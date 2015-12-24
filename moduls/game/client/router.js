@@ -64,6 +64,10 @@ var gameRoutes = {
 	communication: {
 		chat: 'communication/chat/:channel?',
 		mail: 'communication/mail/:page?'
+	},
+
+	cosmos: {
+		cosmos: 'cosmos'
 	}
 }
 
@@ -81,6 +85,8 @@ var gameActions = {
 	reptileHero: Game.Unit.showPage,
 
 	mutual: Game.Mutual.showPage
+
+	cosmos: Game.Cosmos.showPage
 }
 
 for (var group in gameRoutes) {

@@ -55,6 +55,10 @@ var menu = {
 			}
 		}
 	}, 
+	cosmos: {
+		routeName: ['cosmos'],
+		url: Router.routes.cosmos.path()
+	},
 	communication: {
 		routeName: ['mail', 'chat'],
 		url: Router.routes.mail.path(),

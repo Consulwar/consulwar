@@ -5,6 +5,8 @@ initBuildingClient();
 initResearchClient();
 initUnitClient();
 
+initCosmosClient();
+
 initMutualClient();
 
 initMailClient();

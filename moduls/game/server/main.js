@@ -18,6 +18,7 @@ Meteor.startup(function () {
 	initBuildingServer();
 	initResearchServer();
 	initUnitServer();
+	initCosmosServer();
 
 	initMutualServer();
 

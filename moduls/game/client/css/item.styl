@@ -1,0 +1,238 @@
+.information
+	position relative
+	z-index 3
+	margin-left 124px
+	padding 3.5px
+	//width 1024px
+	height 428px
+	background-color #090e14
+		
+	&.global
+		
+		.description
+			p
+				//max-width 600px
+			
+			.requirements
+				margin 10px 0
+		
+		.count
+			bottom 55px
+
+	img
+		display inline-block
+		width 350px
+		height 428px
+		margin-right 20px
+		// 372 16
+			
+	p
+		//max-width 700px
+		font-size 14px
+		color #b6c5d3
+		
+	.description
+		width 940px
+	
+	.small_description
+		width 300px
+	
+	.description, .small_description
+		position relative
+		display inline-block
+		vertical-align top
+		margin-top 20px
+		
+		.requirements
+			position relative
+			float right
+			width 240px
+			margin-left 30px
+			
+			.title
+				font-size 16px
+				color #598AB3
+			
+			>a
+				display block
+				width 171px
+				height 32px
+				padding 8px 0 12px 74px
+				background-repeat no-repeat
+				background-position 2px center
+				margin-top 12px
+				text-decoration none
+			
+		.currentLevel
+			margin-top 10px
+			color: #42617D
+			
+		.nextLevel
+			margin-top 10px
+			color: #88A23F
+		
+	.characteristics
+		position absolute
+		bottom 125px
+		left 390px
+		width 225px
+		padding 10px 114px 10px 10px
+		border 1px solid #3D1E1B
+		background-color #000
+		margin-top 20px
+		min-height 75px
+		color #994732
+		
+		.life,
+		.damage
+			position absolute
+			left 175px
+			
+			&:before
+				position relative
+				top 4px
+				vertical-align middle
+		
+		.damage
+			color #B75B50
+			top 14px
+			
+			&:before
+				content url(/img/game/damage.png)
+				width 21px
+				height 21px
+				padding 0 5px
+		
+		.life
+			color #BBBBBB
+			top 45px
+			
+			&:before
+				content url(/img/game/life.png)
+				width 18px
+				height 21px
+				padding 0 6.5px
+		
+		.targets
+			color #d3912e
+			
+			li
+				display block
+	
+	.build
+		color #91B935
+		border 2px solid #91B935
+		background-color #000
+		padding 20px 45px
+		font-size 16px
+		cursor pointer
+		
+		&[data-action="invest"]:not([data-currency="credits"])
+			color #5cabc1
+			border-color #5cabc1
+		
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
+	
+	.select_all,
+	.send_reinforcement,
+	.send_fleet
+		background-color #000
+		font-size 16px
+		font-weight bold
+		cursor pointer
+		
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
+		
+	.select_all,
+	.send_reinforcement
+		display inline-block
+		margin 20px 5px
+		padding 10px 15px
+		color #5f8cb3
+		border 2px solid #5f8cb3
+	
+	.send_fleet
+		position absolute
+		bottom 15px
+		left 370px
+		color #92402b
+		border 2px solid #92402b
+		padding 15px 30px
+		
+	
+	>.build
+		position absolute
+		bottom 15px
+		left 750px
+	
+	progress
+		position absolute
+		bottom 15px
+		left 750px
+		width 200px
+		font-weight bold
+		border 1px solid #3e4059
+		background-color #000
+		
+		&::-moz-progress-bar 
+			background-color #3cb8ee
+
+		&::-webkit-progress-value
+			background-color #3cb8ee
+			
+		&::-webkit-progress-bar
+			background-color #000
+			
+		&[aria-valuenow]:before
+			background-color #3cb8ee
+			
+		&[role][aria-valuenow]
+			background-color #000
+		
+		&:before
+			content attr(value) ' / ' attr(max)
+			position absolute
+			display block
+			width 100%
+			top -20px
+			text-align center
+			color #9aceda
+		
+	.count
+		position absolute
+		bottom 90px
+		left 750px
+		width 196px
+		height 20px
+		border-radius 5px
+		padding-top 2px
+		-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+		-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+		box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+		border 2px solid #335168
+		background-color #adadad
+		text-align center
+	
+	.items
+		display inline-block
+		width 700px
+		text-align center
+		
+		.disabled
+			cursor not-allowed
+		
+		li:not(.disabled)
+			a:before, div:before
+				content attr(data-count)
+				position absolute
+				bottom 0
+				left 0
+				width 100%
+				height 17px
+				background-color rgba(0, 0, 0, 0.5)
+				text-align center
+				color #ddd

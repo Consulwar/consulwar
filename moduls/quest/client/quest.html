@@ -1,0 +1,47 @@
+<template name="quest">
+	<div class="smoke"></div>
+	<div class="modal quest">
+		<img src="/img/game/{{who}}.jpg" alt="">
+		<div class="title">{{title}}</div>
+		{{{text}}}
+		
+		<br/><br/>
+		<span class="prize">
+		{{#if reward}}
+		{{#if or reward.metals reward.crystals}}
+		Награда: {{#if reward.metals}}{{formatNumber reward.metals}} металла{{/if}}{{#if reward.crystals}}{{#if reward.metals}}, {{/if}}{{formatNumber reward.crystals}} кристалла{{/if}}
+		{{else}}
+		Награды нет
+		{{/if}}
+		{{/if}}
+		</span>
+
+		{{#if isPrompt}}
+		{{#each options}}
+		<a data-option="{{this.name}}" class="{{this.mood}}" href="#">{{this.text}}</a>
+		{{/each}}
+		{{/if}}
+		<div class="close"></div>
+	</div>
+</template>
+
+<template name="reward">
+	<div class="smoke"></div>
+	<div class="reward">
+		<div class="title">{{title}}</div>
+		<ul>
+			{{#if reward.metals}}
+			<li>
+				<img src="/img/game/quests/metals.png">
+				<div class="count">{{formatNumber reward.metals}}</div>
+			</li>
+			{{/if}}
+			{{#if reward.crystals}}
+			<li>
+				<img src="/img/game/quests/crystals.png">
+				<div class="count">{{formatNumber reward.crystals}}</div>
+			</li>
+			{{/if}}
+		</ul>
+	</div>
+</template>

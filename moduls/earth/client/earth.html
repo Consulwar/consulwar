@@ -1,0 +1,117 @@
+<template name="earth">
+	<div class="overlay">
+		{{#each items}}
+		<a href="{{pathFor 'game' menu='battle' side='earth' item=this.engName}}" class="{{this.engName}}" title="{{this.type.name}}">{{this.engName}}</a>
+		{{/each}}
+	</div>
+	<!--
+	<div id="map">
+
+	</div>
+	-->
+	{{#if active_item}}
+	<div class="information point">
+		<div class="header">
+			<a class="back" href="{{pathFor 'game' menu='battle' side='earth'}}">Назад</a> Точка {{active_item.engName}}
+		</div>
+		
+		<div class="army">
+			{{#if army}}
+			<table>
+				<tr>
+					<th>тип войск</th>
+					<th>количество</th>
+				</tr>
+				{{#each army}}
+				{{#if gt this.count 0}}
+				<tr>
+					<td>{{this.name}}</td>
+					<td>{{formatNumber this.count}}</td>
+				</tr>
+				{{/if}}
+				{{/each}}
+			</table>
+			{{else}}
+			<h2>Наших войск на точке нет</h2>
+			{{/if}}
+			<!--<table>
+				<tr>
+					<th>тип войск</th>
+					<th>количество</th>
+				</tr>
+				<tr>
+					<td>Тилпс</td>
+					<td>1</td>
+				</tr>
+			</table>-->
+		</div>
+		<ul class="type {{active_item.type.engName}}">
+			{{#each currentEffects}}
+			<li>{{this.value}}% {{this.affect}} {{this.name}}</li>
+			{{/each}}
+		</ul>
+		<div class="reptiles">
+			{{#if reptiles}}
+			<table>
+				<tr>
+					<th>тип войск</th>
+					<th>количество</th>
+				</tr>
+				{{#each reptiles}}
+				{{#if gt this.count 0}}
+				<tr>
+					<td>{{this.name}}</td>
+					<td>{{formatNumber this.count}}</td>
+				</tr>
+				{{/if}}
+				{{/each}}
+			</table>
+			{{else}}
+			{{#unless army}}
+			<h2>Информация отсутствует</h2>
+			{{/unless}}
+			{{/if}}
+			<!--<table>
+				<tr>
+					<th>тип войск</th>
+					<th>количество</th>
+				</tr>
+				<tr>
+					<td>Тон Ренек</td>
+					<td>1</td>
+				</tr>
+			</table>-->
+		</div>
+	</div>
+	{{/if}}
+</template>
+
+<template name="reserve">
+	<div class="information">
+		<ul class="items reserve">
+			{{#each units}}
+			<li class="{{#if eq this.count 0}}disabled{{/if}}">
+				<div class="{{this.engName}}" href="/game/army/ground/{{this.engName}}" data-count="{{this.count}}"></div>
+			</li>
+			{{/each}}
+		</ul>
+		
+		<div class="small_description">
+			<p>Как вам известно, Консул. На Земле идут ожесточённые бои против сил захватчиков. Рептилоиды не сдают позиции, а их силы всё растут. Галактический совет не может поддерживать достаточное количество войск для обороны и наступления. Освобождение нашей Родной планеты загнётся без вашей поддержки. Отправить подкрепление на Активную точку можно в любое время суток, кроме двух часов наступления.</p><br/>
+
+			<!--<p>С 17:00 до 19:00 по МСК отправка войск недоступна.</p><br/>-->
+
+			<p class="remuneration">
+				<ul class="resources">
+					<li class="honor">{{formatNumber honor}}</li>
+				</ul>
+				Ваша Поддержка Военной компании не останется незамеченной, Консул. После отправки этих отрядов, вы получите Очки Чести в размере:
+			</p>
+
+			
+			<button class="select_all">Выбрать всех</button>
+			<button class="send_reinforcement">Отправить</button>
+		</div>
+	</div>
+	<div class="additional_area bolz"></div>
+</template>

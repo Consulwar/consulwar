@@ -1,0 +1,11 @@
+<template name="current_resources">
+	<ul class="resources">
+		{{#with resources}}
+		<li class="humans" {{incomeTooltip incomeEffects 'humans'}}>{{formatNumber humans.amount}}</li>
+		<li class="metals" {{incomeTooltip incomeEffects 'metals'}}>{{formatNumber metals.amount}}</li>
+		<li class="crystals" {{incomeTooltip incomeEffects 'crystals'}}>{{formatNumber crystals.amount}}</li>
+		<li class="honor">{{formatNumber honor.amount}}</li>
+		<li class="credits" {{incomeTooltip incomeEffects 'credits'}}>{{formatNumber credits.amount}}</li>
+		{{/with}}
+	</ul>
+</template>

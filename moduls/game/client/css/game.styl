@@ -1,0 +1,224 @@
+menu-icon(name)
+	.{name}-icon:not([disabled])
+		background-image url("/img/game/menu/" name ".png")
+		&:hover,
+		&.active
+			background-image url("/img/game/menu/" name "_a.png")
+	
+	.{name}-icon[disabled]
+		background-image url("/img/game/menu/" name "_d.png")
+
+side-icon(name)
+	.{name}-icon
+		background-image url("/img/game/side/" name ".png")
+		&:hover,
+		&.active
+			background-image url("/img/game/side/" name "_a.png")
+
+bottom-icon(type, group, name)
+	.{name}-icon
+		background-image url("/img/game/" type "/" group "/i/" name ".png")
+
+bottom-side-icon(type, side, group, name)
+	.{name}-icon
+		background-image url("/img/game/" type "/" side "/" group "/i/" name ".png")
+
+overlay-image(menu, sub, name, x, y, z)
+	.{name}-icon:before
+		content url("/img/game/" menu "/" sub "/" name ".png")
+		left x px
+		top y px
+		z-index z
+
+overlay-item(name, x, y, z)
+	.{name}-icon
+		left x px
+		top y px
+		z-index z
+		
+requirements-icon(menu, sub, name)
+	.{name}-icon
+		background-image url("/img/game/" menu "/" sub "/r/" name ".jpg")
+
+:disabled
+	-webkit-filter grayscale(1) !important
+	filter grayscale(1) !important
+	cursor not-allowed !important
+
+.game
+	@import '{}/moduls/building/client/building.styl'
+	@import '{}/moduls/research/client/research.styl'
+	@import '{}/moduls/unit/client/unit.styl'
+	@import '{}/moduls/mail/client/mail.styl'
+	@import '{}/moduls/chat/client/chat.styl'
+	@import '{}/moduls/game/client/css/menu.styl'
+	@import '{}/moduls/game/client/css/item.styl'
+	@import '{}/moduls/resources/client/resources.styl'
+	
+	position relative
+	min-width 1465px
+	height 100%
+	background-image url(/img/game/background.jpg)
+	background-repeat no-repeat
+	background-position top center
+	
+	header
+		width 100%
+		height 42px
+		background-color #132029
+		font-size 17px
+		margin-bottom 18px
+		
+		.username,
+		.servername
+			position absolute
+			top 10px
+			
+			span
+				color #A03444
+				padding-right 15px
+			
+			.sound
+				position absolute
+				left -50px
+				top -6px
+				width 33px
+				height 33px
+				background-color transparent
+				border 0
+				background-repeat no-repeat
+				cursor pointer
+				
+				&.on
+					background-image url(/img/sound_on.png)
+					
+				&.off
+					background-image url(/img/sound_off.png)
+
+		.username
+			left 50%
+			margin-left -732px
+		.servername
+			right 50%
+			margin-right -732px
+		
+		.planet_name
+			margin-left 30px
+			
+		.edit
+			display inline-block
+			width 21px
+			height 21px
+			margin-left 5px
+			vertical-align middle
+			background-image url(/img/game/edit.png)
+			background-repeat no-repeat
+			
+			&:hover
+				background-image url(/img/game/edit_a.png)
+	
+				
+	.content
+		position relative
+		margin 0 auto
+		width 1464px
+		height 435px
+		background-color #000
+		background-image url(/img/game/bg.jpg)
+		background-repeat no-repeat
+		background-position 124px top
+		
+			
+		&.counsul
+			background-image url(/img/game/planet/counsul/back.jpg)
+
+		&.battle
+			background-image url(/img/game/battle/back.jpg)
+		
+		&.earth
+			background-image url(/img/game/battle/earth/back.jpg)
+			
+			.overlay
+				a
+					padding 5px
+					background-color #000
+					border-radius 50px
+					border: 1px solid #973739
+					text-decoration none
+					text-transform uppercase
+		
+		.information.global .additional_area
+			position absolute
+			width 300px
+			height auto
+			top initial
+			bottom 15px
+			right 15px
+			z-index 2
+		
+		.additional_area
+			position absolute
+			width 330px
+			height 433px
+			top 0
+			right 10px
+			z-index 2
+			background-repeat no-repeat
+			background-position top center
+			
+			&.quest
+				cursor pointer
+
+				&.prompt:after,
+				&.finished:after
+					position absolute
+					top 10px
+					right 33px
+				
+				&.prompt:after
+					content url(/img/game/quests/hasquest.png)
+					
+				&.finished:after
+					content url(/img/game/quests/hasreward.png)
+			
+			&.bolz
+				background-image url(/img/game/bolz.jpg)
+
+		&.residential  .additional_area.quest
+			background-image url(/img/game/quests/tamily.jpg)
+		
+		&.counsul  .additional_area.quest
+			background-image url(/img/game/quests/portal.jpg)
+		
+		&.military  .additional_area.quest
+			background-image url(/img/game/quests/thirdenginery.jpg)
+		
+		&.fleet  .additional_area.quest
+			background-image url(/img/game/quests/vaha.jpg)
+		
+		&.heroes  .additional_area.quest
+			background-image url(/img/game/quests/psm.jpg)
+		
+		&.ground  .additional_area.quest
+			background-image url(/img/game/quests/tilps.jpg)
+		
+		&.evolution  .additional_area.quest
+			background-image url(/img/game/quests/nataly.jpg)
+		
+		&.fleetups  .additional_area.quest
+			background-image url(/img/game/quests/mechanic.jpg)
+		
+		&.global  .additional_area.quest
+			background-image url(/img/game/quests/calibrator.jpg)
+		
+		&.reinforcement  .additional_area.quest
+			background-image url(/img/game/quests/bolz.jpg)
+		
+		&.private  .additional_area.quest
+			background-image url(/img/game/quests/renexis.jpg)
+	
+	.currentConstruction
+		position absolute
+		top 200px
+		right 200px
+		font-size 30px

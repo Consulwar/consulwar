@@ -1,0 +1,146 @@
+.resources
+	li
+		display inline-block
+		width 94px
+		height 20px
+		padding-top 44px
+		background-repeat no-repeat
+		background-position top center
+		text-align center
+		vertical-align top
+		color #aaa
+	
+	.humans
+		background-image url(/img/game/humans.png)
+		color #736540
+		width 94px
+		//margin-right 15px
+		//margin-left 15px
+	.metals
+		background-image url(/img/game/metals.png)
+		color #578AA7
+	.crystals
+		background-image url(/img/game/crystals.png)
+		color #8E557E
+	.credits
+		background-image url(/img/game/credits.png)
+		color #D1FE01
+	.honor
+		background-image url(/img/game/honor.png)
+		color #D55F51
+	.time
+		display block
+		height 25px
+		padding 0 0 10px 20px
+		//background-image url(/img/game/time.png)
+		color #aaa
+		font-weight bold
+		text-align left
+		width auto
+		
+		time
+			color #fff
+	
+	.button
+		width 160px
+		height 64px
+		padding-top 0
+
+.content .overlay.planet.residential
+	progress
+		position absolute
+		width 200px
+		font-weight bold
+		border 1px solid #3e4059
+		background-color #000
+		z-index 20
+		cursor pointer
+			
+		&::-webkit-progress-bar
+			background-color #000
+			
+		&[role][aria-valuenow]
+			background-color #000
+		
+		&:before
+			content attr(value) ' / ' attr(max)
+			position absolute
+			display block
+			width 100%
+			top -20px
+			text-align center
+			
+		&.active:after
+			content ''
+			position absolute
+			top -90px
+			left 69px
+			width 62px
+			height 62px
+			background-repeat no-repeat
+			background-position center center
+			background-color #000
+			border-radius 32px
+			border-width 2px
+			border-style solid
+		
+		&.metals
+			top 410px
+			left 785px
+			color #5697D7
+		
+			&::-moz-progress-bar 
+				background-color #5697D7
+
+			&::-webkit-progress-value
+				background-color #5697D7
+				
+			&[aria-valuenow]:before
+				background-color #5697D7
+			
+			&.active:after
+				background-image url(/img/game/metals_bonus.png)
+				border-color #5697D7
+			
+		&.crystals
+			top 410px
+			left 14px
+			color #D7559B
+			
+		
+			&::-moz-progress-bar 
+				background-color #D7559B
+
+			&::-webkit-progress-value
+				background-color #D7559B
+				
+			&[aria-valuenow]:before
+				background-color #D7559B
+			
+			&.active:after
+				background-image url(/img/game/crystals_bonus.png)
+				border-color #D7559B
+
+.information
+	>.resources
+		position absolute
+		bottom 10px
+		left 370px
+		
+		.button:nth-child(6)
+			margin-top 2px
+			height 82px
+			
+			button
+				margin 8px 0
+
+		button
+			padding 15px 10px
+			margin 6px 0
+		
+	&.global
+		.resources
+			width 356px
+			
+			.credits
+				margin-top 20px

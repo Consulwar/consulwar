@@ -1,0 +1,270 @@
+.side_menu
+	side-icon('mail')
+
+.mail
+	position relative
+	//width 1000px
+	height 435px
+	margin-left 124px
+	background-color #04080B
+	overflow-y auto
+	
+	>table
+		width 100%
+		border-collapse collapse
+		
+		tr
+			height 40px
+			
+			cursor pointer
+			
+			&:nth-child(odd):not(.header)
+				background-color #0B121A
+			
+			&:nth-child(even)
+				background-color #0E1821
+				
+			&.from_tamily
+				color #3AB6F2
+				
+			&.from_system
+				&.battle_win
+					color #A9C362
+				&.battle_draw
+					color #D8E2EB
+				&.battle_lose
+					color #9D3830
+				&.quiz
+					color #3CB3ED
+					font-weight bold
+			
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+			
+		td, th
+			text-align left
+				
+		td:first-child, th:first-child
+			width 20px
+			padding 12px
+			text-align center
+		
+		.name
+			width 180px
+			
+		.subject
+			width 330px
+			
+		.time
+			width 150px
+			
+	.delete_selected, .new_message
+		display inline-block
+		color #5cabc1
+		border 2px solid #5cabc1
+		background-color #000
+		padding 10px 15px
+		font-size 16px
+		cursor pointer
+		
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
+	
+	.letter, .battle_letter, .battle_on_earth_letter, form
+		display none
+		position fixed
+		top 142px
+		//left 0
+		width 100%
+		height 442px
+		background-color #04080B
+	
+	.letter, .battle_letter, .battle_on_earth_letter
+		
+		.text
+			width 980px
+			height 300px
+			background-color #0E1821
+			color #fff
+			padding 15px 10px
+			margin-top 3px
+			overflow-y scroll
+			
+		.name, .subject
+			margin 0 30px
+		
+		time
+			position relative
+			right 10px
+	
+	form
+		div
+			background-color #0F1923
+			padding 14px
+		
+		label
+			color #50B2EF
+			
+			&:not(:first-child)
+				margin-left 30px
+			
+			input
+				background-color #333D47
+				height 17px
+				border 0
+				box-shadow inset 2px 2px 2px #000
+				padding 10px 18px
+				color #fff
+				
+				&.subject
+					width 300px
+				
+		textarea
+			width 950px
+			height 220px
+			background-color #17212B
+			color #fff
+			padding 15px 10px
+			border 2px solid #000
+			margin-top 13px
+			resize none
+		
+	button, input[type="submit"]
+		border 2px solid #2D7B9F
+		color #2D7B9F
+		padding 10px 5px
+		margin 5px
+		background transparent
+		font-weight bold
+		cursor pointer
+			
+	input[type="submit"],
+	.reply
+		position relative
+		left 880px
+		
+	.battle_letter, 
+	.battle_on_earth_letter
+		.result
+			position relative
+			width 1000px
+			height 385px
+			text-align center
+			
+			table
+				width 30%
+				text-align left
+				
+				tr
+					height 15px
+					
+				td
+					padding 3px
+			
+			.fleet, .army, .reptiles
+				position absolute
+				top 0
+				background-color #0F1922
+				
+				li
+					display block
+					width 180px
+					height 20px
+					background-repeat no-repeat
+					font-size 20px
+					padding 20px 0
+			
+
+			.fleet, .army
+				left 0
+				li
+					padding-left 260px
+					background-position left center
+					
+				.wasp
+					background-image url(/img/game/army/fleet/battle/wasp.jpg)
+				.cruiser
+					background-image url(/img/game/army/fleet/battle/cruiser.jpg)
+				.battleship
+					background-image url(/img/game/army/fleet/battle/battleship.jpg)
+				.carrier
+					background-image url(/img/game/army/fleet/battle/carrier.jpg)
+				.flagship
+					background-image url(/img/game/army/fleet/battle/flagship.jpg)
+			
+			.reptiles
+				right 0
+				li
+					padding-right 260px
+					background-position right center
+					
+				.blade
+					background-image url(/img/game/reptiles/fleet/battle/blade.jpg)
+				.dragon
+					background-image url(/img/game/reptiles/fleet/battle/dragon.jpg)
+				.hydra
+					background-image url(/img/game/reptiles/fleet/battle/hydra.jpg)
+				.armadillo
+					background-image url(/img/game/reptiles/fleet/battle/armadillo.jpg)
+				.shadow
+					background-image url(/img/game/reptiles/fleet/battle/shadow.jpg)
+				.trioniks
+					background-image url(/img/game/reptiles/fleet/battle/trioniks.jpg)
+			
+			.profit
+				position absolute
+				left 50%
+				margin-left -60px
+				width 120px
+				color #E2D757
+				font-size 17px
+				font-weight bold
+				
+				li
+					margin-right 0
+					margin-top 20px
+					
+
+.quiz
+	progress
+		position relative
+		width 450px
+		height 25px
+		margin-top 70px
+		background-color #000
+			
+		&[role][aria-valuenow]
+			background-color #000
+				
+		&::-moz-progress-bar 
+			background-color #56baf2
+
+		&::-webkit-progress-value
+			background-color #56baf2
+			
+		&[aria-valuenow]:before
+			background-color #56baf2
+		
+		&:before
+			content attr(data-option)
+			display block
+			position absolute
+			bottom 25px
+			font-size 15px
+			color #cfdcdf
+			
+		&:after
+			position absolute
+			width 100%
+			top 0
+			left 0
+			display block
+			content attr(value) ' (' attr(data-percent) '%)'
+			font-size 20px
+			text-align center
+			color #ededed
+	
+	.vote_power
+		font-size 12px

@@ -1,0 +1,55 @@
+<template name="chat">
+	<div class="chat">
+		<ul class="participants">
+			{{#each users}}
+			<li>{{this.login}}</li>
+			{{/each}}
+		</ul>
+
+		<ul class="messages">
+			{{#each messages}}
+			<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
+			{{#if this.data}}* {{/if}}<span class="{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} {{#if eq this.login user.login}}me{{/if}}">{{this.login}}{{#unless this.data}}:{{/unless}}</span>
+			{{#if this.data}}
+				{{#if eq this.data.type 'dice'}}
+					бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+					{{#each this.data.dice.dices.values}}
+					<span class="dice">{{this}}</span> 
+					{{/each}}
+				{{/if}}
+				{{#if eq this.data.type 'status'}}
+					{{{highlightUser this.message}}}
+				{{/if}}
+				{{#if eq this.data.type 'sepukku'}}
+					совершил кровавое сепукку.
+				{{/if}}
+				{{#if eq this.data.type 'unblock'}}
+					разблокировал чат {{this.message}}
+				{{/if}}
+				{{#if eq this.data.type 'block'}}
+					заблокировал чат {{this.message}}
+				{{/if}}
+			{{else}}
+				{{{highlightUser this.message}}}
+			{{/if}}
+			{{#if eqor user.role 'admin' 'helper'}}
+				<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
+			{{/if}}
+			</li>
+			{{/each}}
+		</ul>
+
+		<form>
+			<textarea name="text" maxlength="140"></textarea>
+			<input type="submit" value="Послать">
+			<ul class="resources">
+				<li class="crystals">{{price}}</li>
+			</ul>
+
+			<!--<button>Больше никогда не платить за ссаный чат</button>
+			<ul class="resources">
+				<li class="credits">5 000</li>
+			</ul>-->
+		</form>
+	</div>
+</template>

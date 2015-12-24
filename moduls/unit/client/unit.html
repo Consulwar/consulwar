@@ -1,0 +1,24 @@
+<template name="unit">
+	<div class="information {{unit.type}}">
+		<img src="/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg">
+		<div class="description">
+			{{> item_requirements requirements=unit.requirements}}
+
+			<p>{{unit.description}}</p>
+			
+			{{> item_effect item=unit}}
+		</div>
+
+		{{> item_characteristic item=unit}}
+		
+		{{#unless eq unit.side 'reptiles'}}
+			{{> item_price price=(unit.price count)}}
+
+			<input class="count" type="number" placeholder="Количество" value="{{count}}"/>
+
+			<button class="build" disabled="{{not unit.canBuild}}">Отдать приказ</button>
+		{{/unless}}
+		
+		{{> Template.dynamic template=additionalArea}}
+	</div>
+</template>

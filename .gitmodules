@@ -1,0 +1,3 @@
+[submodule "content"]
+	path = content
+	url = git@gitlab.consulwar.ru:zav/consulwar-content.git

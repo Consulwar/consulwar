@@ -1,0 +1,74 @@
+<template name="top_menu">
+	<ul class="top_menu">
+		<li><a href="{{pathFor 'chat'}}">Чат</a></li>
+		<li><a href="">Статистика</a></li>
+		<!--<li><a href="">Настройки</a></li>-->
+		<li><a href="javascript: ShowModalWindow(Template.support)">Служба поддержки</a></li>
+		<li><a href="http://ru.consulwar.wikia.com" target="_blank">Неофициальная вики</a></li>
+		<li><a href="{{pathFor 'logout'}}">Выход</a></li>
+	</ul>
+</template>
+
+<template name="game_menu">
+	<ul class="game_menu">
+		{{#each menu}}
+			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}} {{this.additionalClass}}">
+				<a href="{{this.url}}"></a>
+			</li>
+		{{/each}}
+	</ul>
+</template>
+
+<template name="side_menu">
+	<ul class="side_menu">
+		{{#each sides}}
+			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}"><a href="{{this.url}}"></a></li>
+		{{/each}}
+		{{#if eq sides.length 2}}
+			<!--<li class="helpusplease">
+				<a href="https://boomstarter.ru/projects/zav/consul_war">Поддержите</a> нас:<br/>
+				1. <a href="http://vk.com/zelenin39?w=wall1466715_672" target="_blank">Репост ВК</a><br/>
+				2. <a href="http://vk.com/consulwar" target="_blank">Группа ВК</a><br/>
+				3. <a href="https://twitter.com/ZAV39/status/629592939400982528" target="_blank">Ретвит</a><br/>
+				4. <a href="mailto: consulwar@gmail.com">Ошибки и предложения</a><br/>
+				5. <a href="http://ru.consulwar.wikia.com" target="_blank">Наполните вики</a>
+			</li>-->
+		{{/if}}
+	</ul>
+</template>
+
+<template name="items_menu">
+	<ul class="bottom_menu items">
+		{{#each items}}
+			{{#let progress=this.progress}}
+				<li 
+					class="{{#if eq this.url currentUrl}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}}" 
+					data-level="{{#if this.currentLevel}}{{this.currentLevel}}{{/if}}" 
+					data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}">
+					<a class="{{this.engName}}-icon" href="{{this.url}}"></a>
+				</li>
+			{{/let}}
+		{{/each}}
+	</ul>
+</template>
+
+<template name="overlay_menu">
+	<div class="overlay {{menuGroup}} {{itemGroup}}">
+		{{#each items}}
+			{{#if gt this.currentLevel 0}}
+				<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
+			{{/if}}
+			
+			{{#let progress=this.progress}}
+				{{#if progress}}
+					<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
+				{{/if}}
+			{{/let}}
+		{{/each}}
+		
+		{{#if eq currentUrl (pathFor route='building' group='residential')}}
+			<progress class="metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
+			<progress class="crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
+		{{/if}}
+	</div>
+</template>

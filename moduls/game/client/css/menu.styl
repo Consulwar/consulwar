@@ -1,0 +1,343 @@
+.top_menu
+	width 100%
+	text-align center
+	li
+		display inline-block
+		margin 10px 15px
+		
+		&:first-child
+			padding-left 250px
+		
+		a
+			color #5E8CCA
+			text-decoration none
+			font-size 15px
+			
+			&:hover
+				text-decoration underline
+
+.menu
+	position relative
+	margin 0 auto
+	width 1464px
+	padding-bottom 18px
+	
+	.resources
+		width 490px
+	
+	ul,
+	.fleet_info
+		display inline-block
+		vertical-align top
+	
+	.fleet_info
+		width 324px
+		height 44px
+		padding 25px 24px 0 0
+		background-image url(/img/game/fleet_bg.png)
+		background-repeat no-repeat
+		background-position center center
+		color #9399B1
+		text-align right
+		font-size 16px
+		
+		&.battle
+			color #2EB6E0
+	
+	.game_menu 
+		a
+			display block
+			width 64px
+			height 64px
+			
+		li
+			display inline-block
+			width 64px
+			height 64px
+			background-color #090E14
+			border 2px solid #263D4F
+			border-radius 5px
+			cursor pointer
+			margin-right 12px
+			text-decoration none
+			background-repeat no-repeat
+			background-position center center
+			
+			&:not([disabled]):hover,
+			&.active
+				border-color #80BAEC
+		
+		menu-icon('planet')
+		menu-icon('army')
+		menu-icon('research')
+		menu-icon('powerups')
+		menu-icon('alliance')
+		menu-icon('galactic')
+		menu-icon('battle')
+		menu-icon('communication')
+		menu-icon('reptiles')
+		
+		.messages.has_new_mail,
+		.messages.has_new_mail.active,
+		.messages.has_new_mail:hover
+			background-image url(/img/game/menu/messages_n.png)
+
+.side_menu
+	float left
+	width 124px
+	li
+		position relative
+		display block
+		width 124px
+		height 145px
+		background-color #04070C
+		cursor pointer
+		background-position center center
+		background-repeat no-repeat
+
+		&:hover,
+		&.active
+			background-color #18202B
+		
+		&.progress:after
+			content url(/img/game/progress.png)
+			position absolute
+			top 58px
+			left -46px
+			
+		&.progress:before
+			content attr(data-remaining)
+			position absolute
+			top 62px
+			left -125px
+			color #E7B04C
+			font-size 18px
+	
+	a
+		display block
+		width 100%
+		height 100%
+	
+	.helpusplease
+		padding 3px
+		width 114px
+		height 135px
+		border 2px solid red
+		a
+			display inline
+			width auto
+			height auto
+
+	side-icon('counsul')
+	
+	side-icon('avaliable')
+	side-icon('activated')
+	side-icon('bought')
+	
+	side-icon('info')
+	side-icon('find')
+	side-icon('create')
+	
+	side-icon('attack')
+	side-icon('statistics')
+	side-icon('earth')
+	
+	side-icon('events')
+	side-icon('reinforcement')
+	side-icon('history')
+
+.items
+	&.bottom_menu
+		position relative
+		margin 25px auto 0
+		width 1428px
+		text-align left
+		
+		li
+			margin-right 20px
+			margin-bottom 35px
+			overflow visible
+			
+	li
+		position relative
+		display inline-block
+		margin-right 10px
+		margin-bottom 15px
+		vertical-align top
+		text-align center
+		width 117px
+		height 117px
+		background-color #090E14
+		border 2px solid #263D4F
+		border-radius 10px
+		background-position center center
+		background-repeat no-repeat
+		cursor pointer
+		overflow hidden
+		
+		&.battle
+			a, div
+				-webkit-filter grayscale(0.5) brightness(0.75)
+				filter grayscale(0.5) brightness(0.75)
+		
+		a, div
+			display block
+			width 100%
+			height 100%
+			-webkit-filter grayscale(1)
+			filter grayscale(1)
+			transition filter .5s, -webkit-filter .5s
+			
+			&:hover
+				-webkit-filter grayscale(0)
+				filter grayscale(0)
+		
+		&.enough_resources
+			a, div
+				-webkit-filter grayscale(0)
+				filter grayscale(0)
+				
+		&.disabled a:before, &.disabled div:before
+			content ''
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
+			background-image url(/img/game/disabled.png)
+			background-position center center
+			background-repeat no-repeat
+			
+		&:not(.disabled):before
+			content attr(data-level)
+			position absolute
+			top 135px
+			left 0
+			width 100%
+			text-align center
+			color #E7B04C
+			font-size 18px
+		
+		&.progress:before
+			content url(/img/game/progress.png)
+			top 133px
+			text-align left
+			
+		&.progress:after
+			content attr(data-remaining)
+			position absolute
+			top 135px
+			left 35px
+			width 75px
+			text-align left
+			color #E7B04C
+			font-size 18px
+			
+			
+		&:last-child
+			margin 0
+			
+
+		&:hover,
+		&.active
+			background-color #18202B
+			border-color #80BAEC
+			-webkit-filter grayscale(0)
+			filter grayscale(0)
+				
+			a, div
+				-webkit-filter grayscale(0)
+				filter grayscale(0)
+		
+		
+		bottom-icon('battle', 'attack', 'patrolfleet')
+		bottom-icon('battle', 'attack', 'defencefleet')
+		bottom-icon('battle', 'attack', 'battlefleet')
+		bottom-icon('battle', 'attack', 'tradefleet')
+		//bottom-icon('battle', 'attack', 'commandor')
+
+.overlay
+	position absolute
+	width 1000px
+	height 100%
+	left 124px
+	top 0
+	z-index: 1
+	background-repeat no-repeat
+	background-position top left
+
+	a
+		position absolute
+		
+		&:before
+			position absolute
+			top 0
+			left 0
+			-webkit-filter blur(0)
+			filter blur(0)
+			opacity 1
+			transition opacity .5s, filter 2s, -webkit-filter 2s
+		
+		&:hover:before
+			-webkit-filter brightness(1.1)
+			filter brightness(1.1)
+		
+		/*&.new:before
+			filter blur(5px)
+			opacity 0*/
+		&[progress="100"]:before
+			-webkit-filter blur(20px)
+			filter blur(20px)
+		&[progress="90"]:before
+			-webkit-filter blur(18px)
+			filter blur(18px)
+		&[progress="80"]:before
+			-webkit-filter blur(16px)
+			filter blur(16px)
+		&[progress="70"]:before
+			-webkit-filter blur(12px)
+			filter blur(12px)
+		&[progress="60"]:before
+			-webkit-filter blur(8px)
+			filter blur(8px)
+		&[progress="50"]:before
+			-webkit-filter blur(6px)
+			filter blur(6px)
+		&[progress="40"]:before
+			-webkit-filter blur(4px)
+			filter blur(4px)
+		&[progress="30"]:before
+			-webkit-filter blur(3px)
+			filter blur(3px)
+		&[progress="20"]:before
+			-webkit-filter blur(2px)
+			filter blur(2px)
+		&[progress="10"]:before
+			-webkit-filter blur(1px)
+			filter blur(1px)
+	
+	overlay-item('a1',   50,  50,   1)
+	overlay-item('a2',  237,  35,   1)
+	overlay-item('a3',  400,  69,   1)
+	overlay-item('a4',  562,  36,   1)
+	overlay-item('a5',  790,  46,   1)
+	overlay-item('a6', 1026,  52,   1)
+	overlay-item('a7', 1210,  45,   1)
+	
+	overlay-item('b1',   80, 183,   1)
+	overlay-item('b2',  237, 150,   1)
+	overlay-item('b3',  369, 227,   1)
+	overlay-item('b4',  522, 192,   1)
+	overlay-item('b5',  700, 161,   1)
+	overlay-item('b6',  877, 192,   1)
+	overlay-item('b7', 1081, 187,   1)
+	
+	overlay-item('c1',   54, 354,   1)
+	overlay-item('c2',  237, 326,   1)
+	overlay-item('c3',  445, 347,   1)
+	overlay-item('c4',  619, 282,   1)
+	overlay-item('c5',  800, 330,   1)
+	overlay-item('c6',  963, 282,   1)
+	overlay-item('c7', 1117, 342,   1)
+	
+	overlay-item('d1', 1235, 277,   1)

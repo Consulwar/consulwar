@@ -1,0 +1,81 @@
+<template name="item_requirements">
+	{{#if requirements}}
+	<div class="requirements">
+		<span class="title">Необходимые технологии:</span>
+		{{#each requirements}}
+		<a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">
+			{{#unless eq this.[0].level 1}}{{this.[1]}} уровень{{/unless}}
+			<div class="{{this.[0].type}}">{{this.[0].name}}</div>
+		</a>
+		{{/each}}
+	</div>
+	{{/if}}
+</template>
+
+<template name="item_effect">
+	{{#if item.effect}}
+		{{#with item.effect}}
+			<div class="currentLevel">
+				Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+				{{name}}{{pretext}}{{result}}{{aftertext}} {{unit}}
+			</div>
+
+				{{#with next}}
+				<div class="nextLevel">
+					Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+					{{name}}{{pretext}}{{result}}{{aftertext}} {{unit}}
+				</div>
+				{{/with}}
+		{{/with}}
+	{{/if}}
+</template>
+
+<template name="item_characteristic">
+	{{#if item.characteristics}}
+		<div class="characteristics">
+			{{#if item.targets}}
+				Приоритеты атаки:
+				<ul class="targets">
+					{{#each item.targets}}
+						<li><a href="{{this.url}}">{{this.name}}</a></li>
+					{{/each}}
+				</ul>
+			{{/if}}
+			{{item.characteristics.effect.name}}
+
+			{{#if item.characteristics.air}}
+				*Воздушная единица<br/>
+			{{/if}}
+
+			{{#if eq item.characteristics.attackAir false}}
+				*Не атакует воздушные цели
+			{{/if}}
+			
+			<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
+				{{#if item.characteristics.damage}}
+					{{formatNumber (multiply item.characteristics.damage 0.8)}} —
+					{{formatNumber item.characteristics.damage}}
+				{{/if}} 
+			</span>
+			<span class="life" {{militaryTooltip item.characteristics.effects 'life'}}>
+				{{formatNumber item.characteristics.life}}
+			</span>
+		</div>
+	{{/if}}
+</template>
+
+<template name="item_price">
+	<ul class="resources">
+		{{#with price}}
+			<li class="time" {{priceTooltip . 'time'}}>
+				Время строительства: 
+				<time>{{formatSeconds time}}</time>
+			</li>
+			{{#if humans}}<li class="humans" {{priceTooltip . 'humans'}}>{{formatNumber humans}}</li>{{/if}}
+			{{#if honor}}<li class="honor" {{priceTooltip . 'honor'}}>{{formatNumber honor}}</li>{{/if}}
+			{{#if metals}}<li class="metals" {{priceTooltip . 'metals'}}>{{formatNumber metals}}</li>{{/if}}
+			{{#if crystals}}<li class="crystals" {{priceTooltip . 'crystals'}}>{{formatNumber crystals}}</li>{{/if}}
+			{{#if credits}}<li class="credits" {{priceTooltip . 'credits'}}>{{formatNumber credits}}</li>{{/if}}
+		{{/with}}
+	</ul>
+</template>

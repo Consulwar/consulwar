@@ -1,0 +1,176 @@
+<template name="mail">
+	<div class="mail">
+		<table>
+			<tr class="header">
+				<th><input type="checkbox"/></th>
+				<th class="name">Имя</th>
+				<th class="subject">Тема</th>
+				<th class="time">Время</th>
+				<th class="status">Статус</th>
+			</tr>
+			{{#each mail}}
+			<tr data-id="{{this._id}}" class="{{#if eq this.from 0}}from_tamily{{/if}} {{#if eq this.from 1}}from_system {{#if eq this.type 'fleetbattle'}}{{#if eq this.text.result 'Победа'}}battle_win{{else}}{{#if eq this.text.result 'Ничья'}}battle_draw{{else}}battle_lose{{/if}}{{/if}}{{/if}}{{#if eq this.type 'quiz'}}quiz{{/if}}{{/if}}">
+				<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
+				<td>{{this.name}}</td>
+				<td>{{this.subject}}</td>
+				<td>{{formatDate this.timestamp}}</td>
+				<td>{{this.status}}</td>
+			</tr>
+			{{/each}}
+		</table>
+		<a class="delete_selected" href="#">Удалить выделенное</a> &nbsp;&nbsp;&nbsp; <a class="new_message" href="#">Написать сообщение</a>
+
+		<div class="letter">
+			<button class="back">Назад</button>
+			{{#with letter}}
+			<span class="name">{{#if eq from Meteor.userId}} 
+			{{recipient}}
+			{{else}}
+			{{sender}}
+			{{/if}}</span>
+			<span class="subject">{{subject}}</span>
+			<time>{{formatDate timestamp}}</time>
+			<div class="text">{{{nl2br text}}}</div>
+			{{/with}}
+			<button class="reply">Ответить</button>
+		</div>
+
+		<div class="battle_letter">
+			<button class="back">Назад</button>
+			{{#with letter}}
+			<span class="name">{{#if eq from Meteor.userId}} 
+			{{recipient}}
+			{{else}}
+			{{sender}}
+			{{/if}}</span>
+			<span class="subject">{{subject}}</span>
+			<time>{{formatDate timestamp}}</time>
+			{{#with text}}
+			<div class="result">
+				<ul class="fleet">
+					{{#unless eq this.startArmy.wasp 0}}<li class="wasp">{{this.startArmy.wasp}} {{#unless eq this.startArmy.wasp this.army.wasp}}&gt; {{this.army.wasp}}{{/unless}}</li>{{/unless}}
+					{{#unless eq this.startArmy.cruiser 0}}<li class="cruiser">{{this.startArmy.cruiser}} {{#unless eq this.startArmy.cruiser this.army.cruiser}}&gt; {{this.army.cruiser}}{{/unless}}</li>{{/unless}}
+					{{#unless eq this.startArmy.battleship 0}}<li class="battleship">{{this.startArmy.battleship}} {{#unless eq this.startArmy.battleship this.army.battleship}}&gt; {{this.army.battleship}}{{/unless}}</li>{{/unless}}
+					{{#unless eq this.startArmy.carrier 0}}<li class="carrier">{{this.startArmy.carrier}} {{#unless eq this.startArmy.carrier this.army.carrier}}&gt; {{this.army.carrier}}{{/unless}}</li>{{/unless}}
+					{{#unless eq this.startArmy.flagship 0}}<li class="flagship">{{this.startArmy.flagship}} {{#unless eq this.startArmy.flagship this.army.flagship}}&gt; {{this.army.flagship}}{{/unless}}</li>{{/unless}}
+				</ul>
+
+				<ul class="reptiles">
+					{{#if gt this.startReptiles.blade 0}}<li class="blade">{{this.startReptiles.blade}} {{#unless eq this.startReptiles.blade this.reptiles.blade}}&gt; {{this.reptiles.blade}}{{/unless}}</li>{{/if}}
+					{{#if gt this.startReptiles.dragon 0}}<li class="dragon">{{this.startReptiles.dragon}} {{#unless eq this.startReptiles.dragon this.reptiles.dragon}}&gt; {{this.reptiles.dragon}}{{/unless}}</li>{{/if}}
+					{{#if gt this.startReptiles.hydra 0}}<li class="hydra">{{this.startReptiles.hydra}} {{#unless eq this.startReptiles.hydra this.reptiles.hydra}}&gt; {{this.reptiles.hydra}}{{/unless}}</li>{{/if}}
+					{{#if gt this.startReptiles.armadillo 0}}<li class="armadillo">{{this.startReptiles.armadillo}} {{#unless eq this.startReptiles.armadillo this.reptiles.armadillo}}&gt; {{this.reptiles.armadillo}}{{/unless}}</li>{{/if}}
+					{{#if gt this.startReptiles.shadow 0}}<li class="shadow">{{this.startReptiles.shadow}} {{#unless eq this.startReptiles.shadow this.reptiles.shadow}}&gt; {{this.reptiles.shadow}}{{/unless}}</li>{{/if}}
+					{{#if gt this.startReptiles.trioniks 0}}<li class="trioniks">{{this.startReptiles.trioniks}} {{#unless eq this.startReptiles.trioniks this.reptiles.trioniks}}&gt; {{this.reptiles.trioniks}}{{/unless}}</li>{{/if}}
+				</ul>
+				
+				<div class="profit">
+					{{#if this.award}}
+					Получено ресурсов:
+					<ul class="resources">
+						{{#with this.award}}
+						{{#if metals}}<li class="metals">{{metals}}</li>{{/if}}
+						{{#if crystals}}<li class="crystals">{{crystals}}</li>{{/if}}
+						{{#if honor}}<li class="honor">{{honor}}</li>{{/if}}
+						{{/with}}
+					</ul>
+					{{else}}
+					Награды нет
+					{{/if}}
+				</div>
+			</div>
+			{{/with}}
+			{{/with}}
+		</div>
+
+		<div class="battle_on_earth_letter">
+			<button class="back">Назад</button>
+			{{#with letter}}
+			<span class="name">{{#if eq from Meteor.userId}} 
+			{{recipient}}
+			{{else}}
+			{{sender}}
+			{{/if}}</span>
+			<span class="subject">{{subject}}</span>
+			<time>{{formatDate timestamp}}</time>
+			<div class="result">
+				<table class="army">
+					<tr>
+						<th>Тип войск</th>
+						<th>Было</th>
+						<th>Стало</th>
+					</tr>
+					{{#each army text.startArmy text.army}}
+					{{#if gt this.startCount 0}}
+					<tr>
+						<td>{{this.name}}</td>
+						<td colspan="{{#if eq this.startCount this.count}}2{{else}}1{{/if}}">{{this.startCount}}</td>
+						{{#unless eq this.startCount this.count}}<td>{{this.count}}</td>{{/unless}}
+					</tr>
+					{{/if}}
+					{{/each}}
+				</table>
+
+				<table class="reptiles">
+					<tr>
+						<th>Тип войск</th>
+						<th>Было</th>
+						<th>Стало</th>
+					</tr>
+					{{#each reptiles text.startReptiles text.reptiles}}
+					{{#if gt this.startCount 0}}
+					<tr>
+						<td>{{this.name}}</td>
+						<td colspan="{{#if eq this.startCount this.count}}2{{else}}1{{/if}}">{{this.startCount}}</td>
+						{{#unless eq this.startCount this.count}}<td>{{this.count}}</td>{{/unless}}
+					</tr>
+					{{/if}}
+					{{/each}}
+				</table>
+				
+				<div class="profit">
+					<h1>{{text.result}}</h1>
+				</div>
+			</div>
+			{{/with}}
+		</div>
+
+
+		<form>
+			<button class="back">Назад</button>
+			<div>
+				<label>Кому написать: <input class="recipient" />[x]</label>
+				<label>Тема сообщения: <input class="subject" /></label>
+				<textarea></textarea>
+			</div>
+			<input type="submit"/>
+		</form>
+	</div>
+</template>
+
+<template name="quiz">
+	<div class="smoke"></div>
+	<div class="modal quiz">
+		<img src="/img/game/{{who}}.jpg" alt="">
+		<div class="title">{{title}}</div>
+		<div class="text">
+			{{{text}}}
+		</div>
+
+		<div class="vote_power">
+			Сила голоса: {{votePower}}
+		</div>
+		
+		<br/>
+		{{#if canVote}}
+		{{#each options}}
+		<a data-option="{{this.name}}" class="neutral {{this.mood}}" href="#">{{this.text}}</a>
+		{{/each}}
+		{{else}}
+		{{#each options}}
+		<progress data-option="{{this.text}}" data-percent="{{#with multiply this.value 100}}{{div this ../totalVotes}}{{/with}}" value="{{this.value}}" max="{{totalVotes}}"></progress>
+		{{/each}}
+		{{/if}}
+		<div class="close"></div>
+	</div>
+</template>

@@ -1,0 +1,319 @@
+.auth,
+.register
+	position absolute
+	top 65px
+	left 50%
+	width 278px //315
+	height 203px
+	padding 13px 18.5px
+	background-repeat no-repeat
+	background-position top left
+	
+.auth
+	margin-left -540px
+	background-image url(/img/login_bg.png)
+	
+	input[name="login"],
+	input[name="password"]
+		width 244px
+		height 10px
+		margin-bottom 12px
+		padding 9px 0 9px 34px
+		background-color #C0C0C0
+		border 0
+		border-radius 5px
+		box-shadow inset 2px 2px 2px #000
+		background-repeat no-repeat
+		background-position 7px center
+		
+		&::-webkit-input-placeholder
+			color #000201
+			
+		&::-moz-placeholder
+			color #000201
+		
+	input[name="login"]
+		background-image url(/img/i_login.png)
+		
+	input[name="password"]
+		background-image url(/img/i_password.png)
+		
+	select
+		width 278px
+		height 28px
+		margin-bottom 12px
+		background-color #232526
+		border 0
+		border-radius 5px
+		box-shadow inset 2px 2px 2px #000
+		
+		color #999DA1
+		
+		.server
+			color #993A2E
+			
+	label
+		margin-bottom 12px
+		
+	input[name="remember"]
+		vertical-align middle
+		margin-right 5px
+		
+	input[type="submit"]
+		width 248px
+		height 31px
+		margin 12px 0 6px
+		color transparent
+		border 0
+		background-color transparent
+		background-image url(/img/auth_submit.png)
+		background-repeat no-repeat
+		cursor pointer
+		
+		&:hover
+			background-image url(/img/auth_submit_a.png)
+	
+	a
+		position relative
+		color #D4D4D3
+		margin-right 20px
+
+.register
+	margin-left 225px
+	background-image url(/img/register_bg.png)
+	
+	.consul_here
+		display block
+		width 258px
+		height 43px
+		padding 10px
+		margin 22px auto 30px
+		background-color #983a2e
+		color #fffbfc
+		font-size 35px
+		text-decoration none
+		text-align center
+		border-radius 10px
+			
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
+			
+	p
+		margin 0 auto
+		width 190px
+		text-align center
+
+
+.smoke
+	position fixed
+	top 0
+	left 0
+	width 100%
+	height 100%
+	z-index 99
+	background-color rgba(0, 0, 0, .8)
+
+.modal
+	position fixed
+	
+	z-index 100
+	
+	top 50%
+	left 50%
+	
+	margin -270px 0 0 -450px
+
+	width 835px
+	height 500px
+	
+	padding 17px 48px 17px 17px
+
+	border 1px solid #2D4D5C
+	border-radius 5px
+	
+	background-color #171B1C
+	
+	font-size 16px
+	color #ABAFB2
+	
+	img
+		float left
+		margin-right 43px
+	
+	>.title
+		color #9C3A2D
+		font-weight bold
+		margin 15px 0 40px
+		font-size 20px
+		
+	p
+		color #FE9528
+		font-weight bold
+		padding-bottom 30px
+	
+	>a
+		position relative
+		float left
+		display block
+		width 378px
+		padding 16px 42px
+		margin 15.8px 0
+		color #fff
+		text-decoration none
+		color #fff
+		font-size 18px
+		
+		&.positive
+			background-color #719241
+			&:hover
+				background-color #A9CB64
+
+		&.negative
+			background-color #782E25
+			&:hover
+				background-color #B8493B
+
+		&.neutral
+			background-color #3B3B3B
+			&:hover
+				background-color #5C5C5C
+	
+	label
+		display block
+		
+		.title
+			color #FE9528
+			padding-bottom 10px
+			
+		a
+			font-size 12px
+			color #559099
+			vertical-align middle
+			
+		
+	input[type="text"],
+	input[type="password"]
+		width 280px
+		padding 13px 12px
+		border 2px solid #006382
+		background-color #C0C0C0
+		border-radius 5px
+		box-shadow inset 2px 2px 2px #000
+		margin-bottom 20px
+		
+	input[type="checkbox"]
+		vertical-align middle
+		
+	input[type="submit"]
+		width 280px
+		padding 13px 12px
+		background-color #41CFEF
+		border 0
+		color #fff
+		font-size 18px
+		font-weight bold
+		cursor pointer
+		-webkit-filter brightness(0.8)
+		filter brightness(0.8)
+		
+		&:hover
+			-webkit-filter brightness(1)
+			filter brightness(1)
+	
+	input[name="code"]
+		margin-bottom 10px
+		
+	select
+		width 278px
+		height 28px
+		margin-bottom 12px
+		background-color #232526
+		border 0
+		border-radius 5px
+		box-shadow inset 2px 2px 2px #000
+		
+		color #999DA1
+		
+		.server
+			color #993A2E
+	
+	input.err
+		border 2px solid red
+	
+	.error_text
+		display inline-block
+		width 130px
+		color red
+		vertical-align middle
+		font-size 14px
+		
+	.close
+		position absolute
+		top -22px
+		right -22px
+		height 44px
+		width 44px
+		padding 0
+		margin 0
+		background-image url(/img/game/close.png)
+		background-repeat no-repeat
+		cursor pointer
+		
+		&:hover
+			background-image url(/img/game/close_a.png)
+
+.reward
+	position fixed
+	
+	z-index 100
+	
+	top 50%
+	left 50%
+	
+	margin -270px 0 0 -450px
+
+	width 835px
+	height 367px
+	
+	padding 150px 48px 17px 17px
+	font-size 18px
+	
+	text-align center
+	
+	background-image url(/img/game/quests/bg.png)
+	background-repeat no-repeat
+	background-position center center
+	
+	cursor pointer
+	
+	.title
+		font-size 30px
+	
+	li
+		display inline-block
+		padding 50px
+		
+.quest
+	.title
+		margin-bottom 20px
+		color #169CB9
+	
+	.prize
+		color #E99245	
+
+	p
+		font-size 12px
+		padding-bottom 10px
+		color #fff
+		font-weight normal
+	
+	>a.neutral
+		background-color #1D809F
+		
+		&:hover
+			background-color #228CAD
+	
+	.count
+		color #FE9528
+		

@@ -1,4 +1,6 @@
-var initCosmosLib = function() {
+initCosmosLib = function() {
+
+Game.Cosmos = {};
 
 Game.Planets = {
 	Collection: new Meteor.Collection('planets'),

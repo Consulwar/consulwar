@@ -1,4 +1,4 @@
-var initCosmosServer = function() {
+initCosmosServer = function() {
 	initCosmosLib();
 	initCosmosPlanetsServer();
 	initCosmosEventsServer();

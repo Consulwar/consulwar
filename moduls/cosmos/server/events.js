@@ -1,4 +1,4 @@
-var initCosmosEventsServer = function() {
+initCosmosEventsServer = function() {
 
 Game.SpaceEvents.update = function(event) {
 	if (!event._id || !event.user_id) {

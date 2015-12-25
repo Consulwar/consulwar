@@ -1,4 +1,4 @@
-var initCosmosClient = function() {
+initCosmosClient = function() {
 
 initCosmosLib();
 

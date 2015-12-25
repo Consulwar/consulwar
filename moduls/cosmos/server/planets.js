@@ -1,6 +1,4 @@
-var initCosmosServer = function() {
-
-initCosmosLib();
+initCosmosPlanetsServer = function() {
 
 Game.Planets.update = function(planet) {
 	if (!planet._id || !planet.user_id) {
@@ -440,7 +438,5 @@ Meteor.publish('planets', function () {
 		})
 	}
 });
-
-initCosmosEventsServer();
 
 }

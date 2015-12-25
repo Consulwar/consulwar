@@ -1,8 +1,13 @@
 initCosmosLib = function() {
 
+game.PlanetType = function(options) {
+	Game.Planets.types.push(options);
+}
+
 Game.Cosmos = {};
 
 Game.Planets = {
+
 	Collection: new Meteor.Collection('planets'),
 
 	getAll: function() {
@@ -33,101 +38,13 @@ Game.Planets = {
 		}
 	},
 
+	// ------------------------------------------------------------------------
+	// Planets generation
+	// ------------------------------------------------------------------------
+
 	MIN_PLANET_DISTANCE: 1,
 
-	types: [
-		{
-			engName: 'jungle',
-			name: 'джунгли',
-			chance: 30,
-			sizeMin: 4,
-			sizeMax: 5
-		},
-		{
-			engName: 'terran',
-			name: 'земного типа',
-			chance: 20,
-			sizeMin: 4,
-			sizeMax: 5
-		},
-		{
-			engName: 'ocean',
-			name: 'океаническая',
-			chance: 10,
-			sizeMin: 5,
-			sizeMax: 5
-		},
-		{
-			engName: 'arid',
-			name: 'засушливая',
-			chance: 10,
-			sizeMin: 4,
-			sizeMax: 5
-		},
-		{
-			engName: 'tundra',
-			name: 'тундра',
-			chance: 10,
-			sizeMin: 4,
-			sizeMax: 5
-		},
-		{
-			engName: 'desert',
-			name: 'пустынная',
-			chance: 10,
-			sizeMin: 4,
-			sizeMax: 5
-		},
-		{
-			engName: 'arctic',
-			name: 'арктическая',
-			chance: 10,
-			sizeMin: 5,
-			sizeMax: 5
-		},
-		{
-			engName: 'lava',
-			name: 'лавовая',
-			chance: 50,
-			sizeMin: 1,
-			sizeMax: 3
-		},
-		{
-			engName: 'barren',
-			name: 'бесплодная',
-			chance: 50,
-			sizeMin: 4,
-			sizeMax: 5
-		},
-		{
-			engName: 'asteroids',
-			name: 'астероид',
-			chance: 100,
-			sizeMin: 1,
-			sizeMax: 3
-		},
-		{
-			engName: 'methane',
-			name: 'метановая',
-			chance: 50,
-			sizeMin: 5,
-			sizeMax: 5
-		},
-		{
-			engName: 'hydrogen',
-			name: 'водородная',
-			chance: 50,
-			sizeMin: 5,
-			sizeMax: 5
-		},
-		{
-			engName: 'helium',
-			name: 'гелиевая',
-			chance: 50,
-			sizeMin: 5,
-			sizeMax: 5
-		}
-	],
+	types: [],
 
 	calcSegmentCenter: function(hand, segment, maxHands, maxSegments, rotationFactor, maxRadius, galacticAngle) {
 		// central sector
@@ -226,6 +143,10 @@ Game.Planets = {
 
 		return result;
 	},
+
+	// ------------------------------------------------------------------------
+	// Travel speed & time calculations
+	// ------------------------------------------------------------------------
 
 	SPEED_CONFIG: [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100 ],
 	SPEED_K_CACHED: 0,
@@ -406,5 +327,7 @@ Game.SpaceEvents = {
 		});
 	}
 }
+
+initCosmosContent();
 
 }

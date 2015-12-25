@@ -88,13 +88,13 @@ var PlanetView = function(map, planet) {
 			name: planet.name,
 			type: Game.Planets.getType(planet.type).name,
 			items: [{
-				name: 'green' + Math.round(Math.random() * 4 + 1),
+				name: Game.Artefacts.getRandom().engName,
 				chance: Math.round(Math.random() * 50 + 25)
 			}, {
-				name: 'purple' + Math.round(Math.random() * 4 + 1),
+				name: Game.Artefacts.getRandom().engName,
 				chance: Math.round(Math.random() * 50 + 25)
 			}, {
-				name: 'orange' + Math.round(Math.random() * 4 + 1),
+				name: Game.Artefacts.getRandom().engName,
 				chance: Math.round(Math.random() * 50 + 25)
 			}]
 		};
@@ -143,7 +143,7 @@ var PlanetView = function(map, planet) {
 				name: config.name,
 				enemies: _.map( config.level[planet.mission.level].enemies, function(value, key) {
 					return {
-						name: game.reptiles.rfleet[key].name,
+						name: Game.Unit.items.reptiles.fleet[key].name,
 						engName: key,
 						count: _.isString(value) ? game.Battle.count[value] : value
 					}
@@ -182,7 +182,7 @@ var PlanetView = function(map, planet) {
 
 		var k = Math.pow(2, (map.getZoom() - 7));
 		var position = map.latLngToContainerPoint(this.marker.getLatLng());
-		position.x += 124 + 10 + Math.round(this.iconSize * k / 2);
+		position.x += 24 + 10 + Math.round(this.iconSize * k / 2);
 		position.y -= 85;
 
 		$('.map-planet-popup-container')

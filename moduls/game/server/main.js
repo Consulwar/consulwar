@@ -14,6 +14,7 @@ SyncedCron.config({
 });
 
 Meteor.startup(function () {
+	initArtefactsServer();
 	initResourcesServer();
 	initBuildingServer();
 	initResearchServer();

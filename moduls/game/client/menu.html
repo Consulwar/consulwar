@@ -42,8 +42,8 @@
 		{{#each items}}
 			{{#let progress=this.progress}}
 				<li 
-					class="{{#if eq this.url currentUrl}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}}" 
-					data-level="{{#if this.currentLevel}}{{this.currentLevel}}{{/if}}" >
+					class="{{#if eq this.url currentUrl}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}}" 
+					data-level="{{#if this.currentLevel}}{{formatNumberWithISO this.currentLevel 3}}{{/if}}" >
 					<a 
 						class="{{this.engName}}-icon" 
 						href="{{this.url}}"

@@ -75,7 +75,9 @@ Template.game_menu.helpers({
 					return {
 						engName: key,
 						url: Router.routes[groups[0]].path(),
-						isActive: groups[0] == currentRouteName,
+						isActive: _.find(groups, function(group) {
+							return group == currentRouteName
+						}),
 						additionalClass: 
 							(key == 'communication' && (
 								Meteor.user().game.quests.daily.status != game.Quest.status.finished

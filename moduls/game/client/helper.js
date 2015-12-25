@@ -115,11 +115,16 @@ var iso = {
 }
 
 
-UI.registerHelper('formatNumberWithISO', function(price) {
+UI.registerHelper('formatNumberWithISO', function(price, limit) {
+	limit = (_.isNumber(limit) 
+		? limit < 3
+			? 3
+			: limit
+		: 5);
 	price = price.toString();
 
 	var exponent = 0;
-	while(price.length > 5) {
+	while(price.length > limit) {
 		price = (price / 1000);
 		if (price.toFixed(1).substr(-1) != 0) {
 			price = price.toFixed(1);

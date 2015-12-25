@@ -35,11 +35,11 @@
 		<div class="characteristics">
 			{{#if item.targets}}
 				Приоритеты атаки:
-				<ul class="targets">
+				<ol class="targets">
 					{{#each item.targets}}
 						<li><a href="{{this.url}}">{{this.name}}</a></li>
 					{{/each}}
-				</ul>
+				</ol>
 			{{/if}}
 			{{item.characteristics.effect.name}}
 
@@ -51,12 +51,12 @@
 				*Не атакует воздушные цели
 			{{/if}}
 			
-			<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
-				{{#if item.characteristics.damage}}
-					{{formatNumberWithISO (multiply item.characteristics.damage 0.8)}} —
-					{{formatNumberWithISO item.characteristics.damage}}
-				{{/if}} 
-			</span>
+			{{#if item.characteristics.damage}}
+				<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
+						{{formatNumberWithISO (multiply item.characteristics.damage 0.8)}} —
+						{{formatNumberWithISO item.characteristics.damage}}
+				</span>
+			{{/if}} 
 			<span class="life" {{militaryTooltip item.characteristics.effects 'life'}}>
 				{{formatNumberWithISO item.characteristics.life}}
 			</span>

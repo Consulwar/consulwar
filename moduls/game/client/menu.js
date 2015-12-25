@@ -39,10 +39,10 @@ var menu = {
 		reinforcement: [],
 		history: []
 	},*/
-	/*communication: {
+	communication: {
 		mail: {},
 		chat: {}
-	},*/
+	},
 	reptiles: {
 		fleet: Game.Unit.items.reptiles.fleet,
 		heroes: Game.Unit.items.reptiles.heroes,

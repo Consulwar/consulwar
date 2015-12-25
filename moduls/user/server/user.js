@@ -59,17 +59,16 @@ Accounts.onCreateUser(function(option, user) {
 	}));
 
 
-	check(option.code, Match.Where(function(code) {
-		var valid_code_id = Meteor.call('checkInviteCode', code);
+	check(option.code, String);
+	var valid_code_id = Meteor.call('checkInviteCode', option.code);
 
-		if (valid_code_id) {
-			Invites.remove({_id: valid_code_id});
-		}
-
-		return valid_code_id;
-	}));
-
+	if (valid_code_id) {
+		Invites.remove({_id: valid_code_id});
+	} else {
+		throw new Meteor.Error('Некорректный код приглашения');
+	}
 	user.inviteCode = option.code;
+
 
 	user.login = option.login;
 	user.planetName = (

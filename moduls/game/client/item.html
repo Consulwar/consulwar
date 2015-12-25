@@ -53,12 +53,12 @@
 			
 			<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
 				{{#if item.characteristics.damage}}
-					{{formatNumber (multiply item.characteristics.damage 0.8)}} —
-					{{formatNumber item.characteristics.damage}}
+					{{formatNumberWithISO (multiply item.characteristics.damage 0.8)}} —
+					{{formatNumberWithISO item.characteristics.damage}}
 				{{/if}} 
 			</span>
 			<span class="life" {{militaryTooltip item.characteristics.effects 'life'}}>
-				{{formatNumber item.characteristics.life}}
+				{{formatNumberWithISO item.characteristics.life}}
 			</span>
 		</div>
 	{{/if}}
@@ -71,11 +71,11 @@
 				Время строительства: 
 				<time>{{formatSeconds time}}</time>
 			</li>
-			{{#if humans}}<li class="humans" {{priceTooltip . 'humans'}}>{{formatNumber humans}}</li>{{/if}}
-			{{#if honor}}<li class="honor" {{priceTooltip . 'honor'}}>{{formatNumber honor}}</li>{{/if}}
-			{{#if metals}}<li class="metals" {{priceTooltip . 'metals'}}>{{formatNumber metals}}</li>{{/if}}
-			{{#if crystals}}<li class="crystals" {{priceTooltip . 'crystals'}}>{{formatNumber crystals}}</li>{{/if}}
-			{{#if credits}}<li class="credits" {{priceTooltip . 'credits'}}>{{formatNumber credits}}</li>{{/if}}
+			{{#if humans}}<li class="humans" {{priceTooltip . 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
+			{{#if honor}}<li class="honor" {{priceTooltip . 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
+			{{#if metals}}<li class="metals" {{priceTooltip . 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}
+			{{#if crystals}}<li class="crystals" {{priceTooltip . 'crystals'}}>{{formatNumberWithISO crystals}}</li>{{/if}}
+			{{#if credits}}<li class="credits" {{priceTooltip . 'credits'}}>{{formatNumberWithISO credits}}</li>{{/if}}
 		{{/with}}
 	</ul>
 </template>

@@ -143,10 +143,10 @@
 				{{/if}}
 				
 				<span class="damage" {{militaryTooltip active_item.characteristics.effects 'damage'}}>
-					{{#if active_item.characteristics.damage}}{{#with multiply active_item.characteristics.damage 0.8}}{{formatNumber this}}{{/with}} —{{/if}} 
-					{{formatNumber active_item.characteristics.damage}}
+					{{#if active_item.characteristics.damage}}{{#with multiply active_item.characteristics.damage 0.8}}{{formatNumberWithISO this}}{{/with}} —{{/if}} 
+					{{formatNumberWithISO active_item.characteristics.damage}}
 				</span>
-				<span class="life" {{militaryTooltip active_item.characteristics.effects 'life'}}>{{formatNumber active_item.characteristics.life}}</span>
+				<span class="life" {{militaryTooltip active_item.characteristics.effects 'life'}}>{{formatNumberWithISO active_item.characteristics.life}}</span>
 			</div>
 		{{/if}}
 
@@ -157,14 +157,14 @@
 			{{#unless eq active_item.type 'global'}}
 			<li class="time" {{priceTooltip priceEffects 'time'}}>Время строительства: <time>{{#if currentConstruction}}{{#if eq active_item.engName currentConstruction.engName}}{{formatSeconds constructionRemaningTime}}{{else}}{{formatSeconds time}}{{/if}}{{else}}{{formatSeconds time}}{{/if}}</time></li>
 			{{/unless}}
-			{{#if humans}}<li class="humans" {{priceTooltip priceEffects 'humans'}}>{{formatNumber humans}}</li>{{/if}}
-			{{#if honor}}<li class="honor" {{priceTooltip priceEffects 'honor'}}>{{formatNumber honor}}</li>{{/if}}
-			{{#if metals}}<li class="metals" {{priceTooltip priceEffects 'metals'}}>{{formatNumber metals}}</li>{{/if}}
-			{{#if crystals}}<li class="crystals" {{priceTooltip priceEffects 'crystals'}}>{{formatNumber crystals}}</li>{{/if}}
+			{{#if humans}}<li class="humans" {{priceTooltip priceEffects 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
+			{{#if honor}}<li class="honor" {{priceTooltip priceEffects 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
+			{{#if metals}}<li class="metals" {{priceTooltip priceEffects 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}
+			{{#if crystals}}<li class="crystals" {{priceTooltip priceEffects 'crystals'}}>{{formatNumberWithISO crystals}}</li>{{/if}}
 			{{#if eq active_item.type 'global'}}<li class="button"><button class="build" data-action="invest" data-currency="resources" disabled="{{not enoughResources}}">Вложить ресурсы</button></li>{{/if}}
 			{{#if credits}}
 			{{#if eq active_item.type 'global'}}<li></li>{{/if}}
-			<li class="credits" {{priceTooltip priceEffects 'credits'}}>{{formatNumber credits}}</li>
+			<li class="credits" {{priceTooltip priceEffects 'credits'}}>{{formatNumberWithISO credits}}</li>
 			{{#if eq active_item.type 'global'}}<li class="button">или<button class="build" data-action="invest" data-currency="credits" disabled="{{not enoughCredits}}">Вложить кредиты</button></li>{{/if}}
 			{{/if}}
 			{{/with}}

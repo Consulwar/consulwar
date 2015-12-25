@@ -3,6 +3,12 @@
 		<div class="image">
 			<img alt="{{unit.name}}" src="/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg">
 			<span class="title">{{unit.name}}</span>
+			{{#if unit.currentLevel}}
+				<span class="level" title="{{formatNumber unit.currentLevel}}">
+					{{formatNumberWithISO unit.currentLevel}} 
+					{{declension unit.currentLevel 'юнит' '' 'а' 'ов'}}
+				</span>
+			{{/if}}
 		</div>
 		<div class="description">
 			{{> item_requirements requirements=unit.requirements}}

@@ -1,82 +1,94 @@
-Meteor.startup(function () {
+Meteor.startup(function() {
 
-UI.registerHelper('user', function () {
+UI.registerHelper('user', function() {
 	return Meteor.user();
 });
 
-UI.registerHelper('Game', function () {
+UI.registerHelper('Game', function() {
 	return Game;
 });
 
-UI.registerHelper('serverTime', function () {
+UI.registerHelper('serverTime', function() {
 	return Session.get('serverTime');
 });
 
-UI.registerHelper('eq', function (a, b) {
+UI.registerHelper('eq', function(a, b) {
 	return a === b;
 });
 
-UI.registerHelper('and', function (a, b) {
+UI.registerHelper('and', function(a, b) {
 	return a && b;
 });
 
-UI.registerHelper('or', function (a, b) {
+UI.registerHelper('or', function(a, b) {
 	return a || b;
 });
 
-UI.registerHelper('eqandtrue', function (a, b) {
+UI.registerHelper('eqandtrue', function(a, b) {
 	return a && b && a === b;
 });
 
-UI.registerHelper('eqor', function (text, a, b) {
+UI.registerHelper('eqor', function(text, a, b) {
 	return text == a || text == b;
 });
 
-UI.registerHelper('gt', function (a, b) {
+UI.registerHelper('gt', function(a, b) {
 	return a > b;
 });
 
-UI.registerHelper('lt', function (a, b) {
+UI.registerHelper('lt', function(a, b) {
 	return a < b;
 });
 
-UI.registerHelper('multiply', function (a, b) {
+UI.registerHelper('multiply', function(a, b) {
 	return Math.floor(a * b);
 });
 
-UI.registerHelper('div', function (a, b) {
+UI.registerHelper('div', function(a, b) {
 	return Math.floor(a / b);
 });
 
-UI.registerHelper('sum', function (a, b) {
+UI.registerHelper('sum', function(a, b) {
 	return a + b;
 });
 
-UI.registerHelper('substract', function (a, b) {
+UI.registerHelper('substract', function(a, b) {
 	return a - b;
 });
 
-UI.registerHelper('nl2br', function (text) {
+UI.registerHelper('nl2br', function(text) {
 	return text.replace(/\n/g, '<br/>');
 });
 
-UI.registerHelper('not', function (value) {
+UI.registerHelper('not', function(value) {
 	return !value;
 });
 
+UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {
+	return zeroForm + (
+		(/^[0,2-9]?[1]$/.test(number))
+		? singleForm
+		: (
+			(/^[0,2-9]?[2-4]$/.test(number))
+			? twoForm
+			: manyForm
+		)
+	)
+});
+
 /*
-UI.registerHelper('formatTimestamp', function (timestamp) {
+UI.registerHelper('formatTimestamp', function(timestamp) {
 	var date = new Date(timestamp);
 	return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
 });*/
 
-UI.registerHelper('formatDate', function (timestamp) {
+UI.registerHelper('formatDate', function(timestamp) {
 	var date = new Date(timestamp * 1000);
 	return (('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear() + ' '
 		+ ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2));
 });
 
-var formatSeconds = function (seconds) {
+var formatSeconds = function(seconds) {
 	if (seconds < 0) {
 		return '…';
 	}
@@ -102,7 +114,8 @@ var iso = {
 	8: 'Y'
 }
 
-var formatNumber = function (price) {
+
+UI.registerHelper('formatNumberWithISO', function(price) {
 	price = price.toString();
 
 	var exponent = 0;
@@ -122,11 +135,19 @@ var formatNumber = function (price) {
 	}
 
 	return price + iso[exponent];
+});
+
+var formatNumber = function (price) {
+	price = price.toString();
+	/*if (price.length > 9) {
+		return 'Ой, много';
+	}*/
+	return price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
 UI.registerHelper('formatNumber', formatNumber);
 
-UI.registerHelper('priceTooltip', function (price, target) {
+UI.registerHelper('priceTooltip', function(price, target) {
 	var basePrice = price.base[target];
 	var effects = price.effects;
 
@@ -159,7 +180,7 @@ UI.registerHelper('priceTooltip', function (price, target) {
 	return {title: text};
 });
 
-UI.registerHelper('incomeTooltip', function (effects, target) {
+UI.registerHelper('incomeTooltip', function(effects, target) {
 	var basePrice = {};
 	basePrice[target] = 0;
 
@@ -192,7 +213,7 @@ UI.registerHelper('incomeTooltip', function (effects, target) {
 	return {title: text};
 });
 
-UI.registerHelper('militaryTooltip', function (characteristics, target) {
+UI.registerHelper('militaryTooltip', function(characteristics, target) {
 	var baseCharacteristics = characteristics.base;
 	var effects = characteristics.effects;
 

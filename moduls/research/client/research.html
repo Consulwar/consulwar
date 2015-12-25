@@ -3,6 +3,9 @@
 		<div class="image">
 			<img alt="{{research.name}}" src="/img/game/research/{{research.group}}/{{research.engName}}.jpg">
 			<span class="title">{{research.name}}</span>
+			{{#if research.currentLevel}}
+				<span class="level" title="{{formatNumber research.currentLevel}}">{{formatNumberWithISO research.currentLevel}} уровень</span>
+			{{/if}}
 		</div>
 		<div class="description">
 			{{> item_requirements requirements=research.requirements}}

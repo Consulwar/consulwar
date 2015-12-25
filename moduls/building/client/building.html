@@ -3,6 +3,9 @@
 		<div class="image">
 			<img alt="{{building.name}}" src="/img/game/building/{{building.group}}/{{building.engName}}.jpg">
 			<span class="title">{{building.name}}</span>
+			{{#if building.currentLevel}}
+				<span class="level" title="{{formatNumber building.currentLevel}}">{{formatNumberWithISO building.currentLevel}} уровень</span>
+			{{/if}}
 		</div>
 		<div class="description">
 			{{> item_requirements requirements=building.requirements}}

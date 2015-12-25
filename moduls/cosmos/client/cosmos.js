@@ -284,17 +284,25 @@ var ShipView = function(map, spaceEvent) {
 
 	this.id = null;
 	this.info = null;
+	this.maxSpeed = 0;
+	this.acceleration = 0;
+	this.totalFlyDistance = 0;
 
 	this.constructor = function(map, spaceEvent) {
 
 		this.id = spaceEvent._id;
 
+		this.maxSpeed = Game.Planets.calcMaxSpeed( spaceEvent.info.engineLevel );
+		this.acceleration = Game.Planets.calcAcceleration( spaceEvent.info.engineLevel );
+
+		var a = spaceEvent.info.startPosition;
+		var b = spaceEvent.info.targetPosition;
+		this.totalFlyDistance = Math.sqrt( Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) );
+
 		// ----------------------------
 		// TODO: Get real info!
 		// ----------------------------
-
 		var flyTime = spaceEvent.timeEnd - spaceEvent.timeStart; // debug
-
 		if (spaceEvent.info.isHumans) {
 			this.info = {
 				id: '',
@@ -407,20 +415,21 @@ var ShipView = function(map, spaceEvent) {
 	}
 
 	this.updateShipAnimation = function() {
+		
+		if (!_pathView) {
+			return;
+		}
 
 		var timeLeft = spaceEvent.timeEnd - Session.get('serverTime');
 		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
 		var timeCurrent = Session.get('serverTime') - spaceEvent.timeStart;
 
-		// TODO: Шпили вили ололо!!!!!!!!
-		var shipAcc = Game.Planets.calcAcceleration(0);
-		var shipSpeed = Game.Planets.calcMaxSpeed(0);
+		var currentDistance = Game.Planets.calcFlyDistanceByTime(timeCurrent,
+		                                                         this.totalFlyDistance,
+		                                                         this.maxSpeed,
+		                                                         this.acceleration);
 
-		var totalDistance = Math.sqrt( Math.pow(spaceEvent.info.targetPosition.x - spaceEvent.info.startPosition.x, 2) + Math.pow(spaceEvent.info.targetPosition.y - spaceEvent.info.startPosition.y, 2) );
-		var currentDistance = Game.Planets.calcFlyDistanceByTime(timeCurrent, totalDistance, shipSpeed, shipAcc);
-
-		var k = currentDistance / totalDistance;
-		//var k = timeCurrent / timeTotal;
+		var k = currentDistance / this.totalFlyDistance;
 		var curPoint = _pathView.getPointAlongDistanceByCoef(k);
 		
 		_marker.setLatLng(L.latLng(
@@ -465,17 +474,17 @@ var ShipView = function(map, spaceEvent) {
 		return spaceEvent.timeEnd - Session.get('serverTime');
 	}
 
-	this.getAttackPoint = function() {
+	this.getAttackPoint = function(attackerPlanet, attackerEngineLevel) {
 
-		// TODO: Шпили вили !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		var basePlanet = Game.Planets.getBase();
-		var timeAttack = Game.Planets.calcAttackFlyTime(basePlanet,
-		                                                spaceEvent.info.startPosition,
-		                                                spaceEvent.info.targetPosition,
-		                                                spaceEvent.timeEnd - spaceEvent.timeStart);
+		var timeCurrent = Session.get('serverTime');
+
+		var timeAttack = Game.Planets.calcAttackFlyTime(attackerPlanet,
+		                                                attackerEngineLevel,
+		                                                spaceEvent,
+		                                                timeCurrent);
 
 		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
-		var k = 1 - ( spaceEvent.timeEnd - Session.get('serverTime') - timeAttack ) / timeTotal;
+		var k = 1 - ( spaceEvent.timeEnd - timeCurrent - timeAttack ) / timeTotal;
 
 		return _pathView.getPointAlongDistanceByCoef(k);
 	}
@@ -882,8 +891,12 @@ Template.cosmos.events({
 		var eventId = $(e.currentTarget).attr("data-event-id");
 		if (eventId && eventId.length > 0) {
 
+			var attackerPlanet = Game.Planets.getBase();
+			var attackerEngineLevel = Game.Planets.getEngineLevel();
+
 			var targetShip = shipViews[ eventId ];
-			var targetPoint = targetShip.getAttackPoint();
+			var targetPoint = targetShip.getAttackPoint(attackerPlanet,
+			                                            attackerEngineLevel);
 
 			Meteor.call('spaceEvents.attackReptFleet', eventId, targetPoint.x, targetPoint.y);
 		} else {

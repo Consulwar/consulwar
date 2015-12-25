@@ -389,14 +389,17 @@ Meteor.methods({
 			y: targetPlanet.y
 		}
 
+		var engineLevel = Game.Planets.getEngineLevel();
+
 		Game.SpaceEvents.sendShip(startPosition,
 		                          basePlanet._id,
 		                          targetPosition,
 		                          Game.SpaceEvents.TARGET_PLANET,
 		                          targetPlanet._id,
 		                          getServerTime(),
-		                          Game.Planets.calcFlyTime(startPosition, targetPosition),
+		                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 		                          true,
+		                          engineLevel,
 		                          null);
 	},
 

@@ -39,13 +39,24 @@ Game.SpaceEvents.updateEvent = function(event) {
 // Ship events
 // ----------------------------------------------------------------------------
 
-Game.SpaceEvents.sendShip = function(startPosition, startPlanetId, targetPosition, targetType, targetId, startTime, flyTime, isHumans, mission) {
-	var eventShip = {
+Game.SpaceEvents.sendShip = function(startPosition,
+                                     startPlanetId,
+                                     targetPosition,
+                                     targetType,
+                                     targetId,
+                                     startTime,
+                                     flyTime,
+                                     isHumans,
+                                     engineLevel,
+                                     mission
+) {
+	Game.SpaceEvents.add({
 		type: Game.SpaceEvents.EVENT_SHIP,
 		timeStart: startTime,
 		timeEnd: startTime + flyTime,
 		info: {
 			isHumans: isHumans,
+			engineLevel: engineLevel,
 			startPosition: startPosition,
 			startPlanetId: startPlanetId,
 			targetPosition: targetPosition,
@@ -53,9 +64,7 @@ Game.SpaceEvents.sendShip = function(startPosition, startPlanetId, targetPositio
 			targetId: targetId,
 			mission: mission
 		}
-	}
-
-	Game.SpaceEvents.add(eventShip);
+	});
 }
 
 Game.SpaceEvents.updateShip = function(serverTime, event) {
@@ -87,6 +96,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			if (event.info.startPlanetId) {
 				var startPosition = event.info.targetPosition;
 				var targetPosition = event.info.startPosition;
+				var engineLevel = event.info.engineLevel;
 
 				Game.SpaceEvents.sendShip(startPosition,
 				                          null,
@@ -94,8 +104,9 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				                          Game.SpaceEvents.TARGET_PLANET,
 				                          event.info.startPlanetId,
 				                          event.timeEnd,
-				                          Game.Planets.calcFlyTime(startPosition, targetPosition),
+				                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 				                          true,
+				                          engineLevel,
 				                          null);
 			}
 
@@ -117,6 +128,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		// return to base
 		var startPosition = event.info.targetPosition;
 		var targetPosition = event.info.startPosition;
+		var engineLevel = event.info.engineLevel;
 
 		Game.SpaceEvents.sendShip(startPosition,
 		                          null,
@@ -124,8 +136,9 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		                          Game.SpaceEvents.TARGET_PLANET,
 		                          event.info.startPlanetId,
 		                          serverTime,
-		                          Game.Planets.calcFlyTime(startPosition, targetPosition),
+		                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 		                          event.info.isHumans,
+		                          engineLevel,
 		                          null);
 	}
 }
@@ -162,6 +175,8 @@ Meteor.methods({
 		}
 
 		var basePlanet = Game.Planets.getBase();
+		var engineLevel = Game.Planets.getEngineLevel();
+
 		var startPosition = {
 			x: basePlanet.x,
 			y: basePlanet.y
@@ -174,11 +189,11 @@ Meteor.methods({
 
 		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 		var timeLeft = enemyShip.timeEnd - timeCurrent;
+		
+		// TODO: Шо то здеся не то!
 		var timeAttack = Game.Planets.calcAttackFlyTime(startPosition,
-		                                                enemyShip.info.startPosition,
-		                                                enemyShip.info.targetPosition,
-		                                                enemyShip.timeStart,
-		                                                enemyShip.timeEnd,
+		                                                engineLevel,
+		                                                enemyShip,
 		                                                timeCurrent);
 
 		if (timeAttack >= timeLeft) {
@@ -193,11 +208,12 @@ Meteor.methods({
 		                          timeCurrent,
 		                          timeAttack,
 		                          true,
+		                          engineLevel,
 		                          null);
 	},
 
-	'spaceEvents.attackPlayerFleet': function() {
-		
+	'spaceEvents.attackPlayerFleet': function(id, targetX, targetY) {
+		// TODO: implement!
 	},
 
 	'spaceEvents.attackPlayerPlanet': function() {
@@ -234,14 +250,17 @@ Meteor.methods({
 				y: targetPlanet.y
 			}
 
+			var engineLevel = Game.Planets.getEngineLevel();
+
 			Game.SpaceEvents.sendShip(startPosition,
 			                          startPlanet._id,
 			                          targetPosition,
 			                          Game.SpaceEvents.TARGET_PLANET,
 			                          targetPlanet._id,
 			                          timeCurrent,
-			                          Game.Planets.calcFlyTime(startPosition, targetPosition),
+			                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 			                          false,
+			                          engineLevel,
 			                          null);
 		}
 	},
@@ -282,15 +301,19 @@ Meteor.methods({
 				y: targetPlanet.y
 			}
 
+			// TODO: Calculate reptile ship flyTime and engineLevel!
+			var flyTime = 120;
+			var engineLevel = 0;
+
 			Game.SpaceEvents.sendShip(startPosition,
 			                          startPlanet._id,
 			                          targetPosition,
 			                          Game.SpaceEvents.TARGET_PLANET,
 			                          targetPlanet._id,
 			                          timeCurrent,
-			                          // TODO: move to constant maybe!
-			                          120, // trade fleet 2 minutes
+			                          flyTime,
 			                          false,
+			                          engineLevel,
 			                          null);
 		}
 	}

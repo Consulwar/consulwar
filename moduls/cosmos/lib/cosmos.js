@@ -1,5 +1,15 @@
 initCosmosLib = function() {
 
+
+var calcDistance = function(start, end) {
+	return Math.sqrt( Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2) );
+}
+
+var calcAngle = function(start, end) {
+	return Math.atan2(end.y - start.y, end.x - start.x);
+}
+
+
 game.PlanetType = function(options) {
 	Game.Planets.types.push(options);
 }
@@ -263,39 +273,51 @@ Game.Planets = {
 		return time;
 	},
 
-	getHumansEngineLevel: function() {
-		return 0;
-	},
-
-	getReptsEngineLevel: function() {
-		return 0;
+	getEngineLevel: function() {
+		// TODO: Get current user engine level!
+		return 50;
 	},
 
 	calcFlyTime: function(startPoint, endPoint, engineLevel) {
-		
-		engineLevel = 0; // TODO: шпиливили!!!!!!!!!!!!!!!!
-
-		var distance = Math.sqrt( Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2) );
+		var distance = calcDistance(startPoint, endPoint);
 		var maxSpeed = Game.Planets.calcMaxSpeed(engineLevel);
 		var acceleration = Game.Planets.calcAcceleration(engineLevel);
 
 		return Game.Planets.calcFlyTimeByDistance(distance, maxSpeed, acceleration);
 	},
 
-	calcAttackFlyTime: function(pointBase, pointStart, pointEnd, timeStart, timeEnd, timeCurrent) {
+	calcAttackFlyTime: function(attackerPlanet, attackerEngineLevel, targetShip, timeCurrent) {
 
-		// TODO: шпиливили!!!!!!!!!!!!!!!!!!!!!!
+		var angle = calcAngle( targetShip.info.startPosition, targetShip.info.targetPosition );
+		var distance = calcDistance( targetShip.info.startPosition, targetShip.info.targetPosition );
 
-		var k = 1 - (timeEnd - timeCurrent) / (timeEnd - timeStart);
-		var angle = Math.atan2(pointEnd.y - pointStart.y, pointEnd.x - pointStart.x);
-		var distance = Math.sqrt( Math.pow(pointEnd.x - pointStart.x, 2) + Math.pow(pointEnd.y - pointStart.y, 2) );
+		var targetFlyTime = timeCurrent - targetShip.timeStart;
+		var maxSpeed = Game.Planets.calcMaxSpeed( targetShip.info.engineLevel );
+		var acceleration = Game.Planets.calcAcceleration( targetShip.info.engineLevel );
 
-		var pointAttack = {
-			x: pointStart.x + distance * Math.cos(angle) * k,
-			y: pointStart.y + distance * Math.sin(angle) * k
+		var currentDistance = Game.Planets.calcFlyDistanceByTime(targetFlyTime,
+		                                                         distance,
+		                                                         maxSpeed,
+		                                                         acceleration);
+
+		var k = (1 - currentDistance / distance) / 2;
+
+		var pointAttackEnd = {
+			x: targetShip.info.startPosition.x + distance * Math.cos(angle) * k,
+			y: targetShip.info.startPosition.y + distance * Math.sin(angle) * k
 		}
 
-		return Game.Planets.calcFlyTime(pointBase, pointAttack);
+		var pointAttackStart = {
+			x: attackerPlanet.x,
+			y: attackerPlanet.y
+		}
+
+		var timeAttack = Game.Planets.calcFlyTime(pointAttackStart, pointAttackEnd, attackerEngineLevel);
+
+		// debug
+		console.log('Time to attack = ', timeAttack, k);
+
+		return timeAttack;
 	}
 }
 

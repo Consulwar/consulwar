@@ -93,6 +93,14 @@ for (var group in gameRoutes) {
 		})(group, name, gameRoutes[group][name], gameActions[name]);
 	}
 }
+
+Router.route('/game', {
+	name: 'game',
+	action: function() {
+		Router.go('building', {group: 'residential'});
+	}
+})
+
 /*
 game/planet/residential
 game/planet/military

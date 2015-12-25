@@ -57,31 +57,39 @@ Template.game_menu.helpers({
 
 		return _.map(menu, function(menu, key) {
 			var groups = _.keys(menu);
-			var firstGroupKeys = groups && _.keys(menu[groups[0]]);
 
-			if (groups.length && firstGroupKeys.length) {
-				var firstItem = menu[groups[0]][firstGroupKeys[0]];
+			if (groups.length) {
+				var firstGroupKeys = _.keys(menu[groups[0]]);
+				if (firstGroupKeys.length) {
+					var firstItem = menu[groups[0]][firstGroupKeys[0]];
 
-				return {
-					engName: key,
-					url: firstItem.url({group: firstItem.group}),
-					isActive: _.find(menu, function(group) {
-						return group[_.keys(group)[0]].type == currentRouteName
-					}),
-					
-				};
+					return {
+						engName: key,
+						url: firstItem.url({group: firstItem.group}),
+						isActive: _.find(menu, function(group) {
+							return group[_.keys(group)[0]].type == currentRouteName
+						}),
+						
+					};
+				} else {
+					return {
+						engName: key,
+						url: Router.routes[groups[0]].path(),
+						isActive: groups[0] == currentRouteName,
+						additionalClass: 
+							(key == 'communication' && (
+								Meteor.user().game.quests.daily.status != game.Quest.status.finished
+								|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
+							)) 
+							? 'has_new_mail' 
+							: ''
+					}
+				}
 			} else {
 				return {
 					engName: key,
-					url: Router.routes[groups[0]].path(),
-					isActive: groups[0] == currentRouteName,
-					additionalClass: 
-						(key == 'communication' && (
-							Meteor.user().game.quests.daily.status != game.Quest.status.finished
-							|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-						)) 
-						? 'has_new_mail' 
-						: ''
+					url: Router.routes[key].path(),
+					isActive: key == currentRouteName
 				}
 			}
 		});
@@ -122,7 +130,11 @@ Template.side_menu.helpers({
 
 var helpers = {
 	items: function() {
-		return _.toArray(menu[Router.current().group][Router.current().params.group]);
+		if (Router.current().params.group) {
+			return _.toArray(menu[Router.current().group][Router.current().params.group]);
+		} else {
+			return [];
+		}
 	},
 	currentUrl: function() {
 		// Iron router при первом открытии возвращет полный пусть. Обрезаем.

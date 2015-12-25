@@ -77,6 +77,10 @@ UI.registerHelper('formatDate', function (timestamp) {
 });
 
 var formatSeconds = function (seconds) {
+	if (seconds < 0) {
+		return '…';
+	}
+
 	var hours = Math.floor(seconds / 3600);
 	seconds -= hours * 3600;
 	var minutes = Math.floor(seconds / 60);
@@ -86,12 +90,38 @@ var formatSeconds = function (seconds) {
 
 UI.registerHelper('formatSeconds', formatSeconds);
 
+var iso = {
+	0: '',
+	1: 'K',
+	2: 'M',
+	3: 'G',
+	4: 'T',
+	5: 'P',
+	6: 'E',
+	7: 'Z',
+	8: 'Y'
+}
+
 var formatNumber = function (price) {
 	price = price.toString();
-	/*if (price.length > 9) {
-		return 'Ой, много';
-	}*/
-	return price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+	var exponent = 0;
+	while(price.length > 5) {
+		price = (price / 1000);
+		if (price.toFixed(1).substr(-1) != 0) {
+			price = price.toFixed(1);
+		}
+		price = price.toString()
+		exponent++;
+	}
+
+	price = price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+	if (iso[exponent] == undefined) {
+		return 'o_O ??';
+	}
+
+	return price + iso[exponent];
 }
 
 UI.registerHelper('formatNumber', formatNumber);

@@ -1,6 +1,9 @@
 <template name="item_research">
 	<div class="information {{research.type}}">
-		<img src="/img/game/research/{{research.group}}/{{research.engName}}.jpg">
+		<div class="image">
+			<img alt="{{research.name}}" src="/img/game/research/{{research.group}}/{{research.engName}}.jpg">
+			<span class="title">{{research.name}}</span>
+		</div>
 		<div class="description">
 			{{> item_requirements requirements=research.requirements}}
 

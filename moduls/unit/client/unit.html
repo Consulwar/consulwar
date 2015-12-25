@@ -1,6 +1,9 @@
 <template name="unit">
 	<div class="information {{unit.type}}">
-		<img src="/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg">
+		<div class="image">
+			<img alt="{{unit.name}}" src="/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg">
+			<span class="title">{{unit.name}}</span>
+		</div>
 		<div class="description">
 			{{> item_requirements requirements=unit.requirements}}
 

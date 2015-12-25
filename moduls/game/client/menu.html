@@ -43,9 +43,11 @@
 			{{#let progress=this.progress}}
 				<li 
 					class="{{#if eq this.url currentUrl}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}}" 
-					data-level="{{#if this.currentLevel}}{{this.currentLevel}}{{/if}}" 
-					data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}">
-					<a class="{{this.engName}}-icon" href="{{this.url}}"></a>
+					data-level="{{#if this.currentLevel}}{{this.currentLevel}}{{/if}}" >
+					<a 
+						class="{{this.engName}}-icon" 
+						href="{{this.url}}"
+						data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"></a>
 				</li>
 			{{/let}}
 		{{/each}}

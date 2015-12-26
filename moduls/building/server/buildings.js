@@ -1,6 +1,6 @@
-initBuldingServer = function() {
+initBuildingServer = function() {
 
-initBuldingLib();
+initBuildingLib();
 
 Game.Building.set = function(building) {
 	Game.Building.initialize();
@@ -36,6 +36,6 @@ Meteor.publish('buildings', function () {
 	}
 });
 
-initBuldingServerMethods();
+initBuildingServerMethods();
 
 }

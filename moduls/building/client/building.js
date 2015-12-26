@@ -1,6 +1,6 @@
-initBuldingClient = function() {
+initBuildingClient = function() {
 
-initBuldingLib();
+initBuildingLib();
 
 Game.Building.showPage = function() {
 	var item = Game.Building.items[this.params.group][this.params.item];

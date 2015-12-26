@@ -1,7 +1,7 @@
 Meteor.startup(function () {
 
 initResourcesClient();
-initBuldingClient();
+initBuildingClient();
 initResearchClient();
 initUnitClient();
 
@@ -106,7 +106,7 @@ Meteor.subscribe('queue');
 Meteor.subscribe('buildings');
 Meteor.subscribe('units');
 Meteor.subscribe('researches');
-Meteor.subscribe('globalResearch');
+Meteor.subscribe('mutualResearch');
 
 
 Meteor.subscribe('chat');
@@ -131,7 +131,7 @@ var menu = {
 	research: {
 		evolution: game.research.evolution,
 		fleetups: game.research.fleetups,
-		global: game.research.global
+		mutual: game.research.mutual
 	},
 	/*powerups: {
 		avaliable: [],
@@ -329,7 +329,7 @@ Tracker.autorun(function () {
 	}
 });
 
-global = {
+mutual = {
 	item: null,
 	sub: null
 };
@@ -573,7 +573,7 @@ Template.game.events({
 				who = 'mechanic';
 				text = 'У меня много имён: Защитник, Перевозчик... но ты, Консул, можешь называть меня Механик. Я занимаюсь тем, что доставляю свежайшие и мощнейшие технологии для усиления флота. Если хочешь господствовать в небе, то ты обратился по адресу. Я сделаю твой флот в разы мощнее чем эти железяки чешуйчатых. Естественно не за бесплатно…';
 				break;
-			case 'global':
+			case 'mutual':
 				who = 'calibrator';
 				text = 'О, Консул! Я вас не заметил… я тут это, калибрую потихоньку. Знаете, тысячи различных приказов поступают ото всех Консулов галактики. Всё это нужно отсортировать, каталогизировать и разослать в научные отделы, а после, когда технология будет исследована, ещё и сообщить в Лаборатории на каждую из колоний… ох, извините, что загружаю. Пора возвращаться к калибровке.';
 				break;

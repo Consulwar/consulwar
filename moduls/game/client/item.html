@@ -4,7 +4,7 @@
 		<span class="title">Необходимые технологии:</span>
 		{{#each requirements}}
 		<a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">
-			{{#unless eq this.[0].level 1}}{{this.[1]}} уровень{{/unless}}
+			{{#if gt this.[1] 1}}{{this.[1]}} уровень{{/if}}
 			<div class="{{this.[0].type}}">{{this.[0].name}}</div>
 		</a>
 		{{/each}}

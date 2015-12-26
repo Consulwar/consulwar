@@ -19,6 +19,8 @@ Meteor.startup(function () {
 	initResearchServer();
 	initUnitServer();
 
+	initMutualServer();
+
 	initMailServer();
 
 	initQuestServer();

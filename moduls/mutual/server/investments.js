@@ -1,4 +1,4 @@
-Meteor.startup(function() {
+initMutualServerInvestments = function () {
 
 Game.Investments.set = function(item) {
 	Game.Investments.initialize(item);
@@ -23,7 +23,7 @@ Game.Investments.set = function(item) {
 		$set: set
 	});
 
-	Game.Global.add(item);
+	Game.Mutual.add(item);
 
 	return set;
 }
@@ -58,4 +58,4 @@ Meteor.publish('topInvestors', function(item) {
 	}
 });
 
-});
+}

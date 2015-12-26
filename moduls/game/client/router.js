@@ -56,6 +56,10 @@ var gameRoutes = {
 	research: {
 		research: 'research/:group(evolution|fleetups)/:item?'
 	},
+
+	mutual: {
+		mutual: 'mutual/:group(research)/:item?'
+	},
 	
 	communication: {
 		chat: 'communication/chat/:channel?',
@@ -75,6 +79,8 @@ var gameActions = {
 	unit: Game.Unit.showPage,
 	reptileUnit: Game.Unit.showPage,
 	reptileHero: Game.Unit.showPage,
+
+	mutual: Game.Mutual.showPage
 }
 
 for (var group in gameRoutes) {
@@ -118,7 +124,7 @@ game/army/ground
 
 game/research/evolution
 game/research/fleetups
-game/research/global
+game/research/mutual
 
 game/battle/space
 game/battle/earth

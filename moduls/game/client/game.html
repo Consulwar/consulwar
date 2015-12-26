@@ -154,23 +154,23 @@
 
 		<ul class="resources">
 			{{#with price}}
-			{{#unless eq active_item.type 'global'}}
+			{{#unless eq active_item.type 'mutual'}}
 			<li class="time" {{priceTooltip priceEffects 'time'}}>Время строительства: <time>{{#if currentConstruction}}{{#if eq active_item.engName currentConstruction.engName}}{{formatSeconds constructionRemaningTime}}{{else}}{{formatSeconds time}}{{/if}}{{else}}{{formatSeconds time}}{{/if}}</time></li>
 			{{/unless}}
 			{{#if humans}}<li class="humans" {{priceTooltip priceEffects 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
 			{{#if honor}}<li class="honor" {{priceTooltip priceEffects 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
 			{{#if metals}}<li class="metals" {{priceTooltip priceEffects 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}
 			{{#if crystals}}<li class="crystals" {{priceTooltip priceEffects 'crystals'}}>{{formatNumberWithISO crystals}}</li>{{/if}}
-			{{#if eq active_item.type 'global'}}<li class="button"><button class="build" data-action="invest" data-currency="resources" disabled="{{not enoughResources}}">Вложить ресурсы</button></li>{{/if}}
+			{{#if eq active_item.type 'mutual'}}<li class="button"><button class="build" data-action="invest" data-currency="resources" disabled="{{not enoughResources}}">Вложить ресурсы</button></li>{{/if}}
 			{{#if credits}}
-			{{#if eq active_item.type 'global'}}<li></li>{{/if}}
+			{{#if eq active_item.type 'mutual'}}<li></li>{{/if}}
 			<li class="credits" {{priceTooltip priceEffects 'credits'}}>{{formatNumberWithISO credits}}</li>
-			{{#if eq active_item.type 'global'}}<li class="button">или<button class="build" data-action="invest" data-currency="credits" disabled="{{not enoughCredits}}">Вложить кредиты</button></li>{{/if}}
+			{{#if eq active_item.type 'mutual'}}<li class="button">или<button class="build" data-action="invest" data-currency="credits" disabled="{{not enoughCredits}}">Вложить кредиты</button></li>{{/if}}
 			{{/if}}
 			{{/with}}
 		</ul>
 
-		{{#unless eq active_item.type 'global'}}
+		{{#unless eq active_item.type 'mutual'}}
 		<button class="build" disabled="{{disableBuild}}">Отдать приказ</button>
 		{{else}}
 		<progress max="{{active_item.investments}}" value="{{investments}}"></progress>
@@ -180,7 +180,7 @@
 		<input class="count" type="number" placeholder="Количество" value="1"/>
 		{{/if}}
 
-		{{#if eq active_item.type 'global'}}
+		{{#if eq active_item.type 'mutual'}}
 		<input class="count" type="number" placeholder="Количество" value="1"/>
 		{{/if}}
 	
@@ -196,19 +196,4 @@
 		{{constructionRemaningTime}}
 	</div>
 	{{/if}}
-</template>
-
-<template name="top_investors">
-	<div class="additional_area">
-		<ol>
-		{{#each investors}}
-			<li>
-				{{this.login}} — {{this.investments}} вложений<br/>
-				{{#if this.resources.metals}}<span class="metals">{{this.resources.metals}} металла</span>{{/if}} 
-				{{#if this.resources.crystals}}<span class="crystals">{{this.resources.crystals}} кристалла</span>{{/if}} 
-				{{#if this.resources.credits}}<span class="credits">{{this.resources.credits}} кредитов</span>{{/if}}
-			</li>
-		{{/each}}
-		</ol>
-	</div>
 </template>

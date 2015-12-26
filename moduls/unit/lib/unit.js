@@ -54,8 +54,8 @@ game.ReptileHero = function(options){
 };
 game.extend(game.ReptileHero, game.ReptileUnit)
 
-/*game.GlobalUnit = function(options){
-	game.GlobalUnit.superclass.constructor.apply(this, arguments);
+/*game.MutualUnit = function(options){
+	game.MutualUnit.superclass.constructor.apply(this, arguments);
 
 	Game.Unit.items[
 		this.menu == 'army' ? 'army' : 'reptiles'
@@ -67,9 +67,9 @@ game.extend(game.ReptileHero, game.ReptileUnit)
 				: this.side
 	][this.engName] = this;
 
-	//this.type = 'globalUnit';
+	//this.type = 'mutualUnit';
 };
-game.extend(game.GlobalUnit, game.GlobalItem)*/
+game.extend(game.MutualUnit, game.MutualItem)*/
 /*
 game.Hero = function(options){
 	game.Hero.superclass.constructor.apply(this, arguments);
@@ -85,7 +85,7 @@ game.Hero = function(options){
 	this.group = 'hero';
 	//this.type = 'hero';
 };
-game.extend(game.Hero, game.GlobalItem)
+game.extend(game.Hero, game.MutualItem)
 */
 Game.Unit = {
 	Collection: new Meteor.Collection('units'),

@@ -17,7 +17,7 @@ Meteor.methods({
 		});
 
 		for (var i = 0; i < units.length; i++) {
-			if (armyNames.indexOf(units[i]) == -1 || Game.Unit.items.army.ground[units[i]].type == 'global') {
+			if (armyNames.indexOf(units[i]) == -1 || Game.Unit.items.army.ground[units[i]].type == 'mutual') {
 				throw new Meteor.Error('Иш ты чего задумал, шакал.');
 			}
 		}

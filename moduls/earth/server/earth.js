@@ -70,7 +70,7 @@ Game.Point.observePoint = function(name) {
 	}));
 
 	// Есть еноты?
-	if (Game.Global.has('research', 'reccons')) {
+	if (Game.Mutual.has('research', 'reccons')) {
 		var letter = name.substr(0, 1);
 		var num = parseInt(name.substr(1));
 
@@ -397,7 +397,7 @@ Game.Point.performBattle = function() {
 	}
 
 	// Работа псиоников
-	var psidamage = ((Game.Global.has('research', 'psieffect') ? 0.1 : 0.05) * 0.15);
+	var psidamage = ((Game.Mutual.has('research', 'psieffect') ? 0.1 : 0.05) * 0.15);
 	var horrordamage = (0.05 * 0.15);
 	if (army.psimans > reptiles.horror) {
 		for (var name in enemyLife) {

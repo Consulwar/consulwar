@@ -5,6 +5,8 @@ initBuildingClient();
 initResearchClient();
 initUnitClient();
 
+initMutualClient();
+
 initMailClient();
 
 initQuestLib();
@@ -429,11 +431,7 @@ Template.game.helpers(helpers);
 Template.item.helpers(helpers);
 Template.battle.helpers(helpers);
 
-Template.top_investors.helpers({
-	investors: function() {
-		return Game.Investments.getTopInvestors(Session.get('active_item'));
-	}
-})
+
 
 Session.set('honor', 0);
 Template.reserve.onRendered(function() {

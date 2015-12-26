@@ -68,7 +68,17 @@ var menu = {
 				url: Router.routes.chat.path()
 			}
 		}
-	}, 
+	},
+	mutual: {
+		routeName: ['mutual'],
+		url: firstItemGroupURL(Game.Mutual.items.research),
+		items: {
+			research: {
+				url: firstItemGroupURL(Game.Mutual.items.research),
+				items: Game.Mutual.items.research
+			}
+		}
+	},
 	reptiles: {
 		routeName: ['reptileUnit'],
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),

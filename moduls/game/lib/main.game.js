@@ -15,7 +15,7 @@ game = {
 	research: {
 		evolution: {},
 		fleetups: {},
-		global: {}
+		mutual: {}
 	},
 	powerups: {
 		avaliable: {},
@@ -152,7 +152,7 @@ game.Item = function(options) {
 
 	this.price = function(level) {
 		var curPrice = {};
-		if (this.type != 'unit' && this.type != 'global') {
+		if (this.type != 'unit' && this.type != 'mutual') {
 			// Цена идет на подъем ДО указаного уровня с предыдущего
 			// т.к. начальный уровень нулевой, то цена для первого уровня
 			// является ценой подъема с нулевого до первого
@@ -208,7 +208,7 @@ game.Item = function(options) {
 
 	this.isEnoughResources = function(count, currency) {
 		if (count == undefined) {
-			if (this.type == 'unit' || this.type == 'global') {
+			if (this.type == 'unit' || this.type == 'mutual') {
 				count = 1;
 			} else {
 				count = this.currentLevel() + 1;
@@ -281,27 +281,6 @@ function extend(Child, Parent) {
 
 game.extend = extend;
 
-game.GlobalItem = function(options) {
-	game.GlobalItem.superclass.constructor.apply(this, arguments);
-
-	this.constructor = function(options) {
-		this.investments = options.investments;
-	}
-
-	this.constructor(options);
-
-	this.currentLevel = function() {
-		return Math.floor(this.currentInvestments() / this.investments);
-	}
-
-	this.currentInvestments = function() {
-		return Game.Global.get(this.group, this.engName) || 0;
-	}
-
-	this.type = 'global';
-}
-extend(game.GlobalItem, game.Item);
-
 
 Game = {
 	PRODUCTION_FACTOR: 1.48902803168182,
@@ -361,8 +340,8 @@ Game = {
 			case 'unit':
 				return Game.Unit;
 
-			case 'global':
-				return Game.Global;
+			case 'mutual':
+				return Game.Mutual;
 
 			case 'research':
 				return Game.Research;

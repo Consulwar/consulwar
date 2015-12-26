@@ -18,18 +18,6 @@ game.Research = function(options){
 };
 game.extend(game.Research, game.Item);
 
-game.GlobalResearch = function(options){
-	game.GlobalResearch.superclass.constructor.apply(this, arguments);
-
-	Game.Research.items[this.engName] = this;
-
-	//this.type = 'globalResearch';
-	this.group = 'research';
-};
-game.extend(game.GlobalResearch, game.GlobalItem);
-
-
-
 Game.Research = {
 	Collection: new Meteor.Collection('researches'),
 

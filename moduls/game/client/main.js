@@ -9,9 +9,9 @@ initMailClient();
 
 initQuestLib();
 
-initMenuClient();
-
 initRouterClient();
+
+initMenuClient();
 
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",

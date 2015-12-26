@@ -11,7 +11,7 @@ game.Unit = function(options){
 			item: this.engName
 		};
 		
-		return Router.routes['unit'].path(options);
+		return Router.routes[this.type].path(options);
 	}
 
 	this.type = 'unit';
@@ -30,7 +30,7 @@ game.ReptileUnit = function(options){
 			item: this.engName
 		};
 		
-		return Router.routes['reptileUnit'].path(options);
+		return Router.routes[this.type].path(options);
 	}
 
 	this.canBuild = function(count) {

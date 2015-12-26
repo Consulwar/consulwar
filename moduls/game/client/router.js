@@ -49,7 +49,8 @@ var gameRoutes = {
 	},
 
 	reptiles: {
-		reptileUnit: 'reptiles/:group(fleet|heroes|ground)/:item?'
+		reptileUnit: 'reptiles/:group(fleet|ground)/:item?',
+		reptileHero: 'reptiles/:group(heroes)/:item?'
 	},
 
 	research: {
@@ -73,6 +74,7 @@ var gameActions = {
 
 	unit: Game.Unit.showPage,
 	reptileUnit: Game.Unit.showPage,
+	reptileHero: Game.Unit.showPage,
 }
 
 for (var group in gameRoutes) {

@@ -1,130 +1,119 @@
 initMenuClient = function() {
 
-var menu = {
-	planet: {
-		residential: Game.Building.items.residential, 
-		//counsul: game.planet.counsul, 
-		military: Game.Building.items.military,
-	},
-	research: {
-		evolution: Game.Research.items.evolution,
-		fleetups: Game.Research.items.fleetups,
-		//global: game.research.global
-	},
-	army: {
-		fleet: Game.Unit.items.army.fleet,
-		//heroes: game.army.heroes,
-		ground: Game.Unit.items.army.ground
-	},
-	/*powerups: {
-		avaliable: [],
-		activated: [],
-		bought: []
-	},
-	alliance: {
-		info: [],
-		find: [],
-		create: []
-	},*/
-	/*battle: {
-		attack: _.map(Game.Battle.items, function(value) {
-			return value;
-		}),
-		reinforcement: [],
-		//statistics: [],
-		earth: []
-	},*/
-	/*battle: {
-		events: [],
-		reinforcement: [],
-		history: []
-	},*/
-	communication: {
-		mail: {},
-		chat: {}
-	},
-	reptiles: {
-		fleet: Game.Unit.items.reptiles.fleet,
-		heroes: Game.Unit.items.reptiles.heroes,
-		ground: Game.Unit.items.reptiles.ground
-	}
+
+var firstItemGroupURL = function(items) {
+	var firstItem = items[_.keys(items)[0]];
+	return firstItem.url({group: firstItem.group});
 }
 
+var menu = {
+	planet: {
+		routeName: ['building'],
+		url: firstItemGroupURL(Game.Building.items.residential),
+		items: {
+			residential: {
+				url: firstItemGroupURL(Game.Building.items.residential),
+				items: Game.Building.items.residential
+			}, 
+			military: {
+				url: firstItemGroupURL(Game.Building.items.military),
+				items: Game.Building.items.military
+			}
+		}
+	}, 
+	research: {
+		routeName: ['research'],
+		url: firstItemGroupURL(Game.Research.items.evolution),
+		items: {
+			evolution: {
+				url: firstItemGroupURL(Game.Research.items.evolution),
+				items: Game.Research.items.evolution
+			}, 
+			fleetups: {
+				url: firstItemGroupURL(Game.Research.items.fleetups),
+				items: Game.Research.items.fleetups
+			}
+		}
+	}, 
+	army: {
+		routeName: ['unit'],
+		url: firstItemGroupURL(Game.Unit.items.army.fleet),
+		items: {
+			fleet: {
+				url: firstItemGroupURL(Game.Unit.items.army.fleet),
+				items: Game.Unit.items.army.fleet
+			}, 
+			ground: {
+				url: firstItemGroupURL(Game.Unit.items.army.ground),
+				items: Game.Unit.items.army.ground
+			}
+		}
+	}, 
+	communication: {
+		routeName: ['mail', 'chat'],
+		url: Router.routes.mail.path(),
+		additionalClass: function() {
+			if (Meteor.user().game.quests.daily.status != game.Quest.status.finished
+				|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})) {
+				return 'has_new_mail';
+			} else {
+				return '';
+			}
+		},
+		items: {
+			mail: {
+				url: Router.routes.mail.path()
+			}, 
+			chat: {
+				url: Router.routes.chat.path()
+			}
+		}
+	}, 
+	reptiles: {
+		routeName: ['reptileUnit'],
+		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
+		items: {
+			fleet: {
+				url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
+				items: Game.Unit.items.reptiles.fleet
+			}, 
+			heroes: {
+				url: firstItemGroupURL(Game.Unit.items.reptiles.heroes),
+				items: Game.Unit.items.reptiles.heroes
+			}, 
+			ground: {
+				url: firstItemGroupURL(Game.Unit.items.reptiles.ground),
+				items: Game.Unit.items.reptiles.ground
+			}
+		}
+	}
+};
+
+var getMenu = function(menu, isActive) {
+	var currentRouteName = Router.current().route.getName();
+
+	return _.map(menu, function(menu, key) {
+		return {
+			engName: key,
+			url: menu.url,
+			isActive: isActive(menu, key),
+			additionalClass: menu.additionalClass
+		}
+	});
+}
 
 Template.game_menu.helpers({
 	menu: function() {
-		var currentRouteName = Router.current().route.getName();
-
-		return _.map(menu, function(menu, key) {
-			var groups = _.keys(menu);
-
-			if (groups.length) {
-				var firstGroupKeys = _.keys(menu[groups[0]]);
-				if (firstGroupKeys.length) {
-					var firstItem = menu[groups[0]][firstGroupKeys[0]];
-
-					return {
-						engName: key,
-						url: firstItem.url({group: firstItem.group}),
-						isActive: _.find(menu, function(group) {
-							return group[_.keys(group)[0]].type == currentRouteName
-						}),
-						
-					};
-				} else {
-					return {
-						engName: key,
-						url: Router.routes[groups[0]].path(),
-						isActive: _.find(groups, function(group) {
-							return group == currentRouteName
-						}),
-						additionalClass: 
-							(key == 'communication' && (
-								Meteor.user().game.quests.daily.status != game.Quest.status.finished
-								|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-							)) 
-							? 'has_new_mail' 
-							: ''
-					}
-				}
-			} else {
-				return {
-					engName: key,
-					url: Router.routes[key].path(),
-					isActive: key == currentRouteName
-				}
-			}
-		});
+		return getMenu(menu, function(item) {
+			return item.routeName.indexOf(Router.current().route.getName()) != -1
+		})
 	}
 });
+
 Template.side_menu.helpers({
 	sides: function() {
-		var currentRouteName = Router.current().route.getName();
-
-		return _.map(menu[Router.current().group], function(items, side) {
-			var itemsKeys = _.keys(items);
-
-			if (itemsKeys.length) {
-				var firstItem = items[itemsKeys[0]];
-
-				return {
-					engName: side,
-					//currentConstruction: sideConstruction,
-					//constructionRemaningTime: sideConstruction ? sideConstruction.finishTime - Session.get('serverTime') : null,
-					//progress: sideConstruction ? true : false,
-					url: firstItem.url({group: firstItem.group}),
-					isActive: firstItem.group == Router.current().params.group
-				}
-			} else {
-				return {
-					engName: side,
-					//currentConstruction: sideConstruction,
-					//constructionRemaningTime: sideConstruction ? sideConstruction.finishTime - Session.get('serverTime') : null,
-					//progress: sideConstruction ? true : false,
-					url: Router.routes[side].path(),
-					isActive: side == currentRouteName
-				}
-			}
+		return getMenu(menu[Router.current().group].items, function(item, key) {
+			return key == Router.current().params.group;
 		})
 	}
 });
@@ -133,7 +122,7 @@ Template.side_menu.helpers({
 var helpers = {
 	items: function() {
 		if (Router.current().params.group) {
-			return _.toArray(menu[Router.current().group][Router.current().params.group]);
+			return _.toArray(menu[Router.current().group].items[Router.current().params.group].items);
 		} else {
 			return [];
 		}

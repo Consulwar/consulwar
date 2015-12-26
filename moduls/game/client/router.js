@@ -109,6 +109,8 @@ Router.route('/game', {
 	}
 })
 
+Router.go(location.href.replace(location.origin, ''));
+
 /*
 game/planet/residential
 game/planet/military

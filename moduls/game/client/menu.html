@@ -22,7 +22,9 @@
 <template name="side_menu">
 	<ul class="side_menu">
 		{{#each sides}}
-			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}"><a href="{{this.url}}"></a></li>
+			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}">
+				<a href="{{this.url}}">{{this.name}}</a>
+			</li>
 		{{/each}}
 		{{#if eq sides.length 2}}
 			<!--<li class="helpusplease">

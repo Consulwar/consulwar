@@ -12,10 +12,12 @@ var menu = {
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
 			residential: {
+				name: 'Жилой район',
 				url: firstItemGroupURL(Game.Building.items.residential),
 				items: Game.Building.items.residential
 			}, 
 			military: {
+				name: 'Военный район',
 				url: firstItemGroupURL(Game.Building.items.military),
 				items: Game.Building.items.military
 			}
@@ -26,10 +28,12 @@ var menu = {
 		url: firstItemGroupURL(Game.Research.items.evolution),
 		items: {
 			evolution: {
+				name: 'Эволюционные исследования',
 				url: firstItemGroupURL(Game.Research.items.evolution),
 				items: Game.Research.items.evolution
 			}, 
 			fleetups: {
+				name: 'Улучшения флота',
 				url: firstItemGroupURL(Game.Research.items.fleetups),
 				items: Game.Research.items.fleetups
 			}
@@ -40,10 +44,12 @@ var menu = {
 		url: firstItemGroupURL(Game.Unit.items.army.fleet),
 		items: {
 			fleet: {
+				name: 'Комический флот',
 				url: firstItemGroupURL(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet
 			}, 
 			ground: {
+				name: 'Армия',
 				url: firstItemGroupURL(Game.Unit.items.army.ground),
 				items: Game.Unit.items.army.ground
 			}
@@ -62,9 +68,11 @@ var menu = {
 		},
 		items: {
 			mail: {
+				name: 'Почта',
 				url: Router.routes.mail.path()
 			}, 
 			chat: {
+				name: 'Чат',
 				url: Router.routes.chat.path()
 			}
 		}
@@ -74,6 +82,7 @@ var menu = {
 		url: firstItemGroupURL(Game.Mutual.items.research),
 		items: {
 			research: {
+				name: 'Исследования',
 				url: firstItemGroupURL(Game.Mutual.items.research),
 				items: Game.Mutual.items.research
 			}
@@ -84,14 +93,17 @@ var menu = {
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 		items: {
 			fleet: {
+				name: 'Комический флот',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 				items: Game.Unit.items.reptiles.fleet
 			}, 
 			heroes: {
+				name: 'Герои',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.heroes),
 				items: Game.Unit.items.reptiles.heroes
 			}, 
 			ground: {
+				name: 'Армия',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.ground),
 				items: Game.Unit.items.reptiles.ground
 			}
@@ -105,6 +117,7 @@ var getMenu = function(menu, isActive) {
 	return _.map(menu, function(menu, key) {
 		return {
 			engName: key,
+			name: menu.name,
 			url: menu.url,
 			isActive: isActive(menu, key),
 			additionalClass: menu.additionalClass
@@ -123,7 +136,11 @@ Template.game_menu.helpers({
 Template.side_menu.helpers({
 	sides: function() {
 		return getMenu(menu[Router.current().group].items, function(item, key) {
-			return key == Router.current().params.group;
+			return (
+				item.items
+				? key == Router.current().params.group
+				: item.url == Router.current().url
+			)
 		})
 	}
 });

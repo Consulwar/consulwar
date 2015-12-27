@@ -318,7 +318,159 @@ Game.Planets = {
 		console.log('Time to attack = ', timeAttack, k);
 
 		return timeAttack;
+	},
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	calcFlyTimeByDistance2: function(currentDistance, totalDistance, maxSpeed, acceleration) {
+		currentDistance *= 50;
+		totalDistance *= 50;
+
+		var isFlying = true;
+		var maxAccelerationDistance = totalDistance / 2;
+		var speed = 0;
+		var traveledDistance = 0;
+		var time = 0;
+
+		if (traveledDistance >= currentDistance) {
+			isFlying = false;
+		}
+
+		while (isFlying && speed < maxSpeed && traveledDistance < maxAccelerationDistance) {
+			speed = Math.min(speed + acceleration, maxSpeed);
+			traveledDistance += speed;
+			time++;
+
+			if (traveledDistance >= currentDistance) {
+				isFlying = false;
+			}
+		}
+
+		var accDistance = traveledDistance;
+
+		while (isFlying && speed != 0 && traveledDistance < (totalDistance - accDistance)) {
+			traveledDistance += speed;
+			time++;
+
+			if (traveledDistance >= currentDistance) {
+				isFlying = false;
+			}
+		}
+
+		while (isFlying && speed > 0 && traveledDistance < totalDistance) {
+			speed = Math.max(speed - acceleration, acceleration);
+			traveledDistance += speed;
+			time++;
+
+			if (traveledDistance >= currentDistance) {
+				isFlying = false;
+			}
+		}
+
+		return time;
+	},
+
+	calcAttackK: function(attackerPlanet, attackerEngineLevel, targetShip, timeCurrent) {
+		
+		var angle = calcAngle( targetShip.info.startPosition, targetShip.info.targetPosition );
+		var totalDistance = calcDistance( targetShip.info.startPosition, targetShip.info.targetPosition );
+
+		var startPoint = {
+			x: targetShip.info.startPosition.x,
+			y: targetShip.info.startPosition.y,
+		}
+
+		var targetShipTime = timeCurrent - targetShip.timeStart;
+		var targetShipSpeed = Game.Planets.calcMaxSpeed(targetShip.info.engineLevel);
+		var targetShipAcc = Game.Planets.calcAcceleration(targetShip.info.engineLevel);
+
+		var targetDistance = Game.Planets.calcFlyDistanceByTime(targetShipTime,
+		                                                        totalDistance,
+		                                                        targetShipSpeed,
+		                                                        targetShipAcc);
+
+		
+
+		var check = function(checkDistance) {
+			// target time
+			var timeToPoint = Game.Planets.calcFlyTimeByDistance2(checkDistance,
+			                                         totalDistance,
+			                                         targetShipSpeed,
+			                                         targetShipAcc);
+			var timeLeft = timeToPoint - targetShipTime;
+
+			// attack time
+			var attackPoint = {
+				x: startPoint.x + checkDistance * Math.cos(angle),
+				y: startPoint.y + checkDistance * Math.sin(angle)
+			}
+
+			var timeAttack = Game.Planets.calcFlyTime(attackerPlanet, attackPoint, attackerEngineLevel);
+
+			console.log('timeToAttack ' + timeAttack + ' timeToPoint ' + timeToPoint + ' timeLeft ' + timeLeft);
+
+			// check
+			if (timeAttack >= timeLeft) {
+				return {
+					time: timeAttack,
+					result: false,
+				}
+			} else {
+				return {
+					time: timeAttack,
+					result: true
+				}
+			}
+		}
+
+		if (targetDistance + 0.2 >= totalDistance - 0.2) {
+			return false;
+		}
+
+		if (!check(totalDistance - 0.2).result) {
+			return false;
+		}
+
+		var left = targetDistance;
+		var right = totalDistance - 0.5;
+		var cur = 0;
+		var checkObj = null;
+
+		var distResult = totalDistance;
+
+		console.log('===========================');
+
+		while (Math.abs(right - left) >= 0.1) {
+			cur = left + (right - left) / 2;
+
+			console.log('check ' + (cur / totalDistance).toFixed(2) + ' from ' + (left / totalDistance).toFixed(2) + ' to ' + (right / totalDistance).toFixed(2));
+
+			checkObj = check(cur);
+
+			if (checkObj.result) {
+				console.log('okay');
+				right = cur;
+				distResult = cur;
+			} else {
+				console.log('fail');
+				left = cur;
+			}
+		}
+
+		console.log('result = ', distResult / totalDistance);
+
+		return {
+			k: distResult / totalDistance,
+			time: check(distResult).time
+		}
 	}
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
 }
 
 Game.SpaceEvents = {

@@ -123,7 +123,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		// TODO: Calculate battle results!
 
 		// destroy target ship
-		Game.SpaceEvents.Collection.remove({ _id: event.info.targetId });
+		// Game.SpaceEvents.Collection.remove({ _id: event.info.targetId });
 
 		// return to base
 		var startPosition = event.info.targetPosition;
@@ -167,7 +167,7 @@ Meteor.methods({
 		}
 	},
 
-	'spaceEvents.attackReptFleet': function(id, targetX, targetY) {
+	'spaceEvents.attackReptFleet': function(id, targetX, targetY, flyTime) {
 
 		var enemyShip = Game.SpaceEvents.getOne(id);
 		if (!enemyShip) {
@@ -190,11 +190,22 @@ Meteor.methods({
 		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 		var timeLeft = enemyShip.timeEnd - timeCurrent;
 		
+		// TODO: Запилить проверку! Или перенести turf на сервер!
 		// TODO: Шо то здеся не то!
+		/*
 		var timeAttack = Game.Planets.calcAttackFlyTime(startPosition,
 		                                                engineLevel,
 		                                                enemyShip,
 		                                                timeCurrent);
+		*/
+		/*
+		var result = Game.Planets.calcAttackK(attackerPlanet,
+		                                 attackerEngineLevel,
+		                                 spaceEvent,
+		                                 timeCurrent);
+		*/
+
+		timeAttack = flyTime;
 
 		if (timeAttack >= timeLeft) {
 			return; // not enough time to attack
@@ -302,8 +313,8 @@ Meteor.methods({
 			}
 
 			// TODO: Calculate reptile ship flyTime and engineLevel!
-			var flyTime = 120;
 			var engineLevel = 0;
+			var flyTime = Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel);
 
 			Game.SpaceEvents.sendShip(startPosition,
 			                          startPlanet._id,

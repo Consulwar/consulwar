@@ -478,6 +478,7 @@ var ShipView = function(map, spaceEvent) {
 
 		var timeCurrent = Session.get('serverTime');
 
+		/*
 		var timeAttack = Game.Planets.calcAttackFlyTime(attackerPlanet,
 		                                                attackerEngineLevel,
 		                                                spaceEvent,
@@ -485,8 +486,21 @@ var ShipView = function(map, spaceEvent) {
 
 		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
 		var k = 1 - ( spaceEvent.timeEnd - timeCurrent - timeAttack ) / timeTotal;
+		*/
 
-		return _pathView.getPointAlongDistanceByCoef(k);
+		var result = Game.Planets.calcAttackK(attackerPlanet,
+		                                 attackerEngineLevel,
+		                                 spaceEvent,
+		                                 timeCurrent);
+
+		if (!result) {
+			return false;
+		}
+
+		return {
+			point: _pathView.getPointAlongDistanceByCoef(result.k),
+			time: result.time
+		}
 	}
 
 	this.constructor(map, spaceEvent);
@@ -898,7 +912,11 @@ Template.cosmos.events({
 			var targetPoint = targetShip.getAttackPoint(attackerPlanet,
 			                                            attackerEngineLevel);
 
-			Meteor.call('spaceEvents.attackReptFleet', eventId, targetPoint.x, targetPoint.y);
+			if (!targetPoint) {
+				return;
+			}
+
+			Meteor.call('spaceEvents.attackReptFleet', eventId, targetPoint.point.x, targetPoint.point.y, targetPoint.time);
 		} else {
 
 			var planetId = $(e.currentTarget).attr("data-planet-id");

@@ -88,10 +88,20 @@ game.Hero = function(options){
 game.extend(game.Hero, game.MutualItem)
 */
 Game.Unit = {
+
+	location: {
+		HOME: 1,
+		PLANET: 2,
+		SHIP: 3
+	},
+
 	Collection: new Meteor.Collection('units'),
 
 	getValue: function() {
-		return Game.Unit.Collection.findOne({user_id: Meteor.userId()});
+		return Game.Unit.Collection.findOne({
+			user_id: Meteor.userId(),
+			location: Game.Unit.location.HOME
+		});
 	},
 
 	get: function(group, name) {

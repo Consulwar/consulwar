@@ -84,7 +84,7 @@ var gameActions = {
 	reptileUnit: Game.Unit.showPage,
 	reptileHero: Game.Unit.showPage,
 
-	mutual: Game.Mutual.showPage
+	mutual: Game.Mutual.showPage,
 
 	cosmos: Game.Cosmos.showPage
 }

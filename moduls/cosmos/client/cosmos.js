@@ -884,7 +884,23 @@ Template.cosmos.onDestroyed(function() {
 
 Template.cosmos.helpers({
 	planet: function() { return Session.get('planet'); },
-	drop: function() { return Session.get('drop'); }
+	drop: function() { return Session.get('drop'); },
+	target: function() { return Session.get('target'); },
+
+	available_fleet: function() {
+
+		var fleet = Game.Unit.items.army.fleet;
+		var result = [];
+
+		for (var key in fleet) {
+			result.push({
+				engName: fleet[key].engName,
+				max: Math.round( 100 + Math.random() * 1000 )
+			})
+		}
+
+		return result;
+	}
 });
 
 Template.cosmos.events({
@@ -900,7 +916,18 @@ Template.cosmos.events({
 		}
 	},
 
-	'click .button-attack': function(e) {
+	'click .btn-close': function(e) {
+		Session.set('target', null);
+	},
+
+	'click .open': function(e) {
+
+		Session.set('target', {
+			planetId: $(e.currentTarget).attr("data-planet-id"),
+			eventId: $(e.currentTarget).attr("data-event-id")
+		});
+
+		/*
 		// TODO: Рефакторинг!!! data-target-id data-target-type
 		var eventId = $(e.currentTarget).attr("data-event-id");
 		if (eventId && eventId.length > 0) {
@@ -924,7 +951,47 @@ Template.cosmos.events({
 				Meteor.call('planet.sendFleet', planetId);
 			}
 		}
+		*/
+	},
+
+	'click .btn-all': function(e) {
+		$('.fleet li').each(function(index, element) {
+			var max = Number( $(element).find('.max').html() );
+			$(element).find('.count').val( max );
+		});
+	},
+
+	'click .defend': function(e) {
+		// Attack and defend
+		// TODO: implement
+	},
+
+	'click .return': function(e) {
+		// Attack and return home
+		var total = 0;
+		var units = {};
+
+		$('.fleet li').each(function(index, element) {
+			
+			var id = $(element).attr('data-id');
+			var max = Number( $(element).find('.max').html() );
+			var count = Number( $(element).find('.count').val() );
+
+			$(element).find('.count').val(0);
+
+			units[ id ] = Math.min(max, count);
+			total += units[ id ];
+		});
+
+		console.log(units);
+
+		if (total <= 0) {
+			Notifications.info('Выберите корабли для отправки');
+		} else {
+			Notifications.success('Флот отправлен', 'ожидайте боя');
+		}
 	}
+
 });
 
 // ------------------------------------------------------

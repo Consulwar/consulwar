@@ -265,6 +265,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 			isHome: false,
 			type: type.engName,
 			// state
+			armyId: null,
 			mission: null,
 			timeRespawn: 0,
 			// generation
@@ -380,6 +381,14 @@ Meteor.methods({
 		}
 
 		// TODO: Units! Check and slice!
+		// TODO: If sent all units, remove army id!
+		
+		if (!basePlanet.isHome) {
+			basePlanet.armyId = null;
+			basePlanet.timeRespawn = getServerTime() + 120;
+		}
+
+		Game.Planets.update(basePlanet);
 
 		var startPosition = {
 			x: basePlanet.x,
@@ -422,7 +431,10 @@ Meteor.methods({
 
 		// spawn enemies
 		var timeCurrent = getServerTime();
-		if (!planet.mission && planet.timeRespawn <= timeCurrent) {
+		if (!planet.mission
+		 && !planet.armyId
+		 &&  planet.timeRespawn <= timeCurrent
+		) {
 			if (Math.random() >= 0.5) {
 				// create mission
 				planet.mission = Game.Planets.generateMission(planet);

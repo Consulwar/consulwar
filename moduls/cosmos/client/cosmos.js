@@ -110,7 +110,7 @@ var PlanetView = function(map, planet) {
 		this.element.removeClass('map-planet-border-red');
 		this.element.removeClass('map-planet-border-white');
 
-		if (planet.isHome) {
+		if (planet.isHome || planet.armyId) {
 			this.element.addClass('map-planet-border-blue');
 		} else {
 			if (planet.mission) {
@@ -130,9 +130,10 @@ var PlanetView = function(map, planet) {
 			metals: 100500,
 			crystals: 100542
 		};
-		if (planet.isHome) {
+		if (planet.isHome || planet.armyId) {
 			info.isHome = true;
 		}
+		// TODO: Allow send two times or not?!
 		//if (planet.state == 'IDLE') {
 			info.canSend = true;
 		//}
@@ -751,6 +752,10 @@ var createPlanet = function(planet) {
 	if (!planetViews) planetViews = {};
 	planetViews[ planet._id ] = new PlanetView(mapView, planet);
 	planetViews[ planet._id ].update();
+
+	if (planet.isHome) {
+		mapView.setView([planet.x, planet.y], 8);
+	}
 }
 
 var updatePlanet = function(id) {
@@ -816,9 +821,13 @@ Game.SpaceEvents.getAll().observeChanges({
 });
 
 var sendFleet = function(isOneway) {
+	var baseId = Session.get('active_colony_id');
+	var basePlanet = Game.Planets.getOne(baseId);
 
-	// TODO: Get selected planet!
-	var basePlanet = Game.Planets.getBase();
+	if (!basePlanet) {
+		Notifications.info('Не выбрана базовая планета');
+		return;
+	}
 
 	var total = 0;
 	var units = {};
@@ -856,7 +865,12 @@ var sendFleet = function(isOneway) {
 			return;
 		}
 
-		Meteor.call('spaceEvents.attackReptFleet', target.eventId, attack.point.x, attack.point.y, attack.time);
+		Meteor.call('spaceEvents.attackReptFleet', basePlanet._id,
+		                                           target.eventId,
+		                                           units,
+		                                           attack.point.x, 
+		                                           attack.point.y,
+		                                           attack.time);
 	}
 
 	Session.set('target', null);
@@ -926,6 +940,9 @@ Template.cosmos.helpers({
 	drop: function() { return Session.get('drop'); },
 	target: function() { return Session.get('target'); },
 
+	active_colony_id: function() { return Session.get('active_colony_id'); },
+	colonies: function() { return Session.get('colonies'); },
+
 	available_fleet: function() {
 		// TODO: get real info!
 		var fleet = Game.Unit.items.army.fleet;
@@ -954,11 +971,22 @@ Template.cosmos.events({
 		}
 	},
 
+	'click .planets li': function(e) {
+		var id = $(e.currentTarget).attr("data-id");
+		Session.set('active_colony_id', id);
+	},
+
 	'click .btn-close': function(e) {
 		Session.set('target', null);
 	},
 
 	'click .open': function(e) {
+		var homePlanet = Game.Planets.getBase();
+		Session.set('active_colony_id', homePlanet._id);
+
+		var colonies = Game.Planets.getColonies();
+		Session.set('colonies', colonies);
+
 		Session.set('target', {
 			planetId: $(e.currentTarget).attr("data-planet-id"),
 			eventId: $(e.currentTarget).attr("data-event-id")

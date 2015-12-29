@@ -40,6 +40,16 @@ Game.Planets = {
 		});
 	},
 
+	getColonies: function() {
+		return Game.Planets.Collection.find({
+			user_id: Meteor.userId(),
+			$or: [
+				{ isHome: true },
+				{ armyId: { $ne: null } }
+			]
+		}).fetch();
+	},
+
 	getType: function(id) {
 		for (var i = 0; i < Game.Planets.types.length; i++) {
 			if (Game.Planets.types[i].engName == id) {
@@ -374,7 +384,7 @@ Game.Planets = {
 				return timeAttack;
 			}
 		}
-		
+
 		if (targetDistance + 0.5 >= totalDistance - 0.5) {
 			return null;
 		}

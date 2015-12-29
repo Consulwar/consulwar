@@ -86,21 +86,29 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 		if (event.info.isHumans) {
 
+			var isOneway = (event.info.startPlanetId) ? false : true;
+
 			// TODO: Calculate battle results!
 			if (planet.mission) {
 				planet.mission = null;
 				if (planet.timeRespawn < event.timeEnd) {
 					planet.timeRespawn = event.timeEnd + 120;
 				}
-				Game.Planets.update(planet);
 			}
+
+			if (isOneway) {
+				// TODO: Save humans army id!
+				planet.armyId = 100500;
+			}
+
+			Game.Planets.update(planet);
 			// ------------------------------
 
 			if (!planet.isDiscovered) {
 				Meteor.call('planet.discover', planet._id);
 			}
 
-			if (event.info.startPlanetId) {
+			if (!isOneway) {
 				var startPosition = event.info.targetPosition;
 				var targetPosition = event.info.startPosition;
 				var engineLevel = event.info.engineLevel;
@@ -119,7 +127,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 		} else {
 
-			// TODO: Repts arrived on planet
+			// TODO: Reptiles arrived on planet
 
 		}
 	}
@@ -177,14 +185,17 @@ Meteor.methods({
 		}
 	},
 
-	'spaceEvents.attackReptFleet': function(id, targetX, targetY, flyTime) {
+	'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY, flyTime) {
+		var basePlanet = Game.Planets.getOne(baseId);
+		if (!basePlanet) {
+			return; // no such planet
+		}
 
-		var enemyShip = Game.SpaceEvents.getOne(id);
+		var enemyShip = Game.SpaceEvents.getOne(targetId);
 		if (!enemyShip) {
 			return; // no such ship
 		}
 
-		var basePlanet = Game.Planets.getBase();
 		var engineLevel = Game.Planets.getEngineLevel();
 
 		var startPosition = {
@@ -206,6 +217,13 @@ Meteor.methods({
 
 		if (timeAttack >= timeLeft) {
 			return; // not enough time to attack
+		}
+
+		// TODO: Units! Check and slice!
+		if (!basePlanet.isHome) {
+			basePlanet.armyId = null;
+			basePlanet.timeRespawn = timeCurrent + 120;
+			Game.Planets.update(basePlanet);	
 		}
 
 		Game.SpaceEvents.sendShip(startPosition,

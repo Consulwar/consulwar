@@ -24,7 +24,7 @@
 		{{#if planet}}
 			<h2>{{planet.name}} ({{planet.type}})</h2>
 			{{#if planet.isHome}}
-				<p>Домашняя планета</p>
+				<p>Колония</p>
 			{{else}}
 				<!--
 				<ul class="resources">
@@ -60,26 +60,16 @@
 	{{#if target}}
 	<div class="attack-menu">
 		<ul class="planets">
-			<li class="home">Планета консула</li>
-			<li>LOL-101</li>
-			<li class="active">PEW-111</li>
-			<li>ABC-123</li>
-			<li>Свободно</li>
-			<li>Свободно</li>
-			<li>Свободно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
-			<li class="locked">не доступно</li>
+			{{#each colonies}}
+			<li data-id="{{this._id}}" class="{{#if eq this._id active_colony_id}}active{{else}}{{#if this.isHome}}home{{/if}}{{/if}}">
+				{{#if this.isHome}}
+				Планета консула
+				{{else}}
+				{{this.name}}
+				{{/if}}
+			</li>
+			{{/each}}
+			<!-- <li class="locked">не доступно</li> -->
 		</ul>
 
 		{{#if available_fleet}}

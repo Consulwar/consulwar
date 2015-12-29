@@ -424,10 +424,10 @@ var ShipView = function(map, spaceEvent) {
 		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
 		var timeCurrent = Session.get('serverTime') - spaceEvent.timeStart;
 
-		var currentDistance = Game.Planets.calcFlyDistanceByTime(timeCurrent,
-		                                                         this.totalFlyDistance,
-		                                                         this.maxSpeed,
-		                                                         this.acceleration);
+		var currentDistance = Game.Planets.calcDistanceByTime(timeCurrent,
+		                                                      this.totalFlyDistance,
+		                                                      this.maxSpeed,
+		                                                      this.acceleration);
 
 		var k = currentDistance / this.totalFlyDistance;
 		var curPoint = _pathView.getPointAlongDistanceByCoef(k);
@@ -474,24 +474,14 @@ var ShipView = function(map, spaceEvent) {
 		return spaceEvent.timeEnd - Session.get('serverTime');
 	}
 
-	this.getAttackPoint = function(attackerPlanet, attackerEngineLevel) {
+	this.getAttackPointAndTime = function(attackerPlanet, attackerEngineLevel) {
 
 		var timeCurrent = Session.get('serverTime');
 
-		/*
-		var timeAttack = Game.Planets.calcAttackFlyTime(attackerPlanet,
-		                                                attackerEngineLevel,
-		                                                spaceEvent,
-		                                                timeCurrent);
-
-		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
-		var k = 1 - ( spaceEvent.timeEnd - timeCurrent - timeAttack ) / timeTotal;
-		*/
-
-		var result = Game.Planets.calcAttackK(attackerPlanet,
-		                                 attackerEngineLevel,
-		                                 spaceEvent,
-		                                 timeCurrent);
+		var result = Game.Planets.calcAttackOptions(attackerPlanet,
+		                                            attackerEngineLevel,
+		                                            spaceEvent,
+		                                            timeCurrent);
 
 		if (!result) {
 			return false;
@@ -825,6 +815,55 @@ Game.SpaceEvents.getAll().observeChanges({
 	}
 });
 
+var sendFleet = function(isOneway) {
+
+	// TODO: Get selected planet!
+	var basePlanet = Game.Planets.getBase();
+
+	var total = 0;
+	var units = {};
+
+	$('.fleet li').each(function(index, element) {
+		var id = $(element).attr('data-id');
+		var max = Number( $(element).find('.max').html() );
+		var count = Number( $(element).find('.count').val() );
+
+		$(element).find('.count').val(0);
+
+		units[ id ] = Math.min(max, count);
+		total += units[ id ];
+	});
+
+	if (total <= 0) {
+		Notifications.info('Выберите корабли для отправки');
+		return;
+	}
+
+	var target = Session.get('target');
+
+	if (target.planetId && target.planetId.length > 0) {
+		// Send to planet
+		Meteor.call('planet.sendFleet', basePlanet._id, target.planetId, units, isOneway);
+
+	} else if (target.eventId && target.eventId.length > 0) {
+		// Attack ship
+		var engineLevel = Game.Planets.getEngineLevel();
+		var targetShip = shipViews[ target.eventId ];
+		var attack = targetShip.getAttackPointAndTime(basePlanet, engineLevel);
+
+		if (!attack) {
+			Notifications.info('Невозможно перехватить вражеский флот');
+			return;
+		}
+
+		Meteor.call('spaceEvents.attackReptFleet', target.eventId, attack.point.x, attack.point.y, attack.time);
+	}
+
+	Session.set('target', null);
+	Session.set('planet', null);
+	Notifications.success('Флот отправлен');
+}
+
 Template.cosmos.onRendered(function() {
 
 	// Init map
@@ -888,7 +927,7 @@ Template.cosmos.helpers({
 	target: function() { return Session.get('target'); },
 
 	available_fleet: function() {
-
+		// TODO: get real info!
 		var fleet = Game.Unit.items.army.fleet;
 		var result = [];
 
@@ -906,7 +945,6 @@ Template.cosmos.helpers({
 Template.cosmos.events({
 	'click .map-control-home': function(e) {
 		if (mapView) {
-
 			var homePlanet = Game.Planets.getBase();
 			if (homePlanet) {
 				mapView.setView([homePlanet.x, homePlanet.y], 8);
@@ -921,37 +959,10 @@ Template.cosmos.events({
 	},
 
 	'click .open': function(e) {
-
 		Session.set('target', {
 			planetId: $(e.currentTarget).attr("data-planet-id"),
 			eventId: $(e.currentTarget).attr("data-event-id")
 		});
-
-		/*
-		// TODO: Рефакторинг!!! data-target-id data-target-type
-		var eventId = $(e.currentTarget).attr("data-event-id");
-		if (eventId && eventId.length > 0) {
-
-			var attackerPlanet = Game.Planets.getBase();
-			var attackerEngineLevel = Game.Planets.getEngineLevel();
-
-			var targetShip = shipViews[ eventId ];
-			var targetPoint = targetShip.getAttackPoint(attackerPlanet,
-			                                            attackerEngineLevel);
-
-			if (!targetPoint) {
-				return;
-			}
-
-			Meteor.call('spaceEvents.attackReptFleet', eventId, targetPoint.point.x, targetPoint.point.y, targetPoint.time);
-		} else {
-
-			var planetId = $(e.currentTarget).attr("data-planet-id");
-			if (planetId && planetId.length > 0) {
-				Meteor.call('planet.sendFleet', planetId);
-			}
-		}
-		*/
 	},
 
 	'click .btn-all': function(e) {
@@ -962,34 +973,11 @@ Template.cosmos.events({
 	},
 
 	'click .defend': function(e) {
-		// Attack and defend
-		// TODO: implement
+		sendFleet(true);
 	},
 
 	'click .return': function(e) {
-		// Attack and return home
-		var total = 0;
-		var units = {};
-
-		$('.fleet li').each(function(index, element) {
-			
-			var id = $(element).attr('data-id');
-			var max = Number( $(element).find('.max').html() );
-			var count = Number( $(element).find('.count').val() );
-
-			$(element).find('.count').val(0);
-
-			units[ id ] = Math.min(max, count);
-			total += units[ id ];
-		});
-
-		console.log(units);
-
-		if (total <= 0) {
-			Notifications.info('Выберите корабли для отправки');
-		} else {
-			Notifications.success('Флот отправлен', 'ожидайте боя');
-		}
+		sendFleet(false);
 	}
 
 });

@@ -364,20 +364,22 @@ Meteor.methods({
 		}
 	},
 
-	'planet.sendFleet': function(planetId) {
-		var targetPlanet = Game.Planets.getOne(planetId);
+	'planet.sendFleet': function(baseId, targetId, units, isOneway) {
+		if (baseId == targetId) {
+			return;
+		}
+
+		var targetPlanet = Game.Planets.getOne(targetId);
 		if (!targetPlanet) {
 			return;
 		}
 
-		var basePlanet = Game.Planets.getBase();
+		var basePlanet = Game.Planets.getOne(baseId);
 		if (!basePlanet) {
 			return;
 		}
 
-		if (basePlanet._id == targetPlanet._id) {
-			return;
-		}
+		// TODO: Units! Check and slice!
 
 		var startPosition = {
 			x: basePlanet.x,
@@ -392,7 +394,7 @@ Meteor.methods({
 		var engineLevel = Game.Planets.getEngineLevel();
 
 		Game.SpaceEvents.sendShip(startPosition,
-		                          basePlanet._id,
+		                          (isOneway ? null : basePlanet._id),
 		                          targetPosition,
 		                          Game.SpaceEvents.TARGET_PLANET,
 		                          targetPlanet._id,

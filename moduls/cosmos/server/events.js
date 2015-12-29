@@ -72,7 +72,9 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		return; // still flying
 	}
 
+	// --------------------------------
 	// Arrived to planet
+	// --------------------------------
 	if (event.info.targetType ==  Game.SpaceEvents.TARGET_PLANET) {
 
 		var planetId = event.info.targetId;
@@ -84,13 +86,18 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 		if (event.info.isHumans) {
 
+			// TODO: Calculate battle results!
 			if (planet.mission) {
-				// TODO: Calculate battle results!
 				planet.mission = null;
 				if (planet.timeRespawn < event.timeEnd) {
-					planet.timeRespawn = event.timeEnd;
+					planet.timeRespawn = event.timeEnd + 120;
 				}
 				Game.Planets.update(planet);
+			}
+			// ------------------------------
+
+			if (!planet.isDiscovered) {
+				Meteor.call('planet.discover', planet._id);
 			}
 
 			if (event.info.startPlanetId) {
@@ -117,13 +124,15 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		}
 	}
 
+	// --------------------------------
 	// Meet with target ship
+	// --------------------------------
 	if (event.info.targetType == Game.SpaceEvents.TARGET_SHIP) {
 		
 		// TODO: Calculate battle results!
 
 		// destroy target ship
-		// Game.SpaceEvents.Collection.remove({ _id: event.info.targetId });
+		Game.SpaceEvents.Collection.remove({ _id: event.info.targetId });
 
 		// return to base
 		var startPosition = event.info.targetPosition;
@@ -139,7 +148,8 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 		                          event.info.isHumans,
 		                          engineLevel,
-		                          null);
+		                          null,
+		                          true);
 	}
 }
 
@@ -190,20 +200,7 @@ Meteor.methods({
 		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 		var timeLeft = enemyShip.timeEnd - timeCurrent;
 		
-		// TODO: Запилить проверку! Или перенести turf на сервер!
-		// TODO: Шо то здеся не то!
-		/*
-		var timeAttack = Game.Planets.calcAttackFlyTime(startPosition,
-		                                                engineLevel,
-		                                                enemyShip,
-		                                                timeCurrent);
-		*/
-		/*
-		var result = Game.Planets.calcAttackK(attackerPlanet,
-		                                 attackerEngineLevel,
-		                                 spaceEvent,
-		                                 timeCurrent);
-		*/
+		// TODO: Implement time check on server! Or use turf!
 
 		timeAttack = flyTime;
 

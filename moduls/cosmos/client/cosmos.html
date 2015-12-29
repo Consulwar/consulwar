@@ -24,7 +24,11 @@
 		{{#if planet}}
 			<h2>{{planet.name}} ({{planet.type}})</h2>
 			{{#if planet.isHome}}
+				{{#if planet.isColony}}
 				<p>Колония</p>
+				{{else}}
+				<p>Планета консула</p>
+				{{/if}}
 			{{else}}
 				<!--
 				<ul class="resources">
@@ -89,6 +93,17 @@
 			{{#each planet.mission.enemies}}
 			<li>{{this.name}} <span>{{this.count}}</span></li>
 			{{/each}}
+
+			<!-- TODO: Убрать отсюда эту хрень -->
+			<li>-------------------------</li>
+			{{#if time_attack}}
+			<li>Время до цели: <span>{{formatSeconds time_attack}}</span></li>
+			{{/if}}
+			{{#if time_left}}
+			<li>Осталось времени: <span>{{formatSeconds time_left}}</span></li>
+			{{/if}}
+			<!-- TODO: Убрать отсюда эту хрень -->
+
 		</ul>
 		{{/if}}
 
@@ -97,7 +112,11 @@
 		</ul>
 		<a class="btn-add">Дополнительная планета</a>
 		<a class="btn-all">Выбрать всех</a>
+
+		{{#if target.planetId}}
 		<a class="btn-attack defend">Захват и оборона</a>
+		{{/if}}
+
 		<a class="btn-attack return">Уничтожить</a>
 
 		<a class="btn-close"></a>

@@ -132,6 +132,7 @@ var PlanetView = function(map, planet) {
 		};
 		if (planet.isHome || planet.armyId) {
 			info.isHome = true;
+			info.isColony = (planet.isHome) ? false : true;
 		}
 		// TODO: Allow send two times or not?!
 		//if (planet.state == 'IDLE') {
@@ -820,6 +821,48 @@ Game.SpaceEvents.getAll().observeChanges({
 	}
 });
 
+var calcTimeToTarget = function() {
+	var target = Session.get('target');
+	var baseId = Session.get('active_colony_id');
+
+	if (!target) {
+
+		Session.set('time_attack', null);
+		Session.set('time_left', null);
+
+	} else if (target.planetId) {
+
+		var basePlanet = Game.Planets.getOne(baseId);
+		var targetPlanet = Game.Planets.getOne(target.planetId);
+		var engineLevel = Game.Planets.getEngineLevel();
+
+		var timeAttack = Game.Planets.calcFlyTime(basePlanet, targetPlanet, engineLevel);
+		Session.set('time_attack', timeAttack);
+		Session.set('time_left', null);
+
+	} else if (target.eventId) {
+
+		var basePlanet = Game.Planets.getOne(baseId);
+		var targetShip = Game.SpaceEvents.getOne(target.eventId);
+		var engineLevel = Game.Planets.getEngineLevel();
+		var timeCurrent = Session.get('serverTime');
+
+		var result = Game.Planets.calcAttackOptions(basePlanet,
+		                                            engineLevel,
+		                                            targetShip,
+		                                            timeCurrent);
+
+		var timeAttack = (result) ? result.time : null;
+		var timeLeft = targetShip.timeEnd - timeCurrent;
+
+		Session.set('time_attack', timeAttack);
+		Session.set('time_left', timeLeft);
+
+		// TODO: Так можно делать или нет?
+		setTimeout(calcTimeToTarget, 1000);
+	}
+}
+
 var sendFleet = function(isOneway) {
 	var baseId = Session.get('active_colony_id');
 	var basePlanet = Game.Planets.getOne(baseId);
@@ -850,11 +893,11 @@ var sendFleet = function(isOneway) {
 
 	var target = Session.get('target');
 
-	if (target.planetId && target.planetId.length > 0) {
+	if (target.planetId) {
 		// Send to planet
 		Meteor.call('planet.sendFleet', basePlanet._id, target.planetId, units, isOneway);
 
-	} else if (target.eventId && target.eventId.length > 0) {
+	} else if (target.eventId) {
 		// Attack ship
 		var engineLevel = Game.Planets.getEngineLevel();
 		var targetShip = shipViews[ target.eventId ];
@@ -943,6 +986,9 @@ Template.cosmos.helpers({
 	active_colony_id: function() { return Session.get('active_colony_id'); },
 	colonies: function() { return Session.get('colonies'); },
 
+	time_attack: function() { return Session.get('time_attack'); },
+	time_left: function() { return Session.get('time_left'); },
+
 	available_fleet: function() {
 		// TODO: get real info!
 		var fleet = Game.Unit.items.army.fleet;
@@ -974,6 +1020,8 @@ Template.cosmos.events({
 	'click .planets li': function(e) {
 		var id = $(e.currentTarget).attr("data-id");
 		Session.set('active_colony_id', id);
+
+		calcTimeToTarget();
 	},
 
 	'click .btn-close': function(e) {
@@ -987,10 +1035,15 @@ Template.cosmos.events({
 		var colonies = Game.Planets.getColonies();
 		Session.set('colonies', colonies);
 
+		var planetId = $(e.currentTarget).attr("data-planet-id");
+		var eventId = $(e.currentTarget).attr("data-event-id");
+
 		Session.set('target', {
-			planetId: $(e.currentTarget).attr("data-planet-id"),
-			eventId: $(e.currentTarget).attr("data-event-id")
+			planetId: (planetId && planetId.length > 0 ? planetId : null),
+			eventId: (eventId && eventId.length > 0 ? eventId : null)
 		});
+
+		calcTimeToTarget();
 	},
 
 	'click .btn-all': function(e) {

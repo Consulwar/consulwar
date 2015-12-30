@@ -134,13 +134,15 @@
 				{{/if}}
 				{{active_item.characteristics.effect.name}}
 
-				{{#if active_item.characteristics.air}}
+				{{#if eq active_item.characteristics.special 'air'}}
 				*Воздушная единица<br/>
 				{{/if}}
 
-				{{#if eq active_item.characteristics.attackAir false}}
+				{{#each active_item.characteristics.notAttack}}
+				{{#if eq this 'air'}}
 				*Не атакует воздушные цели
 				{{/if}}
+				{{/each}}
 				
 				<span class="damage" {{militaryTooltip active_item.characteristics.effects 'damage'}}>
 					{{#if active_item.characteristics.damage}}

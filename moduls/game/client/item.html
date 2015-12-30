@@ -43,13 +43,15 @@
 			{{/if}}
 			{{item.characteristics.effect.name}}
 
-			{{#if item.characteristics.air}}
+			{{#if eq item.characteristics.special 'air'}}
 				*Воздушная единица<br/>
 			{{/if}}
 
-			{{#if eq item.characteristics.attackAir false}}
+			{{#each item.characteristics.notAttack}}
+			{{#if eq this 'air'}}
 				*Не атакует воздушные цели
 			{{/if}}
+			{{/each}}
 			
 			{{#if item.characteristics.damage}}
 				<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>

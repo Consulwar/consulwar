@@ -319,7 +319,7 @@ var parseArmyToUnits = function(army) {
 }
 
 var fire = function(unit, enemyUnits) {
-
+	// no damage this round
 	if (unit.damage <= 0) return;
 
 	// find targets
@@ -333,22 +333,38 @@ var fire = function(unit, enemyUnits) {
 
 		var enemy = enemyUnits[key];
 
+		// check life
 		if (enemy.life <= 0) continue;
-		// TODO: check group
 
+		// test enemy special group vs unit special group
+		var enemySpecial = enemy.model.characteristics.special;
+		var unitNotAttack = unit.model.characteristics.notAttack;
+
+		if (enemySpecial
+		 && unitNotAttack
+		 && unitNotAttack.length > 0
+		 && unitNotAttack.indexOf(enemySpecial) >= 0
+		) {
+			continue;
+		}
+
+		// save target
 		targets.push(enemy);
 
+		// check if enemy is one of priority targets
 		if (unitPriorTargets) {
 			for (var i = 0; i < unitPriorTargets.length; i++) {
 				if (enemy.side == unitPriorTargets[i].side
 				 && enemy.group == unitPriorTargets[i].group
 				 && enemy.name == unitPriorTargets[i].engName
 				) {
+					// fill array if need
 					for (var j = 0; j < i; j++) {
 						if (priorTargets.length < j + 1) {
 							priorTargets.push(null);
 						}
 					}
+					// save priority target
 					priorTargets[i] = enemy;
 					break;
 				}
@@ -358,6 +374,7 @@ var fire = function(unit, enemyUnits) {
 
 	// attack priority targets
 	if (priorTargets.length > 0) {
+
 		console.log(unit.model.name + ' (' + unit.count + ') атакует приоритетные цели с общим уроном ' + unit.damage);
 
 		var totalDamage = unit.damage;

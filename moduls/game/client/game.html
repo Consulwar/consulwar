@@ -143,8 +143,10 @@
 				{{/if}}
 				
 				<span class="damage" {{militaryTooltip active_item.characteristics.effects 'damage'}}>
-					{{#if active_item.characteristics.damage}}{{#with multiply active_item.characteristics.damage 0.8}}{{formatNumberWithISO this}}{{/with}} —{{/if}} 
-					{{formatNumberWithISO active_item.characteristics.damage}}
+					{{#if active_item.characteristics.damage}}
+					{{formatNumberWithISO active_item.characteristics.damage.min}} —
+					{{formatNumberWithISO active_item.characteristics.damage.max}}
+					{{/if}}
 				</span>
 				<span class="life" {{militaryTooltip active_item.characteristics.effects 'life'}}>{{formatNumberWithISO active_item.characteristics.life}}</span>
 			</div>

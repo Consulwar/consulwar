@@ -437,17 +437,25 @@ var performRound = function(userUnits, enemyUnits, round, damageReduction) {
 	
 	// calculate damage
 	for (var key in userUnits) {
-		var damage = userUnits[key].count * userUnits[key].model.characteristics.damage;
-		damage = _.random( Math.floor(damage * 0.8), damage ); // TODO: Ввести damageMin damageMax!
-		damage = Math.ceil( damage * damageReduction );
-		userUnits[key].damage = damage;
+		if (userUnits[key].model.characteristics.damage) {
+			var min = userUnits[key].model.characteristics.damage.min;
+			var max = userUnits[key].model.characteristics.damage.max;
+			var damage = _.random( min, max ) * damageReduction; 
+			userUnits[key].damage = damage;
+		} else {
+			userUnits[key].damage = 0;
+		}
 	}
 
 	for (var key in enemyUnits) {
-		var damage = enemyUnits[key].count * enemyUnits[key].model.characteristics.damage;
-		damage = _.random( Math.floor(damage * 0.8), damage ); // TODO: Ввести damageMin damageMax!
-		damage = Math.ceil( damage * damageReduction );
-		enemyUnits[key].damage = damage;
+		if (enemyUnits[key].model.characteristics.damage) {
+			var min = enemyUnits[key].model.characteristics.damage.min;
+			var max = enemyUnits[key].model.characteristics.damage.max;
+			var damage = _.random( min, max ) * damageReduction; 
+			enemyUnits[key].damage = damage;
+		} else {
+			enemyUnits[key].damage = 0;
+		}
 	}
 
 	// attack

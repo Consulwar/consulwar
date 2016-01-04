@@ -175,6 +175,7 @@ Game.Unit = {
 				if (canAttack) {
 					var appliedDamage = Math.floor( enemies[key].life * power );
 					enemies[key].life -= appliedDamage;
+					enemies[key].count = Math.ceil( enemies[key].life / enemies[key].model.characteristics.life );
 					message += enemies[key].model.name + ' (-' + appliedDamage + ') ';
 				}
 			}

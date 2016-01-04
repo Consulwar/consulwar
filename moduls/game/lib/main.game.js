@@ -133,7 +133,7 @@ game.Item = function(options) {
 			});
 		}
 
-		this.special = options.special;
+		this.triggers = options.triggers;
 
 		this.menu = game.setToMenu;
 		this.side = game.setToSide;

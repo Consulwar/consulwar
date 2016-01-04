@@ -1,6 +1,6 @@
 initUnitLib = function() {
 
-game.Unit = function(options){
+game.Unit = function(options) {
 	game.Unit.superclass.constructor.apply(this, arguments);
 
 	Game.Unit.items['army'][this.side][this.engName] = this;
@@ -19,7 +19,7 @@ game.Unit = function(options){
 };
 game.extend(game.Unit, game.Item);
 
-game.ReptileUnit = function(options){
+game.ReptileUnit = function(options) {
 	game.ReptileUnit.superclass.constructor.apply(this, arguments);
 
 	Game.Unit.items['reptiles'][this.group][this.engName] = this;
@@ -129,6 +129,51 @@ Game.Unit = {
 			ground: {},
 			heroes: {}
 		}
+	},
+
+	battleEffects: {
+
+		psi: function(unit, friends, enemies, round, options) {
+			// check round
+			if (round != 'before') {
+				return false;
+			}
+			// get effect power
+			var power = 0.1 * options.damageReduction;
+			// count psi enemies
+			var psiCount = 0;
+			for (var key in enemies) {
+				if (enemies[key].model.engName == 'psimans'
+				 || enemies[key].model.engName == 'horror'
+				) {
+					psiCount += enemies[key].startCount;
+				}
+			}
+			// if psi equal, idle
+			if (psiCount == unit.startCount) {
+				return unit.model.name + ' ничего не может сделать';
+			}
+			// apply effect
+			var message = unit.model.name + ' атакует ';
+			for (var key in enemies) {
+				var canAttack = true;
+				// if our psi count lower, attack only psi units
+				if (psiCount > unit.startCount
+				 && enemies[key].model.engName != 'psimans'
+				 && enemies[key].model.engName != 'horror'
+				) {
+					canAttack = false;
+				}
+				// attack
+				if (canAttack) {
+					var appliedDamage = Math.floor( enemies[key].life * power );
+					enemies[key].life -= appliedDamage;
+					message += enemies[key].model.name + ' (-' + appliedDamage + ') ';
+				}
+			}
+			return message;
+		}
+
 	}
 }
 
@@ -200,7 +245,7 @@ Game.Unit.testBattle = function() {
 			ground: {
 				fathers: 1,
 				horizontalbarman: 1,
-				psimans: 1,
+				psimans: 2,
 				agmogedcar: 1,
 				easytank: 1,
 				mothertank: 1,
@@ -306,6 +351,7 @@ var parseArmyToUnits = function(army) {
 					group: group,
 					name: name,
 					model: model,
+					startCount: count,
 					// vars
 					count: count,
 					life: count * model.characteristics.life
@@ -446,18 +492,45 @@ var fire = function(unit, enemyUnits) {
 	}
 }
 
-var performRound = function(userUnits, enemyUnits, round, damageReduction) {
+var applyBattleEffects = function(userUnits, enemyUnits, round, options) {
+
+	var applyEffect = function(unit, friends, enemies) {
+		if (unit
+		 &&	unit.model
+		 && unit.model.triggers
+		 && unit.model.triggers.battle
+		) {
+			var effects = unit.model.triggers.battle;
+			for (var i = 0; i < effects.length; i++) {
+				var result = effects[i].applyEffect(unit, friends, enemies, round, options);
+				if (result && result.length > 0) {
+					console.log(result);
+				}
+			}
+		}
+	}
+
+	for (var key in userUnits) {
+		applyEffect( userUnits[key], userUnits, enemyUnits );
+	}
+
+	for (var key in enemyUnits) {
+		applyEffect( enemyUnits[key], enemyUnits, userUnits );
+	}
+}
+
+var performRound = function(userUnits, enemyUnits, round, options) {
 
 	console.log('----------------------');
 	console.log('Раунд ' + round);
 	console.log('----------------------');
-	
+
 	// calculate damage
 	for (var key in userUnits) {
 		if (userUnits[key].model.characteristics.damage) {
 			var min = userUnits[key].model.characteristics.damage.min;
 			var max = userUnits[key].model.characteristics.damage.max;
-			var damage = _.random( min, max ) * damageReduction; 
+			var damage = _.random( min, max ) * options.damageReduction; 
 			userUnits[key].damage = damage;
 		} else {
 			userUnits[key].damage = 0;
@@ -468,7 +541,7 @@ var performRound = function(userUnits, enemyUnits, round, damageReduction) {
 		if (enemyUnits[key].model.characteristics.damage) {
 			var min = enemyUnits[key].model.characteristics.damage.min;
 			var max = enemyUnits[key].model.characteristics.damage.max;
-			var damage = _.random( min, max ) * damageReduction; 
+			var damage = _.random( min, max ) * options.damageReduction; 
 			enemyUnits[key].damage = damage;
 		} else {
 			enemyUnits[key].damage = 0;
@@ -542,6 +615,11 @@ Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	}
 	damageReduction = 1 - damageReduction / 100
 
+	var options = {
+		rouns: rounds,
+		damageReduction: damageReduction
+	}
+
 	// parse user army
 	var userUnits = parseArmyToUnits( userArmy );
 
@@ -554,11 +632,17 @@ Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 
 	while (!isFinished) {
 
-		performRound(userUnits, enemyUnits, round, damageReduction);
+		if (round <= 1) {
+			applyBattleEffects(userUnits, enemyUnits, 'before', options);
+		}
+
+		performRound(userUnits, enemyUnits, round, options);
 
 		if (hasAlive(userUnits) && hasAlive(enemyUnits) && round < rounds) {
+			applyBattleEffects(userUnits, enemyUnits, round, options);
 			round++;
 		} else {
+			applyBattleEffects(userUnits, enemyUnits, 'after', options);
 			isFinished = true;
 		}
 	}

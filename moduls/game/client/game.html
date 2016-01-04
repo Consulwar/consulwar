@@ -132,7 +132,9 @@
 					{{/each}}
 				</ul>
 				{{/if}}
-				{{active_item.characteristics.effect.name}}
+				{{#each item.triggers.battle}}
+				{{this.name}}
+				{{/each}}
 
 				{{#if eq active_item.characteristics.special 'air'}}
 				*Воздушная единица<br/>

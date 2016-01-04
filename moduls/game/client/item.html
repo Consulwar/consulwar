@@ -41,7 +41,9 @@
 					{{/each}}
 				</ol>
 			{{/if}}
-			{{item.characteristics.effect.name}}
+			{{#each item.triggers.battle}}
+			{{this.name}}
+			{{/each}}
 
 			{{#if eq item.characteristics.special 'air'}}
 				*Воздушная единица<br/>

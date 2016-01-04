@@ -390,7 +390,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 	var applyEffect = function(unit, friends, enemies, round, options) {
 		if (unit
-		 &&	unit.model
+		 && unit.model
 		 && unit.model.triggers
 		 && unit.model.triggers.battle
 		) {

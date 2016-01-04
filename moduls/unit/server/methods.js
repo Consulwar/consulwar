@@ -79,7 +79,6 @@ Meteor.methods({
 			throw new Meteor.Error('Не достаточно ресурсов');
 		}
 	}
-
 })
 
 }

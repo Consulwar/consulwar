@@ -78,11 +78,6 @@ Meteor.methods({
 		} else {
 			throw new Meteor.Error('Не достаточно ресурсов');
 		}
-	},
-
-	'unit.performBattle': function(userArmy, enemyArmy, options) {
-		var result = Game.Unit.performBattle(userArmy, enemyArmy, options);
-		return result.log;
 	}
 
 })

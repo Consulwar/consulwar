@@ -15,6 +15,8 @@ initRouterClient();
 
 initMenuClient();
 
+initCheatsClient();
+
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",
 	assetsUrl: "//d1culzimi74ed4.cloudfront.net/",

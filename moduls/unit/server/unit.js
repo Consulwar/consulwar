@@ -500,13 +500,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 	this.constructor = function(userArmy, enemyArmy, options) {
 
 		// parse options
-		var rounds = (options && options.rounds) ? options.rounds : 4;
+		var rounds = (options && options.rounds) ? options.rounds : 3;
 
 		var damageReduction = (options && options.damageReduction) ? options.damageReduction : 0;
 		if (damageReduction < 0) {
 			damageReduction = 0;
-		} else if (damageReduction > 99) {
-			damageReduction = 99;
+		} else if (damageReduction >= 100) {
+			damageReduction = 99.99;
 		}
 		damageReduction = 1 - (damageReduction / 100);
 

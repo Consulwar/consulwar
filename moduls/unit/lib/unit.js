@@ -139,7 +139,14 @@ Game.Unit = {
 				return false;
 			}
 			// get effect power
-			var power = 0.1 * options.damageReduction;
+			var power = 0;
+			var psieffect = Game.Mutual.get('research', 'psieffect');
+			if (psieffect <= 0) {
+				power = ( 1 + Math.round( Math.random() * 4 ) ) / 100;
+			} else {
+				power = ( 6 + Math.round( Math.random() * 4 ) ) / 100;
+			}
+			power *= options.damageReduction;
 			// count psi enemies
 			var psiCount = 0;
 			for (var key in enemies) {

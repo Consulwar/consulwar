@@ -24,6 +24,8 @@ Meteor.startup(function () {
 	initMailServer();
 
 	initQuestServer();
+
+	initCheatsServer();
 });
 
 Meteor.methods({

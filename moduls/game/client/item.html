@@ -41,20 +41,24 @@
 					{{/each}}
 				</ol>
 			{{/if}}
-			{{item.characteristics.effect.name}}
+			{{#each item.triggers.battle}}
+			{{this.name}}
+			{{/each}}
 
-			{{#if item.characteristics.air}}
+			{{#if eq item.characteristics.special 'air'}}
 				*Воздушная единица<br/>
 			{{/if}}
 
-			{{#if eq item.characteristics.attackAir false}}
+			{{#each item.characteristics.notAttack}}
+			{{#if eq this 'air'}}
 				*Не атакует воздушные цели
 			{{/if}}
+			{{/each}}
 			
 			{{#if item.characteristics.damage}}
 				<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
-						{{formatNumberWithISO (multiply item.characteristics.damage 0.8)}} —
-						{{formatNumberWithISO item.characteristics.damage}}
+					{{formatNumberWithISO item.characteristics.damage.min}} —
+					{{formatNumberWithISO item.characteristics.damage.max}}
 				</span>
 			{{/if}} 
 			<span class="life" {{militaryTooltip item.characteristics.effects 'life'}}>

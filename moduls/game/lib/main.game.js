@@ -133,7 +133,7 @@ game.Item = function(options) {
 			});
 		}
 
-		this.special = options.special;
+		this.triggers = options.triggers;
 
 		this.menu = game.setToMenu;
 		this.side = game.setToSide;
@@ -593,9 +593,19 @@ Game.Effect.applyTo = function(target, obj, hideEffects) {
 
 			if (obj[item]) {
 				if (priority % 2 == 1) {
-					obj[item] += effect * (this.reduce ? -1 : 1);
+					if (item == 'damage') { // TODO: Refactoring!
+						obj[item].min += effect * (this.reduce ? -1 : 1);
+						obj[item].max += effect * (this.reduce ? -1 : 1);
+					} else {
+						obj[item] += effect * (this.reduce ? -1 : 1);
+					}
 				} else {
-					obj[item] = obj[item] + Math.floor(obj[item] * (0.01 * effect)) * (this.reduce ? -1 : 1);
+					if (item == 'damage') { // TODO: Refactoring!
+						obj[item].min = obj[item].min + Math.floor(obj[item].min * (0.01 * effect)) * (this.reduce ? -1 : 1);
+						obj[item].max = obj[item].max + Math.floor(obj[item].max * (0.01 * effect)) * (this.reduce ? -1 : 1);
+					} else {
+						obj[item] = obj[item] + Math.floor(obj[item] * (0.01 * effect)) * (this.reduce ? -1 : 1);
+					}
 				}
 			}
 		}

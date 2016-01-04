@@ -1,6 +1,6 @@
 initUnitLib = function() {
 
-game.Unit = function(options){
+game.Unit = function(options) {
 	game.Unit.superclass.constructor.apply(this, arguments);
 
 	Game.Unit.items['army'][this.side][this.engName] = this;
@@ -19,7 +19,7 @@ game.Unit = function(options){
 };
 game.extend(game.Unit, game.Item);
 
-game.ReptileUnit = function(options){
+game.ReptileUnit = function(options) {
 	game.ReptileUnit.superclass.constructor.apply(this, arguments);
 
 	Game.Unit.items['reptiles'][this.group][this.engName] = this;
@@ -88,10 +88,20 @@ game.Hero = function(options){
 game.extend(game.Hero, game.MutualItem)
 */
 Game.Unit = {
+
+	location: {
+		HOME: 1,
+		PLANET: 2,
+		SHIP: 3
+	},
+
 	Collection: new Meteor.Collection('units'),
 
 	getValue: function() {
-		return Game.Unit.Collection.findOne({user_id: Meteor.userId()});
+		return Game.Unit.Collection.findOne({
+			user_id: Meteor.userId(),
+			location: Game.Unit.location.HOME
+		});
 	},
 
 	get: function(group, name) {
@@ -119,10 +129,64 @@ Game.Unit = {
 			ground: {},
 			heroes: {}
 		}
+	},
+
+	battleEffects: {
+
+		psi: function(unit, friends, enemies, round, options) {
+			// check round
+			if (round != 'before') {
+				return false;
+			}
+			// get effect power
+			var power = 0;
+			var psieffect = Game.Mutual.get('research', 'psieffect');
+			if (psieffect <= 0) {
+				power = _.random(1, 5) / 100;
+			} else {
+				power = _.random(6, 10) / 100;
+			}
+			power *= options.damageReduction;
+			// count psi enemies
+			var psiCount = 0;
+			for (var key in enemies) {
+				if (enemies[key].model.engName == 'psimans'
+				 || enemies[key].model.engName == 'horror'
+				) {
+					psiCount += enemies[key].startCount;
+				}
+			}
+			// if psi equal, idle
+			if (psiCount == unit.startCount) {
+				return unit.model.name + ' ничего не может сделать';
+			}
+			// apply effect
+			var message = unit.model.name + ' атакует ';
+			for (var key in enemies) {
+				var canAttack = true;
+				// if our psi count lower, attack only psi units
+				if (psiCount > unit.startCount
+				 && enemies[key].model.engName != 'psimans'
+				 && enemies[key].model.engName != 'horror'
+				) {
+					canAttack = false;
+				}
+				// attack
+				if (canAttack) {
+					var appliedDamage = Math.floor( enemies[key].life * power );
+					enemies[key].life -= appliedDamage;
+					enemies[key].count = Math.ceil( enemies[key].life / enemies[key].model.characteristics.life );
+					message += enemies[key].model.name + ' (-' + appliedDamage + ') ';
+				}
+			}
+			return message;
+		}
+
 	}
 }
 
 initUnitsContent();
+
 /*
 for (var category in Game.Unit.items.army) {
 	for (var name in Game.Unit.items.army[category]) {
@@ -156,4 +220,5 @@ for (var category in Game.Unit.items.reptiles) {
 	}
 }
 */
+
 }

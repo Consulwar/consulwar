@@ -37,24 +37,20 @@
 				</ul>
 				-->
 				{{#if planet.mission}}
-					<div class="map-planet-info-mission">
-						<p>Рептилоиды</p>
-						<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
-						<p><span>Статус: </span>{{planet.mission.name}}</p>
-						<ul>
-							{{#each planet.mission.enemies}}
-							<li>{{this.name}} <span>{{this.count}}</span></li>
-							{{/each}}
-						</ul>
-					</div>
-					{{#if planet.canSend}}
-						<a class="button-attack open" data-planet-id="{{planet.id}}" data-event-id="{{planet.event_id}}">В АТАКУ</a>
-					{{/if}}
-				{{else}}
-					{{#if planet.canSend}}
-						<a class="button-attack open" data-planet-id="{{planet.id}}" data-event-id="{{planet.event_id}}">ИССЛЕДОВАТЬ</a>
-					{{/if}}
+				<div class="map-planet-info-mission">
+					<p>Рептилоиды</p>
+					<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
+					<p><span>Статус: </span>{{planet.mission.name}}</p>
+					<ul>
+						{{#each planet.mission.enemies}}
+						<li>{{this.name}} <span>{{this.count}}</span></li>
+						{{/each}}
+					</ul>
+				</div>
 				{{/if}}
+			{{/if}}
+			{{#if planet.canSend}}
+				<a class="button-attack open" data-planet-id="{{planet.id}}" data-event-id="{{planet.event_id}}">ОТПРАВИТЬ</a>
 			{{/if}}
 		{{else}}
 		<h2>Нет информации</h2>
@@ -114,10 +110,15 @@
 		<a class="btn-all">Выбрать всех</a>
 
 		{{#if target.planetId}}
+		{{#if planet.isHome}}
+		<a class="btn-attack defend">Отправить</a>
+		{{else}}
 		<a class="btn-attack defend">Захват и оборона</a>
+		<a class="btn-attack return">{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}</a>
 		{{/if}}
-
-		<a class="btn-attack return">Уничтожить</a>
+		{{else}}
+		<a class="btn-attack return">Перехватить</a>
+		{{/if}}
 
 		<a class="btn-close"></a>
 	</div>

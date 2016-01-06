@@ -130,14 +130,22 @@ var PlanetView = function(map, planet) {
 			metals: 100500,
 			crystals: 100542
 		};
+
 		if (planet.isHome || planet.armyId) {
 			info.isHome = true;
 			info.isColony = (planet.isHome) ? false : true;
 		}
-		// TODO: Allow send two times or not?!
-		//if (planet.state == 'IDLE') {
+		
+		if (planet.isHome || planet.armyId) {
+			if (Game.Planets.getColonies().length <= 1) {
+				info.canSend = false;
+			} else {
+				info.canSend = true;
+			}
+		} else {
 			info.canSend = true;
-		//}
+		}
+		
 		if (planet.mission) {
 			var config = Game.Battle.items[planet.mission.type];
 			info.mission = {
@@ -765,6 +773,14 @@ var updatePlanet = function(id) {
 	}
 }
 
+var updatePlanets = function() {
+	if (planetViews) {
+		for (var id in planetViews) {
+			planetViews[ id ].update();
+		}
+	}
+}
+
 Game.Planets.getAll().observeChanges({
 	added: function(id, planet) {
 		planet._id = id;
@@ -775,7 +791,8 @@ Game.Planets.getAll().observeChanges({
 
 	changed: function(id, planet) {
 		if (mapView) {
-			updatePlanet(id);
+			updatePlanets();
+			// updatePlanet(id);
 		}
 	}
 });
@@ -783,7 +800,9 @@ Game.Planets.getAll().observeChanges({
 var createSpaceEvent = function(event) {
 	switch (event.type) {
 		case Game.SpaceEvents.EVENT_SHIP:
-			if (!shipViews) shipViews = {};
+			if (!shipViews) {
+				shipViews = {};
+			}
 			shipViews[ event._id ] = new ShipView(mapView, event);
 			break;
 	}
@@ -979,6 +998,7 @@ Template.cosmos.onDestroyed(function() {
 });
 
 Template.cosmos.helpers({
+
 	planet: function() { return Session.get('planet'); },
 	drop: function() { return Session.get('drop'); },
 	target: function() { return Session.get('target'); },
@@ -1003,6 +1023,7 @@ Template.cosmos.helpers({
 
 		return result;
 	}
+
 });
 
 Template.cosmos.events({
@@ -1024,21 +1045,31 @@ Template.cosmos.events({
 			return;
 		}
 
-		var homePlanet = Game.Planets.getBase();
-		Session.set('active_colony_id', homePlanet._id);
-
-		var colonies = Game.Planets.getColonies();
-		Session.set('colonies', colonies);
-
 		var planetId = $(e.currentTarget).attr("data-planet-id");
 		var eventId = $(e.currentTarget).attr("data-event-id");
+		var colonies = Game.Planets.getColonies();
 
-		Session.set('target', {
-			planetId: (planetId && planetId.length > 0 ? planetId : null),
-			eventId: (eventId && eventId.length > 0 ? eventId : null)
-		});
+		// delete selected planet from colonies
+		if (planetId) {
+			var n = colonies.length;
+			while (n-- > 0) {
+				if (colonies[n]._id == planetId) {
+					colonies.splice(n, 1);
+				}
+			}
+		}
 
-		calcTimeToTarget();
+		if (colonies.length > 0) {
+			Session.set('active_colony_id', colonies[0]._id);
+			Session.set('colonies', colonies);
+
+			Session.set('target', {
+				planetId: (planetId && planetId.length > 0 ? planetId : null),
+				eventId: (eventId && eventId.length > 0 ? eventId : null)
+			});
+
+			calcTimeToTarget();
+		}
 	},
 
 	'click .btn-close': function(e) {

@@ -39,32 +39,68 @@ Game.SpaceEvents.updateEvent = function(event) {
 // Ship events
 // ----------------------------------------------------------------------------
 
-Game.SpaceEvents.sendShip = function(startPosition,
-                                     startPlanetId,
-                                     targetPosition,
-                                     targetType,
-                                     targetId,
-                                     startTime,
-                                     flyTime,
-                                     isHumans,
-                                     engineLevel,
-                                     mission,
-                                     isColony
-) {
+Game.SpaceEvents.sendShip = function(options) {
+	// mandatory options
+	if (options.startPosition === undefined) {
+		throw new Meteor.Error('Не задана точка старта полета');
+	}
+
+	if (options.targetPosition === undefined) {
+		throw new Meteor.Error('Не задана точка финиша полета');
+	}
+
+	if (options.targetType === undefined) {
+		throw new Meteor.Error('Не задан тип цели');
+	}
+
+	if (options.targetId === undefined) {
+		throw new Meteor.Error('Не задан id цели');
+	}
+
+	if (options.startTime === undefined) {
+		throw new Meteor.Error('Не задано время старта полета');
+	}
+
+	if (options.flyTime === undefined) {
+		throw new Meteor.Error('Не задана продолжительность полета');
+	}
+
+	if (options.engineLevel === undefined) {
+		throw new Meteor.Error('Не задан уровень двигателей');
+	}
+
+	// not required options
+	if (options.startPlanetId === undefined) {
+		options.startPlanetId = null;
+	}
+
+	if (options.mission === undefined) { 
+		options.mission = null;
+	}
+
+	if (options.isColony === undefined) {
+		options.isColony = false;
+	}
+
+	if (options.isHumans === undefined) {
+		options.isHumans = false;
+	}
+
+	// insert event
 	Game.SpaceEvents.add({
 		type: Game.SpaceEvents.EVENT_SHIP,
-		timeStart: startTime,
-		timeEnd: startTime + flyTime,
+		timeStart: options.startTime,
+		timeEnd: options.startTime + options.flyTime,
 		info: {
-			isHumans: isHumans,
-			isColony: isColony,
-			engineLevel: engineLevel,
-			startPosition: startPosition,
-			startPlanetId: startPlanetId,
-			targetPosition: targetPosition,
-			targetType: targetType,
-			targetId: targetId,
-			mission: mission
+			isHumans: options.isHumans,
+			isColony: options.isColony,
+			engineLevel: options.engineLevel,
+			startPosition: options.startPosition,
+			startPlanetId: options.startPlanetId,
+			targetPosition: options.targetPosition,
+			targetType: options.targetType,
+			targetId: options.targetId,
+			mission: options.mission
 		}
 	});
 }
@@ -115,17 +151,21 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				var targetPosition = event.info.startPosition;
 				var engineLevel = event.info.engineLevel;
 
-				Game.SpaceEvents.sendShip(startPosition,
-				                          null,
-				                          targetPosition,
-				                          Game.SpaceEvents.TARGET_PLANET,
-				                          event.info.startPlanetId,
-				                          event.timeEnd,
-				                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-				                          true,
-				                          engineLevel,
-				                          null,
-				                          false);
+				var shipOptions = {
+					startPosition:  startPosition,
+					startPlanetId:  null,
+					targetPosition: targetPosition,
+					targetType:     Game.SpaceEvents.TARGET_PLANET,
+					targetId:       event.info.startPlanetId,
+					startTime:      event.timeEnd,
+					flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+					isHumans:       true,
+					engineLevel:    engineLevel,
+					mission:        null,
+					isColony:       false
+				}
+
+				Game.SpaceEvents.sendShip(shipOptions);
 			}
 
 		} else {
@@ -150,18 +190,21 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		var targetPosition = event.info.startPosition;
 		var engineLevel = event.info.engineLevel;
 
-		Game.SpaceEvents.sendShip(startPosition,
-		                          null,
-		                          targetPosition,
-		                          Game.SpaceEvents.TARGET_PLANET,
-		                          event.info.startPlanetId,
-		                          serverTime,
-		                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-		                          event.info.isHumans,
-		                          engineLevel,
-		                          null,
-		                          true,
-		                          false);
+		var shipOptions = {
+			startPosition:  startPosition,
+			startPlanetId:  null,
+			targetPosition: targetPosition,
+			targetType:     Game.SpaceEvents.TARGET_PLANET,
+			targetId:       event.info.startPlanetId,
+			startTime:      event.timeEnd,
+			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+			isHumans:       event.info.isHumans,
+			engineLevel:    engineLevel,
+			mission:        true,
+			isColony:       false
+		}
+
+		Game.SpaceEvents.sendShip(shipOptions);
 	}
 }
 
@@ -234,17 +277,21 @@ Meteor.methods({
 			Game.Planets.update(basePlanet);	
 		}
 
-		Game.SpaceEvents.sendShip(startPosition,
-		                          basePlanet._id,
-		                          targetPosition,
-		                          Game.SpaceEvents.TARGET_SHIP,
-		                          enemyShip._id,
-		                          timeCurrent,
-		                          timeAttack,
-		                          true,
-		                          engineLevel,
-		                          null,
-		                          false);
+		var shipOptions = {
+			startPosition:  startPosition,
+			startPlanetId:  basePlanet._id,
+			targetPosition: targetPosition,
+			targetType:     Game.SpaceEvents.TARGET_SHIP,
+			targetId:       enemyShip._id,
+			startTime:      timeCurrent,
+			flyTime:        timeAttack,
+			isHumans:       true,
+			engineLevel:    engineLevel,
+			mission:        null,
+			isColony:       false
+		}
+
+		Game.SpaceEvents.sendShip(shipOptions);
 	},
 
 	'spaceEvents.attackPlayerFleet': function(id, targetX, targetY) {
@@ -287,17 +334,21 @@ Meteor.methods({
 
 			var engineLevel = Game.Planets.getEngineLevel();
 
-			Game.SpaceEvents.sendShip(startPosition,
-			                          startPlanet._id,
-			                          targetPosition,
-			                          Game.SpaceEvents.TARGET_PLANET,
-			                          targetPlanet._id,
-			                          timeCurrent,
-			                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-			                          false,
-			                          engineLevel,
-			                          null,
-			                          false);
+			var shipOptions = {
+				startPosition:  startPosition,
+				startPlanetId:  startPlanet._id,
+				targetPosition: targetPosition,
+				targetType:     Game.SpaceEvents.TARGET_PLANET,
+				targetId:       targetPlanet._id,
+				startTime:      timeCurrent,
+				flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+				isHumans:       false,
+				engineLevel:    engineLevel,
+				mission:        null,
+				isColony:       false
+			}
+
+			Game.SpaceEvents.sendShip(shipOptions);
 		}
 	},
 
@@ -341,17 +392,21 @@ Meteor.methods({
 			var engineLevel = 0;
 			var flyTime = Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel);
 
-			Game.SpaceEvents.sendShip(startPosition,
-			                          startPlanet._id,
-			                          targetPosition,
-			                          Game.SpaceEvents.TARGET_PLANET,
-			                          targetPlanet._id,
-			                          timeCurrent,
-			                          flyTime,
-			                          false,
-			                          engineLevel,
-			                          null,
-			                          false);
+			var shipOptions = {
+				startPosition:  startPosition,
+				startPlanetId:  startPlanet._id,
+				targetPosition: targetPosition,
+				targetType:     Game.SpaceEvents.TARGET_PLANET,
+				targetId:       targetPlanet._id,
+				startTime:      timeCurrent,
+				flyTime:        flyTime,
+				isHumans:       false,
+				engineLevel:    engineLevel,
+				mission:        null,
+				isColony:       false
+			}
+
+			Game.SpaceEvents.sendShip(shipOptions);
 		}
 	}
 

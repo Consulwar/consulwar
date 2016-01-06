@@ -493,17 +493,21 @@ Meteor.methods({
 
 		var engineLevel = Game.Planets.getEngineLevel();
 
-		Game.SpaceEvents.sendShip(startPosition,
-		                          (isOneway ? null : basePlanet._id),
-		                          targetPosition,
-		                          Game.SpaceEvents.TARGET_PLANET,
-		                          targetPlanet._id,
-		                          getServerTime(),
-		                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-		                          true,
-		                          engineLevel,
-		                          null,
-		                          isColony);
+		var shipOptions = {
+			startPosition:  startPosition,
+			startPlanetId:  (isOneway ? null : basePlanet._id),
+			targetPosition: targetPosition,
+			targetType:     Game.SpaceEvents.TARGET_PLANET,
+			targetId:       targetPlanet._id,
+			startTime:      getServerTime(),
+			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+			isHumans:       true,
+			engineLevel:    engineLevel,
+			mission:        null,
+			isColony:       isColony
+		}
+
+		Game.SpaceEvents.sendShip(shipOptions);
 	},
 
 	'planet.updateAll': function() {

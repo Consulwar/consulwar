@@ -76,4 +76,15 @@ Game.Cheats.testBattle = Game.Unit.testBattle = function() {
 	});
 }
 
+Game.Cheats.testMissionGenerate = function(hand, segment) {
+	var planet = {
+		segment: segment,
+		hand: hand
+	}
+
+	Meteor.call('cheats.testMissionGenerate', planet, function (err, data) {
+		console.log(data);
+	});
+}
+
 }

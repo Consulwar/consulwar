@@ -1006,6 +1006,7 @@ Template.cosmos.helpers({
 });
 
 Template.cosmos.events({
+
 	'click .map-control-home': function(e) {
 		if (mapView) {
 			var homePlanet = Game.Planets.getBase();
@@ -1017,18 +1018,12 @@ Template.cosmos.events({
 		}
 	},
 
-	'click .planets li': function(e) {
-		var id = $(e.currentTarget).attr("data-id");
-		Session.set('active_colony_id', id);
-
-		calcTimeToTarget();
-	},
-
-	'click .btn-close': function(e) {
-		Session.set('target', null);
-	},
-
 	'click .open': function(e) {
+		if (!Game.SpaceEvents.checkCanSendFleet()) {
+			Notifications.info('Слишком много флотов уже отправлено');
+			return;
+		}
+
 		var homePlanet = Game.Planets.getBase();
 		Session.set('active_colony_id', homePlanet._id);
 
@@ -1042,6 +1037,17 @@ Template.cosmos.events({
 			planetId: (planetId && planetId.length > 0 ? planetId : null),
 			eventId: (eventId && eventId.length > 0 ? eventId : null)
 		});
+
+		calcTimeToTarget();
+	},
+
+	'click .btn-close': function(e) {
+		Session.set('target', null);
+	},
+
+	'click .planets li': function(e) {
+		var id = $(e.currentTarget).attr("data-id");
+		Session.set('active_colony_id', id);
 
 		calcTimeToTarget();
 	},

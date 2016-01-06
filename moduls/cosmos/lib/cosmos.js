@@ -444,6 +444,25 @@ Game.SpaceEvents = {
 			user_id: Meteor.userId(),
 			_id: id
 		});
+	},
+
+	getCurrentFleetsCount: function() {
+		return Game.SpaceEvents.Collection.find({
+			user_id: Meteor.userId(),
+			type: Game.SpaceEvents.EVENT_SHIP
+		}).count();
+	},
+	
+	getMaxFleetsCount: function() {
+		var colonies = Game.Planets.getColonies();
+		return colonies.length * 2;
+	},
+
+	checkCanSendFleet: function() {
+		if (Game.SpaceEvents.getCurrentFleetsCount() < Game.SpaceEvents.getMaxFleetsCount()) {
+			return true;
+		}
+		return false;
 	}
 }
 

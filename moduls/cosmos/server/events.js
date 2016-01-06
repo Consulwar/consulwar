@@ -186,6 +186,10 @@ Meteor.methods({
 	},
 
 	'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY, flyTime) {
+		if (!Game.SpaceEvents.checkCanSendFleet()) {
+			throw new Meteor.Error('Слишком много флотов уже отправлено');
+		}
+
 		var basePlanet = Game.Planets.getOne(baseId);
 		if (!basePlanet) {
 			return; // no such planet

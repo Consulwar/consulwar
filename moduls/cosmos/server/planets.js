@@ -366,6 +366,10 @@ Meteor.methods({
 	},
 
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {
+		if (!Game.SpaceEvents.checkCanSendFleet()) {
+			throw new Meteor.Error('Слишком много флотов уже отправлено');
+		}
+
 		if (baseId == targetId) {
 			return;
 		}

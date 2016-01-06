@@ -77,18 +77,72 @@ Game.Planets.generateName = function() {
 }
 
 Game.Planets.generateMission = function(planet) {
-
-	// TODO: Переделать эту херь!
-	var types = [];
-	if (planet) {
-		types = ['patrolfleet', 'defencefleet', 'battlefleet'];
-	} else {
-		types = ['tradefleet'];
+	// check planets
+	if (!planet) {
+		return;
 	}
 
+	var basePlanet = Game.Planets.getBase();
+	if (!basePlanet) {
+		return;
+	}
+
+	// TODO: Maybe move to lib?
+	var missions = [{
+		types: ['patrolfleet'],
+		levels: [1]
+	}, {
+		types: ['patrolfleet', 'battlefleet'],
+		levels: [1, 2]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [1, 2, 3]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [2, 3, 4]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [3, 4, 5]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [4, 5, 6]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [5, 6, 7]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [6, 7, 8]
+	}, {
+		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
+		levels: [7, 8, 9]
+	}, {
+		types: ['patrolfleet', 'defencefleet', 'battlefleet'],
+		levels: [10]
+	}];
+
+	// get mission config by distance from home planet or center
+	var distCurrent = planet.segment;
+	var distTotal = basePlanet.galactic.segments;
+
+	if (planet.hand == basePlanet.hand) {
+		if (planet.segment > basePlanet.segment) {
+			distTotal = basePlanet.segment;
+			distCurrent = planet.segment - basePlanet.segment;
+		} else if (planet.segment < basePlanet.segment) {
+			distTotal = basePlanet.segment;
+			distCurrent = basePlanet.segment - planet.segment;
+		} else {
+			distCurrent = 0;
+			distTotal = 1;
+		}
+	}
+
+	var index = Math.round( distCurrent / distTotal * (missions.length - 1) );
+	var mission = missions[ index ];
+
 	return {
-		level: Math.round( Math.random() * 9 + 1 ),
-		type: types[ Math.round( Math.random() * (types.length - 1) ) ]
+		level: mission.levels[ _.random(0, mission.levels.length - 1) ],
+		type: mission.types[ _.random(0, mission.types.length - 1) ]
 	};
 }
 

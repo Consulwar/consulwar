@@ -88,41 +88,59 @@ Game.Planets.generateMission = function(planet) {
 	}
 
 	// TODO: Maybe move to lib?
-	var missions = [{
-		types: ['patrolfleet'],
-		levels: [1]
-	}, {
-		types: ['patrolfleet', 'battlefleet'],
-		levels: [1, 2]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [1, 2, 3]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [2, 3, 4]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [3, 4, 5]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [4, 5, 6]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [5, 6, 7]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [6, 7, 8]
-	}, {
-		types: ['patrolfleet', 'battlefleet', 'defencefleet'],
-		levels: [7, 8, 9]
-	}, {
-		types: ['patrolfleet', 'defencefleet', 'battlefleet'],
-		levels: [10]
-	}];
+	var missions = [
+		[
+			{ type: 'patrolfleet', levels: [1] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [2] },
+			{ type: 'defencefleet', levels: [1] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [3] },
+			{ type: 'defencefleet', levels: [2] },
+			{ type: 'battlefleet', levels: [1] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [4, 5, 6] },
+			{ type: 'defencefleet', levels: [3, 4, 5] },
+			{ type: 'battlefleet', levels: [2, 3, 4] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [5, 6, 7] },
+			{ type: 'defencefleet', levels: [4, 5, 6] },
+			{ type: 'battlefleet', levels: [3, 4, 5] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [6, 7, 8] },
+			{ type: 'defencefleet', levels: [5, 6, 7] },
+			{ type: 'battlefleet', levels: [4, 5, 6] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [8, 9, 10] },
+			{ type: 'defencefleet', levels: [6, 7, 8] },
+			{ type: 'battlefleet', levels: [5, 6, 7] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [9, 10] },
+			{ type: 'defencefleet', levels: [7, 8, 9] },
+			{ type: 'battlefleet', levels: [6, 7, 8] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [10] },
+			{ type: 'defencefleet', levels: [8, 9, 10] },
+			{ type: 'battlefleet', levels: [7, 8, 9] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [10] },
+			{ type: 'defencefleet', levels: [10] },
+			{ type: 'battlefleet', levels: [10] }
+		]
+	];
 
 	// get mission config by distance from home planet or center
-	var distCurrent = planet.segment;
 	var distTotal = basePlanet.galactic.segments;
+	var distCurrent = distTotal - planet.segment;
 
 	if (planet.hand == basePlanet.hand) {
 		if (planet.segment > basePlanet.segment) {
@@ -137,12 +155,17 @@ Game.Planets.generateMission = function(planet) {
 		}
 	}
 
+	if (distCurrent < 0) {
+		distCurrent = 0;
+	}
+
 	var index = Math.round( distCurrent / distTotal * (missions.length - 1) );
-	var mission = missions[ index ];
+	var list = missions[ index ];
+	var mission = list[ _.random(0, list.length - 1) ];
 
 	return {
-		level: mission.levels[ _.random(0, mission.levels.length - 1) ],
-		type: mission.types[ _.random(0, mission.types.length - 1) ]
+		type: mission.type,
+		level: mission.levels[ _.random(0, mission.levels.length - 1) ]
 	};
 }
 

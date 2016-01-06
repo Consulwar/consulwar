@@ -1022,6 +1022,10 @@ Template.cosmos.helpers({
 		}
 
 		return result;
+	},
+
+	can_have_more_colonies: function() {
+		return Game.Planets.checkCanHaveMoreColonies();
 	}
 
 });

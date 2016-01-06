@@ -1,6 +1,5 @@
 initCosmosLib = function() {
 
-
 var calcDistance = function(start, end) {
 	return Math.sqrt( Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2) );
 }
@@ -8,7 +7,6 @@ var calcDistance = function(start, end) {
 var calcAngle = function(start, end) {
 	return Math.atan2(end.y - start.y, end.x - start.x);
 }
-
 
 game.PlanetType = function(options) {
 	Game.Planets.types.push(options);
@@ -48,6 +46,24 @@ Game.Planets = {
 				{ armyId: { $ne: null } }
 			]
 		}).fetch();
+	},
+
+	getMaxColoniesCount: function() {
+		// TODO: implement!
+		return 3;
+	},
+
+	getColoniesCount: function() {
+		return Game.Planets.getColonies().length;
+	},
+
+	checkCanHaveMoreColonies: function() {
+		var current = Game.SpaceEvents.getSentToColonyCount()
+		            + Game.Planets.getColoniesCount();
+
+		console.log('current colonies: ' + current);
+
+		return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
 	},
 
 	getType: function(id) {
@@ -446,10 +462,20 @@ Game.SpaceEvents = {
 		});
 	},
 
+	getSentToColonyCount: function() {
+		return Game.SpaceEvents.Collection.find({
+			user_id: Meteor.userId(),
+			type: Game.SpaceEvents.EVENT_SHIP,
+			'info.isHumans': true,
+			'info.isColony': true
+		}).count();
+	},
+
 	getCurrentFleetsCount: function() {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
-			type: Game.SpaceEvents.EVENT_SHIP
+			type: Game.SpaceEvents.EVENT_SHIP,
+			'info.isHumans': true
 		}).count();
 	},
 	

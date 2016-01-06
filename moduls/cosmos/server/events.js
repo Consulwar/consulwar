@@ -48,7 +48,8 @@ Game.SpaceEvents.sendShip = function(startPosition,
                                      flyTime,
                                      isHumans,
                                      engineLevel,
-                                     mission
+                                     mission,
+                                     isColony
 ) {
 	Game.SpaceEvents.add({
 		type: Game.SpaceEvents.EVENT_SHIP,
@@ -56,6 +57,7 @@ Game.SpaceEvents.sendShip = function(startPosition,
 		timeEnd: startTime + flyTime,
 		info: {
 			isHumans: isHumans,
+			isColony: isColony,
 			engineLevel: engineLevel,
 			startPosition: startPosition,
 			startPlanetId: startPlanetId,
@@ -122,7 +124,8 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 				                          true,
 				                          engineLevel,
-				                          null);
+				                          null,
+				                          false);
 			}
 
 		} else {
@@ -157,7 +160,8 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		                          event.info.isHumans,
 		                          engineLevel,
 		                          null,
-		                          true);
+		                          true,
+		                          false);
 	}
 }
 
@@ -239,7 +243,8 @@ Meteor.methods({
 		                          timeAttack,
 		                          true,
 		                          engineLevel,
-		                          null);
+		                          null,
+		                          false);
 	},
 
 	'spaceEvents.attackPlayerFleet': function(id, targetX, targetY) {
@@ -291,7 +296,8 @@ Meteor.methods({
 			                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 			                          false,
 			                          engineLevel,
-			                          null);
+			                          null,
+			                          false);
 		}
 	},
 
@@ -344,7 +350,8 @@ Meteor.methods({
 			                          flyTime,
 			                          false,
 			                          engineLevel,
-			                          null);
+			                          null,
+			                          false);
 		}
 	}
 

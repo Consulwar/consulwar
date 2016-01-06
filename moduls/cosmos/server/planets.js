@@ -461,6 +461,16 @@ Meteor.methods({
 			return;
 		}
 
+		// check is new colony
+		var isColony = false;
+		if (isOneway && !targetPlanet.armyId && !targetPlanet.isHome) {
+			isColony = true;
+		}
+
+		if (isColony && !Game.Planets.checkCanHaveMoreColonies()) {
+			throw new Meteor.Error('Уже слишком много колоний');
+		}
+
 		// TODO: Units! Check and slice!
 		// TODO: If sent all units, remove army id!
 		
@@ -492,7 +502,8 @@ Meteor.methods({
 		                          Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 		                          true,
 		                          engineLevel,
-		                          null);
+		                          null,
+		                          isColony);
 	},
 
 	'planet.updateAll': function() {

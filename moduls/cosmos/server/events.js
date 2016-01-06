@@ -334,6 +334,11 @@ Meteor.methods({
 
 			var engineLevel = Game.Planets.getEngineLevel();
 
+			var mission = {
+				type: 'battlefleet',
+				level: _.random(1, 10)
+			}
+
 			var shipOptions = {
 				startPosition:  startPosition,
 				startPlanetId:  startPlanet._id,
@@ -344,7 +349,7 @@ Meteor.methods({
 				flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 				isHumans:       false,
 				engineLevel:    engineLevel,
-				mission:        null,
+				mission:        mission,
 				isColony:       false
 			}
 
@@ -388,6 +393,11 @@ Meteor.methods({
 				y: targetPlanet.y
 			}
 
+			var mission = {
+				type: 'tradefleet',
+				level: _.random(1, 10)
+			}
+
 			// TODO: Calculate reptile ship flyTime and engineLevel!
 			var engineLevel = 0;
 			var flyTime = Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel);
@@ -402,7 +412,7 @@ Meteor.methods({
 				flyTime:        flyTime,
 				isHumans:       false,
 				engineLevel:    engineLevel,
-				mission:        null,
+				mission:        mission,
 				isColony:       false
 			}
 

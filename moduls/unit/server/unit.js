@@ -13,7 +13,12 @@ Game.Unit.set = function(unit, invertSign) {
 
 	set[unit.group + '.' + unit.engName] = parseInt(currentValue + (unit.count) * invertSign);
 
-	Game.Unit.Collection.update({'user_id': Meteor.userId()}, {$set: set});
+	Game.Unit.Collection.update({
+		user_id: Meteor.userId(),
+		location: Game.Unit.location.HOME
+	}, {
+		$set: set
+	});
 
 	return set;
 }

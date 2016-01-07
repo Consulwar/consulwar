@@ -74,6 +74,29 @@ Game.Planets = {
 		}
 	},
 
+	getFleetUnits: function(planetId) {
+		var planet = Game.Planets.getOne(planetId);
+		if (!planet) {
+			return null;
+		}
+
+		if (planet.mission) {
+			if (planet.mission.units) {
+				return planet.mission.units;
+			} else {
+				return Game.Battle.items[planet.mission.type].level[planet.mission.level].enemies;
+			}
+		} else if (planet.armyId || planet.isHome) {
+			var army = (planet.isHome) ? Game.Unit.getValue()
+			                           : Game.Unit.getArmy(planet.armyId);
+			if (army) {
+				return army.fleet;
+			}
+		}
+
+		return null;
+	},
+
 	// ------------------------------------------------------------------------
 	// Planets generation
 	// ------------------------------------------------------------------------
@@ -489,6 +512,30 @@ Game.SpaceEvents = {
 			return true;
 		}
 		return false;
+	},
+
+	getFleetUnits: function(shipId) {
+		var ship = Game.SpaceEvents.getOne(shipId);
+		if (!ship || ship != Game.SpaceEvents.EVENT_SHIP) {
+			return null;
+		}
+
+		var info = ship.info;
+
+		if (info.mission) {
+			if (info.mission.units) {
+				return info.mission.units;
+			} else {
+				return Game.Battle.items[info.mission.type].level[info.mission.level].enemies;
+			}
+		} else if (info.armyId) {
+			var army = Game.Unit.getArmy(info.armyId);
+			if (army) {
+				return army.fleet;
+			}
+		}
+
+		return null;
 	}
 }
 

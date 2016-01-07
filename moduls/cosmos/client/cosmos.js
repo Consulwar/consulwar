@@ -120,22 +120,18 @@ var PlanetView = function(map, planet) {
 			}
 		}
 
-		// ----------------------------
-		// TODO: Update real info!
-		// ----------------------------
-		var info = {
-			id: planet._id,
-			name: planet.name,
-			type: Game.Planets.getType(planet.type).name,
-			metals: 100500,
-			crystals: 100542
-		};
+		// update planet side info
+		var info = {};
+
+		info.id = planet._id;
+		info.name = planet.name;
+		info.type = Game.Planets.getType(planet.type).name;
 
 		if (planet.isHome || planet.armyId) {
 			info.isHome = true;
 			info.isColony = (planet.isHome) ? false : true;
 		}
-		
+
 		if (planet.isHome || planet.armyId) {
 			if (Game.Planets.getColonies().length <= 1) {
 				info.canSend = false;
@@ -147,22 +143,25 @@ var PlanetView = function(map, planet) {
 		}
 		
 		if (planet.mission) {
-			var config = Game.Battle.items[planet.mission.type];
 			info.mission = {
 				level: planet.mission.level,
-				name: config.name,
-				enemies: _.map( config.level[planet.mission.level].enemies, function(value, key) {
-					return {
-						name: Game.Unit.items.reptiles.fleet[key].name,
-						engName: key,
-						count: _.isString(value) ? game.Battle.count[value] : value
-					}
-				})
-			};
+				name: Game.Battle.items[planet.mission.type].name
+			}
 		}
-		// ----------------------------
-		// TODO: Update real info!
-		// ----------------------------
+
+		var units = Game.Planets.getFleetUnits(planet._id);
+		if (units) {
+			var side = (planet.mission) ? 'reptiles' : 'army';
+			info.units = [];
+
+			for (var key in units) {
+				info.units.push({
+					engName: key,
+					name: Game.Unit.items[side].fleet[key].name,
+					count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
+				})
+			}
+		}
 
 		// save info
 		this.infoPlanet = info;
@@ -1010,18 +1009,28 @@ Template.cosmos.helpers({
 	time_left: function() { return Session.get('time_left'); },
 
 	available_fleet: function() {
-		// TODO: get real info!
-		var fleet = Game.Unit.items.army.fleet;
-		var result = [];
-
-		for (var key in fleet) {
-			result.push({
-				engName: fleet[key].engName,
-				max: Math.round( 100 + Math.random() * 1000 )
-			})
+		var colonyId = Session.get('active_colony_id');
+		if (!colonyId) {
+			return null;
 		}
 
-		return result;
+		var army = Game.Planets.getFleetUnits(colonyId);
+		if (!army) {
+			return null;
+		}
+
+		var units = [];
+
+		for (var key in army) {
+			units.push({
+				engName: key,
+				name: Game.Unit.items.army.fleet[key].name,
+				max: army[key],
+				count: 0
+			});
+		}
+
+		return units;
 	},
 
 	can_have_more_colonies: function() {
@@ -1100,6 +1109,17 @@ Template.cosmos.events({
 
 	'click .return': function(e) {
 		sendFleet(false);
+	},
+
+	'change .fleet input': function (e) {
+		var value = parseInt( e.currentTarget.value );
+		var max = parseInt( $(e.currentTarget).attr('data-max') );
+
+		if (value < 0) {
+			e.currentTarget.value = 0;
+		} else if (value > max) {
+			e.currentTarget.value = max;
+		}
 	}
 
 });

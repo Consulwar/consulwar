@@ -24,34 +24,33 @@
 		{{#if planet}}
 			<h2>{{planet.name}} ({{planet.type}})</h2>
 			{{#if planet.isHome}}
-				{{#if planet.isColony}}
-				<p>Колония</p>
-				{{else}}
-				<p>Планета консула</p>
-				{{/if}}
-			{{else}}
-				<!--
-				<ul class="resources">
-					<li class="metals">{{planet.metals}}</li>
-					<li class="crystals">{{planet.crystals}}</li>
-				</ul>
-				-->
-				{{#if planet.mission}}
-				<div class="map-planet-info-mission">
-					<p>Рептилоиды</p>
-					<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
-					<p><span>Статус: </span>{{planet.mission.name}}</p>
-					<ul>
-						{{#each planet.mission.enemies}}
-						<li>{{this.name}} <span>{{this.count}}</span></li>
-						{{/each}}
-					</ul>
-				</div>
-				{{/if}}
+			<div class="header-humans">
+				{{#if planet.isColony}}<p>Колония</p>{{else}}<p>Планета консула</p>{{/if}}
+			</div>
+			{{/if}}
+			{{#if planet.mission}}
+			<div class="header-reptiles">
+				<p>Рептилоиды</p>
+				<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
+				<p><span>Статус: </span>{{planet.mission.name}}</p>
+			</div>
+			{{/if}}
+			{{#if planet.units}}
+			<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
+				{{#each planet.units}}
+				<li>{{this.name}} <span>{{this.count}}</span></li>
+				{{/each}}
+			</ul>
 			{{/if}}
 			{{#if planet.canSend}}
 				<a class="button-attack open" data-planet-id="{{planet.id}}" data-event-id="{{planet.event_id}}">ОТПРАВИТЬ</a>
 			{{/if}}
+			<!--
+			<ul class="resources">
+				<li class="metals">{{planet.metals}}</li>
+				<li class="crystals">{{planet.crystals}}</li>
+			</ul>
+			-->
 		{{else}}
 		<h2>Нет информации</h2>
 		{{/if}}
@@ -59,6 +58,8 @@
 
 	{{#if target}}
 	<div class="attack-menu">
+
+		<!-- left block -->
 		<ul class="planets">
 			{{#each colonies}}
 			<li data-id="{{this._id}}" class="{{#if eq this._id active_colony_id}}active{{else}}{{#if this.isHome}}home{{/if}}{{/if}}">
@@ -69,46 +70,45 @@
 				{{/if}}
 			</li>
 			{{/each}}
-			<!-- <li class="locked">не доступно</li> -->
 		</ul>
 
+		<!-- center block -->
 		{{#if available_fleet}}
 		<ul class="items fleet">
 			{{#each available_fleet}}
 			<li class="unit" data-id="{{this.engName}}">
 				<a class="{{this.engName}}-icon"></a>
 				<div class="max">{{this.max}}</div>
-				<input class="count" type="number" placeholder="Количество">
+				<input class="count" type="number" placeholder="Количество" data-max="{{this.max}}" value="{{this.count}}">
 			</li>
 			{{/each}}
 		</ul>
 		{{/if}}
 
-		{{#if planet.mission}}
-		<ul class="enemies">
-			{{#each planet.mission.enemies}}
-			<li>{{this.name}} <span>{{this.count}}</span></li>
-			{{/each}}
-
-			<!-- TODO: Убрать отсюда эту хрень -->
-			<li>-------------------------</li>
+		<!-- right block -->
+		<div class="target">
+			<h2>{{planet.name}} ({{planet.type}})</h2>
 			{{#if time_attack}}
-			<li>Время до цели: <span>{{formatSeconds time_attack}}</span></li>
+			<p>Время до цели: <span>{{formatSeconds time_attack}}</span></p>
 			{{/if}}
 			{{#if time_left}}
-			<li>Осталось времени: <span>{{formatSeconds time_left}}</span></li>
+			<p>Осталось времени: <span>{{formatSeconds time_left}}</span></p>
 			{{/if}}
-			<!-- TODO: Убрать отсюда эту хрень -->
+			{{#if planet.units}}
+			<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
+				{{#each planet.units}}
+				<li>{{this.name}} <span>{{this.count}}</span></li>
+				{{/each}}
+			</ul>	
+			{{/if}}
+		</div>
 
-		</ul>
-		{{/if}}
-
+		<!-- control buttons -->
 		<ul class="resources cost">
 			<li class="credits">100500</li>
 		</ul>
 		<a class="btn-add">Дополнительная планета</a>
 		<a class="btn-all">Выбрать всех</a>
-
 		{{#if target.planetId}}
 		{{#if planet.isHome}}
 		<a class="btn-attack defend">Отправить</a>
@@ -121,7 +121,6 @@
 		{{else}}
 		<a class="btn-attack return">Перехватить</a>
 		{{/if}}
-
 		<a class="btn-close"></a>
 	</div>
 	{{/if}}

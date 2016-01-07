@@ -188,6 +188,12 @@
 		background-image url(/img/game/cosmomap/button_home_active.png)
 
 
+.reptiles
+	color #DC6257
+	
+.humans
+	color #56BAF2
+
 .map-planet-info
 	left 1124px
 	top 0
@@ -201,6 +207,50 @@
 	h2
 		margin-top 15px
 		margin-bottom 15px
+	
+	span
+		color #ffffff
+		
+	ul
+		position relative
+		margin-top 5px
+		margin-left 15px
+		text-align left
+		font-weight bold
+		font-size 18px
+		
+		li
+			position relative
+			display block
+
+	.header-reptiles
+		height 70px
+		margin-top 15px
+		width 100%
+		text-align left
+		color #DC6257
+		font-size 18px
+		background-repeat no-repeat
+		background-image url(/img/game/cosmomap/ico_rept.png)
+		background-position 15px 10px
+		
+		p
+			padding-left 65px
+
+	.header-humans
+		height 70px
+		margin-top 15px
+		width 100%
+		text-align left
+		color #56BAF2
+		font-size 18px
+		background-repeat no-repeat
+		background-image url(/img/game/cosmomap/ico_humans.png)
+		background-position 15px 10px
+		
+		p
+			padding-top 20px
+			padding-left 65px
 
 	.button-attack
 		cursor pointer
@@ -219,32 +269,6 @@
 		
 		&:hover
 			background-image url(/img/game/cosmomap/button_attack_active.png)
-
-.map-planet-info-mission
-	margin-top 15px
-	width 100%
-	text-align left
-	color #DC6257
-	font-size 18px
-	background-repeat no-repeat
-	background-image url(/img/game/cosmomap/ico_rept.png)
-	background-position 15px 10px
-	
-	p
-		padding-left 65px
-
-	span
-		color #ffffff
-		
-	ul
-		position relative
-		margin-top 5px
-		margin-left 15px
-		
-		li
-			position relative
-			display block
-
 
 .map-planet-popup-container
 	left 0
@@ -428,18 +452,27 @@
 			background-color #adadad
 			text-align center
 			
-	.enemies
+	.target
 		position absolute
 		display block
 		left 1100px
 		top 20px
 		width 300px
-		color #DC6257
 		
-		li
+		ul
 			position relative
-			display block
-			padding-top 5px
+			margin-top 5px
+			text-align left
+			font-weight bold
+			font-size 18px
+			
+			li
+				position relative
+				display block
+			
+		p 
+			font-weight normal
+			color #b6c5d3
 			
 		span
 			color #ffffff

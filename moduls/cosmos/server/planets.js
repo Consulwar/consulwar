@@ -471,14 +471,26 @@ Meteor.methods({
 			throw new Meteor.Error('Уже слишком много колоний');
 		}
 
-		// TODO: Units! Check and slice!
-		// TODO: If sent all units, remove army id!
-		
-		if (!basePlanet.isHome) {
-			basePlanet.armyId = null;
-			basePlanet.timeRespawn = getServerTime() + 120;
+		// slice units
+		var sourceArmyId = basePlanet.armyId;
+		if (basePlanet.isHome) {
+			sourceArmyId = Game.Unit.getHomeArmyId();
 		}
 
+		var destUnits = {
+			army: {
+				fleet: units
+			}
+		}
+
+		var newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+
+		// update base planet
+		var baseArmy = Game.Unit.getArmy(basePlanet.armyId);
+		if (!baseArmy) {
+			basePlanet.armyId = null;	
+		}
+		basePlanet.timeRespawn = getServerTime() + 120;
 		Game.Planets.update(basePlanet);
 
 		var startPosition = {
@@ -495,16 +507,18 @@ Meteor.methods({
 
 		var shipOptions = {
 			startPosition:  startPosition,
-			startPlanetId:  (isOneway ? null : basePlanet._id),
+			startPlanetId:  basePlanet._id,
 			targetPosition: targetPosition,
 			targetType:     Game.SpaceEvents.TARGET_PLANET,
 			targetId:       targetPlanet._id,
 			startTime:      getServerTime(),
 			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-			isHumans:       true,
 			engineLevel:    engineLevel,
+			isHumans:       true,
+			isColony:       isColony,
+			isOneway:       isOneway,
 			mission:        null,
-			isColony:       isColony
+			armyId:         newArmyId,
 		}
 
 		Game.SpaceEvents.sendShip(shipOptions);

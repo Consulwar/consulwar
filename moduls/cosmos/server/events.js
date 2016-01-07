@@ -74,6 +74,10 @@ Game.SpaceEvents.sendShip = function(options) {
 		options.startPlanetId = null;
 	}
 
+	if (options.armyId === undefined) {
+		options.armyId = null;
+	}
+
 	if (options.mission === undefined) { 
 		options.mission = null;
 	}
@@ -86,6 +90,10 @@ Game.SpaceEvents.sendShip = function(options) {
 		options.isHumans = false;
 	}
 
+	if (options.isOneway === undefined) {
+		options.isOneway = true;
+	}
+
 	// insert event
 	Game.SpaceEvents.add({
 		type: Game.SpaceEvents.EVENT_SHIP,
@@ -94,13 +102,15 @@ Game.SpaceEvents.sendShip = function(options) {
 		info: {
 			isHumans: options.isHumans,
 			isColony: options.isColony,
+			isOneway: options.isOneway,
 			engineLevel: options.engineLevel,
 			startPosition: options.startPosition,
 			startPlanetId: options.startPlanetId,
 			targetPosition: options.targetPosition,
 			targetType: options.targetType,
 			targetId: options.targetId,
-			mission: options.mission
+			mission: options.mission,
+			armyId: options.armyId
 		}
 	});
 }
@@ -124,29 +134,26 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 		if (event.info.isHumans) {
 
-			var isOneway = (event.info.startPlanetId) ? false : true;
-
 			// TODO: Calculate battle results!
 			if (planet.mission) {
 				planet.mission = null;
-				if (planet.timeRespawn < event.timeEnd) {
-					planet.timeRespawn = event.timeEnd + 120;
+			}
+			
+			planet.timeRespawn = event.timeEnd + 120;
+
+			if (event.info.isOneway) {
+				// stay on planet
+				if (planet.isHome || planet.armyId) {
+					// merge army
+					var destArmyId = (planet.isHome) ? Game.Unit.getHomeArmyId : planet.armyId;
+					Game.Unit.mergeArmy(event.info.armyId, destArmyId);
+				} else {
+					// move army
+					Game.Unit.moveArmy(event.info.armyId, Game.Unit.location.PLANET);
+					planet.armyId = event.info.armyId;
 				}
-			}
-
-			if (isOneway) {
-				// TODO: Save humans army id!
-				planet.armyId = 100500;
-			}
-
-			Game.Planets.update(planet);
-			// ------------------------------
-
-			if (!planet.isDiscovered) {
-				Meteor.call('planet.discover', planet._id);
-			}
-
-			if (!isOneway) {
+			} else {
+				// return ship
 				var startPosition = event.info.targetPosition;
 				var targetPosition = event.info.startPosition;
 				var engineLevel = event.info.engineLevel;
@@ -160,12 +167,21 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					startTime:      event.timeEnd,
 					flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 					isHumans:       true,
+					isColony:       false,
+					isOneway:       true,
 					engineLevel:    engineLevel,
 					mission:        null,
-					isColony:       false
+					armyId:         event.info.armyId
 				}
 
 				Game.SpaceEvents.sendShip(shipOptions);
+			}
+
+			Game.Planets.update(planet);
+			// ------------------------------
+
+			if (!planet.isDiscovered) {
+				Meteor.call('planet.discover', planet._id);
 			}
 
 		} else {

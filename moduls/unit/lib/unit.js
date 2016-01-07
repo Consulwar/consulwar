@@ -104,18 +104,27 @@ Game.Unit = {
 		});
 	},
 
-	getValue: function() {
+	getHomeArmy: function() {
 		return Game.Unit.Collection.findOne({
 			user_id: Meteor.userId(),
 			location: Game.Unit.location.HOME
 		});
 	},
 
-	get: function(group, name) {
-		var units = Game.Unit.getValue();
+	getHomeArmyId: function () {
+		return Game.Unit.getHomeArmy()._id;
+	},
 
-		if (units && units[group] && units[group][name]) {
-			return units[group][name];
+	get: function(group, name) {
+		var record = Game.Unit.getHomeArmy();
+
+		if (record
+		 && record.units
+		 && record.units.army
+		 && record.units.army[group]
+		 && record.units.army[group][name]
+		) {
+			return record.units.army[group][name];
 		} else {
 			return 0;
 		}

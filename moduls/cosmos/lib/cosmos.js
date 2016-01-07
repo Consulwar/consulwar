@@ -87,10 +87,10 @@ Game.Planets = {
 				return Game.Battle.items[planet.mission.type].level[planet.mission.level].enemies;
 			}
 		} else if (planet.armyId || planet.isHome) {
-			var army = (planet.isHome) ? Game.Unit.getValue()
+			var army = (planet.isHome) ? Game.Unit.getHomeArmy()
 			                           : Game.Unit.getArmy(planet.armyId);
 			if (army) {
-				return army.fleet;
+				return army.units.army.fleet;
 			}
 		}
 
@@ -531,7 +531,7 @@ Game.SpaceEvents = {
 		} else if (info.armyId) {
 			var army = Game.Unit.getArmy(info.armyId);
 			if (army) {
-				return army.fleet;
+				return army.units.army.fleet;
 			}
 		}
 

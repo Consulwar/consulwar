@@ -97,6 +97,13 @@ Game.Unit = {
 
 	Collection: new Meteor.Collection('units'),
 
+	getArmy: function (id) {
+		return Game.Unit.Collection.findOne({
+			user_id: Meteor.userId(),
+			_id: id
+		});
+	},
+
 	getValue: function() {
 		return Game.Unit.Collection.findOne({
 			user_id: Meteor.userId(),

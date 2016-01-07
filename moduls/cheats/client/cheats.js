@@ -2,7 +2,11 @@ initCheatsClient = function() {
 
 Game.Cheats = {}
 
-Game.Cheats.testBattle = Game.Unit.testBattle = function() {
+Game.Cheats.setUnitCount = function (group, name, count) {
+	Meteor.call('cheats.setUnitCount', group, name, count);
+}
+
+Game.Cheats.testBattle = function() {
 	// fleet battle test
 	userArmy = {
 		army: {

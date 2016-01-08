@@ -22,10 +22,12 @@
 
 	<div class="map-planet-info">
 		{{#if planet}}
-			<h2>{{planet.name}} ({{planet.type}})</h2>
-			{{#if planet.isHome}}
+			{{#if planet.name}}
+			<h2>{{planet.name}}{{#if planet.type}} ({{planet.type}}){{/if}}</h2>
+			{{/if}}
+			{{#if planet.isHumans}}
 			<div class="header-humans">
-				{{#if planet.isColony}}<p>Колония</p>{{else}}<p>Планета консула</p>{{/if}}
+				<p>{{planet.status}}</p>
 			</div>
 			{{/if}}
 			{{#if planet.mission}}
@@ -87,7 +89,7 @@
 
 		<!-- right block -->
 		<div class="target">
-			<h2>{{planet.name}} ({{planet.type}})</h2>
+			<h2>{{planet.name}}{{#if planet.type}} ({{planet.type}}){{/if}}</h2>
 			{{#if time_attack}}
 			<p>Время до цели: <span>{{formatSeconds time_attack}}</span></p>
 			{{/if}}

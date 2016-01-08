@@ -77,11 +77,11 @@ var PlanetView = function(map, planet) {
 		this.refreshSize();
 
 		// GUI data
+		this.infoPlanet = null;
+
 		// ----------------------------
 		// TODO: Get real info!
 		// ----------------------------
-		this.infoPlanet = null;
-
 		this.infoDrop = {
 			segment: planet.segment,
 			hand: planet.hand,
@@ -128,8 +128,11 @@ var PlanetView = function(map, planet) {
 		info.type = Game.Planets.getType(planet.type).name;
 
 		if (planet.isHome || planet.armyId) {
+			info.isHumans = true;
 			info.isHome = true;
-			info.isColony = (planet.isHome) ? false : true;
+			info.status = (planet.isHome) ? 'Планета консула' : 'Колония';
+		} else {
+			info.isHumans = false;
 		}
 
 		if (planet.isHome || planet.armyId) {
@@ -155,6 +158,10 @@ var PlanetView = function(map, planet) {
 			info.units = [];
 
 			for (var key in units) {
+				if (!_.isString( units[key] ) && units[key] <= 0) {
+					continue;
+				}
+
 				info.units.push({
 					engName: key,
 					name: Game.Unit.items[side].fleet[key].name,
@@ -308,46 +315,73 @@ var ShipView = function(map, spaceEvent) {
 		var b = spaceEvent.info.targetPosition;
 		this.totalFlyDistance = Math.sqrt( Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) );
 
-		// ----------------------------
-		// TODO: Get real info!
-		// ----------------------------
-		var flyTime = spaceEvent.timeEnd - spaceEvent.timeStart; // debug
-		if (spaceEvent.info.isHumans) {
-			this.info = {
-				id: '',
-				event_id: spaceEvent._id,
-				name: 'Наш флот',
-				type: flyTime + ' s', // debug
-				metals: 100500,
-				crystals: 100542,
-				canSend: false,
-				mission: null
-			};
-		} else {
-			this.info = {
-				id: '',
-				event_id: spaceEvent._id,
-				name: 'Флот рептилоидов',
-				type: flyTime + ' s', // debug
-				metals: 100500,
-				crystals: 100542,
-				canSend: true,
-				mission: {
-					level: 7,
-					name: 'Продам гараж',
-					enemies: [
-						{ name: 'Клинок', count: 100500 },
-						{ name: 'Дракон', count: 42 }
-					]
-				}
-			};
-		}
-		// ----------------------------
-		// TODO: Get real info!
-		// ----------------------------
-
 		_state = STATE_WAIT;
+		this.updateData();
 		this.update();
+	}
+
+	this.updateData = function () {
+		var spaceEvent = Game.SpaceEvents.getOne(this.id);
+
+		if (!spaceEvent) {
+
+			this.info = null;
+
+		} else {
+
+			var info = {};
+
+			info.name = null;
+			info.id = null;
+			info.event_id = spaceEvent._id;
+
+			if (spaceEvent.info.isHumans) {
+				info.isHumans = true;
+				info.canSend = false;
+				info.status = 'Флот консула';
+	 		} else {
+	 			info.isHumans = false;
+	 			info.canSend = true;
+	 			info.mission = {
+	 				level: spaceEvent.info.mission.level,
+					name: Game.Battle.items[spaceEvent.info.mission.type].name
+	 			}
+	 		}
+
+			var units = Game.SpaceEvents.getFleetUnits(spaceEvent._id);
+			if (units) {
+				var side = (spaceEvent.info.isHumans) ? 'army' : 'reptiles';
+				info.units = [];
+
+				for (var key in units) {
+					if (!_.isString( units[key] ) && units[key] <= 0) {
+						continue;
+					}
+
+					info.units.push({
+						engName: key,
+						name: Game.Unit.items[side].fleet[key].name,
+						count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
+					})
+				}
+			}
+
+			this.info = info;
+		}
+
+		// update side menu
+		var sideInfo = Session.get('planet');
+		if (sideInfo && sideInfo.id == null && sideInfo.event_id == this.id) {
+			Session.set('planet', this.info);
+		}
+
+		// update target popup
+		var targetInfo = Session.get('target');
+		if (targetInfo && targetInfo.eventId && targetInfo.eventId == this.id) {
+			if (this.info == null) {
+				Session.set('target', null); // hide if removed
+			}
+		}
 	}
 
 	this.update = function() {
@@ -807,13 +841,16 @@ var createSpaceEvent = function(event) {
 	}
 }
 
-var updateSpaceEvent = function(id) {
-	// TODO: implement!
+var updateSpaceEventData = function(id) {
+	if (shipViews && shipViews[ id ]) {
+		shipViews[ id ].updateData();
+	}
 }
 
 var removeSpaceEvent = function(id) {
 	if (shipViews && shipViews[ id ]) {
 		shipViews[ id ].remove();
+		shipViews[ id ].updateData();
 		shipViews[ id ] = null;
 	}
 }
@@ -828,7 +865,7 @@ Game.SpaceEvents.getAll().observeChanges({
 
 	changed: function(id, event) {
 		if (mapView) {
-			updateSpaceEvent(id);
+			updateSpaceEventData(id);
 		}
 	},
 
@@ -895,13 +932,15 @@ var sendFleet = function(isOneway) {
 
 	$('.fleet li').each(function(index, element) {
 		var id = $(element).attr('data-id');
-		var max = Number( $(element).find('.max').html() );
-		var count = Number( $(element).find('.count').val() );
+		var max = parseInt( $(element).find('.max').html() );
+		var count = parseInt( $(element).find('.count').val() );
+
+		if (max > 0 && count > 0) {
+			units[ id ] = Math.min(max, count);
+			total += units[ id ];
+		}
 
 		$(element).find('.count').val(0);
-
-		units[ id ] = Math.min(max, count);
-		total += units[ id ];
 	});
 
 	if (total <= 0) {
@@ -1022,6 +1061,10 @@ Template.cosmos.helpers({
 		var units = [];
 
 		for (var key in army) {
+			if (army[key] <= 0) {
+				continue;
+			}
+			
 			units.push({
 				engName: key,
 				name: Game.Unit.items.army.fleet[key].name,

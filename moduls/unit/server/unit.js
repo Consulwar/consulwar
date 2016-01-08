@@ -44,7 +44,11 @@ Game.Unit.initialize = function(user) {
 }
 
 Game.Unit.removeArmy = function(id) {
-	Game.Unit.Collection.remove({ _id: id });
+	if (Game.Unit.getHomeArmyId() == id) {
+		Game.Unit.Collection.update({ _id: id }, { $set: { 'units': null } } );
+	} else {
+		Game.Unit.Collection.remove({ _id: id });
+	}
 }
 
 Game.Unit.createArmy = function(units, location) {

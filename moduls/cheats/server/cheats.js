@@ -14,6 +14,13 @@ Meteor.methods({
 		}, {
 			$set: set
 		})
+
+		var homePlanet = Game.Planets.getBase();
+		if (homePlanet) {
+			// refresh home planet
+			homePlanet.timeRespawn = Math.floor( new Date().valueOf() / 1000 );
+			Game.Planets.update(homePlanet);
+		}
 	},
 
 	'cheats.performBattle': function(userArmy, enemyArmy, options) {

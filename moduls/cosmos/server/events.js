@@ -132,16 +132,50 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			return; // no such planet
 		}
 
+		// ----------------------------
+		// Humans arrived
+		// ----------------------------
 		if (event.info.isHumans) {
 
-			// TODO: Calculate battle results!
+			// calculate battle results
+			var battleResult = null;
+			var userArmy = null;
+			var enemyArmy = null;
+
 			if (planet.mission) {
-				planet.mission = null;
+				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
+				enemyArmy = { reptiles: { fleet: enemyFleet } };
+
+				var userFleet = Game.SpaceEvents.getFleetUnits(event._id);
+				userArmy = { army: { fleet: userFleet } };
+
+				battleResult = Game.Unit.performBattle(userArmy, enemyArmy);
+				userArmy = battleResult.userArmy;
+				enemyArmy = battleResult.enemyArmy;
+
+				if (userArmy && enemyArmy) {
+					// tie
+					Game.Unit.updateArmy(event.info.armyId, userArmy);
+					planet.mission.units = enemyArmy.reptiles.fleet;
+				} else if (!userArmy && enemyArmy) {
+					// reptiles won
+					Game.Unit.removeArmy(event.info.armyId);
+					planet.mission.units = enemyArmy.reptiles.fleet;
+				} else if (userArmy && !enemyArmy) {
+					// humans won
+					Game.Unit.updateArmy(event.info.armyId, userArmy);
+					planet.mission = null;
+				} else {
+					// everyone died
+					Game.Unit.removeArmy(event.info.armyId);
+					planet.mission = null;
+				}
 			}
 			
+			// update planet info
 			planet.timeRespawn = event.timeEnd + 120;
 
-			if (event.info.isOneway) {
+			if (event.info.isOneway && (!battleResult || (userArmy && !enemyArmy))) {
 				// stay on planet
 				if (planet.isHome || planet.armyId) {
 					// merge army
@@ -152,7 +186,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					Game.Unit.moveArmy(event.info.armyId, Game.Unit.location.PLANET);
 					planet.armyId = event.info.armyId;
 				}
-			} else {
+			} else if (!battleResult || userArmy) {
 				// return ship
 				var startPosition = event.info.targetPosition;
 				var targetPosition = event.info.startPosition;
@@ -160,7 +194,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 				var shipOptions = {
 					startPosition:  startPosition,
-					startPlanetId:  null,
+					startPlanetId:  event.info.targetId,
 					targetPosition: targetPosition,
 					targetType:     Game.SpaceEvents.TARGET_PLANET,
 					targetId:       event.info.startPlanetId,
@@ -178,15 +212,100 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			}
 
 			Game.Planets.update(planet);
-			// ------------------------------
 
-			if (!planet.isDiscovered) {
-				Meteor.call('planet.discover', planet._id);
+			if (!battleResult || (userArmy && !enemyArmy)) {
+				if (!planet.isDiscovered) {
+					Meteor.call('planet.discover', planet._id);
+				}
 			}
 
+		// ----------------------------
+		// Reptiles arrived
+		// ----------------------------
 		} else {
 
-			// TODO: Reptiles arrived on planet
+			if (!event.info.mission) {
+				return; // empty reptiles ship!
+			}
+
+			if (planet.armyId || planet.isHome) {
+				// humans planet
+				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
+				var enemyArmy = { reptiles: { fleet: enemyFleet } };
+
+				var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmyId : planet.armyId;
+				var userFleet = Game.Planets.getFleetUnits(planet._id);
+				var userArmy = { army: { fleet: userFleet } };
+
+				var battleResult = Game.Unit.performBattle(userArmy, enemyArmy);
+				userArmy = battleResult.userArmy;
+				enemyArmy = battleResult.enemyArmy;
+
+				if (userArmy && enemyArmy) {
+					// tie
+					Game.Unit.updateArmy(userArmyId, userArmy);
+					planet.mission.units = enemyArmy.reptiles.fleet;
+				} else if (!userArmy && enemyArmy) {
+					// reptiles won
+					Game.Unit.removeArmy(userArmyId);
+					if (planet.isHome) {
+						event.info.mission.units = enemyArmy.reptiles.fleet;
+					} else {
+						planet.mission = {
+							type: 'defenceFleet',
+							level: event.info.mission.level,
+							units: enemyArmy.reptiles.fleet
+						}
+					}
+				} else if (userArmy && !enemyArmy) {
+					// humans won
+					Game.Unit.updateArmy(userArmyId, userArmy);
+					event.info.mission = null;
+				} else {
+					// everyone died
+					Game.Unit.removeArmy(userArmyId);
+					event.info.mission = null;
+				}
+
+				if (battleResult && enemyArmy && (userArmy || planet.isHome)) {
+					// return reptiles ship
+					var startPosition = event.info.targetPosition;
+					var targetPosition = event.info.startPosition;
+					var engineLevel = event.info.engineLevel;
+
+					var shipOptions = {
+						startPosition:  startPosition,
+						startPlanetId:  event.info.targetId,
+						targetPosition: targetPosition,
+						targetType:     Game.SpaceEvents.TARGET_PLANET,
+						targetId:       event.info.startPlanetId,
+						startTime:      event.timeEnd,
+						flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+						isHumans:       false,
+						isColony:       false,
+						isOneway:       true,
+						engineLevel:    engineLevel,
+						mission:        event.info.mission,
+						armyId:         null
+					}
+
+					Game.SpaceEvents.sendShip(shipOptions);
+				}
+
+			} else if (planet.mission) {
+				// reptiles planet
+				// TODO: implement mission merge!
+
+			} else {
+				// empty planet
+				planet.mission = {
+					type: 'defenceFleet',
+					level: event.info.mission.level,
+					units: event.info.mission.units
+				}
+			}
+
+			Game.Planets.update(planet);
 
 		}
 	}
@@ -195,32 +314,73 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 	// Meet with target ship
 	// --------------------------------
 	if (event.info.targetType == Game.SpaceEvents.TARGET_SHIP) {
-		
-		// TODO: Calculate battle results!
 
-		// destroy target ship
-		Game.SpaceEvents.Collection.remove({ _id: event.info.targetId });
-
-		// return to base
-		var startPosition = event.info.targetPosition;
-		var targetPosition = event.info.startPosition;
-		var engineLevel = event.info.engineLevel;
-
-		var shipOptions = {
-			startPosition:  startPosition,
-			startPlanetId:  null,
-			targetPosition: targetPosition,
-			targetType:     Game.SpaceEvents.TARGET_PLANET,
-			targetId:       event.info.startPlanetId,
-			startTime:      event.timeEnd,
-			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-			isHumans:       event.info.isHumans,
-			engineLevel:    engineLevel,
-			mission:        true,
-			isColony:       false
+		var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
+		if (!targetShip) {
+			return; // no such target!
 		}
 
-		Game.SpaceEvents.sendShip(shipOptions);
+		if (event.info.isHumans == targetShip.info.isHumans) {
+			return; // same side!
+		}
+
+		var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
+		var firstArmy = (event.info.isHumans) ? { army: { fleet: firstFleet } }
+		                                      : { reptiles: { fleet: firstFleet } };
+
+		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
+		var secondArmy = (targetShip.info.isHumans) ? { army: { fleet: secondFleet } }
+		                                            : { reptiles: { fleet: secondFleet } };
+
+		var battleResult = Game.Unit.performBattle(firstArmy, secondArmy);
+		firstArmy = battleResult.userArmy;
+		secondArmy = battleResult.enemyArmy;
+
+		if (firstArmy) {
+			if (event.info.isHumans) {
+				Game.Unit.updateArmy(event.info.armyId, firstArmy);
+			} else {
+				event.info.mission.units = firstArmy.reptiles.fleet;
+			}
+		} else {
+			Game.SpaceEvents.Collection.remove({ _id: event._id });
+		}
+
+		if (secondArmy) {
+			if (targetShip.info.isHumans) {
+				Game.Unit.updateArmy(targetShip.info.armyId, secondArmy);
+			} else {
+				targetShip.info.mission.units = secondArmy.reptiles.fleet;
+			}
+			targetShip.info.timeBattle = serverTime;
+			Game.SpaceEvents.Collection.update({ _id: targetShip._id }, targetShip);
+		} else {
+			Game.SpaceEvents.Collection.remove({ _id: targetShip._id });
+		}
+
+		if (firstArmy) {
+			// return to base
+			var startPosition = event.info.targetPosition;
+			var targetPosition = event.info.startPosition;
+			var engineLevel = event.info.engineLevel;
+
+			var shipOptions = {
+				startPosition:  startPosition,
+				startPlanetId:  null,
+				targetPosition: targetPosition,
+				targetType:     Game.SpaceEvents.TARGET_PLANET,
+				targetId:       event.info.startPlanetId,
+				startTime:      event.timeEnd,
+				flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+				isHumans:       event.info.isHumans,
+				engineLevel:    event.info.engineLevel,
+				mission:        event.info.mission,
+				isColony:       event.info.isColony,
+				armyId:         event.info.armyId
+			}
+
+			Game.SpaceEvents.sendShip(shipOptions);
+		}
 	}
 }
 
@@ -286,13 +446,24 @@ Meteor.methods({
 			return; // not enough time to attack
 		}
 
-		// TODO: Units! Check and slice!
-		if (!basePlanet.isHome) {
-			basePlanet.armyId = null;
-			basePlanet.timeRespawn = timeCurrent + 120;
-			Game.Planets.update(basePlanet);	
+		// check and slice units
+		var sourceArmyId = basePlanet.armyId;
+		if (basePlanet.isHome) {
+			sourceArmyId = Game.Unit.getHomeArmyId();
 		}
 
+		var destUnits = { army: { fleet: units } };
+		var newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+
+		// update base planet
+		var baseArmy = Game.Unit.getArmy(basePlanet.armyId);
+		if (!baseArmy) {
+			basePlanet.armyId = null;	
+		}
+		basePlanet.timeRespawn = timeCurrent + 120;
+		Game.Planets.update(basePlanet);
+
+		// send ship
 		var shipOptions = {
 			startPosition:  startPosition,
 			startPlanetId:  basePlanet._id,
@@ -304,7 +475,8 @@ Meteor.methods({
 			isHumans:       true,
 			engineLevel:    engineLevel,
 			mission:        null,
-			isColony:       false
+			isColony:       false,
+			armyId:         newArmyId
 		}
 
 		Game.SpaceEvents.sendShip(shipOptions);

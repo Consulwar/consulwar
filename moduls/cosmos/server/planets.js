@@ -477,12 +477,7 @@ Meteor.methods({
 			sourceArmyId = Game.Unit.getHomeArmyId();
 		}
 
-		var destUnits = {
-			army: {
-				fleet: units
-			}
-		}
-
+		var destUnits = { army: { fleet: units } };
 		var newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
 
 		// update base planet

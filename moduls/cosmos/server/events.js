@@ -173,8 +173,6 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			}
 			
 			// update planet info
-			planet.timeRespawn = event.timeEnd + 120;
-
 			if (event.info.isOneway && (!battleResult || (userArmy && !enemyArmy))) {
 				// stay on planet
 				if (planet.isHome || planet.armyId) {
@@ -211,6 +209,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				Game.SpaceEvents.sendShip(shipOptions);
 			}
 
+			planet.timeRespawn = event.timeEnd + 120;
 			Game.Planets.update(planet);
 
 			if (!battleResult || (userArmy && !enemyArmy)) {
@@ -305,6 +304,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				}
 			}
 
+			planet.timeRespawn = event.timeEnd + 120;
 			Game.Planets.update(planet);
 
 		}

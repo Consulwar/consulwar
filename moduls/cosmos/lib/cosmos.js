@@ -516,7 +516,7 @@ Game.SpaceEvents = {
 
 	getFleetUnits: function(shipId) {
 		var ship = Game.SpaceEvents.getOne(shipId);
-		if (!ship || ship != Game.SpaceEvents.EVENT_SHIP) {
+		if (!ship || ship.type != Game.SpaceEvents.EVENT_SHIP) {
 			return null;
 		}
 

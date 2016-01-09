@@ -64,6 +64,11 @@
 		<!-- left block -->
 		<ul class="planets">
 			{{#each colonies}}
+			{{#if this.isEmpty}}
+			<li class="locked">
+				{{#if this.isSent}}Флот отправлен{{else}}Свободно{{/if}}
+			</li>
+			{{else}}
 			<li data-id="{{this._id}}" class="{{#if eq this._id active_colony_id}}active{{else}}{{#if this.isHome}}home{{/if}}{{/if}}">
 				{{#if this.isHome}}
 				Планета консула
@@ -71,6 +76,7 @@
 				{{this.name}}
 				{{/if}}
 			</li>
+			{{/if}}
 			{{/each}}
 		</ul>
 

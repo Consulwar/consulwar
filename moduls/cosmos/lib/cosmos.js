@@ -50,7 +50,7 @@ Game.Planets = {
 
 	getMaxColoniesCount: function() {
 		// TODO: implement!
-		return 3;
+		return 4;
 	},
 
 	getColoniesCount: function() {
@@ -60,8 +60,6 @@ Game.Planets = {
 	checkCanHaveMoreColonies: function() {
 		var current = Game.SpaceEvents.getSentToColonyCount()
 		            + Game.Planets.getColoniesCount();
-
-		console.log('current colonies: ' + current);
 
 		return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
 	},

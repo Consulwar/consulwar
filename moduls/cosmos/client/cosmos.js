@@ -1106,13 +1106,32 @@ Template.cosmos.events({
 		var colonies = Game.Planets.getColonies();
 
 		// delete selected planet from colonies
+		var isColonySelected = false;
 		if (planetId) {
 			var n = colonies.length;
 			while (n-- > 0) {
 				if (colonies[n]._id == planetId) {
 					colonies.splice(n, 1);
+					isColonySelected = true;
+					break;
 				}
 			}
+		}
+
+		// add free slots
+		var maxCount = Game.Planets.getMaxColoniesCount();
+		var sentCount = Game.SpaceEvents.getSentToColonyCount();
+
+		if (isColonySelected) {
+			maxCount -= 1;
+		}
+
+		for (var i = colonies.length; i < maxCount; i++) {
+			colonies.push({
+				isEmpty: true,
+				isSent: (sentCount > 0 ? true : false)
+			});
+			sentCount--;
 		}
 
 		if (colonies.length > 0) {
@@ -1134,9 +1153,10 @@ Template.cosmos.events({
 
 	'click .planets li': function(e) {
 		var id = $(e.currentTarget).attr("data-id");
-		Session.set('active_colony_id', id);
-
-		calcTimeToTarget();
+		if (id) {
+			Session.set('active_colony_id', id);
+			calcTimeToTarget();
+		}
 	},
 
 	'click .btn-all': function(e) {

@@ -212,6 +212,7 @@ var PlanetView = function(map, planet) {
 
 	this.showSideBarInfo = function() {
 		Session.set('planet', this.infoPlanet);
+		Session.set('time_fly', null);
 	}
 
 	this.refreshAnim = function() {
@@ -463,6 +464,7 @@ var ShipView = function(map, spaceEvent) {
 
 	this.showSideInfo = function() {
 		Session.set('planet', this.info);
+		Session.set('time_fly', this.getTimeLeft());
 	}
 
 	this.updateShipAnimation = function() {
@@ -495,9 +497,16 @@ var ShipView = function(map, spaceEvent) {
 		var angle = Math.atan2(nextPoint.y - curPoint.y, nextPoint.x - curPoint.x);
 		this.setRotation(angle);
 
+		// update gui time
+		/*
 		_markerTime.html(Math.round(timeLeft) + '&nbsp;sec.')
 		           .css('left', 30 * Math.cos(angle))
 		           .css('top', 30 * Math.sin(angle));
+		*/
+		var sideInfo = Session.get('planet');
+		if (sideInfo && sideInfo.id == null && sideInfo.event_id == this.id) {
+			Session.set('time_fly', timeLeft);
+		}
 	}
 
 	this.hideShipAnimation = function() {
@@ -929,7 +938,7 @@ Game.SpaceEvents.getAll().observeChanges({
 	}
 });
 
-var calcTimeToTarget = function() {
+var refreshTimeToTarget = function() {
 	var target = Session.get('target');
 	var baseId = Session.get('active_colony_id');
 
@@ -967,7 +976,7 @@ var calcTimeToTarget = function() {
 		Session.set('time_left', timeLeft);
 
 		// TODO: Так можно делать или нет?
-		setTimeout(calcTimeToTarget, 1000);
+		setTimeout(refreshTimeToTarget, 1000);
 	}
 }
 
@@ -1102,6 +1111,7 @@ Template.cosmos.helpers({
 
 	time_attack: function() { return Session.get('time_attack'); },
 	time_left: function() { return Session.get('time_left'); },
+	time_fly: function () { return Session.get('time_fly'); },
 
 	available_fleet: function() {
 		var colonyId = Session.get('active_colony_id');
@@ -1218,7 +1228,7 @@ Template.cosmos.events({
 				eventId: (eventId && eventId.length > 0 ? eventId : null)
 			});
 
-			calcTimeToTarget();
+			refreshTimeToTarget();
 		}
 	},
 
@@ -1230,7 +1240,7 @@ Template.cosmos.events({
 		var id = $(e.currentTarget).attr("data-id");
 		if (id) {
 			Session.set('active_colony_id', id);
-			calcTimeToTarget();
+			refreshTimeToTarget();
 		}
 	},
 

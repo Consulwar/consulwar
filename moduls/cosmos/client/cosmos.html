@@ -44,6 +44,9 @@
 				{{/each}}
 			</ul>
 			{{/if}}
+			{{#if time_fly}}
+			<p>Время до цели: <span>{{formatSeconds time_fly}}</span></p>
+			{{/if}}
 			{{#if planet.canSend}}
 				<a class="button-attack open" data-planet-id="{{planet.id}}" data-event-id="{{planet.event_id}}">ОТПРАВИТЬ</a>
 			{{/if}}
@@ -83,6 +86,9 @@
 			{{/each}}
 		</ul>
 		{{/if}}
+		{{#unless user_fleets}}{{#unless reptile_fleets}}
+		<h2>Нет передвижений флота</h2>
+		{{/unless}}{{/unless}}
 		{{/if}}
 	</div>
 

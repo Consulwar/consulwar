@@ -54,7 +54,35 @@
 			</ul>
 			-->
 		{{else}}
-		<h2>Нет информации</h2>
+		{{#if user_fleets}}
+		<div class="header-humans">
+			<p>Флот консула</p>
+		</div>
+		<ul class="humans">
+			{{#each user_fleets}}
+			<li class="fleet" data-id="{{this.id}}">
+				{{#if this.start}}{{this.start.name}}{{else}}Перехват{{/if}}
+				<span> ---> </span> 
+				{{#if this.finish}}{{this.finish.name}}{{else}}Перехват{{/if}}
+			</li>
+			{{/each}}
+		</ul>
+		{{/if}}
+		{{#if reptile_fleets}}
+		<div class="header-reptiles">
+			<p>&nbsp;</p>
+			<p>Флот рептилий</p>
+		</div>
+		<ul class="reptiles">
+			{{#each reptile_fleets}}
+			<li class="fleet" data-id="{{this.id}}">
+				{{#if this.start}}{{this.start.name}}{{else}}Перехват{{/if}}
+				<span> ---> </span> 
+				{{#if this.finish}}{{this.finish.name}}{{else}}Перехват{{/if}}
+			</li>
+			{{/each}}
+		</ul>
+		{{/if}}
 		{{/if}}
 	</div>
 

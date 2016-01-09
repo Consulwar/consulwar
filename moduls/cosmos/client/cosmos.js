@@ -453,6 +453,14 @@ var ShipView = function(map, spaceEvent) {
 		_marker.on('click', this.showSideInfo.bind(this));
 	}
 
+	this.getPosition = function () {
+		var latLng = (_marker) ? _marker.getLatLng() : null;
+		return {
+			x: (latLng ? latLng.lat : 0),
+			y: (latLng ? latLng.lng : 0)
+		}	
+	}
+
 	this.showSideInfo = function() {
 		Session.set('planet', this.info);
 	}
@@ -830,6 +838,48 @@ Game.Planets.getAll().observeChanges({
 	}
 });
 
+var refreshFleetsInfo = function() {
+	var user = null;
+	var reptile = null;
+
+	var fleets = Game.SpaceEvents.getFleets().fetch();
+	for (var i = 0; i < fleets.length; i++) {
+
+		var startPlanetId = fleets[i].info.startPlanetId; 
+		var startPlanet = null;
+		if (startPlanetId) {
+			startPlanet = Game.Planets.getOne(startPlanetId);
+		}
+
+		var finishPlanetId = fleets[i].info.targetId
+		var finishPlanet = null;
+		if (fleets[i].info.targetType == Game.SpaceEvents.TARGET_PLANET && finishPlanetId) {
+			finishPlanet = Game.Planets.getOne(finishPlanetId);
+		}
+
+		var info = {
+			id: fleets[i]._id,
+			start: startPlanet,
+			finish: finishPlanet
+		}
+
+		if (fleets[i].info.isHumans) {
+			if (!user) {
+				user = [];
+			}
+			user.push(info);
+		} else {
+			if (!reptile) {
+				reptile = [];
+			}
+			reptile.push(info);
+		}
+	}
+
+	Session.set('user_fleets', user);
+	Session.set('reptile_fleets', reptile);
+}
+
 var createSpaceEvent = function(event) {
 	switch (event.type) {
 		case Game.SpaceEvents.EVENT_SHIP:
@@ -837,6 +887,7 @@ var createSpaceEvent = function(event) {
 				shipViews = {};
 			}
 			shipViews[ event._id ] = new ShipView(mapView, event);
+			refreshFleetsInfo();
 			break;
 	}
 }
@@ -844,6 +895,7 @@ var createSpaceEvent = function(event) {
 var updateSpaceEventData = function(id) {
 	if (shipViews && shipViews[ id ]) {
 		shipViews[ id ].updateData();
+		refreshFleetsInfo();
 	}
 }
 
@@ -852,6 +904,7 @@ var removeSpaceEvent = function(id) {
 		shipViews[ id ].remove();
 		shipViews[ id ].updateData();
 		shipViews[ id ] = null;
+		refreshFleetsInfo();
 	}
 }
 
@@ -1041,6 +1094,9 @@ Template.cosmos.helpers({
 	drop: function() { return Session.get('drop'); },
 	target: function() { return Session.get('target'); },
 
+	user_fleets: function () { return Session.get('user_fleets'); },
+	reptile_fleets: function () { return Session.get('reptile_fleets'); },
+
 	active_colony_id: function() { return Session.get('active_colony_id'); },
 	colonies: function() { return Session.get('colonies'); },
 
@@ -1093,6 +1149,25 @@ Template.cosmos.events({
 				mapView.setView([0, 0], 8);
 			}
 		}
+	},
+
+	'click .fleet': function (e) {
+		var id = $(e.currentTarget).attr('data-id');
+		if (!id) {
+			return;
+		}
+
+		if (!shipViews || !mapView) {
+			return;
+		}
+
+		var shipView = shipViews[ id ];
+		if (!shipView) {
+			return;
+		}
+
+		var position = shipView.getPosition();
+		mapView.setView([position.x, position.y], 9);
 	},
 
 	'click .open': function(e) {

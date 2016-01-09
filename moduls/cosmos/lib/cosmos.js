@@ -248,7 +248,7 @@ Game.Planets = {
 
 	getEngineLevel: function() {
 		// TODO: Get current user engine level!
-		return 100;
+		return 0;
 	},
 
 	calcDistanceByTime: function(currentTime, totalDistance, maxSpeed, acceleration) {
@@ -480,6 +480,13 @@ Game.SpaceEvents = {
 		return Game.SpaceEvents.Collection.findOne({
 			user_id: Meteor.userId(),
 			_id: id
+		});
+	},
+
+	getFleets: function () {
+		return Game.SpaceEvents.Collection.find({
+			user_id: Meteor.userId(),
+			type: Game.SpaceEvents.EVENT_SHIP
 		});
 	},
 

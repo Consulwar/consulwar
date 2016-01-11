@@ -143,13 +143,18 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			var enemyArmy = null;
 
 			if (planet.mission) {
+				var battleOptions = {
+					missionType: planet.mission.type,
+					missionLevel: planet.mission.level
+				};
+
 				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
 				enemyArmy = { reptiles: { fleet: enemyFleet } };
 
 				var userFleet = Game.SpaceEvents.getFleetUnits(event._id);
 				userArmy = { army: { fleet: userFleet } };
 
-				battleResult = Game.Unit.performBattle(userArmy, enemyArmy);
+				battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
 				userArmy = battleResult.userArmy;
 				enemyArmy = battleResult.enemyArmy;
 
@@ -170,6 +175,9 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					Game.Unit.removeArmy(event.info.armyId);
 					planet.mission = null;
 				}
+
+				// add reward
+				Game.Resources.add( battleResult.reward );
 			}
 			
 			// update planet info
@@ -324,6 +332,12 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			return; // same side!
 		}
 
+		var battleOptions = {};
+		if (targetShip.info.mission) {
+			battleOptions.missionType = targetShip.info.mission.type;
+			battleOptions.missionLevel = targetShip.info.mission.level;
+		}
+
 		var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
 		var firstArmy = (event.info.isHumans) ? { army: { fleet: firstFleet } }
 		                                      : { reptiles: { fleet: firstFleet } };
@@ -332,10 +346,11 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		var secondArmy = (targetShip.info.isHumans) ? { army: { fleet: secondFleet } }
 		                                            : { reptiles: { fleet: secondFleet } };
 
-		var battleResult = Game.Unit.performBattle(firstArmy, secondArmy);
+		var battleResult = Game.Unit.performBattle(firstArmy, secondArmy, battleOptions);
 		firstArmy = battleResult.userArmy;
 		secondArmy = battleResult.enemyArmy;
 
+		// update units
 		if (firstArmy) {
 			if (event.info.isHumans) {
 				Game.Unit.updateArmy(event.info.armyId, firstArmy);
@@ -358,8 +373,13 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			Game.SpaceEvents.Collection.remove({ _id: targetShip._id });
 		}
 
+		// add reward
+		if ((firstArmy && event.info.isHumans) || (secondArmy && targetShip.info.isHumans)) {
+			Game.Resources.add( battleResult.reward );
+		}
+
+		// return to base
 		if (firstArmy) {
-			// return to base
 			var startPosition = event.info.targetPosition;
 			var targetPosition = event.info.startPosition;
 			var engineLevel = event.info.engineLevel;

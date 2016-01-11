@@ -80,6 +80,22 @@ Game.Planets.generateName = function() {
 	return result;
 }
 
+Game.Planets.getLastAttackTime = function() {
+	var home = Game.Planets.getBase();
+	if (home && home.timeLastAttack) {
+		return home.timeLastAttack;
+	}
+	return 0;
+}
+
+Game.Planets.setLastAttackTime = function(time) {
+	var home = Game.Planets.getBase();
+	if (home) {
+		home.timeLastAttack = time;
+		Game.Planets.update(home);
+	}
+}
+
 Game.Planets.generateMission = function(planet) {
 	// check planets
 	if (!planet) {

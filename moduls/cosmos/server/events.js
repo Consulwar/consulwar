@@ -1,49 +1,49 @@
 initCosmosEventsServer = function() {
 
 Game.SpaceEvents.actualize = function() {
-	// TODO: write method!
-	/*
-	var chances = Game.Planets.getReptileAttackChance();
+	var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 
-	if (chances.home >= _.random(0, 100)) {
-		// choose base planet
-		targetPlanet = Game.Planets.getBase();
-	} else if (chances.colony >= _.random(0, 100)) {
-		// choose from colonies, exclude base planet
-		var colonies = Game.Planets.getColonies();
-		var n = colonies.length;
-		while (n-- > 0) {
-			if (colonies[n].isHome) {
-				colonies.splice(n, 1);
+	// Try to attack player
+	if (timeCurrent >= Game.Planets.getLastAttackTime() + 120) {
+		var targetPlanet = null;
+		var chances = Game.Planets.getReptileAttackChance();
+
+		if (chances.home >= _.random(0, 100)) {
+			// choose base planet
+			targetPlanet = Game.Planets.getBase();
+		} else if (chances.colony >= _.random(0, 100)) {
+			// choose from colonies, exclude base planet
+			var colonies = Game.Planets.getColonies();
+			var n = colonies.length;
+			while (n-- > 0) {
+				if (colonies[n].isHome) {
+					colonies.splice(n, 1);
+				}
+			}
+			if (colonies.length > 0) {
+				targetPlanet = colonies[ _.random(0, colonies.length - 1) ];
 			}
 		}
-		if (colonies.length > 0) {
-			targetPlanet = colonies[ _.random(0, colonies.length - 1) ];
-		}
-	} 
-	*/
 
-	/*
-	// count trade fleets
-	var curCount = 0;
-	var events = Game.SpaceEvents
-	if (events) {
-		for (var i = 0; i < events.length; i++) {
-			if (events[i].type == Game.SpaceEvents.type.SHIP
-			 && events[i]
-			 && events[i].info.mission
-			 && events[i].info.mission.type == 'tradefleet'
-			) {
-				curCount++;
-			}
+		if (targetPlanet) {
+			Game.SpaceEvents.sendReptileFleetToPlanet(targetPlanet._id);
+			Game.Planets.setLastAttackTime(timeCurrent);
 		}
 	}
 
-	if (curCount > 0) {
-		return; // don't spawn more than 1 trade fleet
-	}
-	*/
+	// Try to spawn trade fleet
+	var tradeFleetsCount = Game.SpaceEvents.Collection.find({
+		user_id: Meteor.userId(),
+		type: Game.SpaceEvents.type.SHIP,
+		status: Game.SpaceEvents.status.STARTED,
+		'info.mission.type': 'tradefleet'
+	}).count();
 
+	if (tradeFleetsCount <= 0) {
+		Game.SpaceEvents.spawnTradeFleet();	
+	}
+
+	// Update space events
 	Meteor.call('spaceEvents.updateAll');
 }
 

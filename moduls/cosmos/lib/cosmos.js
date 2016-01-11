@@ -507,6 +507,7 @@ Game.SpaceEvents = {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
 			type: Game.SpaceEvents.type.SHIP,
+			status: Game.SpaceEvents.status.STARTED,
 			'info.isHumans': true,
 			'info.isColony': true
 		}).count();
@@ -516,6 +517,7 @@ Game.SpaceEvents = {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
 			type: Game.SpaceEvents.type.SHIP,
+			status: Game.SpaceEvents.status.STARTED,
 			'info.isHumans': true
 		}).count();
 	},

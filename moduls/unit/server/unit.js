@@ -540,8 +540,47 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 	}
 
-	this.constructor = function(userArmy, enemyArmy, options) {
+	var getPoints = function(resources) {
+		var points = 0;
+		for (var res in resources) {
+			if (res != 'time') {
+				points += resources[res] * (res == 'crystals' ? 3 : res == 'humans' ? 4 : 1);
+			}
+		}
+		return points;
+	}
 
+	var calculateAward = function(killed, multiplier) {
+		var resources = {
+			metals: 0,
+			crystals: 0
+		}
+
+		for (var side in killed) {
+			for (var group in killed[side]) {
+				for (var name in killed[side][group]) {
+
+					var count = killed[side][group][name];
+					if (count <= 0) {
+						continue;
+					}
+
+					var price = Game.Unit.items[side][group][name].price(count);
+					if (price && price.base) {
+						resources.metals += price.base.metals;
+						resources.crystals += price.base.crystals;
+					}
+				}
+			}
+		}
+
+		resources.metals *= multiplier;
+		resources.crystals *= multiplier;
+
+		return resources;
+	}
+
+	this.constructor = function(userArmy, enemyArmy, options) {
 		// parse options
 		var rounds = (options && options.rounds) ? options.rounds : 3;
 
@@ -553,9 +592,14 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 		damageReduction = 1 - (damageReduction / 100);
 
+		var missionType = (options && options.missionType) ? options.missionType : null;
+		var missionLevel = (options && options.missionLevel) ? options.missionLevel : null;
+
 		var options = {
 			rouns: rounds,
-			damageReduction: damageReduction
+			damageReduction: damageReduction,
+			missionType: missionType,
+			missionLevel: missionLevel
 		}
 
 		// parse user army
@@ -608,18 +652,32 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (!userArmyRest[unit.side][unit.group]) {
 					userArmyRest[unit.side][unit.group] = {};
 				}
-
 				userArmyRest[unit.side][unit.group][unit.name] = unit.count;
 			}
 		}
 
 		writeLog('Вражеская армия:');
 		var enemyArmyRest = null;
+		var enemyArmyKilled = null;
 		
 		for (var key in enemyUnits) {
 
 			var unit = enemyUnits[key];
 			writeLog('    ' + unit.model.name + ' ' + unit.count);
+
+			var killed = unit.startCount - unit.count;
+			if (killed > 0) {
+				if (!enemyArmyKilled) {
+					enemyArmyKilled = {};
+				}
+				if (!enemyArmyKilled[unit.side]) {
+					enemyArmyKilled[unit.side] = {};
+				}
+				if (!enemyArmyKilled[unit.side][unit.group]) {
+					enemyArmyKilled[unit.side][unit.group] = {};
+				}
+				enemyArmyKilled[unit.side][unit.group][unit.name] = killed;
+			}
 
 			if (unit.count > 0) {
 				if (!enemyArmyRest) {
@@ -631,15 +689,43 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (!enemyArmyRest[unit.side][unit.group]) {
 					enemyArmyRest[unit.side][unit.group] = {};
 				}
-
 				enemyArmyRest[unit.side][unit.group][unit.name] = unit.count;
 			}
 		}
 
+		// calculate reward
+		reward = {};
+
+		var mission = null;
+		if (options.missionType
+		 && options.missionLevel
+		 && Game.Battle.items[ options.missionType ]
+		 && Game.Battle.items[ options.missionType ].level
+		 && Game.Battle.items[ options.missionType ].level[ options.missionLevel ]
+		) {
+			mission = Game.Battle.items[ options.missionType ];
+		}
+
+		if (mission) {
+			// metals + crystals
+			if (userArmyRest && !enemyArmyRest) {
+				if (mission.level[ options.missionLevel ].reward) {
+					reward = mission.level[ options.missionLevel ].reward;
+				} else {
+					reward = calculateAward(enemyArmyKilled, 0.1);
+				}
+			}
+
+			// honor
+			reward.honor = Math.floor((getPoints(calculateAward(enemyArmyKilled, 1)) / 100) * (mission.honor * 0.01));
+		}
+
+		// save results
 		this.results = {
 			log: currentLog,
 			userArmy: userArmyRest,
-			enemyArmy: enemyArmyRest
+			enemyArmy: enemyArmyRest,
+			reward: reward
 		}
 	}
 	this.constructor(userArmy, enemyArmy, options);

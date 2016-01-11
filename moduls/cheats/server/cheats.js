@@ -30,7 +30,16 @@ Meteor.methods({
 
 	'cheats.testMissionGenerate': function (planet) {
 		return Game.Planets.generateMission(planet);
+	},
+
+	'cheats.spawnTradeFleet': function() {
+		Game.SpaceEvents.spawnTradeFleet();
+	},
+
+	'cheats.sendReptileFleetToPlanet': function(planetId) {
+		Game.SpaceEvents.sendReptileFleetToPlanet(planetId);
 	}
+
 })
 
 }

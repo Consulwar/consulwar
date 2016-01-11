@@ -11,8 +11,8 @@ Game.Cheats.testBattle = function() {
 	userArmy = {
 		army: {
 			fleet: {
-				wasp: 1,
-				cruiser: 1,
+				wasp: 1000,
+				cruiser: 500,
 				battleship: 1,
 				carrier: 1,
 				flagship: 1
@@ -22,9 +22,9 @@ Game.Cheats.testBattle = function() {
 	enemyArmy = {
 		reptiles: {
 			fleet: {
-				blade: 1,
-				dragon: 1,
-				hydra: 1,
+				blade: 100,
+				dragon: 20,
+				hydra: 10,
 				armadillo: 1,
 				shadow: 1,
 				trioniks: 1
@@ -71,8 +71,10 @@ Game.Cheats.testBattle = function() {
 	} */
 
 	options = {
-		rounds: 4,
-		damageReduction: 0
+		rounds: 3,
+		damageReduction: 0,
+		missionType: 'patrolfleet',
+		missionLevel: 1
 	}
 
 	Meteor.call('cheats.performBattle', userArmy, enemyArmy, options, function(err, data) {
@@ -89,6 +91,17 @@ Game.Cheats.testMissionGenerate = function(hand, segment) {
 	Meteor.call('cheats.testMissionGenerate', planet, function (err, data) {
 		console.log(data);
 	});
+}
+
+Game.Cheats.spawnTradeFleet = function() {
+	Meteor.call('cheats.spawnTradeFleet');
+}
+
+Game.Cheats.sendReptileFleetToPlanet = function(planetName) {
+	var planet = Game.Planets.Collection.findOne({ name: planetName });
+	if (planet) {
+		Meteor.call('cheats.sendReptileFleetToPlanet', planet._id);
+	}
 }
 
 }

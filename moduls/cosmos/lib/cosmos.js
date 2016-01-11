@@ -247,8 +247,7 @@ Game.Planets = {
 	},
 
 	getEngineLevel: function() {
-		// TODO: Get current user engine level!
-		return 0;
+		return Game.Research.get('evolution', 'hyperdrive');
 	},
 
 	calcDistanceByTime: function(currentTime, totalDistance, maxSpeed, acceleration) {

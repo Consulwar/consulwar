@@ -87,7 +87,7 @@ Game.Planets.generateMission = function(planet) {
 		return;
 	}
 
-	// TODO: Maybe move to lib?
+	// missions config
 	var missions = [
 		[
 			{ type: 'patrolfleet', levels: [1] }
@@ -163,6 +163,62 @@ Game.Planets.generateMission = function(planet) {
 	var list = missions[ index ];
 	var mission = list[ _.random(0, list.length - 1) ];
 
+	return {
+		type: mission.type,
+		level: mission.levels[ _.random(0, mission.levels.length - 1) ]
+	};
+}
+
+Game.Planets.getReptileAttackChance = function() {
+	var power = Game.User.getVotePower();
+	return {
+		home: power * 5,
+		colony: power * 1
+	};
+}
+
+Game.Planets.getReptileAttackMission = function() {
+	var power = Game.User.getVotePower();
+
+	// missions config
+	var missions = [
+		[
+			// if power = 0 then no attacks
+		],
+		[
+			{ type: 'patrolfleet', levels: [2, 3, 4] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [5, 6, 7] }
+		],
+		[
+			{ type: 'patrolfleet', levels: [8, 9, 10] }
+		],
+		[
+			{ type: 'battlefleet', levels: [1, 2, 3] }
+		],
+		[
+			{ type: 'battlefleet', levels: [4, 5, 6] }
+		],
+		[
+			{ type: 'battlefleet', levels: [7, 8, 9] }
+		],
+		[
+			{ type: 'battlefleet', levels: [10] }
+		]
+	];
+
+	// select mission
+	if (power >= missions.length) {
+		power = missions.length - 1;
+	}
+
+	var list = missions[ power ];
+	if (!list || list.length <= 0) {
+		return;
+	}
+
+	var mission = list[ _.random(0, list.length - 1) ];
 	return {
 		type: mission.type,
 		level: mission.levels[ _.random(0, mission.levels.length - 1) ]

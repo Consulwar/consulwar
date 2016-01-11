@@ -85,6 +85,9 @@ Meteor.methods({
 
 		Game.Queue.checkAll();
 
+		Game.SpaceEvents.actualize();
+		Game.Planets.actualize();
+
 		Meteor.call('updateQuests');
 
 		return true;

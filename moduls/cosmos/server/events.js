@@ -1,5 +1,52 @@
 initCosmosEventsServer = function() {
 
+Game.SpaceEvents.actualize = function() {
+	// TODO: write method!
+	/*
+	var chances = Game.Planets.getReptileAttackChance();
+
+	if (chances.home >= _.random(0, 100)) {
+		// choose base planet
+		targetPlanet = Game.Planets.getBase();
+	} else if (chances.colony >= _.random(0, 100)) {
+		// choose from colonies, exclude base planet
+		var colonies = Game.Planets.getColonies();
+		var n = colonies.length;
+		while (n-- > 0) {
+			if (colonies[n].isHome) {
+				colonies.splice(n, 1);
+			}
+		}
+		if (colonies.length > 0) {
+			targetPlanet = colonies[ _.random(0, colonies.length - 1) ];
+		}
+	} 
+	*/
+
+	/*
+	// count trade fleets
+	var curCount = 0;
+	var events = Game.SpaceEvents
+	if (events) {
+		for (var i = 0; i < events.length; i++) {
+			if (events[i].type == Game.SpaceEvents.type.SHIP
+			 && events[i]
+			 && events[i].info.mission
+			 && events[i].info.mission.type == 'tradefleet'
+			) {
+				curCount++;
+			}
+		}
+	}
+
+	if (curCount > 0) {
+		return; // don't spawn more than 1 trade fleet
+	}
+	*/
+
+	Meteor.call('spaceEvents.updateAll');
+}
+
 Game.SpaceEvents.update = function(event) {
 	if (!event._id || !event.user_id) {
 		return null;
@@ -25,13 +72,14 @@ Game.SpaceEvents.updateEvent = function(event) {
 	serverTime = Math.floor( new Date().valueOf() / 1000 );
 
 	switch (event.type) {
-		case Game.SpaceEvents.EVENT_SHIP:
+		case Game.SpaceEvents.type.SHIP:
 			Game.SpaceEvents.updateShip(serverTime, event);
 			break;
 	}
 
 	if (event.timeEnd <= serverTime) {
-		Game.SpaceEvents.Collection.remove({ _id: event._id })
+		event.status = Game.SpaceEvents.status.FINISHED;
+		Game.SpaceEvents.Collection.update({ _id: event._id }, event);
 	}
 }
 
@@ -96,7 +144,8 @@ Game.SpaceEvents.sendShip = function(options) {
 
 	// insert event
 	Game.SpaceEvents.add({
-		type: Game.SpaceEvents.EVENT_SHIP,
+		type: Game.SpaceEvents.type.SHIP,
+		status: Game.SpaceEvents.status.STARTED,
 		timeStart: options.startTime,
 		timeEnd: options.startTime + options.flyTime,
 		info: {
@@ -115,7 +164,134 @@ Game.SpaceEvents.sendShip = function(options) {
 	});
 }
 
+Game.SpaceEvents.spawnTradeFleet = function() {
+	// find available planets
+	var planets = Game.Planets.getAll().fetch();
+	var n = planets.length;
+
+	while (n-- > 0) {
+		if (!planets[n].mission || planets[n].isHome) {
+			planets.splice(n, 1);
+		}
+	}
+
+	if (planets.length >= 2) {
+		// get two random planets
+		var randFrom = Math.floor( Math.random() * planets.length );
+		var randTo = randFrom;
+		while (randTo == randFrom) {
+			randTo = Math.floor( Math.random() * planets.length );
+		}
+
+		var startPlanet = planets[ randFrom ];
+		var targetPlanet = planets[ randTo ];
+
+		// send ship
+		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
+
+		var startPosition = {
+			x: startPlanet.x,
+			y: startPlanet.y
+		}
+
+		var targetPosition = {
+			x: targetPlanet.x,
+			y: targetPlanet.y
+		}
+
+		var mission = Game.Planets.generateMission(startPlanet);
+		if (!mission) {
+			mission = {
+				level: _.random(1, 10)
+			};
+		}
+		mission.type = 'tradefleet';
+
+		var engineLevel = 0;
+		var flyTime = Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel);
+
+		var shipOptions = {
+			startPosition:  startPosition,
+			startPlanetId:  startPlanet._id,
+			targetPosition: targetPosition,
+			targetType:     Game.SpaceEvents.target.PLANET,
+			targetId:       targetPlanet._id,
+			startTime:      timeCurrent,
+			flyTime:        flyTime,
+			isHumans:       false,
+			engineLevel:    engineLevel,
+			mission:        mission,
+			isColony:       false
+		}
+
+		Game.SpaceEvents.sendShip(shipOptions);
+	}
+}
+
+Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
+	// get target planet
+	var targetPlanet = Game.Planets.getOne(planetId);
+	if (!targetPlanet) {
+		throw new Meteor.Error('Нет такой планеты');
+	}
+
+	// find available start planets
+	var planets = Game.Planets.getAll().fetch();
+	var n = planets.length;
+
+	while (n-- > 0) {
+		if (!planets[n].mission || planets[n].isHome) {
+			planets.splice(n, 1);
+		}
+	}
+
+	if (planets.length > 0) {
+
+		// choose start planet
+		var rand = Math.floor( Math.random() * planets.length );
+		var startPlanet = planets[rand];
+
+		// send ship
+		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
+
+		var startPosition = {
+			x: startPlanet.x,
+			y: startPlanet.y
+		}
+
+		var targetPosition = {
+			x: targetPlanet.x,
+			y: targetPlanet.y
+		}
+
+		var engineLevel = Game.Planets.getEngineLevel();
+
+		var mission = (targetPlanet.isHome) ? Game.Planets.getReptileAttackMission()
+		                                    : Game.Planets.generateMission(targetPlanet);
+
+		var shipOptions = {
+			startPosition:  startPosition,
+			startPlanetId:  startPlanet._id,
+			targetPosition: targetPosition,
+			targetType:     Game.SpaceEvents.target.PLANET,
+			targetId:       targetPlanet._id,
+			startTime:      timeCurrent,
+			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+			isHumans:       false,
+			engineLevel:    engineLevel,
+			mission:        mission,
+			isColony:       false
+		}
+
+		Game.SpaceEvents.sendShip(shipOptions);
+	}
+}
+
 Game.SpaceEvents.updateShip = function(serverTime, event) {
+	if (event.status == Game.SpaceEvents.status.FINISHED) {
+		return; // already finished
+	}
+
 	if (event.timeEnd > serverTime) {
 		return; // still flying
 	}
@@ -123,7 +299,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 	// --------------------------------
 	// Arrived to planet
 	// --------------------------------
-	if (event.info.targetType ==  Game.SpaceEvents.TARGET_PLANET) {
+	if (event.info.targetType ==  Game.SpaceEvents.target.PLANET) {
 
 		var planetId = event.info.targetId;
 		var planet = Game.Planets.getOne(planetId);
@@ -202,7 +378,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					startPosition:  startPosition,
 					startPlanetId:  event.info.targetId,
 					targetPosition: targetPosition,
-					targetType:     Game.SpaceEvents.TARGET_PLANET,
+					targetType:     Game.SpaceEvents.target.PLANET,
 					targetId:       event.info.startPlanetId,
 					startTime:      event.timeEnd,
 					flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
@@ -259,7 +435,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 						event.info.mission.units = enemyArmy.reptiles.fleet;
 					} else {
 						planet.mission = {
-							type: 'defenceFleet',
+							type: 'defencefleet',
 							level: event.info.mission.level,
 							units: enemyArmy.reptiles.fleet
 						}
@@ -284,7 +460,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 						startPosition:  startPosition,
 						startPlanetId:  event.info.targetId,
 						targetPosition: targetPosition,
-						targetType:     Game.SpaceEvents.TARGET_PLANET,
+						targetType:     Game.SpaceEvents.target.PLANET,
 						targetId:       event.info.startPlanetId,
 						startTime:      event.timeEnd,
 						flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
@@ -306,7 +482,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			} else {
 				// empty planet
 				planet.mission = {
-					type: 'defenceFleet',
+					type: 'defencefleet',
 					level: event.info.mission.level,
 					units: event.info.mission.units
 				}
@@ -321,7 +497,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 	// --------------------------------
 	// Meet with target ship
 	// --------------------------------
-	if (event.info.targetType == Game.SpaceEvents.TARGET_SHIP) {
+	if (event.info.targetType == Game.SpaceEvents.target.SHIP) {
 
 		var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
 		if (!targetShip) {
@@ -358,7 +534,8 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				event.info.mission.units = firstArmy.reptiles.fleet;
 			}
 		} else {
-			Game.SpaceEvents.Collection.remove({ _id: event._id });
+			event.status = Game.SpaceEvents.status.FINISHED;
+			Game.SpaceEvents.Collection.update({ _id: event._id }, event);
 		}
 
 		if (secondArmy) {
@@ -370,7 +547,8 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			targetShip.info.timeBattle = serverTime;
 			Game.SpaceEvents.Collection.update({ _id: targetShip._id }, targetShip);
 		} else {
-			Game.SpaceEvents.Collection.remove({ _id: targetShip._id });
+			targetShip.status = Game.SpaceEvents.status.FINISHED;
+			Game.SpaceEvents.Collection.update({ _id: targetShip._id}, targetShip);
 		}
 
 		// add reward
@@ -388,7 +566,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				startPosition:  startPosition,
 				startPlanetId:  null,
 				targetPosition: targetPosition,
-				targetType:     Game.SpaceEvents.TARGET_PLANET,
+				targetType:     Game.SpaceEvents.target.PLANET,
 				targetId:       event.info.startPlanetId,
 				startTime:      event.timeEnd,
 				flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
@@ -428,19 +606,19 @@ Meteor.methods({
 		}
 	},
 
-	'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY, flyTime) {
+	'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY) {
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}
 
 		var basePlanet = Game.Planets.getOne(baseId);
 		if (!basePlanet) {
-			return; // no such planet
+			throw new Meteor.Error('Плаента не существует');
 		}
 
 		var enemyShip = Game.SpaceEvents.getOne(targetId);
 		if (!enemyShip) {
-			return; // no such ship
+			throw new Meteor.Error('Корабль не существует');
 		}
 
 		var engineLevel = Game.Planets.getEngineLevel();
@@ -455,16 +633,20 @@ Meteor.methods({
 			y: targetY
 		}
 
+		// check time
 		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 		var timeLeft = enemyShip.timeEnd - timeCurrent;
 		
-		// TODO: Implement time check on server! Or use turf!
+		var attackOptions = Game.Planets.calcAttackOptions(basePlanet,
+		                                                   engineLevel,
+		                                                   enemyShip,
+		                                                   timeCurrent);
 
-		timeAttack = flyTime;
-
-		if (timeAttack >= timeLeft) {
-			return; // not enough time to attack
+		if (!attackOptions || attackOptions.time >= timeLeft) {
+			throw new Meteor.Error('Невозможно перехватить');
 		}
+
+		var timeAttack = attackOptions.time;
 
 		// check and slice units
 		var sourceArmyId = basePlanet.armyId;
@@ -488,7 +670,7 @@ Meteor.methods({
 			startPosition:  startPosition,
 			startPlanetId:  basePlanet._id,
 			targetPosition: targetPosition,
-			targetType:     Game.SpaceEvents.TARGET_SHIP,
+			targetType:     Game.SpaceEvents.target.SHIP,
 			targetId:       enemyShip._id,
 			startTime:      timeCurrent,
 			flyTime:        timeAttack,
@@ -500,132 +682,6 @@ Meteor.methods({
 		}
 
 		Game.SpaceEvents.sendShip(shipOptions);
-	},
-
-	'spaceEvents.attackPlayerFleet': function(id, targetX, targetY) {
-		// TODO: implement!
-	},
-
-	'spaceEvents.attackPlayerPlanet': function() {
-
-		// choose target planet
-		var targetPlanet = Game.Planets.getBase();
-
-		// find available start planets
-		var planets = Game.Planets.getAll().fetch();
-		var n = planets.length;
-
-		while (n-- > 0) {
-			if (!planets[n].mission || planets[n].isHome) {
-				planets.splice(n, 1);
-			}
-		}
-
-		if (planets.length > 0) {
-
-			// choose start planet
-			var rand = Math.floor( Math.random() * planets.length );
-			var startPlanet = planets[rand];
-
-			// send ship
-			var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
-
-			var startPosition = {
-				x: startPlanet.x,
-				y: startPlanet.y
-			}
-
-			var targetPosition = {
-				x: targetPlanet.x,
-				y: targetPlanet.y
-			}
-
-			var engineLevel = Game.Planets.getEngineLevel();
-
-			var mission = {
-				type: 'battlefleet',
-				level: _.random(1, 10)
-			}
-
-			var shipOptions = {
-				startPosition:  startPosition,
-				startPlanetId:  startPlanet._id,
-				targetPosition: targetPosition,
-				targetType:     Game.SpaceEvents.TARGET_PLANET,
-				targetId:       targetPlanet._id,
-				startTime:      timeCurrent,
-				flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-				isHumans:       false,
-				engineLevel:    engineLevel,
-				mission:        mission,
-				isColony:       false
-			}
-
-			Game.SpaceEvents.sendShip(shipOptions);
-		}
-	},
-
-	'spaceEvents.spawnTradeFleet': function() {
-
-		var planets = Game.Planets.getAll().fetch();
-		var n = planets.length;
-
-		while (n-- > 0) {
-			if (!planets[n].mission || planets[n].isHome) {
-				planets.splice(n, 1);
-			}
-		}
-
-		if (planets.length >= 2) {
-
-			// get two random planets
-			var randFrom = Math.floor( Math.random() * planets.length );
-			var randTo = randFrom;
-			while (randTo == randFrom) {
-				randTo = Math.floor( Math.random() * planets.length );
-			}
-
-			var startPlanet = planets[ randFrom ];
-			var targetPlanet = planets[ randTo ];
-
-			// send ship
-			var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
-
-			var startPosition = {
-				x: startPlanet.x,
-				y: startPlanet.y
-			}
-
-			var targetPosition = {
-				x: targetPlanet.x,
-				y: targetPlanet.y
-			}
-
-			var mission = {
-				type: 'tradefleet',
-				level: _.random(1, 10)
-			}
-
-			// TODO: Calculate reptile ship flyTime and engineLevel!
-			var engineLevel = 0;
-			var flyTime = Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel);
-
-			var shipOptions = {
-				startPosition:  startPosition,
-				startPlanetId:  startPlanet._id,
-				targetPosition: targetPosition,
-				targetType:     Game.SpaceEvents.TARGET_PLANET,
-				targetId:       targetPlanet._id,
-				startTime:      timeCurrent,
-				flyTime:        flyTime,
-				isHumans:       false,
-				engineLevel:    engineLevel,
-				mission:        mission,
-				isColony:       false
-			}
-
-			Game.SpaceEvents.sendShip(shipOptions);
-		}
 	}
 
 })

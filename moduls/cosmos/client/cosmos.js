@@ -306,7 +306,6 @@ var ShipView = function(map, spaceEvent) {
 	this.totalFlyDistance = 0;
 
 	this.constructor = function(map, spaceEvent) {
-
 		this.id = spaceEvent._id;
 
 		this.maxSpeed = Game.Planets.calcMaxSpeed( spaceEvent.info.engineLevel );
@@ -324,7 +323,7 @@ var ShipView = function(map, spaceEvent) {
 	this.updateData = function () {
 		var spaceEvent = Game.SpaceEvents.getOne(this.id);
 
-		if (!spaceEvent) {
+		if (!spaceEvent || spaceEvent.status == Game.SpaceEvents.status.FINISHED) {
 
 			this.info = null;
 
@@ -862,7 +861,7 @@ var refreshFleetsInfo = function() {
 
 		var finishPlanetId = fleets[i].info.targetId
 		var finishPlanet = null;
-		if (fleets[i].info.targetType == Game.SpaceEvents.TARGET_PLANET && finishPlanetId) {
+		if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET && finishPlanetId) {
 			finishPlanet = Game.Planets.getOne(finishPlanetId);
 		}
 
@@ -890,8 +889,14 @@ var refreshFleetsInfo = function() {
 }
 
 var createSpaceEvent = function(event) {
+	if (event.status == Game.SpaceEvents.status.FINISHED
+	 || event.timeEnd <= Session.get('serverTime')
+	) {
+		return;
+	}
+
 	switch (event.type) {
-		case Game.SpaceEvents.EVENT_SHIP:
+		case Game.SpaceEvents.type.SHIP:
 			if (!shipViews) {
 				shipViews = {};
 			}
@@ -927,7 +932,11 @@ Game.SpaceEvents.getAll().observeChanges({
 
 	changed: function(id, event) {
 		if (mapView) {
-			updateSpaceEventData(id);
+			if (event.status == Game.SpaceEvents.status.FINISHED) {
+				removeSpaceEvent(id);
+			} else {
+				updateSpaceEventData(id);
+			}
 		}
 	},
 
@@ -975,7 +984,6 @@ var refreshTimeToTarget = function() {
 		Session.set('time_attack', timeAttack);
 		Session.set('time_left', timeLeft);
 
-		// TODO: Так можно делать или нет?
 		setTimeout(refreshTimeToTarget, 1000);
 	}
 }
@@ -1031,8 +1039,7 @@ var sendFleet = function(isOneway) {
 		                                           target.eventId,
 		                                           units,
 		                                           attack.point.x, 
-		                                           attack.point.y,
-		                                           attack.time);
+		                                           attack.point.y);
 	}
 
 	Session.set('target', null);
@@ -1070,7 +1077,6 @@ Template.cosmos.onRendered(function() {
 
 	if (planets.length == 0) {
 		// create first planets
-		// TODO: show home planet after initialize!
 		Meteor.call('planet.initialize');
 	} else {
 		// show existing
@@ -1085,15 +1091,12 @@ Template.cosmos.onRendered(function() {
 		createSpaceEvent(item);
 	});
 
-	// TODO: move to actualize info method!
-	setInterval(function() {
-		Meteor.call('planet.updateAll');
-	}, 1000);
+	Meteor.call('planet.updateAll');
 });
 
 Template.cosmos.onDestroyed(function() {
 	if (mapView) {
-		// TODO: Возможно нужно удалять карту или удалять слушателей событий
+		// TODO: Maybe clear map or event listeners?!
 	}
 });
 
@@ -1325,11 +1328,11 @@ Game.Planets.debugCalcFlyTime = function() {
 		strDebug += i + '        ';
 		strDebug += maxSpeed.toFixed(2) + '        ';
 		strDebug += acceleration.toFixed(2) + '        ';
-		strDebug += Game.Planets.calcFlyTimeByDistance(1, maxSpeed, acceleration) + ' - ';
-		strDebug += Game.Planets.calcFlyTimeByDistance(2, maxSpeed, acceleration) + ' - ';
-		strDebug += Game.Planets.calcFlyTimeByDistance(20, maxSpeed, acceleration) + ' - ';
-		strDebug += Game.Planets.calcFlyTimeByDistance(40, maxSpeed, acceleration) + ' - ';
-		strDebug += Game.Planets.calcFlyTimeByDistance(80, maxSpeed, acceleration);
+		strDebug += Game.Planets.calcTotalTimeByDistance(1, maxSpeed, acceleration) + ' - ';
+		strDebug += Game.Planets.calcTotalTimeByDistance(2, maxSpeed, acceleration) + ' - ';
+		strDebug += Game.Planets.calcTotalTimeByDistance(20, maxSpeed, acceleration) + ' - ';
+		strDebug += Game.Planets.calcTotalTimeByDistance(40, maxSpeed, acceleration) + ' - ';
+		strDebug += Game.Planets.calcTotalTimeByDistance(80, maxSpeed, acceleration);
 
 		if (i % 10 == 0) {
 			console.log('================================================');

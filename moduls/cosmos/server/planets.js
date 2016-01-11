@@ -1,5 +1,9 @@
 initCosmosPlanetsServer = function() {
 
+Game.Planets.actualize = function() {
+	Meteor.call('planet.updateAll');
+}
+
 Game.Planets.update = function(planet) {
 	if (!planet._id || !planet.user_id) {
 		return null;
@@ -179,11 +183,10 @@ Game.Planets.getReptileAttackChance = function() {
 
 Game.Planets.getReptileAttackMission = function() {
 	var power = Game.User.getVotePower();
-
 	// missions config
 	var missions = [
 		[
-			// if power = 0 then no attacks
+			{ type: 'patrolfleet', levels: [1] }
 		],
 		[
 			{ type: 'patrolfleet', levels: [2, 3, 4] }
@@ -560,7 +563,7 @@ Meteor.methods({
 			startPosition:  startPosition,
 			startPlanetId:  basePlanet._id,
 			targetPosition: targetPosition,
-			targetType:     Game.SpaceEvents.TARGET_PLANET,
+			targetType:     Game.SpaceEvents.target.PLANET,
 			targetId:       targetPlanet._id,
 			startTime:      getServerTime(),
 			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),

@@ -49,8 +49,7 @@ Game.Planets = {
 	},
 
 	getMaxColoniesCount: function() {
-		// TODO: implement!
-		return 4;
+		return 4; // TODO: Implement later!
 	},
 
 	getColoniesCount: function() {
@@ -393,9 +392,9 @@ Game.Planets = {
 		var targetShipAcc = Game.Planets.calcAcceleration(targetShip.info.engineLevel);
 
 		var targetDistance = Game.Planets.calcDistanceByTime(targetShipTime,
-		                                                        totalDistance,
-		                                                        targetShipSpeed,
-		                                                        targetShipAcc);
+		                                                     totalDistance,
+		                                                     targetShipSpeed,
+		                                                     targetShipAcc);
 
 		var check = function(distance) {
 			// target time
@@ -456,12 +455,22 @@ Game.Planets = {
 
 Game.SpaceEvents = {
 
-	// event types
-	EVENT_SHIP: 1,
+	// event status
+	status: {
+		STARTED: 1,
+		FINISHED: 2
+	},
 
-	// event targets
-	TARGET_SHIP: 1,
-	TARGET_PLANET: 2,
+	// event type
+	type: {
+		SHIP: 1
+	},
+
+	// event target
+	target: {
+		SHIP: 1,
+		PLANET: 2
+	},
 
 	Collection: new Meteor.Collection('spaceEvents'),
 
@@ -485,14 +494,19 @@ Game.SpaceEvents = {
 	getFleets: function () {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
-			type: Game.SpaceEvents.EVENT_SHIP
+			type: Game.SpaceEvents.type.SHIP,
+			status: Game.SpaceEvents.status.STARTED
+		}, {
+			sort: {
+				timeEnd: 1
+			}
 		});
 	},
 
 	getSentToColonyCount: function() {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
-			type: Game.SpaceEvents.EVENT_SHIP,
+			type: Game.SpaceEvents.type.SHIP,
 			'info.isHumans': true,
 			'info.isColony': true
 		}).count();
@@ -501,7 +515,7 @@ Game.SpaceEvents = {
 	getCurrentFleetsCount: function() {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
-			type: Game.SpaceEvents.EVENT_SHIP,
+			type: Game.SpaceEvents.type.SHIP,
 			'info.isHumans': true
 		}).count();
 	},
@@ -520,7 +534,7 @@ Game.SpaceEvents = {
 
 	getFleetUnits: function(shipId) {
 		var ship = Game.SpaceEvents.getOne(shipId);
-		if (!ship || ship.type != Game.SpaceEvents.EVENT_SHIP) {
+		if (!ship || ship.type != Game.SpaceEvents.type.SHIP) {
 			return null;
 		}
 

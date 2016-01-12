@@ -425,10 +425,12 @@ var ShipView = function(map, spaceEvent) {
 	}
 
 	this.showShipAnimation = function() {
-		_pathView = new PathView(map,
-		                         spaceEvent.info.startPosition,
-		                         spaceEvent.info.targetPosition, 
-		                         (spaceEvent.info.isHumans ? '#56BAF2' : '#DC6257'));
+		_pathView = new PathView(
+			map,
+			spaceEvent.info.startPosition,
+			spaceEvent.info.targetPosition, 
+			(spaceEvent.info.isHumans ? '#56BAF2' : '#DC6257')
+		);
 
 		_marker = L.marker(
 			[0, 0],
@@ -476,10 +478,12 @@ var ShipView = function(map, spaceEvent) {
 		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
 		var timeCurrent = Session.get('serverTime') - spaceEvent.timeStart;
 
-		var currentDistance = Game.Planets.calcDistanceByTime(timeCurrent,
-		                                                      this.totalFlyDistance,
-		                                                      this.maxSpeed,
-		                                                      this.acceleration);
+		var currentDistance = Game.Planets.calcDistanceByTime(
+			timeCurrent,
+			this.totalFlyDistance,
+			this.maxSpeed,
+			this.acceleration
+		);
 
 		var k = currentDistance / this.totalFlyDistance;
 		var curPoint = _pathView.getPointAlongDistanceByCoef(k);
@@ -537,10 +541,12 @@ var ShipView = function(map, spaceEvent) {
 
 		var timeCurrent = Session.get('serverTime');
 
-		var result = Game.Planets.calcAttackOptions(attackerPlanet,
-		                                            attackerEngineLevel,
-		                                            spaceEvent,
-		                                            timeCurrent);
+		var result = Game.Planets.calcAttackOptions(
+			attackerPlanet,
+			attackerEngineLevel,
+			spaceEvent,
+			timeCurrent
+		);
 
 		if (!result) {
 			return false;
@@ -973,10 +979,12 @@ var refreshTimeToTarget = function() {
 		var engineLevel = Game.Planets.getEngineLevel();
 		var timeCurrent = Session.get('serverTime');
 
-		var result = Game.Planets.calcAttackOptions(basePlanet,
-		                                            engineLevel,
-		                                            targetShip,
-		                                            timeCurrent);
+		var result = Game.Planets.calcAttackOptions(
+			basePlanet,
+			engineLevel,
+			targetShip,
+			timeCurrent
+		);
 
 		var timeAttack = (result) ? result.time : null;
 		var timeLeft = targetShip.timeEnd - timeCurrent;
@@ -1035,11 +1043,14 @@ var sendFleet = function(isOneway) {
 			return;
 		}
 
-		Meteor.call('spaceEvents.attackReptFleet', basePlanet._id,
-		                                           target.eventId,
-		                                           units,
-		                                           attack.point.x, 
-		                                           attack.point.y);
+		Meteor.call(
+			'spaceEvents.attackReptFleet',
+			basePlanet._id,
+			target.eventId,
+			units,
+			attack.point.x, 
+			attack.point.y
+		);
 	}
 
 	Session.set('target', null);

@@ -282,12 +282,15 @@ Game.Planets.findPlanetsNearPoint = function(x, y, r) {
 Game.Planets.checkIntersects = function(planet, nearPlanets) {
 	for (var i = 0; i < nearPlanets.length; i++) {
 		var radius = Game.Planets.MIN_PLANET_DISTANCE / 2;
-		if (hitCircleVsCircle(planet.x,
-		                      planet.y,
-		                      radius,
-		                      nearPlanets[i].x,
-		                      nearPlanets[i].y,
-		                      radius)
+		if (
+			hitCircleVsCircle(
+				planet.x,
+				planet.y,
+				radius,
+				nearPlanets[i].x,
+				nearPlanets[i].y,
+				radius
+			)
 		) {
 			return true;
 		}
@@ -372,23 +375,27 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 	}
 
 	// calc amount
-	var amount = Game.Planets.calcSegmentPlanetsAmount(hand,
-	                                                   segment,
-	                                                   galactic.hands,
-	                                                   galactic.segments,
-	                                                   galactic.minPlanets,
-	                                                   galactic.maxPlanets);
+	var amount = Game.Planets.calcSegmentPlanetsAmount(
+		hand,
+		segment,
+		galactic.hands,
+		galactic.segments,
+		galactic.minPlanets,
+		galactic.maxPlanets
+	);
 
 	// find random points
-	var randSpots = Game.Planets.calcSegmentRandomPoints(amount,
-	                                                     hand,
-	                                                     segment,
-	                                                     galactic.hands,
-	                                                     galactic.segments,
-	                                                     galactic.rotationFactor,
-	                                                     galactic.narrowFactor,
-	                                                     galactic.radius,
-	                                                     galactic.angle);
+	var randSpots = Game.Planets.calcSegmentRandomPoints(
+		amount,
+		hand,
+		segment,
+		galactic.hands,
+		galactic.segments,
+		galactic.rotationFactor,
+		galactic.narrowFactor,
+		galactic.radius,
+		galactic.angle
+	);
 
 	// fins free points
 	var freeSpots = [];
@@ -461,13 +468,15 @@ Meteor.methods({
 
 			var hand = Game.Random.interval(0, galactic.hands - 1);
 			var segment = galactic.segments - 3;
-			var center = Game.Planets.calcSegmentCenter(hand,
-			                                            segment,
-			                                            galactic.hands,
-			                                            galactic.segments,
-			                                            galactic.rotationFactor,
-			                                            galactic.radius,
-			                                            galactic.angle);
+			var center = Game.Planets.calcSegmentCenter(
+				hand,
+				segment,
+				galactic.hands,
+				galactic.segments,
+				galactic.rotationFactor,
+				galactic.radius,
+				galactic.angle
+			);
 
 			var planetId = Game.Planets.add({
 				name: user.planetName,

@@ -637,10 +637,12 @@ Meteor.methods({
 		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 		var timeLeft = enemyShip.timeEnd - timeCurrent;
 		
-		var attackOptions = Game.Planets.calcAttackOptions(basePlanet,
-		                                                   engineLevel,
-		                                                   enemyShip,
-		                                                   timeCurrent);
+		var attackOptions = Game.Planets.calcAttackOptions(
+			basePlanet,
+			engineLevel,
+			enemyShip,
+			timeCurrent
+		);
 
 		if (!attackOptions || attackOptions.time >= timeLeft) {
 			throw new Meteor.Error('Невозможно перехватить');

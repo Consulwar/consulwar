@@ -391,17 +391,22 @@ Game.Planets = {
 		var targetShipSpeed = Game.Planets.calcMaxSpeed(targetShip.info.engineLevel);
 		var targetShipAcc = Game.Planets.calcAcceleration(targetShip.info.engineLevel);
 
-		var targetDistance = Game.Planets.calcDistanceByTime(targetShipTime,
-		                                                     totalDistance,
-		                                                     targetShipSpeed,
-		                                                     targetShipAcc);
+		var targetDistance = Game.Planets.calcDistanceByTime(
+			targetShipTime,
+			totalDistance,
+			targetShipSpeed,
+			targetShipAcc
+		);
 
 		var check = function(distance) {
 			// target time
-			var timeToPoint = Game.Planets.calcTimeByDistance(distance,
-			                                                  totalDistance,
-			                                                  targetShipSpeed,
-			                                                  targetShipAcc);
+			var timeToPoint = Game.Planets.calcTimeByDistance(
+				distance,
+				totalDistance,
+				targetShipSpeed,
+				targetShipAcc
+			);
+			
 			var timeLeft = timeToPoint - targetShipTime;
 
 			// attack time

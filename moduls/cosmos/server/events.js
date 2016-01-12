@@ -8,10 +8,10 @@ Game.SpaceEvents.actualize = function() {
 		var targetPlanet = null;
 		var chances = Game.Planets.getReptileAttackChance();
 
-		if (chances.home >= _.random(0, 100)) {
+		if (chances.home >= Game.Random.interval(0, 100)) {
 			// choose base planet
 			targetPlanet = Game.Planets.getBase();
-		} else if (chances.colony >= _.random(0, 100)) {
+		} else if (chances.colony >= Game.Random.interval(0, 100)) {
 			// choose from colonies, exclude base planet
 			var colonies = Game.Planets.getColonies();
 			var n = colonies.length;
@@ -21,7 +21,7 @@ Game.SpaceEvents.actualize = function() {
 				}
 			}
 			if (colonies.length > 0) {
-				targetPlanet = colonies[ _.random(0, colonies.length - 1) ];
+				targetPlanet = colonies[ Game.Random.interval(0, colonies.length - 1) ];
 			}
 		}
 
@@ -177,10 +177,10 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 
 	if (planets.length >= 2) {
 		// get two random planets
-		var randFrom = Math.floor( Math.random() * planets.length );
+		var randFrom =Game.Random.interval(0, planets.length - 1);
 		var randTo = randFrom;
 		while (randTo == randFrom) {
-			randTo = Math.floor( Math.random() * planets.length );
+			randTo = Game.Random.interval(0, planets.length - 1);
 		}
 
 		var startPlanet = planets[ randFrom ];
@@ -202,7 +202,7 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 		var mission = Game.Planets.generateMission(startPlanet);
 		if (!mission) {
 			mission = {
-				level: _.random(1, 10)
+				level: Game.Random.interval(1, 10)
 			};
 		}
 		mission.type = 'tradefleet';
@@ -248,7 +248,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 	if (planets.length > 0) {
 
 		// choose start planet
-		var rand = Math.floor( Math.random() * planets.length );
+		var rand = Game.Random.interval(0, planets.length - 1);
 		var startPlanet = planets[rand];
 
 		// send ship

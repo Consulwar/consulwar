@@ -7,7 +7,7 @@ game.Artefact = function(options) {
 Game.Artefacts = {
 
 	getRandom: function() {
-		var iRand = Math.floor( Math.random() * Game.Artefacts.items.length );
+		var iRand = Game.Random.interval(0, Game.Artefacts.items.length - 1);
 		return Game.Artefacts.items[iRand];
 	},
 

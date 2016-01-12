@@ -355,6 +355,16 @@ Game = {
 	}
 }
 
+Game.Random = {
+	random: function() {
+		return Random.fraction();
+	},
+
+	interval: function(min, max) {
+		return min + Math.round( Random.fraction() * (max - min) );
+	}
+}
+
 Game.Effect = function(options) {
 	this.constructor = function(options) {
 		this.name = options.name;

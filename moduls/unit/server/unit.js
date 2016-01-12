@@ -206,33 +206,33 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		switch (name) {
 			case 'few':
-				return _.random(1, 4);
+				return Game.Random.interval(1, 4);
 			case 'several':
-				return _.random(5, 9);
+				return Game.Random.interval(5, 9);
 			case 'pack':
-				return _.random(10, 19);
+				return Game.Random.interval(10, 19);
 			case 'lots':
-				return _.random(20, 49);
+				return Game.Random.interval(20, 49);
 			case 'horde':
-				return _.random(50, 99);
+				return Game.Random.interval(50, 99);
 			case 'throng':
-				return _.random(100, 249);
+				return Game.Random.interval(100, 249);
 			case 'swarm':
-				return _.random(250, 499);
+				return Game.Random.interval(250, 499);
 			case 'zounds':
-				return _.random(500, 999);
+				return Game.Random.interval(500, 999);
 			case 'legion':
-				return _.random(1000, 4999);
+				return Game.Random.interval(1000, 4999);
 			case 'division':
-				return _.random(5000, 9999);
+				return Game.Random.interval(5000, 9999);
 			case 'corps':
-				return _.random(10000, 19999);
+				return Game.Random.interval(10000, 19999);
 			case 'army':
-				return _.random(20000, 49999);
+				return Game.Random.interval(20000, 49999);
 			case 'group':
-				return _.random(50000, 99999);
+				return Game.Random.interval(50000, 99999);
 			case 'front':
-				return _.random(100000, 249999);
+				return Game.Random.interval(100000, 249999);
 		}
 	}
 
@@ -468,7 +468,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (userUnits[key].model.characteristics.damage) {
 				var min = userUnits[key].model.characteristics.damage.min * userUnits[key].count;
 				var max = userUnits[key].model.characteristics.damage.max * userUnits[key].count;
-				var damage = _.random( min, max ) * options.damageReduction; 
+				var damage = Game.Random.interval( min, max ) * options.damageReduction; 
 				userUnits[key].damage = damage;
 			} else {
 				userUnits[key].damage = 0;
@@ -479,7 +479,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (enemyUnits[key].model.characteristics.damage) {
 				var min = enemyUnits[key].model.characteristics.damage.min * enemyUnits[key].count;
 				var max = enemyUnits[key].model.characteristics.damage.max * enemyUnits[key].count;
-				var damage = _.random( min, max ) * options.damageReduction; 
+				var damage = Game.Random.interval( min, max ) * options.damageReduction; 
 				enemyUnits[key].damage = damage;
 			} else {
 				enemyUnits[key].damage = 0;

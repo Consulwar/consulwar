@@ -38,7 +38,7 @@ Game.Planets.generateType = function() {
 			val += types[i].chance;
 		}
 
-		var randomVal = Math.random() * val;
+		var randomVal = Game.Random.random() * val;
 		val = 0;
 
 		for (var i = 0; i < types.length; i++) {
@@ -68,13 +68,13 @@ Game.Planets.generateName = function() {
 
 	while (home == result) {
 		result = (
-		  letters[Math.floor(Math.random()*36)]
-		+ letters[Math.floor(Math.random()*36)]
-		+ letters[Math.floor(Math.random()*36)]
+		  letters[Game.Random.interval(0, 35)]
+		+ letters[Game.Random.interval(0, 35)]
+		+ letters[Game.Random.interval(0, 35)]
 		+ '-'
-		+ letters[Math.floor(Math.random()*36)]
-		+ letters[Math.floor(Math.random()*36)]
-		+ letters[Math.floor(Math.random()*36)]);
+		+ letters[Game.Random.interval(0, 35)]
+		+ letters[Game.Random.interval(0, 35)]
+		+ letters[Game.Random.interval(0, 35)]);
 	}
 
 	return result;
@@ -181,11 +181,11 @@ Game.Planets.generateMission = function(planet) {
 
 	var index = Math.round( distCurrent / distTotal * (missions.length - 1) );
 	var list = missions[ index ];
-	var mission = list[ _.random(0, list.length - 1) ];
+	var mission = list[ Game.Random.interval(0, list.length - 1) ];
 
 	return {
 		type: mission.type,
-		level: mission.levels[ _.random(0, mission.levels.length - 1) ]
+		level: mission.levels[ Game.Random.interval(0, mission.levels.length - 1) ]
 	};
 }
 
@@ -237,10 +237,10 @@ Game.Planets.getReptileAttackMission = function() {
 		return;
 	}
 
-	var mission = list[ _.random(0, list.length - 1) ];
+	var mission = list[ Game.Random.interval(0, list.length - 1) ];
 	return {
 		type: mission.type,
-		level: mission.levels[ _.random(0, mission.levels.length - 1) ]
+		level: mission.levels[ Game.Random.interval(0, mission.levels.length - 1) ]
 	};
 }
 
@@ -403,10 +403,10 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 	// add new planets
 	while (freeSpots.length > 0) {
 
-		var n = Math.floor( Math.random() * freeSpots.length );
+		var n = Game.Random.interval(0, freeSpots.length - 1);
 
 		var type = Game.Planets.generateType();
-		var size = type.sizeMin + Math.round( Math.random() * ( type.sizeMax - type.sizeMin ) );
+		var size = Game.Random.interval( type.sizeMin, type.sizeMin );
 		if (size < 1) {
 			size = 1;
 		}
@@ -450,16 +450,16 @@ Meteor.methods({
 
 			var galactic = {
 				radius: 40,
-				hands: 4 + Math.round( Math.random() * 2 ), // 4 - 6
+				hands: Game.Random.interval(4, 6),
 				segments: 10,
-				rotationFactor: Math.round( 2 + Math.random() * 4 ) / 100, // 0.02 - 0.06
+				rotationFactor: Game.Random.interval(2, 6) / 100, // 0.02 - 0.06
 				narrowFactor: 5,
-				angle: Math.random() * Math.PI * 2, // 0 - 360
+				angle: Game.Random.random() * Math.PI * 2, // 0 - 360
 				minPlanets: 400,
 				maxPlanets: 500
 			}
 
-			var hand = Math.round( Math.random() * galactic.hands );
+			var hand = Game.Random.interval(0, galactic.hands - 1);
 			var segment = galactic.segments - 3;
 			var center = Game.Planets.calcSegmentCenter(hand,
 			                                            segment,
@@ -615,7 +615,7 @@ Meteor.methods({
 		 && !planet.armyId
 		 &&  planet.timeRespawn <= timeCurrent
 		) {
-			if (Math.random() >= 0.5) {
+			if (Game.Random.random() >= 0.5) {
 				// create mission
 				planet.mission = Game.Planets.generateMission(planet);
 			} else {

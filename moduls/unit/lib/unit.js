@@ -158,9 +158,9 @@ Game.Unit = {
 			var power = 0;
 			var psieffect = Game.Mutual.get('research', 'psieffect');
 			if (psieffect <= 0) {
-				power = _.random(1, 5) / 100;
+				power = Game.Random.interval(1, 5) / 100;
 			} else {
-				power = _.random(6, 10) / 100;
+				power = Game.Random.interval(6, 10) / 100;
 			}
 			power *= options.damageReduction;
 			// count psi enemies

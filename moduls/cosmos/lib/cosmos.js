@@ -136,7 +136,7 @@ Game.Planets = {
 			max = (maxPlanets * kHand) / (maxSegments + 1) * 2 * k;
 		}
 
-		var amount = Math.round( min + Math.random() * (max - min) );
+		var amount = Game.Random.interval(min, max);
 		return (amount >= 1) ? amount : 0;
 	},
 
@@ -148,8 +148,8 @@ Game.Planets = {
 			var radius = maxRadius / maxSegments * 0.9;
 
 			while (amount-- > 0) {
-				var distance = Math.random() * radius;
-				var angle = Math.random() * Math.PI * 2;
+				var distance = Game.Random.random() * radius;
+				var angle = Game.Random.random() * Math.PI * 2;
 
 				result.push({
 					x: distance * Math.cos(angle),
@@ -173,11 +173,11 @@ Game.Planets = {
 		endDistance -= delta * 0.2;
 
 		while (amount-- > 0) {
-			var distance = startDistance + Math.random() * (endDistance - startDistance);
+			var distance = startDistance + Game.Random.random() * (endDistance - startDistance);
 
 			var rotation = distance * rotationFactor;
 
-			var offset = Math.random() * handAngleOffset - handAngleOffset / 2;
+			var offset = Game.Random.random() * handAngleOffset - handAngleOffset / 2;
 			offset = offset * (narrowFactor / distance);
 			if (offset < 0) {
 				offset = Math.pow(offset, 2) * -1;
@@ -186,7 +186,7 @@ Game.Planets = {
 			}
 			
 			if (Math.abs(offset) >= handAngle / 2) {
-				offset = Math.random() * (handAngle * 0.8) - (handAngle * 0.8) / 2;
+				offset = Game.Random.random() * (handAngle * 0.8) - (handAngle * 0.8) / 2;
 			}
 
 			var angle = startAngle + offset + rotation;

@@ -79,9 +79,9 @@
 					{{/each}}
 				</ul>
 			{{/if}}
-			{{#unless and user_fleets reptile_fleets}}
+			{{#if and (not user_fleets) (not reptile_fleets)}}
 				<h2>Нет передвижений флота</h2>
-			{{/unless}}
+			{{/if}}
 		{{/if}}
 	</div>
 

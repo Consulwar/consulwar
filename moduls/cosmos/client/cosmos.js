@@ -6,14 +6,32 @@ Meteor.subscribe('planets');
 Meteor.subscribe('spaceEvents');
 
 Game.Cosmos.showPage = function() {
-	this.render('cosmos', {to: 'content'});
+	this.render('cosmos', {
+		to: 'content',
+		data: {
+			drop: new ReactiveVar(null),
+			planet: new ReactiveVar(null),
+			ship: new ReactiveVar(null),
+			target: new ReactiveVar(null),
+			userFleets: new ReactiveVar(null),
+			reptileFleets: new ReactiveVar(null),
+			activeColonyId: new ReactiveVar(null),
+			colonies: new ReactiveVar(null),
+
+			// TODO: refactoring!
+			timeAttack: new ReactiveVar(null),
+			timeLeft: new ReactiveVar(null),
+			timeFly: new ReactiveVar(null)
+		}
+
+	});
 }
 
 // ----------------------------------------------------------------------------
 // PLANET VIEW
 // ----------------------------------------------------------------------------
 
-var PlanetView = function(map, planet) {
+var PlanetView = function(map, planet, template) {
 
 	this.id = null;
 	this.name = null;
@@ -174,9 +192,9 @@ var PlanetView = function(map, planet) {
 		this.infoPlanet = info;
 
 		// update side menu
-		var sideInfo = Session.get('planet');
+		var sideInfo = template.data.planet.get();
 		if (sideInfo && sideInfo.id == this.id) {
-			Session.set('planet', this.infoPlanet);
+			template.data.planet.set( this.infoPlanet );
 		}
 	}
 
@@ -194,7 +212,7 @@ var PlanetView = function(map, planet) {
 	}
 
 	this.showPopup = function() {
-		Session.set('drop', this.infoDrop);
+		template.data.drop.set( this.infoDrop );
 
 		var k = Math.pow(2, (map.getZoom() - 7));
 		var position = map.latLngToContainerPoint(this.marker.getLatLng());
@@ -207,12 +225,13 @@ var PlanetView = function(map, planet) {
 	}
 
 	this.hidePopup = function() {
-		Session.set('drop', null);
+		template.data.drop.set(null);
 	}
 
 	this.showSideBarInfo = function() {
-		Session.set('planet', this.infoPlanet);
-		Session.set('time_fly', null);
+		template.data.planet.set( this.infoPlanet );
+		template.data.timeFly.set(null);
+		template.data.ship.set(null);
 	}
 
 	this.refreshAnim = function() {
@@ -284,7 +303,7 @@ var PlanetView = function(map, planet) {
 // SHIP VIEW
 // ----------------------------------------------------------------------------
 
-var ShipView = function(map, spaceEvent) {
+var ShipView = function(map, spaceEvent, template) {
 
 	var STATE_REMOVED = 0;
 	var STATE_WAIT = 1;
@@ -332,8 +351,7 @@ var ShipView = function(map, spaceEvent) {
 			var info = {};
 
 			info.name = null;
-			info.id = null;
-			info.event_id = spaceEvent._id;
+			info.id = spaceEvent._id;
 
 			if (spaceEvent.info.isHumans) {
 				info.isHumans = true;
@@ -370,16 +388,17 @@ var ShipView = function(map, spaceEvent) {
 		}
 
 		// update side menu
-		var sideInfo = Session.get('planet');
-		if (sideInfo && sideInfo.id == null && sideInfo.event_id == this.id) {
-			Session.set('planet', this.info);
+		var sideInfo = template.data.ship.get();
+		if (sideInfo && sideInfo.id == null && sideInfo.id == this.id) {
+			template.data.ship.set( this.info );
 		}
 
 		// update target popup
-		var targetInfo = Session.get('target');
-		if (targetInfo && targetInfo.eventId && targetInfo.eventId == this.id) {
+		var targetId = template.data.target.get();
+		if (targetId && targetId == this.id) {
 			if (this.info == null) {
-				Session.set('target', null); // hide if removed
+				// hide window if ship removed	
+				template.target.data.set(null);			
 			}
 		}
 	}
@@ -464,8 +483,9 @@ var ShipView = function(map, spaceEvent) {
 	}
 
 	this.showSideInfo = function() {
-		Session.set('planet', this.info);
-		Session.set('time_fly', this.getTimeLeft());
+		template.data.planet.set(null);
+		template.data.ship.set( this.info );
+		template.data.timeFly.set( this.getTimeLeft() );
 	}
 
 	this.updateShipAnimation = function() {
@@ -506,9 +526,9 @@ var ShipView = function(map, spaceEvent) {
 		           .css('left', 30 * Math.cos(angle))
 		           .css('top', 30 * Math.sin(angle));
 		*/
-		var sideInfo = Session.get('planet');
-		if (sideInfo && sideInfo.id == null && sideInfo.event_id == this.id) {
-			Session.set('time_fly', timeLeft);
+		var sideInfo = template.data.ship.get();
+		if (sideInfo && sideInfo.id == this.id) {
+			template.data.timeFly.set( timeLeft );
 		}
 	}
 
@@ -808,13 +828,14 @@ var PathView = function(map, startPoint, endPoint, color) {
 
 IS_DRAW_CURVED = true;
 
+var template = null;
 var mapView = null;
 var planetViews = null;
 var shipViews = null;
 
-var createPlanet = function(planet) {
+var createPlanet = function(planet, template) {
 	if (!planetViews) planetViews = {};
-	planetViews[ planet._id ] = new PlanetView(mapView, planet);
+	planetViews[ planet._id ] = new PlanetView(mapView, planet, template);
 	planetViews[ planet._id ].update();
 
 	if (planet.isHome) {
@@ -835,22 +856,6 @@ var updatePlanets = function() {
 		}
 	}
 }
-
-Game.Planets.getAll().observeChanges({
-	added: function(id, planet) {
-		planet._id = id;
-		if (mapView) {
-			createPlanet(planet);
-		}
-	},
-
-	changed: function(id, planet) {
-		if (mapView) {
-			updatePlanets();
-			// updatePlanet(id);
-		}
-	}
-});
 
 var refreshFleetsInfo = function() {
 	var user = null;
@@ -890,11 +895,11 @@ var refreshFleetsInfo = function() {
 		}
 	}
 
-	Session.set('user_fleets', user);
-	Session.set('reptile_fleets', reptile);
+	template.data.userFleets.set( user );
+	template.data.reptileFleets.set( reptile );
 }
 
-var createSpaceEvent = function(event) {
+var createSpaceEvent = function(event, template) {
 	if (event.status == Game.SpaceEvents.status.FINISHED
 	 || event.timeEnd <= Session.get('serverTime')
 	) {
@@ -906,7 +911,7 @@ var createSpaceEvent = function(event) {
 			if (!shipViews) {
 				shipViews = {};
 			}
-			shipViews[ event._id ] = new ShipView(mapView, event);
+			shipViews[ event._id ] = new ShipView(mapView, event, template);
 			refreshFleetsInfo();
 			break;
 	}
@@ -928,54 +933,32 @@ var removeSpaceEvent = function(id) {
 	}
 }
 
-Game.SpaceEvents.getAll().observeChanges({
-	added: function(id, event) {
-		event._id = id;
-		if (mapView) {
-			createSpaceEvent(event);
-		}
-	},
-
-	changed: function(id, event) {
-		if (mapView) {
-			if (event.status == Game.SpaceEvents.status.FINISHED) {
-				removeSpaceEvent(id);
-			} else {
-				updateSpaceEventData(id);
-			}
-		}
-	},
-
-	removed: function(id) {
-		if (mapView) {
-			removeSpaceEvent(id);
-		}
-	}
-});
-
 var refreshTimeToTarget = function() {
-	var target = Session.get('target');
-	var baseId = Session.get('active_colony_id');
+	var target = template.data.target.get();
+	var baseId = template.data.activeColonyId.get();
+	var planet = template.data.planet.get();
+	var ship = template.data.ship.get();
 
 	if (!target) {
 
-		Session.set('time_attack', null);
-		Session.set('time_left', null);
+		template.data.timeAttack.set( null );
+		template.data.timeLeft.set( null );
 
-	} else if (target.planetId) {
+	} else if (planet) {
 
 		var basePlanet = Game.Planets.getOne(baseId);
-		var targetPlanet = Game.Planets.getOne(target.planetId);
+		var targetPlanet = Game.Planets.getOne(target);
 		var engineLevel = Game.Planets.getEngineLevel();
 
 		var timeAttack = Game.Planets.calcFlyTime(basePlanet, targetPlanet, engineLevel);
-		Session.set('time_attack', timeAttack);
-		Session.set('time_left', null);
 
-	} else if (target.eventId) {
+		template.data.timeAttack.set( timeAttack );
+		template.data.timeLeft.set( null );
+
+	} else if (ship) {
 
 		var basePlanet = Game.Planets.getOne(baseId);
-		var targetShip = Game.SpaceEvents.getOne(target.eventId);
+		var targetShip = Game.SpaceEvents.getOne(target);
 		var engineLevel = Game.Planets.getEngineLevel();
 		var timeCurrent = Session.get('serverTime');
 
@@ -989,15 +972,15 @@ var refreshTimeToTarget = function() {
 		var timeAttack = (result) ? result.time : null;
 		var timeLeft = targetShip.timeEnd - timeCurrent;
 
-		Session.set('time_attack', timeAttack);
-		Session.set('time_left', timeLeft);
+		template.data.timeAttack.set( timeAttack );
+		template.data.timeLeft.set( timeLeft );
 
 		setTimeout(refreshTimeToTarget, 1000);
 	}
 }
 
 var sendFleet = function(isOneway) {
-	var baseId = Session.get('active_colony_id');
+	var baseId = template.data.activeColonyId.get();
 	var basePlanet = Game.Planets.getOne(baseId);
 
 	if (!basePlanet) {
@@ -1026,16 +1009,23 @@ var sendFleet = function(isOneway) {
 		return;
 	}
 
-	var target = Session.get('target');
+	var target = template.data.target.get();
+	var planet = template.data.planet.get();
+	var ship = template.data.ship.get();
 
-	if (target.planetId) {
+	if (!target) {
+		Notifications.info('Не выбрана цель');
+		return;
+	}
+
+	if (planet) {
 		// Send to planet
-		Meteor.call('planet.sendFleet', basePlanet._id, target.planetId, units, isOneway);
+		Meteor.call('planet.sendFleet', basePlanet._id, target, units, isOneway);
 
-	} else if (target.eventId) {
+	} else if (ship) {
 		// Attack ship
 		var engineLevel = Game.Planets.getEngineLevel();
-		var targetShip = shipViews[ target.eventId ];
+		var targetShip = shipViews[ target ];
 		var attack = targetShip.getAttackPointAndTime(basePlanet, engineLevel);
 
 		if (!attack) {
@@ -1046,19 +1036,63 @@ var sendFleet = function(isOneway) {
 		Meteor.call(
 			'spaceEvents.attackReptFleet',
 			basePlanet._id,
-			target.eventId,
+			target,
 			units,
 			attack.point.x, 
 			attack.point.y
 		);
 	}
 
-	Session.set('target', null);
-	Session.set('planet', null);
+	template.data.target.set(null);
 	Notifications.success('Флот отправлен');
 }
 
 Template.cosmos.onRendered(function() {
+
+	// TODO: refactoring!
+	template = this;
+
+	// observe planets
+	Game.Planets.getAll().observeChanges({
+		added: function(id, planet) {
+			planet._id = id;
+			if (mapView) {
+				createPlanet(planet, template);
+			}
+		},
+
+		changed: function(id, planet) {
+			if (mapView) {
+				updatePlanet(id);
+			}
+		}
+	});
+
+	// observe space events
+	Game.SpaceEvents.getAll().observeChanges({
+		added: function(id, event) {
+			event._id = id;
+			if (mapView) {
+				createSpaceEvent(event, template);
+			}
+		},
+
+		changed: function(id, event) {
+			if (mapView) {
+				if (event.status == Game.SpaceEvents.status.FINISHED) {
+					removeSpaceEvent(id);
+				} else {
+					updateSpaceEventData(id);
+				}
+			}
+		},
+
+		removed: function(id) {
+			if (mapView) {
+				removeSpaceEvent(id);
+			}
+		}
+	});
 
 	// Init map
 	mapView = L.map('map-battle', {
@@ -1076,7 +1110,8 @@ Template.cosmos.onRendered(function() {
 	});
 
 	mapView.on('click', function(e) {
-		Session.set('planet', null);
+		template.data.planet.set(null);
+		template.data.ship.set(null);
 	});
 
 	shipViews = {};
@@ -1091,16 +1126,16 @@ Template.cosmos.onRendered(function() {
 		Meteor.call('planet.initialize');
 	} else {
 		// show existing
-		planets.forEach(function(item, i, arr) {
-			createPlanet(item);
-		});
+		for (var i = 0; i < planets.length; i++) {
+			createPlanet(planets[i], this);
+		}
 	}
 
 	// Init events
 	var events = Game.SpaceEvents.getAll().fetch();
-	events.forEach(function(item, i, arr) {
-		createSpaceEvent(item);
-	});
+	for (var i = 0; i < events.length; i++) {
+		createSpaceEvent(events[i], this);
+	}
 
 	Meteor.call('planet.updateAll');
 });
@@ -1113,22 +1148,24 @@ Template.cosmos.onDestroyed(function() {
 
 Template.cosmos.helpers({
 
-	planet: function() { return Session.get('planet'); },
-	drop: function() { return Session.get('drop'); },
-	target: function() { return Session.get('target'); },
+	planet: function() { return this.planet.get(); },
+	ship: function() { return this.ship.get(); },
+	drop: function() { return this.drop.get(); },
+	target: function() { return this.target.get(); },
 
-	user_fleets: function () { return Session.get('user_fleets'); },
-	reptile_fleets: function () { return Session.get('reptile_fleets'); },
+	userFleets: function () { return this.userFleets.get(); },
+	reptileFleets: function () { return this.reptileFleets.get(); },
 
-	active_colony_id: function() { return Session.get('active_colony_id'); },
-	colonies: function() { return Session.get('colonies'); },
+	activeColonyId: function() { return this.activeColonyId.get(); },
+	colonies: function() { return this.colonies.get(); },
 
-	time_attack: function() { return Session.get('time_attack'); },
-	time_left: function() { return Session.get('time_left'); },
-	time_fly: function () { return Session.get('time_fly'); },
+	// TODO: refactoring!
+	timeAttack: function() { return this.timeAttack.get(); },
+	timeLeft: function() { return this.timeLeft.get(); },
+	timeFly: function () { return this.timeFly.get(); },
 
-	available_fleet: function() {
-		var colonyId = Session.get('active_colony_id');
+	availableFleet: function() {
+		var colonyId = this.activeColonyId.get();
 		if (!colonyId) {
 			return null;
 		}
@@ -1156,7 +1193,7 @@ Template.cosmos.helpers({
 		return units;
 	},
 
-	can_have_more_colonies: function() {
+	canHaveMoreColonies: function() {
 		return Game.Planets.checkCanHaveMoreColonies();
 	}
 
@@ -1164,7 +1201,7 @@ Template.cosmos.helpers({
 
 Template.cosmos.events({
 
-	'click .map-control-home': function(e) {
+	'click .map-control-home': function(e, t) {
 		if (mapView) {
 			var homePlanet = Game.Planets.getBase();
 			if (homePlanet) {
@@ -1175,7 +1212,7 @@ Template.cosmos.events({
 		}
 	},
 
-	'click .fleet': function (e) {
+	'click .fleet': function (e, t) {
 		var id = $(e.currentTarget).attr('data-id');
 		if (!id) {
 			return;
@@ -1194,22 +1231,24 @@ Template.cosmos.events({
 		mapView.setView([position.x, position.y], 9);
 	},
 
-	'click .open': function(e) {
+	'click .open': function(e, t) {
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			Notifications.info('Слишком много флотов уже отправлено');
 			return;
 		}
 
-		var planetId = $(e.currentTarget).attr("data-planet-id");
-		var eventId = $(e.currentTarget).attr("data-event-id");
+		var targetId = $(e.currentTarget).attr("data-id");
+		var planet = t.data.planet.get();
+		var ship = t.data.ship.get();
+
 		var colonies = Game.Planets.getColonies();
 
 		// delete selected planet from colonies
 		var isColonySelected = false;
-		if (planetId) {
+		if (planet) {
 			var n = colonies.length;
 			while (n-- > 0) {
-				if (colonies[n]._id == planetId) {
+				if (colonies[n]._id == targetId) {
 					colonies.splice(n, 1);
 					isColonySelected = true;
 					break;
@@ -1234,46 +1273,41 @@ Template.cosmos.events({
 		}
 
 		if (colonies.length > 0) {
-			Session.set('active_colony_id', colonies[0]._id);
-			Session.set('colonies', colonies);
-
-			Session.set('target', {
-				planetId: (planetId && planetId.length > 0 ? planetId : null),
-				eventId: (eventId && eventId.length > 0 ? eventId : null)
-			});
-
+			t.data.activeColonyId.set( colonies[0]._id );
+			t.data.colonies.set( colonies );
+			t.data.target.set( targetId );
 			refreshTimeToTarget();
 		}
 	},
 
-	'click .btn-close': function(e) {
-		Session.set('target', null);
+	'click .btn-close': function(e, t) {
+		t.data.target.set( null );
 	},
 
-	'click .planets li': function(e) {
+	'click .planets li': function(e, t) {
 		var id = $(e.currentTarget).attr("data-id");
 		if (id) {
-			Session.set('active_colony_id', id);
+			t.data.activeColonyId.set( id );
 			refreshTimeToTarget();
 		}
 	},
 
-	'click .btn-all': function(e) {
+	'click .btn-all': function(e, t) {
 		$('.fleet li').each(function(index, element) {
 			var max = Number( $(element).find('.max').html() );
 			$(element).find('.count').val( max );
 		});
 	},
 
-	'click .defend': function(e) {
+	'click .defend': function(e, t) {
 		sendFleet(true);
 	},
 
-	'click .return': function(e) {
+	'click .return': function(e, t) {
 		sendFleet(false);
 	},
 
-	'change .fleet input': function (e) {
+	'change .fleet input': function (e, t) {
 		var value = parseInt( e.currentTarget.value );
 		var max = parseInt( $(e.currentTarget).attr('data-max') );
 

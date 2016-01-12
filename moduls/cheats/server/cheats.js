@@ -39,7 +39,20 @@ Meteor.methods({
 	'cheats.sendReptileFleetToPlanet': function(planetId) {
 		Game.SpaceEvents.sendReptileFleetToPlanet(planetId);
 	}
+})
 
+} else {
+
+var addCheater = function() {
+	throw new Meteor.Error('Вы добавлены в список читеров, поздравляем');
+}
+
+Meteor.methods({
+	'cheats.setUnitCount': addCheater,
+	'cheats.performBattle': addCheater,
+	'cheats.testMissionGenerate': addCheater,
+	'cheats.spawnTradeFleet': addCheater,
+	'cheats.sendReptileFleetToPlanet': addCheater
 })
 
 }

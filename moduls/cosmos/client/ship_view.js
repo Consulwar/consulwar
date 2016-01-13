@@ -182,6 +182,7 @@ game.ShipView = function(map, spaceEvent, template) {
 		).addTo(map);
 
 		_element = $(_marker.getElement());
+		_element[0].view = this;
 
 		if (spaceEvent.info.isHumans) {
 			_element.append('<div class="map-fleet-humans"></div>');
@@ -192,7 +193,8 @@ game.ShipView = function(map, spaceEvent, template) {
 		_element.append('<div class="map-fleet-time"></div>');
 		_markerTime = $(_element.find('.map-fleet-time'));
 
-		_marker.on('click', this.showSideInfo.bind(this));
+		// click event
+		// _marker.on('click', this.showSideInfo.bind(this));
 	}
 
 	this.getPosition = function () {

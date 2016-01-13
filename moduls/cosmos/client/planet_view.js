@@ -41,6 +41,7 @@ game.PlanetView = function(map, planet, template) {
 
 		// Planet jquery element
 		this.element = $(this.marker.getElement());
+		this.element[0].view = this;
 
 		// Planet name
 		this.element.append('<div class="map-planet-marker-name">' + planet.name + '</div>');
@@ -53,9 +54,9 @@ game.PlanetView = function(map, planet, template) {
 		this.markerAttack.hide();
 
 		// Events
-		this.marker.on('mouseover', this.showPopup.bind(this));
-		this.marker.on('mouseout', this.hidePopup.bind(this));
-		this.marker.on('click', this.showSideBarInfo.bind(this));
+		//this.marker.on('mouseover', this.showPopup.bind(this));
+		//this.marker.on('mouseout', this.hidePopup.bind(this));
+		//this.marker.on('click', this.showSideBarInfo.bind(this));
 
 		map.on('moveend', this.refreshAnim.bind(this));
 		map.on('zoomend', this.refreshSize.bind(this));

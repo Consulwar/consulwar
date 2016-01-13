@@ -390,6 +390,30 @@ Template.cosmos.helpers({
 });
 
 Template.cosmos.events({
+	'click .map-fleet': function(e, t) {
+		if (e.currentTarget.view) {
+			e.currentTarget.view.showSideInfo();
+		}
+	},
+
+	'click .map-planet-marker': function(e, t) {
+		if (e.currentTarget.view) {
+			e.currentTarget.view.showSideBarInfo();
+		}
+	},
+
+	'mouseover .map-planet-marker': function(e, t) {
+		if (e.currentTarget.view) {
+			e.currentTarget.view.showPopup();
+		}
+	},
+
+	'mouseout .map-planet-marker': function(e, t) {
+		if (e.currentTarget.view) {
+			e.currentTarget.view.hidePopup();
+		}
+	},
+
 	'click .map-control-home': function(e, t) {
 		if (mapView) {
 			var homePlanet = Game.Planets.getBase();

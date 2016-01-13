@@ -143,14 +143,35 @@ game.ShipView = function(map, spaceEvent, template) {
 	}
 
 	this.showShipAnimation = function() {
+		// calc offsets
+		var startOffset = 0;
+		if (spaceEvent.info.startPlanetId) {
+			var planet = Game.Planets.getOne(spaceEvent.info.startPlanetId);
+			if (planet) {
+				startOffset = (planet.size + 3) * 0.02;
+			}
+		}
+
+		var endOffset = 0;
+		if (spaceEvent.info.targetType == Game.SpaceEvents.target.PLANET) {
+			var planet = Game.Planets.getOne(spaceEvent.info.targetId);
+			if (planet) {
+				endOffset = (planet.size + 3) * 0.02;
+			}
+		}
+
+		// draw path
 		_pathView = new game.PathView(
 			map,
 			spaceEvent.info.startPosition,
-			spaceEvent.info.targetPosition, 
+			spaceEvent.info.targetPosition,
+			startOffset,
+			endOffset,
 			(spaceEvent.info.isHumans ? '#56BAF2' : '#DC6257'),
 			template
 		);
 
+		// add marker
 		_marker = L.marker(
 			[0, 0],
 			{

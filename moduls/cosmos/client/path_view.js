@@ -1,6 +1,6 @@
 initCosmosPathView = function () {
 
-game.PathView = function(map, startPoint, endPoint, color, template) {
+game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color, template) {
 
 	var hitLineVsCircle = function(x1, y1, x2, y2, cx, cy, cRad) {
 		var a = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
@@ -184,6 +184,16 @@ game.PathView = function(map, startPoint, endPoint, color, template) {
 	this.totalDistance = null;
 
 	this.constructor = function() {
+		// apply start and end offset
+		var angle = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
+		
+		startPoint.x += startOffset * Math.cos(angle);
+		startPoint.y += startOffset * Math.sin(angle);
+
+		endPoint.x -= endOffset * Math.cos(angle);
+		endPoint.y -= endOffset * Math.sin(angle);
+
+		// build path
 		var points = getPath(startPoint, endPoint);
 		points = buildSpline(points);
 

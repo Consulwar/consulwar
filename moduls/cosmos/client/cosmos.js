@@ -407,11 +407,11 @@ Template.cosmos.events({
 			return;
 		}
 
-		if (!shipViews || !mapView) {
+		if (!t.data.shipViews || !mapView) {
 			return;
 		}
 
-		var shipView = shipViews[ id ];
+		var shipView = t.data.shipViews[ id ];
 		if (!shipView) {
 			return;
 		}

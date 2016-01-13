@@ -57,10 +57,9 @@ game.PlanetView = function(map, planet, template) {
 		this.marker.on('mouseout', this.hidePopup.bind(this));
 		this.marker.on('click', this.showSideBarInfo.bind(this));
 
-		map.on('move', this.refreshAnim.bind(this));
+		map.on('moveend', this.refreshAnim.bind(this));
 		map.on('zoomend', this.refreshSize.bind(this));
 
-		this.refreshAnim();
 		this.refreshSize();
 
 		// GUI data
@@ -210,7 +209,6 @@ game.PlanetView = function(map, planet, template) {
 			} else {
 				this.element.removeClass('map-planet-marker-animated');
 			}
-			this.refreshSize(zoom);
 		} else {
 			this.element.addClass('map-planet-marker-hidden');
 			this.element.removeClass('map-planet-marker-animated');
@@ -218,15 +216,9 @@ game.PlanetView = function(map, planet, template) {
 	}
 
 	this.refreshSize = function() {
+		this.refreshAnim();
+
 		var zoom = map.getZoom();
-
-		if (this.zoom == zoom
-		 ||	this.element.hasClass('map-planet-marker-hidden')
-		) {
-			return;
-		}
-		this.zoom = zoom;
-
 		var k = Math.pow(2, (zoom - 7));
 		// planet size & anchor
 		this.element

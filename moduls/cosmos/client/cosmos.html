@@ -147,12 +147,6 @@
 			<div class="target">
 				{{#if planet}}
 					<h2>{{planet.name}}{{#if planet.type}} ({{planet.type}}){{/if}}</h2>
-					{{#if timeAttack}}
-						<p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
-					{{/if}}
-					{{#if timeLeft}}
-						<p>Осталось времени: <span>{{formatSeconds timeLeft}}</span></p>
-					{{/if}}
 					{{#if planet.units}}
 						<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
 							{{#each planet.units}}
@@ -160,22 +154,25 @@
 							{{/each}}
 						</ul>
 					{{/if}}
+					{{#if timeAttack}}
+						<p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
+					{{/if}}
 				{{/if}}
 
 				{{#if ship}}
 					<h2>{{ship.status}}</h2>
-					{{#if timeAttack}}
-						<p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
-					{{/if}}
-					{{#if timeLeft}}
-						<p>Осталось времени: <span>{{formatSeconds timeLeft}}</span></p>
-					{{/if}}
 					{{#if ship.units}}
 						<ul class="{{#if ship.mission}}reptiles{{else}}humans{{/if}}">
 							{{#each ship.units}}
 								<li>{{this.name}} <span>{{this.count}}</span></li>
 							{{/each}}
 						</ul>	
+					{{/if}}
+					{{#if timeAttack}}
+						<p>Время перехвата: <span>{{formatSeconds timeAttack}}</span></p>
+					{{/if}}
+					{{#if timeLeft}}
+						<p>Осталось времени: <span>{{formatSeconds timeLeft}}</span></p>
 					{{/if}}
 				{{/if}}
 			</div>

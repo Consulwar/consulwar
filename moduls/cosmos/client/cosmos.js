@@ -17,8 +17,6 @@ Game.Cosmos.showPage = function() {
 			reptileFleets: new ReactiveVar(null),
 			activeColonyId: new ReactiveVar(null),
 			colonies: new ReactiveVar(null),
-
-			// TODO: refactoring!
 			timeAttack: new ReactiveVar(null),
 			timeLeft: new ReactiveVar(null),
 			timeFly: new ReactiveVar(null)
@@ -149,17 +147,13 @@ var PlanetView = function(map, planet, template) {
 			info.isHumans = true;
 			info.isHome = true;
 			info.status = (planet.isHome) ? 'Планета консула' : 'Колония';
-		} else {
-			info.isHumans = false;
-		}
-
-		if (planet.isHome || planet.armyId) {
 			if (Game.Planets.getColonies().length <= 1) {
 				info.canSend = false;
 			} else {
 				info.canSend = true;
 			}
 		} else {
+			info.isHumans = false;
 			info.canSend = true;
 		}
 		
@@ -384,6 +378,8 @@ var ShipView = function(map, spaceEvent, template) {
 				}
 			}
 
+			info.timeFly = 
+
 			this.info = info;
 		}
 
@@ -398,7 +394,7 @@ var ShipView = function(map, spaceEvent, template) {
 		if (targetId && targetId == this.id) {
 			if (this.info == null) {
 				// hide window if ship removed	
-				template.target.data.set(null);			
+				template.data.target.set(null);			
 			}
 		}
 	}
@@ -521,11 +517,11 @@ var ShipView = function(map, spaceEvent, template) {
 		this.setRotation(angle);
 
 		// update gui time
-		/*
-		_markerTime.html(Math.round(timeLeft) + '&nbsp;sec.')
+		
+		/* _markerTime.html(Math.round(timeLeft) + '&nbsp;sec.')
 		           .css('left', 30 * Math.cos(angle))
-		           .css('top', 30 * Math.sin(angle));
-		*/
+		           .css('top', 30 * Math.sin(angle)); */
+
 		var sideInfo = template.data.ship.get();
 		if (sideInfo && sideInfo.id == this.id) {
 			template.data.timeFly.set( timeLeft );
@@ -1044,13 +1040,21 @@ var sendFleet = function(isOneway) {
 	}
 
 	template.data.target.set(null);
+	template.data.planet.set(null);
+	template.data.ship.set(null);
+
 	Notifications.success('Флот отправлен');
 }
 
 Template.cosmos.onRendered(function() {
 
+	// --------------------------------
 	// TODO: refactoring!
+	// --------------------------------
 	template = this;
+	// --------------------------------
+	// TODO: refactoring!
+	// --------------------------------
 
 	// observe planets
 	Game.Planets.getAll().observeChanges({
@@ -1147,25 +1151,23 @@ Template.cosmos.onDestroyed(function() {
 });
 
 Template.cosmos.helpers({
+	planet: function() { return Template.instance().data.planet.get(); },
+	ship: function() { return Template.instance().data.ship.get(); },
+	drop: function() { return Template.instance().data.drop.get(); },
+	target: function() { return Template.instance().data.target.get(); },
 
-	planet: function() { return this.planet.get(); },
-	ship: function() { return this.ship.get(); },
-	drop: function() { return this.drop.get(); },
-	target: function() { return this.target.get(); },
+	userFleets: function () { return Template.instance().data.userFleets.get(); },
+	reptileFleets: function () { return Template.instance().data.reptileFleets.get(); },
 
-	userFleets: function () { return this.userFleets.get(); },
-	reptileFleets: function () { return this.reptileFleets.get(); },
+	activeColonyId: function() { return Template.instance().data.activeColonyId.get(); },
+	colonies: function() { return Template.instance().data.colonies.get(); },
 
-	activeColonyId: function() { return this.activeColonyId.get(); },
-	colonies: function() { return this.colonies.get(); },
-
-	// TODO: refactoring!
-	timeAttack: function() { return this.timeAttack.get(); },
-	timeLeft: function() { return this.timeLeft.get(); },
-	timeFly: function () { return this.timeFly.get(); },
+	timeAttack: function() { return Template.instance().data.timeAttack.get(); },
+	timeLeft: function() { return Template.instance().data.timeLeft.get(); },
+	timeFly: function () { return Template.instance().data.timeFly.get(); },
 
 	availableFleet: function() {
-		var colonyId = this.activeColonyId.get();
+		var colonyId = Template.instance().data.activeColonyId.get();
 		if (!colonyId) {
 			return null;
 		}
@@ -1196,7 +1198,6 @@ Template.cosmos.helpers({
 	canHaveMoreColonies: function() {
 		return Game.Planets.checkCanHaveMoreColonies();
 	}
-
 });
 
 Template.cosmos.events({

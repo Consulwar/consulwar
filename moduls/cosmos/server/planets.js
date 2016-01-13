@@ -569,7 +569,7 @@ Meteor.methods({
 		if (!baseArmy) {
 			basePlanet.armyId = null;	
 		}
-		basePlanet.timeRespawn = getServerTime() + 120;
+		basePlanet.timeRespawn = getServerTime() + Game.Cosmos.TIME_RESPAWN_MISSION;
 		Game.Planets.update(basePlanet);
 
 		var startPosition = {
@@ -629,7 +629,7 @@ Meteor.methods({
 				planet.mission = Game.Planets.generateMission(planet);
 			} else {
 				// wait
-				planet.timeRespawn = timeCurrent + 1200;
+				planet.timeRespawn = timeCurrent + Game.Cosmos.TIME_RESPAWN_MISSION;
 			}
 			Game.Planets.update(planet);
 		}

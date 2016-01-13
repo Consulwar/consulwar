@@ -12,7 +12,10 @@ game.PlanetType = function(options) {
 	Game.Planets.types.push(options);
 }
 
-Game.Cosmos = {};
+Game.Cosmos = {
+	TIME_RESPAWN_MISSION: 120,
+	TIME_ATTACK_PLAYER: 120
+};
 
 Game.Planets = {
 

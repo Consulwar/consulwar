@@ -4,7 +4,7 @@ Game.SpaceEvents.actualize = function() {
 	var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 
 	// Try to attack player
-	if (timeCurrent >= Game.Planets.getLastAttackTime() + 120) {
+	if (timeCurrent >= Game.Planets.getLastAttackTime() + Game.Cosmos.TIME_ATTACK_PLAYER) {
 		var targetPlanet = null;
 		var chances = Game.Planets.getReptileAttackChance();
 
@@ -393,7 +393,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				Game.SpaceEvents.sendShip(shipOptions);
 			}
 
-			planet.timeRespawn = event.timeEnd + 120;
+			planet.timeRespawn = event.timeEnd + Game.Cosmos.TIME_RESPAWN_MISSION;
 			Game.Planets.update(planet);
 
 			if (!battleResult || (userArmy && !enemyArmy)) {
@@ -488,7 +488,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				}
 			}
 
-			planet.timeRespawn = event.timeEnd + 120;
+			planet.timeRespawn = event.timeEnd + Game.Cosmos.TIME_RESPAWN_MISSION;
 			Game.Planets.update(planet);
 
 		}
@@ -664,7 +664,7 @@ Meteor.methods({
 		if (!baseArmy) {
 			basePlanet.armyId = null;	
 		}
-		basePlanet.timeRespawn = timeCurrent + 120;
+		basePlanet.timeRespawn = timeCurrent + Game.Cosmos.TIME_RESPAWN_MISSION;
 		Game.Planets.update(basePlanet);
 
 		// send ship

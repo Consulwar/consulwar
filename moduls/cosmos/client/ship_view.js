@@ -83,14 +83,12 @@ game.ShipView = function(map, spaceEvent, template) {
 				}
 			}
 
-			info.timeFly = 
-
 			this.info = info;
 		}
 
 		// update side menu
 		var sideInfo = template.data.ship.get();
-		if (sideInfo && sideInfo.id == null && sideInfo.id == this.id) {
+		if (sideInfo && sideInfo.id == this.id) {
 			template.data.ship.set( this.info );
 		}
 
@@ -98,8 +96,8 @@ game.ShipView = function(map, spaceEvent, template) {
 		var targetId = template.data.target.get();
 		if (targetId && targetId == this.id) {
 			if (this.info == null) {
-				// hide window if ship removed	
-				template.data.target.set(null);			
+				// hide window if ship removed
+				template.data.target.set(null);
 			}
 		}
 	}

@@ -93,17 +93,17 @@ game.PlanetView = function(map, planet, template) {
 	this.update = function() {
 		var planet = Game.Planets.getOne(this.id);
 
-		this.element.removeClass('map-planet-border-blue');
-		this.element.removeClass('map-planet-border-red');
-		this.element.removeClass('map-planet-border-white');
+		this.element.removeClass('map-planet-border-human');
+		this.element.removeClass('map-planet-border-reptile');
+		this.element.removeClass('map-planet-border-empty');
 
 		if (planet.isHome || planet.armyId) {
-			this.element.addClass('map-planet-border-blue');
+			this.element.addClass('map-planet-border-human');
 		} else {
 			if (planet.mission) {
-				this.element.addClass('map-planet-border-red');
+				this.element.addClass('map-planet-border-reptile');
 			} else {
-				this.element.addClass('map-planet-border-white');
+				this.element.addClass('map-planet-border-empty');
 			}
 		}
 

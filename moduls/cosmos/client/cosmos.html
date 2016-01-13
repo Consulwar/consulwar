@@ -170,6 +170,8 @@
 					{{/if}}
 					{{#if timeAttack}}
 						<p>Время перехвата: <span>{{formatSeconds timeAttack}}</span></p>
+					{{else}}
+						<p>Невозможно перехватить</p>
 					{{/if}}
 					{{#if timeLeft}}
 						<p>Осталось времени: <span>{{formatSeconds timeLeft}}</span></p>

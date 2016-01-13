@@ -63,6 +63,7 @@ game.ShipView = function(map, spaceEvent, template) {
 	 				level: spaceEvent.info.mission.level,
 					name: Game.Battle.items[spaceEvent.info.mission.type].name
 	 			}
+	 			info.status = 'Флот рептилий';
 	 		}
 
 			var units = Game.SpaceEvents.getFleetUnits(spaceEvent._id);
@@ -193,8 +194,18 @@ game.ShipView = function(map, spaceEvent, template) {
 		_element.append('<div class="map-fleet-time"></div>');
 		_markerTime = $(_element.find('.map-fleet-time'));
 
-		// click event
+		// Events
 		// _marker.on('click', this.showSideInfo.bind(this));
+		map.on('zoomend', this.refreshSize.bind(this));
+	}
+
+	this.refreshSize = function() {
+		var zoom = map.getZoom();
+		if (zoom < 6) {
+			_element.hide();
+		} else {
+			_element.show();
+		}
 	}
 
 	this.getPosition = function () {
@@ -208,7 +219,6 @@ game.ShipView = function(map, spaceEvent, template) {
 	this.showSideInfo = function() {
 		template.data.planet.set(null);
 		template.data.ship.set( this.info );
-		template.data.timeFly.set( this.getTimeLeft() );
 	}
 
 	this.updateShipAnimation = function() {
@@ -248,11 +258,6 @@ game.ShipView = function(map, spaceEvent, template) {
 		/* _markerTime.html(Math.round(timeLeft) + '&nbsp;sec.')
 		           .css('left', 30 * Math.cos(angle))
 		           .css('top', 30 * Math.sin(angle)); */
-
-		var sideInfo = template.data.ship.get();
-		if (sideInfo && sideInfo.id == this.id) {
-			template.data.timeFly.set( timeLeft );
-		}
 	}
 
 	this.hideShipAnimation = function() {

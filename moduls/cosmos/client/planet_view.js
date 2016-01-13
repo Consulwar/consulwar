@@ -195,7 +195,6 @@ game.PlanetView = function(map, planet, template) {
 
 	this.showSideBarInfo = function() {
 		template.data.planet.set( this.infoPlanet );
-		template.data.timeFly.set(null);
 		template.data.ship.set(null);
 	}
 

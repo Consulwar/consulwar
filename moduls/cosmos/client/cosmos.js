@@ -44,6 +44,16 @@ Template.cosmos.onRendered(function() {
 	var updatePlanet = function(id) {
 		if (template.data.planetViews && template.data.planetViews[ id ]) {
 			template.data.planetViews[ id ].update();
+			// ----------------------------------------------------------------
+			// Dirty workaround!
+			// ----------------------------------------------------------------
+			// Always update base planet, because everytime you gain or loose colony
+			// gui property info.canSend might be changed.
+			var baseId = Game.Planets.getBase()._id;
+			if (baseId && baseId != id && template.data.planetViews[ baseId ]) {
+				template.data.planetViews[ baseId ].update();
+			}
+			// ----------------------------------------------------------------
 		}
 	}
 

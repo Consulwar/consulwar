@@ -97,7 +97,14 @@ Game.Unit = {
 
 	Collection: new Meteor.Collection('units'),
 
-	getValue: function() {
+	getArmy: function (id) {
+		return Game.Unit.Collection.findOne({
+			user_id: Meteor.userId(),
+			_id: id
+		});
+	},
+
+	getHomeArmy: function() {
 		return Game.Unit.Collection.findOne({
 			user_id: Meteor.userId(),
 			location: Game.Unit.location.HOME
@@ -105,10 +112,15 @@ Game.Unit = {
 	},
 
 	get: function(group, name) {
-		var units = Game.Unit.getValue();
+		var record = Game.Unit.getHomeArmy();
 
-		if (units && units[group] && units[group][name]) {
-			return units[group][name];
+		if (record
+		 && record.units
+		 && record.units.army
+		 && record.units.army[group]
+		 && record.units.army[group][name]
+		) {
+			return record.units.army[group][name];
 		} else {
 			return 0;
 		}
@@ -142,9 +154,9 @@ Game.Unit = {
 			var power = 0;
 			var psieffect = Game.Mutual.get('research', 'psieffect');
 			if (psieffect <= 0) {
-				power = _.random(1, 5) / 100;
+				power = Game.Random.interval(1, 5) / 100;
 			} else {
-				power = _.random(6, 10) / 100;
+				power = Game.Random.interval(6, 10) / 100;
 			}
 			power *= options.damageReduction;
 			// count psi enemies

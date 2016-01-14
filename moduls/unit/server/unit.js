@@ -11,7 +11,7 @@ Game.Unit.set = function(unit, invertSign) {
 
 	var set = {};
 
-	set[unit.group + '.' + unit.engName] = parseInt(currentValue + (unit.count) * invertSign);
+	set['units.army.' + unit.group + '.' + unit.engName] = parseInt(currentValue + (unit.count) * invertSign);
 
 	Game.Unit.Collection.update({
 		user_id: Meteor.userId(),
@@ -33,7 +33,7 @@ Game.Unit.remove = function(unit) {
 
 Game.Unit.initialize = function(user) {
 	user = user || Meteor.user();
-	var currentValue = Game.Unit.getValue();
+	var currentValue = Game.Unit.getHomeArmy();
 
 	if (currentValue == undefined) {
 		Game.Unit.Collection.insert({
@@ -43,39 +43,76 @@ Game.Unit.initialize = function(user) {
 	}
 }
 
-Game.Unit.slice = function(sourceId, destUnits, destLocation) {
+Game.Unit.removeArmy = function(id) {
+	if (Game.Unit.getHomeArmy()._id == id) {
+		Game.Unit.Collection.update({ _id: id }, { $set: { 'units': {} } } );
+	} else {
+		Game.Unit.Collection.remove({ _id: id });
+	}
+}
 
+Game.Unit.createArmy = function(units, location) {
+	var record = {};
+
+	record.user_id = Meteor.userId();
+	record.units = units;
+	record.location = location;
+
+	return Game.Unit.Collection.insert(record);
+}
+
+Game.Unit.updateArmy = function(id, units) {
+	var army = Game.Unit.getArmy(id);
+	if (army) {
+		army.units = units;
+		Game.Unit.Collection.update({ _id: id }, army);
+	}
+}
+
+Game.Unit.moveArmy = function (id, location) {
+	var army = Game.Unit.getArmy(id);
+	if (army) {
+		army.location = location;
+		Game.Unit.Collection.update({ _id: id }, army);
+	}
+}
+
+Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 	if (destLocation == Game.Unit.location.HOME) {
 		throw new Meteor.Error('Может существовать только одна локация HOME');
 	}
 
-	var source = Game.Unit.Collection.findOne({
-		_id: sourceId
-	});
-
-	if (!source) {
+	var source = Game.Unit.getArmy(sourceId);
+	if (!source || !source.units) {
 		throw new Meteor.Error('Нет армии с таким id');
 	}
 
+	var sourceUnits = source.units;
 	var totalCount = 0;
+	var restCount = 0;
 
-	for (var group in destUnits) {
-		for (var name in destUnits[group]) {
+	for (var side in destUnits) {
+		for (var group in destUnits[side]) {
+			for (var name in destUnits[side][group]) {
 
-			var count = parseInt(destUnits[group][name], 10);
+				var count = parseInt( destUnits[side][group][name], 10 );
 
-			if (!source[group] || !source[group][name]) {
-				source[group][name] = 0;
+				if (!sourceUnits[side]
+				 || !sourceUnits[side][group]
+				 || !sourceUnits[side][group][name]
+				) {
+					continue;
+				}
+
+				if (count > sourceUnits[side][group][name]) {
+					count = sourceUnits[side][group][name];
+				}
+
+				destUnits[side][group][name] = count;
+				sourceUnits[side][group][name] -= count;
+				totalCount += count;
+				restCount += sourceUnits[side][group][name];
 			}
-			 
-			if (count > source[group][name]) {
-				count = source[group][name];
-			}
-
-			destUnits[group][name] = count;
-			source[group][name] -= count;
-
-			totalCount += count;
 		}
 	}
 
@@ -84,63 +121,64 @@ Game.Unit.slice = function(sourceId, destUnits, destLocation) {
 	}
 
 	// update source
-	Game.Unit.Collection.update({ _id: sourceId }, source);
+	if (restCount > 0) {
+		Game.Unit.updateArmy(sourceId, sourceUnits);
+	} else {
+		Game.Unit.removeArmy(sourceId);
+	}
 
 	// insert new slice
-	destUnits.user_id = Meteor.userId();
-	destUnits.location = destLocation;
-
-	return Game.Unit.Collection.insert(destUnits);
+	return Game.Unit.createArmy(destUnits, destLocation);
 }
 
-Game.Unit.merge = function(sourceId, sourceUnits, destId) {
+Game.Unit.mergeArmy = function(sourceId, destId) {
+	if (sourceId == destId) {
+		throw new Meteor.Error('Нельзя слить одну и туже армию');
+	}
 
-	var source = Game.Unit.Collection.findOne({
-		_id: sourceId
-	});
+	var source = Game.Unit.getArmy(sourceId);
+	var dest = Game.Unit.getArmy(destId);
 
-	var dest = Game.Unit.Collection.findOne({
-		_id: destId
-	});
-
-	if (!source || !dest) {
+	if (!source || !source.units || !dest || !dest.units) {
 		throw new Meteor.Error('Армии с указанными id не найдены');
 	}
 
-	var restCount = 0;
+	if (source.location == Game.Unit.location.HOME) {
+		throw new Meteor.Error('Нельзя слить домашнюю армию');
+	}
+
+	var sourceUnits = source.units;
+	var destUnits = dest.units;
 	var mergeCount = 0;
 
-	for (var group in sourceUnits) {
-		for (var name in sourceUnits[group]) {
+	for (var side in sourceUnits) {
+		for (var group in sourceUnits[side]) {
+			for (var name in sourceUnits[side][group]) {
 
-			if (!source[group] || !source[group][name]) {
-				continue;
+				var count = parseInt( sourceUnits[side][group][name], 10 );
+
+				if (!destUnits[side]) {
+					destUnits[side] = {};
+				}
+				if (!destUnits[side][group]) {
+					destUnits[side][group] = {};
+				}
+				if (!destUnits[side][group][name]) {
+					destUnits[side][group][name] = 0;
+				}
+
+				destUnits[side][group][name] += count;
+				mergeCount += count;
 			}
-
-			var count = parseInt(sourceUnits[group][name], 10);
-
-			if (count > source[group][name]) {
-				count = source[group][name];
-			}
-
-			dest[group][name] += count;
-			source[group][name] -= count;
-
-			restCount += source[group][name];
-			mergeCount += count;
 		}
 	}
 
-	// update source
-	if (restCount > 0 || source.location == Game.Unit.location.HOME) {
-		Game.Unit.Collection.update({ _id: sourceId }, source);
-	} else {
-		Game.Unit.Collection.remove({ _id: sourceId });
-	}
+	// remove source
+	Game.Unit.removeArmy(sourceId);
 
-	// update destination
+	// update destination units
 	if (mergeCount > 0) {
-		Game.Unit.Collection.update({ _id: destId }, dest);
+		Game.Unit.updateArmy(destId, destUnits);
 	}
 }
 
@@ -168,33 +206,33 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		switch (name) {
 			case 'few':
-				return _.random(1, 4);
+				return Game.Random.interval(1, 4);
 			case 'several':
-				return _.random(5, 9);
+				return Game.Random.interval(5, 9);
 			case 'pack':
-				return _.random(10, 19);
+				return Game.Random.interval(10, 19);
 			case 'lots':
-				return _.random(20, 49);
+				return Game.Random.interval(20, 49);
 			case 'horde':
-				return _.random(50, 99);
+				return Game.Random.interval(50, 99);
 			case 'throng':
-				return _.random(100, 249);
+				return Game.Random.interval(100, 249);
 			case 'swarm':
-				return _.random(250, 499);
+				return Game.Random.interval(250, 499);
 			case 'zounds':
-				return _.random(500, 999);
+				return Game.Random.interval(500, 999);
 			case 'legion':
-				return _.random(1000, 4999);
+				return Game.Random.interval(1000, 4999);
 			case 'division':
-				return _.random(5000, 9999);
+				return Game.Random.interval(5000, 9999);
 			case 'corps':
-				return _.random(10000, 19999);
+				return Game.Random.interval(10000, 19999);
 			case 'army':
-				return _.random(20000, 49999);
+				return Game.Random.interval(20000, 49999);
 			case 'group':
-				return _.random(50000, 99999);
+				return Game.Random.interval(50000, 99999);
 			case 'front':
-				return _.random(100000, 249999);
+				return Game.Random.interval(100000, 249999);
 		}
 	}
 
@@ -430,7 +468,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (userUnits[key].model.characteristics.damage) {
 				var min = userUnits[key].model.characteristics.damage.min * userUnits[key].count;
 				var max = userUnits[key].model.characteristics.damage.max * userUnits[key].count;
-				var damage = _.random( min, max ) * options.damageReduction; 
+				var damage = Game.Random.interval( min, max ) * options.damageReduction; 
 				userUnits[key].damage = damage;
 			} else {
 				userUnits[key].damage = 0;
@@ -441,7 +479,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (enemyUnits[key].model.characteristics.damage) {
 				var min = enemyUnits[key].model.characteristics.damage.min * enemyUnits[key].count;
 				var max = enemyUnits[key].model.characteristics.damage.max * enemyUnits[key].count;
-				var damage = _.random( min, max ) * options.damageReduction; 
+				var damage = Game.Random.interval( min, max ) * options.damageReduction; 
 				enemyUnits[key].damage = damage;
 			} else {
 				enemyUnits[key].damage = 0;
@@ -502,8 +540,47 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 	}
 
-	this.constructor = function(userArmy, enemyArmy, options) {
+	var getPoints = function(resources) {
+		var points = 0;
+		for (var res in resources) {
+			if (res != 'time') {
+				points += resources[res] * (res == 'crystals' ? 3 : res == 'humans' ? 4 : 1);
+			}
+		}
+		return points;
+	}
 
+	var calculateAward = function(killed, multiplier) {
+		var resources = {
+			metals: 0,
+			crystals: 0
+		}
+
+		for (var side in killed) {
+			for (var group in killed[side]) {
+				for (var name in killed[side][group]) {
+
+					var count = killed[side][group][name];
+					if (count <= 0) {
+						continue;
+					}
+
+					var price = Game.Unit.items[side][group][name].price(count);
+					if (price && price.base) {
+						resources.metals += price.base.metals;
+						resources.crystals += price.base.crystals;
+					}
+				}
+			}
+		}
+
+		resources.metals *= multiplier;
+		resources.crystals *= multiplier;
+
+		return resources;
+	}
+
+	this.constructor = function(userArmy, enemyArmy, options) {
 		// parse options
 		var rounds = (options && options.rounds) ? options.rounds : 3;
 
@@ -515,9 +592,14 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 		damageReduction = 1 - (damageReduction / 100);
 
+		var missionType = (options && options.missionType) ? options.missionType : null;
+		var missionLevel = (options && options.missionLevel) ? options.missionLevel : null;
+
 		var options = {
 			rouns: rounds,
-			damageReduction: damageReduction
+			damageReduction: damageReduction,
+			missionType: missionType,
+			missionLevel: missionLevel
 		}
 
 		// parse user army
@@ -570,18 +652,32 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (!userArmyRest[unit.side][unit.group]) {
 					userArmyRest[unit.side][unit.group] = {};
 				}
-
 				userArmyRest[unit.side][unit.group][unit.name] = unit.count;
 			}
 		}
 
 		writeLog('Вражеская армия:');
 		var enemyArmyRest = null;
+		var enemyArmyKilled = null;
 		
 		for (var key in enemyUnits) {
 
 			var unit = enemyUnits[key];
 			writeLog('    ' + unit.model.name + ' ' + unit.count);
+
+			var killed = unit.startCount - unit.count;
+			if (killed > 0) {
+				if (!enemyArmyKilled) {
+					enemyArmyKilled = {};
+				}
+				if (!enemyArmyKilled[unit.side]) {
+					enemyArmyKilled[unit.side] = {};
+				}
+				if (!enemyArmyKilled[unit.side][unit.group]) {
+					enemyArmyKilled[unit.side][unit.group] = {};
+				}
+				enemyArmyKilled[unit.side][unit.group][unit.name] = killed;
+			}
 
 			if (unit.count > 0) {
 				if (!enemyArmyRest) {
@@ -593,15 +689,43 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (!enemyArmyRest[unit.side][unit.group]) {
 					enemyArmyRest[unit.side][unit.group] = {};
 				}
-
 				enemyArmyRest[unit.side][unit.group][unit.name] = unit.count;
 			}
 		}
 
+		// calculate reward
+		reward = {};
+
+		var mission = null;
+		if (options.missionType
+		 && options.missionLevel
+		 && Game.Battle.items[ options.missionType ]
+		 && Game.Battle.items[ options.missionType ].level
+		 && Game.Battle.items[ options.missionType ].level[ options.missionLevel ]
+		) {
+			mission = Game.Battle.items[ options.missionType ];
+		}
+
+		if (mission) {
+			// metals + crystals
+			if (userArmyRest && !enemyArmyRest) {
+				if (mission.level[ options.missionLevel ].reward) {
+					reward = mission.level[ options.missionLevel ].reward;
+				} else {
+					reward = calculateAward(enemyArmyKilled, 0.1);
+				}
+			}
+
+			// honor
+			reward.honor = Math.floor((getPoints(calculateAward(enemyArmyKilled, 1)) / 100) * (mission.honor * 0.01));
+		}
+
+		// save results
 		this.results = {
 			log: currentLog,
 			userArmy: userArmyRest,
-			enemyArmy: enemyArmyRest
+			enemyArmy: enemyArmyRest,
+			reward: reward
 		}
 	}
 	this.constructor(userArmy, enemyArmy, options);

@@ -14,10 +14,12 @@ SyncedCron.config({
 });
 
 Meteor.startup(function () {
+	initArtefactsServer();
 	initResourcesServer();
 	initBuildingServer();
 	initResearchServer();
 	initUnitServer();
+	initCosmosServer();
 
 	initMutualServer();
 
@@ -82,6 +84,9 @@ Meteor.methods({
 		Game.Resources.updateWithIncome();
 
 		Game.Queue.checkAll();
+
+		Game.SpaceEvents.actualize();
+		Game.Planets.actualize();
 
 		Meteor.call('updateQuests');
 

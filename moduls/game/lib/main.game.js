@@ -152,7 +152,10 @@ game.Item = function(options) {
 
 	this.price = function(level) {
 		var curPrice = {};
-		if (this.type != 'unit' && this.type != 'mutual') {
+		if (this.type != 'unit'
+		 && this.type != 'reptileUnit'
+		 && this.type != 'mutual'
+		) {
 			// Цена идет на подъем ДО указаного уровня с предыдущего
 			// т.к. начальный уровень нулевой, то цена для первого уровня
 			// является ценой подъема с нулевого до первого
@@ -349,6 +352,16 @@ Game = {
 			default:
 				throw new Meteor.Error("Такого объекта нет");
 		}
+	}
+}
+
+Game.Random = {
+	random: function() {
+		return Random.fraction();
+	},
+
+	interval: function(min, max) {
+		return min + Math.round( Random.fraction() * (max - min) );
 	}
 }
 

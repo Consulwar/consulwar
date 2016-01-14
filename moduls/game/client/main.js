@@ -1,9 +1,12 @@
 Meteor.startup(function () {
 
+initArtefactsClient();
 initResourcesClient();
 initBuildingClient();
 initResearchClient();
 initUnitClient();
+
+initCosmosClient();
 
 initMutualClient();
 

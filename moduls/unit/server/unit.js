@@ -186,8 +186,31 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 // Battle
 // ----------------------------------------------------------------------------
 
+Game.BattleHistory = {};
+
+Game.BattleHistory.Collection = new Meteor.Collection('battleHistory');
+
+Game.BattleHistory.add = function(userArmy, userArmyRest, enemyArmy, enemyArmyRest) {
+	Game.BattleHistory.Collection.insert({
+		user_id: Meteor.userId(),
+		timestamp: Math.floor( new Date().valueOf() / 1000 ),
+		userArmy: userArmy,
+		userArmyRest: userArmyRest,
+		enemyArmy: enemyArmy,
+		enemyArmyRest: enemyArmyRest
+	});
+}
+
 Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	var battle = new Game.Unit.Battle(userArmy, enemyArmy, options);
+
+	Game.BattleHistory.add(
+		userArmy,
+		battle.results.userArmy,
+		enemyArmy,
+		battle.results.enemyArmy
+	)
+
 	return battle.results;
 }
 

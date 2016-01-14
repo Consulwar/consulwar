@@ -44,8 +44,8 @@ Game.Unit.initialize = function(user) {
 }
 
 Game.Unit.removeArmy = function(id) {
-	if (Game.Unit.getHomeArmyId() == id) {
-		Game.Unit.Collection.update({ _id: id }, { $set: { 'units': null } } );
+	if (Game.Unit.getHomeArmy()._id == id) {
+		Game.Unit.Collection.update({ _id: id }, { $set: { 'units': {} } } );
 	} else {
 		Game.Unit.Collection.remove({ _id: id });
 	}
@@ -121,7 +121,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 	}
 
 	// update source
-	if (restCount > 0 || source.location == Game.Unit.location.HOME) {
+	if (restCount > 0) {
 		Game.Unit.updateArmy(sourceId, sourceUnits);
 	} else {
 		Game.Unit.removeArmy(sourceId);

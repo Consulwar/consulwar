@@ -111,10 +111,6 @@ Game.Unit = {
 		});
 	},
 
-	getHomeArmyId: function () {
-		return Game.Unit.getHomeArmy()._id;
-	},
-
 	get: function(group, name) {
 		var record = Game.Unit.getHomeArmy();
 

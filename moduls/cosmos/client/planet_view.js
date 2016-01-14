@@ -41,7 +41,7 @@ game.PlanetView = function(map, planet, template) {
 
 		// Planet jquery element
 		this.element = $(this.marker.getElement());
-		this.element[0].view = this;
+		this.element.data('view', this);
 
 		// Planet name
 		this.element.append('<div class="map-planet-marker-name">' + planet.name + '</div>');

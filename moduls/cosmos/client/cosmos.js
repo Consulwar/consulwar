@@ -271,7 +271,7 @@ Template.cosmos.helpers({
 	},
 
 	userFleets: function () {
-		var result = null;
+		var result = [];
 		var fleets = Game.SpaceEvents.getFleets().fetch();
 		
 		for (var i = 0; i < fleets.length; i++) {
@@ -279,36 +279,20 @@ Template.cosmos.helpers({
 				continue;
 			}
 
-			var startPlanetId = fleets[i].info.startPlanetId; 
-			var startPlanet = null;
-			if (startPlanetId) {
-				startPlanet = Game.Planets.getOne(startPlanetId);
-			}
-
-			var finishPlanetId = fleets[i].info.targetId
-			var finishPlanet = null;
-			if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET && finishPlanetId) {
-				finishPlanet = Game.Planets.getOne(finishPlanetId);
-			}
-
 			var info = {
 				id: fleets[i]._id,
-				start: startPlanet,
-				finish: finishPlanet
-			}
-
-			if (!result) {
-				result = [];
+				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
+				finish: Game.Planets.getOne( fleets[i].info.targetId )
 			}
 
 			result.push(info);
 		}
 
-		return result;
+		return (result.length > 0) ? result : null;
 	},
 
 	reptileFleets: function () {
-		var result = null;
+		var result = [];
 		var fleets = Game.SpaceEvents.getFleets().fetch();
 		
 		for (var i = 0; i < fleets.length; i++) {
@@ -316,58 +300,34 @@ Template.cosmos.helpers({
 				continue;
 			}
 
-			var startPlanetId = fleets[i].info.startPlanetId; 
-			var startPlanet = null;
-			if (startPlanetId) {
-				startPlanet = Game.Planets.getOne(startPlanetId);
-			}
-
-			var finishPlanetId = fleets[i].info.targetId
-			var finishPlanet = null;
-			if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET && finishPlanetId) {
-				finishPlanet = Game.Planets.getOne(finishPlanetId);
-			}
-
 			var info = {
 				id: fleets[i]._id,
-				start: startPlanet,
-				finish: finishPlanet
-			}
-
-			if (!result) {
-				result = [];
+				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
+				finish: Game.Planets.getOne( fleets[i].info.targetId )
 			}
 
 			result.push(info);
 		}
 
-		return result;
+		return (result.length > 0) ? result : null;
 	}
 });
 
 Template.cosmos.events({
 	'click .map-fleet': function(e, t) {
-		if (e.currentTarget.view) {
-			e.currentTarget.view.showSideInfo();
-		}
+		$(e.currentTarget).data('view').showSideInfo();
 	},
 
 	'click .map-planet-marker': function(e, t) {
-		if (e.currentTarget.view) {
-			e.currentTarget.view.showSideBarInfo();
-		}
+		$(e.currentTarget).data('view').showSideBarInfo();
 	},
 
 	'mouseover .map-planet-marker': function(e, t) {
-		if (e.currentTarget.view) {
-			e.currentTarget.view.showPopup();
-		}
+		$(e.currentTarget).data('view').showPopup();
 	},
 
 	'mouseout .map-planet-marker': function(e, t) {
-		if (e.currentTarget.view) {
-			e.currentTarget.view.hidePopup();
-		}
+		$(e.currentTarget).data('view').hidePopup();
 	},
 
 	'click .map-control-home': function(e, t) {

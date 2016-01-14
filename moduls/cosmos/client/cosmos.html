@@ -21,11 +21,11 @@
 		<!-- Planet info -->
 		{{#if planet}}
 			{{#if planet.name}}
-				<h2>{{planet.name}}{{#if planet.type}} ({{planet.type}}){{/if}}</h2>
+				<h2>{{planet.name}} ({{planet.type}})</h2>
 			{{/if}}
 			{{#if planet.isHumans}}
 				<div class="header-humans">
-					<p>{{planet.status}}</p>
+					<p class="center">{{planet.status}}</p>
 				</div>
 			{{/if}}
 			{{#if planet.mission}}
@@ -38,7 +38,7 @@
 			{{#if planet.units}}
 				<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
 					{{#each planet.units}}
-						<li>{{this.name}} <span>{{this.count}}</span></li>
+						<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
 					{{/each}}
 				</ul>
 			{{/if}}
@@ -51,7 +51,7 @@
 		{{#if ship}}
 			{{#if ship.isHumans}}
 				<div class="header-humans">
-					<p>{{ship.status}}</p>
+					<p class="center">{{ship.status}}</p>
 				</div>
 			{{/if}}
 			{{#if ship.mission}}
@@ -64,7 +64,7 @@
 			{{#if ship.units}}
 				<ul class="{{#if ship.mission}}reptiles{{else}}humans{{/if}}">
 					{{#each ship.units}}
-						<li>{{this.name}} <span>{{this.count}}</span></li>
+						<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
 					{{/each}}
 				</ul>
 			{{/if}}
@@ -80,7 +80,7 @@
 		{{#if and (not planet) (not ship)}}
 			{{#if userFleets}}
 				<div class="header-humans">
-					<p>Флот консула</p>
+					<p class="center">Флот консула</p>
 				</div>
 				<ul class="humans">
 					{{#each userFleets}}
@@ -94,8 +94,7 @@
 			{{/if}}
 			{{#if reptileFleets}}
 				<div class="header-reptiles">
-					<p>&nbsp;</p>
-					<p>Флот рептилий</p>
+					<p class="center">Флот рептилий</p>
 				</div>
 				<ul class="reptiles">
 					{{#each reptileFleets}}
@@ -123,7 +122,16 @@
 							{{#if this.isSent}}Флот отправлен{{else}}Свободно{{/if}}
 						</li>
 					{{else}}
-						<li data-id="{{this._id}}" class="{{#if eq this._id activeColonyId}}active{{else}}{{#if this.isHome}}home{{/if}}{{/if}}">
+						<li data-id="{{this._id}}"
+							class="
+								{{#if eq this._id activeColonyId}}
+									active
+								{{else}}
+									{{#if this.isHome}}
+										home
+									{{/if}}
+								{{/if}}"
+						>
 							{{#if this.isHome}}Планета консула{{else}}{{this.name}}{{/if}}
 						</li>
 					{{/if}}
@@ -136,7 +144,7 @@
 					{{#each availableFleet}}
 						<li class="unit" data-id="{{this.engName}}">
 							<a class="{{this.engName}}-icon"></a>
-							<div class="max">{{this.max}}</div>
+							<div class="max">{{formatNumberWithISO this.max}}</div>
 							<input class="count" type="number" placeholder="Количество" data-max="{{this.max}}" value="{{this.count}}">
 						</li>
 					{{/each}}
@@ -150,7 +158,7 @@
 					{{#if planet.units}}
 						<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
 							{{#each planet.units}}
-								<li>{{this.name}} <span>{{this.count}}</span></li>
+								<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
 							{{/each}}
 						</ul>
 					{{/if}}
@@ -164,14 +172,14 @@
 					{{#if ship.units}}
 						<ul class="{{#if ship.mission}}reptiles{{else}}humans{{/if}}">
 							{{#each ship.units}}
-								<li>{{this.name}} <span>{{this.count}}</span></li>
+								<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
 							{{/each}}
 						</ul>	
 					{{/if}}
 					{{#if timeAttack}}
 						<p>Время перехвата: <span>{{formatSeconds timeAttack}}</span></p>
 					{{else}}
-						<p>Невозможно перехватить</p>
+						<p>Не успеем перехватить</p>
 					{{/if}}
 					{{#if timeLeft}}
 						<p>Осталось времени: <span>{{formatSeconds timeLeft}}</span></p>
@@ -180,10 +188,12 @@
 			</div>
 
 			<!-- control buttons -->
+			<!-- not implemented!
 			<ul class="resources cost">
 				<li class="credits">100500</li>
 			</ul>
 			<a class="btn-add">Дополнительная планета</a>
+			-->
 			<a class="btn-all">Выбрать всех</a>
 			{{#if planet}}
 				{{#if planet.isHome}}

@@ -183,7 +183,7 @@ game.ShipView = function(map, spaceEvent, template) {
 		).addTo(map);
 
 		_element = $(_marker.getElement());
-		_element[0].view = this;
+		_element.data('view', this)
 
 		if (spaceEvent.info.isHumans) {
 			_element.append('<div class="map-fleet-humans"></div>');

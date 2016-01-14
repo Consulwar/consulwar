@@ -361,7 +361,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				// stay on planet
 				if (planet.isHome || planet.armyId) {
 					// merge army
-					var destArmyId = (planet.isHome) ? Game.Unit.getHomeArmyId : planet.armyId;
+					var destArmyId = (planet.isHome) ? Game.Unit.getHomeArmy()._id : planet.armyId;
 					Game.Unit.mergeArmy(event.info.armyId, destArmyId);
 				} else {
 					// move army
@@ -416,7 +416,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
 				var enemyArmy = { reptiles: { fleet: enemyFleet } };
 
-				var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmyId : planet.armyId;
+				var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmy()._id : planet.armyId;
 				var userFleet = Game.Planets.getFleetUnits(planet._id);
 				var userArmy = { army: { fleet: userFleet } };
 
@@ -515,12 +515,14 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 		}
 
 		var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
-		var firstArmy = (event.info.isHumans) ? { army: { fleet: firstFleet } }
-		                                      : { reptiles: { fleet: firstFleet } };
+		var firstArmy = (event.info.isHumans)
+			? { army: { fleet: firstFleet } }
+			: { reptiles: { fleet: firstFleet } };
 
 		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
-		var secondArmy = (targetShip.info.isHumans) ? { army: { fleet: secondFleet } }
-		                                            : { reptiles: { fleet: secondFleet } };
+		var secondArmy = (targetShip.info.isHumans)
+			? { army: { fleet: secondFleet } }
+			: { reptiles: { fleet: secondFleet } };
 
 		var battleResult = Game.Unit.performBattle(firstArmy, secondArmy, battleOptions);
 		firstArmy = battleResult.userArmy;
@@ -653,7 +655,7 @@ Meteor.methods({
 		// check and slice units
 		var sourceArmyId = basePlanet.armyId;
 		if (basePlanet.isHome) {
-			sourceArmyId = Game.Unit.getHomeArmyId();
+			sourceArmyId = Game.Unit.getHomeArmy()._id;
 		}
 
 		var destUnits = { army: { fleet: units } };

@@ -68,6 +68,10 @@ var gameRoutes = {
 
 	cosmos: {
 		cosmos: 'cosmos'
+	},
+
+	earth: {
+		earth: 'earth'
 	}
 }
 
@@ -86,7 +90,8 @@ var gameActions = {
 
 	mutual: Game.Mutual.showPage,
 
-	cosmos: Game.Cosmos.showPage
+	cosmos: Game.Cosmos.showPage,
+	earth: Game.Earth.showPage
 }
 
 for (var group in gameRoutes) {

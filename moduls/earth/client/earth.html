@@ -1,14 +1,61 @@
 <template name="earth">
-	<div class="overlay">
-		{{#each items}}
-		<a href="{{pathFor 'game' menu='battle' side='earth' item=this.engName}}" class="{{this.engName}}" title="{{this.type.name}}">{{this.engName}}</a>
-		{{/each}}
+	
+	<div id="map-earth"></div>
+	
+	<div class="point-popup-container">
+		{{#if popup_info}}
+		<div class="point-popup">
+			<h2 class="{{#if popup_info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
+				Точка {{popup_info.name}}
+			</h2>
+			<a class="btn-info" data-id="{{popup_info.id}}">ИНФОРМАЦИЯ</a>
+			{{#if popup_info.isEnemy}}
+			<a class="btn-attack" data-id="{{popup_info.id}}">В АТАКУ</a>
+			<p class="text-ours">Ваш голос: {{popup_info.vote}}</p>
+			<p>Консулов: {{popup_info.consuls}}</p>
+			{{else}}
+			<a class="btn-reinforce" data-id="{{popup_info.id}}">ПОДКРЕПЛЕНИЕ</a>
+			{{/if}}
+		</div>
+		{{/if}}
 	</div>
-	<!--
-	<div id="map">
 
+	{{#if zone_info}}
+	<div class="zone-info">
+		<div class="summary-info">
+			<h2>{{zone_info.name}}</h2>
+			<p>
+				Захвачено на: 50%
+				<br><span class="humans">Точек людей: 15</span>
+				<br><span class="repts">Точек рептилий: 42</span>
+			</p>
+		</div>
+		<div class="army-humans">
+			<p>Люди<br><span>Сила: 45</span></p>
+			<ul>
+				{{#each zone_info.armyHumans}}
+				<li>
+					<span>{{this.count}}</span> {{this.name}}
+				</li>
+				{{/each}}
+			</ul>
+		</div>
+		<div class="army-repts">
+			<p>Рептилоиды<br><span>Сила: 100</span></p>
+			<ul>
+				{{#each zone_info.armyRepts}}
+				<li>
+					<span>{{this.count}}</span> {{this.name}}
+				</li>
+				{{/each}}
+			</ul>
+		</div>
+		<a class="btn-reinforce" data-id="{{zone_info.id}}">ПОДКРЕПЛЕНИЕ</a>
+		<a class="btn-special" data-id="{{zone_info.id}}">СПЕЦ АТАКА</a>
+		<a class="btn-close"></a>
 	</div>
-	-->
+	{{/if}}
+
 	{{#if active_item}}
 	<div class="information point">
 		<div class="header">

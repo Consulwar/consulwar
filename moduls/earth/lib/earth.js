@@ -1,4 +1,4 @@
-Meteor.startup(function() {
+initEarthLib = function() {
 
 game.PointType = function(options) {
 	this.constructor = function(options) {
@@ -25,6 +25,8 @@ game.Point = function(options) {
 	this.constructor(options);
 }
 
+Game.Earth = {};
+
 Game.Point = {
 	Collection: new Meteor.Collection('points'),
 
@@ -42,4 +44,4 @@ Game.Point = {
 
 initGalacticContentEarth();
 
-});
+}

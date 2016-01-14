@@ -1,4 +1,6 @@
-Meteor.startup(function() {
+initEarthServer = function() {
+
+initEarthLib();
 
 Game.Point.addReinforcement = function(units) {
 	var set = {};
@@ -735,6 +737,4 @@ Meteor.methods({
 	
 });
 
-
-
-});
+}

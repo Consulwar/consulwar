@@ -7,6 +7,7 @@ initResearchClient();
 initUnitClient();
 
 initCosmosClient();
+initEarthClient();
 
 initMutualClient();
 

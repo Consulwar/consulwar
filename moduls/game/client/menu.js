@@ -81,7 +81,12 @@ var menu = {
 			}
 		}
 	},
-	mutual: {
+	earth: {
+		routeName: ['earth'],
+		url: Router.routes.earth.path()
+	},
+	// TODO: Move to research menu!
+	/* mutual: {
 		routeName: ['mutual'],
 		url: firstItemGroupURL(Game.Mutual.items.research),
 		items: {
@@ -91,7 +96,7 @@ var menu = {
 				items: Game.Mutual.items.research
 			}
 		}
-	},
+	}, */
 	reptiles: {
 		routeName: ['reptileUnit'],
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),

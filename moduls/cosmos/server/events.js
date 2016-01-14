@@ -501,11 +501,11 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 		var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
 		if (!targetShip) {
-			return; // no such target!
+			throw new Meteor.Error('Корабль с id = ' + event.info.targetId + ' не существует');
 		}
 
 		if (event.info.isHumans == targetShip.info.isHumans) {
-			return; // same side!
+			throw new Meteor.Error('Невозможна битва между одной стороной конфликта');
 		}
 
 		var battleOptions = {};
@@ -514,19 +514,28 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			battleOptions.missionLevel = targetShip.info.mission.level;
 		}
 
+		// get fleet units
 		var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
-		var firstArmy = (event.info.isHumans)
+		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
+
+		// perform battle
+		var userArmy = (event.info.isHumans)
 			? { army: { fleet: firstFleet } }
+			: { army: { fleet: secondFleet } };
+
+		var enemyArmy = (event.info.isHumans)
+			? { reptiles: { fleet: secondFleet } }
 			: { reptiles: { fleet: firstFleet } };
 
-		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
-		var secondArmy = (targetShip.info.isHumans)
-			? { army: { fleet: secondFleet } }
-			: { reptiles: { fleet: secondFleet } };
+		var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
 
-		var battleResult = Game.Unit.performBattle(firstArmy, secondArmy, battleOptions);
-		firstArmy = battleResult.userArmy;
-		secondArmy = battleResult.enemyArmy;
+		var firstArmy = (event.info.isHumans)
+			? battleResult.userArmy
+			: battleResult.enemyArmy;
+
+		var secondArmy = (event.info.isHumans)
+			? battleResult.enemyArmy
+			: battleResult.userArmy;
 
 		// update units
 		if (firstArmy) {
@@ -536,6 +545,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				event.info.mission.units = firstArmy.reptiles.fleet;
 			}
 		} else {
+			// first fleet destroyed
 			event.status = Game.SpaceEvents.status.FINISHED;
 			Game.SpaceEvents.Collection.update({ _id: event._id }, event);
 		}
@@ -546,9 +556,11 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			} else {
 				targetShip.info.mission.units = secondArmy.reptiles.fleet;
 			}
+			// update target fleet
 			targetShip.info.timeBattle = serverTime;
 			Game.SpaceEvents.Collection.update({ _id: targetShip._id }, targetShip);
 		} else {
+			// target fleet destroyed
 			targetShip.status = Game.SpaceEvents.status.FINISHED;
 			Game.SpaceEvents.Collection.update({ _id: targetShip._id}, targetShip);
 		}

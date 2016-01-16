@@ -184,6 +184,9 @@ game.PlanetView = function(map, planet, template) {
 		position.x += 24 + 10 + Math.round(this.iconSize * k / 2);
 		position.y -= 85;
 
+		position.x -= 562;
+		position.y -= 217.5;
+
 		$('.map-planet-popup-container')
 			.css('left', position.x + 'px')
 			.css('top', position.y + 'px');

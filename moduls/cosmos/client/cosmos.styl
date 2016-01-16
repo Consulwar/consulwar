@@ -99,13 +99,18 @@
 .map-planet-marker-hidden
 	display none
 
+#map-battle.animated
+	.map-planet-marker
+		&:before
+			animation animatePlanetBack 20s linear infinite
+
 .map-planet-marker-animated
 	
 	&:before
 		animation animatePlanetBack 20s linear infinite
 
 .map-planet-marker
-
+	
 	cursor pointer
 
 	&:before

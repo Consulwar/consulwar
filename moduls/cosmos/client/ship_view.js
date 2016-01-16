@@ -177,11 +177,34 @@ game.ShipView = function(map, spaceEvent, template) {
 			[0, 0],
 			{
 				icon: L.divIcon({
-					className: 'map-fleet'
+					className: 'map-fleet ' + spaceEvent._id
 				})
 			}
 		).addTo(map);
 
+		/*
+		Blaze.renderWithData(
+			Template.shipView,
+			{
+				ship: function() {
+					var side = (spaceEvent.info.isHumans) ? 'map-fleet-humans' : 'map-fleet-rept' ;
+					return {
+						id: spaceEvent._id,
+						side: side
+					}
+				},
+				position: function() {
+					return {
+						x: spaceEvent.info.startPosition.x,
+						y: spaceEvent.info.startPosition.y
+					}
+				}
+			},
+			$('.' + spaceEvent._id)[0]
+		);
+		*/
+
+		/*
 		_element = $(_marker.getElement());
 		_element.data('view', this)
 
@@ -197,6 +220,7 @@ game.ShipView = function(map, spaceEvent, template) {
 		// Events
 		// _marker.on('click', this.showSideInfo.bind(this));
 		map.on('zoomend', this.refreshSize.bind(this));
+		*/
 	}
 
 	this.refreshSize = function() {

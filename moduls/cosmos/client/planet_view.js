@@ -43,6 +43,8 @@ game.PlanetView = function(map, planet, template) {
 		this.element = $(this.marker.getElement());
 		this.element.data('view', this);
 
+		//Blaze.renderWithData(Template.cosmos_planet, { planet: planet }, this.marker.getElement());
+
 		// Planet name
 		this.element.append('<div class="map-planet-marker-name">' + planet.name + '</div>');
 		this.textName = $(this.element.find('.map-planet-marker-name'));

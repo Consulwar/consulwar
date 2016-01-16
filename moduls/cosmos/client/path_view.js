@@ -2,6 +2,11 @@ initCosmosPathView = function () {
 
 game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color, template) {
 
+	var allPlanets = Game.Planets.getAll().fetch();
+	for (var i = 0; i < allPlanets.length; i++) {
+		allPlanets[i].radius = (allPlanets[i].size + 3) * 0.02;
+	}
+
 	var hitLineVsCircle = function(x1, y1, x2, y2, cx, cy, cRad) {
 		var a = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 		var b = 2 * ((x2 - x1) * (x1 - cx) +(y2 - y1) * (y1 - cy));
@@ -69,8 +74,8 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		var planets = [];
 		var minRadius = Game.Planets.MIN_PLANET_DISTANCE / 2;
 
-		for (var id in template.data.planetViews) {
-			var planetView = template.data.planetViews[id];
+		for (var i = 0; i < allPlanets.length; i++) {
+			var planetView = allPlanets[i];
 
 			if (calcDistanse(point1.x, point1.y, planetView.x, planetView.y) < minRadius) continue;
 			if (calcDistanse(point2.x, point2.y, planetView.x, planetView.y) < minRadius) continue;

@@ -104,4 +104,8 @@ Game.Cheats.sendReptileFleetToPlanet = function(planetName) {
 	}
 }
 
+Game.Cheats.generateAllPlanets = function() {
+	Meteor.call('cheats.generateAllPlanets');
+}
+
 }

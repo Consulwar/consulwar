@@ -71,7 +71,6 @@ Template.cosmosFleetsInfo.events({
 		var spaceEvent = Game.SpaceEvents.getOne(id);
 
 		if (path && spaceEvent) {
-			// TOOD: Дублирующийся код! Придумать что делать!
 			var currentTime = Session.get('serverTime');
 			var timeLeft = spaceEvent.timeEnd - currentTime;
 			var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
@@ -112,56 +111,64 @@ Game.Cosmos.showPlanetInfo= function(id) {
 	});
 }
 
+Game.Cosmos.getPlanetInfo = function(planet) {
+	if (!planet) {
+		return null;
+	}
+
+	var info = {};
+
+	info.id = planet._id;
+	info.name = planet.name;
+	info.type = Game.Planets.getType(planet.type).name;
+
+	if (planet.isHome || planet.armyId) {
+		info.isHumans = true;
+		info.isHome = true;
+		info.status = (planet.isHome) ? 'Планета консула' : 'Колония';
+		if (Game.Planets.getColonies().length <= 1) {
+			info.canSend = false;
+		} else {
+			info.canSend = true;
+		}
+	} else {
+		info.isHumans = false;
+		info.canSend = true;
+	}
+	
+	if (planet.mission) {
+		info.mission = {
+			level: planet.mission.level,
+			name: Game.Battle.items[planet.mission.type].name
+		}
+	}
+
+	var units = Game.Planets.getFleetUnits(planet._id);
+	if (units) {
+		var side = (planet.mission) ? 'reptiles' : 'army';
+		info.units = [];
+
+		for (var key in units) {
+			if (!_.isString( units[key] ) && units[key] <= 0) {
+				continue;
+			}
+
+			info.units.push({
+				engName: key,
+				name: Game.Unit.items[side].fleet[key].name,
+				count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
+			})
+		}
+	}
+
+	return info;
+}
+
 Template.cosmosPlanetInfo.helpers({
 	planet: function() {
 		var id = Template.instance().data.id;
 		var planet = Game.Planets.getOne(id);
-		var info = {};
-
-		info.id = planet._id;
-		info.name = planet.name;
-		info.type = Game.Planets.getType(planet.type).name;
-
-		if (planet.isHome || planet.armyId) {
-			info.isHumans = true;
-			info.isHome = true;
-			info.status = (planet.isHome) ? 'Планета консула' : 'Колония';
-			if (Game.Planets.getColonies().length <= 1) {
-				info.canSend = false;
-			} else {
-				info.canSend = true;
-			}
-		} else {
-			info.isHumans = false;
-			info.canSend = true;
-		}
-		
-		if (planet.mission) {
-			info.mission = {
-				level: planet.mission.level,
-				name: Game.Battle.items[planet.mission.type].name
-			}
-		}
-
-		var units = Game.Planets.getFleetUnits(planet._id);
-		if (units) {
-			var side = (planet.mission) ? 'reptiles' : 'army';
-			info.units = [];
-
-			for (var key in units) {
-				if (!_.isString( units[key] ) && units[key] <= 0) {
-					continue;
-				}
-
-				info.units.push({
-					engName: key,
-					name: Game.Unit.items[side].fleet[key].name,
-					count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-				})
-			}
-		}
-
-		return info;
+		return Game.Cosmos.getPlanetInfo(planet);
 	}
 });
 
@@ -183,13 +190,58 @@ Template.cosmosPlanetInfo.events({
 // Ship side menu
 // ----------------------------------------------------------------------------
 
-Game.Cosmos.showShipInfo= function(id) {
+Game.Cosmos.showShipInfo = function(id) {
 	Router.current().render('cosmosShipInfo', {
 		to: 'cosmosSideInfo',
 		data: {
 			id: id
 		}
 	});
+}
+
+Game.Cosmos.getShipInfo = function(spaceEvent) {
+	if (!spaceEvent || spaceEvent.status == Game.SpaceEvents.status.FINISHED) {
+		return null;
+	}
+
+	var info = {};
+
+	info.name = null;
+	info.id = spaceEvent._id;
+
+	if (spaceEvent.info.isHumans) {
+		info.isHumans = true;
+		info.canSend = false;
+		info.status = 'Флот консула';
+	} else {
+		info.isHumans = false;
+		info.canSend = true;
+		info.mission = {
+			level: spaceEvent.info.mission.level,
+		name: Game.Battle.items[spaceEvent.info.mission.type].name
+		}
+		info.status = 'Флот рептилий';
+	}
+
+	var units = Game.SpaceEvents.getFleetUnits(spaceEvent._id);
+	if (units) {
+		var side = (spaceEvent.info.isHumans) ? 'army' : 'reptiles';
+		info.units = [];
+
+		for (var key in units) {
+			if (!_.isString( units[key] ) && units[key] <= 0) {
+				continue;
+			}
+
+			info.units.push({
+				engName: key,
+				name: Game.Unit.items[side].fleet[key].name,
+				count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
+			})
+		}
+	}
+
+	return info;
 }
 
 Template.cosmosShipInfo.helpers({
@@ -203,53 +255,14 @@ Template.cosmosShipInfo.helpers({
 		var id = Template.instance().data.id;
 		var spaceEvent = Game.SpaceEvents.getOne(id);
 
-		if (!spaceEvent || spaceEvent.status == Game.SpaceEvents.status.FINISHED) {
-
+		var info = Game.Cosmos.getShipInfo(spaceEvent);
+		if (!info) {
 			// TODO: Подумать над этой мазафакой!
 			Game.Cosmos.showFleetsInfo();
 			return {};
-
-		} else {
-
-			var info = {};
-
-			info.name = null;
-			info.id = spaceEvent._id;
-
-			if (spaceEvent.info.isHumans) {
-				info.isHumans = true;
-				info.canSend = false;
-				info.status = 'Флот консула';
-	 		} else {
-	 			info.isHumans = false;
-	 			info.canSend = true;
-	 			info.mission = {
-	 				level: spaceEvent.info.mission.level,
-					name: Game.Battle.items[spaceEvent.info.mission.type].name
-	 			}
-	 			info.status = 'Флот рептилий';
-	 		}
-
-			var units = Game.SpaceEvents.getFleetUnits(spaceEvent._id);
-			if (units) {
-				var side = (spaceEvent.info.isHumans) ? 'army' : 'reptiles';
-				info.units = [];
-
-				for (var key in units) {
-					if (!_.isString( units[key] ) && units[key] <= 0) {
-						continue;
-					}
-
-					info.units.push({
-						engName: key,
-						name: Game.Unit.items[side].fleet[key].name,
-						count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-					})
-				}
-			}
-
-			return info;
 		}
+
+		return info;
 	}
 });
 
@@ -314,110 +327,16 @@ Game.Cosmos.hideAttackMenu = function() {
 }
 
 Template.cosmosAttackMenu.helpers({
-	ship: function() { // TOOD: Дублирующийся метод! Что с этим делать?
+	ship: function() {
 		var id = Template.instance().data.id;
 		var spaceEvent = Game.SpaceEvents.getOne(id);
-
-		if (!spaceEvent || spaceEvent.status == Game.SpaceEvents.status.FINISHED) {
-
-			return null;
-
-		} else {
-
-			var info = {};
-
-			info.name = null;
-			info.id = spaceEvent._id;
-
-			if (spaceEvent.info.isHumans) {
-				info.isHumans = true;
-				info.canSend = false;
-				info.status = 'Флот консула';
-	 		} else {
-	 			info.isHumans = false;
-	 			info.canSend = true;
-	 			info.mission = {
-	 				level: spaceEvent.info.mission.level,
-					name: Game.Battle.items[spaceEvent.info.mission.type].name
-	 			}
-	 			info.status = 'Флот рептилий';
-	 		}
-
-			var units = Game.SpaceEvents.getFleetUnits(spaceEvent._id);
-			if (units) {
-				var side = (spaceEvent.info.isHumans) ? 'army' : 'reptiles';
-				info.units = [];
-
-				for (var key in units) {
-					if (!_.isString( units[key] ) && units[key] <= 0) {
-						continue;
-					}
-
-					info.units.push({
-						engName: key,
-						name: Game.Unit.items[side].fleet[key].name,
-						count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-					})
-				}
-			}
-
-			return info;
-		}
+		return Game.Cosmos.getShipInfo(spaceEvent);
 	},
 
-	planet: function() { // TOOD: Дублирующийся метод! Что с этим делать?
+	planet: function() {
 		var id = Template.instance().data.id;
 		var planet = Game.Planets.getOne(id);
-
-		if (!planet) {
-			return null;
-		}
-
-		var info = {};
-		info.id = planet._id;
-		info.name = planet.name;
-		info.type = Game.Planets.getType(planet.type).name;
-
-		if (planet.isHome || planet.armyId) {
-			info.isHumans = true;
-			info.isHome = true;
-			info.status = (planet.isHome) ? 'Планета консула' : 'Колония';
-			if (Game.Planets.getColonies().length <= 1) {
-				info.canSend = false;
-			} else {
-				info.canSend = true;
-			}
-		} else {
-			info.isHumans = false;
-			info.canSend = true;
-		}
-		
-		if (planet.mission) {
-			info.mission = {
-				level: planet.mission.level,
-				name: Game.Battle.items[planet.mission.type].name
-			}
-		}
-
-		var units = Game.Planets.getFleetUnits(planet._id);
-		if (units) {
-			var side = (planet.mission) ? 'reptiles' : 'army';
-			info.units = [];
-
-			for (var key in units) {
-				if (!_.isString( units[key] ) && units[key] <= 0) {
-					continue;
-				}
-
-				info.units.push({
-					engName: key,
-					name: Game.Unit.items[side].fleet[key].name,
-					count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-				})
-			}
-		}
-
-		return info;
+		return Game.Cosmos.getPlanetInfo(planet);
 	},
 
 	timeAttack: function() {

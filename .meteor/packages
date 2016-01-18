@@ -25,7 +25,6 @@ mrt:fancybox
 yasinuslu:metrika
 brentjanderson:buzz
 percolate:synced-cron
-bevanhunt:leaflet
 djedi:sanitize-html
 standard-minifiers
 meteor-base
@@ -45,3 +44,4 @@ check
 
 npm-container
 reactive-var
+bevanhunt:leaflet

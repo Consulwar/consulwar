@@ -1,6 +1,6 @@
 initCosmosPathView = function () {
 
-game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color, template) {
+game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color) {
 
 	var allPlanets = Game.Planets.getAll().fetch();
 	for (var i = 0; i < allPlanets.length; i++) {

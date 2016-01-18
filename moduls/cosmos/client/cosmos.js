@@ -624,6 +624,17 @@ Template.cosmos.onRendered(function() {
 		added: function(id, event) {
 			if (event.type == Game.SpaceEvents.type.SHIP) {
 				createPath(id, event);
+
+				// TODO: А так можно?
+				var timeLeft = event.timeEnd - Session.get('serverTime');
+				if (timeLeft > 0) {
+					setTimeout(
+						function() {
+							Meteor.call('spaceEvents.update', id);
+						},
+						timeLeft * 1000
+					);
+				}
 			}
 		},
 

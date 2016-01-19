@@ -2,6 +2,8 @@ initEarthClient = function() {
 
 initEarthLib();
 
+Meteor.subscribe('zones');
+
 Game.Earth.showPage = function() {
 	this.render('earth', {
 		to: 'content',
@@ -13,7 +15,7 @@ Game.Earth.showPage = function() {
 // ZONE VIEW
 // ----------------------------------------------------------------------------
 
-var ZoneView = function(map, data, polygon) {
+var ZoneView = function(mapView, zone) {
 
 	// -----------------------------------
 	// TODO: move to css
@@ -65,15 +67,22 @@ var ZoneView = function(map, data, polygon) {
 	this.info = null;
 
 	this.constructor = function() {
-		this.id = data.id;
+		// TODO: Remove dat shit!
+		var data = {};
+
+		this.id = zone._id;
 		this.data = data;
+		this.isEnemy = zone.isEnemy;
+
+		// Create a plygon
+		var polygon = L.GeoJSON.geometryToLayer({
+			type: 'Feature',
+			geometry: zone.geometry
+		});
 		this.polygon = polygon;
 
-		if (['Argentina', 'South Africa', 'Pakistan', 'New Zealand', 'Japan', 'Swedan'].indexOf(data.properties.name) != -1) {
-			this.isEnemy = false;
-		} else {
-			this.isEnemy = true;
-		}
+		mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
+		mapBounds.extend(L.latLng(polygon.getBounds().getNorthEast()));
 
 		// -------
 		// debug
@@ -83,6 +92,7 @@ var ZoneView = function(map, data, polygon) {
 
 		// -------
 		// debug
+		/*
 		this.info = {
 			id: data.id,
 			name: data.properties.name,
@@ -164,6 +174,7 @@ var ZoneView = function(map, data, polygon) {
 				count: 42
 			}]
 		};
+		*/
 		// -------
 
 		// Polygon view
@@ -177,7 +188,7 @@ var ZoneView = function(map, data, polygon) {
 			polygon.bringToBack();
 		}
 
-		(function(polygon, properties, style, styleHover) {
+		(function(polygon, style, styleHover) {
 			polygon.setStyle(style);
 
 			polygon.on("mouseover", function (e) {
@@ -187,9 +198,9 @@ var ZoneView = function(map, data, polygon) {
 			polygon.on("mouseout", function (e) {
 				polygon.setStyle(style);
 			})
-		})(polygon, data.properties, style, styleHover)
+		})(polygon, style, styleHover)
 
-		polygon.addTo(map);
+		polygon.addTo(mapView);
 
 		// marker
 		this.x = polygon.getBounds().getCenter().lat;
@@ -206,7 +217,7 @@ var ZoneView = function(map, data, polygon) {
 					iconAnchor: [this.iconSize / 2, this.iconSize / 2]
 				})
 			}
-		).addTo(map);
+		).addTo(mapView);
 
 		this.element = $(this.marker.getElement());
 
@@ -232,8 +243,8 @@ var ZoneView = function(map, data, polygon) {
 		this.marker.on('mouseout', this.hideConnections.bind(this));
 		*/
 
-		map.on('move', this.refreshPosition.bind(this));
-		map.on('zoomend', this.refreshZoom.bind(this));
+		mapView.on('move', this.refreshPosition.bind(this));
+		mapView.on('zoomend', this.refreshZoom.bind(this));
 
 		this.refreshPosition();
 		this.refreshZoom();
@@ -244,7 +255,7 @@ var ZoneView = function(map, data, polygon) {
 	}
 
 	this.refreshZoom = function() {
-		var zoom = map.getZoom();
+		var zoom = mapView.getZoom();
 		var k = Math.pow(2, (zoom - 4));
 
 		if (k > 2) {
@@ -259,22 +270,17 @@ var ZoneView = function(map, data, polygon) {
 			.css('margin-top', this.iconSize * k * -0.5)
 			.css('margin-left', this.iconSize * k * -0.5);
 
+		// TODO: Refactoring!
+		/*
 		if (zoom < 5) {
 			this.hideProgress();
 		} else {
 			this.showProgress(data.armyOur, data.armyEnemy, this.iconSize * k);
 		}
-	}
-
-	this.addConnection = function(id) {
-		if (!data.borders) {
-			data.borders = [];
-		}
-		data.borders.push( { id: id } );
+		*/
 	}
 
 	this.showConnections = function() {
-
 		if (!data || !data.borders) {
 			return;
 		}
@@ -286,7 +292,7 @@ var ZoneView = function(map, data, polygon) {
 					color: '#4a82c4',
 					weight: 3,
 					smoothFactor: 1
-				}).addTo(map);
+				}).addTo(mapView);
 				lineView.addLatLng(L.latLng(this.x, this.y));
 				lineView.addLatLng(L.latLng(zoneView.x, zoneView.y));
 
@@ -297,7 +303,7 @@ var ZoneView = function(map, data, polygon) {
 					icon: L.divIcon({
 						className: 'earth-marker-connection-text'
 					})
-				}).addTo(map);
+				}).addTo(mapView);
 				$(lineText.getElement()).append('<p>' + Math.round( Math.random() * 50 + 10 ) + '%</p>');
 
 				lineView.lineText = lineText;
@@ -313,8 +319,8 @@ var ZoneView = function(map, data, polygon) {
 	this.hideConnections = function() {
 		if (this.lines) {
 			for (var i = 0; i < this.lines.length; i++) {
-				map.removeLayer( this.lines[i].lineText );
-				map.removeLayer( this.lines[i] );
+				mapView.removeLayer( this.lines[i].lineText );
+				mapView.removeLayer( this.lines[i] );
 			}
 			this.lines = null;
 		}
@@ -325,7 +331,7 @@ var ZoneView = function(map, data, polygon) {
 
 		var popup = $('.point-popup-container');
 
-		var position = map.latLngToContainerPoint(this.marker.getLatLng());
+		var position = mapView.latLngToContainerPoint(this.marker.getLatLng());
 		position.x += 40;
 		position.y -= 40;
 
@@ -396,81 +402,23 @@ var ZoneView = function(map, data, polygon) {
 	this.constructor(); 
 }
 
-var createZone = function(data, polygon) {
-	if (map) {
-		zones[ data.id ] = new ZoneView(map, data, polygon);
+var createZone = function(id, zone) {
+	if (mapView && zoneViews) {
+		zoneViews[ id ] = new ZoneView(mapView, zone);
 	}
-}
-
-// ----------------------------------------------------------------------------
-// Find zone connections
-// ----------------------------------------------------------------------------
-
-var calcBorders = function() {
-
-	var checkPolygonsConnected = function(polygon1, polygon2) {
-		for (var i = 0; i < polygon1.length; i++) {
-			for (var j = 0; j < polygon2.length; j++) {
-				if (Math.abs(polygon1[i][0] - polygon2[j][0]) <= 0.01
-				 && Math.abs(polygon1[i][1] - polygon2[j][1]) <= 0.01
-				) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	var getPolygonCoordinates = function(geometry) {
-		var result = [];
-		var coords = geometry.coordinates;
-		if (geometry.type == 'MultiPolygon') {
-			for (var i = 0; i < coords.length; i++) {
-				for (var j = 0; j < coords[i].length; j++) {
-					for (var k = 0; k < coords[i][j].length; k++) {
-						result.push(coords[i][j][k]);
-					}
-				}
-			}
-		} else {
-			for (var i = 0; i < coords.length; i++) {
-				for (var j = 0; j < coords[i].length; j++) {
-					result.push(coords[i][j]);
-				}
-			}
-		}
-		return result;
-	}
-
-	for (var i in zones) {
-		var zone = zones[i];
-		for (var j in zones) {
-			var tmpZone = zones[j];
-			if (i == j) continue;
-
-			var isConnnection = false;
-
-			var coords1 = getPolygonCoordinates( zone.data.geometry );
-			var coords2 = getPolygonCoordinates( tmpZone.data.geometry );
-
-			if (checkPolygonsConnected(coords1, coords2)) {
-				zone.addConnection(tmpZone.id);
-			}
-		}
-	}
-
 }
 
 // ----------------------------------------------------------------------------
 // MAIN
 // ----------------------------------------------------------------------------
 
-var map = null;
-var zones = {};
+var mapView = null;
+var mapBounds = null;
+var zoneViews = {};
 
 Template.earth.onRendered(function() {
 
-	map = L.map('map-earth', {
+	mapView = L.map('map-earth', {
 		zoomAnimation: false,
 		zoomControl: false,
 		doubleClickZoom: false,
@@ -481,117 +429,51 @@ Template.earth.onRendered(function() {
 		minZoom: 4,
 		maxZoom: 6
 	});
-	map.setView([47.36865, 8.539183], 4);
-	map.spin(false);
+	mapView.setView([47.36865, 8.539183], 4);
+	mapView.spin(false);
 
 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 		id: 'zav39.1f2ff4e8',
 		accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
-	}).addTo(map);
+	}).addTo(mapView);
 
 	// Map Events
-	map.on('move', function(e) {
+	/* TODO: Refactoring!!!!!!!!!!!
+	mapView.on('move', function(e) {
 		Session.set('popup_info', null);
 	});
 
-	map.on('zoomend', function(e) {
+	mapView.on('zoomend', function(e) {
 		Session.set('popup_info', null);
 	});
 
-	map.on('click', function(e) {
+	mapView.on('click', function(e) {
 		Session.set('popup_info', null);
-		// console.log('click latlng = ', e.latlng.lat, e.latlng.lng);
 	});
 
 	Session.set('popup_info', null);
+	*/
 
-	// Init zones
-	var availableZones = [
-		'Nigeria',
-		'Egypt',
-		'South Africa',
-		'Algeria',
-		'Morocco',
-		'Kenya',
-		'Angola',
-		'Ethiopia',
-		'Tunisia',
-		'Ghana',
-		'Sudan',
-		'Libya',
-		'Uganda',
-		'Cameroon',
-		'Democratic Republic of the Congo',
-		'Ivory Coast',
-		'Botswana',
-		'Gabon',
-		'Mozambique',
-		'Chad',
-		'Senegal',
-		'Burkina Faso',
-		'Zambia',
-		'Madagascar',
-		'Mauritius',
-		'Republic of the Congo',
-		'Mali',
-		'Namibia',
-		//'Equatorial Guinea',
-		'Benin',
-		//'Rwanda',
-		//'Malawi',
-		'Niger',
-		'Guinea',
-		'Zimbabwe',
-		'Mauritania',
-		'Togo',
-		//'Swaziland',
-		'Somalia',
-		//'Burundi',
-		'Eritrea',
-		//'Lesotho',
-		'The Gambia',
-		'Liberia',
-		'Central African Republic',
-		'Cape Verde',
-		//'Djibouti',
-		'Seychelles',
-		'Guinea-Bissau',
-		'Comoros',
-		'United Republic of Tanzania',
-		'South Sudan'
-	];
+	// TODO: Calc max bounds!
+	mapBounds = L.latLngBounds(L.latLng(0, 0), L.latLng(0, 0));
 
-	var mapBounds = L.latLngBounds(L.latLng(0, 0), L.latLng(0, 0));
+	var zones = Game.EarthZones.getAll().fetch();
+	for (var i = 0; i < zones.length; i++) {
+		createZone( zones[i]._id, zones[i] );
+	}
 
-	$.getJSON('/geo.json', function(data) {
-		L.geoJson(data.features, {
-			onEachFeature: function(feature, layer) {
+	mapView.setMaxBounds(mapBounds);
+})
 
-				if (availableZones.indexOf(feature.properties.name) < 0) {
-					return;
-				}
-
-				mapBounds.extend(L.latLng(layer.getBounds().getSouthWest()));
-				mapBounds.extend(L.latLng(layer.getBounds().getNorthEast()));
-
-				createZone(feature, layer);
-			}
-		});
-
-		map.setMaxBounds(mapBounds);
-
-		calcBorders();
-
-		for (var index in zones) {
-			if (!zones[index].isEnemy) {
-				zones[index].showConnections();
-			}
-		}
-	})
-
+Template.earth.onDestroyed(function() {
+	mapView = null;
+	mapBounds = null;
+	zoneViews = {};
 })
 
 Template.earth.helpers({
+	// TODO: Refactoring!
+	/*
 	popup_info: function() {
 		return Session.get('popup_info');
 	},
@@ -658,10 +540,12 @@ Template.earth.helpers({
 
 		return effects;
 	}
+	*/
 });
 
 Template.earth.events({
-	
+	// TODO: Refactoring!
+	/*
 	'click .btn-info': function(e) {
 		var zoneId = $(e.currentTarget).attr("data-id");
 		zone = zones[ zoneId ];
@@ -672,7 +556,7 @@ Template.earth.events({
 	'click .btn-close': function(e) {
 		Session.set('zone_info', null);
 	},
-
+	*/
 });
 
 }

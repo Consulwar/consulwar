@@ -199,6 +199,65 @@ Template.cosmosPlanetInfo.events({
 });
 
 // ----------------------------------------------------------------------------
+// Planets popup
+// ----------------------------------------------------------------------------
+
+Game.Cosmos.getPlanetPopupInfo = function(planet) {
+	if (!planet) {
+		return null;
+	}
+
+	// ----------------------------
+	// TODO: Get real info!
+	return {
+		name: planet.name,
+		type: Game.Planets.getType(planet.type).name,
+		items: [{
+			name: Game.Artefacts.getRandom().engName,
+			chance: Math.round(Math.random() * 50 + 25)
+		}, {
+			name: Game.Artefacts.getRandom().engName,
+			chance: Math.round(Math.random() * 50 + 25)
+		}, {
+			name: Game.Artefacts.getRandom().engName,
+			chance: Math.round(Math.random() * 50 + 25)
+		}]
+	};
+	// ----------------------------
+}
+
+Game.Cosmos.showPlanetPopup = function(id) {
+	var planet = Game.Planets.getOne(id);
+	var dropInfo = Game.Cosmos.getPlanetPopupInfo(planet);
+	if (!dropInfo) {
+		return;
+	}
+
+	Router.current().render('cosmosPlanetPopup', {
+		to: 'cosmosPopupContent',
+		data: {
+			drop: dropInfo,
+			position: function() {
+				var k = Math.pow(2, (mapView.getZoom() - 7));
+				var iconSize = (planet.size + 3) * 4;
+				var position = mapView.latLngToContainerPoint(new L.latLng(planet.x, planet.y));
+				position.x += 24 + 10 + Math.round(iconSize * k / 2);
+				position.y -= 85;
+				position.x -= 562;
+				position.y -= 217.5;
+				return position;
+			}
+		}
+	});
+}
+
+Game.Cosmos.hidePlanetPopup = function() {
+	Router.current().render(null, {
+		to: 'cosmosPopupContent'
+	});
+}
+
+// ----------------------------------------------------------------------------
 // Ship side menu
 // ----------------------------------------------------------------------------
 
@@ -788,6 +847,14 @@ Template.cosmos.onRendered(function() {
 
 	mapView.on('click', function(e) {
 		Game.Cosmos.showFleetsInfo();
+	});
+
+	mapView.on('movestart', function(e) {
+		Game.Cosmos.hidePlanetPopup();
+	});
+
+	mapView.on('zoomstart', function(e) {
+		Game.Cosmos.hidePlanetPopup();
 	})
 });
 
@@ -815,13 +882,13 @@ Template.cosmos.events({
 	},
 
 	'mouseover .map-planet-marker': function(e, t) {
-		var id = $(e.currentTarget).attr('data-id');
-		// TODO: Show popup
+		// TODO: Remove comment when artefacts ready!
+		// var id = $(e.currentTarget).attr('data-id');
+		// Game.Cosmos.showPlanetPopup(id);
 	},
 
 	'mouseout .map-planet-marker': function(e, t) {
-		var id = $(e.currentTarget).attr('data-id');
-		// TODO: Hide popup
+		Game.Cosmos.hidePlanetPopup();
 	},
 
 	'click .map-control-home': function(e, t) {

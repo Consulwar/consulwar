@@ -1,17 +1,18 @@
 <template name="cosmos">
 	<div id="map-battle"></div>
 	<a class="map-control-home"></a>
-	<div class="map-planet-popup-container">
-		{{> yield "cosmosPopupContent"}}
-	</div>
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
+	{{> yield "cosmosPopupContent"}}
 	{{> yield "cosmosAttackMenu"}}
 </template>
 
 <template name="cosmosPlanetPopup">
-	<div class="map-planet-popup">
+	<div 
+		class="map-planet-popup" 
+		style="left: {{position.x}}px; top: {{position.y}}px;"
+	>
 		<h2>{{drop.name}} ({{drop.type}})</h2>
 		<ul class="map-planet-popup-items">
 			{{#each drop.items}}

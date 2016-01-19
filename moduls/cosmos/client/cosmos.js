@@ -10,18 +10,6 @@ Meteor.subscribe('spaceEvents');
 var mapView = null;
 var pathViews = {};
 
-/*
-var some = {
-	mapView: function() {
-		return mapView;
-	}
-}
-
-Template.cosmosAttackMenu.helpers(some);
-Template.cosmosFleetsInfo.helpers(some);
-Template.cosmos.helpers(some);
-*/
-
 Game.Cosmos.showPage = function() {
 	this.render('cosmos', {
 		to: 'content'
@@ -858,6 +846,8 @@ Template.cosmos.onRendered(function() {
 
 Template.cosmos.onDestroyed(function() {
 	// TODO: Maybe clear map or event listeners?!
+	mapView = null;
+	pathViews = {};
 });
 
 Template.cosmos.helpers({
@@ -905,32 +895,14 @@ Template.cosmos.events({
 // Debug methods
 // ------------------------------------------------------
 
-var debugMap = null;
-
 Game.Planets.debugDrawGalactic = function(hands, segments, rotation, narrow, min, max, radius, angle) {
-	if (!debugMap) {
-		// init debug map
-		// TODO: fix this leaflet shit!
-		//       Map container is already initialized
-		debugMap = L.map('map-battle', {
-			crs: L.CRS.Simple,
-			zoomAnimation: false,
-			zoomControl: false,
-			doubleClickZoom: false,
-			attributionControl: false,
-			fadeAnimation: false,
-			inertia: false,
-			center: [0, 0],
-			zoom: 8,
-			minZoom: 2, //3
-			maxZoom: 10
-		});
-	} else {
-		// clear debug map
-		debugMap.eachLayer(function (layer) {
-			debugMap.removeLayer(layer);
-		});
+	if (!mapView) {
+		return;
 	}
+
+	mapView.eachLayer(function (layer) {
+		mapView.removeLayer(layer);
+	});
 
 	var debugDrawSegment = function(hand, segment) {
 		var amount = Game.Planets.calcSegmentPlanetsAmount(hand, segment, hands, segments, min, max);
@@ -949,7 +921,7 @@ Game.Planets.debugDrawGalactic = function(hands, segments, rotation, narrow, min
 			L.circle([points[i].x, points[i].y], 0.1, {
 				color: color,
 				fillOpacity: 1
-			}).addTo(debugMap);
+			}).addTo(mapView);
 		}
 
 		return amount;

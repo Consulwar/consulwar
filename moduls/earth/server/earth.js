@@ -3,6 +3,12 @@ initEarthServer = function() {
 initEarthLib();
 initEarthServerImport();
 
+Meteor.publish('zones', function () {
+	if (this.userId) {
+		return Game.EarthZones.Collection.find();
+	}
+});
+
 Game.Point.addReinforcement = function(units) {
 	var set = {};
 

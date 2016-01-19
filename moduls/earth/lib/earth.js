@@ -1,5 +1,17 @@
 initEarthLib = function() {
 
+Game.Earth = {};
+
+Game.EarthZones = {
+	Collection: new Meteor.Collection('zones'),
+
+	getAll: function() {
+		return Game.EarthZones.Collection.find();
+	}
+};
+
+
+
 game.PointType = function(options) {
 	this.constructor = function(options) {
 		this.name = options.name;
@@ -24,12 +36,6 @@ game.Point = function(options) {
 
 	this.constructor(options);
 }
-
-Game.Earth = {};
-
-Game.EarthZones = {
-	Collection: new Meteor.Collection('zones')
-};
 
 Game.Point = {
 	Collection: new Meteor.Collection('points'),

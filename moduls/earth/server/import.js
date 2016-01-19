@@ -1,5 +1,14 @@
 initEarthServerImport = function () {
 
+var startZones = [
+	'Argentina',
+	'South Africa',
+	'Pakistan',
+	'New Zealand',
+	'Japan',
+	'Swedan'
+];
+
 var availableZones = [
 	'Nigeria',
 	'Egypt',
@@ -72,9 +81,10 @@ Game.Earth.importZones = function() {
 		}
 
 		Game.EarthZones.Collection.insert({
-			name: feature.properties.name,
+			name: name,
 			geometry: feature.geometry,
-			links: []
+			links: [],
+			isEnemy: (startZones.indexOf(name) < 0 ? true : false)
 		});
 
 		console.log('import zone: ' + name);

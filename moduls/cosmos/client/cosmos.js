@@ -1,8 +1,6 @@
 initCosmosClient = function() {
 
 initCosmosLib();
-initCosmosPlanetView(); // TODO: remove file later!
-initCosmosShipView(); // TODO: remove file later!
 initCosmosPathView();
 
 Meteor.subscribe('planets');

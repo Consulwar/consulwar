@@ -12,6 +12,18 @@ Meteor.subscribe('spaceEvents');
 var mapView = null;
 var pathViews = {};
 
+/*
+var some = {
+	mapView: function() {
+		return mapView;
+	}
+}
+
+Template.cosmosAttackMenu.helpers(some);
+Template.cosmosFleetsInfo.helpers(some);
+Template.cosmos.helpers(some);
+*/
+
 Game.Cosmos.showPage = function() {
 	this.render('cosmos', {
 		to: 'content'
@@ -244,6 +256,17 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 	return info;
 }
 
+Template.cosmosShipInfo.onRendered(function() {
+	// show fleets info when ship removed
+	this.autorun(function() {
+		var id = Template.currentData().id;
+		var spaceEvent = Game.SpaceEvents.getOne( id );
+		if (!spaceEvent) {
+			Game.Cosmos.showFleetsInfo();
+		}
+	});
+});
+
 Template.cosmosShipInfo.helpers({
 	timeLeft: function() {
 		var id = Template.instance().data.id;
@@ -254,15 +277,7 @@ Template.cosmosShipInfo.helpers({
 	ship: function() {
 		var id = Template.instance().data.id;
 		var spaceEvent = Game.SpaceEvents.getOne(id);
-
-		var info = Game.Cosmos.getShipInfo(spaceEvent);
-		if (!info) {
-			// TODO: Подумать над этой мазафакой!
-			Game.Cosmos.showFleetsInfo();
-			return {};
-		}
-
-		return info;
+		return Game.Cosmos.getShipInfo(spaceEvent);
 	}
 });
 
@@ -625,16 +640,13 @@ Template.cosmos.onRendered(function() {
 			if (event.type == Game.SpaceEvents.type.SHIP) {
 				createPath(id, event);
 
-				// TODO: А так можно?
-				var timeLeft = event.timeEnd - Session.get('serverTime');
-				if (timeLeft > 0) {
-					setTimeout(
-						function() {
-							Meteor.call('spaceEvents.update', id);
-						},
-						timeLeft * 1000
-					);
-				}
+				// update event on time end
+				Tracker.autorun(function(c) {
+					if (event.timeEnd <= Session.get('serverTime')) {
+						c.stop();
+						Meteor.call('spaceEvents.update', id);
+					}
+				});
 			}
 		},
 

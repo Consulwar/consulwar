@@ -155,58 +155,62 @@
 </template>
 
 <template name="cosmosPlanetInfo">
-	{{#if planet.name}}
-		<h2>{{planet.name}} ({{planet.type}})</h2>
-	{{/if}}
-	{{#if planet.isHumans}}
-		<div class="header-humans">
-			<p class="center">{{planet.status}}</p>
-		</div>
-	{{/if}}
-	{{#if planet.mission}}
-		<div class="header-reptiles">
-			<p>Рептилоиды</p>
-			<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
-			<p><span>Статус: </span>{{planet.mission.name}}</p>
-		</div>
-	{{/if}}
-	{{#if planet.units}}
-		<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
-			{{#each planet.units}}
-				<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
-			{{/each}}
-		</ul>
-	{{/if}}
-	{{#if planet.canSend}}
-		<a class="button-attack open" data-id="{{planet.id}}">ОТПРАВИТЬ</a>
+	{{#if planet}}
+		{{#if planet.name}}
+			<h2>{{planet.name}} ({{planet.type}})</h2>
+		{{/if}}
+		{{#if planet.isHumans}}
+			<div class="header-humans">
+				<p class="center">{{planet.status}}</p>
+			</div>
+		{{/if}}
+		{{#if planet.mission}}
+			<div class="header-reptiles">
+				<p>Рептилоиды</p>
+				<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
+				<p><span>Статус: </span>{{planet.mission.name}}</p>
+			</div>
+		{{/if}}
+		{{#if planet.units}}
+			<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
+				{{#each planet.units}}
+					<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if planet.canSend}}
+			<a class="button-attack open" data-id="{{planet.id}}">ОТПРАВИТЬ</a>
+		{{/if}}
 	{{/if}}
 </template>
 
 <template name="cosmosShipInfo">
-	{{#if ship.isHumans}}
-		<div class="header-humans">
-			<p class="center">{{ship.status}}</p>
-		</div>
-	{{/if}}
-	{{#if ship.mission}}
-		<div class="header-reptiles">
-			<p>Рептилоиды</p>
-			<p><span>Уровень опасности: </span>{{ship.mission.level}}</p>
-			<p><span>Статус: </span>{{ship.mission.name}}</p>
-		</div>
-	{{/if}}
-	{{#if ship.units}}
-		<ul class="{{#if ship.mission}}reptiles{{else}}humans{{/if}}">
-			{{#each ship.units}}
-				<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
-			{{/each}}
-		</ul>
-	{{/if}}
-	{{#if timeLeft}}
-		<p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
-	{{/if}}
-	{{#if ship.canSend}}
-		<a class="button-attack open" data-id="{{ship.id}}">ПЕРЕХВАТИТЬ</a>
+	{{#if ship}}
+		{{#if ship.isHumans}}
+			<div class="header-humans">
+				<p class="center">{{ship.status}}</p>
+			</div>
+		{{/if}}
+		{{#if ship.mission}}
+			<div class="header-reptiles">
+				<p>Рептилоиды</p>
+				<p><span>Уровень опасности: </span>{{ship.mission.level}}</p>
+				<p><span>Статус: </span>{{ship.mission.name}}</p>
+			</div>
+		{{/if}}
+		{{#if ship.units}}
+			<ul class="{{#if ship.mission}}reptiles{{else}}humans{{/if}}">
+				{{#each ship.units}}
+					<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if timeLeft}}
+			<p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
+		{{/if}}
+		{{#if ship.canSend}}
+			<a class="button-attack open" data-id="{{ship.id}}">ПЕРЕХВАТИТЬ</a>
+		{{/if}}
 	{{/if}}
 </template>
 

@@ -27,6 +27,10 @@ game.Point = function(options) {
 
 Game.Earth = {};
 
+Game.EarthZones = {
+	Collection: new Meteor.Collection('zones')
+};
+
 Game.Point = {
 	Collection: new Meteor.Collection('points'),
 

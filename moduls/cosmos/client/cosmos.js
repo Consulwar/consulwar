@@ -533,7 +533,7 @@ Template.cosmosAttackMenu.events({
 
 		$('.fleet li').each(function(index, element) {
 			var id = $(element).attr('data-id');
-			var max = parseInt( $(element).find('.max').html() );
+			var max = parseInt( $(element).attr('data-max') );
 			var count = parseInt( $(element).find('.count').val() );
 
 			if (max > 0 && count > 0) {

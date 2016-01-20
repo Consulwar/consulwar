@@ -38,6 +38,15 @@ if (process.env.NODE_ENV == 'development') {
 
 		'cheats.sendReptileFleetToPlanet': function(planetId) {
 			Game.SpaceEvents.sendReptileFleetToPlanet(planetId);
+		},
+
+		'cheats.generateAllPlanets': function() {
+			var galactic = Game.Planets.getBase().galactic;
+			for (var i = 0; i < galactic.hands; i++) {
+				for (var j = 0; j < galactic.segments; j++) {
+					Game.Planets.generateSector(galactic, i, j, true);
+				}
+			}
 		}
 	})
 
@@ -52,7 +61,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.performBattle': addCheater,
 		'cheats.testMissionGenerate': addCheater,
 		'cheats.spawnTradeFleet': addCheater,
-		'cheats.sendReptileFleetToPlanet': addCheater
+		'cheats.sendReptileFleetToPlanet': addCheater,
+		'cheats.generateAllPlanets': addCheater
 	})
 
 }

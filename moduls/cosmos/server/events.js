@@ -693,7 +693,8 @@ Meteor.methods({
 Meteor.publish('spaceEvents', function () {
 	if (this.userId) {
 		return Game.SpaceEvents.Collection.find({
-			user_id: this.userId
+			user_id: this.userId,
+			status: Game.SpaceEvents.status.STARTED
 		})
 	}
 });

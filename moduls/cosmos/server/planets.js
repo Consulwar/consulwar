@@ -347,8 +347,6 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 
 		var newPlanet = {
 			name: Game.Planets.generateName(),
-			isDiscovered: false,
-			isHome: false,
 			type: type.engName,
 			// state
 			armyId: null,
@@ -407,7 +405,6 @@ Meteor.methods({
 
 			var planetId = Game.Planets.add({
 				name: user.planetName,
-				isDiscovered: false,
 				isHome: true,
 				type: 'terran',
 				// generation

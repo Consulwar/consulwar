@@ -1,135 +1,66 @@
 <template name="earth">
-	
 	<div id="map-earth"></div>
-	
-	<div class="point-popup-container">
-		{{#if popup_info}}
-		<div class="point-popup">
-			<h2 class="{{#if popup_info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
-				Точка {{popup_info.name}}
+	{{> yield "earthZonePopup"}}
+	{{> yield "earthZoneInfo"}}
+	{{> yield "earthReserve"}}
+</template>
+
+<template name="earthZonePopup">
+	{{#if info}}
+		<div 
+			class="point-popup" 
+			style="left: {{position.x}}px; top: {{position.y}}px;"
+		>
+			<h2 class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
+				{{info.name}}
 			</h2>
-			<a class="btn-info" data-id="{{popup_info.id}}">ИНФОРМАЦИЯ</a>
-			{{#if popup_info.isEnemy}}
-			<a class="btn-attack" data-id="{{popup_info.id}}">В АТАКУ</a>
-			<p class="text-ours">Ваш голос: {{popup_info.vote}}</p>
-			<p>Консулов: {{popup_info.consuls}}</p>
+			<a class="btn-info">Информация</a>
+			{{#if info.isEnemy}}
+				<a class="btn-attack">В атаку</a>
+				<p class="text-ours">Ваш голос: {{info.vote}}</p>
+				<p>Консулов: {{info.consuls}}</p>
 			{{else}}
-			<a class="btn-reinforce" data-id="{{popup_info.id}}">ПОДКРЕПЛЕНИЕ</a>
+				<a class="btn-reinforce">Подкрепление</a>
 			{{/if}}
 		</div>
-		{{/if}}
-	</div>
-
-	{{#if zone_info}}
-	<div class="zone-info">
-		<div class="summary-info">
-			<h2>{{zone_info.name}}</h2>
-			<p>
-				Захвачено на: 50%
-				<br><span class="humans">Точек людей: 15</span>
-				<br><span class="repts">Точек рептилий: 42</span>
-			</p>
-		</div>
-		<div class="army-humans">
-			<p>Люди<br><span>Сила: 45</span></p>
-			<ul>
-				{{#each zone_info.armyHumans}}
-				<li>
-					<span>{{this.count}}</span> {{this.name}}
-				</li>
-				{{/each}}
-			</ul>
-		</div>
-		<div class="army-repts">
-			<p>Рептилоиды<br><span>Сила: 100</span></p>
-			<ul>
-				{{#each zone_info.armyRepts}}
-				<li>
-					<span>{{this.count}}</span> {{this.name}}
-				</li>
-				{{/each}}
-			</ul>
-		</div>
-		<a class="btn-reinforce" data-id="{{zone_info.id}}">ПОДКРЕПЛЕНИЕ</a>
-		<a class="btn-special" data-id="{{zone_info.id}}">СПЕЦ АТАКА</a>
-		<a class="btn-close"></a>
-	</div>
 	{{/if}}
+</template>
 
-	{{#if active_item}}
-	<div class="information point">
-		<div class="header">
-			<a class="back" href="{{pathFor 'game' menu='battle' side='earth'}}">Назад</a> Точка {{active_item.engName}}
+<template name="earthZoneInfo">
+	{{#if info}}
+		<div class="zone-info">
+			<div class="summary-info">
+				<h2>{{info.name}}</h2>
+				<p>
+					Захвачено на: 50%
+					<br><span class="humans">Точек людей: 15</span>
+					<br><span class="repts">Точек рептилий: 42</span>
+				</p>
+			</div>
+			<div class="army-humans">
+				<p>Люди<br><span>Сила: 45</span></p>
+				<ul>
+					{{#each info.armyHumans}}
+						<li>
+							<span>{{this.count}}</span> {{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="army-repts">
+				<p>Рептилоиды<br><span>Сила: 100</span></p>
+				<ul>
+					{{#each info.armyRepts}}
+						<li>
+							<span>{{this.count}}</span> {{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+			<a class="btn-reinforce">Подкрепление</a>
+			<a class="btn-special">Спец атака</a>
+			<a class="btn-close"></a>
 		</div>
-		
-		<div class="army">
-			{{#if army}}
-			<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				{{#each army}}
-				{{#if gt this.count 0}}
-				<tr>
-					<td>{{this.name}}</td>
-					<td>{{formatNumber this.count}}</td>
-				</tr>
-				{{/if}}
-				{{/each}}
-			</table>
-			{{else}}
-			<h2>Наших войск на точке нет</h2>
-			{{/if}}
-			<!--<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				<tr>
-					<td>Тилпс</td>
-					<td>1</td>
-				</tr>
-			</table>-->
-		</div>
-		<ul class="type {{active_item.type.engName}}">
-			{{#each currentEffects}}
-			<li>{{this.value}}% {{this.affect}} {{this.name}}</li>
-			{{/each}}
-		</ul>
-		<div class="reptiles">
-			{{#if reptiles}}
-			<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				{{#each reptiles}}
-				{{#if gt this.count 0}}
-				<tr>
-					<td>{{this.name}}</td>
-					<td>{{formatNumber this.count}}</td>
-				</tr>
-				{{/if}}
-				{{/each}}
-			</table>
-			{{else}}
-			{{#unless army}}
-			<h2>Информация отсутствует</h2>
-			{{/unless}}
-			{{/if}}
-			<!--<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				<tr>
-					<td>Тон Ренек</td>
-					<td>1</td>
-				</tr>
-			</table>-->
-		</div>
-	</div>
 	{{/if}}
 </template>
 
@@ -137,9 +68,9 @@
 	<div class="information">
 		<ul class="items reserve">
 			{{#each units}}
-			<li class="{{#if eq this.count 0}}disabled{{/if}}">
-				<div class="{{this.engName}}" href="/game/army/ground/{{this.engName}}" data-count="{{this.count}}"></div>
-			</li>
+				<li class="{{#if eq this.count 0}}disabled{{/if}}">
+					<div class="{{this.engName}}-icon" href="/game/army/ground/{{this.engName}}" data-count="{{this.count}}"></div>
+				</li>
 			{{/each}}
 		</ul>
 		

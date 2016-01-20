@@ -7,6 +7,12 @@ Game.EarthZones = {
 
 	getAll: function() {
 		return Game.EarthZones.Collection.find();
+	},
+
+	getByName: function(name) {
+		return Game.EarthZones.Collection.findOne({
+			name: name
+		})
 	}
 };
 

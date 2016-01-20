@@ -12,6 +12,212 @@ Game.Earth.showPage = function() {
 }
 
 // ----------------------------------------------------------------------------
+// Reserve
+// ----------------------------------------------------------------------------
+
+Game.Earth.showReserveMenu = function() {
+	Router.current().render('reserve', {
+		to: 'earthReserve',
+		data: {
+			honor: new ReactiveVar(0)
+		}
+	});
+}
+
+Game.Earth.hideReserveMenu = function() {
+	Router.current().render(null, {
+		to: 'earthReserve'
+	});
+}
+
+Template.reserve.helpers({
+	units: function() {
+		return _.map(Game.Unit.items.army.ground, function(val, key) {
+			return {
+				engName: key,
+				count: val.currentLevel()
+			}
+		})
+	},
+
+	honor: function() {
+		return Template.instance().data.honor.get();
+	}
+});
+
+Template.reserve.events({
+	'click .items li': function(e, t) {
+		if (!$(e.currentTarget).hasClass('disabled')) {
+			$(e.currentTarget).toggleClass('active');
+
+			var current = $(e.currentTarget).find('div')[0];
+			var name = current.className;
+			var count = current.dataset.count;
+			var honor = t.data.honor.get();
+				
+			if (['hbhr', 'lost'].indexOf(name) != -1) {
+				honor += Game.Resources.calculateHonorFromReinforcement(game.army.heroes[name].price(count))
+				       * ($(e.currentTarget).hasClass('active') ? 1 : -1 );
+			} else {
+				honor += Game.Resources.calculateHonorFromReinforcement(game.army.ground[name].price(count))
+				       * ($(e.currentTarget).hasClass('active') ? 1 : -1 );
+			}
+
+			t.data.honor.set(honor);
+		}
+	},
+
+	'click .select_all': function() {
+		$('.items li:not(.disabled,.active)').click();
+	},
+
+	'click .send_reinforcement': function() {
+		Game.Earth.hideReserveMenu();
+		// TODO: Send!
+		/*
+		var active = $('.reserve .active div');
+		var units = [];
+		for (var i = 0; i < active.length; i++) {
+			var name = active[i].className;
+			
+			units.push(name);
+		}
+
+		$('.reserve .active').removeClass('active');
+		Session.set('SendToReserve', 0);
+
+		Meteor.call('sendReinforcement', units, function(err, result) {
+			if (err) {
+				Notifications.error(err);
+			} else {
+				Notifications.info('Получено ' + result + ' чести', 'Замечательно!');
+				Session.set('honor', 0);
+			}
+		});
+		*/
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Zone info
+// ----------------------------------------------------------------------------
+
+Game.Earth.showZoneInfo = function(name) {
+
+	var name = this.params.name;
+
+	Router.current().render('earthZoneInfo', {
+		to: 'earthZoneInfo',
+		data: {
+			info: function() {
+				return {
+					id: null,
+					name: null,
+					armyHumans: null, 
+					armyRepts: null
+				};
+			}
+		}
+	});
+}
+
+Game.Earth.hideZoneInfo = function() {
+	Router.current().render(null, {
+		to: 'earthZoneInfo'
+	});
+}
+
+Template.earthZoneInfo.events({
+	'click .btn-close': function(e, t) {
+		Game.Earth.hideZoneInfo();
+	},
+
+	'click .btn-reinforce': function(e, t) {
+		Game.Earth.hideZoneInfo();
+		Game.Earth.showReserveMenu();
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Zone popup
+// ----------------------------------------------------------------------------
+
+Game.Earth.showZonePopup = function(name) {
+
+	// TODO: Fix popup position!
+
+	var zoom = new ReactiveVar(mapView.getZoom());
+	mapView.on('zoomend', function(e) {
+		zoom.set( mapView.getZoom() );
+	});
+
+	var bounds = new ReactiveVar(mapView.getBounds());
+	mapView.on('move', function(e) {
+		bounds.set( mapView.getBounds() );
+	});
+
+	Router.current().render('earthZonePopup', {
+		to: 'earthZonePopup',
+		data: {
+			name: name,
+			zoom: zoom,
+			bounds: bounds,
+			info: function() {
+				var zone = Game.EarthZones.getByName(name);
+				return {
+					id: zone._id,
+					name: zone.name,
+					isEnemy: zone.isEnemy,
+					consuls: 10,
+					vote: 20
+				};
+			}
+		}
+	});
+}
+
+Game.Earth.hideZonePopup = function() {
+	Router.current().render(null, {
+		to: 'earthZonePopup'
+	});
+}
+
+Template.earthZonePopup.helpers({
+	position: function() {
+		var name = Template.instance().data.name;
+		var zoom = Template.instance().data.zoom.get();
+		var bounds = Template.instance().data.bounds.get();
+
+		var zoneView = zoneViews[ name ];
+		var zoneCenter = new L.latLng( zoneView.x, zoneView.y );
+
+		var screenPosition = mapView.latLngToContainerPoint(zoneCenter);
+
+		return {
+			x: screenPosition.x + 50,
+			y: screenPosition.y - 100
+		}
+	}
+});
+
+Template.earthZonePopup.events({
+	'click .btn-info': function(e, t) {
+		var name = t.data.name;
+		Game.Earth.hideZonePopup();
+		Game.Earth.showZoneInfo(name);
+	},
+
+	'click .btn-attack': function(e, t) {
+		// TODO: Attack zone!
+	},
+
+	'click .btn-reinforce': function(e, t) {
+		Game.Earth.hideZonePopup();
+		Game.Earth.showReserveMenu();
+	}
+});
+
+// ----------------------------------------------------------------------------
 // ZONE VIEW
 // ----------------------------------------------------------------------------
 
@@ -32,7 +238,7 @@ var ZoneView = function(mapView, zone) {
 		this.id = zone._id;
 		this.name = zone.name;
 
-		// Polygon view
+		// polygon
 		polygon = L.GeoJSON.geometryToLayer({
 			type: 'Feature',
 			geometry: zone.geometry
@@ -41,6 +247,10 @@ var ZoneView = function(mapView, zone) {
 		mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
 		mapBounds.extend(L.latLng(polygon.getBounds().getNorthEast()));
 
+		var polygonCenter = polygon.getBounds().getCenter();
+		this.x = polygonCenter.lat;
+		this.y = polygonCenter.lng;
+
 		if (zone.isEnemy) {
 			polygon.bringToBack();
 		} else {
@@ -48,7 +258,7 @@ var ZoneView = function(mapView, zone) {
 		}
 
 		var ourStyle = {
-			color: "#374a60",
+			color: '#374a60',
 			weight: 3,
 			opacity: 1,
 			zIndex: 100,
@@ -57,14 +267,14 @@ var ZoneView = function(mapView, zone) {
 		}
 
 		var ourStyleHover = {
-			color: "#4a82c4",
+			color: '#4a82c4',
 			weight: 4,
 			opacity: 1,
 			zIndex: 100
 		}
 
 		var enemyStyle = {
-			color: "#913b31",
+			color: '#913b31',
 			weight: 2,
 			opacity: 0.5,
 			fillOpacity: 0,
@@ -73,26 +283,30 @@ var ZoneView = function(mapView, zone) {
 		}
 
 		var enemyStyleHover = {
-			color: "#bd5348",
+			color: '#bd5348',
 			weight: 2,
 			opacity: 1
 		}
 
 		polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
 
-		polygon.on("mouseover", function (e) {
+		polygon.on('mouseover', function (e) {
 			polygon.setStyle( zone.isEnemy ? enemyStyleHover : ourStyleHover );
 		});
 
-		polygon.on("mouseout", function (e) {
+		polygon.on('mouseout', function (e) {
 			polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
 		});
 
-		// marker
-		var polygonCenter = polygon.getBounds().getCenter();
-		this.x = polygonCenter.lat;
-		this.y = polygonCenter.lng;
+		// TODO: Fix click!
+		mapView.on('click', function(e) {
+			Game.Earth.hideZonePopup();
+		});
+		polygon.on('click', function(e) {
+			Game.Earth.showZonePopup(zone.name);
+		});
 
+		// marker
 		marker = L.marker(
 			[this.x, this.y],
 			{
@@ -295,24 +509,6 @@ Template.earth.onRendered(function() {
 		accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
 	}).addTo(mapView);
 
-	// Map Events
-	/* TODO: Refactoring!!!!!!!!!!!
-	mapView.on('move', function(e) {
-		Session.set('popup_info', null);
-	});
-
-	mapView.on('zoomend', function(e) {
-		Session.set('popup_info', null);
-	});
-
-	mapView.on('click', function(e) {
-		Session.set('popup_info', null);
-	});
-
-	Session.set('popup_info', null);
-	*/
-
-	// TODO: Calc max bounds!
 	mapBounds = L.latLngBounds(L.latLng(0, 0), L.latLng(0, 0));
 
 	var zones = Game.EarthZones.getAll().fetch();
@@ -331,91 +527,11 @@ Template.earth.onDestroyed(function() {
 })
 
 Template.earth.helpers({
-	// TODO: Refactoring!
-	/*
-	popup_info: function() {
-		return Session.get('popup_info');
-	},
-
-	zone_info: function() {
-		return Session.get('zone_info');
-	},
-
-	items: function() {
-		return _.map(Game.Point.items, function(value) { return value });
-	},
-
-	active_item: function() { return Session.get('active_item'); },
-	point_info: function() { return Session.get('point_info'); },
-
-	reptiles: function() {
-		if (!Session.get('point_info')) {
-			return [];
-		}
-
-		var reptiles = Session.get('point_info').reptiles;
-
-		return _.map(reptiles, function(value, engName) {
-			return {
-				engName: engName,
-				name: Game.Units.items.reptiles.rground[engName].name,
-				count: value
-			}
-		})
-	},
-
-	army: function() {
-		if (!Session.get('point_info')) {
-			return [];
-		}
-		
-		var army = Session.get('point_info').army;
-
-		return _.map(army, function(value, engName) {
-			return {
-				engName: engName,
-				name: Game.Units.items.army.ground[engName].name,
-				count: value
-			}
-		})
-	},
-
-	currentEffects: function() {
-		var item = Session.get('active_item');
-
-		var effects = [];
-
-		for (var groupName in item.type.effects) {
-			var group = item.type.effects[groupName];
-
-			for (var type in group) {
-				effects.push({
-					name: groupName,
-					affect: type,
-					value: group[type]
-				});
-			}
-		}
-
-		return effects;
-	}
-	*/
+	
 });
 
 Template.earth.events({
-	// TODO: Refactoring!
-	/*
-	'click .btn-info': function(e) {
-		var zoneId = $(e.currentTarget).attr("data-id");
-		zone = zones[ zoneId ];
-		zone.hidePopup();
-		Session.set('zone_info', zone.info);
-	},
 
-	'click .btn-close': function(e) {
-		Session.set('zone_info', null);
-	},
-	*/
 });
 
 }

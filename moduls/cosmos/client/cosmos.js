@@ -533,7 +533,7 @@ Template.cosmosAttackMenu.events({
 
 		$('.fleet li').each(function(index, element) {
 			var id = $(element).attr('data-id');
-			var max = parseInt( $(element).find('.max').html() );
+			var max = parseInt( $(element).attr('data-max') );
 			var count = parseInt( $(element).find('.count').val() );
 
 			if (max > 0 && count > 0) {
@@ -646,6 +646,7 @@ Template.cosmos.onRendered(function() {
 		}
 
 		// calc offsets
+		/*
 		var startOffset = 0;
 		if (event.info.startPlanetId) {
 			var planet = Game.Planets.getOne(event.info.startPlanetId);
@@ -661,6 +662,9 @@ Template.cosmos.onRendered(function() {
 				endOffset = (planet.size + 3) * 0.02;
 			}
 		}
+		*/
+		var startOffset = 0;
+		var endOffset = 0;
 
 		// draw path
 		pathViews[id] = new game.PathView(
@@ -827,6 +831,55 @@ Template.cosmos.onRendered(function() {
 		},
 		$('.leaflet-marker-pane')[0]
 	);
+
+	// Align map to nearest planet
+	// TODO: Избавиться от подергивания при наведении!
+	/*
+	var curLatLng = null;
+	var zoomLatLng = null;
+	var lastZoom = null;
+
+	var alingMapToNearestPlanet = function(position) {
+		var minDistance = Infinity;
+		var currentDistance = 0;
+		var nearest = null;
+
+		var planets = Game.Planets.getAll().fetch();
+		for (var i = 0; i < planets.length; i++) {
+			currentDistance = Game.Planets.calcDistance(position, planets[i]);
+			if (minDistance > currentDistance) {
+				minDistance = currentDistance;
+				nearest = planets[i];
+			}
+		}
+
+		if (nearest) {
+			var point1 = mapView.latLngToContainerPoint(new L.latLng(position.x, position.y));
+			var point2 = mapView.latLngToContainerPoint(new L.latLng(nearest.x, nearest.y));
+			if (Game.Planets.calcDistance(point1, point2) < 100) {
+				mapView.setView([nearest.x, nearest.y], mapView.getZoom(), { animate: false });
+			}
+		}
+	}
+
+	mapView.on('zoomstart', function(e) {
+		zoomLatLng = new L.latLng(curLatLng.lat, curLatLng.lng);
+		lastZoom = mapView.getZoom();
+	});
+
+	mapView.on('zoomend', function(e) {
+		if (lastZoom && lastZoom < mapView.getZoom() && zoomLatLng) {
+			alingMapToNearestPlanet({
+				x: zoomLatLng.lat,
+				y: zoomLatLng.lng
+			});
+		}
+	});
+
+	mapView.on('mousemove', function(e) {
+		curLatLng = e.latlng;
+	})
+	*/
 
 	// Show default side info
 	Game.Cosmos.showFleetsInfo();

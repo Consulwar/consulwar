@@ -1,13 +1,5 @@
 initCosmosLib = function() {
 
-var calcDistance = function(start, end) {
-	return Math.sqrt( Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2) );
-}
-
-var calcAngle = function(start, end) {
-	return Math.atan2(end.y - start.y, end.x - start.x);
-}
-
 game.PlanetType = function(options) {
 	Game.Planets.types.push(options);
 }
@@ -93,6 +85,14 @@ Game.Planets = {
 		}
 
 		return null;
+	},
+
+	calcDistance: function(start, end) {
+		return Math.sqrt( Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2) );
+	},
+
+	calcAngle: function(start, end) {
+		return Math.atan2(end.y - start.y, end.x - start.x);
 	},
 
 	// ------------------------------------------------------------------------
@@ -372,7 +372,7 @@ Game.Planets = {
 	},
 
 	calcFlyTime: function(startPoint, endPoint, engineLevel) {
-		var distance = calcDistance(startPoint, endPoint);
+		var distance = Game.Planets.calcDistance(startPoint, endPoint);
 		var maxSpeed = Game.Planets.calcMaxSpeed(engineLevel);
 		var acceleration = Game.Planets.calcAcceleration(engineLevel);
 
@@ -380,8 +380,14 @@ Game.Planets = {
 	},
 
 	calcAttackOptions: function(attackerPlanet, attackerEngineLevel, targetShip, timeCurrent) {
-		var angle = calcAngle( targetShip.info.startPosition, targetShip.info.targetPosition );
-		var totalDistance = calcDistance( targetShip.info.startPosition, targetShip.info.targetPosition );
+		var angle = Game.Planets.calcAngle(
+			targetShip.info.startPosition,
+			targetShip.info.targetPosition
+		);
+		var totalDistance = Game.Planets.calcDistance(
+			targetShip.info.startPosition,
+			targetShip.info.targetPosition
+		);
 
 		var startPoint = {
 			x: targetShip.info.startPosition.x,

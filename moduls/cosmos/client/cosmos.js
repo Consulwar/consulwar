@@ -646,6 +646,7 @@ Template.cosmos.onRendered(function() {
 		}
 
 		// calc offsets
+		/*
 		var startOffset = 0;
 		if (event.info.startPlanetId) {
 			var planet = Game.Planets.getOne(event.info.startPlanetId);
@@ -661,6 +662,9 @@ Template.cosmos.onRendered(function() {
 				endOffset = (planet.size + 3) * 0.02;
 			}
 		}
+		*/
+		var startOffset = 0;
+		var endOffset = 0;
 
 		// draw path
 		pathViews[id] = new game.PathView(

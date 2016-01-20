@@ -204,7 +204,8 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 
 		this.polyline = new L.Polyline([], {
 			color: color,
-			weight: 3,
+			weight: 2,
+			opacity: 1,
 			smoothFactor: 1
 		}).addTo(map);
 

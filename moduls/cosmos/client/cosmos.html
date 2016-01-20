@@ -52,10 +52,10 @@
 		{{#if availableFleet}}
 			<ul class="items fleet">
 				{{#each availableFleet}}
-					<li class="unit" data-id="{{this.engName}}">
+					<li class="unit" data-id="{{this.engName}}" data-max="{{this.max}}">
 						<a class="{{this.engName}}-icon"></a>
 						<div class="max">{{formatNumberWithISO this.max}}</div>
-						<input class="count" type="number" placeholder="Количество" data-max="{{this.max}}" value="{{this.count}}">
+						<input class="count" type="number" placeholder="Количество"  value="{{this.count}}">
 					</li>
 				{{/each}}
 			</ul>
@@ -110,7 +110,7 @@
 				<a class="btn-attack defend">Отправить</a>
 			{{else}}
 				{{#if canHaveMoreColonies}}
-					<a class="btn-attack defend">Захват и оборона</a>
+					<a class="btn-attack defend">Захватить</a>
 				{{/if}}
 				<a class="btn-attack return">{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}</a>
 			{{/if}}
@@ -180,7 +180,7 @@
 			</ul>
 		{{/if}}
 		{{#if planet.canSend}}
-			<a class="button-attack open" data-id="{{planet.id}}">ОТПРАВИТЬ</a>
+			<a class="button-attack open" data-id="{{planet.id}}">Отправить</a>
 		{{/if}}
 	{{/if}}
 </template>
@@ -210,7 +210,7 @@
 			<p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
 		{{/if}}
 		{{#if ship.canSend}}
-			<a class="button-attack open" data-id="{{ship.id}}">ПЕРЕХВАТИТЬ</a>
+			<a class="button-attack open" data-id="{{ship.id}}">Перехватить</a>
 		{{/if}}
 	{{/if}}
 </template>
@@ -270,7 +270,7 @@
 			tabindex="0" 
 			style="
 				transform: translate3d({{animation.x}}px, {{animation.y}}px, 0px);
-				z-index: 221;"
+				z-index: 222;"
 		>
 			<div
 				class="

@@ -16,242 +16,115 @@ Game.Earth.showPage = function() {
 // ----------------------------------------------------------------------------
 
 var ZoneView = function(mapView, zone) {
-
-	// -----------------------------------
-	// TODO: move to css
-	var ourStyle = {
-		color: "#374a60",
-		weight: 3,
-		opacity: 1,
-		zIndex: 100,
-		fillOpacity: 0.03,
-		fillColor: '#374a60'
-	}
-
-	var ourStyleHover = {
-		color: "#4a82c4",
-		weight: 4,
-		opacity: 1,
-		zIndex: 100
-	}
-
-	var enemyStyle = {
-		color: "#913b31",
-		weight: 2,
-		opacity: 0.5,
-		fillOpacity: 0,
-		fillOpacity: 0.01,
-		fillColor: '#913b31'
-	}
-
-	var enemyStyleHover = {
-		color: "#bd5348",
-		weight: 2,
-		opacity: 1
-	}
-	// -------------------------------------
-
 	this.id = null;
-	this.data = null;
-	this.polygon = null;
-
-	this.iconSize = 0;
+	this.name = null;
 	this.x = 0;
 	this.y = 0;
 
-	this.isEnemy = true;
-	this.marker = null;
-	this.element = null;
-	this.canvas = null;
-
-	this.info = null;
+	var iconSize = 50;
+	var lines = null;
+	var polygon = null;
+	var marker = null;
+	var element = null;
+	var canvasElement = null;
 
 	this.constructor = function() {
-		// TODO: Remove dat shit!
-		var data = {};
-
 		this.id = zone._id;
-		this.data = data;
-		this.isEnemy = zone.isEnemy;
+		this.name = zone.name;
 
-		// Create a plygon
-		var polygon = L.GeoJSON.geometryToLayer({
+		// Polygon view
+		polygon = L.GeoJSON.geometryToLayer({
 			type: 'Feature',
 			geometry: zone.geometry
-		});
-		this.polygon = polygon;
+		}).addTo(mapView);
 
 		mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
 		mapBounds.extend(L.latLng(polygon.getBounds().getNorthEast()));
 
-		// -------
-		// debug
-		data.armyEnemy = Math.round( Math.random() * 100 );
-		data.armyOur = Math.round( Math.random() * 100 );
-		// -------
-
-		// -------
-		// debug
-		/*
-		this.info = {
-			id: data.id,
-			name: data.properties.name,
-			isEnemy: this.isEnemy,
-			consuls: Math.round( Math.random() * 500 + 1000 ),
-			vote: Math.round( Math.random() * 20 + 20 ),
-			armyHumans: [{
-				name: 'Имя юнита 1',
-				count: 42
-			}, {
-				name: 'Имя юнита 2',
-				count: 42
-			}, {
-				name: 'Имя юнита 3',
-				count: 42
-			}, {
-				name: 'Имя юнита 4',
-				count: 42
-			}, {
-				name: 'Имя юнита 5',
-				count: 42
-			}, {
-				name: 'Имя юнита 6',
-				count: 42
-			}, {
-				name: 'Имя юнита 7',
-				count: 42
-			}, {
-				name: 'Имя юнита 8',
-				count: 42
-			}, {
-				name: 'Имя юнита 9',
-				count: 42
-			}, {
-				name: 'Имя юнита 10',
-				count: 42
-			}, {
-				name: 'Имя юнита 11',
-				count: 42
-			}, {
-				name: 'Имя юнита 12',
-				count: 42
-			}],
-			armyRepts: [{
-				name: 'Имя юнита 1',
-				count: 42
-			}, {
-				name: 'Имя юнита 2',
-				count: 42
-			}, {
-				name: 'Имя юнита 3',
-				count: 42
-			}, {
-				name: 'Имя юнита 4',
-				count: 42
-			}, {
-				name: 'Имя юнита 5',
-				count: 42
-			}, {
-				name: 'Имя юнита 6',
-				count: 42
-			}, {
-				name: 'Имя юнита 7',
-				count: 42
-			}, {
-				name: 'Имя юнита 8',
-				count: 42
-			}, {
-				name: 'Имя юнита 9',
-				count: 42
-			}, {
-				name: 'Имя юнита 10',
-				count: 42
-			}, {
-				name: 'Имя юнита 11',
-				count: 42
-			}, {
-				name: 'Имя юнита 12',
-				count: 42
-			}]
-		};
-		*/
-		// -------
-
-		// Polygon view
-		if (!this.isEnemy) {
-			var style = ourStyle;
-			var styleHover = ourStyleHover;
-			polygon.bringToFront();
-		} else {
-			var style = enemyStyle;
-			var styleHover = enemyStyleHover;
+		if (zone.isEnemy) {
 			polygon.bringToBack();
+		} else {
+			polygon.bringToFront();
 		}
 
-		(function(polygon, style, styleHover) {
-			polygon.setStyle(style);
+		var ourStyle = {
+			color: "#374a60",
+			weight: 3,
+			opacity: 1,
+			zIndex: 100,
+			fillOpacity: 0.03,
+			fillColor: '#374a60'
+		}
 
-			polygon.on("mouseover", function (e) {
-				polygon.setStyle(styleHover);
-			})
+		var ourStyleHover = {
+			color: "#4a82c4",
+			weight: 4,
+			opacity: 1,
+			zIndex: 100
+		}
 
-			polygon.on("mouseout", function (e) {
-				polygon.setStyle(style);
-			})
-		})(polygon, style, styleHover)
+		var enemyStyle = {
+			color: "#913b31",
+			weight: 2,
+			opacity: 0.5,
+			fillOpacity: 0,
+			fillOpacity: 0.01,
+			fillColor: '#913b31'
+		}
 
-		polygon.addTo(mapView);
+		var enemyStyleHover = {
+			color: "#bd5348",
+			weight: 2,
+			opacity: 1
+		}
+
+		polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
+
+		polygon.on("mouseover", function (e) {
+			polygon.setStyle( zone.isEnemy ? enemyStyleHover : ourStyleHover );
+		});
+
+		polygon.on("mouseout", function (e) {
+			polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
+		});
 
 		// marker
-		this.x = polygon.getBounds().getCenter().lat;
-		this.y = polygon.getBounds().getCenter().lng;
+		var polygonCenter = polygon.getBounds().getCenter();
+		this.x = polygonCenter.lat;
+		this.y = polygonCenter.lng;
 
-		this.iconSize = 50;
-
-		this.marker = L.marker(
+		marker = L.marker(
 			[this.x, this.y],
 			{
 				icon: L.divIcon({
 					className: 'earth-marker',
-					iconSize: [this.iconSize, this.iconSize],
-					iconAnchor: [this.iconSize / 2, this.iconSize / 2]
+					iconSize: [iconSize, iconSize],
+					iconAnchor: [iconSize / 2, iconSize / 2]
 				})
 			}
 		).addTo(mapView);
 
-		this.element = $(this.marker.getElement());
+		element = $(marker._icon);
 
-		if (this.isEnemy) {
-			this.element.addClass('earth-marker-enemy');
-			this.element.removeClass('earth-marker-our');
+		if (zone.isEnemy) {
+			element.addClass('earth-marker-enemy');
+			element.removeClass('earth-marker-our');
 		} else {
-			this.element.removeClass('earth-marker-enemy');
-			this.element.addClass('earth-marker-our');
+			element.removeClass('earth-marker-enemy');
+			element.addClass('earth-marker-our');
 		}
 
-		this.element.append('<canvas></canvas>');
-		this.canvas = $(this.element.find('canvas'));
+		element.append('<canvas></canvas>');
+		canvasElement = $(element.find('canvas'));
 		
-		// Events
-
-		// this.marker.on('mouseover', this.showPopup.bind(this));
-		// this.marker.on('mouseout', this.hidePopup.bind(this));
-		this.marker.on('click', this.showPopup.bind(this));
-
-		/* Debug
-		this.marker.on('mouseover', this.showConnections.bind(this));
-		this.marker.on('mouseout', this.hideConnections.bind(this));
-		*/
-
-		mapView.on('move', this.refreshPosition.bind(this));
+		// events
 		mapView.on('zoomend', this.refreshZoom.bind(this));
-
-		this.refreshPosition();
 		this.refreshZoom();
-	}
 
-	this.refreshPosition = function() {
-
+		// debug
+		marker.on('click', function(e) { console.log(zone.name); });
+		marker.on('mouseover', this.showConnections.bind(this));
+		marker.on('mouseout', this.hideConnections.bind(this));
 	}
 
 	this.refreshZoom = function() {
@@ -264,30 +137,29 @@ var ZoneView = function(mapView, zone) {
 			k = 1;
 		}
 
-		this.element
-			.height(this.iconSize * k)
-			.width(this.iconSize * k)
-			.css('margin-top', this.iconSize * k * -0.5)
-			.css('margin-left', this.iconSize * k * -0.5);
+		element
+			.height(iconSize * k)
+			.width(iconSize * k)
+			.css('margin-top', iconSize * k * -0.5)
+			.css('margin-left', iconSize * k * -0.5);
 
-		// TODO: Refactoring!
-		/*
 		if (zoom < 5) {
 			this.hideProgress();
 		} else {
-			this.showProgress(data.armyOur, data.armyEnemy, this.iconSize * k);
+			// TODO: Get real info!
+			this.showProgress(50, 75, iconSize * k);
 		}
-		*/
 	}
 
 	this.showConnections = function() {
-		if (!data || !data.borders) {
+		if (!zone || !zone.links) {
 			return;
 		}
 
-		for (var i = 0; i < data.borders.length; i++) {
-			var zoneView = zones[ data.borders[i].id ];
+		for (var i = 0; i < zone.links.length; i++) {
+			var zoneView = zoneViews[ zone.links[i] ];
 			if (zoneView) {
+				// create line
 				var lineView = new L.Polyline([], {
 					color: '#4a82c4',
 					weight: 3,
@@ -296,6 +168,7 @@ var ZoneView = function(mapView, zone) {
 				lineView.addLatLng(L.latLng(this.x, this.y));
 				lineView.addLatLng(L.latLng(zoneView.x, zoneView.y));
 
+				// create line text
 				var lineText = new L.marker([
 					Math.min(this.x, zoneView.x) + Math.abs(this.x - zoneView.x) / 2,
 					Math.min(this.y, zoneView.y) + Math.abs(this.y - zoneView.y) / 2
@@ -304,63 +177,41 @@ var ZoneView = function(mapView, zone) {
 						className: 'earth-marker-connection-text'
 					})
 				}).addTo(mapView);
-				$(lineText.getElement()).append('<p>' + Math.round( Math.random() * 50 + 10 ) + '%</p>');
+
+				$(lineText._icon).append('<p>' + Math.round( Math.random() * 50 + 10 ) + '%</p>');
 
 				lineView.lineText = lineText;
 
-				if (!this.lines) {
-					this.lines = [];
+				// store line inside array
+				if (!lines) {
+					lines = [];
 				}
-				this.lines.push(lineView);
+				lines.push(lineView);
 			}
 		}
 	}
 
 	this.hideConnections = function() {
-		if (this.lines) {
-			for (var i = 0; i < this.lines.length; i++) {
-				mapView.removeLayer( this.lines[i].lineText );
-				mapView.removeLayer( this.lines[i] );
+		if (lines) {
+			for (var i = 0; i < lines.length; i++) {
+				mapView.removeLayer( lines[i].lineText );
+				mapView.removeLayer( lines[i] );
 			}
-			this.lines = null;
+			lines = null;
 		}
 	}
 
-	this.showPopup = function() {
-		Session.set('popup_info', this.info);
-
-		var popup = $('.point-popup-container');
-
-		var position = mapView.latLngToContainerPoint(this.marker.getLatLng());
-		position.x += 40;
-		position.y -= 40;
-
-		popup.css('left', position.x + 'px')
-		popup.css('top', position.y + 'px');
-	}
-
-	this.hidePopup = function() {
-		Session.set('popup_info', null);
-	}
-
-	this.hideProgress = function() {
-		this.canvas.hide();
-		var canvas = this.canvas[0];
-		var context = canvas.getContext('2d');
-		context.clearRect(0, 0, canvas.width, canvas.height);
-	}
-
 	this.showProgress = function(humans, reptiles, size) {
-		this.canvas.show();
-		this.canvas
+		canvasElement.show();
+		canvasElement
 			.css('left', size * -0.5 + 25)
 			.css('top', size * -0.5 + 25);
 
-		this.canvas
+		canvasElement
 			.css('left', 0)
 			.css('top', 0);
 
-		var canvas = this.canvas[0];
+		var canvas = canvasElement[0];
 		canvas.width = size;
 		canvas.height = size;
 
@@ -399,12 +250,19 @@ var ZoneView = function(mapView, zone) {
 		context.stroke();
 	}
 
-	this.constructor(); 
+	this.hideProgress = function() {
+		canvasElement.hide();
+		var canvas = canvasElement[0];
+		var context = canvas.getContext('2d');
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	}
+
+	this.constructor();
 }
 
-var createZone = function(id, zone) {
+var createZone = function(name, zone) {
 	if (mapView && zoneViews) {
-		zoneViews[ id ] = new ZoneView(mapView, zone);
+		zoneViews[ name ] = new ZoneView(mapView, zone);
 	}
 }
 
@@ -459,10 +317,11 @@ Template.earth.onRendered(function() {
 
 	var zones = Game.EarthZones.getAll().fetch();
 	for (var i = 0; i < zones.length; i++) {
-		createZone( zones[i]._id, zones[i] );
+		createZone( zones[i].name, zones[i] );
 	}
 
 	mapView.setMaxBounds(mapBounds);
+	mapView.fitBounds(mapBounds);
 })
 
 Template.earth.onDestroyed(function() {

@@ -1,5 +1,7 @@
 initEarthServerImport = function () {
 
+var startZone = 'South Africa';
+
 var startZones = [
 	'Argentina',
 	'South Africa',
@@ -64,6 +66,10 @@ var availableZones = [
 	'South Sudan'
 ];
 
+var autoLinkList = [
+	['Mozambique', 'Madagascar']
+]
+
 Game.Earth.importZones = function() {
 	var geoJson = JSON.parse( Assets.getText("geo.json") );
 
@@ -84,7 +90,9 @@ Game.Earth.importZones = function() {
 			name: name,
 			geometry: feature.geometry,
 			links: [],
-			isEnemy: (startZones.indexOf(name) < 0 ? true : false)
+			isEnemy: (startZones.indexOf(name) < 0 ? true : false),
+			isCurrent: (startZone == name ? true : false ),
+			isVisible: (startZone == name ? true : false )
 		});
 
 		console.log('import zone: ' + name);
@@ -130,6 +138,7 @@ Game.Earth.autoLinkZones = function() {
 		return result;
 	}
 
+	// check borders with same points
 	var zones = Game.EarthZones.Collection.find().fetch();
 
 	for (var i = 0; i < zones.length - 1; i++) {
@@ -145,6 +154,11 @@ Game.Earth.autoLinkZones = function() {
 				Game.Earth.linkZones(firstZone.name, secondZone.name);
 			}
 		}
+	}
+
+	// auto link from config
+	for (var i = 0; i < autoLinkList.length; i++) {
+		Game.Earth.linkZones( autoLinkList[i][0], autoLinkList[i][1] );
 	}
 }
 

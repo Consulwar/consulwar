@@ -3,6 +3,7 @@ initEarthClient = function() {
 initEarthLib();
 
 Meteor.subscribe('zones');
+Meteor.subscribe('turns');
 
 Game.Earth.showPage = function() {
 	this.render('earth', {

@@ -16,7 +16,15 @@ Game.EarthZones = {
 	}
 };
 
+Game.EarthTurns = {
+	Collection: new Meteor.Collection('turns'),
 
+	getLast: function() {
+		return Game.EarthTurns.Collection.findOne({}, {
+			sort: { timeEnd: -1 }
+		});
+	}
+}
 
 game.PointType = function(options) {
 	this.constructor = function(options) {

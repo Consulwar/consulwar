@@ -1,6 +1,46 @@
 initEarthServerMethods = function() {
 
 Meteor.methods({
+	'earth.voteAction': function(actionName) {
+		// check user
+		var user = Meteor.user();
+
+		if (!(user && user._id)) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		// check turn
+		var lastTurn = Game.EarthTurns.getLast();
+
+		if (!lastTurn) {
+			throw new Meteor.Error('Не создано ни одного хода');
+		}
+
+		if (lastTurn.users.indexOf(user._id) >= 0) {
+			throw new Meteor.Error('Вы уже голосовали в этом ходу');
+		}
+
+		if (!lastTurn.actions[ actionName ]) {
+			throw new Meteor.Error('Нет такого действия в этом ходу');
+		}
+
+		// get vote power
+		// TOOD: Get user vote power!
+		var votePower = 1;
+
+		// save vote
+		lastTurn.users.push(user._id);
+		lastTurn.actions[ actionName ] += votePower;
+
+		Game.EarthTurns.Collection.update({
+			_id: lastTurn._id
+		}, lastTurn);
+	},
+
 	'earth.sendReinforcement': function(units) {
 		// TODO: fix this method!
 		var user = Meteor.user();
@@ -73,7 +113,7 @@ if (process.env.NODE_ENV == 'development') {
 		'earth.importZones': Game.Earth.importZones,
 		'earth.linkZones': Game.Earth.linkZones,
 		'earth.unlinkZones': Game.Earth.unlinkZones,
-		'earth.nextTurn': Game.Earth.checkPoll
+		'earth.nextTurn': Game.Earth.checkTurn
 	});
 }
 

@@ -130,7 +130,7 @@ Game.Earth.performBattleAtZone = function(name, options) {
 	 && !checkHasAliveUnits( zone.userArmy )
 	 && !checkHasAliveUnits( zone.enemyArmy )
 	) {
-		return; // No need to fight!
+		return null; // No need to fight!
 	}
 
 	var battleResult = Game.Unit.performBattle(
@@ -139,27 +139,45 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		options
 	);
 
+	var turnResult = null;
+
+	if (battleResult.userArmy) {
+		if (battleResult.enemyArmy) {
+			turnResult = 'tie';
+		} else {
+			turnResult = 'victory';
+		}
+	} else {
+		turnResult = 'defeat';
+	}
+
+	// update zone
+	var isEnemy = zone.isEnemy;
+	if (isEnemy) {
+		isEnemy = (turnResult == 'victory') ? false : true;
+	} else {
+		isEnemy = (turnResult == 'defeat') ? true : false;
+	}
+
 	Game.EarthZones.Collection.update({
 		name: name
 	}, {
 		$set: {
 			userArmy: battleResult.userArmy,
 			enemyArmy: battleResult.enemyArmy,
-			isEnemy: (battleResult.userArmy && !battleResult.enemyArmy)
+			isEnemy: isEnemy
 		}
-	})
+	});
 
-	if (battleResult.userArmy) {
-		if (battleResult.enemyArmy) {
-			// tie
-		} else {
-			// victory
-			Game.Earth.observeZone(name);
-		}
-	} else {
-		// defeat
+	if (turnResult == 'victory') {
+		Game.Earth.observeZone(name);
+	}
+	
+	if (turnResult == 'defeat') {
 		Game.Earth.retreat();
 	}
+
+	return turnResult;
 }
 
 Game.Earth.moveArmy = function(destination) {
@@ -169,10 +187,6 @@ Game.Earth.moveArmy = function(destination) {
 
 	if (!currentZone) {
 		throw new Meteor.Error('Не установлена текущая зона');
-	}
-
-	if (!currentZone.userArmy) {
-		throw new Meteor.Error('На текущей точке нет армии');
 	}
 
 	var destZone = Game.EarthZones.Collection.findOne({
@@ -198,9 +212,9 @@ Game.Earth.moveArmy = function(destination) {
 	];
 
 	// move units
-	var currentArmy = currentZone.userArmy;
-	var restArmy = {};
+	var currentArmy = (currentZone.userArmy) ? currentZone.userArmy : {};
 	var destArmy = (destZone.userArmy) ? destZone.userArmy : {};
+	var restArmy = {};
 
 	for (var side in currentArmy) {
 		for (var group in currentArmy[side]) {
@@ -304,7 +318,7 @@ Game.Earth.retreat = function() {
 	}
 }
 
-Game.Earth.createPoll = function() {
+Game.Earth.createTurn = function() {
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
 	});
@@ -313,7 +327,7 @@ Game.Earth.createPoll = function() {
 		throw new Meteor.Error('Не установлена текущая зона');
 	}
 
-	// create poll
+	// create turn
 	var finishDate = new Date();
 	finishDate.setDate(new Date().getDate() + 1);
 	finishDate.setHours(18);
@@ -325,20 +339,13 @@ Game.Earth.createPoll = function() {
 		// Got enemy at current zone! Proceed battle or retreat?
 		var options = {
 			type: 'battle',
-			who: 'tilps',
-			name: 'Бой на ' + currentZone.name,
-			text: 'Что предпримем?',
-			options: {
-				battle: 'Продолжаем бой',
-				back: 'Отступаем'
-			},
-			startDate: Math.floor(new Date().valueOf() / 1000),
-			endDate: Math.floor(finishDate.valueOf() / 1000),
-			result: {
+			timeStart: Math.floor(new Date().valueOf() / 1000),
+			timeFinish: Math.floor(finishDate.valueOf() / 1000),
+			actions: {
 				battle: 0,
-				back: 0
+				retreat: 0
 			},
-			totalVotes: 0
+			users: []
 		};
 
 	} else {
@@ -349,58 +356,43 @@ Game.Earth.createPoll = function() {
 			isVisible: { $ne: true }
 		}).fetch();
 
-		var optionsList = {};
-		var resultList = {};
-
-		optionsList[ currentZone.name ] = 'Остаемся на ' + currentZone.name;
-		resultList[ currentZone.name ] = 0;
+		var actionsList = {};
+		actionsList[ currentZone.name ] = 0;
 
 		for (var i = 0; i < zonesAround.length; i++) {
-			var zone = zonesAround[i];
-			if (checkHasAliveUnits(zone.enemyArmy)) {
-				optionsList[ zone.name ] = 'Нападаем на ' + zone.name;
-			} else {
-				optionsList[ zone.name ] = 'Идем на ' + zone.name;
-			}
-			resultList[ zone.name ] = 0;
+			actionsList[ zonesAround[i].name ] = 0;
 		}
 
 		var options = {
-			type: 'battle',
-			who: 'tilps',
-			name: 'Движение с ' + currentZone.name,
-			text: 'Куда двинем?',
-			options: optionsList,
-			startDate: Math.floor(new Date().valueOf() / 1000),
-			endDate: Math.floor(finishDate.valueOf() / 1000),
-			result: resultList,
-			totalVotes: 0
+			type: 'move',
+			timeStart: Math.floor(new Date().valueOf() / 1000),
+			timeFinish: Math.floor(finishDate.valueOf() / 1000),
+			actions: actionsList,
+			users: []
 		};
 
 	}
 
-	// save poll
+	// Save turn
 	if (options) {
-		Game.Quiz.Collection.insert(options);
+		Game.EarthTurns.Collection.insert(options);
 	}
 }
 
-Game.Earth.checkPoll = function() {
-	var lastPoll = Game.Quiz.Collection.findOne({
-		type: 'battle'
-	}, {
-		sort: {endDate: -1}
-	});
+Game.Earth.checkTurn = function() {
+	var lastTurn = Game.EarthTurns.getLast();
 
-	if (!lastPoll) {
-		throw new Meteor.Error('Нет опросов по поводу битвы на земле');
+	if (!lastTurn) {
+		throw new Meteor.Error('Не создано ни одного хода');
 	}
 
-	if (lastPoll.name.indexOf('Движение') != -1) {
+	var turnResult = null;
+
+	if (lastTurn.type == 'move') {
 
 		var targetName = null;
-		for (var targetName in lastPoll.result) {
-			if (targetName == null || lastPoll.result[name] > lastPoll.result[targetName]) {
+		for (var targetName in lastTurn.actions) {
+			if (targetName == null || lastTurn.actions[name] > lastTurn.actions[targetName]) {
 				targetName = name;
 			}
 		}
@@ -412,8 +404,8 @@ Game.Earth.checkPoll = function() {
 		if (currentZone.name != targetName) {
 
 			// Move army and perform battle
-			Game.Point.moveArmy(targetName);
-			Game.Earth.performBattleAtZone(targetName);
+			Game.Earth.moveArmy(targetName);
+			turnResult = Game.Earth.performBattleAtZone(targetName);
 
 		} else {
 
@@ -439,26 +431,39 @@ Game.Earth.checkPoll = function() {
 					}, {
 						$set: { enemyArmy: enemyArmy }
 					});
-					
-					Game.Earth.performBattleAtZone(currentZone.name);
+
+					turnResult = Game.Earth.performBattleAtZone(currentZone.name);
 				}
 			}
 		}
 	} else {
 
 		// Retreat or fight?
-		if (lastPoll.result.battle > lastPoll.result.back) {
+		if (lastTurn.actions.battle > lastTurn.actions.retreat) {
 			var currentZone = Game.EarthZones.Collection.findOne({
 				isCurrent: true
 			});
-			Game.Earth.performBattleAtZone(currentZone.name);
+			turnResult = Game.Earth.performBattleAtZone(currentZone.name);
 		} else {
 			Game.Earth.retreat();
+			turnResult = 'retreat';
 		}
 
 	}
 
-	Game.Earth.createPoll();
+	// Save turn result
+	if (!turnResult) {
+		turnResult = 'idle';
+	}
+
+	Game.EarthTurns.Collection.update({
+		_id: lastTurn._id
+	}, {
+		$set: { result: turnResult }
+	});
+
+	// Create next turn
+	Game.Earth.createTurn();
 }
 
 /* TODO: Enable after test!
@@ -468,7 +473,7 @@ SyncedCron.add({
 		return parser.text('at 7:00pm every 1 day');
 	},
 	job: function() {
-		Game.Earth.checkPoll();
+		Game.Earth.checkTurn();
 	}
 });
 
@@ -479,6 +484,10 @@ Meteor.publish('zones', function () {
 	if (this.userId) {
 		return Game.EarthZones.Collection.find();
 	}
+});
+
+Meteor.publish('turns', function() {
+	return Game.EarthTurns.Collection.find()
 });
 
 }

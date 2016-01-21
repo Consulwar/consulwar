@@ -1,5 +1,8 @@
+initEarthServerMethods = function() {
+
 Meteor.methods({
-	sendReinforcement: function(units) {
+	'earth.sendReinforcement': function(units) {
+		// TODO: fix this method!
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -9,8 +12,6 @@ Meteor.methods({
 		if (user.blocked == true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
-
-		console.log('sendReinforcement: ', new Date(), user.login);
 
 		var armyNames = _.map(Game.Unit.items.army.ground, function(value, key) {
 			return key;
@@ -22,8 +23,6 @@ Meteor.methods({
 			}
 		}
 
-		Game.Point.initialize();
-
 		var currentValue = Game.Unit.getValue();
 
 		units = _.map(_.uniq(units), function(name) {
@@ -34,12 +33,15 @@ Meteor.methods({
 			}
 		});
 
-
-
 		if (units.length == 0) {
 			throw new Meteor.Error('Войска для отправки не выбраны');
 		}
 
+		// send reinforcements to current point
+		// TODO: Add units after delay!
+		Game.Earth.addReinforcement( { army: { ground: units } } );
+
+		// calculate and apply honor
 		var honor = 0;
 		for (var i = 0; i < units.length; i++) {
 			var count = units[i].count;
@@ -54,8 +56,6 @@ Meteor.methods({
 			Game.Unit.remove(units[i]);
 		}
 
-		Game.Point.addReinforcement(units);
-
 		Game.Resources.add({
 			honor: honor
 		})
@@ -63,3 +63,18 @@ Meteor.methods({
 		return honor;
 	}
 });
+
+// ----------------------------------------------------------------------------
+// Public methods only for development!
+// ----------------------------------------------------------------------------
+
+if (process.env.NODE_ENV == 'development') {
+	Meteor.methods({
+		'earth.importZones': Game.Earth.importZones,
+		'earth.linkZones': Game.Earth.linkZones,
+		'earth.unlinkZones': Game.Earth.unlinkZones,
+		'earth.nextTurn': Game.Earth.checkPoll
+	});
+}
+
+}

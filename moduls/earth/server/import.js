@@ -234,16 +234,4 @@ Game.Earth.unlinkZones = function(firstName, secondName) {
 	}
 }
 
-// ----------------------------------------------------------------------------
-// Public methods only for development!
-// ----------------------------------------------------------------------------
-
-if (process.env.NODE_ENV == 'development') {
-	Meteor.methods({
-		'earth.importZones': Game.Earth.importZones,
-		'earth.linkZones': Game.Earth.linkZones,
-		'earth.unlinkZones': Game.Earth.unlinkZones
-	});
-}
-
 }

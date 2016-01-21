@@ -68,7 +68,7 @@ Game.Earth.generateEnemyArmy = function() {
 
 Game.Earth.observeZone = function(name) {
 	if (!Game.Mutual.has('research', 'reccons')) {
-		return; // no recons!
+		throw new Meteor.Error('Нельзя разведать точки, еноты не изучены');
 	}
 
 	// get target zone
@@ -318,6 +318,38 @@ Game.Earth.retreat = function() {
 	}
 }
 
+Game.Earth.nextTurn = function() {
+	var currentZone = Game.EarthZones.Collection.findOne({
+		isCurrent: true
+	});
+
+	if (!currentZone) {
+		throw new Meteor.Error('Текущая зона не установлена');
+	}
+
+	var enemyZonesCount = Game.EarthZones.Collection.find({
+		isEnemy: true,
+		isVisible: true
+	}).count();
+
+	if (!currentZone.isEnemy && enemyZonesCount <= 0) {
+
+		// Only start zone is available, so try to observer nearby zones
+		if (Game.Mutual.has('research', 'reccons')) {
+			Game.Earth.observeZone(currentZone.name);
+			Game.Earth.createTurn();
+		} else {
+			console.log('Need mutual research recons!');
+		}
+
+	} else {
+
+		// There are enemy zones, perform turn
+		Game.Earth.checkTurn();
+
+	}
+}
+
 Game.Earth.createTurn = function() {
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
@@ -468,12 +500,12 @@ Game.Earth.checkTurn = function() {
 
 /* TODO: Enable after test!
 SyncedCron.add({
-	name: 'Проверка опросов и выполнение боевых действий',
+	name: 'Следующий ход битвы на земле',
 	schedule: function(parser) {
 		return parser.text('at 7:00pm every 1 day');
 	},
 	job: function() {
-		Game.Earth.checkTurn();
+		Game.Earth.nextTurn();
 	}
 });
 
@@ -489,5 +521,7 @@ Meteor.publish('zones', function () {
 Meteor.publish('turns', function() {
 	return Game.EarthTurns.Collection.find()
 });
+
+initEarthServerMethods();
 
 }

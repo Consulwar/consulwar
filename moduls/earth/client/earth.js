@@ -222,12 +222,13 @@ Template.earthZonePopup.events({
 // ZONE VIEW
 // ----------------------------------------------------------------------------
 
-var ZoneView = function(mapView, zone) {
+var ZoneView = function(mapView, zoneData) {
 	this.id = null;
 	this.name = null;
 	this.x = 0;
 	this.y = 0;
 
+	var zone = zoneData;
 	var iconSize = 50;
 	var lines = null;
 	var polygon = null;
@@ -243,20 +244,11 @@ var ZoneView = function(mapView, zone) {
 		polygon = L.GeoJSON.geometryToLayer({
 			type: 'Feature',
 			geometry: zone.geometry
-		}).addTo(mapView);
-
-		mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
-		mapBounds.extend(L.latLng(polygon.getBounds().getNorthEast()));
+		});
 
 		var polygonCenter = polygon.getBounds().getCenter();
 		this.x = polygonCenter.lat;
 		this.y = polygonCenter.lng;
-
-		if (zone.isEnemy) {
-			polygon.bringToBack();
-		} else {
-			polygon.bringToFront();
-		}
 
 		var ourStyle = {
 			color: '#374a60',
@@ -317,24 +309,7 @@ var ZoneView = function(mapView, zone) {
 					iconAnchor: [iconSize / 2, iconSize / 2]
 				})
 			}
-		).addTo(mapView);
-
-		element = $(marker._icon);
-
-		if (zone.isEnemy) {
-			element.addClass('earth-marker-enemy');
-			element.removeClass('earth-marker-our');
-		} else {
-			element.removeClass('earth-marker-enemy');
-			element.addClass('earth-marker-our');
-		}
-
-		element.append('<canvas></canvas>');
-		canvasElement = $(element.find('canvas'));
-		
-		// events
-		mapView.on('zoomend', this.refreshZoom.bind(this));
-		this.refreshZoom();
+		);
 
 		// debug
 		marker.on('click', function(e) { console.log(zone.name); });
@@ -342,7 +317,63 @@ var ZoneView = function(mapView, zone) {
 		marker.on('mouseout', this.hideConnections.bind(this));
 	}
 
+	this.update = function() {
+		zone = Game.EarthZones.getByName(this.name);
+
+		if (zone.isVisible) {
+
+			// extend map bounds
+			if (mapBounds) {
+				mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
+				mapBounds.extend(L.latLng(polygon.getBounds().getNorthEast()));
+			} else {
+				mapBounds = polygon.getBounds();
+			}
+
+			if (mapBounds) {
+				mapView.setMaxBounds(mapBounds);
+				mapView.fitBounds(mapBounds);
+			}
+
+			// show on map
+			polygon.addTo(mapView);
+			marker.addTo(mapView);
+
+			element = $(marker._icon);
+			element.html('<canvas></canvas>');
+			canvasElement = $(element.find('canvas'));
+
+			if (zone.isEnemy) {
+				polygon.bringToBack();
+				element.addClass('earth-marker-enemy');
+				element.removeClass('earth-marker-our');
+			} else {
+				polygon.bringToFront();
+				element.removeClass('earth-marker-enemy');
+				element.addClass('earth-marker-our');
+			}
+
+			mapView.on('zoomend', this.refreshZoom.bind(this));
+			this.refreshZoom();
+
+		} else {
+
+			// remove from map
+			if (mapView.hasLayer(polygon)) {
+				mapView.removeLayer(polygon);
+			}
+			if (mapView.hasLayer(marker)) {
+				mapView.removeLayer(marker);
+			}
+
+		}
+	}
+
 	this.refreshZoom = function() {
+		if (!zone || !zone.isVisible) {
+			return;
+		}
+
 		var zoom = mapView.getZoom();
 		var k = Math.pow(2, (zoom - 4));
 
@@ -367,7 +398,7 @@ var ZoneView = function(mapView, zone) {
 	}
 
 	this.showConnections = function() {
-		if (!zone || !zone.links) {
+		if (!zone || !zone.links || !zone.isVisible) {
 			return;
 		}
 
@@ -431,6 +462,10 @@ var ZoneView = function(mapView, zone) {
 		canvas.height = size;
 
 		var context = canvas.getContext('2d');
+		if (!context) {
+			return;
+		}
+
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		var x = canvas.width / 2;
@@ -468,17 +503,16 @@ var ZoneView = function(mapView, zone) {
 	this.hideProgress = function() {
 		canvasElement.hide();
 		var canvas = canvasElement[0];
+
 		var context = canvas.getContext('2d');
+		if (!context) {
+			return;
+		}
+
 		context.clearRect(0, 0, canvas.width, canvas.height);
 	}
 
 	this.constructor();
-}
-
-var createZone = function(name, zone) {
-	if (mapView && zoneViews) {
-		zoneViews[ name ] = new ZoneView(mapView, zone);
-	}
 }
 
 // ----------------------------------------------------------------------------
@@ -510,15 +544,24 @@ Template.earth.onRendered(function() {
 		accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
 	}).addTo(mapView);
 
-	mapBounds = L.latLngBounds(L.latLng(0, 0), L.latLng(0, 0));
-
+	// create existing zones
 	var zones = Game.EarthZones.getAll().fetch();
 	for (var i = 0; i < zones.length; i++) {
-		createZone( zones[i].name, zones[i] );
+		if (mapView && zoneViews) {
+			zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
+			zoneViews[ zones[i].name ].update();
+		}
 	}
 
-	mapView.setMaxBounds(mapBounds);
-	mapView.fitBounds(mapBounds);
+	// track db updates
+	Game.EarthZones.getAll().observeChanges({
+		changed: function(id, fields) {
+			var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
+			if (mapView && zoneViews && zoneViews[ name ]) {
+				zoneViews[ name ].update();
+			}
+		}
+	});
 })
 
 Template.earth.onDestroyed(function() {

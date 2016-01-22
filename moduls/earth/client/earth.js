@@ -104,9 +104,6 @@ Template.reserve.events({
 // ----------------------------------------------------------------------------
 
 Game.Earth.showZoneInfo = function(name) {
-
-	var name = this.params.name;
-
 	Router.current().render('earthZoneInfo', {
 		to: 'earthZoneInfo',
 		data: {
@@ -209,7 +206,7 @@ Template.earthZonePopup.events({
 	},
 
 	'click .btn-attack': function(e, t) {
-		// TODO: Attack zone!
+		Meteor.call('earth.voteAction', t.data.name);
 	},
 
 	'click .btn-reinforce': function(e, t) {
@@ -313,8 +310,6 @@ var ZoneView = function(mapView, zoneData) {
 
 		// debug
 		marker.on('click', function(e) { console.log(zone.name); });
-		marker.on('mouseover', this.showConnections.bind(this));
-		marker.on('mouseout', this.hideConnections.bind(this));
 	}
 
 	this.update = function() {
@@ -392,58 +387,12 @@ var ZoneView = function(mapView, zoneData) {
 		if (zoom < 5) {
 			this.hideProgress();
 		} else {
-			// TODO: Get real info!
-			this.showProgress(50, 75, iconSize * k);
-		}
-	}
-
-	this.showConnections = function() {
-		if (!zone || !zone.links || !zone.isVisible) {
-			return;
-		}
-
-		for (var i = 0; i < zone.links.length; i++) {
-			var zoneView = zoneViews[ zone.links[i] ];
-			if (zoneView) {
-				// create line
-				var lineView = new L.Polyline([], {
-					color: '#4a82c4',
-					weight: 3,
-					smoothFactor: 1
-				}).addTo(mapView);
-				lineView.addLatLng(L.latLng(this.x, this.y));
-				lineView.addLatLng(L.latLng(zoneView.x, zoneView.y));
-
-				// create line text
-				var lineText = new L.marker([
-					Math.min(this.x, zoneView.x) + Math.abs(this.x - zoneView.x) / 2,
-					Math.min(this.y, zoneView.y) + Math.abs(this.y - zoneView.y) / 2
-				], {
-					icon: L.divIcon({
-						className: 'earth-marker-connection-text'
-					})
-				}).addTo(mapView);
-
-				$(lineText._icon).append('<p>' + Math.round( Math.random() * 50 + 10 ) + '%</p>');
-
-				lineView.lineText = lineText;
-
-				// store line inside array
-				if (!lines) {
-					lines = [];
-				}
-				lines.push(lineView);
-			}
-		}
-	}
-
-	this.hideConnections = function() {
-		if (lines) {
-			for (var i = 0; i < lines.length; i++) {
-				mapView.removeLayer( lines[i].lineText );
-				mapView.removeLayer( lines[i] );
-			}
-			lines = null;
+			// ---------------------------------------
+			// TODO: Как считать заполненность шкалы?!
+			var humans = (zone.userArmy) ? 100 : 0;
+			var reptiles = (zone.enemyArmy) ? 100 : 0;
+			// ---------------------------------------
+			this.showProgress(humans, reptiles, iconSize * k);
 		}
 	}
 
@@ -516,12 +465,72 @@ var ZoneView = function(mapView, zoneData) {
 }
 
 // ----------------------------------------------------------------------------
-// MAIN
+// Line view
+// ----------------------------------------------------------------------------
+
+var LineView = function(start, finish) {
+
+	var line = null;
+	var text = null;
+	var textElement = null;
+
+	this.constructor = function() {
+		// create line
+		line = new L.Polyline([], {
+			color: '#4a82c4',
+			weight: 3,
+			smoothFactor: 1
+		}).addTo(mapView);
+		line.addLatLng(L.latLng(start.x, start.y));
+		line.addLatLng(L.latLng(finish.x, finish.y));
+
+		// create line text
+		text = new L.marker([
+			Math.min(start.x, finish.x) + Math.abs(start.x - finish.x) / 2,
+			Math.min(start.y, finish.y) + Math.abs(start.y - finish.y) / 2
+		], {
+			icon: L.divIcon({
+				className: 'earth-marker-connection-text'
+			})
+		}).addTo(mapView);
+
+		textElement = $(text._icon);
+	}
+
+	this.update = function(value) {
+		if (textElement) {
+			textElement.html('<p>' + value + '</p>');
+		}
+	}
+
+	this.remove = function() {
+		if (line) {
+			if (mapView && mapView.hasLayer(line)) {
+				mapView.removeLayer(line);
+			}
+			line = null;
+		}
+
+		if (text) {
+			if (mapView && mapView.hasLayer(text)) {
+				mapView.removeLayer(text);
+			}
+			text = null;
+			textElement = null;
+		}
+	}
+
+	this.constructor();
+}
+
+// ----------------------------------------------------------------------------
+// Main
 // ----------------------------------------------------------------------------
 
 var mapView = null;
 var mapBounds = null;
 var zoneViews = {};
+var lineViews = {};
 
 Template.earth.onRendered(function() {
 
@@ -562,12 +571,50 @@ Template.earth.onRendered(function() {
 			}
 		}
 	});
+
+	// show turn lines and track db updates
+	this.autorun(function() {
+		for (var key in lineViews) {
+			lineViews[ key ].remove();
+		}
+
+		var turn = Game.EarthTurns.getLast();
+		if (!turn || turn.type != 'move') {
+			return;
+		}
+
+		var currentZone = Game.EarthZones.getCurrent();
+		if (!currentZone) {
+			return;
+		}
+
+		for (var name in turn.actions) {
+			if (name == currentZone.name) {
+				continue;
+			}
+
+			var start = zoneViews[ currentZone.name ];
+			var finish = zoneViews[ name ];
+
+			if (!start || !finish) {
+				continue;
+			}
+
+			var value = (turn.totalVotePower > 0)
+				? (turn.actions[name] / turn.totalVotePower) * 100
+				: 0;
+
+			lineViews[ name ] = new LineView(start, finish);
+			lineViews[ name ].update( Math.round(value) + '%' );
+		}
+	});
 })
 
 Template.earth.onDestroyed(function() {
 	mapView = null;
 	mapBounds = null;
 	zoneViews = {};
+	lineViews = {};
 })
 
 Template.earth.helpers({

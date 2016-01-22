@@ -12,7 +12,13 @@ Game.EarthZones = {
 	getByName: function(name) {
 		return Game.EarthZones.Collection.findOne({
 			name: name
-		})
+		});
+	},
+
+	getCurrent: function() {
+		return Game.EarthZones.Collection.findOne({
+			isCurrent: true
+		});
 	}
 };
 

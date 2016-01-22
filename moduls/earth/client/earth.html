@@ -11,17 +11,18 @@
 			class="point-popup" 
 			style="left: {{position.x}}px; top: {{position.y}}px;"
 		>
-			<h2 class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
+			<h2 title="{{info.name}}" class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
 				{{info.name}}
 			</h2>
 			<a class="btn-info">Информация</a>
 			{{#if info.isEnemy}}
 				<a class="btn-attack">В атаку</a>
-				<p class="text-ours">Ваш голос: {{info.vote}}</p>
-				<p>Консулов: {{info.consuls}}</p>
 			{{else}}
+				<a class="btn-attack">Ждем</a>
 				<a class="btn-reinforce">Подкрепление</a>
 			{{/if}}
+			<p class="text-ours">Ваш голос: {{info.vote}}</p>
+			<p>Консулов: {{info.consuls}}</p>
 		</div>
 	{{/if}}
 </template>

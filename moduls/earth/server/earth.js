@@ -290,7 +290,7 @@ Game.Earth.retreat = function() {
 	// get zone for retreat
 	var retreatZone = Game.EarthZones.Collection.findOne({
 		name: { $in: zone.links },
-		isVisible: { $ne: true },
+		isVisible: { $ne: false },
 		isEnemy: { $ne: true }
 	});
 
@@ -309,6 +309,7 @@ Game.Earth.retreat = function() {
 	// if no retreat zone, make first found user zone current
 	if (!retreatZone) {
 		Game.EarthZones.Collection.update({
+			isVisible: { $ne: false },
 			isEnemy: { $ne: true }
 		}, {
 			$set: {
@@ -385,7 +386,7 @@ Game.Earth.createTurn = function() {
 		// No enemy at current zone! What we gonna do?
 		var zonesAround = Game.EarthZones.Collection.find({
 			name: { $in: currentZone.links },
-			isVisible: { $ne: true }
+			isVisible: { $ne: false }
 		}).fetch();
 
 		var actionsList = {};

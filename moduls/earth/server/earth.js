@@ -12,7 +12,7 @@ Game.Earth.addReinforcement = function(units) {
 		throw new Meteor.Error('Не установлена текущая зона');
 	}
 
-	var currentUnits = (currentZone.userArmy) ? currentZone.userArmy : {};
+	var currentUnits = currentZone.userArmy;
 
 	for (var side in units) {
 		for (var group in units[side]) {
@@ -24,6 +24,9 @@ Game.Earth.addReinforcement = function(units) {
 					continue;
 				}
 
+				if (!currentUnits) {
+					currentUnits = {};
+				}
 				if (!currentUnits[side]) {
 					currentUnits[side] = {};
 				}
@@ -103,19 +106,6 @@ Game.Earth.observeZone = function(name) {
 	}
 }
 
-var checkHasAliveUnits = function(units) {
-	for (var side in units) {
-		for (var group in units[side]) {
-			for (var name in units[side][group]) {
-				if (units[side][group][name] > 0) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 Game.Earth.performBattleAtZone = function(name, options) {
 	var zone = Game.EarthZones.Collection.findOne({
 		name: name
@@ -125,11 +115,7 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		throw new Meteor.Error('Зона с именем ' + name + ' не найдена');
 	}
 
-	if (!zone.userArmy
-	 && !zone.enemyArmy
-	 && !checkHasAliveUnits( zone.userArmy )
-	 && !checkHasAliveUnits( zone.enemyArmy )
-	) {
+	if (!zone.userArmy && !zone.enemyArmy) {
 		return null; // No need to fight!
 	}
 
@@ -212,46 +198,54 @@ Game.Earth.moveArmy = function(destination) {
 	];
 
 	// move units
-	var currentArmy = (currentZone.userArmy) ? currentZone.userArmy : {};
-	var destArmy = (destZone.userArmy) ? destZone.userArmy : {};
-	var restArmy = {};
+	var currentArmy = currentZone.userArmy;
+	var destArmy = destZone.userArmy;
+	var restArmy = null;
 
-	for (var side in currentArmy) {
-		for (var group in currentArmy[side]) {
-			for (var name in currentArmy[side][group]) {
+	if (currentArmy) {
+		for (var side in currentArmy) {
+			for (var group in currentArmy[side]) {
+				for (var name in currentArmy[side][group]) {
 
-				var count = parseInt( currentArmy[side][group][name], 10 );
+					var count = parseInt( currentArmy[side][group][name], 10 );
 
-				if (count <= 0) {
-					continue;
+					if (count <= 0) {
+						continue;
+					}
+
+					if (stationaryUnits.indexOf(side + '.' + group + '.' + name) >= 0) {
+						// stay on current point
+						if (!restArmy) {
+							restArmy = {};
+						}
+						if (!restArmy[side]) {
+							restArmy[side] = {};
+						}
+						if (!restArmy[side][group]) {
+							restArmy[side][group] = {};
+						}
+
+						restArmy[side][group].name = count;
+
+					} else {
+						// move
+						if (!destArmy) {
+							restArmy = {};
+						}
+						if (!destArmy[side]) {
+							destArmy[side] = {};
+						}
+						if (!destArmy[side][group]) {
+							destArmy[side][group] = {};
+						}
+						if (!destArmy[side][group][name]) {
+							destArmy[side][group][name] = 0;
+						}
+
+						destArmy[side][group][name] += count;
+					}
+
 				}
-
-				if (stationaryUnits.indexOf(side + '.' + group + '.' + name) >= 0) {
-					// stay on current point
-					if (!restArmy[side]) {
-						restArmy[side] = {};
-					}
-					if (!restArmy[side][group]) {
-						restArmy[side][group] = {};
-					}
-
-					restArmy[side][group].name = count;
-
-				} else {
-					// move
-					if (!destArmy[side]) {
-						destArmy[side] = {};
-					}
-					if (!destArmy[side][group]) {
-						destArmy[side][group] = {};
-					}
-					if (!destArmy[side][group][name]) {
-						destArmy[side][group][name] = 0;
-					}
-
-					destArmy[side][group][name] += count;
-				}
-
 			}
 		}
 	}
@@ -303,7 +297,7 @@ Game.Earth.retreat = function() {
 	Game.EarthZones.Collection.update({
 		name: currentZone.name
 	}, {
-		$set: { userArmy: {} }
+		$set: { userArmy: null }
 	});
 
 	// if no retreat zone, make first found user zone current
@@ -367,7 +361,7 @@ Game.Earth.createTurn = function() {
 	finishDate.setMinutes(55);
 	finishDate.setSeconds(0);
 
-	if (checkHasAliveUnits(currentZone.enemyArmy)) {
+	if (currentZone.enemyArmy) {
 
 		// Got enemy at current zone! Proceed battle or retreat?
 		var options = {

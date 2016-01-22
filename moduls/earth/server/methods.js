@@ -24,7 +24,7 @@ Meteor.methods({
 			throw new Meteor.Error('Вы уже голосовали в этом ходу');
 		}
 
-		if (!lastTurn.actions[ actionName ]) {
+		if (lastTurn.actions[ actionName ] == undefined) {
 			throw new Meteor.Error('Нет такого действия в этом ходу');
 		}
 
@@ -35,6 +35,7 @@ Meteor.methods({
 		// save vote
 		lastTurn.users.push(user._id);
 		lastTurn.actions[ actionName ] += votePower;
+		lastTurn.totalVotePower += votePower;
 
 		Game.EarthTurns.Collection.update({
 			_id: lastTurn._id
@@ -113,7 +114,23 @@ if (process.env.NODE_ENV == 'development') {
 		'earth.importZones': Game.Earth.importZones,
 		'earth.linkZones': Game.Earth.linkZones,
 		'earth.unlinkZones': Game.Earth.unlinkZones,
-		'earth.nextTurn': Game.Earth.nextTurn
+		'earth.nextTurn': Game.Earth.nextTurn,
+
+		'earth.voteActionDev': function(actionName, votePower) {
+			var lastTurn = Game.EarthTurns.getLast();
+			var votePower = votePower || 1;
+
+			if (!lastTurn || lastTurn.actions[ actionName ] == undefined) {
+				return;
+			}
+			
+			lastTurn.actions[ actionName ] += votePower;
+			lastTurn.totalVotePower += votePower;
+
+			Game.EarthTurns.Collection.update({
+				_id: lastTurn._id
+			}, lastTurn);
+		}
 	});
 }
 

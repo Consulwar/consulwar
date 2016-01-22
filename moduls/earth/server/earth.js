@@ -340,7 +340,11 @@ Game.Earth.nextTurn = function() {
 	} else {
 
 		// There are enemy zones, perform turn
-		Game.Earth.checkTurn();
+		if (Game.EarthTurns.getLast()) {
+			Game.Earth.checkTurn();
+		} else {
+			Game.Earth.createTurn();
+		}
 
 	}
 }
@@ -372,6 +376,7 @@ Game.Earth.createTurn = function() {
 				battle: 0,
 				retreat: 0
 			},
+			totalVotePower: 0,
 			users: []
 		};
 
@@ -395,6 +400,7 @@ Game.Earth.createTurn = function() {
 			timeStart: Math.floor(new Date().valueOf() / 1000),
 			timeFinish: Math.floor(finishDate.valueOf() / 1000),
 			actions: actionsList,
+			totalVotePower: 0,
 			users: []
 		};
 

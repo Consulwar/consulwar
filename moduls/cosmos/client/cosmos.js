@@ -9,6 +9,7 @@ Meteor.subscribe('spaceEvents');
 // TODO: Подумать что делать с этими двумя переменными!
 var mapView = null;
 var pathViews = {};
+var observerSpaceEvents = null;
 
 Game.Cosmos.showPage = function() {
 	this.render('cosmos', {
@@ -304,6 +305,9 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 Template.cosmosShipInfo.onRendered(function() {
 	// show fleets info when ship removed
 	this.autorun(function() {
+		if (!mapView) {
+			return;
+		}
 		var id = Template.currentData().id;
 		var spaceEvent = Game.SpaceEvents.getOne( id );
 		if (!spaceEvent) {
@@ -641,8 +645,8 @@ Template.cosmos.onRendered(function() {
 
 	// Paths
 	var createPath = function(id, event) {
-		if (pathViews[id]) {
-			return; // already created
+		if (!mapView || pathViews[id]) {
+			return;
 		}
 
 		// calc offsets
@@ -678,13 +682,13 @@ Template.cosmos.onRendered(function() {
 	}
 
 	var removePath = function(id) {
-		if (pathViews[id]) {
+		if (mapView && pathViews[id]) {
 			pathViews[id].remove();
 			pathViews[id] = null;
 		}
 	}
 
-	Game.SpaceEvents.getAll().observeChanges({
+	observerSpaceEvents = Game.SpaceEvents.getAll().observeChanges({
 		added: function(id, event) {
 			if (event.type == Game.SpaceEvents.type.SHIP) {
 				createPath(id, event);
@@ -693,7 +697,9 @@ Template.cosmos.onRendered(function() {
 				Tracker.autorun(function(c) {
 					if (event.timeEnd <= Session.get('serverTime')) {
 						c.stop();
-						Meteor.call('spaceEvents.update', id);
+						if (mapView) {
+							Meteor.call('spaceEvents.update', id);
+						}
 					}
 				});
 			}
@@ -898,9 +904,20 @@ Template.cosmos.onRendered(function() {
 });
 
 Template.cosmos.onDestroyed(function() {
-	// TODO: Maybe clear map or event listeners?!
-	mapView = null;
+	Game.Cosmos.hidePlanetPopup();
+	Game.Cosmos.hideAttackMenu();
+
+	if (observerSpaceEvents) {
+		observerSpaceEvents.stop();
+		observerSpaceEvents = null;
+	}
+
 	pathViews = {};
+
+	if (mapView) {
+		mapView.remove();
+		mapView = null;
+	}
 });
 
 Template.cosmos.helpers({

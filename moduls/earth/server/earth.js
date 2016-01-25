@@ -50,20 +50,45 @@ Game.Earth.addReinforcement = function(units) {
 }
 
 Game.Earth.generateEnemyArmy = function() {
-	// TODO: Write correct implementation!
+	// count online players
+	var players = Meteor.users.find({
+		'status.lastLogin.date': {
+			$gt: new Date((new Date()).setDate((new Date()).getDate() - 3))
+		},
+		'rating': {
+			$gt: 24999
+		}
+	}).count();
+
+	// count difficulty modifier
+	var visibleZones = Game.EarthZones.Collection.find({
+		isVisible: true
+	}).count();
+
+	// each 5 visible zones = 1 difficulty level
+	var level = Math.round(visibleZones / 5);
+	if (level < 1) {
+		level = 1; // min level
+	} else if (level > 8) {
+		level = 8; // max level
+	}
+
+	var difficulty = Math.pow(1.5, level);
+
+	// generate units
 	return {
 		reptiles: {
 			ground: {
-				striker: Game.Random.interval(1000, 2000),
-				ripper: Game.Random.interval(900, 1800),
-				horror: Game.Random.interval(10, 20),
-				slider: Game.Random.interval(8, 16),
-				breaker: Game.Random.interval(12, 24),
-				crusher: Game.Random.interval(1, 2),
-				geccon: Game.Random.interval(3, 6),
-				amfizben: Game.Random.interval(20, 40),
-				amphibian: Game.Random.interval(14, 28),
-				chipping: Game.Random.interval(1, 2)
+				striker: Math.floor( 1000 * players * difficulty ),
+				ripper: Game.Random.interval(900 * players * difficulty ),
+				horror: Game.Random.interval(10 * players * difficulty ),
+				slider: Game.Random.interval(8 * players * difficulty ),
+				breaker: Game.Random.interval(12 * players * difficulty ),
+				crusher: Game.Random.interval(1 * players * difficulty ),
+				geccon: Game.Random.interval(3 * players * difficulty ),
+				amfizben: Game.Random.interval(20 * players * difficulty ),
+				amphibian: Game.Random.interval(14 * players * difficulty ),
+				chipping: Game.Random.interval(1 * players * difficulty )
 			}
 		}
 	};
@@ -446,23 +471,62 @@ Game.Earth.checkTurn = function() {
 			// Enemy can attack (chance 1/3)
 			if (Game.Random.interval(1, 99) <= 33) {
 
-				// TODO: Get enemy army at near point! (exclude reptiles.ground.chipping unit)
-				var enemyArmy = {
-					reptiles: {
-						ground: {
-							striker: Game.Random.interval(100, 200),
-							ripper: Game.Random.interval(50, 100),
-							horror: Game.Random.interval(5, 10),
-							slider: Game.Random.interval(2, 4)
+				// find near enemy zone
+				var nearZone = Game.EarthZones.Collection.findOne({
+					name: { $in: zone.links },
+					isVisible: true,
+					isEnemy: true,
+					userArmy: null,
+					enemyArmy: { $ne: null }
+				});
+
+				// get 10 - 50 % of enemy army
+				var attackArmy = null;
+
+				if (nearZone) {
+					var k = Game.Random.interval(10, 50) / 100;
+					var enemyArmy = nearZone.enemyArmy;
+					
+					for (var side in enemyArmy) {
+						for (var group in enemyArmy[side]) {
+							for (var name in enemyArmy[side][group]) {
+								// skip reptiles groun chipping
+								if (side == 'reptiles'
+								 && group == 'ground'
+								 && name == 'chipping'
+								) {
+									continue;
+								}
+
+								var count = parseInt( enemyArmy[side][group][name], 10 );
+								count = Math.floor( count * k );
+
+								if (count <= 0) {
+									continue;
+								}
+
+								if (!attackArmy) {
+									attackArmy = {};
+								}
+								if (!attackArmy[side]) {
+									attackArmy[side] = {};
+								}
+								if (!attackArmy[side][group]) {
+									attackArmy[side][group] = {};
+								}
+
+								attackArmy[side][group][name] = count;
+							}
 						}
-					}
+					}	
 				}
 
-				if (enemyArmy) {
+				// attack
+				if (attackArmy) {
 					Game.EarthZones.update({
 						name: currentZone.name
 					}, {
-						$set: { enemyArmy: enemyArmy }
+						$set: { enemyArmy: attackArmy }
 					});
 
 					turnResult = Game.Earth.performBattleAtZone(currentZone.name);

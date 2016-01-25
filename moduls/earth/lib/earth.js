@@ -52,7 +52,7 @@ Game.EarthTurns = {
 
 	getLast: function() {
 		return Game.EarthTurns.Collection.findOne({}, {
-			sort: { timeEnd: -1 }
+			sort: { timeStart: -1 }
 		});
 	}
 }

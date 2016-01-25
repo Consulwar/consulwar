@@ -60,6 +60,10 @@ Game.Earth.generateEnemyArmy = function() {
 		}
 	}).count();
 
+	if (players < 1) {
+		players = 1;
+	}
+
 	// count difficulty modifier
 	var visibleZones = Game.EarthZones.Collection.find({
 		isVisible: true
@@ -80,15 +84,15 @@ Game.Earth.generateEnemyArmy = function() {
 		reptiles: {
 			ground: {
 				striker: Math.floor( 1000 * players * difficulty ),
-				ripper: Game.Random.interval(900 * players * difficulty ),
-				horror: Game.Random.interval(10 * players * difficulty ),
-				slider: Game.Random.interval(8 * players * difficulty ),
-				breaker: Game.Random.interval(12 * players * difficulty ),
-				crusher: Game.Random.interval(1 * players * difficulty ),
-				geccon: Game.Random.interval(3 * players * difficulty ),
-				amfizben: Game.Random.interval(20 * players * difficulty ),
-				amphibian: Game.Random.interval(14 * players * difficulty ),
-				chipping: Game.Random.interval(1 * players * difficulty )
+				ripper: Math.floor( 900 * players * difficulty ),
+				horror: Math.floor( 10 * players * difficulty ),
+				slider: Math.floor( 8 * players * difficulty ),
+				breaker: Math.floor( 12 * players * difficulty ),
+				crusher: Math.floor( 1 * players * difficulty ),
+				geccon: Math.floor( 3 * players * difficulty ),
+				amfizben: Math.floor( 20 * players * difficulty ),
+				amphibian: Math.floor( 14 * players * difficulty ),
+				chipping: Math.floor( 1 * players * difficulty )
 			}
 		}
 	};
@@ -255,7 +259,7 @@ Game.Earth.moveArmy = function(destination) {
 					} else {
 						// move
 						if (!destArmy) {
-							restArmy = {};
+							destArmy = {};
 						}
 						if (!destArmy[side]) {
 							destArmy[side] = {};
@@ -308,8 +312,8 @@ Game.Earth.retreat = function() {
 
 	// get zone for retreat
 	var retreatZone = Game.EarthZones.Collection.findOne({
-		name: { $in: zone.links },
-		isVisible: { $ne: false },
+		name: { $in: currentZone.links },
+		isVisible: true,
 		isEnemy: { $ne: true }
 	});
 
@@ -328,7 +332,7 @@ Game.Earth.retreat = function() {
 	// if no retreat zone, make first found user zone current
 	if (!retreatZone) {
 		Game.EarthZones.Collection.update({
-			isVisible: { $ne: false },
+			isVisible: true,
 			isEnemy: { $ne: true }
 		}, {
 			$set: {
@@ -384,19 +388,12 @@ Game.Earth.createTurn = function() {
 	}
 
 	// create turn
-	var finishDate = new Date();
-	finishDate.setDate(new Date().getDate() + 1);
-	finishDate.setHours(18);
-	finishDate.setMinutes(55);
-	finishDate.setSeconds(0);
-
 	if (currentZone.enemyArmy) {
 
 		// Got enemy at current zone! Proceed battle or retreat?
 		var options = {
 			type: 'battle',
 			timeStart: Math.floor(new Date().valueOf() / 1000),
-			timeFinish: Math.floor(finishDate.valueOf() / 1000),
 			actions: {
 				battle: 0,
 				retreat: 0
@@ -423,7 +420,6 @@ Game.Earth.createTurn = function() {
 		var options = {
 			type: 'move',
 			timeStart: Math.floor(new Date().valueOf() / 1000),
-			timeFinish: Math.floor(finishDate.valueOf() / 1000),
 			actions: actionsList,
 			totalVotePower: 0,
 			users: []
@@ -449,7 +445,7 @@ Game.Earth.checkTurn = function() {
 	if (lastTurn.type == 'move') {
 
 		var targetName = null;
-		for (var targetName in lastTurn.actions) {
+		for (var name in lastTurn.actions) {
 			if (targetName == null || lastTurn.actions[name] > lastTurn.actions[targetName]) {
 				targetName = name;
 			}
@@ -473,7 +469,7 @@ Game.Earth.checkTurn = function() {
 
 				// find near enemy zone
 				var nearZone = Game.EarthZones.Collection.findOne({
-					name: { $in: zone.links },
+					name: { $in: currentZone.links },
 					isVisible: true,
 					isEnemy: true,
 					userArmy: null,
@@ -523,7 +519,7 @@ Game.Earth.checkTurn = function() {
 
 				// attack
 				if (attackArmy) {
-					Game.EarthZones.update({
+					Game.EarthZones.Collection.update({
 						name: currentZone.name
 					}, {
 						$set: { enemyArmy: attackArmy }

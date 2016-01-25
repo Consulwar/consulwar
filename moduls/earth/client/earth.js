@@ -38,9 +38,10 @@ Template.reserve.helpers({
 		return _.map(Game.Unit.items.army.ground, function(val, key) {
 			return {
 				engName: key,
-				count: val.currentLevel()
+				max: val.currentLevel(),
+				count: 0
 			}
-		})
+		});
 	},
 
 	honor: function() {
@@ -49,55 +50,71 @@ Template.reserve.helpers({
 });
 
 Template.reserve.events({
-	'click .items li': function(e, t) {
-		if (!$(e.currentTarget).hasClass('disabled')) {
-			$(e.currentTarget).toggleClass('active');
+	'click .select_all': function(e, t) {
+		$('.units li').each(function(index, element) {
+			var max = Number( $(element).attr('data-max') );
+			$(element).find('.count').val( max );
+			$(element).find('.count').change();
+		});
+	},
 
-			var current = $(e.currentTarget).find('div')[0];
-			var name = current.className;
-			var count = current.dataset.count;
-			var honor = t.data.honor.get();
-				
-			if (['hbhr', 'lost'].indexOf(name) != -1) {
-				honor += Game.Resources.calculateHonorFromReinforcement(game.army.heroes[name].price(count))
-				       * ($(e.currentTarget).hasClass('active') ? 1 : -1 );
-			} else {
-				honor += Game.Resources.calculateHonorFromReinforcement(game.army.ground[name].price(count))
-				       * ($(e.currentTarget).hasClass('active') ? 1 : -1 );
+	'change .units input': function (e, t) {
+		var value = parseInt( e.currentTarget.value );
+		var max = parseInt( $(e.currentTarget.parentElement).attr('data-max') );
+
+		if (value < 0) {
+			e.currentTarget.value = 0;
+		} else if (value > max) {
+			e.currentTarget.value = max;
+		}
+
+		// recalculate honor
+		var honor = 0;
+
+		$('.units li').each(function(index, element) {
+			var id = $(element).attr('data-id');
+			var max = parseInt( $(element).attr('data-max') );
+			var count = parseInt( $(element).find('.count').val() );
+
+			if (max < count) {
+				count = max;
 			}
 
-			t.data.honor.set(honor);
-		}
-	},
-
-	'click .select_all': function() {
-		$('.items li:not(.disabled,.active)').click();
-	},
-
-	'click .send_reinforcement': function() {
-		Game.Earth.hideReserveMenu();
-		// TODO: Send!
-		/*
-		var active = $('.reserve .active div');
-		var units = [];
-		for (var i = 0; i < active.length; i++) {
-			var name = active[i].className;
-			
-			units.push(name);
-		}
-
-		$('.reserve .active').removeClass('active');
-		Session.set('SendToReserve', 0);
-
-		Meteor.call('sendReinforcement', units, function(err, result) {
-			if (err) {
-				Notifications.error(err);
-			} else {
-				Notifications.info('Получено ' + result + ' чести', 'Замечательно!');
-				Session.set('honor', 0);
+			if (count > 0) {
+				honor += Game.Resources.calculateHonorFromReinforcement(
+					Game.Unit.items.army.ground[id].price(count)
+				);
 			}
 		});
-		*/
+
+		t.data.honor.set(honor);
+	},
+
+	'click .send_reinforcement': function(e, t) {
+		var total = 0;
+		var units = {};
+
+		$('.units li').each(function(index, element) {
+			var id = $(element).attr('data-id');
+			var max = parseInt( $(element).attr('data-max') );
+			var count = parseInt( $(element).find('.count').val() );
+
+			if (max > 0 && count > 0) {
+				units[ id ] = Math.min(max, count);
+				total += units[ id ];
+			}
+
+			$(element).find('.count').val(0);
+			$(element).find('.count').change();
+		});
+
+		if (total <= 0) {
+			Notifications.info('Выберите войска для отправки');
+			return;
+		}
+
+		Meteor.call('earth.sendReinforcement', units);
+		Notifications.success('Войска отправлены на землю');
 	}
 });
 
@@ -259,13 +276,20 @@ Template.earthZonePopup.helpers({
 			}
 		}
 
-		turn.canVote = (turn && turn.users.indexOf(Meteor.userId()) < 0) ? true : false;
+		if (turn
+		 && turn.users.indexOf(Meteor.userId()) < 0
+		 && Game.User.getVotePower() > 0
+		) {
+			turn.canVote = true;
+		} else {
+			turn.canVote = false;
+		}
 
 		return turn;
 	},
 
 	votePower: function() {
-		return 1;
+		return Game.User.getVotePower();
 	},
 
 	position: function() {

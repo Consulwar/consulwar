@@ -39,7 +39,11 @@
 				{{#if turn.canVote}}
 					<p>Сила голоса: {{votePower}}</p>
 				{{else}}
-					<p>Вы уже проголосовали</p>
+					{{#if gt votePower 0}}
+						<p>Вы уже проголосовали</p>
+					{{else}}
+						<p>Вы не можете голосовать</p>
+					{{/if}}
 				{{/if}}
 			{{/if}}
 		</div>
@@ -87,25 +91,29 @@
 </template>
 
 <template name="reserve">
-	<div class="information">
-		<ul class="items reserve">
-			{{#each units}}
-				<li class="{{#if eq this.count 0}}disabled{{/if}}">
-					<div class="{{this.engName}}-icon" href="/game/army/ground/{{this.engName}}" data-count="{{this.count}}"></div>
-				</li>
-			{{/each}}
-		</ul>
+	<div class="zone-reserve">
+		{{#if units}}
+			<ul class="items units">
+				{{#each units}}
+					<li class="unit" data-id="{{this.engName}}" data-max="{{this.max}}">
+						<a class="{{this.engName}}-icon"></a>
+						<div class="max">{{formatNumberWithISO this.max}}</div>
+						<input class="count" type="number" placeholder="Количество"  value="{{this.count}}">
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
 		
-		<div class="small_description">
+		<div class="description">
 			<p>Как вам известно, Консул. На Земле идут ожесточённые бои против сил захватчиков. Рептилоиды не сдают позиции, а их силы всё растут. Галактический совет не может поддерживать достаточное количество войск для обороны и наступления. Освобождение нашей Родной планеты загнётся без вашей поддержки. Отправить подкрепление на Активную точку можно в любое время суток, кроме двух часов наступления.</p><br/>
 
 			<!--<p>С 17:00 до 19:00 по МСК отправка войск недоступна.</p><br/>-->
 
 			<p class="remuneration">
+				Ваша Поддержка Военной компании не останется незамеченной, Консул. После отправки этих отрядов, вы получите Очки Чести в размере:
 				<ul class="resources">
 					<li class="honor">{{formatNumber honor}}</li>
 				</ul>
-				Ваша Поддержка Военной компании не останется незамеченной, Консул. После отправки этих отрядов, вы получите Очки Чести в размере:
 			</p>
 
 			

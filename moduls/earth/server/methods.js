@@ -29,8 +29,11 @@ Meteor.methods({
 		}
 
 		// get vote power
-		// TOOD: Get user vote power!
-		var votePower = 1;
+		var votePower = Game.User.getVotePower();
+
+		if (votePower <= 0) {
+			throw new Meteor.Error('Маленький ещё, подрости сначала');
+		}
 
 		// save vote
 		lastTurn.users.push(user._id);
@@ -43,7 +46,6 @@ Meteor.methods({
 	},
 
 	'earth.sendReinforcement': function(units) {
-		// TODO: fix this method!
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -54,27 +56,20 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		var armyNames = _.map(Game.Unit.items.army.ground, function(value, key) {
-			return key;
-		});
+		var totalCount = 0;
 
-		for (var i = 0; i < units.length; i++) {
-			if (armyNames.indexOf(units[i]) == -1 || Game.Unit.items.army.ground[units[i]].type == 'mutual') {
+		for (var name in units) {
+			var count = units[name];
+			var unit = Game.Unit.items.army.ground[ name ];
+
+			if (!unit || unit.type == 'mutual' || unit.currentLevel() < count) {
 				throw new Meteor.Error('Иш ты чего задумал, шакал.');
 			}
+
+			totalCount += count;
 		}
 
-		var currentValue = Game.Unit.getValue();
-
-		units = _.map(_.uniq(units), function(name) {
-			return {
-				engName: name,
-				group: 'ground',
-				count: currentValue.ground ? currentValue.ground[name] || 0 : 0
-			}
-		});
-
-		if (units.length == 0) {
+		if (totalCount == 0) {
 			throw new Meteor.Error('Войска для отправки не выбраны');
 		}
 
@@ -84,22 +79,26 @@ Meteor.methods({
 
 		// calculate and apply honor
 		var honor = 0;
-		for (var i = 0; i < units.length; i++) {
-			var count = units[i].count;
+
+		for (var name in units) {
+			var count = units[name];
+
 			if (count) {
-				if (['hbhr', 'lost'].indexOf(units[i].engName) != -1) {
-					honor += Game.Resources.calculateHonorFromReinforcement(game.army.heroes[units[i].engName].price(count))
-				} else {
-					honor += Game.Resources.calculateHonorFromReinforcement(game.army.ground[units[i].engName].price(count))
-				}
+				honor += Game.Resources.calculateHonorFromReinforcement(
+					Game.Unit.items.army.ground[ name ].price(count)
+				);
 			}
 
-			Game.Unit.remove(units[i]);
+			Game.Unit.remove({
+				group: 'ground',
+				engName: name,
+				count: count
+			});
 		}
 
 		Game.Resources.add({
 			honor: honor
-		})
+		});
 
 		return honor;
 	}

@@ -6,23 +6,42 @@
 </template>
 
 <template name="earthZonePopup">
-	{{#if info}}
+	{{#if zone}}
 		<div 
 			class="point-popup" 
 			style="left: {{position.x}}px; top: {{position.y}}px;"
 		>
 			<h2 title="{{info.name}}" class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
-				{{info.name}}
+				{{zone.name}}
 			</h2>
+			<!-- buttons -->
 			<a class="btn-info">Информация</a>
-			{{#if info.isEnemy}}
-				<a class="btn-attack">В атаку</a>
-			{{else}}
-				<a class="btn-attack">Ждем</a>
+			{{#if turn}}
+				{{#if turn.canVote}}
+					{{#if eq turn.type "move"}}
+						{{#if zone.isEnemy}}
+							<a class="btn-attack" data-action="{{zone.name}}">В атаку</a>
+						{{else}}
+							<a class="btn-attack" data-action="{{zone.name}}">Ждем</a>
+						{{/if}}
+					{{/if}}
+					{{#if eq turn.type "battle"}}
+						<a class="btn-attack" data-action="battle">В атаку</a>
+						<a class="btn-attack" data-action="retreat">Отступаем</a>
+					{{/if}}
+				{{/if}}
+			{{/if}}
+			{{#if zone.isCurrent}}
 				<a class="btn-reinforce">Подкрепление</a>
 			{{/if}}
-			<p class="text-ours">Ваш голос: {{info.vote}}</p>
-			<p>Консулов: {{info.consuls}}</p>
+			<!-- info -->
+			{{#if turn}}
+				{{#if turn.canVote}}
+					<p>Сила голоса: {{votePower}}</p>
+				{{else}}
+					<p>Вы уже проголосовали</p>
+				{{/if}}
+			{{/if}}
 		</div>
 	{{/if}}
 </template>

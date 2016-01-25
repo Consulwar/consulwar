@@ -227,17 +227,7 @@ Game.Earth.showZonePopup = function(name) {
 		data: {
 			name: name,
 			zoom: zoom,
-			bounds: bounds,
-			info: function() {
-				var zone = Game.EarthZones.getByName(name);
-				return {
-					id: zone._id,
-					name: zone.name,
-					isEnemy: zone.isEnemy,
-					consuls: 10,
-					vote: 20
-				};
-			}
+			bounds: bounds
 		}
 	});
 }
@@ -249,6 +239,35 @@ Game.Earth.hideZonePopup = function() {
 }
 
 Template.earthZonePopup.helpers({
+	zone: function() {
+		return Game.EarthZones.getByName(Template.instance().data.name);
+	},
+
+	turn: function() {
+		var turn = Game.EarthTurns.getLast();
+		if (!turn) {
+			return null;
+		}
+
+		var zone = Game.EarthZones.getByName(Template.instance().data.name);
+		if (!zone) {
+			return null;
+		}
+		if (!zone.isCurrent) {
+			if (turn.type != 'move' || turn.actions[zone.name] == undefined) {
+				return null;
+			}
+		}
+
+		turn.canVote = (turn && turn.users.indexOf(Meteor.userId()) < 0) ? true : false;
+
+		return turn;
+	},
+
+	votePower: function() {
+		return 1;
+	},
+
 	position: function() {
 		var name = Template.instance().data.name;
 		var zoom = Template.instance().data.zoom.get();
@@ -274,7 +293,8 @@ Template.earthZonePopup.events({
 	},
 
 	'click .btn-attack': function(e, t) {
-		Meteor.call('earth.voteAction', t.data.name);
+		var action = $(e.currentTarget).attr('data-action');
+		Meteor.call('earth.voteAction', action);
 	},
 
 	'click .btn-reinforce': function(e, t) {

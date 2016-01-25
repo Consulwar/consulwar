@@ -233,6 +233,9 @@ var ZoneView = function(mapView, zoneData) {
 	var element = null;
 	var canvasElement = null;
 
+	var reptilePower = 0;
+	var humanPower = 0;
+
 	this.constructor = function() {
 		this.id = zone._id;
 		this.name = zone.name;
@@ -317,6 +320,23 @@ var ZoneView = function(mapView, zoneData) {
 
 		if (zone.isVisible) {
 
+			// calculate army power
+			var totalHumanPower = Game.EarthZones.calcTotalPower(false);
+			if (totalHumanPower > 0) {
+				var currentHumanPower = Game.EarthZones.calcUnitsPower(zone.userArmy);
+				humanPower = Math.round( (currentHumanPower / totalHumanPower) * 100 );
+			} else {
+				humanPower = 0;
+			}
+
+			var totalReptilePower = Game.EarthZones.calcTotalPower(true);
+			if (totalReptilePower > 0) {
+				var currentReptilePower = Game.EarthZones.calcUnitsPower(zone.enemyArmy);
+				reptilePower = Math.round( (currentReptilePower / totalReptilePower ) * 100);
+			} else {
+				reptilePower = 0;
+			}
+
 			// extend map bounds
 			if (mapBounds) {
 				mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
@@ -387,12 +407,7 @@ var ZoneView = function(mapView, zoneData) {
 		if (zoom < 5) {
 			this.hideProgress();
 		} else {
-			// ---------------------------------------
-			// TODO: Как считать заполненность шкалы?!
-			var humans = (zone.userArmy) ? 100 : 0;
-			var reptiles = (zone.enemyArmy) ? 100 : 0;
-			// ---------------------------------------
-			this.showProgress(humans, reptiles, iconSize * k);
+			this.showProgress(humanPower, reptilePower, iconSize * k);
 		}
 	}
 

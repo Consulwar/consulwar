@@ -74,8 +74,12 @@ Meteor.methods({
 		}
 
 		// send reinforcements to current point
-		// TODO: Add units after delay!
-		Game.Earth.addReinforcement( { army: { ground: units } } );
+		// TODO: Set duration 2 hours!
+		Game.SpaceEvents.sendReinforcement({
+			startTime: Math.floor(new Date().valueOf() / 1000),
+			durationTime: 120,
+			units: { army: { ground: units } }
+		});
 
 		// calculate and apply honor
 		var honor = 0;

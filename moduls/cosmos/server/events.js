@@ -69,11 +69,18 @@ Game.SpaceEvents.add = function(event) {
 }
 
 Game.SpaceEvents.updateEvent = function(event) {
+	if (event.status == Game.SpaceEvents.status.FINISHED) {
+		return;
+	}
+
 	serverTime = Math.floor( new Date().valueOf() / 1000 );
 
 	switch (event.type) {
 		case Game.SpaceEvents.type.SHIP:
 			Game.SpaceEvents.updateShip(serverTime, event);
+			break;
+		case Game.SpaceEvents.type.REINFORCEMENT:
+			Game.SpaceEvents.updateReinforcement(serverTime, event);
 			break;
 	}
 
@@ -81,6 +88,67 @@ Game.SpaceEvents.updateEvent = function(event) {
 		event.status = Game.SpaceEvents.status.FINISHED;
 		Game.SpaceEvents.Collection.update({ _id: event._id }, event);
 	}
+}
+
+// ----------------------------------------------------------------------------
+// Earth reinforcement events
+// ----------------------------------------------------------------------------
+
+Game.SpaceEvents.sendReinforcement = function(options) {
+	// mandatory options
+	if (options.startTime == undefined) {
+		throw new Meteor.Error('Не задано время старта');
+	}
+
+	if (options.durationTime == undefined) {
+		throw new Meteor.Error('Не задано время за которое прибудет подкрепление');
+	}
+
+	if (options.units == undefined) {
+		throw new Meteor.Error('Не указаны войска');
+	}
+
+	// add event
+	Game.SpaceEvents.add({
+		type: Game.SpaceEvents.type.REINFORCEMENT,
+		status: Game.SpaceEvents.status.STARTED,
+		timeStart: options.startTime,
+		timeEnd: options.startTime + options.durationTime,
+		info: {
+			units: options.units
+		}
+	});
+}
+
+Game.SpaceEvents.updateReinforcement = function(serverTime, event) {
+	if (event.status == Game.SpaceEvents.status.FINISHED) {
+		return; // already finished
+	}
+
+	if (event.timeEnd > serverTime) {
+		return; // still flying
+	}
+
+	// kill random count on the way
+	var killedPercent = Game.Random.interval(0, 30);
+	event.info.killedPercent = killedPercent;
+	var k = 1 - (killedPercent / 100);
+
+	var units = event.info.units;
+	var arrived = {};
+	for (var side in units) {
+		arrived[side] = {};
+		for (var group in units[side]) {
+			arrived[side][group] = {};
+			for (var name in units[side][group]) {
+				var count = parseInt( units[side][group][name], 10 );
+				arrived[side][group][name] = Math.floor( count * k );
+			}
+		}
+	}
+
+	// save reinforcements
+	Game.Earth.addReinforcement( arrived );
 }
 
 // ----------------------------------------------------------------------------

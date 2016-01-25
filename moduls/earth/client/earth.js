@@ -1,5 +1,7 @@
 initEarthClient = function() {
 
+// TODO: Запилить роуты грамотно! Для подкрепления и информации о зоне!
+
 initEarthLib();
 
 Meteor.subscribe('zones');
@@ -107,14 +109,7 @@ Game.Earth.showZoneInfo = function(name) {
 	Router.current().render('earthZoneInfo', {
 		to: 'earthZoneInfo',
 		data: {
-			info: function() {
-				return {
-					id: null,
-					name: null,
-					armyHumans: null, 
-					armyRepts: null
-				};
-			}
+			name: name
 		}
 	});
 }
@@ -124,6 +119,79 @@ Game.Earth.hideZoneInfo = function() {
 		to: 'earthZoneInfo'
 	});
 }
+
+Template.earthZoneInfo.helpers({
+	info: function() {
+		var zone = Game.EarthZones.getByName(Template.instance().data.name);
+
+		var currentUserPower = Game.EarthZones.calcUnitsPower( zone.userArmy );
+		var currentEnemyPower = Game.EarthZones.calcUnitsPower( zone.enemyArmy );
+
+		var userArmy = (zone.userArmy) ? [] : null;
+		for (var side in zone.userArmy) {
+			for (var group in zone.userArmy[side]) {
+				for (var name in zone.userArmy[side][group]) {
+					userArmy.push({
+						name: Game.Unit.items[side][group][name].name,
+						count: zone.userArmy[side][group][name]
+					})
+				}
+			}
+		}
+
+		var enemyArmy = (zone.enemyArmy) ? [] : null;
+		for (var side in zone.enemyArmy) {
+			for (var group in zone.enemyArmy[side]) {
+				for (var name in zone.enemyArmy[side][group]) {
+					enemyArmy.push({
+						name: Game.Unit.items[side][group][name].name,
+						count: zone.enemyArmy[side][group][name]
+					})
+				}
+			}
+		}
+
+		var userCount = 0;
+		var totalUserPower = 0;
+		var enemyCount = 0;
+		var totalEnemyPower = 0;
+
+		var zones = Game.EarthZones.getAll().fetch();
+		for (var i = 0; i < zones.length; i++) {
+			if (zones[i].isEnemy) {
+				enemyCount++;
+			} else {
+				userCount++;
+			}
+
+			totalUserPower += Game.EarthZones.calcUnitsPower( zones[i].userArmy );
+			totalEnemyPower += Game.EarthZones.calcUnitsPower( zones[i].enemyArmy );
+		}
+
+		var totalCount = userCount + enemyCount;
+		var capturedPercent = Math.round( (userCount / totalCount) * 100 );
+
+		var userPower = (totalUserPower > 0)
+			? Math.round( (currentUserPower / totalUserPower) * 100 )
+			: 0;
+
+		var enemyPower = (totalEnemyPower > 0)
+			? Math.round( (currentEnemyPower / totalEnemyPower) * 100 )
+			: 0;
+
+		return {
+			name: zone.name,
+			isCurrent: zone.isCurrent,
+			capturedPercent: capturedPercent,
+			userCount: userCount,
+			userPower: userPower,
+			userArmy: userArmy,
+			enemyCount: enemyCount,
+			enemyPower: enemyPower,
+			enemyArmy: enemyArmy
+		};
+	}
+});
 
 Template.earthZoneInfo.events({
 	'click .btn-close': function(e, t) {
@@ -292,12 +360,8 @@ var ZoneView = function(mapView, zoneData) {
 		});
 
 		// TODO: Fix click!
-		mapView.on('click', function(e) {
-			Game.Earth.hideZonePopup();
-		});
-		polygon.on('click', function(e) {
-			Game.Earth.showZonePopup(zone.name);
-		});
+		mapView.on('click', this.hidePopup.bind(this));
+		polygon.on('click', this.showPopup.bind(this));
 
 		// marker
 		marker = L.marker(
@@ -382,6 +446,14 @@ var ZoneView = function(mapView, zoneData) {
 			}
 
 		}
+	}
+
+	this.showPopup = function() {
+		Game.Earth.showZonePopup(zone.name);
+	}
+
+	this.hidePopup = function() {
+		Game.Earth.hideZonePopup();
 	}
 
 	this.refreshZoom = function() {

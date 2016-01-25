@@ -33,15 +33,15 @@
 			<div class="summary-info">
 				<h2>{{info.name}}</h2>
 				<p>
-					Захвачено на: 50%
-					<br><span class="humans">Точек людей: 15</span>
-					<br><span class="repts">Точек рептилий: 42</span>
+					Захвачено на: {{info.capturedPercent}}%
+					<br><span class="humans">Точек людей: {{info.userCount}}</span>
+					<br><span class="repts">Точек рептилий: {{info.enemyCount}}</span>
 				</p>
 			</div>
 			<div class="army-humans">
-				<p>Люди<br><span>Сила: 45</span></p>
+				<p>Люди<br><span>Сила: {{info.userPower}}</span></p>
 				<ul>
-					{{#each info.armyHumans}}
+					{{#each info.userArmy}}
 						<li>
 							<span>{{this.count}}</span> {{this.name}}
 						</li>
@@ -49,18 +49,20 @@
 				</ul>
 			</div>
 			<div class="army-repts">
-				<p>Рептилоиды<br><span>Сила: 100</span></p>
+				<p>Рептилоиды<br><span>Сила: {{info.enemyPower}}</span></p>
 				<ul>
-					{{#each info.armyRepts}}
+					{{#each info.enemyArmy}}
 						<li>
 							<span>{{this.count}}</span> {{this.name}}
 						</li>
 					{{/each}}
 				</ul>
 			</div>
-			<a class="btn-reinforce">Подкрепление</a>
-			<a class="btn-special">Спец атака</a>
+			{{#if info.isCurrent}}
+				<a class="btn-reinforce">Подкрепление</a>
+			{{/if}}
 			<a class="btn-close"></a>
+			<!-- <a class="btn-special">Спец атака</a> -->
 		</div>
 	{{/if}}
 </template>

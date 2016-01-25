@@ -1,13 +1,11 @@
 initEarthClient = function() {
 
-// TODO: Запилить роуты грамотно! Для подкрепления и информации о зоне!
-
 initEarthLib();
 
 Meteor.subscribe('zones');
 Meteor.subscribe('turns');
 
-Game.Earth.showPage = function() {
+Game.Earth.showMap = function() {
 	this.render('earth', {
 		to: 'content',
 		data: {}
@@ -18,18 +16,12 @@ Game.Earth.showPage = function() {
 // Reserve
 // ----------------------------------------------------------------------------
 
-Game.Earth.showReserveMenu = function() {
+Game.Earth.showReserve = function() {
 	Router.current().render('reserve', {
-		to: 'earthReserve',
+		to: 'content',
 		data: {
 			honor: new ReactiveVar(0)
 		}
-	});
-}
-
-Game.Earth.hideReserveMenu = function() {
-	Router.current().render(null, {
-		to: 'earthReserve'
 	});
 }
 
@@ -122,18 +114,14 @@ Template.reserve.events({
 // Zone info
 // ----------------------------------------------------------------------------
 
-Game.Earth.showZoneInfo = function(name) {
+Game.Earth.showZone = function() {
+	var name = this.params.name;
+
 	Router.current().render('earthZoneInfo', {
-		to: 'earthZoneInfo',
+		to: 'content',
 		data: {
 			name: name
 		}
-	});
-}
-
-Game.Earth.hideZoneInfo = function() {
-	Router.current().render(null, {
-		to: 'earthZoneInfo'
 	});
 }
 
@@ -207,17 +195,6 @@ Template.earthZoneInfo.helpers({
 			enemyPower: enemyPower,
 			enemyArmy: enemyArmy
 		};
-	}
-});
-
-Template.earthZoneInfo.events({
-	'click .btn-close': function(e, t) {
-		Game.Earth.hideZoneInfo();
-	},
-
-	'click .btn-reinforce': function(e, t) {
-		Game.Earth.hideZoneInfo();
-		Game.Earth.showReserveMenu();
 	}
 });
 
@@ -310,25 +287,14 @@ Template.earthZonePopup.helpers({
 });
 
 Template.earthZonePopup.events({
-	'click .btn-info': function(e, t) {
-		var name = t.data.name;
-		Game.Earth.hideZonePopup();
-		Game.Earth.showZoneInfo(name);
-	},
-
 	'click .btn-attack': function(e, t) {
 		var action = $(e.currentTarget).attr('data-action');
 		Meteor.call('earth.voteAction', action);
-	},
-
-	'click .btn-reinforce': function(e, t) {
-		Game.Earth.hideZonePopup();
-		Game.Earth.showReserveMenu();
 	}
 });
 
 // ----------------------------------------------------------------------------
-// ZONE VIEW
+// Zone view
 // ----------------------------------------------------------------------------
 
 var ZoneView = function(mapView, zoneData) {
@@ -662,6 +628,7 @@ var mapView = null;
 var mapBounds = null;
 var zoneViews = {};
 var lineViews = {};
+var observerZones = null;
 
 Template.earth.onRendered(function() {
 
@@ -694,7 +661,7 @@ Template.earth.onRendered(function() {
 	}
 
 	// track db updates
-	Game.EarthZones.getAll().observeChanges({
+	observerZones = Game.EarthZones.getAll().observeChanges({
 		changed: function(id, fields) {
 			var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
 			if (mapView && zoneViews && zoneViews[ name ]) {
@@ -742,18 +709,21 @@ Template.earth.onRendered(function() {
 })
 
 Template.earth.onDestroyed(function() {
-	mapView = null;
-	mapBounds = null;
+	Game.Earth.hideZonePopup();
+
+	if (observerZones) {
+		observerZones.stop();
+		observerZones = null;
+	}
+	
 	zoneViews = {};
 	lineViews = {};
-})
 
-Template.earth.helpers({
-	
-});
-
-Template.earth.events({
-
+	if (mapView) {
+		mapView.remove();
+		mapView = null;
+		mapBounds = null;
+	}
 });
 
 }

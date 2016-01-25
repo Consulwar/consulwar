@@ -1,8 +1,6 @@
 <template name="earth">
 	<div id="map-earth"></div>
 	{{> yield "earthZonePopup"}}
-	{{> yield "earthZoneInfo"}}
-	{{> yield "earthReserve"}}
 </template>
 
 <template name="earthZonePopup">
@@ -15,7 +13,7 @@
 				{{zone.name}}
 			</h2>
 			<!-- buttons -->
-			<a class="btn-info">Информация</a>
+			<a class="btn-info" href="/game/earth/zone/{{zone.name}}">Информация</a>
 			{{#if turn}}
 				{{#if turn.canVote}}
 					{{#if eq turn.type "move"}}
@@ -32,7 +30,7 @@
 				{{/if}}
 			{{/if}}
 			{{#if zone.isCurrent}}
-				<a class="btn-reinforce">Подкрепление</a>
+				<a class="btn-reinforce" href="/game/earth/reserve">Подкрепление</a>
 			{{/if}}
 			<!-- info -->
 			{{#if turn}}
@@ -82,9 +80,9 @@
 				</ul>
 			</div>
 			{{#if info.isCurrent}}
-				<a class="btn-reinforce">Подкрепление</a>
+				<a class="btn-reinforce" href="/game/earth/reserve">Подкрепление</a>
 			{{/if}}
-			<a class="btn-close"></a>
+			<a class="btn-close" href="/game/earth"></a>
 			<!-- <a class="btn-special">Спец атака</a> -->
 		</div>
 	{{/if}}
@@ -115,11 +113,12 @@
 					<li class="honor">{{formatNumber honor}}</li>
 				</ul>
 			</p>
-
 			
 			<button class="select_all">Выбрать всех</button>
 			<button class="send_reinforcement">Отправить</button>
 		</div>
+
+		<a class="btn-close" href="/game/earth"></a>
 	</div>
 	<div class="additional_area bolz"></div>
 </template>

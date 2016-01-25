@@ -505,14 +505,14 @@ Template.cosmosAttackMenu.events({
 
 	'click .btn-all': function(e, t) {
 		$('.fleet li').each(function(index, element) {
-			var max = Number( $(element).find('.max').html() );
+			var max = Number( $(element).attr('data-max') );
 			$(element).find('.count').val( max );
 		});
 	},
 
 	'change .fleet input': function (e, t) {
 		var value = parseInt( e.currentTarget.value );
-		var max = parseInt( $(e.currentTarget).attr('data-max') );
+		var max = parseInt( $(e.currentTarget.parentElement).attr('data-max') );
 
 		if (value < 0) {
 			e.currentTarget.value = 0;

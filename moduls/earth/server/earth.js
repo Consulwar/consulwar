@@ -559,7 +559,6 @@ Game.Earth.checkTurn = function() {
 	Game.Earth.createTurn();
 }
 
-/* TODO: Enable after test!
 SyncedCron.add({
 	name: 'Следующий ход битвы на земле',
 	schedule: function(parser) {
@@ -571,7 +570,6 @@ SyncedCron.add({
 });
 
 SyncedCron.start();
-*/
 
 Meteor.publish('zones', function () {
 	if (this.userId) {

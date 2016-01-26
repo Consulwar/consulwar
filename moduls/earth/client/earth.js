@@ -42,7 +42,7 @@ Template.reserve.helpers({
 });
 
 Template.reserve.events({
-	'click .select_all': function(e, t) {
+	'click .btn-all': function(e, t) {
 		$('.units li').each(function(index, element) {
 			var max = Number( $(element).attr('data-max') );
 			$(element).find('.count').val( max );
@@ -82,7 +82,7 @@ Template.reserve.events({
 		t.data.honor.set(honor);
 	},
 
-	'click .send_reinforcement': function(e, t) {
+	'click .btn-send': function(e, t) {
 		var total = 0;
 		var units = {};
 

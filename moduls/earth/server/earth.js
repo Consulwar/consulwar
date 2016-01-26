@@ -1,6 +1,7 @@
 initEarthServer = function() {
 
 initEarthLib();
+initEarthContentServer();
 initEarthServerImport();
 
 Game.Earth.addReinforcement = function(units) {

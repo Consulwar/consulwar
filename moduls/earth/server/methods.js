@@ -74,10 +74,9 @@ Meteor.methods({
 		}
 
 		// send reinforcements to current point
-		// TODO: Set duration 2 hours!
 		Game.SpaceEvents.sendReinforcement({
 			startTime: Math.floor(new Date().valueOf() / 1000),
-			durationTime: 120,
+			durationTime: Game.Earth.TIME_REINFORCEMENTS_DELAY,
 			units: { army: { ground: units } }
 		});
 

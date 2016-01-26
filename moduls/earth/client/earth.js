@@ -203,33 +203,34 @@ Template.earthZoneInfo.helpers({
 // ----------------------------------------------------------------------------
 
 Game.Earth.showZonePopup = function(name) {
+	if (!mapView || !zoneViews[name]) {
+		return;
+	}
 
-	// TODO: Fix popup position!
+	$('.leaflet-popup-pane').html('');
 
-	var zoom = new ReactiveVar(mapView.getZoom());
+	var zoom = new ReactiveVar(0);
 	mapView.on('zoomend', function(e) {
 		zoom.set( mapView.getZoom() );
 	});
 
-	var bounds = new ReactiveVar(mapView.getBounds());
-	mapView.on('move', function(e) {
-		bounds.set( mapView.getBounds() );
-	});
-
-	Router.current().render('earthZonePopup', {
-		to: 'earthZonePopup',
-		data: {
+	Blaze.renderWithData(
+		Template.earthZonePopup, {
 			name: name,
-			zoom: zoom,
-			bounds: bounds
-		}
-	});
+			zoom: zoom
+		},
+		$('.leaflet-popup-pane')[0]
+	);
+
+	zoom.set( mapView.getZoom() );
 }
 
 Game.Earth.hideZonePopup = function() {
-	Router.current().render(null, {
-		to: 'earthZonePopup'
-	});
+	if (!mapView) {
+		return;
+	}
+
+	$('.leaflet-popup-pane').html('');
 }
 
 Template.earthZonePopup.helpers({
@@ -271,17 +272,18 @@ Template.earthZonePopup.helpers({
 
 	position: function() {
 		var name = Template.instance().data.name;
-		var zoom = Template.instance().data.zoom.get();
-		var bounds = Template.instance().data.bounds.get();
-
 		var zoneView = zoneViews[ name ];
 		var zoneCenter = new L.latLng( zoneView.x, zoneView.y );
-
 		var screenPosition = mapView.latLngToContainerPoint(zoneCenter);
 
+		var zoom = Template.instance().data.zoom.get();
+		var k = Math.pow(2, (zoom - 4));
+		var offsetX = 25 * k;
+		var offsetY = $('.point-popup').height() * 0.5;
+
 		return {
-			x: screenPosition.x + 50,
-			y: screenPosition.y - 100
+			x: screenPosition.x + offsetX,
+			y: screenPosition.y - offsetY
 		}
 	}
 });
@@ -369,10 +371,6 @@ var ZoneView = function(mapView, zoneData) {
 			polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
 		});
 
-		// TODO: Fix click!
-		mapView.on('click', this.hidePopup.bind(this));
-		polygon.on('click', this.showPopup.bind(this));
-
 		// marker
 		marker = L.marker(
 			[this.x, this.y],
@@ -385,8 +383,12 @@ var ZoneView = function(mapView, zoneData) {
 			}
 		);
 
+		// events
+		polygon.on('click', this.showPopup.bind(this));
+		marker.on('click', this.showPopup.bind(this));
+
 		// debug
-		marker.on('click', function(e) { console.log(zone.name); });
+		// marker.on('click', function(e) { console.log(zone.name); });
 	}
 
 	this.update = function() {
@@ -650,6 +652,10 @@ Template.earth.onRendered(function() {
 		id: 'zav39.1f2ff4e8',
 		accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
 	}).addTo(mapView);
+
+	mapView.on('click', function(e) {
+		Game.Earth.hideZonePopup();
+	});
 
 	// create existing zones
 	var zones = Game.EarthZones.getAll().fetch();

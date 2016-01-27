@@ -142,7 +142,13 @@ Game.SpaceEvents.updateReinforcement = function(serverTime, event) {
 			arrived[side][group] = {};
 			for (var name in units[side][group]) {
 				var count = parseInt( units[side][group][name], 10 );
-				arrived[side][group][name] = Math.floor( count * k );
+				var result = Math.floor( count * k );
+				if (result < 1) {
+					if (Game.Random.random() > k) {
+						result = 1;
+					}
+				}
+				arrived[side][group][name] = result;
 			}
 		}
 	}

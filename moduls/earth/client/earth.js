@@ -202,14 +202,14 @@ Template.earthZoneInfo.helpers({
 // Zone popup
 // ----------------------------------------------------------------------------
 
-Game.Earth.showZonePopup = function(name) {
+Game.Earth.showZonePopup = function(name, latlng) {
 	if (!mapView || !zoneViews[name]) {
 		return;
 	}
 
 	$('.leaflet-popup-pane').html('');
 
-	var zoom = new ReactiveVar(0);
+	var zoom = new ReactiveVar( mapView.getZoom() );
 	mapView.on('zoomend', function(e) {
 		zoom.set( mapView.getZoom() );
 	});
@@ -217,12 +217,14 @@ Game.Earth.showZonePopup = function(name) {
 	Blaze.renderWithData(
 		Template.earthZonePopup, {
 			name: name,
-			zoom: zoom
+			zoom: zoom,
+			position: function() {
+				zoom.get();
+				return mapView.latLngToContainerPoint(latlng);
+			}
 		},
 		$('.leaflet-popup-pane')[0]
 	);
-
-	zoom.set( mapView.getZoom() );
 }
 
 Game.Earth.hideZonePopup = function() {
@@ -268,23 +270,6 @@ Template.earthZonePopup.helpers({
 
 	votePower: function() {
 		return Game.User.getVotePower();
-	},
-
-	position: function() {
-		var name = Template.instance().data.name;
-		var zoneView = zoneViews[ name ];
-		var zoneCenter = new L.latLng( zoneView.x, zoneView.y );
-		var screenPosition = mapView.latLngToContainerPoint(zoneCenter);
-
-		var zoom = Template.instance().data.zoom.get();
-		var k = Math.pow(2, (zoom - 4));
-		var offsetX = 25 * k;
-		var offsetY = $('.point-popup').height() * 0.5;
-
-		return {
-			x: screenPosition.x + offsetX,
-			y: screenPosition.y - offsetY
-		}
 	}
 });
 
@@ -460,8 +445,10 @@ var ZoneView = function(mapView, zoneData) {
 		}
 	}
 
-	this.showPopup = function() {
-		Game.Earth.showZonePopup(zone.name);
+	this.showPopup = function(e) {
+		if (e && e.latlng) {
+			Game.Earth.showZonePopup(zone.name, e.latlng);
+		}
 	}
 
 	this.hidePopup = function() {
@@ -724,7 +711,7 @@ Template.earth.onDestroyed(function() {
 	
 	zoneViews = {};
 	lineViews = {};
-
+	
 	if (mapView) {
 		mapView.remove();
 		mapView = null;

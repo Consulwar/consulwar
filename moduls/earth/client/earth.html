@@ -17,14 +17,22 @@
 				{{#if turn.canVote}}
 					{{#if eq turn.type "move"}}
 						{{#if zone.isEnemy}}
-							<a class="btn-attack" data-action="{{zone.name}}">В атаку</a>
+							<a class="btn-attack" data-action="{{zone.name}}">
+								В атаку {{votePercent zone.name turn}}%
+							</a>
 						{{else}}
-							<a class="btn-attack" data-action="{{zone.name}}">Ждем</a>
+							<a class="btn-attack" data-action="{{zone.name}}">
+								Ждем {{votePercent zone.name turn}}%
+							</a>
 						{{/if}}
 					{{/if}}
 					{{#if eq turn.type "battle"}}
-						<a class="btn-attack" data-action="battle">В атаку</a>
-						<a class="btn-attack" data-action="retreat">Отступаем</a>
+						<a class="btn-attack" data-action="battle">
+							В атаку {{votePercent "battle" turn}}%
+						</a>
+						<a class="btn-attack" data-action="retreat">
+							Отступаем {{votePercent "retreat" turn}}%
+						</a>
 					{{/if}}
 				{{/if}}
 			{{/if}}
@@ -40,6 +48,18 @@
 						<p>Вы уже проголосовали</p>
 					{{else}}
 						<p>Вы не можете голосовать</p>
+					{{/if}}
+					<p>Всего голосов: {{turn.count}}</p>
+					{{#if eq turn.type "move"}}
+						{{#if zone.isEnemy}}
+							<p>В атаку: {{votePercent zone.name turn}}%</p>
+						{{else}}
+							<p>Ждем: {{votePercent zone.name turn}}%</p>
+						{{/if}}
+					{{/if}}
+					{{#if eq turn.type "battle"}}
+						<p>В атаку: {{votePercent "battle" turn}}%</p>
+						<p>Отступаем: {{votePercent "retreat" turn}}%</p>
 					{{/if}}
 				{{/if}}
 			{{/if}}

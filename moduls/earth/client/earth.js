@@ -217,7 +217,6 @@ Game.Earth.showZonePopup = function(name, latlng) {
 	Blaze.renderWithData(
 		Template.earthZonePopup, {
 			name: name,
-			zoom: zoom,
 			position: function() {
 				zoom.get();
 				return mapView.latLngToContainerPoint(latlng);
@@ -256,6 +255,10 @@ Template.earthZonePopup.helpers({
 			}
 		}
 
+		if (turn) {
+			turn.count = turn.users.length;
+		}
+
 		if (turn
 		 && turn.users.indexOf(Meteor.userId()) < 0
 		 && Game.User.getVotePower() > 0
@@ -270,6 +273,16 @@ Template.earthZonePopup.helpers({
 
 	votePower: function() {
 		return Game.User.getVotePower();
+	},
+
+	votePercent: function(name, turn) {
+		if (!name || !turn || turn.totalVotePower <= 0) {
+			return 0;
+		}
+
+		var totalValue = turn.totalVotePower;
+		var actionValue = turn.actions[ name ];
+		return Math.round( actionValue / totalValue * 100 );
 	}
 });
 
@@ -622,7 +635,7 @@ var observerZones = null;
 Template.earth.onRendered(function() {
 
 	if (!mapView) {
-		
+
 		// first time manualy create div inside template
 		$('#map-content').html('<div id="map-earth"></div>');
 

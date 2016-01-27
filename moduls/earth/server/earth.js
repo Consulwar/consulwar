@@ -1,7 +1,6 @@
 initEarthServer = function() {
 
 initEarthLib();
-initEarthContentServer();
 initEarthServerImport();
 
 Game.Earth.addReinforcement = function(units) {
@@ -65,8 +64,8 @@ Game.Earth.generateEnemyArmy = function(level) {
 	// count online players
 	var players = Game.Earth.countActivePlayers();
 
-	if (players < Game.Earth.MIN_ACTIVE_PLAYERS) {
-		players = Game.Earth.MIN_ACTIVE_PLAYERS;
+	if (players < Meteor.settings.earth.minActivePlayers) {
+		players = Meteor.settings.earth.minActivePlayers;
 	}
 
 	// count difficulty modifier
@@ -96,7 +95,7 @@ Game.Earth.observeZone = function(name) {
 		throw new Meteor.Error('Нельзя разведать точки, еноты не изучены');
 	}
 
-	if (Game.Earth.countActivePlayers() < Game.Earth.MIN_ACTIVE_PLAYERS) {
+	if (Game.Earth.countActivePlayers() < Meteor.settings.earth.minActivePlayers) {
 		throw new Meteor.Error('Нельзя разведать точки, мало активных игроков');
 	}
 
@@ -372,7 +371,7 @@ Game.Earth.nextTurn = function() {
 
 		// Only start zone is available, so try to observer nearby zones
 		if (Game.Mutual.has('research', 'reccons')
-		 && Game.Earth.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
+		 && Game.Earth.countActivePlayers() >= Meteor.settings.earth.minActivePlayers
 		) {
 			Game.Earth.observeZone(currentZone.name);
 			Game.Earth.createTurn();

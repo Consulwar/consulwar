@@ -76,7 +76,7 @@ Meteor.methods({
 		// send reinforcements to current point
 		Game.SpaceEvents.sendReinforcement({
 			startTime: Math.floor(new Date().valueOf() / 1000),
-			durationTime: Game.Earth.TIME_REINFORCEMENTS_DELAY,
+			durationTime: Meteor.settings.earth.reinforcementsDelay,
 			units: { army: { ground: units } }
 		});
 

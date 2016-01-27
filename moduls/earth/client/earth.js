@@ -660,8 +660,8 @@ Template.earth.onRendered(function() {
 		mapView.spin(false);
 
 		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-			id: 'zav39.1f2ff4e8',
-			accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
+			id: Meteor.settings.public.mapbox.id,
+			accessToken: Meteor.settings.public.mapbox.accessToken
 		}).addTo(mapView);
 		
 		mapView.on('click', function(e) {

@@ -37,7 +37,7 @@ Template.reserve.helpers({
 	},
 
 	honor: function() {
-		return Template.instance().data.honor.get();
+		return this.honor.get();
 	}
 });
 
@@ -63,10 +63,11 @@ Template.reserve.events({
 		// recalculate honor
 		var honor = 0;
 
-		$('.units li').each(function(index, element) {
-			var id = $(element).attr('data-id');
-			var max = parseInt( $(element).attr('data-max') );
-			var count = parseInt( $(element).find('.count').val() );
+		$('.units li').each(function(index, elem) {
+			var element = $(elem);
+			var id = element.attr('data-id');
+			var max = parseInt( element.attr('data-max') );
+			var count = parseInt( element.find('.count').val() );
 
 			if (max < count) {
 				count = max;
@@ -86,27 +87,27 @@ Template.reserve.events({
 		var total = 0;
 		var units = {};
 
-		$('.units li').each(function(index, element) {
-			var id = $(element).attr('data-id');
-			var max = parseInt( $(element).attr('data-max') );
-			var count = parseInt( $(element).find('.count').val() );
+		$('.units li').each(function(index, elem) {
+			var element = $(elem);
+			var id = element.attr('data-id');
+			var max = parseInt( element.attr('data-max') );
+			var count = parseInt( element.find('.count').val() );
 
 			if (max > 0 && count > 0) {
 				units[ id ] = Math.min(max, count);
 				total += units[ id ];
 			}
 
-			$(element).find('.count').val(0);
-			$(element).find('.count').change();
+			element.find('.count').val(0);
+			element.find('.count').change();
 		});
 
 		if (total <= 0) {
-			Notifications.info('Выберите войска для отправки');
-			return;
+			return Notifications.info('Выберите войска для отправки');
 		}
 
 		Meteor.call('earth.sendReinforcement', units);
-		Notifications.success('Войска отправлены на землю');
+		return Notifications.success('Войска отправлены на землю');
 	}
 });
 
@@ -127,10 +128,10 @@ Game.Earth.showZone = function() {
 
 Template.earthZoneInfo.helpers({
 	info: function() {
-		var zone = Game.EarthZones.getByName(Template.instance().data.name);
+		var zone = Game.EarthZones.getByName(this.name);
 
-		var currentUserPower = Game.EarthZones.calcUnitsPower( zone.userArmy );
-		var currentEnemyPower = Game.EarthZones.calcUnitsPower( zone.enemyArmy );
+		var currentUserPower = Game.EarthZones.calcUnitsHealth( zone.userArmy );
+		var currentEnemyPower = Game.EarthZones.calcUnitsHealth( zone.enemyArmy );
 
 		var userArmy = (zone.userArmy) ? [] : null;
 		for (var side in zone.userArmy) {
@@ -169,8 +170,8 @@ Template.earthZoneInfo.helpers({
 				userCount++;
 			}
 
-			totalUserPower += Game.EarthZones.calcUnitsPower( zones[i].userArmy );
-			totalEnemyPower += Game.EarthZones.calcUnitsPower( zones[i].enemyArmy );
+			totalUserPower += Game.EarthZones.calcUnitsHealth( zones[i].userArmy );
+			totalEnemyPower += Game.EarthZones.calcUnitsHealth( zones[i].enemyArmy );
 		}
 
 		var totalCount = userCount + enemyCount;
@@ -236,7 +237,7 @@ Game.Earth.hideZonePopup = function() {
 
 Template.earthZonePopup.helpers({
 	zone: function() {
-		return Game.EarthZones.getByName(Template.instance().data.name);
+		return Game.EarthZones.getByName(this.name);
 	},
 
 	turn: function() {
@@ -245,7 +246,7 @@ Template.earthZonePopup.helpers({
 			return null;
 		}
 
-		var zone = Game.EarthZones.getByName(Template.instance().data.name);
+		var zone = Game.EarthZones.getByName(this.name);
 		if (!zone) {
 			return null;
 		}
@@ -294,7 +295,7 @@ Template.earthZonePopup.events({
 });
 
 // ----------------------------------------------------------------------------
-// Zone view
+// Zone view (maker + polygon on map which displays zone status)
 // ----------------------------------------------------------------------------
 
 var ZoneView = function(mapView, zoneData) {
@@ -389,6 +390,8 @@ var ZoneView = function(mapView, zoneData) {
 
 		// debug
 		// marker.on('click', function(e) { console.log(zone.name); });
+
+		this.update();
 	}
 
 	this.update = function() {
@@ -397,17 +400,19 @@ var ZoneView = function(mapView, zoneData) {
 		if (zone.isVisible) {
 
 			// calculate army power
-			var totalHumanPower = Game.EarthZones.calcTotalPower(false);
+			var totalPower = Game.EarthZones.calcTotalHealth();
+
+			var totalHumanPower = totalPower.userPower;
 			if (totalHumanPower > 0) {
-				var currentHumanPower = Game.EarthZones.calcUnitsPower(zone.userArmy);
+				var currentHumanPower = Game.EarthZones.calcUnitsHealth(zone.userArmy);
 				humanPower = Math.round( (currentHumanPower / totalHumanPower) * 100 );
 			} else {
 				humanPower = 0;
 			}
 
-			var totalReptilePower = Game.EarthZones.calcTotalPower(true);
+			var totalReptilePower = totalPower.enemyPower;
 			if (totalReptilePower > 0) {
-				var currentReptilePower = Game.EarthZones.calcUnitsPower(zone.enemyArmy);
+				var currentReptilePower = Game.EarthZones.calcUnitsHealth(zone.enemyArmy);
 				reptilePower = Math.round( (currentReptilePower / totalReptilePower ) * 100);
 			} else {
 				reptilePower = 0;
@@ -431,7 +436,7 @@ var ZoneView = function(mapView, zoneData) {
 
 			element = $(marker._icon);
 			element.html('<canvas></canvas>');
-			canvasElement = $(element.find('canvas'));
+			canvasElement = element.find('canvas');
 
 			if (zone.isEnemy) {
 				polygon.bringToBack();
@@ -465,9 +470,7 @@ var ZoneView = function(mapView, zoneData) {
 		}
 	}
 
-	this.hidePopup = function() {
-		Game.Earth.hideZonePopup();
-	}
+	this.hidePopup = Game.Earth.hideZonePopup;
 
 	this.refreshZoom = function() {
 		if (!zone || !zone.isVisible) {
@@ -523,25 +526,25 @@ var ZoneView = function(mapView, zoneData) {
 		var lineWidth = canvas.width / 15;
 		var offset = canvas.width / 100;
 
-		// enemy full
+		// draw enemy progress bar background
 		context.beginPath();
 		context.arc(x + offset, y, radius, Math.PI * 0.5, Math.PI * -0.5, true);
 		context.lineWidth = lineWidth;
 		context.strokeStyle = '#913b31';
 		context.stroke();
-		// enemy current
+		// draw enemy progress bar current value
 		context.beginPath();
 		context.arc(x + offset, y, radius, Math.PI * 0.5, Math.PI * (0.5 - reptiles / 100), true);
 		context.lineWidth = lineWidth;
 		context.strokeStyle = '#D05F4A';
 		context.stroke();
-		// our full
+		// draw user progress bar background
 		context.beginPath();
 		context.arc(x - offset, y, radius, Math.PI * 0.5, Math.PI * 1.5, false);
 		context.lineWidth = lineWidth;
 		context.strokeStyle = '#374a60';
 		context.stroke();
-		// our current
+		// draw user progress bar current value
 		context.beginPath();
 		context.arc(x - offset, y, radius, Math.PI * 0.5, Math.PI * (0.5 + humans / 100), false);
 		context.lineWidth = lineWidth;
@@ -565,7 +568,7 @@ var ZoneView = function(mapView, zoneData) {
 }
 
 // ----------------------------------------------------------------------------
-// Line view
+// Line view (line on map which displays zone connection + vote result)
 // ----------------------------------------------------------------------------
 
 var LineView = function(start, finish) {
@@ -669,7 +672,6 @@ Template.earth.onRendered(function() {
 		var zones = Game.EarthZones.getAll().fetch();
 		for (var i = 0; i < zones.length; i++) {
 			zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
-			zoneViews[ zones[i].name ].update();
 		}
 
 		// track db updates
@@ -698,11 +700,14 @@ Template.earth.onRendered(function() {
 	}
 
 	// show turn lines and track db updates
+	// TODO: Make reactive!
 	this.autorun(function() {
+		// remove current lines
 		for (var key in lineViews) {
 			lineViews[ key ].remove();
 		}
 
+		// get last turn
 		var turn = Game.EarthTurns.getLast();
 		if (!turn || turn.type != 'move') {
 			return;
@@ -713,6 +718,7 @@ Template.earth.onRendered(function() {
 			return;
 		}
 
+		// draw new lines
 		for (var name in turn.actions) {
 			if (name == currentZone.name) {
 				continue;

@@ -21,7 +21,7 @@ Game.EarthZones = {
 		});
 	},
 
-	calcUnitsPower: function(units) {
+	calcUnitsHealth: function(units) {
 		var power = 0;
 		if (units) {
 			for (var side in units) {
@@ -37,13 +37,20 @@ Game.EarthZones = {
 		return power;
 	},
 
-	calcTotalPower: function(isEnemy) {
-		var power = 0;
+	calcTotalHealth: function(isEnemy) {
+		var userPower = 0;
+		var enemyPower = 0;
+
 		var zones = Game.EarthZones.getAll().fetch();
 		for (var i = 0; i < zones.length; i++) {
-			power += Game.EarthZones.calcUnitsPower( isEnemy ? zones[i].enemyArmy : zones[i].userArmy );
+			userPower += Game.EarthZones.calcUnitsHealth( zones[i].userArmy );
+			enemyPower += Game.EarthZones.calcUnitsHealth( zones[i].enemyArmy );
 		}
-		return power;
+
+		return {
+			userPower: userPower,
+			enemyPower: enemyPower
+		}
 	}
 };
 

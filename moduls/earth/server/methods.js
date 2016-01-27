@@ -80,6 +80,9 @@ Meteor.methods({
 			units: { army: { ground: units } }
 		});
 
+		// add at once for quick debug
+		// Game.Earth.addReinforcement( { army: { ground: units } } );
+
 		// calculate and apply honor
 		var honor = 0;
 

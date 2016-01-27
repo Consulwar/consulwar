@@ -12,32 +12,15 @@ Game.Earth.addReinforcement = function(units) {
 		throw new Meteor.Error('Не установлена текущая зона');
 	}
 
-	var currentUnits = currentZone.userArmy;
+	var incrementUnits = {};
 
 	for (var side in units) {
 		for (var group in units[side]) {
 			for (var name in units[side][group]) {
-
 				var count = parseInt( units[side][group][name], 10 );
-
-				if (count <= 0) {
-					continue;
+				if (count > 0) {
+					incrementUnits['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
 				}
-
-				if (!currentUnits) {
-					currentUnits = {};
-				}
-				if (!currentUnits[side]) {
-					currentUnits[side] = {};
-				}
-				if (!currentUnits[side][group]) {
-					currentUnits[side][group] = {};
-				}
-				if (!currentUnits[side][group][name]) {
-					currentUnits[side][group][name] = 0;
-				}
-
-				currentUnits[side][group][name] += count;
 			}
 		}
 	}
@@ -45,7 +28,7 @@ Game.Earth.addReinforcement = function(units) {
 	Game.EarthZones.Collection.update({
 		isCurrent: true
 	}, {
-		$set: { userArmy: currentUnits }
+		$inc: incrementUnits
 	});
 }
 
@@ -476,7 +459,7 @@ Game.Earth.checkTurn = function() {
 
 			// Stay at current zone
 			// Enemy can attack (chance 1/3)
-			if (Game.Random.interval(1, 99) <= 33) {
+			if (currentZone.name != 'South Africa' && Game.Random.interval(1, 99) <= 33) {
 
 				// find near enemy zone
 				var nearZone = Game.EarthZones.Collection.findOne({
@@ -580,7 +563,8 @@ SyncedCron.add({
 	}
 });
 
-SyncedCron.start();
+// TODO: Remove comment after test!
+// SyncedCron.start();
 
 Meteor.publish('zones', function () {
 	if (this.userId) {

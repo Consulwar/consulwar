@@ -621,47 +621,59 @@ var observerZones = null;
 
 Template.earth.onRendered(function() {
 
-	mapView = L.map('map-earth', {
-		zoomAnimation: false,
-		zoomControl: false,
-		doubleClickZoom: false,
-		attributionControl: false,
-		fadeAnimation: false,
-		inertia: false,
-		zoom: 4,
-		minZoom: 4,
-		maxZoom: 6
-	});
-	mapView.setView([47.36865, 8.539183], 4);
-	mapView.spin(false);
+	if (!mapView) {
+		
+		// first time manualy create div inside template
+		$('#map-content').html('<div id="map-earth"></div>');
 
-	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-		id: 'zav39.1f2ff4e8',
-		accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
-	}).addTo(mapView);
+		mapView = L.map('map-earth', {
+			zoomAnimation: false,
+			zoomControl: false,
+			doubleClickZoom: false,
+			attributionControl: false,
+			fadeAnimation: false,
+			inertia: false,
+			zoom: 4,
+			minZoom: 4,
+			maxZoom: 6
+		});
+		mapView.setView([47.36865, 8.539183], 4);
+		mapView.spin(false);
 
-	mapView.on('click', function(e) {
-		Game.Earth.hideZonePopup();
-	});
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+			id: 'zav39.1f2ff4e8',
+			accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
+		}).addTo(mapView);
 
-	// create existing zones
-	var zones = Game.EarthZones.getAll().fetch();
-	for (var i = 0; i < zones.length; i++) {
-		if (mapView && zoneViews) {
-			zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
-			zoneViews[ zones[i].name ].update();
-		}
-	}
+		mapView.on('click', function(e) {
+			Game.Earth.hideZonePopup();
+		});
 
-	// track db updates
-	observerZones = Game.EarthZones.getAll().observeChanges({
-		changed: function(id, fields) {
-			var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
-			if (mapView && zoneViews && zoneViews[ name ]) {
-				zoneViews[ name ].update();
+		// create existing zones
+		var zones = Game.EarthZones.getAll().fetch();
+		for (var i = 0; i < zones.length; i++) {
+			if (mapView && zoneViews) {
+				zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
+				zoneViews[ zones[i].name ].update();
 			}
 		}
-	});
+
+		// track db updates
+		observerZones = Game.EarthZones.getAll().observeChanges({
+			changed: function(id, fields) {
+				var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
+				if (mapView && zoneViews && zoneViews[ name ]) {
+					zoneViews[ name ].update();
+				}
+			}
+		});
+
+	} else {
+		
+		// put existing map content into template
+		$('#map-content').html( mapView._container );
+
+	}
 
 	// show turn lines and track db updates
 	this.autorun(function() {
@@ -709,6 +721,7 @@ Template.earth.onDestroyed(function() {
 		observerZones = null;
 	}
 	
+	/* Code for map remove
 	zoneViews = {};
 	lineViews = {};
 	
@@ -717,6 +730,7 @@ Template.earth.onDestroyed(function() {
 		mapView = null;
 		mapBounds = null;
 	}
+	*/
 });
 
 }

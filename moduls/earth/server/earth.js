@@ -50,9 +50,8 @@ Game.Earth.addReinforcement = function(units) {
 	});
 }
 
-Game.Earth.generateEnemyArmy = function() {
-	// count online players
-	var players = Meteor.users.find({
+Game.Earth.countActivePlayers = function() {
+	return Meteor.users.find({
 		'status.lastLogin.date': {
 			$gt: new Date((new Date()).setDate((new Date()).getDate() - 3))
 		},
@@ -60,24 +59,17 @@ Game.Earth.generateEnemyArmy = function() {
 			$gt: 24999
 		}
 	}).count();
+}
 
-	if (players < 1) {
-		players = 1;
+Game.Earth.generateEnemyArmy = function(level) {
+	// count online players
+	var players = Game.Earth.countActivePlayers();
+
+	if (players < Game.Earth.MIN_ACTIVE_PLAYERS) {
+		players = Game.Earth.MIN_ACTIVE_PLAYERS;
 	}
 
 	// count difficulty modifier
-	var visibleZones = Game.EarthZones.Collection.find({
-		isVisible: true
-	}).count();
-
-	// each 5 visible zones = 1 difficulty level
-	var level = Math.round(visibleZones / 5);
-	if (level < 1) {
-		level = 1; // min level
-	} else if (level > 8) {
-		level = 8; // max level
-	}
-
 	var difficulty = Math.pow(1.5, level);
 
 	// generate units
@@ -104,6 +96,10 @@ Game.Earth.observeZone = function(name) {
 		throw new Meteor.Error('Нельзя разведать точки, еноты не изучены');
 	}
 
+	if (Game.Earth.countActivePlayers() < Game.Earth.MIN_ACTIVE_PLAYERS) {
+		throw new Meteor.Error('Нельзя разведать точки, мало активных игроков');
+	}
+
 	// get target zone
 	var zone = Game.EarthZones.Collection.findOne({
 		name: name
@@ -123,6 +119,21 @@ Game.Earth.observeZone = function(name) {
 		isVisible: { $ne: true }
 	}).fetch();
 
+	// calculate difficulty level
+	var visibleZones = Game.EarthZones.Collection.find({
+		isVisible: true
+	}).count();
+
+	visibleZones += zonesAround.length;
+	
+	var level = Math.round(visibleZones / 5); // each 5 visible zones = 1 difficulty level
+	if (level < 1) {
+		level = 1; // min level
+	} else if (level > 8) {
+		level = 8; // max level
+	}
+
+	// mark as visible + generate enemy army at each new zone
 	for (var i = 0; i < zonesAround.length; i++) {
 		Game.EarthZones.Collection.update({
 			name: zonesAround[i].name
@@ -130,7 +141,7 @@ Game.Earth.observeZone = function(name) {
 			$set: {
 				isVisible: true,
 				isEnemy: true,
-				enemyArmy: Game.Earth.generateEnemyArmy()
+				enemyArmy: Game.Earth.generateEnemyArmy(level)
 			}
 		});
 	}
@@ -360,11 +371,11 @@ Game.Earth.nextTurn = function() {
 	if (!currentZone.isEnemy && enemyZonesCount <= 0) {
 
 		// Only start zone is available, so try to observer nearby zones
-		if (Game.Mutual.has('research', 'reccons')) {
+		if (Game.Mutual.has('research', 'reccons')
+		 && Game.Earth.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
+		) {
 			Game.Earth.observeZone(currentZone.name);
 			Game.Earth.createTurn();
-		} else {
-			console.log('Need mutual research recons!');
 		}
 
 	} else {

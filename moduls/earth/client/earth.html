@@ -16,19 +16,13 @@
 			{{#if turn}}
 				{{#if turn.canVote}}
 					{{#if eq turn.type "move"}}
-						{{#if zone.isEnemy}}
-							<a class="btn-attack" data-action="{{zone.name}}">
-								В атаку {{votePercent zone.name turn}}%
-							</a>
-						{{else}}
-							<a class="btn-attack" data-action="{{zone.name}}">
-								Ждем {{votePercent zone.name turn}}%
-							</a>
-						{{/if}}
+						<a class="btn-attack" data-action="{{zone.name}}">
+							{{#if zone.isEnemy}}В атаку{{else}}Ждем{{/if}} {{votePercent zone.name turn}}%
+						</a>
 					{{/if}}
 					{{#if eq turn.type "battle"}}
 						<a class="btn-attack" data-action="battle">
-							В атаку {{votePercent "battle" turn}}%
+							Воюем {{votePercent "battle" turn}}%
 						</a>
 						<a class="btn-attack" data-action="retreat">
 							Отступаем {{votePercent "retreat" turn}}%
@@ -51,14 +45,10 @@
 					{{/if}}
 					<p>Всего голосов: {{turn.count}}</p>
 					{{#if eq turn.type "move"}}
-						{{#if zone.isEnemy}}
-							<p>В атаку: {{votePercent zone.name turn}}%</p>
-						{{else}}
-							<p>Ждем: {{votePercent zone.name turn}}%</p>
-						{{/if}}
+						<p>{{#if zone.isEnemy}}В атаку{{else}}Ждем{{/if}}: {{votePercent zone.name turn}}%</p>
 					{{/if}}
 					{{#if eq turn.type "battle"}}
-						<p>В атаку: {{votePercent "battle" turn}}%</p>
+						<p>Воюем: {{votePercent "battle" turn}}%</p>
 						<p>Отступаем: {{votePercent "retreat" turn}}%</p>
 					{{/if}}
 				{{/if}}
@@ -72,11 +62,11 @@
 		<div class="zone-info">
 			<div class="summary-info">
 				<h2>{{info.name}}</h2>
-				<p>
+				<div>
 					Захвачено на: {{info.capturedPercent}}%
-					<br><span class="humans">Точек людей: {{info.userCount}}</span>
-					<br><span class="repts">Точек рептилий: {{info.enemyCount}}</span>
-				</p>
+					<div class="humans">Точек людей: {{info.userCount}}</div>
+					<div class="repts">Точек рептилий: {{info.enemyCount}}</div>
+				</div>
 			</div>
 			<div class="army-humans">
 				<p>Люди<br><span>Сила: {{info.userPower}}</span></p>

@@ -423,7 +423,6 @@ var ZoneView = function(mapView, zoneData) {
 
 			if (mapBounds) {
 				mapView.setMaxBounds(mapBounds);
-				mapView.fitBounds(mapBounds);
 			}
 
 			// show on map
@@ -669,10 +668,8 @@ Template.earth.onRendered(function() {
 		// create existing zones
 		var zones = Game.EarthZones.getAll().fetch();
 		for (var i = 0; i < zones.length; i++) {
-			if (mapView && zoneViews) {
-				zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
-				zoneViews[ zones[i].name ].update();
-			}
+			zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
+			zoneViews[ zones[i].name ].update();
 		}
 
 		// track db updates
@@ -685,10 +682,18 @@ Template.earth.onRendered(function() {
 			}
 		});
 
+		if (mapBounds) {
+			mapView.fitBounds(mapBounds);
+		}
+
 	} else {
 		
 		// put existing map content into template
 		$('#map-content').html( mapView._container );
+
+		for (var key in zoneViews) {
+			zoneViews[ key ].update();
+		}
 
 	}
 

@@ -219,7 +219,7 @@ Game.Earth.showZonePopup = function(name, latlng) {
 			name: name,
 			position: function() {
 				zoom.get();
-				return mapView.latLngToContainerPoint(latlng);
+				return mapView.latLngToLayerPoint(latlng);
 			}
 		},
 		$('.leaflet-popup-pane')[0]
@@ -333,7 +333,7 @@ var ZoneView = function(mapView, zoneData) {
 			weight: 3,
 			opacity: 1,
 			zIndex: 100,
-			fillOpacity: 0.03,
+			fillOpacity: 0.05,
 			fillColor: '#374a60'
 		}
 
@@ -341,21 +341,23 @@ var ZoneView = function(mapView, zoneData) {
 			color: '#4a82c4',
 			weight: 4,
 			opacity: 1,
+			fillOpacity: 0.2,
 			zIndex: 100
 		}
 
 		var enemyStyle = {
 			color: '#913b31',
 			weight: 2,
-			opacity: 0.5,
+			opacity: 0.1,
 			fillOpacity: 0,
-			fillOpacity: 0.01,
+			fillOpacity: 0.05,
 			fillColor: '#913b31'
 		}
 
 		var enemyStyleHover = {
 			color: '#bd5348',
 			weight: 2,
+			fillOpacity: 0.2,
 			opacity: 1
 		}
 
@@ -373,6 +375,7 @@ var ZoneView = function(mapView, zoneData) {
 		marker = L.marker(
 			[this.x, this.y],
 			{
+				clickable: false,
 				icon: L.divIcon({
 					className: 'earth-marker',
 					iconSize: [iconSize, iconSize],
@@ -383,7 +386,6 @@ var ZoneView = function(mapView, zoneData) {
 
 		// events
 		polygon.on('click', this.showPopup.bind(this));
-		marker.on('click', this.showPopup.bind(this));
 
 		// debug
 		// marker.on('click', function(e) { console.log(zone.name); });
@@ -576,6 +578,7 @@ var LineView = function(start, finish) {
 	this.constructor = function() {
 		// create line
 		line = new L.Polyline([], {
+			clickable: false,
 			color: '#4a82c4',
 			weight: 3,
 			smoothFactor: 1
@@ -588,6 +591,7 @@ var LineView = function(start, finish) {
 			Math.min(start.x, finish.x) + Math.abs(start.x - finish.x) / 2,
 			Math.min(start.y, finish.y) + Math.abs(start.y - finish.y) / 2
 		], {
+			clickable: false,
 			icon: L.divIcon({
 				className: 'earth-marker-connection-text'
 			})
@@ -657,7 +661,7 @@ Template.earth.onRendered(function() {
 			id: 'zav39.1f2ff4e8',
 			accessToken: 'pk.eyJ1IjoiemF2MzkiLCJhIjoiNDQzNTM1OGVkN2FjNDJmM2NlY2NjOGZmOTk4NzNiOTYifQ.urd1R1KSQQ9WTeGAFLOK8A'
 		}).addTo(mapView);
-
+		
 		mapView.on('click', function(e) {
 			Game.Earth.hideZonePopup();
 		});

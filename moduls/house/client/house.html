@@ -1,0 +1,43 @@
+<template name="consulHouse">
+
+	{{#each placed_items}}
+	<div class="{{this}}">{{this}}</div>
+	{{/each}}
+
+	<div class="information house">
+		<img src="/img/game/house/tron/item_tron.jpg">
+		<div class="description">
+			<ul class ="consul-items">
+				{{#each house_items}}
+				<li data-id="{{this.engName}}">
+					<a class="
+					{{#if this.isBought}}has{{else}}{{#if this.isNew}}new{{/if}}{{/if}} 
+					{{#if eq house_item.engName this.engName}}active{{/if}} 
+					{{#if this.isPlaced}}placed{{/if}}
+					"></a>
+				</li>
+				{{/each}}
+			</ul>
+			<p>
+				{{house_item.name}}<br>
+				Царский трон был создан специально для очень важных задниц, для самых важных задниц. На вашей планете, Консул, нет ни одной задницы важнее вашей. У вас есть уникальный шанс подчеркнуть это. Укажите всем на ваше превосходство, установив этот трон в свои покои.
+			</p>
+			<div class="profit">
+				Приток населения +100 в час
+			</div>
+		</div>
+		{{#if house_item.isBought}}
+		{{#if house_item.isPlaced}}
+		<button class="remove" data-id="{{house_item.engName}}">Убрать</button>
+		{{else}}
+		<button class="place" data-id="{{house_item.engName}}">Установить</button>
+		{{/if}}
+		{{else}}
+		<ul class="resources">
+			<li class="credits">{{house_item.credits}}</li>
+		</ul>
+		<button class="buy" data-id="{{house_item.engName}}">Приобрести</button>
+		{{/if}}
+	</div>
+
+</template>

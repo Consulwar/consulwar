@@ -8,6 +8,7 @@ initUnitClient();
 
 initCosmosClient();
 initEarthClient();
+initHouseClient();
 
 initMutualClient();
 

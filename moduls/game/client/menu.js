@@ -8,7 +8,7 @@ var firstItemGroupURL = function(items) {
 
 var menu = {
 	planet: {
-		routeName: ['building'],
+		routeName: ['building', 'house'],
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
 			residential: {
@@ -20,6 +20,11 @@ var menu = {
 				name: 'Военный район',
 				url: firstItemGroupURL(Game.Building.items.military),
 				items: Game.Building.items.military
+			},
+			house: {
+				name: 'Палата консула',
+				url: Router.routes.house.path()
+				// TODO: Add items!
 			}
 		}
 	}, 

@@ -61,6 +61,10 @@ Meteor.methods({
 			throw new Meteor.Error('С 17:00 до 19:00 по МСК отправка войск недоступна');
 		}
 
+		if (!Game.SpaceEvents.checkCanSendFleet()) {
+			throw new Meteor.Error('Слишком много флотов уже отправлено');
+		}
+
 		var totalCount = 0;
 
 		for (var name in units) {

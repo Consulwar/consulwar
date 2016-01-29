@@ -130,7 +130,11 @@
 				<li class="fleet" data-id="{{this.id}}">
 					{{#if this.start}}{{this.start.name}}{{else}}Перехват{{/if}}
 					<span> → </span> 
-					{{#if this.finish}}{{this.finish.name}}{{else}}Перехват{{/if}}
+					{{#if this.finish}}
+						{{this.finish.name}}
+					{{else}}
+						{{#if this.isReinforcement}}Земля{{else}}Перехват{{/if}}
+					{{/if}}
 				</li>
 			{{/each}}
 		</ul>

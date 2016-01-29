@@ -88,6 +88,10 @@ Template.reserve.events({
 			return Notifications.info('С 17:00 до 19:00 по МСК отправка войск недоступна');
 		}
 
+		if (!Game.SpaceEvents.checkCanSendFleet()) {
+			return Notifications.info('Слишком много флотов уже отправлено');
+		}
+
 		var total = 0;
 		var units = {};
 

@@ -46,6 +46,7 @@ Meteor.methods({
 	},
 
 	'earth.sendReinforcement': function(units) {
+		var currentTime = Math.floor(new Date().valueOf() / 1000);
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -54,6 +55,10 @@ Meteor.methods({
 
 		if (user.blocked == true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (!Game.Earth.checkReinforceTime(currentTime)) {
+			throw new Meteor.Error('С 17:00 до 19:00 по МСК отправка войск недоступна');
 		}
 
 		var totalCount = 0;
@@ -75,7 +80,7 @@ Meteor.methods({
 
 		// send reinforcements to current point
 		Game.SpaceEvents.sendReinforcement({
-			startTime: Math.floor(new Date().valueOf() / 1000),
+			startTime: currentTime,
 			durationTime: Meteor.settings.earth.reinforcementsDelay,
 			units: { army: { ground: units } }
 		});
@@ -83,30 +88,14 @@ Meteor.methods({
 		// add at once for quick debug
 		// Game.Earth.addReinforcement( { army: { ground: units } } );
 
-		// calculate and apply honor
-		var honor = 0;
-
+		// remove units
 		for (var name in units) {
-			var count = units[name];
-
-			if (count) {
-				honor += Game.Resources.calculateHonorFromReinforcement(
-					Game.Unit.items.army.ground[ name ].price(count)
-				);
-			}
-
 			Game.Unit.remove({
 				group: 'ground',
 				engName: name,
-				count: count
+				count: units[name]
 			});
 		}
-
-		Game.Resources.add({
-			honor: honor
-		});
-
-		return honor;
 	}
 });
 

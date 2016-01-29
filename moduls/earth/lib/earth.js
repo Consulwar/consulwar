@@ -1,6 +1,11 @@
 initEarthLib = function() {
 
-Game.Earth = {};
+Game.Earth = {
+	checkReinforceTime: function(currentTime) {
+		var hours = new Date(currentTime * 1000).getHours();
+		return (hours >= 17 && hours < 19) ? false : true;
+	}
+};
 
 Game.EarthZones = {
 	Collection: new Meteor.Collection('zones'),

@@ -12,6 +12,7 @@ Game.Earth.addReinforcement = function(units) {
 		throw new Meteor.Error('Не установлена текущая зона');
 	}
 
+	var honor = 0;
 	var incrementUnits = {};
 
 	for (var side in units) {
@@ -19,11 +20,18 @@ Game.Earth.addReinforcement = function(units) {
 			for (var name in units[side][group]) {
 				var count = parseInt( units[side][group][name], 10 );
 				if (count > 0) {
+					honor += Game.Resources.calculateHonorFromReinforcement(
+						Game.Unit.items[side][group][name].price(count)
+					);
 					incrementUnits['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
 				}
 			}
 		}
 	}
+	
+	Game.Resources.add({
+		honor: honor
+	});
 
 	Game.EarthZones.Collection.update({
 		isCurrent: true

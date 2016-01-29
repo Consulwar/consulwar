@@ -84,6 +84,10 @@ Template.reserve.events({
 	},
 
 	'click .btn-send': function(e, t) {
+		if (!Game.Earth.checkReinforceTime( Session.get('serverTime') )) {
+			return Notifications.info('С 17:00 до 19:00 по МСК отправка войск недоступна');
+		}
+
 		var total = 0;
 		var units = {};
 

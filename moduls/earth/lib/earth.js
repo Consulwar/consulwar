@@ -37,7 +37,7 @@ Game.EarthZones = {
 		return power;
 	},
 
-	calcTotalHealth: function(isEnemy) {
+	calcTotalHealth: function() {
 		var userPower = 0;
 		var enemyPower = 0;
 

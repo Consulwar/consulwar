@@ -143,11 +143,11 @@ Game.SpaceEvents.updateReinforcement = function(serverTime, event) {
 			for (var name in units[side][group]) {
 				var count = parseInt( units[side][group][name], 10 );
 				var result = Math.floor( count * k );
+				// if result < 1, check chance instead of percents
 				if (result < 1) {
-					if (Game.Random.random() > k) {
-						result = 1;
-					}
+					result = Game.Random.random() > k ? 1 : 0;
 				}
+				// save result
 				arrived[side][group][name] = result;
 			}
 		}

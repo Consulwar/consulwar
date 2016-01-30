@@ -2,84 +2,78 @@ initHouseServer = function() {
 
 initHouseLib();
 
-Game.HouseItems.update = function(data) {
-	Game.HouseItems.Collection.update({
+Game.House.update = function(data) {
+	Game.House.Collection.update({
 		user_id: Meteor.userId()
 	}, data);
 
 	return data;
 }
 
-Game.HouseItems.initialize = function(user) {
+Game.House.initialize = function(user) {
 	user = user || Meteor.user();
-	var currentValue = Game.HouseItems.getValue();
+	var currentValue = Game.House.getValue();
 
 	if (currentValue == undefined) {
-		Game.HouseItems.Collection.insert({
-			'user_id': user._id
+		Game.House.Collection.insert({
+			'user_id': user._id,
+			'tron': {
+				'consul': {
+					isPlaced: true
+				}
+			}
 		})
 	}
 }
 
+// TODO: Куда это лучше запихнуть!?
+Game.House.initialize();
+
 Meteor.methods({
+	'house.buyItem': function(group, id) {
+		var data = Game.House.getValue();
 
-	'houseItems.buy': function(group, name) {
-		Game.HouseItems.initialize();
+		var item = Game.House.items[group].types[id];
+		if (!item) {
+			throw new Meteor.Error('Нет такого предмета');
+		}
 
-		var data = Game.HouseItems.getValue();
-
-		// TODO: check and grab money!
-		var itemConfig = Game.HouseItems.getItemConfig(group, name);
-		if (!itemConfig) {
-			return; // no such item
+		if (data[group][id]) {
+			throw new Meteor.Error('Предмет уже куплен');
 		}
 
 		if (!data[group]) {
 			data[group] = {};
 		}
 
-		if (data[group][name]) {
-			return; // already bought
-		}
-
-		data[group][name] = {
+		data[group][id] = {
 			isPlaced: false
 		}
 
-		Game.HouseItems.update(data);
+		// TODO: Check and grab money!
+
+		Game.House.update(data);
 	},
 
-	'houseItems.place': function(group, name) {
-		var data = Game.HouseItems.getValue();
+	'house.placeItem': function(group, id) {
+		var data = Game.House.getValue();
 
-		if (!data[group] || !data[group][name]) {
-			return; // no such item
+		if (!data[group] || !data[group][id]) {
+			throw new Meteor.Error('Нет такого предмета');
 		}
 
-		for (var index in data[group]) {
-			data[group][index].isPlaced = false;	
+		for (var key in data[group]) {
+			data[group][key].isPlaced = false;	
 		}
 
-		data[group][name].isPlaced = true;
-		Game.HouseItems.update(data);
-	},
-
-	'houseItems.remove': function(group, name) {
-		var data = Game.HouseItems.getValue();
-
-		if (!data[group] || !data[group][name]) {
-			return; // no such item
-		}
-
-		data[group][name].isPlaced = false;
-		Game.HouseItems.update(data);
+		data[group][id].isPlaced = true;
+		Game.House.update(data);
 	}
-
 })
 
 Meteor.publish('houseItems', function () {
 	if (this.userId) {
-		return Game.HouseItems.Collection.find({
+		return Game.House.Collection.find({
 			user_id: this.userId
 		})
 	}

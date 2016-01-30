@@ -12,7 +12,8 @@ Game.House.showPage = function() {
 		this.render('consulHouseItem', {
 			to: 'content',
 			data: {
-				name: item
+				name: item,
+				id: new ReactiveVar( _.keys(Game.House.items[item].types)[0] )
 			}
 		});
 	} else {
@@ -22,115 +23,100 @@ Game.House.showPage = function() {
 	}
 }
 
-var items = [];
+// ----------------------------------------------------------------------------
+// Consul house overview
+// ----------------------------------------------------------------------------
 
-var getItem = function(id) {
-	for (var i = 0; i < items.length; i++) {
-		if (items[i].engName == id) {
-			return items[i];
-		}
-	}
-	return {};
-}
+Template.consulHouse.helpers({
+	items: function() {
+		var items = [];
+		var data = Game.House.getValue();
+		
+		for (var group in data) {
+			if (!Game.House.items[group]) {
+				continue;
+			}
 
-var selectItem = function(id) {
-	Session.set('house_item', getItem(id));
-}
+			for (var id in data[group]) {
+				if (!Game.House.items[group].types[id]) {
+					continue;
+				}
 
-var buyItem = function(id) {
-
-	Meteor.call('houseItems.buy', 'chairs', id);
-
-	getItem(id).isBought = true;
-	Session.set('house_items', items);
-	Session.set('house_item', getItem(id));
-}
-
-var placeItem = function(id) {
-
-	Meteor.call('houseItems.place', 'chairs', id);
-
-	for (var i = 0; i < items.length; i++) {
-		items[i].isPlaced = false;
-	}
-	getItem(id).isPlaced = true;
-	Session.set('house_items', items);
-	Session.set('house_item', getItem(id));
-}
-
-var removeItem = function(id) {
-
-	Meteor.call('houseItems.remove', 'chairs', id);
-
-	getItem(id).isPlaced = false;
-	Session.set('house_items', items);
-	Session.set('house_item', getItem(id));
-}
-
-Template.consulHouse.onRendered(function() {
-
-	items = Game.HouseItems.items['chairs'];
-	items[10].isNew = true;
-	items[11].isNew = true;
-	items[12].isNew = true;
-
-	// TODO: maybe observe?
-	var data = Game.HouseItems.getValue();
-	if (data && data['chairs']) {
-		for (var key in data['chairs']) {
-			for (var i = 0; i < items.length; i++) {
-				if (items[i].engName == key) {
-					items[i].isBought = true;
-					items[i].isPlaced = data['chairs'][key].isPlaced;
+				if (data[group][id].isPlaced) {
+					items.push({
+						group: group,
+						id: id
+					});
 				}
 			}
 		}
+
+		return items;
 	}
+})
 
-	Session.set('house_items', items);
-	Session.set('house_item', items[0]);
+// ----------------------------------------------------------------------------
+// Consul house item menu
+// ----------------------------------------------------------------------------
 
-});
-
-Template.consulHouse.helpers({
-
-	'house_items': function() {
-		return Session.get('house_items');
+Template.consulHouseItem.helpers({
+	group: function() {
+		return Template.instance().data.name;
 	},
 
-	'house_item': function() {
-		return Session.get('house_item');
+	id: function() {
+		return Template.instance().data.id.get();
 	},
 
-	'placed_items': function() {
-		return false;
-		//return Game.HouseItems.getPlaced();
+	item: function() {
+		var name = Template.instance().data.name;
+		var id = Template.instance().data.id.get();
+
+		var data = Game.House.getValue();
+		var item = Game.House.items[name].types[id];
+
+		item.isPlaced = (data[name] && data[name][id] && data[name][id].isPlaced) ? true : false;
+		item.isBought = (data[name] && data[name][id]) ? true : false;
+		item.isNew = false;
+
+		return item;
+	},
+
+	items: function() {
+		var result = [];
+
+		var data = Game.House.getValue();
+		var name = Template.instance().data.name;
+		var types = Game.House.items[name].types;
+
+		for (var key in types) {
+			result.push({
+				id: key,
+				isPlaced: (data[name] && data[name][key] && data[name][key].isPlaced) ? true : false,
+				idBought: (data[name] && data[name][key]) ? true : false,
+				idNew: false
+			})
+		}
+
+		return result;
 	}
+})
 
-});
-
-Template.consulHouse.events({
-
-	'click .consul-items li': function(e) {
+Template.consulHouseItem.events({
+	'click .consul-items li': function(e, t) {
 		var id = $(e.currentTarget).attr('data-id');
-		selectItem(id);
+		t.data.id.set( id );
 	},
 
-	'click .buy': function(e) {
+	'click .buy': function(e, t) {
 		var id = $(e.currentTarget).attr('data-id');
-		buyItem(id);
+		Meteor.call('house.buyItem', t.data.name, id);
 	},
 
-	'click .place': function(e) {
+	'click .place': function(e, t) {
 		var id = $(e.currentTarget).attr('data-id');
-		placeItem(id);
-	},
-
-	'click .remove': function(e) {
-		var id = $(e.currentTarget).attr('data-id');
-		removeItem(id);
+		Meteor.call('house.placeItem', t.data.name, id);
 	}
-
 })
 
 }

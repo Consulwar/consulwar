@@ -7,11 +7,19 @@ Meteor.subscribe('houseItems');
 Game.House.showPage = function() {
 
 	var item = this.params.item;
-	console.log('input item = ', item);
 
-	this.render('consulHouse', {
-		to: 'content'
-	});
+	if (item) {
+		this.render('consulHouseItem', {
+			to: 'content',
+			data: {
+				name: item
+			}
+		});
+	} else {
+		this.render('consulHouse', {
+			to: 'content'
+		});
+	}
 }
 
 var items = [];

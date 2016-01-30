@@ -1,6 +1,53 @@
 initHouseLib = function() {
 
-Game.House = {};
+game.HouseItem = function(options) {
+	game.HouseItem.superclass.constructor.apply(this, arguments);
+
+	this.type = 'house';
+
+	Game.House.items[this.engName] = this;
+
+	this.url = function(options) {
+		options = options || {
+			group: this.group,
+			item: this.engName
+		};
+		return Router.routes[this.type].path(options);
+	}
+
+	this.currentLevel = function() {
+		return 0;
+	}
+};
+game.extend(game.HouseItem, game.Item);
+
+Game.House = {
+	items: {}
+}
+
+// ------------------------------------
+// TODO: Move to content
+
+game.setToMenu = 'planet';
+game.setToSide = 'house';
+
+new game.HouseItem({
+	name: 'Трон',
+	engName: 'tron',
+	types: {
+		'tron1': {
+			name: 'Трон 1'
+		},
+		'tron2': {
+			name: 'Трон 2'
+		},
+		'tron3': {
+			name: 'Трон 3'
+		}
+	}
+});
+
+// ------------------------------------
 
 Game.HouseItems = {
 	Collection: new Meteor.Collection('houseItems'),

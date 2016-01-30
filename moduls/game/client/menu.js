@@ -23,8 +23,8 @@ var menu = {
 			},
 			house: {
 				name: 'Палата консула',
-				url: Router.routes.house.path()
-				// TODO: Add items!
+				url: firstItemGroupURL(Game.House.items),
+				items: Game.House.items
 			}
 		}
 	}, 

@@ -1,9 +1,10 @@
 <template name="consulHouse">
-
 	{{#each placed_items}}
-	<div class="{{this}}">{{this}}</div>
+		<div class="{{this}}">{{this}}</div>
 	{{/each}}
+</template>
 
+<template name="consulHouseItem">
 	<div class="information house">
 		<img src="/img/game/house/tron/item_tron.jpg">
 		<div class="description">
@@ -39,5 +40,4 @@
 		<button class="buy" data-id="{{house_item.engName}}">Приобрести</button>
 		{{/if}}
 	</div>
-
 </template>

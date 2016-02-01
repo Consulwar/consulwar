@@ -27,6 +27,13 @@ Game.House.showPage = function() {
 // Consul house overview
 // ----------------------------------------------------------------------------
 
+Tracker.autorun(function() {
+	var data = Game.House.getValue();
+	for (var key in Game.House.items) {
+		Game.House.items[key].refreshEffects();
+	}
+})
+
 Template.consulHouse.helpers({
 	items: function() {
 		var items = [];

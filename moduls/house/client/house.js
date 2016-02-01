@@ -75,11 +75,23 @@ Template.consulHouseItem.helpers({
 		var data = Game.House.getValue();
 		var item = Game.House.items[name].types[id];
 
-		item.isPlaced = (data[name] && data[name][id] && data[name][id].isPlaced) ? true : false;
-		item.isBought = (data[name] && data[name][id]) ? true : false;
-		item.isNew = false;
+		var arrPrice = [];
+		for (var key in item.price) {
+			arrPrice.push({
+				name: key,
+				count: item.price[key]
+			});
+		}
 
-		return item;
+		return {
+			id: id,
+			name: item.name,
+			description: item.description,
+			price: (arrPrice.length > 0 ? arrPrice : null),
+			isPlaced: (data[name] && data[name][id] && data[name][id].isPlaced ? true : false),
+			isBought: (data[name] && data[name][id] ? true : false),
+			isNew: false
+		}
 	},
 
 	items: function() {

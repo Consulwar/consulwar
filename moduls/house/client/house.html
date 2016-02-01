@@ -1,7 +1,10 @@
 <template name="consulHouse">
-	{{#each items}}
-		<div class="{{this.group}} {{this.id}}">{{this.group}} {{this.id}}</div>
-	{{/each}}
+	<div class="consul"></div>
+	{{#if items}}
+		{{#each items}}
+			<div class="{{this.group}}-{{this.id}}"></div>
+		{{/each}}
+	{{/if}}
 </template>
 
 <template name="consulHouseItem">
@@ -30,7 +33,7 @@
 		{{#if item.isBought}}
 			{{#unless item.isPlaced}}
 				<button class="place" data-id="{{id}}">Установить</button>
-			{{/if}}
+			{{/unless}}
 		{{else}}
 			{{#if item.price}}
 				<ul class="resources">
@@ -38,7 +41,7 @@
 						<li class="{{this.name}}">{{this.count}}</li>
 					{{/each}}
 				</ul>
-				<button class="buy" data-id="{{house_item.engName}}">Приобрести</button>
+				<button class="buy" data-id="{{id}}">Приобрести</button>
 			{{/if}}
 		{{/if}}
 	</div>

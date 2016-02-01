@@ -97,7 +97,7 @@ Accounts.onCreateUser(function(option, user) {
 	};
 
 	Game.Resources.initialize(user);
-
+	Game.House.initialize(user);
 
 	Meteor.setTimeout(function(user) {
 		Accounts.sendVerificationEmail(user._id);

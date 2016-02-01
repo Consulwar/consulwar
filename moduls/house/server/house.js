@@ -26,9 +26,6 @@ Game.House.initialize = function(user) {
 	}
 }
 
-// TODO: Куда это лучше запихнуть!?
-Game.House.initialize();
-
 Meteor.methods({
 	'house.buyItem': function(group, id) {
 		var data = Game.House.getValue();

@@ -1,3 +1,30 @@
+house-element(group, name, x, y, z)
+	.{group}-{name}
+		position absolute
+		display block
+		content url("/img/game/house/" group "/" name ".png")
+		left x px
+		top y px
+		z-index z
+
+.content
+	.overlay.planet.house
+		background-image url(/img/game/house/back.jpg)
+		z-index 1
+		
+	.consul
+		position absolute
+		display block
+		content url(/img/game/house/consul.png)
+		left 580px
+		top 120px
+		z-index 10
+		
+	house-element('tron', 'consul', 485, 25, 5)
+	house-element('tron', 'czar', 480, 58, 5)
+	house-element('tron', 'gameofthrones', 480, 45, 5)
+
+
 .house
 	
 	button
@@ -99,10 +126,10 @@
 	background-image url("/img/game/house/tron/icon.png")
 	
 .tron-consul-icon
-	background-image url("/img/game/house/tron/consul.png")
+	background-image url("/img/game/house/tron/i/consul.png")
 	
 .tron-gameofthrones-icon
-	background-image url("/img/game/house/tron/gameofthrones.png")
+	background-image url("/img/game/house/tron/i/gameofthrones.png")
 	
 .tron-czar-icon
-	background-image url("/img/game/house/tron/czar.png")
+	background-image url("/img/game/house/tron/i/czar.png")

@@ -65,10 +65,15 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 		var dropPower = groups[groupName].power;
 
 		for (var itemName in planetItems[groupName]) {
+			var dropChance = Math.round( planetItems[groupName][itemName] * dropPower );
+			if (dropChance <= 0) {
+				continue;
+			}
+
 			items.push({
 				name: itemName,
 				spawnChance: spawnChance,
-				dropChance: Math.round( planetItems[groupName][itemName] * dropPower )
+				dropChance: dropChance
 			});
 		}
 	}

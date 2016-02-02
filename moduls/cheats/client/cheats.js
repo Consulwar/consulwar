@@ -2,6 +2,10 @@ initCheatsClient = function() {
 
 Game.Cheats = {}
 
+// ----------------------------------------------------------------------------
+// Unit cheats
+// ----------------------------------------------------------------------------
+
 Game.Cheats.setUnitCount = function (group, name, count) {
 	Meteor.call('cheats.setUnitCount', group, name, count);
 }
@@ -82,6 +86,10 @@ Game.Cheats.testBattle = function() {
 	});
 }
 
+// ----------------------------------------------------------------------------
+// Cosmos cheats
+// ----------------------------------------------------------------------------
+
 Game.Cheats.testMissionGenerate = function(hand, segment) {
 	var planet = {
 		segment: segment,
@@ -106,6 +114,18 @@ Game.Cheats.sendReptileFleetToPlanet = function(planetName) {
 
 Game.Cheats.generateAllPlanets = function() {
 	Meteor.call('cheats.generateAllPlanets');
+}
+
+// ----------------------------------------------------------------------------
+// Artefacts cheats
+// ----------------------------------------------------------------------------
+
+Game.Cheats.addArtefact = function(id, amount) {
+	Meteor.call('cheats.addArtefact', id, amount);
+}
+
+Game.Cheats.removeArtefact = function(id, amount) {
+	Meteor.call('cheats.removeArtefact', id, amount);
 }
 
 }

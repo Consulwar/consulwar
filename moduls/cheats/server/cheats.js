@@ -47,13 +47,21 @@ if (process.env.NODE_ENV == 'development') {
 					Game.Planets.generateSector(galactic, i, j, true);
 				}
 			}
+		},
+
+		'cheats.addArtefact': function(id, amount) {
+			Game.Artefacts.add(id, amount);
+		},
+
+		'cheats.removeArtefact': function(id, amount) {
+			Game.Artefacts.remove(id, amount);
 		}
 	})
 
 } else {
 
 	var addCheater = function() {
-		throw new Meteor.Error('Вы добавлены в список читеров, поздравляем');
+		throw new Meteor.Error('Вы добавлены в список читеров, поздравляем!');
 	}
 
 	Meteor.methods({
@@ -62,7 +70,9 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.testMissionGenerate': addCheater,
 		'cheats.spawnTradeFleet': addCheater,
 		'cheats.sendReptileFleetToPlanet': addCheater,
-		'cheats.generateAllPlanets': addCheater
+		'cheats.generateAllPlanets': addCheater,
+		'cheats.addArtefact': addCheater,
+		'cheats.removeArtefact': addCheater
 	})
 
 }

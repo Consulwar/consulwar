@@ -1,18 +1,24 @@
 initArtefactsLib = function() {
 
 game.Artefact = function(options) {
-	Game.Artefacts.items.push(options);
+	Game.Artefacts.items[options.engName] = options;
 }
 
 Game.Artefacts = {
+	Collection: new Meteor.Collection('artefacts'),
 
-	getRandom: function() {
-		var iRand = Game.Random.interval(0, Game.Artefacts.items.length - 1);
-		return Game.Artefacts.items[iRand];
+	getValue: function() {
+		return Game.Artefacts.Collection.findOne({
+			user_id: Meteor.userId()
+		});
 	},
 
-	items: []
+	getAmount: function(id) {
+		var data = Game.Artefacts.getValue();
+		return (data && data[id]) ? data[id] : 0;
+	},
 
+	items: {}
 }
 
 initArtefactsContent();

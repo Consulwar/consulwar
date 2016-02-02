@@ -204,13 +204,13 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 		name: planet.name,
 		type: Game.Planets.getType(planet.type).name,
 		items: [{
-			name: Game.Artefacts.getRandom().engName,
+			name: 'weapon_parts',
 			chance: Math.round(Math.random() * 50 + 25)
 		}, {
-			name: Game.Artefacts.getRandom().engName,
+			name: 'weapon_parts',
 			chance: Math.round(Math.random() * 50 + 25)
 		}, {
-			name: Game.Artefacts.getRandom().engName,
+			name: 'weapon_parts',
 			chance: Math.round(Math.random() * 50 + 25)
 		}]
 	};

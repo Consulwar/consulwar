@@ -649,8 +649,9 @@ Meteor.methods({
 			return;
 		}
 
-		// spawn enemies
 		var timeCurrent = getServerTime();
+
+		// spawn enemies
 		if (!planet.mission
 		 && !planet.armyId
 		 &&  planet.timeRespawn <= timeCurrent
@@ -663,6 +664,19 @@ Meteor.methods({
 				planet.timeRespawn = timeCurrent + Game.Cosmos.TIME_RESPAWN_MISSION;
 			}
 			Game.Planets.update(planet);
+		}
+
+		// auto collect artefacts
+		if (planet.armyId && planet.timeArtefacts) {
+			var delta = timeCurrent - planet.timeArtefacts;
+			var count = Math.floor( delta / Game.Cosmos.TIME_COLLECT_ARTEFACTS );
+			if (count > 0) {
+				while (count-- > 0) {
+					Game.Planets.collectArtefacts(planet);
+				}
+				planet.timeArtefacts = timeCurrent;
+				Game.Planets.update(planet);
+			}
 		}
 	}
 

@@ -356,6 +356,13 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				Game.Resources.add( battleResult.reward );
 			}
 			
+			// collect artefacts
+			var wasUserColony = (planet.isHome || planet.armyId) ? true : false;
+			if (!wasUserColony && (!battleResult || (userArmy && !enemyArmy))) {
+				planet.timeArtefacts = serverTime;
+				Game.Planets.collectArtefacts(planet);
+			}
+
 			// update planet info
 			if (event.info.isOneway && (!battleResult || (userArmy && !enemyArmy))) {
 				// stay on planet
@@ -397,15 +404,9 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			Game.Planets.update(planet);
 
 			if (!battleResult || (userArmy && !enemyArmy)) {
-				// discover planet, if not yet
 				if (!planet.isDiscovered) {
 					Meteor.call('planet.discover', planet._id);
 				}
-
-				// try to collect artefacts
-				// TODO: Also collect artefacts each 4 hours
-				//       Also collect offline until planet captured by enemy
-				Game.Planets.collectArtefacts(planet);
 			}
 
 		// ----------------------------
@@ -456,7 +457,18 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					event.info.mission = null;
 				}
 
-				if (battleResult && enemyArmy && (userArmy || planet.isHome)) {
+				// collect and reset artefacts time
+				if (enemyArmy && !userArmy && !planet.isHome) {
+					var delta = serverTime - planet.timeArtefacts;
+					var count = Math.floor( delta / Game.Cosmos.TIME_COLLECT_ARTEFACTS );
+					while (count-- > 0) {
+						Game.Planets.collectArtefacts(planet);
+					}
+
+					planet.timeArtefacts = null;
+				}
+
+				if (enemyArmy && (userArmy || planet.isHome)) {
 					// return reptiles ship
 					var startPosition = event.info.targetPosition;
 					var targetPosition = event.info.startPosition;
@@ -498,6 +510,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			Game.Planets.update(planet);
 
 		}
+
 	}
 
 	// --------------------------------

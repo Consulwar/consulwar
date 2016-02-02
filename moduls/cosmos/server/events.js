@@ -397,9 +397,15 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			Game.Planets.update(planet);
 
 			if (!battleResult || (userArmy && !enemyArmy)) {
+				// discover planet, if not yet
 				if (!planet.isDiscovered) {
 					Meteor.call('planet.discover', planet._id);
 				}
+
+				// try to collect artefacts
+				// TODO: Also collect artefacts each 4 hours
+				//       Also collect offline until planet captured by enemy
+				Game.Planets.collectArtefacts(planet);
 			}
 
 		// ----------------------------

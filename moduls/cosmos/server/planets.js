@@ -25,6 +25,30 @@ Game.Planets.add = function(planet) {
 	return Game.Planets.Collection.insert(planet);
 }
 
+Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
+	var result = null;
+
+	// TODO: Implement correct algorythm!
+
+	return {
+		'weapon_parts': Game.Random.interval(10, 30),
+		'silver_plasmoid': Game.Random.interval(30, 60),
+		'ship_details': Game.Random.interval(60, 90)
+	}
+}
+
+Game.Planets.collectArtefacts = function(planet) {
+	if (!planet || !planet.artefacts) {
+		return;
+	}
+
+	for (var key in planet.artefacts) {
+		if (Game.Random.interval(1, 99) <= planet.artefacts[key]) {
+			Game.Artefacts.add(key, 1);
+		}
+	}
+}
+
 Game.Planets.generateType = function() {
 	var result = null;
 	var types = Game.Planets.types;
@@ -345,9 +369,17 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 			size = 1;
 		}
 
+		var artefacts = Game.Planets.generateArtefacts(
+			galactic,
+			hand,
+			segment,
+			type
+		)
+
 		var newPlanet = {
 			name: Game.Planets.generateName(),
 			type: type.engName,
+			artefacts: artefacts,
 			// state
 			armyId: null,
 			mission: null,

@@ -4,7 +4,6 @@
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
-	{{> yield "cosmosPopupContent"}}
 	{{> yield "cosmosAttackMenu"}}
 </template>
 
@@ -16,7 +15,7 @@
 		<h2>{{drop.name}} ({{drop.type}})</h2>
 		<ul class="map-planet-popup-items">
 			{{#each drop.items}}
-				<li class="{{this.name}}">{{this.chance}}%</li>
+				<li class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</li>
 			{{/each}}
 		</ul>
 	</div>

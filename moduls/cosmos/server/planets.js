@@ -26,15 +26,85 @@ Game.Planets.add = function(planet) {
 }
 
 Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
-	var result = null;
+	// get artefacts spread config by distance from home planet or center
+	var basePlanet = Game.Planets.getBase();
+	var distTotal = galactic.segments;
+	var distCurrent = distTotal - segment;
 
-	// TODO: Implement correct algorythm!
-
-	return {
-		'weapon_parts': Game.Random.interval(10, 30),
-		'silver_plasmoid': Game.Random.interval(30, 60),
-		'ship_details': Game.Random.interval(60, 90)
+	if (basePlanet && hand == basePlanet.hand) {
+		if (segment > basePlanet.segment) {
+			distTotal = basePlanet.segment;
+			distCurrent = segment - basePlanet.segment;
+		} else if (segment < basePlanet.segment) {
+			distTotal = basePlanet.segment;
+			distCurrent = basePlanet.segment - segment;
+		} else {
+			distCurrent = 0;
+			distTotal = 1;
+		}
 	}
+
+	if (distCurrent < 0) {
+		distCurrent = 0;
+	}
+
+	var len = Game.Cosmos.ARTEFACTS_GROUP_SPREAD.length;
+	var index = Math.round( distCurrent / distTotal * (len - 1) );
+	var groups = Game.Cosmos.ARTEFACTS_GROUP_SPREAD[ index ];
+
+	// select available items
+	var planetItems = Game.Cosmos.PLANET_TYPE_ARTEFACTS[ type.engName ];
+	var items = [];
+
+	for (var groupName in groups) {
+		if (!planetItems || !planetItems[groupName]) {
+			continue;
+		}
+
+		var spawnChance = groups[groupName].chance;
+		var dropPower = groups[groupName].power;
+
+		for (var itemName in planetItems[groupName]) {
+			items.push({
+				name: itemName,
+				spawnChance: spawnChance,
+				dropChance: Math.round( planetItems[groupName][itemName] * dropPower )
+			});
+		}
+	}
+
+	if (items.length <= 0) {
+		return null;
+	}
+
+	// select random items from available
+	var result = {};
+	var foundCount = 0;
+
+	while (items.length > 0 && foundCount < 3) {
+
+		var val = 0;
+		for (var i = 0; i < items.length; i++) {
+			val += items[i].spawnChance;
+		}
+
+		var randomVal = Game.Random.random() * val;
+		val = 0;
+
+		for (var i = 0; i < items.length; i++) {
+			val += items[i].spawnChance;
+			if (randomVal <= val) {
+				break;
+			}
+		}
+
+		result[items[i].name] = items[i].dropChance;
+		foundCount++;
+
+		items.splice(i, 1);
+	}
+
+	return result;
 }
 
 Game.Planets.collectArtefacts = function(planet) {

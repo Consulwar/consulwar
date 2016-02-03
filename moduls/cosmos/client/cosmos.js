@@ -10,6 +10,7 @@ var mapView = null;
 var pathViews = {};
 var observerSpaceEvents = null;
 var cosmosObjectsView = null;
+var cosmosPopupView = null;
 
 Game.Cosmos.showPage = function() {
 	this.render('cosmos', {
@@ -215,11 +216,9 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 }
 
 Game.Cosmos.showPlanetPopup = function(id) {
-	if (!mapView) {
+	if (!mapView || cosmosPopupView) {
 		return;
 	}
-
-	$('.leaflet-popup-pane').html('');
 
 	var planet = Game.Planets.getOne(id);
 	var dropInfo = Game.Cosmos.getPlanetPopupInfo(planet);
@@ -229,7 +228,7 @@ Game.Cosmos.showPlanetPopup = function(id) {
 
 	var zoom = this.data.zoom;
 
-	Blaze.renderWithData(
+	cosmosPopupView = Blaze.renderWithData(
 		Template.cosmosPlanetPopup, {
 			drop: dropInfo,
 			position: function() {
@@ -246,11 +245,10 @@ Game.Cosmos.showPlanetPopup = function(id) {
 }
 
 Game.Cosmos.hidePlanetPopup = function() {
-	if (!mapView) {
-		return;
+	if (cosmosPopupView) {
+		Blaze.remove( cosmosPopupView );
+		cosmosPopupView = null;
 	}
-
-	$('.leaflet-popup-pane').html('');
 }
 
 // ----------------------------------------------------------------------------

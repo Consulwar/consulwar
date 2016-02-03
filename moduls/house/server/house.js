@@ -30,7 +30,7 @@ Meteor.methods({
 	'house.buyItem': function(group, id) {
 		var data = Game.House.getValue();
 
-		var item = Game.House.items[group].types[id];
+		var item = Game.House.items[group][id];
 		if (!item) {
 			throw new Meteor.Error('Нет такого предмета');
 		}

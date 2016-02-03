@@ -4,43 +4,14 @@ game.HouseItem = function(options) {
 	game.HouseItem.superclass.constructor.apply(this, arguments);
 
 	this.type = 'house';
-	this.types = options.types;
+	this.subgroup = options.subgroup;
 
-	Game.House.items[this.engName] = this;
-
-	// -------------------------------------------
-	// TODO: Cheeki breeki!
-	this.refreshEffects = function() {
-		var currentItem = null;
-		var newItem = null;
-
-		for (var key in options.types) {
-			if (!options.types[key].effect || !options.types[key].effect.register) {
-				continue;
-			}
-
-			if (!newItem && Game.House.checkPlaced(options.engName, key)) {
-				newItem = options.types[key];
-			}
-
-			if (!currentItem && options.types[key].effect.isRegistered) {
-				currentItem = options.types[key];
-			}
-		}
-
-		if (currentItem) {
-			currentItem.effect.unregister(currentItem);
-		}
-
-		if (newItem) {
-			newItem.effect.register(newItem);
-		}
-	}
-	// -------------------------------------------
+	Game.House.items[this.subgroup][this.engName] = this;
 
 	this.url = function(options) {
 		options = options || {
 			group: this.group,
+			subgroup: this.subgroup,
 			item: this.engName
 		};
 		return Router.routes[this.type].path(options);
@@ -81,7 +52,9 @@ Game.House = {
 		return (data && data[group] && data[group][id] && data[group][id].isPlaced) ? true : false;
 	},
 
-	items: {}
+	items: {
+		tron: {}
+	}
 }
 
 // ------------------------------------
@@ -91,57 +64,59 @@ game.setToMenu = 'planet';
 game.setToSide = 'house';
 
 new game.HouseItem({
-	name: 'Трон',
-	engName: 'tron',
-	types: {
-		'consul': {
-			name: 'Трон Консула',
-			description: 'У каждого правителя должен быть свой трон. Этот трон был специально изготовлен для вашего аватара, Консул. Это один из символов вашей власти, вашей непоколебимой воли и справедливых решений. Вы - уникальны, и этот трон - ваш.',
-			//effect: 'сидеть тепло и мягко'
-			effect: new Game.Effect.Income({
-				pretext: 'Приток населения ',
-				aftertext: ' человек в час',
-				priority: 1,
-				affect: 'humans',
-				result: function(level) {
-					return 20;
-				}
-			})
-		},
-		'czar': {
-			name: 'Царский Трон',
-			description: 'Царский трон был создан специально для очень важных задниц, для самых важных задниц. На вашей планете, Консул, нет ни одной задницы важнее вашей. У вас есть уникальный шанс подчеркнуть это. Укажите всем на ваше превосходство, установив этот трон в свои покои.',
-			//effect: 'приток населения +100 в час',
-			effect: new Game.Effect.Income({
-				pretext: 'Приток населения ',
-				aftertext: ' человек в час',
-				priority: 1,
-				affect: 'humans',
-				result: function(level) {
-					return 100;
-				}
-			}),
-			price: {
-				credits: 1000
-			}
-		},
-		'gameofthrones': {
-			name: 'Трон Игра Престолов',
-			description: 'Здесь не Вестерос, однако же проблем далеко не меньше. Нужно управлять целой планетой, судьба всего человечества зависит от Консула. Рептилоиды продолжают атаковать по всем фронтам и только самые стойкие из консулов смогут устоять. Железный Трон уникален и изготавливается именно для таких Правителей.',
-			//effect: 'броня флота +2%',
-			effect: new Game.Effect.Income({
-				pretext: 'Приток населения ',
-				aftertext: ' человек в час',
-				priority: 1,
-				affect: 'humans',
-				result: function(level) {
-					return 500;
-				}
-			}),
-			price: {
-				credits: 100500
-			}
+	subgroup: 'tron',
+	engName: 'consul',
+	name: 'Трон Консула',
+	description: 'У каждого правителя должен быть свой трон. Этот трон был специально изготовлен для вашего аватара, Консул. Это один из символов вашей власти, вашей непоколебимой воли и справедливых решений. Вы - уникальны, и этот трон - ваш.',
+	//effect: 'сидеть тепло и мягко'
+	effect: new Game.Effect.Income({
+		pretext: 'Приток населения ',
+		aftertext: ' человек в час',
+		priority: 1,
+		affect: 'humans',
+		result: function(level) {
+			return 20;
 		}
+	})
+});
+
+new game.HouseItem({
+	subgroup: 'tron',
+	engName: 'czar',
+	name: 'Царский Трон',
+	description: 'Царский трон был создан специально для очень важных задниц, для самых важных задниц. На вашей планете, Консул, нет ни одной задницы важнее вашей. У вас есть уникальный шанс подчеркнуть это. Укажите всем на ваше превосходство, установив этот трон в свои покои.',
+	//effect: 'приток населения +100 в час',
+	effect: new Game.Effect.Income({
+		pretext: 'Приток населения ',
+		aftertext: ' человек в час',
+		priority: 1,
+		affect: 'humans',
+		result: function(level) {
+			return 100;
+		}
+	}),
+	price: {
+		credits: 1000
+	}
+});
+
+new game.HouseItem({
+	subgroup: 'tron',
+	engName: 'gameofthrones',
+	name: 'Трон Игра Престолов',
+	description: 'Здесь не Вестерос, однако же проблем далеко не меньше. Нужно управлять целой планетой, судьба всего человечества зависит от Консула. Рептилоиды продолжают атаковать по всем фронтам и только самые стойкие из консулов смогут устоять. Железный Трон уникален и изготавливается именно для таких Правителей.',
+	//effect: 'броня флота +2%',
+	effect: new Game.Effect.Income({
+		pretext: 'Приток населения ',
+		aftertext: ' человек в час',
+		priority: 1,
+		affect: 'humans',
+		result: function(level) {
+			return 500;
+		}
+	}),
+	price: {
+		credits: 100500
 	}
 });
 

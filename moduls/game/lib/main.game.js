@@ -376,10 +376,6 @@ Game.Effect = function(options) {
 		this.affect = options.affect;
 		this.result = options.result;
 
-		this.isRegistered = false;
-		this.list = null;
-		this.index = -1;
-
 		Object.defineProperty(this, 'level', {
 			get: function() {
 				return this.provider.currentLevel();
@@ -421,7 +417,7 @@ Game.Effect = function(options) {
 					Game.effects[this.type][this.condition.name] = {list: []};
 				}
 
-				this.list = Game.effects[this.type][this.condition.name].list;
+				Game.effects[this.type][this.condition.name].list.push(this);
 			} else {
 				if (Game.effects[this.type][this.condition.type] == undefined) {
 					Game.effects[this.type][this.condition.type] = {list: []};
@@ -436,29 +432,16 @@ Game.Effect = function(options) {
 						if (Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] == undefined) {
 							Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] = {list: []};
 						}
-						this.list = Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special].list;
+						Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special].list.push(this);
 					} else {
-						this.list = Game.effects[this.type][this.condition.type][this.condition.group].list;
+						Game.effects[this.type][this.condition.type][this.condition.group].list.push(this);
 					}
 				} else {
-					this.list = Game.effects[this.type][this.condition.type].list;
+					Game.effects[this.type][this.condition.type].list.push(this);
 				}
 			}
 		} else {
-			this.list = Game.effects[this.type].list;
-		}
-
-		if (this.list && !this.isRegistered) {
-			this.list.push(this);
-			this.index = this.list.length - 1;
-			this.isRegistered = true;
-		}
-	}
-
-	this.unregister = function() {
-		if (this.isRegistered && this.list && this.index >= 0) {
-			this.list.splice(this.index, 1);
-			this.isRegistered = false;
+			Game.effects[this.type].list.push(this);
 		}
 	}
 }

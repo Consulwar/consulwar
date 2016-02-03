@@ -2,6 +2,6 @@ initArtefactsClient = function() {
 
 initArtefactsLib();
 
-// TODO: Write implementation!
+Meteor.subscribe('artefacts');
 
 }

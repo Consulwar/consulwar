@@ -46,9 +46,9 @@ initQuestContent();
 
 Game.Quest.initialize = function(user) {
 	user = user || Meteor.user();
-	var data = Game.Quest.getValue();
+	var quests = Game.Quest.getValue();
 
-	if (data == undefined) {
+	if (quests == undefined) {
 		Game.Quest.Collection.insert({
 			user_id: user._id,
 			current: {},
@@ -58,10 +58,10 @@ Game.Quest.initialize = function(user) {
 }
 
 Meteor.methods({
-	updateQuests: function() {
+	'quests.update': function() {
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
@@ -69,9 +69,15 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('updateQuests: ', new Date(), user.login);
+		
+	},
 
-		var user = Meteor.user();
+	'quests.sendAction': function(questId, action) {
+
+	},
+
+	'quests.getReward': function(questId) {
+
 	}
 })
 

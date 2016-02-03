@@ -90,7 +90,7 @@ Meteor.methods({
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();
 
-		Meteor.call('updateQuests');
+		Meteor.call('quests.update');
 
 		return true;
 	},

@@ -1,6 +1,8 @@
 initHouseLib = function() {
 
 game.HouseItem = function(options) {
+	this.doNotRegisterEffect = true;
+
 	game.HouseItem.superclass.constructor.apply(this, arguments);
 
 	this.type = 'house';
@@ -40,6 +42,29 @@ Game.House = {
 		} else {
 			return null;
 		}
+	},
+
+	getPlacedItems: function() {
+		var items = [];
+		var data = Game.House.getValue();
+		
+		for (var group in data) {
+			if (!Game.House.items[group]) {
+				continue;
+			}
+
+			for (var id in data[group]) {
+				if (!Game.House.items[group][id]) {
+					continue;
+				}
+
+				if (data[group][id].isPlaced) {
+					items.push(Game.House.items[group][id]);
+				}
+			}
+		}
+
+		return items;
 	},
 
 	checkBought: function(group, id) {
@@ -106,13 +131,17 @@ new game.HouseItem({
 	name: 'Трон Игра Престолов',
 	description: 'Здесь не Вестерос, однако же проблем далеко не меньше. Нужно управлять целой планетой, судьба всего человечества зависит от Консула. Рептилоиды продолжают атаковать по всем фронтам и только самые стойкие из консулов смогут устоять. Железный Трон уникален и изготавливается именно для таких Правителей.',
 	//effect: 'броня флота +2%',
-	effect: new Game.Effect.Income({
-		pretext: 'Приток населения ',
-		aftertext: ' человек в час',
-		priority: 1,
-		affect: 'humans',
+	effect: new Game.Effect.Military({
+		pretext: 'Броня флота +',
+		aftertext: '%',
+		condition: {
+			type: 'unit',
+			group: 'fleet'
+		},
+		priority: 2,
+		affect: 'life',
 		result: function(level) {
-			return 500;
+			return 25;
 		}
 	}),
 	price: {

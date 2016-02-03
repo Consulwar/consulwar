@@ -89,8 +89,12 @@ game.Item = function(options) {
 		this.engName = options.engName;
 
 		if (options.effect && options.effect.register) {
-			options.effect.register(this);
-		}
+			if (!this.doNotRegisterEffect) {
+				options.effect.register(this);
+			} else {
+				options.effect.setProvider(this);
+			}
+		} 
 
 		this.effect = options.effect;
 		if (options.effect && options.effect.result) {
@@ -402,13 +406,16 @@ Game.Effect = function(options) {
 		};
 	}
 
-	this.register = function(obj) {
-		//this.provider = obj;
-
+	this.setProvider = function(provider) {
 		Object.defineProperty(this, 'provider', {
-			value: obj,
+			value: provider,
 			enumerable: false
 		});
+	}
+
+	this.register = function(obj) {
+		//this.provider = obj;
+		this.setProvider(obj);
 
 		if (this.condition && this.condition.type != 'all') {
 			// Если влияет только на конкретный объект
@@ -505,6 +512,40 @@ Game.Effect.getRelatedTo = function(obj) {
 
 		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i])
 	}
+
+	// Items
+	var items = Game.House.getPlacedItems();
+
+	for (var i = 0; i < items.length; i++) {
+		var effect = items[i].effect;
+		if (effect.type == this.type) {
+			if (effect.condition) {
+				if (effect.condition.name && obj.name != effect.condition.name) {
+					continue;
+				}
+
+				if (effect.condition.type && obj.type != effect.condition.type) {
+					continue;
+				}
+
+				if (effect.condition.group && obj.group != effect.condition.group) {
+					continue;
+				}
+
+				if (effect.condition.special && obj.special != effect.condition.special) {
+					continue;
+				}
+			}
+
+			if (effects[effect.priority] == undefined) {
+				effects[effect.priority] = [];
+			}
+
+			effects[effect.priority].push(effect)
+		}
+	}
+
+
 
 	var result = {};
 

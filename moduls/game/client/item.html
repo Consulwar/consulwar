@@ -56,7 +56,7 @@
 			{{/each}}
 			
 			{{#if item.characteristics.damage}}
-				<span class="damage" {{militaryTooltip item.characteristics 'damage'}}>
+				<span class="damage" {{militaryTooltipDamage item.characteristics}}>
 					{{formatNumberWithISO item.characteristics.damage.min}} —
 					{{formatNumberWithISO item.characteristics.damage.max}}
 				</span>

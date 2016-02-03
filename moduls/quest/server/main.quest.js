@@ -1,4 +1,4 @@
-initQuestServer = function() {
+initQuestServerOld = function() {
 
 initQuestLib();
 

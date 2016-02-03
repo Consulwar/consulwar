@@ -14,7 +14,7 @@ initMutualClient();
 
 initMailClient();
 
-initQuestLib();
+initQuestClient();
 
 initRouterClient();
 
@@ -352,8 +352,9 @@ Meteor.setInterval(function() {
 var hasNewMailStatus = false;
 Tracker.autorun(function() {
 	var user = Meteor.user();
-	if (user && user.game && user.game.quests.daily.status != game.Quest.status.finished
-		|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
+	// TODO: Change condition later!
+	if (/*user && user.game && user.game.quests.daily.status != game.Quest.status.finished
+		||*/ Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
 		&& !hasNewMailStatus) {
 		hasNewMailStatus = true;
 	} else {

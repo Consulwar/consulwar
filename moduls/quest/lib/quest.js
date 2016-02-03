@@ -16,4 +16,14 @@ game.Quest.status = {
 	finished: 3
 };
 
+Game.Quest = {
+	Collection: new Meteor.Collection('quest'),
+
+	getValue: function() {
+		return Game.Quest.Collection.findOne({
+			user_id: Meteor.userId()
+		});
+	}
+}
+
 }

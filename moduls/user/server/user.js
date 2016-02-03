@@ -81,7 +81,8 @@ Accounts.onCreateUser(function(option, user) {
 		+ letters[Math.floor(Math.random()*36)]);
 
 	user.game = {
-		updated: Math.floor(new Date().valueOf() / 1000),
+		updated: Math.floor(new Date().valueOf() / 1000)//,
+		// TODO: Remove this!
 		/*resources: {
 			humans: {amount: 500},
 			metals: {amount: 3000},
@@ -89,15 +90,16 @@ Accounts.onCreateUser(function(option, user) {
 			credits: {amount: 0},
 			honor: {amount: 0}
 		},*/
-		quests: {
+		/*quests: {
 			current: null,
 			finished: {},
 			daily: null
-		}
+		}*/
 	};
 
 	Game.Resources.initialize(user);
 	Game.House.initialize(user);
+	Game.Quest.initialize(user);
 
 	Meteor.setTimeout(function(user) {
 		Accounts.sendVerificationEmail(user._id);

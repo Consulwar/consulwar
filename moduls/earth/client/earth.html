@@ -1,117 +1,133 @@
 <template name="earth">
-	<div class="overlay">
-		{{#each items}}
-		<a href="{{pathFor 'game' menu='battle' side='earth' item=this.engName}}" class="{{this.engName}}" title="{{this.type.name}}">{{this.engName}}</a>
-		{{/each}}
-	</div>
-	<!--
-	<div id="map">
+	<div id="map-content"></div>
+</template>
 
-	</div>
-	-->
-	{{#if active_item}}
-	<div class="information point">
-		<div class="header">
-			<a class="back" href="{{pathFor 'game' menu='battle' side='earth'}}">Назад</a> Точка {{active_item.engName}}
-		</div>
-		
-		<div class="army">
-			{{#if army}}
-			<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				{{#each army}}
-				{{#if gt this.count 0}}
-				<tr>
-					<td>{{this.name}}</td>
-					<td>{{formatNumber this.count}}</td>
-				</tr>
+<template name="earthZonePopup">
+	{{#if zone}}
+		<div 
+			class="point-popup" 
+			style="left: {{position.x}}px; top: {{position.y}}px;"
+		>
+			<h2 title="{{info.name}}" class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
+				{{zone.name}}
+			</h2>
+			<!-- buttons -->
+			<a class="btn-info" href="{{pathFor 'earthZone' zone.name}}">Информация</a>
+			{{#if turn}}
+				{{#if turn.canVote}}
+					{{#if eq turn.type "move"}}
+						<a class="btn-attack" data-action="{{zone.name}}">
+							{{#if zone.isEnemy}}В атаку{{else}}Ждем{{/if}} {{votePercent zone.name turn}}%
+						</a>
+					{{/if}}
+					{{#if eq turn.type "battle"}}
+						<a class="btn-attack" data-action="battle">
+							Воюем {{votePercent "battle" turn}}%
+						</a>
+						<a class="btn-attack" data-action="retreat">
+							Отступаем {{votePercent "retreat" turn}}%
+						</a>
+					{{/if}}
 				{{/if}}
-				{{/each}}
-			</table>
-			{{else}}
-			<h2>Наших войск на точке нет</h2>
 			{{/if}}
-			<!--<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				<tr>
-					<td>Тилпс</td>
-					<td>1</td>
-				</tr>
-			</table>-->
-		</div>
-		<ul class="type {{active_item.type.engName}}">
-			{{#each currentEffects}}
-			<li>{{this.value}}% {{this.affect}} {{this.name}}</li>
-			{{/each}}
-		</ul>
-		<div class="reptiles">
-			{{#if reptiles}}
-			<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				{{#each reptiles}}
-				{{#if gt this.count 0}}
-				<tr>
-					<td>{{this.name}}</td>
-					<td>{{formatNumber this.count}}</td>
-				</tr>
+			{{#if zone.isCurrent}}
+				<a class="btn-reinforce" href="{{pathFor 'earthReserve'}}">Подкрепление</a>
+			{{/if}}
+			<!-- info -->
+			{{#if turn}}
+				{{#if turn.canVote}}
+					<p>Сила голоса: {{votePower}}</p>
+				{{else}}
+					{{#if gt votePower 0}}
+						<p>Вы уже проголосовали</p>
+					{{else}}
+						<p>Вы не можете голосовать</p>
+					{{/if}}
+					<p>Всего голосов: {{turn.count}}</p>
+					{{#if eq turn.type "move"}}
+						<p>{{#if zone.isEnemy}}В атаку{{else}}Ждем{{/if}}: {{votePercent zone.name turn}}%</p>
+					{{/if}}
+					{{#if eq turn.type "battle"}}
+						<p>Воюем: {{votePercent "battle" turn}}%</p>
+						<p>Отступаем: {{votePercent "retreat" turn}}%</p>
+					{{/if}}
 				{{/if}}
-				{{/each}}
-			</table>
-			{{else}}
-			{{#unless army}}
-			<h2>Информация отсутствует</h2>
-			{{/unless}}
 			{{/if}}
-			<!--<table>
-				<tr>
-					<th>тип войск</th>
-					<th>количество</th>
-				</tr>
-				<tr>
-					<td>Тон Ренек</td>
-					<td>1</td>
-				</tr>
-			</table>-->
 		</div>
-	</div>
+	{{/if}}
+</template>
+
+<template name="earthZoneInfo">
+	{{#if info}}
+		<div class="zone-info">
+			<div class="summary-info">
+				<h2>{{info.name}}</h2>
+				<div>
+					Захвачено на: {{info.capturedPercent}}%
+					<div class="humans">Точек людей: {{info.userCount}}</div>
+					<div class="reptiles">Точек рептилий: {{info.enemyCount}}</div>
+				</div>
+			</div>
+			<div class="army-humans">
+				<p>Люди<br><span>Сила: {{info.userPower}}</span></p>
+				<ul>
+					{{#each info.userArmy}}
+						<li>
+							<span>{{this.count}}</span> {{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="army-reptiles">
+				<p>Рептилоиды<br><span>Сила: {{info.enemyPower}}</span></p>
+				<ul>
+					{{#each info.enemyArmy}}
+						<li>
+							<span>{{this.count}}</span> {{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+			{{#if info.isCurrent}}
+				<a class="btn-reinforce" href="{{pathFor 'earthReserve'}}">Подкрепление</a>
+			{{/if}}
+			<a class="btn-close" href="{{pathFor 'earth'}}"></a>
+			<!-- <a class="btn-special">Спец атака</a> -->
+		</div>
 	{{/if}}
 </template>
 
 <template name="reserve">
-	<div class="information">
-		<ul class="items reserve">
-			{{#each units}}
-			<li class="{{#if eq this.count 0}}disabled{{/if}}">
-				<div class="{{this.engName}}" href="/game/army/ground/{{this.engName}}" data-count="{{this.count}}"></div>
-			</li>
-			{{/each}}
-		</ul>
+	<div class="zone-reserve">
+		{{#if units}}
+			<ul class="items units">
+				{{#each units}}
+					<li class="unit" data-id="{{this.engName}}" data-max="{{this.max}}">
+						<a class="{{this.engName}}-icon"></a>
+						<div class="max">{{formatNumberWithISO this.max}}</div>
+						<input class="count" type="number" placeholder="Количество"  value="0">
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
 		
-		<div class="small_description">
+		<div class="description">
 			<p>Как вам известно, Консул. На Земле идут ожесточённые бои против сил захватчиков. Рептилоиды не сдают позиции, а их силы всё растут. Галактический совет не может поддерживать достаточное количество войск для обороны и наступления. Освобождение нашей Родной планеты загнётся без вашей поддержки. Отправить подкрепление на Активную точку можно в любое время суток, кроме двух часов наступления.</p><br/>
 
-			<!--<p>С 17:00 до 19:00 по МСК отправка войск недоступна.</p><br/>-->
+			<p>С 17:00 до 19:00 по МСК отправка войск недоступна.</p><br/>
 
 			<p class="remuneration">
+				Ваша Поддержка Военной компании не останется незамеченной, Консул. После отправки этих отрядов, вы получите Очки Чести в размере:
 				<ul class="resources">
 					<li class="honor">{{formatNumber honor}}</li>
 				</ul>
-				Ваша Поддержка Военной компании не останется незамеченной, Консул. После отправки этих отрядов, вы получите Очки Чести в размере:
 			</p>
-
 			
-			<button class="select_all">Выбрать всех</button>
-			<button class="send_reinforcement">Отправить</button>
+			<a class="btn-all">Выбрать всех</a>
+			<a class="btn-send">Отправить</a>
 		</div>
+
+		<a class="btn-close" href="{{pathFor 'earth'}}"></a>
 	</div>
 	<div class="additional_area bolz"></div>
 </template>

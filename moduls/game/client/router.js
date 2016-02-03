@@ -68,6 +68,12 @@ var gameRoutes = {
 
 	cosmos: {
 		cosmos: 'cosmos'
+	},
+
+	earth: {
+		earth: 'earth',
+		earthReserve: 'earth/reserve',
+		earthZone: 'earth/zone/:name?'
 	}
 }
 
@@ -86,7 +92,11 @@ var gameActions = {
 
 	mutual: Game.Mutual.showPage,
 
-	cosmos: Game.Cosmos.showPage
+	cosmos: Game.Cosmos.showPage,
+
+	earth: Game.Earth.showMap,
+	earthReserve: Game.Earth.showReserve,
+	earthZone: Game.Earth.showZone
 }
 
 for (var group in gameRoutes) {

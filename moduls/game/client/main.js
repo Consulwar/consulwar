@@ -7,6 +7,7 @@ initResearchClient();
 initUnitClient();
 
 initCosmosClient();
+initEarthClient();
 
 initMutualClient();
 
@@ -435,78 +436,6 @@ Template.game.helpers(helpers);
 //Template.build.helpers(helpers);
 Template.item.helpers(helpers);
 Template.battle.helpers(helpers);
-
-
-
-Session.set('honor', 0);
-Template.reserve.onRendered(function() {
-	Session.set('honor', 0);
-})
-
-Template.reserve.helpers({
-	units: function() {
-		return _.map(game.army.ground, function(val, key) {
-			return {
-				engName: key,
-				count: game.army.ground[key].currentLevel()
-			}
-		}).concat(_.map({hbhr: game.army.heroes.hbhr, lost: game.army.heroes.lost}, function(val, key) {
-			return {
-				engName: key,
-				count: game.army.heroes[key].currentLevel()
-			}
-		}))
-	},
-
-	honor: function() { return Session.get('honor'); }
-})
-
-Template.reserve.events({
-	'click .items li': function(e, t) {
-		if (!$(e.currentTarget).hasClass('disabled')) {
-			$(e.currentTarget).toggleClass('active');
-
-			var current = $(e.currentTarget).find('div')[0];
-			var name = current.className;
-			var count = current.dataset.count;
-			var honor = Session.get('honor');
-				
-			if (['hbhr', 'lost'].indexOf(name) != -1) {
-				honor += Game.Resources.calculateHonorFromReinforcement(game.army.heroes[name].price(count)) * ($(e.currentTarget).hasClass('active') ? 1 : -1 )
-			} else {
-				honor += Game.Resources.calculateHonorFromReinforcement(game.army.ground[name].price(count)) * ($(e.currentTarget).hasClass('active') ? 1 : -1 )
-			}
-
-			Session.set('honor', honor);
-		}
-	},
-
-	'click .select_all': function() {
-		$('.items li:not(.disabled,.active)').click();
-	},
-
-	'click .send_reinforcement': function() {
-		var active = $('.reserve .active div');
-		var units = [];
-		for (var i = 0; i < active.length; i++) {
-			var name = active[i].className;
-			
-			units.push(name);
-		}
-
-		$('.reserve .active').removeClass('active');
-		Session.set('SendToReserve', 0);
-
-		Meteor.call('sendReinforcement', units, function(err, result) {
-			if (err) {
-				Notifications.error(err);
-			} else {
-				Notifications.info('Получено ' + result + ' чести', 'Замечательно!');
-				Session.set('honor', 0);
-			}
-		});
-	}
-})
 
 
 Template.game.events({

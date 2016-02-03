@@ -1,0 +1,28 @@
+{
+	"public": {
+		"yandex": {
+			"id": 123
+		},
+		"mapbox": {
+			"id": "***",
+			"accessToken": "***"
+		}
+	},
+	"kadira": { 
+		"appId": "***", 
+		"appSecret": "***" 
+	},
+	"mail": {
+		"protocol": "smtp",
+		"username": "***",
+		"password": "***",
+		"server":   "smtp.gmail.com",
+		"port": 25,
+		"from": "*** <***@***>",
+		"sitename": "***"
+	},
+	"earth": {
+		"reinforcementsDelay": 120,
+		"minActivePlayers": 100
+	}
+}

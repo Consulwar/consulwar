@@ -35,18 +35,28 @@ Game.Cosmos.showFleetsInfo = function() {
 Template.cosmosFleetsInfo.helpers({
 	userFleets: function () {
 		var result = [];
+
 		var fleets = Game.SpaceEvents.getFleets().fetch();	
 		for (var i = 0; i < fleets.length; i++) {
 			if (!fleets[i].info.isHumans) {
 				continue;
 			}
-			var info = {
+			result.push({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId )
-			}
-			result.push(info);
+			});
 		}
+		
+		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
+		for (var i = 0; i < reinforcements.length; i++) {
+			result.push({
+				isReinforcement: true,
+				id: reinforcements[i]._id,
+				start: Game.Planets.getBase()
+			});
+		}
+
 		return (result.length > 0) ? result : null;
 	},
 
@@ -57,12 +67,11 @@ Template.cosmosFleetsInfo.helpers({
 			if (fleets[i].info.isHumans) {
 				continue;
 			}
-			var info = {
+			result.push({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId )
-			}
-			result.push(info);
+			});
 		}
 		return (result.length > 0) ? result : null;
 	}

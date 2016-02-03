@@ -475,7 +475,8 @@ Game.SpaceEvents = {
 
 	// event type
 	type: {
-		SHIP: 1
+		SHIP: 1,
+		REINFORCEMENT: 2
 	},
 
 	// event target
@@ -515,6 +516,18 @@ Game.SpaceEvents = {
 		});
 	},
 
+	getReinforcements: function() {
+		return Game.SpaceEvents.Collection.find({
+			user_id: Meteor.userId(),
+			type: Game.SpaceEvents.type.REINFORCEMENT,
+			status: Game.SpaceEvents.status.STARTED
+		}, {
+			sort: {
+				timeEnd: 1
+			}
+		})
+	},
+
 	getSentToColonyCount: function() {
 		return Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
@@ -526,12 +539,20 @@ Game.SpaceEvents = {
 	},
 
 	getCurrentFleetsCount: function() {
-		return Game.SpaceEvents.Collection.find({
+		var inSpace = Game.SpaceEvents.Collection.find({
 			user_id: Meteor.userId(),
 			type: Game.SpaceEvents.type.SHIP,
 			status: Game.SpaceEvents.status.STARTED,
 			'info.isHumans': true
 		}).count();
+
+		var toEarth = Game.SpaceEvents.Collection.find({
+			user_id: Meteor.userId(),
+			type: Game.SpaceEvents.type.REINFORCEMENT,
+			status: Game.SpaceEvents.status.STARTED
+		}).count();
+
+		return inSpace + toEarth;
 	},
 	
 	getMaxFleetsCount: function() {

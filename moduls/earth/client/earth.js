@@ -30,8 +30,7 @@ Template.reserve.helpers({
 		return _.map(Game.Unit.items.army.ground, function(val, key) {
 			return {
 				engName: key,
-				max: val.currentLevel(),
-				count: 0
+				max: val.currentLevel()
 			}
 		});
 	},
@@ -211,19 +210,21 @@ Template.earthZoneInfo.helpers({
 // Zone popup
 // ----------------------------------------------------------------------------
 
+var zonePopupView = null;
+
 Game.Earth.showZonePopup = function(name, latlng) {
 	if (!mapView || !zoneViews[name]) {
 		return;
 	}
 
-	$('.leaflet-popup-pane').html('');
+	Game.Earth.hideZonePopup();
 
 	var zoom = new ReactiveVar( mapView.getZoom() );
 	mapView.on('zoomend', function(e) {
 		zoom.set( mapView.getZoom() );
 	});
 
-	Blaze.renderWithData(
+	zonePopupView = Blaze.renderWithData(
 		Template.earthZonePopup, {
 			name: name,
 			position: function() {
@@ -236,11 +237,10 @@ Game.Earth.showZonePopup = function(name, latlng) {
 }
 
 Game.Earth.hideZonePopup = function() {
-	if (!mapView) {
-		return;
+	if (zonePopupView) {
+		Blaze.remove( zonePopupView );
+		zonePopupView = null;
 	}
-
-	$('.leaflet-popup-pane').html('');
 }
 
 Template.earthZonePopup.helpers({

@@ -7,10 +7,7 @@ Game.SpaceEvents.actualize = function() {
 	var timeLastAttack = Game.Planets.getLastAttackTime();
 	var attacks = Math.floor( (timeCurrent - timeLastAttack) / Game.Cosmos.ATTACK_PLAYER_PERIOD );
 
-	if (attacks > 0
-	 && Game.User.getVotePower() > 0
-	 && Game.Unit.getHomeArmy()
-	) {
+	if (attacks > 0 && Game.User.getVotePower() > 0) {
 		for (var i = 0; i < attacks; i++) {
 			var targetPlanet = null;
 			var chances = Game.Planets.getReptileAttackChance();
@@ -313,11 +310,6 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 }
 
 Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
-	// check user has fleet
-	if (!Game.Unit.getHomeArmy()) {
-		throw new Meteor.Error('У игрока нет армии, нельзя его атаковать');
-	}
-
 	// get target planet
 	var targetPlanet = Game.Planets.getOne(planetId);
 	if (!targetPlanet) {
@@ -515,51 +507,60 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			if (planet.armyId || planet.isHome) {
 				// humans planet
 				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
-				var enemyArmy = { reptiles: { fleet: enemyFleet } };
-
-				var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmy()._id : planet.armyId;
+				var enemyArmy = (enemyFleet)
+					? { reptiles: { fleet: enemyFleet } }
+					: null;
+				
 				var userFleet = Game.Planets.getFleetUnits(planet._id);
-				var userArmy = { army: { fleet: userFleet } };
+				var userArmy = (userFleet)
+					? { army: { fleet: userFleet } }
+					: null;
 
-				var battleResult = Game.Unit.performBattle(userArmy, enemyArmy);
-				userArmy = battleResult.userArmy;
-				enemyArmy = battleResult.enemyArmy;
+				if (enemyArmy && userArmy) {
+					// perform battle
+					var battleResult = Game.Unit.performBattle(userArmy, enemyArmy);
+					userArmy = battleResult.userArmy;
+					enemyArmy = battleResult.enemyArmy;
 
-				if (userArmy && enemyArmy) {
-					// tie
-					Game.Unit.updateArmy(userArmyId, userArmy);
-					planet.mission.units = enemyArmy.reptiles.fleet;
-				} else if (!userArmy && enemyArmy) {
-					// reptiles won
-					Game.Unit.removeArmy(userArmyId);
-					if (planet.isHome) {
-						event.info.mission.units = enemyArmy.reptiles.fleet;
-					} else {
-						planet.mission = {
-							type: 'defencefleet',
-							level: event.info.mission.level,
-							units: enemyArmy.reptiles.fleet
+					// need this to update user army
+					var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmy()._id : planet.armyId;
+
+					if (userArmy && enemyArmy) {
+						// tie
+						Game.Unit.updateArmy(userArmyId, userArmy);
+						planet.mission.units = enemyArmy.reptiles.fleet;
+					} else if (!userArmy && enemyArmy) {
+						// reptiles won
+						Game.Unit.removeArmy(userArmyId);
+						if (planet.isHome) {
+							event.info.mission.units = enemyArmy.reptiles.fleet;
+						} else {
+							planet.mission = {
+								type: 'defencefleet',
+								level: event.info.mission.level,
+								units: enemyArmy.reptiles.fleet
+							}
 						}
-					}
-				} else if (userArmy && !enemyArmy) {
-					// humans won
-					Game.Unit.updateArmy(userArmyId, userArmy);
-					event.info.mission = null;
-				} else {
-					// everyone died
-					Game.Unit.removeArmy(userArmyId);
-					event.info.mission = null;
-				}
-
-				// collect and reset artefacts time
-				if (enemyArmy && !userArmy && !planet.isHome) {
-					var delta = serverTime - planet.timeArtefacts;
-					var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
-					while (count-- > 0) {
-						Game.Planets.collectArtefacts(planet);
+					} else if (userArmy && !enemyArmy) {
+						// humans won
+						Game.Unit.updateArmy(userArmyId, userArmy);
+						event.info.mission = null;
+					} else {
+						// everyone died
+						Game.Unit.removeArmy(userArmyId);
+						event.info.mission = null;
 					}
 
-					planet.timeArtefacts = null;
+					// collect and reset artefacts time
+					if (enemyArmy && !userArmy && !planet.isHome) {
+						var delta = serverTime - planet.timeArtefacts;
+						var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
+						while (count-- > 0) {
+							Game.Planets.collectArtefacts(planet);
+						}
+
+						planet.timeArtefacts = null;
+					}
 				}
 
 				if (enemyArmy && (userArmy || planet.isHome)) {

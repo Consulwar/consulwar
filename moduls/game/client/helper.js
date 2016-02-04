@@ -146,111 +146,72 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 	return price + iso[exponent];
 });
 
-var formatNumber = function (price) {
-	price = price.toString();
-	/*if (price.length > 9) {
-		return 'Ой, много';
-	}*/
-	return price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+var formatNumber = function (num, delimeter) {
+	delimeter = delimeter || '';
+
+	num = _.isObject(num) || _.isArray(num) ? num : [num];
+
+	return _.map(num, function(value) {
+		value = value.toString();
+		return value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+	}).join(delimeter);
 }
 
 UI.registerHelper('formatNumber', formatNumber);
 
-UI.registerHelper('priceTooltip', function(price, target) {
-	if (!price.base) {
-		return 'disabled';
-	}
-	
-	var basePrice = price.base[target];
-	var effects = price.effects;
 
-	if (basePrice == undefined) {
+var getEffectsTooltip = function(item, effects, target, invert) {
+	if (item.base == undefined) {
 		return 'disabled';
 	}
 
-	if (target == 'time') {
-		var textModifier = formatSeconds;
-	} else {
-		var textModifier = formatNumber;
-	}
+	var baseValue = item.base[target];
 
-	var text = '' + textModifier(basePrice);
+	var isMultiValue = !!(_.isObject(baseValue) || _.isArray(baseValue));
+
+	var currentValue = baseValue
+	  , nextValue = 100; // %
+
+	var text = isMultiValue || currentValue > 0 ? formatNumber(currentValue, ' - ') : '';
+
 	for (var priority in effects) {
-		if (effects[priority][target]) {
-			for (var i = 0; i < effects[priority][target].length; i++) {
-				text += ("\n" + (effects[priority][target][i].value > 0 ? '–' : '+')
-					+ (priority % 2 == 0 
-						? ''
-						: textModifier(effects[priority][target][i].value))
-					+ (priority % 2 == 0 
-						? textModifier(Math.floor(basePrice * (effects[priority][target][i].value * 0.01))) + (' (' + effects[priority][target][i].value + '%)') 
-						: '')
-					+ ' от ' + effects[priority][target][i].provider.name);
-			}
+		if (priority % 2 != 0 ) {
+			currentValue = isMultiValue 
+				? _.mapObject(currentValue, function(value) { 
+					return Math.floor(value * (nextValue * 0.01)) 
+				  })
+				: Math.floor(currentValue * (nextValue * 0.01));
+			nextValue = 0;
+		} else {
+			currentValue = isMultiValue 
+				? _.mapObject(currentValue, function(value) { return value + nextValue })
+				: currentValue + nextValue;
+			nextValue = 100;
 		}
-	}
 
-	return {title: text};
-});
-
-UI.registerHelper('incomeTooltip', function(effects, target) {
-	var basePrice = {};
-	basePrice[target] = 0;
-
-	var text = '';
-	for (var priority in effects) {
-		if (effects[priority][target]) {
-			var effect = 0;
-
-			for (var i = 0; i < effects[priority][target].length; i++) {
-				text += ("\n" + (effects[priority][target][i].value > 0 ? '+' : '')
-					+ (priority % 2 == 0 
-						? '' 
-						: formatNumber(effects[priority][target][i].value))
-					+ (priority % 2 == 0 
-						? formatNumber(Math.floor(basePrice[target] * (effects[priority][target][i].value * 0.01))) + (' (' + effects[priority][target][i].value + '%)') 
-						: '')
-					+ ' от ' + effects[priority][target][i].provider.name);
-
-				effect += effects[priority][target][i].value;
-			}
-
-			if (priority % 2 == 0) {
-				basePrice[target] = Math.floor(basePrice[target] * (1 + basePrice[target] * 0.01))
-			} else {
-				basePrice[target] += effect;
-			}
-		}
-	}
-
-	return {title: text};
-});
-
-UI.registerHelper('militaryTooltip', function(characteristics, target) {
-	var baseCharacteristics = characteristics.base;
-	var effects = characteristics.effects;
-
-	if (baseCharacteristics == undefined) {
-		return 'disabled';
-	}
-
-	var base  = baseCharacteristics[target];
-
-	var text = formatNumber(base);
-
-	for (var priority in effects) {
 		if (effects[priority][target]) {
 			for (var i = 0; i < effects[priority][target].length; i++) {
 				var effect = effects[priority][target][i];
 
-				text += "\n" + (effect.value > 0 ? '+' : '');
+				text += "\n";
+				if ((effect.value > 0 && !invert) || (effect.value < 0 && invert)) {
+					text += '+';
+				} else {
+					text += '–';
+				}
 				
 				if (priority % 2 != 0 ) {
-					text += formatNumber(effect.value);
+					text += formatNumber(Math.abs(effect.value));
 				} else {
-					text += formatNumber( Math.floor(base * (effect.value * 0.01)) )
-					      + ' (' + effect.value + '%)';
+					text += (isMultiValue
+						? _.toArray(
+							_.mapObject(currentValue, function(value) { 
+								return Math.abs(Math.floor(value * (effect.value * 0.01)))
+							})).join(' - ')
+						: formatNumber( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) )
+						) + ' (' + effect.value + '%)';
 				}
+				nextValue += effect.value;
 
 				text += ' от ' + effect.provider.name;
 			}
@@ -258,44 +219,21 @@ UI.registerHelper('militaryTooltip', function(characteristics, target) {
 	}
 
 	return {title: text};
+}
+
+UI.registerHelper('priceTooltip', function(price, target) {
+	return getEffectsTooltip({base: price}, price.effects, target, true);
 });
 
-UI.registerHelper('militaryTooltipDamage', function(characteristics) {
-	var baseCharacteristics = characteristics.base;
-	var effects = characteristics.effects;
-
-	if (baseCharacteristics == undefined) {
-		return 'disabled';
-	}
-
-	var base  = baseCharacteristics.damage;
-
-	var text = formatNumber(base.min)
-	         + ' - '
-	         + formatNumber(base.max);
-
-	for (var priority in effects) {
-		if (effects[priority].damage) {
-			for (var i = 0; i < effects[priority].damage.length; i++) {
-				var effect = effects[priority].damage[i];
-
-				text += "\n" + (effect.value > 0 ? '+' : '');
-
-				if (priority % 2 != 0 ) {
-					text += formatNumber(effect.value);
-				} else {
-					text += formatNumber( Math.floor(base.min * (effect.value * 0.01)) )
-					      +' - '
-					      + formatNumber( Math.floor(base.max * (effect.value * 0.01)) )
-					      + ' (' + effect.value + '%)';
-				}
-
-				text += ' от ' + effect.provider.name;
-			}
-		}
-	}
-
-	return {title: text};
+UI.registerHelper('incomeTooltip', function(effects, target) {
+	var income = {base: {}};
+	income.base[target] = 0;
+	return getEffectsTooltip(income, effects, target);
 });
+
+UI.registerHelper('militaryTooltip', function(characteristics, target) {
+	return getEffectsTooltip(characteristics, characteristics.effects, target);
+});
+
 
 });

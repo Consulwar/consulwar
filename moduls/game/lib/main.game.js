@@ -518,6 +518,10 @@ Game.Effect.getRelatedTo = function(obj) {
 
 	for (var i = 0; i < items.length; i++) {
 		var effect = items[i].effect;
+		if (!effect) {
+			continue;
+		}
+		
 		if (effect.type == this.type) {
 			if (effect.condition) {
 				if (effect.condition.name && obj.name != effect.condition.name) {

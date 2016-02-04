@@ -116,7 +116,7 @@ game.Item = function(options) {
 			//this.targets = options.targets;
 			Object.defineProperty(this, 'targets', {
 				get: function() {
-					//var characteristics = Game.Effect.Military.applyTo(this, _.clone(options.characteristics), false);
+					//var characteristics = Game.Effect.Military.applyTo(this, options.characteristics, false);
 					//characteristics.base = options.characteristics;
 
 					return options.targets;
@@ -128,7 +128,7 @@ game.Item = function(options) {
 		if (options.characteristics) {
 			Object.defineProperty(this, 'characteristics', {
 				get: function() {
-					var characteristics = Game.Effect.Military.applyTo(this, _.clone(options.characteristics), false);
+					var characteristics = Game.Effect.Military.applyTo(this, options.characteristics, false);
 					characteristics.base = options.characteristics;
 
 					return characteristics;
@@ -628,7 +628,13 @@ Game.Effect.getValue = function(hideEffects) {
 }
 
 // reduce - true = скидка, т.е. вычитаем эффекты
-Game.Effect.applyTo = function(target, obj, hideEffects) {
+Game.Effect.applyTo = function(target, sourceObj, hideEffects) {
+	// source object full clone
+	var obj = _.clone(sourceObj);
+	if (sourceObj.damage) {
+		obj.damage = _.clone(sourceObj.damage);
+	}
+
 	hideEffects = hideEffects == undefined ? true : hideEffects;
 	var effects = this.getRelatedTo(target);
 
@@ -645,22 +651,27 @@ Game.Effect.applyTo = function(target, obj, hideEffects) {
 				effect += effects[priority][item][i].value;
 			}
 
-			if (obj[item]) {
-				if (priority % 2 == 1) {
-					if (item == 'damage') { // TODO: Refactoring!
+			if (!obj[item]) {
+				continue;
+			}
+
+			switch (item) {
+				case 'damage':
+					if (priority % 2 == 1) {
 						obj[item].min += effect * (this.reduce ? -1 : 1);
 						obj[item].max += effect * (this.reduce ? -1 : 1);
 					} else {
-						obj[item] += effect * (this.reduce ? -1 : 1);
-					}
-				} else {
-					if (item == 'damage') { // TODO: Refactoring!
 						obj[item].min = obj[item].min + Math.floor(obj[item].min * (0.01 * effect)) * (this.reduce ? -1 : 1);
 						obj[item].max = obj[item].max + Math.floor(obj[item].max * (0.01 * effect)) * (this.reduce ? -1 : 1);
+					}
+					break;
+				default:
+					if (priority % 2 == 1) {
+						obj[item] += effect * (this.reduce ? -1 : 1);
 					} else {
 						obj[item] = obj[item] + Math.floor(obj[item] * (0.01 * effect)) * (this.reduce ? -1 : 1);
 					}
-				}
+					break;
 			}
 		}
 	}

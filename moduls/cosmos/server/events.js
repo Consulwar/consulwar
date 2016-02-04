@@ -4,31 +4,41 @@ Game.SpaceEvents.actualize = function() {
 	var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 
 	// Try to attack player
-	if (timeCurrent >= Game.Planets.getLastAttackTime() + Game.Cosmos.ATTACK_PLAYER_PERIOD) {
-		var targetPlanet = null;
-		var chances = Game.Planets.getReptileAttackChance();
+	var timeLastAttack = Game.Planets.getLastAttackTime();
+	var attacks = Math.floor( (timeCurrent - timeLastAttack) / Game.Cosmos.ATTACK_PLAYER_PERIOD );
 
-		if (chances.home >= Game.Random.interval(0, 100)) {
-			// choose base planet
-			targetPlanet = Game.Planets.getBase();
-		} else if (chances.colony >= Game.Random.interval(0, 100)) {
-			// choose from colonies, exclude base planet
-			var colonies = Game.Planets.getColonies();
-			var n = colonies.length;
-			while (n-- > 0) {
-				if (colonies[n].isHome) {
-					colonies.splice(n, 1);
+	if (attacks > 0
+	 && Game.User.getVotePower() > 0
+	 && Game.Unit.getHomeArmy()
+	) {
+		for (var i = 0; i < attacks; i++) {
+			var targetPlanet = null;
+			var chances = Game.Planets.getReptileAttackChance();
+
+			if (chances.home >= Game.Random.interval(0, 100)) {
+				// choose base planet
+				targetPlanet = Game.Planets.getBase();
+			} else if (chances.colony >= Game.Random.interval(0, 100)) {
+				// choose from colonies, exclude base planet
+				var colonies = Game.Planets.getColonies();
+				var n = colonies.length;
+				while (n-- > 0) {
+					if (colonies[n].isHome) {
+						colonies.splice(n, 1);
+					}
+				}
+				if (colonies.length > 0) {
+					targetPlanet = colonies[ Game.Random.interval(0, colonies.length - 1) ];
 				}
 			}
-			if (colonies.length > 0) {
-				targetPlanet = colonies[ Game.Random.interval(0, colonies.length - 1) ];
+
+			if (targetPlanet) {
+				Game.SpaceEvents.sendReptileFleetToPlanet(targetPlanet._id);
+				break; // maximum 1 simultaneous attack
 			}
 		}
 
-		if (targetPlanet) {
-			Game.SpaceEvents.sendReptileFleetToPlanet(targetPlanet._id);
-			Game.Planets.setLastAttackTime(timeCurrent);
-		}
+		Game.Planets.setLastAttackTime( timeLastAttack + attacks * Game.Cosmos.ATTACK_PLAYER_PERIOD );
 	}
 
 	// Try to spawn trade fleet
@@ -304,7 +314,7 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 
 Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 	// check user has fleet
-	if (!Game.Units.getHomeArmy()) {
+	if (!Game.Unit.getHomeArmy()) {
 		throw new Meteor.Error('У игрока нет армии, нельзя его атаковать');
 	}
 

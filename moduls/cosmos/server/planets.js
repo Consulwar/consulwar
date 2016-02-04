@@ -53,29 +53,29 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	var groups = Game.Cosmos.ARTEFACTS_GROUP_SPREAD[ index ];
 
 	// select available items
-	var planetItems = Game.Cosmos.PLANET_TYPE_ARTEFACTS[ type.engName ];
+	var artefacts = type.artefacts();
 	var items = [];
 
-	for (var groupName in groups) {
-		if (!planetItems || !planetItems[groupName]) {
+	for (var i = 0; i < artefacts.length; i++) {
+
+		var artefact = artefacts[i][0];
+		var chance = artefacts[i][1];
+
+		if (!artefact || !artefact.group) {
 			continue;
 		}
 
-		var spawnChance = groups[groupName].chance;
-		var dropPower = groups[groupName].power;
+		var group = groups[artefact.group];
 
-		for (var itemName in planetItems[groupName]) {
-			var dropChance = Math.round( planetItems[groupName][itemName] * dropPower );
-			if (dropChance <= 0) {
-				continue;
-			}
-
-			items.push({
-				name: itemName,
-				spawnChance: spawnChance,
-				dropChance: dropChance
-			});
+		if (!group || group.chance <= 0 || group.power <= 0) {
+			continue;
 		}
+
+		items.push({
+			name: artefact.engName,
+			spawnChance: group.chance,
+			dropChance: chance * group.power
+		})
 	}
 
 	if (items.length <= 0) {

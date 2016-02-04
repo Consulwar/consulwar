@@ -24,5 +24,10 @@
 	"earth": {
 		"reinforcementsDelay": 120,
 		"minActivePlayers": 100
+	},
+	"cosmos": {
+		"enemyRespawnPeriod": 120,
+		"attackPlayerPeriod": 120,
+		"collectArtefactsPeriod": 120
 	}
 }

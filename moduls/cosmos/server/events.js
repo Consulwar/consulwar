@@ -4,7 +4,7 @@ Game.SpaceEvents.actualize = function() {
 	var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
 
 	// Try to attack player
-	if (timeCurrent >= Game.Planets.getLastAttackTime() + Game.Cosmos.TIME_ATTACK_PLAYER) {
+	if (timeCurrent >= Game.Planets.getLastAttackTime() + Game.Cosmos.ATTACK_PLAYER_PERIOD) {
 		var targetPlanet = null;
 		var chances = Game.Planets.getReptileAttackChance();
 
@@ -303,6 +303,11 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 }
 
 Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
+	// check user has fleet
+	if (!Game.Units.getHomeArmy()) {
+		throw new Meteor.Error('У игрока нет армии, нельзя его атаковать');
+	}
+
 	// get target planet
 	var targetPlanet = Game.Planets.getOne(planetId);
 	if (!targetPlanet) {
@@ -340,8 +345,13 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 
 		var engineLevel = Game.Planets.getEngineLevel();
 
-		var mission = (targetPlanet.isHome) ? Game.Planets.getReptileAttackMission()
-		                                    : Game.Planets.generateMission(targetPlanet);
+		var mission = (targetPlanet.isHome)
+			? Game.Planets.getReptileAttackMission()
+			: Game.Planets.generateMission(targetPlanet);
+
+		if (!mission) {
+			throw new Meteor.Error('Не получилось сгенерировать миссию для нападения');
+		}
 
 		var shipOptions = {
 			startPosition:  startPosition,
@@ -474,7 +484,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				Game.SpaceEvents.sendShip(shipOptions);
 			}
 
-			planet.timeRespawn = event.timeEnd + Game.Cosmos.TIME_RESPAWN_MISSION;
+			planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 			Game.Planets.update(planet);
 
 			if (!battleResult || (userArmy && !enemyArmy)) {
@@ -534,7 +544,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				// collect and reset artefacts time
 				if (enemyArmy && !userArmy && !planet.isHome) {
 					var delta = serverTime - planet.timeArtefacts;
-					var count = Math.floor( delta / Game.Cosmos.TIME_COLLECT_ARTEFACTS );
+					var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 					while (count-- > 0) {
 						Game.Planets.collectArtefacts(planet);
 					}
@@ -580,7 +590,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				}
 			}
 
-			planet.timeRespawn = event.timeEnd + Game.Cosmos.TIME_RESPAWN_MISSION;
+			planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 			Game.Planets.update(planet);
 
 		}
@@ -771,7 +781,7 @@ Meteor.methods({
 		if (!baseArmy) {
 			basePlanet.armyId = null;	
 		}
-		basePlanet.timeRespawn = timeCurrent + Game.Cosmos.TIME_RESPAWN_MISSION;
+		basePlanet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 		Game.Planets.update(basePlanet);
 
 		// send ship

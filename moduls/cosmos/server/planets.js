@@ -198,12 +198,12 @@ Game.Planets.setLastAttackTime = function(time) {
 Game.Planets.generateMission = function(planet) {
 	// check planets
 	if (!planet) {
-		return;
+		return null;
 	}
 
 	var basePlanet = Game.Planets.getBase();
 	if (!basePlanet) {
-		return;
+		return null;
 	}
 
 	// missions config
@@ -250,6 +250,7 @@ Game.Planets.getReptileAttackChance = function() {
 
 Game.Planets.getReptileAttackMission = function() {
 	var power = Game.User.getVotePower();
+
 	// missions config
 	var missions = Game.Cosmos.ATTACK_MISSIONS;
 
@@ -260,7 +261,7 @@ Game.Planets.getReptileAttackMission = function() {
 
 	var list = missions[ power ];
 	if (!list || list.length <= 0) {
-		return;
+		return null;
 	}
 
 	var mission = list[ Game.Random.interval(0, list.length - 1) ];
@@ -600,7 +601,7 @@ Meteor.methods({
 		if (!baseArmy) {
 			basePlanet.armyId = null;	
 		}
-		basePlanet.timeRespawn = getServerTime() + Game.Cosmos.TIME_RESPAWN_MISSION;
+		basePlanet.timeRespawn = getServerTime() + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 		Game.Planets.update(basePlanet);
 
 		var startPosition = {
@@ -661,7 +662,7 @@ Meteor.methods({
 				planet.mission = Game.Planets.generateMission(planet);
 			} else {
 				// wait
-				planet.timeRespawn = timeCurrent + Game.Cosmos.TIME_RESPAWN_MISSION;
+				planet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 			}
 			Game.Planets.update(planet);
 		}
@@ -669,7 +670,7 @@ Meteor.methods({
 		// auto collect artefacts
 		if (planet.armyId && planet.timeArtefacts) {
 			var delta = timeCurrent - planet.timeArtefacts;
-			var count = Math.floor( delta / Game.Cosmos.TIME_COLLECT_ARTEFACTS );
+			var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 			if (count > 0) {
 				while (count-- > 0) {
 					Game.Planets.collectArtefacts(planet);

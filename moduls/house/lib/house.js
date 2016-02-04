@@ -20,6 +20,10 @@ game.HouseItem = function(options) {
 		return Router.routes[this.type].path(options);
 	}
 
+	this.getPrice = function() {
+		return options.price;
+	}
+
 	this.currentLevel = function() {
 		return 0;
 	}
@@ -50,13 +54,14 @@ game.HouseItem = function(options) {
 	}
 
 	this.canBuy = function() {
-		if (!this.price || this.isUnique) {
+		var price = this.getPrice();
+		if (!price) {
 			return false;
 		}
 
 		var resources = Game.Resources.getValue();
-		for (var name in this.price) {
-			if (name != 'time' && resources[name].amount <= (this.price[name])) {
+		for (var name in price) {
+			if (name != 'time' && resources[name].amount <= (price[name])) {
 				return false;
 			}
 		}

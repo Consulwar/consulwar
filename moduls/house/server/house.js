@@ -65,7 +65,7 @@ Meteor.methods({
 			isPlaced: false
 		}
 		
-		Game.Resources.spend(item.price);
+		Game.Resources.spend(item.getPrice());
 		Game.House.update(house);
 	},
 

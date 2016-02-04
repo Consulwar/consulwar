@@ -64,13 +64,20 @@ Template.consulHouseItem.helpers({
 
 Template.consulHouseItem.events({
 	'click .buy': function(e, t) {
-		var id = $(e.currentTarget).attr('data-id');
-		Meteor.call('house.buyItem', t.data.subgroup, id);
+		var group = t.data.subgroup;
+		var id = t.data.item;
+
+		if (!Game.House.items[group][id].canBuy()) {
+			return Notifications.info('Не достаточно денег!');
+		}
+
+		Meteor.call('house.buyItem', group, id);
 	},
 
 	'click .place': function(e, t) {
-		var id = $(e.currentTarget).attr('data-id');
-		Meteor.call('house.placeItem', t.data.subgroup, id);
+		var group = t.data.subgroup;
+		var id = t.data.item;
+		Meteor.call('house.placeItem', group, id);
 	}
 })
 

@@ -56,12 +56,12 @@
 			{{/each}}
 			
 			{{#if item.characteristics.damage}}
-				<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
+				<span class="damage" {{militaryTooltipDamage item.characteristics}}>
 					{{formatNumberWithISO item.characteristics.damage.min}} —
 					{{formatNumberWithISO item.characteristics.damage.max}}
 				</span>
 			{{/if}} 
-			<span class="life" {{militaryTooltip item.characteristics.effects 'life'}}>
+			<span class="life" {{militaryTooltip item.characteristics 'life'}}>
 				{{formatNumberWithISO item.characteristics.life}}
 			</span>
 		</div>
@@ -71,10 +71,12 @@
 <template name="item_price">
 	<ul class="resources">
 		{{#with price}}
-			<li class="time" {{priceTooltip . 'time'}}>
-				Время строительства: 
-				<time>{{formatSeconds time}}</time>
-			</li>
+			{{#if time}}
+				<li class="time" {{priceTooltip . 'time'}}>
+					Время строительства: 
+					<time>{{formatSeconds time}}</time>
+				</li>
+			{{/if}}
 			{{#if humans}}<li class="humans" {{priceTooltip . 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
 			{{#if honor}}<li class="honor" {{priceTooltip . 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
 			{{#if metals}}<li class="metals" {{priceTooltip . 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}

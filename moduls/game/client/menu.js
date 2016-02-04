@@ -6,9 +6,14 @@ var firstItemGroupURL = function(items) {
 	return firstItem.url({group: firstItem.group});
 }
 
+var firstItemUrl = function(items) {
+	var firstItem = items[_.keys(items)[0]];
+	return firstItem.url();
+}
+
 var menu = {
 	planet: {
-		routeName: ['building'],
+		routeName: ['building', 'house'],
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
 			residential: {
@@ -20,6 +25,24 @@ var menu = {
 				name: 'Военный район',
 				url: firstItemGroupURL(Game.Building.items.military),
 				items: Game.Building.items.military
+			},
+			house: {
+				name: 'Палата консула',
+				url: Router.routes.house.path({ group: 'house' }),
+				items: {
+					tron: {
+						name: 'Трон',
+						engName: 'tron',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: Router.routes.house.path({
+							group: 'house',
+							subgroup: 'tron',
+							item: 'consul'
+						}),
+						items: Game.House.items.tron
+					}
+				}
 			}
 		}
 	}, 
@@ -167,6 +190,9 @@ var helpers = {
 		// Iron router при первом открытии возвращет полный пусть. Обрезаем.
 		var currentUrl = Router.current().url;
 		return currentUrl.substr(currentUrl.indexOf('/game'));
+	},
+	isPartOfUrl: function(url, part) {
+		return url.indexOf(part) != -1;
 	},
 	percentRound10: function(progress) {
 		return Math.floor((progress.finishTime - Session.get('serverTime')) * 10 / (progress.finishTime - progress.startTime)) * 10

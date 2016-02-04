@@ -1,0 +1,57 @@
+<template name="consulHouse">
+	<div class="consul"></div>
+	{{#if items}}
+		{{#each items}}
+			<div class="{{this.subgroup}}-{{this.engName}}"></div>
+		{{/each}}
+	{{/if}}
+</template>
+
+<template name="consulHouseItem">
+	<div class="information house">
+		<img src="/img/game/house/{{subgroup}}/{{item.engName}}.jpg">
+		<div class="description">
+			<ul class ="consul-items">
+				{{#each subgroupItems}}
+					<li>
+						<a 
+							class="
+								{{subgroup}}-{{this.engName}}-icon 
+								{{#if this.checkBought}}
+									has
+								{{else}}
+									{{#if this.isNew}}new{{/if}}
+								{{/if}} 
+								{{#if eq item.engName this.engName}}active{{/if}} 
+								{{#if this.checkPlaced}}placed{{/if}}"
+							href="{{pathFor 'house' group='house' subgroup=subgroup item=this.engName}}"
+						></a>
+					</li>
+				{{/each}}
+			</ul>
+			<p>
+				{{item.description}}
+			</p>
+
+			{{#if item.effect}}
+				<div class="profit">
+					{{item.effect.pretext}}{{item.effect.result}}{{item.effect.aftertext}}
+				</div>
+			{{/if}}
+		</div>
+		{{#if item.checkBought}}
+			{{#unless item.checkPlaced}}
+				<button class="place">Установить</button>
+			{{/unless}}
+		{{else}}
+			{{#if item.isUnique}}
+				<div class="unique"></div>
+			{{else}}
+				{{#if item.getPrice}}
+					{{> item_price price=(item.getPrice 1)}}
+					<button class="buy">Приобрести</button>
+				{{/if}}
+			{{/if}}
+		{{/if}}
+	</div>
+</template>

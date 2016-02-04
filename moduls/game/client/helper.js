@@ -157,6 +157,10 @@ var formatNumber = function (price) {
 UI.registerHelper('formatNumber', formatNumber);
 
 UI.registerHelper('priceTooltip', function(price, target) {
+	if (!price.base) {
+		return 'disabled';
+	}
+	
 	var basePrice = price.base[target];
 	var effects = price.effects;
 
@@ -230,18 +234,63 @@ UI.registerHelper('militaryTooltip', function(characteristics, target) {
 		return 'disabled';
 	}
 
-	var text = '' + formatNumber(baseCharacteristics[target]);
+	var base  = baseCharacteristics[target];
+
+	var text = formatNumber(base);
+
 	for (var priority in effects) {
 		if (effects[priority][target]) {
 			for (var i = 0; i < effects[priority][target].length; i++) {
-				text += ("\n" + (effects[priority][target][i].value > 0 ? '+' : '')
-					+ (priority % 2 == 0 
-						? '' 
-						: formatNumber(effects[priority][target][i].value))
-					+ (priority % 2 == 0 
-						? formatNumber(Math.floor(baseCharacteristics[target] * (effects[priority][target][i].value * 0.01))) + (' (' + effects[priority][target][i].value + '%)') 
-						: '')
-					+ ' от ' + effects[priority][target][i].provider.name);
+				var effect = effects[priority][target][i];
+
+				text += "\n" + (effect.value > 0 ? '+' : '');
+				
+				if (priority % 2 != 0 ) {
+					text += formatNumber(effect.value);
+				} else {
+					text += formatNumber( Math.floor(base * (effect.value * 0.01)) )
+					      + ' (' + effect.value + '%)';
+				}
+
+				text += ' от ' + effect.provider.name;
+			}
+		}
+	}
+
+	return {title: text};
+});
+
+UI.registerHelper('militaryTooltipDamage', function(characteristics) {
+	var baseCharacteristics = characteristics.base;
+	var effects = characteristics.effects;
+
+	if (baseCharacteristics == undefined) {
+		return 'disabled';
+	}
+
+	var base  = baseCharacteristics.damage;
+
+	var text = formatNumber(base.min)
+	         + ' - '
+	         + formatNumber(base.max);
+
+	for (var priority in effects) {
+		if (effects[priority].damage) {
+			for (var i = 0; i < effects[priority].damage.length; i++) {
+				var effect = effects[priority].damage[i];
+
+				text += "\n" + (effect.value > 0 ? '+' : '');
+
+				if (priority % 2 != 0 ) {
+					text += formatNumber(effect.value);
+				} else {
+					text += formatNumber( Math.floor(base.min * (effect.value * 0.01)) )
+					      +' - '
+					      + formatNumber( Math.floor(base.max * (effect.value * 0.01)) )
+					      + ' (' + effect.value + '%)';
+				}
+
+				text += ' от ' + effect.provider.name;
 			}
 		}
 	}

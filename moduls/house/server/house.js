@@ -17,9 +17,11 @@ Game.House.initialize = function(user) {
 	if (currentValue == undefined) {
 		Game.House.Collection.insert({
 			'user_id': user._id,
-			'tron': {
-				'consul': {
-					isPlaced: true
+			'items': {
+				'tron': {
+					'consul': {
+						isPlaced: true
+					}
 				}
 			}
 		})
@@ -28,43 +30,58 @@ Game.House.initialize = function(user) {
 
 Meteor.methods({
 	'house.buyItem': function(group, id) {
-		var data = Game.House.getValue();
+		// check config
+		if (!Game.House.items[group] || !Game.House.items[group][id]) {
+			throw new Meteor.Error('Нет такого предмета.');
+		}
 
 		var item = Game.House.items[group][id];
-		if (!item) {
-			throw new Meteor.Error('Нет такого предмета');
+
+		if (item.isUnique) {
+			throw new Meteor.Error('Только всемогущий админ может подарить тебе этот предмет!');
 		}
 
-		if (data[group][id]) {
-			throw new Meteor.Error('Предмет уже куплен');
+		if (!item.canBuy()) {
+			throw new Meteor.Error('Нельзя купить этот предмет.');
 		}
 
-		if (!data[group]) {
-			data[group] = {};
+		// check db
+		var house = Game.House.getValue();
+
+		if (!house.items) {
+			house.items = {};
 		}
 
-		data[group][id] = {
+		if (!house.items[group]) {
+			house.items[group] = {};
+		}
+
+		if (house.items[group][id]) {
+			throw new Meteor.Error('Предмет уже куплен.');
+		}
+
+		// add item and spend price
+		house.items[group][id] = {
 			isPlaced: false
 		}
-
-		// TODO: Check and grab money!
-
-		Game.House.update(data);
+		
+		Game.Resources.spend(item.price);
+		Game.House.update(house);
 	},
 
 	'house.placeItem': function(group, id) {
-		var data = Game.House.getValue();
+		var house = Game.House.getValue();
 
-		if (!data[group] || !data[group][id]) {
-			throw new Meteor.Error('Нет такого предмета');
+		if (!house.items || !house.items[group] || !house.items[group][id]) {
+			throw new Meteor.Error('У тебя нет такого предмета.');
 		}
 
-		for (var key in data[group]) {
-			data[group][key].isPlaced = false;	
+		for (var key in house.items[group]) {
+			house.items[group][key].isPlaced = false;	
 		}
 
-		data[group][id].isPlaced = true;
-		Game.House.update(data);
+		house.items[group][id].isPlaced = true;
+		Game.House.update(house);
 	}
 })
 

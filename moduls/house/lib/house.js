@@ -7,6 +7,7 @@ game.HouseItem = function(options) {
 
 	this.type = 'house';
 	this.subgroup = options.subgroup;
+	this.isUnique = options.isUnique;
 
 	Game.House.items[this.subgroup][this.engName] = this;
 
@@ -22,6 +23,46 @@ game.HouseItem = function(options) {
 	this.currentLevel = function() {
 		return 0;
 	}
+
+	this.checkBought = function() {
+		var house = Game.House.getValue();
+		if (house
+		 && house.items
+		 && house.items[this.subgroup]
+		 && house.items[this.subgroup][this.engName]
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	this.checkPlaced = function() {
+		var house = Game.House.getValue();
+		if (house
+		 && house.items
+		 && house.items[this.subgroup]
+		 && house.items[this.subgroup][this.engName]
+		 && house.items[this.subgroup][this.engName].isPlaced
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	this.canBuy = function() {
+		if (!this.price || this.isUnique) {
+			return false;
+		}
+
+		var resources = Game.Resources.getValue();
+		for (var name in this.price) {
+			if (name != 'time' && resources[name].amount <= (this.price[name])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
 game.extend(game.HouseItem, game.Item);
 
@@ -35,46 +76,30 @@ Game.House = {
 	},
 
 	getItem: function(group, id) {
-		var items = Game.House.getValue();
+		var house = Game.House.getValue();
 
-		if (items && items[group] && items[group][id]) {
-			return items[group][id];
+		if (house && house.items && house.items[group] && house.items[group][id]) {
+			return house.items[group][id];
 		} else {
 			return null;
 		}
 	},
 
 	getPlacedItems: function() {
-		var items = [];
-		var data = Game.House.getValue();
+		var placed = [];
+		var house = Game.House.getValue();
 		
-		for (var group in data) {
-			if (!Game.House.items[group]) {
-				continue;
-			}
-
-			for (var id in data[group]) {
-				if (!Game.House.items[group][id]) {
-					continue;
-				}
-
-				if (data[group][id].isPlaced) {
-					items.push(Game.House.items[group][id]);
+		if (house) {
+			for (var group in house.items) {
+				for (var id in house.items[group]) {
+					if (house.items[group][id].isPlaced) {
+						placed.push( Game.House.items[group][id] );
+					}
 				}
 			}
 		}
 
-		return items;
-	},
-
-	checkBought: function(group, id) {
-		var data = Game.House.getValue();
-		return (data && data[group] && data[group][id]) ? true : false;
-	},
-
-	checkPlaced: function(group, id) {
-		var data = Game.House.getValue();
-		return (data && data[group] && data[group][id] && data[group][id].isPlaced) ? true : false;
+		return placed;
 	},
 
 	items: {
@@ -82,73 +107,6 @@ Game.House = {
 	}
 }
 
-// ------------------------------------
-// TODO: Move to content
-
-game.setToMenu = 'planet';
-game.setToSide = 'house';
-
-new game.HouseItem({
-	subgroup: 'tron',
-	engName: 'consul',
-	name: 'Трон Консула',
-	description: 'У каждого правителя должен быть свой трон. Этот трон был специально изготовлен для вашего аватара, Консул. Это один из символов вашей власти, вашей непоколебимой воли и справедливых решений. Вы - уникальны, и этот трон - ваш.',
-	//effect: 'сидеть тепло и мягко'
-	effect: new Game.Effect.Income({
-		pretext: 'Приток населения ',
-		aftertext: ' человек в час',
-		priority: 1,
-		affect: 'humans',
-		result: function(level) {
-			return 20;
-		}
-	})
-});
-
-new game.HouseItem({
-	subgroup: 'tron',
-	engName: 'czar',
-	name: 'Царский Трон',
-	description: 'Царский трон был создан специально для очень важных задниц, для самых важных задниц. На вашей планете, Консул, нет ни одной задницы важнее вашей. У вас есть уникальный шанс подчеркнуть это. Укажите всем на ваше превосходство, установив этот трон в свои покои.',
-	//effect: 'приток населения +100 в час',
-	effect: new Game.Effect.Income({
-		pretext: 'Приток населения ',
-		aftertext: ' человек в час',
-		priority: 1,
-		affect: 'humans',
-		result: function(level) {
-			return 100;
-		}
-	}),
-	price: {
-		credits: 1000
-	}
-});
-
-new game.HouseItem({
-	subgroup: 'tron',
-	engName: 'gameofthrones',
-	name: 'Трон Игра Престолов',
-	description: 'Здесь не Вестерос, однако же проблем далеко не меньше. Нужно управлять целой планетой, судьба всего человечества зависит от Консула. Рептилоиды продолжают атаковать по всем фронтам и только самые стойкие из консулов смогут устоять. Железный Трон уникален и изготавливается именно для таких Правителей.',
-	//effect: 'броня флота +2%',
-	effect: new Game.Effect.Military({
-		pretext: 'Броня флота +',
-		aftertext: '%',
-		condition: {
-			type: 'unit',
-			group: 'fleet'
-		},
-		priority: 2,
-		affect: 'life',
-		result: function(level) {
-			return 25;
-		}
-	}),
-	price: {
-		credits: 100500
-	}
-});
-
-// ------------------------------------
+initHouseContent();
 
 }

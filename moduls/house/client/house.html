@@ -2,24 +2,28 @@
 	<div class="consul"></div>
 	{{#if items}}
 		{{#each items}}
-			<div class="{{this.group}}-{{this.id}}"></div>
+			<div class="{{this.subgroup}}-{{this.engName}}"></div>
 		{{/each}}
 	{{/if}}
 </template>
 
 <template name="consulHouseItem">
 	<div class="information house">
-		<img src="/img/game/house/{{subgroup}}/{{item.id}}.jpg">
+		<img src="/img/game/house/{{subgroup}}/{{item.engName}}.jpg">
 		<div class="description">
 			<ul class ="consul-items">
-				{{#each items}}
+				{{#each subgroupItems}}
 					<li>
 						<a class="
-								{{subgroup}}-{{this.id}}-icon 
-								{{#if this.isBought}}has{{else}}{{#if this.isNew}}new{{/if}}{{/if}} 
-								{{#if eq item.id this.id}}active{{/if}} 
-								{{#if this.isPlaced}}placed{{/if}}"
-							href="{{pathFor 'house' group='house' subgroup=subgroup item=this.id}}"
+								{{subgroup}}-{{this.engName}}-icon 
+								{{#if this.checkBought}}
+									has
+								{{else}}
+									{{#if this.isNew}}new{{/if}}
+								{{/if}} 
+								{{#if eq item.engName this.engName}}active{{/if}} 
+								{{#if this.checkPlaced}}placed{{/if}}"
+							href="{{pathFor 'house' group='house' subgroup=subgroup item=this.engName}}"
 						></a>
 					</li>
 				{{/each}}
@@ -31,18 +35,14 @@
 				{{item.effect}}
 			</div>
 		</div>
-		{{#if item.isBought}}
-			{{#unless item.isPlaced}}
-				<button class="place" data-id="{{item.id}}">Установить</button>
+		{{#if item.checkBought}}
+			{{#unless item.checkPlaced}}
+				<button class="place" data-id="{{item.engName}}">Установить</button>
 			{{/unless}}
 		{{else}}
 			{{#if item.price}}
-				<ul class="resources">
-					{{#each item.price}}
-						<li class="{{this.name}}">{{this.count}}</li>
-					{{/each}}
-				</ul>
-				<button class="buy" data-id="{{item.id}}">Приобрести</button>
+				
+				<button class="buy" data-id="{{item.engName}}">Приобрести</button>
 			{{/if}}
 		{{/if}}
 	</div>

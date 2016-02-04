@@ -7,6 +7,15 @@ house-element(group, name, x, y, z)
 		top y px
 		z-index z
 
+house-group-icon(group)
+	.{group}-icon
+		background-image url("/img/game/house/" group "/icon.png")
+
+house-item-icon(group, name)
+	.{group}-{name}-icon
+		background-image url("/img/game/house/" group "/i/" name ".png")
+
+
 .content
 	.overlay.planet.house
 		background-image url(/img/game/house/back.jpg)
@@ -19,10 +28,16 @@ house-element(group, name, x, y, z)
 		left 580px
 		top 120px
 		z-index 10
-		
-	house-element('tron', 'consul', 485, 25, 5)
-	house-element('tron', 'czar', 480, 58, 5)
-	house-element('tron', 'gameofthrones', 480, 45, 5)
+
+
+house-element('tron', 'consul', 485, 25, 5)
+house-element('tron', 'czar', 480, 58, 5)
+house-element('tron', 'gameofthrones', 480, 45, 5)
+
+house-group-icon('tron')
+house-item-icon('tron', 'consul')
+house-item-icon('tron', 'czar')
+house-item-icon('tron', 'gameofthrones')
 
 
 .house
@@ -38,7 +53,7 @@ house-element(group, name, x, y, z)
 		padding-bottom 20px
 		width 180px
 		background-color #000000
-		
+
 	.buy
 		border 2px solid #91b935
 		color #91b935
@@ -56,7 +71,17 @@ house-element(group, name, x, y, z)
 		font-size 16px
 		font-weight bold
 		color #EBA742
-	
+
+	.unique
+		position absolute
+		bottom 15px
+		left 500px
+		width 132px
+		height 40px
+		background-position center center
+		background-repeat no-repeat
+		background-image url(/img/game/house/ico_unique.png)
+
 
 .consul-items
 	display block
@@ -109,7 +134,7 @@ house-element(group, name, x, y, z)
 		width 100%
 		height 95%
 		background-position center bottom
-		background-repeat no-repeat		
+		background-repeat no-repeat
 		background-image url(/img/game/house/ico_new.png)
 	
 	.has:after
@@ -118,18 +143,5 @@ house-element(group, name, x, y, z)
 		width 100%
 		height 95%
 		background-position center bottom
-		background-repeat no-repeat		
+		background-repeat no-repeat
 		background-image url(/img/game/house/ico_has.png)
-		
-
-.tron-icon
-	background-image url("/img/game/house/tron/icon.png")
-	
-.tron-consul-icon
-	background-image url("/img/game/house/tron/i/consul.png")
-	
-.tron-gameofthrones-icon
-	background-image url("/img/game/house/tron/i/gameofthrones.png")
-	
-.tron-czar-icon
-	background-image url("/img/game/house/tron/i/czar.png")

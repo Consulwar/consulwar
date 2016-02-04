@@ -31,18 +31,25 @@
 			<p>
 				{{item.description}}
 			</p>
-			<div class="profit">
-				{{item.effect}}
-			</div>
+
+			{{#if item.effect}}
+				<div class="profit">
+					{{item.effect.pretext}}{{item.effect.result}}{{item.effect.aftertext}}
+				</div>
+			{{/if}}
 		</div>
 		{{#if item.checkBought}}
 			{{#unless item.checkPlaced}}
-				<button class="place" data-id="{{item.engName}}">Установить</button>
+				<button class="place">Установить</button>
 			{{/unless}}
 		{{else}}
-			{{#if item.price}}
-				
-				<button class="buy" data-id="{{item.engName}}">Приобрести</button>
+			{{#if item.isUnique}}
+				<div class="unique"></div>
+			{{else}}
+				{{#if item.getPrice}}
+					{{> item_price price=(item.getPrice 1)}}
+					<button class="buy">Приобрести</button>
+				{{/if}}
 			{{/if}}
 		{{/if}}
 	</div>

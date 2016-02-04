@@ -157,6 +157,10 @@ var formatNumber = function (price) {
 UI.registerHelper('formatNumber', formatNumber);
 
 UI.registerHelper('priceTooltip', function(price, target) {
+	if (!price.base) {
+		return 'disabled';
+	}
+	
 	var basePrice = price.base[target];
 	var effects = price.effects;
 

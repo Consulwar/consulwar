@@ -46,12 +46,12 @@ game.QuestLine = function(options, quests) {
 	}
 
 	this.findStep = function(engName) {
-		var i = this.questMap[engName];
+		var i = this.questsMap[engName];
 		return (i >= 0 && i < this.quests.length) ? this.quests[i] : null;
 	}
 
 	this.nextStep = function(engName) {
-		var i = this.questMap[engName];
+		var i = this.questsMap[engName];
 		return (i >= 0 && i < this.quests.length - 1) ? this.quests[i + 1] : null;
 	}
 }
@@ -222,6 +222,31 @@ Meteor.methods({
 
 			Game.Quest.Collection.update({ user_id: user._id }, quests);
 		}
+	},
+
+	'quests.getInfo': function(questId, stepName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		var questLine = Game.Quest.regularQuests[questId];
+
+		if (!questLine) {
+			throw new Meteor.Error('Нет такой цепочки заданий');
+		}
+
+		var quest = questLine.findStep(stepName);
+		if (!quest) {
+			throw new Meteor.Error('Нет такого задания в цепочке');
+		}
+
+		return quest;
 	}
 })
 

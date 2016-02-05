@@ -10,12 +10,15 @@ game.Quest = function(options) {
 	this.isDone = options.isDone;
 };
 
+// ------------------------------------
+// TODO: Remove later!
 game.Quest.status = {
 	prompt: 0,
 	inprogress: 1,
 	canceled: 2,
 	finished: 3
 };
+// ------------------------------------
 
 Game.Quest = {
 	Collection: new Meteor.Collection('quest'),

@@ -18,6 +18,7 @@ Template.mail.helpers({
 		var user = Meteor.user();
 
 		//
+		// TODO: Дверь поставить как выпилил!
 		var dailyQuest = user.game.quests.daily;
 		if (dailyQuest) {
 			var quest = {

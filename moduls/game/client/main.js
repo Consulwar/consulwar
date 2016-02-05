@@ -332,7 +332,9 @@ Tracker.autorun(function () {
 		//var resources = Game.Resources.getValue();
 		//Session.set('resources', resources);
 
-		Session.set('currentQuest', user.game.quests.current);
+		// TODO: Remove later!
+		//Session.set('currentQuest', user.game.quests.current);
+
 		Session.set('login', user.login);
 		Session.set('planetName', user.planetName);
 	}

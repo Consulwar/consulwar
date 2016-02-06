@@ -39,6 +39,21 @@
 	</ul>
 </template>
 
+<template name="additional_area">
+	{{#if sideHero}}
+		<div 
+			class="
+				additional_area 
+				quest
+				{{sideHero}} 
+				{{#if currentQuest}}
+					{{#if eq currentQuest.status 0}}prompt{{/if}}
+					{{#if eq currentQuest.status 3}}finished{{/if}}
+				{{/if}}">
+		</div>
+	{{/if}}
+</template>
+
 <template name="items_menu">
 	<ul class="bottom_menu items">
 		{{#each items}}

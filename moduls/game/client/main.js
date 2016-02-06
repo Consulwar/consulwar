@@ -393,35 +393,6 @@ var helpers = {
 	enoughCredits: function() { return Session.get('enoughCredits'); },
 	effect: function() { return Session.get('effect'); },
 
-	activeMenu: function() {
-		return Router.current().group;
-	},
-
-	hasAdditionalArea: function() {
-		var activeMenu = Router.current().group;
-		if (activeMenu == 'planet'
-		 || activeMenu == 'army'
-		 || activeMenu == 'research'
-		) {
-			return true;
-		}
-		return false;
-	},
-
-	sideHero: function() {
-		var activeSide = Router.current().params.group;
-		if (activeSide == 'house') {
-			return 'portal';
-		}
-		return Game.getPersonByMenu(activeSide);
-	},
-
-	currentQuest: function() {
-		var activeSide = Router.current().params.group;
-		var who = Game.getPersonByMenu(activeSide);
-		return (who) ? Game.Quest.getByHero(who) : null;
-	},
-
 	currentConstruction: function() { return Session.get('currentConstruction'); },
 	constructionRemaningTime: function() {
 		var currentConstruction = Session.get('currentConstruction');
@@ -490,89 +461,6 @@ Template.game.events({
 				Notifications.success('Бонусный кристалл получен', '+' + result);
 			}
 		})
-	},
-
-	'click .game .content .quest': function() {
-		var activeSide = Router.current().params.group;
-		
-		if (activeSide == 'house') {
-			return ShowModalWindow( Template.support );
-		}
-
-		var who = Game.getPersonByMenu(activeSide);
-		if (!who) {
-			return;
-		}
-
-		var currentQuest = Game.Quest.getByHero(who);
-
-		if (!currentQuest) {
-
-			// no quest for selected hero, show greetings dialog
-			var text = Game.Persons[who].text;
-
-			if (text && text.length > 0) {
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: who,
-						type: 'quest',
-						text: text
-					}, 
-					$('.over')[0]
-				);
-			}
-
-		} else {
-
-			// get actual quest and show
-			Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
-
-				var quest = new game.Quest(data);
-
-				if (currentQuest.status == Game.Quest.status.FINISHED) {
-					Blaze.renderWithData(
-						Template.reward, 
-						{
-							type: 'quest',
-							engName: currentQuest.engName,
-							who: who,
-							title: [
-								'Замечательно!', 
-								'Прекрасно!', 
-								'Отличная Работа!', 
-								'Супер! Потрясающе!', 
-								'Уникальный Талант!', 
-								'Слава Консулу! ', 
-								'Невероятно!', 
-								'Изумительно!'
-							][Math.floor(Math.random()*8)],
-							reward: quest.reward
-						}, 
-						$('.over')[0]
-					);
-				} else {
-					Blaze.renderWithData(
-						Template.quest, 
-						{
-							type: 'quest',
-							engName: currentQuest.engName,
-							who: who,
-							title: quest.conditionText, 
-							text: quest.text, 
-							reward: quest.reward,
-							options: $.map(quest.options, function(values, name) {
-								values.name = name;
-								return values;
-							}),
-							isPrompt: currentQuest.status == Game.Quest.status.PROMPT
-						}, 
-						$('.over')[0]
-					);
-				}
-			});
-
-		}
 	}
 });
 

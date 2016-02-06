@@ -358,23 +358,7 @@ Game = {
 			text: 'Привет!'
 		}
 	},
-
-	getPersonByMenu: function(name) {
-		switch (name) {
-			case 'residential': return 'tamily';
-			case 'military': return 'thirdenginery';
-			case 'fleet': return 'vaha';
-			case 'heroes': return 'psm';
-			case 'ground': return 'tilps';
-			case 'evolution': return 'nataly';
-			case 'fleetups': return 'mechanic';
-			case 'mutual': return 'calibrator';
-			case 'reinforcement': return 'bolz';
-			case 'private': return 'renexis';
-		}
-		return null;
-	},
-
+	
 	getCurrentTime: function() {
 		return Math.floor(new Date().valueOf() / 1000);
 	},

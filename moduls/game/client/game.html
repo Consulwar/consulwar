@@ -51,15 +51,7 @@
 
 			{{>yield region="content"}}
 
-			{{#if hasAdditionalArea}}
-				<div 
-					class="additional_area quest {{sideHero}} 
-					{{#if currentQuest}}
-							{{#if eq currentQuest.status 0}}prompt{{/if}}
-							{{#if eq currentQuest.status 3}}finished{{/if}}
-						{{/if}}">
-				</div>
-			{{/if}}
+			{{> additional_area}}
 		</div>
 
 		{{> items_menu}}

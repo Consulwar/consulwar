@@ -44,7 +44,7 @@ Game.Quest = {
 		return result;
 	},
 
-	hasDaily: function() {
+	hasNewDaily: function() {
 		var quests = Game.Quest.getValue();
 		if (quests
 		 && quests.daily

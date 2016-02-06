@@ -86,7 +86,7 @@ var menu = {
 		routeName: ['mail', 'chat'],
 		url: Router.routes.mail.path(),
 		additionalClass: function() {
-			if (Game.Quest.hasDaily() || Game.Mail.hasUnread()) {
+			if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread()) {
 				return 'has_new_mail';
 			} else {
 				return '';

@@ -53,7 +53,14 @@
 			
 			
 			{{#if eq active_menu 'planet'}}
-			<div class="additional_area quest {{#if eq active_side 'residential'}}{{#if currentQuest}}{{#if eq currentQuest.status 0}}prompt{{/if}} {{#if eq currentQuest.status 3}}finished{{/if}}{{/if}}{{/if}}">
+			<div class="additional_area quest 
+						{{#if eq active_side 'residential'}}
+							{{#if currentQuest}}
+								{{#if eq currentQuest.status 0}}prompt{{/if}}
+								{{#if eq currentQuest.status 3}}finished{{/if}}
+							{{/if}}
+						{{/if}}"
+			>
 			</div>
 			{{/if}}
 			{{#if eq active_menu 'army'}}

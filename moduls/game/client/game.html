@@ -44,26 +44,14 @@
 			</div>
 		</div>
 		
-		<div class="content {{active_menu}} {{active_side}} {{active_item.type}}">
+		<div class="content">
 			{{> side_menu}}
 
 			{{> overlay_menu}}
 
 			{{>yield region="content"}}
-			
-			
-			{{#if eq active_menu 'planet'}}
-			<div class="additional_area quest {{#if eq active_side 'residential'}}{{#if currentQuest}}{{#if eq currentQuest.status 0}}prompt{{/if}} {{#if eq currentQuest.status 3}}finished{{/if}}{{/if}}{{/if}}">
-			</div>
-			{{/if}}
-			{{#if eq active_menu 'army'}}
-			<div class="additional_area quest">
-			</div>
-			{{/if}}
-			{{#if eq active_menu 'research'}}
-			<div class="additional_area quest">
-			</div>
-			{{/if}}
+
+			{{> additional_area}}
 		</div>
 
 		{{> items_menu}}

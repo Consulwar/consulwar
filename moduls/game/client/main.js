@@ -14,7 +14,7 @@ initMutualClient();
 
 initMailClient();
 
-initQuestLib();
+initQuestClient();
 
 initRouterClient();
 
@@ -332,7 +332,6 @@ Tracker.autorun(function () {
 		//var resources = Game.Resources.getValue();
 		//Session.set('resources', resources);
 
-		Session.set('currentQuest', user.game.quests.current);
 		Session.set('login', user.login);
 		Session.set('planetName', user.planetName);
 	}
@@ -352,9 +351,7 @@ Meteor.setInterval(function() {
 var hasNewMailStatus = false;
 Tracker.autorun(function() {
 	var user = Meteor.user();
-	if (user && user.game && user.game.quests.daily.status != game.Quest.status.finished
-		|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-		&& !hasNewMailStatus) {
+	if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread() && !hasNewMailStatus) {
 		hasNewMailStatus = true;
 	} else {
 		hasNewMailStatus = false;
@@ -396,8 +393,6 @@ var helpers = {
 	enoughCredits: function() { return Session.get('enoughCredits'); },
 	effect: function() { return Session.get('effect'); },
 
-	currentQuest: function() { return Session.get('currentQuest'); },
-
 	currentConstruction: function() { return Session.get('currentConstruction'); },
 	constructionRemaningTime: function() {
 		var currentConstruction = Session.get('currentConstruction');
@@ -422,10 +417,7 @@ var helpers = {
 	currentBattle: function() { return Session.get('currentBattle'); },
 
 	hasNewMail: function() { 
-		return (
-			Meteor.user().game.quests.daily.status != game.Quest.status.finished
-			|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-		); 
+		return (Game.Quest.hasNewDaily() || Game.Mail.hasUnread());
 	},
 
 	connection: function() { return Meteor.status(); },
@@ -469,129 +461,27 @@ Template.game.events({
 				Notifications.success('Бонусный кристалл получен', '+' + result);
 			}
 		})
-	},
-
-	'click .game .content .quest': function() {
-		var who = '';
-		var text = '';
-		switch(Session.get('active_side')) {
-			case 'residential':
-				who = 'tamily';
-				break;
-			case 'counsul':
-				who = 'portal';
-				return ShowModalWindow(Template.support);
-				break;
-			case 'military':
-				who = 'thirdenginery';
-				text = 'Третий Инженерный на связи! Приятно вас снова видеть, Консул, после предыдущей работы над техникой во время первой волны освобождения Земли, нас перебросили в военную отрасль немного другого формата. В общем, мы теперь работаем над военными зданиями, правитель. Качество Гарантируем.';
-				break;
-			case 'fleet':
-				who = 'vaha';
-				text = 'Понятия не имею хуля я тут делаю, но эти ебланы из Совета не подпускают меня к войскам до начала боя. Посадили меня курировать флот консулов... Да ну и хер с ним, по летающим мишеням  стрелять веселее, верно ведь, Консул?';
-				break;
-			case 'heroes':
-				who = 'psm';
-				text = 'Рад, что вы снова с нами, Консул. Портал вновь открыт, но не время расслабляться. Вам, как и многим другим Консулам, придётся через многое пройти, чтобы победить Рептилий, но я уверен, что вы справитесь. На связи, Консул.';
-				break;
-			case 'ground':
-				who = 'tilps';
-				text = 'Я слежу за подготовкой солдат и техники к бою, Консул. Задача не из лёгких доложу я вам, но ведь никто не говорил, что будет просто, верно? В любом случае у нас с вами одна цель, спасибо за помощь, Консул. Мы это очень ценим, даже Вахаёбович, хотя он и не признается никогда.';
-				break;
-			case 'evolution':
-				who = 'nataly';
-				text = 'О! Здравствуйте, Командующий. Думаю, вы помните меня как руководителя десятой инженерной бригады. Ну что же это я, конечно помните. Теперь мы работаем над системами улучшения различных приборов, а так же совершаем новые открытия. Двигаем вперёд научный прогресс! В общем, Консул, если вам нужно что-то улучшить — сразу ко мне. И помните, для науки нет ничего невозможного!';
-				break;
-			case 'fleetups':
-				who = 'mechanic';
-				text = 'У меня много имён: Защитник, Перевозчик... но ты, Консул, можешь называть меня Механик. Я занимаюсь тем, что доставляю свежайшие и мощнейшие технологии для усиления флота. Если хочешь господствовать в небе, то ты обратился по адресу. Я сделаю твой флот в разы мощнее чем эти железяки чешуйчатых. Естественно не за бесплатно…';
-				break;
-			case 'mutual':
-				who = 'calibrator';
-				text = 'О, Консул! Я вас не заметил… я тут это, калибрую потихоньку. Знаете, тысячи различных приказов поступают ото всех Консулов галактики. Всё это нужно отсортировать, каталогизировать и разослать в научные отделы, а после, когда технология будет исследована, ещё и сообщить в Лаборатории на каждую из колоний… ох, извините, что загружаю. Пора возвращаться к калибровке.';
-				break;
-			case 'reinforcement':
-				who = 'bolz';
-				text = 'Доброго дня вам, Консул. Или сейчас ночь? В космосе хрен разберёшь. Если у вас есть какие-то войска на отправку, закидывайте это мясо в трюмы, мои ребята доставят их на Землю с ветерком... ну или не доставят, тут уж как повезёт.';
-				break;
-			case 'private':
-				who = 'renexis';
-				text = 'Привет';
-				break;
-		}
-
-
-		if (who == 'tamily') {
-			var quest = Meteor.user().game.quests.current;
-
-			if (quest.status == game.Quest.status.finished) {
-				Blaze.renderWithData(
-					Template.reward, 
-					{
-						type: 'quest',
-						title: [
-							'Замечательно!', 
-							'Прекрасно!', 
-							'Отличная Работа!', 
-							'Супер! Потрясающе!', 
-							'Уникальный Талант!', 
-							'Слава Консулу! ', 
-							'Невероятно!', 
-							'Изумительно!'
-						][Math.floor(Math.random()*8)],
-						reward: quest.reward
-					}, 
-					$('.over')[0]
-				)
-			} else {
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: 'tamily',
-						type: 'quest',
-						title: quest.conditionText, 
-						text: quest.text, 
-						reward: quest.reward,
-						options: $.map(quest.options, function(values, name) {
-							values.name = name;
-							return values;
-						}),
-						isPrompt: quest.status == game.Quest.status.prompt
-					}, 
-					$('.over')[0]
-				)
-			}
-		} else {
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					who: who,
-					type: 'quest',
-					//title: quest.conditionText, 
-					text: text
-				}, 
-				$('.over')[0]
-			)
-		}
 	}
 });
 
 Template.quest.events({
 	'click a': function(e, t) {
 		if (t.data.type == 'quest') {
-			Meteor.call('questAction', e.target.dataset.option);
+			Meteor.call('quests.sendAction', t.data.engName, e.target.dataset.option);
 			Blaze.remove(t.view);
 		} else {
-			Meteor.call('dailyQuestAnswer', e.target.dataset.option, function(err, result) {
-				var user = Meteor.user();
+			Meteor.call('quests.sendDailyAnswer', e.target.dataset.option, function(err, result) {
+				var who = t.data.who;
+				var title = t.data.title;
+
 				Blaze.remove(t.view);
 
 				Blaze.renderWithData(
 					Template.quest, 
 					{
-						who: user.game.quests.daily.who || 'tamily',
+						who: who,
 						type: 'daily',
-						title: user.game.quests.daily.name,
+						title: title,
 						text: result.text,
 						reward: result.reward
 					}, 

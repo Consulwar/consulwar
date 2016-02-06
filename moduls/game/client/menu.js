@@ -18,16 +18,19 @@ var menu = {
 		items: {
 			residential: {
 				name: 'Жилой район',
+				additionalArea: 'tamily',
 				url: firstItemGroupURL(Game.Building.items.residential),
 				items: Game.Building.items.residential
 			}, 
 			military: {
 				name: 'Военный район',
+				additionalArea: 'thirdenginery',
 				url: firstItemGroupURL(Game.Building.items.military),
 				items: Game.Building.items.military
 			},
 			house: {
 				name: 'Палата консула',
+				additionalArea: 'portal',
 				url: Router.routes.house.path({ group: 'house' }),
 				items: {
 					tron: {
@@ -52,11 +55,13 @@ var menu = {
 		items: {
 			evolution: {
 				name: 'Эволюционные исследования',
+				additionalArea: 'nataly',
 				url: firstItemGroupURL(Game.Research.items.evolution),
 				items: Game.Research.items.evolution
 			}, 
 			fleetups: {
 				name: 'Улучшения флота',
+				additionalArea: 'mechanic',
 				url: firstItemGroupURL(Game.Research.items.fleetups),
 				items: Game.Research.items.fleetups
 			}
@@ -68,11 +73,13 @@ var menu = {
 		items: {
 			fleet: {
 				name: 'Комический флот',
+				additionalArea: 'vaha',
 				url: firstItemGroupURL(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet
 			}, 
 			ground: {
 				name: 'Армия',
+				additionalArea: 'tilps',
 				url: firstItemGroupURL(Game.Unit.items.army.ground),
 				items: Game.Unit.items.army.ground
 			}
@@ -86,8 +93,7 @@ var menu = {
 		routeName: ['mail', 'chat'],
 		url: Router.routes.mail.path(),
 		additionalClass: function() {
-			if (Meteor.user().game.quests.daily.status != game.Quest.status.finished
-				|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})) {
+			if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread()) {
 				return 'has_new_mail';
 			} else {
 				return '';
@@ -177,6 +183,109 @@ Template.side_menu.helpers({
 	}
 });
 
+var getSideHeroByRoute = function(route) {
+	return (
+		route &&
+		route.group &&
+		route.params.group &&
+		menu[route.group] &&
+		menu[route.group].items &&
+		menu[route.group].items[route.params.group] &&
+		menu[route.group].items[route.params.group].additionalArea
+	);
+}
+
+Template.additional_area.events({
+	'click .quest': function() {
+		var who = getSideHeroByRoute( Router.current() );
+		if (!who) {
+			return;
+		}
+
+		if (who == 'portal') {
+			return ShowModalWindow( Template.support );
+		}
+
+		var currentQuest = Game.Quest.getByHero(who);
+		if (!currentQuest) {
+			// no quest for selected hero, show greetings dialog
+			var text = Game.Persons[who].text;
+
+			if (text && text.length > 0) {
+				Blaze.renderWithData(
+					Template.quest, 
+					{
+						who: who,
+						type: 'quest',
+						text: text
+					}, 
+					$('.over')[0]
+				);
+			}
+
+		} else {
+
+			// get actual quest and show
+			Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
+
+				var quest = new game.Quest(data);
+
+				if (currentQuest.status == Game.Quest.status.FINISHED) {
+					Blaze.renderWithData(
+						Template.reward, 
+						{
+							type: 'quest',
+							engName: currentQuest.engName,
+							who: who,
+							title: [
+								'Замечательно!', 
+								'Прекрасно!', 
+								'Отличная Работа!', 
+								'Супер! Потрясающе!', 
+								'Уникальный Талант!', 
+								'Слава Консулу! ', 
+								'Невероятно!', 
+								'Изумительно!'
+							][Math.floor(Math.random()*8)],
+							reward: quest.reward
+						}, 
+						$('.over')[0]
+					);
+				} else {
+					Blaze.renderWithData(
+						Template.quest, 
+						{
+							type: 'quest',
+							engName: currentQuest.engName,
+							who: who,
+							title: quest.conditionText, 
+							text: quest.text, 
+							reward: quest.reward,
+							options: $.map(quest.options, function(values, name) {
+								values.name = name;
+								return values;
+							}),
+							isPrompt: currentQuest.status == Game.Quest.status.PROMPT
+						}, 
+						$('.over')[0]
+					);
+				}
+			});
+
+		}
+	}
+});
+
+Template.additional_area.helpers({
+	sideHero: function() {
+		return getSideHeroByRoute( Router.current() );	
+	},
+
+	currentQuest: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		return (who) ? Game.Quest.getByHero(who) : null;
+	}
+});
 
 var helpers = {
 	items: function() {

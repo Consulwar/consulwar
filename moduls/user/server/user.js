@@ -81,20 +81,7 @@ Accounts.onCreateUser(function(option, user) {
 		+ letters[Math.floor(Math.random()*36)]);
 
 	user.game = {
-		updated: Math.floor(new Date().valueOf() / 1000)//,
-		// TODO: Remove this!
-		/*resources: {
-			humans: {amount: 500},
-			metals: {amount: 3000},
-			crystals: {amount: 1500},
-			credits: {amount: 0},
-			honor: {amount: 0}
-		},*/
-		/*quests: {
-			current: null,
-			finished: {},
-			daily: null
-		}*/
+		updated: Math.floor(new Date().valueOf() / 1000)
 	};
 
 	Game.Resources.initialize(user);

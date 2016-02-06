@@ -144,17 +144,19 @@ Meteor.methods({
 			}
 
 			quests.current[key] = {
+				engName: questLine.engName,
 				status: Game.Quest.status.PROMPT,
-				step: firstStep.engName
+				step: firstStep.engName,
+				who: questLine.who
 			}
 		}
 
 		// refresh daily quest
-		var currentTime = Math.floor(new Date().valueOf() / 1000)
+		var currentTime = Math.floor(new Date().valueOf() / 1000);
 
 		if (!quests.daily
-		 ||  quests.daily.status == Game.Quest.status.FINISHED
-		 ||  quests.daily.startTime + Game.Quest.DAILY_QUEST_PERIOD < currentTime
+		 || (    quests.daily.status == Game.Quest.status.FINISHED
+		      && quests.daily.startTime + Game.Quest.DAILY_QUEST_PERIOD < currentTime )
 		) {
 			var keys = Object.keys( Game.Quest.dailyQuests );
 			var choise = keys[ Game.Random.interval(0, keys.length - 1) ];
@@ -162,7 +164,9 @@ Meteor.methods({
 			quests.daily = {
 				engName: choise,
 				status: Game.Quest.status.INPROGRESS,
-				startTime: currentTime
+				startTime: currentTime,
+				name: Game.Quest.dailyQuests[choise].name,
+				who: Game.Quest.dailyQuests[choise].who
 			}
 		}
 
@@ -273,7 +277,7 @@ Meteor.methods({
 	'quests.getDailyInfo': function() {
 		var user = Meteor.user();
 
-		if (!user || user._id) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
@@ -306,7 +310,7 @@ Meteor.methods({
 	'quests.sendDailyAnswer': function(answer) {
 		var user = Meteor.user();
 
-		if (!user || user._id) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 

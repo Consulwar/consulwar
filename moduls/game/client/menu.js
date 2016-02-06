@@ -44,6 +44,18 @@ var menu = {
 							item: 'consul'
 						}),
 						items: Game.House.items.tron
+					},
+					artefacts: {
+						name: 'Артефакты',
+						engName: 'artefacts',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: Router.routes.house.path({
+							group: 'house',
+							subgroup: 'artefacts',
+							item: 'weapon_parts'
+						}),
+						items: Game.Artefacts.items
 					}
 				}
 			}

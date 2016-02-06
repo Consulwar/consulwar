@@ -14,7 +14,7 @@ Game.House.showPage = function() {
 
 	if (subgroup && item) {
 		// show item menu
-		this.render('consulHouseItem', {
+		this.render((subgroup == 'artefacts' ? 'consulHouseArtefacts' : 'consulHouseItem'), {
 			to: 'content',
 			data: {
 				subgroup: subgroup,
@@ -78,6 +78,23 @@ Template.consulHouseItem.events({
 		var group = t.data.subgroup;
 		var id = t.data.item;
 		Meteor.call('house.placeItem', group, id);
+	}
+})
+
+// ----------------------------------------------------------------------------
+// Consul house artefacts menu
+// ----------------------------------------------------------------------------
+
+Template.consulHouseArtefacts.helpers({
+	item: function() {
+		var id = Template.instance().data.item;
+		return Game.Artefacts.items[id];
+	},
+
+	subgroupItems: function() {
+		return _.map(Game.Artefacts.items, function(item) {
+			return item;
+		});
 	}
 })
 

@@ -113,6 +113,8 @@ Meteor.methods({
 			throw new Meteor.Error('Не инициализированы квесты');
 		}
 		
+		var currentTime = Math.floor(new Date().valueOf() / 1000);
+
 		// check inprogress quest lines
 		for (var key in quests.current) {
 			var current = quests.current[key];
@@ -146,14 +148,13 @@ Meteor.methods({
 			quests.current[key] = {
 				engName: questLine.engName,
 				status: Game.Quest.status.PROMPT,
+				appearTime: currentTime,
 				step: firstStep.engName,
 				who: questLine.who
 			}
 		}
 
 		// refresh daily quest
-		var currentTime = Math.floor(new Date().valueOf() / 1000);
-
 		if (!quests.daily
 		 || (    quests.daily.status == Game.Quest.status.FINISHED
 		      && quests.daily.startTime + Game.Quest.DAILY_QUEST_PERIOD < currentTime )
@@ -196,6 +197,7 @@ Meteor.methods({
 			if (action == 'accept') {
 				// start quest
 				current.status = Game.Quest.status.INPROGRESS;
+				current.startTime = Math.floor(new Date().valueOf() / 1000);
 			} else {
 				// cancel whole quest line
 				current.status = Game.Quest.status.CANCELED;
@@ -235,10 +237,14 @@ Meteor.methods({
 				if (!current.history) {
 					current.history = {};
 				}
-				current.history[nextStep.engName] = Game.Quest.status.FINISHED;
+				current.history[nextStep.engName] = {
+					result: Game.Quest.status.FINISHED,
+					startTime: current.startTime
+				}
 				// put next step
 				current.status = Game.Quest.status.PROMPT;
 				current.step = nextStep.engName;
+				current.startTime = Math.floor(new Date().valueOf() / 1000);
 			} else {
 				// move quest line to finished
 				quests.finished[questId] = current;

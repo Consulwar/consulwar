@@ -374,9 +374,7 @@ var helpers = {
 	information: function() {
 		return Session.get('active_item');
 	},
-	active_menu: function() {
-		return Router.current().group; 
-	},
+	active_menu: function() { return Session.get('active_menu'); },
 	active_side: function() { return Session.get('active_side'); },
 	active_item: function() { return Session.get('active_item'); },
 
@@ -394,6 +392,29 @@ var helpers = {
 	enoughResources: function() { return Session.get('enoughResources'); },
 	enoughCredits: function() { return Session.get('enoughCredits'); },
 	effect: function() { return Session.get('effect'); },
+
+	activeMenu: function() {
+		return Router.current().group;
+	},
+
+	hasAdditionalArea: function() {
+		var activeMenu = Router.current().group;
+		if (activeMenu == 'planet'
+		 || activeMenu == 'army'
+		 || activeMenu == 'research'
+		) {
+			return true;
+		}
+		return false;
+	},
+
+	sideHero: function() {
+		var activeSide = Router.current().params.group;
+		if (activeSide == 'house') {
+			return 'portal';
+		}
+		return Game.getPersonByMenu(activeSide);
+	},
 
 	currentQuest: function() {
 		var activeSide = Router.current().params.group;
@@ -474,7 +495,7 @@ Template.game.events({
 	'click .game .content .quest': function() {
 		var activeSide = Router.current().params.group;
 		
-		if (activeSide == 'consul') {
+		if (activeSide == 'house') {
 			return ShowModalWindow( Template.support );
 		}
 
@@ -515,7 +536,7 @@ Template.game.events({
 						{
 							type: 'quest',
 							engName: currentQuest.engName,
-							who: quest.who,
+							who: who,
 							title: [
 								'Замечательно!', 
 								'Прекрасно!', 
@@ -536,7 +557,7 @@ Template.game.events({
 						{
 							type: 'quest',
 							engName: currentQuest.engName,
-							who: quest.who,
+							who: who,
 							title: quest.conditionText, 
 							text: quest.text, 
 							reward: quest.reward,

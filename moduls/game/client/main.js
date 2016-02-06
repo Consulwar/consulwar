@@ -332,9 +332,6 @@ Tracker.autorun(function () {
 		//var resources = Game.Resources.getValue();
 		//Session.set('resources', resources);
 
-		// TODO: Remove later!
-		//Session.set('currentQuest', user.game.quests.current);
-
 		Session.set('login', user.login);
 		Session.set('planetName', user.planetName);
 	}
@@ -354,10 +351,7 @@ Meteor.setInterval(function() {
 var hasNewMailStatus = false;
 Tracker.autorun(function() {
 	var user = Meteor.user();
-	// TODO: Change condition later!
-	if (/*user && user.game && user.game.quests.daily.status != game.Quest.status.finished
-		||*/ Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-		&& !hasNewMailStatus) {
+	if (Game.Quest.hasDaily() || Game.Mail.hasUnread() && !hasNewMailStatus) {
 		hasNewMailStatus = true;
 	} else {
 		hasNewMailStatus = false;
@@ -425,10 +419,7 @@ var helpers = {
 	currentBattle: function() { return Session.get('currentBattle'); },
 
 	hasNewMail: function() { 
-		return (
-			Meteor.user().game.quests.daily.status != game.Quest.status.finished
-			|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-		); 
+		return (Game.Quest.hasDaily() || Game.Mail.hasUnread());
 	},
 
 	connection: function() { return Meteor.status(); },
@@ -523,58 +514,72 @@ Template.game.events({
 				break;
 		}
 
+		var currentQuest = Game.Quest.getByHero(who);
 
-		if (who == 'tamily') {
-			var quest = Meteor.user().game.quests.current;
+		if (!currentQuest) {
 
-			if (quest.status == game.Quest.status.finished) {
-				Blaze.renderWithData(
-					Template.reward, 
-					{
-						type: 'quest',
-						title: [
-							'Замечательно!', 
-							'Прекрасно!', 
-							'Отличная Работа!', 
-							'Супер! Потрясающе!', 
-							'Уникальный Талант!', 
-							'Слава Консулу! ', 
-							'Невероятно!', 
-							'Изумительно!'
-						][Math.floor(Math.random()*8)],
-						reward: quest.reward
-					}, 
-					$('.over')[0]
-				)
-			} else {
+			// no quest for selected hero, show greetings dialog
+			if (text && text.length > 0) {
 				Blaze.renderWithData(
 					Template.quest, 
 					{
-						who: 'tamily',
+						who: who,
 						type: 'quest',
-						title: quest.conditionText, 
-						text: quest.text, 
-						reward: quest.reward,
-						options: $.map(quest.options, function(values, name) {
-							values.name = name;
-							return values;
-						}),
-						isPrompt: quest.status == game.Quest.status.prompt
+						text: text
 					}, 
 					$('.over')[0]
-				)
+				);
 			}
+
 		} else {
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					who: who,
-					type: 'quest',
-					//title: quest.conditionText, 
-					text: text
-				}, 
-				$('.over')[0]
-			)
+
+			// get actual quest and show
+			Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
+
+				var quest = new game.Quest(data);
+
+				if (currentQuest.status == Game.Quest.status.FINISHED) {
+					Blaze.renderWithData(
+						Template.reward, 
+						{
+							type: 'quest',
+							engName: currentQuest.engName,
+							who: quest.who,
+							title: [
+								'Замечательно!', 
+								'Прекрасно!', 
+								'Отличная Работа!', 
+								'Супер! Потрясающе!', 
+								'Уникальный Талант!', 
+								'Слава Консулу! ', 
+								'Невероятно!', 
+								'Изумительно!'
+							][Math.floor(Math.random()*8)],
+							reward: quest.reward
+						}, 
+						$('.over')[0]
+					);
+				} else {
+					Blaze.renderWithData(
+						Template.quest, 
+						{
+							type: 'quest',
+							engName: currentQuest.engName,
+							who: quest.who,
+							title: quest.conditionText, 
+							text: quest.text, 
+							reward: quest.reward,
+							options: $.map(quest.options, function(values, name) {
+								values.name = name;
+								return values;
+							}),
+							isPrompt: currentQuest.status == Game.Quest.status.PROMPT
+						}, 
+						$('.over')[0]
+					);
+				}
+			});
+
 		}
 	}
 });
@@ -582,19 +587,21 @@ Template.game.events({
 Template.quest.events({
 	'click a': function(e, t) {
 		if (t.data.type == 'quest') {
-			Meteor.call('questAction', e.target.dataset.option);
+			Meteor.call('quests.sendAction', t.data.engName, e.target.dataset.option);
 			Blaze.remove(t.view);
 		} else {
-			Meteor.call('dailyQuestAnswer', e.target.dataset.option, function(err, result) {
-				var user = Meteor.user();
+			Meteor.call('quests.sendDailyAnswer', e.target.dataset.option, function(err, result) {
+				var who = t.data.who;
+				var title = t.data.title;
+
 				Blaze.remove(t.view);
 
 				Blaze.renderWithData(
 					Template.quest, 
 					{
-						who: user.game.quests.daily.who || 'tamily',
+						who: who,
 						type: 'daily',
-						title: user.game.quests.daily.name,
+						title: title,
 						text: result.text,
 						reward: result.reward
 					}, 

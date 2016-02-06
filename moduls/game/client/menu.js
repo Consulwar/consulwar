@@ -86,9 +86,7 @@ var menu = {
 		routeName: ['mail', 'chat'],
 		url: Router.routes.mail.path(),
 		additionalClass: function() {
-			// TODO: Change condition later!
-			if (/*Meteor.user().game.quests.daily.status != game.Quest.status.finished
-				||*/ Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})) {
+			if (Game.Quest.hasDaily() || Game.Mail.hasUnread()) {
 				return 'has_new_mail';
 			} else {
 				return '';

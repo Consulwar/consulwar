@@ -15,11 +15,10 @@ Template.mail.helpers({
 			letters[i].status = letters[i].status == game.Mail.status.read ? 'Прочитано': '';
 		}
 
+		// insert daily quest into letters
 		var user = Meteor.user();
+		var dailyQuest = Game.Quest.getDaily();
 
-		//
-		// TODO: Дверь поставить как выпилил!
-		var dailyQuest = user.game.quests.daily;
 		if (dailyQuest) {
 			var quest = {
 				to: user._id,
@@ -29,12 +28,12 @@ Template.mail.helpers({
 				name: Game.Persons[dailyQuest.who || 'tamily'].name,
 				subject: dailyQuest.name,
 				timestamp: dailyQuest.startTime,
-				status: dailyQuest.status == game.Quest.status.finished ? 'Выполнено' : ''
+				status: dailyQuest.status == Game.Quest.status.FINISHED ? 'Выполнено' : ''
 			};
 
 			var questAdded = false;
 			for (var i = 0; i < letters.length; i++) {
-				if(dailyQuest.startTime > letters[i].timestamp) {
+				if (dailyQuest.startTime > letters[i].timestamp) {
 					letters.splice(i, 0, quest);
 					questAdded = true;
 					break;
@@ -161,13 +160,14 @@ Template.mail.events({
 
 	// Дейлик
 	'click tr.from_tamily': function(e, t) {
-		var user = Meteor.user();
-		var dailyQuest = user.game.quests.daily;
+		var dailyQuest = Game.Quest.getDaily();
 
 		closeMessages(t);
 
-		if (dailyQuest.status == game.Quest.status.inprogress) {
-			Meteor.call('getDailyQuest', function(err, quest){
+		if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
+
+			// show inprogress daily quest
+			Meteor.call('quests.getDailyInfo', function(err, quest) {
 				Blaze.renderWithData(
 					Template.quest, 
 					{
@@ -185,9 +185,12 @@ Template.mail.events({
 						isPrompt: true
 					}, 
 					$('.over')[0]
-				)
-			})
+				);
+			});
+			
 		} else {
+
+			// show finished daily quest
 			Blaze.renderWithData(
 				Template.quest, 
 				{
@@ -197,7 +200,8 @@ Template.mail.events({
 					text: dailyQuest.result
 				}, 
 				$('.over')[0]
-			)
+			);
+
 		}
 	},
 

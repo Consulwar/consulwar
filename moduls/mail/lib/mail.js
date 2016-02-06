@@ -8,7 +8,14 @@ game.Mail.status = {
 };
 
 Game.Mail = {
-	Collection: new Meteor.Collection('mail')
+	Collection: new Meteor.Collection('mail'),
+
+	hasUnread: function() {
+		return Game.Mail.Collection.findOne({
+			status: game.Mail.status.unread,
+			to: Meteor.userId()
+		});
+	}
 };
 
 }

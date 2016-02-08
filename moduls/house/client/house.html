@@ -1,5 +1,4 @@
 <template name="consulHouse">
-	<div class="consul"></div>
 	{{#if items}}
 		{{#each items}}
 			<div class="{{this.subgroup}}-{{this.engName}}"></div>
@@ -10,7 +9,7 @@
 <template name="consulHouseItem">
 	<div class="information house">
 		<div class="image">
-			<img src="/img/game/house/{{subgroup}}/{{item.engName}}.jpg">
+			<img src="/img/game/house/{{subgroup}}/i/{{item.engName}}.jpg">
 			<span class="title">{{item.name}}</span>
 		</div>
 		<div class="description">

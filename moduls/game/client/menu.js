@@ -1,6 +1,5 @@
 initMenuClient = function() {
 
-
 var firstItemGroupURL = function(items) {
 	var firstItem = items[_.keys(items)[0]];
 	return firstItem.url({group: firstItem.group});
@@ -33,6 +32,18 @@ var menu = {
 				additionalArea: 'portal',
 				url: Router.routes.house.path({ group: 'house' }),
 				items: {
+					room: {
+						name: 'Палата',
+						engName: 'room',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: Router.routes.house.path({
+							group: 'house',
+							subgroup: 'room',
+							item: 'consul'
+						}),
+						items: Game.House.items.room
+					},
 					tron: {
 						name: 'Трон',
 						engName: 'tron',
@@ -44,6 +55,18 @@ var menu = {
 							item: 'consul'
 						}),
 						items: Game.House.items.tron
+					},
+					avatar: {
+						name: 'Аватар',
+						engName: 'avatar',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: Router.routes.house.path({
+							group: 'house',
+							subgroup: 'avatar',
+							item: 'consul'
+						}),
+						items: Game.House.items.avatar
 					},
 					artefacts: {
 						name: 'Артефакты',

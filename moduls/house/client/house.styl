@@ -7,6 +7,15 @@ house-element(group, name, x, y, z)
 		top y px
 		z-index z
 
+house-element-back(group, name)
+	.{group}-{name}
+		position absolute
+		display block
+		content url("/img/game/house/" group "/" name ".jpg")
+		left 124px
+		top 0px
+		z-index 1
+
 house-group-icon(group)
 	.{group}-icon
 		background-image url("/img/game/house/" group "/icon.png")
@@ -16,28 +25,31 @@ house-item-icon(group, name)
 		background-image url("/img/game/house/" group "/i/" name ".png")
 
 
-.content
-	.overlay.planet.house
-		background-image url(/img/game/house/back.jpg)
-		z-index 1
-		
-	.consul
-		position absolute
-		display block
-		content url(/img/game/house/consul.png)
-		left 580px
-		top 120px
-		z-index 10
-
-
-house-element('tron', 'consul', 485, 25, 5)
-house-element('tron', 'czar', 480, 58, 5)
-house-element('tron', 'gameofthrones', 480, 45, 5)
+house-group-icon('room')
+house-item-icon('room', 'consul')
+house-item-icon('room', 'czar')
+house-item-icon('room', 'cruel')
+house-item-icon('room', 'gameofthrones')
+house-element-back('room', 'consul')
+house-element-back('room', 'czar')
+house-element-back('room', 'cruel')
+house-element-back('room', 'gameofthrones')
 
 house-group-icon('tron')
 house-item-icon('tron', 'consul')
 house-item-icon('tron', 'czar')
 house-item-icon('tron', 'gameofthrones')
+house-element('tron', 'consul', 485, 30, 5)
+house-element('tron', 'czar', 480, 60, 5)
+house-element('tron', 'gameofthrones', 480, 50, 5)
+
+house-group-icon('avatar')
+house-item-icon('avatar', 'consul')
+house-item-icon('avatar', 'czar')
+house-item-icon('avatar', 'johnsnow')
+house-element('avatar', 'consul', 575, 125, 10)
+house-element('avatar', 'czar', 575, 125, 10)
+house-element('avatar', 'johnsnow', 580, 110, 10)
 
 
 .house

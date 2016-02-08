@@ -57,6 +57,10 @@ if (process.env.NODE_ENV == 'development') {
 			Game.Artefacts.remove(id, amount);
 		},
 
+		'cheats.resetHouseItems': function() {
+			Game.House.initialize(Meteor.user(), true);
+		},
+
 		'cheats.buyAllHouseItems': function() {
 			var items = {};
 			var groups = Game.House.items;
@@ -73,6 +77,10 @@ if (process.env.NODE_ENV == 'development') {
 			}, {
 				$set: { items: items }
 			});
+		},
+
+		'cheats.resetQuests': function() {
+			Game.Quest.initialize(Meteor.user(), true);
 		}
 	})
 
@@ -91,7 +99,9 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.generateAllPlanets': addCheater,
 		'cheats.addArtefact': addCheater,
 		'cheats.removeArtefact': addCheater,
-		'cheats.buyAllHouseItems': addCheater
+		'cheats.resetHouseItems': addCheater,
+		'cheats.buyAllHouseItems': addCheater,
+		'cheats.resetQuests': addCheater
 	})
 
 }

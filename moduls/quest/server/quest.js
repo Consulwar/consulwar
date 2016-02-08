@@ -82,13 +82,20 @@ game.DailyQuest = function(options) {
 
 initQuestContent();
 
-Game.Quest.initialize = function(user) {
+Game.Quest.initialize = function(user, isRewrite) {
 	user = user || Meteor.user();
 	var quests = Game.Quest.getValue();
 
 	if (quests == undefined) {
 		Game.Quest.Collection.insert({
 			user_id: user._id,
+			current: {},
+			finished: {}
+		});
+	} else if (isRewrite) {
+		Game.Quest.Collection.update({
+			user_id: user._id
+		}, {
 			current: {},
 			finished: {}
 		});

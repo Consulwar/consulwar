@@ -132,8 +132,20 @@ Game.Cheats.removeArtefact = function(id, amount) {
 // Consul house cheats
 // ----------------------------------------------------------------------------
 
+Game.Cheats.resetHouseItems = function() {
+	Meteor.call('cheats.resetHouseItems');
+}
+
 Game.Cheats.buyAllHouseItems = function() {
 	Meteor.call('cheats.buyAllHouseItems');
+}
+
+// ----------------------------------------------------------------------------
+// Quest cheats
+// ----------------------------------------------------------------------------
+
+Game.Cheats.resetQuests = function() {
+	Meteor.call('cheats.resetQuests');
 }
 
 }

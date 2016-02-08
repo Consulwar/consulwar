@@ -10,31 +10,39 @@ Game.House.update = function(data) {
 	return data;
 }
 
-Game.House.initialize = function(user) {
+Game.House.initialize = function(user, isRewrite) {
 	user = user || Meteor.user();
 	var currentValue = Game.House.getValue();
+
+	var defaultItems = {
+		'room': {
+			'consul': {
+				isPlaced: true
+			}
+		},
+		'tron': {
+			'consul': {
+				isPlaced: true
+			}
+		},
+		'avatar': {
+			'consul': {
+				isPlaced: true
+			}
+		}
+	};
 
 	if (currentValue == undefined) {
 		Game.House.Collection.insert({
 			'user_id': user._id,
-			'items': {
-				'room': {
-					'consul': {
-						isPlaced: true
-					}
-				},
-				'tron': {
-					'consul': {
-						isPlaced: true
-					}
-				},
-				'avatar': {
-					'consul': {
-						isPlaced: true
-					}
-				}
-			}
-		})
+			'items': defaultItems
+		});
+	} else if (isRewrite) {
+		Game.House.Collection.update({
+			user_id: user._id
+		}, {
+			items: defaultItems
+		});
 	}
 }
 

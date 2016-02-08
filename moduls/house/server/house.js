@@ -18,7 +18,17 @@ Game.House.initialize = function(user) {
 		Game.House.Collection.insert({
 			'user_id': user._id,
 			'items': {
+				'room': {
+					'consul': {
+						isPlaced: true
+					}
+				},
 				'tron': {
+					'consul': {
+						isPlaced: true
+					}
+				},
+				'avatar': {
 					'consul': {
 						isPlaced: true
 					}

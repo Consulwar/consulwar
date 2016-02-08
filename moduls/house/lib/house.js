@@ -108,7 +108,9 @@ Game.House = {
 	},
 
 	items: {
-		tron: {}
+		room: {},
+		tron: {},
+		avatar: {}
 	}
 }
 

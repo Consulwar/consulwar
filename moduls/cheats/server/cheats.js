@@ -55,6 +55,24 @@ if (process.env.NODE_ENV == 'development') {
 
 		'cheats.removeArtefact': function(id, amount) {
 			Game.Artefacts.remove(id, amount);
+		},
+
+		'cheats.buyAllHouseItems': function() {
+			var items = {};
+			var groups = Game.House.items;
+			for (var groupKey in groups) {
+				items[groupKey] = {};
+				for (var itemKey in groups[groupKey]) {
+					items[groupKey][itemKey] = {
+						isPlaced: (itemKey == 'consul' ? true : false)
+					};
+				}
+			}
+			Game.House.Collection.update({
+				user_id: Meteor.userId()
+			}, {
+				$set: { items: items }
+			});
 		}
 	})
 
@@ -72,7 +90,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.sendReptileFleetToPlanet': addCheater,
 		'cheats.generateAllPlanets': addCheater,
 		'cheats.addArtefact': addCheater,
-		'cheats.removeArtefact': addCheater
+		'cheats.removeArtefact': addCheater,
+		'cheats.buyAllHouseItems': addCheater
 	})
 
 }

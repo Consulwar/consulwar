@@ -128,4 +128,12 @@ Game.Cheats.removeArtefact = function(id, amount) {
 	Meteor.call('cheats.removeArtefact', id, amount);
 }
 
+// ----------------------------------------------------------------------------
+// Consul house cheats
+// ----------------------------------------------------------------------------
+
+Game.Cheats.buyAllHouseItems = function() {
+	Meteor.call('cheats.buyAllHouseItems');
+}
+
 }

@@ -1,7 +1,16 @@
 initArtefactsLib = function() {
 
 game.Artefact = function(options) {
-	Game.Artefacts.items[options.engName] = options;
+	this.group = options.group;
+	this.engName = options.engName;
+	this.name = options.name;
+	this.description = options.description;
+
+	this.amount = function() {
+		return Game.Artefacts.getAmount(this.engName);
+	}
+
+	Game.Artefacts.items[options.engName] = this;
 }
 
 Game.Artefacts = {

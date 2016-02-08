@@ -1,5 +1,4 @@
 <template name="consulHouse">
-	<div class="consul"></div>
 	{{#if items}}
 		{{#each items}}
 			<div class="{{this.subgroup}}-{{this.engName}}"></div>
@@ -9,7 +8,10 @@
 
 <template name="consulHouseItem">
 	<div class="information house">
-		<img src="/img/game/house/{{subgroup}}/{{item.engName}}.jpg">
+		<div class="image">
+			<img src="/img/game/house/{{subgroup}}/i/{{item.engName}}.jpg">
+			<span class="title">{{item.name}}</span>
+		</div>
 		<div class="description">
 			<ul class ="consul-items">
 				{{#each subgroupItems}}
@@ -53,5 +55,34 @@
 				{{/if}}
 			{{/if}}
 		{{/if}}
+	</div>
+</template>
+
+<template name="consulHouseArtefacts">
+	<div class="information house">
+		<div class="image">
+			<img src="/img/artefacts/{{item.group}}/{{item.engName}}.jpg">
+			<span class="title">{{item.name}}</span>
+			{{#if gt item.amount 0}}
+				<span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>
+			{{/if}}
+		</div>
+		<div class="description">
+			<ul class ="consul-artefacts">
+				{{#each subgroupItems}}
+					<li>
+						<a 
+							class="
+								{{this.engName}} 
+								{{#if eq item.engName this.engName}}active{{/if}}"
+							href="{{pathFor 'house' group='house' subgroup='artefacts' item=this.engName}}"
+						>{{formatNumberWithISO this.amount}}</a>
+					</li>
+				{{/each}}
+			</ul>
+			{{#if item.description}}
+				<p>{{item.description}}</p>
+			{{/if}}
+		</div>
 	</div>
 </template>

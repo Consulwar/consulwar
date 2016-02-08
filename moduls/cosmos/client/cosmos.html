@@ -1,6 +1,7 @@
 <template name="cosmos">
 	<div id="map-battle"></div>
 	<a class="map-control-home"></a>
+	<a class="history" href="{{pathFor 'cosmosHistory'}}">Лог космических боев</a>
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
@@ -288,4 +289,33 @@
 		</div>
 		{{/let}}
 	{{/each}}
+</template>
+
+<template name="cosmosHistory">
+	{{#if battles}}
+		<div class="history">
+			<table>
+				<tr class="header">
+					<th class="sides">Стороны</th>
+					<th class="result">Итог</th>
+					<th class="time">Время</th>	
+				</tr>
+				{{#each battles}}
+					<tr data-id="{{this._id}}">
+						<td>{{this.sides}}</td>
+						<td>{{this.result}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+	{{/if}}
+	<a class="back" href="{{pathFor 'cosmos'}}">Закрыть</a>
+</template>
+
+<template name="cosmosHistoryItem">
+	{{#if battle}}
+		<h2>{{battle._id}}</h2>
+	{{/if}}
+	<a class="back" href="{{pathFor 'cosmosHistory'}}">Закрыть</a>
 </template>

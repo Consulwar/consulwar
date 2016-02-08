@@ -489,3 +489,76 @@
 			
 		span
 			color #ffffff
+			
+
+.history
+	position relative
+	z-index 2
+	width 100%
+	height 435px
+	margin-left 0px
+	background-color #04080B
+	overflow-y auto
+	
+	>table
+		width 100%
+		border-collapse collapse
+		
+		tr
+			height 40px
+			
+			cursor pointer
+			
+			&:nth-child(odd):not(.header)
+				background-color #0B121A
+			
+			&:nth-child(even)
+				background-color #0E1821
+				
+			&.from_tamily
+				color #3AB6F2
+				
+			&.from_system
+				&.battle_win
+					color #A9C362
+				&.battle_draw
+					color #D8E2EB
+				&.battle_lose
+					color #9D3830
+				&.quiz
+					color #3CB3ED
+					font-weight bold
+			
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+			
+		td, th
+			text-align left
+				
+		td:first-child, th:first-child
+			width 20px
+			padding 12px
+			text-align center
+		
+		.sides
+			width 200px
+			
+		.result
+			width 180px
+
+		.name
+			width 180px
+			
+		.subject
+			width 330px
+			
+		.time
+			width 150px
+			
+
+.history-item
+	position relative
+	z-index 3
+	width 100%
+	height 100%

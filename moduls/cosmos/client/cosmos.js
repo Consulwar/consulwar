@@ -23,6 +23,55 @@ Game.Cosmos.showPage = function() {
 }
 
 // ----------------------------------------------------------------------------
+// Cosmos battle history
+// ----------------------------------------------------------------------------
+
+Game.Cosmos.showHistory = function() {
+	this.render('cosmosHistory', {
+		to: 'content'
+	});
+}
+
+Template.cosmosHistory.helpers({
+	battles: function() {
+		return [
+			{ _id: 1, sides: 'Рептилии vs Игрок', timestamp: 123456700, result: 0 },
+			{ _id: 2, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
+			{ _id: 3, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
+			{ _id: 4, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
+			{ _id: 5, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 }
+		]
+	}
+})
+
+Template.cosmosHistory.events({
+	'click tr:not(.header)': function(e, t) {
+		var id = $(e.currentTarget).attr('data-id');
+		if (id) {
+			Router.go('cosmosHistoryItem', { id: id });
+		}
+	}
+})
+
+Game.Cosmos.showHistoryItem = function() {
+	var id = this.params.id;
+	if (id) {
+		this.render('cosmosHistoryItem', {
+			to: 'content',
+			data: {
+				id: id
+			}
+		});
+	}
+}
+
+Template.cosmosHistoryItem.helpers({
+	battle: function() {
+		return { _id: 42, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 };
+	}
+})
+
+// ----------------------------------------------------------------------------
 // Fleets side menu
 // ----------------------------------------------------------------------------
 

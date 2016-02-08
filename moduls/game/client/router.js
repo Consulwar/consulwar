@@ -67,7 +67,9 @@ var gameRoutes = {
 	},
 
 	cosmos: {
-		cosmos: 'cosmos'
+		cosmos: 'cosmos',
+		cosmosHistory: 'cosmos/history',
+		cosmosHistoryItem: 'cosmos/history/:id?'
 	},
 
 	earth: {
@@ -92,6 +94,8 @@ var gameActions = {
 	mutual: Game.Mutual.showPage,
 
 	cosmos: Game.Cosmos.showPage,
+	cosmosHistory: Game.Cosmos.showHistory,
+	cosmosHistoryItem: Game.Cosmos.showHistoryItem,
 
 	earth: Game.Earth.showMap,
 	earthReserve: Game.Earth.showReserve,

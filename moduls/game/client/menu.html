@@ -46,10 +46,26 @@
 				additional_area 
 				quest
 				{{sideHero}} 
-				{{#if currentQuest}}
-					{{#if eq currentQuest.status 0}}prompt{{/if}}
-					{{#if eq currentQuest.status 3}}finished{{/if}}
-				{{/if}}">
+				{{#if gt status -1}}
+					{{#if eq status 0}}prompt{{/if}}
+					{{#if eq status 3}}finished{{/if}}
+				{{/if}}"
+		>
+			{{#if quests}}
+				<ul class="quests">
+					{{#each quests}}
+						<li 
+							data-id="{{this.engName}}"
+							class="
+								{{#if eq this.status 0}}prompt{{/if}}
+								{{#if eq this.status 1}}inprogress{{/if}}
+								{{#if eq this.status 3}}finished{{/if}}"
+						>
+							{{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
 		</div>
 	{{/if}}
 </template>

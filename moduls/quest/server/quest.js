@@ -147,6 +147,7 @@ Meteor.methods({
 
 			quests.current[key] = {
 				engName: questLine.engName,
+				name: firstStep.conditionText,
 				status: Game.Quest.status.PROMPT,
 				appearTime: currentTime,
 				step: firstStep.engName,
@@ -243,6 +244,7 @@ Meteor.methods({
 				}
 				// put next step
 				current.status = Game.Quest.status.PROMPT;
+				current.name = nextStep.conditionText;
 				current.step = nextStep.engName;
 				current.startTime = Math.floor(new Date().valueOf() / 1000);
 			} else {

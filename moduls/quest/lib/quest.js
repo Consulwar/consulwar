@@ -26,17 +26,24 @@ Game.Quest = {
 		});
 	},
 
-	getByHero: function(who) {
+	getOneById: function(id) {
+		var quests = Game.Quest.getValue();
+		return (quests && quests.current && quests.current[id])
+			? quests.current[id]
+			: null;
+	},
+
+	getAllByHero: function(who) {
 		var quests = Game.Quest.getValue();
 		var result = null;
 
 		if (quests && quests.current) {
 			for (var key in quests.current) {
 				if (quests.current[key].who == who) {
-					// get quest with max status
-					if (!result || quests.current[key].status > result.status) {
-						result = quests.current[key];
+					if (!result) {
+						result = {};
 					}
+					result[key] = quests.current[key];
 				}
 			}
 		}

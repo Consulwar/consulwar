@@ -241,73 +241,77 @@ Template.additional_area.events({
 			return ShowModalWindow( Template.support );
 		}
 
-		var currentQuest = Game.Quest.getByHero(who);
-		if (!currentQuest) {
-			// no quest for selected hero, show greetings dialog
-			var text = Game.Persons[who].text;
+		var text = Game.Persons[who].text;
 
-			if (text && text.length > 0) {
+		if (text && text.length > 0) {
+			Blaze.renderWithData(
+				Template.quest, 
+				{
+					who: who,
+					type: 'quest',
+					text: text
+				}, 
+				$('.over')[0]
+			);
+		}
+	},
+
+	'click .quests li': function(e, t) {
+		var id = $(e.currentTarget).attr('data-id');
+		if (!id) {
+			return;
+		}
+
+		var currentQuest = Game.Quest.getOneById(id);
+		if (!currentQuest) {
+			return;
+		}
+
+		// get actual quest and show
+		Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
+			var quest = new game.Quest(data);
+
+			if (currentQuest.status == Game.Quest.status.FINISHED) {
+				Blaze.renderWithData(
+					Template.reward, 
+					{
+						type: 'quest',
+						engName: currentQuest.engName,
+						who: currentQuest.who,
+						title: [
+							'Замечательно!', 
+							'Прекрасно!', 
+							'Отличная Работа!', 
+							'Супер! Потрясающе!', 
+							'Уникальный Талант!', 
+							'Слава Консулу! ', 
+							'Невероятно!', 
+							'Изумительно!'
+						][Math.floor(Math.random()*8)],
+						reward: quest.reward
+					}, 
+					$('.over')[0]
+				);
+			} else {
 				Blaze.renderWithData(
 					Template.quest, 
 					{
-						who: who,
 						type: 'quest',
-						text: text
+						engName: currentQuest.engName,
+						who: currentQuest.who,
+						title: quest.conditionText, 
+						text: quest.text, 
+						reward: quest.reward,
+						options: $.map(quest.options, function(values, name) {
+							values.name = name;
+							return values;
+						}),
+						isPrompt: currentQuest.status == Game.Quest.status.PROMPT
 					}, 
 					$('.over')[0]
 				);
 			}
-
-		} else {
-
-			// get actual quest and show
-			Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
-
-				var quest = new game.Quest(data);
-
-				if (currentQuest.status == Game.Quest.status.FINISHED) {
-					Blaze.renderWithData(
-						Template.reward, 
-						{
-							type: 'quest',
-							engName: currentQuest.engName,
-							who: who,
-							title: [
-								'Замечательно!', 
-								'Прекрасно!', 
-								'Отличная Работа!', 
-								'Супер! Потрясающе!', 
-								'Уникальный Талант!', 
-								'Слава Консулу! ', 
-								'Невероятно!', 
-								'Изумительно!'
-							][Math.floor(Math.random()*8)],
-							reward: quest.reward
-						}, 
-						$('.over')[0]
-					);
-				} else {
-					Blaze.renderWithData(
-						Template.quest, 
-						{
-							type: 'quest',
-							engName: currentQuest.engName,
-							who: who,
-							title: quest.conditionText, 
-							text: quest.text, 
-							reward: quest.reward,
-							options: $.map(quest.options, function(values, name) {
-								values.name = name;
-								return values;
-							}),
-							isPrompt: currentQuest.status == Game.Quest.status.PROMPT
-						}, 
-						$('.over')[0]
-					);
-				}
-			});
-
-		}
+		});
 	}
 });
 
@@ -316,9 +320,33 @@ Template.additional_area.helpers({
 		return getSideHeroByRoute( Router.current() );	
 	},
 
-	currentQuest: function() {
+	quests: function() {
 		var who = getSideHeroByRoute( Router.current() );
-		return (who) ? Game.Quest.getByHero(who) : null;
+		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
+		if (quests) {
+			return _.map(quests, function(item) {
+				return {
+					engName: item.engName,
+					name: item.name,
+					status: item.status
+				}
+			});
+		}
+		return null;
+	},
+
+	status: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
+		var result = null;
+		if (quests) {
+			for (var key in quests) {
+				if (!result || quests[key].status > result) {
+					result = quests[key].status;
+				}
+			}
+		}
+		return result;
 	}
 });
 

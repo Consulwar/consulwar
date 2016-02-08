@@ -168,6 +168,43 @@ requirements-icon(menu, sub, name)
 			background-repeat no-repeat
 			background-position top center
 			
+			.quests
+				position absolute
+				display block
+				left 32px
+				bottom 60px
+				
+				li
+					cursor pointer
+					display inline-block
+					padding 10px
+					width 250px
+					border-radius 10px
+					font-weight bold
+					font-size 16px
+					overflow hidden
+					text-overflow ellipsis
+					text-align left
+					white-space nowrap
+					background rgb(0, 0, 0)
+					background rgba(0, 0, 0, 0.7)
+				
+					&:hover
+						-webkit-filter brightness(1.4)
+						filter brightness(1.4)
+
+				.prompt
+					border-color #ffffff
+					color #ffffff
+				
+				.inprogress
+					border-color #56baf2
+					color #56baf2
+					
+				.finished
+					border-color #e9a844
+					color #e9a844
+
 			&.quest
 				cursor pointer
 

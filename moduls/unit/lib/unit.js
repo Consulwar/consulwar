@@ -46,7 +46,6 @@ game.ReptileUnit = function(options) {
 };
 game.extend(game.ReptileUnit, game.Item)
 
-
 game.ReptileHero = function(options){
 	game.ReptileHero.superclass.constructor.apply(this, arguments);
 
@@ -195,6 +194,10 @@ Game.Unit = {
 		}
 
 	}
+}
+
+Game.BattleHistory = {
+	Collection: new Meteor.Collection('battleHistory')
 }
 
 initUnitsContent();

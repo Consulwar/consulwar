@@ -230,8 +230,72 @@ var getSideHeroByRoute = function(route) {
 	);
 }
 
+var showQuestWindow = function(id) {
+	var currentQuest = Game.Quest.getOneById(id);
+	if (!currentQuest) {
+		return;
+	}
+
+	Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
+		var quest = new game.Quest(data);
+
+		if (currentQuest.status == Game.Quest.status.FINISHED) {
+			Blaze.renderWithData(
+				Template.reward, 
+				{
+					type: 'quest',
+					engName: currentQuest.engName,
+					who: currentQuest.who,
+					title: [
+						'Замечательно!', 
+						'Прекрасно!', 
+						'Отличная Работа!', 
+						'Супер! Потрясающе!', 
+						'Уникальный Талант!', 
+						'Слава Консулу! ', 
+						'Невероятно!', 
+						'Изумительно!'
+					][Math.floor(Math.random()*8)],
+					reward: quest.reward
+				}, 
+				$('.over')[0]
+			);
+		} else {
+			Blaze.renderWithData(
+				Template.quest, 
+				{
+					type: 'quest',
+					engName: currentQuest.engName,
+					who: currentQuest.who,
+					title: quest.conditionText, 
+					text: quest.text, 
+					reward: quest.reward,
+					options: $.map(quest.options, function(values, name) {
+						values.name = name;
+						return values;
+					}),
+					isPrompt: currentQuest.status == Game.Quest.status.PROMPT
+				}, 
+				$('.over')[0]
+			);
+		}
+	});
+}
+
+Session.set('sideQuestsOpened', false);
+
 Template.additional_area.events({
-	'click .quest': function() {
+	'click .close': function(e, t) {
+		e.stopPropagation();
+		Session.set('sideQuestsOpened', false);
+	},
+
+	'click .open': function(e, t) {
+		e.stopPropagation();
+		Session.set('sideQuestsOpened', true);
+	},
+
+	'click .quest': function(e, t) {
 		var who = getSideHeroByRoute( Router.current() );
 		if (!who) {
 			return;
@@ -241,83 +305,54 @@ Template.additional_area.events({
 			return ShowModalWindow( Template.support );
 		}
 
-		var text = Game.Persons[who].text;
+		var currentQuest = Game.Quest.getOneByHero(who);
+		if (currentQuest) {
 
-		if (text && text.length > 0) {
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					who: who,
-					type: 'quest',
-					text: text
-				}, 
-				$('.over')[0]
-			);
-		}
-	},
+			// has active quest
+			showQuestWindow(currentQuest.engName);
 
-	'click .quests li': function(e, t) {
-		var id = $(e.currentTarget).attr('data-id');
-		if (!id) {
-			return;
-		}
+		} else {
 
-		var currentQuest = Game.Quest.getOneById(id);
-		if (!currentQuest) {
-			return;
-		}
+			// no quest, show greeting
+			var text = Game.Persons[who].text;
 
-		// get actual quest and show
-		Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
-			var quest = new game.Quest(data);
-
-			if (currentQuest.status == Game.Quest.status.FINISHED) {
-				Blaze.renderWithData(
-					Template.reward, 
-					{
-						type: 'quest',
-						engName: currentQuest.engName,
-						who: currentQuest.who,
-						title: [
-							'Замечательно!', 
-							'Прекрасно!', 
-							'Отличная Работа!', 
-							'Супер! Потрясающе!', 
-							'Уникальный Талант!', 
-							'Слава Консулу! ', 
-							'Невероятно!', 
-							'Изумительно!'
-						][Math.floor(Math.random()*8)],
-						reward: quest.reward
-					}, 
-					$('.over')[0]
-				);
-			} else {
+			if (text && text.length > 0) {
 				Blaze.renderWithData(
 					Template.quest, 
 					{
+						who: who,
 						type: 'quest',
-						engName: currentQuest.engName,
-						who: currentQuest.who,
-						title: quest.conditionText, 
-						text: quest.text, 
-						reward: quest.reward,
-						options: $.map(quest.options, function(values, name) {
-							values.name = name;
-							return values;
-						}),
-						isPrompt: currentQuest.status == Game.Quest.status.PROMPT
+						text: text
 					}, 
 					$('.over')[0]
 				);
 			}
-		});
+
+		}
+	},
+
+	'click .quests li': function(e, t) {
+		e.stopPropagation();
+		var id = $(e.currentTarget).attr('data-id');
+		if (id) {
+			showQuestWindow(id);
+		}
 	}
 });
 
 Template.additional_area.helpers({
 	sideHero: function() {
 		return getSideHeroByRoute( Router.current() );	
+	},
+
+	status: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		var quest = (who) ? Game.Quest.getOneByHero(who) : null;
+		return (quest) ? quest.status : null;
+	},
+
+	isOpened: function() {
+		return Session.get('sideQuestsOpened');
 	},
 
 	quests: function() {
@@ -333,20 +368,6 @@ Template.additional_area.helpers({
 			});
 		}
 		return null;
-	},
-
-	status: function() {
-		var who = getSideHeroByRoute( Router.current() );
-		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
-		var result = null;
-		if (quests) {
-			for (var key in quests) {
-				if (!result || quests[key].status > result) {
-					result = quests[key].status;
-				}
-			}
-		}
-		return result;
 	}
 });
 

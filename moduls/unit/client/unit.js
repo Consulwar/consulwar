@@ -2,6 +2,8 @@ initUnitClient = function() {
 
 initUnitLib();
 
+Meteor.subscribe('battleHistory');
+
 Game.Unit.showPage = function() {
 	var item = Game.Unit.items[this.group][this.params.group][this.params.item];
 	

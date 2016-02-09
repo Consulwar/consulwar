@@ -96,8 +96,11 @@ Game.Quest.initialize = function(user, isRewrite) {
 		Game.Quest.Collection.update({
 			user_id: user._id
 		}, {
-			current: {},
-			finished: {}
+			$set: {
+				current: {},
+				finished: {},
+				daily: null
+			}
 		});
 	}
 }
@@ -134,7 +137,7 @@ Meteor.methods({
 			var quest = questLine.findStep(current.step);
 
 			if (quest.isDone()) {
-				current.status == Game.Quest.status.FINISHED;
+				current.status = Game.Quest.status.FINISHED;
 			}
 		}
 
@@ -245,7 +248,7 @@ Meteor.methods({
 				if (!current.history) {
 					current.history = {};
 				}
-				current.history[nextStep.engName] = {
+				current.history[current.step] = {
 					result: Game.Quest.status.FINISHED,
 					startTime: current.startTime
 				}

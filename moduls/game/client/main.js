@@ -498,7 +498,7 @@ Template.quest.events({
 
 Template.reward.events({
 	'click .reward': function(e, t) {
-		Meteor.call('getReward');
+		Meteor.call('quests.getReward', t.data.engName);
 		Blaze.remove(t.view);
 	}
 });

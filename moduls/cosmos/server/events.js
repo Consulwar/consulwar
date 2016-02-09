@@ -407,7 +407,8 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			if (planet.mission) {
 				var battleOptions = {
 					missionType: planet.mission.type,
-					missionLevel: planet.mission.level
+					missionLevel: planet.mission.level,
+					spaceEventId: event._id
 				};
 
 				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
@@ -517,8 +518,12 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					: null;
 
 				if (enemyArmy && userArmy) {
+					var battleOptions = {
+						spaceEventId: event._id
+					}
+
 					// perform battle
-					var battleResult = Game.Unit.performBattle(userArmy, enemyArmy);
+					var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
 					userArmy = battleResult.userArmy;
 					enemyArmy = battleResult.enemyArmy;
 
@@ -622,7 +627,10 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			throw new Meteor.Error('Невозможна битва между одной стороной конфликта');
 		}
 
-		var battleOptions = {};
+		var battleOptions = {
+			spaceEventId: event._id
+		};
+		
 		if (targetShip.info.mission) {
 			battleOptions.missionType = targetShip.info.mission.type;
 			battleOptions.missionLevel = targetShip.info.mission.level;

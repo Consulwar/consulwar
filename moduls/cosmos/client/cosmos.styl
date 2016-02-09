@@ -489,10 +489,45 @@
 			
 		span
 			color #ffffff
-			
+		
+
+.btn-history
+	cursor pointer
+	display block
+	position absolute
+	z-index 2
+	bottom 10px
+	left 10px
+	font-size 16px
+	text-align center
+	text-decoration none
+	padding-top 14px
+	padding-bottom 14px
+	width 150px
+	background-color #000000
+	border 2px solid #80BAEC
+	color #80BAEC
+
+
+.btn-back
+	display block
+	position absolute
+	z-index 4
+	left 640px
+	bottom 0px
+	width 164px
+	height 34px
+	cursor pointer
+	color #ffffff
+	background-image url(/img/game/earth/btn_close.png)
+	background-repeat no-repeat
+	background-position 0px 0px
+	&:hover
+		background-position 0px -34px
+
 
 .history
-	position relative
+	position absolute
 	z-index 2
 	width 100%
 	height 435px
@@ -500,6 +535,11 @@
 	background-color #04080B
 	overflow-y auto
 	
+	h2
+		margin-top 20px
+		width 100%
+		text-align center
+
 	>table
 		width 100%
 		border-collapse collapse
@@ -558,7 +598,90 @@
 			
 
 .history-item
-	position relative
+	position absolute
 	z-index 3
 	width 100%
 	height 100%
+	font-weight bold
+	font-size 16px
+	background-size 100% 100%
+	background-repeat no-repeat
+	background-image url(/img/game/cosmomap/back_history.jpg)
+	
+	.result
+		margin-top 10px
+		width 100%
+		font-size 18px
+		text-align center
+		text-decoration uppercase
+
+	.user-army
+		position absolute
+		top 0px
+		left 0px
+		text-align left
+		background-repeat no-repeat
+		background-image url(/img/game/cosmomap/ico_humans.png)
+		background-position 80px 5px
+		
+		p
+			padding-top 10px
+			padding-left 140px
+
+	.enemy-army
+		position absolute
+		top 0px
+		right 0px
+		text-align right
+		background-repeat no-repeat
+		background-image url(/img/game/cosmomap/ico_rept.png)
+		background-position 275px 5px
+		
+		p
+			padding-top 10px
+			padding-right 160px
+				
+	table
+		width 400px
+		border-collapse collapse
+	
+		tr
+			display block
+			margin-top 4px
+			
+			&:not(.header)
+				background rgb(0, 0, 0)
+				background rgba(0, 0, 0, 0.8)
+			
+		td
+			padding-top 5px
+			padding-bottom 5px
+			padding-left 10px
+			padding-right 10px
+		
+		.name
+			width 150px
+			
+		.count
+			width 125px
+			
+	.resources
+		position absolute
+		display block
+		top 57px
+		left 450px
+		width 570px
+		height 100px
+		background rgb(0, 0, 0)
+		background rgba(0, 0, 0, 0.8)
+		
+	.artefacts
+		position absolute
+		display block
+		top 170px
+		left 450px
+		width 570px
+		height 100px
+		background rgb(0, 0, 0)
+		background rgba(0, 0, 0, 0.8)
+		

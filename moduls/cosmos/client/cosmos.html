@@ -1,7 +1,7 @@
 <template name="cosmos">
 	<div id="map-battle"></div>
 	<a class="map-control-home"></a>
-	<a class="history" href="{{pathFor 'cosmosHistory'}}">Лог космических боев</a>
+	<a class="btn-history" href="{{pathFor 'cosmosHistory'}}">История боев</a>
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
@@ -292,8 +292,8 @@
 </template>
 
 <template name="cosmosHistory">
-	{{#if battles}}
-		<div class="history">
+	<div class="history">
+		{{#if battles}}
 			<table>
 				<tr class="header">
 					<th class="sides">Стороны</th>
@@ -307,15 +307,80 @@
 						<td>{{formatDate this.timestamp}}</td>
 					</tr>
 				{{/each}}
+				<tr class="header">
+					<th class="sides"></th>
+					<th class="result"></th>
+					<th class="time"></th>	
+				</tr>
 			</table>
-		</div>
-	{{/if}}
-	<a class="back" href="{{pathFor 'cosmos'}}">Закрыть</a>
+		{{else}}
+			<h2>История боев пуста</h2>
+		{{/if}}
+	</div>
+	<a class="btn-back" href="{{pathFor 'cosmos'}}"></a>
 </template>
 
 <template name="cosmosHistoryItem">
-	{{#if battle}}
-		<h2>{{battle._id}}</h2>
-	{{/if}}
-	<a class="back" href="{{pathFor 'cosmosHistory'}}">Закрыть</a>
+	<div class="history-item">
+		{{#if battle}}
+			<div class="result">{{battle.result}}</div>
+			{{#if battle.resources}}
+				<div class="resources">
+					<ul>
+						{{#each battle.resources}}
+							<li class="{{this.engName}}">{{this.amount}}</li>
+						{{/each}}
+					</ul>
+				</div>
+			{{/if}}
+			{{#if battle.artefacts}}
+				<div class="artefacts">
+					<ul>
+						{{#each battle.artefacts}}
+							<li class="{{this.engName}}">{{this.amount}}</li>
+						{{/each}}
+					</ul>
+				</div>
+			{{/if}}
+			<div class="user-army">
+				<p class="humans">Люди</p>
+				{{#if battle.userArmy}}
+					<table>
+						<tr class="header">
+							<td class="name"></td>
+							<td class="count">Вылетело</td>
+							<td class="count">Осталось</td>
+						</tr>
+						{{#each battle.userArmy}}
+							<tr>
+								<td class="name humans">{{this.name}}</td>
+								<td class="count">{{formatNumberWithISO this.start}}</td>
+								<td class="count">{{formatNumberWithISO this.end}}</td>
+							</tr>
+						{{/each}}
+					</table>
+				{{/if}}
+			</div>
+			<div class="enemy-army">
+				<p class="reptiles">Рептилоиды</p>
+				{{#if battle.enemyArmy}}
+					<table>
+						<tr class="header">
+							<td class="count">Осталось</td>
+							<td class="count">Вылетело</td>
+							<td class="name"></td>
+						</tr>
+						{{#each battle.enemyArmy}}
+							<tr>
+								<td class="count">{{this.end}}</td>
+								<td class="count">{{formatNumberWithISO this.start}}</td>
+								<td class="name reptiles">{{formatNumberWithISO this.name}}</td>
+							</tr>
+						{{/each}}
+					</table>
+				{{/if}}
+			</div>
+		{{/if}}
+	</div>
+	<a class="btn-back" href="{{pathFor 'cosmosHistory'}}"></a>
 </template>

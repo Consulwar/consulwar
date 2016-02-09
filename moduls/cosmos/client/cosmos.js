@@ -39,7 +39,17 @@ Template.cosmosHistory.helpers({
 			{ _id: 2, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
 			{ _id: 3, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
 			{ _id: 4, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
-			{ _id: 5, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 }
+			{ _id: 5, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 },
+			{ _id: 6, sides: 'Рептилии vs Игрок', timestamp: 123456700, result: 0 },
+			{ _id: 7, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
+			{ _id: 8, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
+			{ _id: 9, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
+			{ _id: 10, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 },
+			{ _id: 11, sides: 'Рептилии vs Игрок', timestamp: 123456700, result: 0 },
+			{ _id: 12, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
+			{ _id: 13, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
+			{ _id: 14, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
+			{ _id: 15, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 }
 		]
 	}
 })
@@ -67,7 +77,41 @@ Game.Cosmos.showHistoryItem = function() {
 
 Template.cosmosHistoryItem.helpers({
 	battle: function() {
-		return { _id: 42, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 };
+		return {
+			result: 'Героическая победа',
+			resources: [
+				{ engName: 'metals', amount: 100500 },
+				{ engName: 'crystals', amount: 100500 },
+				{ engName: 'honor', amount: 100500 },
+			],
+			artefacts: [
+				{ engName: 'weapon_parts', amount: 1 },
+				{ engName: 'jimcarrium', amount: 1 },
+				{ engName: 'ancient_artefact', amount: 1 }
+			],
+			userArmy: [
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 },
+				{ name: 'Оса', start: 20, end: 15 }
+			],
+			enemyArmy: [
+				{ name: 'Дракон', start: 20, end: 0 },
+				{ name: 'Дракон', start: 20, end: 0 },
+				{ name: 'Дракон', start: 20, end: 0 },
+				{ name: 'Дракон', start: 20, end: 0 },
+				{ name: 'Дракон', start: 20, end: 0 },
+				{ name: 'Дракон', start: 20, end: 0 }
+			]
+		};
 	}
 })
 

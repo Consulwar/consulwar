@@ -128,10 +128,15 @@ game.Item = function(options) {
 		if (options.characteristics) {
 			Object.defineProperty(this, 'characteristics', {
 				get: function() {
-					var characteristics = Game.Effect.Military.applyTo(this, options.characteristics, false);
-					characteristics.base = options.characteristics;
+					var characteristics = _.clone(options.characteristics);
+					if (options.characteristics.damage) {
+						characteristics.damage = _.clone(options.characteristics.damage);
+					}
 
-					return characteristics;
+					var result = Game.Effect.Military.applyTo(this, characteristics, false);
+					result.base = options.characteristics;
+
+					return result;
 				},
 				enumerable: true
 			});
@@ -656,13 +661,7 @@ Game.Effect.getValue = function(hideEffects) {
 }
 
 // reduce - true = скидка, т.е. вычитаем эффекты
-Game.Effect.applyTo = function(target, sourceObj, hideEffects) {
-	// source object full clone
-	var obj = _.clone(sourceObj);
-	if (sourceObj.damage) {
-		obj.damage = _.clone(sourceObj.damage);
-	}
-
+Game.Effect.applyTo = function(target, obj, hideEffects) {
 	hideEffects = hideEffects == undefined ? true : hideEffects;
 	var effects = this.getRelatedTo(target);
 

@@ -303,15 +303,14 @@
 				{{#each battles}}
 					<tr data-id="{{this._id}}">
 						<td>{{this.sides}}</td>
-						<td>{{this.result}}</td>
+						<td>
+							{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
+							{{#if eq this.result 'victory'}}Героическая победа{{/if}}
+							{{#if eq this.result 'defeat'}}Полное поражение{{/if}}
+						</td>
 						<td>{{formatDate this.timestamp}}</td>
 					</tr>
 				{{/each}}
-				<tr class="header">
-					<th class="sides"></th>
-					<th class="result"></th>
-					<th class="time"></th>	
-				</tr>
 			</table>
 		{{else}}
 			<h2>История боев пуста</h2>
@@ -323,7 +322,11 @@
 <template name="cosmosHistoryItem">
 	<div class="history-item">
 		{{#if battle}}
-			<div class="result">{{battle.result}}</div>
+			<div class="result {{battle.result}}">
+				{{#if eq battle.result 'tie'}}Тактическая ничья{{/if}}
+				{{#if eq battle.result 'victory'}}Героическая победа{{/if}}
+				{{#if eq battle.result 'defeat'}}Полное поражение{{/if}}
+			</div>
 			{{#if battle.resources}}
 				<div class="resources">
 					<ul>
@@ -347,9 +350,9 @@
 				{{#if battle.userArmy}}
 					<table>
 						<tr class="header">
-							<td class="name"></td>
-							<td class="count">Вылетело</td>
-							<td class="count">Осталось</td>
+							<th class="name"></th>
+							<th class="count">Вылетело</th>
+							<th class="count">Осталось</th>
 						</tr>
 						{{#each battle.userArmy}}
 							<tr>

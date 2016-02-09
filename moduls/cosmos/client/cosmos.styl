@@ -613,7 +613,16 @@
 		width 100%
 		font-size 18px
 		text-align center
-		text-decoration uppercase
+		text-transform uppercase
+		
+		&.tie
+			color #E4E4E4
+			
+		&.victory
+			color #CEF861
+			
+		&.defeat
+			color #FB6153
 
 	.user-army
 		position absolute
@@ -622,11 +631,11 @@
 		text-align left
 		background-repeat no-repeat
 		background-image url(/img/game/cosmomap/ico_humans.png)
-		background-position 80px 5px
+		background-position 90px 5px
 		
 		p
 			padding-top 10px
-			padding-left 140px
+			padding-left 150px
 
 	.enemy-army
 		position absolute
@@ -635,11 +644,11 @@
 		text-align right
 		background-repeat no-repeat
 		background-image url(/img/game/cosmomap/ico_rept.png)
-		background-position 275px 5px
+		background-position 270px 5px
 		
 		p
 			padding-top 10px
-			padding-right 160px
+			padding-right 150px
 				
 	table
 		width 400px
@@ -654,10 +663,7 @@
 				background rgba(0, 0, 0, 0.8)
 			
 		td
-			padding-top 5px
-			padding-bottom 5px
-			padding-left 10px
-			padding-right 10px
+			padding 5px
 		
 		.name
 			width 150px

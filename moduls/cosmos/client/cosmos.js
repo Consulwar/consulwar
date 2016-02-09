@@ -34,23 +34,29 @@ Game.Cosmos.showHistory = function() {
 
 Template.cosmosHistory.helpers({
 	battles: function() {
-		return [
-			{ _id: 1, sides: 'Рептилии vs Игрок', timestamp: 123456700, result: 0 },
-			{ _id: 2, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
-			{ _id: 3, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
-			{ _id: 4, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
-			{ _id: 5, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 },
-			{ _id: 6, sides: 'Рептилии vs Игрок', timestamp: 123456700, result: 0 },
-			{ _id: 7, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
-			{ _id: 8, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
-			{ _id: 9, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
-			{ _id: 10, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 },
-			{ _id: 11, sides: 'Рептилии vs Игрок', timestamp: 123456700, result: 0 },
-			{ _id: 12, sides: 'Рептилии vs Игрок', timestamp: 123456600, result: 0 },
-			{ _id: 13, sides: 'Рептилии vs Игрок', timestamp: 123456500, result: 0 },
-			{ _id: 14, sides: 'Рептилии vs Игрок', timestamp: 123456400, result: 0 },
-			{ _id: 15, sides: 'Рептилии vs Игрок', timestamp: 123456300, result: 0 }
-		]
+		var history = Game.BattleHistory.Collection.find().fetch();
+
+		return _.map(history, function(item) {
+			// TODO: Писать нормальное описание, кто на кого напал!
+			//       Для этого нужно аккуратно подправить publish на spaceEvents.
+			// sides
+			sides = 'Рептилии vs Игрок';
+
+			// result
+			var result = 'tie';
+			if (item.userArmyRest && !item.enemyArmyRest) {
+				result = 'victory';
+			} else if (!item.userArmyRest && item.enemyArmyRest) {
+				result = 'defeat'
+			}
+
+			return {
+				_id: item._id,
+				timestamp: item.timestamp,
+				sides: sides,
+				result: result
+			}
+		});
 	}
 })
 
@@ -75,42 +81,84 @@ Game.Cosmos.showHistoryItem = function() {
 	}
 }
 
+var getArmyInfo = function(units, rest) {
+	var result = [];
+
+	for (var side in units) {
+		for (var group in units[side]) {
+			for (var name in units[side][group]) {
+
+				var countStart = units[side][group][name];
+				if (_.isString( countStart )) {
+					countStart = game.Battle.count[ countStart ];
+				}
+
+				var countAfter = 0;
+				if (rest
+				 && rest[side]
+				 && rest[side][group]
+				 && rest[side][group][name]
+				) {
+					countAfter = rest[side][group][name];
+				}
+
+				result.push({
+					name: Game.Unit.items[side][group][name].name,
+					start: countStart,
+					end: countAfter
+				});
+			}
+		}
+	}
+
+	return result.length > 0 ? result : null;
+}
+
 Template.cosmosHistoryItem.helpers({
 	battle: function() {
+		var history = Game.BattleHistory.Collection.findOne({
+			_id: Template.instance().data.id
+		});
+
+		if (!history) {
+			return null;
+		}
+
+		// result
+		var result = 'tie';
+		if (history.userArmyRest && !history.enemyArmyRest) {
+			result = 'victory';
+		} else if (!history.userArmyRest && history.enemyArmyRest) {
+			result = 'defeat'
+		}
+
+		// resources
+		var resources = [];
+		if (history.reward) {
+			for (var key in history.reward) {
+				if (history.reward[key] > 0) {
+					resources.push({
+						engName: key,
+						amount: history.reward[key]
+					});
+				}
+			}
+		}
+
+		// TODO: Get collected artefacts!
+		// artefacts
+		var artefacts = null; /* [
+			{ engName: 'weapon_parts', amount: 1 },
+			{ engName: 'jimcarrium', amount: 1 },
+			{ engName: 'ancient_artefact', amount: 1 }
+		]; */
+
 		return {
-			result: 'Героическая победа',
-			resources: [
-				{ engName: 'metals', amount: 100500 },
-				{ engName: 'crystals', amount: 100500 },
-				{ engName: 'honor', amount: 100500 },
-			],
-			artefacts: [
-				{ engName: 'weapon_parts', amount: 1 },
-				{ engName: 'jimcarrium', amount: 1 },
-				{ engName: 'ancient_artefact', amount: 1 }
-			],
-			userArmy: [
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 },
-				{ name: 'Оса', start: 20, end: 15 }
-			],
-			enemyArmy: [
-				{ name: 'Дракон', start: 20, end: 0 },
-				{ name: 'Дракон', start: 20, end: 0 },
-				{ name: 'Дракон', start: 20, end: 0 },
-				{ name: 'Дракон', start: 20, end: 0 },
-				{ name: 'Дракон', start: 20, end: 0 },
-				{ name: 'Дракон', start: 20, end: 0 }
-			]
+			result: result,
+			resources: resources.length > 0 ? resources : null,
+			artefacts: artefacts,
+			userArmy: getArmyInfo( history.userArmy, history.userArmyRest ),
+			enemyArmy: getArmyInfo( history.enemyArmy, history.enemyArmyRest )
 		};
 	}
 })

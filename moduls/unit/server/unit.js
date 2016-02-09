@@ -186,18 +186,16 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 // Battle
 // ----------------------------------------------------------------------------
 
-Game.BattleHistory = {};
-
-Game.BattleHistory.Collection = new Meteor.Collection('battleHistory');
-
-Game.BattleHistory.add = function(userArmy, userArmyRest, enemyArmy, enemyArmyRest) {
+Game.BattleHistory.add = function(userArmy, userArmyRest, enemyArmy, enemyArmyRest, reward, spaceEventId) {
 	Game.BattleHistory.Collection.insert({
 		user_id: Meteor.userId(),
 		timestamp: Math.floor( new Date().valueOf() / 1000 ),
 		userArmy: userArmy,
 		userArmyRest: userArmyRest,
 		enemyArmy: enemyArmy,
-		enemyArmyRest: enemyArmyRest
+		enemyArmyRest: enemyArmyRest,
+		reward: reward,
+		spaceEventId: spaceEventId
 	});
 }
 
@@ -208,7 +206,9 @@ Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 		userArmy,
 		battle.results.userArmy,
 		enemyArmy,
-		battle.results.enemyArmy
+		battle.results.enemyArmy,
+		battle.results.reward,
+		(options ? options.spaceEventId : null)
 	)
 
 	return battle.results;
@@ -757,6 +757,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 Meteor.publish('units', function () {
 	if (this.userId) {
 		return Game.Unit.Collection.find({user_id: this.userId});
+	}
+});
+
+Meteor.publish('battleHistory', function () {
+	if (this.userId) {
+		return Game.BattleHistory.Collection.find({user_id: this.userId});
 	}
 });
 

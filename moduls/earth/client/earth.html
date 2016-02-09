@@ -1,5 +1,5 @@
 <template name="earth">
-	<div id="map-content"></div>
+	<div id="map-content" class="information"></div>
 </template>
 
 <template name="earthZonePopup">
@@ -12,7 +12,7 @@
 				{{zone.name}}
 			</h2>
 			<!-- buttons -->
-			<a class="btn-info" href="{{pathFor 'earthZone' zone.name}}">Информация</a>
+			<a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
 			{{#if turn}}
 				{{#if turn.canVote}}
 					{{#if eq turn.type "move"}}
@@ -31,7 +31,7 @@
 				{{/if}}
 			{{/if}}
 			{{#if zone.isCurrent}}
-				<a class="btn-reinforce" href="{{pathFor 'earthReserve'}}">Подкрепление</a>
+				<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth'}}">Подкрепление</a>
 			{{/if}}
 			<!-- info -->
 			{{#if turn}}
@@ -89,9 +89,9 @@
 				</ul>
 			</div>
 			{{#if info.isCurrent}}
-				<a class="btn-reinforce" href="{{pathFor 'earthReserve'}}">Подкрепление</a>
+				<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth'}}">Подкрепление</a>
 			{{/if}}
-			<a class="btn-close" href="{{pathFor 'earth'}}"></a>
+			<a class="btn-close" href="{{pathFor 'earth' group='earth'}}"></a>
 			<!-- <a class="btn-special">Спец атака</a> -->
 		</div>
 	{{/if}}
@@ -127,7 +127,7 @@
 			<a class="btn-send">Отправить</a>
 		</div>
 
-		<a class="btn-close" href="{{pathFor 'earth'}}"></a>
+		<a class="btn-close" href="{{pathFor 'earth' group='earth'}}"></a>
 	</div>
 	<div class="additional_area bolz"></div>
 </template>

@@ -145,22 +145,21 @@ var menu = {
 			}
 		}
 	},
-	earth: {
-		routeName: ['earth'],
-		url: Router.routes.earth.path()
-	},
-	// TODO: Move to research menu!
-	/* mutual: {
-		routeName: ['mutual'],
-		url: firstItemGroupURL(Game.Mutual.items.research),
+	mutual: {
+		routeName: ['mutual', 'earth'],
+		url: Router.routes.earth.path({ group: 'earth' }),
 		items: {
+			earth: {
+				name: 'Земля',
+				url: Router.routes.earth.path({ group: 'earth' })
+			},
 			research: {
 				name: 'Исследования',
 				url: firstItemGroupURL(Game.Mutual.items.research),
 				items: Game.Mutual.items.research
 			}
 		}
-	}, */
+	},
 	reptiles: {
 		routeName: ['reptileUnit'],
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),

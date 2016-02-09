@@ -33,6 +33,24 @@ Game.Quest = {
 			: null;
 	},
 
+	getOneByHero: function(who) {
+		var quests = Game.Quest.getValue();
+		var result = null;
+
+		if (quests && quests.current) {
+			for (var key in quests.current) {
+				if (quests.current[key].who == who) {
+					if (!result || quests.current[key].status > result.status) {
+						result = quests.current[key];
+						break;
+					}
+				}
+			}
+		}
+
+		return result;
+	},
+
 	getAllByHero: function(who) {
 		var quests = Game.Quest.getValue();
 		var result = null;

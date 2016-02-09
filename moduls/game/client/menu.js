@@ -282,7 +282,19 @@ var showQuestWindow = function(id) {
 	});
 }
 
+Session.set('sideQuestsOpened', false);
+
 Template.additional_area.events({
+	'click .close': function(e, t) {
+		e.stopPropagation();
+		Session.set('sideQuestsOpened', false);
+	},
+
+	'click .open': function(e, t) {
+		e.stopPropagation();
+		Session.set('sideQuestsOpened', true);
+	},
+
 	'click .quest': function(e, t) {
 		var who = getSideHeroByRoute( Router.current() );
 		if (!who) {
@@ -333,6 +345,16 @@ Template.additional_area.helpers({
 		return getSideHeroByRoute( Router.current() );	
 	},
 
+	status: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		var quest = (who) ? Game.Quest.getOneByHero(who) : null;
+		return (quest) ? quest.status : null;
+	},
+
+	isOpened: function() {
+		return Session.get('sideQuestsOpened');
+	},
+
 	quests: function() {
 		var who = getSideHeroByRoute( Router.current() );
 		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
@@ -346,20 +368,6 @@ Template.additional_area.helpers({
 			});
 		}
 		return null;
-	},
-
-	status: function() {
-		var who = getSideHeroByRoute( Router.current() );
-		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
-		var result = null;
-		if (quests) {
-			for (var key in quests) {
-				if (!result || quests[key].status > result) {
-					result = quests[key].status;
-				}
-			}
-		}
-		return result;
 	}
 });
 

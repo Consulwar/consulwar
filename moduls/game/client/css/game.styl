@@ -168,11 +168,31 @@ requirements-icon(menu, sub, name)
 			background-repeat no-repeat
 			background-position top center
 			
+			.quests-switch
+				display block
+				position absolute
+				right 25px
+				bottom 40px
+				width 36px
+				height 36px
+				background-position center center
+				background-repeat no-repeat
+
+				&:hover
+					-webkit-filter brightness(1.5)
+					filter brightness(1.5)
+
+				&.open
+					background-image url(/img/game/arrow_open.png)
+					
+				&.close
+					background-image url(/img/game/arrow_close.png)
+
 			.quests
 				position absolute
 				display block
 				left 32px
-				bottom 60px
+				bottom 80px
 				
 				li
 					cursor pointer
@@ -187,7 +207,7 @@ requirements-icon(menu, sub, name)
 					text-align left
 					white-space nowrap
 					background rgb(0, 0, 0)
-					background rgba(0, 0, 0, 0.7)
+					background rgba(0, 0, 0, 0.8)
 				
 					&:hover
 						-webkit-filter brightness(1.4)

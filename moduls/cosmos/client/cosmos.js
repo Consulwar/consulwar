@@ -45,11 +45,22 @@ Template.cosmosHistory.helpers({
 				result = 'defeat'
 			}
 
+			// battle location name
+			var locationName = null;
+			if (typeof item.location === 'string') {
+				var planet = Game.Planets.getOne(item.location);
+				if (planet) {
+					locationName = planet.name;
+				}
+			}
+
 			return {
 				_id: item._id,
 				timestamp: item.timestamp,
+				location: item.location,
 				userLocation: item.userLocation,
 				enemyLocation: item.enemyLocation,
+				locationName: locationName,
 				result: result
 			}
 		});

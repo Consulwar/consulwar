@@ -305,21 +305,21 @@
 					<tr data-id="{{this._id}}">
 						<td></td>
 						<td>
-							<span class="humans">
-								{{#if this.userLocation}}
-									Консул на планете {{this.userLocation}}
-								{{else}}
-									Флот консула
-								{{/if}}
-							</span>
-							 vs 
-							<span class="reptiles">
-								{{#if this.enemyLocation}}
-									Рептилии на планете {{this.enemyLocation}}
-								{{else}}
-									Флот рептилий
-								{{/if}}
-							</span>
+							{{#if eq this.userLocation this.location}}
+								<span class="reptiles">Флот рептилий</span>
+								 vs  
+								<span class="humans">Консул на планете {{this.locationName}}</span>
+							{{/if}}
+							{{#if eq this.enemyLocation this.location}}
+								<span class="humans">Флот консула</span>
+								 vs 
+								<span class="reptiles">Рептилии на планете {{this.locationName}}</span>
+							{{/if}}
+							{{#unless this.locationName}}
+								<span class="humans">Флот консула</span>
+								 vs  
+								<span class="reptiles">Флот рептилий</span>
+							{{/unless}}
 						</td>
 						<td>
 							{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}

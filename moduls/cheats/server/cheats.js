@@ -50,11 +50,15 @@ if (process.env.NODE_ENV == 'development') {
 		},
 
 		'cheats.addArtefact': function(id, amount) {
-			Game.Artefacts.add(id, amount);
+			var artefacts = {};
+			artefacts[id] = amount;
+			Game.Artefacts.add( artefacts );
 		},
 
 		'cheats.removeArtefact': function(id, amount) {
-			Game.Artefacts.remove(id, amount);
+			var artefacts = {};
+			artefacts[id] = amount;
+			Game.Artefacts.remove( artefacts );
 		},
 
 		'cheats.resetHouseItems': function() {

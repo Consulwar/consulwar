@@ -13,34 +13,49 @@ Game.Artefacts.initialize = function(user) {
 	}
 }
 
-Game.Artefacts.increment = function(id, amount) {
-	Game.Artefacts.initialize();
-
-	if (!Game.Artefacts.items[id]) {
-		throw new Meteor.Error('Артефакт ' + id + ' не существует.');
+Game.Artefacts.increment = function(increment) {
+	if (increment && _.keys(increment).length > 0) {
+		Game.Artefacts.initialize();
+		Game.Artefacts.Collection.update({
+			user_id: Meteor.userId()
+		}, {
+			$inc: increment
+		});
 	}
+}
 
+Game.Artefacts.add = function(artefacts) {
 	var increment = {};
-	increment[id] = amount;
 
-	Game.Artefacts.Collection.update({
-		user_id: Meteor.userId()
-	}, {
-		$inc: increment
-	});
-}
+	for (var key in artefacts) {
+		if (!Game.Artefacts.items[key]) {
+			throw new Meteor.Error('Артефакт ' + key + ' не существует.');
+		}
 
-Game.Artefacts.add = function(id, amount) {
-	Game.Artefacts.increment(id, amount);
-}
-
-Game.Artefacts.remove = function(id, amount) {
-	var current = Game.Artefacts.getAmount(id);
-	if (current - amount < 0) {
-		amount = current;
+		increment[key] = artefacts[key];
 	}
 
-	Game.Artefacts.increment(id, amount * -1);
+	Game.Artefacts.increment(increment);
+}
+
+Game.Artefacts.remove = function(artefacts) {
+	var increment = {};
+
+	for (var key in artefacts) {
+		if (!Game.Artefacts.items[key]) {
+			throw new Meteor.Error('Артефакт ' + key + ' не существует.');
+		}
+
+		var amount = artefacts[key];
+		var current = Game.Artefacts.getAmount(key);
+		if (current - amount < 0) {
+			amount = current;
+		}
+
+		increment[key] = amount * -1;
+	}
+
+	Game.Artefacts.increment(increment);
 }
 
 Meteor.publish('artefacts', function () {

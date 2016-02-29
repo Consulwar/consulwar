@@ -405,10 +405,19 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			var enemyArmy = null;
 
 			if (planet.mission) {
+				var wasUserColony = (planet.isHome || planet.armyId) ? true : false;
+
+				var userLocation = (event.info.startPlanetId)
+					? event.info.startPlanetId
+					: event.info.startPosition;
+
 				var battleOptions = {
 					missionType: planet.mission.type,
 					missionLevel: planet.mission.level,
-					spaceEventId: event._id
+					location: planet._id,
+					userLocation: userLocation,
+					enemyLocation: planet._id,
+					artefacts: (!wasUserColony ? Game.Planets.getArtefacts(planet) : null)
 				};
 
 				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
@@ -440,14 +449,15 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				}
 
 				// add reward
-				Game.Resources.add( battleResult.reward );
-			}
-			
-			// collect artefacts
-			var wasUserColony = (planet.isHome || planet.armyId) ? true : false;
-			if (!wasUserColony && (!battleResult || (userArmy && !enemyArmy))) {
-				planet.timeArtefacts = serverTime;
-				Game.Planets.collectArtefacts(planet);
+				if (battleResult.reward) {
+					Game.Resources.add( battleResult.reward );
+				}
+
+				// add artefacts
+				if (battleResult.artefacts) {
+					planet.timeArtefacts = serverTime;
+					Game.Artefacts.add( battleResult.artefacts );
+				}
 			}
 
 			// update planet info
@@ -518,8 +528,14 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					: null;
 
 				if (enemyArmy && userArmy) {
+					var enemyLocation = (event.info.startPlanetId)
+						? event.info.startPlanetId
+						: event.info.startPosition;
+
 					var battleOptions = {
-						spaceEventId: event._id
+						location: planet._id,
+						userLocation: planet._id,
+						enemyLocation: enemyLocation
 					}
 
 					// perform battle
@@ -561,7 +577,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 						var delta = serverTime - planet.timeArtefacts;
 						var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 						while (count-- > 0) {
-							Game.Planets.collectArtefacts(planet);
+							Game.Artefacts.add( Game.Planets.getArtefacts(planet) );
 						}
 
 						planet.timeArtefacts = null;
@@ -627,8 +643,18 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 			throw new Meteor.Error('Невозможна битва между одной стороной конфликта');
 		}
 
+		var firstLocation = (event.info.startPlanetId)
+			? event.info.startPlanetId
+			: event.info.startPosition;
+
+		var secondLocation = (targetShip.info.startPlanetId)
+			? targetShip.info.startPlanetId
+			: targetShip.info.startPosition;
+
 		var battleOptions = {
-			spaceEventId: event._id
+			location: event.info.targetPosition,
+			userLocation: event.info.isHumans ? firstLocation : secondLocation,
+			enemyLocation: event.info.isHumans ? secondLocation : firstLocation
 		};
 		
 		if (targetShip.info.mission) {

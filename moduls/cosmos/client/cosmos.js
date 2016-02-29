@@ -37,11 +37,6 @@ Template.cosmosHistory.helpers({
 		var history = Game.BattleHistory.Collection.find().fetch();
 
 		return _.map(history, function(item) {
-			// TODO: Писать нормальное описание, кто на кого напал!
-			//       Для этого нужно аккуратно подправить publish на spaceEvents.
-			// sides
-			sides = 'Рептилии vs Игрок';
-
 			// result
 			var result = 'tie';
 			if (item.userArmyRest && !item.enemyArmyRest) {
@@ -50,10 +45,22 @@ Template.cosmosHistory.helpers({
 				result = 'defeat'
 			}
 
+			// battle location name
+			var locationName = null;
+			if (typeof item.location === 'string') {
+				var planet = Game.Planets.getOne(item.location);
+				if (planet) {
+					locationName = planet.name;
+				}
+			}
+
 			return {
 				_id: item._id,
 				timestamp: item.timestamp,
-				sides: sides,
+				location: item.location,
+				userLocation: item.userLocation,
+				enemyLocation: item.enemyLocation,
+				locationName: locationName,
 				result: result
 			}
 		});
@@ -145,18 +152,24 @@ Template.cosmosHistoryItem.helpers({
 			}
 		}
 
-		// TODO: Get collected artefacts!
 		// artefacts
-		var artefacts = null; /* [
-			{ engName: 'weapon_parts', amount: 1 },
-			{ engName: 'jimcarrium', amount: 1 },
-			{ engName: 'ancient_artefact', amount: 1 }
-		]; */
+		var artefacts = [];
+		if (history.artefacts) {
+			for (var key in history.artefacts) {
+				if (history.artefacts[key] > 0) {
+					artefacts.push({
+						engName: key,
+						name: Game.Artefacts.items[key].name,
+						amount: history.artefacts[key]
+					})
+				}
+			}
+		}
 
 		return {
 			result: result,
 			resources: resources.length > 0 ? resources : null,
-			artefacts: artefacts,
+			artefacts: artefacts.length > 0 ? artefacts : null,
 			userArmy: getArmyInfo( history.userArmy, history.userArmyRest ),
 			enemyArmy: getArmyInfo( history.enemyArmy, history.enemyArmyRest )
 		};

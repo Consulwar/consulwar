@@ -296,13 +296,31 @@
 		{{#if battles}}
 			<table>
 				<tr class="header">
+					<th></th>
 					<th class="sides">Стороны</th>
 					<th class="result">Итог</th>
 					<th class="time">Время</th>	
 				</tr>
 				{{#each battles}}
 					<tr data-id="{{this._id}}">
-						<td>{{this.sides}}</td>
+						<td></td>
+						<td>
+							{{#if eq this.userLocation this.location}}
+								<span class="reptiles">Флот рептилий</span>
+								 vs  
+								<span class="humans">Консул на планете {{this.locationName}}</span>
+							{{/if}}
+							{{#if eq this.enemyLocation this.location}}
+								<span class="humans">Флот консула</span>
+								 vs 
+								<span class="reptiles">Рептилии на планете {{this.locationName}}</span>
+							{{/if}}
+							{{#unless this.locationName}}
+								<span class="humans">Флот консула</span>
+								 vs  
+								<span class="reptiles">Флот рептилий</span>
+							{{/unless}}
+						</td>
 						<td>
 							{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
 							{{#if eq this.result 'victory'}}Героическая победа{{/if}}
@@ -328,10 +346,12 @@
 				{{#if eq battle.result 'defeat'}}Полное поражение{{/if}}
 			</div>
 			{{#if battle.resources}}
-				<div class="resources">
+				<div class="resources big">
 					<ul>
 						{{#each battle.resources}}
-							<li class="{{this.engName}}">{{this.amount}}</li>
+							<li class="{{this.engName}}">
+								{{formatNumberWithISO this.amount}}
+							</li>
 						{{/each}}
 					</ul>
 				</div>
@@ -340,7 +360,9 @@
 				<div class="artefacts">
 					<ul>
 						{{#each battle.artefacts}}
-							<li class="{{this.engName}}">{{this.amount}}</li>
+							<li class="{{this.engName}}" title="{{this.name}}">
+								{{formatNumberWithISO this.amount}}
+							</li>
 						{{/each}}
 					</ul>
 				</div>
@@ -369,9 +391,9 @@
 				{{#if battle.enemyArmy}}
 					<table>
 						<tr class="header">
-							<td class="count">Осталось</td>
-							<td class="count">Вылетело</td>
-							<td class="name"></td>
+							<th class="count">Осталось</th>
+							<th class="count">Вылетело</th>
+							<th class="name"></th>
 						</tr>
 						{{#each battle.enemyArmy}}
 							<tr>

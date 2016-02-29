@@ -68,6 +68,8 @@ Meteor.methods({
 		var totalCount = 0;
 
 		for (var name in units) {
+			units[name] = parseInt( units[name], 10 );
+
 			var count = units[name];
 			var unit = Game.Unit.items.army.ground[ name ];
 

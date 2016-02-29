@@ -190,6 +190,7 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	Game.BattleHistory.Collection.insert({
 		user_id: Meteor.userId(),
 		timestamp: Math.floor( new Date().valueOf() / 1000 ),
+		location: options.location,
 		userLocation: options.userLocation,
 		userArmy: userArmy,
 		userArmyRest: battleResults.userArmy,

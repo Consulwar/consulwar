@@ -473,8 +473,9 @@ Game.Earth.checkTurn = function() {
 
 			// Move army and perform battle
 			var battleOptions = {
+				location: targetName,
 				userLocation: currentZone.name,
-				enemyLocation: targetName
+				enemyLocation: targetName,
 			}
 
 			Game.Earth.moveArmy(targetName);
@@ -539,6 +540,7 @@ Game.Earth.checkTurn = function() {
 				// attack
 				if (attackArmy) {
 					var battleOptions = {
+						location: currentZone.name,
 						userLocation: currentZone.name,
 						enemyLocation: (nearZone ? nearZone.name : null)
 					}
@@ -562,6 +564,7 @@ Game.Earth.checkTurn = function() {
 			});
 
 			var battleOptions = {
+				location: currentZone.name,
 				userLocation: currentZone.name,
 				enemyLocation: currentZone.name
 			}

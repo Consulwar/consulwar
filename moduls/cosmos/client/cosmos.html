@@ -296,13 +296,31 @@
 		{{#if battles}}
 			<table>
 				<tr class="header">
+					<th></th>
 					<th class="sides">Стороны</th>
 					<th class="result">Итог</th>
 					<th class="time">Время</th>	
 				</tr>
 				{{#each battles}}
 					<tr data-id="{{this._id}}">
-						<td>{{this.sides}}</td>
+						<td></td>
+						<td>
+							<span class="humans">
+								{{#if this.userLocation}}
+									Консул на планете {{this.userLocation}}
+								{{else}}
+									Флот консула
+								{{/if}}
+							</span>
+							 vs 
+							<span class="reptiles">
+								{{#if this.enemyLocation}}
+									Рептилии на планете {{this.enemyLocation}}
+								{{else}}
+									Флот рептилий
+								{{/if}}
+							</span>
+						</td>
 						<td>
 							{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
 							{{#if eq this.result 'victory'}}Героическая победа{{/if}}
@@ -328,7 +346,7 @@
 				{{#if eq battle.result 'defeat'}}Полное поражение{{/if}}
 			</div>
 			{{#if battle.resources}}
-				<div class="resources">
+				<div class="resources big">
 					<ul>
 						{{#each battle.resources}}
 							<li class="{{this.engName}}">{{this.amount}}</li>
@@ -340,7 +358,7 @@
 				<div class="artefacts">
 					<ul>
 						{{#each battle.artefacts}}
-							<li class="{{this.engName}}">{{this.amount}}</li>
+							<li class="{{this.engName}}" title="{{this.name}}">{{this.amount}}</li>
 						{{/each}}
 					</ul>
 				</div>
@@ -369,9 +387,9 @@
 				{{#if battle.enemyArmy}}
 					<table>
 						<tr class="header">
-							<td class="count">Осталось</td>
-							<td class="count">Вылетело</td>
-							<td class="name"></td>
+							<th class="count">Осталось</th>
+							<th class="count">Вылетело</th>
+							<th class="name"></th>
 						</tr>
 						{{#each battle.enemyArmy}}
 							<tr>

@@ -186,16 +186,18 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 // Battle
 // ----------------------------------------------------------------------------
 
-Game.BattleHistory.add = function(userArmy, userArmyRest, enemyArmy, enemyArmyRest, reward, spaceEventId) {
+Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	Game.BattleHistory.Collection.insert({
 		user_id: Meteor.userId(),
 		timestamp: Math.floor( new Date().valueOf() / 1000 ),
+		userLocation: options.userLocation,
 		userArmy: userArmy,
-		userArmyRest: userArmyRest,
+		userArmyRest: battleResults.userArmy,
+		enemyLocation: options.enemyLocation,
 		enemyArmy: enemyArmy,
-		enemyArmyRest: enemyArmyRest,
-		reward: reward,
-		spaceEventId: spaceEventId
+		enemyArmyRest: battleResults.enemyArmy,
+		reward: battleResults.reward,
+		artefacts: battleResults.artefacts
 	});
 }
 
@@ -204,12 +206,10 @@ Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 
 	Game.BattleHistory.add(
 		userArmy,
-		battle.results.userArmy,
 		enemyArmy,
-		battle.results.enemyArmy,
-		battle.results.reward,
-		(options ? options.spaceEventId : null)
-	)
+		options,
+		battle.results
+	);
 
 	return battle.results;
 }
@@ -618,11 +618,14 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var missionType = (options && options.missionType) ? options.missionType : null;
 		var missionLevel = (options && options.missionLevel) ? options.missionLevel : null;
 
+		var artefacts = (options && options.artefacts) ? options.artefacts : null;
+
 		var options = {
 			rouns: rounds,
 			damageReduction: damageReduction,
 			missionType: missionType,
-			missionLevel: missionLevel
+			missionLevel: missionLevel,
+			artefacts: artefacts
 		}
 
 		// parse user army
@@ -717,7 +720,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		// calculate reward
-		reward = {};
+		reward = null;
 
 		var mission = null;
 		if (options.missionType
@@ -730,6 +733,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		if (mission) {
+			reward = {};
+
 			// metals + crystals
 			if (userArmyRest && !enemyArmyRest) {
 				if (mission.level[ options.missionLevel ].reward) {
@@ -743,12 +748,22 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			reward.honor = Math.floor((getPoints(calculateAward(enemyArmyKilled, 1)) / 100) * (mission.honor * 0.01));
 		}
 
+		// pass gained artefacts
+		var artefacts = null;
+
+		if (options.artefacts) {
+			if (userArmyRest && !enemyArmyRest) {
+				artefacts = options.artefacts;
+			}
+		}
+
 		// save results
 		this.results = {
 			log: currentLog,
 			userArmy: userArmyRest,
 			enemyArmy: enemyArmyRest,
-			reward: reward
+			reward: reward,
+			artefacts: artefacts
 		}
 	}
 	this.constructor(userArmy, enemyArmy, options);

@@ -472,8 +472,13 @@ Game.Earth.checkTurn = function() {
 		if (currentZone.name != targetName) {
 
 			// Move army and perform battle
+			var battleOptions = {
+				userLocation: currentZone.name,
+				enemyLocation: targetName
+			}
+
 			Game.Earth.moveArmy(targetName);
-			turnResult = Game.Earth.performBattleAtZone(targetName);
+			turnResult = Game.Earth.performBattleAtZone(targetName, battleOptions);
 
 		} else {
 
@@ -533,13 +538,18 @@ Game.Earth.checkTurn = function() {
 
 				// attack
 				if (attackArmy) {
+					var battleOptions = {
+						userLocation: currentZone.name,
+						enemyLocation: (nearZone ? nearZone.name : null)
+					}
+
 					Game.EarthZones.Collection.update({
 						name: currentZone.name
 					}, {
 						$set: { enemyArmy: attackArmy }
 					});
 
-					turnResult = Game.Earth.performBattleAtZone(currentZone.name);
+					turnResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
 				}
 			}
 		}
@@ -550,7 +560,13 @@ Game.Earth.checkTurn = function() {
 			var currentZone = Game.EarthZones.Collection.findOne({
 				isCurrent: true
 			});
-			turnResult = Game.Earth.performBattleAtZone(currentZone.name);
+
+			var battleOptions = {
+				userLocation: currentZone.name,
+				enemyLocation: currentZone.name
+			}
+
+			turnResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
 		} else {
 			Game.Earth.retreat();
 			turnResult = 'retreat';

@@ -112,16 +112,20 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	return result;
 }
 
-Game.Planets.collectArtefacts = function(planet) {
+Game.Planets.getArtefacts = function(planet) {
 	if (!planet || !planet.artefacts) {
-		return;
+		return null;
 	}
+
+	var result = {};
 
 	for (var key in planet.artefacts) {
 		if (Game.Random.interval(1, 99) <= planet.artefacts[key]) {
-			Game.Artefacts.add(key, 1);
+			result[key] = 1;
 		}
 	}
+
+	return result;
 }
 
 Game.Planets.generateType = function() {
@@ -673,7 +677,7 @@ Meteor.methods({
 			var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 			if (count > 0) {
 				while (count-- > 0) {
-					Game.Planets.collectArtefacts(planet);
+					Game.Artefacts.add( Game.Planets.getArtefacts(planet) );
 				}
 				planet.timeArtefacts = timeCurrent;
 				Game.Planets.update(planet);

@@ -349,7 +349,9 @@
 				<div class="resources big">
 					<ul>
 						{{#each battle.resources}}
-							<li class="{{this.engName}}">{{this.amount}}</li>
+							<li class="{{this.engName}}">
+								{{formatNumberWithISO this.amount}}
+							</li>
 						{{/each}}
 					</ul>
 				</div>
@@ -358,7 +360,9 @@
 				<div class="artefacts">
 					<ul>
 						{{#each battle.artefacts}}
-							<li class="{{this.engName}}" title="{{this.name}}">{{this.amount}}</li>
+							<li class="{{this.engName}}" title="{{this.name}}">
+								{{formatNumberWithISO this.amount}}
+							</li>
 						{{/each}}
 					</ul>
 				</div>

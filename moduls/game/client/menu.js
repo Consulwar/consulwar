@@ -215,7 +215,7 @@ Template.side_menu.helpers({
 			return (
 				item.items
 				? key == Router.current().params.group
-				: item.url == Router.current().url
+				: Router.current().url.indexOf(item.url) != -1
 			)
 		})
 	}

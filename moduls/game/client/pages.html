@@ -2,6 +2,15 @@
 	{{#if items}}
 		<div class="pages">
 			<ul>
+				<li>
+					<a 
+						class="{{#if eq 1 current}}active{{/if}}"
+						href="{{pathFor route page=1}}"
+						title="Первая страница"
+					>
+						&lt;
+					</a>
+				</li>
 				{{#each items}}
 					<li>
 						<a
@@ -13,6 +22,15 @@
 						</a>
 					</li>
 				{{/each}}
+				<li>
+					<a 
+						class="{{#if eq maxPage current}}active{{/if}}"
+						href="{{pathFor route page=maxPage}}"
+						title="Последняя страница"
+					>
+						&gt;
+					</a>
+				</li>
 			</ul>
 		</div>
 	{{/if}}

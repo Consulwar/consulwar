@@ -1,0 +1,19 @@
+<template name="pages">
+	{{#if items}}
+		<div class="pages">
+			<ul>
+				{{#each items}}
+					<li>
+						<a
+							class="{{#if eq this.page current}}active{{/if}}"
+							href="{{pathFor route page=this.page}}"
+							title="{{this.start}} - {{this.end}}"
+						>
+							{{this.page}}
+						</a>
+					</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
+</template>

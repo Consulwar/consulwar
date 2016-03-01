@@ -2,41 +2,43 @@ initRatingClient = function() {
 
 Game.Rating = {};
 
-var showRatingPage = function(pageNumber, countOnPage) {
-	Meteor.call('rating.getPage', pageNumber, countOnPage, function(err, data) {
-		var skip = (pageNumber - 1) * countOnPage;
-		var users = data.users;
-
-		for (var i = 0; i < users.length; i++) {
-			users[i].place = skip + i + 1;
-		}
-
-		Router.current().render('rating', {
-			to: 'content',
-			data: {
-				currentPage: pageNumber,
-				countOnPage: countOnPage,
-				countTotal: data.count,
-				users: users
-			}
-		});
-	});
-}
-
 Game.Rating.showPage = function() {
+	var pageNumber = this.params.page;
 	var countOnPage = 20;
 
-	if (this.params.page) {
+	if (pageNumber) {
+		// reset scroll
+		var element = $('.rating .data')[0];
+		if (element) {
+			element.scrollTop = 0;
+		}
 		// show required page
-		showRatingPage(this.params.page, countOnPage);
+		Meteor.call('rating.getPage', pageNumber, countOnPage, function(err, data) {
+			var skip = (pageNumber - 1) * countOnPage;
+			var users = data.users;
+
+			for (var i = 0; i < users.length; i++) {
+				users[i].place = skip + i + 1;
+			}
+
+			Router.current().render('rating', {
+				to: 'content',
+				data: {
+					currentPage: pageNumber,
+					countOnPage: countOnPage,
+					countTotal: data.count,
+					users: users
+				}
+			});
+		});
 	} else {
-		// show user page
+		// redirect to user page
 		Meteor.call('rating.getUserPosition', function(err, data) {
 			var userPage = (data.total >= data.position)
 				? Math.ceil( data.position / countOnPage )
 				: 1;
 
-			showRatingPage(userPage, countOnPage);
+			Router.go('statistics', { page: userPage } );
 		})
 	}
 }
@@ -50,7 +52,7 @@ Template.rating.helpers({
 Template.rating.onRendered(function() {
 	var userRow = $('#' + Meteor.user().login)[0];
 	if (userRow) {
-		$('.rating .data')[0].scrollTop = userRow.offsetTop;
+		$('.rating .data')[0].scrollTop = userRow.offsetTop + 200;
 	}
 });
 

@@ -25,7 +25,7 @@ var showRatingPage = function(pageNumber, countOnPage) {
 
 Game.Rating.showPage = function() {
 	var countOnPage = 20;
-	
+
 	if (this.params.page) {
 		// show required page
 		showRatingPage(this.params.page, countOnPage);
@@ -50,7 +50,7 @@ Template.rating.helpers({
 Template.rating.onRendered(function() {
 	var userRow = $('#' + Meteor.user().login)[0];
 	if (userRow) {
-		$('.rating')[0].scrollTop = userRow.offsetTop - 200;
+		$('.rating .data')[0].scrollTop = userRow.offsetTop;
 	}
 });
 

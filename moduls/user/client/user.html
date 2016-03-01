@@ -140,16 +140,17 @@
 
 <template name="rating">
 	<div class="rating">
-		{{> pages current=currentPage total=countTotal onPage=countOnPage route='statistics'}}
 		<table>
-			<tr>
+			<tr class="header">
 				<th>Место</th>
 				<th>Ник</th>
 				<th>Награды</th>
 				<th>Действия</th>
 				<th>Рейтинг</th>
 			</tr>
-			<tbody>
+		</table>
+		<div class="data">
+			<table>
 				{{#each users}}
 				<tr class="{{#if eq this.login user.login}}me{{/if}}" id="{{this.login}}">
 					<td>{{this.place}}</td>
@@ -162,7 +163,8 @@
 					<td>{{formatNumber this.rating}}</td>
 				</tr>
 				{{/each}}
-			</tbody>
-		</table>
+			</table>
+		</div>
+		{{> pages current=currentPage total=countTotal onPage=countOnPage route='statistics'}}
 	</div>
 </template>

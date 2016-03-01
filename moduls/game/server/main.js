@@ -14,6 +14,7 @@ SyncedCron.config({
 });
 
 Meteor.startup(function () {
+	initRatingServer();
 	initArtefactsServer();
 	initResourcesServer();
 	initBuildingServer();
@@ -22,13 +23,9 @@ Meteor.startup(function () {
 	initCosmosServer();
 	initEarthServer();
 	initHouseServer();
-
 	initMutualServer();
-
 	initMailServer();
-
 	initQuestServer();
-
 	initCheatsServer();
 });
 

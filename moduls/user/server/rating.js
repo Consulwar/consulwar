@@ -1,12 +1,12 @@
+initRatingServer = function() {
+
 Meteor.methods({
-	getTopUsers: function() {
+	'rating.getTopUsers': function() {
 		var user = Meteor.user();
 		
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
-
-		console.log('getPointInfo: ', new Date(), user.login);
 		
 		return Meteor.users.find({
 			rating: {$gt: 0}
@@ -20,3 +20,5 @@ Meteor.methods({
 		}).fetch();
 	}
 });
+
+}

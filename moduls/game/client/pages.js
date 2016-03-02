@@ -11,29 +11,29 @@ Template.pages.helpers({
 		return Template.instance().data.route;
 	},
 
-	items: function() {
-		var items = [];
-
+	pages: function() {
 		var totalPages = Math.ceil( this.total / this.onPage );
-		var maxVisiblePages = 11;
+		if (totalPages <= 1) {
+			return null;
+		}
 
 		// calc start page
-		var half = Math.floor(maxVisiblePages / 2);
-		var from = this.current - half;
-
+		var maxVisible = 11;
+		var from = this.current - Math.floor( maxVisible / 2 );
 		if (from < 1) {
 			from = 1;
-		} else if (totalPages - from < maxVisiblePages) {
-			from = totalPages - maxVisiblePages + 1;
+		} else if (totalPages - from < maxVisible) {
+			from = totalPages - maxVisible + 1;
 		}
 
 		// calc end page
-		var to = from + maxVisiblePages - 1;
+		var to = from + maxVisible - 1;
 		if (to > totalPages) {
 			to = totalPages;
 		}
 
 		// prepare pages array
+		var items = [];
 		for (var i = from; i <= to; i++) {
 			items.push({
 				page: i,
@@ -41,7 +41,11 @@ Template.pages.helpers({
 				end: (i < totalPages) ? i * this.onPage : this.total
 			});
 		}
-
-		return items;
+		
+		return {
+			items: items,
+			hasFirst: from == 1,
+			hasLast: to == totalPages
+		}
 	}
 });

@@ -186,6 +186,10 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 // Battle
 // ----------------------------------------------------------------------------
 
+Game.BattleHistory = {
+	Collection: new Meteor.Collection('battleHistory')
+}
+
 Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	Game.BattleHistory.Collection.insert({
 		user_id: Meteor.userId(),
@@ -773,12 +777,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 Meteor.publish('units', function () {
 	if (this.userId) {
 		return Game.Unit.Collection.find({user_id: this.userId});
-	}
-});
-
-Meteor.publish('battleHistory', function () {
-	if (this.userId) {
-		return Game.BattleHistory.Collection.find({user_id: this.userId});
 	}
 });
 

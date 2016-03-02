@@ -72,8 +72,8 @@ var gameRoutes = {
 
 	cosmos: {
 		cosmos: 'cosmos',
-		cosmosHistory: 'cosmos/history',
-		cosmosHistoryItem: 'cosmos/history/:id'
+		cosmosHistory: 'cosmos/history/:page',
+		cosmosHistoryItem: 'cosmos/history/item/:id'
 	}
 }
 

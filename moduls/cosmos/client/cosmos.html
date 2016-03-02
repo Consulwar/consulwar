@@ -1,7 +1,7 @@
 <template name="cosmos">
 	<div id="map-battle"></div>
 	<a class="map-control-home"></a>
-	<a class="btn-history" href="{{pathFor 'cosmosHistory'}}">История боев</a>
+	<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боев</a>
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
@@ -330,6 +330,7 @@
 					</tr>
 				{{/each}}
 			</table>
+			{{> pages current=currentPage total=countTotal onPage=countOnPage route='cosmosHistory'}}
 		{{else}}
 			<h2>История боев пуста</h2>
 		{{/if}}
@@ -345,10 +346,10 @@
 				{{#if eq battle.result 'victory'}}Героическая победа{{/if}}
 				{{#if eq battle.result 'defeat'}}Полное поражение{{/if}}
 			</div>
-			{{#if battle.resources}}
+			{{#if battle.reward}}
 				<div class="resources big">
 					<ul>
-						{{#each battle.resources}}
+						{{#each battle.reward}}
 							<li class="{{this.engName}}">
 								{{formatNumberWithISO this.amount}}
 							</li>
@@ -369,14 +370,14 @@
 			{{/if}}
 			<div class="user-army">
 				<p class="humans">Люди</p>
-				{{#if battle.userArmy}}
+				{{#if battle.userUnits}}
 					<table>
 						<tr class="header">
 							<th class="name"></th>
 							<th class="count">Вылетело</th>
 							<th class="count">Осталось</th>
 						</tr>
-						{{#each battle.userArmy}}
+						{{#each battle.userUnits}}
 							<tr>
 								<td class="name humans">{{this.name}}</td>
 								<td class="count">{{formatNumberWithISO this.start}}</td>
@@ -388,14 +389,14 @@
 			</div>
 			<div class="enemy-army">
 				<p class="reptiles">Рептилоиды</p>
-				{{#if battle.enemyArmy}}
+				{{#if battle.enemyUnits}}
 					<table>
 						<tr class="header">
 							<th class="count">Осталось</th>
 							<th class="count">Вылетело</th>
 							<th class="name"></th>
 						</tr>
-						{{#each battle.enemyArmy}}
+						{{#each battle.enemyUnits}}
 							<tr>
 								<td class="count">{{this.end}}</td>
 								<td class="count">{{formatNumberWithISO this.start}}</td>
@@ -407,5 +408,5 @@
 			</div>
 		{{/if}}
 	</div>
-	<a class="btn-back" href="{{pathFor 'cosmosHistory'}}"></a>
+	<a class="btn-back" href="{{pathFor 'cosmosHistory' page=1}}"></a>
 </template>

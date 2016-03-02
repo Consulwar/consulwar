@@ -196,10 +196,6 @@ Game.Unit = {
 	}
 }
 
-Game.BattleHistory = {
-	Collection: new Meteor.Collection('battleHistory')
-}
-
 initUnitsContent();
 
 /*

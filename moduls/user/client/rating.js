@@ -56,10 +56,4 @@ Template.rating.onRendered(function() {
 	}
 });
 
-Template.rating.events({
-	'click .send_message': function(e, t) {
-		// TODO: implement!
-	}
-});
-
 }

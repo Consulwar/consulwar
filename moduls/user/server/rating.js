@@ -37,10 +37,7 @@ Meteor.methods({
 	},
 
 	'rating.getPage': function(page, count) {
-		page = parseInt(page, 10);
 		check(page, Match.Integer);
-
-		count = parseInt(count, 10);
 		check(count, Match.Integer);
 
 		var user = Meteor.user();

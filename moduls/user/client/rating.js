@@ -3,7 +3,7 @@ initRatingClient = function() {
 Game.Rating = {};
 
 Game.Rating.showPage = function() {
-	var pageNumber = this.params.page;
+	var pageNumber = parseInt( this.params.page, 10 );
 	var countOnPage = 20;
 
 	if (pageNumber) {

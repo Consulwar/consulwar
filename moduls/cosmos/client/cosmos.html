@@ -296,46 +296,48 @@
 		{{#if battles}}
 			<table>
 				<tr class="header">
-					<th></th>
 					<th class="sides">Стороны</th>
 					<th class="result">Итог</th>
 					<th class="time">Время</th>	
 				</tr>
-				{{#each battles}}
-					<tr data-id="{{this._id}}">
-						<td></td>
-						<td>
-							{{#if eq this.userLocation this.location}}
-								<span class="reptiles">Флот рептилий</span>
-								 vs  
-								<span class="humans">Консул на планете {{this.locationName}}</span>
-							{{/if}}
-							{{#if eq this.enemyLocation this.location}}
-								<span class="humans">Флот консула</span>
-								 vs 
-								<span class="reptiles">Рептилии на планете {{this.locationName}}</span>
-							{{/if}}
-							{{#unless this.locationName}}
-								<span class="humans">Флот консула</span>
-								 vs  
-								<span class="reptiles">Флот рептилий</span>
-							{{/unless}}
-						</td>
-						<td>
-							{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
-							{{#if eq this.result 'victory'}}Героическая победа{{/if}}
-							{{#if eq this.result 'defeat'}}Полное поражение{{/if}}
-						</td>
-						<td>{{formatDate this.timestamp}}</td>
-					</tr>
-				{{/each}}
 			</table>
+			<div class="data">
+				<table>
+					{{#each battles}}
+						<tr data-id="{{this._id}}">
+							<td>
+								{{#if eq this.userLocation this.location}}
+									<span class="reptiles">Флот рептилий</span>
+									 vs  
+									<span class="humans">Консул на планете {{this.locationName}}</span>
+								{{/if}}
+								{{#if eq this.enemyLocation this.location}}
+									<span class="humans">Флот консула</span>
+									 vs 
+									<span class="reptiles">Рептилии на планете {{this.locationName}}</span>
+								{{/if}}
+								{{#unless this.locationName}}
+									<span class="humans">Флот консула</span>
+									 vs  
+									<span class="reptiles">Флот рептилий</span>
+								{{/unless}}
+							</td>
+							<td>
+								{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
+								{{#if eq this.result 'victory'}}Героическая победа{{/if}}
+								{{#if eq this.result 'defeat'}}Полное поражение{{/if}}
+							</td>
+							<td>{{formatDate this.timestamp}}</td>
+						</tr>
+					{{/each}}
+				</table>
+			</div>
 			{{> pages current=currentPage total=countTotal onPage=countOnPage route='cosmosHistory'}}
 		{{else}}
 			<h2>История боев пуста</h2>
 		{{/if}}
 	</div>
-	<a class="btn-back" href="{{pathFor 'cosmos'}}"></a>
+	<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
 </template>
 
 <template name="cosmosHistoryItem">

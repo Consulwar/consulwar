@@ -59,6 +59,14 @@ Meteor.methods({
 		subject = subject.trim();
 		subject = subject || '*Без темы';
 
+		if (subject.length > 200) {
+			subject = subject.substr(0, 200);
+		}
+
+		if (text.length > 5000) {
+			text = text.substr(0, 5000);
+		}
+
 		text = sanitizeHtml(text.trim(), {
 			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
 			allowedAttributes: {

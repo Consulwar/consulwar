@@ -28,26 +28,24 @@ Game.Cosmos.showPage = function() {
 
 Game.Cosmos.showHistory = function() {
 	var pageNumber = parseInt( this.params.page, 10 );
+	var itemId = this.getParams().hash;
 	var countOnPage = 20;
 
 	Meteor.call('battleHistory.getPage', pageNumber, countOnPage, function(err, data) {
-		var battles = data.battles;
+		var battle = new ReactiveVar(null);
 
-		for (var i = 0; i < battles.length; i++) {
-			battles[i].result = 'tie';
-			if (battles[i].userArmyRest && !battles[i].enemyArmyRest) {
-				battles[i].result = 'victory';
-			} else if (!battles[i].userArmyRest && battles[i].enemyArmyRest) {
-				battles[i].result = 'defeat'
+		for (var i = 0; i < data.battles.length; i++) {
+			data.battles[i] = getBattleInfo( data.battles[i] );
+			// check if current item
+			if (itemId && data.battles[i]._id == itemId) {
+				battle.set( data.battles[i] );
 			}
+		}
 
-			battles[i].locationName = null;
-			if (typeof battles[i].location === 'string') {
-				var planet = Game.Planets.getOne(battles[i].location);
-				if (planet) {
-					battles[i].locationName = planet.name;
-				}
-			}
+		if (itemId && !battle.get()) {
+			Meteor.call('battleHistory.getById', itemId, function(err, data) {
+				battle.set( getBattleInfo(data) );
+			});
 		}
 
 		Router.current().render('cosmosHistory', {
@@ -56,59 +54,29 @@ Game.Cosmos.showHistory = function() {
 				currentPage: pageNumber,
 				countOnPage: countOnPage,
 				countTotal: data.count,
-				battles: data.battles
+				battles: data.battles,
+				battle: battle,
+				itemId: itemId
 			}
 		});
 	});
 }
+
+Template.cosmosHistory.helpers({
+	battle: function() {
+		return Template.instance().data.battle.get();
+	}
+});
 
 Template.cosmosHistory.events({
 	'click tr:not(.header)': function(e, t) {
+		var page = Template.instance().data.currentPage;
 		var id = $(e.currentTarget).attr('data-id');
 		if (id) {
-			Router.go('cosmosHistoryItem', { id: id });
+			Router.go('cosmosHistory', { page: page }, { hash: id });
 		}
 	}
-})
-
-Game.Cosmos.showHistoryItem = function() {
-	var id = this.params.id;
-
-	Meteor.call('battleHistory.getById', id, function(err, data) {
-		data.result = 'tie';
-		if (data.userArmyRest && !data.enemyArmyRest) {
-			data.result = 'victory';
-		} else if (!data.userArmyRest && data.enemyArmyRest) {
-			data.result = 'defeat'
-		}
-
-		data.reward = _.map(data.reward, function(value, key) {
-			return {
-				engName: key,
-				amount: value
-			}
-		});
-
-		data.artefacts = _.map(data.artefacts, function(value, key) {
-			return {
-				engName: key,
-				name: Game.Artefacts.items[key].name,
-				amount: value
-			}
-		});
-
-		data.userUnits = getArmyInfo( data.userArmy, data.userArmyRest ),
-		data.enemyUnits =  getArmyInfo( data.enemyArmy, data.enemyArmyRest )
-
-		Router.current().render('cosmosHistoryItem', {
-			to: 'content',
-			data: {
-				id: id,
-				battle: data
-			}
-		});
-	});
-}
+});
 
 var getArmyInfo = function(units, rest) {
 	var result = [];
@@ -141,6 +109,43 @@ var getArmyInfo = function(units, rest) {
 	}
 
 	return result.length > 0 ? result : null;
+}
+
+var getBattleInfo = function(item) {
+	item.result = 'tie';
+	if (item.userArmyRest && !item.enemyArmyRest) {
+		item.result = 'victory';
+	} else if (!item.userArmyRest && item.enemyArmyRest) {
+		item.result = 'defeat'
+	}
+
+	item.locationName = null;
+	if (typeof item.location === 'string') {
+		var planet = Game.Planets.getOne(item.location);
+		if (planet) {
+			item.locationName = planet.name;
+		}
+	}
+
+	item.reward = _.map(item.reward, function(value, key) {
+		return {
+			engName: key,
+			amount: value
+		}
+	});
+
+	item.artefacts = _.map(item.artefacts, function(value, key) {
+		return {
+			engName: key,
+			name: Game.Artefacts.items[key].name,
+			amount: value
+		}
+	});
+
+	item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
+	item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
+
+	return item;
 }
 
 // ----------------------------------------------------------------------------

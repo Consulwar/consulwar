@@ -72,8 +72,7 @@ var gameRoutes = {
 
 	cosmos: {
 		cosmos: 'cosmos',
-		cosmosHistory: 'cosmos/history/:page',
-		cosmosHistoryItem: 'cosmos/history/item/:id'
+		cosmosHistory: 'cosmos/history/:page'
 	}
 }
 
@@ -96,8 +95,7 @@ var gameActions = {
 	statistics: Game.Rating.showPage,
 
 	cosmos: Game.Cosmos.showPage,
-	cosmosHistory: Game.Cosmos.showHistory,
-	cosmosHistoryItem: Game.Cosmos.showHistoryItem
+	cosmosHistory: Game.Cosmos.showHistory
 }
 
 for (var group in gameRoutes) {

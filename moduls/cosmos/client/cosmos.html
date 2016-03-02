@@ -336,13 +336,11 @@
 		{{else}}
 			<h2>История боев пуста</h2>
 		{{/if}}
+		<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
 	</div>
-	<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
-</template>
 
-<template name="cosmosHistoryItem">
-	<div class="history-item">
-		{{#if battle}}
+	{{#if battle}}
+		<div class="history-item">
 			<div class="result {{battle.result}}">
 				{{#if eq battle.result 'tie'}}Тактическая ничья{{/if}}
 				{{#if eq battle.result 'victory'}}Героическая победа{{/if}}
@@ -408,7 +406,7 @@
 					</table>
 				{{/if}}
 			</div>
-		{{/if}}
-	</div>
-	<a class="btn-back" href="{{pathFor 'cosmosHistory' page=1}}"></a>
+			<a class="btn-back" href="{{pathFor 'cosmosHistory' page=currentPage}}"></a>
+		</div>
+	{{/if}}
 </template>

@@ -4,7 +4,7 @@ Template.pages.helpers({
 	},
 
 	maxPage: function() {
-		return Math.ceil( Template.instance().data.total / Template.instance().data.onPage );
+		return Math.ceil( Template.instance().data.total / Template.instance().data.perPage );
 	},
 
 	route: function() {
@@ -12,7 +12,7 @@ Template.pages.helpers({
 	},
 
 	pages: function() {
-		var totalPages = Math.ceil( this.total / this.onPage );
+		var totalPages = Math.ceil( this.total / this.perPage );
 		if (totalPages <= 1) {
 			return null;
 		}
@@ -37,8 +37,8 @@ Template.pages.helpers({
 		for (var i = from; i <= to; i++) {
 			items.push({
 				page: i,
-				start: (i - 1) * this.onPage + 1,
-				end: (i < totalPages) ? i * this.onPage : this.total
+				start: (i - 1) * this.perPage + 1,
+				end: (i < totalPages) ? i * this.perPage : this.total
 			});
 		}
 		

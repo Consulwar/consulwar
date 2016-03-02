@@ -4,7 +4,7 @@ Game.Rating = {};
 
 Game.Rating.showPage = function() {
 	var pageNumber = parseInt( this.params.page, 10 );
-	var countOnPage = 20;
+	var countPerPage = 20;
 
 	if (pageNumber) {
 		// reset scroll
@@ -13,8 +13,8 @@ Game.Rating.showPage = function() {
 			element.scrollTop = 0;
 		}
 		// show required page
-		Meteor.call('rating.getPage', pageNumber, countOnPage, function(err, data) {
-			var skip = (pageNumber - 1) * countOnPage;
+		Meteor.call('rating.getPage', pageNumber, countPerPage, function(err, data) {
+			var skip = (pageNumber - 1) * countPerPage;
 			var users = data.users;
 
 			for (var i = 0; i < users.length; i++) {
@@ -25,7 +25,7 @@ Game.Rating.showPage = function() {
 				to: 'content',
 				data: {
 					currentPage: pageNumber,
-					countOnPage: countOnPage,
+					countPerPage: countPerPage,
 					countTotal: data.count,
 					users: users
 				}
@@ -35,7 +35,7 @@ Game.Rating.showPage = function() {
 		// redirect to user page
 		Meteor.call('rating.getUserPosition', function(err, data) {
 			var userPage = (data.total >= data.position)
-				? Math.ceil( data.position / countOnPage )
+				? Math.ceil( data.position / countPerPage )
 				: 1;
 
 			Router.go('statistics', { page: userPage } );

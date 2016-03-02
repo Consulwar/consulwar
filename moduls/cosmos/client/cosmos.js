@@ -29,9 +29,9 @@ Game.Cosmos.showPage = function() {
 Game.Cosmos.showHistory = function() {
 	var pageNumber = parseInt( this.params.page, 10 );
 	var itemId = this.getParams().hash;
-	var countOnPage = 20;
+	var countPerPage = 20;
 
-	Meteor.call('battleHistory.getPage', pageNumber, countOnPage, function(err, data) {
+	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, function(err, data) {
 		var battle = new ReactiveVar(null);
 
 		for (var i = 0; i < data.battles.length; i++) {
@@ -52,7 +52,7 @@ Game.Cosmos.showHistory = function() {
 			to: 'content',
 			data: {
 				currentPage: pageNumber,
-				countOnPage: countOnPage,
+				countPerPage: countPerPage,
 				countTotal: data.count,
 				battles: data.battles,
 				battle: battle,

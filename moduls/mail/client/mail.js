@@ -89,16 +89,27 @@ var closeMessages = function(t) {
 	t.$('form').hide();
 }
 
+var toggleDeleteButton = function(t) {
+	if (t.$('td input[type="checkbox"]:checked').length > 0) {
+		t.$('.delete_selected').show();
+	} else {
+		t.$('.delete_selected').hide();
+	}
+}
+
 Template.mail.events({
 	// Поставить чекбокс
-	'click td:first-child, click th:first-child': function(e, t) {
+	'click td:first-child': function(e, t) {
 		e.stopPropagation();
 		var checkbox = $(e.target).find('input');
 		checkbox.prop('checked', checkbox.prop('checked') == true ? false: true);
+		$('th input[type="checkbox"]').prop('checked', false);
+		toggleDeleteButton(t);
 	},
 
 	'change th input[type="checkbox"]': function(e, t) {
 		$('input[type="checkbox"]').prop('checked', $(e.target).prop('checked'));
+		toggleDeleteButton(t);
 	},
 
 	// Открыть письмо
@@ -221,6 +232,8 @@ Template.mail.events({
 		if (ids) {
 			Meteor.call('removeLetters', ids);
 		}
+
+		t.$('.delete_selected').hide();
 	},
 
 	// Закрыть чтение/написание письма
@@ -250,7 +263,7 @@ Template.mail.events({
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		closeMessages(t);
+		$('input[type="submit"]').prop('disabled', true);
 
 		Meteor.call(
 			'sendLetter', 
@@ -260,11 +273,14 @@ Template.mail.events({
 			function(err, response) {
 				if (!err) {
 					e.currentTarget.reset();
-					t.$('form').hide();
+					closeMessages(t);
+					$('input[type="submit"]').prop('disabled', false);
 				} else {
 					Notifications.error('Невозможно отправить письмо', err.error);
+					$('input[type="submit"]').prop('disabled', false);
 				}
-			});
+			}
+		);
 	}
 });
 

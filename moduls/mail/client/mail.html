@@ -1,5 +1,5 @@
 <template name="mail">
-	<div class="information mail">
+	<div class="mail">
 		<table>
 			<tr class="header">
 				<th><input type="checkbox"/></th>
@@ -8,17 +8,23 @@
 				<th class="time">Время</th>
 				<th class="status">Статус</th>
 			</tr>
-			{{#each mail}}
-			<tr data-id="{{this._id}}" class="{{#if eq this.from 0}}from_tamily{{/if}} {{#if eq this.from 1}}from_system {{#if eq this.type 'fleetbattle'}}{{#if eq this.text.result 'Победа'}}battle_win{{else}}{{#if eq this.text.result 'Ничья'}}battle_draw{{else}}battle_lose{{/if}}{{/if}}{{/if}}{{#if eq this.type 'quiz'}}quiz{{/if}}{{/if}}">
-				<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
-				<td>{{this.name}}</td>
-				<td>{{this.subject}}</td>
-				<td>{{formatDate this.timestamp}}</td>
-				<td>{{this.status}}</td>
-			</tr>
-			{{/each}}
 		</table>
-		<a class="delete_selected" href="#">Удалить выделенное</a> &nbsp;&nbsp;&nbsp; <a class="new_message" href="#">Написать сообщение</a>
+		<div class="data">
+			<table>
+				{{#each mail}}
+					<tr data-id="{{this._id}}" class="{{#if eq this.from 0}}from_tamily{{/if}} {{#if eq this.from 1}}from_system {{#if eq this.type 'fleetbattle'}}{{#if eq this.text.result 'Победа'}}battle_win{{else}}{{#if eq this.text.result 'Ничья'}}battle_draw{{else}}battle_lose{{/if}}{{/if}}{{/if}}{{#if eq this.type 'quiz'}}quiz{{/if}}{{/if}}">
+						<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
+						<td>{{this.name}}</td>
+						<td>{{this.subject}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+						<td>{{this.status}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+
+		<a class="delete_selected" href="#">Удалить выделенное</a>
+		<a class="new_message" href="#">Написать сообщение</a>
 
 		<div class="letter">
 			<button class="back">Назад</button>

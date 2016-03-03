@@ -16,7 +16,7 @@ Game.Rating.showPage = function() {
 		Meteor.call('rating.getPage', pageNumber, countPerPage, function(err, data) {
 			var skip = (pageNumber - 1) * countPerPage;
 			var users = data.users;
-
+			
 			for (var i = 0; i < users.length; i++) {
 				users[i].place = skip + i + 1;
 			}
@@ -33,7 +33,7 @@ Game.Rating.showPage = function() {
 	} else {
 		// redirect to user page
 		Meteor.call('rating.getUserPosition', function(err, data) {
-			var userPage = (data.total >= data.position)
+			var userPage = (data.total > 0 && data.position > 0)
 				? Math.ceil( data.position / countPerPage )
 				: 1;
 

@@ -1,14 +1,14 @@
 Template.pages.helpers({
+	route: function() {
+		return Router.current().route.getName();
+	},
+
 	current: function() {
-		return parseInt( Template.instance().data.current, 10 );
+		return parseInt( Router.current().params.page, 10 );
 	},
 
 	maxPage: function() {
-		return Math.ceil( Template.instance().data.total / Template.instance().data.perPage );
-	},
-
-	route: function() {
-		return Template.instance().data.route;
+		return Math.ceil( this.total / this.perPage );
 	},
 
 	pages: function() {
@@ -19,7 +19,7 @@ Template.pages.helpers({
 
 		// calc start page
 		var maxVisible = 11;
-		var from = this.current - Math.floor( maxVisible / 2 );
+		var from = Router.current().params.page - Math.floor( maxVisible / 2 );
 		if (from < 1) {
 			from = 1;
 		} else if (totalPages - from < maxVisible) {

@@ -51,7 +51,6 @@ Game.Cosmos.showHistory = function() {
 		Router.current().render('cosmosHistory', {
 			to: 'content',
 			data: {
-				currentPage: pageNumber,
 				countPerPage: countPerPage,
 				countTotal: data.count,
 				battles: data.battles,
@@ -64,13 +63,19 @@ Game.Cosmos.showHistory = function() {
 
 Template.cosmosHistory.helpers({
 	battle: function() {
-		return Template.instance().data.battle.get();
+		return this.battle.get();
+	}
+});
+
+Template.cosmosHistoryItem.helpers({
+	currentPage: function() {
+		return Router.current().params.page;
 	}
 });
 
 Template.cosmosHistory.events({
 	'click tr:not(.header)': function(e, t) {
-		var page = Template.instance().data.currentPage;
+		var page = Router.current().params.page;
 		var id = $(e.currentTarget).attr('data-id');
 		if (id) {
 			Router.go('cosmosHistory', { page: page }, { hash: id });

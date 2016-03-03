@@ -24,7 +24,6 @@ Game.Rating.showPage = function() {
 			Router.current().render('rating', {
 				to: 'content',
 				data: {
-					currentPage: pageNumber,
 					countPerPage: countPerPage,
 					countTotal: data.count,
 					users: users

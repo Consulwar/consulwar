@@ -332,7 +332,7 @@
 					{{/each}}
 				</table>
 			</div>
-			{{> pages current=currentPage total=countTotal perPage=countPerPage route='cosmosHistory'}}
+			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			<h2>История боев пуста</h2>
 		{{/if}}
@@ -340,7 +340,13 @@
 	</div>
 
 	{{#if battle}}
-		<div class="history-item">
+		{{> cosmosHistoryItem battle=battle}}
+	{{/if}}
+</template>
+
+<template name="cosmosHistoryItem">
+	<div class="history-item">
+		{{#if battle}}
 			<div class="result {{battle.result}}">
 				{{#if eq battle.result 'tie'}}Тактическая ничья{{/if}}
 				{{#if eq battle.result 'victory'}}Героическая победа{{/if}}
@@ -406,7 +412,7 @@
 					</table>
 				{{/if}}
 			</div>
-			<a class="btn-back" href="{{pathFor 'cosmosHistory' page=currentPage}}"></a>
-		</div>
-	{{/if}}
+		{{/if}}
+		<a class="btn-back" href="{{pathFor 'cosmosHistory' page=currentPage}}"></a>
+	</div>
 </template>

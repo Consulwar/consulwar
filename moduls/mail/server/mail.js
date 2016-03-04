@@ -6,6 +6,7 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 	var user = Meteor.user();
 	
 	Game.Mail.Collection.insert({
+		owner: user._id,
 		type: type,
 		from: 1,
 		sender: 'Система',
@@ -19,10 +20,12 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 };
 
 game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
+	// TODO: Сделать рассылку очередями!
 	var users = Meteor.users.find().fetch();
 
 	for (var i = 0; i < users.length; i++) {
 		Game.Mail.Collection.insert({
+			owner: users[i]._id,
 			type: type,
 			from: 1,
 			sender: 'Система',
@@ -77,14 +80,31 @@ Meteor.methods({
 		}).trim();
 
 		if (recipient == '[all]') {
+
 			if (['admin', 'helper'].indexOf(user.role) == -1) {
 				throw new Meteor.Error('Ээ, нет. Так не пойдет.');
 			}
 
+			// insert sender copy
+			Game.Mail.Collection.insert({
+				owner: user._id,
+				from: user._id,
+				sender: user.login,
+				to: '[all]',
+				recipient: '[all]',
+				subject: '[Рассылка] ' + subject,
+				text: text,
+				status: game.Mail.status.read,
+				timestamp: Math.floor(new Date().valueOf() / 1000)
+			});
+
+			// insert recipients copies
+			// TODO: Сделать рассылку очередями!
 			var users = Meteor.users.find().fetch();
 
 			for (var i = 0; i < users.length; i++) {
 				Game.Mail.Collection.insert({
+					owner: users[i]._id,
 					from: user._id,
 					sender: user.login,
 					to: users[i]._id,
@@ -95,11 +115,17 @@ Meteor.methods({
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
 			}
-		} else {
-			var to = Meteor.users.findOne({login: recipient}, {fields: {_id: 1, login: 1}});
 
-			//console.log(recipient);
-			//console.log(to);
+		} else {
+
+			var to = Meteor.users.findOne({
+				login: recipient
+			}, {
+				fields: {
+					_id: 1,
+					login: 1
+				}
+			});
 
 			if (!to) {
 				throw new Meteor.Error('Получателя с таким ником не существует');
@@ -117,17 +143,22 @@ Meteor.methods({
 				Game.Resources.spend({crystals: price});
 			}
 
-			/*var set = {
-				'game.resources.crystals.amount': user.game.resources.crystals.amount - 10
-			}
-
-			console.log(set);
-
-			Meteor.users.update({'_id': Meteor.userId()}, {
-				$set: set
-			});*/
-
+			// insert sender copy
 			Game.Mail.Collection.insert({
+				owner: user._id,
+				from: user._id,
+				sender: user.login,
+				to: to._id,
+				recipient: to.login,
+				subject: subject,
+				text: text,
+				status: game.Mail.status.read,
+				timestamp: Math.floor(new Date().valueOf() / 1000)
+			});
+			
+			// insert recipient copy
+			Game.Mail.Collection.insert({
+				owner: to._id,
 				from: user._id,
 				sender: user.login,
 				to: to._id,
@@ -153,7 +184,10 @@ Meteor.methods({
 		
 		check(id, String);
 
-		Game.Mail.Collection.update({'_id': id, to: Meteor.userId()}, {
+		Game.Mail.Collection.update({
+			_id: id,
+			to: Meteor.userId()
+		}, {
 			$set: {
 				status: game.Mail.status.read
 			}
@@ -171,24 +205,25 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Mail.Collection.remove({
-			$or: [
-				{from: this.userId},
-				{to: this.userId}
-			],
-			_id: {
-				$in: ids
+		Game.Mail.Collection.update({
+			_id: { $in: ids },
+			owner: user._id
+		}, {
+			$set: {
+				deleted: true
 			}
-		})
+		}, {
+			multi: true
+		});
 	}
 })
 
 Meteor.publish('mail', function () {
 	if (this.userId) {
-		return Game.Mail.Collection.find({$or: [
-				{from: this.userId},
-				{to: this.userId}
-			]}, {
+		return Game.Mail.Collection.find({
+			owner: this.userId,
+			deleted: { $ne: true }
+		}, {
 			sort: {
 				timestamp: -1
 			},

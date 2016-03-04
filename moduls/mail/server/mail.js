@@ -42,7 +42,7 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 };
 
 Meteor.methods({
-	sendLetter: function(recipient, subject, text) {
+	'mail.sendLetter': function(recipient, subject, text) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -171,7 +171,7 @@ Meteor.methods({
 		}
 	},
 
-	readLetter: function(id) {
+	'mail.readLetter': function(id) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -186,7 +186,7 @@ Meteor.methods({
 
 		Game.Mail.Collection.update({
 			_id: id,
-			to: Meteor.userId()
+			owner: user._id
 		}, {
 			$set: {
 				status: game.Mail.status.read
@@ -194,7 +194,30 @@ Meteor.methods({
 		});
 	},
 
-	removeLetters: function(ids) {
+	'mail.complainLetter': function(id) {
+		var user = Meteor.user();
+
+		if (!(user && user._id)) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(id, String);
+
+		Game.Mail.Collection.update({
+			_id: id,
+			owner: user._id
+		}, {
+			$set: {
+				complaint: true
+			}
+		});
+	},
+
+	'mail.removeLetters': function(ids) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {

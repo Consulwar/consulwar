@@ -129,7 +129,7 @@ Template.mail.events({
 		});
 
 		if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
-			Meteor.call('readLetter', letter._id);
+			Meteor.call('mail.readLetter', letter._id);
 		}
 
 		closeMessages(t);
@@ -232,7 +232,7 @@ Template.mail.events({
 		}
 		
 		if (ids) {
-			Meteor.call('removeLetters', ids);
+			Meteor.call('mail.removeLetters', ids);
 		}
 
 		t.$('.delete_selected').hide();
@@ -269,7 +269,7 @@ Template.mail.events({
 		t.$('input[type="submit"]').prop('disabled', true);
 
 		Meteor.call(
-			'sendLetter', 
+			'mail.sendLetter', 
 			t.find('form .recipient').value, 
 			t.find('form .subject').value, 
 			t.find('form textarea').value,

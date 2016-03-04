@@ -53,7 +53,11 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('sendLetter: ', new Date(), user.login);
+		var currentTime = Math.floor(new Date().valueOf() / 1000);
+
+		if (user.mailBlockedUntil && user.mailBlockedUntil > currentTime) {
+			throw new Meteor.Error('Почта заблокирована');
+		}
 
 		check(recipient, String);
 		check(subject, String);
@@ -237,6 +241,65 @@ Meteor.methods({
 			}
 		}, {
 			multi: true
+		});
+	},
+
+	'mail.getComplaintLetters': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
+		}
+
+		return Game.Mail.Collection.find({
+			complaint: true
+		}, {
+			sort: {
+				timestamp: -1
+			},
+			limit: 200
+		}).fetch();
+	},
+
+	'mail.blockUser': function(login, timestamp) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
+		}
+
+		var target = Meteor.users.findOne({
+			login: login
+		});
+
+		if (!target) {
+			throw new Meteor.Error('Некорректно указан логин');
+		}
+
+		check(timestamp, Match.Integer);
+
+		Meteor.users.update({
+			_id: target._id
+		}, {
+			$set: {
+				mailBlockedUntil: timestamp
+			}
 		});
 	}
 })

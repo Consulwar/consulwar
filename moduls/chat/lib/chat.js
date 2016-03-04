@@ -22,6 +22,8 @@ Game.Chat = {
 	}
 };
 
-
+Game.ChatRoom = {
+	Collection: new Meteor.Collection('chatRooms')
+};
 
 });

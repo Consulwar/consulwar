@@ -1,6 +1,10 @@
 Meteor.startup(function () {
 
+Meteor.subscribe('online');
+
 Game.Chat.showPage = function() {
+	console.log('subscribe to', this.params.room);
+	Meteor.subscribe('chat', this.params.room);
 	this.render('chat', {to: 'content'});
 }
 
@@ -48,11 +52,12 @@ Template.chat.events({
 	'submit .chat form': function(e, t) {
 		e.preventDefault();
 
+		var roomId = Router.current().params.room;
 		var text = t.find('textarea[name="text"]').value;
 
 		t.find('form').reset();
 
-		Meteor.call('sendMessage', text, function(err, result) {
+		Meteor.call('chat.sendMessage', text, roomId, function(err, result) {
 			if (err) {
 				Notifications.error(err);
 			}
@@ -64,7 +69,7 @@ Template.chat.events({
 	'click li a.block': function(e, t) {
 		e.preventDefault();
 
-		Meteor.call('blockOrUnblockChatTo', e.currentTarget.dataset.login, function(err) {
+		Meteor.call('chat.blockOrUnblockUser', e.currentTarget.dataset.login, function(err) {
 			if (err) {
 				Notifications.error(err);
 			}

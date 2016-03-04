@@ -1,7 +1,7 @@
 Meteor.startup(function () {
 
 Meteor.methods({
-	sendMessage: function(message) {
+	'chat.sendMessage': function(message, roomId) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -36,24 +36,19 @@ Meteor.methods({
 		if (resources.crystals.amount < price) {
 			throw new Meteor.Error("Not enough resources");
 		}
-/*
-		var set = {
-			'game.resources.crystals.amount': user.game.resources.crystals.amount - price
-		}
 
-		console.log(set);
-
-		Meteor.users.update({'_id': Meteor.userId()}, {
-			$set: set
-		});*/
 		var set = {
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
-			//type: user.type,
 			message: message,
 			timestamp: Math.floor(new Date().valueOf() / 1000)
 		};
+
+		if (roomId) {
+			check(roomId, String);
+			set.room = roomId;
+		}
 
 		if (user.role) {
 			set.role = user.role;
@@ -85,12 +80,12 @@ Meteor.methods({
 					}
 				}
 
-				//console.log(set.data);
 			} else if (message.substr(0, 3) == '/me') {
 				set.data = {
 					type: 'status'
 				}
 				set.message = message.substr(3);
+
 			} else if (message.substr(0, 8) == '/сепукку') {
 				if (resources.crystals.amount < 0 || resources.metals.amount < 0 || resources.honor.amount < 0) {
 					throw new Meteor.Error('Вы слишком бедны что бы совершать сепукку');
@@ -134,7 +129,7 @@ Meteor.methods({
 		Game.Chat.Collection.insert(set);
 	},
 
-	blockOrUnblockChatTo: function(login) {
+	'chat.blockOrUnblockUser': function(login) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -145,17 +140,21 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (!(user && ['admin', 'helper'].indexOf(user.role) != -1)) {
+		if (['admin', 'helper'].indexOf(user.role) != -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
-		var target = Meteor.users.findOne({login: login});
+		var target = Meteor.users.findOne({
+			login: login
+		});
 
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 
-		Meteor.users.update({_id: target._id}, {
+		Meteor.users.update({
+			_id: target._id
+		}, {
 			$set: {
 				muted: target.muted ? false : true
 			}
@@ -173,7 +172,7 @@ Meteor.methods({
 		});
 	},
 
-	banAccount: function(login) {
+	'chat.banAccount': function(login) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -184,12 +183,13 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (!(user && ['admin'].indexOf(user.role) != -1)) {
+		if (['admin'].indexOf(user.role) != -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
-		var target = Meteor.users.findOne({login: login});
-
+		var target = Meteor.users.findOne({
+			login: login
+		});
 
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
@@ -202,7 +202,7 @@ Meteor.methods({
 		})
 	},
 
-	cheaterVaip: function(login) {
+	'chat.cheaterVaip': function(login) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -213,11 +213,13 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (!(user && ['admin'].indexOf(user.role) != -1)) {
+		if (['admin'].indexOf(user.role) != -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
-		var target = Meteor.users.findOne({login: login});
+		var target = Meteor.users.findOne({
+			login: login
+		});
 
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
@@ -235,14 +237,17 @@ Meteor.methods({
 
 		Game.Investments.Collection.remove({user_id: target._id});
 		
-		Game.Resources.Collection.upsert({user_id: target._id}, {$set: {
-			humans: {amount: 200},
-			metals: {amount: 0},
-			crystals: {amount: 0},
-			credits: {amount: 0},
-			honor: {amount: 0}
-  		}})
-
+		Game.Resources.Collection.upsert({
+			user_id: target._id
+		}, {
+			$set: {
+				humans: {amount: 200},
+				metals: {amount: 0},
+				crystals: {amount: 0},
+				credits: {amount: 0},
+				honor: {amount: 0}
+  			}
+  		})
 
 		Meteor.users.update({_id: target._id}, {
 			$set: {
@@ -251,12 +256,31 @@ Meteor.methods({
 			}
 		})
 	}
-})
+});
 
 
-Meteor.publish('chat', function () {
+Meteor.publish('chat', function (roomId) {
 	if (this.userId) {
-		return Game.Chat.Collection.find({}, {
+
+		if (roomId) {
+
+			check(roomId, String);
+
+			// TODO: Написать проверки!
+			/*
+			var room = Game.ChatRoom.Collection.findOne({
+				_id: roomId
+			});
+
+			if (!room) {
+				return [];
+			}
+			*/
+		}
+
+		return Game.Chat.Collection.find({
+			room: (roomId ? roomId : null)
+		}, {
 			fields: {
 				login: 1,
 				message: 1,

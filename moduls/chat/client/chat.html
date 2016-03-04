@@ -6,6 +6,10 @@
 			{{/each}}
 		</ul>
 
+		{{#if hasMore}}
+			<a class="more">Показать предыдущие</a>
+		{{/if}}
+
 		<ul class="messages">
 			{{#each messages}}
 			<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">

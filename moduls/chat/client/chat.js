@@ -3,9 +3,14 @@ Meteor.startup(function () {
 Meteor.subscribe('online');
 
 Game.Chat.showPage = function() {
-	console.log('subscribe to', this.params.room);
-	Meteor.subscribe('chat', this.params.room);
-	this.render('chat', {to: 'content'});
+	Meteor.subscribe('chat', this.params.room, Game.Chat.MESSAGE_AMOUNT);
+
+	this.render('chat', {
+		to: 'content',
+		data: {
+			maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT )
+		}
+	});
 }
 
 var scrollChatToBottom = function(force) {
@@ -17,25 +22,39 @@ var scrollChatToBottom = function(force) {
 }
 
 Game.Chat.Collection.find({}, {sort: {'timestamp': 1}}).observeChanges({
-	added: function (id, user) {
-		Meteor.setTimeout(scrollChatToBottom);
+	added: function (id, message) {
+		var currentRoom = Router.current().params.room;
+		if (currentRoom == message.room) {
+			Meteor.setTimeout(scrollChatToBottom);
+		}
 	}
 });
 
 Template.chat.onRendered(function() {
 	Meteor.setTimeout(scrollChatToBottom.bind(this, true));
-})
+});
 
 Template.chat.helpers({
+	hasMore: function() {
+		if (Game.Chat.MESSAGE_LIMIT <= this.maxMessages.get()) {
+			return false;
+		}
+		var count = Game.Chat.Collection.find({}).count();
+		return count < this.maxMessages.get() ? false : true;
+	},
+
 	messages: function() {
 		return Game.Chat.Collection.find({}, {sort: {'timestamp': 1}});
 	},
+
 	users: function() {
 		return Meteor.users.find({}, {sort: {'login': 1}});
 	},
+
 	price: function() {
 		return Game.Chat.getMessagePrice();
 	},
+
 	highlightUser: function(text) {
 		if (text.indexOf('/me') == 0) {
 			text = text.substr(3);
@@ -43,12 +62,19 @@ Template.chat.helpers({
 
 		return text.replace('@' + Meteor.user().login, '<span class="me">@' + Meteor.user().login + '</span>');
 	},
+
 	startWith: function(text, value) {
 		return (text.substr(0, value.length) == value);
 	}
 });
 
 Template.chat.events({
+	'click a.more': function(e, t) {
+		var count = t.data.maxMessages.get();
+		t.data.maxMessages.set( count + Game.Chat.MESSAGE_AMOUNT );
+		Meteor.subscribe('chat', Router.current().params.room, t.data.maxMessages.get());
+	},
+
 	'submit .chat form': function(e, t) {
 		e.preventDefault();
 

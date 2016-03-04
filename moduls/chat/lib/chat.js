@@ -1,6 +1,9 @@
 Meteor.startup(function () {
 
 Game.Chat = {
+	MESSAGE_AMOUNT: 200,
+	MESSAGE_LIMIT: 1000,
+
 	Collection: new Meteor.Collection("messages"),
 
 	getMessagePrice: function() {

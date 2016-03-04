@@ -258,9 +258,14 @@ Meteor.methods({
 	}
 });
 
-
-Meteor.publish('chat', function (roomId) {
+Meteor.publish('chat', function (roomId, limit) {
 	if (this.userId) {
+
+		check(limit, Match.Integer);
+
+		if (limit > Game.Chat.MESSAGE_LIMIT) {
+			limit = Game.Chat.MESSAGE_LIMIT;
+		}
 
 		if (roomId) {
 
@@ -289,12 +294,13 @@ Meteor.publish('chat', function (roomId) {
 				alliance: 1,
 				type: 1,
 				role: 1,
-				cheater: 1
+				cheater: 1,
+				room: 1
 			},
 			sort: {
 				timestamp: -1
 			},
-			limit: 200
+			limit: limit
 		});
 	} else {
 		this.ready();

@@ -1,7 +1,7 @@
 <template name="cosmos">
 	<div id="map-battle"></div>
 	<a class="map-control-home"></a>
-	<a class="btn-history" href="{{pathFor 'cosmosHistory'}}">История боев</a>
+	<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боев</a>
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
@@ -296,59 +296,71 @@
 		{{#if battles}}
 			<table>
 				<tr class="header">
-					<th></th>
 					<th class="sides">Стороны</th>
 					<th class="result">Итог</th>
 					<th class="time">Время</th>	
 				</tr>
-				{{#each battles}}
-					<tr data-id="{{this._id}}">
-						<td></td>
-						<td>
-							{{#if eq this.userLocation this.location}}
-								<span class="reptiles">Флот рептилий</span>
-								 vs  
-								<span class="humans">Консул на планете {{this.locationName}}</span>
-							{{/if}}
-							{{#if eq this.enemyLocation this.location}}
-								<span class="humans">Флот консула</span>
-								 vs 
-								<span class="reptiles">Рептилии на планете {{this.locationName}}</span>
-							{{/if}}
-							{{#unless this.locationName}}
-								<span class="humans">Флот консула</span>
-								 vs  
-								<span class="reptiles">Флот рептилий</span>
-							{{/unless}}
-						</td>
-						<td>
-							{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
-							{{#if eq this.result 'victory'}}Героическая победа{{/if}}
-							{{#if eq this.result 'defeat'}}Полное поражение{{/if}}
-						</td>
-						<td>{{formatDate this.timestamp}}</td>
-					</tr>
-				{{/each}}
 			</table>
+			<div class="data">
+				<table>
+					{{#each battles}}
+						<tr data-id="{{this._id}}">
+							<td>
+								{{#if eq this.userLocation this.location}}
+									<span class="reptiles">Флот рептилий</span>
+									 vs  
+									<span class="humans">Консул на планете {{this.locationName}}</span>
+								{{else}}
+									<span class="humans">Флот консула</span>
+									 vs 
+									{{#if eq this.enemyLocation this.location}}
+										<span class="reptiles">Рептилии на планете {{this.locationName}}</span>
+									{{else}}
+										<span class="reptiles">Флот рептилий</span>
+									{{/if}}
+								{{/if}}
+							</td>
+							<td>
+								{{#if eq this.result 0}}Тактическая ничья{{/if}}
+								{{#if eq this.result 1}}Героическая победа{{/if}}
+								{{#if eq this.result 2}}Полное поражение{{/if}}
+							</td>
+							<td>{{formatDate this.timestamp}}</td>
+						</tr>
+					{{/each}}
+				</table>
+			</div>
+			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			<h2>История боев пуста</h2>
 		{{/if}}
+		<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
 	</div>
-	<a class="btn-back" href="{{pathFor 'cosmos'}}"></a>
+
+	{{#if battle}}
+		{{> cosmosHistoryItem battle=battle}}
+	{{/if}}
 </template>
 
 <template name="cosmosHistoryItem">
 	<div class="history-item">
 		{{#if battle}}
-			<div class="result {{battle.result}}">
-				{{#if eq battle.result 'tie'}}Тактическая ничья{{/if}}
-				{{#if eq battle.result 'victory'}}Героическая победа{{/if}}
-				{{#if eq battle.result 'defeat'}}Полное поражение{{/if}}
+			<div
+				class="
+					result
+					{{#if eq battle.result 0}}tie{{/if}}
+					{{#if eq battle.result 1}}victory{{/if}}
+					{{#if eq battle.result 2}}defeat{{/if}}
+				"
+			>
+				{{#if eq battle.result 0}}Тактическая ничья{{/if}}
+				{{#if eq battle.result 1}}Героическая победа{{/if}}
+				{{#if eq battle.result 2}}Полное поражение{{/if}}
 			</div>
-			{{#if battle.resources}}
+			{{#if battle.reward}}
 				<div class="resources big">
 					<ul>
-						{{#each battle.resources}}
+						{{#each battle.reward}}
 							<li class="{{this.engName}}">
 								{{formatNumberWithISO this.amount}}
 							</li>
@@ -369,14 +381,14 @@
 			{{/if}}
 			<div class="user-army">
 				<p class="humans">Люди</p>
-				{{#if battle.userArmy}}
+				{{#if battle.userUnits}}
 					<table>
 						<tr class="header">
 							<th class="name"></th>
 							<th class="count">Вылетело</th>
 							<th class="count">Осталось</th>
 						</tr>
-						{{#each battle.userArmy}}
+						{{#each battle.userUnits}}
 							<tr>
 								<td class="name humans">{{this.name}}</td>
 								<td class="count">{{formatNumberWithISO this.start}}</td>
@@ -388,14 +400,14 @@
 			</div>
 			<div class="enemy-army">
 				<p class="reptiles">Рептилоиды</p>
-				{{#if battle.enemyArmy}}
+				{{#if battle.enemyUnits}}
 					<table>
 						<tr class="header">
 							<th class="count">Осталось</th>
 							<th class="count">Вылетело</th>
 							<th class="name"></th>
 						</tr>
-						{{#each battle.enemyArmy}}
+						{{#each battle.enemyUnits}}
 							<tr>
 								<td class="count">{{this.end}}</td>
 								<td class="count">{{formatNumberWithISO this.start}}</td>
@@ -406,6 +418,6 @@
 				{{/if}}
 			</div>
 		{{/if}}
+		<a class="btn-back" href="{{pathFor 'cosmosHistory' page=currentPage}}"></a>
 	</div>
-	<a class="btn-back" href="{{pathFor 'cosmosHistory'}}"></a>
 </template>

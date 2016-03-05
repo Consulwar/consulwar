@@ -324,20 +324,6 @@
 	background-color #090e14
 	font-size 16px
 	font-weight bold
-	
-	.btn-close
-		cursor pointer
-		display block
-		position absolute
-		right 10px
-		top 10px
-		width 30px
-		height 30px
-		background-image url(/img/game/cosmomap/button_close.png)
-		background-repeat no-repeat
-		
-		&:hover
-			background-image url(/img/game/cosmomap/button_close_active.png)
 
 	.btn-attack
 		cursor pointer
@@ -525,6 +511,21 @@
 	&:hover
 		background-position 0px -34px
 
+.btn-close
+	cursor pointer
+	display block
+	z-index 4
+	position absolute
+	right 5px
+	top 5px
+	width 30px
+	height 30px
+	background-image url(/img/game/cosmomap/button_close.png)
+	background-repeat no-repeat
+	
+	&:hover
+		background-image url(/img/game/cosmomap/button_close_active.png)
+
 
 .history
 	position absolute
@@ -533,20 +534,23 @@
 	height 435px
 	margin-left 0px
 	background-color #04080B
-	overflow-y auto
 	
 	h2
 		margin-top 20px
 		width 100%
 		text-align center
+		
+	.data
+		display block
+		height 355px
+		overflow-y auto
 
-	>table
+	table
 		width 100%
 		border-collapse collapse
 		
 		tr
 			height 40px
-			
 			cursor pointer
 			
 			&:nth-child(odd):not(.header)
@@ -554,20 +558,6 @@
 			
 			&:nth-child(even)
 				background-color #0E1821
-				
-			&.from_tamily
-				color #3AB6F2
-				
-			&.from_system
-				&.battle_win
-					color #A9C362
-				&.battle_draw
-					color #D8E2EB
-				&.battle_lose
-					color #9D3830
-				&.quiz
-					color #3CB3ED
-					font-weight bold
 			
 			&:hover
 				-webkit-filter brightness(1.2)
@@ -576,20 +566,12 @@
 		td, th
 			text-align left
 				
-		td:first-child, th:first-child
-			width 20px
-			padding 12px
-			text-align center
-		
-		.sides
-			width 400px
-			
-		.result
-			width 180px
-			
-		.time
-			width 150px
-			
+			&:nth-child(1)
+				width 600px
+				padding-left 20px
+
+			&:nth-child(2)
+				width 400px
 
 .history-item
 	position absolute

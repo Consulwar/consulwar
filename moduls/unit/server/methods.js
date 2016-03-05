@@ -78,6 +78,45 @@ Meteor.methods({
 		} else {
 			throw new Meteor.Error('Не достаточно ресурсов');
 		}
+	},
+
+	'battleHistory.getPage': function(page, count) {
+		check(page, Match.Integer);
+		check(count, Match.Integer);
+
+		var user = Meteor.user();
+		
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		var result = Game.BattleHistory.Collection.find({
+			user_id: user._id
+		}, {
+			sort: {timestamp: -1},
+			skip: (page > 0) ? (page - 1) * count : 0,
+			limit: count
+		});
+
+		return {
+			battles: result.fetch(),
+			count: result.count()
+		}
+	},
+
+	'battleHistory.getById': function(id) {
+		check(id, String);
+
+		var user = Meteor.user();
+		
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		return Game.BattleHistory.Collection.findOne({
+			_id: id,
+			user_id: user._id
+		});
 	}
 })
 

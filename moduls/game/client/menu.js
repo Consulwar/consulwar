@@ -146,7 +146,7 @@ var menu = {
 		}
 	},
 	mutual: {
-		routeName: ['mutual', 'earth'],
+		routeName: ['mutual', 'earth', 'statistics'],
 		url: Router.routes.earth.path({ group: 'earth' }),
 		items: {
 			earth: {
@@ -157,6 +157,10 @@ var menu = {
 				name: 'Исследования',
 				url: firstItemGroupURL(Game.Mutual.items.research),
 				items: Game.Mutual.items.research
+			},
+			statistics: {
+				name: 'Статистика',
+				url: Router.routes.statistics.path()
 			}
 		}
 	},
@@ -211,7 +215,7 @@ Template.side_menu.helpers({
 			return (
 				item.items
 				? key == Router.current().params.group
-				: item.url == Router.current().url
+				: Router.current().url.indexOf(item.url) != -1
 			)
 		})
 	}

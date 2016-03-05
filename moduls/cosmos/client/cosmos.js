@@ -27,66 +27,61 @@ Game.Cosmos.showPage = function() {
 // ----------------------------------------------------------------------------
 
 Game.Cosmos.showHistory = function() {
-	this.render('cosmosHistory', {
-		to: 'content'
+	var pageNumber = parseInt( this.params.page, 10 );
+	var itemId = this.getParams().hash;
+	var countPerPage = 20;
+
+	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, function(err, data) {
+		var battle = new ReactiveVar(null);
+
+		for (var i = 0; i < data.battles.length; i++) {
+			data.battles[i] = getBattleInfo( data.battles[i] );
+			// check if current item
+			if (itemId && data.battles[i]._id == itemId) {
+				battle.set( data.battles[i] );
+			}
+		}
+
+		if (itemId && !battle.get()) {
+			Meteor.call('battleHistory.getById', itemId, function(err, data) {
+				battle.set( getBattleInfo(data) );
+			});
+		}
+
+		Router.current().render('cosmosHistory', {
+			to: 'content',
+			data: {
+				countPerPage: countPerPage,
+				countTotal: data.count,
+				battles: data.battles,
+				battle: battle,
+				itemId: itemId
+			}
+		});
 	});
 }
 
 Template.cosmosHistory.helpers({
-	battles: function() {
-		var history = Game.BattleHistory.Collection.find().fetch();
-
-		return _.map(history, function(item) {
-			// result
-			var result = 'tie';
-			if (item.userArmyRest && !item.enemyArmyRest) {
-				result = 'victory';
-			} else if (!item.userArmyRest && item.enemyArmyRest) {
-				result = 'defeat'
-			}
-
-			// battle location name
-			var locationName = null;
-			if (typeof item.location === 'string') {
-				var planet = Game.Planets.getOne(item.location);
-				if (planet) {
-					locationName = planet.name;
-				}
-			}
-
-			return {
-				_id: item._id,
-				timestamp: item.timestamp,
-				location: item.location,
-				userLocation: item.userLocation,
-				enemyLocation: item.enemyLocation,
-				locationName: locationName,
-				result: result
-			}
-		});
+	battle: function() {
+		return this.battle.get();
 	}
-})
+});
+
+Template.cosmosHistoryItem.helpers({
+	currentPage: function() {
+		return Router.current().params.page;
+	}
+});
 
 Template.cosmosHistory.events({
 	'click tr:not(.header)': function(e, t) {
+		var page = Router.current().params.page;
 		var id = $(e.currentTarget).attr('data-id');
 		if (id) {
-			Router.go('cosmosHistoryItem', { id: id });
+			Router.go('cosmosHistory', { page: page }, { hash: id });
 		}
 	}
-})
-
-Game.Cosmos.showHistoryItem = function() {
-	var id = this.params.id;
-	if (id) {
-		this.render('cosmosHistoryItem', {
-			to: 'content',
-			data: {
-				id: id
-			}
-		});
-	}
-}
+});
 
 var getArmyInfo = function(units, rest) {
 	var result = [];
@@ -121,60 +116,35 @@ var getArmyInfo = function(units, rest) {
 	return result.length > 0 ? result : null;
 }
 
-Template.cosmosHistoryItem.helpers({
-	battle: function() {
-		var history = Game.BattleHistory.Collection.findOne({
-			_id: Template.instance().data.id
-		});
-
-		if (!history) {
-			return null;
+var getBattleInfo = function(item) {
+	item.locationName = null;
+	if (_.isString(item.location)) {
+		var planet = Game.Planets.getOne(item.location);
+		if (planet) {
+			item.locationName = planet.name;
 		}
-
-		// result
-		var result = 'tie';
-		if (history.userArmyRest && !history.enemyArmyRest) {
-			result = 'victory';
-		} else if (!history.userArmyRest && history.enemyArmyRest) {
-			result = 'defeat'
-		}
-
-		// resources
-		var resources = [];
-		if (history.reward) {
-			for (var key in history.reward) {
-				if (history.reward[key] > 0) {
-					resources.push({
-						engName: key,
-						amount: history.reward[key]
-					});
-				}
-			}
-		}
-
-		// artefacts
-		var artefacts = [];
-		if (history.artefacts) {
-			for (var key in history.artefacts) {
-				if (history.artefacts[key] > 0) {
-					artefacts.push({
-						engName: key,
-						name: Game.Artefacts.items[key].name,
-						amount: history.artefacts[key]
-					})
-				}
-			}
-		}
-
-		return {
-			result: result,
-			resources: resources.length > 0 ? resources : null,
-			artefacts: artefacts.length > 0 ? artefacts : null,
-			userArmy: getArmyInfo( history.userArmy, history.userArmyRest ),
-			enemyArmy: getArmyInfo( history.enemyArmy, history.enemyArmyRest )
-		};
 	}
-})
+
+	item.reward = _.map(item.reward, function(value, key) {
+		return {
+			engName: key,
+			amount: value
+		}
+	});
+
+	item.artefacts = _.map(item.artefacts, function(value, key) {
+		return {
+			engName: key,
+			name: Game.Artefacts.items[key].name,
+			amount: value
+		}
+	});
+
+	item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
+	item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
+
+	return item;
+}
 
 // ----------------------------------------------------------------------------
 // Fleets side menu

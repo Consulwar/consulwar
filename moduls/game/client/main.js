@@ -1,25 +1,19 @@
 Meteor.startup(function () {
 
+initRatingClient();
 initArtefactsClient();
 initResourcesClient();
 initBuildingClient();
 initResearchClient();
 initUnitClient();
-
 initCosmosClient();
 initEarthClient();
 initHouseClient();
-
 initMutualClient();
-
 initMailClient();
-
 initQuestClient();
-
 initRouterClient();
-
 initMenuClient();
-
 initCheatsClient();
 
 ChdFeedbackWidget.init({

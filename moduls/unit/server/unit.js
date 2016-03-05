@@ -186,6 +186,10 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 // Battle
 // ----------------------------------------------------------------------------
 
+Game.BattleHistory = {
+	Collection: new Meteor.Collection('battleHistory')
+}
+
 Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	Game.BattleHistory.Collection.insert({
 		user_id: Meteor.userId(),
@@ -198,7 +202,8 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 		enemyArmy: enemyArmy,
 		enemyArmyRest: battleResults.enemyArmy,
 		reward: battleResults.reward,
-		artefacts: battleResults.artefacts
+		artefacts: battleResults.artefacts,
+		result: battleResults.result
 	});
 }
 
@@ -758,8 +763,17 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 		}
 
+		// calc result
+		var result = Game.Battle.result.tie;
+		if (userArmyRest && !enemyArmyRest) {
+			result = Game.Battle.result.victory;
+		} else if (!userArmyRest && enemyArmyRest) {
+			item.result = Game.Battle.result.defeat;
+		}
+
 		// save results
 		this.results = {
+			result: result,
 			log: currentLog,
 			userArmy: userArmyRest,
 			enemyArmy: enemyArmyRest,
@@ -773,12 +787,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 Meteor.publish('units', function () {
 	if (this.userId) {
 		return Game.Unit.Collection.find({user_id: this.userId});
-	}
-});
-
-Meteor.publish('battleHistory', function () {
-	if (this.userId) {
-		return Game.BattleHistory.Collection.find({user_id: this.userId});
 	}
 });
 

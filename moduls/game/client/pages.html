@@ -1,0 +1,41 @@
+<template name="pages">
+	{{#if pages}}
+		<div class="pages">
+			<ul>
+				{{#unless pages.hasFirst}}
+					<li>
+						<a 
+							class="{{#if eq 1 current}}active{{/if}}"
+							href="{{pathFor route page=1}}"
+							title="Первая страница"
+						>
+							&lt;
+						</a>
+					</li>
+				{{/unless}}
+				{{#each pages.items}}
+					<li>
+						<a
+							class="{{#if eq this.page current}}active{{/if}}"
+							href="{{pathFor route page=this.page}}"
+							title="{{this.start}} - {{this.end}}"
+						>
+							{{this.page}}
+						</a>
+					</li>
+				{{/each}}
+				{{#unless pages.hasLast}}
+					<li>
+						<a 
+							class="{{#if eq maxPage current}}active{{/if}}"
+							href="{{pathFor route page=maxPage}}"
+							title="Последняя страница"
+						>
+							&gt;
+						</a>
+					</li>
+				{{/unless}}
+			</ul>
+		</div>
+	{{/if}}
+</template>

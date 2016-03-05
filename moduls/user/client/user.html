@@ -140,28 +140,35 @@
 
 <template name="rating">
 	<div class="rating">
-		<table>
-			<tr>
-				<th>Место</th>
-				<th>Ник</th>
-				<th>Награды</th>
-				<th>Действия</th>
-				<th>Рейтинг</th>
-			</tr>
-			<tbody>
-				{{#each users}}
-				<tr class="{{#if eq this.login user.login}}me{{/if}}" id="{{this.login}}">
-					<td>{{this.place}}</td>
-					<td>{{this.login}}</td>
-					<td>
-						{{#if this.cheater}}<img src="/img/game/achivments/cheater.png"/>{{/if}}
-						{{#if gt this.rating 25000}}<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>{{/if}}
-						</td>
-					<td><a class="send_message" href="{{pathFor 'game' menu='messages' side='private' hash=this.login}}"><img src="/img/game/message.png"></a></td>
-					<td>{{formatNumber this.rating}}</td>
+		{{#if users}}
+			<table>
+				<tr class="header">
+					<th>Место</th>
+					<th>Ник</th>
+					<th>Награды</th>
+					<th>Действия</th>
+					<th>Рейтинг</th>
 				</tr>
-				{{/each}}
-			</tbody>
-		</table>
+			</table>
+			<div class="data">
+				<table>
+					{{#each users}}
+					<tr class="{{#if eq this.login user.login}}me{{/if}}" id="{{this.login}}">
+						<td>{{this.place}}</td>
+						<td>{{this.login}}</td>
+						<td>
+							{{#if this.cheater}}<img src="/img/game/achivments/cheater.png"/>{{/if}}
+							{{#if gt this.rating 25000}}<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>{{/if}}
+							</td>
+						<td><a class="send_message" href="{{pathFor 'mail' hash=this.login}}"><img src="/img/game/message.png"></a></td>
+						<td>{{formatNumber this.rating}}</td>
+					</tr>
+					{{/each}}
+				</table>
+			</div>
+			{{> pages total=countTotal perPage=countPerPage}}
+		{{else}}
+			<h2>Нет статистики</h2>
+		{{/if}}
 	</div>
 </template>

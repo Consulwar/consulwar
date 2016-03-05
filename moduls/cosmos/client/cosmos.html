@@ -323,9 +323,9 @@
 								{{/unless}}
 							</td>
 							<td>
-								{{#if eq this.result 'tie'}}Тактическая ничья{{/if}}
-								{{#if eq this.result 'victory'}}Героическая победа{{/if}}
-								{{#if eq this.result 'defeat'}}Полное поражение{{/if}}
+								{{#if eq this.result 0}}Тактическая ничья{{/if}}
+								{{#if eq this.result 1}}Героическая победа{{/if}}
+								{{#if eq this.result 2}}Полное поражение{{/if}}
 							</td>
 							<td>{{formatDate this.timestamp}}</td>
 						</tr>
@@ -347,10 +347,17 @@
 <template name="cosmosHistoryItem">
 	<div class="history-item">
 		{{#if battle}}
-			<div class="result {{battle.result}}">
-				{{#if eq battle.result 'tie'}}Тактическая ничья{{/if}}
-				{{#if eq battle.result 'victory'}}Героическая победа{{/if}}
-				{{#if eq battle.result 'defeat'}}Полное поражение{{/if}}
+			<div
+				class="
+					result
+					{{#if eq battle.result 0}}tie{{/if}}
+					{{#if eq battle.result 1}}victory{{/if}}
+					{{#if eq battle.result 2}}defeat{{/if}}
+				"
+			>
+				{{#if eq battle.result 0}}Тактическая ничья{{/if}}
+				{{#if eq battle.result 1}}Героическая победа{{/if}}
+				{{#if eq battle.result 2}}Полное поражение{{/if}}
 			</div>
 			{{#if battle.reward}}
 				<div class="resources big">

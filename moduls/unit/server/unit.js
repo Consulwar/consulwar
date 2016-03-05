@@ -202,7 +202,8 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 		enemyArmy: enemyArmy,
 		enemyArmyRest: battleResults.enemyArmy,
 		reward: battleResults.reward,
-		artefacts: battleResults.artefacts
+		artefacts: battleResults.artefacts,
+		result: battleResults.result
 	});
 }
 
@@ -762,8 +763,17 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 		}
 
+		// calc result
+		var result = Game.Battle.result.tie;
+		if (userArmyRest && !enemyArmyRest) {
+			result = Game.Battle.result.victory;
+		} else if (!userArmyRest && enemyArmyRest) {
+			item.result = Game.Battle.result.defeat;
+		}
+
 		// save results
 		this.results = {
+			result: result,
 			log: currentLog,
 			userArmy: userArmyRest,
 			enemyArmy: enemyArmyRest,

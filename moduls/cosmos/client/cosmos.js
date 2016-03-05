@@ -117,15 +117,8 @@ var getArmyInfo = function(units, rest) {
 }
 
 var getBattleInfo = function(item) {
-	item.result = 'tie';
-	if (item.userArmyRest && !item.enemyArmyRest) {
-		item.result = 'victory';
-	} else if (!item.userArmyRest && item.enemyArmyRest) {
-		item.result = 'defeat'
-	}
-
 	item.locationName = null;
-	if (typeof item.location === 'string') {
+	if (_.isString(item.location)) {
 		var planet = Game.Planets.getOne(item.location);
 		if (planet) {
 			item.locationName = planet.name;

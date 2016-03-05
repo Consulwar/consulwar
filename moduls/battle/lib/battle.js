@@ -44,6 +44,12 @@ Game.Battle = {
 	items: {}
 }
 
+Game.Battle.result = {
+	tie: 0,
+	victory: 1,
+	defeat: 2
+}
+
 initGalacticContentBattle();
 
 });

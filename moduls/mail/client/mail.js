@@ -94,6 +94,8 @@ var toggleDeleteButton = function(t) {
 		t.$('.delete_selected').show();
 	} else {
 		t.$('.delete_selected').hide();
+		// update first checkbox
+		t.$('th input[type="checkbox"]').prop('checked', false);
 	}
 }
 
@@ -101,14 +103,13 @@ Template.mail.events({
 	// Поставить чекбокс
 	'click td:first-child': function(e, t) {
 		e.stopPropagation();
-		var checkbox = $(e.target).find('input');
+		var checkbox = t.$(e.target).find('input');
 		checkbox.prop('checked', checkbox.prop('checked') == true ? false: true);
-		$('th input[type="checkbox"]').prop('checked', false);
 		toggleDeleteButton(t);
 	},
 
 	'change th input[type="checkbox"]': function(e, t) {
-		$('input[type="checkbox"]').prop('checked', $(e.target).prop('checked'));
+		t.$('input[type="checkbox"]').prop('checked', t.$(e.target).prop('checked'));
 		toggleDeleteButton(t);
 	},
 
@@ -225,15 +226,17 @@ Template.mail.events({
 	'click .delete_selected': function(e, t) {
 		var selected = t.$('td input[type="checkbox"]:checked');
 		var ids = [];
-		for (var i = 0; i < selected.length; i++) {
-			ids.push($(selected[i]).parent().parent().data('id'));
-		}
 
+		for (var i = 0; i < selected.length; i++) {
+			ids.push(t.$(selected[i]).parent().parent().data('id'));
+		}
+		
 		if (ids) {
 			Meteor.call('removeLetters', ids);
 		}
 
 		t.$('.delete_selected').hide();
+		t.$('th input[type="checkbox"]').prop('checked', false);
 	},
 
 	// Закрыть чтение/написание письма
@@ -263,7 +266,7 @@ Template.mail.events({
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		$('input[type="submit"]').prop('disabled', true);
+		t.$('input[type="submit"]').prop('disabled', true);
 
 		Meteor.call(
 			'sendLetter', 
@@ -274,10 +277,10 @@ Template.mail.events({
 				if (!err) {
 					e.currentTarget.reset();
 					closeMessages(t);
-					$('input[type="submit"]').prop('disabled', false);
+					t.$('input[type="submit"]').prop('disabled', false);
 				} else {
 					Notifications.error('Невозможно отправить письмо', err.error);
-					$('input[type="submit"]').prop('disabled', false);
+					t.$('input[type="submit"]').prop('disabled', false);
 				}
 			}
 		);

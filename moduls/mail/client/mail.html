@@ -12,7 +12,27 @@
 		<div class="data">
 			<table>
 				{{#each mail}}
-					<tr data-id="{{this._id}}" class="{{#if eq this.from 0}}from_tamily{{/if}} {{#if eq this.from 1}}from_system {{#if eq this.type 'fleetbattle'}}{{#if eq this.text.result 'Победа'}}battle_win{{else}}{{#if eq this.text.result 'Ничья'}}battle_draw{{else}}battle_lose{{/if}}{{/if}}{{/if}}{{#if eq this.type 'quiz'}}quiz{{/if}}{{/if}}">
+					<tr 
+						data-id="{{this._id}}"
+						class="
+							{{#if eq this.from 0}}from_tamily{{/if}} 
+							{{#if eq this.from 1}}
+								from_system 
+								{{#if eq this.type 'fleetbattle'}}
+									{{#if eq this.text.result 'Победа'}}
+										battle_win 
+									{{else}}
+										{{#if eq this.text.result 'Ничья'}}
+											battle_draw 
+										{{else}}
+											battle_lose 
+										{{/if}}
+									{{/if}}
+								{{/if}}
+								{{#if eq this.type 'quiz'}}quiz{{/if}}
+							{{/if}}
+						"
+					>
 						<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
 						<td>{{this.name}}</td>
 						<td>{{this.subject}}</td>
@@ -23,8 +43,8 @@
 			</table>
 		</div>
 
-		<a class="delete_selected" href="#">Удалить выделенное</a>
-		<a class="new_message" href="#">Написать сообщение</a>
+		<span class="delete_selected">Удалить выделенное</span>
+		<span class="new_message">Написать сообщение</span>
 
 		<div class="letter">
 			<button class="back">Назад</button>

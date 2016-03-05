@@ -40,6 +40,10 @@ Meteor.methods({
 		check(page, Match.Integer);
 		check(count, Match.Integer);
 
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
 		var user = Meteor.user();
 		
 		if (!user || !user._id) {

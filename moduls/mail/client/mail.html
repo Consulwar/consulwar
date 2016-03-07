@@ -166,8 +166,9 @@
 		<form>
 			<button class="back">Назад</button>
 			<div>
-				<label>Кому написать: <input class="recipient"/> </label>
-				<span class="{{#if isRecipientOk}}check{{else}}cross{{/if}}"></span>
+				<label class="{{#if isRecipientOk}}check{{else}}cross{{/if}}">
+					Кому написать: <input class="recipient"/>
+				</label>
 				<label>Тема сообщения: <input class="subject" maxlength="200"/></label>
 				<textarea maxlength="5000"></textarea>
 			</div>

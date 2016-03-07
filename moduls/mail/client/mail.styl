@@ -8,22 +8,6 @@
 	margin-left 124px
 	background-color #04080B
 
-	.check
-		display inline-block
-		width 30px
-		height 24px
-		background-repeat no-repeat
-		background-position center center
-		background-image url(/img/game/check.png)
-		
-	.cross
-		display inline-block
-		width 30px
-		height 24px
-		background-repeat no-repeat
-		background-position center center
-		background-image url(/img/game/cross.png)
-
 	.data
 		height 355px
 		overflow-y auto
@@ -85,17 +69,18 @@
 	.delete_selected, .new_message
 		display block
 		position absolute
-		color #5cabc1
-		border 2px solid #5cabc1
+		color #2D7B9F
+		border 2px solid #2D7B9F
 		background-color #000
 		padding 8px 15px
 		font-size 16px
+		font-weight bold
 		text-decoration none
 		cursor pointer
 		
 		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 	
 	.delete_selected
 		display none
@@ -139,9 +124,21 @@
 			padding 14px
 		
 		label
+			display inline-block
 			color #50B2EF
+			background-repeat no-repeat
+			background-position center right
 			
-			&:not(:first-child)
+			&.check
+				background-image url(/img/game/check.png)
+		
+			&.cross
+				background-image url(/img/game/cross.png)
+
+			&:nth-child(1)
+				padding-right 40px
+				
+			&:nth-child(2)
 				margin-left 30px
 			
 			input
@@ -168,16 +165,21 @@
 	button, input[type="submit"]
 		border 2px solid #2D7B9F
 		color #2D7B9F
-		padding 10px 5px
+		padding 10px 15px
 		margin 5px
 		background transparent
+		font-size 16px
 		font-weight bold
 		cursor pointer
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 			
 	input[type="submit"],
 	.reply
-		position relative
-		left 880px
+		position absolute
+		left 860px
 		
 	.battle_letter, 
 	.battle_on_earth_letter

@@ -3,7 +3,13 @@ initMailClient = function () {
 initMailLib();
 
 Game.Mail.showPage = function() {
-	this.render('mail', {to: 'content'});
+	Meteor.subscribe('mail');
+	this.render('mail', {
+		to: 'content',
+		data: {
+			letter: new ReactiveVar(null)
+		}
+	});
 }
 
 Template.mail.helpers({
@@ -48,7 +54,13 @@ Template.mail.helpers({
 		return letters;
 	},
 
-	letter: function() { return Session.get('letter'); },
+	letter: function() {
+		return this.letter.get();
+	},
+
+	userId: function() {
+		return Meteor.userId();
+	},
 
 	army: function(start, result) {
 		return _.map(start, function(value, key) {
@@ -117,7 +129,8 @@ Template.mail.events({
 	'click tr:not(.header,.from_tamily)': function(e, t) {
 		var letter = Game.Mail.Collection.findOne({'_id': e.currentTarget.dataset.id});
 
-		Session.set('letter', {
+		t.data.letter.set({
+			_id: letter._id,
 			to: letter.to,
 			from: letter.from,
 			sender: letter.sender,
@@ -239,15 +252,30 @@ Template.mail.events({
 		t.$('th input[type="checkbox"]').prop('checked', false);
 	},
 
-	// Закрыть чтение/написание письма
+	// Закрыть чтение / написание письма
 	'click button.back': function(e, t) {
 		e.preventDefault();
 		$(e.currentTarget).parent().hide();
 	},
 
+	// Пожаловаться
+	'click button.complain': function(e, t) {
+		closeMessages(t);
+		var letter = t.data.letter.get();
+		if (letter) {
+			Meteor.call('mail.complainLetter', letter._id, function(err, data) {
+				if (err) {
+					Notifications.error('Невозможно отправить жалобу', err.error);
+				} else {
+					Notifications.success('Жалоба отправлена');
+				}
+			});
+		}
+	},
+
 	// Ответить на письмо
 	'click button.reply': function(e, t) {
-		var letter = Session.get('letter');
+		var letter = t.data.letter.get();
 
 		t.$('form .recipient').val(letter.from == Meteor.userId() ? letter.recipient : letter.sender);
 		t.$('form .subject').val('Re: ' + letter.subject);
@@ -278,14 +306,101 @@ Template.mail.events({
 					e.currentTarget.reset();
 					closeMessages(t);
 					t.$('input[type="submit"]').prop('disabled', false);
+					Notifications.success('Письмо отправлено');
 				} else {
-					Notifications.error('Невозможно отправить письмо', err.error);
 					t.$('input[type="submit"]').prop('disabled', false);
+					Notifications.error('Невозможно отправить письмо', err.error);
 				}
 			}
 		);
 	}
 });
+
+// ----------------------------------------------------------------------------
+// Admin page
+// ----------------------------------------------------------------------------
+
+Game.Mail.showAdminPage = function() {
+	Meteor.subscribe('mail', true);
+	this.render('mailAdmin', {
+		to: 'content',
+		data: {
+			letter: new ReactiveVar(null)
+		}
+	});
+}
+
+Template.mailAdmin.helpers({
+	mail: function() {
+		return Game.Mail.Collection.find({}, {sort: {'timestamp': -1}}).fetch();
+	},
+
+	letter: function() {
+		return this.letter.get();
+	}
+});
+
+Template.mailAdmin.events({
+	'click td:first-child': function(e, t) {
+		e.stopPropagation();
+		var checkbox = t.$(e.target).find('input');
+		checkbox.prop('checked', checkbox.prop('checked') == true ? false: true);
+		toggleDeleteButton(t);
+	},
+
+	'change th input[type="checkbox"]': function(e, t) {
+		t.$('input[type="checkbox"]').prop('checked', t.$(e.target).prop('checked'));
+		toggleDeleteButton(t);
+	},
+
+	'click tr:not(.header)': function(e, t) {
+		var letter = Game.Mail.Collection.findOne({'_id': e.currentTarget.dataset.id});
+		t.data.letter.set(letter);
+		closeMessages(t);
+		t.$('.letter').show();
+	},
+
+	'click .delete_selected': function(e, t) {
+		var selected = t.$('td input[type="checkbox"]:checked');
+		var ids = [];
+
+		for (var i = 0; i < selected.length; i++) {
+			ids.push(t.$(selected[i]).parent().parent().data('id'));
+		}
+		
+		if (ids) {
+			Meteor.call('mail.cancelComplaints', ids);
+		}
+
+		t.$('.delete_selected').hide();
+		t.$('th input[type="checkbox"]').prop('checked', false);
+	},
+
+	'click button.back': function(e, t) {
+		e.preventDefault();
+		$(e.currentTarget).parent().hide();
+	},
+
+	'click button.block': function(e, t) {
+		closeMessages(t);
+
+		var letter = t.data.letter.get();
+		if (letter) {
+			Meteor.call('mail.blockUser', letter.sender, 86400 * 7);
+			Meteor.call('mail.cancelComplaints', [ letter._id ] );
+		}
+	},
+
+	'click button.cancel': function(e, t) {
+		closeMessages(t);
+
+		var letter = t.data.letter.get();
+		if (letter) {
+			Meteor.call('mail.cancelComplaints', [ letter._id ] );
+		}
+	}
+});
+
 
 initMailQuizClient();
 

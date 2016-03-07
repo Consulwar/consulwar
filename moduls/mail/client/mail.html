@@ -49,14 +49,13 @@
 		<div class="letter">
 			<button class="back">Назад</button>
 			{{#with letter}}
-			<span class="name">{{#if eq from Meteor.userId}} 
-			{{recipient}}
-			{{else}}
-			{{sender}}
-			{{/if}}</span>
-			<span class="subject">{{subject}}</span>
-			<time>{{formatDate timestamp}}</time>
-			<div class="text">{{{nl2br text}}}</div>
+				<span class="name">{{sender}}</span>
+				<span class="subject">{{subject}}</span>
+				<time>{{formatDate timestamp}}</time>
+				<div class="text">{{{nl2br text}}}</div>
+				{{#if eq to userId}}
+					<button class="complain">Пожаловаться</button>
+				{{/if}}
 			{{/with}}
 			<button class="reply">Ответить</button>
 		</div>
@@ -198,5 +197,66 @@
 		{{/each}}
 		{{/if}}
 		<div class="close"></div>
+	</div>
+</template>
+
+<template name="mailAdmin">
+	<div class="mail">
+		<table>
+			<tr class="header">
+				<th><input type="checkbox"/></th>
+				<th class="name">Отправитель</th>
+				<th class="name">Получатель</th>
+				<th class="subject">Тема</th>
+				<th class="time">Время</th>
+			</tr>
+		</table>
+		<div class="data">
+			<table>
+				{{#each mail}}
+					<tr 
+						data-id="{{this._id}}"
+						class="
+							{{#if eq this.from 0}}from_tamily{{/if}} 
+							{{#if eq this.from 1}}
+								from_system 
+								{{#if eq this.type 'fleetbattle'}}
+									{{#if eq this.text.result 'Победа'}}
+										battle_win 
+									{{else}}
+										{{#if eq this.text.result 'Ничья'}}
+											battle_draw 
+										{{else}}
+											battle_lose 
+										{{/if}}
+									{{/if}}
+								{{/if}}
+								{{#if eq this.type 'quiz'}}quiz{{/if}}
+							{{/if}}
+						"
+					>
+						<td><input type="checkbox"/></td>
+						<td>{{this.sender}}</td>
+						<td>{{this.recipient}}</td>
+						<td>{{this.subject}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+
+		<span class="delete_selected">Скрыть выделенное</span>
+
+		<div class="letter">
+			<button class="back">Назад</button>
+			{{#with letter}}
+				<span class="name">{{sender}}</span>
+				<span class="subject">{{subject}}</span>
+				<time>{{formatDate timestamp}}</time>
+				<div class="text">{{{nl2br text}}}</div>
+			{{/with}}
+			<button class="block">Заблокировать отправителя</button>
+			<button class="cancel">Отклонить жалобу</button>
+		</div>
 	</div>
 </template>

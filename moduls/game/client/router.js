@@ -67,7 +67,8 @@ var gameRoutes = {
 	
 	communication: {
 		chat: 'communication/chat/:channel?',
-		mail: 'communication/mail/:page?'
+		mail: 'communication/mail/:page?',
+		mailAdmin: 'communication/mailadmin/:page?'
 	},
 
 	cosmos: {
@@ -83,6 +84,7 @@ var gameActions = {
 
 	chat: Game.Chat.showPage,
 	mail: Game.Mail.showPage,
+	mailAdmin: Game.Mail.showAdminPage,
 
 	unit: Game.Unit.showPage,
 	reptileUnit: Game.Unit.showPage,

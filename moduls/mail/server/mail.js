@@ -201,7 +201,7 @@ Meteor.methods({
 	'mail.complainLetter': function(id) {
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
@@ -244,7 +244,7 @@ Meteor.methods({
 		});
 	},
 
-	'mail.getComplaintLetters': function() {
+	'mail.cancelComplaints': function(ids) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -259,17 +259,18 @@ Meteor.methods({
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
 		}
 
-		return Game.Mail.Collection.find({
-			complaint: true
+		Game.Mail.Collection.update({
+			_id: { $in: ids }
 		}, {
-			sort: {
-				timestamp: -1
-			},
-			limit: 200
-		}).fetch();
+			$set: {
+				complaint: false
+			}
+		}, {
+			multi: true
+		});
 	},
 
-	'mail.blockUser': function(login, timestamp) {
+	'mail.blockUser': function(login, time) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -292,7 +293,43 @@ Meteor.methods({
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 
-		check(timestamp, Match.Integer);
+		check(time, Match.Integer);
+
+		var timestamp = Game.getCurrentTime() + time;
+
+		Meteor.users.update({
+			_id: target._id
+		}, {
+			$set: {
+				mailBlockedUntil: timestamp
+			}
+		});
+	},
+
+	'mail.unblockUser': function(login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
+		}
+
+		var target = Meteor.users.findOne({
+			login: login
+		});
+
+		if (!target) {
+			throw new Meteor.Error('Некорректно указан логин');
+		}
+
+		var timestamp = Game.getCurrentTime();
 
 		Meteor.users.update({
 			_id: target._id
@@ -304,17 +341,35 @@ Meteor.methods({
 	}
 })
 
-Meteor.publish('mail', function () {
+Meteor.publish('mail', function (isAdmin) {
 	if (this.userId) {
-		return Game.Mail.Collection.find({
-			owner: this.userId,
-			deleted: { $ne: true }
-		}, {
-			sort: {
-				timestamp: -1
-			},
-			limit: 200
-		});
+		if (isAdmin) {
+			// letters visible at admin page
+			var user = Meteor.users.findOne({ _id: this.userId });
+			if (user && ['admin', 'helper'].indexOf(user.role) != -1) {
+				return Game.Mail.Collection.find({
+					complaint: true
+				}, {
+					sort: {
+						timestamp: -1
+					},
+					limit: 200
+				});
+			} else {
+				this.ready();
+			}
+		} else {
+			// user's own letters
+			return Game.Mail.Collection.find({
+				owner: this.userId,
+				deleted: { $ne: true }
+			}, {
+				sort: {
+					timestamp: -1
+				},
+				limit: 200
+			});
+		}
 	} else {
 		this.ready();
 	}

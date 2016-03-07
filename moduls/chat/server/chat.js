@@ -34,7 +34,7 @@ Meteor.methods({
 		var resources = Game.Resources.getValue();
 
 		if (resources.crystals.amount < price) {
-			throw new Meteor.Error("Not enough resources");
+			throw new Meteor.Error('Недостаточно ресурсов');
 		}
 
 		var set = {
@@ -45,9 +45,16 @@ Meteor.methods({
 			timestamp: Math.floor(new Date().valueOf() / 1000)
 		};
 
-		if (roomId) {
-			check(roomId, String);
+		check(roomId, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomId
+		});
+		
+		if (room && (room.isPublic || room.users.indexOf(user._id) != -1)) {
 			set.room = roomId;
+		} else {
+			throw new Meteor.Error('Вы не можете писать в эту комнату');
 		}
 
 		if (user.role) {
@@ -140,7 +147,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (['admin', 'helper'].indexOf(user.role) != -1) {
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
@@ -183,7 +190,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (['admin'].indexOf(user.role) != -1) {
+		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
@@ -213,7 +220,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (['admin'].indexOf(user.role) != -1) {
+		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
@@ -255,53 +262,221 @@ Meteor.methods({
 				cheater: true
 			}
 		})
+	},
+
+	'chat.createRoom': function(name, isPublic) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(name, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: name
+		});
+
+		if (room) {
+			throw new Meteor.Error('Коната с именем ' + name + ' уже существует');
+		}
+
+		room = {};
+		room.name = name;
+
+		if (isPublic) {
+			if (['admin'].indexOf(user.role) == -1) {
+				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+			}
+			room.isPublic = true;
+		} else {
+			room.owner = user._id;
+			room.users = [ user._id ];
+		}
+
+		Game.ChatRoom.Collection.insert(room);
+	},
+
+	'chat.removeRoom': function(name) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(name, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: name
+		});
+
+		if (room) {
+			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
+		}
+
+		if (room.isPublic) {
+			if (['admin'].indexOf(user.role) == -1) {
+				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+			}
+		} else {
+			if (room.owner != user._id) {
+				throw new Meteor.Error('Это не твоя комната.');
+			}
+		}
+
+		Game.ChatRoom.Collection.remove({
+			name: name
+		});
+
+		Game.Chat.Collection.remove({
+			room: name
+		});
+	},
+
+	'chat.addUserToRoom': function(roomName, login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+		check(login, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
+		});
+
+		if (room) {
+			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
+		}
+
+		if (room.isPublic) {
+			throw new Meteor.Error('Невозможно добавить пользователя');
+		}
+
+		if (room.owner != user._id) {
+			throw new Meteor.Error('Это не твоя комната');
+		}
+
+		var newUser = Meteor.users.find({
+			login: login
+		});
+
+		if (!newUser) {
+			throw new Meteor.Error('Пользователя с таким именем не существует');
+		}
+
+		if (room.users.indexOf( newUser._id ) == -1) {
+			room.users.push( newUser._id );
+			Game.ChatRoom.Collection.update({
+				room: roomName
+			}, {
+				$set: { users: room.users }
+			});
+		}
+	},
+
+	'chat.removeUserFromRoom': function(roomName, login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+		check(login, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
+		});
+
+		if (room) {
+			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
+		}
+
+		if (room.isPublic) {
+			throw new Meteor.Error('Невозможно удалить пользователя');
+		}
+
+		if (room.owner != user._id) {
+			throw new Meteor.Error('Это не твоя комната');
+		}
+
+		var newUser = Meteor.users.find({
+			login: login
+		});
+
+		if (!newUser) {
+			throw new Meteor.Error('Пользователя с таким именем не существует');
+		}
+
+		if (room.owner == newUser._id) {
+
+		}
+
+		var i = room.users.indexOf( newUser._id );
+		if (i != -1) {
+			room.users.splice(i, 1);
+			Game.ChatRoom.Collection.update({
+				room: roomName
+			}, {
+				$set: { users: room.users }
+			});
+		}
 	}
 });
 
-Meteor.publish('chat', function (roomId, limit) {
+Meteor.publish('chat', function (roomName, limit) {
 	if (this.userId) {
-
+		check(roomName, String);
 		check(limit, Match.Integer);
 
 		if (limit > Game.Chat.MESSAGE_LIMIT) {
 			limit = Game.Chat.MESSAGE_LIMIT;
 		}
 
-		if (roomId) {
-
-			check(roomId, String);
-
-			// TODO: Написать проверки!
-			/*
-			var room = Game.ChatRoom.Collection.findOne({
-				_id: roomId
-			});
-
-			if (!room) {
-				return [];
-			}
-			*/
-		}
-
-		return Game.Chat.Collection.find({
-			room: (roomId ? roomId : null)
-		}, {
-			fields: {
-				login: 1,
-				message: 1,
-				data: 1,
-				timestamp: 1,
-				alliance: 1,
-				type: 1,
-				role: 1,
-				cheater: 1,
-				room: 1
-			},
-			sort: {
-				timestamp: -1
-			},
-			limit: limit
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
 		});
+
+		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
+			return Game.Chat.Collection.find({
+				room: roomName
+			}, {
+				fields: {
+					login: 1,
+					message: 1,
+					data: 1,
+					timestamp: 1,
+					alliance: 1,
+					type: 1,
+					role: 1,
+					cheater: 1,
+					room: 1
+				},
+				sort: {
+					timestamp: -1
+				},
+				limit: limit
+			});
+		}
 	} else {
 		this.ready();
 	}

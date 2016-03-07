@@ -341,25 +341,45 @@ Meteor.methods({
 	}
 })
 
-Meteor.publish('mail', function (isAdmin) {
-	if (this.userId) {
+Meteor.publish('mail', function (page, count, isAdmin) {
+
+	check(page, Match.Integer);
+	check(count, Match.Integer);
+
+	if (this.userId && count < 100) {
 		if (isAdmin) {
 			// letters visible at admin page
 			var user = Meteor.users.findOne({ _id: this.userId });
 			if (user && ['admin', 'helper'].indexOf(user.role) != -1) {
+				// publish count
+				Counts.publish(this, 'mailCount', Game.Mail.Collection.find({
+					complaint: true
+				}), { 
+					noReady: true
+				});
+				// publish records
 				return Game.Mail.Collection.find({
 					complaint: true
 				}, {
 					sort: {
 						timestamp: -1
 					},
-					limit: 200
+					skip: (page > 0) ? (page - 1) * count : 0,
+					limit: count
 				});
 			} else {
 				this.ready();
 			}
 		} else {
 			// user's own letters
+			// publish count
+			Counts.publish(this, 'mailCount', Game.Mail.Collection.find({
+				owner: this.userId,
+				deleted: { $ne: true }
+			}), { 
+				noReady: true
+			});
+			// publish records
 			return Game.Mail.Collection.find({
 				owner: this.userId,
 				deleted: { $ne: true }
@@ -367,7 +387,8 @@ Meteor.publish('mail', function (isAdmin) {
 				sort: {
 					timestamp: -1
 				},
-				limit: 200
+				skip: (page > 0) ? (page - 1) * count : 0,
+				limit: count
 			});
 		}
 	} else {

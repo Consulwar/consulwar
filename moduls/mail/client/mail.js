@@ -3,16 +3,32 @@ initMailClient = function () {
 initMailLib();
 
 Game.Mail.showPage = function() {
-	Meteor.subscribe('mail');
-	this.render('mail', {
-		to: 'content',
-		data: {
-			letter: new ReactiveVar(null)
-		}
-	});
+	var page = parseInt( this.getParams().page, 10 );
+	var count = 20;
+
+	if (!page || page < 1) {
+		Router.go('mail', { page: 1 } );
+	} else {
+		Meteor.subscribe('mail', page, count);
+		this.render('mail', {
+			to: 'content',
+			data: {
+				countPerPage: count,
+				letter: new ReactiveVar(null)
+			}
+		});
+	}
 }
 
 Template.mail.helpers({
+	currentPage: function() {
+		return parseInt( Router.current().params.page, 10 );
+	},
+
+	countTotal: function() {
+		return Counts.get('mailCount');
+	},
+
 	mail: function() {
 		var letters = Game.Mail.Collection.find({}, {sort: {'timestamp': -1}}).fetch();
 
@@ -321,16 +337,32 @@ Template.mail.events({
 // ----------------------------------------------------------------------------
 
 Game.Mail.showAdminPage = function() {
-	Meteor.subscribe('mail', true);
-	this.render('mailAdmin', {
-		to: 'content',
-		data: {
-			letter: new ReactiveVar(null)
-		}
-	});
+	var page = parseInt( this.getParams().page, 10 );
+	var count = 20;
+
+	if (!page || page < 1) {
+		Router.go('mailAdmin', { page: 1 } );
+	} else {
+		Meteor.subscribe('mail', page, count, true);
+		this.render('mailAdmin', {
+			to: 'content',
+			data: {
+				countPerPage: count,
+				letter: new ReactiveVar(null)
+			}
+		});
+	}
 }
 
 Template.mailAdmin.helpers({
+	currentPage: function() {
+		return parseInt( Router.current().params.page, 10 );
+	},
+
+	countTotal: function() {
+		return Counts.get('mailCount');
+	},
+
 	mail: function() {
 		return Game.Mail.Collection.find({}, {sort: {'timestamp': -1}}).fetch();
 	},

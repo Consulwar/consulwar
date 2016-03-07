@@ -39,32 +39,23 @@ Template.mail.helpers({
 		}
 
 		// insert daily quest into letters
-		var user = Meteor.user();
-		var dailyQuest = Game.Quest.getDaily();
+		if (Router.current().params.page == 1) {
+			var user = Meteor.user();
+			var dailyQuest = Game.Quest.getDaily();
 
-		if (dailyQuest) {
-			var quest = {
-				to: user._id,
-				from: 0,
-				sender: Game.Persons[dailyQuest.who || 'tamily'].name,
-				recipient: user.login,
-				name: Game.Persons[dailyQuest.who || 'tamily'].name,
-				subject: dailyQuest.name,
-				timestamp: dailyQuest.startTime,
-				status: dailyQuest.status == Game.Quest.status.FINISHED ? 'Выполнено' : ''
-			};
-
-			var questAdded = false;
-			for (var i = 0; i < letters.length; i++) {
-				if (dailyQuest.startTime > letters[i].timestamp) {
-					letters.splice(i, 0, quest);
-					questAdded = true;
-					break;
-				}
-			}
-
-			if (!questAdded) {
-				letters.push(quest);
+			if (dailyQuest) {
+				var quest = {
+					to: user._id,
+					from: 0,
+					sender: Game.Persons[dailyQuest.who || 'tamily'].name,
+					recipient: user.login,
+					name: Game.Persons[dailyQuest.who || 'tamily'].name,
+					subject: dailyQuest.name,
+					timestamp: dailyQuest.startTime,
+					status: dailyQuest.status == Game.Quest.status.FINISHED ? 'Выполнено' : ''
+				};
+				
+				letters.unshift(quest); // always on top
 			}
 		}
 

@@ -76,6 +76,10 @@ Meteor.methods({
 			text = text.substr(0, 5000);
 		}
 
+		if (text.length == 0) {
+			throw new Meteor.Error('Напиши хоть что-нибудь!');
+		}
+
 		text = sanitizeHtml(text, {
 			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
 			allowedAttributes: {

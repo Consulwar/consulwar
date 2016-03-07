@@ -14,6 +14,7 @@ Game.Mail.showPage = function() {
 			to: 'content',
 			data: {
 				countPerPage: count,
+				isRecipientOk: new ReactiveVar(false),
 				letter: new ReactiveVar(null)
 			}
 		});
@@ -76,6 +77,10 @@ Template.mail.helpers({
 
 	userId: function() {
 		return Meteor.userId();
+	},
+
+	isRecipientOk: function() {
+		return this.isRecipientOk.get();
 	},
 
 	army: function(start, result) {
@@ -329,6 +334,12 @@ Template.mail.events({
 				}
 			}
 		);
+	},
+
+	'change input.recipient': function(e, t) {
+		Meteor.call('mail.checkLogin', e.currentTarget.value, function(err, result) {
+			t.data.isRecipientOk.set(result);
+		});
 	}
 });
 

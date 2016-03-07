@@ -198,6 +198,24 @@ Meteor.methods({
 		});
 	},
 
+	'mail.checkLogin': function(login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var target = Meteor.users.findOne({
+			login: login
+		});
+
+		return target ? true : false;
+	},
+
 	'mail.complainLetter': function(id) {
 		var user = Meteor.user();
 

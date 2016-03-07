@@ -3,14 +3,19 @@ Meteor.startup(function () {
 Meteor.subscribe('online');
 
 Game.Chat.showPage = function() {
-	Meteor.subscribe('chat', this.params.room, Game.Chat.MESSAGE_AMOUNT);
+	var roomId = this.getParams().room;
 
-	this.render('chat', {
-		to: 'content',
-		data: {
-			maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT )
-		}
-	});
+	if (!roomId) {
+		Router.go('chat', { room: 'general' } );
+	} else {
+		Meteor.subscribe('chat', this.params.room, Game.Chat.MESSAGE_AMOUNT);
+		this.render('chat', {
+			to: 'content',
+			data: {
+				maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT )
+			}
+		});
+	}
 }
 
 var scrollChatToBottom = function(force) {

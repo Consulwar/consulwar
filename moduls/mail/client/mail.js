@@ -54,7 +54,7 @@ Template.mail.helpers({
 					timestamp: dailyQuest.startTime,
 					status: dailyQuest.status == Game.Quest.status.FINISHED ? 'Выполнено' : ''
 				};
-				
+
 				letters.unshift(quest); // always on top
 			}
 		}
@@ -316,6 +316,7 @@ Template.mail.events({
 			function(err, response) {
 				if (!err) {
 					e.currentTarget.reset();
+					t.data.isRecipientOk.set(false);
 					closeMessages(t);
 					t.$('input[type="submit"]').prop('disabled', false);
 					Notifications.success('Письмо отправлено');

@@ -1,16 +1,17 @@
 <template name="chat">
 	<div class="chat">
-		<ul class="participants">
-			{{#each users}}
-			<li>{{this.login}}</li>
-			{{/each}}
-		</ul>
-
-		{{#if hasMore}}
-			<a class="more">Показать предыдущие</a>
+		{{#if users}}
+			<ul class="participants">
+				{{#each users}}
+					<li class="{{#unless this.offline}}online{{/unless}}">{{this.login}}</li>
+				{{/each}}
+			</ul>
 		{{/if}}
 
 		<ul class="messages">
+			{{#if hasMore}}
+				<li class="more">Показать предыдущие</li>
+			{{/if}}
 			{{#each messages}}
 			<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
 			{{#if this.data}}* {{/if}}<span class="{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} {{#if eq this.login user.login}}me{{/if}}">{{this.login}}{{#unless this.data}}:{{/unless}}</span>
@@ -33,6 +34,12 @@
 				{{#if eq this.data.type 'block'}}
 					заблокировал чат {{this.message}}
 				{{/if}}
+				{{#if eq this.data.type 'add'}}
+					добавил в чат {{this.message}}
+				{{/if}}
+				{{#if eq this.data.type 'remove'}}
+					удалил из чата {{this.message}}
+				{{/if}}
 			{{else}}
 				{{{highlightUser this.message}}}
 			{{/if}}
@@ -43,7 +50,7 @@
 			{{/each}}
 		</ul>
 
-		<form>
+		<form id="message">
 			<textarea name="text" maxlength="140"></textarea>
 			<input type="submit" value="Послать">
 			<ul class="resources">
@@ -55,5 +62,12 @@
 				<li class="credits">5 000</li>
 			</ul>-->
 		</form>
+
+		{{#if canControl}}
+			<form id="control">
+				<input name="login" />
+				<input type="submit" value="Добавить" />
+			</form>
+		{{/if}}
 	</div>
 </template>

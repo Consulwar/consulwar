@@ -342,6 +342,45 @@ Meteor.methods({
 		});
 	},
 
+	'chat.getRoomInfo': function(roomName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+		}
+
+		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
+			throw new Meteor.Error('Тебе сюда нельзя');
+		}
+
+		if (!room.isPublic) {
+			var users = Meteor.users.find({
+				_id: { $in: room.users }
+			}).fetch();
+
+			room.logins = [];
+			for (var i = 0; i < users.length; i++) {
+				room.logins.push(users[i].login);
+			}
+		}
+
+		return room;
+	},
+
 	'chat.addUserToRoom': function(roomName, login) {
 		var user = Meteor.user();
 
@@ -380,27 +419,29 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.users.indexOf( target._id ) == -1) {
-			room.users.push( target._id );
-
-			Game.ChatRoom.Collection.update({
-				name: roomName
-			}, {
-				$set: { users: room.users }
-			});
-
-			Game.Chat.Collection.insert({
-				room: roomName,
-				user_id: user._id,
-				login: user.login,
-				alliance: user.alliance,
-				data: {
-					type: 'add'
-				},
-				message: target.login,
-				timestamp: Math.floor(new Date().valueOf() / 1000)
-			});
+		if (room.users.indexOf( target._id ) != -1) {
+			throw new Meteor.Error('Пользователь уже в чате');
 		}
+
+		room.users.push( target._id );
+
+		Game.ChatRoom.Collection.update({
+			name: roomName
+		}, {
+			$set: { users: room.users }
+		});
+
+		Game.Chat.Collection.insert({
+			room: roomName,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'add'
+			},
+			message: target.login,
+			timestamp: Math.floor(new Date().valueOf() / 1000)
+		});
 	},
 
 	'chat.removeUserFromRoom': function(roomName, login) {
@@ -446,27 +487,29 @@ Meteor.methods({
 		}
 
 		var i = room.users.indexOf( target._id );
-		if (i != -1) {
-			room.users.splice(i, 1);
-
-			Game.ChatRoom.Collection.update({
-				name: roomName
-			}, {
-				$set: { users: room.users }
-			});
-
-			Game.Chat.Collection.insert({
-				room: roomName,
-				user_id: user._id,
-				login: user.login,
-				alliance: user.alliance,
-				data: {
-					type: 'remove'
-				},
-				message: target.login,
-				timestamp: Math.floor(new Date().valueOf() / 1000)
-			});
+		if (i == -1) {
+			throw new Meteor.Error('Такого пользователя нет в чате');
 		}
+
+		room.users.splice(i, 1);
+
+		Game.ChatRoom.Collection.update({
+			name: roomName
+		}, {
+			$set: { users: room.users }
+		});
+
+		Game.Chat.Collection.insert({
+			room: roomName,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'remove'
+			},
+			message: target.login,
+			timestamp: Math.floor(new Date().valueOf() / 1000)
+		});
 	}
 });
 
@@ -488,6 +531,7 @@ Meteor.publish('chat', function (roomName, limit) {
 				room: roomName
 			}, {
 				fields: {
+					_id: 1,
 					login: 1,
 					message: 1,
 					data: 1,

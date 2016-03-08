@@ -3,16 +3,25 @@ Meteor.startup(function () {
 Meteor.subscribe('online');
 
 Game.Chat.showPage = function() {
-	var roomId = this.getParams().room;
+	var roomName = this.getParams().room;
 
-	if (!roomId) {
+	if (!roomName) {
 		Router.go('chat', { room: 'general' } );
 	} else {
+		var roomInfo = new ReactiveVar(null);
+		Meteor.call('chat.getRoomInfo', roomName, function(err, data) {
+			if (!err) {
+				roomInfo.set(data);
+			}
+		});
+
 		Meteor.subscribe('chat', this.params.room, Game.Chat.MESSAGE_AMOUNT);
+
 		this.render('chat', {
 			to: 'content',
 			data: {
-				maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT )
+				maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT ),
+				room: roomInfo
 			}
 		});
 	}
@@ -52,8 +61,38 @@ Template.chat.helpers({
 		return Game.Chat.Collection.find({}, {sort: {'timestamp': 1}});
 	},
 
+	room: function() {
+		return this.room.get();
+	},
+
+	canControl: function() {
+		var room = this.room.get();
+		if (!room || room.isPublic) {
+			return false;
+		}
+		return room.owner == Meteor.userId() ? true : false;
+	},
+
 	users: function() {
-		return Meteor.users.find({}, {sort: {'login': 1}});
+		var room = this.room.get();
+		if (!room) {
+			return null;
+		}
+
+		if (room.isPublic) {
+			return Meteor.users.find({}, {sort: {'login': 1}});
+		}
+
+		var users = [];
+		for (var i = 0; i < room.logins.length; i++) {
+			var user = Meteor.users.findOne({ login: room.logins[i] });
+			users.push({
+				login: room.logins[i],
+				offline: user ? false : true
+			});
+		}
+
+		return users;
 	},
 
 	price: function() {
@@ -74,21 +113,21 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
-	'click a.more': function(e, t) {
+	'click .chat .more': function(e, t) {
 		var count = t.data.maxMessages.get();
 		t.data.maxMessages.set( count + Game.Chat.MESSAGE_AMOUNT );
 		Meteor.subscribe('chat', Router.current().params.room, t.data.maxMessages.get());
 	},
 
-	'submit .chat form': function(e, t) {
+	'submit .chat #message': function(e, t) {
 		e.preventDefault();
 
-		var roomId = Router.current().params.room;
-		var text = t.find('textarea[name="text"]').value;
+		var roomName = Router.current().params.room;
+		var text = t.find('#message textarea[name="text"]').value;
 
-		t.find('form').reset();
+		t.find('#message').reset();
 
-		Meteor.call('chat.sendMessage', text, roomId, function(err, result) {
+		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
 			if (err) {
 				Notifications.error(err);
 			}
@@ -109,12 +148,29 @@ Template.chat.events({
 
 	'keypress textarea[name="text"]': function(e, t) {
 		if (e.ctrlKey && (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter')) {
-			t.find('input[type="submit"]').click();
+			t.find('#message input[type="submit"]').click();
 		}
 	},
 
 	'click .messages span:not(.dice), click .participants li': function(e, t) {
-		t.find('textarea[name="text"]').value = t.find('textarea[name="text"]').value + '@' + e.currentTarget.innerHTML;
+		t.find('#message textarea[name="text"]').value = t.find('#message textarea[name="text"]').value + '@' + e.currentTarget.innerHTML;
+	},
+
+	'submit .chat #control': function(e, t) {
+		e.preventDefault();
+
+		var login = t.find('#control input[name="login"]').value;
+		var roomName = Router.current().params.room;
+
+		if (login && roomName) {
+			Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
+				if (!err) {
+					t.find('#control').reset();
+				} else {
+					Notifications.error(err.error);
+				}
+			});
+		}
 	}
 });
 

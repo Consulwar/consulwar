@@ -34,9 +34,20 @@
 				&.dice
 					color #3eb5f1
 			
+			&.more
+				cursor pointer
+				text-align center
+				color #9399b1
+
+			&.remove
+				color red
+
 			&.block
 				color red
 			
+			&.add
+				color green
+
 			&.unblock
 				color green
 				
@@ -82,6 +93,18 @@
 			font-size 17px
 			overflow hidden
 			
+		input
+			width 200px
+			height 62px
+			padding 2px
+			border 1px solid #1D2D3C
+			background-color #090E14
+			color #fff
+			resize none
+			vertical-align top
+			font-size 17px
+			overflow hidden
+
 		[type="submit"]
 			width 120px
 			height 68px
@@ -109,9 +132,22 @@
 		
 	.participants
 		float right
-		height 428px
+		width 160px
+		height 338px
 		overflow-y auto
-		padding-right 15px
+		overflow-x hidden
+		padding 11px
+		text-align right
 		
 		li
 			cursor pointer
+			color #777777
+			
+			&.online
+				color #FFFFFF
+			
+	#control
+		position absolute
+		right 0px
+		bottom 0px
+		height 69px

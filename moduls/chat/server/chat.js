@@ -167,6 +167,7 @@ Meteor.methods({
 			}
 		})
 
+		// TODO: set correct room name!
 		Game.Chat.Collection.insert({
 			user_id: user._id,
 			login: user.login,
@@ -359,8 +360,8 @@ Meteor.methods({
 			name: roomName
 		});
 
-		if (room) {
-			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
+		if (!room) {
+			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
 		if (room.isPublic) {
@@ -371,20 +372,33 @@ Meteor.methods({
 			throw new Meteor.Error('Это не твоя комната');
 		}
 
-		var newUser = Meteor.users.find({
+		var target = Meteor.users.findOne({
 			login: login
 		});
 
-		if (!newUser) {
+		if (!target) {
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.users.indexOf( newUser._id ) == -1) {
-			room.users.push( newUser._id );
+		if (room.users.indexOf( target._id ) == -1) {
+			room.users.push( target._id );
+
 			Game.ChatRoom.Collection.update({
-				room: roomName
+				name: roomName
 			}, {
 				$set: { users: room.users }
+			});
+
+			Game.Chat.Collection.insert({
+				room: roomName,
+				user_id: user._id,
+				login: user.login,
+				alliance: user.alliance,
+				data: {
+					type: 'add'
+				},
+				message: target.login,
+				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 		}
 	},
@@ -407,8 +421,8 @@ Meteor.methods({
 			name: roomName
 		});
 
-		if (room) {
-			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
+		if (!room) {
+			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
 		if (room.isPublic) {
@@ -419,25 +433,38 @@ Meteor.methods({
 			throw new Meteor.Error('Это не твоя комната');
 		}
 
-		var newUser = Meteor.users.find({
+		var target = Meteor.users.findOne({
 			login: login
 		});
 
-		if (!newUser) {
+		if (!target) {
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.owner == newUser._id) {
-
+		if (room.owner == target._id) {
+			throw new Meteor.Error('Зачем?');
 		}
 
-		var i = room.users.indexOf( newUser._id );
+		var i = room.users.indexOf( target._id );
 		if (i != -1) {
 			room.users.splice(i, 1);
+
 			Game.ChatRoom.Collection.update({
-				room: roomName
+				name: roomName
 			}, {
 				$set: { users: room.users }
+			});
+
+			Game.Chat.Collection.insert({
+				room: roomName,
+				user_id: user._id,
+				login: user.login,
+				alliance: user.alliance,
+				data: {
+					type: 'remove'
+				},
+				message: target.login,
+				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 		}
 	}

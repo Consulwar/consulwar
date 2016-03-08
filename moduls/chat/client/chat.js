@@ -144,7 +144,7 @@ Template.chat.events({
 	'click li a.block': function(e, t) {
 		e.preventDefault();
 
-		Meteor.call('chat.blockOrUnblockUser', e.currentTarget.dataset.login, function(err) {
+		Meteor.call('chat.blockUser', e.currentTarget.dataset.login, 86400, null, function(err) {
 			if (err) {
 				Notifications.error(err);
 			}

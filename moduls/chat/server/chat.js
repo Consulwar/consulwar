@@ -12,22 +12,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (user.muted == true) {
+		if (user.chatBlockedUntil && user.chatBlockedUntil > Game.getCurrentTime()) {
 			throw new Meteor.Error('Чат заблокирован');
-		}
-
-		// check message
-		check(message, String);
-
-		message = sanitizeHtml(message.trim().substr(0, 140), {
-			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
-			allowedAttributes: {
-				'a': [ 'href' ]
-			}
-		}).trim();
-
-		if (message.length == 0) {
-			throw new Meteor.Error('Напиши хоть что-нибудь что бы отправить сообщение!');
 		}
 
 		// check room name
@@ -43,6 +29,27 @@ Meteor.methods({
 
 		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
 			throw new Meteor.Error('Вы не можете писать в эту комнату');
+		}
+
+		if (room.blocked
+		 && room.blocked[user.login]
+		 && room.blocked[user.login] > Game.getCurrentTime()
+		) {
+			throw new Meteor.Error('Чат ' + roomName + ' заблокирован');
+		}
+
+		// check message
+		check(message, String);
+
+		message = sanitizeHtml(message.trim().substr(0, 140), {
+			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
+			allowedAttributes: {
+				'a': [ 'href' ]
+			}
+		}).trim();
+
+		if (message.length == 0) {
+			throw new Meteor.Error('Напиши хоть что-нибудь что бы отправить сообщение!');
 		}
 
 		// calc price
@@ -156,10 +163,10 @@ Meteor.methods({
 		Game.Chat.Collection.insert(set);
 	},
 
-	'chat.blockOrUnblockUser': function(login) {
+	'chat.blockUser': function(login, time, roomName) {
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user && !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
@@ -167,7 +174,25 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (['admin', 'helper'].indexOf(user.role) == -1) {
+		var hasAccess = ['admin', 'helper'].indexOf(user.role) != -1;
+
+		if (roomName) {
+			check(roomName, String);
+
+			var room = Game.ChatRoom.Collection.findOne({
+				name: roomName
+			});
+
+			if (!room) {
+				throw new Meteor.Error('Нет такой комнаты');
+			}
+
+			if (!room.isPublic && !hasAccess) {
+				hasAccess = room.owner == user._id;
+			}
+		}
+
+		if (!hasAccess) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
@@ -179,25 +204,63 @@ Meteor.methods({
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 
-		Meteor.users.update({
-			_id: target._id
-		}, {
-			$set: {
-				muted: target.muted ? false : true
-			}
-		})
+		check(time, Match.Integer);
 
-		// TODO: set correct room name!
-		Game.Chat.Collection.insert({
-			user_id: user._id,
-			login: user.login,
-			alliance: user.alliance,
-			data: {
-				type: target.muted ? 'unblock' : 'block'
-			},
-			message: target.login,
-			timestamp: Math.floor(new Date().valueOf() / 1000)
-		});
+		var timestamp = Game.getCurrentTime() + time;
+
+		if (roomName) {
+			// room block
+			var blocked = room.blocked ? room.blocked : {};
+			blocked[ login ] = timestamp;
+
+			Game.ChatRoom.Collection.update({
+				name: roomName
+			}, {
+				$set: { blocked: blocked }
+			});
+
+			// send message
+			Game.Chat.Collection.insert({
+				room: roomName,
+				user_id: user._id,
+				login: user.login,
+				alliance: user.alliance,
+				data: {
+					type: time <= 0 ? 'unblock' : 'block',
+					timestamp: timestamp
+				},
+				message: target.login,
+				timestamp: Math.floor(new Date().valueOf() / 1000)
+			});
+
+		} else {
+			// general block
+			Meteor.users.update({
+				_id: target._id
+			}, {
+				$set: {
+					chatBlockedUntil: timestamp
+				}
+			});
+
+			// send messages
+			var rooms = Game.ChatRoom.Collection.find().fetch();
+
+			for (var i = 0; i < rooms.length; i++) {
+				Game.Chat.Collection.insert({
+					room: rooms[i].name,
+					user_id: user._id,
+					login: user.login,
+					alliance: user.alliance,
+					data: {
+						type: time <= 0 ? 'unblock' : 'block',
+						timestamp: timestamp
+					},
+					message: target.login,
+					timestamp: Math.floor(new Date().valueOf() / 1000)
+				});
+			}
+		}
 	},
 
 	'chat.banAccount': function(login) {

@@ -8,20 +8,12 @@ Game.Chat.showPage = function() {
 	if (!roomName) {
 		Router.go('chat', { room: 'general' } );
 	} else {
-		var roomInfo = new ReactiveVar(null);
-		Meteor.call('chat.getRoomInfo', roomName, function(err, data) {
-			if (!err) {
-				roomInfo.set(data);
-			}
-		});
-
+		Meteor.subscribe('chatRoom', this.params.room);
 		Meteor.subscribe('chat', this.params.room, Game.Chat.MESSAGE_AMOUNT);
-
 		this.render('chat', {
 			to: 'content',
 			data: {
-				maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT ),
-				room: roomInfo
+				maxMessages: new ReactiveVar( Game.Chat.MESSAGE_AMOUNT )
 			}
 		});
 	}
@@ -61,20 +53,25 @@ Template.chat.helpers({
 		return Game.Chat.Collection.find({}, {sort: {'timestamp': 1}});
 	},
 
-	room: function() {
-		return this.room.get();
-	},
-
 	canControl: function() {
-		var room = this.room.get();
+		var roomName = Router.current().params.room;
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
+		});
+
 		if (!room || room.isPublic) {
 			return false;
 		}
+
 		return room.owner == Meteor.userId() ? true : false;
 	},
 
 	users: function() {
-		var room = this.room.get();
+		var roomName = Router.current().params.room;
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
+		});
+
 		if (!room) {
 			return null;
 		}

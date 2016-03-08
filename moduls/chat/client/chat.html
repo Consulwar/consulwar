@@ -53,9 +53,11 @@
 		<form id="message">
 			<textarea name="text" maxlength="140"></textarea>
 			<input type="submit" value="Послать">
-			<ul class="resources">
-				<li class="crystals">{{price}}</li>
-			</ul>
+			{{#if price}}
+				<ul class="resources">
+					<li class="crystals">{{price}}</li>
+				</ul>
+			{{/if}}
 
 			<!--<button>Больше никогда не платить за ссаный чат</button>
 			<ul class="resources">

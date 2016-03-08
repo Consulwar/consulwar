@@ -1,10 +1,10 @@
 Meteor.startup(function () {
 
 Meteor.methods({
-	'chat.sendMessage': function(message, roomId) {
+	'chat.sendMessage': function(message, roomName) {
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
@@ -12,6 +12,11 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		if (user.muted == true) {
+			throw new Meteor.Error('Чат заблокирован');
+		}
+
+		// check message
 		check(message, String);
 
 		message = sanitizeHtml(message.trim().substr(0, 140), {
@@ -25,37 +30,43 @@ Meteor.methods({
 			throw new Meteor.Error('Напиши хоть что-нибудь что бы отправить сообщение!');
 		}
 
-		if (user.muted == true) {
-			throw new Meteor.Error('Чат заблокирован');
+		// check room name
+		check(roomName, String);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName
+		});
+		
+		if (!room) {
+			throw new Meteor.Error('Нет такой комнаты');
 		}
 
+		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
+			throw new Meteor.Error('Вы не можете писать в эту комнату');
+		}
+
+		// calc price
 		var price = Game.Chat.getMessagePrice();
+		var payerId = (!room.isPublic && room.isOwnerPays) ? room.owner : user._id;
+		var payerResources = Game.Resources.getValue(payerId);
 
-		var resources = Game.Resources.getValue();
-
-		if (resources.crystals.amount < price) {
-			throw new Meteor.Error('Недостаточно ресурсов');
+		if (payerResources.crystals.amount < price) {
+			if (payerId == user._id) {
+				throw new Meteor.Error('У Вас недостаточно ресурсов');
+			} else {
+				throw new Meteor.Error('У владельца чата недостаточно ресурсов');
+			}
 		}
 
+		// send message
 		var set = {
+			room: roomName,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
 			message: message,
 			timestamp: Math.floor(new Date().valueOf() / 1000)
 		};
-
-		check(roomId, String);
-
-		var room = Game.ChatRoom.Collection.findOne({
-			name: roomId
-		});
-		
-		if (room && (room.isPublic || room.users.indexOf(user._id) != -1)) {
-			set.room = roomId;
-		} else {
-			throw new Meteor.Error('Вы не можете писать в эту комнату');
-		}
 
 		if (user.role) {
 			set.role = user.role;
@@ -94,7 +105,12 @@ Meteor.methods({
 				set.message = message.substr(3);
 
 			} else if (message.substr(0, 8) == '/сепукку') {
-				if (resources.crystals.amount < 0 || resources.metals.amount < 0 || resources.honor.amount < 0) {
+				var userResources = Game.Resources.getValue();
+
+				if (userResources.crystals.amount < 0
+				 || userResources.metals.amount < 0
+				 || userResources.honor.amount < 0
+				) {
 					throw new Meteor.Error('Вы слишком бедны что бы совершать сепукку');
 				}
 
@@ -127,11 +143,15 @@ Meteor.methods({
 			price = 5000 * set.data.dice.dices.amount;
 		}
 
-		if (resources.crystals.amount < price) {
-			throw new Meteor.Error("Not enough resources");
+		if (payerResources.crystals.amount < price) {
+			if (payerId == user._id) {
+				throw new Meteor.Error('У Вас недостаточно ресурсов');
+			} else {
+				throw new Meteor.Error('У владельца чата недостаточно ресурсов');
+			}
 		}
 		
-		Game.Resources.spend({crystals: price});
+		Game.Resources.spend({crystals: price}, payerId);
 
 		Game.Chat.Collection.insert(set);
 	},
@@ -265,7 +285,7 @@ Meteor.methods({
 		})
 	},
 
-	'chat.createRoom': function(name, isPublic) {
+	'chat.createRoom': function(name, isPublic, isOwnerPays) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -298,6 +318,10 @@ Meteor.methods({
 			room.owner = user._id;
 			room.users = [ user._id ];
 			room.logins = [ user.login ];
+
+			if (isOwnerPays) {
+				room.isOwnerPays = true;
+			}
 		}
 
 		Game.ChatRoom.Collection.insert(room);

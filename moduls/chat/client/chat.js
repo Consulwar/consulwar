@@ -93,6 +93,14 @@ Template.chat.helpers({
 	},
 
 	price: function() {
+		var room = Game.ChatRoom.Collection.findOne({
+			name: Router.current().params.room
+		});
+
+		if (room && !room.isPublic && room.isOwnerPays && room.owner != Meteor.userId()) {
+			return 0;
+		}
+
 		return Game.Chat.getMessagePrice();
 	},
 

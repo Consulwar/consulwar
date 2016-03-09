@@ -55,9 +55,13 @@
 				<span class="subject">{{subject}}</span>
 				<time>{{formatDate timestamp}}</time>
 				<div class="text">{{{nl2br text}}}</div>
-				{{#if eq to userId}}
-					<button class="complain">Пожаловаться</button>
-				{{/if}}
+				{{#unless eq from userId}}
+					{{#if complaint}}
+						<span class="complaint">Отправлена жалоба</span>
+					{{else}}
+						<button class="complain">Пожаловаться</button>
+					{{/if}}
+				{{/unless}}
 			{{/with}}
 			<button class="reply">Ответить</button>
 		</div>

@@ -159,17 +159,7 @@ Template.mail.events({
 				return;
 			}
 
-			t.data.letter.set({
-				_id: letter._id,
-				to: letter.to,
-				from: letter.from,
-				sender: letter.sender,
-				recipient: letter.recipient,
-				name: letter.from == Meteor.userId() ? '-> ' + letter.recipient : letter.sender,
-				subject: letter.subject,
-				timestamp: letter.timestamp,
-				text: letter.text
-			});
+			t.data.letter.set(letter);
 
 			if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
 				Meteor.call('mail.readLetter', letter._id);
@@ -291,12 +281,18 @@ Template.mail.events({
 
 	// Пожаловаться
 	'click button.complain': function(e, t) {
-		closeMessages(t);
 		var letter = t.data.letter.get();
 		if (letter) {
+			// mark current as complaint
+			letter.complaint = true;
+			t.data.letter.set(letter);
+			// send request
 			Meteor.call('mail.complainLetter', letter._id, function(err, data) {
 				if (err) {
 					Notifications.error('Невозможно отправить жалобу', err.error);
+					// request failed, so mark as not complaint
+					letter.complaint = false;
+					t.data.letter.set(letter);
 				} else {
 					Notifications.success('Жалоба отправлена');
 				}

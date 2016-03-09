@@ -197,10 +197,34 @@ Meteor.methods({
 		}
 	},
 
+	'mail.getLetter': function(id) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin', 'helper'].indexOf(user.role) >= 0) {
+			return Game.Mail.Collection.findOne({
+				_id: id,
+				complaint: true
+			});
+		} else {
+			return Game.Mail.Collection.findOne({
+				_id: id,
+				owner: user._id
+			});
+		}
+	},
+
 	'mail.readLetter': function(id) {
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 

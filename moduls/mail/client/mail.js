@@ -153,60 +153,65 @@ Template.mail.events({
 
 	// Открыть письмо
 	'click tr:not(.header,.from_tamily)': function(e, t) {
-		var letter = Game.Mail.Collection.findOne({'_id': e.currentTarget.dataset.id});
+		Meteor.call('mail.getLetter', e.currentTarget.dataset.id, function(err, letter) {
+			if (err) {
+				Notifications.error(err.error);
+				return;
+			}
 
-		t.data.letter.set({
-			_id: letter._id,
-			to: letter.to,
-			from: letter.from,
-			sender: letter.sender,
-			recipient: letter.recipient,
-			name: letter.from == Meteor.userId() ? '-> ' + letter.recipient : letter.sender,
-			subject: letter.subject,
-			timestamp: letter.timestamp,
-			text: letter.text
+			t.data.letter.set({
+				_id: letter._id,
+				to: letter.to,
+				from: letter.from,
+				sender: letter.sender,
+				recipient: letter.recipient,
+				name: letter.from == Meteor.userId() ? '-> ' + letter.recipient : letter.sender,
+				subject: letter.subject,
+				timestamp: letter.timestamp,
+				text: letter.text
+			});
+
+			if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
+				Meteor.call('mail.readLetter', letter._id);
+			}
+
+			closeMessages(t);
+
+			if (letter.type == 'fleetbattle') {
+				t.$('.battle_letter').show();
+			} else if (letter.type == 'battleonearth') {
+				t.$('.battle_on_earth_letter').show();
+			} else if (letter.type == 'quiz') {
+				
+				Meteor.call('getQuiz', letter.text, function(err, result) {
+					Blaze.renderWithData(
+						Template.quiz, 
+						{
+							id: result._id,
+							userAnswer: result.userAnswer,
+							who: result.who || 'psm',
+							type: 'quiz',
+							title: result.name, 
+							text: result.text, 
+							options: $.map(result.options, function(value, name) {
+								return {
+									name: name,
+									text: value,
+									value: result.result[name] || 0,
+									totalVotes: result.totalVotes,
+								};
+							}),
+							totalVotes: result.totalVotes,
+							votePower: Game.User.getVotePower(),
+							canVote: !result.userAnswer /*|| !Game.User.getVotePower() ? false : true*/
+						}, 
+						$('.over')[0]
+					)
+				})
+			} else {
+				t.$('.letter').show();
+			}
 		});
-
-		if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
-			Meteor.call('mail.readLetter', letter._id);
-		}
-
-		closeMessages(t);
-
-		if (letter.type == 'fleetbattle') {
-			t.$('.battle_letter').show();
-		} else if (letter.type == 'battleonearth') {
-			t.$('.battle_on_earth_letter').show();
-		} else if (letter.type == 'quiz') {
-			
-			Meteor.call('getQuiz', letter.text, function(err, result) {
-				Blaze.renderWithData(
-					Template.quiz, 
-					{
-						id: result._id,
-						userAnswer: result.userAnswer,
-						who: result.who || 'psm',
-						type: 'quiz',
-						title: result.name, 
-						text: result.text, 
-						options: $.map(result.options, function(value, name) {
-							return {
-								name: name,
-								text: value,
-								value: result.result[name] || 0,
-								totalVotes: result.totalVotes,
-							};
-						}),
-						totalVotes: result.totalVotes,
-						votePower: Game.User.getVotePower(),
-						canVote: !result.userAnswer /*|| !Game.User.getVotePower() ? false : true*/
-					}, 
-					$('.over')[0]
-				)
-			})
-		} else {
-			t.$('.letter').show();
-		}
 	},
 
 	// Дейлик

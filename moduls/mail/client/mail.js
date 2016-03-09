@@ -49,7 +49,11 @@ Template.mail.helpers({
 
 		for (var i = 0; i < letters.length; i++) {
 			letters[i].name = letters[i].from == Meteor.userId() ? '-> ' + letters[i].recipient : letters[i].sender;
-			letters[i].status = letters[i].status == game.Mail.status.read ? 'Прочитано': '';
+			if (letters[i].sentCount) {
+				letters[i].status = 'Прочитано ' + letters[i].sentCount + ' из ' + letters[i].readCount;
+			} else {
+				letters[i].status = letters[i].status == game.Mail.status.read ? 'Прочитано': '';
+			}
 		}
 
 		// insert daily quest into letters

@@ -98,7 +98,7 @@ Meteor.methods({
 			}
 
 			// insert sender copy
-			Game.Mail.Collection.insert({
+			var parentId = Game.Mail.Collection.insert({
 				owner: user._id,
 				from: user._id,
 				sender: user.login,
@@ -115,6 +115,7 @@ Meteor.methods({
 			// insert recipients copies
 			// TODO: Сделать рассылку очередями!
 			var users = Meteor.users.find().fetch();
+			var sentCount = 0;
 
 			for (var i = 0; i < users.length; i++) {
 				if (users[i]._id == user._id) {
@@ -123,6 +124,7 @@ Meteor.methods({
 
 				Game.Mail.Collection.insert({
 					owner: users[i]._id,
+					parentId: parentId,
 					from: user._id,
 					sender: user.login,
 					to: users[i]._id,
@@ -134,7 +136,16 @@ Meteor.methods({
 				});
 
 				Meteor.users.update({ _id: users[i]._id }, { $inc: { totalMail: 1 } });
+
+				sentCount++;
 			}
+
+			Game.Mail.Collection.update({ _id: parentId }, {
+				$set: {
+					sentCount: sentCount,
+					readCount: 0 
+				}
+			});
 
 		} else {
 
@@ -151,20 +162,8 @@ Meteor.methods({
 				throw new Meteor.Error('Получателя с таким ником не существует');
 			}
 
-			var price = Game.Chat.getMessagePrice();
-
-			var resources = Game.Resources.getValue();
-
-			if (resources.crystals.amount < price) {
-				throw new Meteor.Error('Недостаточно ресурсов');
-			}
-
-			if (price > 0) {
-				Game.Resources.spend({crystals: price});
-			}
-
 			// insert sender copy
-			Game.Mail.Collection.insert({
+			var parentId = Game.Mail.Collection.insert({
 				owner: user._id,
 				from: user._id,
 				sender: user.login,
@@ -172,16 +171,17 @@ Meteor.methods({
 				recipient: to.login,
 				subject: subject,
 				text: text,
-				status: game.Mail.status.read,
+				status: game.Mail.status.unread,
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
 			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
-			
+
 			if (user._id != to._id) {
 				// insert recipient copy
 				Game.Mail.Collection.insert({
 					owner: to._id,
+					parentId: parentId,
 					from: user._id,
 					sender: user.login,
 					to: to._id,
@@ -210,8 +210,7 @@ Meteor.methods({
 
 		if (['admin', 'helper'].indexOf(user.role) >= 0) {
 			return Game.Mail.Collection.findOne({
-				_id: id,
-				complaint: true
+				_id: id
 			});
 		} else {
 			return Game.Mail.Collection.findOne({
@@ -229,19 +228,31 @@ Meteor.methods({
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
 		check(id, String);
 
-		Game.Mail.Collection.update({
+		var letter = Game.Mail.Collection.findOne({
 			_id: id,
-			owner: user._id
-		}, {
-			$set: {
-				status: game.Mail.status.read
-			}
+			owner: user._id,
+			status: game.Mail.status.unread
 		});
+
+		if (!letter) {
+			throw new Meteor.Error('Ты втираешь мне какую-то дичь!');
+		}
+
+		Game.Mail.Collection.update({ _id: id }, {
+			$set: { status: game.Mail.status.read }
+		});
+
+		if (letter.parentId) {
+			Game.Mail.Collection.update({ _id: letter.parentId }, {
+				$set: { status: game.Mail.status.read },
+				$inc: { readCount: 1 }
+			});
+		}
 	},
 
 	'mail.checkLogin': function(login) {

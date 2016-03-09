@@ -26,7 +26,7 @@ Game.Mail.showPage = function() {
 
 Template.mail.helpers({
 	countTotal: function() {
-		return 200; // TODO: Create agregation field!
+		return Meteor.user().totalMail;
 	},
 
 	mail: function() {
@@ -34,7 +34,7 @@ Template.mail.helpers({
 			owner: Meteor.userId()
 		}, {
 			sort: { timestamp: -1 },
-			offset: (this.page > 0) ? (this.page - 1) * this.count : 0,
+			skip: (this.page > 0) ? (this.page - 1) * this.count : 0,
 			limit: this.count
 		}).fetch();
 
@@ -44,7 +44,7 @@ Template.mail.helpers({
 		}
 
 		// insert daily quest into letters
-		if (Router.current().params.page == 1) {
+		if (this.page == 1) {
 			var user = Meteor.user();
 			var dailyQuest = Game.Quest.getDaily();
 
@@ -373,7 +373,7 @@ Template.mailAdmin.helpers({
 			complaint: true
 		}, {
 			sort: { timestamp: -1 },
-			offset: (this.page > 0) ? (this.page - 1) * this.count : 0,
+			skip: (this.page > 0) ? (this.page - 1) * this.count : 0,
 			limit: this.count
 		}).fetch();
 	},

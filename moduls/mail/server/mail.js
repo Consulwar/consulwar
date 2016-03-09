@@ -17,6 +17,8 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 		status: game.Mail.status.unread,
 		timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 	});
+
+	Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
 };
 
 game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
@@ -36,6 +38,8 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 			status: game.Mail.status.unread,
 			timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 		});
+
+		Meteor.users.update({ _id: users[i]._id }, { $inc: { totalMail: 1 } });
 	}
 	
 	return users;
@@ -106,11 +110,17 @@ Meteor.methods({
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
+			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
+
 			// insert recipients copies
 			// TODO: Сделать рассылку очередями!
 			var users = Meteor.users.find().fetch();
 
 			for (var i = 0; i < users.length; i++) {
+				if (users[i]._id == user._id) {
+					continue;
+				}
+
 				Game.Mail.Collection.insert({
 					owner: users[i]._id,
 					from: user._id,
@@ -122,6 +132,8 @@ Meteor.methods({
 					status: game.Mail.status.unread,
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
+
+				Meteor.users.update({ _id: users[i]._id }, { $inc: { totalMail: 1 } });
 			}
 
 		} else {
@@ -163,19 +175,25 @@ Meteor.methods({
 				status: game.Mail.status.read,
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
+
+			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
 			
-			// insert recipient copy
-			Game.Mail.Collection.insert({
-				owner: to._id,
-				from: user._id,
-				sender: user.login,
-				to: to._id,
-				recipient: to.login,
-				subject: subject,
-				text: text,
-				status: game.Mail.status.unread,
-				timestamp: Math.floor(new Date().valueOf() / 1000)
-			});
+			if (user._id != to._id) {
+				// insert recipient copy
+				Game.Mail.Collection.insert({
+					owner: to._id,
+					from: user._id,
+					sender: user.login,
+					to: to._id,
+					recipient: to.login,
+					subject: subject,
+					text: text,
+					status: game.Mail.status.unread,
+					timestamp: Math.floor(new Date().valueOf() / 1000)
+				});
+
+				Meteor.users.update({ _id: to._id }, { $inc: { totalMail: 1 } });
+			}
 		}
 	},
 
@@ -254,7 +272,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Mail.Collection.update({
+		var updateCount = Game.Mail.Collection.update({
 			_id: { $in: ids },
 			owner: user._id
 		}, {
@@ -264,6 +282,11 @@ Meteor.methods({
 		}, {
 			multi: true
 		});
+
+		if (updateCount > 0) {
+			updateCount = updateCount * -1;
+			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: updateCount } });
+		}
 	},
 
 	'mail.cancelComplaints': function(ids) {

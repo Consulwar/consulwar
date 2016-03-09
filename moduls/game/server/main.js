@@ -226,7 +226,8 @@ Meteor.publish('game', function () {
 				planetName: 1,
 				role: 1,
 				blocked: 1,
-				rating: 1
+				rating: 1,
+				totalMail: 1
 			}
 		});
 	}

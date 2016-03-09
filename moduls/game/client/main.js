@@ -104,6 +104,7 @@ Router.route('register', {
 
 
 Meteor.subscribe('game');
+Meteor.subscribe('statistic');
 Meteor.subscribe('queue');
 Meteor.subscribe('buildings');
 Meteor.subscribe('units');

@@ -232,6 +232,23 @@ Meteor.publish('game', function () {
 		});
 	}
 });
+
+Meteor.publish('statistic', function() {
+	if (this.userId) {
+
+		var user = Meteor.users.findOne({ _id: this.userId });
+		var isAdmin = user && ['admin', 'helper'].indexOf(user.role) >= 0;
+
+		if (isAdmin) {
+			return Game.Statistic.Collection.find({}, {
+				fields: {
+					totalMailComplaints: 1
+				}
+			});
+		}
+	}
+});
+
 /*
 Meteor.publish('resources', function () {
 	if (this.userId) {

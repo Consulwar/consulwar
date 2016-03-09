@@ -367,6 +367,7 @@ Meteor.methods({
 	}
 })
 
+/*
 Meteor.publish('privateMailUnread', function() {
 	if (this.userId) {
 		// unread user letters
@@ -387,12 +388,16 @@ Meteor.publish('privateMailUnread', function() {
 				timestamp: 1,
 				complaint: 1
 			},
+			sort: {
+				timestamp: -1
+			},
 			limit: 100
 		});
 	} else {
 		this.ready();
 	}
 });
+*/
 
 Meteor.publish('privateMailPage', function(page, count) {
 	check(page, Match.Integer);
@@ -466,6 +471,7 @@ Meteor.publish('adminMailPage', function(page, count) {
 	}
 });
 
+/*
 Meteor.publish('mailSingleLetter', function(id) {
 	check(id, String);
 
@@ -488,6 +494,7 @@ Meteor.publish('mailSingleLetter', function(id) {
 		this.ready();
 	}
 });
+*/
 
 initMailQuizServer();
 

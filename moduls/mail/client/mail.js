@@ -2,7 +2,8 @@ initMailClient = function () {
 
 initMailLib();
 
-Meteor.subscribe('privateMailUnread');
+// TODO: Каким-то образом получать непрочитанные письма или статус!
+// Meteor.subscribe('privateMailUnread');
 
 Game.Mail.showPage = function() {
 	var page = parseInt( this.getParams().page, 10 );
@@ -31,12 +32,20 @@ Template.mail.helpers({
 
 	mail: function() {
 		var letters = Game.Mail.Collection.find({
-			owner: Meteor.userId()
+			owner: Meteor.userId(),
+			deleted: { $ne: true }
 		}, {
 			sort: { timestamp: -1 },
-			skip: (this.page > 0) ? (this.page - 1) * this.count : 0,
 			limit: this.count
 		}).fetch();
+
+		/* Debug block
+		var output = [];
+		for (var i = 0; i < letters.length; i++) {
+			output.push( letters[i].subject );
+		}
+		console.log(this.page, this.count, output, Game.Mail.Collection.find().fetch().length);
+		*/
 
 		for (var i = 0; i < letters.length; i++) {
 			letters[i].name = letters[i].from == Meteor.userId() ? '-> ' + letters[i].recipient : letters[i].sender;
@@ -373,7 +382,6 @@ Template.mailAdmin.helpers({
 			complaint: true
 		}, {
 			sort: { timestamp: -1 },
-			skip: (this.page > 0) ? (this.page - 1) * this.count : 0,
 			limit: this.count
 		}).fetch();
 	},

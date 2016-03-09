@@ -218,27 +218,7 @@
 		<div class="data">
 			<table>
 				{{#each mail}}
-					<tr 
-						data-id="{{this._id}}"
-						class="
-							{{#if eq this.from 0}}from_tamily{{/if}} 
-							{{#if eq this.from 1}}
-								from_system 
-								{{#if eq this.type 'fleetbattle'}}
-									{{#if eq this.text.result 'Победа'}}
-										battle_win 
-									{{else}}
-										{{#if eq this.text.result 'Ничья'}}
-											battle_draw 
-										{{else}}
-											battle_lose 
-										{{/if}}
-									{{/if}}
-								{{/if}}
-								{{#if eq this.type 'quiz'}}quiz{{/if}}
-							{{/if}}
-						"
-					>
+					<tr data-id="{{this._id}}">
 						<td></td>
 						<td>{{this.sender}}</td>
 						<td>{{this.recipient}}</td>

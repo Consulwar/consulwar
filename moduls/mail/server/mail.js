@@ -363,54 +363,121 @@ Meteor.methods({
 	}
 })
 
-Meteor.publish('mail', function (page, count, isAdmin) {
+Meteor.publish('privateMailUnread', function() {
+	if (this.userId) {
+		// unread user letters
+		return Game.Mail.Collection.find({
+			owner: this.userId,
+			status: game.Mail.status.unread,
+			deleted: { $ne: true }
+		}, {
+			fields: {
+				owner: 1,
+				type: 1,
+				from: 1,
+				sender: 1,
+				to: 1,
+				recipient: 1,
+				subject: 1,
+				status: 1,
+				timestamp: 1,
+				complaint: 1
+			},
+			limit: 100
+		});
+	} else {
+		this.ready();
+	}
+});
 
+Meteor.publish('privateMailPage', function(page, count) {
 	check(page, Match.Integer);
 	check(count, Match.Integer);
 
 	if (this.userId && count < 100) {
-		if (isAdmin) {
-			// letters visible at admin page
-			var user = Meteor.users.findOne({ _id: this.userId });
-			if (user && ['admin', 'helper'].indexOf(user.role) != -1) {
-				// publish count
-				Counts.publish(this, 'mailCount', Game.Mail.Collection.find({
-					complaint: true
-				}), { 
-					noReady: true
-				});
-				// publish records
-				return Game.Mail.Collection.find({
-					complaint: true
-				}, {
-					sort: {
-						timestamp: -1
-					},
-					skip: (page > 0) ? (page - 1) * count : 0,
-					limit: count
-				});
-			} else {
-				this.ready();
-			}
-		} else {
-			// user's own letters
-			// publish count
-			Counts.publish(this, 'mailCount', Game.Mail.Collection.find({
-				owner: this.userId,
-				deleted: { $ne: true }
-			}), { 
-				noReady: true
-			});
-			// publish records
+		// owned letters page for user
+		return Game.Mail.Collection.find({
+			owner: this.userId,
+			deleted: { $ne: true }
+		}, {
+			fields: {
+				owner: 1,
+				type: 1,
+				from: 1,
+				sender: 1,
+				to: 1,
+				recipient: 1,
+				subject: 1,
+				status: 1,
+				timestamp: 1,
+				complaint: 1
+			},
+			sort: {
+				timestamp: -1
+			},
+			skip: (page > 0) ? (page - 1) * count : 0,
+			limit: count
+		});
+	} else {
+		this.ready();
+	}
+});
+
+Meteor.publish('adminMailPage', function(page, count) {
+	check(page, Match.Integer);
+	check(count, Match.Integer);
+
+	if (this.userId && count < 100) {
+		var user = Meteor.users.findOne({ _id: this.userId });
+		if (user && ['admin', 'helper'].indexOf(user.role) >= 0) {
+			console.log('published for admin!');
+			// complaint letters page for admin
 			return Game.Mail.Collection.find({
-				owner: this.userId,
-				deleted: { $ne: true }
+				complaint: true
 			}, {
+				fields: {
+					owner: 1,
+					type: 1,
+					from: 1,
+					sender: 1,
+					to: 1,
+					recipient: 1,
+					subject: 1,
+					status: 1,
+					timestamp: 1,
+					complaint: 1
+				},
 				sort: {
 					timestamp: -1
 				},
 				skip: (page > 0) ? (page - 1) * count : 0,
 				limit: count
+			});
+		} else {
+			console.log('publish for admin declined!');
+			this.ready();
+		}
+	} else {
+		this.ready();
+	}
+});
+
+Meteor.publish('mailSingleLetter', function(id) {
+	check(id, String);
+
+	if (this.userId) {
+		var user = Meteor.users.findOne({ _id: this.userId });
+		var isAdmin = user && ['admin', 'helper'].indexOf(user.role) >= 0;
+		if (isAdmin) {
+			// any letter for admin
+			return Game.Mail.Collection.find({
+				_id: id
+			});
+		} else {
+			// only owned letter for user
+			return Game.Mail.Collection.find({
+				_id: id,
+				owner: this.userId
 			});
 		}
 	} else {

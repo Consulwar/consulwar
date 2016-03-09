@@ -2,6 +2,8 @@ initMailClient = function () {
 
 initMailLib();
 
+Meteor.subscribe('privateMailUnread');
+
 Game.Mail.showPage = function() {
 	var page = parseInt( this.getParams().page, 10 );
 	var count = 20;
@@ -9,11 +11,12 @@ Game.Mail.showPage = function() {
 	if (!page || page < 1) {
 		Router.go('mail', { page: 1 } );
 	} else {
-		Meteor.subscribe('mail', page, count);
+		Meteor.subscribe('privateMailPage', page, count);
 		this.render('mail', {
 			to: 'content',
 			data: {
-				countPerPage: count,
+				page: page,
+				count: count,
 				isRecipientOk: new ReactiveVar(false),
 				letter: new ReactiveVar(null)
 			}
@@ -22,16 +25,18 @@ Game.Mail.showPage = function() {
 }
 
 Template.mail.helpers({
-	currentPage: function() {
-		return parseInt( Router.current().params.page, 10 );
-	},
-
 	countTotal: function() {
-		return Counts.get('mailCount');
+		return 200; // TODO: Create agregation field!
 	},
 
 	mail: function() {
-		var letters = Game.Mail.Collection.find({}, {sort: {'timestamp': -1}}).fetch();
+		var letters = Game.Mail.Collection.find({
+			owner: Meteor.userId()
+		}, {
+			sort: { timestamp: -1 },
+			offset: (this.page > 0) ? (this.page - 1) * this.count : 0,
+			limit: this.count
+		}).fetch();
 
 		for (var i = 0; i < letters.length; i++) {
 			letters[i].name = letters[i].from == Meteor.userId() ? '-> ' + letters[i].recipient : letters[i].sender;
@@ -346,11 +351,12 @@ Game.Mail.showAdminPage = function() {
 	if (!page || page < 1) {
 		Router.go('mailAdmin', { page: 1 } );
 	} else {
-		Meteor.subscribe('mail', page, count, true);
+		Meteor.subscribe('adminMailPage', page, count);
 		this.render('mailAdmin', {
 			to: 'content',
 			data: {
-				countPerPage: count,
+				page: page,
+				count: count,
 				letter: new ReactiveVar(null)
 			}
 		});
@@ -358,16 +364,18 @@ Game.Mail.showAdminPage = function() {
 }
 
 Template.mailAdmin.helpers({
-	currentPage: function() {
-		return parseInt( Router.current().params.page, 10 );
-	},
-
 	countTotal: function() {
-		return Counts.get('mailCount');
+		return 50; // TODO: Make agregation field for complaint letters!
 	},
 
 	mail: function() {
-		return Game.Mail.Collection.find({}, {sort: {'timestamp': -1}}).fetch();
+		return Game.Mail.Collection.find({
+			complaint: true
+		}, {
+			sort: { timestamp: -1 },
+			offset: (this.page > 0) ? (this.page - 1) * this.count : 0,
+			limit: this.count
+		}).fetch();
 	},
 
 	letter: function() {

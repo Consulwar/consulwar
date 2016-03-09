@@ -251,14 +251,21 @@ Meteor.methods({
 
 		check(id, String);
 
-		Game.Mail.Collection.update({
+		var updateCount = Game.Mail.Collection.update({
 			_id: id,
-			owner: user._id
+			owner: user._id,
+			complaint: { $ne: true }
 		}, {
 			$set: {
 				complaint: true
 			}
 		});
+
+		if (updateCount > 0) {
+			Game.Statistic.Collection.upsert({}, {
+				$inc: { totalMailComplaints: updateCount }
+			});
+		}
 	},
 
 	'mail.removeLetters': function(ids) {
@@ -287,32 +294,6 @@ Meteor.methods({
 			updateCount = updateCount * -1;
 			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: updateCount } });
 		}
-	},
-
-	'mail.cancelComplaints': function(ids) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		if (['admin', 'helper'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
-		}
-
-		Game.Mail.Collection.update({
-			_id: { $in: ids }
-		}, {
-			$set: {
-				complaint: false
-			}
-		}, {
-			multi: true
-		});
 	},
 
 	'mail.blockUser': function(login, time) {

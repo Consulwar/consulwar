@@ -365,7 +365,7 @@ Game.Mail.showAdminPage = function() {
 
 Template.mailAdmin.helpers({
 	countTotal: function() {
-		return 50; // TODO: Make agregation field for complaint letters!
+		return Game.Statistic.get('totalMailComplaints');
 	},
 
 	mail: function() {
@@ -384,39 +384,11 @@ Template.mailAdmin.helpers({
 });
 
 Template.mailAdmin.events({
-	'click td:first-child': function(e, t) {
-		e.stopPropagation();
-		var checkbox = t.$(e.target).find('input');
-		checkbox.prop('checked', checkbox.prop('checked') == true ? false: true);
-		toggleDeleteButton(t);
-	},
-
-	'change th input[type="checkbox"]': function(e, t) {
-		t.$('input[type="checkbox"]').prop('checked', t.$(e.target).prop('checked'));
-		toggleDeleteButton(t);
-	},
-
 	'click tr:not(.header)': function(e, t) {
 		var letter = Game.Mail.Collection.findOne({'_id': e.currentTarget.dataset.id});
 		t.data.letter.set(letter);
 		closeMessages(t);
 		t.$('.letter').show();
-	},
-
-	'click .delete_selected': function(e, t) {
-		var selected = t.$('td input[type="checkbox"]:checked');
-		var ids = [];
-
-		for (var i = 0; i < selected.length; i++) {
-			ids.push(t.$(selected[i]).parent().parent().data('id'));
-		}
-		
-		if (ids) {
-			Meteor.call('mail.cancelComplaints', ids);
-		}
-
-		t.$('.delete_selected').hide();
-		t.$('th input[type="checkbox"]').prop('checked', false);
 	},
 
 	'click button.back': function(e, t) {
@@ -430,7 +402,6 @@ Template.mailAdmin.events({
 		var letter = t.data.letter.get();
 		if (letter) {
 			Meteor.call('mail.blockUser', letter.sender, 86400 * 7);
-			Meteor.call('mail.cancelComplaints', [ letter._id ] );
 		}
 	},
 
@@ -439,7 +410,7 @@ Template.mailAdmin.events({
 
 		var letter = t.data.letter.get();
 		if (letter) {
-			Meteor.call('mail.cancelComplaints', [ letter._id ] );
+			// TODO: Write another method!
 		}
 	}
 });

@@ -208,7 +208,7 @@
 	<div class="mail">
 		<table>
 			<tr class="header">
-				<th><input type="checkbox"/></th>
+				<th></th>
 				<th class="name">Отправитель</th>
 				<th class="name">Получатель</th>
 				<th class="subject">Тема</th>
@@ -239,7 +239,7 @@
 							{{/if}}
 						"
 					>
-						<td><input type="checkbox"/></td>
+						<td></td>
 						<td>{{this.sender}}</td>
 						<td>{{this.recipient}}</td>
 						<td>{{this.subject}}</td>
@@ -248,8 +248,6 @@
 				{{/each}}
 			</table>
 		</div>
-
-		<span class="delete_selected">Скрыть выделенное</span>
 
 		{{> pages total=countTotal perPage=count}}
 

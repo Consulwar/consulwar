@@ -33,12 +33,16 @@ game.ReptileUnit = function(options) {
 		return Router.routes[this.type].path(options);
 	}
 
-	this.canBuild = function(count) {
+	this.canBuild = function() {
 		return false;
 	}
 
 	this.currentLevel = function() {
 		return 0;
+	}
+
+	this.isEnoughResources = function() {
+		return true;
 	}
 
 	this.type = 'reptileUnit';

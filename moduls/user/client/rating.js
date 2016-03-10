@@ -45,6 +45,10 @@ Game.Rating.showPage = function() {
 Template.rating.helpers({
 	rank: function(rating) {
 		return Game.User.getVotePower(rating);
+	},
+
+	mailHash: function(login) {
+		return 'compose/' + login;
 	}
 });
 

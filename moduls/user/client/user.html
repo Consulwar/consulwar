@@ -160,7 +160,7 @@
 							{{#if this.cheater}}<img src="/img/game/achivments/cheater.png"/>{{/if}}
 							{{#if gt this.rating 25000}}<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>{{/if}}
 							</td>
-						<td><a class="send_message" href="{{pathFor 'mail' hash=this.login}}"><img src="/img/game/message.png"></a></td>
+						<td><a class="send_message" href="{{pathFor 'mail' hash=(mailHash this.login)}}"><img src="/img/game/message.png"></a></td>
 						<td>{{formatNumber this.rating}}</td>
 					</tr>
 					{{/each}}

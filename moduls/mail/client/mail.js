@@ -2,8 +2,16 @@ initMailClient = function () {
 
 initMailLib();
 
-// TODO: Каким-то образом получать непрочитанные письма или статус!
-// Meteor.subscribe('privateMailUnread');
+// Only one record for hasUnread function!
+Meteor.subscribe('privateMailUnread');
+
+var getPrivatePage = function(container, page, count) {
+	Meteor.call('mail.getPrivatePage', page, count, function(err, data) {
+		if (!err) {
+			container.set(data);
+		}
+	});
+}
 
 Game.Mail.showPage = function() {
 	var page = parseInt( this.getParams().page, 10 );
@@ -12,14 +20,17 @@ Game.Mail.showPage = function() {
 	if (!page || page < 1) {
 		Router.go('mail', { page: 1 } );
 	} else {
-		Meteor.subscribe('privateMailPage', page, count);
+		var mail = new ReactiveVar(null);
+		getPrivatePage(mail, page, count);
+
 		this.render('mail', {
 			to: 'content',
 			data: {
 				page: page,
 				count: count,
-				isRecipientOk: new ReactiveVar(false),
-				letter: new ReactiveVar(null)
+				mail: mail,
+				letter: new ReactiveVar(null),
+				isRecipientOk: new ReactiveVar(false)
 			}
 		});
 	}
@@ -31,57 +42,22 @@ Template.mail.helpers({
 	},
 
 	mail: function() {
-		var letters = Game.Mail.Collection.find({
-			owner: Meteor.userId(),
-			deleted: { $ne: true }
-		}, {
-			sort: { timestamp: -1 },
-			limit: this.count
-		}).fetch();
-
-		/* Debug block
-		var output = [];
-		for (var i = 0; i < letters.length; i++) {
-			output.push( letters[i].subject );
-		}
-		console.log(this.page, this.count, output, Game.Mail.Collection.find().fetch().length);
-		*/
-
-		for (var i = 0; i < letters.length; i++) {
-			letters[i].name = letters[i].from == Meteor.userId() ? '-> ' + letters[i].recipient : letters[i].sender;
-			if (letters[i].sentCount) {
-				letters[i].status = 'Прочитано ' + letters[i].sentCount + ' из ' + letters[i].readCount;
-			} else {
-				letters[i].status = letters[i].status == game.Mail.status.read ? 'Прочитано': '';
-			}
-		}
-
-		// insert daily quest into letters
-		if (this.page == 1) {
-			var user = Meteor.user();
-			var dailyQuest = Game.Quest.getDaily();
-
-			if (dailyQuest) {
-				var quest = {
-					to: user._id,
-					from: 0,
-					sender: Game.Persons[dailyQuest.who || 'tamily'].name,
-					recipient: user.login,
-					name: Game.Persons[dailyQuest.who || 'tamily'].name,
-					subject: dailyQuest.name,
-					timestamp: dailyQuest.startTime,
-					status: dailyQuest.status == Game.Quest.status.FINISHED ? 'Выполнено' : ''
-				};
-
-				letters.unshift(quest); // always on top
-			}
-		}
-
-		return letters;
+		return this.mail.get();
 	},
 
 	letter: function() {
 		return this.letter.get();
+	},
+
+	letterName: function(letter) {
+		return letter.from == Meteor.userId() ? '-> ' + letter.recipient : letter.sender;
+	},
+
+	letterStatus: function(letter) {
+		if (letter.sentCount) {
+			return 'Прочитано ' + letter.sentCount + ' из ' + letter.readCount;
+		}
+		return letter.status == game.Mail.status.read ? 'Прочитано': '';
 	},
 
 	userId: function() {
@@ -90,6 +66,26 @@ Template.mail.helpers({
 
 	isRecipientOk: function() {
 		return this.isRecipientOk.get();
+	},
+
+	dailyQuest: function() {
+		var user = Meteor.user();
+		var dailyQuest = Game.Quest.getDaily();
+
+		if (dailyQuest) {
+			return {
+				to: user._id,
+				from: 0,
+				sender: Game.Persons[dailyQuest.who || 'tamily'].name,
+				recipient: user.login,
+				name: Game.Persons[dailyQuest.who || 'tamily'].name,
+				subject: dailyQuest.name,
+				timestamp: dailyQuest.startTime,
+				status: dailyQuest.status == Game.Quest.status.FINISHED ? 'Выполнено' : ''
+			};
+		}
+
+		return null;
 	},
 
 	army: function(start, result) {
@@ -166,7 +162,19 @@ Template.mail.events({
 			t.data.letter.set(letter);
 
 			if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
+				// send request
 				Meteor.call('mail.readLetter', letter._id);
+				// hack for status update without request
+				letter.status = game.Mail.status.read;
+				var letters = t.data.mail.get();
+				if (letters) {
+				for (var i = 0; i < letters.length; i++)
+					if (letters[i]._id == letter._id) {
+						letters[i].status = game.Mail.status.read;
+						t.data.mail.set(letters);
+						break;
+					}
+				}
 			}
 
 			closeMessages(t);
@@ -268,13 +276,21 @@ Template.mail.events({
 		for (var i = 0; i < selected.length; i++) {
 			ids.push(t.$(selected[i]).parent().parent().data('id'));
 		}
-		
-		if (ids) {
-			Meteor.call('mail.removeLetters', ids);
-		}
 
 		t.$('.delete_selected').hide();
 		t.$('th input[type="checkbox"]').prop('checked', false);
+		
+		if (ids) {
+			Meteor.call('mail.removeLetters', ids, function(err, data) {
+				if (!err) {
+					if (t.data.page > 1 && (t.data.page - 1) * t.data.count >= Meteor.user().totalMail) {
+						Router.go('mail', { page: t.data.page - 1 });
+					} else {
+						getPrivatePage(t.data.mail, t.data.page, t.data.count);
+					}
+				}
+			});
+		}
 	},
 
 	// Закрыть чтение / написание письма
@@ -338,6 +354,9 @@ Template.mail.events({
 					t.data.isRecipientOk.set(false);
 					closeMessages(t);
 					t.$('input[type="submit"]').prop('disabled', false);
+					if (t.data.page == 1) {
+						getPrivatePage(t.data.mail, t.data.page, t.data.count);
+					}
 					Notifications.success('Письмо отправлено');
 				} else {
 					t.$('input[type="submit"]').prop('disabled', false);
@@ -365,12 +384,19 @@ Game.Mail.showAdminPage = function() {
 	if (!page || page < 1) {
 		Router.go('mailAdmin', { page: 1 } );
 	} else {
-		Meteor.subscribe('adminMailPage', page, count);
+		var mail = new ReactiveVar(null);
+		Meteor.call('mail.getAdminPage', page, count, function(err, data) {
+			if (!err) {
+				mail.set(data);
+			}
+		})
+
 		this.render('mailAdmin', {
 			to: 'content',
 			data: {
 				page: page,
 				count: count,
+				mail: mail,
 				letter: new ReactiveVar(null)
 			}
 		});
@@ -383,12 +409,7 @@ Template.mailAdmin.helpers({
 	},
 
 	mail: function() {
-		return Game.Mail.Collection.find({
-			complaint: true
-		}, {
-			sort: { timestamp: -1 },
-			limit: this.count
-		}).fetch();
+		return this.mail.get();
 	},
 
 	letter: function() {
@@ -398,10 +419,17 @@ Template.mailAdmin.helpers({
 
 Template.mailAdmin.events({
 	'click tr:not(.header)': function(e, t) {
-		var letter = Game.Mail.Collection.findOne({'_id': e.currentTarget.dataset.id});
-		t.data.letter.set(letter);
-		closeMessages(t);
-		t.$('.letter').show();
+		Meteor.call('mail.getLetter', e.currentTarget.dataset.id, function(err, letter) {
+			if (err) {
+				Notifications.error(err.error);
+				return;
+			}
+
+			t.data.letter.set(letter);
+
+			closeMessages(t);
+			t.$('.letter').show();
+		});
 	},
 
 	'click button.back': function(e, t) {

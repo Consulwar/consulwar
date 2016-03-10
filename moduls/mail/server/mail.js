@@ -399,52 +399,32 @@ Meteor.methods({
 				mailBlockedUntil: timestamp
 			}
 		});
-	}
-})
+	},
 
-/*
-Meteor.publish('privateMailUnread', function() {
-	if (this.userId) {
-		// unread user letters
+	'mail.getPrivatePage': function(page, count) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(page, Match.Integer);
+		check(count, Match.Integer);
+
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
 		return Game.Mail.Collection.find({
-			owner: this.userId,
-			status: game.Mail.status.unread,
+			owner: user._id,
 			deleted: { $ne: true }
 		}, {
 			fields: {
-				owner: 1,
-				type: 1,
-				from: 1,
-				sender: 1,
-				to: 1,
-				recipient: 1,
-				subject: 1,
-				status: 1,
-				timestamp: 1,
-				complaint: 1
-			},
-			sort: {
-				timestamp: -1
-			},
-			limit: 100
-		});
-	} else {
-		this.ready();
-	}
-});
-*/
-
-Meteor.publish('privateMailPage', function(page, count) {
-	check(page, Match.Integer);
-	check(count, Match.Integer);
-
-	if (this.userId && count < 100) {
-		// owned letters page for user
-		return Game.Mail.Collection.find({
-			owner: this.userId,
-			deleted: { $ne: true }
-		}, {
-			fields: {
+				_id: 1,
 				owner: 1,
 				type: 1,
 				from: 1,
@@ -461,75 +441,76 @@ Meteor.publish('privateMailPage', function(page, count) {
 			},
 			skip: (page > 0) ? (page - 1) * count : 0,
 			limit: count
+		}).fetch();
+	},
+
+	'mail.getAdminPage': function(page, count) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
+		}
+
+		check(page, Match.Integer);
+		check(count, Match.Integer);
+
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		return Game.Mail.Collection.find({
+			complaint: true
+		}, {
+			fields: {
+				_id: 1,
+				owner: 1,
+				type: 1,
+				from: 1,
+				sender: 1,
+				to: 1,
+				recipient: 1,
+				subject: 1,
+				status: 1,
+				timestamp: 1,
+				complaint: 1
+			},
+			sort: {
+				timestamp: -1
+			},
+			skip: (page > 0) ? (page - 1) * count : 0,
+			limit: count
+		}).fetch();
+	}
+})
+
+Meteor.publish('privateMailUnread', function() {
+	if (this.userId) {
+		return Game.Mail.Collection.find({
+			owner: this.userId,
+			status: game.Mail.status.unread,
+			deleted: { $ne: true }
+		}, {
+			fields: {
+				to: 1,
+				status: 1
+			},
+			sort: {
+				timestamp: -1
+			},
+			limit: 1
 		});
 	} else {
 		this.ready();
 	}
 });
-
-Meteor.publish('adminMailPage', function(page, count) {
-	check(page, Match.Integer);
-	check(count, Match.Integer);
-
-	if (this.userId && count < 100) {
-		var user = Meteor.users.findOne({ _id: this.userId });
-		if (user && ['admin', 'helper'].indexOf(user.role) >= 0) {
-			console.log('published for admin!');
-			// complaint letters page for admin
-			return Game.Mail.Collection.find({
-				complaint: true
-			}, {
-				fields: {
-					owner: 1,
-					type: 1,
-					from: 1,
-					sender: 1,
-					to: 1,
-					recipient: 1,
-					subject: 1,
-					status: 1,
-					timestamp: 1,
-					complaint: 1
-				},
-				sort: {
-					timestamp: -1
-				},
-				skip: (page > 0) ? (page - 1) * count : 0,
-				limit: count
-			});
-		} else {
-			console.log('publish for admin declined!');
-			this.ready();
-		}
-	} else {
-		this.ready();
-	}
-});
-
-/*
-Meteor.publish('mailSingleLetter', function(id) {
-	check(id, String);
-
-	if (this.userId) {
-		var user = Meteor.users.findOne({ _id: this.userId });
-		var isAdmin = user && ['admin', 'helper'].indexOf(user.role) >= 0;
-		if (isAdmin) {
-			// any letter for admin
-			return Game.Mail.Collection.find({
-				_id: id
-			});
-		} else {
-			// only owned letter for user
-			return Game.Mail.Collection.find({
-				_id: id,
-				owner: this.userId
-			});
-		}
-	} else {
-		this.ready();
-	}
-});
-*/
 
 initMailQuizServer();
 

@@ -11,6 +11,19 @@
 		</table>
 		<div class="data">
 			<table>
+				{{#if eq page 1}}
+					{{#let quest=dailyQuest}}
+						{{#if quest}}
+							<tr class="from_tamily">
+								<td></td>
+								<td>{{quest.name}}</td>
+								<td>{{quest.subject}}</td>
+								<td>{{formatDate quest.timestamp}}</td>
+								<td>{{quest.status}}</td>
+							</tr>
+						{{/if}}
+					{{/let}}
+				{{/if}}
 				{{#each mail}}
 					<tr 
 						data-id="{{this._id}}"
@@ -34,10 +47,10 @@
 						"
 					>
 						<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
-						<td>{{this.name}}</td>
+						<td>{{letterName this}}</td>
 						<td>{{this.subject}}</td>
 						<td>{{formatDate this.timestamp}}</td>
-						<td>{{this.status}}</td>
+						<td>{{letterStatus this}}</td>
 					</tr>
 				{{/each}}
 			</table>

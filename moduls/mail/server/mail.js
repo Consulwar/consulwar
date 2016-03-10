@@ -85,7 +85,7 @@ Meteor.methods({
 		}
 
 		text = sanitizeHtml(text, {
-			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
+			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike', 'blockquote' ],
 			allowedAttributes: {
 				'a': [ 'href' ]
 			}

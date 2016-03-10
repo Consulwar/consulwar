@@ -325,7 +325,8 @@ Template.mail.events({
 		var letter = t.data.letter.get();
 
 		t.$('form .recipient').val(letter.from == Meteor.userId() ? letter.recipient : letter.sender);
-		
+		t.data.isRecipientOk.set(true);
+
 		var subject = letter.subject;
 		var match = subject.match(/Re: /i);
 		if (match) {
@@ -341,7 +342,10 @@ Template.mail.events({
 		}
 		t.$('form .subject').val(subject);
 
-		t.$('form textarea').val('\n'.repeat(5) + '-'.repeat(20) + '\n>>' + letter.text.replace(/\n/g, '\n>> '));
+		var quote = '<blockquote>' + letter.text + '</blockquote>';
+		if (quote.length < 5000) {
+			t.$('form textarea').val(quote);
+		}
 
 		t.$('form').show();
 

@@ -14,11 +14,12 @@ var getPrivatePage = function(container, page, count) {
 }
 
 Game.Mail.showPage = function() {
+	var hash = this.getParams().hash;
 	var page = parseInt( this.getParams().page, 10 );
 	var count = 20;
 
 	if (!page || page < 1) {
-		Router.go('mail', { page: 1 } );
+		Router.go('mail', { page: 1 }, { hash: hash } );
 	} else {
 		var mail = new ReactiveVar(null);
 		getPrivatePage(mail, page, count);
@@ -118,9 +119,11 @@ Template.mail.helpers({
 });
 
 Template.mail.onRendered(function() {
-	if (window.location.hash.length > 0) {
-		this.$('.recipient').val(window.location.hash.substr(1));
+	var hash = Router.current().getParams().hash;
+	if (hash && hash.indexOf('compose') == 0) {
+		this.$('.recipient').val( hash.substr(8) );
 		this.$('form').show();
+		checkLogin(this);
 	}
 })
 
@@ -138,6 +141,17 @@ var toggleDeleteButton = function(t) {
 		t.$('.delete_selected').hide();
 		// update first checkbox
 		t.$('th input[type="checkbox"]').prop('checked', false);
+	}
+}
+
+var checkLogin = function(t) {
+	var login = t.$('form .recipient').val();
+	if (login && login.length > 0) {
+		Meteor.call('mail.checkLogin', login, function(err, result) {
+			t.data.isRecipientOk.set(result);
+		});
+	} else {
+		t.data.isRecipientOk.set(false);
 	}
 }
 
@@ -271,6 +285,7 @@ Template.mail.events({
 	'click .new_message': function(e, t) {
 		closeMessages(t);
 		t.$('form').show();
+		checkLogin(t);
 	},
 
 	'click .delete_selected': function(e, t) {
@@ -329,7 +344,6 @@ Template.mail.events({
 		var letter = t.data.letter.get();
 
 		t.$('form .recipient').val(letter.from == Meteor.userId() ? letter.recipient : letter.sender);
-		t.data.isRecipientOk.set(true);
 
 		var subject = letter.subject;
 		var match = subject.match(/Re: /i);
@@ -352,6 +366,7 @@ Template.mail.events({
 		}
 
 		t.$('form').show();
+		checkLogin(t);
 
 		var textarea = t.find('form textarea');
 		textarea.focus();
@@ -389,9 +404,7 @@ Template.mail.events({
 	},
 
 	'change input.recipient': function(e, t) {
-		Meteor.call('mail.checkLogin', e.currentTarget.value, function(err, result) {
-			t.data.isRecipientOk.set(result);
-		});
+		checkLogin(t);
 	}
 });
 
@@ -485,7 +498,7 @@ Template.mailAdmin.events({
 					: game.Mail.complain.recipientBlocked;
 
 				Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
-				
+
 				closeMessages(t);
 				getAdminPage(t.data.mail, t.data.page, t.data.count);
 			}

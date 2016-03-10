@@ -460,6 +460,11 @@ Template.mailAdmin.events({
 	},
 
 	'click button.block': function(e, t) {
+		var letter = t.data.letter.get();
+		if (!letter) {
+			return;
+		}
+
 		var login = e.currentTarget.dataset.login;
 		var time = 86400 * 7; // TODO: Get time from GUI!
 		var reason = prompt('Заблокировать почту для пользователя ' + login, 'Потому что я могу!');
@@ -469,7 +474,7 @@ Template.mailAdmin.events({
 			if (reason.length == 0) {
 				Notifications.error('Укажите причину блокировки!');
 			} else {
-				Meteor.call('mail.blockUser', login, time, reason);
+				Meteor.call('mail.blockUser', login, time, reason, letter._id);
 			}
 		}
 	},

@@ -331,7 +331,7 @@ Meteor.methods({
 		}
 	},
 
-	'mail.blockUser': function(login, time, reason) {
+	'mail.blockUser': function(login, time, reason, letterId) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -353,26 +353,35 @@ Meteor.methods({
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
 		}
-
-		check(reason, String);
+		
 		check(time, Match.Integer);
 
 		var timestamp = Game.getCurrentTime() + time;
 
-		var history = target.mailBlockHistory ? target.mailBlockHistory : [];
-		history.push({
+		var history = {
 			who: user.login,
-			reason: reason,
 			timeFrom: Game.getCurrentTime(),
 			timeUntil: timestamp
-		});
+		};
+
+		if (reason) {
+			check(reason, String);
+			history.reason = reason;
+		}
+
+		if (letterId) {
+			check(letterId, String);
+			history.letterId = letterId;
+		}
 		
 		var messageText = '';
 		if (time > 0) {
 			messageText += 'Администратор ' + user.login + ' заблокировал вам почту.' + '\n';
-			messageText += 'Причина: ' + reason;
 		} else {
 			messageText += 'Администратор ' + user.login + ' разблокировал вам почту.';
+		}
+		if (reason) {
+			messageText += 'Причина: ' + reason;
 		}
 
 		Game.Mail.Collection.insert({
@@ -390,13 +399,9 @@ Meteor.methods({
 		Meteor.users.update({
 			_id: target._id
 		}, {
-			$set: {
-				mailBlockedUntil: timestamp,
-				mailBlockHistory: history
-			},
-			$inc: {
-				totalMail: 1
-			}
+			$set: { mailBlockedUntil: timestamp },
+			$push: { mailBlockHistory: history },
+			$inc: { totalMail: 1 }
 		});
 	},
 

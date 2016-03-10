@@ -405,6 +405,37 @@ Meteor.methods({
 		});
 	},
 
+	'mail.resolveComplaint': function(id, resolution, comment) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
+		}
+
+		check(id, String);
+		check(resolution, Match.Integer);
+		check(comment, String);
+
+		Game.Mail.Collection.update({
+			_id: id,
+			complaint: true
+		}, {
+			$set: {
+				resolved: true,
+				resolution: resolution,
+				resolutionComment: comment
+			}
+		});
+	},
+
 	'mail.getPrivatePage': function(page, count) {
 		var user = Meteor.user();
 
@@ -484,9 +515,11 @@ Meteor.methods({
 				subject: 1,
 				status: 1,
 				timestamp: 1,
-				complaint: 1
+				complaint: 1,
+				resolved: 1
 			},
 			sort: {
+				resolved: 1,
 				timestamp: -1
 			},
 			skip: (page > 0) ? (page - 1) * count : 0,

@@ -71,7 +71,17 @@
 			{{/with}}
 			{{#if canComplain letter}}
 				{{#if letter.complaint}}
-					<span class="complaint">Отправлена жалоба</span>
+					<span class="complaint">
+						{{#if letter.resolved}}
+							{{#if eq letter.resolution 0}}
+								Администратор отклонил жалобу
+							{{else}}
+								Жалоба обработана
+							{{/if}}
+						{{else}}
+							Жалоба отправлена
+						{{/if}}
+					</span>
 				{{else}}
 					<button class="complain">Пожаловаться</button>
 				{{/if}}
@@ -230,6 +240,7 @@
 				<th class="name">Получатель</th>
 				<th class="subject">Тема</th>
 				<th class="time">Время</th>
+				<th class="status">Статус</th>
 			</tr>
 		</table>
 		<div class="data">
@@ -241,6 +252,7 @@
 						<td>{{this.recipient}}</td>
 						<td>{{this.subject}}</td>
 						<td>{{formatDate this.timestamp}}</td>
+						<td>{{#if this.resolved}}Обработана{{/if}}</td>
 					</tr>
 				{{/each}}
 			</table>
@@ -261,8 +273,10 @@
 				<button class="block" data-login="{{recipient}}">
 					Заблокировать {{recipient}}
 				</button>
+				{{#unless resolved}}
+					<button class="cancel">Отклонить жалобу</button>
+				{{/unless}}
 			{{/with}}
-			<button class="cancel">Отклонить жалобу</button>
 		</div>
 	</div>
 </template>

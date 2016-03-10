@@ -399,6 +399,14 @@ Template.mail.events({
 // Admin page
 // ----------------------------------------------------------------------------
 
+var getAdminPage = function(container, page, count) {
+	Meteor.call('mail.getAdminPage', page, count, function(err, data) {
+		if (!err) {
+			container.set(data);
+		}
+	});
+}
+
 Game.Mail.showAdminPage = function() {
 	var page = parseInt( this.getParams().page, 10 );
 	var count = 20;
@@ -407,11 +415,7 @@ Game.Mail.showAdminPage = function() {
 		Router.go('mailAdmin', { page: 1 } );
 	} else {
 		var mail = new ReactiveVar(null);
-		Meteor.call('mail.getAdminPage', page, count, function(err, data) {
-			if (!err) {
-				mail.set(data);
-			}
-		})
+		getAdminPage(mail, page, count);
 
 		this.render('mailAdmin', {
 			to: 'content',
@@ -475,16 +479,37 @@ Template.mailAdmin.events({
 				Notifications.error('Укажите причину блокировки!');
 			} else {
 				Meteor.call('mail.blockUser', login, time, reason, letter._id);
+
+				var resolution = (letter.sender == login)
+					? game.Mail.complain.senderBlocked
+					: game.Mail.complain.recipientBlocked;
+
+				Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
+				
+				closeMessages(t);
+				getAdminPage(t.data.mail, t.data.page, t.data.count);
 			}
 		}
 	},
 
 	'click button.cancel': function(e, t) {
-		closeMessages(t);
-
 		var letter = t.data.letter.get();
-		if (letter) {
-			// TODO: Write another method!
+		if (!letter) {
+			return;
+		}
+
+		var reason = prompt('Отклонить жалобу', 'Потому что я могу!');
+
+		if (reason) {
+			reason = reason.trim();
+			if (reason.length == 0) {
+				Notifications.error('Укажите причину отказа!');
+			} else {
+				Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
+
+				closeMessages(t);
+				getAdminPage(t.data.mail, t.data.page, t.data.count);
+			}
 		}
 	}
 });

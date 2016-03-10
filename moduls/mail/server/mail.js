@@ -331,7 +331,7 @@ Meteor.methods({
 		}
 	},
 
-	'mail.blockUser': function(login, time) {
+	'mail.blockUser': function(login, time, reason) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -354,49 +354,48 @@ Meteor.methods({
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 
+		check(reason, String);
 		check(time, Match.Integer);
 
 		var timestamp = Game.getCurrentTime() + time;
 
-		Meteor.users.update({
-			_id: target._id
-		}, {
-			$set: {
-				mailBlockedUntil: timestamp
-			}
+		var history = target.mailBlockHistory ? target.mailBlockHistory : [];
+		history.push({
+			who: user.login,
+			reason: reason,
+			timeFrom: Game.getCurrentTime(),
+			timeUntil: timestamp
 		});
-	},
-
-	'mail.unblockUser': function(login) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
+		
+		var messageText = '';
+		if (time > 0) {
+			messageText += 'Администратор ' + user.login + ' заблокировал вам почту.' + '\n';
+			messageText += 'Причина: ' + reason;
+		} else {
+			messageText += 'Администратор ' + user.login + ' разблокировал вам почту.';
 		}
 
-		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		if (['admin', 'helper'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
-		}
-
-		var target = Meteor.users.findOne({
-			login: login
+		Game.Mail.Collection.insert({
+			owner: target._id,
+			from: 1,
+			sender: 'Система',
+			to: target._id,
+			recipient: target.login,
+			subject: time > 0 ? 'Почта заблокирована' : 'Почта разблокирована',
+			text: messageText,
+			status: game.Mail.status.unread,
+			timestamp: Game.getCurrentTime()
 		});
-
-		if (!target) {
-			throw new Meteor.Error('Некорректно указан логин');
-		}
-
-		var timestamp = Game.getCurrentTime();
 
 		Meteor.users.update({
 			_id: target._id
 		}, {
 			$set: {
-				mailBlockedUntil: timestamp
+				mailBlockedUntil: timestamp,
+				mailBlockHistory: history
+			},
+			$inc: {
+				totalMail: 1
 			}
 		});
 	},

@@ -68,14 +68,14 @@
 				<span class="subject">{{subject}}</span>
 				<time>{{formatDate timestamp}}</time>
 				<div class="text">{{{nl2br text}}}</div>
-				{{#unless eq from userId}}
-					{{#if complaint}}
-						<span class="complaint">Отправлена жалоба</span>
-					{{else}}
-						<button class="complain">Пожаловаться</button>
-					{{/if}}
-				{{/unless}}
 			{{/with}}
+			{{#if canComplain letter}}
+				{{#if letter.complaint}}
+					<span class="complaint">Отправлена жалоба</span>
+				{{else}}
+					<button class="complain">Пожаловаться</button>
+				{{/if}}
+			{{/if}}
 			<button class="reply">Ответить</button>
 		</div>
 
@@ -255,8 +255,13 @@
 				<span class="subject">{{subject}}</span>
 				<time>{{formatDate timestamp}}</time>
 				<div class="text">{{{nl2br text}}}</div>
+				<button class="block" data-login="{{sender}}">
+					Заблокировать {{sender}}
+				</button>
+				<button class="block" data-login="{{recipient}}">
+					Заблокировать {{recipient}}
+				</button>
 			{{/with}}
-			<button class="block">Заблокировать отправителя</button>
 			<button class="cancel">Отклонить жалобу</button>
 		</div>
 	</div>

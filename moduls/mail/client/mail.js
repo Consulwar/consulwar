@@ -68,6 +68,10 @@ Template.mail.helpers({
 		return this.isRecipientOk.get();
 	},
 
+	canComplain: function(letter) {
+		return (letter && _.isString(letter.from) && letter.from != Meteor.userId()) ? true : false;
+	},
+
 	dailyQuest: function() {
 		var user = Meteor.user();
 		var dailyQuest = Game.Quest.getDaily();
@@ -456,11 +460,17 @@ Template.mailAdmin.events({
 	},
 
 	'click button.block': function(e, t) {
-		closeMessages(t);
+		var login = e.currentTarget.dataset.login;
+		var time = 86400 * 7; // TODO: Get time from GUI!
+		var reason = prompt('Заблокировать почту для пользователя ' + login, 'Потому что я могу!');
 
-		var letter = t.data.letter.get();
-		if (letter) {
-			Meteor.call('mail.blockUser', letter.sender, 86400 * 7);
+		if (reason) {
+			reason = reason.trim();
+			if (reason.length == 0) {
+				Notifications.error('Укажите причину блокировки!');
+			} else {
+				Meteor.call('mail.blockUser', login, time, reason);
+			}
 		}
 	},
 

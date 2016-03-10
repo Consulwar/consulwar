@@ -88,11 +88,19 @@ game.Item = function(options) {
 		this.name = options.name;
 		this.engName = options.engName;
 
-		if (options.effect && options.effect.register) {
-			if (!this.doNotRegisterEffect) {
-				options.effect.register(this);
-			} else {
-				options.effect.setProvider(this);
+		if (options.effect) {
+			if (!_.isArray(options.effect)) {
+				options.effect = [options.effect];
+			}
+
+			for (var i = 0; i < options.effect.length; i++) {
+				if (options.effect[i].register) {
+					if (!this.doNotRegisterEffect) {
+						options.effect[i].register(this);
+					} else {
+						options.effect[i].setProvider(this);
+					}
+				}
 			}
 		} 
 

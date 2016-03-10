@@ -14,19 +14,27 @@
 
 <template name="item_effect">
 	{{#if item.effect}}
-		{{#with item.effect}}
 			<div class="currentLevel">
-				Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-				{{name}}{{pretext}}{{result}}{{aftertext}} {{unit}}
+				{{#with item.effect.[0]}}
+					Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+				{{/with}}
+				{{#each item.effect}}
+					{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+				{{/each}}
 			</div>
 
-				{{#with next}}
+			{{#unless eq item.maxLevel item.effect.[0].level}}
 				<div class="nextLevel">
-					Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-					{{name}}{{pretext}}{{result}}{{aftertext}} {{unit}}
+					{{#with item.effect.[0].next}}
+						Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+					{{/with}}
+					{{#each item.effect}}
+						{{#with this.next}}
+							{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+						{{/with}}
+					{{/each}}
 				</div>
-				{{/with}}
-		{{/with}}
+			{{/unless}}
 	{{/if}}
 </template>
 

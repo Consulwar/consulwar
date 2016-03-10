@@ -35,11 +35,7 @@
 				{{item.description}}
 			</p>
 
-			{{#if item.effect}}
-				<div class="profit">
-					{{item.effect.pretext}}{{item.effect.result}}{{item.effect.aftertext}}
-				</div>
-			{{/if}}
+			{{> item_effect item=item}}
 		</div>
 		{{#if item.checkBought}}
 			{{#unless item.checkPlaced}}

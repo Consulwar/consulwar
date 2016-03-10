@@ -15,15 +15,17 @@
 <template name="item_effect">
 	{{#if item.effect}}
 			<div class="currentLevel">
-				{{#with item.effect.[0]}}
-					Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-				{{/with}}
+				{{#if item.maxLevel}}
+					{{#with item.effect.[0]}}
+						Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+					{{/with}}
+				{{/if}}
 				{{#each item.effect}}
 					{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
 				{{/each}}
 			</div>
 
-			{{#unless eq item.maxLevel item.effect.[0].level}}
+			{{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
 				<div class="nextLevel">
 					{{#with item.effect.[0].next}}
 						Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
@@ -34,7 +36,7 @@
 						{{/with}}
 					{{/each}}
 				</div>
-			{{/unless}}
+			{{/if}}
 	{{/if}}
 </template>
 

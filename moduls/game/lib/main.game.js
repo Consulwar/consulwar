@@ -555,38 +555,40 @@ Game.Effect.getRelatedTo = function(obj) {
 
 	for (var i = 0; i < items.length; i++) {
 		var effect = items[i].effect;
-		if (!effect) {
+		if (!items[i].effect) {
 			continue;
 		}
 		
-		if (effect.type == this.type) {
-			if (effect.condition) {
-				if (effect.condition.name && obj.name != effect.condition.name) {
-					continue;
+		for(var k = 0; k < items[i].effect.length; k++) {
+			var effect = items[i].effect[k];
+
+			if (effect.type == this.type) {
+				if (effect.condition) {
+					if (effect.condition.name && obj.name != effect.condition.name) {
+						continue;
+					}
+
+					if (effect.condition.type && obj.type != effect.condition.type) {
+						continue;
+					}
+
+					if (effect.condition.group && obj.group != effect.condition.group) {
+						continue;
+					}
+
+					if (effect.condition.special && obj.special != effect.condition.special) {
+						continue;
+					}
 				}
 
-				if (effect.condition.type && obj.type != effect.condition.type) {
-					continue;
+				if (effects[effect.priority] == undefined) {
+					effects[effect.priority] = [];
 				}
 
-				if (effect.condition.group && obj.group != effect.condition.group) {
-					continue;
-				}
-
-				if (effect.condition.special && obj.special != effect.condition.special) {
-					continue;
-				}
+				effects[effect.priority].push(effect)
 			}
-
-			if (effects[effect.priority] == undefined) {
-				effects[effect.priority] = [];
-			}
-
-			effects[effect.priority].push(effect)
-		}
+		}	
 	}
-
-
 
 	var result = {};
 

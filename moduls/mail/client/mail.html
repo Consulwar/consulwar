@@ -86,7 +86,9 @@
 					<button class="complain">Пожаловаться</button>
 				{{/if}}
 			{{/if}}
-			<button class="reply">Ответить</button>
+			{{#if canReply letter}}
+				<button class="reply">Ответить</button>
+			{{/if}}
 		</div>
 
 		<div class="battle_letter">
@@ -188,7 +190,6 @@
 			</div>
 			{{/with}}
 		</div>
-
 
 		<form>
 			<button class="back">Назад</button>

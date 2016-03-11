@@ -5,6 +5,72 @@ initMailLib();
 // Only one record for hasUnread function!
 Meteor.subscribe('privateMailUnread');
 
+var loadLetter = function(id, t) {
+	Meteor.call('mail.getLetter', id, function(err, letter) {
+		if (err) {
+			Notifications.error(err.error);
+			return;
+		}
+
+		t.data.letter.set(letter);
+
+		if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
+			// send request
+			Meteor.call('mail.readLetter', letter._id);
+			// hack for status update without request
+			letter.status = game.Mail.status.read;
+			var letters = t.data.mail.get();
+			if (letters) {
+			for (var i = 0; i < letters.length; i++)
+				if (letters[i]._id == letter._id) {
+					letters[i].status = game.Mail.status.read;
+					t.data.mail.set(letters);
+					break;
+				}
+			}
+		}
+
+		closeMessages(t);
+		t.$('.letter').show();
+
+		/*
+		if (letter.type == 'fleetbattle') {
+			t.$('.battle_letter').show();
+		} else if (letter.type == 'battleonearth') {
+			t.$('.battle_on_earth_letter').show();
+		} else if (letter.type == 'quiz') {
+			
+			Meteor.call('getQuiz', letter.text, function(err, result) {
+				Blaze.renderWithData(
+					Template.quiz, 
+					{
+						id: result._id,
+						userAnswer: result.userAnswer,
+						who: result.who || 'psm',
+						type: 'quiz',
+						title: result.name, 
+						text: result.text, 
+						options: $.map(result.options, function(value, name) {
+							return {
+								name: name,
+								text: value,
+								value: result.result[name] || 0,
+								totalVotes: result.totalVotes,
+							};
+						}),
+						totalVotes: result.totalVotes,
+						votePower: Game.User.getVotePower(),
+						canVote: !result.userAnswer // || !Game.User.getVotePower() ? false : true
+					}, 
+					$('.over')[0]
+				)
+			})
+		} else {
+			t.$('.letter').show();
+		}*/
+	});
+}
+
 var getPrivatePage = function(container, page, count) {
 	Meteor.call('mail.getPrivatePage', page, count, function(err, data) {
 		if (!err) {
@@ -14,9 +80,12 @@ var getPrivatePage = function(container, page, count) {
 }
 
 Game.Mail.showPage = function() {
-	var hash = this.getParams().hash;
-	var page = parseInt( this.getParams().page, 10 );
-	var count = 20;
+	// TODO: remove!
+	//var hash = this.getParams().hash;
+	//var page = parseInt( this.getParams().page, 10 );
+	var hash = this.params.hash;
+	var page = parseInt( this.params.page, 10 );
+	var count = 15;
 
 	if (!page || page < 1) {
 		Router.go('mail', { page: 1 }, { hash: hash } );
@@ -24,7 +93,9 @@ Game.Mail.showPage = function() {
 		var mail = new ReactiveVar(null);
 		getPrivatePage(mail, page, count);
 
-		this.render('mail', {
+		console.log('show page ' + page); // TODO: remove
+
+		var test = this.render('mail', {
 			to: 'content',
 			data: {
 				page: page,
@@ -36,6 +107,26 @@ Game.Mail.showPage = function() {
 		});
 	}
 }
+
+Template.mail.onRendered(function() {
+	var t = this;
+
+	this.autorun(function() {
+		var hash = Router.current().getParams().hash;
+		console.log('autorun with hash = ' + hash); // TODO: remove!
+
+		if (hash && hash.indexOf('compose') == 0) {
+			t.$('.recipient').val( hash.substr(8) );
+			t.$('form').show();
+			checkLogin(t);
+		}
+
+		if (hash && hash.indexOf('read') == 0) {
+			console.log('read letter ' + hash.substr(5));
+			loadLetter(hash.substr(5), t);
+		}
+	});
+})
 
 Template.mail.helpers({
 	countTotal: function() {
@@ -71,6 +162,10 @@ Template.mail.helpers({
 
 	canComplain: function(letter) {
 		return (letter && _.isString(letter.from) && letter.from != Meteor.userId()) ? true : false;
+	},
+
+	canReply: function(letter) {
+		return (letter && _.isString(letter.from)) ? true : false;
 	},
 
 	dailyQuest: function() {
@@ -118,15 +213,6 @@ Template.mail.helpers({
 	}
 });
 
-Template.mail.onRendered(function() {
-	var hash = Router.current().getParams().hash;
-	if (hash && hash.indexOf('compose') == 0) {
-		this.$('.recipient').val( hash.substr(8) );
-		this.$('form').show();
-		checkLogin(this);
-	}
-})
-
 var closeMessages = function(t) {
 	$('.over').empty();
 	t.$('.battle_letter').hide();
@@ -171,67 +257,8 @@ Template.mail.events({
 
 	// Открыть письмо
 	'click tr:not(.header,.from_tamily)': function(e, t) {
-		Meteor.call('mail.getLetter', e.currentTarget.dataset.id, function(err, letter) {
-			if (err) {
-				Notifications.error(err.error);
-				return;
-			}
-
-			t.data.letter.set(letter);
-
-			if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
-				// send request
-				Meteor.call('mail.readLetter', letter._id);
-				// hack for status update without request
-				letter.status = game.Mail.status.read;
-				var letters = t.data.mail.get();
-				if (letters) {
-				for (var i = 0; i < letters.length; i++)
-					if (letters[i]._id == letter._id) {
-						letters[i].status = game.Mail.status.read;
-						t.data.mail.set(letters);
-						break;
-					}
-				}
-			}
-
-			closeMessages(t);
-
-			if (letter.type == 'fleetbattle') {
-				t.$('.battle_letter').show();
-			} else if (letter.type == 'battleonearth') {
-				t.$('.battle_on_earth_letter').show();
-			} else if (letter.type == 'quiz') {
-				
-				Meteor.call('getQuiz', letter.text, function(err, result) {
-					Blaze.renderWithData(
-						Template.quiz, 
-						{
-							id: result._id,
-							userAnswer: result.userAnswer,
-							who: result.who || 'psm',
-							type: 'quiz',
-							title: result.name, 
-							text: result.text, 
-							options: $.map(result.options, function(value, name) {
-								return {
-									name: name,
-									text: value,
-									value: result.result[name] || 0,
-									totalVotes: result.totalVotes,
-								};
-							}),
-							totalVotes: result.totalVotes,
-							votePower: Game.User.getVotePower(),
-							canVote: !result.userAnswer /*|| !Game.User.getVotePower() ? false : true*/
-						}, 
-						$('.over')[0]
-					)
-				})
-			} else {
-				t.$('.letter').show();
-			}
-		});
+		window.location.hash = 'read/' + e.currentTarget.dataset.id;
+		// Router.go('mail', { page: t.data.page }, { hash: 'read/' + e.currentTarget.dataset.id });
 	},
 
 	// Дейлик
@@ -314,8 +341,11 @@ Template.mail.events({
 
 	// Закрыть чтение / написание письма
 	'click button.back': function(e, t) {
+		window.location.hash = '';
 		e.preventDefault();
-		$(e.currentTarget).parent().hide();
+		closeMessages(t);
+		//$(e.currentTarget).parent().hide();
+		//window.history.back();
 	},
 
 	// Пожаловаться
@@ -341,6 +371,8 @@ Template.mail.events({
 
 	// Ответить на письмо
 	'click button.reply': function(e, t) {
+		window.location.hash = '';
+
 		var letter = t.data.letter.get();
 
 		t.$('form .recipient').val(letter.from == Meteor.userId() ? letter.recipient : letter.sender);

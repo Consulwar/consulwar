@@ -21,7 +21,9 @@
 					{{/with}}
 				{{/if}}
 				{{#each item.effect}}
-					{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+					{{#if result}}
+						{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+					{{/if}}
 				{{/each}}
 			</div>
 
@@ -32,7 +34,9 @@
 					{{/with}}
 					{{#each item.effect}}
 						{{#with this.next}}
-							{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+							{{#if and result (not (eq ../result result))}}
+								{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+							{{/if}}
 						{{/with}}
 					{{/each}}
 				</div>

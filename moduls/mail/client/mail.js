@@ -10,9 +10,7 @@ Game.Mail.showPage = function() {
 	var page = parseInt( this.params.page, 10 );
 	var count = 20;
 
-	if (!page || page < 1) {
-		Router.go('mail', { page: 1 }, { hash: hash } );
-	} else {
+	if (page && page > 0) {
 		var mail = new ReactiveVar(null);
 		Meteor.call('mail.getPrivatePage', page, count, function(err, data) {
 			if (!err) {
@@ -453,9 +451,7 @@ Game.Mail.showAdminPage = function() {
 	var page = parseInt( this.params.page, 10 );
 	var count = 20;
 
-	if (!page || page < 1) {
-		Router.go('mailAdmin', { page: 1 }, { hash: hash });
-	} else {
+	if (page && page > 0) {
 		var mail = new ReactiveVar(null);
 		Meteor.call('mail.getAdminPage', page, count, function(err, data) {
 			if (!err) {

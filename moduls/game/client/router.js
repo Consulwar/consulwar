@@ -67,8 +67,8 @@ var gameRoutes = {
 	
 	communication: {
 		chat: 'communication/chat/:channel?',
-		mail: 'communication/mail/:page?',
-		mailAdmin: 'communication/mailadmin/:page?'
+		mail: 'communication/mail/:page',
+		mailAdmin: 'communication/mailadmin/:page'
 	},
 
 	cosmos: {

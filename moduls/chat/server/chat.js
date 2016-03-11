@@ -568,6 +568,54 @@ Meteor.methods({
 			message: target.login,
 			timestamp: Math.floor(new Date().valueOf() / 1000)
 		});
+	},
+
+	'chat.loadMore': function(roomName, timestamp) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+		check(timestamp, Match.Integer);
+
+		var room = Game.ChatRoom.Collection.findOne({
+			name: roomName,
+			$or: [
+				{ users: { $in: [ user._id ] } },
+				{ isPublic: true }
+			]
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Нет такой комнаты');
+		}
+
+		return Game.Chat.Collection.find({
+			room: roomName,
+			timestamp: { $lt: timestamp }
+		}, {
+			fields: {
+				login: 1,
+				message: 1,
+				data: 1,
+				timestamp: 1,
+				alliance: 1,
+				type: 1,
+				role: 1,
+				cheater: 1,
+				room: 1
+			},
+			sort: {
+				timestamp: -1
+			},
+			limit: Game.Chat.LOAD_COUNT
+		}).fetch();
 	}
 });
 
@@ -586,20 +634,19 @@ Meteor.publish('chatRoom', function(roomName) {
 	}
 });
 
-Meteor.publish('chat', function (roomName, limit) {
+Meteor.publish('chat', function (roomName) {
 	if (this.userId) {
 		check(roomName, String);
-		check(limit, Match.Integer);
-
-		if (limit > Game.Chat.MESSAGE_LIMIT) {
-			limit = Game.Chat.MESSAGE_LIMIT;
-		}
 
 		var room = Game.ChatRoom.Collection.findOne({
-			name: roomName
+			name: roomName,
+			$or: [
+				{ users: { $in: [ this.userId ] } },
+				{ isPublic: true }
+			]
 		});
 
-		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
+		if (room) {
 			return Game.Chat.Collection.find({
 				room: roomName
 			}, {
@@ -617,7 +664,7 @@ Meteor.publish('chat', function (roomName, limit) {
 				sort: {
 					timestamp: -1
 				},
-				limit: limit
+				limit: Game.Chat.LOAD_COUNT
 			});
 		}
 	} else {

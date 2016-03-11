@@ -12,6 +12,9 @@
 			{{#if hasMore}}
 				<li class="more">Показать предыдущие</li>
 			{{/if}}
+			{{#if gotLimit}}
+				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
+			{{/if}}
 			{{#each messages}}
 			<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
 			{{#if this.data}}* {{/if}}<span class="{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} {{#if eq this.login user.login}}me{{/if}}">{{this.login}}{{#unless this.data}}:{{/unless}}</span>

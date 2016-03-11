@@ -5,7 +5,74 @@ initMailLib();
 // Only one record for hasUnread function!
 Meteor.subscribe('privateMailUnread');
 
-var loadLetter = function(id, t) {
+Game.Mail.showPage = function() {
+	var hash = this.params.hash;
+	var page = parseInt( this.params.page, 10 );
+	var count = 20;
+
+	if (!page || page < 1) {
+		Router.go('mail', { page: 1 }, { hash: hash } );
+	} else {
+		var mail = new ReactiveVar(null);
+		Meteor.call('mail.getPrivatePage', page, count, function(err, data) {
+			if (!err) {
+				mail.set(data);
+			}
+		});
+
+		var test = this.render('mail', {
+			to: 'content',
+			data: {
+				page: page,
+				count: count,
+				mail: mail,
+				letter: new ReactiveVar(null),
+				isRecipientOk: new ReactiveVar(false)
+			}
+		});
+	}
+}
+
+Template.mail.onRendered(function() {
+	// save template instance
+	var template = this;
+
+	// run this function each time hash changes
+	this.autorun(function() {
+		var hash = Router.current().getParams().hash;
+
+		// hide all windows
+		closeMessages(template);
+
+		if (hash) {
+			// read letter
+			if (hash.indexOf('read') == 0) {
+				readLetter(hash.substr(5), template);
+			}
+			// show quest
+			else if (hash.indexOf('quest') == 0) {
+				showDailyQuest(template);
+			}
+			// compose letter
+			else if (hash.indexOf('compose') == 0) {
+				composeLetter(hash.substr(8), template);
+			}
+			// reply
+			else if (hash.indexOf('reply') == 0) {
+				replyLetter(template.data.letter.get(), template);
+			}
+		}
+	});
+});
+
+var closeMessages = function(t) {
+	$('.over').empty();
+	t.$('.battle_letter').hide();
+	t.$('.letter').hide();
+	t.$('form').hide();
+}
+
+var readLetter = function(id, t) {
 	Meteor.call('mail.getLetter', id, function(err, letter) {
 		if (err) {
 			Notifications.error(err.error);
@@ -30,10 +97,6 @@ var loadLetter = function(id, t) {
 			}
 		}
 
-		closeMessages(t);
-		t.$('.letter').show();
-
-		/*
 		if (letter.type == 'fleetbattle') {
 			t.$('.battle_letter').show();
 		} else if (letter.type == 'battleonearth') {
@@ -67,66 +130,112 @@ var loadLetter = function(id, t) {
 			})
 		} else {
 			t.$('.letter').show();
-		}*/
-	});
-}
-
-var getPrivatePage = function(container, page, count) {
-	Meteor.call('mail.getPrivatePage', page, count, function(err, data) {
-		if (!err) {
-			container.set(data);
 		}
 	});
 }
 
-Game.Mail.showPage = function() {
-	// TODO: remove!
-	//var hash = this.getParams().hash;
-	//var page = parseInt( this.getParams().page, 10 );
-	var hash = this.params.hash;
-	var page = parseInt( this.params.page, 10 );
-	var count = 15;
+var showDailyQuest = function(t) {
+	var dailyQuest = Game.Quest.getDaily();
 
-	if (!page || page < 1) {
-		Router.go('mail', { page: 1 }, { hash: hash } );
-	} else {
-		var mail = new ReactiveVar(null);
-		getPrivatePage(mail, page, count);
-
-		console.log('show page ' + page); // TODO: remove
-
-		var test = this.render('mail', {
-			to: 'content',
-			data: {
-				page: page,
-				count: count,
-				mail: mail,
-				letter: new ReactiveVar(null),
-				isRecipientOk: new ReactiveVar(false)
-			}
+	if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
+		// show inprogress daily quest
+		Meteor.call('quests.getDailyInfo', function(err, quest) {
+			Blaze.renderWithData(
+				Template.quest, 
+				{
+					who: quest.who || 'tamily',
+					type: 'daily',
+					title: quest.name, 
+					text: quest.text, 
+					options: $.map(quest.answers, function(text, name) {
+						return {
+							name: name,
+							text: text,
+							mood: 'neutral'
+						};
+					}),
+					isPrompt: true
+				}, 
+				$('.over')[0]
+			);
 		});
+	} else {
+		// show finished daily quest
+		Blaze.renderWithData(
+			Template.quest, 
+			{
+				who: dailyQuest.who || 'tamily',
+				type: 'daily',
+				title: dailyQuest.name, 
+				text: dailyQuest.result
+			}, 
+			$('.over')[0]
+		);
 	}
 }
 
-Template.mail.onRendered(function() {
-	var t = this;
+var replyLetter = function(letter, t) {
+	if (letter) {
+		// parse source recipient
+		t.$('form .recipient').val(letter.from == Meteor.userId() ? letter.recipient : letter.sender);
 
-	this.autorun(function() {
-		var hash = Router.current().getParams().hash;
-		console.log('autorun with hash = ' + hash); // TODO: remove!
-
-		if (hash && hash.indexOf('compose') == 0) {
-			t.$('.recipient').val( hash.substr(8) );
-			t.$('form').show();
-			checkLogin(t);
+		// parse source subject
+		var subject = letter.subject;
+		var match = subject.match(/Re: /i);
+		if (match) {
+			subject = 'Re (1): ' + subject.substr(match[0].length, subject.length);
+		} else {
+			match = subject.match(/Re \((\d+)\): /i);
+			if (match) {
+				var n = parseInt( match[1] ) + 1;
+				subject = 'Re (' + n + '): ' + subject.substr(match[0].length, subject.length);
+			} else {
+				subject = 'Re: ' + subject; 
+			}
 		}
+		t.$('form .subject').val(subject);
 
-		if (hash && hash.indexOf('read') == 0) {
-			console.log('read letter ' + hash.substr(5));
-			loadLetter(hash.substr(5), t);
+		// parse source message
+		var quote = '<blockquote>' + letter.text + '</blockquote>';
+		if (quote.length < 5000) {
+			t.$('form textarea').val(quote);
 		}
-	});
-})
+	}
+
+	t.$('form').show();
+	checkLogin(t);
+
+	var textarea = t.find('form textarea');
+	textarea.focus();
+	textarea.selectionStart = 0;
+	textarea.selectionEnd = 0;
+}
+
+var composeLetter = function(to, t) {
+	t.$('form').show();
+	t.$('form .recipient').val(to);
+	checkLogin(t);
+}
+
+var toggleDeleteButton = function(t) {
+	if (t.$('td input[type="checkbox"]:checked').length > 0) {
+		t.$('.delete_selected').show();
+	} else {
+		t.$('.delete_selected').hide();
+		t.$('th input[type="checkbox"]').prop('checked', false);
+	}
+}
+
+var checkLogin = function(t) {
+	var login = t.$('form .recipient').val();
+	if (login && login.length > 0) {
+		Meteor.call('mail.checkLogin', login, function(err, result) {
+			t.data.isRecipientOk.set(result);
+		});
+	} else {
+		t.data.isRecipientOk.set(false);
+	}
+}
 
 Template.mail.helpers({
 	countTotal: function() {
@@ -213,36 +322,34 @@ Template.mail.helpers({
 	}
 });
 
-var closeMessages = function(t) {
-	$('.over').empty();
-	t.$('.battle_letter').hide();
-	t.$('.letter').hide();
-	t.$('form').hide();
-}
-
-var toggleDeleteButton = function(t) {
-	if (t.$('td input[type="checkbox"]:checked').length > 0) {
-		t.$('.delete_selected').show();
-	} else {
-		t.$('.delete_selected').hide();
-		// update first checkbox
-		t.$('th input[type="checkbox"]').prop('checked', false);
-	}
-}
-
-var checkLogin = function(t) {
-	var login = t.$('form .recipient').val();
-	if (login && login.length > 0) {
-		Meteor.call('mail.checkLogin', login, function(err, result) {
-			t.data.isRecipientOk.set(result);
-		});
-	} else {
-		t.data.isRecipientOk.set(false);
-	}
-}
-
 Template.mail.events({
-	// Поставить чекбокс
+	// Read letter
+	'click tr:not(.header,.from_tamily)': function(e, t) {
+		Router.go('mail', { page: t.data.page }, { hash: 'read/' + e.currentTarget.dataset.id });
+	},
+
+	// Open daily quest
+	'click tr.from_tamily': function(e, t) {
+		Router.go('mail', { page: t.data.page }, { hash: 'quest' });
+	},
+
+	// Compose letter
+	'click .new_message': function(e, t) {
+		Router.go('mail', { page: t.data.page }, { hash: 'compose' });
+	},
+
+	// Reply to letter
+	'click button.reply': function(e, t) {
+		Router.go('mail', { page: t.data.page }, { hash: 'reply' });
+	},
+
+	// Go back
+	'click button.back': function(e, t) {
+		e.preventDefault();
+		window.history.back();
+	},
+
+	// Checkboxes
 	'click td:first-child': function(e, t) {
 		e.stopPropagation();
 		var checkbox = t.$(e.target).find('input');
@@ -255,66 +362,7 @@ Template.mail.events({
 		toggleDeleteButton(t);
 	},
 
-	// Открыть письмо
-	'click tr:not(.header,.from_tamily)': function(e, t) {
-		window.location.hash = 'read/' + e.currentTarget.dataset.id;
-		// Router.go('mail', { page: t.data.page }, { hash: 'read/' + e.currentTarget.dataset.id });
-	},
-
-	// Дейлик
-	'click tr.from_tamily': function(e, t) {
-		var dailyQuest = Game.Quest.getDaily();
-
-		closeMessages(t);
-
-		if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
-
-			// show inprogress daily quest
-			Meteor.call('quests.getDailyInfo', function(err, quest) {
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: quest.who || 'tamily',
-						type: 'daily',
-						title: quest.name, 
-						text: quest.text, 
-						options: $.map(quest.answers, function(text, name) {
-							return {
-								name: name,
-								text: text,
-								mood: 'neutral'
-							};
-						}),
-						isPrompt: true
-					}, 
-					$('.over')[0]
-				);
-			});
-			
-		} else {
-
-			// show finished daily quest
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					who: dailyQuest.who || 'tamily',
-					type: 'daily',
-					title: dailyQuest.name, 
-					text: dailyQuest.result
-				}, 
-				$('.over')[0]
-			);
-
-		}
-	},
-
-	// Открыть форму написания письма
-	'click .new_message': function(e, t) {
-		closeMessages(t);
-		t.$('form').show();
-		checkLogin(t);
-	},
-
+	// Delete selected letters
 	'click .delete_selected': function(e, t) {
 		var selected = t.$('td input[type="checkbox"]:checked');
 		var ids = [];
@@ -329,26 +377,19 @@ Template.mail.events({
 		if (ids) {
 			Meteor.call('mail.removeLetters', ids, function(err, data) {
 				if (!err) {
-					if (t.data.page > 1 && (t.data.page - 1) * t.data.count >= Meteor.user().totalMail) {
+					for (var i = 0; i < selected.length; i++) {
+						t.$(selected[i]).parent().parent().remove();
+					}
+					// all deleted then go previous page
+					if (t.data.page > 1 && ids.length == t.data.mail.get().length) {
 						Router.go('mail', { page: t.data.page - 1 });
-					} else {
-						getPrivatePage(t.data.mail, t.data.page, t.data.count);
 					}
 				}
 			});
 		}
 	},
 
-	// Закрыть чтение / написание письма
-	'click button.back': function(e, t) {
-		window.location.hash = '';
-		e.preventDefault();
-		closeMessages(t);
-		//$(e.currentTarget).parent().hide();
-		//window.history.back();
-	},
-
-	// Пожаловаться
+	// Complain letter
 	'click button.complain': function(e, t) {
 		var letter = t.data.letter.get();
 		if (letter) {
@@ -369,47 +410,11 @@ Template.mail.events({
 		}
 	},
 
-	// Ответить на письмо
-	'click button.reply': function(e, t) {
-		window.location.hash = '';
-
-		var letter = t.data.letter.get();
-
-		t.$('form .recipient').val(letter.from == Meteor.userId() ? letter.recipient : letter.sender);
-
-		var subject = letter.subject;
-		var match = subject.match(/Re: /i);
-		if (match) {
-			subject = 'Re (1): ' + subject.substr(match[0].length, subject.length);
-		} else {
-			match = subject.match(/Re \((\d+)\): /i);
-			if (match) {
-				var n = parseInt( match[1] ) + 1;
-				subject = 'Re (' + n + '): ' + subject.substr(match[0].length, subject.length);
-			} else {
-				subject = 'Re: ' + subject; 
-			}
-		}
-		t.$('form .subject').val(subject);
-
-		var quote = '<blockquote>' + letter.text + '</blockquote>';
-		if (quote.length < 5000) {
-			t.$('form textarea').val(quote);
-		}
-
-		t.$('form').show();
-		checkLogin(t);
-
-		var textarea = t.find('form textarea');
-		textarea.focus();
-		textarea.selectionStart = 0;
-		textarea.selectionEnd = 0;
-	},
-
-	// Отправить письмо
+	// Send letter
 	'submit form': function(e, t) {
 		e.preventDefault();
 
+		// disable submit button
 		t.$('input[type="submit"]').prop('disabled', true);
 
 		Meteor.call(
@@ -418,23 +423,22 @@ Template.mail.events({
 			t.find('form .subject').value, 
 			t.find('form textarea').value,
 			function(err, response) {
+				// enable submit button
+				t.$('input[type="submit"]').prop('disabled', false);
+				// check response
 				if (!err) {
 					e.currentTarget.reset();
-					t.data.isRecipientOk.set(false);
-					closeMessages(t);
-					t.$('input[type="submit"]').prop('disabled', false);
-					if (t.data.page == 1) {
-						getPrivatePage(t.data.mail, t.data.page, t.data.count);
-					}
 					Notifications.success('Письмо отправлено');
+					// go first page
+					Router.go('mail', { page: 1 });
 				} else {
-					t.$('input[type="submit"]').prop('disabled', false);
 					Notifications.error('Невозможно отправить письмо', err.error);
 				}
 			}
 		);
 	},
 
+	// Check login
 	'change input.recipient': function(e, t) {
 		checkLogin(t);
 	}
@@ -444,23 +448,20 @@ Template.mail.events({
 // Admin page
 // ----------------------------------------------------------------------------
 
-var getAdminPage = function(container, page, count) {
-	Meteor.call('mail.getAdminPage', page, count, function(err, data) {
-		if (!err) {
-			container.set(data);
-		}
-	});
-}
-
 Game.Mail.showAdminPage = function() {
-	var page = parseInt( this.getParams().page, 10 );
+	var hash = this.params.hash;
+	var page = parseInt( this.params.page, 10 );
 	var count = 20;
 
 	if (!page || page < 1) {
-		Router.go('mailAdmin', { page: 1 } );
+		Router.go('mailAdmin', { page: 1 }, { hash: hash });
 	} else {
 		var mail = new ReactiveVar(null);
-		getAdminPage(mail, page, count);
+		Meteor.call('mail.getAdminPage', page, count, function(err, data) {
+			if (!err) {
+				mail.set(data);
+			}
+		});
 
 		this.render('mailAdmin', {
 			to: 'content',
@@ -472,6 +473,37 @@ Game.Mail.showAdminPage = function() {
 			}
 		});
 	}
+}
+
+Template.mailAdmin.onRendered(function() {
+	// save template instance
+	var template = this;
+
+	// run this function each time hash changes
+	this.autorun(function() {
+		var hash = Router.current().getParams().hash;
+
+		// hide all windows
+		closeMessages(template);
+
+		if (hash) {
+			// read letter
+			if (hash.indexOf('read') == 0) {
+				adminReadLetter(hash.substr(5), template);
+			}
+		}
+	});
+})
+
+var adminReadLetter = function(id, t) {
+	Meteor.call('mail.getLetter', id, function(err, letter) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			t.data.letter.set(letter);
+			t.$('.letter').show();
+		}
+	});
 }
 
 Template.mailAdmin.helpers({
@@ -490,22 +522,12 @@ Template.mailAdmin.helpers({
 
 Template.mailAdmin.events({
 	'click tr:not(.header)': function(e, t) {
-		Meteor.call('mail.getLetter', e.currentTarget.dataset.id, function(err, letter) {
-			if (err) {
-				Notifications.error(err.error);
-				return;
-			}
-
-			t.data.letter.set(letter);
-
-			closeMessages(t);
-			t.$('.letter').show();
-		});
+		Router.go('mailAdmin', { page: t.data.page }, { hash: 'read/' + e.currentTarget.dataset.id });
 	},
 
 	'click button.back': function(e, t) {
 		e.preventDefault();
-		$(e.currentTarget).parent().hide();
+		window.history.back();
 	},
 
 	'click button.block': function(e, t) {
@@ -530,9 +552,7 @@ Template.mailAdmin.events({
 					: game.Mail.complain.recipientBlocked;
 
 				Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
-
-				closeMessages(t);
-				getAdminPage(t.data.mail, t.data.page, t.data.count);
+				Router.go('mailAdmin', { page: t.data.page });
 			}
 		}
 	},
@@ -551,14 +571,11 @@ Template.mailAdmin.events({
 				Notifications.error('Укажите причину отказа!');
 			} else {
 				Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
-
-				closeMessages(t);
-				getAdminPage(t.data.mail, t.data.page, t.data.count);
+				Router.go('mailAdmin', { page: t.data.page });
 			}
 		}
 	}
 });
-
 
 initMailQuizClient();
 

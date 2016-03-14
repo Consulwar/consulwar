@@ -447,6 +447,14 @@ Template.mail.events({
 				if (!err) {
 					e.currentTarget.reset();
 					Notifications.success('Письмо отправлено');
+					// if first page, reload data
+					if (t.data.page == 1) {
+						Meteor.call('mail.getPrivatePage', 1, t.data.count, function(err, data) {
+							if (!err) {
+								t.data.mail.set(data);
+							}
+						});
+					}
 					// go first page
 					Router.go('mail', { page: 1 });
 				} else {

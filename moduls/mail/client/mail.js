@@ -243,7 +243,7 @@ Template.mail.helpers({
 	},
 
 	countTotal: function() {
-		return Meteor.user().totalMail;
+		return Game.Statistic.getUserValue('totalMail');
 	},
 
 	mail: function() {
@@ -468,6 +468,8 @@ Template.mail.events({
 // Admin page
 // ----------------------------------------------------------------------------
 
+// TODO: Добавить вывод истории блокировки почты пользователя в админку.
+
 var mailAdmin = new ReactiveVar(null);
 
 Game.Mail.showAdminPage = function() {
@@ -536,7 +538,7 @@ Template.mailAdmin.helpers({
 	},
 
 	countTotal: function() {
-		return Game.Statistic.get('totalMailComplaints');
+		return Game.Statistic.getSystemValue('totalMailComplaints');
 	},
 
 	mail: function() {

@@ -7,7 +7,9 @@ Game.Statistic.fixGameStatistic = function() {
 		complaint: true
 	}).count();
 
-	Game.Statistic.Collection.upsert({}, {
+	Game.Statistic.Collection.upsert({
+		user_id: 'system'
+	}, {
 		$set: {
 			totalMailComplaints: totalMailComplaints
 		}
@@ -15,7 +17,7 @@ Game.Statistic.fixGameStatistic = function() {
 }
 
 Game.Statistic.fixUserStatistic = function(userId) {
-	var user = Meteor.users.find({
+	var user = Meteor.users.findOne({
 		_id: userId
 	});
 
@@ -28,7 +30,9 @@ Game.Statistic.fixUserStatistic = function(userId) {
 		deleted: { $ne: true }
 	}).count();
 
-	Meteor.users.update({ _id: user._id }, {
+	Game.Statistic.Collection.upsert({
+		user_id: user._id
+	}, {
 		$set: {
 			totalMail: totalMail
 		}
@@ -42,10 +46,15 @@ Meteor.publish('statistic', function() {
 		var isAdmin = user && ['admin', 'helper'].indexOf(user.role) >= 0;
 
 		if (isAdmin) {
-			return Game.Statistic.Collection.find({}, {
-				fields: {
-					totalMailComplaints: 1
-				}
+			return Game.Statistic.Collection.find({
+				$or: [
+					{ user_id: this.userId },
+					{ user_id: 'system' }
+				]
+			});
+		} else {
+			return Game.Statistic.Collection.find({
+				user_id: this.userId
 			});
 		}
 	}

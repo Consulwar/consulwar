@@ -18,7 +18,11 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 		timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 	});
 
-	Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
+	Game.Statistic.Collection.upsert({ user_id: user._id }, {
+		$inc: {
+			totalMail: 1
+		}
+	});
 };
 
 game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
@@ -39,7 +43,11 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 			timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 		});
 
-		Meteor.users.update({ _id: users[i]._id }, { $inc: { totalMail: 1 } });
+		Game.Statistic.Collection.upsert({ user_id: users[i]._id }, {
+			$inc: {
+				totalMail: 1
+			}
+		});
 	}
 	
 	return users;
@@ -60,7 +68,7 @@ Meteor.methods({
 		var currentTime = Math.floor(new Date().valueOf() / 1000);
 
 		if (user.mailBlockedUntil && user.mailBlockedUntil > currentTime) {
-			throw new Meteor.Error('Почта заблокирована');
+			throw new Meteor.Error('Отправка писем заблокирована');
 		}
 
 		check(recipient, String);
@@ -110,7 +118,11 @@ Meteor.methods({
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
-			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
+			Game.Statistic.Collection.upsert({ user_id: user._id }, {
+				$inc: {
+					totalMail: 1
+				}
+			});
 
 			// insert recipients copies
 			// TODO: Сделать рассылку очередями!
@@ -135,7 +147,11 @@ Meteor.methods({
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
 
-				Meteor.users.update({ _id: users[i]._id }, { $inc: { totalMail: 1 } });
+				Game.Statistic.Collection.upsert({ user_id: users[i]._id }, {
+					$inc: {
+						totalMail: 1
+					}
+				});
 
 				sentCount++;
 			}
@@ -175,7 +191,11 @@ Meteor.methods({
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
-			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: 1 } });
+			Game.Statistic.Collection.upsert({ user_id: user._id }, {
+				$inc: {
+					totalMail: 1
+				}
+			});
 
 			if (user._id != to._id) {
 				// insert recipient copy
@@ -192,7 +212,11 @@ Meteor.methods({
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
 
-				Meteor.users.update({ _id: to._id }, { $inc: { totalMail: 1 } });
+				Game.Statistic.Collection.upsert({ user_id: to._id }, {
+					$inc: {
+						totalMail: 1
+					}
+				});
 			}
 		}
 	},
@@ -297,8 +321,10 @@ Meteor.methods({
 		});
 
 		if (updateCount > 0) {
-			Game.Statistic.Collection.upsert({}, {
-				$inc: { totalMailComplaints: updateCount }
+			Game.Statistic.Collection.upsert({ user_id: 'system' }, {
+				$inc: {
+					totalMailComplaints: updateCount
+				}
 			});
 		}
 	},
@@ -327,7 +353,11 @@ Meteor.methods({
 
 		if (updateCount > 0) {
 			updateCount = updateCount * -1;
-			Meteor.users.update({ _id: user._id }, { $inc: { totalMail: updateCount } });
+			Game.Statistic.Collection.update({ user_id: user._id }, {
+				$inc: {
+					totalMail: updateCount
+				}
+			});
 		}
 	},
 
@@ -376,9 +406,9 @@ Meteor.methods({
 		
 		var messageText = '';
 		if (time > 0) {
-			messageText += 'Администратор ' + user.login + ' заблокировал вам почту.' + '\n';
+			messageText += 'Администратор ' + user.login + ' заблокировал вам отправку писем.' + '\n';
 		} else {
-			messageText += 'Администратор ' + user.login + ' разблокировал вам почту.';
+			messageText += 'Администратор ' + user.login + ' разблокировал вам отправку писем.';
 		}
 		if (reason) {
 			messageText += 'Причина: ' + reason;
@@ -390,7 +420,7 @@ Meteor.methods({
 			sender: 'Система',
 			to: target._id,
 			recipient: target.login,
-			subject: time > 0 ? 'Почта заблокирована' : 'Почта разблокирована',
+			subject: time > 0 ? 'Отправка писем заблокирована' : 'Отправка писем разблокирована',
 			text: messageText,
 			status: game.Mail.status.unread,
 			timestamp: Game.getCurrentTime()
@@ -400,8 +430,13 @@ Meteor.methods({
 			_id: target._id
 		}, {
 			$set: { mailBlockedUntil: timestamp },
-			$push: { mailBlockHistory: history },
-			$inc: { totalMail: 1 }
+			$push: { mailBlockHistory: history }
+		});
+
+		Game.Statistic.Collection.upsert({ user_id: target._id }, {
+			$inc: {
+				totalMail: 1
+			}
 		});
 	},
 

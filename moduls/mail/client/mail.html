@@ -56,7 +56,7 @@
 			</table>
 		</div>
 
-		<span class="delete_selected">Удалить выделенное</span>
+		<span class="delete_selected disabled">Удалить выделенное</span>
 		<span class="new_message">Написать сообщение</span>
 
 		{{> pages total=countTotal perPage=count}}
@@ -202,6 +202,10 @@
 			</div>
 			<input type="submit"/>
 		</form>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>
 
@@ -279,5 +283,9 @@
 				{{/unless}}
 			{{/with}}
 		</div>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>

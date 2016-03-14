@@ -2,8 +2,12 @@ initMailClient = function () {
 
 initMailLib();
 
-// Only one record for hasUnread function!
+// Subscription returns one record
+// Used at Game.Mail.hasUnread() method
 Meteor.subscribe('privateMailUnread');
+
+var isLoading = new ReactiveVar(false);
+var mailPrivate = new ReactiveVar(null);
 
 Game.Mail.showPage = function() {
 	var hash = this.params.hash;
@@ -11,10 +15,11 @@ Game.Mail.showPage = function() {
 	var count = 20;
 
 	if (page && page > 0) {
-		var mail = new ReactiveVar(null);
+		isLoading.set(true);
 		Meteor.call('mail.getPrivatePage', page, count, function(err, data) {
 			if (!err) {
-				mail.set(data);
+				isLoading.set(false);
+				mailPrivate.set(data);
 			}
 		});
 
@@ -23,9 +28,10 @@ Game.Mail.showPage = function() {
 			data: {
 				page: page,
 				count: count,
-				mail: mail,
+				mail: mailPrivate,
 				letter: new ReactiveVar(null),
-				isRecipientOk: new ReactiveVar(false)
+				isRecipientOk: new ReactiveVar(false),
+				isLoading: isLoading
 			}
 		});
 	}
@@ -45,7 +51,7 @@ Template.mail.onRendered(function() {
 		if (hash) {
 			// read letter
 			if (hash.indexOf('read') == 0) {
-				readLetter(hash.substr(5), template);
+				readLetter(hash.substr('read'.length + 1), template);
 			}
 			// show quest
 			else if (hash.indexOf('quest') == 0) {
@@ -53,7 +59,7 @@ Template.mail.onRendered(function() {
 			}
 			// compose letter
 			else if (hash.indexOf('compose') == 0) {
-				composeLetter(hash.substr(8), template);
+				composeLetter(hash.substr('compose'.length + 1), template);
 			}
 			// reply
 			else if (hash.indexOf('reply') == 0) {
@@ -71,7 +77,10 @@ var closeMessages = function(t) {
 }
 
 var readLetter = function(id, t) {
+	t.data.isLoading.set(true);
 	Meteor.call('mail.getLetter', id, function(err, letter) {
+		t.data.isLoading.set(false);
+
 		if (err) {
 			Notifications.error(err.error);
 			return;
@@ -137,7 +146,9 @@ var showDailyQuest = function(t) {
 
 	if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
 		// show inprogress daily quest
+		t.data.isLoading.set(true);
 		Meteor.call('quests.getDailyInfo', function(err, quest) {
+			t.data.isLoading.set(false);
 			Blaze.renderWithData(
 				Template.quest, 
 				{
@@ -194,7 +205,7 @@ var replyLetter = function(letter, t) {
 		t.$('form .subject').val(subject);
 
 		// parse source message
-		var quote = '<blockquote>' + letter.text + '</blockquote>';
+		var quote = '\n'.repeat(2) + '<blockquote>' + letter.text + '</blockquote>' + '\n';
 		if (quote.length < 5000) {
 			t.$('form textarea').val(quote);
 		}
@@ -215,15 +226,6 @@ var composeLetter = function(to, t) {
 	checkLogin(t);
 }
 
-var toggleDeleteButton = function(t) {
-	if (t.$('td input[type="checkbox"]:checked').length > 0) {
-		t.$('.delete_selected').show();
-	} else {
-		t.$('.delete_selected').hide();
-		t.$('th input[type="checkbox"]').prop('checked', false);
-	}
-}
-
 var checkLogin = function(t) {
 	var login = t.$('form .recipient').val();
 	if (login && login.length > 0) {
@@ -236,6 +238,10 @@ var checkLogin = function(t) {
 }
 
 Template.mail.helpers({
+	isLoading: function() {
+		return this.isLoading.get();
+	},
+
 	countTotal: function() {
 		return Meteor.user().totalMail;
 	},
@@ -352,31 +358,45 @@ Template.mail.events({
 		e.stopPropagation();
 		var checkbox = t.$(e.target).find('input');
 		checkbox.prop('checked', checkbox.prop('checked') == true ? false: true);
-		toggleDeleteButton(t);
+		if (t.$('td input[type="checkbox"]:checked').length > 0) {
+			t.$('.delete_selected').removeClass('disabled');
+		} else {
+			t.$('.delete_selected').addClass('disabled');
+			t.$('th input[type="checkbox"]').prop('checked', false);
+		}
 	},
 
 	'change th input[type="checkbox"]': function(e, t) {
 		t.$('input[type="checkbox"]').prop('checked', t.$(e.target).prop('checked'));
-		toggleDeleteButton(t);
+		if (t.$('td input[type="checkbox"]:checked').length > 0) {
+			t.$('.delete_selected').removeClass('disabled');
+		} else {
+			t.$('.delete_selected').addClass('disabled');
+			t.$('th input[type="checkbox"]').prop('checked', false);
+		}
 	},
 
 	// Delete selected letters
 	'click .delete_selected': function(e, t) {
+		if ($(e.currentTarget).hasClass('disabled')) {
+			return;
+		}
+
 		var selected = t.$('td input[type="checkbox"]:checked');
 		var ids = [];
 
 		for (var i = 0; i < selected.length; i++) {
-			ids.push(t.$(selected[i]).parent().parent().data('id'));
+			ids.push(t.$(selected[i]).parents('tr').data('id'));
 		}
 
-		t.$('.delete_selected').hide();
+		t.$('.delete_selected').addClass('disabled');
 		t.$('th input[type="checkbox"]').prop('checked', false);
 		
 		if (ids) {
 			Meteor.call('mail.removeLetters', ids, function(err, data) {
 				if (!err) {
 					for (var i = 0; i < selected.length; i++) {
-						t.$(selected[i]).parent().parent().remove();
+						t.$(selected[i]).parents('tr').remove();
 					}
 					// all deleted then go previous page
 					if (t.data.page > 1 && ids.length == t.data.mail.get().length) {
@@ -414,6 +434,7 @@ Template.mail.events({
 
 		// disable submit button
 		t.$('input[type="submit"]').prop('disabled', true);
+		t.data.isLoading.set(true);
 
 		Meteor.call(
 			'mail.sendLetter', 
@@ -423,6 +444,7 @@ Template.mail.events({
 			function(err, response) {
 				// enable submit button
 				t.$('input[type="submit"]').prop('disabled', false);
+				t.data.isLoading.set(false);
 				// check response
 				if (!err) {
 					e.currentTarget.reset();
@@ -446,16 +468,19 @@ Template.mail.events({
 // Admin page
 // ----------------------------------------------------------------------------
 
+var mailAdmin = new ReactiveVar(null);
+
 Game.Mail.showAdminPage = function() {
 	var hash = this.params.hash;
 	var page = parseInt( this.params.page, 10 );
 	var count = 20;
 
 	if (page && page > 0) {
-		var mail = new ReactiveVar(null);
+		isLoading.set(true);
 		Meteor.call('mail.getAdminPage', page, count, function(err, data) {
 			if (!err) {
-				mail.set(data);
+				isLoading.set(false);
+				mailAdmin.set(data);
 			}
 		});
 
@@ -464,8 +489,9 @@ Game.Mail.showAdminPage = function() {
 			data: {
 				page: page,
 				count: count,
-				mail: mail,
-				letter: new ReactiveVar(null)
+				mail: mailAdmin,
+				letter: new ReactiveVar(null),
+				isLoading: isLoading
 			}
 		});
 	}
@@ -485,14 +511,16 @@ Template.mailAdmin.onRendered(function() {
 		if (hash) {
 			// read letter
 			if (hash.indexOf('read') == 0) {
-				adminReadLetter(hash.substr(5), template);
+				adminReadLetter(hash.substr('read'.length + 1), template);
 			}
 		}
 	});
 })
 
 var adminReadLetter = function(id, t) {
+	t.data.isLoading.set(true);
 	Meteor.call('mail.getLetter', id, function(err, letter) {
+		t.data.isLoading.set(false);
 		if (err) {
 			Notifications.error(err.error);
 		} else {
@@ -503,6 +531,10 @@ var adminReadLetter = function(id, t) {
 }
 
 Template.mailAdmin.helpers({
+	isLoading: function() {
+		return thid.isLoading.get();
+	},
+
 	countTotal: function() {
 		return Game.Statistic.get('totalMailComplaints');
 	},
@@ -533,24 +565,37 @@ Template.mailAdmin.events({
 		}
 
 		var login = e.currentTarget.dataset.login;
-		var time = 86400 * 7; // TODO: Get time from GUI!
-		var reason = prompt('Заблокировать почту для пользователя ' + login, 'Потому что я могу!');
 
-		if (reason) {
-			reason = reason.trim();
-			if (reason.length == 0) {
-				Notifications.error('Укажите причину блокировки!');
-			} else {
-				Meteor.call('mail.blockUser', login, time, reason, letter._id);
-
-				var resolution = (letter.sender == login)
-					? game.Mail.complain.senderBlocked
-					: game.Mail.complain.recipientBlocked;
-
-				Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
-				Router.go('mailAdmin', { page: t.data.page });
-			}
+		var reason = prompt('Заблокировать почту для пользователя ' + login, 'Нарушение правил');
+		if (!reason) {
+			return;
 		}
+
+		reason.trim();
+		if (reason.length == 0) {
+			Notifications.error('Не указана причина блокировки!');
+			return;
+		}
+
+		var time = prompt('Укажите время блокировки в секундах', '86400');
+		if (!time) {
+			return;
+		}
+
+		if (time <= 0) {
+			Notifications.error('Не задано время блокировки');
+			return;
+		}
+
+		Meteor.call('mail.blockUser', login, time, reason, letter._id);
+
+		var resolution = (letter.sender == login)
+			? game.Mail.complain.senderBlocked
+			: game.Mail.complain.recipientBlocked;
+
+		Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
+		Router.go('mailAdmin', { page: t.data.page });
+		Notifications.success('Пользователь ' + login + ' заблокирован');
 	},
 
 	'click button.cancel': function(e, t) {
@@ -559,17 +604,21 @@ Template.mailAdmin.events({
 			return;
 		}
 
-		var reason = prompt('Отклонить жалобу', 'Потому что я могу!');
+		var reason = prompt('Укажите причину отклонения жалобы', 'Нарушений не найдено');
 
-		if (reason) {
-			reason = reason.trim();
-			if (reason.length == 0) {
-				Notifications.error('Укажите причину отказа!');
-			} else {
-				Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
-				Router.go('mailAdmin', { page: t.data.page });
-			}
+		if (!reason) {
+			return;
 		}
+
+		reason = reason.trim();
+		if (reason.length == 0) {
+			Notifications.error('Не указана причина отклонения жалобы!');
+			return;
+		}
+
+		Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
+		Router.go('mailAdmin', { page: t.data.page });
+		Notifications.success('Жалоба отклонена');
 	}
 });
 

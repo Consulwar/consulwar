@@ -83,9 +83,13 @@
 			filter brightness(1.4)
 	
 	.delete_selected
-		display none
 		left 2px
 		bottom 2px
+		
+		&.disabled
+			cursor default
+			-webkit-filter brightness(0.5)
+			filter brightness(0.5)
 
 	.new_message
 		right 2px

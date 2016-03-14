@@ -105,6 +105,16 @@ Meteor.methods({
 
 	'onlineUsersCount': function() {
 		return Meteor.users.find({'status.online': true}).count();
+	},
+
+	'user.checkLoginExists': function(login) {
+		check(login, String);
+
+		if (Meteor.users.findOne({ login: login })) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 });
 

@@ -233,68 +233,30 @@ Meteor.methods({
 		}
 
 		if (['admin', 'helper'].indexOf(user.role) >= 0) {
-			return Game.Mail.Collection.findOne({
+			var letter = Game.Mail.Collection.findOne({
 				_id: id
 			});
 		} else {
-			return Game.Mail.Collection.findOne({
+			var letter = Game.Mail.Collection.findOne({
 				_id: id,
 				owner: user._id
 			});
 		}
-	},
 
-	'mail.readLetter': function(id) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-		
-		check(id, String);
-
-		var letter = Game.Mail.Collection.findOne({
-			_id: id,
-			owner: user._id,
-			status: game.Mail.status.unread
-		});
-
-		if (!letter) {
-			throw new Meteor.Error('Ты втираешь мне какую-то дичь!');
-		}
-
-		Game.Mail.Collection.update({ _id: id }, {
-			$set: { status: game.Mail.status.read }
-		});
-
-		if (letter.parentId) {
-			Game.Mail.Collection.update({ _id: letter.parentId }, {
-				$set: { status: game.Mail.status.read },
-				$inc: { readCount: 1 }
+		if (letter && letter.to == user._id && letter.status == game.Mail.status.unread) {
+			Game.Mail.Collection.update({ _id: id }, {
+				$set: { status: game.Mail.status.read }
 			});
-		}
-	},
 
-	'mail.checkLogin': function(login) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			if (letter.parentId) {
+				Game.Mail.Collection.update({ _id: letter.parentId }, {
+					$set: { status: game.Mail.status.read },
+					$inc: { readCount: 1 }
+				});
+			}
 		}
 
-		var target = Meteor.users.findOne({
-			login: login
-		});
-
-		return target ? true : false;
+		return letter;
 	},
 
 	'mail.complainLetter': function(id) {

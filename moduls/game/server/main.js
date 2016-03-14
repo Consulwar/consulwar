@@ -31,16 +31,6 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
-	isLoginExists: function(login) {
-		check(login, String);
-
-		if (Meteor.users.findOne({login: login})) {
-			return true;
-		} else {
-			return false;
-		}
-	},
-
 	changePlanetName: function(name) {
 		var user = Meteor.user();
 

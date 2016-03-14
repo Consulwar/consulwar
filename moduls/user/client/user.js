@@ -65,7 +65,7 @@ Template.register_window_step3.helpers({
 
 var validate_login = function(login) {
 	if (login.length > 0) {
-		Meteor.call('isLoginExists', login, function(err, exists) {
+		Meteor.call('user.checkLoginExists', login, function(err, exists) {
 			if (exists) {
 				Session.set('err_username', 'Такой логин уже используется');
 			} else {

@@ -88,10 +88,8 @@ var readLetter = function(id, t) {
 
 		t.data.letter.set(letter);
 
+		// hack for status update without request
 		if (letter.to == Meteor.userId() && letter.status == game.Mail.status.unread) {
-			// send request
-			Meteor.call('mail.readLetter', letter._id);
-			// hack for status update without request
 			letter.status = game.Mail.status.read;
 			var letters = t.data.mail.get();
 			if (letters) {
@@ -229,7 +227,7 @@ var composeLetter = function(to, t) {
 var checkLogin = function(t) {
 	var login = t.$('form .recipient').val();
 	if (login && login.length > 0) {
-		Meteor.call('mail.checkLogin', login, function(err, result) {
+		Meteor.call('user.checkLoginExists', login, function(err, result) {
 			t.data.isRecipientOk.set(result);
 		});
 	} else {

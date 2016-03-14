@@ -87,6 +87,7 @@ Accounts.onCreateUser(function(option, user) {
 	Game.Resources.initialize(user);
 	Game.House.initialize(user);
 	Game.Quest.initialize(user);
+	Game.Statistic.initialize(user);
 
 	Meteor.setTimeout(function(user) {
 		Accounts.sendVerificationEmail(user._id);
@@ -105,6 +106,16 @@ Meteor.methods({
 
 	'onlineUsersCount': function() {
 		return Meteor.users.find({'status.online': true}).count();
+	},
+
+	'user.checkLoginExists': function(login) {
+		check(login, String);
+
+		if (Meteor.users.findOne({ login: login })) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 });
 

@@ -7,6 +7,13 @@ game.Mail.status = {
 	read: 1
 };
 
+game.Mail.complain = {
+	canceled: 0,
+	senderBlocked: 1,
+	recipientBlocked: 2,
+	bothBlocked: 3
+}
+
 Game.Mail = {
 	Collection: new Meteor.Collection('mail'),
 

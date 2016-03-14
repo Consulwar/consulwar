@@ -26,20 +26,11 @@ Meteor.startup(function () {
 	initMutualServer();
 	initMailServer();
 	initQuestServer();
+	initStatisticServer();
 	initCheatsServer();
 });
 
 Meteor.methods({
-	isLoginExists: function(login) {
-		check(login, String);
-
-		if (Meteor.users.findOne({login: login})) {
-			return true;
-		} else {
-			return false;
-		}
-	},
-
 	changePlanetName: function(name) {
 		var user = Meteor.user();
 
@@ -226,11 +217,13 @@ Meteor.publish('game', function () {
 				planetName: 1,
 				role: 1,
 				blocked: 1,
-				rating: 1
+				rating: 1,
+				totalMail: 1
 			}
 		});
 	}
 });
+
 /*
 Meteor.publish('resources', function () {
 	if (this.userId) {

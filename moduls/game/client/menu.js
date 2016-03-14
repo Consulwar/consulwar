@@ -126,7 +126,7 @@ var menu = {
 	},
 	communication: {
 		routeName: ['mail', 'chat'],
-		url: Router.routes.mail.path(),
+		url: Router.routes.mail.path({ page: 1 }),
 		additionalClass: function() {
 			if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread()) {
 				return 'has_new_mail';
@@ -137,7 +137,7 @@ var menu = {
 		items: {
 			mail: {
 				name: 'Почта',
-				url: Router.routes.mail.path()
+				url: Router.routes.mail.path({ page: 1 })
 			}, 
 			chat: {
 				name: 'Чат',

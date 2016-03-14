@@ -11,6 +11,19 @@
 		</table>
 		<div class="data">
 			<table>
+				{{#if eq page 1}}
+					{{#let quest=dailyQuest}}
+						{{#if quest}}
+							<tr class="from_tamily">
+								<td></td>
+								<td>{{quest.name}}</td>
+								<td>{{quest.subject}}</td>
+								<td>{{formatDate quest.timestamp}}</td>
+								<td>{{quest.status}}</td>
+							</tr>
+						{{/if}}
+					{{/let}}
+				{{/if}}
 				{{#each mail}}
 					<tr 
 						data-id="{{this._id}}"
@@ -34,31 +47,48 @@
 						"
 					>
 						<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
-						<td>{{this.name}}</td>
+						<td>{{letterName this}}</td>
 						<td>{{this.subject}}</td>
 						<td>{{formatDate this.timestamp}}</td>
-						<td>{{this.status}}</td>
+						<td>{{letterStatus this}}</td>
 					</tr>
 				{{/each}}
 			</table>
 		</div>
 
-		<span class="delete_selected">Удалить выделенное</span>
+		<span class="delete_selected disabled">Удалить выделенное</span>
 		<span class="new_message">Написать сообщение</span>
+
+		{{> pages total=countTotal perPage=count}}
 
 		<div class="letter">
 			<button class="back">Назад</button>
 			{{#with letter}}
-			<span class="name">{{#if eq from Meteor.userId}} 
-			{{recipient}}
-			{{else}}
-			{{sender}}
-			{{/if}}</span>
-			<span class="subject">{{subject}}</span>
-			<time>{{formatDate timestamp}}</time>
-			<div class="text">{{{nl2br text}}}</div>
+				<span class="name">{{sender}}</span>
+				<span class="subject">{{subject}}</span>
+				<time>{{formatDate timestamp}}</time>
+				<div class="text">{{{nl2br text}}}</div>
 			{{/with}}
-			<button class="reply">Ответить</button>
+			{{#if canComplain letter}}
+				{{#if letter.complaint}}
+					<span class="complaint">
+						{{#if letter.resolved}}
+							{{#if eq letter.resolution 0}}
+								Администратор отклонил жалобу
+							{{else}}
+								Жалоба обработана
+							{{/if}}
+						{{else}}
+							Жалоба отправлена
+						{{/if}}
+					</span>
+				{{else}}
+					<button class="complain">Пожаловаться</button>
+				{{/if}}
+			{{/if}}
+			{{#if canReply letter}}
+				<button class="reply">Ответить</button>
+			{{/if}}
 		</div>
 
 		<div class="battle_letter">
@@ -161,16 +191,21 @@
 			{{/with}}
 		</div>
 
-
 		<form>
 			<button class="back">Назад</button>
 			<div>
-				<label>Кому написать: <input class="recipient"/></label>
+				<label class="{{#if isRecipientOk}}check{{else}}cross{{/if}}">
+					Кому написать: <input class="recipient"/>
+				</label>
 				<label>Тема сообщения: <input class="subject" maxlength="200"/></label>
 				<textarea maxlength="5000"></textarea>
 			</div>
 			<input type="submit"/>
 		</form>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>
 
@@ -198,5 +233,59 @@
 		{{/each}}
 		{{/if}}
 		<div class="close"></div>
+	</div>
+</template>
+
+<template name="mailAdmin">
+	<div class="mail">
+		<table>
+			<tr class="header">
+				<th></th>
+				<th class="name">Отправитель</th>
+				<th class="name">Получатель</th>
+				<th class="subject">Тема</th>
+				<th class="time">Время</th>
+				<th class="status">Статус</th>
+			</tr>
+		</table>
+		<div class="data">
+			<table>
+				{{#each mail}}
+					<tr data-id="{{this._id}}">
+						<td></td>
+						<td>{{this.sender}}</td>
+						<td>{{this.recipient}}</td>
+						<td>{{this.subject}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+						<td>{{#if this.resolved}}Обработана{{/if}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+
+		{{> pages total=countTotal perPage=count}}
+
+		<div class="letter">
+			<button class="back">Назад</button>
+			{{#with letter}}
+				<span class="name">{{sender}}</span>
+				<span class="subject">{{subject}}</span>
+				<time>{{formatDate timestamp}}</time>
+				<div class="text">{{{nl2br text}}}</div>
+				<button class="block" data-login="{{sender}}">
+					Заблокировать {{sender}}
+				</button>
+				<button class="block" data-login="{{recipient}}">
+					Заблокировать {{recipient}}
+				</button>
+				{{#unless resolved}}
+					<button class="cancel">Отклонить жалобу</button>
+				{{/unless}}
+			{{/with}}
+		</div>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>

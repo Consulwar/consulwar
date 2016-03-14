@@ -8,10 +8,14 @@ Template.pages.helpers({
 	},
 
 	maxPage: function() {
-		return Math.ceil( this.total / this.perPage );
+		return this.total ? Math.ceil( this.total / this.perPage ) : 0;
 	},
 
 	pages: function() {
+		if (!this.total) {
+			this.total = 0;
+		}
+
 		var totalPages = Math.ceil( this.total / this.perPage );
 		if (totalPages <= 1) {
 			return null;
@@ -20,10 +24,11 @@ Template.pages.helpers({
 		// calc start page
 		var maxVisible = 11;
 		var from = Router.current().params.page - Math.floor( maxVisible / 2 );
+		if (totalPages - from < maxVisible) {
+			from = totalPages - maxVisible + 1;
+		}
 		if (from < 1) {
 			from = 1;
-		} else if (totalPages - from < maxVisible) {
-			from = totalPages - maxVisible + 1;
 		}
 
 		// calc end page

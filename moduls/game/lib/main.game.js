@@ -767,12 +767,3 @@ Game.Queue = {
 		return false;
 	}
 }
-
-Game.Statistic = {
-	Collection: new Meteor.Collection('statistic'),
-
-	get: function(field) {
-		var statistic = Game.Statistic.Collection.findOne();
-		return (statistic && statistic[ field ]) ? statistic[ field ] : null;
-	}
-}

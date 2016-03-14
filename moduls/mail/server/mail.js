@@ -18,19 +18,20 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 		timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 	});
 
-	Game.Statistic.Collection.upsert({ user_id: user._id }, {
+	Game.Statistic.Collection.update({ user_id: user._id }, {
 		$inc: {
-			totalMail: 1
+			totalMail: 1,
+			totalMailAlltime: 1
 		}
 	});
 };
 
 game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
-	// TODO: Сделать рассылку очередями!
 	var users = Meteor.users.find().fetch();
+	var documents = [];
 
 	for (var i = 0; i < users.length; i++) {
-		Game.Mail.Collection.insert({
+		documents.push({
 			owner: users[i]._id,
 			type: type,
 			from: 1,
@@ -42,13 +43,20 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 			status: game.Mail.status.unread,
 			timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 		});
-
-		Game.Statistic.Collection.upsert({ user_id: users[i]._id }, {
-			$inc: {
-				totalMail: 1
-			}
-		});
 	}
+
+	Game.Mail.Collection.rawCollection().insert(documents, function(err, data) {});
+
+	Game.Statistic.Collection.update({
+		user_id: { $ne: 'system' }
+	}, {
+		$inc: {
+			totalMail: 1,
+			totalMailAlltime: 1
+		}
+	}, {
+		multi: true
+	});
 	
 	return users;
 };
@@ -118,23 +126,16 @@ Meteor.methods({
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
-			Game.Statistic.Collection.upsert({ user_id: user._id }, {
-				$inc: {
-					totalMail: 1
-				}
-			});
-
 			// insert recipients copies
-			// TODO: Сделать рассылку очередями!
 			var users = Meteor.users.find().fetch();
-			var sentCount = 0;
+			var documents = [];
 
 			for (var i = 0; i < users.length; i++) {
 				if (users[i]._id == user._id) {
 					continue;
 				}
 
-				Game.Mail.Collection.insert({
+				documents.push({
 					owner: users[i]._id,
 					parentId: parentId,
 					from: user._id,
@@ -146,19 +147,23 @@ Meteor.methods({
 					status: game.Mail.status.unread,
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
-
-				Game.Statistic.Collection.upsert({ user_id: users[i]._id }, {
-					$inc: {
-						totalMail: 1
-					}
-				});
-
-				sentCount++;
 			}
+
+			Game.Mail.Collection.rawCollection().insert(documents, function(err, data) {});
+
+			Game.Statistic.Collection.update({
+				user_id: { $ne: 'system' }
+			}, {
+				$inc: {
+					totalMail: 1
+				}
+			}, {
+				multi: true
+			});
 
 			Game.Mail.Collection.update({ _id: parentId }, {
 				$set: {
-					sentCount: sentCount,
+					sentCount: documents.length,
 					readCount: 0 
 				}
 			});
@@ -191,9 +196,10 @@ Meteor.methods({
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
-			Game.Statistic.Collection.upsert({ user_id: user._id }, {
+			Game.Statistic.Collection.update({ user_id: user._id }, {
 				$inc: {
-					totalMail: 1
+					totalMail: 1,
+					totalMailAlltime: 1
 				}
 			});
 
@@ -212,9 +218,10 @@ Meteor.methods({
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
 
-				Game.Statistic.Collection.upsert({ user_id: to._id }, {
+				Game.Statistic.Collection.update({ user_id: to._id }, {
 					$inc: {
-						totalMail: 1
+						totalMail: 1,
+						totalMailAlltime: 1
 					}
 				});
 			}
@@ -323,7 +330,7 @@ Meteor.methods({
 		}
 	},
 
-	'mail.blockUser': function(login, time, reason, letterId) {
+	'mail.blockUser': function(options) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -338,16 +345,25 @@ Meteor.methods({
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
 		}
 
+		if (!options || !options.login) {
+			throw new Meteor.Error('Не указан обязательный параметр login');
+		}
+
+		check(options.login, String);
+
 		var target = Meteor.users.findOne({
-			login: login
+			login: options.login
 		});
 
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 		
-		check(time, Match.Integer);
+		if (options.time) {
+			check(options.time, Match.Integer);
+		}
 
+		var time = options.time ? options.time : 0;
 		var timestamp = Game.getCurrentTime() + time;
 
 		var history = {
@@ -356,14 +372,14 @@ Meteor.methods({
 			timeUntil: timestamp
 		};
 
-		if (reason) {
-			check(reason, String);
-			history.reason = reason;
+		if (options.reason) {
+			check(options.reason, String);
+			history.reason = options.reason;
 		}
 
-		if (letterId) {
-			check(letterId, String);
-			history.letterId = letterId;
+		if (options.letterId) {
+			check(options.letterId, String);
+			history.letterId = options.letterId;
 		}
 		
 		var messageText = '';
@@ -372,8 +388,8 @@ Meteor.methods({
 		} else {
 			messageText += 'Администратор ' + user.login + ' разблокировал вам отправку писем.';
 		}
-		if (reason) {
-			messageText += 'Причина: ' + reason;
+		if (options.reason) {
+			messageText += 'Причина: ' + options.reason;
 		}
 
 		Game.Mail.Collection.insert({
@@ -395,9 +411,10 @@ Meteor.methods({
 			$push: { mailBlockHistory: history }
 		});
 
-		Game.Statistic.Collection.upsert({ user_id: target._id }, {
+		Game.Statistic.Collection.update({ user_id: target._id }, {
 			$inc: {
-				totalMail: 1
+				totalMail: 1,
+				totalMailAlltime: 1
 			}
 		});
 	},

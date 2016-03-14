@@ -87,6 +87,7 @@ Accounts.onCreateUser(function(option, user) {
 	Game.Resources.initialize(user);
 	Game.House.initialize(user);
 	Game.Quest.initialize(user);
+	Game.Statistic.initialize(user);
 
 	Meteor.setTimeout(function(user) {
 		Accounts.sendVerificationEmail(user._id);

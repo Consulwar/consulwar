@@ -540,7 +540,7 @@ var adminReadLetter = function(id, t) {
 
 Template.mailAdmin.helpers({
 	isLoading: function() {
-		return thid.isLoading.get();
+		return this.isLoading.get();
 	},
 
 	countTotal: function() {
@@ -590,18 +590,26 @@ Template.mailAdmin.events({
 			return;
 		}
 
+		time = parseInt( time, 10 );
+
 		if (time <= 0) {
 			Notifications.error('Не задано время блокировки');
 			return;
 		}
 
-		Meteor.call('mail.blockUser', login, time, reason, letter._id);
+		Meteor.call('mail.blockUser', {
+			login: login,
+			time: time,
+			reason: reason,
+			letterId: letter._id
+		});
 
 		var resolution = (letter.sender == login)
 			? game.Mail.complain.senderBlocked
 			: game.Mail.complain.recipientBlocked;
 
 		Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
+
 		Router.go('mailAdmin', { page: t.data.page });
 		Notifications.success('Пользователь ' + login + ' заблокирован');
 	},
@@ -625,6 +633,7 @@ Template.mailAdmin.events({
 		}
 
 		Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
+
 		Router.go('mailAdmin', { page: t.data.page });
 		Notifications.success('Жалоба отклонена');
 	}

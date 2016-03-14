@@ -32,6 +32,7 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 
 	for (var i = 0; i < users.length; i++) {
 		documents.push({
+			_id: new Meteor.Collection.ObjectID().valueOf(),
 			owner: users[i]._id,
 			type: type,
 			from: 1,
@@ -136,6 +137,7 @@ Meteor.methods({
 				}
 
 				documents.push({
+					_id: new Meteor.Collection.ObjectID().valueOf(),
 					owner: users[i]._id,
 					parentId: parentId,
 					from: user._id,

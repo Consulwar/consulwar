@@ -66,14 +66,9 @@ var gameRoutes = {
 	},
 	
 	communication: {
-<<<<<<< HEAD
-		chat: 'communication/chat/:channel?',
+		chat: 'communication/chat/:room?',
 		mail: 'communication/mail/:page',
 		mailAdmin: 'communication/mailadmin/:page'
-=======
-		chat: 'communication/chat/:room?',
-		mail: 'communication/mail/:page?'
->>>>>>> e010368... Start reworking chat module
 	},
 
 	cosmos: {

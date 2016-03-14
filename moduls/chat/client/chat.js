@@ -35,9 +35,7 @@ Game.Chat.Collection.find({}).observeChanges({
 Game.Chat.showPage = function() {
 	var roomName = this.getParams().room;
 
-	if (!roomName) {
-		Router.go('chat', { room: 'general' } );
-	} else {
+	if (roomName) {
 		messagesReactive = new ReactiveVar(null);
 		Meteor.subscribe('chatRoom', this.params.room);
 		Meteor.subscribe('chat', this.params.room);

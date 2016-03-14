@@ -6,6 +6,7 @@ initMailLib();
 // Used at Game.Mail.hasUnread() method
 Meteor.subscribe('privateMailUnread');
 
+var observer = null;
 var isLoading = new ReactiveVar(false);
 var mailPrivate = new ReactiveVar(null);
 
@@ -41,6 +42,15 @@ Template.mail.onRendered(function() {
 	// save template instance
 	var template = this;
 
+	// refresh on new unread message
+	observer = Game.Mail.Collection.find({}).observeChanges({
+		added: function(id, fields) {
+			if (template.data.page == 1) {
+				reloadPageData(template);
+			}
+		}
+	});
+
 	// run this function each time hash changes
 	this.autorun(function() {
 		var hash = Router.current().getParams().hash;
@@ -68,6 +78,23 @@ Template.mail.onRendered(function() {
 		}
 	});
 });
+
+Template.mail.onDestroyed(function() {
+	if (observer) {
+		observer.stop();
+		observer = null;
+	}
+})
+
+var reloadPageData = function(t) {
+	t.data.isLoading.set(true);
+	Meteor.call('mail.getPrivatePage', t.data.page, t.data.count, function(err, data) {
+		if (!err) {
+			t.data.isLoading.set(false);
+			t.data.mail.set(data);
+		}
+	});
+}
 
 var closeMessages = function(t) {
 	$('.over').empty();
@@ -449,11 +476,7 @@ Template.mail.events({
 					Notifications.success('Письмо отправлено');
 					// if first page, reload data
 					if (t.data.page == 1) {
-						Meteor.call('mail.getPrivatePage', 1, t.data.count, function(err, data) {
-							if (!err) {
-								t.data.mail.set(data);
-							}
-						});
+						reloadPageData(t);
 					}
 					// go first page
 					Router.go('mail', { page: 1 });

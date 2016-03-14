@@ -548,6 +548,7 @@ Meteor.publish('privateMailUnread', function() {
 	if (this.userId) {
 		return Game.Mail.Collection.find({
 			owner: this.userId,
+			to: this.userId,
 			status: game.Mail.status.unread,
 			deleted: { $ne: true }
 		}, {

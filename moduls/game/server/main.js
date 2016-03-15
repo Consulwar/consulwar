@@ -16,7 +16,6 @@ SyncedCron.config({
 Meteor.startup(function () {
 	initBanHistoryServer();
 	initRatingServer();
-	initArtefactsServer();
 	initResourcesServer();
 	initBuildingServer();
 	initResearchServer();

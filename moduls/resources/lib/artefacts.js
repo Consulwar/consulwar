@@ -7,26 +7,16 @@ game.Artefact = function(options) {
 	this.description = options.description;
 
 	this.amount = function() {
-		return Game.Artefacts.getAmount(this.engName);
+		var resources = Game.Resources.getValue();
+		return (resources && resources[this.engName] && resources[this.engName].amount)
+			? resources[this.engName].amount
+			: 0;
 	}
 
 	Game.Artefacts.items[options.engName] = this;
 }
 
 Game.Artefacts = {
-	Collection: new Meteor.Collection('artefacts'),
-
-	getValue: function() {
-		return Game.Artefacts.Collection.findOne({
-			user_id: Meteor.userId()
-		});
-	},
-
-	getAmount: function(id) {
-		var data = Game.Artefacts.getValue();
-		return (data && data[id]) ? data[id] : 0;
-	},
-
 	items: {}
 }
 

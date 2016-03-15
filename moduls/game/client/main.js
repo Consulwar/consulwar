@@ -1,7 +1,6 @@
 Meteor.startup(function () {
 
 initRatingClient();
-initArtefactsClient();
 initResourcesClient();
 initBuildingClient();
 initResearchClient();

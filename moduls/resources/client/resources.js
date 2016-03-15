@@ -1,6 +1,7 @@
 initResourcesClient = function() {
 
 initResourcesLib();
+initArtefactsLib();
 
 Meteor.subscribe('resources');
 

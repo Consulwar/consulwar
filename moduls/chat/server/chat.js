@@ -168,7 +168,7 @@ Meteor.methods({
 				Game.Resources.spend(price);
 			}
 		}
-		
+
 		Game.Chat.Messages.Collection.insert(set);
 	},
 
@@ -477,6 +477,126 @@ Meteor.methods({
 		});
 
 		Game.Resources.spend({ credits: credits });
+	},
+
+	'chat.addModeratorToRoom': function(roomName, login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+		check(login, String);
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+		}
+
+		if (room.isPublic) {
+			if (['admin', 'helper'].indexOf(user.role) == -1) {
+				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
+			}
+		} else {
+			if (room.owner != user._id) {
+				throw new Meteor.Error('Только владелец может назанчить модератора в приватной комнате');
+			}
+
+			if (room.logins.indexOf(login) == -1) {
+				throw new Meteor.Error('Сначала нужно добавить пользователя в комнату');
+			}
+		}
+
+		if (!room.moderators) {
+			room.moderators = [];
+		}
+
+		if (room.moderators.length >= Game.Chat.Room.MODERATORS_LIMIT) {
+			throw new Meteor.Error('В комнату нельзя добавить больше ' + Game.Chat.Room.MODERATORS_LIMIT + ' модераторов');
+		}
+
+		var target = Meteor.users.findOne({
+			login: login
+		});
+
+		if (!target) {
+			throw new Meteor.Error('Пользователя с таким именем не существует');
+		}
+
+		if (room.moderators.indexOf( target._id ) != -1) {
+			throw new Meteor.Error('Такой модератор уже есть в чате');
+		}
+
+		room.moderators.push( target.login );
+
+		Game.Chat.Room.Collection.update({
+			name: roomName
+		}, {
+			$set: {
+				moderators: room.moderators
+			}
+		});
+	},
+
+	'chat.removeModeratorFromRoom': function(roomName, login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+		
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+		check(login, String);
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+		}
+
+		if (room.isPublic) {
+			if (['admin', 'helper'].indexOf(user.role) == -1) {
+				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
+			}
+		} else {
+			if (room.owner != user._id) {
+				throw new Meteor.Error('Только владелец может назанчить модератора в приватной комнате');
+			}
+		}
+
+		if (!room.moderators) {
+			room.moderators = [];
+		}
+
+		var i = room.moderators.indexOf(login);
+
+		if (i == -1) {
+			throw new Meteor.Error('Такого модератора в чате нет');
+		}
+
+		room.moderators.splice(i, 1);
+
+		Game.Chat.Room.Collection.update({
+			name: roomName
+		}, {
+			$set: {
+				moderators: room.moderators
+			}
+		});
 	},
 
 	'chat.addUserToRoom': function(roomName, login) {

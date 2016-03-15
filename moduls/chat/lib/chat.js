@@ -1,12 +1,14 @@
 Meteor.startup(function () {
 
-Game.Chat = {
+Game.Chat = {};
+
+Game.Chat.Messages = {
 	LOAD_COUNT: 20,
 	LIMIT: 1000,
 
 	Collection: new Meteor.Collection("messages"),
 
-	getMessagePrice: function() {
+	getPrice: function() {
 		var user = Meteor.user();
 
 		if (user.role && ['admin', 'helper'].indexOf(user.role) != -1) {
@@ -25,7 +27,7 @@ Game.Chat = {
 	}
 };
 
-Game.ChatRoom = {
+Game.Chat.Room = {
 	Collection: new Meteor.Collection('chatRooms')
 };
 

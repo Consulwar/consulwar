@@ -19,7 +19,7 @@ Meteor.methods({
 		// check room name
 		check(roomName, String);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName
 		});
 		
@@ -53,7 +53,7 @@ Meteor.methods({
 		}
 
 		// calc price
-		var price = Game.Chat.getMessagePrice();
+		var price = Game.Chat.Messages.getPrice();
 		var payerId = (!room.isPublic && room.isOwnerPays) ? room.owner : user._id;
 		var payerResources = Game.Resources.getValue(payerId);
 
@@ -160,7 +160,7 @@ Meteor.methods({
 		
 		Game.Resources.spend({crystals: price}, payerId);
 
-		Game.Chat.Collection.insert(set);
+		Game.Chat.Messages.Collection.insert(set);
 	},
 
 	'chat.blockUser': function(login, time, roomName) {
@@ -179,7 +179,7 @@ Meteor.methods({
 		if (roomName) {
 			check(roomName, String);
 
-			var room = Game.ChatRoom.Collection.findOne({
+			var room = Game.Chat.Room.Collection.findOne({
 				name: roomName
 			});
 
@@ -213,14 +213,14 @@ Meteor.methods({
 			var blocked = room.blocked ? room.blocked : {};
 			blocked[ login ] = timestamp;
 
-			Game.ChatRoom.Collection.update({
+			Game.Chat.Room.Collection.update({
 				name: roomName
 			}, {
 				$set: { blocked: blocked }
 			});
 
 			// send message
-			Game.Chat.Collection.insert({
+			Game.Chat.Messages.Collection.insert({
 				room: roomName,
 				user_id: user._id,
 				login: user.login,
@@ -244,10 +244,10 @@ Meteor.methods({
 			});
 
 			// send messages
-			var rooms = Game.ChatRoom.Collection.find().fetch();
+			var rooms = Game.Chat.Room.Collection.find().fetch();
 
 			for (var i = 0; i < rooms.length; i++) {
-				Game.Chat.Collection.insert({
+				Game.Chat.Messages.Collection.insert({
 					room: rooms[i].name,
 					user_id: user._id,
 					login: user.login,
@@ -361,7 +361,7 @@ Meteor.methods({
 
 		check(name, String);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: name
 		});
 
@@ -387,7 +387,7 @@ Meteor.methods({
 			}
 		}
 
-		Game.ChatRoom.Collection.insert(room);
+		Game.Chat.Room.Collection.insert(room);
 	},
 
 	'chat.removeRoom': function(name) {
@@ -403,7 +403,7 @@ Meteor.methods({
 
 		check(name, String);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: name
 		});
 
@@ -421,11 +421,11 @@ Meteor.methods({
 			}
 		}
 
-		Game.ChatRoom.Collection.remove({
+		Game.Chat.Room.Collection.remove({
 			name: name
 		});
 
-		Game.Chat.Collection.remove({
+		Game.Chat.Messages.Collection.remove({
 			room: name
 		});
 	},
@@ -444,7 +444,7 @@ Meteor.methods({
 		check(roomName, String);
 		check(login, String);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName
 		});
 
@@ -475,7 +475,7 @@ Meteor.methods({
 		room.users.push( target._id );
 		room.logins.push( target.login );
 
-		Game.ChatRoom.Collection.update({
+		Game.Chat.Room.Collection.update({
 			name: roomName
 		}, {
 			$set: {
@@ -484,7 +484,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Collection.insert({
+		Game.Chat.Messages.Collection.insert({
 			room: roomName,
 			user_id: user._id,
 			login: user.login,
@@ -511,7 +511,7 @@ Meteor.methods({
 		check(roomName, String);
 		check(login, String);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName
 		});
 
@@ -548,7 +548,7 @@ Meteor.methods({
 		room.users.splice(i, 1);
 		room.logins.splice(j, 1);
 
-		Game.ChatRoom.Collection.update({
+		Game.Chat.Room.Collection.update({
 			name: roomName
 		}, {
 			$set: {
@@ -557,7 +557,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Collection.insert({
+		Game.Chat.Messages.Collection.insert({
 			room: roomName,
 			user_id: user._id,
 			login: user.login,
@@ -584,7 +584,7 @@ Meteor.methods({
 		check(roomName, String);
 		check(timestamp, Match.Integer);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
 			$or: [
 				{ users: { $in: [ user._id ] } },
@@ -596,7 +596,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой комнаты');
 		}
 
-		return Game.Chat.Collection.find({
+		return Game.Chat.Messages.Collection.find({
 			room: roomName,
 			timestamp: { $lt: timestamp }
 		}, {
@@ -614,7 +614,7 @@ Meteor.methods({
 			sort: {
 				timestamp: -1
 			},
-			limit: Game.Chat.LOAD_COUNT
+			limit: Game.Chat.Messages.LOAD_COUNT
 		}).fetch();
 	}
 });
@@ -622,7 +622,7 @@ Meteor.methods({
 Meteor.publish('chatRoom', function(roomName) {
 	if (this.userId) {
 		check(roomName, String);
-		return Game.ChatRoom.Collection.find({
+		return Game.Chat.Room.Collection.find({
 			name: roomName,
 			$or: [
 				{ users: { $in: [ this.userId ] } },
@@ -638,7 +638,7 @@ Meteor.publish('chat', function (roomName) {
 	if (this.userId) {
 		check(roomName, String);
 
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
 			$or: [
 				{ users: { $in: [ this.userId ] } },
@@ -647,7 +647,7 @@ Meteor.publish('chat', function (roomName) {
 		});
 
 		if (room) {
-			return Game.Chat.Collection.find({
+			return Game.Chat.Messages.Collection.find({
 				room: roomName
 			}, {
 				fields: {
@@ -664,7 +664,7 @@ Meteor.publish('chat', function (roomName) {
 				sort: {
 					timestamp: -1
 				},
-				limit: Game.Chat.LOAD_COUNT
+				limit: Game.Chat.Messages.LOAD_COUNT
 			});
 		}
 	} else {

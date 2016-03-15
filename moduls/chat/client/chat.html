@@ -16,40 +16,47 @@
 				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
 			{{/if}}
 			{{#each messages}}
-			<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
-			{{#if this.data}}* {{/if}}<span class="{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} {{#if eq this.login user.login}}me{{/if}}">{{this.login}}{{#unless this.data}}:{{/unless}}</span>
-			{{#if this.data}}
-				{{#if eq this.data.type 'dice'}}
-					бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
-					{{#each this.data.dice.dices.values}}
-					<span class="dice">{{this}}</span> 
-					{{/each}}
-				{{/if}}
-				{{#if eq this.data.type 'status'}}
-					{{{highlightUser this.message}}}
-				{{/if}}
-				{{#if eq this.data.type 'sepukku'}}
-					совершил кровавое сепукку.
-				{{/if}}
-				{{#if eq this.data.type 'unblock'}}
-					разблокировал чат {{this.message}}
-				{{/if}}
-				{{#if eq this.data.type 'block'}}
-					заблокировал чат {{this.message}}
-				{{/if}}
-				{{#if eq this.data.type 'add'}}
-					добавил в чат {{this.message}}
-				{{/if}}
-				{{#if eq this.data.type 'remove'}}
-					удалил из чата {{this.message}}
-				{{/if}}
-			{{else}}
-				{{{highlightUser this.message}}}
-			{{/if}}
-			{{#if eqor user.role 'admin' 'helper'}}
-				<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
-			{{/if}}
-			</li>
+				<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
+					{{#if this.data}}* {{/if}}
+					<span 
+						class="
+							{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+							{{#if eq this.login user.login}}me{{/if}}"
+					>
+						{{this.login}}{{#unless this.data}}:{{/unless}}
+					</span>
+					{{#if this.data}}
+						{{#if eq this.data.type 'dice'}}
+							бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+							{{#each this.data.dice.dices.values}}
+								<span class="dice">{{this}}</span> 
+							{{/each}}
+						{{/if}}
+						{{#if eq this.data.type 'status'}}
+							{{{highlightUser this.message}}}
+						{{/if}}
+						{{#if eq this.data.type 'sepukku'}}
+							совершил кровавое сепукку.
+						{{/if}}
+						{{#if eq this.data.type 'unblock'}}
+							разблокировал чат {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'block'}}
+							заблокировал чат {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'add'}}
+							добавил в чат {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'remove'}}
+							удалил из чата {{this.message}}
+						{{/if}}
+					{{else}}
+						{{{highlightUser this.message}}}
+					{{/if}}
+					{{#if eqor user.role 'admin' 'helper'}}
+						<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
+					{{/if}}
+				</li>
 			{{/each}}
 		</ul>
 

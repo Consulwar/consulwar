@@ -4,7 +4,7 @@ Meteor.subscribe('online');
 
 var messagesReactive = null;
 
-Game.Chat.Collection.find({}).observeChanges({
+Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function (id, message) {
 		if (messagesReactive && Router.current().params.room == message.room) {
 			// add new messge
@@ -20,7 +20,7 @@ Game.Chat.Collection.find({}).observeChanges({
 				}
 			}
 
-			while (messages.length > Game.Chat.LIMIT) {
+			while (messages.length > Game.Chat.Messages.LIMIT) {
 				messages.shift();
 			}
 
@@ -66,7 +66,7 @@ Template.chat.onRendered(function() {
 
 Template.chat.helpers({
 	maxMessages: function() {
-		return Game.Chat.LIMIT;
+		return Game.Chat.Messages.LIMIT;
 	},
 
 	gotLimit: function() {
@@ -83,7 +83,7 @@ Template.chat.helpers({
 
 	canControl: function() {
 		var roomName = Router.current().params.room;
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName
 		});
 
@@ -96,7 +96,7 @@ Template.chat.helpers({
 
 	users: function() {
 		var roomName = Router.current().params.room;
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName
 		});
 
@@ -121,7 +121,7 @@ Template.chat.helpers({
 	},
 
 	price: function() {
-		var room = Game.ChatRoom.Collection.findOne({
+		var room = Game.Chat.Room.Collection.findOne({
 			name: Router.current().params.room
 		});
 
@@ -129,7 +129,7 @@ Template.chat.helpers({
 			return 0;
 		}
 
-		return Game.Chat.getMessagePrice();
+		return Game.Chat.Messages.getPrice();
 	},
 
 	highlightUser: function(text) {
@@ -163,17 +163,19 @@ Template.chat.events({
 		Meteor.call('chat.loadMore', roomName, timestamp, function(err, data) {
 			if (!err && data) {
 				for (var i = 0; i < data.length; i++) {
-					if (messages.length >= Game.Chat.LIMIT) {
+					if (messages.length >= Game.Chat.Messages.LIMIT) {
 						break;
 					}
 					messages.unshift( data[i] );
 				}
 
-				if (messages.length >= Game.Chat.LIMIT) {
+				if (messages.length >= Game.Chat.Messages.LIMIT) {
 					t.data.gotLimit.set(true);
 				}
 
-				if (messages.length >= Game.Chat.LIMIT || data.length < Game.Chat.LOAD_COUNT) {
+				if (messages.length >= Game.Chat.Messages.LIMIT
+				 || data.length < Game.Chat.Messages.LOAD_COUNT
+				) {
 					t.data.hasMore.set(false);
 				}
 

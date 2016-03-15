@@ -3,7 +3,7 @@
 		{{#if users}}
 			<ul class="participants">
 				{{#each users}}
-					<li class="{{#unless this.offline}}online{{/unless}}">{{this.login}}</li>
+					<li class="online">{{this}}</li>
 				{{/each}}
 			</ul>
 		{{/if}}

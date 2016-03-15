@@ -1,7 +1,5 @@
 Meteor.startup(function () {
 
-Meteor.subscribe('online');
-
 var messages = new ReactiveArray();
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
@@ -102,20 +100,26 @@ Template.chat.helpers({
 			return null;
 		}
 
-		if (room.isPublic) {
-			return Meteor.users.find({}, {sort: {'login': 1}});
+		// private room -> users list
+		if (!room.isPublic) {
+			return room.logins;
 		}
 
-		var users = [];
-		for (var i = 0; i < room.logins.length; i++) {
-			var user = Meteor.users.findOne({ login: room.logins[i] });
-			users.push({
-				login: room.logins[i],
-				offline: user ? false : true
-			});
+		// public room -> find from last messages
+		messages.depend();
+		var users = [ Meteor.user().login ];
+		var time = Session.get('serverTime') - 1800;
+		var n = messages.length;
+		while (n-- > 0) {
+			if (messages[n].timestamp < time) {
+				break;
+			}
+			if (users.indexOf(messages[n].login) == -1) {
+				users.push(messages[n].login);
+			}
 		}
 
-		return users;
+		return users.length > 0 ? users.sort() : null;
 	},
 
 	price: function() {

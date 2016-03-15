@@ -676,17 +676,4 @@ Meteor.publish('chat', function (roomName) {
 	}
 });
 
-Meteor.publish('online', function () {
-	if (this.userId) {
-		return Meteor.users.find({'status.online': true}, {
-			fields: {
-				login: 1,
-				role: 1
-			}
-		})
-	} else {
-		this.ready();
-	}
-});
-
 });

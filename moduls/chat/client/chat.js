@@ -2,29 +2,27 @@ Meteor.startup(function () {
 
 Meteor.subscribe('online');
 
-var messagesReactive = null;
+var messages = new ReactiveArray();
+var hasMore = new ReactiveVar(true);
+var isLoading = new ReactiveVar(false);
+var gotLimit = new ReactiveVar(false);
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function (id, message) {
-		if (messagesReactive && Router.current().params.room == message.room) {
+		if (Router.current().params.room == message.room) {
 			// add new messge
-			var messages = messagesReactive.get();
-
-			if (!messages) {
-				messages = [ message ];
+			if (messages.length == 0
+			 || messages[ messages.length - 1 ].timestamp < message.timestamp
+			) {
+				messages.push( message );
 			} else {
-				if (message.timestamp > messages[ messages.length - 1 ].timestamp) {
-					messages.push( message );
-				} else {
-					messages.unshift( message );
-				}
+				messages.unshift( message );
 			}
 
+			// limit max count
 			while (messages.length > Game.Chat.Messages.LIMIT) {
 				messages.shift();
 			}
-
-			messagesReactive.set(messages);
 
 			// scroll to bottom
 			Meteor.setTimeout(scrollChatToBottom);
@@ -36,19 +34,15 @@ Game.Chat.showPage = function() {
 	var roomName = this.getParams().room;
 
 	if (roomName) {
-		messagesReactive = new ReactiveVar(null);
+		messages.clear();
+		hasMore.set(true);
+		isLoading.set(false);
+		gotLimit.set(false);
+
 		Meteor.subscribe('chatRoom', this.params.room);
 		Meteor.subscribe('chat', this.params.room);
 
-		this.render('chat', {
-			to: 'content',
-			data: {
-				messages: messagesReactive,
-				hasMore: new ReactiveVar(true),
-				isLoading: new ReactiveVar(false),
-				gotLimit: new ReactiveVar(false)
-			}
-		});
+		this.render('chat', { to: 'content' });
 	}
 }
 
@@ -69,16 +63,20 @@ Template.chat.helpers({
 		return Game.Chat.Messages.LIMIT;
 	},
 
+	isLoading: function() {
+		return isLoading.get();
+	},
+
 	gotLimit: function() {
-		return this.gotLimit.get();
+		return gotLimit.get();
 	},
 
 	hasMore: function() {
-		return this.hasMore.get();
+		return hasMore.get();
 	},
 
 	messages: function() {
-		return this.messages.get();
+		return messages.list();
 	},
 
 	canControl: function() {
@@ -147,18 +145,17 @@ Template.chat.helpers({
 
 Template.chat.events({
 	'click .chat .more': function(e, t) {
-		if (t.data.isLoading.get()) {
+		if (isLoading.get()) {
 			return;
 		}
 
 		var roomName = Router.current().params.room;
-		var messages = t.data.messages.get();
 		if (!roomName || !messages || messages.length == 0) {
 			return;
 		}
 
 		var timestamp = messages[0].timestamp;
-		t.data.isLoading.set(true);
+		isLoading.set(true);
 		
 		Meteor.call('chat.loadMore', roomName, timestamp, function(err, data) {
 			if (!err && data) {
@@ -170,17 +167,16 @@ Template.chat.events({
 				}
 
 				if (messages.length >= Game.Chat.Messages.LIMIT) {
-					t.data.gotLimit.set(true);
+					gotLimit.set(true);
 				}
 
 				if (messages.length >= Game.Chat.Messages.LIMIT
 				 || data.length < Game.Chat.Messages.LOAD_COUNT
 				) {
-					t.data.hasMore.set(false);
+					hasMore.set(false);
 				}
 
-				t.data.messages.set(messages);
-				t.data.isLoading.set(false);
+				isLoading.set(false);
 			}
 		});
 	},

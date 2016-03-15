@@ -117,15 +117,15 @@ Game.Cheats.generateAllPlanets = function() {
 }
 
 // ----------------------------------------------------------------------------
-// Artefacts cheats
+// Resource cheats
 // ----------------------------------------------------------------------------
 
-Game.Cheats.addArtefact = function(id, amount) {
-	Meteor.call('cheats.addArtefact', id, amount);
+Game.Cheats.addResource = function(id, amount) {
+	Meteor.call('cheats.addResource', id, amount);
 }
 
-Game.Cheats.removeArtefact = function(id, amount) {
-	Meteor.call('cheats.removeArtefact', id, amount);
+Game.Cheats.spendResource = function(id, amount) {
+	Meteor.call('cheats.spendResource', id, amount);
 }
 
 // ----------------------------------------------------------------------------

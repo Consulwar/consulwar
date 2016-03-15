@@ -77,6 +77,12 @@ Template.chat.helpers({
 		return messages.list();
 	},
 
+	room: function() {
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room
+		});
+	},
+
 	canControl: function() {
 		var roomName = Router.current().params.room;
 		var room = Game.Chat.Room.Collection.findOne({
@@ -127,11 +133,7 @@ Template.chat.helpers({
 			name: Router.current().params.room
 		});
 
-		if (room && !room.isPublic && room.isOwnerPays && room.owner != Meteor.userId()) {
-			return 0;
-		}
-
-		return Game.Chat.Messages.getPrice();
+		return Game.Chat.Messages.getPrice(room);
 	},
 
 	highlightUser: function(text) {
@@ -148,6 +150,29 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
+	'click .chat .addCredits': function(e, t) {
+		var roomName = Router.current().params.room;
+		var credits = prompt('Положить кредиты на счет комнаты:', '1000');
+
+		if (!credits) {
+			return;
+		}
+
+		credits = parseInt( credits, 10 );
+		if (credits <= 0) {
+			Notifications.error('Укажите сумму кредитов!');
+			return;
+		}
+
+		Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
+				Notifications.success('Кредиты успешно зачисленны на счет комнаты');
+			}
+		});
+	},
+
 	'click .chat .more': function(e, t) {
 		if (isLoading.get()) {
 			return;

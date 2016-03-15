@@ -53,15 +53,16 @@ Meteor.methods({
 		}
 
 		// calc price
-		var price = Game.Chat.Messages.getPrice();
-		var payerId = (!room.isPublic && room.isOwnerPays) ? room.owner : user._id;
-		var payerResources = Game.Resources.getValue(payerId);
+		var price = Game.Chat.Messages.getPrice(room);
+		var userResources = Game.Resources.getValue();
 
-		if (payerResources.crystals.amount < price) {
-			if (payerId == user._id) {
+		if (room.isOwnerPays) {
+			if (price && room.credits < price.credits) {
+				throw new Meteor.Error('Нужно пополнить баланс комнаты');
+			}
+		} else {
+			if (price && userResources.crystals.amount < price.crystals) {
 				throw new Meteor.Error('У Вас недостаточно ресурсов');
-			} else {
-				throw new Meteor.Error('У владельца чата недостаточно ресурсов');
 			}
 		}
 
@@ -112,8 +113,6 @@ Meteor.methods({
 				set.message = message.substr(3);
 
 			} else if (message.substr(0, 8) == '/сепукку') {
-				var userResources = Game.Resources.getValue();
-
 				if (userResources.crystals.amount < 0
 				 || userResources.metals.amount < 0
 				 || userResources.honor.amount < 0
@@ -146,20 +145,30 @@ Meteor.methods({
 			}
 		}
 
+		// dice price check and spend
 		if (set.data && set.data.type == 'dice') {
-			price = 5000 * set.data.dice.dices.amount;
+			var dicePrice = 5000 * set.data.dice.dices.amount;
+
+			if (userResources.crystals.amount < dicePrice) {
+				throw new Meteor.Error('У вас не достаточно кристаллов чтобы бросить кубики');
+			}
+
+			Game.Resources.spend({ crystals: dicePrice });
 		}
 
-		if (payerResources.crystals.amount < price) {
-			if (payerId == user._id) {
-				throw new Meteor.Error('У Вас недостаточно ресурсов');
+		// message price
+		if (price) {
+			if (room.isOwnerPays) {
+				Game.Chat.Room.Collection.update({
+					name: roomName
+				}, {
+					$inc: { credits: price.credits * -1 }
+				})
 			} else {
-				throw new Meteor.Error('У владельца чата недостаточно ресурсов');
+				Game.Resources.spend(price);
 			}
 		}
 		
-		Game.Resources.spend({crystals: price}, payerId);
-
 		Game.Chat.Messages.Collection.insert(set);
 	},
 
@@ -384,6 +393,7 @@ Meteor.methods({
 
 			if (isOwnerPays) {
 				room.isOwnerPays = true;
+				room.credits = 0;
 			}
 		}
 
@@ -428,6 +438,45 @@ Meteor.methods({
 		Game.Chat.Messages.Collection.remove({
 			room: name
 		});
+	},
+
+	'chat.addCreditsToRoom': function(roomName, credits) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+		}
+
+		if (room.isPublic || !room.isOwnerPays) {
+			throw new Meteor.Error('Невозможно пополнить баланс этой комнаты');
+		}
+
+		var userResources = Game.Resources.getValue();
+		if (userResources.credits.amount < credits) {
+			throw new Meteor.Error('У вас недостаточно средств');
+		}
+
+		Game.Chat.Room.Collection.update({
+			name: roomName
+		}, {
+			$inc: { credits: credits }
+		});
+
+		Game.Resources.spend({ credits: credits });
 	},
 
 	'chat.addUserToRoom': function(roomName, login) {

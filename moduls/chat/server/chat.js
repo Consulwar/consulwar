@@ -12,8 +12,34 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (user.chatBlockedUntil && user.chatBlockedUntil > Game.getCurrentTime()) {
+		// check global block
+		var blockGlobal = Game.BanHistory.Collection.findOne({
+			user_id: user._id,
+			type: Game.BanHistory.type.chat,
+			room: { $exists: false }
+		}, {
+			sort: {
+				timestamp: -1
+			}
+		});
+
+		if (blockGlobal && Game.getCurrentTime() < blockGlobal.timestamp + blockGlobal.period) {
 			throw new Meteor.Error('Чат заблокирован');
+		}
+
+		// check room block
+		var blockRoom = Game.BanHistory.Collection.findOne({
+			user_id: user._id,
+			type: Game.BanHistory.type.chat,
+			room: roomName
+		}, {
+			sort: {
+				timestamp: -1
+			}
+		});
+
+		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
+			throw new Meteor.Error('Чат ' + roomName + ' заблокирован');
 		}
 
 		// check room name
@@ -29,13 +55,6 @@ Meteor.methods({
 
 		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
 			throw new Meteor.Error('Вы не можете писать в эту комнату');
-		}
-
-		if (room.blocked
-		 && room.blocked[user.login]
-		 && room.blocked[user.login] > Game.getCurrentTime()
-		) {
-			throw new Meteor.Error('Чат ' + roomName + ' заблокирован');
 		}
 
 		// check message
@@ -172,7 +191,7 @@ Meteor.methods({
 		Game.Chat.Messages.Collection.insert(set);
 	},
 
-	'chat.blockUser': function(login, time, roomName) {
+	'chat.blockUser': function(options) {
 		var user = Meteor.user();
 
 		if (!user && !user._id) {
@@ -183,20 +202,30 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		if (!options || !options.login) {
+			throw new Meteor.Error('Не указан логин');
+		}
+
+		check(options.login, String);
+
 		var hasAccess = ['admin', 'helper'].indexOf(user.role) != -1;
 
-		if (roomName) {
-			check(roomName, String);
+		if (options.roomName) {
+			check(options.roomName, String);
 
 			var room = Game.Chat.Room.Collection.findOne({
-				name: roomName
+				name: options.roomName
 			});
 
 			if (!room) {
 				throw new Meteor.Error('Нет такой комнаты');
 			}
 
-			if (!room.isPublic && !hasAccess) {
+			if (!hasAccess && room.moderators) {
+				hasAccess = room.moderators.indexOf(user.login) >= 0;
+			}
+
+			if (!hasAccess && !room.isPublic) {
 				hasAccess = room.owner == user._id;
 			}
 		}
@@ -206,54 +235,51 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: login
+			login: options.login
 		});
 
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 
-		check(time, Match.Integer);
+		if (options.time) {
+			check(options.time, Match.Integer);
+		}
 
-		var timestamp = Game.getCurrentTime() + time;
+		var time = options.time ? options.time : 0;
 
-		if (roomName) {
-			// room block
-			var blocked = room.blocked ? room.blocked : {};
-			blocked[ login ] = timestamp;
+		var history = {
+			user_id: target._id,
+			type: Game.BanHistory.type.chat,
+			who: user.login,
+			timestamp: Game.getCurrentTime(),
+			period: time
+		}
 
-			Game.Chat.Room.Collection.update({
-				name: roomName
-			}, {
-				$set: { blocked: blocked }
-			});
+		if (options.roomName) {
+			history.room = options.roomName;
+		}
 
-			// send message
+		Game.BanHistory.Collection.insert(history);
+
+		// send message
+		if (options.roomName) {
 			Game.Chat.Messages.Collection.insert({
-				room: roomName,
+				room: options.roomName,
 				user_id: user._id,
 				login: user.login,
 				alliance: user.alliance,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
-					timestamp: timestamp
+					timestamp: Game.getCurrentTime()
 				},
 				message: target.login,
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
-
 		} else {
-			// general block
-			Meteor.users.update({
-				_id: target._id
-			}, {
-				$set: {
-					chatBlockedUntil: timestamp
-				}
-			});
-
-			// send messages
-			var rooms = Game.Chat.Room.Collection.find().fetch();
+			var rooms = Game.Chat.Room.Collection.find({
+				isPublic: true
+			}).fetch();
 
 			for (var i = 0; i < rooms.length; i++) {
 				Game.Chat.Messages.Collection.insert({
@@ -263,7 +289,7 @@ Meteor.methods({
 					alliance: user.alliance,
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
-						timestamp: timestamp
+						timestamp: Game.getCurrentTime()
 					},
 					message: target.login,
 					timestamp: Math.floor(new Date().valueOf() / 1000)
@@ -552,7 +578,7 @@ Meteor.methods({
 		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
-		
+
 		if (user.blocked == true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}

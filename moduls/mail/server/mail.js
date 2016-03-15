@@ -73,10 +73,17 @@ Meteor.methods({
 		if (user.blocked == true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+		
+		var block = Game.BanHistory.Collection.findOne({
+			user_id: user._id,
+			type: Game.BanHistory.type.mail
+		}, {
+			sort: {
+				timestamp: -1
+			}
+		});
 
-		var currentTime = Math.floor(new Date().valueOf() / 1000);
-
-		if (user.mailBlockedUntil && user.mailBlockedUntil > currentTime) {
+		if (block && Game.getCurrentTime() < block.timestamp + block.period) {
 			throw new Meteor.Error('Отправка писем заблокирована');
 		}
 
@@ -366,12 +373,13 @@ Meteor.methods({
 		}
 
 		var time = options.time ? options.time : 0;
-		var timestamp = Game.getCurrentTime() + time;
 
 		var history = {
+			user_id: target._id,
+			type: Game.BanHistory.type.mail,
 			who: user.login,
-			timeFrom: Game.getCurrentTime(),
-			timeUntil: timestamp
+			timestamp: Game.getCurrentTime(),
+			period: time
 		};
 
 		if (options.reason) {
@@ -406,12 +414,7 @@ Meteor.methods({
 			timestamp: Game.getCurrentTime()
 		});
 
-		Meteor.users.update({
-			_id: target._id
-		}, {
-			$set: { mailBlockedUntil: timestamp },
-			$push: { mailBlockHistory: history }
-		});
+		Game.BanHistory.Collection.insert(history);
 
 		Game.Statistic.Collection.update({ user_id: target._id }, {
 			$inc: {

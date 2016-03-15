@@ -230,7 +230,17 @@ Template.chat.events({
 	'click li a.block': function(e, t) {
 		e.preventDefault();
 
-		Meteor.call('chat.blockUser', e.currentTarget.dataset.login, 86400, null, function(err) {
+		var time = prompt('Укажите время блокировки в секундах', '86400');
+		if (!time) {
+			return;
+		}
+
+		var options = {
+			login: e.currentTarget.dataset.login,
+			time: parseInt(time, 10)
+		}
+
+		Meteor.call('chat.blockUser', options, function(err) {
 			if (err) {
 				Notifications.error(err);
 			}

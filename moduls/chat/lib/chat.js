@@ -28,6 +28,8 @@ Game.Chat.Messages = {
 };
 
 Game.Chat.Room = {
+	USERS_LIMIT: 50,
+
 	Collection: new Meteor.Collection('chatRooms')
 };
 

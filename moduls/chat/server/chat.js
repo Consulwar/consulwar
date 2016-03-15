@@ -460,6 +460,10 @@ Meteor.methods({
 			throw new Meteor.Error('Это не твоя комната');
 		}
 
+		if (room.users.length >= Game.Chat.Room.USERS_LIMIT) {
+			throw new Meteor.Error('В комнату нельзя добавить больше ' + Game.Chat.Room.USERS_LIMIT + ' пользователей');
+		}
+
 		var target = Meteor.users.findOne({
 			login: login
 		});

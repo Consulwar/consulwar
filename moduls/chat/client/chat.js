@@ -7,7 +7,6 @@ var gotLimit = new ReactiveVar(false);
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function (id, message) {
-		console.log('got message', message.message);
 		if (Router.current().params.room == message.room) {
 			// add new messge
 			if (messages.length == 0
@@ -30,21 +29,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 });
 
 Game.Chat.showPage = function() {
-	var roomName = this.params.room;
-
-	console.log('show page', roomName);
-
-	if (roomName) {
-		messages.clear();
-		hasMore.set(true);
-		isLoading.set(false);
-		gotLimit.set(false);
-
-		Meteor.subscribe('chatRoom', roomName);
-		Meteor.subscribe('chat', roomName);
-
-		this.render('chat', { to: 'content' });
-	}
+	this.render('chat', { to: 'content' });
 }
 
 var scrollChatToBottom = function(force) {
@@ -57,6 +42,21 @@ var scrollChatToBottom = function(force) {
 
 Template.chat.onRendered(function() {
 	Meteor.setTimeout(scrollChatToBottom.bind(this, true));
+
+	// run this function each time as room changes
+	this.autorun(function() {
+		var roomName = Router.current().getParams().room;
+
+		if (roomName) {
+			messages.clear();
+			hasMore.set(true);
+			isLoading.set(false);
+			gotLimit.set(false);
+			
+			Meteor.subscribe('chatRoom', roomName);
+			Meteor.subscribe('chat', roomName);
+		}
+	});
 });
 
 Template.chat.helpers({
@@ -81,7 +81,6 @@ Template.chat.helpers({
 	},
 
 	messages: function() {
-		console.log('messages helper', messages.list());
 		return messages.list();
 	},
 

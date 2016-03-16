@@ -7,7 +7,8 @@ Game.Payment.Collection = new Meteor.Collection('paymentHistory');
 Game.Payment.log = function(isIncome, resources, source, uid) {
 	var record = {
 		user_id: uid ? uid : Meteor.userId(),
-		resources: resources
+		resources: resources,
+		timestamp: Game.getCurrentTime()
 	}
 
 	if (isIncome) {
@@ -55,6 +56,25 @@ Meteor.methods({
 		// TODO: Перенести в callback
 		Game.Resources.add(paymentItem.resources);
 		Game.Payment.logIncome(paymentItem.resources, id);
+	},
+
+	'user.getPaymentHistory': function(isIncome) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		return Game.Payment.Collection.find({
+			user_id: user._id,
+			income: isIncome ? true : false
+		}, {
+			limit: 100
+		}).fetch();
 	}
 });
 

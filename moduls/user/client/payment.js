@@ -1,0 +1,5 @@
+initPaymentClient = function() {
+	
+initPaymentLib();
+
+}

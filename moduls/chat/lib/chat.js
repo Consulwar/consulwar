@@ -11,6 +11,10 @@ Game.Chat.Messages = {
 	getPrice: function(room) {
 		var user = Meteor.user();
 
+		if (user.isChatFree) {
+			return null;
+		}
+
 		if (user.role && ['admin', 'helper'].indexOf(user.role) != -1) {
 			return null;
 		}

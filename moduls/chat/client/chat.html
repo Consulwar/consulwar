@@ -82,10 +82,12 @@
 				{{/if}}
 			{{/if}}
 
-			<!--<button>Больше никогда не платить за ссаный чат</button>
-			<ul class="resources">
-				<li class="credits">5 000</li>
-			</ul>-->
+			{{#unless isChatFree}}
+				<button class="buyFreeChat">Больше никогда не платить за ссаный чат</button>
+				<ul class="resources">
+					<li class="credits">5 000</li>
+				</ul>
+			{{/unless}}
 		</form>
 
 		{{#if canControl}}

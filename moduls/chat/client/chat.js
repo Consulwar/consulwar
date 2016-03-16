@@ -7,6 +7,7 @@ var gotLimit = new ReactiveVar(false);
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function (id, message) {
+		console.log('got message', message.message);
 		if (Router.current().params.room == message.room) {
 			// add new messge
 			if (messages.length == 0
@@ -29,7 +30,9 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 });
 
 Game.Chat.showPage = function() {
-	var roomName = this.getParams().room;
+	var roomName = this.params.room;
+
+	console.log('show page', roomName);
 
 	if (roomName) {
 		messages.clear();
@@ -37,8 +40,8 @@ Game.Chat.showPage = function() {
 		isLoading.set(false);
 		gotLimit.set(false);
 
-		Meteor.subscribe('chatRoom', this.params.room);
-		Meteor.subscribe('chat', this.params.room);
+		Meteor.subscribe('chatRoom', roomName);
+		Meteor.subscribe('chat', roomName);
 
 		this.render('chat', { to: 'content' });
 	}
@@ -57,6 +60,10 @@ Template.chat.onRendered(function() {
 });
 
 Template.chat.helpers({
+	isChatFree: function() {
+		return Meteor.user().isChatFree;
+	},
+
 	maxMessages: function() {
 		return Game.Chat.Messages.LIMIT;
 	},
@@ -74,6 +81,7 @@ Template.chat.helpers({
 	},
 
 	messages: function() {
+		console.log('messages helper', messages.list());
 		return messages.list();
 	},
 
@@ -150,6 +158,18 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
+	'click .chat .buyFreeChat': function(e, t) {
+		e.preventDefault();
+
+		Meteor.call('chat.buyFreeChat', function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
+				Notifications.success('Ура! Теперь не нужно платить за ссаный чат!');
+			}
+		});
+	},
+
 	'click .chat .addCredits': function(e, t) {
 		var roomName = Router.current().params.room;
 		var credits = prompt('Положить кредиты на счет комнаты:', '1000');

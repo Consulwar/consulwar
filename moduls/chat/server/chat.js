@@ -466,6 +466,32 @@ Meteor.methods({
 		});
 	},
 
+	'chat.buyFreeChat': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var resources = Game.Resources.getValue();
+
+		if (resources.credits.amount < 5000) {
+			throw new Meteor.Error('Недостаточно средств');
+		}
+
+		Game.Resources.spend({ credits: 5000 });
+
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$set: { isChatFree: true }
+		});
+	},
+
 	'chat.addCreditsToRoom': function(roomName, credits) {
 		var user = Meteor.user();
 

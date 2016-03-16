@@ -61,10 +61,42 @@ Meteor.methods({
 // ----------------------------------------------------------------------------
 // Promo codes
 // ----------------------------------------------------------------------------
-
-Game.PromoCode = {
-	Collection: new Meteor.Collection('promoCodes')
+/*
+{
+	code: 'pewpew11',
+	validthru: timestamp, // not required
+	type: string, // not required
+	profit: {
+		resources: {
+			credits: 100,
+			humans: 40,
+			...
+		},
+		units: {
+			fleet: {
+				wasp: 10,
+				...
+			},
+			ground: {
+				fathers: 42,
+				...
+			},
+			...
+		},
+		rating: 100500
+	}
 }
+*/
+
+Game.PromoCode = {};
+
+Game.PromoCode.types = {
+	votepower: {
+		maxForUser: 1
+	}
+}
+
+Game.PromoCode.Collection = new Meteor.Collection('promoCodes');
 
 Meteor.methods({
 	'user.activatePromoCode': function(code) {
@@ -96,15 +128,39 @@ Meteor.methods({
 			throw new Meteor.Error('Срок использования истек');
 		}
 
-		// TODO: Check unique for user codes!
+		// check promo code type options
+		if (promoCode.type && Game.PromoCode.types[promoCode.type]) {
+			var typeOptions = Game.PromoCode.types[promoCode.type];
 
+			if (typeOptions.maxForUser) {
+				var count = Game.PromoCode.Collection.find({
+					user_id: user._id,
+					activated: true
+				}).count();
+
+				if (count >= typeOptions.maxForUser) {
+					throw new Meteor.Error('Вы не можете активировать этот промокод');
+				}
+			}
+		}
+
+		// add profit
 		if (promoCode.profit) {
 			if (promoCode.profit.resources) {
 				Game.Resources.add(promoCode.resources);
 			}
 
 			if (promoCode.profit.units) {
-				Game.Unit.add(promoCode.units);
+				var units = promoCode.profit.units;
+				for (var group in units) {
+					for (var name in units[group]) {
+						Game.Unit.add({
+							engName: name,
+							group: group,
+							count: parseInt( units[group][name], 10 )
+						});
+					}
+				}
 			}
 
 			if (promoCode.profit.rating) {

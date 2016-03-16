@@ -60,29 +60,12 @@ Template.chat.onRendered(function() {
 });
 
 Template.chat.helpers({
-	isChatFree: function() {
-		return Meteor.user().isChatFree;
-	},
-
-	maxMessages: function() {
-		return Game.Chat.Messages.LIMIT;
-	},
-
-	isLoading: function() {
-		return isLoading.get();
-	},
-
-	gotLimit: function() {
-		return gotLimit.get();
-	},
-
-	hasMore: function() {
-		return hasMore.get();
-	},
-
-	messages: function() {
-		return messages.list();
-	},
+	isChatFree: function() { return Meteor.user().isChatFree; },
+	maxMessages: function() { return Game.Chat.Messages.LIMIT; },
+	isLoading: function() { return isLoading.get(); },
+	gotLimit: function() { return gotLimit.get(); },
+	hasMore: function() { return hasMore.get(); },
+	messages: function() { return messages.list(); },
 
 	room: function() {
 		return Game.Chat.Room.Collection.findOne({
@@ -91,16 +74,10 @@ Template.chat.helpers({
 	},
 
 	canControl: function() {
-		var roomName = Router.current().params.room;
-		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			owner: Meteor.userId()
 		});
-
-		if (!room || room.isPublic) {
-			return false;
-		}
-
-		return room.owner == Meteor.userId() ? true : false;
 	},
 
 	users: function() {

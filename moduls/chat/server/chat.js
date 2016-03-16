@@ -503,6 +503,12 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		check(credits, Match.Integer);
+
+		if (credits < 100) {
+			throw new Meteor.Error('Минимальная сумма 100 грязных галлактических кредитов');
+		}
+
 		check(roomName, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
@@ -529,6 +535,18 @@ Meteor.methods({
 		});
 
 		Game.Resources.spend({ credits: credits });
+
+		Game.Chat.Messages.Collection.insert({
+			room: roomName,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'addfunds',
+				amount: credits
+			},
+			timestamp: Math.floor(new Date().valueOf() / 1000)
+		});
 	},
 
 	'chat.addModeratorToRoom': function(roomName, login) {
@@ -823,7 +841,10 @@ Meteor.methods({
 
 		return Game.Chat.Messages.Collection.find({
 			room: roomName,
-			timestamp: { $lt: timestamp }
+			timestamp: {
+				$lt: timestamp,
+				$gt: Game.getCurrentTime() - 84600
+			}
 		}, {
 			fields: {
 				login: 1,
@@ -873,7 +894,8 @@ Meteor.publish('chat', function (roomName) {
 
 		if (room) {
 			return Game.Chat.Messages.Collection.find({
-				room: roomName
+				room: roomName,
+				timestamp: { $gt: Game.getCurrentTime() - 84600 }
 			}, {
 				fields: {
 					login: 1,

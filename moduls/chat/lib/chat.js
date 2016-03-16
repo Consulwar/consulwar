@@ -20,7 +20,7 @@ Game.Chat.Messages = {
 		}
 
 		if (room && room.isOwnerPays) {
-			return { credits: 10 };
+			return { credits: 1 };
 		}
 
 		return { crystals: 10 };

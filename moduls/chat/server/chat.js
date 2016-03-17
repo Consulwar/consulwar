@@ -1,4 +1,19 @@
-Meteor.startup(function () {
+initChatServer = function() {
+
+initChatLib();
+
+// create defaul rooms on server startup
+var createDefaulRoom = function(name) {
+	if (!Game.Chat.Room.Collection.findOne({ name: name })) {
+		Game.Chat.Room.Collection.insert({
+			name: name,
+			isPublic: true
+		});
+	}
+}
+
+createDefaulRoom('general');
+createDefaulRoom('help');
 
 Meteor.methods({
 	'chat.sendMessage': function(message, roomName) {
@@ -479,11 +494,11 @@ Meteor.methods({
 
 		var resources = Game.Resources.getValue();
 
-		if (resources.credits.amount < 5000) {
-			throw new Meteor.Error('Недостаточно средств');
+		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
+			throw new Meteor.Error('Недостаточно средств сервер');
 		}
 
-		Game.Resources.spend({ credits: 5000 });
+		Game.Resources.spend({ credits: Game.Chat.Messages.FREE_CHAT_PRICE });
 
 		Meteor.users.update({
 			_id: user._id
@@ -901,4 +916,4 @@ Meteor.publish('chat', function (roomName) {
 	}
 });
 
-});
+}

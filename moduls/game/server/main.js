@@ -26,6 +26,7 @@ Meteor.startup(function () {
 	initHouseServer();
 	initMutualServer();
 	initMailServer();
+	initChatServer();
 	initQuestServer();
 	initStatisticServer();
 	initCheatsServer();

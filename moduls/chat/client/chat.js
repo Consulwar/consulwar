@@ -1,4 +1,6 @@
-Meteor.startup(function () {
+initChatClient = function() {
+
+initChatLib();
 
 var messages = new ReactiveArray();
 var hasMore = new ReactiveVar(true);
@@ -60,6 +62,7 @@ Template.chat.onRendered(function() {
 });
 
 Template.chat.helpers({
+	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
 	isChatFree: function() { return Meteor.user().isChatFree; },
 	maxMessages: function() { return Game.Chat.Messages.LIMIT; },
 	isLoading: function() { return isLoading.get(); },
@@ -136,6 +139,12 @@ Template.chat.helpers({
 Template.chat.events({
 	'click .chat .buyFreeChat': function(e, t) {
 		e.preventDefault();
+
+		var resources = Game.Resources.getValue();
+		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
+			Notifications.error('Недостаточно средств');
+			return;
+		}
 
 		Meteor.call('chat.buyFreeChat', function(err, data) {
 			if (err) {
@@ -271,4 +280,4 @@ Template.chat.events({
 	}
 });
 
-});
+}

@@ -222,11 +222,11 @@ Meteor.methods({
 			}
 
 			if (!hasAccess && room.moderators) {
-				hasAccess = room.moderators.indexOf(user.login) >= 0;
+				hasAccess = (room.moderators.indexOf(user.login) != -1);
 			}
 
 			if (!hasAccess && !room.isPublic) {
-				hasAccess = room.owner == user._id;
+				hasAccess = (room.owner == user._id);
 			}
 		}
 
@@ -506,7 +506,7 @@ Meteor.methods({
 		check(credits, Match.Integer);
 
 		if (credits < 100) {
-			throw new Meteor.Error('Минимальная сумма 100 грязных галлактических кредитов');
+			throw new Meteor.Error('Минимальная сумма составляет 100 грязных галлактических кредитов');
 		}
 
 		check(roomName, String);
@@ -572,7 +572,7 @@ Meteor.methods({
 		}
 
 		if (room.isPublic) {
-			if (['admin', 'helper'].indexOf(user.role) == -1) {
+			if (['admin'].indexOf(user.role) == -1) {
 				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
 			}
 		} else {
@@ -605,13 +605,11 @@ Meteor.methods({
 			throw new Meteor.Error('Такой модератор уже есть в чате');
 		}
 
-		room.moderators.push( target.login );
-
 		Game.Chat.Room.Collection.update({
 			name: roomName
 		}, {
-			$set: {
-				moderators: room.moderators
+			$addToSet: {
+				moderators: target.login
 			}
 		});
 	},
@@ -639,7 +637,7 @@ Meteor.methods({
 		}
 
 		if (room.isPublic) {
-			if (['admin', 'helper'].indexOf(user.role) == -1) {
+			if (['admin'].indexOf(user.role) == -1) {
 				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
 			}
 		} else {
@@ -648,23 +646,15 @@ Meteor.methods({
 			}
 		}
 
-		if (!room.moderators) {
-			room.moderators = [];
-		}
-
-		var i = room.moderators.indexOf(login);
-
-		if (i == -1) {
+		if (room.moderators.indexOf( target.login ) == -1) {
 			throw new Meteor.Error('Такого модератора в чате нет');
 		}
-
-		room.moderators.splice(i, 1);
 
 		Game.Chat.Room.Collection.update({
 			name: roomName
 		}, {
-			$set: {
-				moderators: room.moderators
+			$pull: {
+				moderators: login
 			}
 		});
 	},
@@ -715,15 +705,12 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователь уже в чате');
 		}
 
-		room.users.push( target._id );
-		room.logins.push( target.login );
-
 		Game.Chat.Room.Collection.update({
 			name: roomName
 		}, {
-			$set: {
-				users: room.users,
-				logins: room.logins
+			$addToSet: {
+				users: target._id,
+				logins: target.login
 			}
 		});
 
@@ -782,21 +769,16 @@ Meteor.methods({
 			throw new Meteor.Error('Зачем?');
 		}
 
-		var i = room.users.indexOf( target._id );
-		var j = room.logins.indexOf( target.login );
-		if (i == -1 || j == -1) {
+		if (room.users.indexOf( target._id ) == -1) {
 			throw new Meteor.Error('Такого пользователя нет в чате');
 		}
-
-		room.users.splice(i, 1);
-		room.logins.splice(j, 1);
 
 		Game.Chat.Room.Collection.update({
 			name: roomName
 		}, {
-			$set: {
-				users: room.users,
-				logins: room.logins
+			$pull: {
+				users: target._id,
+				logins: target.login
 			}
 		});
 

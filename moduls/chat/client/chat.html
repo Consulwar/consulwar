@@ -54,6 +54,12 @@
 						{{#if eq this.data.type 'remove'}}
 							удалил из чата {{this.message}}
 						{{/if}}
+						{{#if eq this.data.type 'addModerator'}}
+							назначил модератора {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'removeModerator'}}
+							разжаловал модератора {{this.message}}
+						{{/if}}
 						{{#if eq this.data.type 'addfunds'}}
 							пополнил баланс чата на {{this.data.amount}} ГГК
 						{{/if}}

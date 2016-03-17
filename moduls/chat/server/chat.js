@@ -503,6 +503,10 @@ Meteor.methods({
 
 		check(name, String);
 
+		if (['general', 'help'].indexOf(name) != -1) {
+			throw new Meteor.Error('Что этот ниггер себе позволяет!');
+		}
+
 		var room = Game.Chat.Room.Collection.findOne({
 			name: name
 		});
@@ -651,7 +655,7 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.moderators && room.moderators.indexOf( target._id ) != -1) {
+		if (room.moderators && room.moderators.indexOf( target.login ) != -1) {
 			throw new Meteor.Error('Такой модератор уже есть в чате');
 		}
 
@@ -661,6 +665,18 @@ Meteor.methods({
 			$addToSet: {
 				moderators: target.login
 			}
+		});
+
+		Game.Chat.Messages.Collection.insert({
+			room: roomName,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'addModerator'
+			},
+			message: target.login,
+			timestamp: Math.floor(new Date().valueOf() / 1000)
 		});
 	},
 
@@ -690,7 +706,7 @@ Meteor.methods({
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
 		}
 
-		if (!room.moderators || room.moderators.indexOf( target.login ) == -1) {
+		if (!room.moderators || room.moderators.indexOf( login ) == -1) {
 			throw new Meteor.Error('Такого модератора в чате нет');
 		}
 
@@ -700,6 +716,18 @@ Meteor.methods({
 			$pull: {
 				moderators: login
 			}
+		});
+
+		Game.Chat.Messages.Collection.insert({
+			room: roomName,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'removeModerator'
+			},
+			message: login,
+			timestamp: Math.floor(new Date().valueOf() / 1000)
 		});
 	},
 
@@ -822,7 +850,8 @@ Meteor.methods({
 		}, {
 			$pull: {
 				users: target._id,
-				logins: target.login
+				logins: target.login,
+				moderators: target.login
 			}
 		});
 

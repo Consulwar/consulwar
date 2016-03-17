@@ -5,6 +5,7 @@ initChatLib();
 var messages = new ReactiveArray();
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
+var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
@@ -53,6 +54,7 @@ Template.chat.onRendered(function() {
 			messages.clear();
 			hasMore.set(true);
 			isLoading.set(false);
+			isSending.set(false);
 			gotLimit.set(false);
 			
 			Meteor.subscribe('chatRoom', roomName);
@@ -218,14 +220,20 @@ Template.chat.events({
 	'submit .chat #message': function(e, t) {
 		e.preventDefault();
 
+		if (isSending.get()) {
+			return;
+		}
+
+		isSending.set(true);
 		var roomName = Router.current().params.room;
 		var text = t.find('#message textarea[name="text"]').value;
 
-		t.find('#message').reset();
-
 		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
+			isSending.set(false);
 			if (err) {
 				Notifications.error(err);
+			} else {
+				t.find('#message').reset();
 			}
 		});
 

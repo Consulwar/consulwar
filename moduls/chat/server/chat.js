@@ -413,6 +413,14 @@ Meteor.methods({
 
 		check(name, String);
 
+		if (name.length > 32) {
+			throw new Meteor.Error('Имя комнаты должно быть не длиннее 32 символов');
+		}
+
+		if (!name.match(/^[a-zA-Z0-9_\-]+$/)) {
+			throw new Meteor.Error('Имя комнаты должно состоять только из латинских букв, цифр, дефисов и подчеркиваний');
+		}
+
 		var room = Game.Chat.Room.Collection.findOne({
 			name: name
 		});

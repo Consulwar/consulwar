@@ -65,6 +65,11 @@
 					{{/if}}
 				</li>
 			{{/each}}
+			{{#if and room room.motd}}
+				<li class="motd">
+					<span>{{room.motd.login}}:</span>{{room.motd.message}}
+				</li>
+			{{/if}}
 		</ul>
 
 		<form id="message">

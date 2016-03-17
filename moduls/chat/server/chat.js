@@ -146,6 +146,16 @@ Meteor.methods({
 				}
 				set.message = message.substr(3);
 
+			} else if(message.substr(0, 5) == '/motd') {
+				if (['admin', 'helper'].indexOf(user.role) == -1
+				 && room.owner != user._id
+				 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
+				) {
+					throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+				}
+
+				set.message = message.substr(5).trim();
+
 			} else if (message.substr(0, 8) == '/сепукку') {
 				if (userResources.crystals.amount < 0
 				 || userResources.metals.amount < 0
@@ -197,13 +207,24 @@ Meteor.methods({
 					name: roomName
 				}, {
 					$inc: { credits: price.credits * -1 }
-				})
+				});
 			} else {
 				Game.Resources.spend(price);
 			}
 		}
 
-		Game.Chat.Messages.Collection.insert(set);
+		// insert message
+		if (message.substr(0, 5) == '/motd') {
+			Game.Chat.Room.Collection.update({
+				name: roomName
+			}, {
+				$set: {
+					motd: (set.message.length > 0 ? set : null)
+				}
+			});
+		} else {
+			Game.Chat.Messages.Collection.insert(set);
+		}
 	},
 
 	'chat.blockUser': function(options) {
@@ -246,7 +267,7 @@ Meteor.methods({
 		}
 
 		if (!hasAccess) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
 		}
 
 		var target = Meteor.users.findOne({
@@ -614,11 +635,7 @@ Meteor.methods({
 			}
 		}
 
-		if (!room.moderators) {
-			room.moderators = [];
-		}
-
-		if (room.moderators.length >= Game.Chat.Room.MODERATORS_LIMIT) {
+		if (room.moderators && room.moderators.length >= Game.Chat.Room.MODERATORS_LIMIT) {
 			throw new Meteor.Error('В комнату нельзя добавить больше ' + Game.Chat.Room.MODERATORS_LIMIT + ' модераторов');
 		}
 
@@ -630,7 +647,7 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.moderators.indexOf( target._id ) != -1) {
+		if (room.moderators && room.moderators.indexOf( target._id ) != -1) {
 			throw new Meteor.Error('Такой модератор уже есть в чате');
 		}
 
@@ -675,7 +692,7 @@ Meteor.methods({
 			}
 		}
 
-		if (room.moderators.indexOf( target.login ) == -1) {
+		if (!room.moderators || room.moderators.indexOf( target.login ) == -1) {
 			throw new Meteor.Error('Такого модератора в чате нет');
 		}
 

@@ -40,14 +40,18 @@ Game.Chat.Room = {
 
 	Collection: new Meteor.Collection('chatRooms'),
 
-	getPrice: function(isPublic) {
+	getPrice: function(room) {
 		var user = Meteor.user();
 
 		if (user.role && ['admin'].indexOf(user.role) != -1) {
 			return null;
 		}
 
-		return { credits: isPublic ? 1000 : 500 };
+		if (room.isPublic) {
+			return room.isOwnerPays ? { credits: 1000 } : { credits: 5000 };
+		}
+
+		return room.isOwnerPays ? { credits: 100 } : { credits: 500 };
 	}
 };
 

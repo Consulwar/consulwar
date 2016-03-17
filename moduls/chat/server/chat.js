@@ -244,8 +244,6 @@ Meteor.methods({
 
 		check(options.login, String);
 
-		var hasAccess = ['admin', 'helper'].indexOf(user.role) != -1;
-
 		if (options.roomName) {
 			check(options.roomName, String);
 
@@ -257,17 +255,19 @@ Meteor.methods({
 				throw new Meteor.Error('Нет такой комнаты');
 			}
 
-			if (!hasAccess && room.moderators) {
-				hasAccess = (room.moderators.indexOf(user.login) != -1);
+			// local block
+			if (['admin', 'helper'].indexOf(user.role) == -1
+			 && room.owner != user._id
+			 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
+			) {
+				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
 			}
 
-			if (!hasAccess && !room.isPublic) {
-				hasAccess = (room.owner == user._id);
+		} else {
+			// global block
+			if (['admin', 'helper'].indexOf(user.role) == -1) {
+				throw new Meteor.Error('Zav за тобой следит, и ты ему очень не нравишься');
 			}
-		}
-
-		if (!hasAccess) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
 		}
 
 		var target = Meteor.users.findOne({
@@ -436,6 +436,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		// check room name
 		check(name, String);
 
 		if (name.length > 32) {
@@ -454,23 +455,36 @@ Meteor.methods({
 			throw new Meteor.Error('Коната с именем ' + name + ' уже существует');
 		}
 
-		room = {};
-		room.name = name;
+		// prepare room
+		room = {
+			name: name,
+			owner: user._id
+		};
+
+		if (isOwnerPays) {
+			room.isOwnerPays = true;
+			room.credits = 0;
+		}
 
 		if (isPublic) {
-			if (['admin'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
-			}
 			room.isPublic = true;
 		} else {
-			room.owner = user._id;
 			room.users = [ user._id ];
 			room.logins = [ user.login ];
+		}
 
-			if (isOwnerPays) {
-				room.isOwnerPays = true;
-				room.credits = 0;
+		// check price
+		var price = Game.Chat.Room.getPrice(room);
+
+		if (price) {
+			var userResources = Game.Resources.getValue();
+			for (var resid in price) {
+				if (!userResources[resid] || userResources[resid].amount < price[resid]) {
+					throw new Meteor.Error('Недостаточно средств для создания комнаты');
+				}
 			}
+
+			Game.Resources.spend(price);
 		}
 
 		Game.Chat.Room.Collection.insert(room);
@@ -497,14 +511,8 @@ Meteor.methods({
 			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
 		}
 
-		if (room.isPublic) {
-			if (['admin'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
-			}
-		} else {
-			if (room.owner != user._id) {
-				throw new Meteor.Error('Это не твоя комната.');
-			}
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
 		}
 
 		Game.Chat.Room.Collection.remove({
@@ -569,7 +577,7 @@ Meteor.methods({
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
-		if (room.isPublic || !room.isOwnerPays) {
+		if (!room.isOwnerPays) {
 			throw new Meteor.Error('Невозможно пополнить баланс этой комнаты');
 		}
 
@@ -621,15 +629,11 @@ Meteor.methods({
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
-		if (room.isPublic) {
-			if (['admin'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
-			}
-		} else {
-			if (room.owner != user._id) {
-				throw new Meteor.Error('Только владелец может назанчить модератора в приватной комнате');
-			}
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+		}
 
+		if (!room.isPublic) {
 			if (room.logins.indexOf(login) == -1) {
 				throw new Meteor.Error('Сначала нужно добавить пользователя в комнату');
 			}
@@ -682,14 +686,8 @@ Meteor.methods({
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
-		if (room.isPublic) {
-			if (['admin'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
-			}
-		} else {
-			if (room.owner != user._id) {
-				throw new Meteor.Error('Только владелец может назанчить модератора в приватной комнате');
-			}
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
 		}
 
 		if (!room.moderators || room.moderators.indexOf( target.login ) == -1) {

@@ -39,10 +39,14 @@
 							совершил кровавое сепукку.
 						{{/if}}
 						{{#if eq this.data.type 'unblock'}}
-							разблокировал чат {{this.message}}
+							разблокировал
+							{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+							для {{this.message}}
 						{{/if}}
 						{{#if eq this.data.type 'block'}}
-							заблокировал чат {{this.message}} до {{formatDate (sum data.timestamp data.period)}}
+							заблокировал
+							{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+							для {{this.message}} до {{formatDate (sum data.timestamp data.period)}}
 						{{/if}}
 						{{#if eq this.data.type 'add'}}
 							добавил в чат {{this.message}}

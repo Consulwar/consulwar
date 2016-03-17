@@ -294,7 +294,10 @@ Meteor.methods({
 			});
 		} else {
 			var rooms = Game.Chat.Room.Collection.find({
-				isPublic: true
+				$or: [
+					{ users: { $in: [ target._id ] } },
+					{ isPublic: true }
+				]
 			}).fetch();
 
 			for (var i = 0; i < rooms.length; i++) {
@@ -306,7 +309,8 @@ Meteor.methods({
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
 						timestamp: Game.getCurrentTime(),
-						period: time
+						period: time,
+						global: true
 					},
 					message: target.login,
 					timestamp: Math.floor(new Date().valueOf() / 1000)

@@ -141,7 +141,7 @@ var menu = {
 			}, 
 			chat: {
 				name: 'Чат',
-				url: Router.routes.chat.path()
+				url: Router.routes.chat.path({ room: 'general' })
 			}
 		}
 	},

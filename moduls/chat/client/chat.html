@@ -1,55 +1,103 @@
 <template name="chat">
 	<div class="chat">
-		<ul class="participants">
-			{{#each users}}
-			<li>{{this.login}}</li>
-			{{/each}}
-		</ul>
+		{{#if users}}
+			<ul class="participants">
+				{{#each users}}
+					<li class="online">{{this}}</li>
+				{{/each}}
+			</ul>
+		{{/if}}
 
 		<ul class="messages">
+			{{#if hasMore}}
+				<li class="more">Показать предыдущие</li>
+			{{/if}}
+			{{#if gotLimit}}
+				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
+			{{/if}}
 			{{#each messages}}
-			<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
-			{{#if this.data}}* {{/if}}<span class="{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} {{#if eq this.login user.login}}me{{/if}}">{{this.login}}{{#unless this.data}}:{{/unless}}</span>
-			{{#if this.data}}
-				{{#if eq this.data.type 'dice'}}
-					бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
-					{{#each this.data.dice.dices.values}}
-					<span class="dice">{{this}}</span> 
-					{{/each}}
-				{{/if}}
-				{{#if eq this.data.type 'status'}}
-					{{{highlightUser this.message}}}
-				{{/if}}
-				{{#if eq this.data.type 'sepukku'}}
-					совершил кровавое сепукку.
-				{{/if}}
-				{{#if eq this.data.type 'unblock'}}
-					разблокировал чат {{this.message}}
-				{{/if}}
-				{{#if eq this.data.type 'block'}}
-					заблокировал чат {{this.message}}
-				{{/if}}
-			{{else}}
-				{{{highlightUser this.message}}}
-			{{/if}}
-			{{#if eqor user.role 'admin' 'helper'}}
-				<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
-			{{/if}}
-			</li>
+				<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
+					{{#if this.data}}* {{/if}}
+					<span 
+						class="
+							{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+							{{#if eq this.login user.login}}me{{/if}}"
+					>
+						{{this.login}}{{#unless this.data}}:{{/unless}}
+					</span>
+					{{#if this.data}}
+						{{#if eq this.data.type 'dice'}}
+							бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+							{{#each this.data.dice.dices.values}}
+								<span class="dice">{{this}}</span> 
+							{{/each}}
+						{{/if}}
+						{{#if eq this.data.type 'status'}}
+							{{{highlightUser this.message}}}
+						{{/if}}
+						{{#if eq this.data.type 'sepukku'}}
+							совершил кровавое сепукку.
+						{{/if}}
+						{{#if eq this.data.type 'unblock'}}
+							разблокировал чат {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'block'}}
+							заблокировал чат {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'add'}}
+							добавил в чат {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'remove'}}
+							удалил из чата {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'addfunds'}}
+							пополнил баланс чата на {{this.data.amount}} ГГК
+						{{/if}}
+					{{else}}
+						{{{highlightUser this.message}}}
+					{{/if}}
+					{{#if eqor user.role 'admin' 'helper'}}
+						<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
+					{{/if}}
+				</li>
 			{{/each}}
 		</ul>
 
-		<form>
+		<form id="message">
 			<textarea name="text" maxlength="140"></textarea>
 			<input type="submit" value="Послать">
-			<ul class="resources">
-				<li class="crystals">{{price}}</li>
-			</ul>
+			{{#if price}}
+				<ul class="resources" title="Стоимость сообщения">
+					{{#if price.crystals}}
+						<li class="crystals">{{price.crystals}}</li>
+					{{/if}}
+					{{#if price.credits}}
+						<li class="credits">{{price.credits}}</li>
+					{{/if}}
+				</ul>
+			{{/if}}
 
-			<!--<button>Больше никогда не платить за ссаный чат</button>
-			<ul class="resources">
-				<li class="credits">5 000</li>
-			</ul>-->
+			{{#if room}}
+				{{#if room.isOwnerPays}}
+					<ul class="resources" title="Баланс комнаты">
+						<li class="credits addCredits">{{room.credits}}</li>
+					</ul>
+				{{/if}}
+			{{/if}}
+
+			{{#unless isChatFree}}
+				<button class="buyFreeChat">Больше никогда не платить за ссаный чат</button>
+				<ul class="resources">
+					<li class="credits">5 000</li>
+				</ul>
+			{{/unless}}
 		</form>
+
+		{{#if canControl}}
+			<form id="control">
+				<input name="login" />
+				<input type="submit" value="Добавить" />
+			</form>
+		{{/if}}
 	</div>
 </template>

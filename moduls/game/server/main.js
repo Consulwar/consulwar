@@ -14,6 +14,7 @@ SyncedCron.config({
 });
 
 Meteor.startup(function () {
+	initBanHistoryServer();
 	initRatingServer();
 	initArtefactsServer();
 	initResourcesServer();
@@ -218,7 +219,7 @@ Meteor.publish('game', function () {
 				role: 1,
 				blocked: 1,
 				rating: 1,
-				totalMail: 1
+				isChatFree: 1
 			}
 		});
 	}

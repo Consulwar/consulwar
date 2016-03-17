@@ -112,9 +112,6 @@ Meteor.subscribe('researches');
 Meteor.subscribe('mutualResearch');
 
 
-Meteor.subscribe('chat');
-Meteor.subscribe('online');
-
 test = Router.route('/test', function() {
 	console.log('yes');
 })

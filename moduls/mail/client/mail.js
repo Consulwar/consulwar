@@ -263,21 +263,12 @@ var checkLogin = function(t) {
 }
 
 Template.mail.helpers({
-	isLoading: function() {
-		return this.isLoading.get();
-	},
-
-	countTotal: function() {
-		return Game.Statistic.getUserValue('totalMail');
-	},
-
-	mail: function() {
-		return this.mail.get();
-	},
-
-	letter: function() {
-		return this.letter.get();
-	},
+	isLoading: function() { return this.isLoading.get(); },
+	countTotal: function() { return Game.Statistic.getUserValue('totalMail'); },
+	mail: function() { return this.mail.get(); },
+	letter: function() { return this.letter.get(); },
+	userId: function() { return Meteor.userId(); },
+	isRecipientOk: function() { return this.isRecipientOk.get(); },
 
 	letterName: function(letter) {
 		return letter.from == Meteor.userId() ? '-> ' + letter.recipient : letter.sender;
@@ -288,14 +279,6 @@ Template.mail.helpers({
 			return 'Прочитано ' + letter.sentCount + ' из ' + letter.readCount;
 		}
 		return letter.status == game.Mail.status.read ? 'Прочитано': '';
-	},
-
-	userId: function() {
-		return Meteor.userId();
-	},
-
-	isRecipientOk: function() {
-		return this.isRecipientOk.get();
 	},
 
 	canComplain: function(letter) {
@@ -562,21 +545,10 @@ var adminReadLetter = function(id, t) {
 }
 
 Template.mailAdmin.helpers({
-	isLoading: function() {
-		return this.isLoading.get();
-	},
-
-	countTotal: function() {
-		return Game.Statistic.getSystemValue('totalMailComplaints');
-	},
-
-	mail: function() {
-		return this.mail.get();
-	},
-
-	letter: function() {
-		return this.letter.get();
-	}
+	isLoading: function() { return this.isLoading.get(); },
+	countTotal: function() { return Game.Statistic.getSystemValue('totalMailComplaints'); },
+	mail: function() { return this.mail.get(); },
+	letter: function() { return this.letter.get(); }
 });
 
 Template.mailAdmin.events({

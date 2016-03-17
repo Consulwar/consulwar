@@ -231,7 +231,11 @@ Template.chat.events({
 		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
 			isSending.set(false);
 			if (err) {
-				Notifications.error(err);
+				var errorMessage = err.error;
+				if (err.reason) {
+					errorMessage += ' до ' + Game.formatDate(err.reason);
+				}
+				Notifications.error(errorMessage);
 			} else {
 				t.find('#message').reset();
 			}
@@ -255,7 +259,7 @@ Template.chat.events({
 
 		Meteor.call('chat.blockUser', options, function(err) {
 			if (err) {
-				Notifications.error(err);
+				Notifications.error(err.error);
 			}
 		});
 	},

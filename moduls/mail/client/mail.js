@@ -464,7 +464,11 @@ Template.mail.events({
 					// go first page
 					Router.go('mail', { page: 1 });
 				} else {
-					Notifications.error('Невозможно отправить письмо', err.error);
+					var errorMessage = err.error;
+					if (err.reason) {
+						errorMessage += ' до ' + Game.formatDate(err.reason);
+					}
+					Notifications.error(errorMessage);
 				}
 			}
 		);

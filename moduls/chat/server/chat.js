@@ -39,7 +39,7 @@ Meteor.methods({
 		});
 
 		if (blockGlobal && Game.getCurrentTime() < blockGlobal.timestamp + blockGlobal.period) {
-			throw new Meteor.Error('Чат заблокирован');
+			throw new Meteor.Error('Чат заблокирован', blockGlobal.timestamp + blockGlobal.period);
 		}
 
 		// check room block
@@ -54,7 +54,7 @@ Meteor.methods({
 		});
 
 		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
-			throw new Meteor.Error('Чат ' + roomName + ' заблокирован');
+			throw new Meteor.Error('Чат ' + roomName + ' заблокирован', blockRoom.timestamp + blockRoom.period);
 		}
 
 		// check room name
@@ -286,7 +286,8 @@ Meteor.methods({
 				alliance: user.alliance,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
-					timestamp: Game.getCurrentTime()
+					timestamp: Game.getCurrentTime(),
+					period: time
 				},
 				message: target.login,
 				timestamp: Math.floor(new Date().valueOf() / 1000)
@@ -304,7 +305,8 @@ Meteor.methods({
 					alliance: user.alliance,
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
-						timestamp: Game.getCurrentTime()
+						timestamp: Game.getCurrentTime(),
+						period: time
 					},
 					message: target.login,
 					timestamp: Math.floor(new Date().valueOf() / 1000)

@@ -121,7 +121,7 @@ var menu = {
 		}
 	}, 
 	cosmos: {
-		routeName: ['cosmos'],
+		routeName: ['cosmos', 'cosmosHistory'],
 		url: Router.routes.cosmos.path()
 	},
 	communication: {
@@ -212,11 +212,7 @@ Template.game_menu.helpers({
 Template.side_menu.helpers({
 	sides: function() {
 		return getMenu(menu[Router.current().group].items, function(item, key) {
-			return (
-				item.items
-				? key == Router.current().params.group
-				: Router.current().url.indexOf(item.url) != -1
-			)
+			return Router.current().url.indexOf(key) == item.url.indexOf(key);
 		})
 	}
 });

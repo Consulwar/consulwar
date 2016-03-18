@@ -369,7 +369,7 @@ Template.chat.events({
 			if (err) {
 				var errorMessage = err.error;
 				if (err.reason) {
-					errorMessage += ' до ' + Game.formatDate(err.reason);
+					errorMessage += ' до ' + Game.Helpers.formatDate(err.reason);
 				}
 				Notifications.error(errorMessage);
 			} else {

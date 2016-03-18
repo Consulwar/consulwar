@@ -37,6 +37,7 @@ Game.Statistic.fixUserStatistic = function(userId) {
 		throw new Meteor.Error('Пользователь не существует');
 	}
 
+	// mail
 	var totalMail = Game.Mail.Collection.find({
 		owner: user._id,
 		deleted: { $ne: true }
@@ -46,15 +47,44 @@ Game.Statistic.fixUserStatistic = function(userId) {
 		owner: user._id
 	}).count();
 
+	// payment
+	var incomeHistoryCount = Game.Payment.Collection.find({
+		user_id: user._id,
+		income: true
+	}).count();
+
+	var expenseHistoryCount = Game.Payment.Collection.find({
+		user_id: user._id,
+		income: { $ne: true }
+	}).count();
+
 	Game.Statistic.Collection.upsert({
 		user_id: user._id
 	}, {
 		$set: {
 			totalMail: totalMail,
-			totalMailAlltime: totalMailAlltime
+			totalMailAlltime: totalMailAlltime,
+			incomeHistoryCount: incomeHistoryCount,
+			expenseHistoryCount: expenseHistoryCount
 		}
 	});
 }
+
+Meteor.methods({
+	'statistic.fixUser': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		Game.Statistic.fixUserStatistic(user._id);
+	}
+});
 
 Meteor.publish('statistic', function() {
 	if (this.userId) {

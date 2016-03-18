@@ -20,6 +20,13 @@ Game.Payment.log = function(isIncome, resources, source, uid) {
 	}
 
 	Game.Payment.Collection.insert(record);
+
+	// update user statistics
+	Game.Statistic.Collection.update({
+		user_id: uid ? uid : Meteor.userId()
+	}, {
+		$inc: ( isIncome ? { incomeHistoryCount: 1 } : { expenseHistoryCount: 1 } )
+	});
 }
 
 Game.Payment.logIncome = function(resources, source, uid) {

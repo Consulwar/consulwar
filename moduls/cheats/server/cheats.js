@@ -49,16 +49,16 @@ if (process.env.NODE_ENV == 'development') {
 			}
 		},
 
-		'cheats.addArtefact': function(id, amount) {
-			var artefacts = {};
-			artefacts[id] = amount;
-			Game.Artefacts.add( artefacts );
+		'cheats.addResource': function(id, amount) {
+			var resources = {};
+			resources[id] = amount;
+			Game.Resources.add(resources);
 		},
 
-		'cheats.removeArtefact': function(id, amount) {
-			var artefacts = {};
-			artefacts[id] = amount;
-			Game.Artefacts.remove( artefacts );
+		'cheats.spendResource': function(id, amount) {
+			var resources = {};
+			resources[id] = amount;
+			Game.Resources.spend(resources);
 		},
 
 		'cheats.resetHouseItems': function() {
@@ -101,8 +101,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.spawnTradeFleet': addCheater,
 		'cheats.sendReptileFleetToPlanet': addCheater,
 		'cheats.generateAllPlanets': addCheater,
-		'cheats.addArtefact': addCheater,
-		'cheats.removeArtefact': addCheater,
+		'cheats.addResource': addCheater,
+		'cheats.spendResource': addCheater,
 		'cheats.resetHouseItems': addCheater,
 		'cheats.buyAllHouseItems': addCheater,
 		'cheats.resetQuests': addCheater

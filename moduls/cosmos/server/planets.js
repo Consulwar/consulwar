@@ -677,7 +677,7 @@ Meteor.methods({
 			var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 			if (count > 0) {
 				while (count-- > 0) {
-					Game.Artefacts.add( Game.Planets.getArtefacts(planet) );
+					Game.Resources.add( Game.Planets.getArtefacts(planet) );
 				}
 				planet.timeArtefacts = timeCurrent;
 				Game.Planets.update(planet);

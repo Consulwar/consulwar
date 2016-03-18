@@ -456,7 +456,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				// add artefacts
 				if (battleResult.artefacts) {
 					planet.timeArtefacts = serverTime;
-					Game.Artefacts.add( battleResult.artefacts );
+					Game.Resources.add( battleResult.artefacts );
 				}
 			}
 
@@ -577,7 +577,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 						var delta = serverTime - planet.timeArtefacts;
 						var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 						while (count-- > 0) {
-							Game.Artefacts.add( Game.Planets.getArtefacts(planet) );
+							Game.Resources.add( Game.Planets.getArtefacts(planet) );
 						}
 
 						planet.timeArtefacts = null;

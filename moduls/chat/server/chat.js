@@ -42,26 +42,12 @@ Meteor.methods({
 			throw new Meteor.Error('Чат заблокирован', blockGlobal.timestamp + blockGlobal.period);
 		}
 
-		// check room block
-		var blockRoom = Game.BanHistory.Collection.findOne({
-			user_id: user._id,
-			type: Game.BanHistory.type.chat,
-			room: roomName
-		}, {
-			sort: {
-				timestamp: -1
-			}
-		});
-
-		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
-			throw new Meteor.Error('Чат ' + roomName + ' заблокирован', blockRoom.timestamp + blockRoom.period);
-		}
-
 		// check room name
 		check(roomName, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 		
 		if (!room) {
@@ -70,6 +56,21 @@ Meteor.methods({
 
 		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
 			throw new Meteor.Error('Вы не можете писать в эту комнату');
+		}
+
+		// check room block
+		var blockRoom = Game.BanHistory.Collection.findOne({
+			user_id: user._id,
+			type: Game.BanHistory.type.chat,
+			room_id: room._id
+		}, {
+			sort: {
+				timestamp: -1
+			}
+		});
+
+		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
+			throw new Meteor.Error('Чат ' + roomName + ' заблокирован', blockRoom.timestamp + blockRoom.period);
 		}
 
 		// check message
@@ -102,7 +103,7 @@ Meteor.methods({
 
 		// send message
 		var set = {
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -204,7 +205,7 @@ Meteor.methods({
 		if (price) {
 			if (room.isOwnerPays) {
 				Game.Chat.Room.Collection.update({
-					name: roomName
+					_id: room._id
 				}, {
 					$inc: { credits: price.credits * -1 }
 				});
@@ -216,7 +217,7 @@ Meteor.methods({
 		// insert message
 		if (message.substr(0, 5) == '/motd') {
 			Game.Chat.Room.Collection.update({
-				name: roomName
+				_id: room._id
 			}, {
 				$set: {
 					motd: (set.message.length > 0 ? set : null)
@@ -248,7 +249,8 @@ Meteor.methods({
 			check(options.roomName, String);
 
 			var room = Game.Chat.Room.Collection.findOne({
-				name: options.roomName
+				name: options.roomName,
+				deleted: { $ne: true }
 			});
 
 			if (!room) {
@@ -293,7 +295,7 @@ Meteor.methods({
 		}
 
 		if (options.roomName) {
-			history.room = options.roomName;
+			history.room_id = room._id;
 		}
 
 		Game.BanHistory.Collection.insert(history);
@@ -301,7 +303,7 @@ Meteor.methods({
 		// send message
 		if (options.roomName) {
 			Game.Chat.Messages.Collection.insert({
-				room: options.roomName,
+				room_id: room._id,
 				user_id: user._id,
 				login: user.login,
 				alliance: user.alliance,
@@ -315,6 +317,7 @@ Meteor.methods({
 			});
 		} else {
 			var rooms = Game.Chat.Room.Collection.find({
+				deleted: { $ne: true },
 				$or: [
 					{ users: { $in: [ target._id ] } },
 					{ isPublic: true }
@@ -323,7 +326,7 @@ Meteor.methods({
 
 			for (var i = 0; i < rooms.length; i++) {
 				Game.Chat.Messages.Collection.insert({
-					room: rooms[i].name,
+					room_id: rooms[i]._id,
 					user_id: user._id,
 					login: user.login,
 					alliance: user.alliance,
@@ -448,7 +451,8 @@ Meteor.methods({
 		}
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: name
+			name: name,
+			deleted: { $ne: true }
 		});
 
 		if (room) {
@@ -508,7 +512,8 @@ Meteor.methods({
 		}
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: name
+			name: name,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -519,12 +524,10 @@ Meteor.methods({
 			throw new Meteor.Error('Вы не можете удалить эту комнату');
 		}
 
-		Game.Chat.Room.Collection.remove({
-			name: name
-		});
-
-		Game.Chat.Messages.Collection.remove({
-			room: name
+		Game.Chat.Room.Collection.update({
+			_id: room._id
+		}, {
+			$set: { deleted: true }
 		});
 	},
 
@@ -574,7 +577,8 @@ Meteor.methods({
 		check(roomName, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -591,7 +595,7 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
 			$inc: { credits: credits }
 		});
@@ -599,7 +603,7 @@ Meteor.methods({
 		Game.Resources.spend({ credits: credits });
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -626,7 +630,8 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -660,7 +665,7 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
 			$addToSet: {
 				moderators: target.login
@@ -668,7 +673,7 @@ Meteor.methods({
 		});
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -695,7 +700,8 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -711,7 +717,7 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
 			$pull: {
 				moderators: login
@@ -719,7 +725,7 @@ Meteor.methods({
 		});
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -746,7 +752,8 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -778,7 +785,7 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
 			$addToSet: {
 				users: target._id,
@@ -787,7 +794,7 @@ Meteor.methods({
 		});
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -814,7 +821,8 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -846,7 +854,7 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
 			$pull: {
 				users: target._id,
@@ -856,7 +864,7 @@ Meteor.methods({
 		});
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -884,6 +892,7 @@ Meteor.methods({
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
+			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ user._id ] } },
 				{ isPublic: true }
@@ -895,7 +904,7 @@ Meteor.methods({
 		}
 
 		return Game.Chat.Messages.Collection.find({
-			room: roomName,
+			room_id: room._id,
 			timestamp: {
 				$lt: timestamp,
 				$gt: Game.getCurrentTime() - 84600
@@ -925,6 +934,7 @@ Meteor.publish('chatRoom', function(roomName) {
 		check(roomName, String);
 		return Game.Chat.Room.Collection.find({
 			name: roomName,
+			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ this.userId ] } },
 				{ isPublic: true }
@@ -941,6 +951,7 @@ Meteor.publish('chat', function (roomName) {
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
+			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ this.userId ] } },
 				{ isPublic: true }
@@ -949,7 +960,7 @@ Meteor.publish('chat', function (roomName) {
 
 		if (room) {
 			return Game.Chat.Messages.Collection.find({
-				room: roomName,
+				room_id: room._id,
 				timestamp: { $gt: Game.getCurrentTime() - 84600 }
 			}, {
 				fields: {

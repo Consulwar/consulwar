@@ -10,24 +10,22 @@ var gotLimit = new ReactiveVar(false);
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
-		if (Router.current().params.room == message.room) {
-			// add new messge
-			if (messages.length == 0
-			 || messages[ messages.length - 1 ].timestamp < message.timestamp
-			) {
-				messages.push( message );
-			} else {
-				messages.unshift( message );
-			}
-
-			// limit max count
-			while (messages.length > Game.Chat.Messages.LIMIT) {
-				messages.shift();
-			}
-
-			// scroll to bottom
-			Meteor.setTimeout(scrollChatToBottom);
+		// add new messge
+		if (messages.length == 0
+		 || messages[ messages.length - 1 ].timestamp <= message.timestamp
+		) {
+			messages.push( message );
+		} else {
+			messages.unshift( message );
 		}
+
+		// limit max count
+		while (messages.length > Game.Chat.Messages.LIMIT) {
+			messages.shift();
+		}
+
+		// scroll to bottom
+		Meteor.setTimeout(scrollChatToBottom);
 	}
 });
 

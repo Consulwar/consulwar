@@ -13,36 +13,43 @@ Template.payment.onRendered(function() {
 	var template = this;
 
 	this.autorun(function() {
-		template.$('.tabcontent').html('');
 		switch (tabName.get()) {
 			case 'income':
-				Blaze.renderWithData(Template.paymentHistory, { isIncome: true }, template.$('.tabcontent')[0]);
+				history.set(null);
+				Meteor.call('user.getPaymentHistory', true, function(err, data) {
+					history.set(data);
+				})
 				break;
 			case 'expense':
-				Blaze.renderWithData(Template.paymentHistory, { isIncome: false }, template.$('.tabcontent')[0]);
-				break;
-			default:
-				Blaze.render(Template.paymentBuy, template.$('.tabcontent')[0]);
+				history.set(null);
+				Meteor.call('user.getPaymentHistory', false, function(err, data) {
+					history.set(data);
+				})
 				break;
 		}
 	});
 });
 
-Template.payment.events({
-	'click .tabmenu li': function(e, t) {
-		tabName.set( $(e.currentTarget).attr('class') );
-	}
-})
+Template.payment.helpers({
+	tabName: function() { return tabName.get(); },
+	history: function() { return history.get(); },
 
-Template.paymentBuy.helpers({
-	items: function() {
+	paymentItems: function() {
 		return _.map(Game.Payment.items, function(item) {
 			return item;
 		});
 	}
 });
 
-Template.paymentBuy.events({
+Template.payment.events({
+	'click .tabmenu li': function(e, t) {
+		tabName.set( $(e.currentTarget).attr('class') );
+	},
+
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	},
+
 	'click .paymentItems li': function(e, t) {
 		Meteor.call('user.buyPaymentItem', e.currentTarget.dataset.id, function(err, data) {
 			if (err) {
@@ -66,19 +73,6 @@ Template.paymentBuy.events({
 				Notifications.success('Промо код активирован');
 			}
 		});
-	}
-})
-
-Template.paymentHistory.onRendered(function() {
-	history.set(null);
-	Meteor.call('user.getPaymentHistory', this.data.isIncome, function(err, data) {
-		history.set(data);
-	})
-});
-
-Template.paymentHistory.helpers({
-	history: function() {
-		return history.get();
 	}
 });
 

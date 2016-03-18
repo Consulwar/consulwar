@@ -1,42 +1,42 @@
 <template name="payment">
 	<div class="smoke"></div>
-	<div class="modal payment">
+	<div class="payment">
+		<div class="close"></div>
 		<ul class="tabmenu">
 			<li class="buy">Пополнение</li>
 			<li class="income">История пополнений</li>
 			<li class="expense">История списаний</li>
 		</ul>
-		<div class="tabcontent"></div>
+
+		{{#if eqor tabName 'income' 'expense'}}
+
+			<table>
+				{{#each history}}
+					<tr>
+						<td>{{this.source}}</td>
+						<td>{{this.resources}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+					</tr>
+				{{/each}}
+			</table>
+
+		{{else}}
+
+			{{#if paymentItems}}
+				<ul class="paymentItems">
+					{{#each paymentItems}}
+						<li data-id="{{this.id}}">
+							{{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+
+			<form>
+				<label>Промо код: <input class="code"/></label>
+				<input type="submit"/>
+			</form>
+
+		{{/if}}
 	</div>
-</template>
-
-<template name="paymentBuy">
-	{{#if items}}
-		<ul class="paymentItems">
-			{{#each items}}
-				<li data-id="{{this.id}}">
-					{{this.name}}
-				</li>
-			{{/each}}
-		</ul>
-	{{/if}}
-
-	<form>
-		<label>Промо код: <input class="code"/></label>
-		<input type="submit"/>
-	</form>
-</template>
-
-<template name="paymentHistory">
-	{{#if history}}
-		<table>
-			{{#each history}}
-				<tr>
-					<td>{{this.source}}</td>
-					<td>{{this.resources}}</td>
-					<td>{{formatDate this.timestamp}}</td>
-				</tr>
-			{{/each}}
-		</table>
-	{{/if}}
 </template>

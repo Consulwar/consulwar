@@ -151,7 +151,7 @@ Meteor.methods({
 				 && room.owner != user._id
 				 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
 				) {
-					throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+					throw new Meteor.Error('Вы не можете устанавливать сообщение дня в этот чат');
 				}
 
 				set.message = message.substr(5).trim();
@@ -260,13 +260,13 @@ Meteor.methods({
 			 && room.owner != user._id
 			 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
 			) {
-				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+				throw new Meteor.Error('Вы не можете наказывать и прощать пользователей в этом чате');
 			}
 
 		} else {
 			// global block
 			if (['admin', 'helper'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Zav за тобой следит, и ты ему очень не нравишься');
+				throw new Meteor.Error('Вы не можете наказывать и прощать пользователей глобально');
 			}
 		}
 
@@ -516,7 +516,7 @@ Meteor.methods({
 		}
 
 		if (user.role != 'admin' && room.owner != user._id) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+			throw new Meteor.Error('Вы не можете удалить эту комнату');
 		}
 
 		Game.Chat.Room.Collection.remove({
@@ -542,7 +542,7 @@ Meteor.methods({
 		var resources = Game.Resources.getValue();
 
 		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
-			throw new Meteor.Error('Недостаточно средств сервер');
+			throw new Meteor.Error('Недостаточно средств');
 		}
 
 		Game.Resources.spend({ credits: Game.Chat.Messages.FREE_CHAT_PRICE });
@@ -634,7 +634,7 @@ Meteor.methods({
 		}
 
 		if (user.role != 'admin' && room.owner != user._id) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+			throw new Meteor.Error('Вы не можете назначать модераторов в этой комнате');
 		}
 
 		if (!room.isPublic) {
@@ -703,11 +703,11 @@ Meteor.methods({
 		}
 
 		if (user.role != 'admin' && room.owner != user._id) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься');
+			throw new Meteor.Error('Вы не можете удалять модераторов из этой комнаты');
 		}
 
 		if (!room.moderators || room.moderators.indexOf( login ) == -1) {
-			throw new Meteor.Error('Такого модератора в чате нет');
+			throw new Meteor.Error('Такого модератора в комнате нет');
 		}
 
 		Game.Chat.Room.Collection.update({

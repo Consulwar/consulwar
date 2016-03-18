@@ -43,98 +43,123 @@ var scrollChatToBottom = function(force) {
 	}
 }
 
-// TODO: Отрефакторить! Вынести в отдельные функции, чтобы использовать их из GUI.
+var createRoom = function(name, isPublic, isOwnerPays) {
+	Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Вы успешно создали комнату ' + name);
+			Router.go('chat', { room: name });
+		}
+	});
+}
+
+var removeRoom = function(name) {
+	Meteor.call('chat.removeRoom', name, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Вы успешно удалили комнату ' + name);
+			Router.go('chat', { room: 'general' });
+		}
+	});
+}
+
+var addCredits = function(roomName, credits) {
+	credits = parseInt( credits, 10 );
+	if (credits <= 0) {
+		Notifications.error('Укажите сумму кредитов!');
+		return;
+	}
+
+	Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Кредиты успешно зачисленны на счет комнаты');
+		}
+	});
+}
+
+var addUser = function(roomName, login) {
+	Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		}
+	});
+}
+
+var removeUser = function(roomName, login) {
+	Meteor.call('chat.removeUserFromRoom', roomName, login, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		}
+	});
+}
+
+var blockUser = function(options) {
+	Meteor.call('chat.blockUser', options, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		}
+	});
+}
+
+var addModerator = function(roomName, login) {
+	Meteor.call('chat.addModeratorToRoom', roomName, login, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		}
+	});
+}
+
+var removeModerator = function(roomName, login) {
+	Meteor.call('chat.removeModeratorFromRoom', roomName, login, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		}
+	});
+}
+
 var execClientCommand = function(message) {
 	// create new channel
 	if (message.indexOf('/create channel') == 0) {
-
-		var name = prompt('Введите название канала');
+		var name = prompt('Введите название комнаты');
 		if (!name) {
-			return true; 
+			return true;
 		}
 
 		var isPublic = confirm('Комната будет публичной?');
 		var isOwnerPays = confirm('Вы будете оплачивать сообщения в комнате?');
 
-		Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			} else {
-				Notifications.success('Вы успешно создали комнату');
-				Router.go('chat', { room: name });
-			}
-		});
+		createRoom(name, isPublic, isOwnerPays);
 		return true;
 	}
 	// remove current channel
 	else if (message.indexOf('/remove channel') == 0) {
-		var roomName = Router.current().params.room;
-		var isOk = confirm('Вы действительно хотите удалить текущую комнату?');
-
-		if (isOk) {
-			Meteor.call('chat.removeRoom', roomName, function(err, data) {
-				if (err) {
-					Notifications.error(err.error);
-				} else {
-					Notifications.success('Вы успешно удалили комнату');
-					Router.go('chat', { room: 'general' });
-				}
-			});
+		if (confirm('Вы действительно хотите удалить текущую комнату?')) {
+			removeRoom(Router.current().params.room);
 		}
 		return true;
 	}
 	// join existing channel
 	else if (message.indexOf('/join') == 0) {
-		var roomName = message.substr('/join'.length).trim();
-		Router.go('chat', { room: roomName });
+		Router.go('chat', { room: message.substr('/join'.length).trim() });
+		return true;
+	}
+	// add funds to channel
+	else if (message.indexOf('/add credits') == 0) {
+		addCredits(Router.current().params.room, message.substr('/add credits'.length).trim())
 		return true;
 	}
 	// add user to channel
 	else if (message.indexOf('/add user') == 0) {
-		var login = message.substr('/add user'.length).trim();
-		var roomName = Router.current().params.room;
-
-		Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
-		});
+		addUser(Router.current().params.room, message.substr('/add user'.length).trim());
 		return true;
 	}
 	// remove user from channel
 	else if (message.indexOf('/remove user') == 0) {
-		var login = message.substr('/remove user'.length).trim();
-		var roomName = Router.current().params.room;
-
-		Meteor.call('chat.removeUserFromRoom', roomName, login, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
-		});
-		return true;
-	}
-	// add user to channel
-	else if (message.indexOf('/add user') == 0) {
-		var login = message.substr('/add user'.length).trim();
-		var roomName = Router.current().params.room;
-
-		Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
-		});
-		return true;
-	}
-	// remove user from channel
-	else if (message.indexOf('/remove user') == 0) {
-		var login = message.substr('/remove user'.length).trim();
-		var roomName = Router.current().params.room;
-
-		Meteor.call('chat.removeUserFromRoom', roomName, login, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
-		});
+		removeUser(Router.current().params.room, message.substr('/remove user'.length).trim());
 		return true;
 	}
 	// block user
@@ -144,56 +169,30 @@ var execClientCommand = function(message) {
 			return;
 		}
 
-		var options = {
+		blockUser({
 			roomName: Router.current().params.room,
 			login: message.substr('/block'.length).trim(),
 			time: parseInt(time, 10)
-		}
-
-		Meteor.call('chat.blockUser', options, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
 		});
 		return true;
 	}
 	// unblock user
 	else if (message.indexOf('/unblock') == 0) {
-		var options = {
+		blockUser({
 			roomName: Router.current().params.room,
 			login: message.substr('/unblock'.length).trim(),
 			time: 0
-		}
-
-		Meteor.call('chat.blockUser', options, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
 		});
 		return true;
 	}
 	// add moderator
 	else if (message.indexOf('/add moderator') == 0) {
-		var login = message.substr('/add moderator'.length).trim();
-		var roomName = Router.current().params.room;
-
-		Meteor.call('chat.addModeratorToRoom', roomName, login, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
-		});
+		addModerator(Router.current().params.room, message.substr('/add moderator'.length).trim());
 		return true;
 	}
 	// remove moderator
 	else if (message.indexOf('/remove moderator') == 0) {
-		var login = message.substr('/remove moderator'.length).trim();
-		var roomName = Router.current().params.room;
-
-		Meteor.call('chat.removeModeratorFromRoom', roomName, login, function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			}
-		});
+		removeModerator(Router.current().params.room, message.substr('/remove moderator'.length).trim());
 		return true;
 	}
 
@@ -297,47 +296,51 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
-	'click .chat .buyFreeChat': function(e, t) {
+	// submit message
+	'submit .chat #message': function(e, t) {
 		e.preventDefault();
 
-		var resources = Game.Resources.getValue();
-		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
-			Notifications.error('Недостаточно средств');
-			return;
+		if (isSending.get()) {
+			return false;
 		}
 
-		Meteor.call('chat.buyFreeChat', function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			} else {
-				Notifications.success('Ура! Теперь не нужно платить за ссаный чат!');
-			}
-		});
-	},
-
-	'click .chat .addCredits': function(e, t) {
 		var roomName = Router.current().params.room;
-		var credits = prompt('Положить кредиты на счет комнаты:', '1000');
+		var text = t.find('#message textarea[name="text"]').value;
 
-		if (!credits) {
-			return;
+		if (execClientCommand(text)) {
+			t.find('#message').reset();
+			return false;
 		}
 
-		credits = parseInt( credits, 10 );
-		if (credits <= 0) {
-			Notifications.error('Укажите сумму кредитов!');
-			return;
-		}
+		isSending.set(true);
 
-		Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
+		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
+			isSending.set(false);
 			if (err) {
-				Notifications.error(err.error);
+				var errorMessage = err.error;
+				if (err.reason) {
+					errorMessage += ' до ' + Game.formatDate(err.reason);
+				}
+				Notifications.error(errorMessage);
 			} else {
-				Notifications.success('Кредиты успешно зачисленны на счет комнаты');
+				t.find('#message').reset();
 			}
 		});
+
+		return false;
 	},
 
+	'keypress textarea[name="text"]': function(e, t) {
+		if (e.ctrlKey && (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter')) {
+			t.find('#message input[type="submit"]').click();
+		}
+	},
+
+	'click .messages span:not(.dice), click .participants li': function(e, t) {
+		t.find('#message textarea[name="text"]').value = t.find('#message textarea[name="text"]').value + '@' + e.currentTarget.innerHTML;
+	},
+
+	// load previous messages
 	'click .chat .more': function(e, t) {
 		if (isLoading.get()) {
 			return;
@@ -375,37 +378,31 @@ Template.chat.events({
 		});
 	},
 
-	'submit .chat #message': function(e, t) {
+	// other chat commands
+	'click .chat .buyFreeChat': function(e, t) {
 		e.preventDefault();
 
-		if (isSending.get()) {
-			return false;
+		var resources = Game.Resources.getValue();
+		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
+			Notifications.error('Недостаточно средств');
+			return;
 		}
 
-		var roomName = Router.current().params.room;
-		var text = t.find('#message textarea[name="text"]').value;
-
-		if (execClientCommand(text)) {
-			t.find('#message').reset();
-			return false;
-		}
-
-		isSending.set(true);
-
-		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
-			isSending.set(false);
+		Meteor.call('chat.buyFreeChat', function(err, data) {
 			if (err) {
-				var errorMessage = err.error;
-				if (err.reason) {
-					errorMessage += ' до ' + Game.formatDate(err.reason);
-				}
-				Notifications.error(errorMessage);
+				Notifications.error(err.error);
 			} else {
-				t.find('#message').reset();
+				Notifications.success('Ура! Теперь не нужно платить за ссаный чат!');
 			}
 		});
+	},
 
-		return false;
+	'click .chat .addCredits': function(e, t) {
+		var roomName = Router.current().params.room;
+		var credits = prompt('Положить кредиты на счет комнаты:', '1000');
+		if (credits) {
+			addCredits(roomName, credits);
+		}
 	},
 
 	'click li a.block': function(e, t) {
@@ -416,27 +413,19 @@ Template.chat.events({
 			return;
 		}
 
-		var options = {
+		blockUser({
 			login: e.currentTarget.dataset.login,
 			time: parseInt(time, 10)
-		}
-
-		Meteor.call('chat.blockUser', options, function(err) {
-			if (err) {
-				Notifications.error(err.error);
-			}
 		});
 	},
 
-	'keypress textarea[name="text"]': function(e, t) {
-		if (e.ctrlKey && (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter')) {
-			t.find('#message input[type="submit"]').click();
-		}
+	/*
+	'click li span.remove': function(e, t) {
+		e.preventDefault();
+		var login = e.currentTarget.dataset.login;
+		console.log(login);
 	},
-
-	'click .messages span:not(.dice), click .participants li': function(e, t) {
-		t.find('#message textarea[name="text"]').value = t.find('#message textarea[name="text"]').value + '@' + e.currentTarget.innerHTML;
-	},
+	*/
 
 	'submit .chat #control': function(e, t) {
 		e.preventDefault();
@@ -444,15 +433,7 @@ Template.chat.events({
 		var login = t.find('#control input[name="login"]').value;
 		var roomName = Router.current().params.room;
 
-		if (login && roomName) {
-			Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
-				if (!err) {
-					t.find('#control').reset();
-				} else {
-					Notifications.error(err.error);
-				}
-			});
-		}
+		addUser(roomName, login);
 	}
 });
 

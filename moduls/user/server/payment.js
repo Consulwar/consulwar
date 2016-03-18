@@ -111,8 +111,16 @@ Meteor.methods({
 Game.PromoCode = {};
 
 Game.PromoCode.types = {
-	votepower: {
-		maxForUser: 1
+	once: {},
+
+	random: {
+		items: [{
+			resources: { credits: 10 }
+		}, {
+			resources: { crystals: 100 }
+		}, {
+			resources: { humans: 200 }
+		}]
 	}
 }
 
@@ -149,19 +157,23 @@ Meteor.methods({
 		}
 
 		// check promo code type options
-		if (promoCode.type && Game.PromoCode.types[promoCode.type]) {
-			var typeOptions = Game.PromoCode.types[promoCode.type];
-
-			if (typeOptions.maxForUser) {
+		switch (promoCode.type) {
+			case 'once': 
 				var count = Game.PromoCode.Collection.find({
+					type: 'once',
 					user_id: user._id,
 					activated: true
 				}).count();
 
-				if (count >= typeOptions.maxForUser) {
+				if (count > 0) {
 					throw new Meteor.Error('Вы не можете активировать этот промокод');
 				}
-			}
+				break;
+
+			case 'random':
+				var items = Game.PromoCode.types[promoCode.type].items;
+				promoCode.profit = items[ Game.Random.interval(0, items.length - 1) ];
+				break; 
 		}
 
 		// add profit
@@ -197,7 +209,8 @@ Meteor.methods({
 		}, {
 			$set: {
 				user_id: user._id,
-				activated: true
+				activated: true,
+				profit: promoCode.profit
 			}
 		});
 	}

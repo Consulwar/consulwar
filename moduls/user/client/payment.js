@@ -6,6 +6,7 @@ var tabName = new ReactiveVar(null);
 var history = new ReactiveVar(null);
 
 Game.Payment.showWindow = function() {
+	tabName.set('buy');
 	Blaze.render(Template.payment, $('.over')[0]);
 }
 
@@ -38,6 +39,15 @@ Template.payment.helpers({
 		return _.map(Game.Payment.items, function(item) {
 			return item;
 		});
+	},
+
+	// TODO: Переделать потом!
+	getProfit: function(resources) {
+		var result = '';
+		for (var name in resources) {
+			result += name + ':' + parseInt(resources[name], 10) + ' ';
+		}
+		return result;
 	}
 });
 

@@ -9,24 +9,25 @@
 		</ul>
 
 		{{#if eqor tabName 'income' 'expense'}}
-
-			<table>
-				{{#each history}}
-					<tr>
-						<td>{{this.source}}</td>
-						<td>{{this.resources}}</td>
-						<td>{{formatDate this.timestamp}}</td>
-					</tr>
-				{{/each}}
-			</table>
-
-		{{else}}
-
+			<div class="data">
+				<table>
+					{{#each history}}
+						<tr>
+							<td>{{this.source}}</td>
+							<td>{{getProfit this.resources}}</td>
+							<td>{{formatDate this.timestamp}}</td>
+						</tr>
+					{{/each}}
+				</table>
+			</div>
+		{{/if}}
+		
+		{{#if eq tabName 'buy'}}
 			{{#if paymentItems}}
 				<ul class="paymentItems">
 					{{#each paymentItems}}
 						<li data-id="{{this.id}}">
-							{{this.name}}
+							{{this.name}} за {{this.cost.rub}} рублей
 						</li>
 					{{/each}}
 				</ul>
@@ -36,7 +37,7 @@
 				<label>Промо код: <input class="code"/></label>
 				<input type="submit"/>
 			</form>
-
 		{{/if}}
+
 	</div>
 </template>

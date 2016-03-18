@@ -9,7 +9,7 @@ var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
-	added: function (id, message) {
+	added: function(id, message) {
 		if (Router.current().params.room == message.room) {
 			// add new messge
 			if (messages.length == 0
@@ -30,6 +30,24 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 		}
 	}
 });
+
+Game.Chat.Room.Collection.find({}).observeChanges({
+	added: function(id, room) {
+		if (room.motd) {
+			room.motd.timestamp = Session.get('serverTime');
+			messages.push(room.motd);
+			Meteor.setTimeout(scrollChatToBottom);
+		}
+	},
+
+	changed: function(id, fields) {
+		if (fields.motd) {
+			fields.motd.timestamp = Session.get('serverTime');
+			messages.push(fields.motd);
+			Meteor.setTimeout(scrollChatToBottom);
+		}
+	}
+})
 
 Game.Chat.showPage = function() {
 	this.render('chat', { to: 'content' });

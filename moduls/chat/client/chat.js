@@ -386,8 +386,8 @@ Template.chat.events({
 		}
 	},
 
-	'click .messages span:not(.dice), click .participants li': function(e, t) {
-		t.find('#message textarea[name="text"]').value = t.find('#message textarea[name="text"]').value + '@' + e.currentTarget.innerHTML;
+	'click .messages span:not(.dice), click .participants span': function(e, t) {
+		t.find('#message textarea[name="text"]').value +=  '@' + e.currentTarget.innerHTML.trim();
 	},
 
 	// load previous messages
@@ -507,6 +507,7 @@ Template.chat.events({
 		var roomName = Router.current().params.room;
 
 		addUser(roomName, login);
+		t.find('#control input[name="login"]').value = '';
 	},
 
 	'click li a.addModerator': function(e, t) {

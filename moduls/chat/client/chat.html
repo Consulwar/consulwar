@@ -4,7 +4,7 @@
 			<ul class="participants">
 				{{#each users}}
 					<li class="online">
-						{{this}}
+						<span>{{this}}</span>
 						{{#if canControlUsers}}
 							<a class="remove" data-login="{{this}}">Удалить</a>
 						{{/if}}

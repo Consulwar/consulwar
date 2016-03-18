@@ -171,31 +171,33 @@
 		text-align left
 		
 		li
-			cursor pointer
 			color #777777
+		
+			span
+				cursor pointer
 			
 			&.online
 				color #FFFFFF
 			
-			.addModerator
-				cursor pointer
-				color #777777
-				&:hover
-					color #FFFFFF
-			
-			.removeModerator
+			.addModerator, .removeModerator, .createRoom, .removeRoom
 				cursor pointer
 				color #777777
 				&:hover
 					color #FFFFFF
 
 			.remove
+				display none
 				float right
 				cursor pointer
 				color #777777
 				&:hover
 					color #FFFFFF
-	
+			
+			&:hover
+				background-color rgba(255, 255, 255, 0.02)
+				.remove
+					display block
+
 	.addCredits
 		cursor pointer	
 

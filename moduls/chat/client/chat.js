@@ -311,15 +311,7 @@ Template.chat.helpers({
 		return (text.substr(0, value.length) == value);
 	},
 
-	canControlUsers: function() {
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			owner: Meteor.userId(),
-			isPublic: { $ne: true }
-		});
-	},
-
-	canControlModerators: function() {
+	canControlRoom: function() {
 		if (['admin'].indexOf(Meteor.user().role) != -1) {
 			return true;
 		}
@@ -327,6 +319,14 @@ Template.chat.helpers({
 		return Game.Chat.Room.Collection.findOne({
 			name: Router.current().params.room,
 			owner: Meteor.userId()
+		});
+	},
+
+	canControlUsers: function() {
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			owner: Meteor.userId(),
+			isPublic: { $ne: true }
 		});
 	},
 
@@ -492,7 +492,6 @@ Template.chat.events({
 
 	'click li a.remove': function(e, t) {
 		e.preventDefault();
-		e.stopPropagation();
 
 		var login = e.currentTarget.dataset.login;
 		if (confirm('Удалить из комнаты пользователя ' + login + '?')) {
@@ -512,7 +511,6 @@ Template.chat.events({
 
 	'click li a.addModerator': function(e, t) {
 		e.preventDefault();
-		e.stopPropagation();
 
 		var login = prompt('Укажите логин');
 		if (login) {
@@ -522,11 +520,32 @@ Template.chat.events({
 
 	'click li a.removeModerator': function(e, t) {
 		e.preventDefault();
-		e.stopPropagation();
 
 		var login = prompt('Укажите логин');
 		if (login) {
 			removeModerator(Router.current().params.room, login);	
+		}
+	},
+
+	'click li a.createRoom': function(e, t) {
+		e.preventDefault();
+
+		var name = prompt('Введите название комнаты');
+		if (!name) {
+			return true;
+		}
+
+		var isPublic = confirm('Комната будет публичной?');
+		var isOwnerPays = confirm('Вы будете оплачивать сообщения в комнате?');
+
+		createRoom(name, isPublic, isOwnerPays);
+	},
+
+	'click li a.removeRoom': function(e, t) {
+		e.preventDefault();
+
+		if (confirm('Вы действительно хотите удалить текущую комнату?')) {
+			removeRoom(Router.current().params.room);
 		}
 	}
 });

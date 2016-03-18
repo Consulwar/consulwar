@@ -10,10 +10,12 @@
 						{{/if}}
 					</li>
 				{{/each}}
-				{{#if canControlModerators}}
+				{{#if canControlRoom}}
 					<li><a class="addModerator" href="#">Назначить модератора</a></li>
 					<li><a class="removeModerator" href="#">Разжаловать модератора</a></li>
+					<li><a class="removeRoom" href="#">Удалить конмату</a></li>
 				{{/if}}
+				<li><a class="createRoom" href="#">Создать комнату</a></li>
 			</ul>
 		{{/if}}
 
@@ -83,7 +85,7 @@
 			{{/each}}
 			{{#if and room room.motd}}
 				<li class="motd">
-					<span>{{room.motd.login}}:</span>{{room.motd.message}}
+					<span>{{room.motd.login}}:</span> {{room.motd.message}}
 				</li>
 			{{/if}}
 		</ul>

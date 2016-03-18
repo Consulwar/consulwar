@@ -85,6 +85,8 @@ var addUser = function(roomName, login) {
 	Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
+		} else {
+			Notifications.success('Пользователь добавлен в комнату');
 		}
 	});
 }
@@ -93,6 +95,8 @@ var removeUser = function(roomName, login) {
 	Meteor.call('chat.removeUserFromRoom', roomName, login, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
+		} else {
+			Notifications.success('Пользователь удален из комнаты');
 		}
 	});
 }
@@ -101,6 +105,12 @@ var blockUser = function(options) {
 	Meteor.call('chat.blockUser', options, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
+		} else {
+			if (options.time && options.time > 0) {
+				Notifications.success('Пользователь заблокирован');
+			} else {
+				Notifications.success('Пользователь разблокирован');
+			}
 		}
 	});
 }
@@ -109,6 +119,8 @@ var addModerator = function(roomName, login) {
 	Meteor.call('chat.addModeratorToRoom', roomName, login, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
+		} else {
+			Notifications.success('Модератор назначен');
 		}
 	});
 }
@@ -117,6 +129,8 @@ var removeModerator = function(roomName, login) {
 	Meteor.call('chat.removeModeratorFromRoom', roomName, login, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
+		} else {
+			Notifications.success('Модератор разжалован');
 		}
 	});
 }
@@ -169,8 +183,13 @@ var execClientCommand = function(message) {
 			return;
 		}
 
+		var isLocal = true;
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			isLocal = confirm('Блокировать только эту комнату?');
+		}
+
 		blockUser({
-			roomName: Router.current().params.room,
+			roomName: isLocal ? Router.current().params.room : null,
 			login: message.substr('/block'.length).trim(),
 			time: parseInt(time, 10)
 		});
@@ -178,8 +197,13 @@ var execClientCommand = function(message) {
 	}
 	// unblock user
 	else if (message.indexOf('/unblock') == 0) {
+		var isLocal = true;
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			isLocal = confirm('Разблокировать только эту комнату?');
+		}
+
 		blockUser({
-			roomName: Router.current().params.room,
+			roomName: isLocal ? Router.current().params.room : null,
 			login: message.substr('/unblock'.length).trim(),
 			time: 0
 		});
@@ -235,13 +259,6 @@ Template.chat.helpers({
 		});
 	},
 
-	canControl: function() {
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			owner: Meteor.userId()
-		});
-	},
-
 	users: function() {
 		var roomName = Router.current().params.room;
 		var room = Game.Chat.Room.Collection.findOne({
@@ -292,6 +309,39 @@ Template.chat.helpers({
 
 	startWith: function(text, value) {
 		return (text.substr(0, value.length) == value);
+	},
+
+	canControlUsers: function() {
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			owner: Meteor.userId(),
+			isPublic: { $ne: true }
+		});
+	},
+
+	canControlModerators: function() {
+		if (['admin'].indexOf(Meteor.user().role) != -1) {
+			return true;
+		}
+
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			owner: Meteor.userId()
+		});
+	},
+
+	canControlBlock: function() {
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			return true;
+		}
+
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			$or: [
+				{ owner: Meteor.userId() },
+				{ moderators: { $in: [ Meteor.user().login ] } }
+			]
+		});
 	}
 });
 
@@ -413,19 +463,42 @@ Template.chat.events({
 			return;
 		}
 
+		var isLocal = true;
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			isLocal = confirm('Блокировать только эту комнату?');
+		}
+
 		blockUser({
+			roomName: isLocal ? Router.current().params.room : null,
 			login: e.currentTarget.dataset.login,
 			time: parseInt(time, 10)
 		});
 	},
 
-	/*
-	'click li span.remove': function(e, t) {
+	'click li a.unblock': function(e, t) {
 		e.preventDefault();
-		var login = e.currentTarget.dataset.login;
-		console.log(login);
+
+		var isLocal = true;
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			isLocal = confirm('Разблокировать только эту комнату?');
+		}
+
+		blockUser({
+			roomName: isLocal ? Router.current().params.room : null,
+			login: e.currentTarget.dataset.login,
+			time: 0
+		});
 	},
-	*/
+
+	'click li a.remove': function(e, t) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var login = e.currentTarget.dataset.login;
+		if (confirm('Удалить из комнаты пользователя ' + login + '?')) {
+			removeUser(Router.current().params.room, login);
+		}
+	},
 
 	'submit .chat #control': function(e, t) {
 		e.preventDefault();
@@ -434,6 +507,26 @@ Template.chat.events({
 		var roomName = Router.current().params.room;
 
 		addUser(roomName, login);
+	},
+
+	'click li a.addModerator': function(e, t) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var login = prompt('Укажите логин');
+		if (login) {
+			addModerator(Router.current().params.room, login);
+		}
+	},
+
+	'click li a.removeModerator': function(e, t) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var login = prompt('Укажите логин');
+		if (login) {
+			removeModerator(Router.current().params.room, login);	
+		}
 	}
 });
 

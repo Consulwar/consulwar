@@ -3,8 +3,17 @@
 		{{#if users}}
 			<ul class="participants">
 				{{#each users}}
-					<li class="online">{{this}}</li>
+					<li class="online">
+						{{this}}
+						{{#if canControlUsers}}
+							<a class="remove" data-login="{{this}}">Удалить</a>
+						{{/if}}
+					</li>
 				{{/each}}
+				{{#if canControlModerators}}
+					<li><a class="addModerator" href="#">Назначить модератора</a></li>
+					<li><a class="removeModerator" href="#">Разжаловать модератора</a></li>
+				{{/if}}
 			</ul>
 		{{/if}}
 
@@ -66,8 +75,9 @@
 					{{else}}
 						{{{highlightUser this.message}}}
 					{{/if}}
-					{{#if eqor user.role 'admin' 'helper'}}
-						<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
+					{{#if canControlBlock}}
+						<a class="block" data-login="{{this.login}}" href="#">Наказать</a>
+						<a class="unblock" data-login="{{this.login}}" href="#">Простить</a>
 					{{/if}}
 				</li>
 			{{/each}}
@@ -110,7 +120,7 @@
 			{{/if}}
 		</form>
 
-		{{#if canControl}}
+		{{#if canControlUsers}}
 			<form id="control">
 				<input name="login" />
 				<input type="submit" value="Добавить" />

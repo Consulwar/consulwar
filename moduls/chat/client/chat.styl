@@ -84,15 +84,29 @@
 			.block
 				position absolute
 				top 0
-				right 10px
+				right 70px
 				display none
 				font-style normal
+				color #777777
+				&:hover
+					color #FFFFFF
+			
+			.unblock
+				position absolute
+				top 0
+				right 5px
+				display none
+				font-style normal
+				color #777777
+				&:hover
+					color #FFFFFF
 			
 			&:hover
 				background-color rgba(255, 255, 255, 0.02)
 				.block
 					display block
-					
+				.unblock
+					display block
 	
 	form
 		height 69px
@@ -162,6 +176,25 @@
 			
 			&.online
 				color #FFFFFF
+			
+			.addModerator
+				cursor pointer
+				color #777777
+				&:hover
+					color #FFFFFF
+			
+			.removeModerator
+				cursor pointer
+				color #777777
+				&:hover
+					color #FFFFFF
+
+			.remove
+				float right
+				cursor pointer
+				color #777777
+				&:hover
+					color #FFFFFF
 	
 	.addCredits
 		cursor pointer	

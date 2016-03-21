@@ -48,10 +48,10 @@ Game.Chat.Room = {
 		}
 
 		if (room.isPublic) {
-			return room.isOwnerPays ? { credits: 1000 } : { credits: 5000 };
+			return room.isOwnerPays ? { credits: 2500 } : { credits: 5000 };
 		}
 
-		return room.isOwnerPays ? { credits: 100 } : { credits: 500 };
+		return room.isOwnerPays ? { credits: 500 } : { credits: 1000 };
 	}
 };
 

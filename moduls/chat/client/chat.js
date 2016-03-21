@@ -63,14 +63,29 @@ var scrollChatToBottom = function(force) {
 }
 
 var createRoom = function(name, isPublic, isOwnerPays) {
-	Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
-		if (err) {
-			Notifications.error(err.error);
-		} else {
-			Notifications.success('Вы успешно создали комнату ' + name);
-			Router.go('chat', { room: name });
-		}
+	var message = 'Имя комнаты: ' +  name + '\n'
+	            + 'Тип комнаты: ' + (isPublic ? 'публичная' : 'приватная') + '\n'
+	            + 'Оплата сообщений: ' + (isOwnerPays ? 'ГГК' : 'кристаллы' );
+
+	var price = Game.Chat.Room.getPrice({
+		isPublic: isPublic,
+		isOwnerPays: isOwnerPays
 	});
+
+	if (price && price.credits) {
+		message += '\n' + 'Стоимость создания: ' + price.credits + ' ГГК';
+	}
+
+	if (confirm(message)) {
+		Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
+				Notifications.success('Вы успешно создали комнату ' + name);
+				Router.go('chat', { room: name });
+			}
+		});
+	}
 }
 
 var removeRoom = function(name) {
@@ -163,7 +178,7 @@ var execClientCommand = function(message) {
 		}
 
 		var isPublic = confirm('Комната будет публичной?');
-		var isOwnerPays = confirm('Вы будете оплачивать сообщения в комнате?');
+		var isOwnerPays = confirm('Сообщения оплачиваются грязными галлактическими кредитами?');
 
 		createRoom(name, isPublic, isOwnerPays);
 		return true;
@@ -555,7 +570,7 @@ Template.chat.events({
 		}
 
 		var isPublic = confirm('Комната будет публичной?');
-		var isOwnerPays = confirm('Вы будете оплачивать сообщения в комнате?');
+		var isOwnerPays = confirm('Сообщения оплачиваются грязными галлактическими кредитами?');
 
 		createRoom(name, isPublic, isOwnerPays);
 	},

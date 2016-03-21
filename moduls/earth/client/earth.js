@@ -270,7 +270,7 @@ Template.earthZonePopup.helpers({
 
 		if (turn
 		 && turn.users.indexOf(Meteor.userId()) < 0
-		 && Game.User.getVotePower() > 0
+		 && Game.User.getLevel() > 0
 		) {
 			turn.canVote = true;
 		} else {

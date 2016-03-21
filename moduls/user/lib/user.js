@@ -1,7 +1,14 @@
 Meteor.startup(function () {
 
 Game.User = {
-	getVotePower: function(rating) {
+	getVotePower: function() {
+		var bonus = Meteor.user().votePowerBonus;
+		var level = Game.User.getLevel( Meteor.user().rating );
+
+		return level + (bonus ? bonus : 0);
+	},
+
+	getLevel: function(rating) {
 		var rating = rating || Meteor.user().rating;
 
 		if (!rating || rating < 25000) {

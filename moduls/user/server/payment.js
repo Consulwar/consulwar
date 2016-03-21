@@ -118,8 +118,7 @@ Meteor.methods({
 			},
 			...
 		},
-		rating: 100500
-		// TODO: Завести поле votepower у юзера и добавлять, а не увеличивать рейтинг!
+		votePower: 5
 	}
 }
 */
@@ -211,11 +210,11 @@ Meteor.methods({
 				}
 			}
 
-			if (promoCode.profit.rating) {
+			if (promoCode.profit.votePower) {
 				Meteor.users.update({
 					_id: user._id
 				}, {
-					$inc: { rating: promoCode.profit.rating }
+					$inc: { votePowerBonus: promoCode.profit.votePower }
 				});
 			}
 		}

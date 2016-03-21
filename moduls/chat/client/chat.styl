@@ -34,6 +34,11 @@
 				&.dice
 					color #3eb5f1
 			
+			&.motd
+				text-align center
+				span
+					display none
+
 			&.more
 				cursor pointer
 				text-align center
@@ -45,6 +50,9 @@
 
 			&.remove
 				color red
+				
+			&.removeModerator
+				color red
 
 			&.block
 				color red
@@ -53,6 +61,9 @@
 				color green
 				
 			&.addfunds
+				color green
+			
+			&.addModerator
 				color green
 
 			&.unblock
@@ -75,15 +86,29 @@
 			.block
 				position absolute
 				top 0
-				right 10px
+				right 70px
 				display none
 				font-style normal
+				color #777777
+				&:hover
+					color #FFFFFF
+			
+			.unblock
+				position absolute
+				top 0
+				right 5px
+				display none
+				font-style normal
+				color #777777
+				&:hover
+					color #FFFFFF
 			
 			&:hover
 				background-color rgba(255, 255, 255, 0.02)
 				.block
 					display block
-					
+				.unblock
+					display block
 	
 	form
 		height 69px
@@ -138,21 +163,43 @@
 			cursor pointer
 		
 	.participants
+		list-style-type none
 		float right
-		width 160px
+		width 180px
 		height 338px
 		overflow-y auto
 		overflow-x hidden
 		padding 11px
-		text-align right
+		text-align left
 		
 		li
-			cursor pointer
 			color #777777
+		
+			span
+				cursor pointer
 			
 			&.online
 				color #FFFFFF
-	
+			
+			.addModerator, .removeModerator, .createRoom, .removeRoom
+				cursor pointer
+				color #777777
+				&:hover
+					color #FFFFFF
+
+			.remove
+				display none
+				float right
+				cursor pointer
+				color #777777
+				&:hover
+					color #FFFFFF
+			
+			&:hover
+				background-color rgba(255, 255, 255, 0.02)
+				.remove
+					display block
+
 	.addCredits
 		cursor pointer	
 

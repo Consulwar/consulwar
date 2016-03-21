@@ -10,6 +10,7 @@ initEarthClient();
 initHouseClient();
 initMutualClient();
 initMailClient();
+initChatClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();

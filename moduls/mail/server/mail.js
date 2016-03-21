@@ -84,7 +84,7 @@ Meteor.methods({
 		});
 
 		if (block && Game.getCurrentTime() < block.timestamp + block.period) {
-			throw new Meteor.Error('Отправка писем заблокирована');
+			throw new Meteor.Error('Отправка писем заблокирована', block.timestamp + block.period);
 		}
 
 		check(recipient, String);

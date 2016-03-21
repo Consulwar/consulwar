@@ -3,8 +3,19 @@
 		{{#if users}}
 			<ul class="participants">
 				{{#each users}}
-					<li class="online">{{this}}</li>
+					<li class="online">
+						<span>{{this}}</span>
+						{{#if canControlUsers}}
+							<a class="remove" data-login="{{this}}">Удалить</a>
+						{{/if}}
+					</li>
 				{{/each}}
+				{{#if canControlRoom}}
+					<li><a class="addModerator" href="#">Назначить модератора</a></li>
+					<li><a class="removeModerator" href="#">Разжаловать модератора</a></li>
+					<li><a class="removeRoom" href="#">Удалить конмату</a></li>
+				{{/if}}
+				<li><a class="createRoom" href="#">Создать комнату</a></li>
 			</ul>
 		{{/if}}
 
@@ -16,7 +27,7 @@
 				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
 			{{/if}}
 			{{#each messages}}
-				<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
+				<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}} {{#if this.isMotd}}motd{{/if}}">
 					{{#if this.data}}* {{/if}}
 					<span 
 						class="
@@ -39,10 +50,14 @@
 							совершил кровавое сепукку.
 						{{/if}}
 						{{#if eq this.data.type 'unblock'}}
-							разблокировал чат {{this.message}}
+							разблокировал
+							{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+							для {{this.message}}
 						{{/if}}
 						{{#if eq this.data.type 'block'}}
-							заблокировал чат {{this.message}}
+							заблокировал
+							{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+							для {{this.message}} до {{formatDate (sum data.timestamp data.period)}}
 						{{/if}}
 						{{#if eq this.data.type 'add'}}
 							добавил в чат {{this.message}}
@@ -50,14 +65,21 @@
 						{{#if eq this.data.type 'remove'}}
 							удалил из чата {{this.message}}
 						{{/if}}
+						{{#if eq this.data.type 'addModerator'}}
+							назначил модератора {{this.message}}
+						{{/if}}
+						{{#if eq this.data.type 'removeModerator'}}
+							разжаловал модератора {{this.message}}
+						{{/if}}
 						{{#if eq this.data.type 'addfunds'}}
 							пополнил баланс чата на {{this.data.amount}} ГГК
 						{{/if}}
 					{{else}}
 						{{{highlightUser this.message}}}
 					{{/if}}
-					{{#if eqor user.role 'admin' 'helper'}}
-						<a class="block" data-login="{{this.login}}" href="#">Блокировать</a>
+					{{#if canControlBlock}}
+						<a class="block" data-login="{{this.login}}" href="#">Наказать</a>
+						<a class="unblock" data-login="{{this.login}}" href="#">Простить</a>
 					{{/if}}
 				</li>
 			{{/each}}
@@ -85,15 +107,17 @@
 				{{/if}}
 			{{/if}}
 
-			{{#unless isChatFree}}
-				<button class="buyFreeChat">Больше никогда не платить за ссаный чат</button>
-				<ul class="resources">
-					<li class="credits">5 000</li>
-				</ul>
-			{{/unless}}
+			{{#if price}}
+				{{#unless isChatFree}}
+					<button class="buyFreeChat">Больше никогда не платить за ссаный чат</button>
+					<ul class="resources">
+						<li class="credits">{{formatNumberWithISO freeChatPrice}}</li>
+					</ul>
+				{{/unless}}
+			{{/if}}
 		</form>
 
-		{{#if canControl}}
+		{{#if canControlUsers}}
 			<form id="control">
 				<input name="login" />
 				<input type="submit" value="Добавить" />

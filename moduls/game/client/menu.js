@@ -121,7 +121,7 @@ var menu = {
 		}
 	}, 
 	cosmos: {
-		routeName: ['cosmos'],
+		routeName: ['cosmos', 'cosmosHistory'],
 		url: Router.routes.cosmos.path()
 	},
 	communication: {
@@ -141,7 +141,10 @@ var menu = {
 			}, 
 			chat: {
 				name: 'Чат',
-				url: Router.routes.chat.path({ room: 'general' })
+				url: Router.routes.chat.path({ room: 'general' }),
+				getUrl: function() {
+					return Router.routes.chat.path({ room: Session.get('chatRoom') });
+				}
 			}
 		}
 	},
@@ -195,11 +198,18 @@ var getMenu = function(menu, isActive) {
 			engName: key,
 			name: menu.name,
 			url: menu.url,
+			getUrl: menu.getUrl,
 			isActive: isActive(menu, key),
 			additionalClass: menu.additionalClass
 		}
 	});
 }
+
+Template.top_menu.helpers({
+	chatRoom: function() {
+		return Session.get('chatRoom');
+	}
+})
 
 Template.game_menu.helpers({
 	menu: function() {
@@ -212,12 +222,12 @@ Template.game_menu.helpers({
 Template.side_menu.helpers({
 	sides: function() {
 		return getMenu(menu[Router.current().group].items, function(item, key) {
-			return (
-				item.items
-				? key == Router.current().params.group
-				: Router.current().url.indexOf(item.url) != -1
-			)
+			return Router.current().url.indexOf(key) == item.url.indexOf(key);
 		})
+	},
+
+	getUrl: function(item) {
+		return item.getUrl ? item.getUrl() : item.url;
 	}
 });
 

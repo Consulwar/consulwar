@@ -1,6 +1,6 @@
 <template name="top_menu">
 	<ul class="top_menu">
-		<li><a href="{{pathFor 'chat' room='general'}}">Чат</a></li>
+		<li><a href="{{pathFor 'chat' room=chatRoom}}">Чат</a></li>
 		<li><a href="{{pathFor 'statistics'}}">Статистика</a></li>
 		<!--<li><a href="">Настройки</a></li>-->
 		<li><a href="javascript: ShowModalWindow(Template.support)">Служба поддержки</a></li>
@@ -23,7 +23,7 @@
 	<ul class="side_menu">
 		{{#each sides}}
 			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}">
-				<a href="{{this.url}}">{{this.name}}</a>
+				<a href="{{getUrl this}}">{{this.name}}</a>
 			</li>
 		{{/each}}
 		{{#if eq sides.length 2}}

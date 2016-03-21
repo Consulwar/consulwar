@@ -1,4 +1,19 @@
-Meteor.startup(function () {
+initChatServer = function() {
+
+initChatLib();
+
+// create defaul rooms on server startup
+var createDefaulRoom = function(name) {
+	if (!Game.Chat.Room.Collection.findOne({ name: name })) {
+		Game.Chat.Room.Collection.insert({
+			name: name,
+			isPublic: true
+		});
+	}
+}
+
+createDefaulRoom('general');
+createDefaulRoom('help');
 
 Meteor.methods({
 	'chat.sendMessage': function(message, roomName) {
@@ -24,29 +39,15 @@ Meteor.methods({
 		});
 
 		if (blockGlobal && Game.getCurrentTime() < blockGlobal.timestamp + blockGlobal.period) {
-			throw new Meteor.Error('Чат заблокирован');
-		}
-
-		// check room block
-		var blockRoom = Game.BanHistory.Collection.findOne({
-			user_id: user._id,
-			type: Game.BanHistory.type.chat,
-			room: roomName
-		}, {
-			sort: {
-				timestamp: -1
-			}
-		});
-
-		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
-			throw new Meteor.Error('Чат ' + roomName + ' заблокирован');
+			throw new Meteor.Error('Чат заблокирован', blockGlobal.timestamp + blockGlobal.period);
 		}
 
 		// check room name
 		check(roomName, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 		
 		if (!room) {
@@ -55,6 +56,21 @@ Meteor.methods({
 
 		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
 			throw new Meteor.Error('Вы не можете писать в эту комнату');
+		}
+
+		// check room block
+		var blockRoom = Game.BanHistory.Collection.findOne({
+			user_id: user._id,
+			type: Game.BanHistory.type.chat,
+			room_id: room._id
+		}, {
+			sort: {
+				timestamp: -1
+			}
+		});
+
+		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
+			throw new Meteor.Error('Чат ' + roomName + ' заблокирован', blockRoom.timestamp + blockRoom.period);
 		}
 
 		// check message
@@ -87,7 +103,7 @@ Meteor.methods({
 
 		// send message
 		var set = {
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -130,6 +146,16 @@ Meteor.methods({
 					type: 'status'
 				}
 				set.message = message.substr(3);
+
+			} else if(message.substr(0, 5) == '/motd') {
+				if (['admin', 'helper'].indexOf(user.role) == -1
+				 && room.owner != user._id
+				 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
+				) {
+					throw new Meteor.Error('Вы не можете устанавливать сообщение дня в этот чат');
+				}
+
+				set.message = message.substr(5).trim();
 
 			} else if (message.substr(0, 8) == '/сепукку') {
 				if (userResources.crystals.amount < 0
@@ -179,16 +205,27 @@ Meteor.methods({
 		if (price) {
 			if (room.isOwnerPays) {
 				Game.Chat.Room.Collection.update({
-					name: roomName
+					_id: room._id
 				}, {
 					$inc: { credits: price.credits * -1 }
-				})
+				});
 			} else {
 				Game.Resources.spend(price);
 			}
 		}
 
-		Game.Chat.Messages.Collection.insert(set);
+		// insert message
+		if (message.substr(0, 5) == '/motd') {
+			Game.Chat.Room.Collection.update({
+				_id: room._id
+			}, {
+				$set: {
+					motd: (set.message.length > 0 ? set : null)
+				}
+			});
+		} else {
+			Game.Chat.Messages.Collection.insert(set);
+		}
 	},
 
 	'chat.blockUser': function(options) {
@@ -208,30 +245,31 @@ Meteor.methods({
 
 		check(options.login, String);
 
-		var hasAccess = ['admin', 'helper'].indexOf(user.role) != -1;
-
 		if (options.roomName) {
 			check(options.roomName, String);
 
 			var room = Game.Chat.Room.Collection.findOne({
-				name: options.roomName
+				name: options.roomName,
+				deleted: { $ne: true }
 			});
 
 			if (!room) {
 				throw new Meteor.Error('Нет такой комнаты');
 			}
 
-			if (!hasAccess && room.moderators) {
-				hasAccess = room.moderators.indexOf(user.login) >= 0;
+			// local block
+			if (['admin', 'helper'].indexOf(user.role) == -1
+			 && room.owner != user._id
+			 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
+			) {
+				throw new Meteor.Error('Вы не можете наказывать и прощать пользователей в этом чате');
 			}
 
-			if (!hasAccess && !room.isPublic) {
-				hasAccess = room.owner == user._id;
+		} else {
+			// global block
+			if (['admin', 'helper'].indexOf(user.role) == -1) {
+				throw new Meteor.Error('Вы не можете наказывать и прощать пользователей глобально');
 			}
-		}
-
-		if (!hasAccess) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
 		var target = Meteor.users.findOne({
@@ -257,7 +295,7 @@ Meteor.methods({
 		}
 
 		if (options.roomName) {
-			history.room = options.roomName;
+			history.room_id = room._id;
 		}
 
 		Game.BanHistory.Collection.insert(history);
@@ -265,31 +303,38 @@ Meteor.methods({
 		// send message
 		if (options.roomName) {
 			Game.Chat.Messages.Collection.insert({
-				room: options.roomName,
+				room_id: room._id,
 				user_id: user._id,
 				login: user.login,
 				alliance: user.alliance,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
-					timestamp: Game.getCurrentTime()
+					timestamp: Game.getCurrentTime(),
+					period: time
 				},
 				message: target.login,
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 		} else {
 			var rooms = Game.Chat.Room.Collection.find({
-				isPublic: true
+				deleted: { $ne: true },
+				$or: [
+					{ users: { $in: [ target._id ] } },
+					{ isPublic: true }
+				]
 			}).fetch();
 
 			for (var i = 0; i < rooms.length; i++) {
 				Game.Chat.Messages.Collection.insert({
-					room: rooms[i].name,
+					room_id: rooms[i]._id,
 					user_id: user._id,
 					login: user.login,
 					alliance: user.alliance,
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
-						timestamp: Game.getCurrentTime()
+						timestamp: Game.getCurrentTime(),
+						period: time,
+						global: true
 					},
 					message: target.login,
 					timestamp: Math.floor(new Date().valueOf() / 1000)
@@ -394,33 +439,56 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		// check room name
 		check(name, String);
 
+		if (name.length > 32) {
+			throw new Meteor.Error('Имя комнаты должно быть не длиннее 32 символов');
+		}
+
+		if (!name.match(/^[a-zA-Z0-9_\-]+$/)) {
+			throw new Meteor.Error('Имя комнаты должно состоять только из латинских букв, цифр, дефисов и подчеркиваний');
+		}
+
 		var room = Game.Chat.Room.Collection.findOne({
-			name: name
+			name: name,
+			deleted: { $ne: true }
 		});
 
 		if (room) {
 			throw new Meteor.Error('Коната с именем ' + name + ' уже существует');
 		}
 
-		room = {};
-		room.name = name;
+		// prepare room
+		room = {
+			name: name,
+			owner: user._id
+		};
+
+		if (isOwnerPays) {
+			room.isOwnerPays = true;
+			room.credits = 0;
+		}
 
 		if (isPublic) {
-			if (['admin'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
-			}
 			room.isPublic = true;
 		} else {
-			room.owner = user._id;
 			room.users = [ user._id ];
 			room.logins = [ user.login ];
+		}
 
-			if (isOwnerPays) {
-				room.isOwnerPays = true;
-				room.credits = 0;
+		// check price
+		var price = Game.Chat.Room.getPrice(room);
+
+		if (price) {
+			var userResources = Game.Resources.getValue();
+			for (var resid in price) {
+				if (!userResources[resid] || userResources[resid].amount < price[resid]) {
+					throw new Meteor.Error('Недостаточно средств для создания комнаты');
+				}
 			}
+
+			Game.Resources.spend(price);
 		}
 
 		Game.Chat.Room.Collection.insert(room);
@@ -439,30 +507,27 @@ Meteor.methods({
 
 		check(name, String);
 
+		if (['general', 'help'].indexOf(name) != -1) {
+			throw new Meteor.Error('Что этот ниггер себе позволяет!');
+		}
+
 		var room = Game.Chat.Room.Collection.findOne({
-			name: name
+			name: name,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
 			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
 		}
 
-		if (room.isPublic) {
-			if (['admin'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
-			}
-		} else {
-			if (room.owner != user._id) {
-				throw new Meteor.Error('Это не твоя комната.');
-			}
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Вы не можете удалить эту комнату');
 		}
 
-		Game.Chat.Room.Collection.remove({
-			name: name
-		});
-
-		Game.Chat.Messages.Collection.remove({
-			room: name
+		Game.Chat.Room.Collection.update({
+			_id: room._id
+		}, {
+			$set: { deleted: true }
 		});
 	},
 
@@ -479,11 +544,11 @@ Meteor.methods({
 
 		var resources = Game.Resources.getValue();
 
-		if (resources.credits.amount < 5000) {
+		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
 			throw new Meteor.Error('Недостаточно средств');
 		}
 
-		Game.Resources.spend({ credits: 5000 });
+		Game.Resources.spend({ credits: Game.Chat.Messages.FREE_CHAT_PRICE });
 
 		Meteor.users.update({
 			_id: user._id
@@ -506,20 +571,21 @@ Meteor.methods({
 		check(credits, Match.Integer);
 
 		if (credits < 100) {
-			throw new Meteor.Error('Минимальная сумма 100 грязных галлактических кредитов');
+			throw new Meteor.Error('Минимальная сумма составляет 100 грязных галлактических кредитов');
 		}
 
 		check(roomName, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
-		if (room.isPublic || !room.isOwnerPays) {
+		if (!room.isOwnerPays) {
 			throw new Meteor.Error('Невозможно пополнить баланс этой комнаты');
 		}
 
@@ -529,7 +595,7 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
 			$inc: { credits: credits }
 		});
@@ -537,7 +603,7 @@ Meteor.methods({
 		Game.Resources.spend({ credits: credits });
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -564,32 +630,25 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
-		if (room.isPublic) {
-			if (['admin', 'helper'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
-			}
-		} else {
-			if (room.owner != user._id) {
-				throw new Meteor.Error('Только владелец может назанчить модератора в приватной комнате');
-			}
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Вы не можете назначать модераторов в этой комнате');
+		}
 
+		if (!room.isPublic) {
 			if (room.logins.indexOf(login) == -1) {
 				throw new Meteor.Error('Сначала нужно добавить пользователя в комнату');
 			}
 		}
 
-		if (!room.moderators) {
-			room.moderators = [];
-		}
-
-		if (room.moderators.length >= Game.Chat.Room.MODERATORS_LIMIT) {
+		if (room.moderators && room.moderators.length >= Game.Chat.Room.MODERATORS_LIMIT) {
 			throw new Meteor.Error('В комнату нельзя добавить больше ' + Game.Chat.Room.MODERATORS_LIMIT + ' модераторов');
 		}
 
@@ -601,18 +660,28 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.moderators.indexOf( target._id ) != -1) {
+		if (room.moderators && room.moderators.indexOf( target.login ) != -1) {
 			throw new Meteor.Error('Такой модератор уже есть в чате');
 		}
 
-		room.moderators.push( target.login );
-
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
-			$set: {
-				moderators: room.moderators
+			$addToSet: {
+				moderators: target.login
 			}
+		});
+
+		Game.Chat.Messages.Collection.insert({
+			room_id: room._id,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'addModerator'
+			},
+			message: target.login,
+			timestamp: Math.floor(new Date().valueOf() / 1000)
 		});
 	},
 
@@ -631,41 +700,40 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
 
-		if (room.isPublic) {
-			if (['admin', 'helper'].indexOf(user.role) == -1) {
-				throw new Meteor.Error('Только админстратор может назначить модератора в публичной комнате');
-			}
-		} else {
-			if (room.owner != user._id) {
-				throw new Meteor.Error('Только владелец может назанчить модератора в приватной комнате');
-			}
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Вы не можете удалять модераторов из этой комнаты');
 		}
 
-		if (!room.moderators) {
-			room.moderators = [];
+		if (!room.moderators || room.moderators.indexOf( login ) == -1) {
+			throw new Meteor.Error('Такого модератора в комнате нет');
 		}
-
-		var i = room.moderators.indexOf(login);
-
-		if (i == -1) {
-			throw new Meteor.Error('Такого модератора в чате нет');
-		}
-
-		room.moderators.splice(i, 1);
 
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
-			$set: {
-				moderators: room.moderators
+			$pull: {
+				moderators: login
 			}
+		});
+
+		Game.Chat.Messages.Collection.insert({
+			room_id: room._id,
+			user_id: user._id,
+			login: user.login,
+			alliance: user.alliance,
+			data: {
+				type: 'removeModerator'
+			},
+			message: login,
+			timestamp: Math.floor(new Date().valueOf() / 1000)
 		});
 	},
 
@@ -684,7 +752,8 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -715,20 +784,17 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователь уже в чате');
 		}
 
-		room.users.push( target._id );
-		room.logins.push( target.login );
-
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
-			$set: {
-				users: room.users,
-				logins: room.logins
+			$addToSet: {
+				users: target._id,
+				logins: target.login
 			}
 		});
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -755,7 +821,8 @@ Meteor.methods({
 		check(login, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName
+			name: roomName,
+			deleted: { $ne: true }
 		});
 
 		if (!room) {
@@ -782,26 +849,22 @@ Meteor.methods({
 			throw new Meteor.Error('Зачем?');
 		}
 
-		var i = room.users.indexOf( target._id );
-		var j = room.logins.indexOf( target.login );
-		if (i == -1 || j == -1) {
+		if (room.users.indexOf( target._id ) == -1) {
 			throw new Meteor.Error('Такого пользователя нет в чате');
 		}
 
-		room.users.splice(i, 1);
-		room.logins.splice(j, 1);
-
 		Game.Chat.Room.Collection.update({
-			name: roomName
+			_id: room._id
 		}, {
-			$set: {
-				users: room.users,
-				logins: room.logins
+			$pull: {
+				users: target._id,
+				logins: target.login,
+				moderators: target.login
 			}
 		});
 
 		Game.Chat.Messages.Collection.insert({
-			room: roomName,
+			room_id: room._id,
 			user_id: user._id,
 			login: user.login,
 			alliance: user.alliance,
@@ -829,6 +892,7 @@ Meteor.methods({
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
+			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ user._id ] } },
 				{ isPublic: true }
@@ -840,7 +904,7 @@ Meteor.methods({
 		}
 
 		return Game.Chat.Messages.Collection.find({
-			room: roomName,
+			room_id: room._id,
 			timestamp: {
 				$lt: timestamp,
 				$gt: Game.getCurrentTime() - 84600
@@ -870,6 +934,7 @@ Meteor.publish('chatRoom', function(roomName) {
 		check(roomName, String);
 		return Game.Chat.Room.Collection.find({
 			name: roomName,
+			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ this.userId ] } },
 				{ isPublic: true }
@@ -886,6 +951,7 @@ Meteor.publish('chat', function (roomName) {
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
+			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ this.userId ] } },
 				{ isPublic: true }
@@ -894,7 +960,7 @@ Meteor.publish('chat', function (roomName) {
 
 		if (room) {
 			return Game.Chat.Messages.Collection.find({
-				room: roomName,
+				room_id: room._id,
 				timestamp: { $gt: Game.getCurrentTime() - 84600 }
 			}, {
 				fields: {
@@ -919,4 +985,4 @@ Meteor.publish('chat', function (roomName) {
 	}
 });
 
-});
+}

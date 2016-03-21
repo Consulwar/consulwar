@@ -31,24 +31,27 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 	}
 });
 
+var addMotd = function(message) {
+	message.isMotd = true;
+	message.timestamp = Session.get('serverTime');
+	messages.push(message);
+	Meteor.setTimeout(scrollChatToBottom);
+}
+
 Game.Chat.Room.Collection.find({}).observeChanges({
 	added: function(id, room) {
 		Session.set('chatRoom', room.name);
 		if (room.motd) {
-			room.motd.timestamp = Session.get('serverTime');
-			messages.push(room.motd);
-			Meteor.setTimeout(scrollChatToBottom);
+			addMotd(room.motd);
 		}
 	},
 
 	changed: function(id, fields) {
 		if (fields.motd) {
-			fields.motd.timestamp = Session.get('serverTime');
-			messages.push(fields.motd);
-			Meteor.setTimeout(scrollChatToBottom);
+			addMotd(fields.motd);
 		}
 	}
-})
+});
 
 Game.Chat.showPage = function() {
 	this.render('chat', { to: 'content' });

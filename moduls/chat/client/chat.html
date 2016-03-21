@@ -27,7 +27,7 @@
 				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
 			{{/if}}
 			{{#each messages}}
-				<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}}">
+				<li class="{{this.role}} {{#if this.data}}status{{/if}} {{this.data.type}} {{#if this.isMotd}}motd{{/if}}">
 					{{#if this.data}}* {{/if}}
 					<span 
 						class="

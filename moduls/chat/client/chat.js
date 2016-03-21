@@ -2,6 +2,8 @@ initChatClient = function() {
 
 initChatLib();
 
+Session.set('chatRoom', 'general');
+
 var messages = new ReactiveArray();
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
@@ -31,6 +33,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 
 Game.Chat.Room.Collection.find({}).observeChanges({
 	added: function(id, room) {
+		Session.set('chatRoom', room.name);
 		if (room.motd) {
 			room.motd.timestamp = Session.get('serverTime');
 			messages.push(room.motd);

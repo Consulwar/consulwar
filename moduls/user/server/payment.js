@@ -65,7 +65,7 @@ Meteor.methods({
 		Game.Payment.logIncome(paymentItem.resources, id);
 	},
 
-	'user.getPaymentHistory': function(isIncome) {
+	'user.getPaymentHistory': function(isIncome, page, count) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -73,14 +73,22 @@ Meteor.methods({
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
 		return Game.Payment.Collection.find({
 			user_id: user._id,
 			income: isIncome ? true : false
 		}, {
-			limit: 100
+			sort: {
+				timestamp: -1
+			},
+			skip: page > 1 ? (page - 1) * count : 0, 
+			limit: count
 		}).fetch();
 	}
 });
@@ -111,6 +119,7 @@ Meteor.methods({
 			...
 		},
 		rating: 100500
+		// TODO: Завести поле votepower у юзера и добавлять, а не увеличивать рейтинг!
 	}
 }
 */

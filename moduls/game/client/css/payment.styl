@@ -18,20 +18,11 @@
 	
 	font-size 16px
 	color #ABAFB2
-	
-	.tabmenu
-		display inline-block
-		margin 17px
-		
-		li
-			margin-right 10px
-			display inline-block
-			cursor pointer
-			color #FFFFFF
 				
 	.paymentItems
 		display block
 		width 100%
+		margin 17px
 		
 		li
 			cursor pointer
@@ -43,6 +34,8 @@
 			text-align center
 			border 1px solid #2D4D5C
 			border-radius 5px
+			&:nth-child(1)
+				margin-left 0px
 			&:hover
 				border 1px solid #FFFFFF
 	
@@ -64,32 +57,40 @@
 		&:hover
 			background-image url(/img/game/close_a.png)
 			
-	.data
-		height 400px
-		overflow-y auto
-		
-	table
-		width 100%
-		border-collapse collapse
-
-		tr
-			height 40px
-
-			&:nth-child(odd):not(.header)
-				background-color #0B121A
+.content
+	.paymentHistory
+		position relative
+		height 435px
+		margin-left 124px
+		background-color #04080B
+		z-index 10
+	
+		.data
+			height 355px
+			overflow-y auto
 			
-			&:nth-child(even)
-				background-color #0E1821
-			
-		td, th
-			text-align left
+		table
+			width 100%
+			border-collapse collapse
+
+			tr
+				height 40px
+
+				&:nth-child(odd):not(.header)
+					background-color #0B121A
 				
-			&:nth-child(1)
-				padding-left 10px
-				width 200px
-		
-			&:nth-child(2)
-				width 200px
+				&:nth-child(even)
+					background-color #0E1821
+				
+			td, th
+				text-align left
+					
+				&:nth-child(1)
+					padding-left 10px
+					width 150px
 			
-			&:nth-child(3)
-				width 200px
+				&:nth-child(2)
+					width 350px
+				
+				&:nth-child(3)
+					width 200px

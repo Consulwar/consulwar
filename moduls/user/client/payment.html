@@ -2,42 +2,41 @@
 	<div class="smoke"></div>
 	<div class="payment">
 		<div class="close"></div>
-		<ul class="tabmenu">
-			<li class="buy">Пополнение</li>
-			<li class="income">История пополнений</li>
-			<li class="expense">История списаний</li>
+		<ul class="paymentItems">
+			{{#each paymentItems}}
+				<li data-id="{{this.id}}">
+					{{this.name}} за {{this.cost.rub}} рублей
+				</li>
+			{{/each}}
 		</ul>
+		<form>
+			<label>Промо код: <input class="code"/></label>
+			<input type="submit"/>
+		</form>
+	</div>
+</template>
 
-		{{#if eqor tabName 'income' 'expense'}}
-			<div class="data">
-				<table>
-					{{#each history}}
-						<tr>
-							<td>{{this.source}}</td>
-							<td>{{getProfit this.resources}}</td>
-							<td>{{formatDate this.timestamp}}</td>
-						</tr>
-					{{/each}}
-				</table>
-			</div>
-		{{/if}}
-		
-		{{#if eq tabName 'buy'}}
-			{{#if paymentItems}}
-				<ul class="paymentItems">
-					{{#each paymentItems}}
-						<li data-id="{{this.id}}">
-							{{this.name}} за {{this.cost.rub}} рублей
-						</li>
-					{{/each}}
-				</ul>
-			{{/if}}
-
-			<form>
-				<label>Промо код: <input class="code"/></label>
-				<input type="submit"/>
-			</form>
-		{{/if}}
-
+<template name="paymentHistory">
+	<div class="paymentHistory">
+		<a class="btn-close" href="{{pathFor 'house' group='house'}}"></a>
+		<table>
+			<tr class="header">
+				<th>Время</th>
+				<th>{{#if isIncome}}Получено{{else}}Потрачено{{/if}}</th>
+				<th></th>
+			</tr>
+		</table>
+		<div class="data">
+			<table>
+				{{#each history}}
+					<tr>
+						<td>{{formatDate this.timestamp}}</td>
+						<td>{{getProfit this.resources}}</td>
+						<td>{{this.source}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+		{{> pages total=countTotal perPage=count}}
 	</div>
 </template>

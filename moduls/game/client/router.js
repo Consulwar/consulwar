@@ -41,7 +41,8 @@ GameRouteController = RouteController.extend({
 var gameRoutes = {
 	planet: {
 		building: 'planet/:group(residential|military)/:item?',
-		house: 'planet/:group(house)/:subgroup?/:item?'
+		house: 'planet/:group(house)/:subgroup?/:item?',
+		payment: 'planet/payment/:type(income|expense)/:page'
 	},
 
 	army: {
@@ -81,6 +82,7 @@ var gameActions = {
 	building: Game.Building.showPage,
 	research: Game.Research.showPage,
 	house: Game.House.showPage,
+	payment: Game.Payment.showHistory,
 
 	chat: Game.Chat.showPage,
 	mail: Game.Mail.showPage,

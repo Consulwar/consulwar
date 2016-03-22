@@ -125,19 +125,13 @@ Meteor.methods({
 
 Game.PromoCode = {};
 
-Game.PromoCode.types = {
-	once: {},
-
-	random: {
-		items: [{
-			resources: { credits: 10 }
-		}, {
-			resources: { crystals: 100 }
-		}, {
-			resources: { humans: 200 }
-		}]
-	}
-}
+Game.PromoCode.randomItems =  [{
+	resources: { credits: 10 }
+}, {
+	resources: { crystals: 100 }
+}, {
+	resources: { humans: 200 }
+}];
 
 Game.PromoCode.Collection = new Meteor.Collection('promoCodes');
 
@@ -172,10 +166,10 @@ Meteor.methods({
 		}
 
 		// check promo code type options
-		switch (promoCode.type) {
-			case 'once': 
+		if (promoCode.type) {
+			if (promoCode.type.indexOf('once') == 0) {
 				var count = Game.PromoCode.Collection.find({
-					type: 'once',
+					type: promoCode.type,
 					user_id: user._id,
 					activated: true
 				}).count();
@@ -183,12 +177,13 @@ Meteor.methods({
 				if (count > 0) {
 					throw new Meteor.Error('Вы не можете активировать этот промокод');
 				}
-				break;
+			}
+		}
 
-			case 'random':
-				var items = Game.PromoCode.types[promoCode.type].items;
-				promoCode.profit = items[ Game.Random.interval(0, items.length - 1) ];
-				break; 
+		// generate random profit
+		if (_.isString(promoCode.profit) && promoCode.profit.indexOf('random') == 0) {
+			var items = Game.PromoCode.randomItems;
+			promoCode.profit = items[ Game.Random.interval(0, items.length - 1) ];
 		}
 
 		// add profit

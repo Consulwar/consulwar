@@ -298,6 +298,11 @@ var showQuestWindow = function(id) {
 Session.set('sideQuestsOpened', false);
 
 Template.additional_area.events({
+	'click .paymentWindow': function(e, t) {
+		e.preventDefault();
+		Game.Payment.showWindow();
+	},
+
 	'click .close': function(e, t) {
 		e.stopPropagation();
 		Session.set('sideQuestsOpened', false);

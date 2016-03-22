@@ -55,6 +55,8 @@ Game.Resources.set = function(resource, invertSign, uid) {
 		}
 	}
 
+	var update = null;
+	
 	if (inc || set) {
 		update = {};
 		if (set) {

@@ -58,6 +58,11 @@ Game.Statistic.fixUserStatistic = function(userId) {
 		income: { $ne: true }
 	}).count();
 
+	// cosmos
+	var battleHistoryCount = Game.BattleHistory.Collection.find({
+		user_id: user._id
+	}).count();
+
 	Game.Statistic.Collection.upsert({
 		user_id: user._id
 	}, {
@@ -65,7 +70,8 @@ Game.Statistic.fixUserStatistic = function(userId) {
 			totalMail: totalMail,
 			totalMailAlltime: totalMailAlltime,
 			incomeHistoryCount: incomeHistoryCount,
-			expenseHistoryCount: expenseHistoryCount
+			expenseHistoryCount: expenseHistoryCount,
+			battleHistoryCount: battleHistoryCount
 		}
 	});
 }

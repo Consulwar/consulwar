@@ -112,16 +112,27 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	return result;
 }
 
-Game.Planets.getArtefacts = function(planet) {
+Game.Planets.getArtefacts = function(planet, count) {
 	if (!planet || !planet.artefacts) {
 		return null;
 	}
 
-	var result = {};
+	var count = (count && count > 1) ? count : 1;
+	var result = null;
 
 	for (var key in planet.artefacts) {
-		if (Game.Random.interval(1, 99) <= planet.artefacts[key]) {
-			result[key] = 1;
+		// Average drop! No random!
+		var income = Math.floor(count * planet.artefacts[key] / 100);
+
+		if (Game.Random.interval(1, 99) <= count * planet.artefacts[key] % 100) {
+			income++;
+		}
+
+		if (income > 0) {
+			if (!result) {
+				result = {};
+			}
+			result[key] = income;
 		}
 	}
 
@@ -676,8 +687,9 @@ Meteor.methods({
 			var delta = timeCurrent - planet.timeArtefacts;
 			var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 			if (count > 0) {
-				while (count-- > 0) {
-					Game.Resources.add( Game.Planets.getArtefacts(planet) );
+				var artefacts = Game.Planets.getArtefacts(planet, count);
+				if (artefacts) {
+					Game.Resources.add(artefacts);
 				}
 				planet.timeArtefacts = timeCurrent;
 				Game.Planets.update(planet);

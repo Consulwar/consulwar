@@ -576,10 +576,12 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 					if (enemyArmy && !userArmy && !planet.isHome) {
 						var delta = serverTime - planet.timeArtefacts;
 						var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
-						while (count-- > 0) {
-							Game.Resources.add( Game.Planets.getArtefacts(planet) );
+						if (count > 0){
+							var artefacts = Game.Planets.getArtefacts(planet, count);
+							if (artefacts) {
+								Game.Resources.add(artefacts);
+							}
 						}
-
 						planet.timeArtefacts = null;
 					}
 				}

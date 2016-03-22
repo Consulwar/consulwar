@@ -5,36 +5,45 @@ initArtefactsLib();
 
 // Добавляет/вычитает ресурсы текущему пользователю
 // invertSign - true если вычитаем ресурсы
-// Возвращает актуальное количество ресурсов
 Game.Resources.set = function(resource, invertSign, uid) {
 	invertSign = invertSign == true ? -1 : 1;
 
-	var currentValue = Game.Resources.getValue(uid);
-
-	var set = {};
+	var inc = null;
+	var set = null;
 
 	for (var name in resource) {
 		if (name == 'time') {
 			continue;
 		}
 
-		var current = (currentValue[name] && currentValue[name].amount)
-			? currentValue[name].amount
-			: 0;
+		// increment resource
+		if (!inc) {
+			inc = {};
+		}
 
 		var increment = (resource[name].amount != undefined)
 			? resource[name].amount
 			: resource[name];
 
-		set[name + '.amount'] = parseInt(current + increment * invertSign);
+		inc[name + '.amount'] = parseInt(increment * invertSign);
 
+		// set resource bonus seconds
 		if (resource[name].bonusSeconds != undefined) {
+			if (!set) {
+				set = {};
+			}
+
 			set[name + '.bonusSeconds'] = resource[name].bonusSeconds;
 		}
 
+		// set resource bonus
 		if (resource[name].bonus != undefined) {
-			var income = Game.Resources.getIncome();
+			if (!set) {
+				set = {};
+			}
 
+			var income = Game.Resources.getIncome();
+			var currentValue = Game.Resources.getValue(uid);
 			var currentBonus = (currentValue[name] && currentValue[name].bonus)
 				? currentValue[name].bonus
 				: 0;
@@ -46,13 +55,21 @@ Game.Resources.set = function(resource, invertSign, uid) {
 		}
 	}
 
-	Game.Resources.Collection.update({
-		user_id: uid != undefined ? uid : Meteor.userId()
-	}, {
-		$set: set
-	});
+	if (inc || set) {
+		update = {};
+		if (set) {
+			update.$set = set;
+		}
+		if (inc) {
+			update.$inc = inc;
+		}
+	}
 
-	return set;
+	if (update) {
+		Game.Resources.Collection.update({
+			user_id: uid != undefined ? uid : Meteor.userId()
+		}, update);
+	}
 }
 
 Game.Resources.add = function(resource, uid) {

@@ -121,12 +121,11 @@ Game.Planets.getArtefacts = function(planet, count) {
 	var result = null;
 
 	for (var key in planet.artefacts) {
-		var income = 0;
+		// Average drop! No random!
+		var income = Math.floor(count * planet.artefacts[key] / 100);
 
-		if (Game.Random.interval(1, 99) <= planet.artefacts[key]) {
-			income = Math.ceil(count * planet.artefacts[key] / 100);
-		} else {
-			income = Math.floor(count * planet.artefacts[key] / 100);
+		if (Game.Random.interval(1, 99) <= count * planet.artefacts[key] % 100) {
+			income++;
 		}
 
 		if (income > 0) {

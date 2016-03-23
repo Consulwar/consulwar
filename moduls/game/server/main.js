@@ -30,6 +30,7 @@ Meteor.startup(function () {
 	initQuestServer();
 	initStatisticServer();
 	initCheatsServer();
+	initMarketServer();
 });
 
 Meteor.methods({

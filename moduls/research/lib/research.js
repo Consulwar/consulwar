@@ -3,6 +3,10 @@ initResearchLib = function() {
 game.Research = function(options){
 	game.Research.superclass.constructor.apply(this, arguments);
 
+	if (Game.Research.items[this.group][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется исследование ' + this.group + ' ' + this.engName);
+	}
+
 	Game.Research.items[this.group][this.engName] = this;
 
 	this.url = function(options) {

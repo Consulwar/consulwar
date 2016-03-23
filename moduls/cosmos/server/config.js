@@ -5,7 +5,7 @@ initCosmosConfigServer = function() {
 	 || !Meteor.settings.cosmos.attackPlayerPeriod
 	 || !Meteor.settings.cosmos.collectArtefactsPeriod
 	) {
-		throw new Meteor.Error('Заполни параметры космоса (см. settings.sample cosmos)');
+		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры космоса (см. settings.sample cosmos)');
 	}
 
 	Game.Cosmos.ENEMY_RESPAWN_PERIOD = Meteor.settings.cosmos.enemyRespawnPeriod;

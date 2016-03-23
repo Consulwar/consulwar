@@ -9,6 +9,10 @@ game.HouseItem = function(options) {
 	this.subgroup = options.subgroup;
 	this.isUnique = options.isUnique;
 
+	if (Game.House.items[this.subgroup][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется предмет палаты консула ' + this.subgroup + ' ' + this.engName);
+	}
+
 	Game.House.items[this.subgroup][this.engName] = this;
 
 	this.url = function(options) {

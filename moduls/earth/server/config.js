@@ -4,7 +4,7 @@ initEarthConfigServer = function() {
 	 || !Meteor.settings.earth.reinforcementsDelay
 	 || !Meteor.settings.earth.minActivePlayers
 	) {
-		throw new Meteor.Error('Заполни параметры боев на земле (см. settings.sample earth)');
+		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры боев на земле (см. settings.sample earth)');
 	}
 
 	Game.Earth.REINFORCEMENTS_DELAY = Meteor.settings.earth.reinforcementsDelay;

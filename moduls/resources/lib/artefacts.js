@@ -13,6 +13,10 @@ game.Artefact = function(options) {
 			: 0;
 	}
 
+	if (Game.Artefacts.items[options.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется артефакт ' + options.engName);
+	}
+
 	Game.Artefacts.items[options.engName] = this;
 }
 

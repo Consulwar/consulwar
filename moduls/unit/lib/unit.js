@@ -3,6 +3,10 @@ initUnitLib = function() {
 game.Unit = function(options) {
 	game.Unit.superclass.constructor.apply(this, arguments);
 
+	if (Game.Unit.items['army'][this.side][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
+	}
+
 	Game.Unit.items['army'][this.side][this.engName] = this;
 
 	this.url = function(options) {
@@ -21,6 +25,10 @@ game.extend(game.Unit, game.Item);
 
 game.ReptileUnit = function(options) {
 	game.ReptileUnit.superclass.constructor.apply(this, arguments);
+
+	if (Game.Unit.items['reptiles'][this.group][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит reptiles ' + this.group + ' ' + this.engName);
+	}
 
 	Game.Unit.items['reptiles'][this.group][this.engName] = this;
 

@@ -5,6 +5,10 @@ game.Building = function(options){
 
 	this.type = 'building';
 
+	if (Game.Building.items[this.group][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется здание ' + this.group + ' ' + this.engName);
+	}
+	
 	Game.Building.items[this.group][this.engName] = this;
 
 	this.url = function(options) {

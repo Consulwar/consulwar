@@ -10,26 +10,26 @@ Game.Quest.dailyQuests = {};
 game.QuestLine = function(options, quests) {
 	this.constructor = function(options, quests) {
 		if (!options.engName) {
-			throw new Error('Не указано имя цепочки заданий');
+			throw new Meteor.Error('Ошибка в контенте', 'Не указано имя цепочки заданий');
 		}
 
 		if (Game.Quest.regularQuests[options.engName] != undefined) {
-			throw new Error('Цепочка заданий с именем ' + options.engName + ' уже существует');
+			throw new Meteor.Error('Ошибка в контенте', 'Цепочка заданий с именем ' + options.engName + ' уже существует');
 		}
 
 		if (quests.length == 0) {
-			throw new Error('Нет ни одного задания в цепочке ' + options.engName);
+			throw new Meteor.Error('Ошибка в контенте', 'Нет ни одного задания в цепочке ' + options.engName);
 		}
 
 		var questsMap = {};
 
 		for (var i = 0; i < quests.length; i++) {
 			if (!quests[i].engName) {
-				throw new Error('Не указано имя задания внутри цепочки ' + options.engName + ' индекс ' + i);
+				throw new Meteor.Error('Ошибка в контенте', 'Не указано имя задания внутри цепочки ' + options.engName + ' индекс ' + i);
 			}
 
 			if (questsMap[quests[i].engName]) {
-				throw new Error('Два одинаковых имени ' + quests[i].engName + ' внутри цепочки заданий ' + options.engName);
+				throw new Meteor.Error('Ошибка в контенте', 'Два одинаковых имени ' + quests[i].engName + ' внутри цепочки заданий ' + options.engName);
 			}
 
 			questsMap[quests[i].engName] = i;
@@ -64,11 +64,11 @@ game.QuestLine = function(options, quests) {
 
 game.DailyQuest = function(options) {
 	if (!options.engName) {
-		throw new Error('Не указано имя ежедневного задания');
+		throw new Meteor.Error('Ошибка в контенте', 'Не указано имя ежедневного задания');
 	}
 
 	if (Game.Quest.dailyQuests[options.engName] != undefined) {
-		throw new Error('Ежедневное задание с именем ' + options.engName + ' уже существует');
+		throw new Meteor.Error('Ошибка в контенте', 'Ежедневное задание с именем ' + options.engName + ' уже существует');
 	}
 
 	this.engName = options.engName;

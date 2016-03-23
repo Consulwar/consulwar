@@ -55,11 +55,11 @@ Template.market.events({
 
 	'click .to li': function(e, t) {
 		activeTo.set(e.currentTarget.dataset.name);
-		t.$('form .amount').val(0);
-		t.$('form .result').html(0);
+		t.$('.exchange .amount').val(0);
+		t.$('.exchange .result').html(0);
 	},
 
-	'change form .amount': function(e, t) {
+	'change .exchange .amount': function(e, t) {
 		var amount = parseInt( e.currentTarget.value, 10 );
 
 		var from = activeFrom.get();
@@ -75,22 +75,44 @@ Template.market.events({
 			amount = current;
 		}
 
-		t.$('form .amount').val(amount);
-		t.$('form .result').html(
+		t.$('.exchange .amount').val(amount);
+		t.$('.exchange .result').html(
 			Game.Market.getExchangeAmount(activeFrom.get(), activeTo.get(), amount)
 		);
 	},
 
-	'submit form': function(e, t) {
-		e.preventDefault();
+	'click .exchange .btn-all': function(e, t) {
+		var from = activeFrom.get();
+		var to = activeTo.get();
 
-		var amount = t.$('form .amount').val();
+		if (from && to) {
+			var userResources = Game.Resources.getValue();
+			if (userResources[from] && userResources[from].amount > 0) {
+				t.$('.exchange .amount').val(userResources[from].amount);
+				t.$('.exchange .result').html(
+					Game.Market.getExchangeAmount(from, to, userResources[from].amount)
+				);
+			}
+		}
+	},
+
+	'click .exchange .btn-exchange': function(e, t) {
+		var amount = t.$('.exchange .amount').val();
+		var from = activeFrom.get();
+		var to = activeTo.get();
+
+		if (Game.Market.getExchangeAmount(from, to, amount) <= 0) {
+			Notifications.error('Невозможно совершить обмен');
+			return;
+		}
 
 		Meteor.call('market.exchange', activeFrom.get(), activeTo.get(), amount, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
 			} else {
 				Notifications.success('Обмен успешно завершен');
+				t.$('.exchange .amount').val(0);
+				t.$('.exchange .result').html(0);
 			}
 		});
 	}

@@ -5,6 +5,7 @@
 		<h2>Торговый порт</h2>
 
 		<div class="from">
+			<h2>Ресуры консула</h2>
 			{{#if itemsFrom}}
 				<ul class="resources">
 					{{#each itemsFrom}}
@@ -20,6 +21,7 @@
 		</div>
 
 		<div class="to">
+			<h2>Доступно для обмена</h2>
 			{{#if itemsTo}}
 				<ul class="resources">
 					{{#each itemsTo}}
@@ -34,13 +36,15 @@
 			{{/if}}
 		</div>
 
-		{{#if and activeFrom activeTo}}
-			<form>
-				<div class="result"></div>
-				<input class="amount"/>
-				<input type="submit"/>
-			</form>
-		{{/if}}
+		<div class="exchange">
+			{{#if and activeFrom activeTo}}
+				<span class="btn-all">Выбрать все</span>
+				<input class="amount" value="0"/> = <span class="result">0</span>
+				<span class="btn-exchange">Обменять</span>
+			{{else}}
+				Выберите ресурсы для обмена
+			{{/if}}
+		</div>
 
 		<div class="close"></div>
 	</div>

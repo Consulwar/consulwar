@@ -17,22 +17,53 @@
 
 		<ul class="resources">
 			{{#let price=(mutual.price count)}}
-				{{#if price.humans}}<li class="humans" {{priceTooltip price 'humans'}}>{{formatNumberWithISO price.humans}}</li>{{/if}}
-				{{#if price.honor}}<li class="honor" {{priceTooltip price 'honor'}}>{{formatNumberWithISO price.honor}}</li>{{/if}}
-				{{#if price.metals}}<li class="metals" {{priceTooltip price 'metals'}}>{{formatNumberWithISO price.metals}}</li>{{/if}}
-				{{#if price.crystals}}<li class="crystals" {{priceTooltip price 'crystals'}}>{{formatNumberWithISO price.crystals}}</li>{{/if}}
+				{{#if price.humans}}
+					<li class="humans" {{priceTooltip price 'humans'}}>
+						{{formatNumberWithISO price.humans}}
+					</li>
+				{{/if}}
+				{{#if price.honor}}
+					<li class="honor" {{priceTooltip price 'honor'}}>
+						{{formatNumberWithISO price.honor}}
+					</li>
+				{{/if}}
+				{{#if price.metals}}
+					<li class="metals" {{priceTooltip price 'metals'}}>
+						{{formatNumberWithISO price.metals}}
+					</li>
+				{{/if}}
+				{{#if price.crystals}}
+					<li class="crystals" {{priceTooltip price 'crystals'}}>
+						{{formatNumberWithISO price.crystals}}
+					</li>
+				{{/if}}
 				<li class="button">
-					<button class="build" data-action="invest" data-currency="resources" disabled="{{not (mutual.canBuild count 'resources')}}">Вложить ресурсы</button>
+					<button 
+						class="build"
+						data-action="invest"
+						data-currency="resources" disabled="{{not (mutual.canBuild count 'resources')}}"
+					>
+						Вложить ресурсы
+					</button>
 				</li>
 				
-					{{#if price.credits}}
-						<li></li>
-						<li class="credits" {{priceTooltip price 'credits'}}>{{formatNumberWithISO price.credits}}</li>
-						<li class="button">
-							или
-							<button class="build" data-action="invest" data-currency="credits" disabled="{{not (mutual.canBuild count 'credits')}}">Вложить кредиты</button>
-						</li>
-					{{/if}}
+				{{#if price.credits}}
+					<li></li>
+					<li class="credits" {{priceTooltip price 'credits'}}>
+						{{formatNumberWithISO price.credits}}
+					</li>
+					<li class="button">
+						или
+						<button 
+							class="build" 
+							data-action="invest" 
+							data-currency="credits" 
+							disabled="{{not (mutual.canBuild count 'credits')}}"
+						>
+							Вложить кредиты
+						</button>
+					</li>
+				{{/if}}
 			{{/let}}
 		</ul>
 

@@ -12,7 +12,7 @@ var firstItemUrl = function(items) {
 
 var menu = {
 	planet: {
-		routeName: ['building', 'house', 'payment'],
+		routeName: ['building', 'house'],
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
 			residential: {

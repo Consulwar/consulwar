@@ -207,10 +207,8 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	});
 
 	if (Meteor.userId()) {
-		Game.Statistic.Collection.update({
-			user_id: Meteor.userId()
-		}, {
-			$inc: { battleHistoryCount: 1 }
+		Game.Statistic.incrementUser(Meteor.userId(), {
+			battleHistoryCount: 1
 		});
 	}
 }

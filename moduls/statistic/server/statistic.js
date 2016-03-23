@@ -2,7 +2,45 @@ initStatisticServer = function() {
 	
 initStatisticLib();
 
-Game.Statistic.fixGameStatistic = function() {
+Game.Statistic.initialize = function(user) {
+	var statistic = Game.Statistic.Collection.findOne({
+		user_id: user._id
+	});
+
+	if (!statistic) {
+		Game.Statistic.Collection.insert({
+			user_id: user._id
+		});
+	}
+}
+
+Game.Statistic.incrementUser = function(uid, increment) {
+	Game.Statistic.Collection.update({
+		user_id: uid
+	}, {
+		$inc: increment
+	});
+}
+
+Game.Statistic.incrementAllUsers = function(increment) {
+	Game.Statistic.Collection.update({
+		user_id: { $ne: 'system' }
+	}, {
+		$inc: increment
+	}, {
+		multi: true
+	});
+}
+
+Game.Statistic.incrementGame = function(increment) {
+	Game.Statistic.Collection.upsert({
+		user_id: 'system'
+	}, {
+		$inc: increment
+	});
+}
+
+Game.Statistic.fixGame = function() {
 	var totalMailComplaints = Game.Mail.Collection.find({
 		complaint: true
 	}).count();
@@ -16,19 +54,7 @@ Game.Statistic.fixGameStatistic = function() {
 	});
 }
 
-Game.Statistic.initialize = function(user) {
-	var statistic = Game.Statistic.Collection.findOne({
-		user_id: user._id
-	});
-
-	if (!statistic) {
-		Game.Statistic.Collection.insert({
-			user_id: user._id
-		});
-	}
-}
-
-Game.Statistic.fixUserStatistic = function(userId) {
+Game.Statistic.fixUser = function(userId) {
 	var user = Meteor.users.findOne({
 		_id: userId
 	});
@@ -77,7 +103,7 @@ Game.Statistic.fixUserStatistic = function(userId) {
 }
 
 Meteor.methods({
-	'statistic.fixUser': function() {
+	'statistic.fixUser': function(login) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -88,7 +114,21 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Statistic.fixUserStatistic(user._id);
+		if (['admin', 'helper'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Нужны парва администратора или модератора');
+		}
+
+		check(login, String);
+
+		var target = Meteor.users.findOne({
+			login: login
+		});
+
+		if (!target) {
+			throw new Meteor.Error('Пользователя с именем ' + login + ' не существует');
+		}
+
+		Game.Statistic.fixUser(target._id);
 	}
 });
 

@@ -2,7 +2,45 @@
 	<div class="smoke"></div>
 	<div class="modal market">
 
-		
+		<h2>Торговый порт</h2>
+
+		<div class="from">
+			{{#if itemsFrom}}
+				<ul class="resources">
+					{{#each itemsFrom}}
+						<li 
+							data-name="{{this.name}}" 
+							class="{{this.name}} {{#if eq activeFrom this.name}}active{{/if}}"
+						>
+							{{formatNumberWithISO this.amount}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+		</div>
+
+		<div class="to">
+			{{#if itemsTo}}
+				<ul class="resources">
+					{{#each itemsTo}}
+						<li 
+							data-name="{{this.name}}" 
+							class="{{this.name}} {{#if eq activeTo this.name}}active{{/if}}"
+						>
+							{{formatRate this.rate}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+		</div>
+
+		{{#if and activeFrom activeTo}}
+			<form>
+				<div class="result"></div>
+				<input class="amount"/>
+				<input type="submit"/>
+			</form>
+		{{/if}}
 
 		<div class="close"></div>
 	</div>

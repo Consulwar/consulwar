@@ -12,6 +12,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		if (Game.User.getLevel() < 1) {
+			throw new Meteor.Error('Чтобы участвовать в общих исследованиях нужно подрости');
+		}
+
 		console.log('invest: ', new Date(), user.login);
 
 		check(options, Object);
@@ -78,6 +82,11 @@ Meteor.methods({
 			};
 
 			Game.Resources.spend(price);
+
+			var honor = Game.Resources.calculateHonorFromMutualResearch(price);
+			if (honor > 0) {
+				Game.Resources.add({ honor: honor });
+			}
 
 			Game.Investments.add(set);
 		} else {

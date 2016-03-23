@@ -23,11 +23,17 @@ Game.Market = {
 			return 0;
 		}
 
-		var level = 0; // TODO: Get market level
-		var rate = Game.Market.exchangeRates[resourceFrom][resourceTo];
+		var level = Game.Building.items.residential['tradingport']
+			? Game.Building.items.residential['tradingport'].currentLevel()
+			: 0;
 
-		// + 0.5% each building level
-		return rate + (1 - rate) / 200 * level;
+		// can't change if no tradingport
+		if (level == 0) {
+			return 0;
+		}
+
+		var rate = Game.Market.exchangeRates[resourceFrom][resourceTo];
+		return rate + (1 - rate) / 200 * level; // + 0.5% each tradingport level
 	},
 
 	getExchangeAmount: function(resourceFrom, resourceTo, amount) {

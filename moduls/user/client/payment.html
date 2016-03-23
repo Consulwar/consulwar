@@ -38,5 +38,8 @@
 			</table>
 		</div>
 		{{> pages total=countTotal perPage=count}}
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>

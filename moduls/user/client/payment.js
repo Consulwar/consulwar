@@ -53,6 +53,7 @@ Template.payment.events({
 // Payment history
 // ----------------------------------------------------------------------------
 
+var isLoading = new ReactiveVar(false);
 var history = new ReactiveVar(null);
 
 Game.Payment.showHistory = function() {
@@ -62,7 +63,10 @@ Game.Payment.showHistory = function() {
 
 	if (page && page > 0) {
 		history.set(null);
+		isLoading.set(true);
+
 		Meteor.call('user.getPaymentHistory', isIncome, page, count, function(err, data) {
+			isLoading.set(false);
 			if (!err) {
 				history.set(data);
 			}
@@ -86,6 +90,7 @@ Template.paymentHistory.helpers({
 			: Game.Statistic.getUserValue('expenseHistoryCount');
 	},
 
+	isLoading: function() { return isLoading.get(); },
 	history: function() { return history.get(); },
 
 	getProfit: function(resources) {

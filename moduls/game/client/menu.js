@@ -221,9 +221,15 @@ Template.game_menu.helpers({
 
 Template.side_menu.helpers({
 	sides: function() {
-		return getMenu(menu[Router.current().group].items, function(item, key) {
+		var group = Router.current().group;
+
+		if (!menu[group]) {
+			return null;
+		}
+
+		return getMenu(menu[group].items, function(item, key) {
 			return Router.current().url.indexOf(key) == item.url.indexOf(key);
-		})
+		});
 	},
 
 	getUrl: function(item) {

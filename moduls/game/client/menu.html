@@ -41,6 +41,13 @@
 
 <template name="additional_area">
 	{{#if sideHero}}
+		{{#if eq sideHero 'portal'}}
+			<div class="side_payment">
+				<a class="paymentWindow" href="#">Купить кредиты</a>
+				<a href="{{pathFor 'walletHistory' type='income' page=1}}">История покупок</a>
+				<a href="{{pathFor 'walletHistory' type='expense' page=1}}">История расходов</a>
+			</div>
+		{{/if}}
 		<div 
 			class="
 				additional_area 

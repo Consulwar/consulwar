@@ -28,14 +28,16 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такого действия в этом ходу');
 		}
 
-		// get vote power
-		var votePower = Game.User.getVotePower();
+		// check level
+		var level = Game.User.getLevel();
 
-		if (votePower <= 0) {
+		if (level <= 0) {
 			throw new Meteor.Error('Маленький ещё, подрости сначала');
 		}
 
 		// save vote
+		var votePower = Game.User.gerVotePower();
+		
 		lastTurn.users.push(user._id);
 		lastTurn.actions[ actionName ] += votePower;
 		lastTurn.totalVotePower += votePower;

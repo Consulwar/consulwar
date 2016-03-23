@@ -44,6 +44,10 @@ var gameRoutes = {
 		house: 'planet/:group(house)/:subgroup?/:item?'
 	},
 
+	wallet: {
+		walletHistory: 'wallet/history/:type(income|expense)/:page'
+	},
+
 	army: {
 		unit: 'army/:group(fleet|defence|ground)/:item?',
 	},
@@ -81,6 +85,8 @@ var gameActions = {
 	building: Game.Building.showPage,
 	research: Game.Research.showPage,
 	house: Game.House.showPage,
+	
+	walletHistory: Game.Payment.showHistory,
 
 	chat: Game.Chat.showPage,
 	mail: Game.Mail.showPage,

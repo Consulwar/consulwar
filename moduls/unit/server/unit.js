@@ -205,6 +205,12 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 		artefacts: battleResults.artefacts,
 		result: battleResults.result
 	});
+
+	if (Meteor.userId()) {
+		Game.Statistic.incrementUser(Meteor.userId(), {
+			battleHistoryCount: 1
+		});
+	}
 }
 
 Game.Unit.performBattle = function(userArmy, enemyArmy, options) {

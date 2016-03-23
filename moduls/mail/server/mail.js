@@ -18,11 +18,9 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 		timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
 	});
 
-	Game.Statistic.Collection.update({ user_id: user._id }, {
-		$inc: {
-			totalMail: 1,
-			totalMailAlltime: 1
-		}
+	Game.Statistic.incrementUser(user._id, {
+		totalMail: 1,
+		totalMailAlltime: 1
 	});
 };
 
@@ -48,15 +46,9 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 
 	Game.Mail.Collection.rawCollection().insert(documents, function(err, data) {});
 
-	Game.Statistic.Collection.update({
-		user_id: { $ne: 'system' }
-	}, {
-		$inc: {
-			totalMail: 1,
-			totalMailAlltime: 1
-		}
-	}, {
-		multi: true
+	Game.Statistic.incrementAllUsers({
+		totalMail: 1,
+		totalMailAlltime: 1
 	});
 	
 	return users;
@@ -160,14 +152,9 @@ Meteor.methods({
 
 			Game.Mail.Collection.rawCollection().insert(documents, function(err, data) {});
 
-			Game.Statistic.Collection.update({
-				user_id: { $ne: 'system' }
-			}, {
-				$inc: {
-					totalMail: 1
-				}
-			}, {
-				multi: true
+			Game.Statistic.incrementAllUsers({
+				totalMail: 1,
+				totalMailAlltime: 1
 			});
 
 			Game.Mail.Collection.update({ _id: parentId }, {
@@ -205,11 +192,9 @@ Meteor.methods({
 				timestamp: Math.floor(new Date().valueOf() / 1000)
 			});
 
-			Game.Statistic.Collection.update({ user_id: user._id }, {
-				$inc: {
-					totalMail: 1,
-					totalMailAlltime: 1
-				}
+			Game.Statistic.incrementUser(user._id, {
+				totalMail: 1,
+				totalMailAlltime: 1
 			});
 
 			if (user._id != to._id) {
@@ -227,11 +212,9 @@ Meteor.methods({
 					timestamp: Math.floor(new Date().valueOf() / 1000)
 				});
 
-				Game.Statistic.Collection.update({ user_id: to._id }, {
-					$inc: {
-						totalMail: 1,
-						totalMailAlltime: 1
-					}
+				Game.Statistic.incrementUser(to._id, {
+					totalMail: 1,
+					totalMailAlltime: 1
 				});
 			}
 		}
@@ -299,10 +282,8 @@ Meteor.methods({
 		});
 
 		if (updateCount > 0) {
-			Game.Statistic.Collection.upsert({ user_id: 'system' }, {
-				$inc: {
-					totalMailComplaints: updateCount
-				}
+			Game.Statistic.incrementGame({
+				totalMailComplaints: updateCount
 			});
 		}
 	},
@@ -330,11 +311,8 @@ Meteor.methods({
 		});
 
 		if (updateCount > 0) {
-			updateCount = updateCount * -1;
-			Game.Statistic.Collection.update({ user_id: user._id }, {
-				$inc: {
-					totalMail: updateCount
-				}
+			Game.Statistic.incrementUser(user._id, {
+				totalMail: updateCount * -1
 			});
 		}
 	},
@@ -416,11 +394,9 @@ Meteor.methods({
 
 		Game.BanHistory.Collection.insert(history);
 
-		Game.Statistic.Collection.update({ user_id: target._id }, {
-			$inc: {
-				totalMail: 1,
-				totalMailAlltime: 1
-			}
+		Game.Statistic.incrementUser(target._id, {
+			totalMail: 1,
+			totalMailAlltime: 1
 		});
 	},
 

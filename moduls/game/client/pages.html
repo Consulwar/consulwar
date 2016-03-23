@@ -6,7 +6,7 @@
 					<li>
 						<a 
 							class="{{#if eq 1 current}}active{{/if}}"
-							href="{{pathFor route page=1}}"
+							href="{{route 1}}"
 							title="Первая страница"
 						>
 							&lt;
@@ -17,7 +17,7 @@
 					<li>
 						<a
 							class="{{#if eq this.page current}}active{{/if}}"
-							href="{{pathFor route page=this.page}}"
+							href="{{route this.page}}"
 							title="{{this.start}} - {{this.end}}"
 						>
 							{{this.page}}
@@ -28,7 +28,7 @@
 					<li>
 						<a 
 							class="{{#if eq maxPage current}}active{{/if}}"
-							href="{{pathFor route page=maxPage}}"
+							href="{{route maxPage}}"
 							title="Последняя страница"
 						>
 							&gt;

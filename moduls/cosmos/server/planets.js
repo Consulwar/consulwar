@@ -256,25 +256,25 @@ Game.Planets.generateMission = function(planet) {
 }
 
 Game.Planets.getReptileAttackChance = function() {
-	var power = Game.User.getVotePower();
+	var level = Game.User.getLevel();
 	return {
-		home: power * 5,
-		colony: power * 1
+		home: level * 5,
+		colony: level * 1
 	};
 }
 
 Game.Planets.getReptileAttackMission = function() {
-	var power = Game.User.getVotePower();
+	var level = Game.User.getLevel();
 
 	// missions config
 	var missions = Game.Cosmos.ATTACK_MISSIONS;
 
 	// select mission
-	if (power >= missions.length) {
-		power = missions.length - 1;
+	if (level >= missions.length) {
+		level = missions.length - 1;
 	}
 
-	var list = missions[ power ];
+	var list = missions[ level ];
 	if (!list || list.length <= 0) {
 		return null;
 	}

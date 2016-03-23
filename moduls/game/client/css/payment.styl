@@ -1,0 +1,115 @@
+.side_payment
+	position absolute
+	width 330px
+	height 433px
+	top 0
+	right 10px
+	z-index 3
+	
+	a
+		display block
+		width 100%
+		padding-top 10px
+		padding-bottom 10px
+		background-color #000000
+		text-align center
+		
+		&:hover
+			background-color #333333
+
+.payment
+	position fixed
+	
+	z-index 100
+	
+	top 50%
+	left 50%
+	
+	margin -270px 0 0 -450px
+
+	width 835px
+	height 500px
+
+	border 1px solid #2D4D5C
+	border-radius 5px
+	
+	background-color #171B1C
+	
+	font-size 16px
+	color #ABAFB2
+				
+	.paymentItems
+		display block
+		width 100%
+		margin 17px
+		
+		li
+			cursor pointer
+			display inline-block
+			width 150px
+			height 60px
+			margin-left 17px
+			padding-top 17px
+			text-align center
+			border 1px solid #2D4D5C
+			border-radius 5px
+			&:nth-child(1)
+				margin-left 0px
+			&:hover
+				border 1px solid #FFFFFF
+	
+	form
+		margin 17px
+
+	.close
+		position absolute
+		top -22px
+		right -22px
+		height 44px
+		width 44px
+		padding 0
+		margin 0
+		background-image url(/img/game/close.png)
+		background-repeat no-repeat
+		cursor pointer
+		
+		&:hover
+			background-image url(/img/game/close_a.png)
+			
+.content
+	.paymentHistory
+		position relative
+		height 435px
+		margin-left 0px
+		background-color #04080B
+		z-index 10
+	
+		.data
+			height 355px
+			overflow-y auto
+			
+		table
+			width 100%
+			border-collapse collapse
+
+			tr
+				height 40px
+
+				&:nth-child(odd):not(.header)
+					background-color #0B121A
+				
+				&:nth-child(even)
+					background-color #0E1821
+				
+			td, th
+				text-align left
+					
+				&:nth-child(1)
+					padding-left 10px
+					width 150px
+			
+				&:nth-child(2)
+					width 350px
+				
+				&:nth-child(3)
+					width 200px

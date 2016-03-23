@@ -1,6 +1,14 @@
 Template.pages.helpers({
-	route: function() {
-		return Router.current().route.getName();
+	route: function(page) {
+		var current = Router.current();
+		// get all params from current route
+		var params = {};
+		for (var name in current.params) {
+			params[name] = current.params[name];
+		}
+		// set page
+		params.page = page;
+		return Router.routes[ current.route.getName() ].path(params);
 	},
 
 	current: function() {

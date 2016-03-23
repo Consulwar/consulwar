@@ -34,11 +34,11 @@ Game.Cosmos.showHistory = function() {
 	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, function(err, data) {
 		var battle = new ReactiveVar(null);
 
-		for (var i = 0; i < data.battles.length; i++) {
-			data.battles[i] = getBattleInfo( data.battles[i] );
+		for (var i = 0; i < data.length; i++) {
+			data[i] = getBattleInfo( data[i] );
 			// check if current item
-			if (itemId && data.battles[i]._id == itemId) {
-				battle.set( data.battles[i] );
+			if (itemId && data[i]._id == itemId) {
+				battle.set( data[i] );
 			}
 		}
 
@@ -52,8 +52,7 @@ Game.Cosmos.showHistory = function() {
 			to: 'content',
 			data: {
 				countPerPage: countPerPage,
-				countTotal: data.count,
-				battles: data.battles,
+				battles: data,
 				battle: battle,
 				itemId: itemId
 			}
@@ -62,9 +61,8 @@ Game.Cosmos.showHistory = function() {
 }
 
 Template.cosmosHistory.helpers({
-	battle: function() {
-		return this.battle.get();
-	}
+	countTotal: function() { return Game.Statistic.getUserValue('battleHistoryCount'); },
+	battle: function() { return this.battle.get(); }
 });
 
 Template.cosmosHistoryItem.helpers({

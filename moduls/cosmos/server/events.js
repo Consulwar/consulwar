@@ -7,7 +7,7 @@ Game.SpaceEvents.actualize = function() {
 	var timeLastAttack = Game.Planets.getLastAttackTime();
 	var attacks = Math.floor( (timeCurrent - timeLastAttack) / Game.Cosmos.ATTACK_PLAYER_PERIOD );
 
-	if (attacks > 0 && Game.User.getVotePower() > 0) {
+	if (attacks > 0 && Game.User.getLevel() > 0) {
 		for (var i = 0; i < attacks; i++) {
 			var targetPlanet = null;
 			var chances = Game.Planets.getReptileAttackChance();

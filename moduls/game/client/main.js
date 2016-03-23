@@ -1,5 +1,6 @@
 Meteor.startup(function () {
 
+initPaymentClient();
 initRatingClient();
 initResourcesClient();
 initBuildingClient();

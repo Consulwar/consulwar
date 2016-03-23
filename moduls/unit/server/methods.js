@@ -90,18 +90,17 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		var result = Game.BattleHistory.Collection.find({
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		return Game.BattleHistory.Collection.find({
 			user_id: user._id
 		}, {
-			sort: {timestamp: -1},
+			sort: { timestamp: -1 },
 			skip: (page > 0) ? (page - 1) * count : 0,
 			limit: count
-		});
-
-		return {
-			battles: result.fetch(),
-			count: result.count()
-		}
+		}).fetch();
 	},
 
 	'battleHistory.getById': function(id) {

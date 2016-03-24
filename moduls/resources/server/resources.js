@@ -84,15 +84,16 @@ Game.Resources.spend = function(resource, uid) {
 
 Game.Resources.updateWithIncome = function(currentTime) {
 	var resources = Game.Resources.getValue();
-	var delta = currentTime - resources.updated;
+	if (currentTime < resources.updated) {
+		throw new Meteor.Error('Ошибка при рассчете доходов');
+	}
 
+	var delta = currentTime - resources.updated;
 	if (delta < 1) {
 		return true;
 	}
 
-	//////////
 	var income = Game.Resources.getIncome();
-	//////////////
 
 	Game.Resources.Collection.update({
 		user_id: Meteor.userId()
@@ -128,7 +129,6 @@ Game.Resources.updateWithIncome = function(currentTime) {
 	}
 
 	Game.Resources.add(result);
-
 	return result;
 }
 

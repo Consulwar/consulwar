@@ -84,7 +84,7 @@ Game.Resources.spend = function(resource, uid) {
 
 Game.Resources.updateWithIncome = function(currentTime) {
 	var resources = Game.Resources.getValue();
-	if (currentTime < resources.updated) {
+	if (currentTime < resources.updated - 10) {
 		throw new Meteor.Error('Ошибка при рассчете доходов');
 	}
 

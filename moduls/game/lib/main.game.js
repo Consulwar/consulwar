@@ -763,11 +763,11 @@ Game.Queue = {
 	Collection: new Meteor.Collection('queue'),
 
 	getAll: function() {
-		return Game.Queue.Collection.find({user_id: Meteor.userId(), incomplete: true}).fetch();
+		return Game.Queue.Collection.find({user_id: Meteor.userId(), status: 0 }).fetch();
 	},
 
 	getGroup: function(group) {
-		return Game.Queue.Collection.findOne({user_id: Meteor.userId(), group: group, incomplete: true});
+		return Game.Queue.Collection.findOne({user_id: Meteor.userId(), group: group, status: 0 });
 	},
 
 	isBusy: function(group) {

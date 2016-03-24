@@ -82,10 +82,8 @@ Game.Resources.spend = function(resource, uid) {
 	return Game.Resources.set(resource, true, uid);
 }
 
-Game.Resources.updateWithIncome = function(uid) {
-	var resources = Game.Resources.getValue(uid);
-
-	var currentTime = Math.floor(new Date().valueOf() / 1000);
+Game.Resources.updateWithIncome = function(currentTime) {
+	var resources = Game.Resources.getValue();
 	var delta = currentTime - resources.updated;
 
 	if (delta < 1) {

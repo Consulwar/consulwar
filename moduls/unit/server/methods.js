@@ -38,6 +38,8 @@ Meteor.methods({
 				count: options.count
 			};
 
+			Meteor._sleepForMs(3000); // TODO: Remove dat shit!
+
 			if (set.level > item.maxLevel) {
 				throw new Meteor.Error("Исследование уже максимального уровня");
 			}
@@ -46,7 +48,10 @@ Meteor.methods({
 			
 			set.time = price.time;
 
-			Game.Queue.add(set);
+			var isInserted = Game.Queue.add(set);
+			if (!isInserted) {
+				return;
+			}
 
 			set = {};
 

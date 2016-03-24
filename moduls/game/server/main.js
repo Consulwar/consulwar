@@ -6,6 +6,30 @@ BrowserPolicy.content.allowEval('*')
 
 
 
+ApplicationCollection = new Meteor.Collection('application');
+Game.processId = uuid.new();
+Game.PROCESS_TIMEOUT = 300;
+
+var heartbeat = function() {
+	var currentTime = Game.getCurrentTime();
+
+	ApplicationCollection.upsert({
+		processId: Game.processId
+	}, {
+		timestamp: currentTime
+	});
+
+	// delete processes older than PROCESS_TIMEOUT
+	ApplicationCollection.remove({
+		timestamp: { $lt: currentTime - Game.PROCESS_TIMEOUT }
+	});
+}
+
+heartbeat();
+Meteor.setInterval(heartbeat, 5000);
+
+
+
 SyncedCron.config({
 	log: true,
 	collectionName: 'cronHistory',
@@ -32,7 +56,42 @@ Meteor.startup(function () {
 	initCheatsServer();
 });
 
+var Test = new Meteor.Collection('test');
+var govno = function() {
+	console.log('test done!');
+
+}
+
 Meteor.methods({
+	test: function() {
+
+		console.log('========= TEST =========');
+
+		var result = Test.find({
+			status: 0
+		});
+
+		var items = result.fetch();
+
+		var observer = result.observeChanges({
+			removed: function(id, fields) {
+				console.log('removed result count = ', result.count());
+				if (result.count() == 2) {
+					govno();
+					observer.stop();
+					observer = null;
+				}
+			}
+		});
+
+		if (result.count() == 2) {
+			govno();
+			observer.stop();
+			observer = null;
+		}
+
+	},
+
 	changePlanetName: function(name) {
 		var user = Meteor.user();
 
@@ -73,7 +132,7 @@ Meteor.methods({
 
 		console.log('Actualize: ', new Date(), user.login);
 
-		Game.Resources.updateWithIncome();
+		//Game.Resources.updateWithIncome();
 
 		Game.Queue.checkAll();
 

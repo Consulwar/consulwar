@@ -42,6 +42,33 @@ Template.market.helpers({
 	}
 });
 
+var resetForm = function(t) {
+	t.$('.exchange .amount').val(0);
+	t.$('.exchange .result').html(0);
+}
+
+var recalculateForm = function(t) {
+	var amount = parseInt( t.$('.exchange .amount').val(), 10 );
+
+	var from = activeFrom.get();
+	var userResource = Game.Resources.getValue();
+
+	var current = userResource[from]
+		? parseInt( userResource[from].amount, 10 )
+		: 0;
+
+	if (!amount || amount < 0) {
+		amount = 0;
+	} else if (amount > current) {
+		amount = current;
+	}
+
+	t.$('.exchange .amount').val(amount);
+	t.$('.exchange .result').html(
+		Game.Market.getExchangeAmount(activeFrom.get(), activeTo.get(), amount)
+	);
+}
+
 Template.market.events({
 	'click .close': function(e, t) {
 		e.preventDefault();
@@ -55,30 +82,22 @@ Template.market.events({
 
 	'click .to li': function(e, t) {
 		activeTo.set(e.currentTarget.dataset.name);
-		t.$('.exchange .amount').val(0);
-		t.$('.exchange .result').html(0);
+		resetForm(t);
 	},
 
 	'change .exchange .amount': function(e, t) {
-		var amount = parseInt( e.currentTarget.value, 10 );
+		recalculateForm(t);
+	},
 
-		var from = activeFrom.get();
-		var userResource = Game.Resources.getValue();
+	'click .exchange .btn-add': function(e, t) {
+		var amount = parseInt(e.currentTarget.dataset.amount, 10);
+		var current = parseInt(t.$('.exchange .amount').val(), 10);
+		t.$('.exchange .amount').val(current + amount);
+		recalculateForm(t);
+	},
 
-		var current = userResource[from]
-			? parseInt( userResource[from].amount, 10 )
-			: 0;
-
-		if (!amount || amount < 0) {
-			amount = 0;
-		} else if (amount > current) {
-			amount = current;
-		}
-
-		t.$('.exchange .amount').val(amount);
-		t.$('.exchange .result').html(
-			Game.Market.getExchangeAmount(activeFrom.get(), activeTo.get(), amount)
-		);
+	'click .exchange .btn-reset': function(e, t) {
+		resetForm(t);
 	},
 
 	'click .exchange .btn-all': function(e, t) {
@@ -111,8 +130,7 @@ Template.market.events({
 				Notifications.error(err.error);
 			} else {
 				Notifications.success('Обмен успешно завершен');
-				t.$('.exchange .amount').val(0);
-				t.$('.exchange .result').html(0);
+				resetForm(t);
 			}
 		});
 	}

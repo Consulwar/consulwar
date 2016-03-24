@@ -1,0 +1,61 @@
+<template name="market">
+	<div class="smoke"></div>
+	<div class="modal market">
+
+		<h2>Торговый порт</h2>
+
+		<div class="from">
+			<h2>Ресуры консула</h2>
+			{{#if itemsFrom}}
+				<ul class="resources">
+					{{#each itemsFrom}}
+						<li 
+							data-name="{{this.name}}" 
+							class="{{this.name}} {{#if eq activeFrom this.name}}active{{/if}}"
+						>
+							{{formatNumberWithISO this.amount}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+		</div>
+
+		<div class="to">
+			<h2>Доступно для обмена</h2>
+			{{#if itemsTo}}
+				<ul class="resources">
+					{{#each itemsTo}}
+						<li 
+							data-name="{{this.name}}" 
+							class="{{this.name}} {{#if eq activeTo this.name}}active{{/if}}"
+						>
+							{{formatRate this.rate}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+		</div>
+
+		<div class="exchange">
+			{{#if and activeFrom activeTo}}
+				<span class="btn-add" data-amount="-1000000">-1M</span>
+				<span class="btn-add" data-amount="-1000">-1K</span>
+				<span class="btn-add" data-amount="-10">-10</span>
+				<span class="btn-add" data-amount="-1">-1</span>
+				<span class="btn-reset">Сбросить</span>
+				<span class="btn-add" data-amount="1">+1</span>
+				<span class="btn-add" data-amount="10">+10</span>
+				<span class="btn-add" data-amount="1000">+1K</span>
+				<span class="btn-add" data-amount="1000000">+1M</span>
+				<br/>
+				<span class="btn-all">Выбрать все</span>
+				<input class="amount" value="0"/> = <span class="result">0</span>
+				<span class="btn-exchange">Обменять</span>
+			{{else}}
+				Выберите ресурсы для обмена
+			{{/if}}
+		</div>
+
+		<div class="close"></div>
+	</div>
+</template>

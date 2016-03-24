@@ -82,21 +82,22 @@ Game.Resources.spend = function(resource, uid) {
 	return Game.Resources.set(resource, true, uid);
 }
 
-Game.Resources.updateWithIncome = function(uid) {
-	var resources = Game.Resources.getValue(uid);
+Game.Resources.updateWithIncome = function(currentTime) {
+	var resources = Game.Resources.getValue();
+	if (currentTime < resources.updated) {
+		throw new Meteor.Error('Ошибка при рассчете доходов');
+	}
 
-	var currentTime = Math.floor(new Date().valueOf() / 1000);
 	var delta = currentTime - resources.updated;
-
 	if (delta < 1) {
 		return true;
 	}
 
-	//////////
 	var income = Game.Resources.getIncome();
-	//////////////
 
-	Game.Resources.Collection.update({'user_id': uid != undefined ? uid : Meteor.userId()}, {
+	Game.Resources.Collection.update({
+		user_id: Meteor.userId()
+	}, {
 		$set: {
 			updated: currentTime
 		}
@@ -127,8 +128,7 @@ Game.Resources.updateWithIncome = function(uid) {
 		)
 	}
 
-	Game.Resources.add(result, uid);
-
+	Game.Resources.add(result);
 	return result;
 }
 

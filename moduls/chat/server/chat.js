@@ -2,6 +2,14 @@ initChatServer = function() {
 
 initChatLib();
 
+/* Rate limiter test rule
+DDPRateLimiter.addRule({
+	userId: function(userId) { return userId; },
+	type: 'method',
+	name: 'chat.sendMessage'
+}, 2, 10000);
+*/
+
 // create defaul rooms on server startup
 var createDefaulRoom = function(name) {
 	if (!Game.Chat.Room.Collection.findOne({ name: name })) {

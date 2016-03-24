@@ -5,20 +5,26 @@ BrowserPolicy.content.allowEval('*')
 //heapdump = Meteor.npmRequire('heapdump');
 
 
-
-ApplicationCollection = new Meteor.Collection('application');
 Game.processId = uuid.new();
 Game.PROCESS_TIMEOUT = 300;
 
+var ApplicationCollection = new Meteor.Collection('application');
+
+Game.checkIsProcessActive = function(processId) {
+	var process = ApplicationCollection.findOne({
+		processId: processId
+	});
+	return process ? true : false;
+}
+
 var heartbeat = function() {
 	var currentTime = Game.getCurrentTime();
-
+	// update current process
 	ApplicationCollection.upsert({
 		processId: Game.processId
 	}, {
 		timestamp: currentTime
 	});
-
 	// delete processes older than PROCESS_TIMEOUT
 	ApplicationCollection.remove({
 		timestamp: { $lt: currentTime - Game.PROCESS_TIMEOUT }
@@ -27,7 +33,6 @@ var heartbeat = function() {
 
 heartbeat();
 Meteor.setInterval(heartbeat, 5000);
-
 
 
 SyncedCron.config({
@@ -56,42 +61,7 @@ Meteor.startup(function () {
 	initCheatsServer();
 });
 
-var Test = new Meteor.Collection('test');
-var govno = function() {
-	console.log('test done!');
-
-}
-
 Meteor.methods({
-	test: function() {
-
-		console.log('========= TEST =========');
-
-		var result = Test.find({
-			status: 0
-		});
-
-		var items = result.fetch();
-
-		var observer = result.observeChanges({
-			removed: function(id, fields) {
-				console.log('removed result count = ', result.count());
-				if (result.count() == 2) {
-					govno();
-					observer.stop();
-					observer = null;
-				}
-			}
-		});
-
-		if (result.count() == 2) {
-			govno();
-			observer.stop();
-			observer = null;
-		}
-
-	},
-
 	changePlanetName: function(name) {
 		var user = Meteor.user();
 
@@ -132,10 +102,10 @@ Meteor.methods({
 
 		console.log('Actualize: ', new Date(), user.login);
 
-		//Game.Resources.updateWithIncome();
-
+		// Update queue tasks and resources
 		Game.Queue.checkAll();
 
+		// TODO: Refactoring! SpaceEvents -> Game.Queue
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();
 

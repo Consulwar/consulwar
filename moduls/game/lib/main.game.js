@@ -760,14 +760,27 @@ Game.Effect.Special.reduce = true;
 
 
 Game.Queue = {
+	status: {
+		INCOMPLETE: 0,
+		INPROGRESS: 1,
+		DONE: 2
+	},
+
 	Collection: new Meteor.Collection('queue'),
 
 	getAll: function() {
-		return Game.Queue.Collection.find({user_id: Meteor.userId(), status: 0 }).fetch();
+		return Game.Queue.Collection.find({
+			user_id: Meteor.userId(),
+			status: Game.Queue.status.INCOMPLETE
+		}).fetch();
 	},
 
 	getGroup: function(group) {
-		return Game.Queue.Collection.findOne({user_id: Meteor.userId(), group: group, status: 0 });
+		return Game.Queue.Collection.findOne({
+			user_id: Meteor.userId(),
+			group: group,
+			status: Game.Queue.status.INCOMPLETE
+		});
 	},
 
 	isBusy: function(group) {

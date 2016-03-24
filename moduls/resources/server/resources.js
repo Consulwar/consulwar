@@ -94,7 +94,9 @@ Game.Resources.updateWithIncome = function(currentTime) {
 	var income = Game.Resources.getIncome();
 	//////////////
 
-	Game.Resources.Collection.update({'user_id': uid != undefined ? uid : Meteor.userId()}, {
+	Game.Resources.Collection.update({
+		user_id: Meteor.userId()
+	}, {
 		$set: {
 			updated: currentTime
 		}
@@ -125,7 +127,7 @@ Game.Resources.updateWithIncome = function(currentTime) {
 		)
 	}
 
-	Game.Resources.add(result, uid);
+	Game.Resources.add(result);
 
 	return result;
 }

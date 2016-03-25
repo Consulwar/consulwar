@@ -65,7 +65,7 @@ game.HouseItem = function(options) {
 
 		var resources = Game.Resources.getValue();
 		for (var name in price) {
-			if (name != 'time' && resources[name].amount <= (price[name])) {
+			if (name != 'time' && resources[name].amount < (price[name])) {
 				return false;
 			}
 		}

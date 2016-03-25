@@ -68,7 +68,7 @@ Template.consulHouseItem.events({
 		var id = t.data.item;
 
 		if (!Game.House.items[group][id].canBuy()) {
-			return Notifications.info('Не достаточно денег!');
+			return Notifications.error('Не достаточно денег!');
 		}
 
 		Meteor.call('house.buyItem', group, id);

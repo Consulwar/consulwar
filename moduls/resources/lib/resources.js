@@ -78,6 +78,17 @@ Game.Resources = {
 		return Game.Effect.Income.getValue();
 	},
 
+	calculateRatingFromResources: function(resources) {
+		var rating = 0;
+
+		rating += ((resources.metals) || 0);
+		rating += ((resources.crystals * 3) || 0);
+		rating += ((resources.humans * 4) || 0);
+		rating += ((resources.honor * 5) || 0);
+
+		return Math.floor(rating / 100);
+	},
+
 	calculateHonorFromResources: function(resources) {
 		var honor = 0;
 		

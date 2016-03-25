@@ -105,86 +105,86 @@ Game.Quest.initialize = function(user, isRewrite) {
 	}
 }
 
+Game.Quest.actualize = function() {
+	var user = Meteor.user();
+
+	if (!user || !user._id) {
+		throw new Meteor.Error('Требуется авторизация');
+	}
+
+	if (user.blocked == true) {
+		throw new Meteor.Error('Аккаунт заблокирован');
+	}
+
+	var quests = Game.Quest.getValue();
+
+	if (!quests) {
+		throw new Meteor.Error('Не инициализированы квесты');
+	}
+	
+	var currentTime = Game.getCurrentTime();
+
+	// check inprogress quest lines
+	for (var key in quests.current) {
+		var current = quests.current[key];
+
+		if (current.status != Game.Quest.status.INPROGRESS) {
+			continue;
+		}
+
+		var questLine = Game.Quest.regularQuests[key];
+		var quest = questLine.findStep(current.step);
+
+		if (quest.isDone()) {
+			current.status = Game.Quest.status.FINISHED;
+		}
+	}
+
+	// try to start new quest line
+	for (var key in Game.Quest.regularQuests) {
+		var questLine = Game.Quest.regularQuests[key];
+
+		if (quests.current[key] || quests.finished[key] || !questLine.canStart()) {
+			continue;
+		}
+
+		var firstStep = questLine.firstStep();
+
+		if (!firstStep) {
+			continue;
+		}
+
+		quests.current[key] = {
+			engName: questLine.engName,
+			name: firstStep.conditionText,
+			status: Game.Quest.status.PROMPT,
+			appearTime: currentTime,
+			step: firstStep.engName,
+			who: questLine.who
+		}
+	}
+
+	// refresh daily quest
+	if (!quests.daily
+	 || (    quests.daily.status == Game.Quest.status.FINISHED
+	      && quests.daily.startTime + Game.Quest.DAILY_QUEST_PERIOD < currentTime )
+	) {
+		var keys = Object.keys( Game.Quest.dailyQuests );
+		var choise = keys[ Game.Random.interval(0, keys.length - 1) ];
+
+		quests.daily = {
+			engName: choise,
+			status: Game.Quest.status.INPROGRESS,
+			startTime: currentTime,
+			name: Game.Quest.dailyQuests[choise].name,
+			who: Game.Quest.dailyQuests[choise].who
+		}
+	}
+
+	Game.Quest.Collection.update({ user_id: user._id }, quests);
+}
+
 Meteor.methods({
-	'quests.update': function() {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		var quests = Game.Quest.getValue();
-
-		if (!quests) {
-			throw new Meteor.Error('Не инициализированы квесты');
-		}
-		
-		var currentTime = Math.floor(new Date().valueOf() / 1000);
-
-		// check inprogress quest lines
-		for (var key in quests.current) {
-			var current = quests.current[key];
-
-			if (current.status != Game.Quest.status.INPROGRESS) {
-				continue;
-			}
-
-			var questLine = Game.Quest.regularQuests[key];
-			var quest = questLine.findStep(current.step);
-
-			if (quest.isDone()) {
-				current.status = Game.Quest.status.FINISHED;
-			}
-		}
-
-		// try to start new quest line
-		for (var key in Game.Quest.regularQuests) {
-			var questLine = Game.Quest.regularQuests[key];
-
-			if (quests.current[key] || quests.finished[key] || !questLine.canStart()) {
-				continue;
-			}
-
-			var firstStep = questLine.firstStep();
-
-			if (!firstStep) {
-				continue;
-			}
-
-			quests.current[key] = {
-				engName: questLine.engName,
-				name: firstStep.conditionText,
-				status: Game.Quest.status.PROMPT,
-				appearTime: currentTime,
-				step: firstStep.engName,
-				who: questLine.who
-			}
-		}
-
-		// refresh daily quest
-		if (!quests.daily
-		 || (    quests.daily.status == Game.Quest.status.FINISHED
-		      && quests.daily.startTime + Game.Quest.DAILY_QUEST_PERIOD < currentTime )
-		) {
-			var keys = Object.keys( Game.Quest.dailyQuests );
-			var choise = keys[ Game.Random.interval(0, keys.length - 1) ];
-
-			quests.daily = {
-				engName: choise,
-				status: Game.Quest.status.INPROGRESS,
-				startTime: currentTime,
-				name: Game.Quest.dailyQuests[choise].name,
-				who: Game.Quest.dailyQuests[choise].who
-			}
-		}
-
-		Game.Quest.Collection.update({ user_id: user._id }, quests);
-	},
-
 	'quests.sendAction': function(questId, action) {
 		var user = Meteor.user();
 
@@ -208,7 +208,7 @@ Meteor.methods({
 			if (action == 'accept') {
 				// start quest
 				current.status = Game.Quest.status.INPROGRESS;
-				current.startTime = Math.floor(new Date().valueOf() / 1000);
+				current.startTime = Game.getCurrentTime();
 			} else {
 				// cancel whole quest line
 				current.status = Game.Quest.status.CANCELED;
@@ -217,6 +217,7 @@ Meteor.methods({
 			}
 
 			Game.Quest.Collection.update({ user_id: user._id }, quests);
+			Game.Quest.actualize();
 		}
 	},
 
@@ -256,7 +257,7 @@ Meteor.methods({
 				current.status = Game.Quest.status.PROMPT;
 				current.name = nextStep.conditionText;
 				current.step = nextStep.engName;
-				current.startTime = Math.floor(new Date().valueOf() / 1000);
+				current.startTime = Game.getCurrentTime();
 			} else {
 				// move quest line to finished
 				quests.finished[questId] = current;

@@ -80,16 +80,22 @@ Game.Resources = {
 
 	calculateHonorFromResources: function(resources) {
 		var honor = 0;
-
-		honor += ((resources.base.metals) || 0);
-		honor += ((resources.base.crystals * 3) || 0);
-		honor += ((resources.base.humans * 4) || 0);
+		
+		if (resources.base) {
+			honor += ((resources.base.metals) || 0);
+			honor += ((resources.base.crystals * 3) || 0);
+			honor += ((resources.base.humans * 4) || 0);
+		}
 
 		return Math.floor(honor / 150);
 	},
 
 	calculateHonorFromReinforcement: function(resources) {
-		return Math.floor(Game.Resources.calculateHonorFromResources(resources) / 2)
+		return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.5);
+	},
+
+	calculateHonorFromMutualResearch: function(resources) {
+		return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.375);
 	}
 };
 

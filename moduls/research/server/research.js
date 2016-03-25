@@ -3,20 +3,19 @@ initResearchServer = function() {
 initResearchLib();
 initResearchServerMethods();
 
-Game.Research.set = function(research) {
+Game.Research.add = function(research) {
 	Game.Research.initialize();
 
 	var set = {};
-	
 	set[research.group + '.' + research.engName] = research.level
 
-	Game.Research.Collection.update({user_id: Meteor.userId()}, {$set: set});
+	Game.Research.Collection.update({
+		user_id: Meteor.userId()
+	}, {
+		$set: set
+	});
 
 	return set;
-}
-
-Game.Research.add = function(research) {
-	return Game.Research.set(research);
 }
 
 Game.Research.initialize = function(user) {
@@ -29,7 +28,6 @@ Game.Research.initialize = function(user) {
 		})
 	}
 }
-
 
 Meteor.publish('researches', function () {
 	if (this.userId) {

@@ -1,4 +1,4 @@
-initUnitServerMethods = function(){
+initUnitServerMethods = function() {
 
 Meteor.methods({
 	'unit.build': function(options) {
@@ -9,7 +9,7 @@ Meteor.methods({
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
 		console.log('unit.build: ', new Date(), user.login);
@@ -44,35 +44,14 @@ Meteor.methods({
 		set.time = price.time;
 
 		if (Game.Queue.add(set)) {
-			var rating = 0;
-
-			if (price['metals']) {
-				rating += price['metals'];
-			}
-
-			if (price['crystals']) {
-				rating += price['crystals'] * 3;
-			}
-
-			if (price['humans']) {
-				rating += price['humans'] * 4;
-			}
-
-			if (price['honor']) {
-				rating += price['honor'] * 5;
-			}
-
-			rating = Math.floor(rating / 100);
-
 			Game.Resources.spend(price);
-
 			Meteor.users.update({
 				_id: user._id
 			}, {
 				$inc: {
-					rating: rating
+					rating: Game.Resources.calculateRatingFromResources(price)
 				}
-			}); 
+			});
 		}
 	},
 

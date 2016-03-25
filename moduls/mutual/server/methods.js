@@ -4,19 +4,19 @@ Meteor.methods({
 	'mutual.invest': function(options) {
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
 		if (Game.User.getLevel() < 1) {
 			throw new Meteor.Error('Чтобы участвовать в общих исследованиях нужно подрости');
 		}
 
-		console.log('invest: ', new Date(), user.login);
+		console.log('mutual.invest: ', new Date(), user.login);
 
 		check(options, Object);
 		check(options.group, String);
@@ -58,40 +58,39 @@ Meteor.methods({
 			throw new Meteor.Error('Вклады более не принимаются');
 		}
 
-		if (item.canBuild(options.investments, options.currency)) {
-
-			if (options.investments > leftInvestments) {
-				options.investments = leftInvestments;
-			}
-
-			var price = item.price(options.investments);
-
-			if (options.currency == 'credits') {
-				price = {
-					credits: price.credits
-				}
-			} else {
-				delete price.credits;
-			}
-
-			var set = {
-				group: item.group,
-				engName: item.engName,
-				investments: options.investments,
-				price: price
-			};
-
-			Game.Resources.spend(price);
-
-			var honor = Game.Resources.calculateHonorFromMutualResearch(price);
-			if (honor > 0) {
-				Game.Resources.add({ honor: honor });
-			}
-
-			Game.Investments.add(set);
-		} else {
+		if (!item.canBuild(options.investments, options.currency)) {
 			throw new Meteor.Error('Невозможно сделать вклад');
 		}
+
+		if (options.investments > leftInvestments) {
+			options.investments = leftInvestments;
+		}
+
+		var price = item.price(options.investments);
+
+		if (options.currency == 'credits') {
+			price = {
+				credits: price.credits
+			}
+		} else {
+			delete price.credits;
+		}
+
+		var set = {
+			group: item.group,
+			engName: item.engName,
+			investments: options.investments,
+			price: price
+		};
+
+		Game.Resources.spend(price);
+
+		var honor = Game.Resources.calculateHonorFromMutualResearch(price);
+		if (honor > 0) {
+			Game.Resources.add({ honor: honor });
+		}
+
+		Game.Investments.add(set);
 	}
 })
 

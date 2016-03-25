@@ -2,6 +2,8 @@ initMutualClient = function() {
 
 initMutualLib();
 
+Meteor.subscribe('mutualResearch');
+
 Game.Mutual.showPage = function() {
 	var item = Game.Mutual.items[this.params.group][this.params.item];
 	

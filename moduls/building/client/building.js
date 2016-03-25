@@ -2,6 +2,8 @@ initBuildingClient = function() {
 
 initBuildingLib();
 
+Meteor.subscribe('buildings');
+
 Game.Building.showPage = function() {
 	var item = Game.Building.items[this.params.group][this.params.item];
 	

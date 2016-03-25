@@ -116,6 +116,39 @@ Meteor.methods({
 		} else {
 			return false;
 		}
+	},
+
+	'user.changePlanetName': function(name) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('user.changePlanetName: ', new Date(), user.login);
+
+		check(name, String);
+		name = name.trim();
+
+		if (name.length == 0) {
+			throw new Meteor.Error('Имя планеты не должно быть пустым');
+		}
+
+		if (name.length > 16) {
+			throw new Meteor.Error('Максимум 16 символов');
+		}
+
+		Meteor.users.update({
+			_id: Meteor.userId()
+		}, {
+			$set: {
+				planetName: name
+			}
+		});
 	}
 });
 

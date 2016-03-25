@@ -914,10 +914,6 @@ Template.cosmos.onRendered(function() {
 		alignMapToBasePlanet();
 	}
 
-	// First update
-	Meteor.call('spaceEvents.updateAll');
-	Meteor.call('planet.updateAll');
-
 	// Paths
 	var createPath = function(id, event) {
 		if (!mapView || pathViews[id]) {
@@ -969,6 +965,7 @@ Template.cosmos.onRendered(function() {
 				createPath(id, event);
 
 				// update event on time end
+				// TODO: Remove this method later! After reworking SpaceEvents -> Queue
 				Tracker.autorun(function(c) {
 					if (event.timeEnd <= Session.get('serverTime')) {
 						c.stop();
@@ -977,6 +974,7 @@ Template.cosmos.onRendered(function() {
 						}
 					}
 				});
+				// --------------------------------------------------------------------
 			}
 		},
 

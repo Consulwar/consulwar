@@ -1,7 +1,49 @@
 initCosmosPlanetsServer = function() {
 
 Game.Planets.actualize = function() {
-	Meteor.call('planet.updateAll');
+	var planets = Game.Planets.getAll().fetch();
+	if (planets) {
+		for (var i = 0; i < planets.length; i++) {
+			Game.Planets.actualizePlanet( planets[i] );
+		}
+	}
+}
+
+Game.Planets.actualizePlanet = function(planet) {
+	if (!planet || planet.isHome) {
+		return;
+	}
+
+	var timeCurrent = Game.getCurrentTime();
+
+	// spawn enemies
+	if (!planet.mission
+	 && !planet.armyId
+	 &&  planet.timeRespawn <= timeCurrent
+	) {
+		if (Game.Random.random() >= 0.5) {
+			// create mission
+			planet.mission = Game.Planets.generateMission(planet);
+		} else {
+			// wait
+			planet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
+		}
+		Game.Planets.update(planet);
+	}
+
+	// auto collect artefacts
+	if (planet.armyId && planet.timeArtefacts) {
+		var delta = timeCurrent - planet.timeArtefacts;
+		var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
+		if (count > 0) {
+			var artefacts = Game.Planets.getArtefacts(planet, count);
+			if (artefacts) {
+				Game.Resources.add(artefacts);
+			}
+			planet.timeArtefacts = timeCurrent;
+			Game.Planets.update(planet);
+		}
+	}
 }
 
 Game.Planets.update = function(planet) {
@@ -286,10 +328,6 @@ Game.Planets.getReptileAttackMission = function() {
 	};
 }
 
-var getServerTime = function() {
-	return Math.floor( new Date().valueOf() / 1000 );
-}
-
 // ----------------------------------------------------------------------------
 // Galactic generation
 // ----------------------------------------------------------------------------
@@ -485,7 +523,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 		}
 
 		var newId = Game.Planets.add(newPlanet);
-		Meteor.call('planet.update', newId);
+		Game.Planets.actualizePlanet(newPlanet);
 
 		freeSpots.splice(n, 1);
 	}
@@ -496,9 +534,18 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 // ----------------------------------------------------------------------------
 
 Meteor.methods({
-
 	'planet.initialize': function() {
-		user = Meteor.user();
+		// For planets initialization Meteor.user() required!
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
 		var planets = Game.Planets.getAll().fetch();
 
 		if (planets.length == 0) {
@@ -549,6 +596,16 @@ Meteor.methods({
 	},
 
 	'planet.discover': function(planetId) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
 		// get discovered planet
 		var planet = Game.Planets.getOne(planetId);
 		if (planet.isDiscovered) {
@@ -574,6 +631,16 @@ Meteor.methods({
 	},
 
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}
@@ -616,7 +683,7 @@ Meteor.methods({
 		if (!baseArmy) {
 			basePlanet.armyId = null;	
 		}
-		basePlanet.timeRespawn = getServerTime() + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
+		basePlanet.timeRespawn = Game.getCurrentTime() + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 		Game.Planets.update(basePlanet);
 
 		var startPosition = {
@@ -637,7 +704,7 @@ Meteor.methods({
 			targetPosition: targetPosition,
 			targetType:     Game.SpaceEvents.target.PLANET,
 			targetId:       targetPlanet._id,
-			startTime:      getServerTime(),
+			startTime:      Game.getCurrentTime(),
 			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 			engineLevel:    engineLevel,
 			isHumans:       true,
@@ -648,62 +715,14 @@ Meteor.methods({
 		}
 
 		Game.SpaceEvents.sendShip(shipOptions);
-	},
-
-	'planet.updateAll': function() {
-		var planets = Game.Planets.getAll().fetch();
-		if (planets) {
-			for (var i = 0; i < planets.length; i++) {
-				Meteor.call('planet.update', planets[i]._id);
-			}
-		}
-	},
-
-	'planet.update': function(planetId) {
-		var planet = Game.Planets.getOne(planetId);
-		if (!planet || planet.isHome) {
-			return;
-		}
-
-		var timeCurrent = getServerTime();
-
-		// spawn enemies
-		if (!planet.mission
-		 && !planet.armyId
-		 &&  planet.timeRespawn <= timeCurrent
-		) {
-			if (Game.Random.random() >= 0.5) {
-				// create mission
-				planet.mission = Game.Planets.generateMission(planet);
-			} else {
-				// wait
-				planet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
-			}
-			Game.Planets.update(planet);
-		}
-
-		// auto collect artefacts
-		if (planet.armyId && planet.timeArtefacts) {
-			var delta = timeCurrent - planet.timeArtefacts;
-			var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
-			if (count > 0) {
-				var artefacts = Game.Planets.getArtefacts(planet, count);
-				if (artefacts) {
-					Game.Resources.add(artefacts);
-				}
-				planet.timeArtefacts = timeCurrent;
-				Game.Planets.update(planet);
-			}
-		}
 	}
-
-})
+});
 
 Meteor.publish('planets', function () {
 	if (this.userId) {
 		return Game.Planets.Collection.find({
 			user_id: this.userId
-		})
+		});
 	}
 });
 

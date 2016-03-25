@@ -1,7 +1,7 @@
 initCosmosEventsServer = function() {
 
 Game.SpaceEvents.actualize = function() {
-	var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
+	var timeCurrent = Game.getCurrentTime();
 
 	// Try to attack player
 	var timeLastAttack = Game.Planets.getLastAttackTime();
@@ -51,7 +51,14 @@ Game.SpaceEvents.actualize = function() {
 	}
 
 	// Update space events
-	Meteor.call('spaceEvents.updateAll');
+	// TODO: Remove this method later! After reworking SpaceEvents -> Queue
+	var events = Game.SpaceEvents.getAll().fetch();
+	if (events) {
+		for (var i = 0; i < events.length; i++) {
+			Game.SpaceEvents.updateEvent(events[i]);
+		}
+	}
+	// --------------------------------------------------------------------
 }
 
 Game.SpaceEvents.update = function(event) {
@@ -80,7 +87,7 @@ Game.SpaceEvents.updateEvent = function(event) {
 		return;
 	}
 
-	serverTime = Math.floor( new Date().valueOf() / 1000 );
+	serverTime = Game.getCurrentTime();
 
 	switch (event.type) {
 		case Game.SpaceEvents.type.SHIP:
@@ -268,7 +275,7 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 		var targetPlanet = planets[ randTo ];
 
 		// send ship
-		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
+		var timeCurrent = Game.getCurrentTime();
 
 		var startPosition = {
 			x: startPlanet.x,
@@ -333,7 +340,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 		var startPlanet = planets[rand];
 
 		// send ship
-		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
+		var timeCurrent = Game.getCurrentTime();
 
 		var startPosition = {
 			x: startPlanet.x,
@@ -751,26 +758,26 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 // ----------------------------------------------------------------------------
 
 Meteor.methods({
-
-	'spaceEvents.updateAll': function() {
-		var events = Game.SpaceEvents.getAll().fetch();
-		if (!events || events.length <= 0) {
-			return;
-		}
-
-		for (var i = 0; i < events.length; i++) {
-			Game.SpaceEvents.updateEvent(events[i]);
-		}
-	},
-
+	// TODO: Remove this method later! After reworking SpaceEvents -> Queue
 	'spaceEvents.update': function(id) {
 		var event = Game.SpaceEvents.getOne(id);
 		if (event) {
 			Game.SpaceEvents.updateEvent(event);
 		}
 	},
+	// --------------------------------------------------------------------
 
 	'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}
@@ -798,7 +805,7 @@ Meteor.methods({
 		}
 
 		// check time
-		var timeCurrent = Math.floor( new Date().valueOf() / 1000 );
+		var timeCurrent = Game.getCurrentTime();
 		var timeLeft = enemyShip.timeEnd - timeCurrent;
 		
 		var attackOptions = Game.Planets.calcAttackOptions(

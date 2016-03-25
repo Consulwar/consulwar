@@ -11,8 +11,8 @@ Meteor.call('createQuiz', {
 		yes: 'Принять подкрепление',
 		more: 'Ещё!!!'
 	},
-	startDate: Math.floor(new Date().valueOf() / 1000),
-	endDate: Math.floor(new Date().valueOf() / 1000) + (60*60*24),
+	startDate: Game.getCurrentTime(),
+	endDate: Game.getCurrentTime() + (60*60*24),
 	result: {
 		no: 0,
 		yes: 0,
@@ -84,7 +84,7 @@ Meteor.methods({
 			throw new Meteor.Error('Такого ответа не существует');
 		}
 
-		if (quiz.endDate < Math.floor(new Date().valueOf() / 1000)) {
+		if (quiz.endDate < Game.getCurrentTime()) {
 			throw new Meteor.Error('Опрос уже завершен');
 		}
 
@@ -104,7 +104,7 @@ Meteor.methods({
 			quiz_id: id,
 			answer: answer,
 			power: votePower,
-			date: Math.floor(new Date().valueOf() / 1000)
+			date: Game.getCurrentTime()
 		});
 
 		var inc = {};

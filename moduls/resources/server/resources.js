@@ -144,7 +144,7 @@ Game.Resources.initialize = function(user) {
 			crystals: {amount: 1500 * 3},
 			credits: {amount: 0},
 			honor: {amount: 0},
-			updated: Math.floor(new Date().valueOf() / 1000)
+			updated: Game.getCurrentTime()
 		})
 	}
 }

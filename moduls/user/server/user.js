@@ -81,7 +81,7 @@ Accounts.onCreateUser(function(option, user) {
 		+ letters[Math.floor(Math.random()*36)]);
 
 	user.game = {
-		updated: Math.floor(new Date().valueOf() / 1000)
+		updated: Game.getCurrentTime()
 	};
 
 	Game.Resources.initialize(user);

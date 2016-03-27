@@ -15,6 +15,12 @@ initEarthLib();
 initEarthConfigServer();
 initEarthServerImport();
 
+// Auto import on server start
+// If db.zones is empty
+if (Game.EarthZones.Collection.find().count() == 0) {
+	Game.Earth.importZones();
+}
+
 Game.Earth.addReinforcement = function(units) {
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
@@ -602,8 +608,7 @@ SyncedCron.add({
 	}
 });
 
-// TODO: Remove comment after test!
-// SyncedCron.start();
+SyncedCron.start();
 
 Meteor.publish('zones', function () {
 	if (this.userId) {

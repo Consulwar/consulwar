@@ -49,16 +49,6 @@ Game.SpaceEvents.actualize = function() {
 	if (tradeFleetsCount <= 0) {
 		Game.SpaceEvents.spawnTradeFleet();	
 	}
-
-	// Update space events
-	// TODO: Remove this method later! After reworking SpaceEvents -> Queue
-	var events = Game.SpaceEvents.getAll().fetch();
-	if (events) {
-		for (var i = 0; i < events.length; i++) {
-			Game.SpaceEvents.updateEvent(events[i]);
-		}
-	}
-	// --------------------------------------------------------------------
 }
 
 Game.SpaceEvents.update = function(event) {
@@ -82,26 +72,34 @@ Game.SpaceEvents.add = function(event) {
 	return Game.SpaceEvents.Collection.insert(event);
 }
 
-Game.SpaceEvents.updateEvent = function(event) {
-	if (event.status == Game.SpaceEvents.status.FINISHED) {
+Game.SpaceEvents.complete = function(task) {
+	if (!task) {
 		return;
 	}
 
-	serverTime = Game.getCurrentTime();
+	var event = Game.SpaceEvents.Collection.findOne({
+		_id: task.eventId,
+		user_id: task.user_id
+	});
+
+	if (!event
+	 || event.status == Game.SpaceEvents.status.FINISHED
+	 || event.timeEnd > Game.getCurrentTime()
+	) {
+		return;
+	}
 
 	switch (event.type) {
 		case Game.SpaceEvents.type.SHIP:
-			Game.SpaceEvents.updateShip(serverTime, event);
+			Game.SpaceEvents.completeShip(event);
 			break;
 		case Game.SpaceEvents.type.REINFORCEMENT:
-			Game.SpaceEvents.updateReinforcement(serverTime, event);
+			Game.SpaceEvents.completeReinforcement(event);
 			break;
 	}
-
-	if (event.timeEnd <= serverTime) {
-		event.status = Game.SpaceEvents.status.FINISHED;
-		Game.SpaceEvents.Collection.update({ _id: event._id }, event);
-	}
+	
+	event.status = Game.SpaceEvents.status.FINISHED;
+	Game.SpaceEvents.Collection.update({ _id: event._id }, event);
 }
 
 // ----------------------------------------------------------------------------
@@ -123,7 +121,7 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 	}
 
 	// add event
-	Game.SpaceEvents.add({
+	var eventId = Game.SpaceEvents.add({
 		type: Game.SpaceEvents.type.REINFORCEMENT,
 		status: Game.SpaceEvents.status.STARTED,
 		timeStart: options.startTime,
@@ -132,17 +130,19 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 			units: options.units
 		}
 	});
+
+	// add task into queue
+	if (eventId) {
+		Game.Queue.add({
+			type: 'spaceEvent',
+			eventId: eventId,
+			startTime: options.startTime,
+			time: options.durationTime
+		});
+	}
 }
 
-Game.SpaceEvents.updateReinforcement = function(serverTime, event) {
-	if (event.status == Game.SpaceEvents.status.FINISHED) {
-		return; // already finished
-	}
-
-	if (event.timeEnd > serverTime) {
-		return; // still flying
-	}
-
+Game.SpaceEvents.completeReinforcement = function(event) {
 	// kill random count on the way
 	var killedPercent = Game.Random.interval(0, 30);
 	event.info.killedPercent = killedPercent;
@@ -231,7 +231,7 @@ Game.SpaceEvents.sendShip = function(options) {
 	}
 
 	// insert event
-	Game.SpaceEvents.add({
+	var eventId = Game.SpaceEvents.add({
 		type: Game.SpaceEvents.type.SHIP,
 		status: Game.SpaceEvents.status.STARTED,
 		timeStart: options.startTime,
@@ -250,6 +250,18 @@ Game.SpaceEvents.sendShip = function(options) {
 			armyId: options.armyId
 		}
 	});
+
+	console.log('add ship', eventId);
+
+	// add task into queue
+	if (eventId) {
+		Game.Queue.add({
+			type: 'spaceEvent',
+			eventId: eventId,
+			startTime: options.startTime,
+			time: options.flyTime
+		});
+	}
 }
 
 Game.SpaceEvents.spawnTradeFleet = function() {
@@ -380,15 +392,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 	}
 }
 
-Game.SpaceEvents.updateShip = function(serverTime, event) {
-	if (event.status == Game.SpaceEvents.status.FINISHED) {
-		return; // already finished
-	}
-
-	if (event.timeEnd > serverTime) {
-		return; // still flying
-	}
-
+Game.SpaceEvents.completeShip = function(event) {
 	// --------------------------------
 	// Arrived to planet
 	// --------------------------------
@@ -462,7 +466,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 				// add artefacts
 				if (battleResult.artefacts) {
-					planet.timeArtefacts = serverTime;
+					planet.timeArtefacts = event.timeEnd;
 					Game.Resources.add( battleResult.artefacts );
 				}
 			}
@@ -581,7 +585,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 
 					// collect and reset artefacts time
 					if (enemyArmy && !userArmy && !planet.isHome) {
-						var delta = serverTime - planet.timeArtefacts;
+						var delta = event.timeEnd - planet.timeArtefacts;
 						var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 						if (count > 0){
 							var artefacts = Game.Planets.getArtefacts(planet, count);
@@ -714,7 +718,7 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 				targetShip.info.mission.units = secondArmy.reptiles.fleet;
 			}
 			// update target fleet
-			targetShip.info.timeBattle = serverTime;
+			targetShip.info.timeBattle = event.timeEnd;
 			Game.SpaceEvents.Collection.update({ _id: targetShip._id }, targetShip);
 		} else {
 			// target fleet destroyed
@@ -758,15 +762,6 @@ Game.SpaceEvents.updateShip = function(serverTime, event) {
 // ----------------------------------------------------------------------------
 
 Meteor.methods({
-	// TODO: Remove this method later! After reworking SpaceEvents -> Queue
-	'spaceEvents.update': function(id) {
-		var event = Game.SpaceEvents.getOne(id);
-		if (event) {
-			Game.SpaceEvents.updateEvent(event);
-		}
-	},
-	// --------------------------------------------------------------------
-
 	'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY) {
 		var user = Meteor.user();
 

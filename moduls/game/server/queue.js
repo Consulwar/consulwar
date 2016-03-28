@@ -14,29 +14,46 @@ Meteor.startup(function() {
 */
 
 Game.Queue.add = function(item) {
-	// TODO: Refactoring! Add SpaceEvents here!
-	if (!Meteor.userId() || Game.Queue.isBusy(item.group)) {
+	if (!Meteor.userId()) {
 		return false;
 	}
 
-	var currentTime = Game.getCurrentTime();
+	if (item.group && Game.Queue.isBusy(item.group)) {
+		return false;
+	}
+
+	var startTime = item.startTime
+		? item.startTime
+		: Game.getCurrentTime();
 
 	var set = {
 		user_id: Meteor.userId(),
 		status: 0,
-		group: item.group,
 		type: item.type,
-		engName: item.engName,
-		startTime: currentTime,
-		finishTime: currentTime + item.time
+		startTime: startTime,
+		finishTime: startTime + item.time
 	}
 
 	var select = {
 		user_id: Meteor.userId(),
-		group: item.group,
 		type: item.type,
-		engName: item.engName,
-		finishTime: { $gt: currentTime }
+		finishTime: { $gt: startTime }
+	}
+
+	// parse additonal options
+	if (item.eventId) {
+		set.eventId = item.eventId;
+		select.eventId = item.eventId;
+	}
+
+	if (item.group) {
+		set.group = item.group;
+		select.group = item.group;
+	}
+
+	if (item.engName) {
+		set.engName = item.engName;
+		select.engName = item.engName;
 	}
 
 	if (item.level) {
@@ -47,9 +64,13 @@ Game.Queue.add = function(item) {
 		select.count = item.count;
 	}
 
+	// try to insert new task
 	var result = Game.Queue.Collection.upsert(select, {
 		$setOnInsert: set
 	});
+
+	console.log('try to insert', set);
+	console.log('result = ', result);
 
 	return result.insertedId ? true : false;
 }
@@ -74,7 +95,7 @@ var completeItems = function(items) {
 		// Рассчитать доход до finishTime
 		Game.Resources.updateWithIncome( items[i].finishTime );
 		// Применить результат и завершить задание
-		Game.getObjectByType( items[i].type ).add( items[i] );
+		Game.getObjectByType( items[i].type ).complete( items[i] );
 		Game.Queue.complete( items[i]._id );
 	}
 }

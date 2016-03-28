@@ -18,6 +18,10 @@ Game.Research.add = function(research) {
 	return set;
 }
 
+Game.Research.complete = function(task) {
+	return Game.Research.add(task);
+}
+
 Game.Research.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Research.getValue();

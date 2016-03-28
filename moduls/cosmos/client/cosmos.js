@@ -963,18 +963,6 @@ Template.cosmos.onRendered(function() {
 		added: function(id, event) {
 			if (event.type == Game.SpaceEvents.type.SHIP) {
 				createPath(id, event);
-
-				// update event on time end
-				// TODO: Remove this method later! After reworking SpaceEvents -> Queue
-				Tracker.autorun(function(c) {
-					if (event.timeEnd <= Session.get('serverTime')) {
-						c.stop();
-						if (mapView) {
-							Meteor.call('spaceEvents.update', id);
-						}
-					}
-				});
-				// --------------------------------------------------------------------
 			}
 		},
 

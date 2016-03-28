@@ -29,6 +29,10 @@ Game.Unit.remove = function(unit) {
 	return Game.Unit.set(unit, true);
 }
 
+Game.Unit.complete = function(task) {
+	return Game.Unit.add(task);
+}
+
 Game.Unit.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Unit.getHomeArmy();

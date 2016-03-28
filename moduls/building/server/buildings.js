@@ -17,6 +17,10 @@ Game.Building.add = function(building) {
 	return set;
 }
 
+Game.Building.complete = function(task) {
+	return Game.Building.add(task);
+}
+
 Game.Building.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Building.getValue();

@@ -1,6 +1,6 @@
 game = {
 	PRODUCTION_FACTOR: 1.48902803168182,
-	PRICE_FACTOR: 1.568803194,
+	PRICE_FACTOR: 1.1,
 
 	planet: {
 		residential: {}, 

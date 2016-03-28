@@ -8,7 +8,7 @@ game.Building = function(options){
 	if (Game.Building.items[this.group][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется здание ' + this.group + ' ' + this.engName);
 	}
-	
+
 	Game.Building.items[this.group][this.engName] = this;
 
 	this.url = function(options) {
@@ -39,7 +39,7 @@ game.Building = function(options){
 		}
 
 		if (!curPrice.time) {
-			curPrice.time = Math.floor(summ / 12);
+			curPrice.time = Math.floor(sum / 12);
 		}
 
 		Object.defineProperty(curPrice, 'base', {

@@ -250,10 +250,14 @@ game.Item = function(options) {
 		var resources = Game.Resources.getValue();
 
 		for (var name in price) {
-			if (name != 'time' && resources[name].amount <= (price[name])) {
+			if (name == 'time') {
+				continue;
+			}
+			if (!resources[name] || resources[name].amount < price[name]) {
 				return false;
 			}
 		}
+
 		return true;
 	}
 

@@ -47,13 +47,13 @@ Template.rating.helpers({
 		return Game.User.getLevel(rating);
 	},
 
-	mailHash: function(login) {
-		return 'compose/' + login;
+	mailHash: function(username) {
+		return 'compose/' + username;
 	}
 });
 
 Template.rating.onRendered(function() {
-	var userRow = $('#' + Meteor.user().login)[0];
+	var userRow = $('#' + Meteor.user().username)[0];
 	if (userRow) {
 		$('.rating .data')[0].scrollTop = userRow.offsetTop + 200;
 	}

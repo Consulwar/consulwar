@@ -118,8 +118,8 @@ var addCredits = function(roomName, credits) {
 	});
 }
 
-var addUser = function(roomName, login) {
-	Meteor.call('chat.addUserToRoom', roomName, login, function(err, data) {
+var addUser = function(roomName, username) {
+	Meteor.call('chat.addUserToRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
 		} else {
@@ -128,8 +128,8 @@ var addUser = function(roomName, login) {
 	});
 }
 
-var removeUser = function(roomName, login) {
-	Meteor.call('chat.removeUserFromRoom', roomName, login, function(err, data) {
+var removeUser = function(roomName, username) {
+	Meteor.call('chat.removeUserFromRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
 		} else {
@@ -152,8 +152,8 @@ var blockUser = function(options) {
 	});
 }
 
-var addModerator = function(roomName, login) {
-	Meteor.call('chat.addModeratorToRoom', roomName, login, function(err, data) {
+var addModerator = function(roomName, username) {
+	Meteor.call('chat.addModeratorToRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
 		} else {
@@ -162,8 +162,8 @@ var addModerator = function(roomName, login) {
 	});
 }
 
-var removeModerator = function(roomName, login) {
-	Meteor.call('chat.removeModeratorFromRoom', roomName, login, function(err, data) {
+var removeModerator = function(roomName, username) {
+	Meteor.call('chat.removeModeratorFromRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
 		} else {
@@ -227,7 +227,7 @@ var execClientCommand = function(message) {
 
 		blockUser({
 			roomName: isLocal ? Router.current().params.room : null,
-			login: message.substr('/block'.length).trim(),
+			username: message.substr('/block'.length).trim(),
 			time: parseInt(time, 10)
 		});
 		return true;
@@ -241,7 +241,7 @@ var execClientCommand = function(message) {
 
 		blockUser({
 			roomName: isLocal ? Router.current().params.room : null,
-			login: message.substr('/unblock'.length).trim(),
+			username: message.substr('/unblock'.length).trim(),
 			time: 0
 		});
 		return true;
@@ -308,20 +308,20 @@ Template.chat.helpers({
 
 		// private room -> users list
 		if (!room.isPublic) {
-			return room.logins;
+			return room.usernames;
 		}
 
 		// public room -> find from last messages
 		messages.depend();
-		var users = [ Meteor.user().login ];
+		var users = [ Meteor.user().username ];
 		var time = Session.get('serverTime') - 1800;
 		var n = messages.length;
 		while (n-- > 0) {
 			if (messages[n].timestamp < time) {
 				break;
 			}
-			if (users.indexOf(messages[n].login) == -1) {
-				users.push(messages[n].login);
+			if (users.indexOf(messages[n].username) == -1) {
+				users.push(messages[n].username);
 			}
 		}
 
@@ -341,7 +341,7 @@ Template.chat.helpers({
 			text = text.substr(3);
 		}
 
-		return text.replace('@' + Meteor.user().login, '<span class="me">@' + Meteor.user().login + '</span>');
+		return text.replace('@' + Meteor.user().username, '<span class="me">@' + Meteor.user().username + '</span>');
 	},
 
 	startWith: function(text, value) {
@@ -376,7 +376,7 @@ Template.chat.helpers({
 			name: Router.current().params.room,
 			$or: [
 				{ owner: Meteor.userId() },
-				{ moderators: { $in: [ Meteor.user().login ] } }
+				{ moderators: { $in: [ Meteor.user().username ] } }
 			]
 		});
 	}
@@ -507,7 +507,7 @@ Template.chat.events({
 
 		blockUser({
 			roomName: isLocal ? Router.current().params.room : null,
-			login: e.currentTarget.dataset.login,
+			username: e.currentTarget.dataset.username,
 			time: parseInt(time, 10)
 		});
 	},
@@ -522,7 +522,7 @@ Template.chat.events({
 
 		blockUser({
 			roomName: isLocal ? Router.current().params.room : null,
-			login: e.currentTarget.dataset.login,
+			username: e.currentTarget.dataset.username,
 			time: 0
 		});
 	},
@@ -530,37 +530,37 @@ Template.chat.events({
 	'click li a.remove': function(e, t) {
 		e.preventDefault();
 
-		var login = e.currentTarget.dataset.login;
-		if (confirm('Удалить из комнаты пользователя ' + login + '?')) {
-			removeUser(Router.current().params.room, login);
+		var username = e.currentTarget.dataset.username;
+		if (confirm('Удалить из комнаты пользователя ' + username + '?')) {
+			removeUser(Router.current().params.room, username);
 		}
 	},
 
 	'submit .chat #control': function(e, t) {
 		e.preventDefault();
 
-		var login = t.find('#control input[name="login"]').value;
+		var username = t.find('#control input[name="username"]').value;
 		var roomName = Router.current().params.room;
 
-		addUser(roomName, login);
-		t.find('#control input[name="login"]').value = '';
+		addUser(roomName, username);
+		t.find('#control input[name="username"]').value = '';
 	},
 
 	'click li a.addModerator': function(e, t) {
 		e.preventDefault();
 
-		var login = prompt('Укажите логин');
-		if (login) {
-			addModerator(Router.current().params.room, login);
+		var username = prompt('Укажите логин');
+		if (username) {
+			addModerator(Router.current().params.room, username);
 		}
 	},
 
 	'click li a.removeModerator': function(e, t) {
 		e.preventDefault();
 
-		var login = prompt('Укажите логин');
-		if (login) {
-			removeModerator(Router.current().params.room, login);	
+		var username = prompt('Укажите логин');
+		if (username) {
+			removeModerator(Router.current().params.room, username);
 		}
 	},
 

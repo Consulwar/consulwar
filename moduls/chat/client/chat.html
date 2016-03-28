@@ -6,7 +6,7 @@
 					<li class="online">
 						<span>{{this}}</span>
 						{{#if canControlUsers}}
-							<a class="remove" data-login="{{this}}">Удалить</a>
+							<a class="remove" data-username="{{this}}">Удалить</a>
 						{{/if}}
 					</li>
 				{{/each}}
@@ -32,9 +32,9 @@
 					<span 
 						class="
 							{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-							{{#if eq this.login user.login}}me{{/if}}"
+							{{#if eq this.username user.username}}me{{/if}}"
 					>
-						{{this.login}}{{#unless this.data}}:{{/unless}}
+						{{this.username}}{{#unless this.data}}:{{/unless}}
 					</span>
 					{{#if this.data}}
 						{{#if eq this.data.type 'dice'}}
@@ -78,8 +78,8 @@
 						{{{highlightUser this.message}}}
 					{{/if}}
 					{{#if canControlBlock}}
-						<a class="block" data-login="{{this.login}}" href="#">Наказать</a>
-						<a class="unblock" data-login="{{this.login}}" href="#">Простить</a>
+						<a class="block" data-username="{{this.username}}" href="#">Наказать</a>
+						<a class="unblock" data-username="{{this.username}}" href="#">Простить</a>
 					{{/if}}
 				</li>
 			{{/each}}
@@ -119,7 +119,7 @@
 
 		{{#if canControlUsers}}
 			<form id="control">
-				<input name="login" />
+				<input name="username" />
 				<input type="submit" value="Добавить" />
 			</form>
 		{{/if}}

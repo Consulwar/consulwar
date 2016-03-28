@@ -1,6 +1,6 @@
 <template name="auth">
 	<form class="auth" name="">
-		<input name="login" type="text" placeholder="Email">
+		<input name="username" type="text" placeholder="Email">
 		<input name="password" type="password" placeholder="*********">
 
 		<select disabled>
@@ -63,7 +63,7 @@
 	<form>
 		<label>
 			<div class="title">Как нам называть вас, Консул?</div>
-			<input class="{{#if err_username}}err{{/if}}" name="login" type="text" placeholder="Ваш логин">
+			<input class="{{#if err_username}}err{{/if}}" name="username" type="text" placeholder="Ваш логин">
 			<span class="error_text">{{err_username}}</span>
 		</label>
 		<label>
@@ -153,15 +153,15 @@
 			<div class="data">
 				<table>
 					{{#each users}}
-					<tr class="{{#if eq this.login user.login}}me{{/if}}" id="{{this.login}}">
+					<tr class="{{#if eq this.username user.username}}me{{/if}}" id="{{this.username}}">
 						<td>{{this.place}}</td>
-						<td>{{this.login}}</td>
+						<td>{{this.username}}</td>
 						<td>
 							{{#if this.cheater}}<img src="/img/game/achivments/cheater.png"/>{{/if}}
 							{{#if gt this.rating 25000}}<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>{{/if}}
 							</td>
 						<td>
-							<a class="send_message" href="{{pathFor 'mail' page=1 hash=(mailHash this.login)}}">
+							<a class="send_message" href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}">
 								<img src="/img/game/message.png">
 							</a>
 						</td>

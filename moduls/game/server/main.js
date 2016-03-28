@@ -74,9 +74,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('Actualize: ', new Date(), user.login);
+		console.log('Actualize: ', new Date(), user.username);
 
 		// Update queue tasks and resources
+		Game.Queue.checkAll();
 		Game.Queue.checkAll();
 
 		Game.SpaceEvents.actualize();
@@ -96,7 +97,7 @@ Meteor.publish('game', function () {
 		return Meteor.users.find({_id: this.userId}, {
 			fields: {
 				game: 1,
-				login: 1,
+				username: 1,
 				planetName: 1,
 				role: 1,
 				blocked: 1,

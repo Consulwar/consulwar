@@ -35,12 +35,30 @@ var letters = [
 ];
 
 Accounts.onCreateUser(function(option, user) {
-	check(option.login, String);
+	check(option.username, String);
 
-	option.login = option.login.trim();
+	option.username = option.username.trim();
+	option.username = option.username.replace(/\s+/g, ' ');
 
-	check(option.login, Match.Where(function(login) {
-		return login.length > 0 && login.length <= 16;
+	check(option.username, Match.Where(function(username) {
+		if (username.length == 0) {
+			throw new Meteor.Error('Имя не должно быть пустым');
+		}
+
+		if (username.length > 16) {
+			throw new Meteor.Error('Максимальная длинна имени 16 символов');
+		}
+
+		if (!username.match(/^[а-яА-Яa-zA-Z0-9_\- ]+$/)) {
+			throw new Meteor.Error('Имя может содержать пробел, тире, нижнее подчеркивание, буквы и цифры');
+		}
+
+		var hasName = Meteor.call('user.checkPlainnameExists', option.username);
+		if (hasName) {
+			throw new Meteor.Error('Такое имя занято');
+		}
+
+		return true;
 	}));
 
 	check(option.email, Match.Where(function(email) {
@@ -70,7 +88,8 @@ Accounts.onCreateUser(function(option, user) {
 	user.inviteCode = option.code;
 
 
-	user.login = option.login;
+	user.username = option.username;
+	user.plain_username = Game.User.convertUsernameToPlainname(option.username);
 	user.planetName = (
 		  letters[Math.floor(Math.random()*36)]
 		+ letters[Math.floor(Math.random()*36)]
@@ -108,10 +127,21 @@ Meteor.methods({
 		return Meteor.users.find({'status.online': true}).count();
 	},
 
-	'user.checkLoginExists': function(login) {
-		check(login, String);
+	'user.checkUsernameExists': function(username) {
+		check(username, String);
 
-		if (Meteor.users.findOne({ login: login })) {
+		if (Meteor.users.findOne({ username: username })) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+
+	'user.checkPlainnameExists': function(username) {
+		check(username, String);
+
+		var plainname = Game.User.convertUsernameToPlainname(username);
+		if (Meteor.users.findOne({ plain_username: plainname })) {
 			return true;
 		} else {
 			return false;
@@ -129,7 +159,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.changePlanetName: ', new Date(), user.login);
+		console.log('user.changePlanetName: ', new Date(), user.username);
 
 		check(name, String);
 		name = name.trim();

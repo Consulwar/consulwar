@@ -32,7 +32,7 @@ Game.Investments.initialize = function(item) {
 	if (currentValue == undefined) {
 		Game.Investments.Collection.insert({
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			group: item.group,
 			engName: item.engName,
 			investments: 0,

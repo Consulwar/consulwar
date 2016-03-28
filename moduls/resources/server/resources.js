@@ -165,7 +165,7 @@ Meteor.methods({
 			throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? ха-ха');
 		}
 
-		console.log('getBonusResources: ', new Date(), user.login);
+		console.log('getBonusResources: ', new Date(), user.username);
 
 		Meteor.call('actualizeGameInfo');
 

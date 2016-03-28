@@ -103,7 +103,7 @@ Game.Statistic.fixUser = function(userId) {
 }
 
 Meteor.methods({
-	'statistic.fixUser': function(login) {
+	'statistic.fixUser': function(username) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -118,14 +118,14 @@ Meteor.methods({
 			throw new Meteor.Error('Нужны парва администратора или модератора');
 		}
 
-		check(login, String);
+		check(username, String);
 
 		var target = Meteor.users.findOne({
-			login: login
+			username: username
 		});
 
 		if (!target) {
-			throw new Meteor.Error('Пользователя с именем ' + login + ' не существует');
+			throw new Meteor.Error('Пользователя с именем ' + username + ' не существует');
 		}
 
 		Game.Statistic.fixUser(target._id);

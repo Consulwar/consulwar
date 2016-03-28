@@ -12,7 +12,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('research.start: ', new Date(), user.login);
+		console.log('research.start: ', new Date(), user.username);
 
 		check(options, Object);
 		check(options.group, String);

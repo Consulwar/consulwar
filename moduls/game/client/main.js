@@ -102,6 +102,20 @@ test = Router.route('/test', function() {
 	console.log('yes');
 })
 
+
+var isActualizeInprogress = false;
+
+Game.actualizeGameInfo = function() {
+	console.log('actualize...');
+	if (!isActualizeInprogress) {
+		isActualizeInprogress = true;
+		Meteor.call('actualizeGameInfo', function() {
+			isActualizeInprogress = false;
+		});
+	}
+}
+
+
 Session.set('serverTimeDelta', null);
 Session.setDefault('serverTime', Math.floor(new Date().valueOf() / 1000));
 
@@ -117,7 +131,7 @@ Meteor.call('getCurrentTime', function(error, result) {
 		var queue = Game.Queue.getAll();
 		for (var i = 0; i < queue.length; i++) {
 			if (queue[i].finishTime <= serverTime) {
-				Meteor.call('actualizeGameInfo');
+				Game.actualizeGameInfo();
 				break;
 			}
 		}
@@ -140,7 +154,7 @@ Tracker.autorun(function () {
 		//var resources = Game.Resources.getValue();
 		//Session.set('resources', resources);
 
-		Session.set('login', user.login);
+		Session.set('username', user.username);
 		Session.set('planetName', user.planetName);
 	}
 });
@@ -151,10 +165,7 @@ mutual = {
 };
 
 
-Meteor.setInterval(function() {
-	console.log('actualize...');
-	Meteor.call('actualizeGameInfo');
-}, 60000);
+Meteor.setInterval(Game.actualizeGameInfo, 60000);
 
 var hasNewMailStatus = false;
 Tracker.autorun(function() {
@@ -166,15 +177,13 @@ Tracker.autorun(function() {
 	}
 });
 
-Accounts.onLogin(function() {
-	Meteor.call('actualizeGameInfo');
-});
+Accounts.onLogin(Game.actualizeGameInfo);
 /*
 Deps.autorun(function(){
 	var user = Meteor.user();
 	if(user && user.game){
 		console.log('actualize...', _.clone(Meteor.user()));
-		Meteor.call('actualizeGameInfo');
+		Game.actualizeGameInfo();
 	}
 });*/
 
@@ -219,7 +228,7 @@ var helpers = {
 		}
 	},
 	resources: function() { return Session.get('resources'); },
-	login: function() { return Session.get('login'); },
+	username: function() { return Session.get('username'); },
 	planetName: function() { return Session.get('planetName'); },
 
 	currentBattle: function() { return Session.get('currentBattle'); },

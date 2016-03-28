@@ -26,19 +26,20 @@ game.Building = function(options){
 		// является ценой подъема с нулевого до первого
 		level = level ? level - 1 : this.currentLevel();
 
-		var summ = 0;
-		for (var name in this.basePrice) {
-			curPrice[name] = Math.floor(this.basePrice[name] * Math.pow(game.PRICE_FACTOR, level));
-			summ += curPrice[name];
+		var basePrice = this.basePrice(level);
+		var sum = 0
+		for (var name in basePrice) {
+			curPrice[name] = basePrice[name][1].call(
+				this,
+				level,
+				basePrice[name][0],
+				basePrice[name][2]
+			);
+			sum += curPrice[name];
 		}
 
-		curPrice.time = Math.floor(summ / 12);
-
-		// ceil((Кри+Мет) / (250 *   max((10 / МаксЛвл^2) * левел^2, 1)))
-		if (level < 10) {
-			curPrice['humans'] = Math.ceil(summ / (250 * Math.max((10 / Math.pow(this.maxLevel, 2)) * Math.pow(level, 2), 1)));
-		} else {
-			curPrice['honor'] = Math.ceil(summ / (250 * Math.max((10 / Math.pow(this.maxLevel, 2)) * Math.pow(level, 2), 1))) * 3;
+		if (!curPrice.time) {
+			curPrice.time = Math.floor(summ / 12);
 		}
 
 		Object.defineProperty(curPrice, 'base', {
@@ -51,6 +52,10 @@ game.Building = function(options){
 	}
 };
 game.extend(game.Building, game.Item);
+
+game.BuildingFunction = function(options) {
+	Game.Building.functions[options.key] = options.func;
+}
 
 Game.Building = {
 	Collection: new Meteor.Collection('buildings'),
@@ -77,7 +82,9 @@ Game.Building = {
 	items: {
 		residential: {},
 		military: {}
-	}
+	},
+
+	functions: {}
 }
 
 initBuildingContent();

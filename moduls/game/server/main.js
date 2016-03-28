@@ -78,6 +78,7 @@ Meteor.methods({
 
 		// Update queue tasks and resources
 		Game.Queue.checkAll();
+		Game.Queue.checkAll();
 
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();

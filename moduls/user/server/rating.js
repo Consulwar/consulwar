@@ -12,7 +12,7 @@ Meteor.methods({
 			rating: { $gt: user.rating }
 		}, {
 			fields: {
-				login: 1,
+				username: 1,
 				rating: 1,
 				cheater: 1
 			},
@@ -23,7 +23,7 @@ Meteor.methods({
 			rating: { $gt: 0 }
 		}, {
 			fields: {
-				login: 1,
+				username: 1,
 				rating: 1,
 				cheater: 1
 			},
@@ -54,7 +54,7 @@ Meteor.methods({
 			rating: { $gt: 0 }
 		}, {
 			fields: {
-				login: 1,
+				username: 1,
 				rating: 1,
 				cheater: 1
 			},

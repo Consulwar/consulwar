@@ -35,12 +35,12 @@ var letters = [
 ];
 
 Accounts.onCreateUser(function(option, user) {
-	check(option.login, String);
+	check(option.username, String);
 
-	option.login = option.login.trim();
+	option.username = option.username.trim();
 
-	check(option.login, Match.Where(function(login) {
-		return login.length > 0 && login.length <= 16;
+	check(option.username, Match.Where(function(username) {
+		return username.length > 0 && username.length <= 16;
 	}));
 
 	check(option.email, Match.Where(function(email) {
@@ -70,7 +70,7 @@ Accounts.onCreateUser(function(option, user) {
 	user.inviteCode = option.code;
 
 
-	user.login = option.login;
+	user.username = option.username;
 	user.planetName = (
 		  letters[Math.floor(Math.random()*36)]
 		+ letters[Math.floor(Math.random()*36)]
@@ -108,10 +108,10 @@ Meteor.methods({
 		return Meteor.users.find({'status.online': true}).count();
 	},
 
-	'user.checkLoginExists': function(login) {
-		check(login, String);
+	'user.checkUsernameExists': function(username) {
+		check(username, String);
 
-		if (Meteor.users.findOne({ login: login })) {
+		if (Meteor.users.findOne({ username: username })) {
 			return true;
 		} else {
 			return false;
@@ -129,7 +129,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.changePlanetName: ', new Date(), user.login);
+		console.log('user.changePlanetName: ', new Date(), user.username);
 
 		check(name, String);
 		name = name.trim();

@@ -38,7 +38,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('getQuiz: ', new Date(), user.login);
+		console.log('getQuiz: ', new Date(), user.username);
 
 		check(id, String);
 
@@ -69,7 +69,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('quizAnswer: ', new Date(), user.login);
+		console.log('quizAnswer: ', new Date(), user.username);
 
 		check(id, String);
 		check(answer, String);
@@ -129,9 +129,9 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('createQuiz: ', new Date(), user.login);
+		console.log('createQuiz: ', new Date(), user.username);
 
-		if (user.login != 'Zav') {
+		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 
@@ -158,9 +158,9 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('sendQuiz: ', new Date(), user.login);
+		console.log('sendQuiz: ', new Date(), user.username);
 
-		if (user.login != 'Zav') {
+		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 		check(id, String);

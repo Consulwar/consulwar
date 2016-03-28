@@ -11,7 +11,7 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 		from: 1,
 		sender: 'Система',
 		to: user._id,
-		recipient: user.login,
+		recipient: user.username,
 		subject: subject,
 		text: text,
 		status: game.Mail.status.unread,
@@ -36,7 +36,7 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 			from: 1,
 			sender: 'Система',
 			to: users[i]._id,
-			recipient: users[i].login,
+			recipient: users[i].username,
 			subject: subject,
 			text: text,
 			status: game.Mail.status.unread,
@@ -117,7 +117,7 @@ Meteor.methods({
 			var parentId = Game.Mail.Collection.insert({
 				owner: user._id,
 				from: user._id,
-				sender: user.login,
+				sender: user.username,
 				to: '[all]',
 				recipient: '[all]',
 				subject: '[Рассылка] ' + subject,
@@ -140,9 +140,9 @@ Meteor.methods({
 					owner: users[i]._id,
 					parentId: parentId,
 					from: user._id,
-					sender: user.login,
+					sender: user.username,
 					to: users[i]._id,
-					recipient: users[i].login,
+					recipient: users[i].username,
 					subject: '[Рассылка] ' + subject,
 					text: text,
 					status: game.Mail.status.unread,
@@ -167,11 +167,11 @@ Meteor.methods({
 		} else {
 
 			var to = Meteor.users.findOne({
-				login: recipient
+				username: recipient
 			}, {
 				fields: {
 					_id: 1,
-					login: 1
+					username: 1
 				}
 			});
 
@@ -183,9 +183,9 @@ Meteor.methods({
 			var parentId = Game.Mail.Collection.insert({
 				owner: user._id,
 				from: user._id,
-				sender: user.login,
+				sender: user.username,
 				to: to._id,
-				recipient: to.login,
+				recipient: to.username,
 				subject: subject,
 				text: text,
 				status: game.Mail.status.unread,
@@ -203,9 +203,9 @@ Meteor.methods({
 					owner: to._id,
 					parentId: parentId,
 					from: user._id,
-					sender: user.login,
+					sender: user.username,
 					to: to._id,
-					recipient: to.login,
+					recipient: to.username,
 					subject: subject,
 					text: text,
 					status: game.Mail.status.unread,
@@ -332,14 +332,14 @@ Meteor.methods({
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
 		}
 
-		if (!options || !options.login) {
-			throw new Meteor.Error('Не указан обязательный параметр login');
+		if (!options || !options.username) {
+			throw new Meteor.Error('Не указан обязательный параметр username');
 		}
 
-		check(options.login, String);
+		check(options.username, String);
 
 		var target = Meteor.users.findOne({
-			login: options.login
+			username: options.username
 		});
 
 		if (!target) {
@@ -355,7 +355,7 @@ Meteor.methods({
 		var history = {
 			user_id: target._id,
 			type: Game.BanHistory.type.mail,
-			who: user.login,
+			who: user.username,
 			timestamp: Game.getCurrentTime(),
 			period: time
 		};
@@ -372,9 +372,9 @@ Meteor.methods({
 		
 		var messageText = '';
 		if (time > 0) {
-			messageText += 'Администратор ' + user.login + ' заблокировал вам отправку писем.' + '\n';
+			messageText += 'Администратор ' + user.username + ' заблокировал вам отправку писем.' + '\n';
 		} else {
-			messageText += 'Администратор ' + user.login + ' разблокировал вам отправку писем.';
+			messageText += 'Администратор ' + user.username + ' разблокировал вам отправку писем.';
 		}
 		if (options.reason) {
 			messageText += 'Причина: ' + options.reason;
@@ -385,7 +385,7 @@ Meteor.methods({
 			from: 1,
 			sender: 'Система',
 			to: target._id,
-			recipient: target.login,
+			recipient: target.username,
 			subject: time > 0 ? 'Отправка писем заблокирована' : 'Отправка писем разблокирована',
 			text: messageText,
 			status: game.Mail.status.unread,

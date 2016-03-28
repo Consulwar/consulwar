@@ -448,7 +448,7 @@ Meteor.methods({
 	sendFleet: function(type, level, fleet) {
 		var user = Meteor.user();
 
-		console.log('sendFleet: ', new Date(), user.login);
+		console.log('sendFleet: ', new Date(), user.username);
 
 		if (!(user && user._id)) {
 			throw new Meteor.Error('Требуется авторизация');
@@ -532,7 +532,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('checkBattles: ', new Date(), user.login);
+		console.log('checkBattles: ', new Date(), user.username);
 
 		var user = Meteor.user();
 

@@ -113,7 +113,7 @@ Meteor.methods({
 		var set = {
 			room_id: room._id,
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			alliance: user.alliance,
 			message: message,
 			timestamp: Game.getCurrentTime()
@@ -158,7 +158,7 @@ Meteor.methods({
 			} else if(message.substr(0, 5) == '/motd') {
 				if (['admin', 'helper'].indexOf(user.role) == -1
 				 && room.owner != user._id
-				 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
+				 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
 				) {
 					throw new Meteor.Error('Вы не можете устанавливать сообщение дня в этот чат');
 				}
@@ -247,11 +247,11 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (!options || !options.login) {
+		if (!options || !options.username) {
 			throw new Meteor.Error('Не указан логин');
 		}
 
-		check(options.login, String);
+		check(options.username, String);
 
 		if (options.roomName) {
 			check(options.roomName, String);
@@ -268,7 +268,7 @@ Meteor.methods({
 			// local block
 			if (['admin', 'helper'].indexOf(user.role) == -1
 			 && room.owner != user._id
-			 && (!room.moderators || room.moderators.indexOf(user.login) == -1)
+			 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
 			) {
 				throw new Meteor.Error('Вы не можете наказывать и прощать пользователей в этом чате');
 			}
@@ -281,7 +281,7 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: options.login
+			username: options.username
 		});
 
 		if (!target) {
@@ -297,7 +297,7 @@ Meteor.methods({
 		var history = {
 			user_id: target._id,
 			type: Game.BanHistory.type.chat,
-			who: user.login,
+			who: user.username,
 			timestamp: Game.getCurrentTime(),
 			period: time
 		}
@@ -313,14 +313,14 @@ Meteor.methods({
 			Game.Chat.Messages.Collection.insert({
 				room_id: room._id,
 				user_id: user._id,
-				login: user.login,
+				username: user.username,
 				alliance: user.alliance,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
 					timestamp: Game.getCurrentTime(),
 					period: time
 				},
-				message: target.login,
+				message: target.username,
 				timestamp: Game.getCurrentTime()
 			});
 		} else {
@@ -336,7 +336,7 @@ Meteor.methods({
 				Game.Chat.Messages.Collection.insert({
 					room_id: rooms[i]._id,
 					user_id: user._id,
-					login: user.login,
+					username: user.username,
 					alliance: user.alliance,
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
@@ -344,14 +344,14 @@ Meteor.methods({
 						period: time,
 						global: true
 					},
-					message: target.login,
+					message: target.username,
 					timestamp: Game.getCurrentTime()
 				});
 			}
 		}
 	},
 
-	'chat.banAccount': function(login) {
+	'chat.banAccount': function(username) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -367,7 +367,7 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: login
+			username: username
 		});
 
 		if (!target) {
@@ -381,7 +381,7 @@ Meteor.methods({
 		})
 	},
 
-	'chat.cheaterVaip': function(login) {
+	'chat.cheaterVaip': function(username) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -397,7 +397,7 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: login
+			username: username
 		});
 
 		if (!target) {
@@ -482,7 +482,7 @@ Meteor.methods({
 			room.isPublic = true;
 		} else {
 			room.users = [ user._id ];
-			room.logins = [ user.login ];
+			room.usernames = [ user.username ];
 		}
 
 		// check price
@@ -613,7 +613,7 @@ Meteor.methods({
 		Game.Chat.Messages.Collection.insert({
 			room_id: room._id,
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			alliance: user.alliance,
 			data: {
 				type: 'addfunds',
@@ -623,7 +623,7 @@ Meteor.methods({
 		});
 	},
 
-	'chat.addModeratorToRoom': function(roomName, login) {
+	'chat.addModeratorToRoom': function(roomName, username) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -635,7 +635,7 @@ Meteor.methods({
 		}
 
 		check(roomName, String);
-		check(login, String);
+		check(username, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
@@ -651,7 +651,7 @@ Meteor.methods({
 		}
 
 		if (!room.isPublic) {
-			if (room.logins.indexOf(login) == -1) {
+			if (room.usernames.indexOf(username) == -1) {
 				throw new Meteor.Error('Сначала нужно добавить пользователя в комнату');
 			}
 		}
@@ -661,14 +661,14 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: login
+			username: username
 		});
 
 		if (!target) {
 			throw new Meteor.Error('Пользователя с таким именем не существует');
 		}
 
-		if (room.moderators && room.moderators.indexOf( target.login ) != -1) {
+		if (room.moderators && room.moderators.indexOf( target.username ) != -1) {
 			throw new Meteor.Error('Такой модератор уже есть в чате');
 		}
 
@@ -676,24 +676,24 @@ Meteor.methods({
 			_id: room._id
 		}, {
 			$addToSet: {
-				moderators: target.login
+				moderators: target.username
 			}
 		});
 
 		Game.Chat.Messages.Collection.insert({
 			room_id: room._id,
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			alliance: user.alliance,
 			data: {
 				type: 'addModerator'
 			},
-			message: target.login,
+			message: target.username,
 			timestamp: Game.getCurrentTime()
 		});
 	},
 
-	'chat.removeModeratorFromRoom': function(roomName, login) {
+	'chat.removeModeratorFromRoom': function(roomName, username) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -705,7 +705,7 @@ Meteor.methods({
 		}
 
 		check(roomName, String);
-		check(login, String);
+		check(username, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
@@ -720,7 +720,7 @@ Meteor.methods({
 			throw new Meteor.Error('Вы не можете удалять модераторов из этой комнаты');
 		}
 
-		if (!room.moderators || room.moderators.indexOf( login ) == -1) {
+		if (!room.moderators || room.moderators.indexOf( username ) == -1) {
 			throw new Meteor.Error('Такого модератора в комнате нет');
 		}
 
@@ -728,24 +728,24 @@ Meteor.methods({
 			_id: room._id
 		}, {
 			$pull: {
-				moderators: login
+				moderators: username
 			}
 		});
 
 		Game.Chat.Messages.Collection.insert({
 			room_id: room._id,
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			alliance: user.alliance,
 			data: {
 				type: 'removeModerator'
 			},
-			message: login,
+			message: username,
 			timestamp: Game.getCurrentTime()
 		});
 	},
 
-	'chat.addUserToRoom': function(roomName, login) {
+	'chat.addUserToRoom': function(roomName, username) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -757,7 +757,7 @@ Meteor.methods({
 		}
 
 		check(roomName, String);
-		check(login, String);
+		check(username, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
@@ -781,7 +781,7 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: login
+			username: username
 		});
 
 		if (!target) {
@@ -797,24 +797,24 @@ Meteor.methods({
 		}, {
 			$addToSet: {
 				users: target._id,
-				logins: target.login
+				usernames: target.username
 			}
 		});
 
 		Game.Chat.Messages.Collection.insert({
 			room: room._id,
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			alliance: user.alliance,
 			data: {
 				type: 'add'
 			},
-			message: target.login,
+			message: target.username,
 			timestamp: Game.getCurrentTime()
 		});
 	},
 
-	'chat.removeUserFromRoom': function(roomName, login) {
+	'chat.removeUserFromRoom': function(roomName, username) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -826,7 +826,7 @@ Meteor.methods({
 		}
 
 		check(roomName, String);
-		check(login, String);
+		check(username, String);
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
@@ -846,7 +846,7 @@ Meteor.methods({
 		}
 
 		var target = Meteor.users.findOne({
-			login: login
+			username: username
 		});
 
 		if (!target) {
@@ -866,20 +866,20 @@ Meteor.methods({
 		}, {
 			$pull: {
 				users: target._id,
-				logins: target.login,
-				moderators: target.login
+				usernames: target.username,
+				moderators: target.username
 			}
 		});
 
 		Game.Chat.Messages.Collection.insert({
 			room_id: room._id,
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			alliance: user.alliance,
 			data: {
 				type: 'remove'
 			},
-			message: target.login,
+			message: target.username,
 			timestamp: Game.getCurrentTime()
 		});
 	},
@@ -919,7 +919,7 @@ Meteor.methods({
 			}
 		}, {
 			fields: {
-				login: 1,
+				username: 1,
 				message: 1,
 				data: 1,
 				timestamp: 1,
@@ -972,7 +972,7 @@ Meteor.publish('chat', function (roomName) {
 				timestamp: { $gt: Game.getCurrentTime() - 84600 }
 			}, {
 				fields: {
-					login: 1,
+					username: 1,
 					message: 1,
 					data: 1,
 					timestamp: 1,

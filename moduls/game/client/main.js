@@ -154,7 +154,7 @@ Tracker.autorun(function () {
 		//var resources = Game.Resources.getValue();
 		//Session.set('resources', resources);
 
-		Session.set('login', user.login);
+		Session.set('username', user.username);
 		Session.set('planetName', user.planetName);
 	}
 });
@@ -228,7 +228,7 @@ var helpers = {
 		}
 	},
 	resources: function() { return Session.get('resources'); },
-	login: function() { return Session.get('login'); },
+	username: function() { return Session.get('username'); },
 	planetName: function() { return Session.get('planetName'); },
 
 	currentBattle: function() { return Session.get('currentBattle'); },

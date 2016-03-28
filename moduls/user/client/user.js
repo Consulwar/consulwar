@@ -2,7 +2,7 @@ Template.auth.events({
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		var email = t.find('input[name="login"]').value
+		var email = t.find('input[name="username"]').value
 		, password = t.find('input[name="password"]').value;
 
 		Meteor.loginWithPassword(email, password, function(err){
@@ -63,9 +63,9 @@ Template.register_window_step3.helpers({
 	}
 });
 
-var validate_login = function(login) {
-	if (login.length > 0) {
-		Meteor.call('user.checkLoginExists', login, function(err, exists) {
+var validate_username = function(username) {
+	if (username.length > 0) {
+		Meteor.call('user.checkUsernameExists', username, function(err, exists) {
 			if (exists) {
 				Session.set('err_username', 'Такой логин уже используется');
 			} else {
@@ -124,14 +124,14 @@ Template.register_window_step3.events({
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		var login = t.find('input[name="login"]').value
+		var username = t.find('input[name="username"]').value
 		  , email = t.find('input[name="email"]').value
 		  , password = t.find('input[name="password"]').value
 		  , passwordr = t.find('input[name="passwordr"]').value
 		  , code = t.find('input[name="code"]').value
 		  , rules = t.find('input[name="rules"]').checked;
 
-		if (validate_login(login) 
+		if (validate_username(username) 
 			&& validate_password(password)
 			&& validate_passwordr(password, passwordr)
 			&& validate_email(email)
@@ -140,7 +140,7 @@ Template.register_window_step3.events({
 			Meteor.call('checkInviteCode', code, function(error, result) {
 				if (result) {
 					Session.set('err_code', false);
-					Accounts.createUser({email: email, password: password, login: login, code: code}, function(err) {
+					Accounts.createUser({email: email, password: password, username: username, code: code}, function(err) {
 						if (err) {
 							Notifications.error('Не удалось зарегистрировать пользователя', err.error);
 						} else {
@@ -156,9 +156,9 @@ Template.register_window_step3.events({
 		return false;
 	},
 
-	'blur [name="login"]': function(e, t) {
-		var login = e.target.value;
-		validate_login(login);
+	'blur [name="username"]': function(e, t) {
+		var username = e.target.value;
+		validate_username(username);
 	},
 
 	'blur [name="password"]': function(e, t) {

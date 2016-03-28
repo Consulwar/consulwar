@@ -272,10 +272,10 @@
 				<span class="subject">{{subject}}</span>
 				<time>{{formatDate timestamp}}</time>
 				<div class="text">{{{nl2br text}}}</div>
-				<button class="block" data-login="{{sender}}">
+				<button class="block" data-username="{{sender}}">
 					Заблокировать {{sender}}
 				</button>
-				<button class="block" data-login="{{recipient}}">
+				<button class="block" data-username="{{recipient}}">
 					Заблокировать {{recipient}}
 				</button>
 				{{#unless resolved}}

@@ -237,7 +237,7 @@ var replyLetter = function(letter, t) {
 	}
 
 	t.$('form').show();
-	checkLogin(t);
+	checkUsername(t);
 
 	var textarea = t.find('form textarea');
 	textarea.focus();
@@ -248,13 +248,13 @@ var replyLetter = function(letter, t) {
 var composeLetter = function(to, t) {
 	t.$('form').show();
 	t.$('form .recipient').val(to);
-	checkLogin(t);
+	checkUsername(t);
 }
 
-var checkLogin = function(t) {
-	var login = t.$('form .recipient').val();
-	if (login && login.length > 0) {
-		Meteor.call('user.checkLoginExists', login, function(err, result) {
+var checkUsername = function(t) {
+	var username = t.$('form .recipient').val();
+	if (username && username.length > 0) {
+		Meteor.call('user.checkUsernameExists', username, function(err, result) {
 			t.data.isRecipientOk.set(result);
 		});
 	} else {
@@ -298,7 +298,7 @@ Template.mail.helpers({
 				to: user._id,
 				from: 0,
 				sender: Game.Persons[dailyQuest.who || 'tamily'].name,
-				recipient: user.login,
+				recipient: user.username,
 				name: Game.Persons[dailyQuest.who || 'tamily'].name,
 				subject: dailyQuest.name,
 				timestamp: dailyQuest.startTime,
@@ -474,9 +474,9 @@ Template.mail.events({
 		);
 	},
 
-	// Check login
+	// Check username
 	'change input.recipient': function(e, t) {
-		checkLogin(t);
+		checkusername(t);
 	}
 });
 
@@ -571,9 +571,9 @@ Template.mailAdmin.events({
 			return;
 		}
 
-		var login = e.currentTarget.dataset.login;
+		var username = e.currentTarget.dataset.username;
 
-		var reason = prompt('Заблокировать почту для пользователя ' + login, 'Нарушение правил');
+		var reason = prompt('Заблокировать почту для пользователя ' + username, 'Нарушение правил');
 		if (!reason) {
 			return;
 		}
@@ -597,20 +597,20 @@ Template.mailAdmin.events({
 		}
 
 		Meteor.call('mail.blockUser', {
-			login: login,
+			username: username,
 			time: time,
 			reason: reason,
 			letterId: letter._id
 		});
 
-		var resolution = (letter.sender == login)
+		var resolution = (letter.sender == username)
 			? game.Mail.complain.senderBlocked
 			: game.Mail.complain.recipientBlocked;
 
 		Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
 
 		Router.go('mailAdmin', { page: t.data.page });
-		Notifications.success('Пользователь ' + login + ' заблокирован');
+		Notifications.success('Пользователь ' + username + ' заблокирован');
 	},
 
 	'click button.cancel': function(e, t) {

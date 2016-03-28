@@ -25,7 +25,7 @@
 
 			<input class="count" type="number" placeholder="Количество" value="{{count}}"/>
 
-			<button class="build" disabled="{{not unit.canBuild}}">Отдать приказ</button>
+			<button class="build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
 		{{/unless}}
 		
 		{{> Template.dynamic template=additionalArea}}

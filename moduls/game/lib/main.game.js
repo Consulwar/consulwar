@@ -275,11 +275,14 @@ game.Item = function(options) {
 	}
 
 	this.canBuild = function(count, currency) {
-		if (currency 
-			&& (
-				(currency == 'credits' && this.basePrice.credits) 
-				|| (currency == 'resources' && (this.basePrice.metals || this.basePrice.crystals || this.basePrice.humans)))) {
-			return this.meetRequirements() && this.isEnoughResources(count, currency);
+		if (currency) {
+			var price = this.price(count); 
+			if (
+			    (currency == 'credits' && price.credits) 
+			 || (currency == 'resources' && (price.metals || price.crystals || price.humans))
+			) {
+				return this.meetRequirements() && this.isEnoughResources(count, currency);
+			}
 		}
 
 		return this.meetRequirements() && this.isEnoughResources(count) && !Game.Queue.getGroup(this.group);

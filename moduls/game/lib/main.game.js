@@ -797,3 +797,12 @@ Game.Queue = {
 		return false;
 	}
 }
+
+
+game.Function = function(options) {
+	Game.functions[options.key] = options.func;
+}
+
+Game.functions = {};
+
+initFunctionsContent();

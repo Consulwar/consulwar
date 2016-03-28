@@ -5,6 +5,17 @@ game.Building = function(options){
 
 	this.type = 'building';
 
+	// -------------------------------------------------------------------
+	// TODO: Remove dat shit!
+	this.basePrice = function(level) {
+		return {
+			metals: [50, Game.functions.slowExponentialGrow, 0],
+			crystals: [50, Game.functions.slowExponentialGrow, 0],
+			weapon_parts: [1, Game.functions.slowLinearGrow, 0]
+		}
+	}
+	// -------------------------------------------------------------------
+
 	if (Game.Building.items[this.group][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется здание ' + this.group + ' ' + this.engName);
 	}
@@ -53,10 +64,6 @@ game.Building = function(options){
 };
 game.extend(game.Building, game.Item);
 
-game.BuildingFunction = function(options) {
-	Game.Building.functions[options.key] = options.func;
-}
-
 Game.Building = {
 	Collection: new Meteor.Collection('buildings'),
 
@@ -82,9 +89,7 @@ Game.Building = {
 	items: {
 		residential: {},
 		military: {}
-	},
-
-	functions: {}
+	}
 }
 
 initBuildingContent();

@@ -38,9 +38,27 @@ Accounts.onCreateUser(function(option, user) {
 	check(option.username, String);
 
 	option.username = option.username.trim();
+	option.username = option.username.replace(/\s+/g, ' ');
 
 	check(option.username, Match.Where(function(username) {
-		return username.length > 0 && username.length <= 16;
+		if (username.length == 0) {
+			throw new Meteor.Error('Имя не должно быть пустым');
+		}
+
+		if (username.length > 16) {
+			throw new Meteor.Error('Максимальная длинна имени 16 символов');
+		}
+
+		if (!username.match(/^[а-яА-Яa-zA-Z0-9_\- ]+$/)) {
+			throw new Meteor.Error('Имя может содержать пробел, тире, нижнее подчеркивание, буквы и цифры');
+		}
+
+		var hasName = Meteor.call('user.checkPlainnameExists', option.username);
+		if (hasName) {
+			throw new Meteor.Error('Такое имя занято');
+		}
+
+		return true;
 	}));
 
 	check(option.email, Match.Where(function(email) {
@@ -71,6 +89,7 @@ Accounts.onCreateUser(function(option, user) {
 
 
 	user.username = option.username;
+	user.plain_username = Game.User.convertUsernameToPlainname(option.username);
 	user.planetName = (
 		  letters[Math.floor(Math.random()*36)]
 		+ letters[Math.floor(Math.random()*36)]
@@ -112,6 +131,17 @@ Meteor.methods({
 		check(username, String);
 
 		if (Meteor.users.findOne({ username: username })) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+
+	'user.checkPlainnameExists': function(username) {
+		check(username, String);
+
+		var plainname = Game.User.convertUsernameToPlainname(username);
+		if (Meteor.users.findOne({ plain_username: plainname })) {
 			return true;
 		} else {
 			return false;

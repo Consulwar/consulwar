@@ -145,7 +145,8 @@ Game.Unit = {
 	items: {
 		army: {
 			fleet: {},
-			ground: {}
+			ground: {},
+			defense: {}
 		},
 		reptiles: {
 			fleet: {},

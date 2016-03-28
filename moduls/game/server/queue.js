@@ -69,9 +69,6 @@ Game.Queue.add = function(item) {
 		$setOnInsert: set
 	});
 
-	console.log('try to insert', set);
-	console.log('result = ', result);
-
 	return result.insertedId ? true : false;
 }
 

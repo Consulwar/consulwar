@@ -251,8 +251,6 @@ Game.SpaceEvents.sendShip = function(options) {
 		}
 	});
 
-	console.log('add ship', eventId);
-
 	// add task into queue
 	if (eventId) {
 		Game.Queue.add({

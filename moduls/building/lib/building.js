@@ -5,17 +5,6 @@ game.Building = function(options){
 
 	this.type = 'building';
 
-	// -------------------------------------------------------------------
-	// TODO: Remove dat shit!
-	this.basePrice = function(level) {
-		return {
-			metals: [50, Game.functions.slowExponentialGrow, 0],
-			crystals: [50, Game.functions.slowExponentialGrow, 0],
-			weapon_parts: [1, Game.functions.slowLinearGrow, 0]
-		}
-	}
-	// -------------------------------------------------------------------
-
 	if (Game.Building.items[this.group][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется здание ' + this.group + ' ' + this.engName);
 	}
@@ -28,38 +17,6 @@ game.Building = function(options){
 			item: this.engName
 		};
 		return Router.routes[this.type].path(options);
-	}
-
-	this.price = function(level) {
-		var curPrice = {};
-		// Цена идет на подъем ДО указаного уровня с предыдущего
-		// т.к. начальный уровень нулевой, то цена для первого уровня
-		// является ценой подъема с нулевого до первого
-		level = level ? level - 1 : this.currentLevel();
-
-		var basePrice = this.basePrice(level);
-		var sum = 0
-		for (var name in basePrice) {
-			curPrice[name] = basePrice[name][1].call(
-				this,
-				level,
-				basePrice[name][0],
-				basePrice[name][2]
-			);
-			sum += curPrice[name];
-		}
-
-		if (!curPrice.time) {
-			curPrice.time = Math.floor(sum / 12);
-		}
-
-		Object.defineProperty(curPrice, 'base', {
-			value: _.clone(curPrice)
-		})
-
-		curPrice = Game.Effect.Price.applyTo(this, curPrice);
-
-		return curPrice;
 	}
 };
 game.extend(game.Building, game.Item);

@@ -178,19 +178,21 @@ game.Item = function(options) {
 			// является ценой подъема с нулевого до первого
 			level = level ? level - 1 : this.currentLevel();
 
-			curPrice.time = 0;
-
-			for (var name in this.basePrice) {
-				curPrice[name] = Math.floor(this.basePrice[name] * Math.pow(game.PRICE_FACTOR, level));
-				curPrice.time += curPrice[name];
+			var basePrice = this.basePrice(level);
+			var sum = 0;
+			for (var name in basePrice) {
+				curPrice[name] = basePrice[name][1].call(
+					this,
+					level,
+					basePrice[name][0],
+					basePrice[name][2]
+				);
+				sum += curPrice[name];
 			}
 
-			if (level > 9 && !curPrice.honor) {
-				curPrice.honor = curPrice.humans * 3;
-				delete curPrice.humans;
+			if (!curPrice.time) {
+				curPrice.time = Math.floor(sum / 12);
 			}
-
-			curPrice.time = Math.floor(curPrice.time / 12);
 		} else {
 			level = level ? level : 1;
 

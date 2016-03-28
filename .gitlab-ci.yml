@@ -7,8 +7,8 @@ update_repo:
   only:
     - dev
   script:
-    - cd /media/sf_dev/consulwar/ && git fetch --all && git checkout dev
-    - cd /media/sf_dev/consulwar/content && git fetch --all && git checkout dev
+    - cd /media/sf_dev/consulwar/ && git fetch --all && git checkout dev && git reset --hard origin/dev
+    - cd /media/sf_dev/consulwar/content && git fetch --all && git checkout dev && git reset --hard origin/dev
 
 job_deploy:
   stage: deploy

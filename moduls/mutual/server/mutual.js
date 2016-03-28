@@ -2,22 +2,19 @@ initMutualServer = function () {
 
 initMutualLib();
 
-Game.Mutual.set = function(item) {
+Game.Mutual.add = function(item) {
 	Game.Mutual.initialize(item.group);
 
-	var currentValue = Game.Mutual.getValue(item.group);
+	var inc = {};
+	inc[item.engName] = parseInt(item.investments);
 
-	var set = {};
+	Game.Mutual.Collection.update({
+		group: item.group
+	}, {
+		$inc: inc
+	});
 
-	set[item.engName] = parseInt((currentValue[item.engName] || 0) + item.investments);
-
-	Game.Mutual.Collection.update({group: item.group}, {$set: set});
-
-	return set;
-}
-
-Game.Mutual.add = function(item) {
-	return Game.Mutual.set(item);
+	return inc;
 }
 
 Game.Mutual.initialize = function(group) {
@@ -26,7 +23,7 @@ Game.Mutual.initialize = function(group) {
 	if (currentValue == undefined) {
 		Game.Mutual.Collection.insert({
 			group: group
-		})
+		});
 	}
 }
 

@@ -33,19 +33,7 @@ Notifications.defaultOptions.timeout = 5000;
 
 Router.configure({
 	loadingTemplate: 'loading'
-})
-/*
-Router.map(function() {
-	this.route('index', {path: '/'})
-
-	this.route('register', {
-		path: '/register',
-		layoutTemplate: 'index',
-		yieldTemplates: {
-			'register_window': {to: 'modal'}
-		}
-	});
-})*/
+});
 
 Router.route('/', function () {
 	Session.set('totalUsersCount', '…');
@@ -108,184 +96,11 @@ Router.route('register', {
 
 Meteor.subscribe('game');
 Meteor.subscribe('queue');
-Meteor.subscribe('buildings');
-Meteor.subscribe('units');
-Meteor.subscribe('researches');
-Meteor.subscribe('mutualResearch');
 
 
 test = Router.route('/test', function() {
 	console.log('yes');
 })
-
-
-var menu = {
-	planet: {
-		residential: game.planet.residential, 
-		counsul: game.planet.counsul, 
-		military: game.planet.military,
-	},
-	army: {
-		fleet: game.army.fleet,
-		heroes: game.army.heroes,
-		ground: game.army.ground
-	},
-	research: {
-		evolution: game.research.evolution,
-		fleetups: game.research.fleetups,
-		mutual: game.research.mutual
-	},
-	/*powerups: {
-		avaliable: [],
-		activated: [],
-		bought: []
-	},
-	alliance: {
-		info: [],
-		find: [],
-		create: []
-	},*/
-	battle: {
-		attack: _.map(Game.Battle.items, function(value) {
-			return value;
-		}),
-		reinforcement: [],
-		//statistics: [],
-		earth: []
-	},
-	/*battle: {
-		events: [],
-		reinforcement: [],
-		history: []
-	},*/
-	messages: {
-		'private': [],
-		//alliance: [],
-		all: []
-	},
-	reptiles: {
-		rfleet: game.reptiles.rfleet,
-		rheroes: game.reptiles.rheroes,
-		rground: game.reptiles.rground
-	}
-}
-
-/*
-Router.route('/game/:menu?/:side?/:item?', {
-	name: 'game',
-
-	before: function() {
-		if (!Meteor.userId()) {
-			this.redirect('index');
-			return;
-		}
-
-		var user = Meteor.user();
-		if (user && user.blocked == true) {
-			Meteor.logout();
-			this.redirect('index');
-			alert('Аккаунт заблокирован');
-		}
-
-		if (this.params.menu && (this.params.menu in menu || this.params.menu in game)) {
-			if (!(this.params.side && (this.params.side in menu[this.params.menu] || this.params.side in game[this.params.menu]))) {
-				return this.redirect('game', {
-					menu: this.params.menu,
-					side: Object.keys(menu[this.params.menu])[0]
-				})
-			}
-		} else {
-			return this.redirect('game', {menu: 'planet'});
-		}
-			
-		this.wait(Meteor.subscribe('game'));
-		this.wait(Meteor.subscribe('resources'));
-		this.wait(Meteor.subscribe('queue'));
-		this.wait(Meteor.subscribe('buildings'));
-		this.wait(Meteor.subscribe('units'));
-		this.wait(Meteor.subscribe('researches'));
-
-		if (this.ready()) {
-			Session.set('active_menu', null);
-			Session.set('active_side', null);
-			Session.set('active_item', null);
-			Session.set('point_info', null);
-
-			Session.set('price', null);
-			Session.set('priceEffects', null);
-			Session.set('level', null);
-			Session.set('investments', null);
-			Session.set('effect', null);
-			Session.set('requirements', null);
-
-			Session.set('active_menu', this.params.menu);
-			Session.set('active_side', this.params.side);
-			this.next();
-		} else {
-			this.render('loading', {layout: 'loading_layout'})
-		}
-	},
-
-	after: function() {
-		if (window.Metrica != undefined) {
-			Metrica.hit(window.location.href, 'Game', document.referrer);
-		}
-	},
-
-	action: function() {
-		this.render('game');
-
-		if (this.params.menu == 'messages') {
-			if (['all', 'alliance'].indexOf(this.params.side) != -1) {
-				this.render('chat', {to: 'content'});
-			} else {
-				this.render('mail', {to: 'content'});
-			}	
-		} else if (this.params.menu == 'battle') {
-			if (this.params.side == 'statistics') {
-				var self = this;
-				Meteor.call('getTopUsers', function(err, users) {
-					for(var i = 0; i < users.length; i++) {
-						users[i].place = i + 1;
-					}
-
-					self.render('rating', {to: 'content', data: {users: users}});
-				});
-			} else if (this.params.side == 'reinforcement') {
-				this.render('reserve', {to: 'content'});
-			} else if (this.params.side == 'earth') {
-				this.render('earth', {to: 'content'});
-
-				if (this.params.item) {
-					var item = Game.Point.items[this.params.item];
-					Session.set('active_item', item);
-					Meteor.call('getPointInfo', this.params.item, function(err, info) {
-						Session.set('point_info', info);
-					});
-						
-				}
-			} else {
-				//this.render('battle', {to: 'content'});
-				var item = Game.Battle.items[this.params.item];
-				Session.set('active_item', item);
-				this.render('battle', {to: 'content'});
-				Session.set('currentBattleLevel', 1);
-				$('select.battle_level').val(1);
-			}	
-		} else if (this.params.item && game[this.params.menu][this.params.side][this.params.item]) {
-			var item = game[this.params.menu][this.params.side][this.params.item];
-			Session.set('active_item', item);
-			this.render('build', {to: 'content'});
-		} else {
-			this.render('empty', {to: 'content'});
-		}
-
-		updateItemInformation();
-	
-	
-	}
-});
-*/
 
 Session.set('serverTimeDelta', null);
 Session.setDefault('serverTime', Math.floor(new Date().valueOf() / 1000));
@@ -419,7 +234,6 @@ var helpers = {
 
 
 Template.game.helpers(helpers);
-//Template.build.helpers(helpers);
 Template.item.helpers(helpers);
 Template.battle.helpers(helpers);
 
@@ -428,13 +242,12 @@ Template.game.events({
 	'click header .username .edit': function() {
 		var planetName = prompt('Как назвать планету?', Meteor.user().planetName);
 
-		Meteor.call('changePlanetName', planetName, function(err, result) {
+		Meteor.call('user.changePlanetName', planetName, function(err, result) {
 			if (err) {
 				Notifications.error('Невозможно сменить название планеты', err.error);
 			}
 		});
 	},
-
 
 	'click progress.metals': function(e, t) {
 		Meteor.call('getBonusResources', 'metals', function(error, result) {
@@ -495,67 +308,6 @@ Template.reward.events({
 		Blaze.remove(t.view);
 	}
 });
-/*
-Template.build.events({
-	'keyup .count, change .count': function(e, t) {
-		var value = e.target.value.replace(/\D/g,'');
-		value = value > 0 ? value : 1;
-
-		var item = game[Session.get('active_menu')][Session.get('active_side')][Session.get('active_item').engName];
-
-		var price = item.price(value);
-		Session.set('price', price);
-		Session.set('priceEffects', price.effects);
-		Session.set('basePrice', price.base);
-
-		Session.set('disableBuild', item.canBuild(value) ? false : true);
-	},
-
-	'click button.build': function(e, t) {
-		var active_menu = Session.get('active_menu')
-		  , active_side = Session.get('active_side')
-		  , active_item = Session.get('active_item').engName;
-
-		var item = game[active_menu][active_side][active_item];
-
-		var build = {
-			menu: active_menu, 
-			side: active_side, 
-			item: active_item, 
-		};
-
-		if (item.type == 'unit') {
-			var value = parseInt(t.find('.count[type="number"]').value);
-			check(value, Number)
-			build.count = value;
-		}
-
-		if (e.target.dataset.action == 'invest') {
-			build.investments = parseInt(t.find('.count[type="number"]').value);
-			Meteor.call('invest', build, e.target.dataset.currency,
-				function(error, message) {
-					if (error) {
-						Notifications.error('Невозможно вложиться', error.error);
-					}
-				}
-			);
-		} else {
-			Meteor.call('build', build,
-				function(error, message) {
-					if (error) {
-						Notifications.error('Невозможно начать строительство', error.error);
-					} else {
-						Notifications.success('Строительство запущено');
-					}
-				}
-			);
-
-			if (item.type != 'unit' && game[active_menu][active_side][active_item].currentLevel() == 0) {
-				Router.go('game', {menu: active_menu, side: active_side});
-			}
-		}
-	}
-});*/
 
 ShowModalWindow = function(template, data) {
 	Blaze.renderWithData(

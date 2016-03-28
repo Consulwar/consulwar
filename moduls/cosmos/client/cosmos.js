@@ -914,10 +914,6 @@ Template.cosmos.onRendered(function() {
 		alignMapToBasePlanet();
 	}
 
-	// First update
-	Meteor.call('spaceEvents.updateAll');
-	Meteor.call('planet.updateAll');
-
 	// Paths
 	var createPath = function(id, event) {
 		if (!mapView || pathViews[id]) {
@@ -967,16 +963,6 @@ Template.cosmos.onRendered(function() {
 		added: function(id, event) {
 			if (event.type == Game.SpaceEvents.type.SHIP) {
 				createPath(id, event);
-
-				// update event on time end
-				Tracker.autorun(function(c) {
-					if (event.timeEnd <= Session.get('serverTime')) {
-						c.stop();
-						if (mapView) {
-							Meteor.call('spaceEvents.update', id);
-						}
-					}
-				});
 			}
 		},
 

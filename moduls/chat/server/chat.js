@@ -2,6 +2,14 @@ initChatServer = function() {
 
 initChatLib();
 
+/* Rate limiter test rule
+DDPRateLimiter.addRule({
+	userId: function(userId) { return userId; },
+	type: 'method',
+	name: 'chat.sendMessage'
+}, 2, 10000);
+*/
+
 // create defaul rooms on server startup
 var createDefaulRoom = function(name) {
 	if (!Game.Chat.Room.Collection.findOne({ name: name })) {
@@ -108,7 +116,7 @@ Meteor.methods({
 			login: user.login,
 			alliance: user.alliance,
 			message: message,
-			timestamp: Math.floor(new Date().valueOf() / 1000)
+			timestamp: Game.getCurrentTime()
 		};
 
 		if (user.role) {
@@ -313,7 +321,7 @@ Meteor.methods({
 					period: time
 				},
 				message: target.login,
-				timestamp: Math.floor(new Date().valueOf() / 1000)
+				timestamp: Game.getCurrentTime()
 			});
 		} else {
 			var rooms = Game.Chat.Room.Collection.find({
@@ -337,7 +345,7 @@ Meteor.methods({
 						global: true
 					},
 					message: target.login,
-					timestamp: Math.floor(new Date().valueOf() / 1000)
+					timestamp: Game.getCurrentTime()
 				});
 			}
 		}
@@ -611,7 +619,7 @@ Meteor.methods({
 				type: 'addfunds',
 				amount: credits
 			},
-			timestamp: Math.floor(new Date().valueOf() / 1000)
+			timestamp: Game.getCurrentTime()
 		});
 	},
 
@@ -681,7 +689,7 @@ Meteor.methods({
 				type: 'addModerator'
 			},
 			message: target.login,
-			timestamp: Math.floor(new Date().valueOf() / 1000)
+			timestamp: Game.getCurrentTime()
 		});
 	},
 
@@ -733,7 +741,7 @@ Meteor.methods({
 				type: 'removeModerator'
 			},
 			message: login,
-			timestamp: Math.floor(new Date().valueOf() / 1000)
+			timestamp: Game.getCurrentTime()
 		});
 	},
 
@@ -802,7 +810,7 @@ Meteor.methods({
 				type: 'add'
 			},
 			message: target.login,
-			timestamp: Math.floor(new Date().valueOf() / 1000)
+			timestamp: Game.getCurrentTime()
 		});
 	},
 
@@ -872,7 +880,7 @@ Meteor.methods({
 				type: 'remove'
 			},
 			message: target.login,
-			timestamp: Math.floor(new Date().valueOf() / 1000)
+			timestamp: Game.getCurrentTime()
 		});
 	},
 

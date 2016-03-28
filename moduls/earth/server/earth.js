@@ -21,6 +21,28 @@ if (Game.EarthZones.Collection.find().count() == 0) {
 	Game.Earth.importZones();
 }
 
+var checkIsStationaryUnit = function(side, group, name) {
+	return[
+		'army.ground.relax',
+		'reptiles.ground.chipping'
+	].indexOf(side + '.' + group + '.' + name) != -1;
+}
+
+var setupUnitHierarchy = function(units, side, group, name) {
+	if (!units) {
+		units = {};
+	}
+	if (!units[side]) {
+		units[side] = {};
+	}
+	if (!units[side][group]) {
+		units[side][group] = {};
+	}
+	if (!units[side][group][name]) {
+		units[side][group][name] = 0;
+	}
+}
+
 Game.Earth.addReinforcement = function(units) {
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
@@ -31,7 +53,7 @@ Game.Earth.addReinforcement = function(units) {
 	}
 
 	var honor = 0;
-	var incrementUnits = {};
+	var inc = {};
 
 	for (var side in units) {
 		for (var group in units[side]) {
@@ -41,7 +63,7 @@ Game.Earth.addReinforcement = function(units) {
 					honor += Game.Resources.calculateHonorFromReinforcement(
 						Game.Unit.items[side][group][name].price(count)
 					);
-					incrementUnits['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
+					inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
 				}
 			}
 		}
@@ -54,7 +76,7 @@ Game.Earth.addReinforcement = function(units) {
 	Game.EarthZones.Collection.update({
 		isCurrent: true
 	}, {
-		$inc: incrementUnits
+		$inc: inc
 	});
 }
 
@@ -241,11 +263,6 @@ Game.Earth.moveArmy = function(destination) {
 		throw new Meteor.Error('Зона ' + currentZone.name + ' не связана с зоной ' + destZone.name);
 	}
 
-	// not movable units
-	var stationaryUnits = [
-		'army.ground.relax'
-	];
-
 	// move units
 	var currentArmy = currentZone.userArmy;
 	var destArmy = destZone.userArmy;
@@ -262,35 +279,13 @@ Game.Earth.moveArmy = function(destination) {
 						continue;
 					}
 
-					if (stationaryUnits.indexOf(side + '.' + group + '.' + name) >= 0) {
+					if (checkIsStationaryUnit(side, group, name)) {
 						// stay on current point
-						if (!restArmy) {
-							restArmy = {};
-						}
-						if (!restArmy[side]) {
-							restArmy[side] = {};
-						}
-						if (!restArmy[side][group]) {
-							restArmy[side][group] = {};
-						}
-
+						setupUnitHierarchy(restArmy, side, group, name);
 						restArmy[side][group].name = count;
-
 					} else {
 						// move
-						if (!destArmy) {
-							destArmy = {};
-						}
-						if (!destArmy[side]) {
-							destArmy[side] = {};
-						}
-						if (!destArmy[side][group]) {
-							destArmy[side][group] = {};
-						}
-						if (!destArmy[side][group][name]) {
-							destArmy[side][group][name] = 0;
-						}
-
+						setupUnitHierarchy(destArmy, side, group, name);
 						destArmy[side][group][name] += count;
 					}
 
@@ -413,7 +408,7 @@ Game.Earth.createTurn = function() {
 		// Got enemy at current zone! Proceed battle or retreat?
 		var options = {
 			type: 'battle',
-			timeStart: Math.floor(new Date().valueOf() / 1000),
+			timeStart: Game.getCurrentTime(),
 			actions: {
 				battle: 0,
 				retreat: 0
@@ -439,7 +434,7 @@ Game.Earth.createTurn = function() {
 
 		var options = {
 			type: 'move',
-			timeStart: Math.floor(new Date().valueOf() / 1000),
+			timeStart: Game.getCurrentTime(),
 			actions: actionsList,
 			totalVotePower: 0,
 			users: []
@@ -512,11 +507,8 @@ Game.Earth.checkTurn = function() {
 					for (var side in enemyArmy) {
 						for (var group in enemyArmy[side]) {
 							for (var name in enemyArmy[side][group]) {
-								// skip reptiles groun chipping
-								if (side == 'reptiles'
-								 && group == 'ground'
-								 && name == 'chipping'
-								) {
+								// skip stationary units
+								if (checkIsStationaryUnit(side, group, name)) {
 									continue;
 								}
 
@@ -527,16 +519,7 @@ Game.Earth.checkTurn = function() {
 									continue;
 								}
 
-								if (!attackArmy) {
-									attackArmy = {};
-								}
-								if (!attackArmy[side]) {
-									attackArmy[side] = {};
-								}
-								if (!attackArmy[side][group]) {
-									attackArmy[side][group] = {};
-								}
-
+								setupUnitHierarchy(attackArmy, side, group, name);
 								attackArmy[side][group][name] = count;
 							}
 						}
@@ -617,7 +600,7 @@ Meteor.publish('zones', function () {
 });
 
 Meteor.publish('turns', function() {
-	return Game.EarthTurns.Collection.find()
+	return Game.EarthTurns.Collection.find();
 });
 
 initEarthServerMethods();

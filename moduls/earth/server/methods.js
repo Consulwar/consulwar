@@ -5,12 +5,12 @@ Meteor.methods({
 		// check user
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
 		// check turn
@@ -37,27 +37,32 @@ Meteor.methods({
 
 		// save vote
 		var votePower = Game.User.gerVotePower();
-		
-		lastTurn.users.push(user._id);
-		lastTurn.actions[ actionName ] += votePower;
-		lastTurn.totalVotePower += votePower;
+
+		var inc = {
+			totalVotePower: votePower
+		}
+		inc['actions.' + actionName] = votePower;
 
 		Game.EarthTurns.Collection.update({
 			_id: lastTurn._id
-		}, lastTurn);
+		}, {
+			$addToSet: { users: user._id },
+			$inc: inc
+		});
 	},
 
 	'earth.sendReinforcement': function(units) {
-		var currentTime = Math.floor(new Date().valueOf() / 1000);
 		var user = Meteor.user();
 
-		if (!(user && user._id)) {
+		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
 		}
+
+		var currentTime = Game.getCurrentTime();
 
 		if (!Game.Earth.checkReinforceTime(currentTime)) {
 			throw new Meteor.Error('С 17:00 до 19:00 по МСК отправка войск недоступна');

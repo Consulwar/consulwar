@@ -2,6 +2,8 @@ initResearchClient = function() {
 
 initResearchLib();
 
+Meteor.subscribe('researches');
+
 Game.Research.showPage = function() {
 	var item = Game.Research.items[this.params.group][this.params.item];
 

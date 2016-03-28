@@ -5,22 +5,20 @@ initUnitServerMethods();
 
 Game.Unit.set = function(unit, invertSign) {
 	invertSign = invertSign == true ? -1 : 1;
+
 	Game.Unit.initialize();
 
-	var currentValue = Game.Unit.get(unit.group, unit.engName);
-
-	var set = {};
-
-	set['units.army.' + unit.group + '.' + unit.engName] = parseInt(currentValue + (unit.count) * invertSign);
+	var inc = {};
+	inc['units.army.' + unit.group + '.' + unit.engName] = parseInt(unit.count * invertSign);
 
 	Game.Unit.Collection.update({
 		user_id: Meteor.userId(),
 		location: Game.Unit.location.HOME
 	}, {
-		$set: set
+		$inc: inc
 	});
 
-	return set;
+	return inc;
 }
 
 Game.Unit.add = function(unit) {
@@ -29,6 +27,10 @@ Game.Unit.add = function(unit) {
 
 Game.Unit.remove = function(unit) {
 	return Game.Unit.set(unit, true);
+}
+
+Game.Unit.complete = function(task) {
+	return Game.Unit.add(task);
 }
 
 Game.Unit.initialize = function(user) {

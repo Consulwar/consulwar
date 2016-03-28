@@ -15,7 +15,7 @@ game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 		subject: subject,
 		text: text,
 		status: game.Mail.status.unread,
-		timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
+		timestamp: timestamp || Game.getCurrentTime()
 	});
 
 	Game.Statistic.incrementUser(user._id, {
@@ -40,7 +40,7 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 			subject: subject,
 			text: text,
 			status: game.Mail.status.unread,
-			timestamp: timestamp || Math.floor(new Date().valueOf() / 1000)
+			timestamp: timestamp || Game.getCurrentTime()
 		});
 	}
 
@@ -123,7 +123,7 @@ Meteor.methods({
 				subject: '[Рассылка] ' + subject,
 				text: text,
 				status: game.Mail.status.read,
-				timestamp: Math.floor(new Date().valueOf() / 1000)
+				timestamp: Game.getCurrentTime()
 			});
 
 			// insert recipients copies
@@ -146,7 +146,7 @@ Meteor.methods({
 					subject: '[Рассылка] ' + subject,
 					text: text,
 					status: game.Mail.status.unread,
-					timestamp: Math.floor(new Date().valueOf() / 1000)
+					timestamp: Game.getCurrentTime()
 				});
 			}
 
@@ -189,7 +189,7 @@ Meteor.methods({
 				subject: subject,
 				text: text,
 				status: game.Mail.status.unread,
-				timestamp: Math.floor(new Date().valueOf() / 1000)
+				timestamp: Game.getCurrentTime()
 			});
 
 			Game.Statistic.incrementUser(user._id, {
@@ -209,7 +209,7 @@ Meteor.methods({
 					subject: subject,
 					text: text,
 					status: game.Mail.status.unread,
-					timestamp: Math.floor(new Date().valueOf() / 1000)
+					timestamp: Game.getCurrentTime()
 				});
 
 				Game.Statistic.incrementUser(to._id, {

@@ -2,20 +2,23 @@ initBuildingServer = function() {
 
 initBuildingLib();
 
-Game.Building.set = function(building) {
+Game.Building.add = function(building) {
 	Game.Building.initialize();
 
 	var set = {};
-	
 	set[building.group + '.' + building.engName] = building.level
 
-	Game.Building.Collection.update({user_id: Meteor.userId()}, {$set: set});
+	Game.Building.Collection.update({
+		user_id: Meteor.userId()
+	}, {
+		$set: set
+	});
 
 	return set;
 }
 
-Game.Building.add = function(building) {
-	return Game.Building.set(building);
+Game.Building.complete = function(task) {
+	return Game.Building.add(task);
 }
 
 Game.Building.initialize = function(user) {
@@ -28,7 +31,6 @@ Game.Building.initialize = function(user) {
 		})
 	}
 }
-
 
 Meteor.publish('buildings', function () {
 	if (this.userId) {

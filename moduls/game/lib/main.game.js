@@ -390,6 +390,9 @@ Game = {
 			case 'research':
 				return Game.Research;
 
+			case 'spaceEvent':
+				return Game.SpaceEvents;
+
 			default:
 				throw new Meteor.Error("Такого объекта нет");
 		}

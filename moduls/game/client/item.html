@@ -84,18 +84,17 @@
 
 <template name="item_price">
 	<ul class="resources">
-		{{#with price}}
-			{{#if time}}
+		{{#each (getResources price)}}
+			{{#if eq this.engName 'time'}}
 				<li class="time" {{priceTooltip . 'time'}}>
 					Время строительства: 
-					<time>{{formatSeconds time}}</time>
+					<time>{{formatSeconds this.amount}}</time>
+				</li>
+			{{else}}
+				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip . this.engName}}>
+					{{formatNumberWithISO this.amount}}
 				</li>
 			{{/if}}
-			{{#if humans}}<li class="humans" {{priceTooltip . 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
-			{{#if honor}}<li class="honor" {{priceTooltip . 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
-			{{#if metals}}<li class="metals" {{priceTooltip . 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}
-			{{#if crystals}}<li class="crystals" {{priceTooltip . 'crystals'}}>{{formatNumberWithISO crystals}}</li>{{/if}}
-			{{#if credits}}<li class="credits" {{priceTooltip . 'credits'}}>{{formatNumberWithISO credits}}</li>{{/if}}
-		{{/with}}
+		{{/each}}
 	</ul>
 </template>

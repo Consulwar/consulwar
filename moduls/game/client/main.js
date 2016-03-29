@@ -326,6 +326,26 @@ ShowModalWindow = function(template, data) {
 	)
 }
 
+Template.item_price.helpers({
+	getResources: function(price) {
+		var result = [];
+		for (var name in price) {
+			var item = {
+				engName: name,
+				amount: price[name]
+			};
+			if (name == 'time') {
+				result.unshift(item);
+			} else {
+				result.push(item);
+			}
+		}
+		return result;
+	},
 
+	isArtefact: function(key) {
+		return Game.Artefacts.items[key] ? true : false;
+	}
+})
 
 });

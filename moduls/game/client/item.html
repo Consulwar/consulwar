@@ -22,7 +22,7 @@
 				{{/if}}
 				{{#each item.effect}}
 					{{#if result}}
-						{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+						{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
 					{{/if}}
 				{{/each}}
 			</div>
@@ -35,7 +35,7 @@
 					{{#each item.effect}}
 						{{#with this.next}}
 							{{#if and result (not (eq ../result result))}}
-								{{name}}{{pretext}}{{result}}{{aftertext}}<br/>
+								{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
 							{{/if}}
 						{{/with}}
 					{{/each}}

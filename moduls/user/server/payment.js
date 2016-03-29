@@ -59,6 +59,26 @@ Meteor.methods({
 			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
 		}
 
+		// Этот код только для внутреннего теста
+		// TODO: Убрать когда подключим платежку
+		var history = Game.Payment.Collection.find({
+			user_id: user._id,
+			income: { $ne: false }
+		}).fetch;
+
+		var totalCredits = 0;
+		for (var i = 0; i < history.length; i++) {
+			if (history[i].resources && history[i].resources.credits) {
+				totalCredits += history[i].resources.credits;
+			}
+		}
+
+		console.log('total credits', totalCredits);
+
+		if (totalCredits >= 5000) {
+			throw new Meteor.Error('Больше получить кредитов нельзя, пока идет внутренний тест');
+		}
+
 		// Ниже идет код для зачисления ресурсов при удачном платеже
 		// TODO: Перенести в callback
 		Game.Resources.add(paymentItem.resources);

@@ -776,7 +776,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		if (userArmyRest && !enemyArmyRest) {
 			result = Game.Battle.result.victory;
 		} else if (!userArmyRest && enemyArmyRest) {
-			item.result = Game.Battle.result.defeat;
+			result = Game.Battle.result.defeat;
 		}
 
 		// save results

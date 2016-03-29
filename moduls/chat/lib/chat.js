@@ -30,7 +30,15 @@ Game.Chat.Messages = {
 			}
 		}
 
-		return { crystals: 10 };
+		var priceReduction = (1 - Game.Research.items.evolution.animalworld.currentLevel() * 0.1);
+
+		return { crystals: Math.ceil(Math.max(
+				Math.min(
+					Math.floor(Game.Resources.getIncome().crystals / 30), 
+					10000), 
+				100
+			) * priceReduction)
+		};
 	}
 };
 

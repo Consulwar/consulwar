@@ -37,7 +37,8 @@ Game.Queue.add = function(item) {
 		status: 0,
 		type: item.type,
 		startTime: startTime,
-		finishTime: startTime + item.time
+		finishTime: startTime + item.time,
+		createdTime: Game.getCurrentTime() // debug field
 	}
 
 	var select = {

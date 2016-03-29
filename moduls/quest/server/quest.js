@@ -242,6 +242,7 @@ Meteor.methods({
 
 		if (current && current.status == Game.Quest.status.FINISHED) {
 			var questLine = Game.Quest.regularQuests[questId];
+			var prevStep = questLine.findStep(current.step);
 			var nextStep = questLine.nextStep(current.step);
 
 			if (nextStep) {
@@ -265,6 +266,11 @@ Meteor.methods({
 			}
 
 			Game.Quest.Collection.update({ user_id: user._id }, quests);
+
+			// add reward
+			if (prevStep && prevStep.reward) {
+				Game.Resources.add(prevStep.reward);
+			}
 		}
 	},
 

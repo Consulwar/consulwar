@@ -13,6 +13,12 @@ Meteor.startup(function() {
 }
 */
 
+Game.Queue.Collection._ensureIndex({
+	user_id: 1,
+	status: 1,
+	finishTime: -1
+})
+
 Game.Queue.add = function(item) {
 	if (!Meteor.userId()) {
 		return false;

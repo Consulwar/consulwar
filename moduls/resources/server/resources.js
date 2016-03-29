@@ -3,6 +3,10 @@ initResourcesServer = function() {
 initResourcesLib();
 initArtefactsLib();
 
+Game.Resources.Collection._ensureIndex({
+	user_id: 1
+});
+
 // Добавляет/вычитает ресурсы текущему пользователю
 // invertSign - true если вычитаем ресурсы
 Game.Resources.set = function(resource, invertSign, uid) {
@@ -84,6 +88,7 @@ Game.Resources.spend = function(resource, uid) {
 
 Game.Resources.updateWithIncome = function(currentTime) {
 	var resources = Game.Resources.getValue();
+	
 	if (currentTime < resources.updated - 10) {
 		throw new Meteor.Error('Ошибка при рассчете доходов');
 	}

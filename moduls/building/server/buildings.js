@@ -2,6 +2,10 @@ initBuildingServer = function() {
 
 initBuildingLib();
 
+Game.Building.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Building.add = function(building) {
 	Game.Building.initialize();
 

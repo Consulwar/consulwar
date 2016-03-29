@@ -2,6 +2,10 @@ initQuestServer = function() {
 
 initQuestLib();
 
+Game.Quest.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Quest.DAILY_QUEST_PERIOD = 14400;
 
 Game.Quest.regularQuests = {};

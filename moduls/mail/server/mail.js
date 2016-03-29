@@ -2,6 +2,15 @@ initMailServer = function () {
 
 initMailLib();
 
+Game.Mail.Collection._ensureIndex({
+	owner: 1,
+	timestamp: -1
+});
+
+Game.Mail.Collection._ensureIndex({
+	complaint: 1
+});
+
 game.Mail.addSystemMessage = function(type, subject, text, timestamp) {
 	var user = Meteor.user();
 	

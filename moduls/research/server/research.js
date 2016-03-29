@@ -3,6 +3,10 @@ initResearchServer = function() {
 initResearchLib();
 initResearchServerMethods();
 
+Game.Research.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Research.add = function(research) {
 	Game.Research.initialize();
 

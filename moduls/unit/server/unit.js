@@ -3,6 +3,10 @@ initUnitServer = function() {
 initUnitLib();
 initUnitServerMethods();
 
+Game.Unit.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Unit.set = function(unit, invertSign) {
 	invertSign = invertSign == true ? -1 : 1;
 
@@ -191,6 +195,10 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 Game.BattleHistory = {
 	Collection: new Meteor.Collection('battleHistory')
 }
+
+Game.BattleHistory.Collection._ensureIndex({
+	user_id: 1
+});
 
 Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	Game.BattleHistory.Collection.insert({

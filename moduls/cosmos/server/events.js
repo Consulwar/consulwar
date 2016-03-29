@@ -1,5 +1,9 @@
 initCosmosEventsServer = function() {
 
+Game.SpaceEvents.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.SpaceEvents.actualize = function() {
 	var timeCurrent = Game.getCurrentTime();
 

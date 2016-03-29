@@ -2,6 +2,10 @@ initStatisticServer = function() {
 	
 initStatisticLib();
 
+Game.Statistic.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Statistic.initialize = function(user) {
 	var statistic = Game.Statistic.Collection.findOne({
 		user_id: user._id

@@ -10,6 +10,15 @@ DDPRateLimiter.addRule({
 }, 2, 10000);
 */
 
+Game.Chat.Messages.Collection._ensureIndex({
+	room_id: 1,
+	timestamp: -1
+});
+
+Game.Chat.Room.Collection._ensureIndex({
+	name: 1
+});
+
 // create defaul rooms on server startup
 var createDefaulRoom = function(name) {
 	if (!Game.Chat.Room.Collection.findOne({ name: name })) {

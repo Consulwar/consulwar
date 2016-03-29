@@ -1,5 +1,9 @@
 initCosmosPlanetsServer = function() {
 
+Game.Planets.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Planets.actualize = function() {
 	var planets = Game.Planets.getAll().fetch();
 	if (planets) {

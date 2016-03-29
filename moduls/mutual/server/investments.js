@@ -1,5 +1,13 @@
 initMutualServerInvestments = function () {
 
+Game.Investments.Collection._ensureIndex({
+	user_id: 1
+});
+
+Game.Investments.Collection._ensureIndex({
+	investments: -1
+});
+
 Game.Investments.add = function(item) {
 	Game.Investments.initialize(item);
 

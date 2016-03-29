@@ -2,6 +2,10 @@ initHouseServer = function() {
 
 initHouseLib();
 
+Game.House.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.House.defaultItems = {
 	'room': {
 		'consul': {

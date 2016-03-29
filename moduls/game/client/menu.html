@@ -105,7 +105,7 @@
 			{{/if}}
 			
 			{{#let progress=this.progress}}
-				{{#if progress}}
+				{{#if and progress (eq progress.level 1)}}
 					<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
 				{{/if}}
 			{{/let}}

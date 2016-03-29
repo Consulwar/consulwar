@@ -64,16 +64,15 @@ Meteor.methods({
 		var history = Game.Payment.Collection.find({
 			user_id: user._id,
 			income: { $ne: false }
-		}).fetch;
+		}).fetch();
 
-		var totalCredits = 0;
+		var totalCredits = paymentItem.resources.credits;
+
 		for (var i = 0; i < history.length; i++) {
 			if (history[i].resources && history[i].resources.credits) {
 				totalCredits += history[i].resources.credits;
 			}
 		}
-
-		console.log('total credits', totalCredits);
 
 		if (totalCredits >= 5000) {
 			throw new Meteor.Error('Больше получить кредитов нельзя, пока идет внутренний тест');

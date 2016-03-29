@@ -204,19 +204,14 @@ Game.Planets = {
 	// ------------------------------------------------------------------------
 	// Travel speed & time calculations
 	// ------------------------------------------------------------------------
-
-	SPEED_CONFIG: [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100 ],
-	SPEED_K_CACHED: 0,
-	SPEED_LEVEL_CACHED: 0,
-	MIN_SPEED: 3,
-	MAX_SPEED: 80,
-	MIN_ACC: 0.4,
-	MAX_ACC: 2,
+	
+	_speedKCached: 0,
+	_speedLevelCached: 0,
 
 	calcSpeedK: function(level) {
-		if (level != Game.Planets.SPEED_LEVEL_CACHED) {
+		if (level != Game.Planets._speedLevelCached) {
 
-			var config = Game.Planets.SPEED_CONFIG;
+			var config = Game.Cosmos.SPEED_CONFIG;
 			var k = 0;
 
 			if (level >= 100) {
@@ -227,22 +222,22 @@ Game.Planets = {
 				k = config[i] + (config[i + 1] - config[i]) / 10 * j;
 			}
 
-			Game.Planets.SPEED_LEVEL_CACHED = level;
-			Game.Planets.SPEED_K_CACHED = k / 100;
+			Game.Planets._speedLevelCached = level;
+			Game.Planets._speedKCached = k / 100;
 		}
 
-		return Game.Planets.SPEED_K_CACHED;
+		return Game.Planets._speedKCached;
 	},
 
 	calcMaxSpeed: function(level) {
-		var min = Game.Planets.MIN_SPEED;
-		var max = Game.Planets.MAX_SPEED;
+		var min = Game.Cosmos.MIN_SPEED;
+		var max = Game.Cosmos.MAX_SPEED;
 		return min + (max - min) * Game.Planets.calcSpeedK(level);
 	},
 
 	calcAcceleration: function(level) {
-		var min = Game.Planets.MIN_ACC;
-		var max = Game.Planets.MAX_ACC;
+		var min = Game.Cosmos.MIN_ACC;
+		var max = Game.Cosmos.MAX_ACC;
 		return min + (max - min) * Game.Planets.calcSpeedK(level);
 	},
 
@@ -592,6 +587,7 @@ Game.SpaceEvents = {
 	}
 }
 
+initCosmosConfigLib();
 initCosmosContent();
 
 }

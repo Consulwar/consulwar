@@ -208,7 +208,7 @@ Meteor.methods({
 		// add profit
 		if (promoCode.profit) {
 			if (promoCode.profit.resources) {
-				Game.Resources.add(promoCode.resources);
+				Game.Resources.add(promoCode.profit.resources);
 			}
 
 			if (promoCode.profit.units) {

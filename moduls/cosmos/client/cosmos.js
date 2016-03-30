@@ -669,7 +669,11 @@ Template.cosmosAttackMenu.events({
 		}
 	},
 
-	'click .btn-attack': function(e, t) {
+	'click .btn-attack.disabled': function(e, t) {
+		Notifications.info('Нельзя захватить планету, так как уже слишком много колоний');
+	},
+
+	'click .btn-attack:not(.disabled)': function(e, t) {
 		var isOneway = $(e.currentTarget).hasClass('defend');
 
 		var baseId = t.data.activeColonyId.get();

@@ -179,6 +179,15 @@ Meteor.methods({
 				planetName: name
 			}
 		});
+
+		Game.Planets.Collection.update({
+			user_id: Meteor.userId(),
+			isHome: true
+		}, {
+			$set: {
+				name: name
+			}
+		});
 	}
 });
 

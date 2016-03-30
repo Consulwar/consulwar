@@ -647,7 +647,7 @@ var lineViews = {};
 var observerZones = null;
 
 Template.earth.onRendered(function() {
-
+	
 	if (!mapView) {
 
 		// first time manualy create div inside template
@@ -682,22 +682,12 @@ Template.earth.onRendered(function() {
 			zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
 		}
 
-		// track db updates
-		observerZones = Game.EarthZones.getAll().observeChanges({
-			changed: function(id, fields) {
-				var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
-				if (mapView && zoneViews && zoneViews[ name ]) {
-					zoneViews[ name ].update();
-				}
-			}
-		});
-
 		if (mapBounds) {
 			mapView.fitBounds(mapBounds);
 		}
 
 	} else {
-		
+
 		// put existing map content into template
 		$('#map-content').html( mapView._container );
 
@@ -706,6 +696,16 @@ Template.earth.onRendered(function() {
 		}
 
 	}
+
+	// track db updates
+	observerZones = Game.EarthZones.getAll().observeChanges({
+		changed: function(id, fields) {
+			var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
+			if (mapView && zoneViews && zoneViews[ name ]) {
+				zoneViews[ name ].update();
+			}
+		}
+	});
 
 	// show turn lines and track db updates
 	// TODO: Make reactive!

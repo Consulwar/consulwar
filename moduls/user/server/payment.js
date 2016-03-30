@@ -235,6 +235,8 @@ Meteor.methods({
 		if (options.maxActivations) {
 			check(options.maxActivations, Match.Integer);
 			promoCode.maxActivations = options.maxActivations;
+		} else {
+			promoCode.maxActivations = 1;
 		}
 
 		if (options.validthru) {
@@ -289,6 +291,19 @@ Meteor.methods({
 			}
 		}
 
+		var updateCount = Game.PromoCode.Collection.update({
+			code: code,
+			activations: { $lt: promoCode.maxActivations },
+			usersActivated: { $ne: user._id }
+		}, {
+			$inc: { activations: 1 },
+			$addToSet: { usersActivated: user._id }
+		});
+
+		if (updateCount == 0) {
+			throw new Meteor.Error('Код уже активирован');
+		}
+
 		// check promo code type options
 		if (promoCode.type) {
 			if (promoCode.type.indexOf('once') == 0) {
@@ -338,15 +353,6 @@ Meteor.methods({
 				});
 			}
 		}
-
-		// update promo code
-		Game.PromoCode.Collection.update({
-			code: code
-		}, {
-			$addToSet: {
-				usersActivated: user._id
-			}
-		});
 
 		// insert history record
 		Game.PromoCode.History.Collection.insert({

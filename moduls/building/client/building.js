@@ -34,6 +34,10 @@ Template.item_building.events({
 		if (item.currentLevel() == 0) {
 			Router.go(item.url({group: item.group}));
 		}
+	},
+
+	'click button.market': function(e, t) {
+		Game.Market.showWindow();
 	}
 });
 

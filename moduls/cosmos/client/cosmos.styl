@@ -23,6 +23,8 @@
 
 
 .map-fleet
+	outline none
+	cursor pointer
 	z-index 1000
 	background-color none
 
@@ -38,7 +40,6 @@
 	background-image url(/img/game/cosmomap/marker_fleet_humans.png)
 	
 .map-fleet-rept
-	cursor pointer
 	position absolute
 	display block
 	width 37px
@@ -107,7 +108,7 @@
 		animation animatePlanetBack 20s linear infinite
 
 .map-planet-marker
-	
+	outline none
 	cursor pointer
 
 	&:before
@@ -283,7 +284,8 @@
 		background-repeat no-repeat
 		
 		&:hover
-			background-image url(/img/game/cosmomap/button_attack_active.png)
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 
 .map-planet-popup
 	display block
@@ -340,7 +342,12 @@
 		background-repeat no-repeat
 		
 		&:hover
-			background-image url(/img/game/cosmomap/button_attack_active.png)
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+			
+		&.disabled
+			-webkit-filter brightness(0.6)
+			filter brightness(0.6)
 			
 	.defend
 		position absolute

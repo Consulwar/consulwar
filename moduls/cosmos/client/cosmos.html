@@ -109,9 +109,9 @@
 			{{#if planet.isHome}}
 				<a class="btn-attack defend">Отправить</a>
 			{{else}}
-				{{#if canHaveMoreColonies}}
-					<a class="btn-attack defend">Захватить</a>
-				{{/if}}
+				<a class="btn-attack defend {{#if not canHaveMoreColonies}}disabled{{/if}}">
+					Захватить
+				</a>
 				<a class="btn-attack return">{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}</a>
 			{{/if}}
 		{{else}}

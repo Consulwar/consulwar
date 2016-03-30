@@ -94,10 +94,12 @@ Game.Queue.complete = function(taskId) {
 	});
 }
 
-var completeItems = function(items) {
+var completeItems = function(items, needResourcesUpdate) {
 	for (var i = 0; i < items.length; i++) {
 		// Рассчитать доход до finishTime
-		Game.Resources.updateWithIncome( items[i].finishTime );
+		if (needResourcesUpdate) {
+			Game.Resources.updateWithIncome( items[i].finishTime );
+		}
 		// Применить результат и завершить задание
 		Game.getObjectByType( items[i].type ).complete( items[i] );
 		Game.Queue.complete( items[i]._id );
@@ -116,7 +118,7 @@ Game.Queue.checkAll = function() {
 		finishTime: { $lt: Game.getCurrentTime() }
 	}, {
 		sort: {
-			finishTime: -1
+			finishTime: 1
 		}
 	}).fetch();
 
@@ -128,6 +130,7 @@ Game.Queue.checkAll = function() {
 	}
 
 	var ids = [];
+	var needUpdateResources = true;
 
 	for (var i = 0; i < items.length; i++) {
 		// Если уже обрабатывается
@@ -139,6 +142,8 @@ Game.Queue.checkAll = function() {
 			) {
 				return;
 			}
+			// Если подхватили чужое задание, то не обновляем ресурсы
+			needUpdateResources = false;
 		} else {
 			ids.push(items[i]._id);
 		}
@@ -160,15 +165,15 @@ Game.Queue.checkAll = function() {
 
 	// Если взяли задач столько же, сколько выбирали
 	if (updatedCount == ids.length) {
-		completeItems(items);
+		completeItems(items, needUpdateResources);
 	} else {
 		// Если другой процесс подхватил наши задачи
 		var cursor = Game.Queue.Collection.find({
 			_id: { $in: ids },
-			status: Game.Queue.status.INCOMPLETE
+			status: Game.Queue.status.INPROGRESS
 		}, {
 			sort: {
-				finishTime: -1
+				finishTime: 1
 			}
 		});
 
@@ -177,7 +182,7 @@ Game.Queue.checkAll = function() {
 			removed: function(id, fields) {
 				// Ожидаем пока другой процесс обработает свои задачи
 				if (cursor.count() <= updatedCount) {
-					completeItems(cursor.fetch());
+					completeItems(cursor.fetch(), needUpdateResources);
 					observer.stop();
 					observer = null;
 				}
@@ -186,7 +191,7 @@ Game.Queue.checkAll = function() {
 
 		// На всякий случай проверяем не обработались ли задачи
 		if (cursor.count() <= updatedCount) {
-			completeItems(cursor.fetch());
+			completeItems(cursor.fetch(), needUpdateResources);
 			observer.stop();
 			observer = null;
 		}

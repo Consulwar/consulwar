@@ -4,6 +4,10 @@ initPaymentLib();
 
 Game.Payment.Collection = new Meteor.Collection('paymentHistory');
 
+Game.Payment.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Payment.log = function(isIncome, resources, source, uid) {
 	var record = {
 		user_id: uid ? uid : Meteor.userId(),
@@ -118,6 +122,7 @@ Meteor.methods({
 /*
 {
 	code: 'pewpew11',
+	maxActivations: 42, // not required
 	validthru: timestamp, // not required
 	type: string, // not required
 	profit: {
@@ -142,7 +147,21 @@ Meteor.methods({
 }
 */
 
-Game.PromoCode = {};
+Game.PromoCode = {
+	Collection: new Meteor.Collection('promoCodes')
+}
+
+Game.PromoCode.Collection._ensureIndex({
+	code: 1
+});
+
+Game.PromoCode.History = {
+	Collection: new Meteor.Collection('promoCodesHistory')
+}
+
+Game.PromoCode.History.Collection._ensureIndex({
+	user_id: 1
+});
 
 Game.PromoCode.randomItems =  [{
 	resources: { credits: 10 }
@@ -152,9 +171,86 @@ Game.PromoCode.randomItems =  [{
 	resources: { humans: 200 }
 }];
 
-Game.PromoCode.Collection = new Meteor.Collection('promoCodes');
-
 Meteor.methods({
+	'admin.addPromoCode': function(options) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		if (['admin'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+		}
+
+		// check reauired options
+		check(options, Object);
+
+		if (!options.code) {
+			throw new Meteor.Error('Не задано поле code');
+		}
+
+		check(options.code, String);
+
+		if (Game.PromoCode.Collection.findOne({
+			code: options.code
+		})) {
+			throw new Meteor.Error('Такой код уже существует');
+		}
+
+		if (!options.profit) {
+			throw new Meteor.Error('Не задано поле profit');
+		}
+
+		var isProfitOk = true;
+
+		if (_.isObject(options.profit)) {
+			if (
+			    !options.profit.resources
+			 && !options.profit.units
+			 && !options.profit.votePower
+			) {
+				isProfitOk = false;
+			}
+		} else if (_.isString(options.profit)) {
+			if (options.profit.indexOf('random') != 0) {
+				isProfitOk = false;
+			}
+		}
+
+		if (!isProfitOk) {
+			throw new Meteor.Error('Неправильно заполнено поле profit');
+		}
+
+		var promoCode = {
+			code: options.code,
+			profit: options.profit
+		}
+
+		// check not required options
+		if (options.maxActivations) {
+			check(options.maxActivations, Match.Integer);
+			promoCode.maxActivations = options.maxActivations;
+		}
+
+		if (options.validthru) {
+			check(options.validthru, Match.Integer);
+			promoCode.validthru = options.validthru;
+		}
+
+		if (options.type) {
+			check(options.type, String);
+			promoCode.type = options.type;
+		}
+
+		// insert code
+		Game.PromoCode.Collection.insert(promoCode);
+	},
+
 	'user.activatePromoCode': function(code) {
 		var user = Meteor.user();
 
@@ -163,7 +259,7 @@ Meteor.methods({
 		}
 
 		if (user.blocked == true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
+			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
 		check(code, String);
@@ -176,21 +272,29 @@ Meteor.methods({
 			throw new Meteor.Error('Такой код не существует');
 		}
 
-		if (promoCode.activated) {
-			throw new Meteor.Error('Такой код уже активирован');
-		}
-
 		if (promoCode.validthru && promoCode.validthru < Game.getCurrentTime()) {
 			throw new Meteor.Error('Срок использования истек');
+		}
+
+		if (promoCode.usersActivated) {
+			if (promoCode.usersActivated.indexOf(user._id) != -1) {
+				throw new Meteor.Error('Вы уже активировали этот код');
+			}
+
+			if (
+			    !promoCode.maxActivations
+			 ||  promoCode.maxActivations <= promoCode.usersActivated.length
+			) {
+				throw new Meteor.Error('Такой код уже активирован другими игроками');
+			}
 		}
 
 		// check promo code type options
 		if (promoCode.type) {
 			if (promoCode.type.indexOf('once') == 0) {
-				var count = Game.PromoCode.Collection.find({
-					type: promoCode.type,
+				var count = Game.PromoCode.History.Collection.find({
 					user_id: user._id,
-					activated: true
+					type: promoCode.type
 				}).count();
 
 				if (count > 0) {
@@ -200,19 +304,21 @@ Meteor.methods({
 		}
 
 		// generate random profit
-		if (_.isString(promoCode.profit) && promoCode.profit.indexOf('random') == 0) {
+		var profit = promoCode.profit;
+
+		if (_.isString(profit) && profit.indexOf('random') == 0) {
 			var items = Game.PromoCode.randomItems;
-			promoCode.profit = items[ Game.Random.interval(0, items.length - 1) ];
+			profit = items[ Game.Random.interval(0, items.length - 1) ];
 		}
 
 		// add profit
-		if (promoCode.profit) {
-			if (promoCode.profit.resources) {
-				Game.Resources.add(promoCode.profit.resources);
+		if (profit) {
+			if (profit.resources) {
+				Game.Resources.add(profit.resources);
 			}
 
-			if (promoCode.profit.units) {
-				var units = promoCode.profit.units;
+			if (profit.units) {
+				var units = profit.units;
 				for (var group in units) {
 					for (var name in units[group]) {
 						Game.Unit.add({
@@ -224,23 +330,32 @@ Meteor.methods({
 				}
 			}
 
-			if (promoCode.profit.votePower) {
+			if (profit.votePower) {
 				Meteor.users.update({
 					_id: user._id
 				}, {
-					$inc: { votePowerBonus: promoCode.profit.votePower }
+					$inc: { votePowerBonus: profit.votePower }
 				});
 			}
 		}
 
+		// update promo code
 		Game.PromoCode.Collection.update({
 			code: code
 		}, {
-			$set: {
-				user_id: user._id,
-				activated: true,
-				profit: promoCode.profit
+			$addToSet: {
+				usersActivated: user._id
 			}
+		});
+
+		// insert history record
+		Game.PromoCode.History.Collection.insert({
+			user_id: user._id,
+			code: promoCode.code,
+			codeId: promoCode._id,
+			type: promoCode.type,
+			profit: profit,
+			timestamp: Game.getCurrentTime()
 		});
 	}
 });

@@ -228,7 +228,8 @@ Meteor.methods({
 
 		var promoCode = {
 			code: options.code,
-			profit: options.profit
+			profit: options.profit,
+			activations: 0
 		}
 
 		// check not required options

@@ -13,6 +13,10 @@ var cosmosObjectsView = null;
 var cosmosPopupView = null;
 
 Game.Cosmos.showPage = function() {
+	if (mapView) {
+		return; // don't render twice!
+	}
+
 	this.render('cosmos', {
 		to: 'content',
 		data: {

@@ -158,6 +158,7 @@ var menu = {
 			},
 			research: {
 				name: 'Исследования',
+				additionalArea: 'calibrator',
 				url: firstItemGroupURL(Game.Mutual.items.research),
 				items: Game.Mutual.items.research
 			},

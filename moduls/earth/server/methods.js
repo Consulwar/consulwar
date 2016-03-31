@@ -65,7 +65,7 @@ Meteor.methods({
 		var currentTime = Game.getCurrentTime();
 
 		if (!Game.Earth.checkReinforceTime(currentTime)) {
-			//throw new Meteor.Error('С 17:00 до 19:00 по МСК отправка войск недоступна');
+			throw new Meteor.Error('С 17:00 до 19:00 по МСК отправка войск недоступна');
 		}
 
 		if (!Game.SpaceEvents.checkCanSendFleet()) {

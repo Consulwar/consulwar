@@ -1149,15 +1149,16 @@ Template.cosmos.onRendered(function() {
 		Game.Cosmos.showFleetsInfo();
 	});
 
-	/* BUG!
+	// Scroll to fleet
 	this.autorun(function() {
-		var hash = Router.current().params.hash;
-		console.log('scroll', hash);
+		var hash = Router.current().getParams().hash;
 		if (hash) {
-			scrollMapToFleet(hash);
+			Tracker.nonreactive(function() {
+				Game.Cosmos.showShipInfo(hash);
+				scrollMapToFleet(hash);
+			});
 		}
 	});
-	*/
 });
 
 Template.cosmos.onDestroyed(function() {

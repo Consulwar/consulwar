@@ -222,10 +222,6 @@ Game.SpaceEvents.sendShip = function(options) {
 		options.mission = null;
 	}
 
-	if (options.isColony === undefined) {
-		options.isColony = false;
-	}
-
 	if (options.isHumans === undefined) {
 		options.isHumans = false;
 	}
@@ -242,7 +238,6 @@ Game.SpaceEvents.sendShip = function(options) {
 		timeEnd: options.startTime + options.flyTime,
 		info: {
 			isHumans: options.isHumans,
-			isColony: options.isColony,
 			isOneway: options.isOneway,
 			engineLevel: options.engineLevel,
 			startPosition: options.startPosition,
@@ -279,7 +274,7 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 
 	if (planets.length >= 2) {
 		// get two random planets
-		var randFrom =Game.Random.interval(0, planets.length - 1);
+		var randFrom = Game.Random.interval(0, planets.length - 1);
 		var randTo = randFrom;
 		while (randTo == randFrom) {
 			randTo = Game.Random.interval(0, planets.length - 1);
@@ -322,8 +317,7 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 			flyTime:        flyTime,
 			isHumans:       false,
 			engineLevel:    engineLevel,
-			mission:        mission,
-			isColony:       false
+			mission:        mission
 		}
 
 		Game.SpaceEvents.sendShip(shipOptions);
@@ -386,8 +380,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 			isHumans:       false,
 			engineLevel:    engineLevel,
-			mission:        mission,
-			isColony:       false
+			mission:        mission
 		}
 
 		Game.SpaceEvents.sendShip(shipOptions);
@@ -500,7 +493,6 @@ Game.SpaceEvents.completeShip = function(event) {
 					startTime:      event.timeEnd,
 					flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 					isHumans:       true,
-					isColony:       false,
 					isOneway:       true,
 					engineLevel:    engineLevel,
 					mission:        null,
@@ -614,7 +606,6 @@ Game.SpaceEvents.completeShip = function(event) {
 						startTime:      event.timeEnd,
 						flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 						isHumans:       false,
-						isColony:       false,
 						isOneway:       true,
 						engineLevel:    engineLevel,
 						mission:        event.info.mission,
@@ -750,7 +741,6 @@ Game.SpaceEvents.completeShip = function(event) {
 				isHumans:       event.info.isHumans,
 				engineLevel:    event.info.engineLevel,
 				mission:        event.info.mission,
-				isColony:       event.info.isColony,
 				armyId:         event.info.armyId
 			}
 
@@ -847,7 +837,6 @@ Meteor.methods({
 			isHumans:       true,
 			engineLevel:    engineLevel,
 			mission:        null,
-			isColony:       false,
 			armyId:         newArmyId
 		}
 

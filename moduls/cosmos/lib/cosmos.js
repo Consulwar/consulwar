@@ -48,9 +48,57 @@ Game.Planets = {
 		return Game.Planets.getColonies().length;
 	},
 
-	checkCanHaveMoreColonies: function() {
-		var current = Game.SpaceEvents.getSentToColonyCount()
-		            + Game.Planets.getColoniesCount();
+	checkCanHaveMoreColonies: function(baseId, isLeavingBase, targetId) {
+		// count already targeted planets
+		var targets = [];
+		var isTargetInList = false;
+		var fleets = Game.SpaceEvents.getFleets().fetch();
+
+		for (var i = 0; i < fleets.length; i++) {
+			var fleet = fleets[i];
+
+			if (!fleet.info.isHumans) {
+				continue;
+			}
+
+			var id = fleet.info.isOneway
+				? fleet.info.targetId
+				: fleet.info.startPlanetId;
+
+			if (targets.indexOf(id) == -1) {
+				targets.push(id);
+			}
+
+			// base is target of another fleet, so we can't leave base
+			if (id == baseId) {
+				isLeavingBase = false;
+			}
+
+			// target planet in list, so we can send more
+			if (id == targetId) {
+				isTargetInList = true;
+			}
+		}
+
+		// add current colonies
+		var colonies = Game.Planets.getColonies();
+		for (var i = 0; i < colonies.length; i++) {
+			var id = colonies[i]._id;
+			if (targets.indexOf(id) == -1) {
+				targets.push(id);
+			}
+		}
+
+		// finaly count and check
+		var current = targets.length;
+
+		if (isLeavingBase) {
+			current--;
+		}
+
+		if (isTargetInList) {
+			current--;
+		}
 
 		return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
 	},
@@ -521,16 +569,6 @@ Game.SpaceEvents = {
 				timeEnd: 1
 			}
 		})
-	},
-
-	getSentToColonyCount: function() {
-		return Game.SpaceEvents.Collection.find({
-			user_id: Meteor.userId(),
-			type: Game.SpaceEvents.type.SHIP,
-			status: Game.SpaceEvents.status.STARTED,
-			'info.isHumans': true,
-			'info.isColony': true
-		}).count();
 	},
 
 	getCurrentFleetsCount: function() {

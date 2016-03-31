@@ -35,12 +35,35 @@
 
 			{{> game_menu}}
 
-			<div class="fleet_info {{#if currentBattle}}battle{{/if}}">
-				{{#unless currentBattle}}
-				Нет передвижений флота
+			<div class="fleet_info {{#if and fleetInfo fleetInfo.isWaitingAttack}}attack{{/if}}">
+				{{#if fleetInfo}}
+					{{#with fleetInfo}}
+						{{#if reinforcements}}
+							<a class="humans" href="{{pathFor 'cosmos' hash=reinforcementsId}}">
+								Подкрепление 
+								{{#if gt reinforcements 1}}({{reinforcements}}) {{/if}}
+								{{formatSeconds (fleetTime reinforcementsTime)}}
+							</a><br/>
+						{{/if}}
+						{{#if consul}}
+							<a class="humans" href="{{pathFor 'cosmos' hash=consulId}}">
+								Флот консула 
+								{{#if gt consul 1}}({{consul}}) {{/if}}
+								{{formatSeconds (fleetTime consulTime)}}
+							</a><br/>
+						{{/if}}
+						{{#if reptile}}
+							<a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
+								Флот рептилий 
+								{{#if gt reptile 1}}({{reptile}}) {{/if}}
+								{{formatSeconds (fleetTime reptileTime)}}
+							</a><br/>
+						{{/if}}
+					{{/with}}
 				{{else}}
-				{{#if eq currentBattle.status 0}}Космический бой{{else}}Возвращение флота{{/if}} через {{formatSeconds currentBattle.remaining}}
-				{{/unless}}
+					<br/>
+					Нет передвижений флота
+				{{/if}}
 			</div>
 		</div>
 		

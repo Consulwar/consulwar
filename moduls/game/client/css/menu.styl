@@ -31,9 +31,9 @@
 		vertical-align top
 	
 	.fleet_info
-		width 324px
-		height 44px
-		padding 25px 24px 0 0
+		width 328px
+		height 60px
+		padding 9px 20px 0 0
 		background-image url(/img/game/fleet_bg.png)
 		background-repeat no-repeat
 		background-position center center
@@ -41,8 +41,21 @@
 		text-align right
 		font-size 16px
 		
-		&.battle
-			color #2EB6E0
+		&.attack:before
+			content ""
+			position absolute
+			display block
+			width 73px
+			height 49px
+			background-image url(/img/game/attack.png)
+			background-position-x 15px
+			background-repeat no-repeat
+			
+		a
+			text-decoration none
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
 	
 	.game_menu 
 		a

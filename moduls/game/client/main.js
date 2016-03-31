@@ -231,14 +231,79 @@ var helpers = {
 	username: function() { return Session.get('username'); },
 	planetName: function() { return Session.get('planetName'); },
 
-	currentBattle: function() { return Session.get('currentBattle'); },
-
 	hasNewMail: function() { 
 		return (Game.Quest.hasNewDaily() || Game.Mail.hasUnread());
 	},
 
 	connection: function() { return Meteor.status(); },
-	reconnectTime: function() { return Session.get('reconnectTime'); }
+	reconnectTime: function() { return Session.get('reconnectTime'); },
+
+	fleetInfo: function() {
+		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
+		var fleets = Game.SpaceEvents.getFleets().fetch();
+		
+		if (reinforcements.length == 0 && fleets.length == 0) {
+			return null;
+		}
+
+		var consul = 0;
+		var consulTime = Number.MAX_VALUE;
+		var consulId = null;
+		var reptile = 0;
+		var reptileTime = Number.MAX_VALUE;
+		var reptileId = null;
+		var isWaitingAttack = false;
+
+		for (var i = 0; i < fleets.length; i++) {
+			if (fleets[i].info.isHumans) {
+				consul++;
+				if (consulTime > fleets[i].timeEnd) {
+					consulTime = fleets[i].timeEnd;
+					consulId = fleets[i]._id;
+				}
+			} else {
+				reptile++;
+				if (reptileTime > fleets[i].timeEnd) {
+					reptileTime = fleets[i].timeEnd;
+					reptileId = fleets[i]._id;
+				}
+				// check attack
+				if (!isWaitingAttack) {
+					if (fleets[i].info.targetType == Game.SpaceEvents.target.SHIP) {
+						// check ship
+						var ship = Game.SpaceEvents.getOne(fleets[i].info.targetId);
+						if (ship && ship.info.isHumans) {
+							isWaitingAttack = true;
+						}
+					} else if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET) {
+						// check planet
+						var planet = Game.Planets.getOne(fleets[i].info.targetId);
+						if (planet && (planet.isHome || planet.armyId)) {
+							isWaitingAttack = true;
+						}
+					}
+				}
+			}
+		}
+
+		return {
+			reinforcements: reinforcements.length,
+			reinforcementsTime: reinforcements.length > 0 ? reinforcements[0].timeEnd : 0,
+			reinforcementsId: reinforcements.length > 0 ? reinforcements[0]._id : null,
+			consul: consul,
+			consulTime: consulTime,
+			consulId: consulId,
+			reptile: reptile,
+			reptileTime: reptileTime,
+			reptileId: reptileId,
+			isWaitingAttack: isWaitingAttack
+		}
+	},
+
+	fleetTime: function(time) {
+		var timeLeft = time - Session.get('serverTime');
+		return (timeLeft > 0) ? timeLeft : 0;
+	}
 };
 
 

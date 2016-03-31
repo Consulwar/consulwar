@@ -113,8 +113,13 @@ Template.reserve.events({
 			return Notifications.info('Выберите войска для отправки');
 		}
 
-		Meteor.call('earth.sendReinforcement', units);
-		return Notifications.success('Войска отправлены на землю');
+		Meteor.call('earth.sendReinforcement', units, function(err) {
+			if (err) {
+				Notifications.error('Не удалось отправить войска', err.error);
+			} else {
+				Notifications.success('Войска отправлены на землю');
+			}
+		});
 	}
 });
 

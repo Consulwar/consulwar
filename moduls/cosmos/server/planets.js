@@ -650,26 +650,42 @@ Meteor.methods({
 		}
 
 		if (baseId == targetId) {
-			return;
+			throw new Meteor.Error('Стартовая планета и конечная должны быть разными');
 		}
 
 		var targetPlanet = Game.Planets.getOne(targetId);
 		if (!targetPlanet) {
-			return;
+			throw new Meteor.Error('Не найдена конечная планета');
 		}
 
 		var basePlanet = Game.Planets.getOne(baseId);
 		if (!basePlanet) {
-			return;
+			throw new Meteor.Error('Не найдена стартовая планета');
 		}
 
 		// check is new colony
-		var isColony = false;
+		var isLeavingBase = false;
+		var isNewColony = false;
+
 		if (isOneway && !targetPlanet.armyId && !targetPlanet.isHome) {
-			isColony = true;
+			isNewColony = true;
+
+			if (!basePlanet.isHome && units) {
+				// base planet is not our home, so we can leave it
+				isLeavingBase = true;
+				// test selected units vs available units
+				var baseUnits = Game.Planets.getFleetUnits(baseId);
+				for (var name in baseUnits) {
+					if (baseUnits[name] != units[name]) {
+						// not all selected, so we don't leaving base
+						isLeavingBase = false;
+						break;
+					}
+				}
+			}
 		}
 
-		if (isColony && !Game.Planets.checkCanHaveMoreColonies()) {
+		if (isNewColony && !Game.Planets.checkCanHaveMoreColonies(baseId, isLeavingBase, targetId)) {
 			throw new Meteor.Error('Уже слишком много колоний');
 		}
 
@@ -712,7 +728,6 @@ Meteor.methods({
 			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 			engineLevel:    engineLevel,
 			isHumans:       true,
-			isColony:       isColony,
 			isOneway:       isOneway,
 			mission:        null,
 			armyId:         newArmyId,

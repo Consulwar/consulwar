@@ -86,12 +86,12 @@
 	<ul class="resources">
 		{{#each (getResources price)}}
 			{{#if eq this.engName 'time'}}
-				<li class="time" {{priceTooltip . 'time'}}>
+				<li class="time" {{priceTooltip price 'time'}}>
 					Время строительства: 
 					<time>{{formatSeconds this.amount}}</time>
 				</li>
 			{{else}}
-				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip . this.engName}}>
+				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}}>
 					{{formatNumberWithISO this.amount}}
 				</li>
 			{{/if}}

@@ -469,6 +469,10 @@ Template.chat.events({
 	'click .chat .buyFreeChat': function(e, t) {
 		e.preventDefault();
 
+		if (!confirm('Вы точно хотите больше никогда не платить за ссаный чат?')) {
+			return;
+		}
+
 		var resources = Game.Resources.getValue();
 		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
 			Notifications.error('Недостаточно средств');

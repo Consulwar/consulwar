@@ -134,6 +134,13 @@ game.Item = function(options) {
 		}
 		
 		if (options.characteristics) {
+			Object.defineProperty(this, 'special', {
+				get: function() {
+					return options.characteristics.special;
+				},
+				enumerable: true
+			});
+
 			Object.defineProperty(this, 'characteristics', {
 				get: function() {
 					var characteristics = _.clone(options.characteristics);
@@ -512,7 +519,9 @@ Game.Effect.getRelatedTo = function(obj) {
 				effects[Game.effects[this.type][obj.engName].list[i].priority] = [];
 			}
 
-			effects[Game.effects[this.type][obj.engName].list[i].priority].push(Game.effects[this.type][obj.engName].list[i])
+			effects[Game.effects[this.type][obj.engName].list[i].priority].push(
+				Game.effects[this.type][obj.engName].list[i]
+			);
 		}
 	}
 
@@ -524,7 +533,9 @@ Game.Effect.getRelatedTo = function(obj) {
 					effects[Game.effects[this.type][obj.type].list[i].priority] = [];
 				}
 
-				effects[Game.effects[this.type][obj.type].list[i].priority].push(Game.effects[this.type][obj.type].list[i])
+				effects[Game.effects[this.type][obj.type].list[i].priority].push(
+					Game.effects[this.type][obj.type].list[i]
+				);
 			}
 		}
 
@@ -536,18 +547,26 @@ Game.Effect.getRelatedTo = function(obj) {
 						effects[Game.effects[this.type][obj.type][obj.group].list[i].priority] = [];
 					}
 
-					effects[Game.effects[this.type][obj.type][obj.group].list[i].priority].push(Game.effects[this.type][obj.type][obj.group].list[i])
+					effects[Game.effects[this.type][obj.type][obj.group].list[i].priority].push(
+						Game.effects[this.type][obj.type][obj.group].list[i]
+					);
 				}
 			}
 
 			// По особенности
-			if (obj.special && Game.effects[this.type][obj.type][obj.group][obj.special] && Game.effects[this.type][obj.type][obj.group][obj.special].list) {
+			if (
+			    obj.special
+			 && Game.effects[this.type][obj.type][obj.group][obj.special]
+			 && Game.effects[this.type][obj.type][obj.group][obj.special].list
+			) {
 				for (var i = 0; i < Game.effects[this.type][obj.type][obj.group][obj.special].list.length; i++) {
 					if (effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] == undefined) {
 						effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] = [];
 					}
 
-					effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority].push(Game.effects[this.type][obj.type][obj.group][obj.special].list[i])
+					effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority].push(
+						Game.effects[this.type][obj.type][obj.group][obj.special].list[i]
+					);
 				}
 			}
 		}

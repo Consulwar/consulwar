@@ -397,7 +397,8 @@ Template.item_price.helpers({
 		for (var name in price) {
 			var item = {
 				engName: name,
-				amount: price[name]
+				amount: price[name],
+				price: price
 			};
 			if (name == 'time') {
 				result.unshift(item);

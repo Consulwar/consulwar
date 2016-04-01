@@ -134,6 +134,10 @@ game.Item = function(options) {
 		}
 		
 		if (options.characteristics) {
+			// --------------------------------------------------------------
+			// TODO: Нужно отрефакторить поле characteristics
+			//       Сейчас нельзя брать special из characteristics
+			//       при рассчете эффектов, т.к. это вызовет бесконечный цикл
 			Object.defineProperty(this, 'special', {
 				get: function() {
 					return options.characteristics.special;
@@ -155,6 +159,7 @@ game.Item = function(options) {
 				},
 				enumerable: true
 			});
+			// --------------------------------------------------------------
 		}
 
 		this.triggers = options.triggers;

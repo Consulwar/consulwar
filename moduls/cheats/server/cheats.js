@@ -101,6 +101,14 @@ if (process.env.NODE_ENV == 'development') {
 
 		'cheats.resetQuests': function() {
 			Game.Quest.initialize(Meteor.user(), true);
+		},
+
+		'cheats.completeQuests': function() {
+			var quests = Game.Quest.getValue();
+			for (var key in quests.current) {
+				quests.current[key].status = Game.Quest.status.FINISHED;
+			}
+			Game.Quest.Collection.update({ user_id: Meteor.userId() }, quests);
 		}
 	})
 
@@ -123,7 +131,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.setResearchLevel': addCheater,
 		'cheats.resetHouseItems': addCheater,
 		'cheats.buyAllHouseItems': addCheater,
-		'cheats.resetQuests': addCheater
+		'cheats.resetQuests': addCheater,
+		'cheats.completeQuests': addCheater
 	})
 
 }

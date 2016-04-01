@@ -51,6 +51,9 @@
 					{{#if eq status 3}}finished{{/if}}
 				{{/if}}"
 		>
+			{{#if sideHeroName}}
+				<span class="title">{{sideHeroName}}</span>
+			{{/if}}
 			{{#if quests}}
 				{{#if isOpened}}
 					<ul class="quests">

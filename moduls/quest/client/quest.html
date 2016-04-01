@@ -2,6 +2,9 @@
 	<div class="smoke"></div>
 	<div class="modal quest">
 		<img src="/img/game/{{who}}.jpg" alt="">
+		{{#if (characterName who)}}
+			<span class="name">{{characterName who}}</span>
+		{{/if}}
 		<div class="title">{{title}}</div>
 		{{{text}}}
 		
@@ -27,21 +30,24 @@
 
 <template name="reward">
 	<div class="smoke"></div>
-	<div class="reward">
-		<div class="title">{{title}}</div>
+	<div class="modal reward">
+		<div class="close"></div>
 		<ul>
 			{{#if reward.metals}}
-				<li>
+				<li class="metals">
+					<div class="name">Металл</div>
 					<img src="/img/game/quests/metals.png">
 					<div class="count">{{formatNumber reward.metals}}</div>
 				</li>
 			{{/if}}
 			{{#if reward.crystals}}
-				<li>
+				<li class="crystals">
+					<div class="name">Кристалл</div>
 					<img src="/img/game/quests/crystals.png">
 					<div class="count">{{formatNumber reward.crystals}}</div>
 				</li>
 			{{/if}}
 		</ul>
+		<span class="take">Награда</span>
 	</div>
 </template>

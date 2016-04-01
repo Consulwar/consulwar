@@ -266,16 +266,6 @@ var showQuestWindow = function(id) {
 					type: 'quest',
 					engName: currentQuest.engName,
 					who: currentQuest.who,
-					title: [
-						'Замечательно!', 
-						'Прекрасно!', 
-						'Отличная Работа!', 
-						'Супер! Потрясающе!', 
-						'Уникальный Талант!', 
-						'Слава Консулу! ', 
-						'Невероятно!', 
-						'Изумительно!'
-					][Math.floor(Math.random()*8)],
 					reward: quest.reward
 				}, 
 				$('.over')[0]
@@ -368,6 +358,11 @@ Template.additional_area.events({
 Template.additional_area.helpers({
 	sideHero: function() {
 		return getSideHeroByRoute( Router.current() );	
+	},
+
+	sideHeroName: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		return who && Game.Persons[who] ? Game.Persons[who].name : null;
 	},
 
 	status: function() {

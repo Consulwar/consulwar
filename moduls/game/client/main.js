@@ -376,13 +376,6 @@ Template.quest.events({
 	}
 });
 
-Template.reward.events({
-	'click .reward': function(e, t) {
-		Meteor.call('quests.getReward', t.data.engName);
-		Blaze.remove(t.view);
-	}
-});
-
 ShowModalWindow = function(template, data) {
 	Blaze.renderWithData(
 		template, 

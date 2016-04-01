@@ -263,36 +263,63 @@
 		&:hover
 			background-image url(/img/game/close_a.png)
 
-.reward
-	position fixed
-	
-	z-index 100
-	
-	top 50%
-	left 50%
-	
-	margin -270px 0 0 -450px
+.modal
+	&.reward
+		position fixed
+		z-index 100
+		top 50%
+		left 50%
+		margin -202px 0 0 -200px
+		width 403px
+		height 297px
+		padding 0
+		font-size 24px
+		font-weight bold
+		text-align center
+		border none
+		background-image url(/img/game/quests/reward_back.png)
+		background-repeat no-repeat
+		background-position center center
 
-	width 835px
-	height 367px
-	
-	padding 150px 48px 17px 17px
-	font-size 18px
-	
-	text-align center
-	
-	background-image url(/img/game/quests/bg.png)
-	background-repeat no-repeat
-	background-position center center
-	
-	cursor pointer
-	
-	.title
-		font-size 30px
-	
-	li
-		display inline-block
-		padding 50px
+		.take
+			display block
+			cursor pointer
+			width 181px
+			height 40px
+			padding-top 10px
+			margin-top 30px
+			margin-left 100px
+			color #FFFFFF
+			background-image url(/img/game/quests/btn_take.png)
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+		li
+			display inline-block
+			margin-top 20px
+			height 140px
+			width 160px
+			text-align center
+			background-repeat no-repeat
+			background-position center centet
+			&.metals
+				color #66CCE2
+			&.crystals
+				color #D36FFF
+				
+			img
+				display block
+				float none
+				margin-top 10px
+				margin-bottom 10px
+				margin-left auto
+				margin-right auto
+				
+			.name
+			.count
+				width 100%
 		
 .quest
 	.title
@@ -318,7 +345,7 @@
 		color #E99245	
 
 	p
-		font-size 14px
+		font-size 12px
 		padding-bottom 10px
 		color #fff
 		font-weight normal

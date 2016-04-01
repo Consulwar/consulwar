@@ -266,16 +266,6 @@ var showQuestWindow = function(id) {
 					type: 'quest',
 					engName: currentQuest.engName,
 					who: currentQuest.who,
-					title: [
-						'Замечательно!', 
-						'Прекрасно!', 
-						'Отличная Работа!', 
-						'Супер! Потрясающе!', 
-						'Уникальный Талант!', 
-						'Слава Консулу! ', 
-						'Невероятно!', 
-						'Изумительно!'
-					][Math.floor(Math.random()*8)],
 					reward: quest.reward
 				}, 
 				$('.over')[0]

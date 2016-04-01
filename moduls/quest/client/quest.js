@@ -10,4 +10,11 @@ Template.quest.helpers({
 	}
 });
 
+Template.reward.events({
+	'click .close, click .take': function(e, t) {
+		Meteor.call('quests.getReward', t.data.engName);
+		Blaze.remove(t.view);
+	}
+});
+
 }

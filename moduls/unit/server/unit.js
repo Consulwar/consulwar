@@ -97,26 +97,25 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 	var totalCount = 0;
 	var restCount = 0;
 
-	for (var side in destUnits) {
-		for (var group in destUnits[side]) {
-			for (var name in destUnits[side][group]) {
-
-				var count = parseInt( destUnits[side][group][name], 10 );
-
-				if (!sourceUnits[side]
-				 || !sourceUnits[side][group]
-				 || !sourceUnits[side][group][name]
+	for (var side in sourceUnits) {
+		for (var group in sourceUnits[side]) {
+			for (var name in sourceUnits[side][group]) {
+				// subtract destination units 
+				if (destUnits[side]
+				 && destUnits[side][group]
+				 && destUnits[side][group][name]
 				) {
-					continue;
-				}
+					var count = parseInt( destUnits[side][group][name], 10 );
+					if (count > sourceUnits[side][group][name]) {
+						count = sourceUnits[side][group][name];
+					}
 
-				if (count > sourceUnits[side][group][name]) {
-					count = sourceUnits[side][group][name];
+					destUnits[side][group][name] = count;
+					sourceUnits[side][group][name] -= count;
+					totalCount += count;
 				}
-
-				destUnits[side][group][name] = count;
-				sourceUnits[side][group][name] -= count;
-				totalCount += count;
+				
+				// calculate rest units
 				restCount += sourceUnits[side][group][name];
 			}
 		}

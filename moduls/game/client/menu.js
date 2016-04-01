@@ -370,6 +370,11 @@ Template.additional_area.helpers({
 		return getSideHeroByRoute( Router.current() );	
 	},
 
+	sideHeroName: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		return who && Game.Persons[who] ? Game.Persons[who].name : null;
+	},
+
 	status: function() {
 		var who = getSideHeroByRoute( Router.current() );
 		var quest = (who) ? Game.Quest.getOneByHero(who) : null;

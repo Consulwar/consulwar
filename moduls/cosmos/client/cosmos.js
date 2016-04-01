@@ -163,23 +163,16 @@ var scrollMapToFleet = function(id) {
 	var spaceEvent = Game.SpaceEvents.getOne(id);
 
 	if (path && spaceEvent) {
-		var currentTime = Session.get('serverTime');
-		var timeLeft = spaceEvent.timeEnd - currentTime;
-		var timeTotal = spaceEvent.timeEnd - spaceEvent.timeStart;
-		var timeCurrent = currentTime - spaceEvent.timeStart;
-
-		var a = spaceEvent.info.startPosition;
-		var b = spaceEvent.info.targetPosition;
-		var totalFlyDistance = Math.sqrt( Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) );
-
-		var maxSpeed = Game.Planets.calcMaxSpeed( spaceEvent.info.engineLevel );
-		var acceleration = Game.Planets.calcAcceleration( spaceEvent.info.engineLevel );
+		var totalFlyDistance = Game.Planets.calcDistance(
+			spaceEvent.info.startPosition,
+			spaceEvent.info.targetPosition
+		);
 
 		var currentDistance = Game.Planets.calcDistanceByTime(
-			timeCurrent,
+			Session.get('serverTime') - spaceEvent.timeStart,
 			totalFlyDistance,
-			maxSpeed,
-			acceleration
+			Game.Planets.calcMaxSpeed( spaceEvent.info.engineLevel ),
+			Game.Planets.calcAcceleration( spaceEvent.info.engineLevel )
 		);
 
 		var k = currentDistance / totalFlyDistance;
@@ -942,12 +935,8 @@ Template.cosmosObjects.helpers({
 			}
 		}
 
-		var timeLeft = fleet.spaceEvent.timeEnd - currentTime;
-		var timeTotal = fleet.spaceEvent.timeEnd - fleet.spaceEvent.timeStart;
-		var timeCurrent = currentTime - fleet.spaceEvent.timeStart;
-
 		var currentDistance = Game.Planets.calcDistanceByTime(
-			timeCurrent,
+			currentTime - fleet.spaceEvent.timeStart,
 			fleet.totalFlyDistance,
 			fleet.maxSpeed,
 			fleet.acceleration

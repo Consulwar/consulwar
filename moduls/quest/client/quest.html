@@ -2,6 +2,9 @@
 	<div class="smoke"></div>
 	<div class="modal quest">
 		<img src="/img/game/{{who}}.jpg" alt="">
+		{{#if (characterName who)}}
+			<span class="name">{{characterName who}}</span>
+		{{/if}}
 		<div class="title">{{title}}</div>
 		{{{text}}}
 		

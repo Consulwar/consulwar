@@ -61,6 +61,22 @@ if (process.env.NODE_ENV == 'development') {
 			Game.Resources.spend(resources);
 		},
 
+		'cheats.setBuildingLevel': function(group, name, level) {
+			Game.Building.add({
+				group: group,
+				engName: name,
+				level: level
+			});
+		},
+		
+		'cheats.setResearchLevel': function(group, name, level) {
+			Game.Research.add({
+				group: group,
+				engName: name,
+				level: level
+			});
+		},
+
 		'cheats.resetHouseItems': function() {
 			Game.House.initialize(Meteor.user(), true);
 		},
@@ -103,6 +119,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.generateAllPlanets': addCheater,
 		'cheats.addResource': addCheater,
 		'cheats.spendResource': addCheater,
+		'cheats.setBuildingLevel': addCheater,
+		'cheats.setResearchLevel': addCheater,
 		'cheats.resetHouseItems': addCheater,
 		'cheats.buyAllHouseItems': addCheater,
 		'cheats.resetQuests': addCheater

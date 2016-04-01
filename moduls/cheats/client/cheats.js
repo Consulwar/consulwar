@@ -117,7 +117,7 @@ Game.Cheats.generateAllPlanets = function() {
 }
 
 // ----------------------------------------------------------------------------
-// Resource cheats
+// Resource, building and research cheats
 // ----------------------------------------------------------------------------
 
 Game.Cheats.addResource = function(id, amount) {
@@ -126,6 +126,14 @@ Game.Cheats.addResource = function(id, amount) {
 
 Game.Cheats.spendResource = function(id, amount) {
 	Meteor.call('cheats.spendResource', id, amount);
+}
+
+Game.Cheats.setBuildingLevel = function(group, name, level) {
+	Meteor.call('cheats.setBuildingLevel', group, name, level);
+}
+
+Game.Cheats.setResearchLevel = function(group, name, level) {
+	Meteor.call('cheats.setResearchLevel', group, name, level);
 }
 
 // ----------------------------------------------------------------------------

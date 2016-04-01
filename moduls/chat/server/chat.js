@@ -48,7 +48,7 @@ Meteor.methods({
 		var blockGlobal = Game.BanHistory.Collection.findOne({
 			user_id: user._id,
 			type: Game.BanHistory.type.chat,
-			room: { $exists: false }
+			room_id: { $exists: false }
 		}, {
 			sort: {
 				timestamp: -1

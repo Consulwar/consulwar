@@ -148,4 +148,8 @@ Game.Cheats.resetQuests = function() {
 	Meteor.call('cheats.resetQuests');
 }
 
+Game.Cheats.completeQuests = function() {
+	Meteor.call('cheats.completeQuests');
+}
+
 }

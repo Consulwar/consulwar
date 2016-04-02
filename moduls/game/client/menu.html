@@ -103,15 +103,43 @@
 <template name="overlay_menu">
 	<div class="overlay {{menuGroup}} {{itemGroup}}">
 		{{#each items}}
-			{{#if gt this.currentLevel 0}}
-				<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
-			{{/if}}
-			
-			{{#let progress=this.progress}}
-				{{#if and progress (eq progress.level 1)}}
-					<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
+			{{#if this.overlay}}
+				{{#let overlay=this.getOverlay}}
+					{{#if and (overlay (or overlay.img overlay.progress))}}
+						<a 
+							href="{{this.url}}"
+							title="{{this.name}}"
+							style="
+								top: {{overlay.y}}px;
+								left: {{overlay.x}}px;
+								z-index: {{overlay.z}};
+							"
+							>
+
+							{{#if overlay.img}}
+								<img src="/img/game/{{overlay.img}}" alt=""/>
+							{{/if}}
+
+							{{#if and overlay.progress (not (eq overlay.img overlay.progress.img))}}
+								<img 
+									src="/img/game/{{overlay.progress.img}}" 
+									progress="{{percentRound10 overlay.progress}}" 
+									alt=""/>
+							{{/if}}
+						</a>
+					{{/if}}
+				{{/let}}
+			{{else}}
+				{{#if gt this.currentLevel 0}}
+					<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
 				{{/if}}
-			{{/let}}
+				
+				{{#let progress=this.progress}}
+					{{#if and progress (eq progress.level 1)}}
+						<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
+					{{/if}}
+				{{/let}}
+			{{/if}}
 		{{/each}}
 		
 		{{#if eq currentUrl (pathFor route='building' group='residential')}}

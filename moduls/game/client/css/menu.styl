@@ -315,6 +315,7 @@
 	z-index: 1
 	background-repeat no-repeat
 	background-position top left
+	overflow hidden
 
 	a
 		position absolute
@@ -331,6 +332,51 @@
 		&:hover:before
 			-webkit-filter brightness(1.1)
 			filter brightness(1.1)
+				
+		img
+			position absolute
+			z-index 1
+			
+			&:hover
+				-webkit-filter brightness(1.1)
+				filter brightness(1.1)
+			
+			&[progress]
+				z-index 2
+				
+			+ img
+				opacity 0.8
+
+			&[progress="100"]
+				-webkit-filter blur(20px)
+				filter blur(20px)
+			&[progress="90"]
+				-webkit-filter blur(18px)
+				filter blur(18px)
+			&[progress="80"]
+				-webkit-filter blur(16px)
+				filter blur(16px)
+			&[progress="70"]
+				-webkit-filter blur(12px)
+				filter blur(12px)
+			&[progress="60"]
+				-webkit-filter blur(8px)
+				filter blur(8px)
+			&[progress="50"]
+				-webkit-filter blur(6px)
+				filter blur(6px)
+			&[progress="40"]
+				-webkit-filter blur(4px)
+				filter blur(4px)
+			&[progress="30"]
+				-webkit-filter blur(3px)
+				filter blur(3px)
+			&[progress="20"]
+				-webkit-filter blur(2px)
+				filter blur(2px)
+			&[progress="10"]
+				-webkit-filter blur(1px)
+				filter blur(1px)
 		
 		/*&.new:before
 			filter blur(5px)

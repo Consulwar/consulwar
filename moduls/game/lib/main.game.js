@@ -112,6 +112,8 @@ game.Item = function(options) {
 		this.basePrice = options.basePrice;
 		this.maxLevel = options.maxLevel;
 
+		this.overlay = options.overlay;
+
 		//this.requirements = options.requirements;
 		Object.defineProperty(this, 'requirements', {
 			get: function() {
@@ -177,6 +179,45 @@ game.Item = function(options) {
 
 	this.currentLevel = function() {
 		return Game.getObjectByType(this.type).get(this.group, this.engName);
+	}
+
+	this.getOverlayImage = function(currentLevel) {
+		currentLevel = currentLevel || this.currentLevel();
+
+		// Select highest level for overlay
+		var fitLevels = _.filter(this.overlay.levels, function(level) {
+			return level <= currentLevel;
+		});
+
+		var level = _.max(fitLevels);
+
+		if (level != -Infinity) {
+			return [this.type, this.group, this.engName, level].join('/') + '.png';
+		}
+		return null;
+	}
+
+	this.getOverlay = function() {
+		if (!this.overlay) {
+			return null;
+		}
+		var currentLevel = this.currentLevel();
+
+		var progress = this.progress();
+
+		if (progress) {
+			progress.img = this.getOverlayImage(progress.level);
+		}
+
+		var result = {
+			img: this.getOverlayImage(currentLevel),
+			x: this.overlay.x,
+			y: this.overlay.y,
+			z: this.overlay.z,
+			progress: progress
+		}
+
+		return result;
 	}
 
 	this.price = function(level) {

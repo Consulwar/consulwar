@@ -36,7 +36,7 @@ Meteor.methods({
 		}
 
 		// save vote
-		var votePower = Game.User.gerVotePower();
+		var votePower = Game.User.getVotePower();
 
 		var inc = {
 			totalVotePower: votePower

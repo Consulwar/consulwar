@@ -30,7 +30,7 @@ Game.Chat.Messages = {
 			}
 		}
 
-		var priceReduction = (1 - Game.Research.items.evolution.animalworld.currentLevel() * 0.1);
+		var priceReduction = (1 - Game.Research.items.evolution.animalworld.currentLevel() * 0.001);
 
 		return { crystals: Math.ceil(Math.max(
 				Math.min(

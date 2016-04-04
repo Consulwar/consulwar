@@ -41,7 +41,7 @@ Game.Planets = {
 	},
 
 	getMaxColoniesCount: function() {
-		return 4; // TODO: Implement later!
+		return 4 + Game.User.getLevel();
 	},
 
 	getColoniesCount: function() {

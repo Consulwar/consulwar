@@ -95,64 +95,66 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	}
 
 	var len = Game.Cosmos.ARTEFACTS_GROUP_SPREAD.length;
-	var index = Math.round( distCurrent / distTotal * (len - 1) );
+	var index = Math.floor( distCurrent / distTotal * (len - 1) );
 	var groups = Game.Cosmos.ARTEFACTS_GROUP_SPREAD[ index ];
 
-	// select available items
+	// sort all available artefacts by group
 	var artefacts = type.artefacts();
-	var items = [];
+	var items = {};
 
 	for (var i = 0; i < artefacts.length; i++) {
-
 		var artefact = artefacts[i][0];
 		var chance = artefacts[i][1];
 
-		if (!artefact || !artefact.group) {
-			continue;
+		if (!items[artefact.group]) {
+			items[artefact.group] = [];
 		}
 
-		var group = groups[artefact.group];
-
-		if (!group || group.chance <= 0 || group.power <= 0) {
-			continue;
-		}
-
-		items.push({
+		items[artefact.group].push({
 			name: artefact.engName,
-			spawnChance: group.chance,
-			dropChance: chance * group.power
-		})
+			chance: chance
+		});
 	}
 
-	if (items.length <= 0) {
-		return null;
+	// select available groups
+	var arrGroups = [];
+	for (var name in groups) {
+		arrGroups.push({
+			name: name,
+			chance: groups[name].chance,
+			power: groups[name].power
+		});
 	}
 
-	// select random items from available
+	// select 3 artefacts
 	var result = {};
-	var foundCount = 0;
 
-	while (items.length > 0 && foundCount < 3) {
+	var maxValue = 0;
+	for (var i = 0; i < arrGroups.length; i++) {
+		maxValue += arrGroups[i].chance;
+	}
 
+	for (var i = 0; i < 3; i++) {
+		// select random group
+		var randomVal = Game.Random.random() * maxValue;
 		var val = 0;
-		for (var i = 0; i < items.length; i++) {
-			val += items[i].spawnChance;
-		}
 
-		var randomVal = Game.Random.random() * val;
-		val = 0;
-
-		for (var i = 0; i < items.length; i++) {
-			val += items[i].spawnChance;
+		for (var j = 0; j < arrGroups.length; j++) {
+			val += arrGroups[j].chance;
 			if (randomVal <= val) {
 				break;
 			}
 		}
 
-		result[items[i].name] = items[i].dropChance;
-		foundCount++;
+		var groupArtefacts = items[ arrGroups[j].name ];
 
-		items.splice(i, 1);
+		// select random artefact from chosen group
+		if (groupArtefacts && groupArtefacts.length > 0) {
+			var iRand = Game.Random.interval(0, groupArtefacts.length - 1);
+			var randomItem = groupArtefacts[iRand];
+			result[randomItem.name] = Math.floor(randomItem.chance * arrGroups[j].power * 100) / 100;
+			groupArtefacts.splice(iRand, 1);
+		}
 	}
 
 	return result;
@@ -558,7 +560,7 @@ Meteor.methods({
 				radius: 40,
 				hands: Game.Random.interval(4, 6),
 				segments: 10,
-				rotationFactor: Game.Random.interval(2, 6) / 100, // 0.02 - 0.06
+				rotationFactor: Game.Random.interval(2, 5) / 100, // 0.02 - 0.05
 				narrowFactor: 5,
 				angle: Game.Random.random() * Math.PI * 2, // 0 - 360
 				minPlanets: 400,

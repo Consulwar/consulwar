@@ -63,10 +63,6 @@ Template.mail.onRendered(function() {
 			if (hash.indexOf('read') == 0) {
 				readLetter(hash.substr('read'.length + 1), template);
 			}
-			// show quest
-			else if (hash.indexOf('quest') == 0) {
-				showDailyQuest(template);
-			}
 			// compose letter
 			else if (hash.indexOf('compose') == 0) {
 				composeLetter(hash.substr('compose'.length + 1), template);
@@ -342,7 +338,7 @@ Template.mail.events({
 
 	// Open daily quest
 	'click tr.from_tamily': function(e, t) {
-		Router.go('mail', { page: t.data.page }, { hash: 'quest' });
+		showDailyQuest(t);
 	},
 
 	// Compose letter
@@ -476,7 +472,7 @@ Template.mail.events({
 
 	// Check username
 	'change input.recipient': function(e, t) {
-		checkusername(t);
+		checkUsername(t);
 	}
 });
 

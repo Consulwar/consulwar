@@ -411,8 +411,6 @@ Game.SpaceEvents.completeShip = function(event) {
 			var enemyArmy = null;
 
 			if (planet.mission) {
-				var wasUserColony = (planet.isHome || planet.armyId) ? true : false;
-
 				var userLocation = (event.info.startPlanetId)
 					? event.info.startPlanetId
 					: event.info.startPosition;
@@ -423,7 +421,7 @@ Game.SpaceEvents.completeShip = function(event) {
 					location: planet._id,
 					userLocation: userLocation,
 					enemyLocation: planet._id,
-					artefacts: (!wasUserColony ? Game.Planets.getArtefacts(planet) : null)
+					artefacts: Game.Planets.getArtefacts(planet)
 				};
 
 				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
@@ -520,7 +518,7 @@ Game.SpaceEvents.completeShip = function(event) {
 				return; // empty reptiles ship!
 			}
 
-			if (planet.armyId || planet.isHome) {
+			if (!planet.mission && (planet.armyId || planet.isHome)) {
 				// humans planet
 				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
 				var enemyArmy = (enemyFleet)
@@ -561,6 +559,7 @@ Game.SpaceEvents.completeShip = function(event) {
 						if (planet.isHome) {
 							event.info.mission.units = enemyArmy.reptiles.fleet;
 						} else {
+							planet.armyId = null;
 							planet.mission = {
 								type: 'defencefleet',
 								level: event.info.mission.level,
@@ -574,6 +573,9 @@ Game.SpaceEvents.completeShip = function(event) {
 					} else {
 						// everyone died
 						Game.Unit.removeArmy(userArmyId);
+						if (!planet.isHome) {
+							planet.armyId = null;
+						}
 						event.info.mission = null;
 					}
 
@@ -630,9 +632,7 @@ Game.SpaceEvents.completeShip = function(event) {
 
 			planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 			Game.Planets.update(planet);
-
 		}
-
 	}
 
 	// --------------------------------
@@ -649,83 +649,89 @@ Game.SpaceEvents.completeShip = function(event) {
 			throw new Meteor.Error('Невозможна битва между одной стороной конфликта');
 		}
 
-		var firstLocation = (event.info.startPlanetId)
-			? event.info.startPlanetId
-			: event.info.startPosition;
+		var isAlive = true;
 
-		var secondLocation = (targetShip.info.startPlanetId)
-			? targetShip.info.startPlanetId
-			: targetShip.info.startPosition;
+		if (targetShip.status != Game.SpaceEvents.status.FINISHED) {
+			// target is still flying
+			var firstLocation = (event.info.startPlanetId)
+				? event.info.startPlanetId
+				: event.info.startPosition;
 
-		var battleOptions = {
-			location: event.info.targetPosition,
-			userLocation: event.info.isHumans ? firstLocation : secondLocation,
-			enemyLocation: event.info.isHumans ? secondLocation : firstLocation
-		};
-		
-		if (targetShip.info.mission) {
-			battleOptions.missionType = targetShip.info.mission.type;
-			battleOptions.missionLevel = targetShip.info.mission.level;
-		}
+			var secondLocation = (targetShip.info.startPlanetId)
+				? targetShip.info.startPlanetId
+				: targetShip.info.startPosition;
 
-		// get fleet units
-		var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
-		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
-
-		// perform battle
-		var userArmy = (event.info.isHumans)
-			? { army: { fleet: firstFleet } }
-			: { army: { fleet: secondFleet } };
-
-		var enemyArmy = (event.info.isHumans)
-			? { reptiles: { fleet: secondFleet } }
-			: { reptiles: { fleet: firstFleet } };
-
-		var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
-
-		var firstArmy = (event.info.isHumans)
-			? battleResult.userArmy
-			: battleResult.enemyArmy;
-
-		var secondArmy = (event.info.isHumans)
-			? battleResult.enemyArmy
-			: battleResult.userArmy;
-
-		// update units
-		if (firstArmy) {
-			if (event.info.isHumans) {
-				Game.Unit.updateArmy(event.info.armyId, firstArmy);
-			} else {
-				event.info.mission.units = firstArmy.reptiles.fleet;
+			var battleOptions = {
+				location: event.info.targetPosition,
+				userLocation: event.info.isHumans ? firstLocation : secondLocation,
+				enemyLocation: event.info.isHumans ? secondLocation : firstLocation
+			};
+			
+			if (targetShip.info.mission) {
+				battleOptions.missionType = targetShip.info.mission.type;
+				battleOptions.missionLevel = targetShip.info.mission.level;
 			}
-		} else {
-			// first fleet destroyed
-			event.status = Game.SpaceEvents.status.FINISHED;
-			Game.SpaceEvents.Collection.update({ _id: event._id }, event);
-		}
 
-		if (secondArmy) {
-			if (targetShip.info.isHumans) {
-				Game.Unit.updateArmy(targetShip.info.armyId, secondArmy);
+			// get fleet units
+			var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
+			var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
+
+			// perform battle
+			var userArmy = (event.info.isHumans)
+				? { army: { fleet: firstFleet } }
+				: { army: { fleet: secondFleet } };
+
+			var enemyArmy = (event.info.isHumans)
+				? { reptiles: { fleet: secondFleet } }
+				: { reptiles: { fleet: firstFleet } };
+
+			var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+
+			var firstArmy = (event.info.isHumans)
+				? battleResult.userArmy
+				: battleResult.enemyArmy;
+
+			var secondArmy = (event.info.isHumans)
+				? battleResult.enemyArmy
+				: battleResult.userArmy;
+
+			// update units
+			if (firstArmy) {
+				if (event.info.isHumans) {
+					Game.Unit.updateArmy(event.info.armyId, firstArmy);
+				} else {
+					event.info.mission.units = firstArmy.reptiles.fleet;
+				}
 			} else {
-				targetShip.info.mission.units = secondArmy.reptiles.fleet;
+				// first fleet destroyed
+				isAlive = false;
+				event.status = Game.SpaceEvents.status.FINISHED;
+				Game.SpaceEvents.Collection.update({ _id: event._id }, event);
 			}
-			// update target fleet
-			targetShip.info.timeBattle = event.timeEnd;
-			Game.SpaceEvents.Collection.update({ _id: targetShip._id }, targetShip);
-		} else {
-			// target fleet destroyed
-			targetShip.status = Game.SpaceEvents.status.FINISHED;
-			Game.SpaceEvents.Collection.update({ _id: targetShip._id}, targetShip);
-		}
 
-		// add reward
-		if ((firstArmy && event.info.isHumans) || (secondArmy && targetShip.info.isHumans)) {
-			Game.Resources.add( battleResult.reward );
+			if (secondArmy) {
+				if (targetShip.info.isHumans) {
+					Game.Unit.updateArmy(targetShip.info.armyId, secondArmy);
+				} else {
+					targetShip.info.mission.units = secondArmy.reptiles.fleet;
+				}
+				// update target fleet
+				targetShip.info.timeBattle = event.timeEnd;
+				Game.SpaceEvents.Collection.update({ _id: targetShip._id }, targetShip);
+			} else {
+				// target fleet destroyed
+				targetShip.status = Game.SpaceEvents.status.FINISHED;
+				Game.SpaceEvents.Collection.update({ _id: targetShip._id}, targetShip);
+			}
+
+			// add reward
+			if ((firstArmy && event.info.isHumans) || (secondArmy && targetShip.info.isHumans)) {
+				Game.Resources.add( battleResult.reward );
+			}
 		}
 
 		// return to base
-		if (firstArmy) {
+		if (isAlive) {
 			var startPosition = event.info.targetPosition;
 			var targetPosition = event.info.startPosition;
 			var engineLevel = event.info.engineLevel;

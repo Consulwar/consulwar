@@ -518,7 +518,7 @@ Game.SpaceEvents.completeShip = function(event) {
 				return; // empty reptiles ship!
 			}
 
-			if (planet.armyId || planet.isHome) {
+			if (!planet.mission && (planet.armyId || planet.isHome)) {
 				// humans planet
 				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
 				var enemyArmy = (enemyFleet)
@@ -559,6 +559,7 @@ Game.SpaceEvents.completeShip = function(event) {
 						if (planet.isHome) {
 							event.info.mission.units = enemyArmy.reptiles.fleet;
 						} else {
+							planet.armyId = null;
 							planet.mission = {
 								type: 'defencefleet',
 								level: event.info.mission.level,
@@ -572,6 +573,9 @@ Game.SpaceEvents.completeShip = function(event) {
 					} else {
 						// everyone died
 						Game.Unit.removeArmy(userArmyId);
+						if (!planet.isHome) {
+							planet.armyId = null;
+						}
 						event.info.mission = null;
 					}
 

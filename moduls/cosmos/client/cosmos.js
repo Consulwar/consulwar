@@ -1278,4 +1278,36 @@ Game.Planets.debugCalcFlyTime = function() {
 	}
 }
 
+Game.Planets.debugCalcArtefactsChances = function() {
+	var items = {};
+	var planetTypes = Game.Planets.types;
+
+	for (var key in planetTypes) {
+		var type = planetTypes[key];
+		var artefacts = type.artefacts();
+
+		for (var i = 0; i < artefacts.length; i++) {
+			var name = artefacts[i][0].name;
+			var group = artefacts[i][0].group;
+
+			if (!items[group]) {
+				items[group] = {};
+			}
+
+			if (!items[group][name]) {
+				items[group][name] = 0;
+			}
+
+			items[group][name] += artefacts[i][1] * type.chance;
+		}
+	}
+
+	for (var groupName in items) {
+		console.log('================================================');
+		for (var artefactName in items[groupName]) {
+			console.log(items[groupName][artefactName], artefactName, groupName);
+		}
+	}
+}
+
 }

@@ -142,6 +142,7 @@ Template.earthZoneInfo.helpers({
 	info: function() {
 		var zone = Game.EarthZones.getByName(this.name);
 
+		var maxPower = Game.EarthZones.calcMaxHealth();
 		var currentUserPower = Game.EarthZones.calcUnitsHealth( zone.userArmy );
 		var currentEnemyPower = Game.EarthZones.calcUnitsHealth( zone.enemyArmy );
 
@@ -170,9 +171,7 @@ Template.earthZoneInfo.helpers({
 		}
 
 		var userCount = 0;
-		var totalUserPower = 0;
 		var enemyCount = 0;
-		var totalEnemyPower = 0;
 
 		var zones = Game.EarthZones.getAll().fetch();
 		for (var i = 0; i < zones.length; i++) {
@@ -181,20 +180,17 @@ Template.earthZoneInfo.helpers({
 			} else {
 				userCount++;
 			}
-
-			totalUserPower += Game.EarthZones.calcUnitsHealth( zones[i].userArmy );
-			totalEnemyPower += Game.EarthZones.calcUnitsHealth( zones[i].enemyArmy );
 		}
 
 		var totalCount = userCount + enemyCount;
 		var capturedPercent = Math.round( (userCount / totalCount) * 100 );
 
-		var userPower = (totalUserPower > 0)
-			? Math.round( (currentUserPower / totalUserPower) * 100 )
+		var userPower = (maxPower > 0)
+			? Math.round( (currentUserPower / maxPower) * 100 )
 			: 0;
 
-		var enemyPower = (totalEnemyPower > 0)
-			? Math.round( (currentEnemyPower / totalEnemyPower) * 100 )
+		var enemyPower = (maxPower > 0)
+			? Math.round( (currentEnemyPower / maxPower) * 100 )
 			: 0;
 
 		return {
@@ -413,20 +409,18 @@ var ZoneView = function(mapView, zoneData) {
 		if (zone.isVisible) {
 
 			// calculate army power
-			var totalPower = Game.EarthZones.calcTotalHealth();
+			var maxPower = Game.EarthZones.calcMaxHealth();
 
-			var totalHumanPower = totalPower.userPower;
-			if (totalHumanPower > 0) {
+			if (maxPower > 0) {
 				var currentHumanPower = Game.EarthZones.calcUnitsHealth(zone.userArmy);
-				humanPower = Math.round( (currentHumanPower / totalHumanPower) * 100 );
+				humanPower = Math.round( (currentHumanPower / maxPower) * 100 );
 			} else {
 				humanPower = 0;
 			}
 
-			var totalReptilePower = totalPower.enemyPower;
-			if (totalReptilePower > 0) {
+			if (maxPower > 0) {
 				var currentReptilePower = Game.EarthZones.calcUnitsHealth(zone.enemyArmy);
-				reptilePower = Math.round( (currentReptilePower / totalReptilePower ) * 100);
+				reptilePower = Math.round( (currentReptilePower / maxPower ) * 100);
 			} else {
 				reptilePower = 0;
 			}
@@ -706,8 +700,10 @@ Template.earth.onRendered(function() {
 	observerZones = Game.EarthZones.getAll().observeChanges({
 		changed: function(id, fields) {
 			var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
-			if (mapView && zoneViews && zoneViews[ name ]) {
-				zoneViews[ name ].update();
+			if (mapView && zoneViews) {
+				for (var key in zoneViews) {
+					zoneViews[ key ].update();
+				}
 			}
 		}
 	});

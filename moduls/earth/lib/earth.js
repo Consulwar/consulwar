@@ -42,20 +42,22 @@ Game.EarthZones = {
 		return power;
 	},
 
-	calcTotalHealth: function() {
-		var userPower = 0;
-		var enemyPower = 0;
-
+	calcMaxHealth: function() {
+		var max = 0;
 		var zones = Game.EarthZones.getAll().fetch();
 		for (var i = 0; i < zones.length; i++) {
-			userPower += Game.EarthZones.calcUnitsHealth( zones[i].userArmy );
-			enemyPower += Game.EarthZones.calcUnitsHealth( zones[i].enemyArmy );
+			// calc user army
+			var userHealth = Game.EarthZones.calcUnitsHealth( zones[i].userArmy );
+			if (userHealth > max) {
+				max = userHealth;
+			}
+			// calc enemy army
+			var enemyHealth = Game.EarthZones.calcUnitsHealth( zones[i].enemyArmy );
+			if (enemyHealth > max) {
+				max = enemyHealth;
+			}
 		}
-
-		return {
-			userPower: userPower,
-			enemyPower: enemyPower
-		}
+		return max;
 	}
 };
 

@@ -136,6 +136,7 @@
 					{{else}}
 						{{#if this.isReinforcement}}Земля{{else}}Перехват{{/if}}
 					{{/if}}
+					<span>{{formatSeconds (getTimeLeft this.timeEnd)}}</span>
 				</li>
 			{{/each}}
 		</ul>
@@ -150,6 +151,7 @@
 					{{#if this.start}}{{this.start.name}}{{else}}Перехват{{/if}}
 					<span> → </span> 
 					{{#if this.finish}}{{this.finish.name}}{{else}}Перехват{{/if}}
+					<span>{{formatSeconds (getTimeLeft this.timeEnd)}}</span>
 				</li>
 			{{/each}}
 		</ul>
@@ -238,6 +240,8 @@
 					map-planet-border-empty
 				{{/if}}{{/if}}
 				{{#if gt zoom 7}}map-planet-marker-animated{{/if}}
+				{{#if lt zoom 7}}zoom-lt-7{{/if}}
+				{{#if lt zoom 5}}zoom-lt-5{{/if}}
 				{{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}" 
 			tabindex="0" 
 			style="
@@ -274,7 +278,8 @@
 			tabindex="0" 
 			style="
 				transform: translate3d({{animation.x}}px, {{animation.y}}px, 0px);
-				z-index: 222;"
+				z-index: 222;
+				{{#if lt zoom 5}}display: none;{{/if}}"
 		>
 			<div
 				class="

@@ -183,6 +183,11 @@ var scrollMapToFleet = function(id) {
 }
 
 Template.cosmosFleetsInfo.helpers({
+	getTimeLeft: function(timeEnd) {
+		var timeLeft = timeEnd - Session.get('serverTime');
+		return timeLeft > 0 ? timeLeft : 0;
+	},
+
 	userFleets: function () {
 		var result = [];
 
@@ -194,7 +199,8 @@ Template.cosmosFleetsInfo.helpers({
 			result.push({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
-				finish: Game.Planets.getOne( fleets[i].info.targetId )
+				finish: Game.Planets.getOne( fleets[i].info.targetId ),
+				timeEnd: fleets[i].timeEnd 
 			});
 		}
 		
@@ -203,7 +209,8 @@ Template.cosmosFleetsInfo.helpers({
 			result.push({
 				isReinforcement: true,
 				id: reinforcements[i]._id,
-				start: Game.Planets.getBase()
+				start: Game.Planets.getBase(),
+				timeEnd: reinforcements[i].timeEnd
 			});
 		}
 
@@ -220,7 +227,8 @@ Template.cosmosFleetsInfo.helpers({
 			result.push({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
-				finish: Game.Planets.getOne( fleets[i].info.targetId )
+				finish: Game.Planets.getOne( fleets[i].info.targetId ),
+				timeEnd: fleets[i].timeEnd
 			});
 		}
 		return (result.length > 0) ? result : null;

@@ -90,14 +90,20 @@
 .map-planet-border-reptile
 	border 3px solid #DC6257
 	border-radius 50%
+	&.zoom-lt-5
+		background-color #DC6257
 	
 .map-planet-border-human
 	border 3px solid #56BAF2
 	border-radius 50%
+	&.zoom-lt-5
+		background-color #56BAF2
 	
 .map-planet-border-empty
 	border 3px solid #ffffff
 	border-radius 50%
+	&.zoom-lt-5
+		background-color #ffffff
 
 .map-planet-marker-hidden
 	display none
@@ -110,6 +116,16 @@
 .map-planet-marker
 	outline none
 	cursor pointer
+
+	&.zoom-lt-7
+		border-width 2px
+
+	&.zoom-lt-5
+		border-width 1px
+		&:before
+			display none
+		&:after
+			display none
 
 	&:before
 		content ""
@@ -202,6 +218,7 @@
 	cursor pointer
 
 .map-planet-info
+	overflow-y auto
 	left 1124px
 	top 0
 	z-index 1

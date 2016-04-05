@@ -277,7 +277,7 @@ Template.mail.helpers({
 
 	letterStatus: function(letter) {
 		if (letter.sentCount) {
-			return 'Прочитано ' + letter.sentCount + ' из ' + letter.readCount;
+			return 'Прочитано ' + letter.readCount + ' из ' + letter.sentCount;
 		}
 		return letter.status == game.Mail.status.read ? 'Прочитано': '';
 	},

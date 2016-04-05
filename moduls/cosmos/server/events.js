@@ -529,7 +529,7 @@ Game.SpaceEvents.completeShip = function(event) {
 				// get user fleet + defense
 				var userFleet = Game.Planets.getFleetUnits(planet._id);
 				var userDefense = Game.Planets.getDefenseUnits(planet._id);
-				
+
 				var userArmy = null;
 				if (userFleet || userDefense) {
 					userArmy = { army: {} };
@@ -591,9 +591,11 @@ Game.SpaceEvents.completeShip = function(event) {
 						}
 						event.info.mission = null;
 					}
+				}
 
-					// collect and reset artefacts time
-					if (enemyArmy && !userArmy && !planet.isHome) {
+				if (enemyArmy) {
+					// collect all gained artefacts until defeat
+					if (!userArmy && !planet.isHome) {
 						var delta = event.timeEnd - planet.timeArtefacts;
 						var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 						if (count > 0){
@@ -604,30 +606,54 @@ Game.SpaceEvents.completeShip = function(event) {
 						}
 						planet.timeArtefacts = null;
 					}
-				}
 
-				if (enemyArmy && (userArmy || planet.isHome)) {
-					// return reptiles ship
-					var startPosition = event.info.targetPosition;
-					var targetPosition = event.info.startPosition;
-					var engineLevel = event.info.engineLevel;
+					// steal user resources
+					if (!userArmy && planet.isHome) {
+						var userResources = Game.Resources.getValue();
+						var stealCost = Game.Unit.calculateArmyCost(enemyArmy);
 
-					var shipOptions = {
-						startPosition:  startPosition,
-						startPlanetId:  event.info.targetId,
-						targetPosition: targetPosition,
-						targetType:     Game.SpaceEvents.target.PLANET,
-						targetId:       event.info.startPlanetId,
-						startTime:      event.timeEnd,
-						flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-						isHumans:       false,
-						isOneway:       true,
-						engineLevel:    engineLevel,
-						mission:        event.info.mission,
-						armyId:         null
+						for (var resName in stealCost) {
+							var stealAmount = Math.floor(stealCost[resName] * 0.2); // 20%
+
+							var userAmount = (userResources[resName] && userResources[resName].amount)
+								? userResources[resName].amount
+								: 0;
+
+							// TODO: Implement resource storage!
+
+							if (stealAmount > userAmount) {
+								stealCost[resName] = userAmount;
+							} else {
+								stealCost[resName] = stealAmount;
+							}
+						}
+						
+						Game.Resources.spend(stealCost);
 					}
 
-					Game.SpaceEvents.sendShip(shipOptions);
+					// return reptiles ship
+					if (userArmy || planet.isHome) {
+						var startPosition = event.info.targetPosition;
+						var targetPosition = event.info.startPosition;
+						var engineLevel = event.info.engineLevel;
+
+						var shipOptions = {
+							startPosition:  startPosition,
+							startPlanetId:  event.info.targetId,
+							targetPosition: targetPosition,
+							targetType:     Game.SpaceEvents.target.PLANET,
+							targetId:       event.info.startPlanetId,
+							startTime:      event.timeEnd,
+							flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
+							isHumans:       false,
+							isOneway:       true,
+							engineLevel:    engineLevel,
+							mission:        event.info.mission,
+							armyId:         null
+						}
+
+						Game.SpaceEvents.sendShip(shipOptions);
+					}
 				}
 
 			} else if (planet.mission) {
@@ -864,8 +890,7 @@ Meteor.methods({
 
 		Game.SpaceEvents.sendShip(shipOptions);
 	}
-
-})
+});
 
 Meteor.publish('spaceEvents', function () {
 	if (this.userId) {

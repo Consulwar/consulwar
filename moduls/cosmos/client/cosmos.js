@@ -183,6 +183,11 @@ var scrollMapToFleet = function(id) {
 }
 
 Template.cosmosFleetsInfo.helpers({
+	getTimeLeft: function(timeEnd) {
+		var timeLeft = timeEnd - Session.get('serverTime');
+		return timeLeft > 0 ? timeLeft : 0;
+	},
+
 	userFleets: function () {
 		var result = [];
 
@@ -194,7 +199,8 @@ Template.cosmosFleetsInfo.helpers({
 			result.push({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
-				finish: Game.Planets.getOne( fleets[i].info.targetId )
+				finish: Game.Planets.getOne( fleets[i].info.targetId ),
+				timeEnd: fleets[i].timeEnd 
 			});
 		}
 		
@@ -203,7 +209,8 @@ Template.cosmosFleetsInfo.helpers({
 			result.push({
 				isReinforcement: true,
 				id: reinforcements[i]._id,
-				start: Game.Planets.getBase()
+				start: Game.Planets.getBase(),
+				timeEnd: reinforcements[i].timeEnd
 			});
 		}
 
@@ -220,7 +227,8 @@ Template.cosmosFleetsInfo.helpers({
 			result.push({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
-				finish: Game.Planets.getOne( fleets[i].info.targetId )
+				finish: Game.Planets.getOne( fleets[i].info.targetId ),
+				timeEnd: fleets[i].timeEnd
 			});
 		}
 		return (result.length > 0) ? result : null;
@@ -280,21 +288,29 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 		}
 	}
 
-	var units = Game.Planets.getFleetUnits(planet._id);
-	if (units) {
+	var units = {
+		fleet: Game.Planets.getFleetUnits(planet._id),
+		defense: Game.Planets.getDefenseUnits(planet._id)
+	}
+
+	if (units.fleet || units.defense) {
 		var side = (planet.mission) ? 'reptiles' : 'army';
 		info.units = [];
 
-		for (var key in units) {
-			if (!_.isString( units[key] ) && units[key] <= 0) {
-				continue;
-			}
+		for (var group in units) {
+			for (var key in units[group]) {
+				if (!_.isString( units[group][key] ) && units[group][key] <= 0) {
+					continue;
+				}
 
-			info.units.push({
-				engName: key,
-				name: Game.Unit.items[side].fleet[key].name,
-				count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-			})
+				info.units.push({
+					engName: key,
+					name: Game.Unit.items[side][group][key].name,
+					count: _.isString( units[group][key] )
+						? game.Battle.count[ units[group][key] ]
+						: units[group][key]
+				});
+			}
 		}
 	}
 

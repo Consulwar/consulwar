@@ -16,7 +16,7 @@ initCosmosConfigLib = function() {
 	Game.Cosmos.SPEED_CONFIG = Meteor.settings.public.cosmos.speedConfig;
 	Game.Cosmos.MIN_SPEED = Meteor.settings.public.cosmos.minSpeed * speedFactor;
 	Game.Cosmos.MAX_SPEED = Meteor.settings.public.cosmos.maxSpeed * speedFactor;
-	Game.Cosmos.MIN_ACC = Meteor.settings.public.cosmos.minAcc * speedFactor;
-	Game.Cosmos.MAX_ACC = Meteor.settings.public.cosmos.maxAcc * speedFactor;
+	Game.Cosmos.MIN_ACC = Meteor.settings.public.cosmos.minAcc * Math.pow(speedFactor, 2);
+	Game.Cosmos.MAX_ACC = Meteor.settings.public.cosmos.maxAcc * Math.pow(speedFactor, 2);
 
 }

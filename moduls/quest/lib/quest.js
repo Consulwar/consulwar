@@ -89,7 +89,7 @@ Game.Quest = {
 	},
 
 	checkFinished: function(id) {
-		var quests = Game.Quest.getValue;
+		var quests = Game.Quest.getValue();
 		return (quests && quests.finished && quests.finished[id]) ? true : false;
 	}
 }

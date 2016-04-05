@@ -384,6 +384,12 @@ ShowModalWindow = function(template, data) {
 	)
 }
 
+Template.item_price.events({
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	}
+})
+
 Template.item_price.helpers({
 	getResources: function(price) {
 		var result = [];

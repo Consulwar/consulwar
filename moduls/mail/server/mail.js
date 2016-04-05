@@ -473,7 +473,9 @@ Meteor.methods({
 				subject: 1,
 				status: 1,
 				timestamp: 1,
-				complaint: 1
+				complaint: 1,
+				readCount: 1,
+				sentCount: 1
 			},
 			sort: {
 				timestamp: -1

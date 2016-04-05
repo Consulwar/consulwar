@@ -187,6 +187,72 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 	}
 }
 
+Game.Unit.rollCount = function(name) {
+	if (_.isNumber(name)) {
+		return name;
+	}
+
+	switch (name) {
+		case 'few':
+			return Game.Random.interval(1, 4);
+		case 'several':
+			return Game.Random.interval(5, 9);
+		case 'pack':
+			return Game.Random.interval(10, 19);
+		case 'lots':
+			return Game.Random.interval(20, 49);
+		case 'horde':
+			return Game.Random.interval(50, 99);
+		case 'throng':
+			return Game.Random.interval(100, 249);
+		case 'swarm':
+			return Game.Random.interval(250, 499);
+		case 'zounds':
+			return Game.Random.interval(500, 999);
+		case 'legion':
+			return Game.Random.interval(1000, 4999);
+		case 'division':
+			return Game.Random.interval(5000, 9999);
+		case 'corps':
+			return Game.Random.interval(10000, 19999);
+		case 'army':
+			return Game.Random.interval(20000, 49999);
+		case 'group':
+			return Game.Random.interval(50000, 99999);
+		case 'front':
+			return Game.Random.interval(100000, 249999);
+	}
+}
+
+Game.Unit.calculateArmyCost = function(army) {
+	var cost = {
+		metals: 0,
+		crystals: 0,
+		humans: 0
+	}
+
+	for (var side in army) {
+		for (var group in army[side]) {
+			for (var name in army[side][group]) {
+
+				var count = Game.Unit.rollCount( army[side][group][name] );
+				if (count <= 0) {
+					continue;
+				}
+
+				var price = Game.Unit.items[side][group][name].price(count);
+				if (price && price.base) {
+					cost.metals += price.base.metals;
+					cost.crystals += price.base.crystals;
+					cost.humans += price.base.humans;
+				}
+			}
+		}
+	}
+
+	return cost;
+}
+
 // ----------------------------------------------------------------------------
 // Battle
 // ----------------------------------------------------------------------------
@@ -243,43 +309,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		currentLog += message + '\n';
 	}
 
-	var rollCount = function(name) {
-		if (_.isNumber(name)) {
-			return name;
-		}
-
-		switch (name) {
-			case 'few':
-				return Game.Random.interval(1, 4);
-			case 'several':
-				return Game.Random.interval(5, 9);
-			case 'pack':
-				return Game.Random.interval(10, 19);
-			case 'lots':
-				return Game.Random.interval(20, 49);
-			case 'horde':
-				return Game.Random.interval(50, 99);
-			case 'throng':
-				return Game.Random.interval(100, 249);
-			case 'swarm':
-				return Game.Random.interval(250, 499);
-			case 'zounds':
-				return Game.Random.interval(500, 999);
-			case 'legion':
-				return Game.Random.interval(1000, 4999);
-			case 'division':
-				return Game.Random.interval(5000, 9999);
-			case 'corps':
-				return Game.Random.interval(10000, 19999);
-			case 'army':
-				return Game.Random.interval(20000, 49999);
-			case 'group':
-				return Game.Random.interval(50000, 99999);
-			case 'front':
-				return Game.Random.interval(100000, 249999);
-		}
-	}
-
 	var hasAlive = function(units) {
 		for (var name in units) {
 			if (units[name].life > 0) {
@@ -325,7 +354,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			for (var group in army[side]) {
 				for (var name in army[side][group]) {
 
-					var count = rollCount( army[side][group][name] );
+					var count = Game.Unit.rollCount( army[side][group][name] );
 					var model = Game.Unit.items[side][group][name];
 
 					units[ side + '.' + group + '.' + name ] = {
@@ -340,6 +369,9 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 						life: count * model.characteristics.life
 					}
 
+					// save result of rollCount
+					// changes army original value!
+					army[side][group][name] = count;
 				}
 			}
 		}
@@ -594,36 +626,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		return points;
 	}
 
-	var calculateAward = function(killed, multiplier) {
-		var resources = {
-			metals: 0,
-			crystals: 0
-		}
-
-		for (var side in killed) {
-			for (var group in killed[side]) {
-				for (var name in killed[side][group]) {
-
-					var count = killed[side][group][name];
-					if (count <= 0) {
-						continue;
-					}
-
-					var price = Game.Unit.items[side][group][name].price(count);
-					if (price && price.base) {
-						resources.metals += price.base.metals;
-						resources.crystals += price.base.crystals;
-					}
-				}
-			}
-		}
-
-		resources.metals *= multiplier;
-		resources.crystals *= multiplier;
-
-		return resources;
-	}
-
 	this.constructor = function(userArmy, enemyArmy, options) {
 		// parse options
 		var rounds = (options && options.rounds) ? options.rounds : 3;
@@ -756,17 +758,23 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		if (mission) {
 			reward = {};
 
+			var killedCost = Game.Unit.calculateArmyCost(enemyArmyKilled);
+
 			// metals + crystals
 			if (userArmyRest && !enemyArmyRest) {
 				if (mission.level[ options.missionLevel ].reward) {
 					reward = mission.level[ options.missionLevel ].reward;
 				} else {
-					reward = calculateAward(enemyArmyKilled, 0.1);
+					reward.metals = Math.floor( killedCost.metals * 0.1 );
+					reward.crystals = Math.floor( killedCost.crystals * 0.1 );
 				}
 			}
 
 			// honor
-			reward.honor = Math.floor((getPoints(calculateAward(enemyArmyKilled, 1)) / 100) * (mission.honor * 0.01));
+			var honor = Math.floor((getPoints(killedCost) / 100) * (mission.honor * 0.01));
+			if (honor > 0) {
+				reward.honor = honor;
+			}
 		}
 
 		// pass gained artefacts

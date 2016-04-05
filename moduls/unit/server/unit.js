@@ -340,6 +340,9 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 						life: count * model.characteristics.life
 					}
 
+					// save result of rollCount
+					// changes army original value!
+					army[side][group][name] = count;
 				}
 			}
 		}
@@ -766,7 +769,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 
 			// honor
-			reward.honor = Math.floor((getPoints(calculateAward(enemyArmyKilled, 1)) / 100) * (mission.honor * 0.01));
+			var honor = Math.floor((getPoints(calculateAward(enemyArmyKilled, 1)) / 100) * (mission.honor * 0.01));
+			if (honor > 0) {
+				reward.honor = honor;
+			}
 		}
 
 		// pass gained artefacts

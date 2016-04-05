@@ -536,6 +536,8 @@ Game.SpaceEvents.completeShip = function(event) {
 						: event.info.startPosition;
 
 					var battleOptions = {
+						missionType: event.info.mission.type,
+						missionLevel: event.info.mission.level,
 						location: planet._id,
 						userLocation: planet._id,
 						enemyLocation: enemyLocation
@@ -670,6 +672,9 @@ Game.SpaceEvents.completeShip = function(event) {
 			if (targetShip.info.mission) {
 				battleOptions.missionType = targetShip.info.mission.type;
 				battleOptions.missionLevel = targetShip.info.mission.level;
+			} else if (event.info.mission) {
+				battleOptions.missionType = event.info.mission.type;
+				battleOptions.missionLevel = event.info.mission.level;
 			}
 
 			// get fleet units

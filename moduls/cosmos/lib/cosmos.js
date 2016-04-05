@@ -589,8 +589,7 @@ Game.SpaceEvents = {
 	},
 	
 	getMaxFleetsCount: function() {
-		var colonies = Game.Planets.getColonies();
-		return colonies.length * 2;
+		return Game.Planets.getMaxColoniesCount() * 2;
 	},
 
 	checkCanSendFleet: function() {

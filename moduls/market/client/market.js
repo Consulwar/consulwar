@@ -38,7 +38,7 @@ Template.market.helpers({
 	},
 
 	formatRate: function(rate) {
-		return rate > 0 ? '1 / ' + Math.floor( 1 / rate ) : null;
+		return rate > 0 ? '1 / ' + Math.ceil( ( 1 / rate ) * 10000 ) / 10000 : null;
 	}
 });
 

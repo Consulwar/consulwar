@@ -38,6 +38,10 @@ Template.top_investors.helpers({
 })
 
 Template.item_mutual.events({
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	},
+
 	'keyup .count, change .count': function(e, t) {
 		var value = parseInt(e.target.value.replace(/\D/g,''), 10);
 		value = value > 0 ? value : 1;

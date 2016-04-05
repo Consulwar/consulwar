@@ -46,7 +46,13 @@ Tracker.autorun(function(){
 
 		Game.Resources.currentValue.set(baseValue);
 	}
-})
+});
+
+Template.current_resources.events({
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	}
+});
 
 Template.current_resources.helpers({
 	resources: function() { return Game.Resources.currentValue.get(); },

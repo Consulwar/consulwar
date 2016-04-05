@@ -179,14 +179,17 @@ var execClientCommand = function(message) {
 		 + 'Доступные команды:' + '\n'
 		 + '/create channel - создать комнату' + '\n'
 		 + '/remove channel - удалить текущую комнату' + '\n'
-		 + '/join %channel% - присоединиться к комнате' + '\n'
-		 + '/add credits %amount% - положить на баланс комнаты кредиты' + '\n'
-		 + '/add user %username% - добавить пользователя к комнате' + '\n'
-		 + '/remove user %username% - удалить пользователя из комнаты' + '\n'
-		 + '/block %username% - наказать пользователя' + '\n'
-		 + '/unblock %username% - простить пользователя' + '\n'
-		 + '/add moderator %username% - назначить модератора' + '\n'
-		 + '/remove moderator %username% - разжаловать модератора';
+		 + '/join [channel] - присоединиться к комнате' + '\n'
+		 + '/add credits [amount] - пополнить баланс комнаты' + '\n'
+		 + '/add user [username] - добавить пользователя к комнате' + '\n'
+		 + '/remove user [username] - удалить пользователя из комнаты' + '\n'
+		 + '/block [username] - наказать пользователя' + '\n'
+		 + '/unblock [username] - простить пользователя' + '\n'
+		 + '/add moderator [username] - назначить модератора' + '\n'
+		 + '/remove moderator [username] - разжаловать модератора' + '\n'
+		 + '/d [n] [m] - бросить n кубиков с m гранями' + '\n'
+		 + '/me [text] - писать от третьего лица' + '\n'
+		 + '/сепукку - совершить сепукку и пожертвовать ресурсы';
 		
 		alert(helpText);
 		return true;

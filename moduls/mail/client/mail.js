@@ -266,6 +266,11 @@ Template.mail.helpers({
 	userId: function() { return Meteor.userId(); },
 	isRecipientOk: function() { return this.isRecipientOk.get(); },
 
+	isAdmin: function() {
+		var user = Meteor.user();
+		return (user && ['admin', 'helper'].indexOf(user.role) != -1);
+	},
+
 	letterName: function(letter) {
 		return letter.from == Meteor.userId() ? '-> ' + letter.recipient : letter.sender;
 	},
@@ -409,6 +414,11 @@ Template.mail.events({
 				}
 			});
 		}
+	},
+
+	// Show admin page
+	'click .admin_page': function(e, t) {
+		Router.go('mailAdmin', { page: 1 });
 	},
 
 	// Complain letter

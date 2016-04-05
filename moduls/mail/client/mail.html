@@ -59,6 +59,10 @@
 		<span class="delete_selected disabled">Удалить выделенное</span>
 		<span class="new_message">Написать сообщение</span>
 
+		{{#if isAdmin}}
+			<span class="admin_page">Жалобы</span>
+		{{/if}}
+
 		{{> pages total=countTotal perPage=count}}
 
 		<div class="letter">
@@ -224,13 +228,19 @@
 		
 		<br/>
 		{{#if canVote}}
-		{{#each options}}
-		<a data-option="{{this.name}}" class="neutral {{this.mood}}" href="#">{{this.text}}</a>
-		{{/each}}
+			{{#each options}}
+				<a data-option="{{this.name}}" class="neutral {{this.mood}}" href="#">{{this.text}}</a>
+			{{/each}}
 		{{else}}
-		{{#each options}}
-		<progress data-option="{{this.text}}" data-percent="{{#with multiply this.value 100}}{{div this ../totalVotes}}{{/with}}" value="{{this.value}}" max="{{totalVotes}}"></progress>
-		{{/each}}
+			{{#each options}}
+				<progress 
+					data-option="{{this.text}}" 
+					data-percent="{{#with multiply this.value 100}}{{div this ../totalVotes}}{{/with}}" 
+					value="{{this.value}}" 
+					max="{{totalVotes}}"
+				>
+				</progress>
+			{{/each}}
 		{{/if}}
 		<div class="close"></div>
 	</div>

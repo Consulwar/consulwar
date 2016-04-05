@@ -519,16 +519,27 @@ Game.SpaceEvents.completeShip = function(event) {
 			}
 
 			if (!planet.mission && (planet.armyId || planet.isHome)) {
-				// humans planet
+				// reptiles attack our planet
+				// get enemy fleet
 				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
 				var enemyArmy = (enemyFleet)
 					? { reptiles: { fleet: enemyFleet } }
 					: null;
 				
+				// get user fleet + defense
 				var userFleet = Game.Planets.getFleetUnits(planet._id);
-				var userArmy = (userFleet)
-					? { army: { fleet: userFleet } }
-					: null;
+				var userDefense = Game.Planets.getDefenseUnits(planet._id);
+				
+				var userArmy = null;
+				if (userFleet || userDefense) {
+					userArmy = { army: {} };
+					if (userFleet) {
+						userArmy.army.fleet = userFleet;
+					}
+					if (userDefense) {
+						userArmy.army.defense = userDefense;
+					}
+				}
 
 				if (enemyArmy && userArmy) {
 					var enemyLocation = (event.info.startPlanetId)

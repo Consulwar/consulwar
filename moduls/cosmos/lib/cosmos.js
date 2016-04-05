@@ -135,6 +135,24 @@ Game.Planets = {
 		return null;
 	},
 
+	getDefenseUnits: function(planetId) {
+		var planet = Game.Planets.getOne(planetId);
+		if (!planet) {
+			return null;
+		}
+
+		if (planet.armyId || planet.isHome) {
+			var army = (planet.isHome) 
+				? Game.Unit.getHomeArmy()
+				: Game.Unit.getArmy(planet.armyId);
+			if (army && army.units && army.units.army) {
+				return army.units.army.defense;
+			}
+		}
+
+		return null;
+	},
+
 	calcDistance: function(start, end) {
 		return Math.sqrt( Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2) );
 	},

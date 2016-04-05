@@ -288,21 +288,29 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 		}
 	}
 
-	var units = Game.Planets.getFleetUnits(planet._id);
-	if (units) {
+	var units = {
+		fleet: Game.Planets.getFleetUnits(planet._id),
+		defense: Game.Planets.getDefenseUnits(planet._id)
+	}
+
+	if (units.fleet || units.defense) {
 		var side = (planet.mission) ? 'reptiles' : 'army';
 		info.units = [];
 
-		for (var key in units) {
-			if (!_.isString( units[key] ) && units[key] <= 0) {
-				continue;
-			}
+		for (var group in units) {
+			for (var key in units[group]) {
+				if (!_.isString( units[group][key] ) && units[group][key] <= 0) {
+					continue;
+				}
 
-			info.units.push({
-				engName: key,
-				name: Game.Unit.items[side].fleet[key].name,
-				count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-			})
+				info.units.push({
+					engName: key,
+					name: Game.Unit.items[side][group][key].name,
+					count: _.isString( units[group][key] )
+						? game.Battle.count[ units[group][key] ]
+						: units[group][key]
+				});
+			}
 		}
 	}
 

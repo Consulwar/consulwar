@@ -173,8 +173,26 @@ var removeModerator = function(roomName, username) {
 }
 
 var execClientCommand = function(message) {
+	// show help
+	if (message.indexOf('/help') == 0) {
+		var helpText = ''
+		 + 'Доступные команды:' + '\n'
+		 + '/create channel - создать комнату' + '\n'
+		 + '/remove channel - удалить текущую комнату' + '\n'
+		 + '/join %channel% - присоединиться к комнате' + '\n'
+		 + '/add credits %amount% - положить на баланс комнаты кредиты' + '\n'
+		 + '/add user %username% - добавить пользователя к комнате' + '\n'
+		 + '/remove user %username% - удалить пользователя из комнаты' + '\n'
+		 + '/block %username% - наказать пользователя' + '\n'
+		 + '/unblock %username% - простить пользователя' + '\n'
+		 + '/add moderator %username% - назначить модератора' + '\n'
+		 + '/remove moderator %username% - разжаловать модератора';
+		
+		alert(helpText);
+		return true;
+	}
 	// create new channel
-	if (message.indexOf('/create channel') == 0) {
+	else if (message.indexOf('/create channel') == 0) {
 		var name = prompt('Введите название комнаты');
 		if (!name) {
 			return true;

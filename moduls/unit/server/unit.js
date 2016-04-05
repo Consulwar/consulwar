@@ -231,8 +231,6 @@ Game.Unit.calculateArmyCost = function(army) {
 		humans: 0
 	}
 
-	console.log('army total units', army);
-
 	for (var side in army) {
 		for (var group in army[side]) {
 			for (var name in army[side][group]) {
@@ -243,7 +241,6 @@ Game.Unit.calculateArmyCost = function(army) {
 				}
 
 				var price = Game.Unit.items[side][group][name].price(count);
-				console.log('price', side, group, name, price);
 				if (price && price.base) {
 					cost.metals += price.base.metals;
 					cost.crystals += price.base.crystals;

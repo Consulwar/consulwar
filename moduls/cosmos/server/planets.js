@@ -44,7 +44,7 @@ Game.Planets.actualizePlanet = function(planet) {
 			if (artefacts) {
 				Game.Resources.add(artefacts);
 			}
-			planet.timeArtefacts = timeCurrent;
+			planet.timeArtefacts += ( Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count );
 			Game.Planets.update(planet);
 		}
 	}

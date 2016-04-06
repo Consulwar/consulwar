@@ -17,7 +17,15 @@
 				{{#if turn.canVote}}
 					{{#if eq turn.type "move"}}
 						<a class="btn-attack" data-action="{{zone.name}}">
-							{{#if zone.isEnemy}}В атаку{{else}}Ждем{{/if}} {{votePercent zone.name turn}}%
+							{{#if zone.isEnemy}}
+								В атаку
+							{{else}}
+								{{#if zone.isCurrent}}
+									Ждем
+								{{else}}
+									Назад
+								{{/if}}
+							{{/if}} {{votePercent zone.name turn}}%
 						</a>
 					{{/if}}
 					{{#if eq turn.type "battle"}}

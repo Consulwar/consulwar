@@ -185,6 +185,9 @@
 				{{/each}}
 			</ul>
 		{{/if}}
+		{{#if planet.timeArtefacts}}
+			<p>Сбор артефактов: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
+		{{/if}}
 		{{#if planet.canSend}}
 			<a class="button-attack open" data-id="{{planet.id}}">Отправить</a>
 		{{/if}}

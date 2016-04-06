@@ -204,16 +204,21 @@ Template.cosmosFleetsInfo.helpers({
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
 				timeEnd: fleets[i].timeEnd
 			};
-			data.start.owner = data.start.mission 
-				? 'reptiles' 
-				: data.start.armyId || data.start.isHome 
-					? 'humans' 
-					: null;
-			data.finish.owner = data.finish.mission 
-				? 'reptiles' 
-				: data.finish.armyId || data.finish.isHome 
-					? 'humans' 
-					: null;
+			if (data.start) {
+				data.start.owner = data.start.mission 
+					? 'reptiles' 
+					: data.start.armyId || data.start.isHome 
+						? 'humans' 
+						: null;
+			}
+			
+			if (data.finish) {
+				data.finish.owner = data.finish.mission 
+					? 'reptiles' 
+					: data.finish.armyId || data.finish.isHome 
+						? 'humans' 
+						: null;
+			}
 
 			result.push(data);
 		}
@@ -246,16 +251,22 @@ Template.cosmosFleetsInfo.helpers({
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
 				timeEnd: fleets[i].timeEnd
 			};
-			data.start.owner = data.start.mission 
-				? 'reptiles' 
-				: data.start.armyId || data.start.isHome 
-					? 'humans' 
-					: null;
-			data.finish.owner = data.finish.mission 
-				? 'reptiles' 
-				: data.finish.armyId || data.finish.isHome 
-					? 'humans' 
-					: null;
+			
+			if (data.start) {
+				data.start.owner = data.start.mission 
+					? 'reptiles' 
+					: data.start.armyId || data.start.isHome 
+						? 'humans' 
+						: null;
+			}
+			
+			if (data.finish) {
+				data.finish.owner = data.finish.mission 
+					? 'reptiles' 
+					: data.finish.armyId || data.finish.isHome 
+						? 'humans' 
+						: null;
+			}
 
 			result.push(data);
 		}

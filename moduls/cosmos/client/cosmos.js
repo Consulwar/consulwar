@@ -182,12 +182,14 @@ var scrollMapToFleet = function(id) {
 	}
 }
 
-Template.cosmosFleetsInfo.helpers({
+Template.cosmosFleetsInfo_table.helpers({
 	getTimeLeft: function(timeEnd) {
 		var timeLeft = timeEnd - Session.get('serverTime');
 		return timeLeft > 0 ? timeLeft : 0;
-	},
+	}
+});
 
+Template.cosmosFleetsInfo.helpers({
 	userFleets: function () {
 		var result = [];
 
@@ -196,22 +198,28 @@ Template.cosmosFleetsInfo.helpers({
 			if (!fleets[i].info.isHumans) {
 				continue;
 			}
-			result.push({
+			var data = {
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
-				timeEnd: fleets[i].timeEnd 
-			});
+				timeEnd: fleets[i].timeEnd
+			};
+			data.start.owner = data.start.mission ? 'reptiles' : data.start.armyId ? 'humans' : null;
+			data.finish.owner = data.finish.mission ? 'reptiles' : data.finish.armyId ? 'humans' : null;
+
+			result.push(data);
 		}
 		
 		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
 		for (var i = 0; i < reinforcements.length; i++) {
-			result.push({
+			var data = {
 				isReinforcement: true,
 				id: reinforcements[i]._id,
 				start: Game.Planets.getBase(),
-				timeEnd: reinforcements[i].timeEnd
-			});
+				timeEnd: reinforcements[i].timeEnd,
+			};
+			data.start.owner = 'humans';
+			result.push(data);
 		}
 
 		return (result.length > 0) ? result : null;
@@ -224,12 +232,16 @@ Template.cosmosFleetsInfo.helpers({
 			if (fleets[i].info.isHumans) {
 				continue;
 			}
-			result.push({
+			var data = {
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
 				timeEnd: fleets[i].timeEnd
-			});
+			};
+			data.start.owner = data.start.mission ? 'reptiles' : data.start.armyId ? 'humans' : null;
+			data.finish.owner = data.finish.mission ? 'reptiles' : data.finish.armyId ? 'humans' : null;
+
+			result.push(data);
 		}
 		return (result.length > 0) ? result : null;
 	}

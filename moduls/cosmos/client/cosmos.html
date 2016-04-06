@@ -125,80 +125,67 @@
 	</div>
 </template>
 
+<template name="cosmosFleetsInfo_table">
+	<table>
+		<tr>
+			<th>РО</th>
+			<th>СО</th>
+			<th>ПО</th>
+			<th>РН</th>
+			<th>СН</th>
+			<th>ПН</th>
+			<th>ВП</th>
+		</tr>
+		{{#each fleets}}
+			<tr data-id="{{this.id}}">
+				{{#if this.start}}
+					{{#if eq this.start.segment 0}}
+						<td colspan="2">Центр</td>
+					{{else}}
+						<td>{{this.start.hand}}</td>
+						<td>{{this.start.segment}}</td>
+					{{/if}}
+					<td class="{{this.start.owner}}">{{this.start.name}}</td>
+				{{else}}
+					<td colspan="3">Перехват</td>
+				{{/if}}
+
+				{{#if this.finish}}
+					{{#if eq this.finish.segment 0}}
+						<td colspan="2">Центр</td>
+					{{else}}
+						<td>{{this.finish.hand}}</td>
+						<td>{{this.finish.segment}}</td>
+					{{/if}}
+					<td class="{{this.start.owner}}">{{this.finish.name}}</td>
+				{{else}}
+					<td colspan="3">
+						{{#if this.isReinforcement}}
+							Земля
+						{{else}}
+							Перехват
+						{{/if}}
+					</td>
+				{{/if}}
+
+				<td>{{formatSeconds (getTimeLeft this.timeEnd)}}</td>
+			</tr>
+		{{/each}}
+	</table>
+</template>
+
 <template name="cosmosFleetsInfo">
 	{{#if userFleets}}
 		<div class="header-humans">
 			<p class="center">Флот консула</p>
 		</div>
-		<ul class="humans">
-			{{#each userFleets}}
-				<li class="fleet" data-id="{{this.id}}">
-					{{#if this.start}}
-						<span>
-							{{#if eq this.start.segment 0}}
-								Центр 
-							{{else}}
-								{{this.start.hand}} - {{this.start.segment}} 
-							{{/if}}
-						</span>
-						{{this.start.name}}
-					{{else}}
-						Перехват
-					{{/if}}
-					<span> → </span> 
-					{{#if this.finish}}
-						<span>
-							{{#if eq this.finish.segment 0}}
-								Центр 
-							{{else}}
-								{{this.finish.hand}} - {{this.finish.segment}} 
-							{{/if}}
-						</span>
-						{{this.finish.name}}
-					{{else}}
-						{{#if this.isReinforcement}}Земля{{else}}Перехват{{/if}}
-					{{/if}}
-					<span>{{formatSeconds (getTimeLeft this.timeEnd)}}</span>
-				</li>
-			{{/each}}
-		</ul>
+		{{> cosmosFleetsInfo_table fleets=userFleets}}
 	{{/if}}
 	{{#if reptileFleets}}
 		<div class="header-reptiles">
 			<p class="center">Флот рептилий</p>
 		</div>
-		<ul class="reptiles">
-			{{#each reptileFleets}}
-				<li class="fleet" data-id="{{this.id}}">
-					{{#if this.start}}
-						<span>
-							{{#if eq this.start.segment 0}}
-								Центр 
-							{{else}}
-								{{this.start.hand}} - {{this.start.segment}} 
-							{{/if}}
-						</span>
-						{{this.start.name}}
-					{{else}}
-						Перехват
-					{{/if}}
-					<span> → </span> 
-					{{#if this.finish}}
-						<span>
-							{{#if eq this.finish.segment 0}}
-								Центр 
-							{{else}}
-								{{this.finish.hand}} - {{this.finish.segment}} 
-							{{/if}}
-						</span>
-						{{this.finish.name}}
-					{{else}}
-						Перехват
-					{{/if}}
-					<span>{{formatSeconds (getTimeLeft this.timeEnd)}}</span>
-				</li>
-			{{/each}}
-		</ul>
+		{{> cosmosFleetsInfo_table fleets=reptileFleets}}
 	{{/if}}
 	{{#if and (not userFleets) (not reptileFleets)}}
 		<h2>Нет передвижений флота</h2>

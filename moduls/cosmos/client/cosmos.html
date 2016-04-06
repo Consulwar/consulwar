@@ -156,7 +156,7 @@
 						</span>
 						{{this.finish.name}}
 					{{else}}
-						Перехват
+						{{#if this.isReinforcement}}Земля{{else}}Перехват{{/if}}
 					{{/if}}
 					<span>{{formatSeconds (getTimeLeft this.timeEnd)}}</span>
 				</li>

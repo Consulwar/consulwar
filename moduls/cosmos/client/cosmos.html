@@ -239,7 +239,8 @@
 				{{else}}
 					map-planet-border-empty
 				{{/if}}{{/if}}
-				{{#if gt zoom 7}}map-planet-marker-animated{{/if}}
+				{{#if gt zoom 5}}map-planet-marker-animated{{/if}}
+				{{#if lt zoom 9}}zoom-lt-9{{/if}}
 				{{#if lt zoom 7}}zoom-lt-7{{/if}}
 				{{#if lt zoom 5}}zoom-lt-5{{/if}}
 				{{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}" 
@@ -252,6 +253,7 @@
 				transform: translate3d({{position.x}}px, {{position.y}}px, 0px);
 				z-index: 221;"
 		>
+			<div class="texture"></div>
 			{{#if gt zoom 5}}
 				<div 
 					class="map-planet-marker-name" 

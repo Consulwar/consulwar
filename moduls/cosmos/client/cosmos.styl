@@ -1,9 +1,9 @@
 @keyframes animatePlanetBack {
 	from {
-		background-position: 0 0;
+		transform rotate(30deg) translateX(0%)
 	}
 	to {
-		background-position: 200% 0;
+		transform rotate(30deg) translateX(-50%)
 	}
 }
 
@@ -109,8 +109,7 @@
 	display none
 
 .map-planet-marker-animated
-	
-	&:before
+	.texture:before
 		animation animatePlanetBack 20s linear infinite
 
 .map-planet-marker
@@ -127,69 +126,105 @@
 		&:after
 			display none
 
-	&:before
-		content ""
+	.texture
 		position absolute
-		display block
-		top 4%
-		left 4%
-		width 92%
-		height 92%
-		background-size 200% 100%
-		background-repeat repeat-x
+		top 3%
+		left 3%
+		width 94%
+		height 94%
 		border-radius 50%
-		transform rotate(30deg)
-		background-image url(/img/game/cosmomap/planets/helium.jpg)
+		overflow hidden
+		z-index 1
+
+		&:before
+			content ""
+			position absolute
+			display block
+			top 75%
+			left -20%
+			width 400%
+			height 100%
+			background-size 50% 100%
+			background-repeat repeat-x
+			transform rotate(30deg)
+			z-index -1
 	
-	&:after
-		content ""
-		background-size 100% 100%
-		background-image url(/img/game/cosmomap/planet_shadow.png)
-		position absolute
-		display block
-		top 4%
-		left 4%
-		width 92%
-		height 92%
-
-.jungle:before
+		&:after
+			content ""
+			background-size 100% 100%
+			background-image url(/img/game/cosmomap/planet_shadow.png)
+			position absolute
+			display block
+			top 0
+			left 0
+			width 100%
+			height 100%
+		
+.jungle.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/jungle_low.jpg)
+.jungle .texture:before
 	background-image url(/img/game/cosmomap/planets/jungle.jpg)
-
-.terran:before
+	
+.terran.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/terran_low.jpg)
+.terran .texture:before
 	background-image url(/img/game/cosmomap/planets/terran.jpg)
 	
-.ocean:before
+.ocean.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/ocean_low.jpg)	
+.ocean .texture:before
 	background-image url(/img/game/cosmomap/planets/ocean.jpg)
 	
-.arid:before
+.arid.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/arid_low.jpg)	
+.arid .texture:before
 	background-image url(/img/game/cosmomap/planets/arid.jpg)
 	
-.tundra:before
+.tundra.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/tundra_low.jpg)	
+.tundra .texture:before
 	background-image url(/img/game/cosmomap/planets/tundra.jpg)
 	
-.desert:before
+.desert.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/desert_low.jpg)	
+.desert .texture:before
 	background-image url(/img/game/cosmomap/planets/desert.jpg)
 	
-.arctic:before
+.arctic.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/arctic_low.jpg)	
+.arctic .texture:before
 	background-image url(/img/game/cosmomap/planets/arctic.jpg)
 	
-.lava:before
+.lava.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/lava_low.jpg)	
+.lava .texture:before
 	background-image url(/img/game/cosmomap/planets/lava.jpg)
 	
-.barren:before
+.barren.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/barren_low.jpg)	
+.barren .texture:before
 	background-image url(/img/game/cosmomap/planets/barren.jpg)
 	
-.asteroids:before
+.asteroids.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/asteroids_low.jpg)	
+.asteroids .texture:before
 	background-image url(/img/game/cosmomap/planets/asteroids.jpg)
 	
-.methane:before
+.methane.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/methane_low.jpg)	
+.methane .texture:before
 	background-image url(/img/game/cosmomap/planets/methane.jpg)
 	
-.hydrogen:before
+.hydrogen.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/hydrogen_low.jpg)	
+.hydrogen .texture:before
 	background-image url(/img/game/cosmomap/planets/hydrogen.jpg)
 	
-.helium:before
+.helium.zoom-lt-9 .texture:before
+	background-image url(/img/game/cosmomap/planets/helium_low.jpg)	
+.helium .texture:before
 	background-image url(/img/game/cosmomap/planets/helium.jpg)
+	
 
 
 .map-control-home

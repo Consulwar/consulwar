@@ -7,6 +7,7 @@ initCosmosConfigLib = function() {
 	 || !Meteor.settings.public.cosmos.minAcc
 	 || !Meteor.settings.public.cosmos.maxAcc
 	 || !Meteor.settings.public.cosmos.speedFactor
+	 || !Meteor.settings.public.cosmos.collectArtefactsPeriod
 	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры космоса (см. settings.sample public.cosmos)');
 	}
@@ -18,5 +19,7 @@ initCosmosConfigLib = function() {
 	Game.Cosmos.MAX_SPEED = Meteor.settings.public.cosmos.maxSpeed * speedFactor;
 	Game.Cosmos.MIN_ACC = Meteor.settings.public.cosmos.minAcc * Math.pow(speedFactor, 2);
 	Game.Cosmos.MAX_ACC = Meteor.settings.public.cosmos.maxAcc * Math.pow(speedFactor, 2);
+
+	Game.Cosmos.COLLECT_ARTEFACTS_PERIOD = Meteor.settings.public.cosmos.collectArtefactsPeriod;
 
 }

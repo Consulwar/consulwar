@@ -405,6 +405,9 @@ Game.SpaceEvents.completeShip = function(event) {
 		// ----------------------------
 		if (event.info.isHumans) {
 
+			// pre generate artefacts
+			var generatedArtefacts = Game.Planets.getArtefacts(planet);
+
 			// calculate battle results
 			var battleResult = null;
 			var userArmy = null;
@@ -421,7 +424,7 @@ Game.SpaceEvents.completeShip = function(event) {
 					location: planet._id,
 					userLocation: userLocation,
 					enemyLocation: planet._id,
-					artefacts: Game.Planets.getArtefacts(planet)
+					artefacts: generatedArtefacts
 				};
 
 				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
@@ -456,11 +459,22 @@ Game.SpaceEvents.completeShip = function(event) {
 				if (battleResult.reward) {
 					Game.Resources.add( battleResult.reward );
 				}
+			}
 
-				// add artefacts
-				if (battleResult.artefacts) {
+			// try to collect artefacts
+			if (!planet.isHome
+			 && !planet.armyId
+			 && (!battleResult || (userArmy && !enemyArmy))
+			) {
+				if (!planet.timeArtefacts
+				 ||  planet.timeArtefacts + Game.Cosmos.COLLECT_ARTEFACTS_PERIOD <= event.timeEnd
+				) {
+					// update time
 					planet.timeArtefacts = event.timeEnd;
-					Game.Resources.add( battleResult.artefacts );
+					// collect artefacts
+					if (generatedArtefacts) {
+						Game.Resources.add( generatedArtefacts );
+					}
 				}
 			}
 

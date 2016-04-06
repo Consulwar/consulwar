@@ -27,13 +27,17 @@ Game.EarthZones = {
 	},
 
 	calcUnitsHealth: function(units) {
+		if (!units) {
+			return 0;
+		}
+
 		var power = 0;
-		if (units) {
-			for (var side in units) {
-				for (var group in units[side]) {
-					for (var name in units[side][group]) {
-						var life = Game.Unit.items[side][group][name].characteristics.life;
-						var count = units[side][group][name];
+		for (var side in units) {
+			for (var group in units[side]) {
+				for (var name in units[side][group]) {
+					var life = Game.Unit.items[side][group][name].characteristics.life;
+					var count = units[side][group][name];
+					if (life && count) {
 						power += (life * count);
 					}
 				}

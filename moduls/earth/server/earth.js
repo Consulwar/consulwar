@@ -41,6 +41,7 @@ var setupUnitHierarchy = function(units, side, group, name) {
 	if (!units[side][group][name]) {
 		units[side][group][name] = 0;
 	}
+	return units;
 }
 
 Game.Earth.addReinforcement = function(units) {
@@ -281,11 +282,11 @@ Game.Earth.moveArmy = function(destination) {
 
 					if (checkIsStationaryUnit(side, group, name)) {
 						// stay on current point
-						setupUnitHierarchy(restArmy, side, group, name);
-						restArmy[side][group].name = count;
+						restArmy = setupUnitHierarchy(restArmy, side, group, name);
+						restArmy[side][group][name] = count;
 					} else {
 						// move
-						setupUnitHierarchy(destArmy, side, group, name);
+						destArmy = setupUnitHierarchy(destArmy, side, group, name);
 						destArmy[side][group][name] += count;
 					}
 
@@ -334,7 +335,7 @@ Game.Earth.retreat = function() {
 
 	// move army
 	if (retreatZone) {
-		Game.Earth.moveArmy(currentZone.name, retreatZone.name);
+		Game.Earth.moveArmy(retreatZone.name);
 	}
 
 	// destroy rest army
@@ -519,7 +520,7 @@ Game.Earth.checkTurn = function() {
 									continue;
 								}
 
-								setupUnitHierarchy(attackArmy, side, group, name);
+								attackArmy = setupUnitHierarchy(attackArmy, side, group, name);
 								attackArmy[side][group][name] = count;
 							}
 						}

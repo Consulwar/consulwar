@@ -276,11 +276,16 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 		} else {
 			info.canSend = true;
 		}
+
+		if (planet.artefacts) {
+			info.timeArtefacts = planet.timeArtefacts;
+		}
+
 	} else {
 		info.isHumans = false;
 		info.canSend = true;
 	}
-	
+
 	if (planet.mission) {
 		info.mission = {
 			level: planet.mission.level,
@@ -322,6 +327,11 @@ Template.cosmosPlanetInfo.helpers({
 		var id = this.id;
 		var planet = Game.Planets.getOne(id);
 		return Game.Cosmos.getPlanetInfo(planet);
+	},
+
+	getTimeNextDrop: function(timeCollected) {
+		var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+		return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
 	}
 });
 

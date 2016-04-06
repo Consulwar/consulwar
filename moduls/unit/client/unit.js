@@ -27,7 +27,7 @@ Template.unit.helpers({
 })
 
 Template.unit.events({
-	'keyup .count, change .count': function(e, t) {
+	'change .count': function(e, t) {
 		var value = parseInt(e.target.value.replace(/\D/g,''), 10);
 		value = value > 0 ? value : 1;
 

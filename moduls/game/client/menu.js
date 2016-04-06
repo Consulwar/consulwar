@@ -169,7 +169,7 @@ var menu = {
 		}
 	},
 	reptiles: {
-		routeName: ['reptileUnit'],
+		routeName: ['reptileUnit', 'reptileHero'],
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 		items: {
 			fleet: {
@@ -216,7 +216,7 @@ Template.game_menu.helpers({
 	menu: function() {
 		return getMenu(menu, function(item) {
 			return item.routeName.indexOf(Router.current().route.getName()) != -1
-		})
+		});
 	}
 });
 
@@ -405,6 +405,14 @@ var helpers = {
 		return currentUrl.substr(currentUrl.indexOf('/game'));
 	},
 	isPartOfUrl: function(url, part) {
+		// special check for consul house items
+		if (Router.current().params.group == 'house') {
+			var item = Router.current().params.item;
+			if (item) {
+				return part.indexOf(url.substr(0, url.indexOf('/' + item))) != -1;
+			}
+		}
+		// other items
 		return url.indexOf(part) != -1;
 	},
 	percentRound10: function(progress) {

@@ -204,8 +204,21 @@ Template.cosmosFleetsInfo.helpers({
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
 				timeEnd: fleets[i].timeEnd
 			};
-			data.start.owner = data.start.mission ? 'reptiles' : data.start.armyId ? 'humans' : null;
-			data.finish.owner = data.finish.mission ? 'reptiles' : data.finish.armyId ? 'humans' : null;
+			if (data.start) {
+				data.start.owner = data.start.mission 
+					? 'reptiles' 
+					: data.start.armyId || data.start.isHome 
+						? 'humans' 
+						: null;
+			}
+			
+			if (data.finish) {
+				data.finish.owner = data.finish.mission 
+					? 'reptiles' 
+					: data.finish.armyId || data.finish.isHome 
+						? 'humans' 
+						: null;
+			}
 
 			result.push(data);
 		}
@@ -238,8 +251,22 @@ Template.cosmosFleetsInfo.helpers({
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
 				timeEnd: fleets[i].timeEnd
 			};
-			data.start.owner = data.start.mission ? 'reptiles' : data.start.armyId ? 'humans' : null;
-			data.finish.owner = data.finish.mission ? 'reptiles' : data.finish.armyId ? 'humans' : null;
+			
+			if (data.start) {
+				data.start.owner = data.start.mission 
+					? 'reptiles' 
+					: data.start.armyId || data.start.isHome 
+						? 'humans' 
+						: null;
+			}
+			
+			if (data.finish) {
+				data.finish.owner = data.finish.mission 
+					? 'reptiles' 
+					: data.finish.armyId || data.finish.isHome 
+						? 'humans' 
+						: null;
+			}
 
 			result.push(data);
 		}
@@ -247,9 +274,9 @@ Template.cosmosFleetsInfo.helpers({
 	}
 });
 
-Template.cosmosFleetsInfo.events({
-	'click .fleet': function (e, t) {
-		var id = $(e.currentTarget).attr('data-id');
+Template.cosmosFleetsInfo_table.events({
+	'click table tr[data-id]': function (e, t) {
+		var id = $(e.currentTarget).data('id');
 		Game.Cosmos.showShipInfo(id);
 		scrollMapToFleet(id);
 	}

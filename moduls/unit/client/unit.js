@@ -27,13 +27,13 @@ Template.unit.helpers({
 })
 
 Template.unit.events({
-	'change .count': function(e, t) {
-		var value = parseInt(e.target.value.replace(/\D/g,''), 10);
-		value = value > 0 ? value : 1;
-
-		e.target.value = value;
-
-		this.count.set(value);
+	'keyup .count, change .count': function(e, t) {
+		if (e.type == 'change' || e.target.value.length > 0) {
+			var value = parseInt(e.target.value.replace(/\D/g,''), 10);
+			value = value > 0 ? value : 1;
+			e.target.value = value;
+			this.count.set(value);
+		}
 	},
 
 	'click button.build': function(e, t) {

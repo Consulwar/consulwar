@@ -404,10 +404,6 @@ Game.SpaceEvents.completeShip = function(event) {
 		// Humans arrived
 		// ----------------------------
 		if (event.info.isHumans) {
-
-			// pre generate artefacts
-			var generatedArtefacts = Game.Planets.getArtefacts(planet);
-
 			// calculate battle results
 			var battleResult = null;
 			var userArmy = null;
@@ -424,7 +420,7 @@ Game.SpaceEvents.completeShip = function(event) {
 					location: planet._id,
 					userLocation: userLocation,
 					enemyLocation: planet._id,
-					artefacts: generatedArtefacts
+					artefacts: Game.Planets.getArtefacts(planet)
 				};
 
 				var enemyFleet = Game.Planets.getFleetUnits(planet._id);
@@ -459,22 +455,10 @@ Game.SpaceEvents.completeShip = function(event) {
 				if (battleResult.reward) {
 					Game.Resources.add( battleResult.reward );
 				}
-			}
 
-			// try to collect artefacts
-			if (!planet.isHome
-			 && !planet.armyId
-			 && (!battleResult || (userArmy && !enemyArmy))
-			) {
-				if (!planet.timeArtefacts
-				 ||  planet.timeArtefacts + Game.Cosmos.COLLECT_ARTEFACTS_PERIOD <= event.timeEnd
-				) {
-					// update time
-					planet.timeArtefacts = event.timeEnd;
-					// collect artefacts
-					if (generatedArtefacts) {
-						Game.Resources.add( generatedArtefacts );
-					}
+				// add artefacts
+				if (battleResult.artefacts) {
+					Game.Resources.add(battleResult.artefacts);
 				}
 			}
 
@@ -489,6 +473,8 @@ Game.SpaceEvents.completeShip = function(event) {
 					// move army
 					Game.Unit.moveArmy(event.info.armyId, Game.Unit.location.PLANET);
 					planet.armyId = event.info.armyId;
+					// update artefacts time
+					planet.timeArtefacts = event.timeEnd;
 				}
 			} else if (!battleResult || userArmy) {
 				// return ship

@@ -52,7 +52,11 @@
 		{{#if availableFleet}}
 			<ul class="items fleet">
 				{{#each availableFleet}}
-					<li class="unit" data-id="{{this.engName}}" data-max="{{this.max}}">
+					<li 
+						class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}" 
+						data-id="{{this.engName}}"
+						data-max="{{this.max}}"
+					>
 						<a class="{{this.engName}}-icon"></a>
 						<div class="max">{{formatNumberWithISO this.max}}</div>
 						<input class="count" type="number" placeholder="Количество"  value="0">

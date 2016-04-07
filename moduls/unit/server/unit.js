@@ -266,37 +266,62 @@ Game.BattleHistory.Collection._ensureIndex({
 });
 
 Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
-	Game.BattleHistory.Collection.insert({
-		user_id: Meteor.userId(),
-		timestamp: Math.floor( new Date().valueOf() / 1000 ),
+	var history = {
+		user_id: options.isEarth ? 'earth' : Meteor.userId(),
+		timestamp: options.timestamp ? options.timestamp : Game.getCurrentTime(),
+		moveType: options.moveType,
 		location: options.location,
 		userLocation: options.userLocation,
 		userArmy: userArmy,
-		userArmyRest: battleResults.userArmy,
 		enemyLocation: options.enemyLocation,
-		enemyArmy: enemyArmy,
-		enemyArmyRest: battleResults.enemyArmy,
-		reward: battleResults.reward,
-		artefacts: battleResults.artefacts,
-		result: battleResults.result
-	});
+		enemyArmy: enemyArmy
+	}
 
-	if (Meteor.userId()) {
+	if (battleResults) {
+		history.userArmyRest = battleResults.userArmy;
+		history.enemyArmyRest = battleResults.enemyArmy,
+		history.reward = battleResults.reward,
+		history.artefacts = battleResults.artefacts,
+		history.result = battleResults.result
+	}
+
+	var historyId = Game.BattleHistory.Collection.insert(history);
+
+	if (options.isEarth) {
+		Game.Statistic.incrementGame({
+			earthHistoryCount: 1
+		});
+	} else if (Meteor.userId()) {
 		Game.Statistic.incrementUser(Meteor.userId(), {
 			battleHistoryCount: 1
 		});
 	}
+
+	return historyId;
+}
+
+Game.BattleHistory.set = function(id, set) {
+	Game.BattleHistory.Collection.update({
+		_id: id,
+		user_id: Meteor.userId()
+	}, {
+		$set: set
+	});
 }
 
 Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	var battle = new Game.Unit.Battle(userArmy, enemyArmy, options);
 
-	Game.BattleHistory.add(
+	var historyId = Game.BattleHistory.add(
 		userArmy,
 		enemyArmy,
 		options,
 		battle.results
 	);
+
+	if (historyId) {
+		battle.results.historyId = historyId;
+	}
 
 	return battle.results;
 }
@@ -348,6 +373,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 	 * Warning! Properties 'count' and 'life' could be changed by other functions!
 	 */
 	var parseArmyToUnits = function(army) {
+		if (!army) {
+			return null;
+		}
+
 		var units = {};
 
 		for (var side in army) {
@@ -658,7 +687,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var enemyUnits = parseArmyToUnits( enemyArmy );
 
 		// perform battle
-		var isFinished = false;
+		var isFinished = (userUnits && enemyUnits) ? false : true;
 		var round = 1;
 
 		while (!isFinished) {

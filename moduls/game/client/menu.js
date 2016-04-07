@@ -149,7 +149,7 @@ var menu = {
 		}
 	},
 	mutual: {
-		routeName: ['mutual', 'earth', 'statistics'],
+		routeName: ['mutual', 'earth', 'earthHistory', 'statistics'],
 		url: Router.routes.earth.path({ group: 'earth' }),
 		items: {
 			earth: {

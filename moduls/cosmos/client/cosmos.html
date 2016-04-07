@@ -349,7 +349,7 @@
 							<td>
 								{{#if eq this.userLocation this.location}}
 									<span class="reptiles">Флот рептилий</span>
-									 vs  
+									 vs 
 									<span class="humans">Консул на планете {{this.locationName}}</span>
 								{{else}}
 									<span class="humans">Флот консула</span>
@@ -420,9 +420,9 @@
 					</ul>
 				</div>
 			{{/if}}
-			<div class="user-army">
-				<p class="humans">Люди</p>
-				{{#if battle.userUnits}}
+			{{#if battle.userArmy}}
+				<div class="user-army">
+					<p class="humans">Люди</p>
 					<table>
 						<tr class="header">
 							<th class="name"></th>
@@ -437,11 +437,11 @@
 							</tr>
 						{{/each}}
 					</table>
-				{{/if}}
-			</div>
-			<div class="enemy-army">
-				<p class="reptiles">Рептилоиды</p>
-				{{#if battle.enemyUnits}}
+				</div>
+			{{/if}}
+			{{#if battle.enemyArmy}}
+				<div class="enemy-army">
+					<p class="reptiles">Рептилоиды</p>
 					<table>
 						<tr class="header">
 							<th class="count">Осталось</th>
@@ -456,8 +456,8 @@
 							</tr>
 						{{/each}}
 					</table>
-				{{/if}}
-			</div>
+				</div>
+			{{/if}}
 		{{/if}}
 		<a class="btn-back" href="{{pathFor 'cosmosHistory' page=currentPage}}"></a>
 	</div>

@@ -415,6 +415,7 @@ Game.SpaceEvents.completeShip = function(event) {
 					: event.info.startPosition;
 
 				var battleOptions = {
+					timestamp: event.timeEnd,
 					missionType: planet.mission.type,
 					missionLevel: planet.mission.level,
 					location: planet._id,
@@ -520,6 +521,21 @@ Game.SpaceEvents.completeShip = function(event) {
 
 			if (!planet.mission && (planet.armyId || planet.isHome)) {
 				// reptiles attack our planet
+				var battleResult = null;
+
+				var enemyLocation = (event.info.startPlanetId)
+					? event.info.startPlanetId
+					: event.info.startPosition;
+
+				var battleOptions = {
+					timestamp: event.timeEnd,
+					missionType: event.info.mission.type,
+					missionLevel: event.info.mission.level,
+					location: planet._id,
+					userLocation: planet._id,
+					enemyLocation: enemyLocation
+				}
+
 				// get enemy fleet
 				var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
 				var enemyArmy = (enemyFleet)
@@ -541,56 +557,42 @@ Game.SpaceEvents.completeShip = function(event) {
 					}
 				}
 
-				if (enemyArmy && userArmy) {
-					var enemyLocation = (event.info.startPlanetId)
-						? event.info.startPlanetId
-						: event.info.startPosition;
+				// perform battle
+				battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+				userArmy = battleResult.userArmy;
+				enemyArmy = battleResult.enemyArmy;
 
-					var battleOptions = {
-						missionType: event.info.mission.type,
-						missionLevel: event.info.mission.level,
-						location: planet._id,
-						userLocation: planet._id,
-						enemyLocation: enemyLocation
-					}
+				// need this to update user army
+				var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmy()._id : planet.armyId;
 
-					// perform battle
-					var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
-					userArmy = battleResult.userArmy;
-					enemyArmy = battleResult.enemyArmy;
-
-					// need this to update user army
-					var userArmyId = (planet.isHome) ? Game.Unit.getHomeArmy()._id : planet.armyId;
-
-					if (userArmy && enemyArmy) {
-						// tie
-						Game.Unit.updateArmy(userArmyId, userArmy);
-						planet.mission.units = enemyArmy.reptiles.fleet;
-					} else if (!userArmy && enemyArmy) {
-						// reptiles won
-						Game.Unit.removeArmy(userArmyId);
-						if (planet.isHome) {
-							event.info.mission.units = enemyArmy.reptiles.fleet;
-						} else {
-							planet.armyId = null;
-							planet.mission = {
-								type: 'defencefleet',
-								level: event.info.mission.level,
-								units: enemyArmy.reptiles.fleet
-							}
-						}
-					} else if (userArmy && !enemyArmy) {
-						// humans won
-						Game.Unit.updateArmy(userArmyId, userArmy);
-						event.info.mission = null;
+				if (userArmy && enemyArmy) {
+					// tie
+					Game.Unit.updateArmy(userArmyId, userArmy);
+					planet.mission.units = enemyArmy.reptiles.fleet;
+				} else if (!userArmy && enemyArmy) {
+					// reptiles won
+					Game.Unit.removeArmy(userArmyId);
+					if (planet.isHome) {
+						event.info.mission.units = enemyArmy.reptiles.fleet;
 					} else {
-						// everyone died
-						Game.Unit.removeArmy(userArmyId);
-						if (!planet.isHome) {
-							planet.armyId = null;
+						planet.armyId = null;
+						planet.mission = {
+							type: 'defencefleet',
+							level: event.info.mission.level,
+							units: enemyArmy.reptiles.fleet
 						}
-						event.info.mission = null;
 					}
+				} else if (userArmy && !enemyArmy) {
+					// humans won
+					Game.Unit.updateArmy(userArmyId, userArmy);
+					event.info.mission = null;
+				} else {
+					// everyone died
+					Game.Unit.removeArmy(userArmyId);
+					if (!planet.isHome) {
+						planet.armyId = null;
+					}
+					event.info.mission = null;
 				}
 
 				if (enemyArmy) {
@@ -627,8 +629,15 @@ Game.SpaceEvents.completeShip = function(event) {
 								stealCost[resName] = stealAmount;
 							}
 						}
-						
+
 						Game.Resources.spend(stealCost);
+
+						// save history
+						if (battleResult) {
+							Game.BattleHistory.set(battleResult.historyId, {
+								lostResources: stealCost,
+							});
+						}
 					}
 
 					// return reptiles ship
@@ -701,6 +710,7 @@ Game.SpaceEvents.completeShip = function(event) {
 				: targetShip.info.startPosition;
 
 			var battleOptions = {
+				timestamp: event.timeEnd,
 				location: event.info.targetPosition,
 				userLocation: event.info.isHumans ? firstLocation : secondLocation,
 				enemyLocation: event.info.isHumans ? secondLocation : firstLocation

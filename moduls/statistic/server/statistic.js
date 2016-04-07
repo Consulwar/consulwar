@@ -49,11 +49,16 @@ Game.Statistic.fixGame = function() {
 		complaint: true
 	}).count();
 
+	var earthHistoryCount = Game.BattleHistory.Collection.find({
+		user_id: 'earth'
+	}).count();
+
 	Game.Statistic.Collection.upsert({
 		user_id: 'system'
 	}, {
 		$set: {
-			totalMailComplaints: totalMailComplaints
+			totalMailComplaints: totalMailComplaints,
+			earthHistoryCount: earthHistoryCount
 		}
 	});
 }
@@ -107,6 +112,24 @@ Game.Statistic.fixUser = function(userId) {
 }
 
 Meteor.methods({
+	'statistic.fixGame': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked == true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Нужны парва администратора');
+		}
+
+		Game.Statistic.fixGame();
+	},
+
 	'statistic.fixUser': function(username) {
 		var user = Meteor.user();
 
@@ -151,7 +174,20 @@ Meteor.publish('statistic', function() {
 			});
 		} else {
 			return Game.Statistic.Collection.find({
-				user_id: this.userId
+				$or: [
+					{ user_id: this.userId },
+					{ user_id: 'system' }
+				]
+			}, {
+				fields: {
+					totalMail: 1,
+					totalMailAlltime: 1,
+					incomeHistoryCount: 1,
+					expenseHistoryCount: 1,
+					battleHistoryCount: 1,
+					// system fields
+					earthHistoryCount: 1
+				}
 			});
 		}
 	}

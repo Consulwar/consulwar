@@ -415,6 +415,7 @@ Game.SpaceEvents.completeShip = function(event) {
 					: event.info.startPosition;
 
 				var battleOptions = {
+					timestamp: event.timeEnd,
 					missionType: planet.mission.type,
 					missionLevel: planet.mission.level,
 					location: planet._id,
@@ -547,6 +548,7 @@ Game.SpaceEvents.completeShip = function(event) {
 						: event.info.startPosition;
 
 					var battleOptions = {
+						timestamp: event.timeEnd,
 						missionType: event.info.mission.type,
 						missionLevel: event.info.mission.level,
 						location: planet._id,
@@ -701,6 +703,7 @@ Game.SpaceEvents.completeShip = function(event) {
 				: targetShip.info.startPosition;
 
 			var battleOptions = {
+				timestamp: event.timeEnd,
 				location: event.info.targetPosition,
 				userLocation: event.info.isHumans ? firstLocation : secondLocation,
 				enemyLocation: event.info.isHumans ? secondLocation : firstLocation

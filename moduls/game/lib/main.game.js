@@ -669,11 +669,29 @@ Game.Effect.getRelatedTo = function(obj) {
 
 	var result = {};
 
+	var cache = {};
+
 	for (var priority in effects) {
 		result[priority] = {};
 		for (var i = 0; i < effects[priority].length; i++) {
 			if (_.isArray(effects[priority][i].affect)) {
-				var value = effects[priority][i].result();
+
+				// Cache for building & research
+				if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
+					var provider = effects[priority][i].provider;
+					if (cache[provider.type] === undefined) {
+						cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
+					}
+
+					var value = effects[priority][i].result(
+						cache[provider.type] && cache[provider.type][provider.group] && cache[provider.type][provider.group][provider.engName]
+							? cache[provider.type][provider.group][provider.engName]
+							: 0
+					);
+				} else {
+					var value = effects[priority][i].result();
+				}
+
 				if (value && value != undefined) {
 					for (var resource in effects[priority][i].affect) {
 						if (result[priority][effects[priority][i].affect[resource]] == undefined) {
@@ -693,7 +711,22 @@ Game.Effect.getRelatedTo = function(obj) {
 					result[priority][effects[priority][i].affect] = [];
 				}
 
-				var value = effects[priority][i].result();
+				// Cache for building & research
+				if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
+					var provider = effects[priority][i].provider;
+					if (cache[provider.type] === undefined) {
+						cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
+					}
+
+					var value = effects[priority][i].result(
+						cache[provider.type] && cache[provider.type][provider.group] && cache[provider.type][provider.group][provider.engName]
+							? cache[provider.type][provider.group][provider.engName]
+							: 0
+					);
+				} else {
+					var value = effects[priority][i].result();
+				}
+
 				if (value && value != undefined) {
 					result[priority][effects[priority][i].affect].push({
 						value: value,

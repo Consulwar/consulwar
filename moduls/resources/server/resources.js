@@ -41,21 +41,12 @@ Game.Resources.set = function(resource, invertSign, uid) {
 		}
 
 		// set resource bonus
-		if (resource[name].bonus != undefined) {
+		if (resource[name].totalBonus != undefined) {
 			if (!set) {
 				set = {};
 			}
 
-			var income = Game.Resources.getIncome();
-			var currentValue = Game.Resources.getValue(uid);
-			var currentBonus = (currentValue[name] && currentValue[name].bonus)
-				? currentValue[name].bonus
-				: 0;
-
-			set[name + '.bonus'] = Math.min(
-				currentBonus + resource[name].bonus,
-				(income[name] || 0) * Game.Resources.bonusStorage
-			);
+			set[name + '.bonus'] = resource[name].totalBonus;
 		}
 	}
 
@@ -126,11 +117,30 @@ Game.Resources.updateWithIncome = function(currentTime) {
 			resources.metals.bonusSeconds,
 			true
 		),
+		honor: Game.Resources.calculateProduction(
+			income.honor, 
+			delta,
+			resources.honor.bonusSeconds
+		),
 		credits: Game.Resources.calculateProduction(
 			income.credits, 
 			delta,
 			resources.credits.bonusSeconds
 		)
+	}
+
+	for (var name in result) {
+		// set resource bonus
+		if (result[name].bonus != undefined) {
+			var currentBonus = (resources[name] && resources[name].bonus)
+				? resources[name].bonus
+				: 0;
+
+			result[name].totalBonus = Math.min(
+				currentBonus + result[name].bonus,
+				(income[name] || 0) * Game.Resources.bonusStorage
+			);
+		}
 	}
 
 	Game.Resources.add(result);

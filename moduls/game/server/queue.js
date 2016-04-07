@@ -196,6 +196,8 @@ Game.Queue.checkAll = function() {
 			observer = null;
 		}
 	}
+
+	return true;
 }
 
 Meteor.publish('queue', function () {

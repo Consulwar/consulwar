@@ -4,6 +4,7 @@ BrowserPolicy.content.allowOriginForAll('*');
 BrowserPolicy.content.allowEval('*')
 //heapdump = Meteor.npmRequire('heapdump');
 
+process.env.METEOR_DOWN_KEY = 'Some_great_key_for_testing_84124';
 
 Game.processId = uuid.new();
 Game.PROCESS_TIMEOUT = 300;
@@ -77,8 +78,9 @@ Meteor.methods({
 		console.log('Actualize: ', new Date(), user.username);
 
 		// Update queue tasks and resources
-		Game.Queue.checkAll();
-		Game.Queue.checkAll();
+		var needToCheckAgain = Game.Queue.checkAll();
+		
+		needToCheckAgain && Game.Queue.checkAll();
 
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();

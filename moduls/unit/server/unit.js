@@ -285,7 +285,7 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 		history.result = battleResults.result
 	}
 
-	Game.BattleHistory.Collection.insert(history);
+	var historyId = Game.BattleHistory.Collection.insert(history);
 
 	if (options.isEarth) {
 		Game.Statistic.incrementGame({
@@ -296,17 +296,32 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 			battleHistoryCount: 1
 		});
 	}
+
+	return historyId;
+}
+
+Game.BattleHistory.set = function(id, set) {
+	Game.BattleHistory.Collection.update({
+		_id: id,
+		user_id: Meteor.userId()
+	}, {
+		$set: set
+	});
 }
 
 Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	var battle = new Game.Unit.Battle(userArmy, enemyArmy, options);
 
-	Game.BattleHistory.add(
+	var historyId = Game.BattleHistory.add(
 		userArmy,
 		enemyArmy,
 		options,
 		battle.results
 	);
+
+	if (historyId) {
+		battle.results.historyId = historyId;
+	}
 
 	return battle.results;
 }

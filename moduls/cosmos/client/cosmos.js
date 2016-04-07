@@ -134,6 +134,15 @@ var getBattleInfo = function(item) {
 		}
 	});
 
+	var lostResources = _.map(item.lostResources, function(value, key) {
+		return {
+			engName: key,
+			amount: value * -1
+		}
+	});
+
+	item.reward = item.reward.concat(lostResources);
+
 	item.artefacts = _.map(item.artefacts, function(value, key) {
 		return {
 			engName: key,

@@ -66,6 +66,7 @@ var gameRoutes = {
 		earth: 'mutual/:group(earth)',
 		earthReserve: 'mutual/:group(earth)/reserve',
 		earthZone: 'mutual/:group(earth)/zone/:name?',
+		earthHistory: 'mutual/:group(earth)/history/:page',
 		statistics: 'mutual/statistics/:page?'
 	},
 	
@@ -100,6 +101,7 @@ var gameActions = {
 	earth: Game.Earth.showMap,
 	earthReserve: Game.Earth.showReserve,
 	earthZone: Game.Earth.showZone,
+	earthHistory: Game.Earth.showHistory,
 	statistics: Game.Rating.showPage,
 
 	cosmos: Game.Cosmos.showPage,

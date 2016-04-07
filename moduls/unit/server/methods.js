@@ -55,7 +55,7 @@ Meteor.methods({
 		}
 	},
 
-	'battleHistory.getPage': function(page, count) {
+	'battleHistory.getPage': function(page, count, isEarth) {
 		check(page, Match.Integer);
 		check(count, Match.Integer);
 
@@ -70,7 +70,7 @@ Meteor.methods({
 		}
 
 		return Game.BattleHistory.Collection.find({
-			user_id: user._id
+			user_id: isEarth ? 'earth' : user._id
 		}, {
 			sort: { timestamp: -1 },
 			skip: (page > 0) ? (page - 1) * count : 0,
@@ -78,7 +78,7 @@ Meteor.methods({
 		}).fetch();
 	},
 
-	'battleHistory.getById': function(id) {
+	'battleHistory.getById': function(id, isEarth) {
 		check(id, String);
 
 		var user = Meteor.user();
@@ -89,7 +89,7 @@ Meteor.methods({
 
 		return Game.BattleHistory.Collection.findOne({
 			_id: id,
-			user_id: user._id
+			user_id: isEarth ? 'earth' : user._id
 		});
 	}
 })

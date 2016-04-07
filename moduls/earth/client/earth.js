@@ -13,6 +13,98 @@ Game.Earth.showMap = function() {
 }
 
 // ----------------------------------------------------------------------------
+// Earth battle history
+// ----------------------------------------------------------------------------
+
+Game.Earth.showHistory = function() {
+	var pageNumber = parseInt( this.params.page, 10 );
+	var itemId = this.getParams().hash;
+	var countPerPage = 20;
+
+	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, true, function(err, data) {
+		var battle = new ReactiveVar(null);
+
+		for (var i = 0; i < data.length; i++) {
+			// check if current item
+			if (itemId && data[i]._id == itemId) {
+				battle.set( data[i] );
+			}
+		}
+
+		if (itemId && !battle.get()) {
+			Meteor.call('battleHistory.getById', itemId, true, function(err, data) {
+				battle.set(data);
+			});
+		}
+
+		Router.current().render('earthHistory', {
+			to: 'content',
+			data: {
+				countPerPage: countPerPage,
+				battles: data,
+				battle: battle,
+				itemId: itemId
+			}
+		});
+	});
+}
+
+Template.earthHistory.helpers({
+	countTotal: function() { return Game.Statistic.getSystemValue('earthHistoryCount'); },
+	battle: function() { return this.battle.get(); }
+});
+
+Template.earthHistoryItem.helpers({
+	currentPage: function() {
+		return Router.current().params.page;
+	},
+
+	getArmyInfo: function(units, rest) {
+		var result = [];
+		var wasBattle = (this.battle.userArmy && this.battle.enemyArmy) ? true : false;
+
+		for (var side in units) {
+			for (var group in units[side]) {
+				for (var name in units[side][group]) {
+
+					var countStart = units[side][group][name];
+					if (_.isString( countStart )) {
+						countStart = game.Battle.count[ countStart ];
+					}
+
+					var countAfter = 0;
+					if (rest
+					 && rest[side]
+					 && rest[side][group]
+					 && rest[side][group][name]
+					) {
+						countAfter = rest[side][group][name];
+					}
+
+					result.push({
+						name: Game.Unit.items[side][group][name].name,
+						start: countStart,
+						end: wasBattle ? countAfter : countStart
+					});
+				}
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	}
+});
+
+Template.earthHistory.events({
+	'click tr:not(.header)': function(e, t) {
+		var page = Router.current().params.page;
+		var id = $(e.currentTarget).attr('data-id');
+		if (id) {
+			Router.go('earthHistory', { group: 'earth', page: page }, { hash: id });
+		}
+	}
+});
+
+// ----------------------------------------------------------------------------
 // Reserve
 // ----------------------------------------------------------------------------
 

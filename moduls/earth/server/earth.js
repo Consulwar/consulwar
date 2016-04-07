@@ -187,7 +187,7 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		throw new Meteor.Error('Зона с именем ' + name + ' не найдена');
 	}
 
-	if (!zone.userArmy && !zone.enemyArmy) {
+	if (!zone.enemyArmy) {
 		return null; // No need to fight!
 	}
 

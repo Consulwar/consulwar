@@ -7,23 +7,13 @@ game.Card = function(options) {
 
 	this.type = 'card';
 	this.durationTime = options.durationTime;
+	this.reloadTime = options.reloadTime;
 
 	if (Game.Cards.items[this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется карточка ' + this.engName);
 	}
 
 	Game.Cards.items[this.engName] = this;
-
-	/*
-	this.url = function(options) {
-		options = options || {
-			group: this.group,
-			subgroup: this.subgroup,
-			item: this.engName
-		};
-		return Router.routes[this.type].path(options);
-	}
-	*/
 
 	this.amount = function() {
 		var resources = Game.Resources.getValue();
@@ -64,6 +54,14 @@ game.Card = function(options) {
 
 		return true;
 	}
+
+	this.nextReloadTime = function() {
+		var resources = Game.Resources.getValue();
+		if (resources[this.engName] && resources[this.engName].nextReloadTime) {
+			return resources[this.engName].nextReloadTime;
+		}
+		return null;
+	}
 }
 game.extend(game.Card, game.Item);
 
@@ -78,10 +76,6 @@ Game.Cards = {
 			}
 		}
 		return result;
-	},
-
-	complete: function(task) {
-		return null; // no action on queue complete
 	}
 }
 

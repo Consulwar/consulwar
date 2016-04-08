@@ -192,6 +192,10 @@ Game.Resources.initialize = function(user) {
 	}
 }
 
+Game.Cards.complete = function(task) {
+	// no action on complete
+}
+
 Meteor.methods({
 	getBonusResources: function(name) {
 		var user = Meteor.user();
@@ -247,6 +251,8 @@ Meteor.methods({
 
 		var item = Game.Cards.items[id];
 
+		Meteor.call('actualizeGameInfo');
+
 		if (!item.canBuy()) {
 			throw new Meteor.Error('Нельзя купить эту карточку');
 		}
@@ -278,7 +284,29 @@ Meteor.methods({
 		Meteor.call('actualizeGameInfo');
 
 		var item = Game.Cards.items[id];
-		
+
+		if (item.amount() <= 0) {
+			throw new Meteor.Error('Карточки заночились');
+		}
+
+		// check reload time
+		if (item.reloadTime) {
+			var nextReloadTime = item.nextReloadTime();
+			if (nextReloadTime > Game.getCurrentTime()) {
+				throw new Meteor.Error('Не прошло время перезарядки');
+			}
+
+			// set next reload time
+			var set = {};
+			set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
+
+			Game.Resources.Collection.update({
+				user_id: user._id
+			}, {
+				$set: set
+			})
+		}
+
 		var task = {
 			type: item.type,
 			engName: item.engName,

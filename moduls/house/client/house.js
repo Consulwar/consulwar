@@ -156,8 +156,38 @@ Template.consulHouseCards.helpers({
 		return (timeLeft > 0) ? timeLeft : 0;
 	},
 
+	canActivate: function() {
+		var item = Game.Cards.items[this.item];
+		if (item.amount() <= 0) {
+			return false;
+		}
+
+		var currentTime = Session.get('serverTime');
+		var task = item.getActive();
+		if (task && task.finishTime > currentTime) {
+			return false;
+		}
+
+		var reloadTime = item.nextReloadTime();
+		if (reloadTime && reloadTime > currentTime) {
+			return false;
+		}
+
+		return true;
+	},
+
+	finishTime: function() {
+		var task = Game.Cards.items[this.item].getActive();
+		return (task) ? task.finishTime : null;
+	},
+
+	reloadTime: function() {
+		var reloadTime = Game.Cards.items[this.item].nextReloadTime();
+		return (reloadTime) ? reloadTime : null;
+	},
+
 	item: function() {
-		var id = Template.instance().data.item;
+		var id = this.item;
 		return Game.Cards.items[id];
 	},
 

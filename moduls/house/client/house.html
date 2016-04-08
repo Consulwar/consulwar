@@ -109,13 +109,17 @@
 			{{#if item.description}}
 				<p>{{item.description}}</p>
 			{{/if}}
-			{{#let task=item.getActive}}
-				{{#if task}}
-					<p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft task.finishTime)}}</p>
+			{{#if not canActivate}}
+				{{#if finishTime}}
+					<p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft finishTime)}}</p>
+				{{else}}
+					{{#if reloadTime}}
+						<p>Можно повторно активировать через {{formatSeconds (getTimeLeft reloadTime)}}</p>
+					{{/if}}
 				{{/if}}
-			{{/let}}
+			{{/if}}
 		</div>
-		{{#if and (not item.getActive) (gt item.amount 0)}}
+		{{#if canActivate}}
 			<button class="activate">Активировать</button>
 		{{/if}}
 		{{#if item.getPrice}}

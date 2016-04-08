@@ -550,6 +550,9 @@ Game.Effect = function(options) {
 				}
 			}
 		} else {
+			if (Game.effects[this.type] == undefined) {
+				Game.effects[this.type] = {list: []};
+			}
 			Game.effects[this.type].list.push(this);
 		}
 	}
@@ -857,6 +860,15 @@ extend(Game.Effect.Military, Game.Effect);
 Game.Effect.Military.type = 'military';
 Game.Effect.Military.reduce = false;
 
+Game.Effect.ProfitOnce = function(options) {
+	Game.Effect.ProfitOnce.superclass.constructor.apply(this, arguments);
+
+	this.type = 'profitOnce';
+	this.reduce = true;
+}
+extend(Game.Effect.ProfitOnce, Game.Effect);
+Game.Effect.ProfitOnce.type = 'profitOnce';
+Game.Effect.ProfitOnce.reduce = true;
 
 Game.Effect.Special = function(options) {
 	Game.Effect.Special.superclass.constructor.apply(this, arguments);

@@ -6,6 +6,7 @@ game.Card = function(options) {
 	game.Card.superclass.constructor.apply(this, arguments);
 
 	this.type = 'card';
+	this.cardGroup = options.cardGroup;
 	this.durationTime = options.durationTime;
 	this.reloadTime = options.reloadTime;
 

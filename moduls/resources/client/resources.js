@@ -2,6 +2,7 @@ initResourcesClient = function() {
 
 initResourcesLib();
 initArtefactsLib();
+initCardsLib();
 
 Meteor.subscribe('resources');
 

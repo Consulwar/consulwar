@@ -797,6 +797,27 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					reward.metals = Math.floor( killedCost.metals * 0.1 );
 					reward.crystals = Math.floor( killedCost.crystals * 0.1 );
 				}
+
+				// truckc grab extra reward
+				var truckCount = 0;
+
+				if (userArmyRest.army
+				 && userArmyRest.army.fleet
+				 && userArmyRest.army.fleet.truckc
+				) {
+					truckCount = userArmyRest.army.fleet.truckc;
+				}
+
+				if (truckCount > 0) {
+					reward.metals += Math.min(
+						truckCount * 2000,
+						Math.floor( killedCost.metals * 0.4 )
+					);
+					reward.crystals += Math.min(
+						truckCount * 1000,
+						Math.floor( killedCost.crystals * 0.4 )
+					);
+				}
 			}
 
 			// honor

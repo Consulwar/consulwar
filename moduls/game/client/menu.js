@@ -79,6 +79,18 @@ var menu = {
 							item: 'weapon_parts'
 						}),
 						items: Game.Artefacts.items
+					},
+					cards: {
+						name: 'Карточки',
+						engName: 'cards',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: Router.routes.house.path({
+							group: 'house',
+							subgroup: 'cards',
+							item: 'testCard1' // TODO: Поменять когда будет контент!
+						}),
+						items: Game.Artefacts.items
 					}
 				}
 			}

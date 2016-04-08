@@ -455,6 +455,9 @@ Game = {
 			case 'spaceEvent':
 				return Game.SpaceEvents;
 
+			case 'card':
+				return Game.Cards;
+
 			default:
 				throw new Meteor.Error("Такого объекта нет");
 		}
@@ -550,6 +553,9 @@ Game.Effect = function(options) {
 				}
 			}
 		} else {
+			if (Game.effects[this.type] == undefined) {
+				Game.effects[this.type] = {list: []};
+			}
 			Game.effects[this.type].list.push(this);
 		}
 	}
@@ -627,8 +633,13 @@ Game.Effect.getRelatedTo = function(obj) {
 		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i])
 	}
 
-	// Items
+	// Items and Cards
 	var items = Game.House.getPlacedItems();
+
+	var cards = Game.Cards.getActive();
+	if (cards && cards.length > 0) {
+		items = items.concat(cards);
+	}
 
 	for (var i = 0; i < items.length; i++) {
 		var effect = items[i].effect;
@@ -857,6 +868,15 @@ extend(Game.Effect.Military, Game.Effect);
 Game.Effect.Military.type = 'military';
 Game.Effect.Military.reduce = false;
 
+Game.Effect.ProfitOnce = function(options) {
+	Game.Effect.ProfitOnce.superclass.constructor.apply(this, arguments);
+
+	this.type = 'profitOnce';
+	this.reduce = true;
+}
+extend(Game.Effect.ProfitOnce, Game.Effect);
+Game.Effect.ProfitOnce.type = 'profitOnce';
+Game.Effect.ProfitOnce.reduce = true;
 
 Game.Effect.Special = function(options) {
 	Game.Effect.Special.superclass.constructor.apply(this, arguments);

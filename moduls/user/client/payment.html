@@ -31,8 +31,21 @@
 				{{#each history}}
 					<tr>
 						<td>{{formatDate this.timestamp}}</td>
-						<td>{{getProfit this.resources}}</td>
-						<td>{{this.source}}</td>
+						<td>{{getProfit this.profit}}</td>
+						<td>
+							{{#if eq this.source.type 'payment'}}
+								Покупка: {{this.source.item}}
+							{{/if}}
+							{{#if eq this.source.type 'promo'}}
+								Промо код: {{this.source.code}}
+							{{/if}}
+							{{#if eq this.source.type 'chatFree'}}
+								Не платить за ссаный чат
+							{{/if}}
+							{{#if eq this.source.type 'chatBalance'}}
+								Пополнение баланса комнаты в чате
+							{{/if}}
+						</td>
 					</tr>
 				{{/each}}
 			</table>

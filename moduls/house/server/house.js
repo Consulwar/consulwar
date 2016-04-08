@@ -75,6 +75,8 @@ Meteor.methods({
 			throw new Meteor.Error('Только всемогущий админ может подарить тебе этот предмет!');
 		}
 
+		Meteor.call('actualizeGameInfo');
+
 		if (!item.canBuy()) {
 			throw new Meteor.Error('Нельзя купить этот предмет');
 		}

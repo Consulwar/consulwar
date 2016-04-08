@@ -183,7 +183,7 @@ Template.consulHouseCards.helpers({
 
 	reloadTime: function() {
 		var reloadTime = Game.Cards.items[this.item].nextReloadTime();
-		return (reloadTime) ? reloadTime : null;
+		return (reloadTime && reloadTime > Session.get('serverTime')) ? reloadTime : null;
 	},
 
 	item: function() {

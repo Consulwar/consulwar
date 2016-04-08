@@ -14,7 +14,14 @@ Game.House.showPage = function() {
 
 	if (subgroup && item) {
 		// show item menu
-		this.render((subgroup == 'artefacts' ? 'consulHouseArtefacts' : 'consulHouseItem'), {
+		var templateName = 'consulHouseItem';
+		if (subgroup == 'artefacts') {
+			templateName = 'consulHouseArtefacts';
+		} else if (subgroup == 'cards') {
+			templateName = 'consulHouseCards';
+		}
+
+		this.render(templateName, {
 			to: 'content',
 			data: {
 				subgroup: subgroup,
@@ -37,7 +44,7 @@ Template.consulHouse.helpers({
 	items: function() {
 		return Game.House.getPlacedItems();
 	}
-})
+});
 
 // ----------------------------------------------------------------------------
 // Consul house item menu
@@ -60,7 +67,7 @@ Template.consulHouseItem.helpers({
 			return item;
 		});
 	}
-})
+});
 
 Template.consulHouseItem.events({
 	'click .buy': function(e, t) {
@@ -71,15 +78,27 @@ Template.consulHouseItem.events({
 			return Notifications.error('Не достаточно денег!');
 		}
 
-		Meteor.call('house.buyItem', group, id);
+		Meteor.call('house.buyItem', group, id, function(err) {
+			if (err) {
+				Notifications.error('Не удалось купить предмет', err.error);
+			} else {
+				Notifications.success('Предмет куплен');
+			}
+		});
 	},
 
 	'click .place': function(e, t) {
 		var group = t.data.subgroup;
 		var id = t.data.item;
-		Meteor.call('house.placeItem', group, id);
+		Meteor.call('house.placeItem', group, id, function(err) {
+			if (err) {
+				Notifications.error('Не удалось установить предмет', err.error);
+			} else {
+				Notifications.success('Предмет установлен в палату');
+			}
+		});
 	}
-})
+});
 
 // ----------------------------------------------------------------------------
 // Consul house artefacts menu
@@ -96,6 +115,57 @@ Template.consulHouseArtefacts.helpers({
 			return item;
 		});
 	}
-})
+});
+
+// ----------------------------------------------------------------------------
+// Consul house cards menu
+// ----------------------------------------------------------------------------
+
+Template.consulHouseCards.events({
+	'click .buy': function(e, t) {
+		var id = t.data.item;
+
+		if (!Game.Cards.items[id].canBuy()) {
+			return Notifications.error('Не достаточно денег!');
+		}
+
+		Meteor.call('cards.buy', id, function(err) {
+			if (err) {
+				Notifications.error('Не удалось купить карточку', err.error);
+			} else {
+				Notifications.success('Карточка куплена');
+			}
+		});
+	},
+
+	'click .activate': function(e, t) {
+		var id = t.data.item;
+		Meteor.call('cards.activate', id, function(err) {
+			if (err) {
+				Notifications.error('Не удалось активировать карточку', err.error);
+			} else {
+				Notifications.success('Карточка активирована');
+			}
+		});
+	}
+});
+
+Template.consulHouseCards.helpers({
+	getTimeLeft: function(timeEnd) {
+		var timeLeft = timeEnd - Session.get('serverTime');
+		return (timeLeft > 0) ? timeLeft : 0;
+	},
+
+	item: function() {
+		var id = Template.instance().data.item;
+		return Game.Cards.items[id];
+	},
+
+	subgroupItems: function() {
+		return _.map(Game.Cards.items, function(item) {
+			return item;
+		});
+	}
+});
 
 }

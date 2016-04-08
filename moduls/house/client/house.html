@@ -82,3 +82,45 @@
 		</div>
 	</div>
 </template>
+
+<template name="consulHouseCards">
+	<div class="information house">
+		<div class="image">
+			<img src="/img/artefacts/white/weapon_parts.jpg">
+			<span class="title">{{item.name}}</span>
+			{{#if gt item.amount 0}}
+				<span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>
+			{{/if}}
+		</div>
+		<div class="description">
+			<ul class ="consul-artefacts">
+				{{#each subgroupItems}}
+					<li>
+						{{this.name}}
+						<a 
+							class="
+								{{this.engName}} 
+								{{#if eq item.engName this.engName}}active{{/if}}"
+							href="{{pathFor 'house' group='house' subgroup='cards' item=this.engName}}"
+						>{{formatNumberWithISO this.amount}}</a>
+					</li>
+				{{/each}}
+			</ul>
+			{{#if item.description}}
+				<p>{{item.description}}</p>
+			{{/if}}
+			{{#let task=item.getActive}}
+				{{#if task}}
+					<p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft task.finishTime)}}</p>
+				{{/if}}
+			{{/let}}
+		</div>
+		{{#if and (not item.getActive) (gt item.amount 0)}}
+			<button class="activate">Активировать</button>
+		{{/if}}
+		{{#if item.getPrice}}
+			{{> item_price price=(item.getPrice 1)}}
+			<button class="buy">Приобрести</button>
+		{{/if}}
+	</div>
+</template>

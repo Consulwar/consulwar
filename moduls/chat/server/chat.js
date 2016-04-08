@@ -567,6 +567,12 @@ Meteor.methods({
 
 		Game.Resources.spend({ credits: Game.Chat.Messages.FREE_CHAT_PRICE });
 
+		Game.Payment.logExpense({
+			resources: { credits: Game.Chat.Messages.FREE_CHAT_PRICE }
+		}, {
+			type: 'chatFree'
+		});
+
 		Meteor.users.update({
 			_id: user._id
 		}, {
@@ -618,6 +624,13 @@ Meteor.methods({
 		});
 
 		Game.Resources.spend({ credits: credits });
+
+		Game.Payment.logExpense({
+			resources: { credits: credits }
+		}, {
+			type: 'chatBalance',
+			room: room._id
+		});
 
 		Game.Chat.Messages.Collection.insert({
 			room_id: room._id,

@@ -8,15 +8,12 @@ Game.Payment.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Payment.log = function(isIncome, resources, source, uid) {
+Game.Payment.log = function(isIncome, profit, source, uid) {
 	var record = {
 		user_id: uid ? uid : Meteor.userId(),
-		resources: resources,
-		timestamp: Game.getCurrentTime()
-	}
-
-	if (isIncome) {
-		record.income = true;
+		profit: profit,
+		timestamp: Game.getCurrentTime(),
+		income: isIncome
 	}
 
 	if (source) {
@@ -33,12 +30,12 @@ Game.Payment.log = function(isIncome, resources, source, uid) {
 	Game.Statistic.incrementUser(record.user_id, increment);
 }
 
-Game.Payment.logIncome = function(resources, source, uid) {
-	Game.Payment.log(true, resources, source, uid);
+Game.Payment.logIncome = function(profit, source, uid) {
+	Game.Payment.log(true, profit, source, uid);
 }
 
-Game.Payment.logExpense = function(resources, source, uid) {
-	Game.Payment.log(false, resources, source, uid);
+Game.Payment.logExpense = function(profit, source, uid) {
+	Game.Payment.log(false, profit, source, uid);
 }
 
 Meteor.methods({
@@ -59,10 +56,11 @@ Meteor.methods({
 		check(id, String);
 		var paymentItem = Game.Payment.items[id];
 
-		if (!paymentItem) {
+		if (!paymentItem || !paymentItem.profit) {
 			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
 		}
 
+		// --------------------------------------------------------------------
 		// Этот код только для внутреннего теста
 		// TODO: Убрать когда подключим платежку
 		var history = Game.Payment.Collection.find({
@@ -70,22 +68,35 @@ Meteor.methods({
 			income: { $ne: false }
 		}).fetch();
 
-		var totalCredits = paymentItem.resources.credits;
+		var totalCredits = (
+			paymentItem.profit
+		 && paymentItem.profit.resources
+		 && paymentItem.profit.resources.credits
+		) ? paymentItem.profit.resources.credits : 0;
 
-		for (var i = 0; i < history.length; i++) {
-			if (history[i].resources && history[i].resources.credits) {
-				totalCredits += history[i].resources.credits;
+		if (totalCredits > 0) {
+			for (var i = 0; i < history.length; i++) {
+				if (history[i].profit
+				 && history[i].profit.resources
+				 && history[i].profit.resources.credits
+				) {
+					totalCredits += history[i].profit.resources.credits;
+				}
+			}
+
+			if (totalCredits >= 5000) {
+				throw new Meteor.Error('Больше получить кредитов нельзя, пока идет внутренний тест');
 			}
 		}
-
-		if (totalCredits >= 5000) {
-			throw new Meteor.Error('Больше получить кредитов нельзя, пока идет внутренний тест');
-		}
+		// --------------------------------------------------------------------
 
 		// Ниже идет код для зачисления ресурсов при удачном платеже
 		// TODO: Перенести в callback
-		Game.Resources.add(paymentItem.resources);
-		Game.Payment.logIncome(paymentItem.resources, id);
+		Game.Resources.addProfit(paymentItem.profit);
+		Game.Payment.logIncome(paymentItem.profit, {
+			type: 'payment',
+			item: paymentItem.id
+		});
 	},
 
 	'user.getPaymentHistory': function(isIncome, page, count) {
@@ -329,30 +340,11 @@ Meteor.methods({
 
 		// add profit
 		if (profit) {
-			if (profit.resources) {
-				Game.Resources.add(profit.resources);
-			}
-
-			if (profit.units) {
-				var units = profit.units;
-				for (var group in units) {
-					for (var name in units[group]) {
-						Game.Unit.add({
-							engName: name,
-							group: group,
-							count: parseInt( units[group][name], 10 )
-						});
-					}
-				}
-			}
-
-			if (profit.votePower) {
-				Meteor.users.update({
-					_id: user._id
-				}, {
-					$inc: { votePowerBonus: profit.votePower }
-				});
-			}
+			Game.Resources.addProfit(profit);
+			Game.Payment.logIncome(profit, {
+				type: 'promo',
+				code: promoCode.code
+			});
 		}
 
 		// insert history record

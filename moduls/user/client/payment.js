@@ -93,10 +93,27 @@ Template.paymentHistory.helpers({
 	isLoading: function() { return isLoading.get(); },
 	history: function() { return history.get(); },
 
-	getProfit: function(resources) {
+	getProfit: function(profit) {
 		var result = '';
-		for (var name in resources) {
-			result += name + ':' + parseInt(resources[name], 10) + ' ';
+		for (var type in profit) {
+			switch (type) {
+				case 'resources':
+					for (var name in profit[type]) {
+						result += name + ': ' + parseInt(profit[type][name], 10) + ' ';
+					}
+					break;
+				case 'units':
+					for (var group in profit[type]) {
+						for (var name in profit[type][group]) {
+							result += Game.Unit.items.army[group][name].name + ': ';
+							result += parseInt(profit[type][group][name], 10) + ' ';
+						}
+					}
+					break;
+				case 'votePower':
+					result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
+					break;
+			}
 		}
 		return result;
 	}

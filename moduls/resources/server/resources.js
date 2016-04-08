@@ -77,6 +77,33 @@ Game.Resources.spend = function(resource, uid) {
 	return Game.Resources.set(resource, true, uid);
 }
 
+Game.Resources.addProfit = function(profit) {
+	if (profit.resources) {
+		Game.Resources.add(profit.resources);
+	}
+
+	if (profit.units) {
+		var units = profit.units;
+		for (var group in units) {
+			for (var name in units[group]) {
+				Game.Unit.add({
+					engName: name,
+					group: group,
+					count: parseInt( units[group][name], 10 )
+				});
+			}
+		}
+	}
+
+	if (profit.votePower && Meteor.userId()) {
+		Meteor.users.update({
+			_id: Meteor.userId()
+		}, {
+			$inc: { votePowerBonus: profit.votePower }
+		});
+	}
+}
+
 Game.Resources.updateWithIncome = function(currentTime) {
 	var resources = Game.Resources.getValue();
 

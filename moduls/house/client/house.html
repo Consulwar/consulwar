@@ -109,6 +109,9 @@
 			{{#if item.description}}
 				<p>{{item.description}}</p>
 			{{/if}}
+			
+			{{> item_effect item=item}}
+
 			{{#if finishTime}}
 				<p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft finishTime)}}</p>
 			{{else}}

@@ -313,8 +313,8 @@ Meteor.methods({
 			time: item.durationTime
 		}
 
-		if (item.group) {
-			task.group = item.group;
+		if (item.cardGroup) {
+			task.group = item.cardGroup;
 		}
 
 		// activate card

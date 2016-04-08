@@ -455,6 +455,9 @@ Game = {
 			case 'spaceEvent':
 				return Game.SpaceEvents;
 
+			case 'card':
+				return Game.Cards;
+
 			default:
 				throw new Meteor.Error("Такого объекта нет");
 		}
@@ -630,8 +633,13 @@ Game.Effect.getRelatedTo = function(obj) {
 		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i])
 	}
 
-	// Items
+	// Items and Cards
 	var items = Game.House.getPlacedItems();
+
+	var cards = Game.Cards.getActive();
+	if (cards && cards.length > 0) {
+		items = items.concat(cards);
+	}
 
 	for (var i = 0; i < items.length; i++) {
 		var effect = items[i].effect;

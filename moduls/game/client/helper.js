@@ -182,12 +182,12 @@ var formatNumber = function (num, delimeter) {
 UI.registerHelper('formatNumber', formatNumber);
 
 
-var getEffectsTooltip = function(item, effects, target, invert) {
-	if (item.base == undefined) {
+var getEffectsTooltip = function(price, effects, target, invert) {
+	if (price.base == undefined) {
 		return 'disabled';
 	}
 
-	var baseValue = item.base[target];
+	var baseValue = price.base[target];
 
 	var isMultiValue = !!(_.isObject(baseValue) || _.isArray(baseValue));
 
@@ -200,26 +200,33 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 
 	var priorities = _.keys(effects);
 	var prevPriority = priorities.length > 0 && priorities[0];
+
+	if (prevPriority % 2 != 0) {
+		nextValue = 0;
+	} else {
+		nextValue = 100;
+	}
+
 	for (var priority in effects) {
+		if (prevPriority % 2 != 0 ) {
+			currentValue = isMultiValue 
+				? _.mapObject(currentValue, function(value) { return value + nextValue })
+				: currentValue + nextValue;
+		} else {
+			currentValue = isMultiValue 
+				? _.mapObject(currentValue, function(value) { 
+					return Math.floor(value * (nextValue * 0.01)) 
+				  })
+				: Math.floor(currentValue * (nextValue * 0.01));
+		}
+
+		if (priority % 2 != 0) {
+			nextValue = 0;
+		} else {
+			nextValue = 100;
+		}
+		
 		if (effects[priority][target] && effects[priority][target].length > 0) {
-			if (prevPriority % 2 != 0 ) {
-				currentValue = isMultiValue 
-					? _.mapObject(currentValue, function(value) { return value + nextValue })
-					: currentValue + nextValue;
-			} else {
-				currentValue = isMultiValue 
-					? _.mapObject(currentValue, function(value) { 
-						return Math.floor(value * (nextValue * 0.01)) 
-					  })
-					: Math.floor(currentValue * (nextValue * 0.01));
-			}
-
-			if (priority % 2 != 0) {
-				nextValue = 0;
-			} else {
-				nextValue = 100;
-			}
-
 			for (var i = 0; i < effects[priority][target].length; i++) {
 				var effect = effects[priority][target][i];
 

@@ -49,7 +49,7 @@ var gameRoutes = {
 	},
 
 	army: {
-		unit: 'army/:group(fleet|defence|ground)/:item?',
+		unit: 'army/:group(fleet|defense|ground)/:item?',
 	},
 
 	reptiles: {

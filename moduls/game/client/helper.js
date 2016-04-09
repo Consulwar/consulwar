@@ -196,22 +196,30 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 
 	var text = isMultiValue || currentValue > 0 ? formatNumber(currentValue, ' - ') : '';
 
-	for (var priority in effects) {
-		if (priority % 2 != 0 ) {
-			currentValue = isMultiValue 
-				? _.mapObject(currentValue, function(value) { 
-					return Math.floor(value * (nextValue * 0.01)) 
-				  })
-				: Math.floor(currentValue * (nextValue * 0.01));
-			nextValue = 0;
-		} else {
-			currentValue = isMultiValue 
-				? _.mapObject(currentValue, function(value) { return value + nextValue })
-				: currentValue + nextValue;
-			nextValue = 100;
-		}
+	var totalValue = _.clone(baseValue);
 
-		if (effects[priority][target]) {
+	var priorities = _.keys(effects);
+	var prevPriority = priorities.length > 0 && priorities[0];
+	for (var priority in effects) {
+		if (effects[priority][target] && effects[priority][target].length > 0) {
+			if (prevPriority % 2 != 0 ) {
+				currentValue = isMultiValue 
+					? _.mapObject(currentValue, function(value) { return value + nextValue })
+					: currentValue + nextValue;
+			} else {
+				currentValue = isMultiValue 
+					? _.mapObject(currentValue, function(value) { 
+						return Math.floor(value * (nextValue * 0.01)) 
+					  })
+					: Math.floor(currentValue * (nextValue * 0.01));
+			}
+
+			if (priority % 2 != 0) {
+				nextValue = 0;
+			} else {
+				nextValue = 100;
+			}
+
 			for (var i = 0; i < effects[priority][target].length; i++) {
 				var effect = effects[priority][target][i];
 
@@ -223,8 +231,24 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 				}
 				
 				if (priority % 2 != 0 ) {
+					if (isMultiValue) {
+						totalValue = _.mapObject(totalValue, function(value) {
+							return value + effect.value;
+						});
+					} else {
+						totalValue += effect.value;
+					}
+					
 					text += formatNumber(Math.abs(effect.value));
 				} else {
+					if (isMultiValue) {
+						totalValue = _.mapObject(currentValue, function(value, key) {
+							return totalValue[key] + Math.floor(value * (effect.value * 0.01));
+						});
+					} else {
+						totalValue += Math.floor(currentValue * (effect.value * 0.01));
+					}
+
 					text += (isMultiValue
 						? _.toArray(
 							_.mapObject(currentValue, function(value) { 
@@ -237,7 +261,18 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 
 				text += ' от ' + effect.provider.name;
 			}
+
+			if (effects[priority][target].length > 0) {
+				text += "\n";
+				text += '====================';
+				text += "\n";
+				text += 'Итого: ';
+				text += formatNumber(totalValue, ' - ');
+				text += "\n";
+			}
 		}
+
+		prevPriority = priority;
 	}
 
 	return {title: text};

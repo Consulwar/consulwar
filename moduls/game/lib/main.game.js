@@ -710,7 +710,7 @@ Game.Effect.getRelatedTo = function(obj) {
 						}
 
 						result[priority][effects[priority][i].affect[resource]].push({
-							value: value,
+							value: (Math.floor((value * 100)) / 100),
 							provider: effects[priority][i].provider,
 							type: effects[priority][i].type,
 							priority: effects[priority][i].priority
@@ -740,7 +740,7 @@ Game.Effect.getRelatedTo = function(obj) {
 
 				if (value && value != undefined) {
 					result[priority][effects[priority][i].affect].push({
-						value: value,
+						value: (Math.floor((value * 100)) / 100),
 						provider: effects[priority][i].provider,
 						type: effects[priority][i].type,
 						priority: effects[priority][i].priority

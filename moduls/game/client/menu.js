@@ -124,6 +124,12 @@ var menu = {
 				url: firstItemGroupURL(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet
 			}, 
+			defense: {
+				name: 'Планетарная оборона',
+				additionalArea: 'bolz',
+				url: firstItemGroupURL(Game.Unit.items.army.defense),
+				items: Game.Unit.items.army.defense
+			}, 
 			ground: {
 				name: 'Армия',
 				additionalArea: 'tilps',

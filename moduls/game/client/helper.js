@@ -194,7 +194,7 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 	var currentValue = baseValue
 	  , nextValue = 100; // %
 
-	var text = isMultiValue || currentValue > 0 ? formatNumber(currentValue, ' - ') : '';
+	var text = isMultiValue || currentValue > 0 ? 'Исходная: ' + formatNumber(currentValue, ' - ') : '';
 
 	var totalValue = _.clone(baseValue);
 
@@ -233,20 +233,20 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 				if (priority % 2 != 0 ) {
 					if (isMultiValue) {
 						totalValue = _.mapObject(totalValue, function(value) {
-							return value + effect.value;
+							return value + effect.value * (invert ? -1 : 1);
 						});
 					} else {
-						totalValue += effect.value;
+						totalValue += effect.value * (invert ? -1 : 1);
 					}
 					
 					text += formatNumber(Math.abs(effect.value));
 				} else {
 					if (isMultiValue) {
 						totalValue = _.mapObject(currentValue, function(value, key) {
-							return totalValue[key] + Math.floor(value * (effect.value * 0.01));
+							return totalValue[key] + Math.floor(value * (effect.value * 0.01)) * (invert ? -1 : 1);
 						});
 					} else {
-						totalValue += Math.floor(currentValue * (effect.value * 0.01));
+						totalValue += Math.floor(currentValue * (effect.value * 0.01)) * (invert ? -1 : 1);
 					}
 
 					text += (isMultiValue
@@ -285,7 +285,7 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 }
 
 UI.registerHelper('priceTooltip', function(price, target) {
-	return getEffectsTooltip({base: price}, price.effects, target, true);
+	return getEffectsTooltip(price, price.effects, target, true);
 });
 
 UI.registerHelper('incomeTooltip', function(effects, target) {

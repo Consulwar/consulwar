@@ -840,6 +840,10 @@ Game.Effect.applyTo = function(target, obj, hideEffects) {
 Game.Effect.Income = function(options) {
 	Game.Effect.Income.superclass.constructor.apply(this, arguments);
 
+	if (!options.affect) {
+		throw new Meteor.Error('Не установлена цель эффекта');
+	}
+
 	this.type = 'income';
 	this.reduce = false;
 }

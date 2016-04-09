@@ -270,6 +270,12 @@ var getEffectsTooltip = function(item, effects, target, invert) {
 				text += formatNumber(totalValue, ' - ');
 				text += "\n";
 			}
+		} else {
+			if (priority % 2 != 0) {
+				nextValue = 0;
+			} else {
+				nextValue = 100;
+			}
 		}
 
 		prevPriority = priority;

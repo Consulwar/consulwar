@@ -291,6 +291,10 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 		prevPriority = priority;
 	}
 
+	if (effectsValues.length && effectsValues[effectsValues.length - 1].total) {
+		effectsValues[effectsValues.length - 1].final = true;
+	}
+
 	return {
 		'data-tooltip': Blaze.toHTMLWithData(Template.tooltipTable, {
 			values: effectsValues

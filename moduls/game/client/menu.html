@@ -12,7 +12,12 @@
 <template name="game_menu">
 	<ul class="game_menu">
 		{{#each menu}}
-			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}} {{this.additionalClass}}">
+			<li 
+				class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}} 
+				{{this.additionalClass}}"
+				data-tooltip="{{this.name}}"
+				data-tooltip-direction="s"
+			>
 				<a href="{{this.url}}"></a>
 			</li>
 		{{/each}}

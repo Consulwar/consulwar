@@ -12,6 +12,7 @@ var firstItemUrl = function(items) {
 
 var menu = {
 	planet: {
+		name: 'Планета',
 		routeName: ['building', 'house'],
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
@@ -77,6 +78,7 @@ var menu = {
 		}
 	}, 
 	research: {
+		name: 'Исследования',
 		routeName: ['research'],
 		url: firstItemGroupURL(Game.Research.items.evolution),
 		items: {
@@ -95,6 +97,7 @@ var menu = {
 		}
 	}, 
 	army: {
+		name: 'Войска',
 		routeName: ['unit'],
 		url: firstItemGroupURL(Game.Unit.items.army.fleet),
 		items: {
@@ -119,10 +122,12 @@ var menu = {
 		}
 	}, 
 	cosmos: {
+		name: 'Космос',
 		routeName: ['cosmos', 'cosmosHistory'],
 		url: Router.routes.cosmos.path()
 	},
 	communication: {
+		name: 'Связь',
 		routeName: ['mail', 'chat'],
 		url: Router.routes.mail.path({ page: 1 }),
 		additionalClass: function() {
@@ -147,6 +152,7 @@ var menu = {
 		}
 	},
 	mutual: {
+		name: 'Общее',
 		routeName: ['mutual', 'earth', 'earthHistory', 'statistics'],
 		url: Router.routes.earth.path({ group: 'earth' }),
 		items: {
@@ -167,6 +173,7 @@ var menu = {
 		}
 	},
 	reptiles: {
+		name: 'Рептилии',
 		routeName: ['reptileUnit', 'reptileHero'],
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 		items: {
@@ -198,6 +205,7 @@ var getMenu = function(menu, isActive) {
 			name: menu.name,
 			url: menu.url,
 			getUrl: menu.getUrl,
+			tooltip: menu.items,
 			isActive: isActive(menu, key),
 			additionalClass: menu.additionalClass
 		}

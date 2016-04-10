@@ -14,6 +14,15 @@ game.Card = function(options) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется карточка ' + this.engName);
 	}
 
+	this.url = function(options) {
+		options = options || {
+			group: 'house',
+			subgroup: 'cards',
+			item: this.engName
+		};
+		return Router.routes.house.path(options);
+	}
+
 	Game.Cards.items[this.engName] = this;
 
 	this.amount = function() {

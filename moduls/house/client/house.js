@@ -14,11 +14,16 @@ Game.House.showPage = function() {
 
 	if (subgroup && item) {
 		// show item menu
-		var templateName = 'consulHouseItem';
+		var templateName = '';
 		if (subgroup == 'artefacts') {
 			templateName = 'consulHouseArtefacts';
+			item = Game.Artefacts.items[item];
 		} else if (subgroup == 'cards') {
 			templateName = 'consulHouseCards';
+			item = Game.Cards.items[item];
+		} else {
+			templateName = 'consulHouseItem';
+			item = Game.House.items[subgroup][item];
 		}
 
 		this.render(templateName, {
@@ -51,16 +56,6 @@ Template.consulHouse.helpers({
 // ----------------------------------------------------------------------------
 
 Template.consulHouseItem.helpers({
-	subgroup: function() {
-		return Template.instance().data.subgroup;
-	},
-
-	item: function() {
-		var group = Template.instance().data.subgroup;
-		var id = Template.instance().data.item;
-		return Game.House.items[group][id];
-	},
-
 	subgroupItems: function() {
 		var group = Template.instance().data.subgroup;
 		return _.map(Game.House.items[group], function(item) {
@@ -105,11 +100,6 @@ Template.consulHouseItem.events({
 // ----------------------------------------------------------------------------
 
 Template.consulHouseArtefacts.helpers({
-	item: function() {
-		var id = Template.instance().data.item;
-		return Game.Artefacts.items[id];
-	},
-
 	subgroupItems: function() {
 		return _.map(Game.Artefacts.items, function(item) {
 			return item;
@@ -184,11 +174,6 @@ Template.consulHouseCards.helpers({
 	reloadTime: function() {
 		var reloadTime = Game.Cards.items[this.item].nextReloadTime();
 		return (reloadTime && reloadTime > Session.get('serverTime')) ? reloadTime : null;
-	},
-
-	item: function() {
-		var id = this.item;
-		return Game.Cards.items[id];
 	},
 
 	subgroupItems: function() {

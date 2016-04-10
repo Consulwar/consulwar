@@ -37,11 +37,7 @@ var menu = {
 						engName: 'room',
 						meetRequirements: true,
 						isEnoughResources: true,
-						url: Router.routes.house.path({
-							group: 'house',
-							subgroup: 'room',
-							item: 'consul'
-						}),
+						url: firstItemUrl(Game.House.items.room),
 						items: Game.House.items.room
 					},
 					tron: {
@@ -49,11 +45,7 @@ var menu = {
 						engName: 'tron',
 						meetRequirements: true,
 						isEnoughResources: true,
-						url: Router.routes.house.path({
-							group: 'house',
-							subgroup: 'tron',
-							item: 'consul'
-						}),
+						url: firstItemUrl(Game.House.items.tron),
 						items: Game.House.items.tron
 					},
 					avatar: {
@@ -61,11 +53,7 @@ var menu = {
 						engName: 'avatar',
 						meetRequirements: true,
 						isEnoughResources: true,
-						url: Router.routes.house.path({
-							group: 'house',
-							subgroup: 'avatar',
-							item: 'consul'
-						}),
+						url: firstItemUrl(Game.House.items.avatar),
 						items: Game.House.items.avatar
 					},
 					artefacts: {
@@ -73,11 +61,7 @@ var menu = {
 						engName: 'artefacts',
 						meetRequirements: true,
 						isEnoughResources: true,
-						url: Router.routes.house.path({
-							group: 'house',
-							subgroup: 'artefacts',
-							item: 'weapon_parts'
-						}),
+						url: firstItemUrl(Game.Artefacts.items),
 						items: Game.Artefacts.items
 					},
 					cards: {
@@ -85,12 +69,8 @@ var menu = {
 						engName: 'cards',
 						meetRequirements: true,
 						isEnoughResources: true,
-						url: Router.routes.house.path({
-							group: 'house',
-							subgroup: 'cards',
-							item: 'testCard1' // TODO: Поменять когда будет контент!
-						}),
-						items: Game.Artefacts.items
+						url: firstItemUrl(Game.Cards.items),
+						items: Game.Cards.items
 					}
 				}
 			}

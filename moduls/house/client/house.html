@@ -24,9 +24,9 @@
 								{{else}}
 									{{#if this.isNew}}new{{/if}}
 								{{/if}} 
-								{{#if eq item.engName this.engName}}active{{/if}} 
+								{{#if eq ../item.engName this.engName}}active{{/if}} 
 								{{#if this.checkPlaced}}placed{{/if}}"
-							href="{{pathFor 'house' group='house' subgroup=subgroup item=this.engName}}"
+							href="{{this.url}}"
 						></a>
 					</li>
 				{{/each}}
@@ -70,8 +70,8 @@
 						<a 
 							class="
 								{{this.engName}} 
-								{{#if eq item.engName this.engName}}active{{/if}}"
-							href="{{pathFor 'house' group='house' subgroup='artefacts' item=this.engName}}"
+								{{#if eq ../item.engName this.engName}}active{{/if}}"
+							href="{{this.url}}"
 						>{{formatNumberWithISO this.amount}}</a>
 					</li>
 				{{/each}}
@@ -100,8 +100,8 @@
 						<a 
 							class="
 								{{this.engName}} 
-								{{#if eq item.engName this.engName}}active{{/if}}"
-							href="{{pathFor 'house' group='house' subgroup='cards' item=this.engName}}"
+								{{#if eq ../item.engName this.engName}}active{{/if}}"
+							href="{{this.url}}"
 						>{{formatNumberWithISO this.amount}}</a>
 					</li>
 				{{/each}}

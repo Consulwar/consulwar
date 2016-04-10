@@ -17,6 +17,15 @@ game.Artefact = function(options) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется артефакт ' + options.engName);
 	}
 
+	this.url = function(options) {
+		options = options || {
+			group: 'house',
+			subgroup: 'artefacts',
+			item: this.engName
+		};
+		return Router.routes.house.path(options);
+	}
+
 	Game.Artefacts.items[options.engName] = this;
 }
 

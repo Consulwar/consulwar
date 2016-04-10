@@ -274,3 +274,35 @@
 				background-color rgba(0, 0, 0, 0.5)
 				text-align center
 				color #ddd
+
+.tooltip
+	z-index 500
+	background-color rgba(0, 0, 0, 0.8)
+	padding 10px
+	border 2px solid #e3c26a
+	border-radius 10px
+	
+	&.hide
+		display none
+	
+	
+
+	tr
+		&.total + tr > td
+			padding-top 10px
+			
+		&.total td
+			border-top 1px dashed #dfdfdf
+
+		&.negative
+			td
+				color #9e3e2d
+
+	td
+		color #56baf2
+		padding 4px
+		text-align right
+
+		&:last-child
+			color #dfdfdf
+			text-align left

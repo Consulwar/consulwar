@@ -98,3 +98,28 @@
 		{{/each}}
 	</ul>
 </template>
+
+<template name="tooltipTable">
+	<table>
+		{{#each values}}
+			<tr class="{{#if this.total}}total{{/if}} {{#if this.negative}}negative{{/if}}">
+				{{#if or this.initial this.total}}
+					<td colspan="4">
+						{{#if this.initial}}
+							Начальное значение: {{this.initial}}
+						{{else}}
+							Итог: {{this.total}}
+						{{/if}}
+					</td>
+				{{else}}
+					<td>{{this.sign}}</td>
+					<td>{{this.value}}</td>
+					{{#if this.percent}}
+						<td>{{this.percent}}%</td>
+					{{/if}}
+					<td colspan="{{#if not this.percent}}2{{else}}1{{/if}}">{{this.source}}</td>
+				{{/if}}
+			</tr>
+		{{/each}}
+	</table>
+</template>

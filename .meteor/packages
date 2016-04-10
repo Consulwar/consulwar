@@ -47,3 +47,4 @@ reactive-var
 bevanhunt:leaflet
 manuel:reactivearray
 ddp-rate-limiter
+lookback:tooltips

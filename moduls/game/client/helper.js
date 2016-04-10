@@ -182,7 +182,7 @@ var formatNumber = function (num, delimeter) {
 UI.registerHelper('formatNumber', formatNumber);
 
 
-var getEffectsTooltip = function(price, effects, target, invert) {
+var getEffectsTooltip = function(price, effects, target, invert, side) {
 	if (price.base == undefined) {
 		return 'disabled';
 	}
@@ -194,7 +194,11 @@ var getEffectsTooltip = function(price, effects, target, invert) {
 	var currentValue = baseValue
 	  , nextValue = 100; // %
 
-	var text = isMultiValue || currentValue > 0 ? 'Исходная: ' + formatNumber(currentValue, ' - ') : '';
+	var effectsValues = [];
+
+	if (isMultiValue || currentValue > 0) {
+		effectsValues.push({initial: formatNumber(currentValue, ' - ')});
+	}
 
 	var totalValue = _.clone(baseValue);
 
@@ -230,11 +234,14 @@ var getEffectsTooltip = function(price, effects, target, invert) {
 			for (var i = 0; i < effects[priority][target].length; i++) {
 				var effect = effects[priority][target][i];
 
-				text += "\n";
+				var result = {};
+
 				if ((effect.value > 0 && !invert) || (effect.value < 0 && invert)) {
-					text += '+';
+					result.sign = '+';
+					result.negative = invert;
 				} else {
-					text += '–';
+					result.sign = '–';
+					result.negative = !invert;
 				}
 				
 				if (priority % 2 != 0 ) {
@@ -246,36 +253,32 @@ var getEffectsTooltip = function(price, effects, target, invert) {
 						totalValue += effect.value * (invert ? -1 : 1);
 					}
 					
-					text += formatNumber(Math.abs(effect.value));
+					result.value = formatNumber(Math.abs(effect.value));
 				} else {
 					if (isMultiValue) {
 						totalValue = _.mapObject(currentValue, function(value, key) {
 							return totalValue[key] + Math.floor(value * (effect.value * 0.01)) * (invert ? -1 : 1);
 						});
-					} else {
-						totalValue += Math.floor(currentValue * (effect.value * 0.01)) * (invert ? -1 : 1);
-					}
-
-					text += (isMultiValue
-						? _.toArray(
+						result.value = _.toArray(
 							_.mapObject(currentValue, function(value) { 
 								return Math.abs(Math.floor(value * (effect.value * 0.01)))
-							})).join(' - ')
-						: formatNumber( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) )
-						) + ' (' + effect.value + '%)';
+							})
+						).join(' - ');
+					} else {
+						totalValue += Math.floor(currentValue * (effect.value * 0.01)) * (invert ? -1 : 1);
+						result.value = formatNumber( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) );
+					}
+					result.percent = Math.abs(effect.value);
 				}
 				nextValue += effect.value;
 
-				text += ' от ' + effect.provider.name;
+				result.source = effect.provider.name;
+
+				effectsValues.push(result);
 			}
 
 			if (effects[priority][target].length > 0) {
-				text += "\n";
-				text += '====================';
-				text += "\n";
-				text += 'Итого: ';
-				text += formatNumber(totalValue, ' - ');
-				text += "\n";
+				effectsValues.push({total: formatNumber(totalValue, ' - ')});
 			}
 		} else {
 			if (priority % 2 != 0) {
@@ -288,21 +291,54 @@ var getEffectsTooltip = function(price, effects, target, invert) {
 		prevPriority = priority;
 	}
 
-	return {title: text};
+	return {
+		'data-tooltip': Blaze.toHTMLWithData(Template.tooltipTable, {
+			values: effectsValues
+		}),
+		'data-tooltip-direction': side || 's'
+	};
 }
 
+Tracker.autorun(function() {
+	var currentTooltip = Tooltips.get();
+	var changed = false;
+
+	var width = $('.tooltip').width();
+	if (currentTooltip.css.left < 0) {
+		currentTooltip.css.left = 0;
+		changed = true;
+	} else if (currentTooltip.css.left + width > (window.innerWidth - 40)) {
+		currentTooltip.css.left = window.innerWidth - width - 40;
+		changed = true;
+	}
+
+
+	var height = $('.tooltip').height();
+	if (currentTooltip.css.top < 0) {
+		currentTooltip.css.top = 0;
+		changed = true;
+	} else if (currentTooltip.css.top + height > (window.innerHight - 40)) {
+		currentTooltip.css.top = window.innerHight - height - 40;
+		changed = true;
+	}
+
+	if (changed) {
+		Tooltips.setPosition(currentTooltip.css);
+	}
+});
+
 UI.registerHelper('priceTooltip', function(price, target) {
-	return getEffectsTooltip(price, price.effects, target, true);
+	return getEffectsTooltip(price, price.effects, target, true, 'n');
 });
 
 UI.registerHelper('incomeTooltip', function(effects, target) {
 	var income = {base: {}};
 	income.base[target] = 0;
-	return getEffectsTooltip(income, effects, target);
+	return getEffectsTooltip(income, effects, target, false, 's');
 });
 
 UI.registerHelper('militaryTooltip', function(characteristics, target) {
-	return getEffectsTooltip(characteristics, characteristics.effects, target);
+	return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w');
 });
 
 

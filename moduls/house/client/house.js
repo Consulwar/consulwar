@@ -67,13 +67,12 @@ Template.consulHouseItem.helpers({
 Template.consulHouseItem.events({
 	'click .buy': function(e, t) {
 		var group = t.data.subgroup;
-		var id = t.data.item;
 
-		if (!Game.House.items[group][id].canBuy()) {
+		if (!t.data.item.canBuy()) {
 			return Notifications.error('Не достаточно денег!');
 		}
 
-		Meteor.call('house.buyItem', group, id, function(err) {
+		Meteor.call('house.buyItem', group, t.data.item.engName, function(err) {
 			if (err) {
 				Notifications.error('Не удалось купить предмет', err.error);
 			} else {
@@ -84,8 +83,8 @@ Template.consulHouseItem.events({
 
 	'click .place': function(e, t) {
 		var group = t.data.subgroup;
-		var id = t.data.item;
-		Meteor.call('house.placeItem', group, id, function(err) {
+
+		Meteor.call('house.placeItem', group, t.data.item.engName, function(err) {
 			if (err) {
 				Notifications.error('Не удалось установить предмет', err.error);
 			} else {
@@ -113,13 +112,11 @@ Template.consulHouseArtefacts.helpers({
 
 Template.consulHouseCards.events({
 	'click .buy': function(e, t) {
-		var id = t.data.item;
-
-		if (!Game.Cards.items[id].canBuy()) {
+		if (!t.data.item.canBuy()) {
 			return Notifications.error('Не достаточно денег!');
 		}
 
-		Meteor.call('cards.buy', id, function(err) {
+		Meteor.call('cards.buy', t.data.item.engName, function(err) {
 			if (err) {
 				Notifications.error('Не удалось купить карточку', err.error);
 			} else {
@@ -129,8 +126,7 @@ Template.consulHouseCards.events({
 	},
 
 	'click .activate': function(e, t) {
-		var id = t.data.item;
-		Meteor.call('cards.activate', id, function(err) {
+		Meteor.call('cards.activate', t.data.item.engName, function(err) {
 			if (err) {
 				Notifications.error('Не удалось активировать карточку', err.error);
 			} else {
@@ -147,18 +143,17 @@ Template.consulHouseCards.helpers({
 	},
 
 	canActivate: function() {
-		var item = Game.Cards.items[this.item];
-		if (item.amount() <= 0) {
+		if (this.item.amount() <= 0) {
 			return false;
 		}
 
 		var currentTime = Session.get('serverTime');
-		var task = item.getActive();
+		var task = this.item.getActive();
 		if (task && task.finishTime > currentTime) {
 			return false;
 		}
 
-		var reloadTime = item.nextReloadTime();
+		var reloadTime = this.item.nextReloadTime();
 		if (reloadTime && reloadTime > currentTime) {
 			return false;
 		}
@@ -167,12 +162,12 @@ Template.consulHouseCards.helpers({
 	},
 
 	finishTime: function() {
-		var task = Game.Cards.items[this.item].getActive();
+		var task = this.item.getActive();
 		return (task) ? task.finishTime : null;
 	},
 
 	reloadTime: function() {
-		var reloadTime = Game.Cards.items[this.item].nextReloadTime();
+		var reloadTime = this.item.nextReloadTime();
 		return (reloadTime && reloadTime > Session.get('serverTime')) ? reloadTime : null;
 	},
 

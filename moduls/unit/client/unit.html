@@ -1,7 +1,16 @@
 <template name="unit">
 	<div class="information {{unit.type}}">
 		<div class="image">
-			<img alt="{{unit.name}}" src="/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg">
+			<img 
+				alt="{{unit.name}}" 
+				src="
+				{{#unless unit.notImplemented}}
+					/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
+				{{else}}
+					/img/game/notimplemented.jpg
+				{{/unless}}
+				"
+			>
 			<span class="title">{{unit.name}}</span>
 			{{#if unit.currentLevel}}
 				<span class="level" title="{{formatNumber unit.currentLevel}}">

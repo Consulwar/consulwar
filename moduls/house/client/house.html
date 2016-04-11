@@ -87,7 +87,16 @@
 <template name="consulHouseCards">
 	<div class="information house">
 		<div class="image">
-			<img src="/img/artefacts/white/weapon_parts.jpg">
+			<img 
+				alt="{{item.name}}" 
+				src="
+				{{#unless item.notImplemented}}
+					/img/game/item/{{item.engName}}.jpg
+				{{else}}
+					/img/game/notimplemented.jpg
+				{{/unless}}
+				"
+			>
 			<span class="title">{{item.name}}</span>
 			{{#if gt item.amount 0}}
 				<span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>

@@ -114,6 +114,8 @@ game.Item = function(options) {
 
 		this.overlay = options.overlay;
 
+		this.notImplemented = options.notImplemented;
+
 		//this.requirements = options.requirements;
 		Object.defineProperty(this, 'requirements', {
 			get: function() {

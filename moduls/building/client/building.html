@@ -1,7 +1,16 @@
 <template name="item_building">
 	<div class="information {{building.type}}">
 		<div class="image">
-			<img alt="{{building.name}}" src="/img/game/building/{{building.group}}/{{building.engName}}.jpg">
+			<img 
+				alt="{{building.name}}" 
+				src="
+				{{#unless building.notImplemented}}
+					/img/game/building/{{building.group}}/{{building.engName}}.jpg
+				{{else}}
+					/img/game/notimplemented.jpg
+				{{/unless}}
+				"
+			>
 			<span class="title">{{building.name}}</span>
 			{{#if building.currentLevel}}
 				<span class="level" title="{{formatNumber building.currentLevel}}">{{formatNumberWithISO building.currentLevel}} уровень</span>

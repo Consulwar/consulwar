@@ -18,10 +18,18 @@ side-icon(name)
 bottom-icon(type, group, name)
 	.{name}-icon
 		background-image url("/img/game/" type "/" group "/i/" name ".png")
+		
+bottom-icon-notimplemented(type, group, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_icon.png")
 
 bottom-side-icon(type, side, group, name)
 	.{name}-icon
 		background-image url("/img/game/" type "/" side "/" group "/i/" name ".png")
+		
+bottom-side-icon-notimplemented(type, side, group, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_icon.png")
 
 overlay-image(menu, sub, name, x, y, z)
 	.{name}-icon:before
@@ -39,6 +47,10 @@ overlay-item(name, x, y, z)
 requirements-icon(menu, sub, name)
 	.{name}-icon
 		background-image url("/img/game/" menu "/" sub "/r/" name ".jpg")
+		
+requirements-icon-notimplemented(menu, sub, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_req.jpg")
 
 :disabled
 	-webkit-filter grayscale(1) !important

@@ -13,7 +13,7 @@ var firstItemUrl = function(items) {
 var menu = {
 	planet: {
 		name: 'Планета',
-		routeName: ['building', 'house'],
+		routeName: ['building', 'house', 'walletHistory'],
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
 			residential: {
@@ -30,7 +30,6 @@ var menu = {
 			},
 			house: {
 				name: 'Палата консула',
-				additionalArea: 'portal',
 				url: Router.routes.house.path({ group: 'house' }),
 				items: {
 					room: {
@@ -301,11 +300,6 @@ var showQuestWindow = function(id) {
 Session.set('sideQuestsOpened', false);
 
 Template.additional_area.events({
-	'click .paymentWindow': function(e, t) {
-		e.preventDefault();
-		Game.Payment.showWindow();
-	},
-
 	'click .close': function(e, t) {
 		e.stopPropagation();
 		Session.set('sideQuestsOpened', false);

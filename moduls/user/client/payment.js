@@ -31,15 +31,35 @@ Template.payment.events({
 				Notifications.success('Покупка завершена успешно');
 			}
 		});
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Payment side menu
+// ----------------------------------------------------------------------------
+
+var isPromoLoading = new ReactiveVar(false);
+
+Template.paymentSide.events({
+	'click .buy': function(e, t) {
+		Game.Payment.showWindow();
 	},
 
-	'submit form': function(e, t) {
-		e.preventDefault();
+	'click .promo .send': function(e, t) {
+		if (isPromoLoading.get()) {
+			return;
+		}
 
-		t.$('input[type="submit"]').prop('disabled', true);
+		var code = t.find('.promo .code').value;
+		if (!code || code.length == 0) {
+			Notifications.error('Нужно ввести промо код');
+			return;
+		}
 
-		Meteor.call('user.activatePromoCode', t.find('form .code').value, function(err, data) {
-			t.$('input[type="submit"]').prop('disabled', false);
+		isPromoLoading.set(true);
+
+		Meteor.call('user.activatePromoCode', code, function(err, data) {
+			isPromoLoading.set(false);
 			if (err) {
 				Notifications.error(err.error);
 			} else {

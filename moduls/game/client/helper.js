@@ -317,8 +317,8 @@ Tracker.autorun(function() {
 	if (currentTooltip.css.left < 0) {
 		currentTooltip.css.left = 0;
 		changed = true;
-	} else if (currentTooltip.css.left + width > (window.innerWidth - 40)) {
-		currentTooltip.css.left = window.innerWidth - width - 40;
+	} else if (currentTooltip.css.left + width > (document.body.clientWidth - 40)) {
+		currentTooltip.css.left = document.body.clientWidth - width - 40;
 		changed = true;
 	}
 
@@ -327,8 +327,8 @@ Tracker.autorun(function() {
 	if (currentTooltip.css.top < 0) {
 		currentTooltip.css.top = 0;
 		changed = true;
-	} else if (currentTooltip.css.top + height > (window.innerHight - 40)) {
-		currentTooltip.css.top = window.innerHight - height - 40;
+	} else if (currentTooltip.css.top + height > (document.body.clientHeight - 40)) {
+		currentTooltip.css.top = document.body.clientHeight - height - 40;
 		changed = true;
 	}
 

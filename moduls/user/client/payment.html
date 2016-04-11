@@ -4,15 +4,34 @@
 		<div class="close"></div>
 		<ul class="paymentItems">
 			{{#each paymentItems}}
-				<li data-id="{{this.id}}">
-					{{this.name}} за {{this.cost.rub}} рублей
+				<li class="{{this.id}}-icon" data-id="{{this.id}}">
+					{{this.cost.rub}} руб
+					{{#if and this.discount this.discount.rub}}
+						<span>- {{this.discount.rub}} руб</span>
+					{{/if}}
 				</li>
 			{{/each}}
 		</ul>
-		<form>
-			<label>Промо код: <input class="code"/></label>
-			<input type="submit"/>
-		</form>
+		<div class="hint">
+			Покупая ГГК вы соглашаетесь с 
+			<a href="#">условиями предоставления услуг</a>
+		</div>
+	</div>
+</template>
+
+<template name="paymentSide">
+	<div class="side_payment">
+		<h2>Грязные галактические кредиты</h2>
+		<div class="buy">
+			Покупая <span class="yellow">Кредиты</span> ты поддерживаешь независимого <span class="blue">Русского разработчика.</span>
+		</div>
+		<a href="{{pathFor 'walletHistory' type='income' page=1}}">История покупок</a>
+		<a href="{{pathFor 'walletHistory' type='expense' page=1}}">История расходов</a>
+		<div class="promo">
+			<span class="hint">Введите промо код, если он у вас конечно есть</span>
+			<input class="code"/>
+			<span class="send">Награда</span>
+		</div>
 	</div>
 </template>
 

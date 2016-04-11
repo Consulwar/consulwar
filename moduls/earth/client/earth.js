@@ -534,7 +534,7 @@ var ZoneView = function(mapView, zoneData) {
 			marker.addTo(mapView);
 
 			element = $(marker._icon);
-			element.html('<canvas></canvas>');
+			element.html('<canvas></canvas><span></span>');
 			canvasElement = element.find('canvas');
 
 			if (zone.isEnemy) {
@@ -661,6 +661,10 @@ var ZoneView = function(mapView, zoneData) {
 		}
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
+	}
+
+	this.updateText = function(value) {
+		element.find('span').html(value);
 	}
 
 	this.constructor();
@@ -808,20 +812,41 @@ Template.earth.onRendered(function() {
 			lineViews[ key ].remove();
 		}
 
-		// get last turn
-		var turn = Game.EarthTurns.getLast();
-		if (!turn || turn.type != 'move') {
-			return;
-		}
-
+		// get current zone
 		var currentZone = Game.EarthZones.getCurrent();
 		if (!currentZone) {
 			return;
 		}
 
+		// get last turn
+		var turn = Game.EarthTurns.getLast();
+		if (!turn) {
+			return;
+		}
+
+		if (turn.type != 'move') {
+			var battle = 0;
+			var retreat = 0;
+
+			if (turn.totalVotePower > 0) {
+				battle = (turn.actions.battle / turn.totalVotePower) * 100;
+				retreat = (turn.actions.retreat / turn.totalVotePower) * 100;
+			}
+
+			zoneViews[ currentZone.name ].updateText(
+				'Воюем: ' + Math.round(battle) + '%' + '\n' + 'Отступаем: ' + Math.round(retreat) + '%'
+			);
+			return;
+		}
+
 		// draw new lines
 		for (var name in turn.actions) {
+			var value = (turn.totalVotePower > 0)
+				? (turn.actions[name] / turn.totalVotePower) * 100
+				: 0;
+
 			if (name == currentZone.name) {
+				zoneViews[ currentZone.name ].updateText('Ждем: ' + Math.round(value) + '%');
 				continue;
 			}
 
@@ -831,10 +856,6 @@ Template.earth.onRendered(function() {
 			if (!start || !finish) {
 				continue;
 			}
-
-			var value = (turn.totalVotePower > 0)
-				? (turn.actions[name] / turn.totalVotePower) * 100
-				: 0;
 
 			lineViews[ name ] = new LineView(start, finish);
 			lineViews[ name ].update( Math.round(value) + '%' );

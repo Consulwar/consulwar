@@ -103,13 +103,13 @@ var menu = {
 		items: {
 			fleet: {
 				name: 'Комический флот',
-				additionalArea: 'vaha',
+				additionalArea: 'bolz',
 				url: firstItemGroupURL(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet
 			}, 
 			defense: {
 				name: 'Планетарная оборона',
-				additionalArea: 'bolz',
+				additionalArea: 'vaha',
 				url: firstItemGroupURL(Game.Unit.items.army.defense),
 				items: Game.Unit.items.army.defense
 			}, 

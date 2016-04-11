@@ -147,6 +147,8 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 			price = price.toFixed(2);
 		} else if (price.toFixed(1).substr(-1) != 0) {
 			price = price.toFixed(1);
+		} else {
+			price = Math.round(price);
 		}
 		price = price.toString()
 		exponent++;

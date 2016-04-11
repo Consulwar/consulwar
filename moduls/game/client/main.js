@@ -344,38 +344,6 @@ Template.game.events({
 	}
 });
 
-Template.quest.events({
-	'click a': function(e, t) {
-		if (t.data.type == 'quest') {
-			Meteor.call('quests.sendAction', t.data.engName, e.target.dataset.option);
-			Blaze.remove(t.view);
-		} else {
-			Meteor.call('quests.sendDailyAnswer', e.target.dataset.option, function(err, result) {
-				var who = t.data.who;
-				var title = t.data.title;
-
-				Blaze.remove(t.view);
-
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: who,
-						type: 'daily',
-						title: title,
-						text: result.text,
-						reward: result.reward
-					}, 
-					$('.over')[0]
-				)
-			})
-		}
-	},
-
-	'click .close': function(e, t) {
-		Blaze.remove(t.view);
-	}
-});
-
 ShowModalWindow = function(template, data) {
 	Blaze.renderWithData(
 		template, 

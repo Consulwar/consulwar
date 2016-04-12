@@ -493,20 +493,19 @@ Game.Planets = {
 			}
 		}
 
-		if (targetDistance + 0.5 >= totalDistance - 0.5) {
+		if (targetDistance >= totalDistance - 0.1) {
 			return null;
 		}
 
-		if (!check(totalDistance - 0.5)) {
+		if (!check(totalDistance - 0.1)) {
 			return null;
 		}
 
 		var left = targetDistance;
-		var right = totalDistance - 0.5;
-		var resultDistance = totalDistance - 0.5;
+		var right = totalDistance - 0.1;
+		var resultDistance = totalDistance - 0.1;
 
-		while (Math.abs(right - left) >= 0.1) {
-
+		while (Math.abs(right - left) >= 0.05) {
 			var cur = left + (right - left) / 2;
 			var checkResult = check(cur);
 

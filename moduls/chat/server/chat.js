@@ -906,7 +906,7 @@ Meteor.methods({
 		});
 	},
 
-	'chat.loadMore': function(roomName, timestamp) {
+	'chat.loadMore': function(options) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -917,11 +917,12 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		check(roomName, String);
-		check(timestamp, Match.Integer);
+		check(options, Object);
+		check(options.roomName, String);
+		check(options.timestamp, Match.Integer);
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: roomName,
+			name: options.roomName,
 			deleted: { $ne: true },
 			$or: [
 				{ users: { $in: [ user._id ] } },
@@ -933,14 +934,20 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой комнаты');
 		}
 
+		var timeCondition = { $gt: Game.getCurrentTime() - 84600 };
+
+		if (options.isPrevious) {
+			timeCondition.$lte = options.timestamp;
+		} else {
+			timeCondition.$gte = options.timestamp;
+		}
+
 		return Game.Chat.Messages.Collection.find({
 			room_id: room._id,
-			timestamp: {
-				$lt: timestamp,
-				$gt: Game.getCurrentTime() - 84600
-			}
+			timestamp: timeCondition
 		}, {
 			fields: {
+				_id: 1,
 				username: 1,
 				message: 1,
 				data: 1,
@@ -994,6 +1001,7 @@ Meteor.publish('chat', function (roomName) {
 				timestamp: { $gt: Game.getCurrentTime() - 84600 }
 			}, {
 				fields: {
+					_id: 1,
 					username: 1,
 					message: 1,
 					data: 1,

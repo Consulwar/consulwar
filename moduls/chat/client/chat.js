@@ -2,7 +2,10 @@ initChatClient = function() {
 
 initChatLib();
 
-Session.set('chatRoom', 'general');
+var currentRoomName = null;
+var lostConnectionTime = null;
+var chatSubscription = null
+var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
 var hasMore = new ReactiveVar(true);
@@ -10,16 +13,32 @@ var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
 
+var addMessage = function(message) {
+	var i = 0;
+	var n = messages.length;
+	var isDuplicated = false;
+
+	while (n-- > 0) {
+		// check if duplicated
+		if (messages[n]._id == message._id) {
+			isDuplicated = true;
+			break;
+		}
+		// find position
+		if (i == 0 && messages[n].timestamp <= message.timestamp) {
+			i = n + 1;
+		}
+	}
+
+	if (!isDuplicated) {
+		messages.splice(i, 0, message);
+	}
+}
+
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
-		// add new messge
-		if (messages.length == 0
-		 || messages[ messages.length - 1 ].timestamp <= message.timestamp
-		) {
-			messages.push( message );
-		} else {
-			messages.unshift( message );
-		}
+		message._id = id;
+		addMessage(message);
 
 		// limit max count
 		while (messages.length > Game.Chat.Messages.LIMIT) {
@@ -32,15 +51,15 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 });
 
 var addMotd = function(message) {
+	message._id = 'motd';
 	message.isMotd = true;
 	message.timestamp = Session.get('serverTime');
-	messages.push(message);
+	addMessage(message);
 	Meteor.setTimeout(scrollChatToBottom);
 }
 
 Game.Chat.Room.Collection.find({}).observeChanges({
 	added: function(id, room) {
-		Session.set('chatRoom', room.name);
 		if (room.motd) {
 			addMotd(room.motd);
 		}
@@ -56,6 +75,92 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 Game.Chat.showPage = function() {
 	this.render('chat', { to: 'content' });
 }
+
+Template.chat.onRendered(function() {
+	Meteor.setTimeout(scrollChatToBottom.bind(this, true));
+
+	// run this function each time as: 
+	// - room changes
+	// - connection status changes
+	this.autorun(function() {
+		// stop previous subscription if has
+		if (chatSubscription) {
+			chatSubscription.stop();
+			chatRoomSubscription.stop();
+		}
+
+		// check connection status
+		if (Meteor.status().status != 'connected') {
+			if (!lostConnectionTime) {
+				lostConnectionTime = Game.getCurrentTime();
+			}
+			return; // connection lost
+		}
+
+		// calculate period after connection lost
+		var noConnectionPeriod = lostConnectionTime
+			? Game.getCurrentTime() - lostConnectionTime
+			: 0;
+
+		lostConnectionTime = null;
+		
+		// get route room name
+		var roomName = Router.current().getParams().room;
+
+		if (roomName) {
+			if (roomName != currentRoomName // new room
+			 || messages.length == 0        // or don't have any messages
+			 || noConnectionPeriod >= 3600  // or lost connection more than 30 min
+			) {
+				// reset current room
+				messages.clear();
+				hasMore.set(true);
+				isLoading.set(false);
+				isSending.set(false);
+				gotLimit.set(false);
+				
+				// subscribe
+				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
+				chatSubscription = Meteor.subscribe('chat', roomName);
+
+				// set as last active chat room
+				Session.set('chatRoom', roomName);
+				currentRoomName = roomName;
+			} else {
+				// load after last message timestamp
+				isLoading.set(true);
+
+				var options = {
+					roomName: roomName,
+					timestamp: messages[ messages.length - 1 ].timestamp
+				};
+
+				Meteor.call('chat.loadMore', options, function(err, data) {
+					isLoading.set(false);
+					// insert loaded messages
+					if (!err && data) {
+						for (var i = 0; i < data.length; i++) {
+							addMessage(data[i]);
+						}
+						while (messages.length > Game.Chat.Messages.LIMIT) {
+							messages.shift();
+						}
+					}
+					// subscribe after loading
+					chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
+					chatSubscription = Meteor.subscribe('chat', roomName);
+				});
+			}
+		}
+	});
+});
+
+Template.chat.onDestroyed(function() {
+	if (chatSubscription) {
+		chatSubscription.stop();
+		chatRoomSubscription.stop();
+	}
+})
 
 var scrollChatToBottom = function(force) {
 	var container = $('ul.messages');
@@ -282,26 +387,6 @@ var execClientCommand = function(message) {
 	return false;
 }
 
-Template.chat.onRendered(function() {
-	Meteor.setTimeout(scrollChatToBottom.bind(this, true));
-
-	// run this function each time as room changes
-	this.autorun(function() {
-		var roomName = Router.current().getParams().room;
-
-		if (roomName) {
-			messages.clear();
-			hasMore.set(true);
-			isLoading.set(false);
-			isSending.set(false);
-			gotLimit.set(false);
-			
-			Meteor.subscribe('chatRoom', roomName);
-			Meteor.subscribe('chat', roomName);
-		}
-	});
-});
-
 Template.chat.helpers({
 	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
 	isChatFree: function() { return Meteor.user().isChatFree; },
@@ -459,16 +544,23 @@ Template.chat.events({
 			return;
 		}
 
-		var timestamp = messages[0].timestamp;
 		isLoading.set(true);
+
+		var options = {
+			roomName: roomName,
+			timestamp: messages[0].timestamp,
+			isPrevious: true
+		};
 		
-		Meteor.call('chat.loadMore', roomName, timestamp, function(err, data) {
+		Meteor.call('chat.loadMore', options, function(err, data) {
+			isLoading.set(false);
+
 			if (!err && data) {
 				for (var i = 0; i < data.length; i++) {
 					if (messages.length >= Game.Chat.Messages.LIMIT) {
 						break;
 					}
-					messages.unshift( data[i] );
+					addMessage(data[i]);
 				}
 
 				if (messages.length >= Game.Chat.Messages.LIMIT) {
@@ -480,8 +572,6 @@ Template.chat.events({
 				) {
 					hasMore.set(false);
 				}
-
-				isLoading.set(false);
 			}
 		});
 	},

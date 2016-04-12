@@ -145,7 +145,10 @@ var menu = {
 				name: 'Чат',
 				url: Router.routes.chat.path({ room: 'general' }),
 				getUrl: function() {
-					return Router.routes.chat.path({ room: Session.get('chatRoom') });
+					var activeRoom = Session.get('chatRoom');
+					return Router.routes.chat.path({
+						room: activeRoom ? activeRoom : 'general'
+					});
 				}
 			}
 		}
@@ -213,7 +216,8 @@ var getMenu = function(menu, isActive) {
 
 Template.top_menu.helpers({
 	chatRoom: function() {
-		return Session.get('chatRoom');
+		var activeRoom = Session.get('chatRoom');
+		return activeRoom ? activeRoom : 'general';
 	}
 })
 

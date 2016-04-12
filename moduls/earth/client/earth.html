@@ -54,7 +54,18 @@
 					{{/if}}
 					<p>Всего голосов: {{turn.count}}</p>
 					{{#if eq turn.type "move"}}
-						<p>{{#if zone.isEnemy}}В атаку{{else}}Ждем{{/if}}: {{votePercent zone.name turn}}%</p>
+						<p>
+							{{#if zone.isEnemy}}
+								В атаку
+							{{else}}
+								{{#if zone.isCurrent}}
+									Ждем
+								{{else}}
+									Идем
+								{{/if}}
+							{{/if}}
+							: {{votePercent zone.name turn}}%
+						</p>
 					{{/if}}
 					{{#if eq turn.type "battle"}}
 						<p>Воюем: {{votePercent "battle" turn}}%</p>

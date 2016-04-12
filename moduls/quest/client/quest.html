@@ -10,13 +10,13 @@
 		
 		<br/><br/>
 		<span class="prize">
-		{{#if reward}}
-			{{#if or reward.metals reward.crystals}}
-				Награда: {{#if reward.metals}}{{formatNumber reward.metals}} металла{{/if}}{{#if reward.crystals}}{{#if reward.metals}}, {{/if}}{{formatNumber reward.crystals}} кристалла{{/if}}
-			{{else}}
-				Награды нет
+			{{#if reward}}
+				{{#if or reward.metals reward.crystals}}
+					Награда: {{#if reward.metals}}{{formatNumber reward.metals}} металла{{/if}}{{#if reward.crystals}}{{#if reward.metals}}, {{/if}}{{formatNumber reward.crystals}} кристалла{{/if}}
+				{{else}}
+					Награды нет
+				{{/if}}
 			{{/if}}
-		{{/if}}
 		</span>
 
 		{{#if isPrompt}}
@@ -25,6 +25,10 @@
 			{{/each}}
 		{{/if}}
 		<div class="close"></div>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>
 
@@ -48,6 +52,11 @@
 				</li>
 			{{/if}}
 		</ul>
+
 		<span class="take">Награда</span>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>

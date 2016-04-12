@@ -255,48 +255,6 @@ var getSideHeroByRoute = function(route) {
 	);
 }
 
-var showQuestWindow = function(id) {
-	var currentQuest = Game.Quest.getOneById(id);
-	if (!currentQuest) {
-		return;
-	}
-
-	Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
-		var quest = new game.Quest(data);
-
-		if (currentQuest.status == Game.Quest.status.FINISHED) {
-			Blaze.renderWithData(
-				Template.reward, 
-				{
-					type: 'quest',
-					engName: currentQuest.engName,
-					who: currentQuest.who,
-					reward: quest.reward
-				}, 
-				$('.over')[0]
-			);
-		} else {
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					type: 'quest',
-					engName: currentQuest.engName,
-					who: currentQuest.who,
-					title: quest.conditionText, 
-					text: quest.text, 
-					reward: quest.reward,
-					options: $.map(quest.options, function(values, name) {
-						values.name = name;
-						return values;
-					}),
-					isPrompt: currentQuest.status == Game.Quest.status.PROMPT
-				}, 
-				$('.over')[0]
-			);
-		}
-	});
-}
-
 Session.set('sideQuestsOpened', false);
 
 Template.additional_area.events({
@@ -322,27 +280,9 @@ Template.additional_area.events({
 
 		var currentQuest = Game.Quest.getOneByHero(who);
 		if (currentQuest) {
-
-			// has active quest
-			showQuestWindow(currentQuest.engName);
-
+			Game.Quest.showQuest(currentQuest.engName);
 		} else {
-
-			// no quest, show greeting
-			var text = Game.Persons[who].text;
-
-			if (text && text.length > 0) {
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: who,
-						type: 'quest',
-						text: text
-					}, 
-					$('.over')[0]
-				);
-			}
-
+			Game.Quest.showGreeteing(who);
 		}
 	},
 
@@ -350,7 +290,7 @@ Template.additional_area.events({
 		e.stopPropagation();
 		var id = $(e.currentTarget).attr('data-id');
 		if (id) {
-			showQuestWindow(id);
+			Game.Quest.showQuest(id);
 		}
 	}
 });

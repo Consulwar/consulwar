@@ -162,48 +162,6 @@ var readLetter = function(id, t) {
 	});
 }
 
-var showDailyQuest = function(t) {
-	var dailyQuest = Game.Quest.getDaily();
-
-	if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
-		// show inprogress daily quest
-		t.data.isLoading.set(true);
-		Meteor.call('quests.getDailyInfo', function(err, quest) {
-			t.data.isLoading.set(false);
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					who: quest.who || 'tamily',
-					type: 'daily',
-					title: quest.name, 
-					text: quest.text, 
-					options: $.map(quest.answers, function(text, name) {
-						return {
-							name: name,
-							text: text,
-							mood: 'neutral'
-						};
-					}),
-					isPrompt: true
-				}, 
-				$('.over')[0]
-			);
-		});
-	} else {
-		// show finished daily quest
-		Blaze.renderWithData(
-			Template.quest, 
-			{
-				who: dailyQuest.who || 'tamily',
-				type: 'daily',
-				title: dailyQuest.name, 
-				text: dailyQuest.result
-			}, 
-			$('.over')[0]
-		);
-	}
-}
-
 var replyLetter = function(letter, t) {
 	if (letter) {
 		// parse source recipient
@@ -343,7 +301,7 @@ Template.mail.events({
 
 	// Open daily quest
 	'click tr.from_tamily': function(e, t) {
-		showDailyQuest(t);
+		Game.Quest.showDailyQuest();
 	},
 
 	// Compose letter

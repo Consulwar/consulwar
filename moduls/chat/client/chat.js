@@ -28,6 +28,10 @@ var addMessage = function(message) {
 		if (i == 0 && messages[n].timestamp <= message.timestamp) {
 			i = n + 1;
 		}
+		// break check
+		if (messages[n].timestamp < message.timestamp) {
+			break;
+		}
 	}
 
 	if (!isDuplicated) {
@@ -51,11 +55,30 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 });
 
 var addMotd = function(message) {
-	message._id = 'motd';
 	message.isMotd = true;
 	message.timestamp = Session.get('serverTime');
-	addMessage(message);
-	Meteor.setTimeout(scrollChatToBottom);
+
+	var hasSame = false;
+	var n = messages.length;
+
+	while (n-- > 0) {
+		if (messages[n].isMotd) {
+			if (messages[n].message == message.message) {
+				// found same motd, no need to push current
+				hasSame = true;
+			} else {
+				// found different motd, remove it
+				messages[n].splice(n, 1);
+			}
+			break;
+		}
+	}
+
+	if (!hasSame) {
+		// no such motd, add current
+		messages.push(message);
+		Meteor.setTimeout(scrollChatToBottom);
+	}
 }
 
 Game.Chat.Room.Collection.find({}).observeChanges({

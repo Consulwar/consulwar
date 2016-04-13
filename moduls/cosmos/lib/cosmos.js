@@ -1,7 +1,10 @@
 initCosmosLib = function() {
 
 game.PlanetType = function(options) {
-	Game.Planets.types.push(options);
+	if (Game.Planets.types[options.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется тип планеты ' + options.engName);
+	}
+	Game.Planets.types[options.engName] = options;
 }
 
 Game.Cosmos = {};
@@ -103,14 +106,6 @@ Game.Planets = {
 		return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
 	},
 
-	getType: function(id) {
-		for (var i = 0; i < Game.Planets.types.length; i++) {
-			if (Game.Planets.types[i].engName == id) {
-				return Game.Planets.types[i];
-			}
-		}
-	},
-
 	getFleetUnits: function(planetId) {
 		var planet = Game.Planets.getOne(planetId);
 		if (!planet) {
@@ -167,7 +162,7 @@ Game.Planets = {
 
 	MIN_PLANET_DISTANCE: 1,
 
-	types: [],
+	types: {},
 
 	calcSegmentCenter: function(hand, segment, maxHands, maxSegments, rotationFactor, maxRadius, galacticAngle) {
 		// central sector

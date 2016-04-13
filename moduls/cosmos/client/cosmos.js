@@ -6,6 +6,9 @@ initCosmosPathView();
 Meteor.subscribe('planets');
 Meteor.subscribe('spaceEvents');
 
+var zoom = new ReactiveVar(null);
+var bounds = new ReactiveVar(null);
+
 var mapView = null;
 var pathViews = {};
 var observerSpaceEvents = null;
@@ -13,17 +16,14 @@ var cosmosObjectsView = null;
 var cosmosPopupView = null;
 
 Game.Cosmos.showPage = function() {
-	if (mapView) {
-		return; // don't render twice!
+	// clear content
+	this.render('empty', { to: 'content' });
+	// show permanent content div
+	$('.permanent').show();
+	// render cosmos map once
+	if (!mapView) {
+		this.render('cosmos', { to: 'permanent_content' });
 	}
-
-	this.render('cosmos', {
-		to: 'content',
-		data: {
-			zoom: new ReactiveVar(null),
-			bounds: new ReactiveVar(null)
-		}
-	});
 }
 
 // ----------------------------------------------------------------------------
@@ -432,8 +432,6 @@ Game.Cosmos.showPlanetPopup = function(id) {
 	if (!dropInfo) {
 		return;
 	}
-
-	var zoom = this.data.zoom;
 
 	cosmosPopupView = Blaze.renderWithData(
 		Template.cosmosPlanetPopup, {
@@ -942,9 +940,6 @@ Game.Cosmos.renderCosmosObjects = function() {
  
 	cosmosObjectsView = Blaze.renderWithData(
 		Template.cosmosObjects, {
-			zoom: this.data.zoom,
-			bounds: this.data.bounds,
-
 			planets: function() {
 				var planets = Game.Planets.getAll().fetch();
 				return _.map(planets, function(planet) {
@@ -976,12 +971,11 @@ Game.Cosmos.renderCosmosObjects = function() {
 
 Template.cosmosObjects.helpers({
 	zoom: function() {
-		return Template.instance().data.zoom.get();
+		return zoom.get();
 	},
 
 	getPlanetPosition: function(x, y, iconSize) {
-		var zoom = Template.instance().data.zoom.get();
-		var k = Math.pow(2, (zoom - 7));
+		var k = Math.pow(2, (zoom.get() - 7));
 		var coords = mapView.latLngToLayerPoint(new L.latLng(x, y));
 
 		return {
@@ -997,7 +991,7 @@ Template.cosmosObjects.helpers({
 	},
 
 	getFleetAnimation: function(fleet) {
-		var zoom = Template.instance().data.zoom.get();
+		var currentZoom = zoom.get();
 		var currentTime = Session.get('serverTime');
 		
 		var path = pathViews[ fleet.spaceEvent._id ];
@@ -1040,8 +1034,7 @@ Template.cosmosObjects.helpers({
 	},
 
 	isHidden: function(x, y) {
-		var bounds = Template.instance().data.bounds.get();
-		if (bounds.contains(new L.latLng(x, y))) {
+		if (bounds.get().contains(new L.latLng(x, y))) {
 			return false;
 		} else {
 			return true;
@@ -1069,14 +1062,14 @@ Template.cosmos.onRendered(function() {
 		maxZoom: 10
 	});
 
-	this.data.zoom.set( mapView.getZoom() );
+	zoom.set( mapView.getZoom() );
 	mapView.on('zoomend', function(e) {
-		this.data.zoom.set( mapView.getZoom() );
+		zoom.set( mapView.getZoom() );
 	}.bind(this));
 
-	this.data.bounds.set( mapView.getBounds() );
+	bounds.set( mapView.getBounds() );
 	mapView.on('moveend', function(e) {
-		this.data.bounds.set( mapView.getBounds() );
+		bounds.set( mapView.getBounds() );
 	}.bind(this));
 
 	// Init planets
@@ -1102,34 +1095,13 @@ Template.cosmos.onRendered(function() {
 			return;
 		}
 
-		// calc offsets
-		/*
-		var startOffset = 0;
-		if (event.info.startPlanetId) {
-			var planet = Game.Planets.getOne(event.info.startPlanetId);
-			if (planet) {
-				startOffset = (planet.size + 3) * 0.02;
-			}
-		}
-
-		var endOffset = 0;
-		if (event.info.targetType == Game.SpaceEvents.target.PLANET) {
-			var planet = Game.Planets.getOne(event.info.targetId);
-			if (planet) {
-				endOffset = (planet.size + 3) * 0.02;
-			}
-		}
-		*/
-		var startOffset = 0;
-		var endOffset = 0;
-
 		// draw path
 		pathViews[id] = new game.PathView(
 			mapView,
 			event.info.startPosition,
 			event.info.targetPosition,
-			startOffset,
-			endOffset,
+			0,
+			0,
 			(event.info.isHumans ? '#56BAF2' : '#DC6257')
 		);
 	}
@@ -1156,55 +1128,6 @@ Template.cosmos.onRendered(function() {
 	// Render cosmos objects
 	Game.Cosmos.renderCosmosObjects.call(this);
 
-	// Align map to nearest planet
-	// TODO: Избавиться от подергивания при наведении!
-	/*
-	var curLatLng = null;
-	var zoomLatLng = null;
-	var lastZoom = null;
-
-	var alingMapToNearestPlanet = function(position) {
-		var minDistance = Infinity;
-		var currentDistance = 0;
-		var nearest = null;
-
-		var planets = Game.Planets.getAll().fetch();
-		for (var i = 0; i < planets.length; i++) {
-			currentDistance = Game.Planets.calcDistance(position, planets[i]);
-			if (minDistance > currentDistance) {
-				minDistance = currentDistance;
-				nearest = planets[i];
-			}
-		}
-
-		if (nearest) {
-			var point1 = mapView.latLngToContainerPoint(new L.latLng(position.x, position.y));
-			var point2 = mapView.latLngToContainerPoint(new L.latLng(nearest.x, nearest.y));
-			if (Game.Planets.calcDistance(point1, point2) < 100) {
-				mapView.setView([nearest.x, nearest.y], mapView.getZoom(), { animate: false });
-			}
-		}
-	}
-
-	mapView.on('zoomstart', function(e) {
-		zoomLatLng = new L.latLng(curLatLng.lat, curLatLng.lng);
-		lastZoom = mapView.getZoom();
-	});
-
-	mapView.on('zoomend', function(e) {
-		if (lastZoom && lastZoom < mapView.getZoom() && zoomLatLng) {
-			alingMapToNearestPlanet({
-				x: zoomLatLng.lat,
-				y: zoomLatLng.lng
-			});
-		}
-	});
-
-	mapView.on('mousemove', function(e) {
-		curLatLng = e.latlng;
-	})
-	*/
-
 	// Show default side info
 	Game.Cosmos.showFleetsInfo();
 
@@ -1225,6 +1148,9 @@ Template.cosmos.onRendered(function() {
 });
 
 Template.cosmos.onDestroyed(function() {
+	// --------------------------------
+	// Never destroy cosmos map!
+	/*
 	Game.Cosmos.hidePlanetPopup();
 	Game.Cosmos.hideAttackMenu();
 
@@ -1244,6 +1170,8 @@ Template.cosmos.onDestroyed(function() {
 		mapView.remove();
 		mapView = null;
 	}
+	*/
+	// --------------------------------
 });
 
 Template.cosmos.events({

@@ -61,6 +61,7 @@ Meteor.startup(function () {
 	initStatisticServer();
 	initCheatsServer();
 	initMarketServer();
+	initColosseumServer();
 });
 
 Meteor.methods({
@@ -105,7 +106,8 @@ Meteor.publish('game', function () {
 				blocked: 1,
 				rating: 1,
 				votePowerBonus: 1,
-				isChatFree: 1
+				isChatFree: 1,
+				timeLastTournament: 1
 			}
 		});
 	}

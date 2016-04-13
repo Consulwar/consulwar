@@ -189,7 +189,9 @@ Game.Planets.getArtefacts = function(planet, count) {
 
 Game.Planets.generateType = function() {
 	var result = null;
-	var types = Game.Planets.types;
+	var types = _.map(Game.Planets.types, function(item) {
+		return item;
+	});
 
 	// select by chance
 	if (types.length > 0) {

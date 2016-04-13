@@ -313,7 +313,7 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 
 	info.id = planet._id;
 	info.name = planet.name;
-	info.type = Game.Planets.getType(planet.type).name;
+	info.type = Game.Planets.types[planet.type].name;
 
 	if (planet.isHome || planet.armyId) {
 		info.isHumans = true;
@@ -417,7 +417,7 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 
 	return {
 		name: planet.name,
-		type: Game.Planets.getType(planet.type).name,
+		type: Game.Planets.types[planet.type].name,
 		items: items
 	};
 }

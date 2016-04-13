@@ -38,6 +38,10 @@ Template.item_building.events({
 
 	'click button.market': function(e, t) {
 		Game.Market.showWindow();
+	},
+
+	'click button.tournament': function(e, t) {
+		Game.Colosseum.showTournaments();
 	}
 });
 

@@ -8,12 +8,15 @@ game.ColosseumTournament = function(options) {
 	Game.Colosseum.tournaments[options.engName] = this;
 
 	this.engName = options.engName;
+	this.name = options.name;
+	this.description = options.description;
 	this.level = options.level;
 	this.price = options.price;
 	this.drop = options.drop;
+	this.reward = options.reward;
 
 	this.checkLevel = function() {
-		return Game.Building.items.residential.colosseum.currentLevel() <= this.level;
+		return Game.Building.items.residential.colosseum.currentLevel() >= this.level;
 	}
 
 	this.checkPrice = function() {
@@ -34,7 +37,7 @@ Game.Colosseum = {
 		var user = Meteor.user();
 		if (user
 		 && user.timeLastTournament
-		 && user.timeLastTournament < Game.getCurrentTime() - 86400
+		 && user.timeLastTournament > Game.getCurrentTime() - 86400
 		) {
 			return false;
 		}

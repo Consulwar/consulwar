@@ -42,31 +42,34 @@ Meteor.methods({
 		});
 
 		// check chance
-		if (Game.Random.interval(1, 99) > tournament.drop.chance + Game.Colosseum.getBonusChance()) {
-			return null;
-		}
-		
-		// generate drop item and amount
-		var artefacts = [];
+		var reward = {};
 
-		for (var key in Game.Artefacts.items) {
-			if (Game.Artefacts.items[key].group == tournament.drop.itemGroup) {
-				artefacts.push(key);
+		if (Game.Random.interval(1, 99) <= tournament.drop.chance + Game.Colosseum.getBonusChance()) {
+			// drop artefacts
+			var artefacts = [];
+
+			for (var key in Game.Artefacts.items) {
+				if (Game.Artefacts.items[key].group == tournament.drop.itemGroup) {
+					artefacts.push(key);
+				}
 			}
+
+			var itemKey = artefacts[ Game.Random.interval(0, artefacts.length - 1) ];
+			var itemAmount = Game.Random.interval(
+				tournament.drop.minAmount,
+				tournament.drop.maxAmount
+			);
+
+			reward[itemKey] = itemAmount;
+		} else {
+			// drop reward
+			reward = tournament.reward;
 		}
 
-		var itemKey = artefacts[ Game.Random.interval(0, artefacts.length - 1) ];
-		var itemAmount = Game.Random.interval(
-			tournament.drop.minAmount,
-			tournament.drop.maxAmount
-		);
+		// add reward
+		Game.Resources.add(reward);
 
-		var result = {};
-		result[itemKey] = itemAmount;
-
-		Game.Resources.add(result);
-
-		return result;
+		return reward;
 	}
 });
 

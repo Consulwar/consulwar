@@ -79,9 +79,13 @@ tournament-icon('bloody_mess')
 		background-image url(/img/game/quests/btn_take.png)
 		
 		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-				
+			&:not([disabled])
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+			&.disabled
+				-webkit-filter grayscale(1) brightness(1.4)
+				filter grayscale(1) brightness(1.4)
+
 
 .modal
 	&.artefact

@@ -6,6 +6,10 @@
 		{{> yield "cosmosSideInfo"}}
 	</div>
 	{{> yield "cosmosAttackMenu"}}
+	
+	{{#if isLoading}}
+		{{> loading}}
+	{{/if}}
 </template>
 
 <template name="cosmosPlanetPopup">

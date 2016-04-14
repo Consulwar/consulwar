@@ -72,6 +72,10 @@ Template.earthHistoryItem.helpers({
 						countStart = game.Battle.count[ countStart ];
 					}
 
+					if (countStart <= 0) {
+						continue;
+					}
+
 					var countAfter = 0;
 					if (rest
 					 && rest[side]

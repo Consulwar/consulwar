@@ -6,6 +6,7 @@ initCosmosPathView();
 Meteor.subscribe('planets');
 Meteor.subscribe('spaceEvents');
 
+var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
 var bounds = new ReactiveVar(null);
 
@@ -22,6 +23,7 @@ Game.Cosmos.showPage = function() {
 	$('.permanent').show();
 	// render cosmos map once
 	if (!mapView) {
+		isLoading.set(true);
 		this.render('cosmos', { to: 'permanent_content' });
 	}
 }
@@ -95,6 +97,10 @@ var getArmyInfo = function(units, rest) {
 				var countStart = units[side][group][name];
 				if (_.isString( countStart )) {
 					countStart = game.Battle.count[ countStart ];
+				}
+
+				if (countStart <= 0) {
+					continue;
 				}
 
 				var countAfter = 0;
@@ -1078,6 +1084,7 @@ Template.cosmos.onRendered(function() {
 		if (homePlanet) {
 			mapView.setView([homePlanet.x, homePlanet.y], 7);
 		}
+		isLoading.set(false);
 	}
 
 	var planets = Game.Planets.getAll().fetch();
@@ -1173,6 +1180,12 @@ Template.cosmos.onDestroyed(function() {
 	*/
 	// --------------------------------
 });
+
+Template.cosmos.helpers({
+	isLoading: function() {
+		return isLoading.get();
+	}
+})
 
 Template.cosmos.events({
 	'click .map-fleet': function(e, t) {

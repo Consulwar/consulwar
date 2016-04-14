@@ -9,6 +9,7 @@ Game.Building.showPage = function() {
 	
 	if (item) {
 		this.render('item_building', {to: 'content', data: {building: item}});
+		this.render(null, { to: 'buildingMenu' });
 	} else {
 		this.render('empty', {to: 'content'})
 	}
@@ -38,6 +39,14 @@ Template.item_building.events({
 
 	'click button.market': function(e, t) {
 		Game.Market.showWindow();
+	},
+
+	'click button.tournament': function(e, t) {
+		Game.Colosseum.showTournaments();
+	},
+
+	'click button.blackmarket': function(e, t) {
+		Game.Blackmarket.showItems();
 	}
 });
 

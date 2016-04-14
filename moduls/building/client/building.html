@@ -34,8 +34,18 @@
 			<button class="market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
 		{{/if}}
 
+		{{#if eq building.engName 'colosseum'}}
+			<button class="tournament" disabled="{{lt building.currentLevel 1}}">Устроить турнир</button>
+		{{/if}}
+
+		{{#if eq building.engName 'blackmarket'}}
+			<button class="blackmarket" disabled="{{lt building.currentLevel 1}}">Купить товар</button>
+		{{/if}}
+
 		<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>
 		
 		{{> Template.dynamic template=additionalArea}}
 	</div>
+
+	{{> yield "buildingMenu"}}
 </template>

@@ -1,0 +1,52 @@
+<template name="blackmarket">
+	<div class="blackmarket-menu">
+		<ul>
+			{{#each items}}
+				<li class="{{this.engName}}-icon">
+					{{this.name}}
+					<ul class="resources">
+						<li class="credits">
+							{{formatNumber this.getPrice.credits}}
+						</li>
+					</ul>
+					<span class="description">
+						{{this.description}}
+					</span>
+					<span class="start {{#if not this.checkPrice}}disabled{{/if}}" data-id="{{this.engName}}">
+						Купить сундук
+					</span>
+				</li>
+			{{/each}}
+		</ul>
+		<span class="btn-close-horizontal"></span>
+	</div>
+</template>
+
+<template name="blackmarketReward">
+	<div class="smoke"></div>
+	<div class="modal blackmarket-reward">
+		<div class="close"></div>
+		<h2>Вы получили:</h2>
+		{{#if resources}}
+			<ul class="resources">
+				{{#each resources}}
+					<li class="{{this.engName}}">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if units}}
+			<ul class="items units">
+				{{#each units}}
+					<li class="unit">
+						<span class="{{this.engName}}-icon">
+							{{formatNumberWithISO this.amount}}
+						</span>
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		<span class="take">Ок</span>
+	</div>
+</template>

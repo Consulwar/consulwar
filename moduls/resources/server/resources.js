@@ -78,6 +78,36 @@ Game.Resources.spend = function(resource, uid) {
 	return Game.Resources.set(resource, true, uid);
 }
 
+var rollRandomValues = function(object) {
+	for (var key in object) {
+		if (_.isArray(object[key])) {
+			object[key] = Game.Random.interval( object[key][0], object[key][1] );
+		} else if (_.isObject(object[key])) {
+			object[key] = rollRandomValues(object[key]);
+		}
+	}
+	return object;
+}
+
+Game.Resources.rollProfit = function(drop) {
+	var max = 0;
+	for (var i = 0; i < drop.length; i++) {
+		max += drop[i].chance;
+	}
+
+	var rand = Game.Random.random() * max;
+	var val = 0;
+
+	for (var i = 0; i < drop.length; i++) {
+		val += drop[i].chance;
+		if (rand <= val) {
+			break;
+		}
+	}
+
+	return rollRandomValues( drop[i].profit );
+}
+
 Game.Resources.addProfit = function(profit) {
 	if (profit.resources) {
 		Game.Resources.add(profit.resources);

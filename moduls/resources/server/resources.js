@@ -100,7 +100,7 @@ Game.Resources.rollProfit = function(drop) {
 
 	for (var i = 0; i < drop.length; i++) {
 		val += drop[i].chance;
-		if (rand <= max) {
+		if (rand <= val) {
 			break;
 		}
 	}

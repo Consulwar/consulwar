@@ -43,6 +43,10 @@ Template.item_building.events({
 
 	'click button.tournament': function(e, t) {
 		Game.Colosseum.showTournaments();
+	},
+
+	'click button.blackmarket': function(e, t) {
+		Game.Blackmarket.showItems();
 	}
 });
 

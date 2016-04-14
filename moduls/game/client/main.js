@@ -19,6 +19,7 @@ initStatisticClient();
 initCheatsClient();
 initMarketClient();
 initColosseumClient();
+initBlackmarketClient();
 
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",

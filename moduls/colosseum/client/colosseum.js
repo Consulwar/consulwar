@@ -25,11 +25,6 @@ Template.colosseum.events({
 	},
 
 	'click .start': function(e, t) {
-		if (!Game.Colosseum.checkCanStart()) {
-			Notifications.error('Турнир уже проводился сегодня');
-			return;
-		}
-
 		var item = Game.Colosseum.tournaments[ e.currentTarget.dataset.id ];
 
 		if (!item || !item.checkLevel()) {
@@ -42,19 +37,26 @@ Template.colosseum.events({
 			return;
 		}
 
-		Meteor.call('colosseum.startTournament', item.engName, function(err, reward) {
+		if (!Game.Colosseum.checkCanStart()) {
+			Notifications.error('Турнир уже проводился сегодня');
+			return;
+		}
+
+		Meteor.call('colosseum.startTournament', item.engName, function(err, profit) {
 			if (err) {
 				Notifications.error('Не удалось провести турнир', err.error);
 				return;
 			}
 			// show reward window
-			Blaze.renderWithData(
-				Template.colosseumReward,
-				{
-					reward: reward
-				}, 
-				$('.over')[0]
-			);
+			if (profit && profit.resources) {
+				Blaze.renderWithData(
+					Template.colosseumReward,
+					{
+						reward: profit.resources
+					}, 
+					$('.over')[0]
+				);
+			}
 		});
 	}
 });

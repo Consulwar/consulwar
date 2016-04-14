@@ -13,7 +13,6 @@ game.ColosseumTournament = function(options) {
 	this.level = options.level;
 	this.price = options.price;
 	this.drop = options.drop;
-	this.reward = options.reward;
 
 	this.checkLevel = function() {
 		return Game.Building.items.residential.colosseum.currentLevel() >= this.level;
@@ -33,19 +32,22 @@ game.ColosseumTournament = function(options) {
 Game.Colosseum = {
 	tournaments: {},
 
+	getCooldownPeriod: function(level) {
+		return 86400 - ( (level - 1) * 580 ); // 24 hours - bonus time
+	},
+
 	checkCanStart: function() {
 		var user = Meteor.user();
+		var level = Game.Building.items.residential.colosseum.currentLevel();
+
 		if (user
 		 && user.timeLastTournament
-		 && user.timeLastTournament > Game.getCurrentTime() - 86400
+		 && user.timeLastTournament > Game.getCurrentTime() - Game.Colosseum.getCooldownPeriod(level)
 		) {
 			return false;
 		}
-		return true;
-	},
 
-	getBonusChance: function() {
-		return Game.Building.items.residential.colosseum.currentLevel() * 0.1;
+		return true;
 	}
 }
 

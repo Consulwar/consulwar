@@ -1,4 +1,4 @@
-Meteor.startup(function() {
+initBattleLib = function() {
 
 game.Battle = function(options) {
 	this.constructor = function(options) {
@@ -52,4 +52,4 @@ Game.Battle.result = {
 
 initGalacticContentBattle();
 
-});
+};

@@ -534,10 +534,10 @@ Template.chat.events({
 			isSending.set(false);
 			if (err) {
 				var errorMessage = err.error;
-				if (err.reason) {
+				if (_.isNumber(err.reason)) {
 					errorMessage += ' до ' + Game.Helpers.formatDate(err.reason);
 				}
-				Notifications.error(errorMessage);
+				Notifications.error('Неполучилось отправить сообщение', errorMessage);
 			} else {
 				t.find('#message').reset();
 			}

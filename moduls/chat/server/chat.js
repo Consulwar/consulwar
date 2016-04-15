@@ -2,14 +2,6 @@ initChatServer = function() {
 
 initChatLib();
 
-/* Rate limiter test rule
-DDPRateLimiter.addRule({
-	userId: function(userId) { return userId; },
-	type: 'method',
-	name: 'chat.sendMessage'
-}, 2, 10000);
-*/
-
 Game.Chat.Messages.Collection._ensureIndex({
 	room_id: 1,
 	timestamp: -1

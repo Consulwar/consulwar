@@ -20,6 +20,6 @@ DDPRateLimiter.addRule({
 	userId: function(userId) {
 		return true;
 	}
-}, 2, 1000);
+}, 5, 10000);
 
 };

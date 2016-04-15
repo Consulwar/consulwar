@@ -19,7 +19,7 @@ var createDefaulRoom = function(name) {
 			isPublic: true
 		});
 	}
-}
+};
 
 createDefaulRoom('general');
 createDefaulRoom('help');
@@ -32,7 +32,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -92,7 +92,7 @@ Meteor.methods({
 			}
 		}).trim();
 
-		if (message.length == 0) {
+		if (message.length === 0) {
 			throw new Meteor.Error('Напиши хоть что-нибудь что бы отправить сообщение!');
 		}
 
@@ -127,14 +127,14 @@ Meteor.methods({
 		if (message.substr(0, 1) == '/') {
 			var reg = new RegExp(/^\/d (\d )?(\d{1,2})$/);
 			if (message == '/d' || reg.test(message)) {
-				if (message == '/d') {
-					var dices = 1;
-					var edges = 6;
-				} else {
-					var dice = reg.exec(message);
 
-					var dices = dice[1] == undefined ? 1 : (parseInt(dice[1]) || 1);
-					var edges = parseInt(dice[2]) < 2 ? 2 : parseInt(dice[2]);
+				var dices = 1;
+				var edges = 6;
+
+				if (message != '/d') {
+					var dice = reg.exec(message);
+					dices = dice[1] === undefined ? 1 : (parseInt(dice[1]) || 1);
+					edges = parseInt(dice[2]) < 2 ? 2 : parseInt(dice[2]);
 				}
 
 				set.data = {
@@ -148,12 +148,12 @@ Meteor.methods({
 						},
 						edges: edges
 					}
-				}
+				};
 
 			} else if (message.substr(0, 3) == '/me') {
 				set.data = {
 					type: 'status'
-				}
+				};
 				set.message = message.substr(3);
 
 			} else if(message.substr(0, 5) == '/motd') {
@@ -176,25 +176,26 @@ Meteor.methods({
 
 				set.data = {
 					type: 'sepukku'
-				}
+				};
 				set.message = message.substr(8);
 
 				var income = Game.Resources.getIncome();
 
-				for(var i = 3; i < 13; i++) {
-					Meteor.setTimeout(function(uid, metals, crystals) {
-						Game.Resources.spend({
-							metals: {amount: metals},
-							crystals: {amount: crystals},
-							honor: 100
-						}, uid);
-					}.bind(
-						this, 
+				var doSepukku = function(uid, metals, crystals) {
+					Game.Resources.spend({
+						metals: {amount: metals},
+						crystals: {amount: crystals},
+						honor: 100
+					}, uid);
+				};
+
+				for (var i = 3; i < 13; i++) {
+					Meteor.setTimeout(doSepukku.bind(
+						this,
 						Meteor.userId(),
 						Math.max(Math.floor(Game.Resources.getIncome().metals * 0.33), 100),
 						Math.max(Math.floor(Game.Resources.getIncome().crystals * 0.33), 100)
-					),
-					i * 1000);
+					), i * 1000);
 				}
 			}
 		}
@@ -244,7 +245,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -254,10 +255,12 @@ Meteor.methods({
 
 		check(options.username, String);
 
+		var room = null;
+
 		if (options.roomName) {
 			check(options.roomName, String);
 
-			var room = Game.Chat.Room.Collection.findOne({
+			room = Game.Chat.Room.Collection.findOne({
 				name: options.roomName,
 				deleted: { $ne: true }
 			});
@@ -301,7 +304,7 @@ Meteor.methods({
 			who: user.username,
 			timestamp: Game.getCurrentTime(),
 			period: time
-		}
+		};
 
 		if (options.roomName) {
 			history.room_id = room._id;
@@ -359,7 +362,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -379,7 +382,7 @@ Meteor.methods({
 			$set: {
 				blocked: true
 			}
-		})
+		});
 	},
 
 	'chat.cheaterVaip': function(username) {
@@ -389,7 +392,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -427,14 +430,14 @@ Meteor.methods({
 				credits: {amount: 0},
 				honor: {amount: 0}
   			}
-  		})
+  		});
 
 		Meteor.users.update({_id: target._id}, {
 			$set: {
 				rating: 1,
 				cheater: true
 			}
-		})
+		});
 	},
 
 	'chat.createRoom': function(name, isPublic, isOwnerPays) {
@@ -444,7 +447,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -510,7 +513,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -547,7 +550,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -579,7 +582,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -644,7 +647,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -714,7 +717,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -766,7 +769,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -835,7 +838,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -905,7 +908,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -1015,4 +1018,4 @@ Meteor.publish('chat', function (roomName) {
 	}
 });
 
-}
+};

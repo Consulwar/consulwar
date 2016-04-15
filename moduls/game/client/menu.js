@@ -3,12 +3,12 @@ initMenuClient = function() {
 var firstItemGroupURL = function(items) {
 	var firstItem = items[_.keys(items)[0]];
 	return firstItem.url({group: firstItem.group});
-}
+};
 
 var firstItemUrl = function(items) {
 	var firstItem = items[_.keys(items)[0]];
 	return firstItem.url();
-}
+};
 
 var menu = {
 	planet: {
@@ -210,21 +210,21 @@ var getMenu = function(menu, isActive) {
 			tooltip: menu.items,
 			isActive: isActive(menu, key),
 			additionalClass: menu.additionalClass
-		}
+		};
 	});
-}
+};
 
 Template.top_menu.helpers({
 	chatRoom: function() {
 		var activeRoom = Session.get('chatRoom');
 		return activeRoom ? activeRoom : 'general';
 	}
-})
+});
 
 Template.game_menu.helpers({
 	menu: function() {
 		return getMenu(menu, function(item) {
-			return item.routeName.indexOf(Router.current().route.getName()) != -1
+			return item.routeName.indexOf(Router.current().route.getName()) != -1;
 		});
 	}
 });
@@ -257,7 +257,7 @@ var getSideHeroByRoute = function(route) {
 		menu[route.group].items[route.params.group] &&
 		menu[route.group].items[route.params.group].additionalArea
 	);
-}
+};
 
 Session.set('sideQuestsOpened', false);
 
@@ -328,7 +328,7 @@ Template.additional_area.helpers({
 					engName: item.engName,
 					name: item.name,
 					status: item.status
-				}
+				};
 			});
 		}
 		return null;
@@ -360,7 +360,7 @@ var helpers = {
 		return url.indexOf(part) != -1;
 	},
 	percentRound10: function(progress) {
-		return Math.floor((progress.finishTime - Session.get('serverTime')) * 10 / (progress.finishTime - progress.startTime)) * 10
+		return Math.floor((progress.finishTime - Session.get('serverTime')) * 10 / (progress.finishTime - progress.startTime)) * 10;
 	},
 	menuGroup: function() {
 		return Router.current().group;
@@ -380,4 +380,4 @@ var helpers = {
 Template.items_menu.helpers(helpers);
 Template.overlay_menu.helpers(helpers);
 
-}
+};

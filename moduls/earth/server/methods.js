@@ -9,7 +9,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -24,7 +24,7 @@ Meteor.methods({
 			throw new Meteor.Error('Вы уже голосовали в этом ходу');
 		}
 
-		if (lastTurn.actions[ actionName ] == undefined) {
+		if (lastTurn.actions[ actionName ] === undefined) {
 			throw new Meteor.Error('Нет такого действия в этом ходу');
 		}
 
@@ -40,7 +40,7 @@ Meteor.methods({
 
 		var inc = {
 			totalVotePower: votePower
-		}
+		};
 		inc['actions.' + actionName] = votePower;
 
 		Game.EarthTurns.Collection.update({
@@ -58,7 +58,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -73,8 +73,9 @@ Meteor.methods({
 		}
 
 		var totalCount = 0;
+		var name = null;
 
-		for (var name in units) {
+		for (name in units) {
 			units[name] = parseInt( units[name], 10 );
 
 			var count = units[name];
@@ -87,7 +88,7 @@ Meteor.methods({
 			totalCount += count;
 		}
 
-		if (totalCount == 0) {
+		if (totalCount === 0) {
 			throw new Meteor.Error('Войска для отправки не выбраны');
 		}
 
@@ -102,7 +103,7 @@ Meteor.methods({
 		// Game.Earth.addReinforcement( { army: { ground: units } } );
 
 		// remove units
-		for (var name in units) {
+		for (name in units) {
 			Game.Unit.remove({
 				group: 'ground',
 				engName: name,
@@ -124,10 +125,10 @@ if (process.env.NODE_ENV == 'development') {
 		'earth.nextTurn': Game.Earth.nextTurn,
 
 		'earth.voteActionDev': function(actionName, votePower) {
+			votePower = votePower || 1;
 			var lastTurn = Game.EarthTurns.getLast();
-			var votePower = votePower || 1;
 
-			if (!lastTurn || lastTurn.actions[ actionName ] == undefined) {
+			if (!lastTurn || lastTurn.actions[ actionName ] === undefined) {
 				return;
 			}
 			
@@ -141,4 +142,4 @@ if (process.env.NODE_ENV == 'development') {
 	});
 }
 
-}
+};

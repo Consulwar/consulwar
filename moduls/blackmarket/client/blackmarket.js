@@ -65,7 +65,7 @@ Template.blackmarketReward.helpers({
 				units.push({
 					engName: name,
 					amount: this.profit.units[group][name]
-				})
+				});
 			}
 		}
 		return units;
@@ -78,4 +78,4 @@ Template.blackmarketReward.events({
 	}
 });
 
-}
+};

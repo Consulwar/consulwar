@@ -10,4 +10,4 @@ initCosmosConfigServer = function() {
 	Game.Cosmos.ENEMY_RESPAWN_PERIOD = Meteor.settings.cosmos.enemyRespawnPeriod;
 	Game.Cosmos.ATTACK_PLAYER_PERIOD = Meteor.settings.cosmos.attackPlayerPeriod;
 
-}
+};

@@ -23,11 +23,11 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			}
 		}
 		return true;
-	}
+	};
 
 	var calcDistanse = function(ax, ay, bx, by) {
 		return Math.sqrt( Math.pow(bx - ax, 2) + Math.pow(by - ay, 2) );
-	}
+	};
 
 	var buildSpline = function(points) {
 		var coords = [];
@@ -49,17 +49,17 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		var curved = turf.bezier(line, 20000, 0.4);
 		curved.properties = { stroke: '#0f0' };
 
-		var coords = curved.geometry.coordinates;
+		var curvedCoords = curved.geometry.coordinates;
 		var result = [];
-		for (var i = 0; i < coords.length; i++) {
+		for (var n = 0; n < curvedCoords.length; n++) {
 			result.push({
-				x: coords[i][0],
-				y: coords[i][1]
+				x: curvedCoords[n][0],
+				y: curvedCoords[n][1]
 			});
 		}
 
 		return result;
-	}
+	};
 
 	var findNewPoint = function(startPoint, midPlanet, angle, isTop) {
 		var tmpAng = angle + Math.PI * (isTop ? -0.5: 0.5);
@@ -68,7 +68,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			x: midPlanet.x + Math.cos(tmpAng) * tmpDist,
 			y: midPlanet.y + Math.sin(tmpAng) * tmpDist
 		};
-	}
+	};
 
 	var getIntersectedPlantents = function(point1, point2) {
 		var planets = [];
@@ -99,7 +99,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		});
 
 		return planets;
-	}
+	};
 
 	var calcDistanseViaPoints = function(points) {
 		distance = 0;
@@ -111,7 +111,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		}
 
 		return distance;
-	}
+	};
 
 	var getConnectionPoints = function(startPoint, midPlanet, finishPoint) {
 		var angle = Math.atan2(finishPoint.y - startPoint.y, finishPoint.x - startPoint.x);
@@ -122,11 +122,14 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		var startToTopIntersects = getIntersectedPlantents(startPoint, topPoint);
 		var startToBottomIntersects = getIntersectedPlantents(startPoint, bottomPoint);
 
+		var distToTop = 0;
+		var distToBottom = 0;
+
 		if (!startToTopIntersects.length || !startToBottomIntersects.length) {
 			if (startToTopIntersects.length == startToBottomIntersects.length) {
 
-				var distToTop = calcDistanseViaPoints([startPoint, topPoint, finishPoint]);
-				var distToBottom = calcDistanseViaPoints([startPoint, bottomPoint, finishPoint]);
+				distToTop = calcDistanseViaPoints([startPoint, topPoint, finishPoint]);
+				distToBottom = calcDistanseViaPoints([startPoint, bottomPoint, finishPoint]);
 
 				if (distToTop > distToBottom) {
 					return bottomPoint;
@@ -142,7 +145,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			var bottomToFinishIntersects = getIntersectedPlantents(bottomPoint, finishPoint);
 
 			var topLength = startToTopIntersects.length + topToFinishIntersects.length;
-			var bottomLength = startToBottomIntersects.length + bottomToFinishIntersects.length
+			var bottomLength = startToBottomIntersects.length + bottomToFinishIntersects.length;
 
 			if (topLength > bottomLength) {
 				midPlanet = startToBottomIntersects[0];
@@ -150,8 +153,8 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 				midPlanet = startToTopIntersects[0];
 			} else {
 				
-				var distToTop = calcDistanseViaPoints([startPoint, topPoint, finishPoint]);
-				var distToBottom = calcDistanseViaPoints([startPoint, bottomPoint, finishPoint]);
+				distToTop = calcDistanseViaPoints([startPoint, topPoint, finishPoint]);
+				distToBottom = calcDistanseViaPoints([startPoint, bottomPoint, finishPoint]);
 
 				if (distToTop > distToBottom) {
 					midPlanet = startToBottomIntersects[0];
@@ -162,7 +165,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 
 			return getConnectionPoints(startPoint, midPlanet, finishPoint);
 		}
-	}
+	};
 
 	var getPath = function(startPoint, finishPoint) {
 		var coords = [];
@@ -182,7 +185,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 
 		coords.push(finishPoint);
 		return coords;
-	}
+	};
 
 	this.polyline = null;
 	this.lineOptions = null;
@@ -225,7 +228,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		};
 
 		this.totalDistance = turf.lineDistance(this.lineOptions, 'kilometers');
-	}
+	};
 
 	this.getPointAlongDistanceByCoef = function(k) {
 
@@ -241,15 +244,15 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			x: along.geometry.coordinates[0],
 			y: along.geometry.coordinates[1]
 		};
-	}
+	};
 
 	this.remove = function() {
 		if (this.polyline) {
 			map.removeLayer(this.polyline);
 		}
-	}
+	};
 
 	this.constructor();
-}
+};
 
-}
+};

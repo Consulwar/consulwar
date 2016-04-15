@@ -17,7 +17,7 @@ game.Building = function(options){
 			item: this.engName
 		};
 		return Router.routes[this.type].path(options);
-	}
+	};
 };
 game.extend(game.Building, game.Item);
 
@@ -47,8 +47,8 @@ Game.Building = {
 		residential: {},
 		military: {}
 	}
-}
+};
 
 initBuildingContent();
 
-}
+};

@@ -10,7 +10,7 @@ Game.Building.add = function(building) {
 	Game.Building.initialize();
 
 	var set = {};
-	set[building.group + '.' + building.engName] = building.level
+	set[building.group + '.' + building.engName] = building.level;
 
 	Game.Building.Collection.update({
 		user_id: Meteor.userId()
@@ -19,23 +19,23 @@ Game.Building.add = function(building) {
 	});
 
 	return set;
-}
+};
 
 Game.Building.complete = function(task) {
 	addBonus(task);
 	return Game.Building.add(task);
-}
+};
 
 Game.Building.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Building.getValue();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Building.Collection.insert({
 			'user_id': user._id
-		})
+		});
 	}
-}
+};
 
 var addBonus = function(building) {
 	var profit = null;
@@ -85,7 +85,7 @@ var addBonus = function(building) {
 		Game.Resources.addProfit(profit);
 		game.Mail.addSystemMessage('profitOnce', 'Единоразовый бонус', text, building.finishTime);
 	}
-}
+};
 
 Meteor.publish('buildings', function () {
 	if (this.userId) {
@@ -95,4 +95,4 @@ Meteor.publish('buildings', function () {
 
 initBuildingServerMethods();
 
-}
+};

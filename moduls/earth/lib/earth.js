@@ -73,6 +73,6 @@ Game.EarthTurns = {
 			sort: { timeStart: -1 }
 		});
 	}
-}
+};
 
-}
+};

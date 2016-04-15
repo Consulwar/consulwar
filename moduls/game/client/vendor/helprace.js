@@ -423,12 +423,12 @@
         var feedbackDomain,
             script = document.createElement('script');
 
-        feedbackDomain = window.ChdFeedbackWidget.config.url.replace(/(http|https|):/, '').replace(/(chd-widgets\/feedback)(.*)/, '')
+        feedbackDomain = window.ChdFeedbackWidget.config.url.replace(/(http|https|):/, '').replace(/(chd-widgets\/feedback)(.*)/, '');
         script.src = feedbackDomain + 'chd-widget/feedback/get-account-keyword';
 
         script.onload = function () {
             window.ChdFeedbackWidget.showTab();
-        }
+        };
 
         document.getElementsByTagName('body')[0].appendChild(script);
     };

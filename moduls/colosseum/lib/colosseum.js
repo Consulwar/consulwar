@@ -16,7 +16,7 @@ game.ColosseumTournament = function(options) {
 
 	this.checkLevel = function() {
 		return Game.Building.items.residential.colosseum.currentLevel() >= this.level;
-	}
+	};
 
 	this.checkPrice = function() {
 		var resources = Game.Resources.getValue();
@@ -26,8 +26,8 @@ game.ColosseumTournament = function(options) {
 			}
 		}
 		return true;
-	}
-}
+	};
+};
 
 Game.Colosseum = {
 	tournaments: {},
@@ -49,8 +49,8 @@ Game.Colosseum = {
 
 		return true;
 	}
-}
+};
 
 initColosseumContent();
 
-}
+};

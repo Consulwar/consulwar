@@ -4,7 +4,7 @@ initChatLib();
 
 var currentRoomName = null;
 var lostConnectionTime = null;
-var chatSubscription = null
+var chatSubscription = null;
 var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
@@ -25,7 +25,7 @@ var addMessage = function(message) {
 			break;
 		}
 		// find position
-		if (i == 0 && messages[n].timestamp <= message.timestamp) {
+		if (i === 0 && messages[n].timestamp <= message.timestamp) {
 			i = n + 1;
 		}
 		// break check
@@ -37,7 +37,7 @@ var addMessage = function(message) {
 	if (!isDuplicated) {
 		messages.splice(i, 0, message);
 	}
-}
+};
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
@@ -79,7 +79,7 @@ var addMotd = function(message) {
 		messages.push(message);
 		Meteor.setTimeout(scrollChatToBottom);
 	}
-}
+};
 
 Game.Chat.Room.Collection.find({}).observeChanges({
 	added: function(id, room) {
@@ -97,7 +97,7 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 
 Game.Chat.showPage = function() {
 	this.render('chat', { to: 'content' });
-}
+};
 
 Template.chat.onRendered(function() {
 	Meteor.setTimeout(scrollChatToBottom.bind(this, true));
@@ -132,7 +132,7 @@ Template.chat.onRendered(function() {
 
 		if (roomName) {
 			if (roomName != currentRoomName // new room
-			 || messages.length == 0        // or don't have any messages
+			 || messages.length === 0        // or don't have any messages
 			 || noConnectionPeriod >= 3600  // or lost connection more than 30 min
 			) {
 				// reset current room
@@ -183,7 +183,7 @@ Template.chat.onDestroyed(function() {
 		chatSubscription.stop();
 		chatRoomSubscription.stop();
 	}
-})
+});
 
 var scrollChatToBottom = function(force) {
 	var container = $('ul.messages');
@@ -191,7 +191,7 @@ var scrollChatToBottom = function(force) {
 	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 50) > container[0].scrollHeight)) {
 		container[0].scrollTop = container[0].scrollHeight;
 	}
-}
+};
 
 var createRoom = function(name, isPublic, isOwnerPays) {
 	var message = 'Имя комнаты: ' +  name + '\n'
@@ -217,7 +217,7 @@ var createRoom = function(name, isPublic, isOwnerPays) {
 			}
 		});
 	}
-}
+};
 
 var removeRoom = function(name) {
 	Meteor.call('chat.removeRoom', name, function(err, data) {
@@ -228,7 +228,7 @@ var removeRoom = function(name) {
 			Router.go('chat', { room: 'general' });
 		}
 	});
-}
+};
 
 var addCredits = function(roomName, credits) {
 	credits = parseInt( credits, 10 );
@@ -244,7 +244,7 @@ var addCredits = function(roomName, credits) {
 			Notifications.success('Кредиты успешно зачисленны на счет комнаты');
 		}
 	});
-}
+};
 
 var addUser = function(roomName, username) {
 	Meteor.call('chat.addUserToRoom', roomName, username, function(err, data) {
@@ -254,7 +254,7 @@ var addUser = function(roomName, username) {
 			Notifications.success('Пользователь добавлен в комнату');
 		}
 	});
-}
+};
 
 var removeUser = function(roomName, username) {
 	Meteor.call('chat.removeUserFromRoom', roomName, username, function(err, data) {
@@ -264,7 +264,7 @@ var removeUser = function(roomName, username) {
 			Notifications.success('Пользователь удален из комнаты');
 		}
 	});
-}
+};
 
 var blockUser = function(options) {
 	Meteor.call('chat.blockUser', options, function(err, data) {
@@ -278,7 +278,7 @@ var blockUser = function(options) {
 			}
 		}
 	});
-}
+};
 
 var addModerator = function(roomName, username) {
 	Meteor.call('chat.addModeratorToRoom', roomName, username, function(err, data) {
@@ -288,7 +288,7 @@ var addModerator = function(roomName, username) {
 			Notifications.success('Модератор назначен');
 		}
 	});
-}
+};
 
 var removeModerator = function(roomName, username) {
 	Meteor.call('chat.removeModeratorFromRoom', roomName, username, function(err, data) {
@@ -298,11 +298,11 @@ var removeModerator = function(roomName, username) {
 			Notifications.success('Модератор разжалован');
 		}
 	});
-}
+};
 
 var execClientCommand = function(message) {
 	// show help
-	if (message.indexOf('/help') == 0) {
+	if (message.indexOf('/help') === 0) {
 		var helpText = ''
 		 + 'Доступные команды:' + '\n'
 		 + '/create channel - создать комнату' + '\n'
@@ -323,7 +323,7 @@ var execClientCommand = function(message) {
 		return true;
 	}
 	// create new channel
-	else if (message.indexOf('/create channel') == 0) {
+	else if (message.indexOf('/create channel') === 0) {
 		var name = prompt('Введите название комнаты');
 		if (!name) {
 			return true;
@@ -336,79 +336,79 @@ var execClientCommand = function(message) {
 		return true;
 	}
 	// remove current channel
-	else if (message.indexOf('/remove channel') == 0) {
+	else if (message.indexOf('/remove channel') === 0) {
 		if (confirm('Вы действительно хотите удалить текущую комнату?')) {
 			removeRoom(Router.current().params.room);
 		}
 		return true;
 	}
 	// join existing channel
-	else if (message.indexOf('/join') == 0) {
+	else if (message.indexOf('/join') === 0) {
 		Router.go('chat', { room: message.substr('/join'.length).trim() });
 		return true;
 	}
 	// add funds to channel
-	else if (message.indexOf('/add credits') == 0) {
-		addCredits(Router.current().params.room, message.substr('/add credits'.length).trim())
+	else if (message.indexOf('/add credits') === 0) {
+		addCredits(Router.current().params.room, message.substr('/add credits'.length).trim());
 		return true;
 	}
 	// add user to channel
-	else if (message.indexOf('/add user') == 0) {
+	else if (message.indexOf('/add user') === 0) {
 		addUser(Router.current().params.room, message.substr('/add user'.length).trim());
 		return true;
 	}
 	// remove user from channel
-	else if (message.indexOf('/remove user') == 0) {
+	else if (message.indexOf('/remove user') === 0) {
 		removeUser(Router.current().params.room, message.substr('/remove user'.length).trim());
 		return true;
 	}
 	// block user
-	else if (message.indexOf('/block') == 0) {
+	else if (message.indexOf('/block') === 0) {
 		var time = prompt('Укажите время блокировки в секундах', '86400');
 		if (!time) {
 			return;
 		}
 
-		var isLocal = true;
+		var isLocalBlock = true;
 		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			isLocal = confirm('Блокировать только эту комнату?');
+			isLocalBlock = confirm('Блокировать только эту комнату?');
 		}
 
 		blockUser({
-			roomName: isLocal ? Router.current().params.room : null,
+			roomName: isLocalBlock ? Router.current().params.room : null,
 			username: message.substr('/block'.length).trim(),
 			time: parseInt(time, 10)
 		});
 		return true;
 	}
 	// unblock user
-	else if (message.indexOf('/unblock') == 0) {
-		var isLocal = true;
+	else if (message.indexOf('/unblock') === 0) {
+		var isLocalUnblock = true;
 		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			isLocal = confirm('Разблокировать только эту комнату?');
+			isLocalUnblock = confirm('Разблокировать только эту комнату?');
 		}
 
 		blockUser({
-			roomName: isLocal ? Router.current().params.room : null,
+			roomName: isLocalUnblock ? Router.current().params.room : null,
 			username: message.substr('/unblock'.length).trim(),
 			time: 0
 		});
 		return true;
 	}
 	// add moderator
-	else if (message.indexOf('/add moderator') == 0) {
+	else if (message.indexOf('/add moderator') === 0) {
 		addModerator(Router.current().params.room, message.substr('/add moderator'.length).trim());
 		return true;
 	}
 	// remove moderator
-	else if (message.indexOf('/remove moderator') == 0) {
+	else if (message.indexOf('/remove moderator') === 0) {
 		removeModerator(Router.current().params.room, message.substr('/remove moderator'.length).trim());
 		return true;
 	}
 
 	// command not found
 	return false;
-}
+};
 
 Template.chat.helpers({
 	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
@@ -466,7 +466,7 @@ Template.chat.helpers({
 	},
 
 	highlightUser: function(text) {
-		if (text.indexOf('/me') == 0) {
+		if (text.indexOf('/me') === 0) {
 			text = text.substr(3);
 		}
 
@@ -563,7 +563,7 @@ Template.chat.events({
 		}
 
 		var roomName = Router.current().params.room;
-		if (!roomName || !messages || messages.length == 0) {
+		if (!roomName || !messages || messages.length === 0) {
 			return;
 		}
 
@@ -725,4 +725,4 @@ Template.chat.events({
 	}
 });
 
-}
+};

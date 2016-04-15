@@ -11,7 +11,7 @@ Game.Planets.actualize = function() {
 			Game.Planets.actualizePlanet( planets[i] );
 		}
 	}
-}
+};
 
 Game.Planets.actualizePlanet = function(planet) {
 	if (!planet || planet.isHome) {
@@ -48,7 +48,7 @@ Game.Planets.actualizePlanet = function(planet) {
 			Game.Planets.update(planet);
 		}
 	}
-}
+};
 
 Game.Planets.update = function(planet) {
 	if (!planet._id || !planet.user_id) {
@@ -64,12 +64,12 @@ Game.Planets.update = function(planet) {
 	});
 	
 	return data;
-}
+};
 
 Game.Planets.add = function(planet) {
 	planet.user_id = Meteor.userId();
 	return Game.Planets.Collection.insert(planet);
-}
+};
 
 Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	// get artefacts spread config by distance from home planet or center
@@ -101,8 +101,9 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	// sort all available artefacts by group
 	var artefacts = type.artefacts();
 	var items = {};
+	var i = 0;
 
-	for (var i = 0; i < artefacts.length; i++) {
+	for (i = 0; i < artefacts.length; i++) {
 		var artefact = artefacts[i][0];
 		var chance = artefacts[i][1];
 
@@ -130,11 +131,11 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	var result = {};
 
 	var maxValue = 0;
-	for (var i = 0; i < arrGroups.length; i++) {
+	for (i = 0; i < arrGroups.length; i++) {
 		maxValue += arrGroups[i].chance;
 	}
 
-	for (var i = 0; i < 3; i++) {
+	for (i = 0; i < 3; i++) {
 		// select random group
 		var randomVal = Game.Random.random() * maxValue;
 		var val = 0;
@@ -158,14 +159,14 @@ Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
 	}
 
 	return result;
-}
+};
 
 Game.Planets.getArtefacts = function(planet, count) {
 	if (!planet || !planet.artefacts) {
 		return null;
 	}
 
-	var count = (count && count > 1) ? count : 1;
+	count = (count && count > 1) ? count : 1;
 	var result = null;
 
 	for (var key in planet.artefacts) {
@@ -185,7 +186,7 @@ Game.Planets.getArtefacts = function(planet, count) {
 	}
 
 	return result;
-}
+};
 
 Game.Planets.generateType = function() {
 	var result = null;
@@ -197,15 +198,16 @@ Game.Planets.generateType = function() {
 	if (types.length > 0) {
 
 		var val = 0;
+		var i = 0;
 
-		for (var i = 0; i < types.length; i++) {
+		for (i = 0; i < types.length; i++) {
 			val += types[i].chance;
 		}
 
 		var randomVal = Game.Random.random() * val;
 		val = 0;
 
-		for (var i = 0; i < types.length; i++) {
+		for (i = 0; i < types.length; i++) {
 			val += types[i].chance;
 			if (randomVal <= val) {
 				result = types[i];
@@ -215,7 +217,7 @@ Game.Planets.generateType = function() {
 	}
 
 	return result;
-}
+};
 
 Game.Planets.generateName = function() {
 	var letters = [
@@ -242,7 +244,7 @@ Game.Planets.generateName = function() {
 	}
 
 	return result;
-}
+};
 
 Game.Planets.getLastAttackTime = function() {
 	var home = Game.Planets.getBase();
@@ -250,7 +252,7 @@ Game.Planets.getLastAttackTime = function() {
 		return home.timeLastAttack;
 	}
 	return 0;
-}
+};
 
 Game.Planets.setLastAttackTime = function(time) {
 	var home = Game.Planets.getBase();
@@ -258,7 +260,7 @@ Game.Planets.setLastAttackTime = function(time) {
 		home.timeLastAttack = time;
 		Game.Planets.update(home);
 	}
-}
+};
 
 Game.Planets.generateMission = function(planet) {
 	// check planets
@@ -303,7 +305,7 @@ Game.Planets.generateMission = function(planet) {
 		type: mission.type,
 		level: mission.levels[ Game.Random.interval(0, mission.levels.length - 1) ]
 	};
-}
+};
 
 Game.Planets.getReptileAttackChance = function() {
 	var level = Game.User.getLevel();
@@ -311,7 +313,7 @@ Game.Planets.getReptileAttackChance = function() {
 		home: level * 5,
 		colony: level * 1
 	};
-}
+};
 
 Game.Planets.getReptileAttackMission = function() {
 	var level = Game.User.getLevel();
@@ -334,7 +336,7 @@ Game.Planets.getReptileAttackMission = function() {
 		type: mission.type,
 		level: mission.levels[ Game.Random.interval(0, mission.levels.length - 1) ]
 	};
-}
+};
 
 // ----------------------------------------------------------------------------
 // Galactic generation
@@ -342,16 +344,16 @@ Game.Planets.getReptileAttackMission = function() {
 
 var radToDeg = function(rad) {
 	return rad * 180 / Math.PI;
-}
+};
 
 var calcDistanse = function(ax, ay, bx, by) {
 	return Math.sqrt( Math.pow(bx - ax, 2) + Math.pow(by - ay, 2) );
-}
+};
 
 var hitCircleVsCircle = function(x1, y1, r1, x2, y2, r2) {
 	var distance = Math.sqrt( Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) );
 	return (r1 + r2 > distance) ? true : false;
-}
+};
 
 Game.Planets.findPlanetsNearPoint = function(x, y, r) {
 	var result = [];
@@ -365,7 +367,7 @@ Game.Planets.findPlanetsNearPoint = function(x, y, r) {
 	}
 
 	return result;
-}
+};
 
 Game.Planets.checkIntersects = function(planet, nearPlanets) {
 	for (var i = 0; i < nearPlanets.length; i++) {
@@ -384,7 +386,7 @@ Game.Planets.checkIntersects = function(planet, nearPlanets) {
 		}
 	}
 	return false;
-}
+};
 
 Game.Planets.getSectorsToDiscover = function(galactic, hand, segment) {
 	var sectors = [];
@@ -423,7 +425,7 @@ Game.Planets.getSectorsToDiscover = function(galactic, hand, segment) {
 	}
 
 	return sectors;
-}
+};
 
 Game.Planets.checkSectorDiscovered = function(hand, segment) {
 	var planets = Game.Planets.getAll().fetch();
@@ -435,7 +437,7 @@ Game.Planets.checkSectorDiscovered = function(hand, segment) {
 		}
 	}
 	return false;
-}
+};
 
 Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered) {
 	// check galactic bounds
@@ -452,8 +454,9 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 	// find near planets
 	var nearPlanets = [];
 	var planets = Game.Planets.getAll().fetch();
+	var i = 0;
 
-	for (var i = 0; i < planets.length; i++) {
+	for (i = 0; i < planets.length; i++) {
 		if (planets[i].segment == segment
 		 || planets[i].segment == segment - 1
 		 || planets[i].segment == segment + 1
@@ -488,7 +491,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 	// fins free points
 	var freeSpots = [];
 
-	for (var i = 0; i < randSpots.length; i++) {
+	for (i = 0; i < randSpots.length; i++) {
 		if (!Game.Planets.checkIntersects(randSpots[i], nearPlanets)) {
 			freeSpots.push(randSpots[i]);
 			nearPlanets.push(randSpots[i]);
@@ -511,7 +514,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 			hand,
 			segment,
 			type
-		)
+		);
 
 		var newPlanet = {
 			name: Game.Planets.generateName(),
@@ -528,14 +531,14 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 			x: freeSpots[n].x,
 			y: freeSpots[n].y,
 			size: size
-		}
+		};
 
 		var newId = Game.Planets.add(newPlanet);
 		Game.Planets.actualizePlanet(newPlanet);
 
 		freeSpots.splice(n, 1);
 	}
-}
+};
 
 // ----------------------------------------------------------------------------
 // Public methods
@@ -550,13 +553,13 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
 		var planets = Game.Planets.getAll().fetch();
 
-		if (planets.length == 0) {
+		if (planets.length === 0) {
 
 			var galactic = {
 				radius: 40,
@@ -567,7 +570,7 @@ Meteor.methods({
 				angle: Game.Random.random() * Math.PI * 2, // 0 - 360
 				minPlanets: 400,
 				maxPlanets: 500
-			}
+			};
 
 			var hand = Game.Random.interval(0, galactic.hands - 1);
 			var segment = galactic.segments - 3;
@@ -610,7 +613,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -645,7 +648,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -713,12 +716,12 @@ Meteor.methods({
 		var startPosition = {
 			x: basePlanet.x,
 			y: basePlanet.y
-		}
+		};
 
 		var targetPosition = {
 			x: targetPlanet.x,
 			y: targetPlanet.y
-		}
+		};
 
 		var engineLevel = Game.Planets.getEngineLevel();
 
@@ -735,7 +738,7 @@ Meteor.methods({
 			isOneway:       isOneway,
 			mission:        null,
 			armyId:         newArmyId,
-		}
+		};
 
 		Game.SpaceEvents.sendShip(shipOptions);
 	}
@@ -783,6 +786,6 @@ Game.Planets.debugCalcArtefactsChances = function() {
 			console.log(items[groupName][artefactName], artefactName, groupName);
 		}
 	}
-}
+};
 
-}
+};

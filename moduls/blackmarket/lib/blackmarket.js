@@ -16,7 +16,7 @@ game.BlackmarketPack = function(options) {
 	this.getPrice = function() {
 		var level = Game.Building.items.residential.blackmarket.currentLevel();
 		return { credits: options.price.credits - level };
-	}
+	};
 
 	this.checkPrice = function() {
 		var price = this.getPrice();
@@ -27,13 +27,13 @@ game.BlackmarketPack = function(options) {
 			}
 		}
 		return true;
-	}
-}
+	};
+};
 
 Game.Blackmarket = {
 	items: {}
-}
+};
 
 initBlackmarketContent();
 
-}
+};

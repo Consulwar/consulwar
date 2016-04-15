@@ -1,7 +1,7 @@
 // Import from actual version of underscore
 
 var cb = function(value, context, argCount) {
-	if (value == null) return _.identity;
+	if (value === null) return _.identity;
 	if (_.isFunction(value)) return optimizeCb(value, context, argCount);
 	if (_.isObject(value)) return _.matcher(value);
 	return _.property(value);
@@ -9,7 +9,7 @@ var cb = function(value, context, argCount) {
 
 var optimizeCb = function(func, context, argCount) {
 	if (context === void 0) return func;
-	switch (argCount == null ? 3 : argCount) {
+	switch (argCount === null ? 3 : argCount) {
 		case 1: return function(value) {
 			return func.call(context, value);
 		};
@@ -29,7 +29,7 @@ var createAssigner = function(keysFunc, defaults) {
 	return function(obj) {
 		var length = arguments.length;
 		if (defaults) obj = Object(obj);
-		if (length < 2 || obj == null) return obj;
+		if (length < 2 || obj === null) return obj;
 		for (var index = 1; index < length; index++) {
 			var source = arguments[index],
 					keys = keysFunc(source),
@@ -45,7 +45,7 @@ var createAssigner = function(keysFunc, defaults) {
 
 _.isMatch = function(object, attrs) {
 	var keys = _.keys(attrs), length = keys.length;
-	if (object == null) return !length;
+	if (object === null) return !length;
 	var obj = Object(object);
 	for (var i = 0; i < length; i++) {
 		var key = keys[i];

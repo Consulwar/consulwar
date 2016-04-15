@@ -27,7 +27,7 @@ Game.Helpers = {
 			+ ('0' + minutes).slice(-2) + ':'
 			+ ('0' + seconds).slice(-2);
 	}
-}
+};
 
 UI.registerHelper('user', function() {
 	return Meteor.user();
@@ -102,7 +102,7 @@ UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, 
 			? twoForm
 			: manyForm
 		)
-	)
+	);
 });
 
 /*
@@ -125,7 +125,7 @@ var iso = {
 	6: 'E',
 	7: 'Z',
 	8: 'Y'
-}
+};
 
 
 UI.registerHelper('formatNumberWithISO', function(price, limit) {
@@ -143,20 +143,20 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 	var exponent = 0;
 	while (price.length > limit) {
 		price = (price / 1000);
-		if (price.toFixed(2).substr(-1) != 0) {
+		if (price.toFixed(2).substr(-1) !== 0) {
 			price = price.toFixed(2);
-		} else if (price.toFixed(1).substr(-1) != 0) {
+		} else if (price.toFixed(1).substr(-1) !== 0) {
 			price = price.toFixed(1);
 		} else {
 			price = Math.round(price);
 		}
-		price = price.toString()
+		price = price.toString();
 		exponent++;
 	}
 
 	price = price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
-	if (iso[exponent] == undefined) {
+	if (iso[exponent] === undefined) {
 		return 'o_O ??';
 	}
 
@@ -170,22 +170,22 @@ var formatNumber = function (num, delimeter) {
 
 	return _.map(num, function(value) {
 		if (_.isNumber(value)) {
-			if (value.toFixed(2).substr(-1) != 0) {
+			if (value.toFixed(2).substr(-1) !== 0) {
 				value = value.toFixed(2);
-			} else if (value.toFixed(1).substr(-1) != 0) {
+			} else if (value.toFixed(1).substr(-1) !== 0) {
 				value = value.toFixed(1);
 			}
 		}
 		value = value.toString();
 		return value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 	}).join(delimeter);
-}
+};
 
 UI.registerHelper('formatNumber', formatNumber);
 
 
 var getEffectsTooltip = function(price, effects, target, invert, side) {
-	if (price.base == undefined) {
+	if (price.base === undefined) {
 		return 'disabled';
 	}
 
@@ -207,26 +207,26 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 	var priorities = _.keys(effects);
 	var prevPriority = priorities.length > 0 && priorities[0];
 
-	if (prevPriority % 2 != 0) {
+	if (prevPriority % 2 !== 0) {
 		nextValue = 0;
 	} else {
 		nextValue = 100;
 	}
 
 	for (var priority in effects) {
-		if (prevPriority % 2 != 0 ) {
+		if (prevPriority % 2 !== 0 ) {
 			currentValue = isMultiValue 
-				? _.mapObject(currentValue, function(value) { return value + nextValue })
+				? _.mapObject(currentValue, function(value) { return value + nextValue; })
 				: currentValue + nextValue;
 		} else {
 			currentValue = isMultiValue 
 				? _.mapObject(currentValue, function(value) { 
-					return Math.floor(value * (nextValue * 0.01)) 
+					return Math.floor(value * (nextValue * 0.01));
 				  })
 				: Math.floor(currentValue * (nextValue * 0.01));
 		}
 
-		if (priority % 2 != 0) {
+		if (priority % 2 !== 0) {
 			nextValue = 0;
 		} else {
 			nextValue = 100;
@@ -246,7 +246,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 					result.negative = !invert;
 				}
 				
-				if (priority % 2 != 0 ) {
+				if (priority % 2 !== 0 ) {
 					if (isMultiValue) {
 						totalValue = _.mapObject(totalValue, function(value) {
 							return value + effect.value * (invert ? -1 : 1);
@@ -263,7 +263,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 						});
 						result.value = _.toArray(
 							_.mapObject(currentValue, function(value) { 
-								return Math.abs(Math.floor(value * (effect.value * 0.01)))
+								return Math.abs(Math.floor(value * (effect.value * 0.01)));
 							})
 						).join(' - ');
 					} else {
@@ -283,7 +283,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 				effectsValues.push({total: formatNumber(totalValue, ' - ')});
 			}
 		} else {
-			if (priority % 2 != 0) {
+			if (priority % 2 !== 0) {
 				nextValue = 0;
 			} else {
 				nextValue = 100;
@@ -307,7 +307,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 		}),
 		'data-tooltip-direction': side || 's'
 	};
-}
+};
 
 Tracker.autorun(function() {
 	var currentTooltip = Tooltips.get();

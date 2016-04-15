@@ -41,7 +41,7 @@ GameRouteController = RouteController.extend({
 
 var gameRoutes = {
 	planet: {
-		building: 'planet/:group(residential|military)/:item?',
+		building: 'planet/:group(residential|military)/:item?/:menu?',
 		house: 'planet/:group(house)/:subgroup?/:item?'
 	},
 

@@ -2,13 +2,7 @@ initBlackmarketClient = function() {
 
 initBlackmarketLib();
 
-Game.Blackmarket.showItems = function() {
-	Router.current().render('blackmarket', { to: 'buildingMenu' });
-}
-
-Game.Blackmarket.hideItems = function() {
-	Router.current().render(null, { to: 'buildingMenu' });
-}
+// TODO: Переделать GUI когда появится графоний!
 
 Template.blackmarket.helpers({
 	items: function() {
@@ -19,11 +13,6 @@ Template.blackmarket.helpers({
 });
 
 Template.blackmarket.events({
-	'click .btn-close-horizontal': function(e, t) {
-		e.preventDefault();
-		Game.Blackmarket.hideItems();
-	},
-
 	'click .start': function(e, t) {
 		var item = Game.Blackmarket.items[ e.currentTarget.dataset.id ];
 

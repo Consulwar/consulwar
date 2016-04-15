@@ -111,8 +111,11 @@ Game.actualizeGameInfo = function() {
 	console.log('actualize...');
 	if (!isActualizeInprogress) {
 		isActualizeInprogress = true;
-		Meteor.call('actualizeGameInfo', function() {
+		Meteor.call('actualizeGameInfo', function(err) {
 			isActualizeInprogress = false;
+			if (err) {
+				Game.syncServerTime();
+			}
 		});
 	}
 }
@@ -121,24 +124,51 @@ Game.actualizeGameInfo = function() {
 Session.set('serverTimeDelta', null);
 Session.setDefault('serverTime', Math.floor(new Date().valueOf() / 1000));
 
-Meteor.call('getCurrentTime', function(error, result) {
-	Session.set('serverTimeDelta', new Date().valueOf() - result);
-	var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
-	Session.set('serverTime', serverTime);
+var syncTimeFunctionId = null;
+var refreshQueueFunctionId = null;
 
-	Meteor.setInterval(function() {
+Game.syncServerTime = function() {
+	if (refreshQueueFunctionId) {
+		Meteor.clearInterval(refreshQueueFunctionId);
+		refreshQueueFunctionId = null;
+	}
+
+	Meteor.call('getCurrentTime', function(error, result) {
+		if (error) {
+			// call Game.syncServerTime again after 10 seconds
+			if (!syncTimeFunctionId) {
+				syncTimeFunctionId = Meteor.setTimeout(Game.syncServerTime, 10000);
+			}
+			return;
+		}
+
+		// clear timeout id
+		if (syncTimeFunctionId) {
+			Meteor.clearTimeout(syncTimeFunctionId);
+			syncTimeFunctionId = null;
+		}
+
+		// got server time
+		Session.set('serverTimeDelta', new Date().valueOf() - result);
 		var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
 		Session.set('serverTime', serverTime);
 
-		var queue = Game.Queue.getAll();
-		for (var i = 0; i < queue.length; i++) {
-			if (queue[i].finishTime <= serverTime) {
-				Game.actualizeGameInfo();
-				break;
+		// refresh time each second
+		refreshQueueFunctionId = Meteor.setInterval(function() {
+			var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
+			Session.set('serverTime', serverTime);
+
+			var queue = Game.Queue.getAll();
+			for (var i = 0; i < queue.length; i++) {
+				if (queue[i].finishTime <= serverTime) {
+					Game.actualizeGameInfo();
+					break;
+				}
 			}
-		}
-	}, 1000);
-});
+		}, 1000);
+	});
+}
+Game.syncServerTime();
 
 
 Tracker.autorun(function () {

@@ -2,28 +2,21 @@ initColosseumClient = function() {
 
 initColosseumLib();
 
-Game.Colosseum.showTournaments = function() {
-	Router.current().render('colosseum', { to: 'buildingMenu' });
-}
-
-Game.Colosseum.hideTournaments = function() {
-	Router.current().render(null, { to: 'buildingMenu' });
-}
-
 Template.colosseum.helpers({
 	tournaments: function() {
 		return _.map(Game.Colosseum.tournaments, function(item) {
 			return item;
 		});
+	},
+
+	timeCooldown: function() {
+		var user = Meteor.user();
+		var level = Game.Building.items.residential.colosseum.currentLevel();
+		return user.timeLastTournament - Session.get('serverTime') + Game.Colosseum.getCooldownPeriod(level);
 	}
 });
 
 Template.colosseum.events({
-	'click .btn-close-horizontal': function(e, t) {
-		e.preventDefault();
-		Game.Colosseum.hideTournaments();
-	},
-
 	'click .start': function(e, t) {
 		var item = Game.Colosseum.tournaments[ e.currentTarget.dataset.id ];
 

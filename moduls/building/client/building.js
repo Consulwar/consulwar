@@ -6,10 +6,20 @@ Meteor.subscribe('buildings');
 
 Game.Building.showPage = function() {
 	var item = Game.Building.items[this.params.group][this.params.item];
+	var menu = this.params.menu;
 	
 	if (item) {
-		this.render('item_building', {to: 'content', data: {building: item}});
-		this.render(null, { to: 'buildingMenu' });
+		switch (menu) {
+			case 'tournaments':
+				this.render('colosseum', { to: 'content' });
+				break;
+			case 'containers':
+				this.render('blackmarket', { to: 'content' });
+				break;
+			default:
+				this.render('item_building', {to: 'content', data: {building: item} });
+				break;
+		}
 	} else {
 		this.render('empty', {to: 'content'})
 	}
@@ -42,11 +52,11 @@ Template.item_building.events({
 	},
 
 	'click button.tournament': function(e, t) {
-		Game.Colosseum.showTournaments();
+		Router.go('building', { group: 'residential', item: 'colosseum', menu: 'tournaments' });
 	},
 
 	'click button.blackmarket': function(e, t) {
-		Game.Blackmarket.showItems();
+		Router.go('building', { group: 'residential', item: 'blackmarket', menu: 'containers' });
 	}
 });
 

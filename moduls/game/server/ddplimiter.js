@@ -9,13 +9,16 @@ var HEAVY_METHODS = [
 	'mutual.invest',
 	'house.buyItem',
 	'cards.buy',
-	'cards.activate'
+	'cards.activate',
+	'chat.sendMessage'
 ];
 
 DDPRateLimiter.addRule({
 	type: 'method',
 	name: function(methodName) {
-		return HEAVY_METHODS.indexOf(methodName) != -1;
+		return true;
+		// Only for methods in array
+		// return HEAVY_METHODS.indexOf(methodName) != -1;
 	},
 	userId: function(userId) {
 		return true;

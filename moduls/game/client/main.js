@@ -143,7 +143,10 @@ Game.syncServerTime = function() {
 		}
 
 		// clear timeout id
-		syncTimeFunctionId = null;
+		if (syncTimeFunctionId) {
+			Meteor.clearTimeout(syncTimeFunctionId);
+			syncTimeFunctionId = null;
+		}
 
 		// got server time
 		Session.set('serverTimeDelta', new Date().valueOf() - result);

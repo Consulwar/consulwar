@@ -311,7 +311,6 @@ var helpers = {
 
 Template.game.helpers(helpers);
 Template.item.helpers(helpers);
-Template.battle.helpers(helpers);
 
 
 Template.game.events({

@@ -1,5 +1,7 @@
 initUnitLib = function() {
 
+initBattleLib();
+
 game.Unit = function(options) {
 	game.Unit.superclass.constructor.apply(this, arguments);
 

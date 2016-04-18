@@ -490,7 +490,7 @@ var completeHumansArrival = function(event, planet) {
 			Meteor.call('planet.discover', planet._id);
 		}
 	}
-}
+};
 
 var completeReptilesArrival = function(event, planet) {
 	if (!event.info.mission) {
@@ -650,7 +650,7 @@ var completeReptilesArrival = function(event, planet) {
 
 	planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 	Game.Planets.update(planet);
-}
+};
 
 var completeShipFight = function(event) {
 	var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
@@ -763,7 +763,7 @@ var completeShipFight = function(event) {
 			armyId:         event.info.armyId
 		});
 	}
-}
+};
 
 Game.SpaceEvents.completeShip = function(event) {
 	// Arrived to planet

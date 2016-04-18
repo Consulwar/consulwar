@@ -208,12 +208,15 @@ Template.cosmosFleetsInfo.helpers({
 	userFleets: function () {
 		var result = [];
 
-		var fleets = Game.SpaceEvents.getFleets().fetch();	
-		for (var i = 0; i < fleets.length; i++) {
+		var i = 0;
+		var data = null;
+
+		var fleets = Game.SpaceEvents.getFleets().fetch();
+		for (i = 0; i < fleets.length; i++) {
 			if (!fleets[i].info.isHumans) {
 				continue;
 			}
-			var data = {
+			data = {
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
@@ -239,8 +242,8 @@ Template.cosmosFleetsInfo.helpers({
 		}
 		
 		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
-		for (var i = 0; i < reinforcements.length; i++) {
-			var data = {
+		for (i = 0; i < reinforcements.length; i++) {
+			data = {
 				isReinforcement: true,
 				id: reinforcements[i]._id,
 				start: Game.Planets.getBase(),
@@ -628,9 +631,10 @@ Game.Cosmos.showAttackMenu = function(id) {
 
 				// count sent
 				var sentCount = 0;
+				var i = 0;
 
 				var fleets = Game.SpaceEvents.getFleets().fetch();
-				for (var i = 0; i < fleets.length; i++) {
+				for (i = 0; i < fleets.length; i++) {
 					var fleet = fleets[i];
 
 					if (!fleet.info.isHumans) {
@@ -646,7 +650,7 @@ Game.Cosmos.showAttackMenu = function(id) {
 					}
 				}
 
-				for (var i = result.length; i < maxCount; i++) {
+				for (i = result.length; i < maxCount; i++) {
 					result.push({
 						isEmpty: true,
 						isSent: (sentCount > 0 ? true : false)

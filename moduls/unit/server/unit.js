@@ -475,7 +475,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			for (i = 0; i < priorTargets.length; i++) {
 
-				var enemy = priorTargets[i];
+				enemy = priorTargets[i];
 				if (!enemy || enemy.life <= 0) continue;
 				if (i >= unitPriorTargetsDamage.length) continue;
 
@@ -538,7 +538,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (unit.damage <= 0) break;
 			}
 		}
-	}
+	};
 
 	var applyEffect = function(unit, friends, enemies, round, options) {
 		if (unit
@@ -554,17 +554,19 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 			}
 		}
-	}
+	};
 
 	var applyBattleEffects = function(userUnits, enemyUnits, round, options) {
-		for (var key in userUnits) {
+		var key = null;
+
+		for (key in userUnits) {
 			applyEffect( userUnits[key], userUnits, enemyUnits, round, options );
 		}
 
-		for (var key in enemyUnits) {
+		for (key in enemyUnits) {
 			applyEffect( enemyUnits[key], enemyUnits, userUnits, round, options );
 		}
-	}
+	};
 
 	var performRound = function(userUnits, enemyUnits, round, options) {
 
@@ -653,8 +655,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		return {
 			userKilled: userKilled,
 			enemyKilled: enemyKilled
-		}
-	}
+		};
+	};
 
 	var getPoints = function(resources) {
 		var points = 0;
@@ -664,7 +666,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 		}
 		return points;
-	}
+	};
 
 	this.constructor = function(userArmy, enemyArmy, options) {
 		// parse options
@@ -683,13 +685,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		var artefacts = (options && options.artefacts) ? options.artefacts : null;
 
-		var options = {
+		options = {
 			rouns: rounds,
 			damageReduction: damageReduction,
 			missionType: missionType,
 			missionLevel: missionLevel,
 			artefacts: artefacts
-		}
+		};
 
 		// parse user army
 		var userUnits = parseArmyToUnits( userArmy );
@@ -726,9 +728,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		writeLog('Наша армия:');
 		var userArmyRest = null;
 
-		for (var key in userUnits) {
+		var key = null;
+		var unit = null;
 
-			var unit = userUnits[key];
+		for (key in userUnits) {
+
+			unit = userUnits[key];
 			writeLog('    ' + unit.model.name + ' ' + unit.count);
 
 			if (unit.count > 0) {
@@ -749,9 +754,9 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var enemyArmyRest = null;
 		var enemyArmyKilled = null;
 		
-		for (var key in enemyUnits) {
+		for (key in enemyUnits) {
 
-			var unit = enemyUnits[key];
+			unit = enemyUnits[key];
 			writeLog('    ' + unit.model.name + ' ' + unit.count);
 
 			var killed = unit.startCount - unit.count;
@@ -839,7 +844,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		// pass gained artefacts
-		var artefacts = null;
+		artefacts = null;
 
 		if (options.artefacts) {
 			if (userArmyRest && !enemyArmyRest) {
@@ -863,10 +868,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			enemyArmy: enemyArmyRest,
 			reward: reward,
 			artefacts: artefacts
-		}
-	}
+		};
+	};
 	this.constructor(userArmy, enemyArmy, options);
-}
+};
 
 Meteor.publish('units', function () {
 	if (this.userId) {

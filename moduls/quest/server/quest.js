@@ -345,7 +345,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked ]== true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -401,7 +401,7 @@ Meteor.publish('quest', function () {
 	if (this.userId) {
 		return Game.Quest.Collection.find({
 			user_id: this.userId
-		})
+		});
 	}
 });
 

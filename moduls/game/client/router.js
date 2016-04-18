@@ -119,7 +119,7 @@ var registerRoute = function(group, name, path, action) {
 		},
 		action: action
 	});
-}
+};
 
 for (var group in gameRoutes) {
 	for (var name in gameRoutes[group]) {

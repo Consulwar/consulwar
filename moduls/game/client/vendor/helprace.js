@@ -129,7 +129,7 @@
             dom.style['-moz-transition'] = '-moz-transform 0.5s';
             dom.style['-webkit-transition'] = '-webkit-transform 0.5s';
             dom.style['-o-transition'] = '-o-transform 0.5s';
-            dom.style['transition'] = 'transform 0.5s';
+            dom.style.transition = 'transform 0.5s';
             if (position.search('top') !== -1) {
                 this.setTransform('translate(0,-25px)', dom);
             }

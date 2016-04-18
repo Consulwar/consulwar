@@ -685,6 +685,7 @@ Game.Effect.getRelatedTo = function(obj) {
 	var result = {};
 	var cache = {};
 	var value = null;
+	var provider = null;
 
 	for (var priority in effects) {
 		result[priority] = {};
@@ -693,7 +694,7 @@ Game.Effect.getRelatedTo = function(obj) {
 
 				// Cache for building & research
 				if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
-					var provider = effects[priority][i].provider;
+					provider = effects[priority][i].provider;
 					if (cache[provider.type] === undefined) {
 						cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
 					}
@@ -728,7 +729,7 @@ Game.Effect.getRelatedTo = function(obj) {
 
 				// Cache for building & research
 				if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
-					var provider = effects[priority][i].provider;
+					provider = effects[priority][i].provider;
 					if (cache[provider.type] === undefined) {
 						cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
 					}
@@ -742,7 +743,7 @@ Game.Effect.getRelatedTo = function(obj) {
 					value = effects[priority][i].result();
 				}
 
-				if (value && value != undefined) {
+				if (value && value !== undefined) {
 					result[priority][effects[priority][i].affect].push({
 						value: (Math.floor((value * 100)) / 100),
 						provider: effects[priority][i].provider,
@@ -755,11 +756,11 @@ Game.Effect.getRelatedTo = function(obj) {
 	}
 
 	return result;
-}
+};
 
 Game.Effect.getAll = function() {
 	return this.getRelatedTo({});
-}
+};
 
 Game.Effect.getValue = function(hideEffects) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
@@ -771,7 +772,7 @@ Game.Effect.getValue = function(hideEffects) {
 		value: effects,
 		configurable: true,
 		enumerable: !hideEffects
-	})
+	});
 
 	for (var priority in effects) {
 		for (var item in effects[priority]) {
@@ -793,7 +794,7 @@ Game.Effect.getValue = function(hideEffects) {
 	}
 
 	return result;
-}
+};
 
 // reduce - true = скидка, т.е. вычитаем эффекты
 Game.Effect.applyTo = function(target, obj, hideEffects) {
@@ -804,7 +805,7 @@ Game.Effect.applyTo = function(target, obj, hideEffects) {
 		value: effects,
 		configurable: true,
 		enumerable: !hideEffects
-	})
+	});
 
 	for (var priority in effects) {
 		for (var item in effects[priority]) {
@@ -839,7 +840,7 @@ Game.Effect.applyTo = function(target, obj, hideEffects) {
 	}
 
 	return obj;
-}
+};
 
 Game.Effect.Income = function(options) {
 	Game.Effect.Income.superclass.constructor.apply(this, arguments);
@@ -850,7 +851,7 @@ Game.Effect.Income = function(options) {
 
 	this.type = 'income';
 	this.reduce = false;
-}
+};
 extend(Game.Effect.Income, Game.Effect);
 Game.Effect.Income.type = 'income';
 Game.Effect.Income.reduce = false;
@@ -860,7 +861,7 @@ Game.Effect.Price = function(options) {
 
 	this.type = 'price';
 	this.reduce = true;
-}
+};
 extend(Game.Effect.Price, Game.Effect);
 Game.Effect.Price.type = 'price';
 Game.Effect.Price.reduce = true;
@@ -871,7 +872,7 @@ Game.Effect.Military = function(options) {
 
 	this.type = 'military';
 	this.reduce = false;
-}
+};
 extend(Game.Effect.Military, Game.Effect);
 Game.Effect.Military.type = 'military';
 Game.Effect.Military.reduce = false;
@@ -881,7 +882,7 @@ Game.Effect.ProfitOnce = function(options) {
 
 	this.type = 'profitOnce';
 	this.reduce = true;
-}
+};
 extend(Game.Effect.ProfitOnce, Game.Effect);
 Game.Effect.ProfitOnce.type = 'profitOnce';
 Game.Effect.ProfitOnce.reduce = true;
@@ -891,7 +892,7 @@ Game.Effect.Special = function(options) {
 
 	this.type = 'special';
 	this.reduce = true;
-}
+};
 extend(Game.Effect.Special, Game.Effect);
 Game.Effect.Special.type = 'special';
 Game.Effect.Special.reduce = true;
@@ -927,12 +928,12 @@ Game.Queue = {
 		}
 		return false;
 	}
-}
+};
 
 
 game.Function = function(options) {
 	Game.functions[options.key] = options.func;
-}
+};
 
 Game.functions = {};
 

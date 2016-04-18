@@ -45,7 +45,7 @@ Game.Quest.showDailyQuest = function() {
 			$('.over')[0]
 		);
 	}
-}
+};
 
 Game.Quest.showQuest = function(id) {
 	var currentQuest = Game.Quest.getOneById(id);
@@ -87,7 +87,7 @@ Game.Quest.showQuest = function(id) {
 		isLoading.set(false);
 		loadedQuest.set( new game.Quest(data) );
 	});
-}
+};
 
 Game.Quest.showGreeteing = function(who) {
 	isLoading.set(false);
@@ -106,7 +106,7 @@ Game.Quest.showGreeteing = function(who) {
 			$('.over')[0]
 		);
 	}
-}
+};
 
 Template.quest.helpers({
 	isLoading: function() { return isLoading.get(); },
@@ -170,7 +170,7 @@ Template.quest.events({
 			Meteor.call('quests.sendDailyAnswer', e.target.dataset.option, function(err, result) {
 				isLoading.set(false);
 				loadedQuest.set(result);
-			})
+			});
 		}
 	},
 
@@ -186,7 +186,7 @@ Template.reward.helpers({
 		var quest = loadedQuest.get();
 		return quest ? quest.reward : null;
 	}
-})
+});
 
 Template.reward.events({
 	'click .close, click .take': function(e, t) {
@@ -195,4 +195,4 @@ Template.reward.events({
 	}
 });
 
-}
+};

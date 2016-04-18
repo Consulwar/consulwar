@@ -17,13 +17,13 @@ Game.Building.showPage = function() {
 				this.render('blackmarket', { to: 'content' });
 				break;
 			default:
-				this.render('item_building', {to: 'content', data: {building: item} });
+				this.render('item_building', {to: 'content', data: { building: item } });
 				break;
 		}
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', { to: 'content' });
 	}
-}
+};
 
 Template.item_building.events({
 	'click button.build': function(e, t) {
@@ -42,7 +42,7 @@ Template.item_building.events({
 			}
 		);
 
-		if (item.currentLevel() == 0) {
+		if (item.currentLevel() === 0) {
 			Router.go(item.url({group: item.group}));
 		}
 	},
@@ -60,4 +60,4 @@ Template.item_building.events({
 	}
 });
 
-}
+};

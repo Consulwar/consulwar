@@ -13,7 +13,7 @@ if (process.env.NODE_ENV == 'development') {
 				location: Game.Unit.location.HOME
 			}, {
 				$set: set
-			})
+			});
 
 			var homePlanet = Game.Planets.getBase();
 			if (homePlanet) {
@@ -110,13 +110,13 @@ if (process.env.NODE_ENV == 'development') {
 			}
 			Game.Quest.Collection.update({ user_id: Meteor.userId() }, quests);
 		}
-	})
+	});
 
 } else {
 
 	var addCheater = function() {
 		throw new Meteor.Error('Вы добавлены в список читеров, поздравляем!');
-	}
+	};
 
 	Meteor.methods({
 		'cheats.setUnitCount': addCheater,
@@ -133,8 +133,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.buyAllHouseItems': addCheater,
 		'cheats.resetQuests': addCheater,
 		'cheats.completeQuests': addCheater
-	})
+	});
 
 }
 
-}
+};

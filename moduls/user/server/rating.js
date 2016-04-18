@@ -33,7 +33,7 @@ Meteor.methods({
 		return {
 			total: total,
 			position: position
-		}
+		};
 	},
 
 	'rating.getPage': function(page, count) {
@@ -66,8 +66,8 @@ Meteor.methods({
 		return {
 			users: result.fetch(),
 			count: result.count()
-		}
+		};
 	}
 });
 
-}
+};

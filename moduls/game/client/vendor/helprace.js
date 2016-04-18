@@ -129,7 +129,7 @@
             dom.style['-moz-transition'] = '-moz-transform 0.5s';
             dom.style['-webkit-transition'] = '-webkit-transform 0.5s';
             dom.style['-o-transition'] = '-o-transform 0.5s';
-            dom.style['transition'] = 'transform 0.5s';
+            dom.style.transition = 'transform 0.5s';
             if (position.search('top') !== -1) {
                 this.setTransform('translate(0,-25px)', dom);
             }
@@ -423,12 +423,12 @@
         var feedbackDomain,
             script = document.createElement('script');
 
-        feedbackDomain = window.ChdFeedbackWidget.config.url.replace(/(http|https|):/, '').replace(/(chd-widgets\/feedback)(.*)/, '')
+        feedbackDomain = window.ChdFeedbackWidget.config.url.replace(/(http|https|):/, '').replace(/(chd-widgets\/feedback)(.*)/, '');
         script.src = feedbackDomain + 'chd-widget/feedback/get-account-keyword';
 
         script.onload = function () {
             window.ChdFeedbackWidget.showTab();
-        }
+        };
 
         document.getElementsByTagName('body')[0].appendChild(script);
     };

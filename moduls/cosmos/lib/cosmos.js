@@ -5,7 +5,7 @@ game.PlanetType = function(options) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется тип планеты ' + options.engName);
 	}
 	Game.Planets.types[options.engName] = options;
-}
+};
 
 Game.Cosmos = {};
 
@@ -56,6 +56,7 @@ Game.Planets = {
 		var targets = [];
 		var isTargetInList = false;
 		var fleets = Game.SpaceEvents.getFleets().fetch();
+		var id = null;
 
 		for (var i = 0; i < fleets.length; i++) {
 			var fleet = fleets[i];
@@ -64,7 +65,7 @@ Game.Planets = {
 				continue;
 			}
 
-			var id = fleet.info.isOneway
+			id = fleet.info.isOneway
 				? fleet.info.targetId
 				: fleet.info.startPlanetId;
 
@@ -85,8 +86,8 @@ Game.Planets = {
 
 		// add current colonies
 		var colonies = Game.Planets.getColonies();
-		for (var i = 0; i < colonies.length; i++) {
-			var id = colonies[i]._id;
+		for (var n = 0; n < colonies.length; n++) {
+			id = colonies[n]._id;
 			if (targets.indexOf(id) == -1) {
 				targets.push(id);
 			}
@@ -166,11 +167,11 @@ Game.Planets = {
 
 	calcSegmentCenter: function(hand, segment, maxHands, maxSegments, rotationFactor, maxRadius, galacticAngle) {
 		// central sector
-		if (segment == 0) {	
+		if (segment === 0) {	
 			return {
 				x: 0,
 				y: 0
-			}
+			};
 		}
 
 		// hand segment
@@ -179,7 +180,7 @@ Game.Planets = {
 		return {
 			x: distance * Math.cos(angle),
 			y: distance * Math.sin(angle)
-		}
+		};
 	},
 
 	calcSegmentPlanetsAmount: function(hand, segment, maxHands, maxSegments, minPlanets, maxPlanets) {
@@ -189,7 +190,7 @@ Game.Planets = {
 		var min = 0;
 		var max = 0;
 
-		if (segment == 0) {
+		if (segment === 0) {
 			min = minPlanets * kCenter;
 			max = maxPlanets * kCenter;
 		} else {
@@ -204,14 +205,16 @@ Game.Planets = {
 
 	calcSegmentRandomPoints: function(amount, hand, segment, maxHands, maxSegments, rotationFactor, narrowFactor, maxRadius, galacticAngle) {
 		var result = [];
+		var angle = 0;
+		var distance = 0;
 
 		// central sector
 		if (segment <= 0) {
 			var radius = maxRadius / maxSegments * 0.9;
 
 			while (amount-- > 0) {
-				var distance = Game.Random.random() * radius;
-				var angle = Game.Random.random() * Math.PI * 2;
+				distance = Game.Random.random() * radius;
+				angle = Game.Random.random() * Math.PI * 2;
 
 				result.push({
 					x: distance * Math.cos(angle),
@@ -235,7 +238,7 @@ Game.Planets = {
 		endDistance -= delta * 0.2;
 
 		while (amount-- > 0) {
-			var distance = startDistance + Game.Random.random() * (endDistance - startDistance);
+			distance = startDistance + Game.Random.random() * (endDistance - startDistance);
 
 			var rotation = distance * rotationFactor;
 
@@ -251,7 +254,7 @@ Game.Planets = {
 				offset = Game.Random.random() * (handAngle * 0.8) - (handAngle * 0.8) / 2;
 			}
 
-			var angle = startAngle + offset + rotation;
+			angle = startAngle + offset + rotation;
 
 			result.push({
 				x: distance * Math.cos(angle),
@@ -331,7 +334,7 @@ Game.Planets = {
 
 		var accDistance = traveledDistance;
 
-		while (isFlying && speed != 0 && traveledDistance < (totalDistance - accDistance)) {
+		while (isFlying && speed !== 0 && traveledDistance < (totalDistance - accDistance)) {
 			traveledDistance += speed;
 			time++;
 
@@ -379,7 +382,7 @@ Game.Planets = {
 
 		var accDistance = traveledDistance;
 
-		while (isFlying && speed != 0 && traveledDistance < (totalDistance - accDistance)) {
+		while (isFlying && speed !== 0 && traveledDistance < (totalDistance - accDistance)) {
 			traveledDistance += speed;
 			time++;
 
@@ -419,7 +422,7 @@ Game.Planets = {
 		traveledDistance *= 2;
 		time *= 2;
 
-		while (speed != 0 && traveledDistance < distance) {
+		while (speed !== 0 && traveledDistance < distance) {
 			traveledDistance += maxSpeed;
 			time++;
 		}
@@ -448,7 +451,7 @@ Game.Planets = {
 		var startPoint = {
 			x: targetShip.info.startPosition.x,
 			y: targetShip.info.startPosition.y,
-		}
+		};
 
 		var targetShipTime = timeCurrent - targetShip.timeStart;
 		var targetShipSpeed = Game.Planets.calcMaxSpeed(targetShip.info.engineLevel);
@@ -476,7 +479,7 @@ Game.Planets = {
 			var attackPoint = {
 				x: startPoint.x + distance * Math.cos(angle),
 				y: startPoint.y + distance * Math.sin(angle)
-			}
+			};
 
 			var timeAttack = Game.Planets.calcFlyTime(attackerPlanet, attackPoint, attackerEngineLevel);
 
@@ -486,7 +489,7 @@ Game.Planets = {
 			} else {
 				return timeAttack;
 			}
-		}
+		};
 
 		if (targetDistance >= totalDistance - 0.1) {
 			return null;
@@ -515,10 +518,10 @@ Game.Planets = {
 		return {
 			k: resultDistance / totalDistance,
 			time: check(resultDistance)
-		}
+		};
 	}
 
-}
+};
 
 Game.SpaceEvents = {
 
@@ -580,7 +583,7 @@ Game.SpaceEvents = {
 			sort: {
 				timeEnd: 1
 			}
-		})
+		});
 	},
 
 	getCurrentFleetsCount: function() {
@@ -634,9 +637,9 @@ Game.SpaceEvents = {
 
 		return null;
 	}
-}
+};
 
 initCosmosConfigLib();
 initCosmosContent();
 
-}
+};

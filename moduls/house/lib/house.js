@@ -22,15 +22,15 @@ game.HouseItem = function(options) {
 			item: this.engName
 		};
 		return Router.routes[this.type].path(options);
-	}
+	};
 
 	this.getPrice = function() {
 		return options.price;
-	}
+	};
 
 	this.currentLevel = function() {
 		return 0;
-	}
+	};
 
 	this.checkBought = function() {
 		var house = Game.House.getValue();
@@ -42,7 +42,7 @@ game.HouseItem = function(options) {
 			return true;
 		}
 		return false;
-	}
+	};
 
 	this.checkPlaced = function() {
 		var house = Game.House.getValue();
@@ -55,7 +55,7 @@ game.HouseItem = function(options) {
 			return true;
 		}
 		return false;
-	}
+	};
 
 	this.canBuy = function() {
 		var price = this.getPrice();
@@ -71,8 +71,8 @@ game.HouseItem = function(options) {
 		}
 
 		return true;
-	}
-}
+	};
+};
 game.extend(game.HouseItem, game.Item);
 
 Game.House = {
@@ -116,8 +116,8 @@ Game.House = {
 		tron: {},
 		avatar: {}
 	}
-}
+};
 
 initHouseContent();
 
-}
+};

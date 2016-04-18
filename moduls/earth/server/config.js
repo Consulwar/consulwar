@@ -10,4 +10,4 @@ initEarthConfigServer = function() {
 	Game.Earth.REINFORCEMENTS_DELAY = Meteor.settings.earth.reinforcementsDelay;
 	Game.Earth.MIN_ACTIVE_PLAYERS = Meteor.settings.earth.minActivePlayers;
 
-}
+};

@@ -11,7 +11,7 @@ Game.Resources.Collection._ensureIndex({
 // Добавляет/вычитает ресурсы текущему пользователю
 // invertSign - true если вычитаем ресурсы
 Game.Resources.set = function(resource, invertSign, uid) {
-	invertSign = invertSign == true ? -1 : 1;
+	invertSign = invertSign === true ? -1 : 1;
 
 	var inc = null;
 	var set = null;
@@ -26,14 +26,14 @@ Game.Resources.set = function(resource, invertSign, uid) {
 			inc = {};
 		}
 
-		var increment = (resource[name].amount != undefined)
+		var increment = (resource[name].amount !== undefined)
 			? resource[name].amount
 			: resource[name];
 
 		inc[name + '.amount'] = parseInt(increment * invertSign);
 
 		// set resource bonus seconds
-		if (resource[name].bonusSeconds != undefined) {
+		if (resource[name].bonusSeconds !== undefined) {
 			if (!set) {
 				set = {};
 			}
@@ -42,7 +42,7 @@ Game.Resources.set = function(resource, invertSign, uid) {
 		}
 
 		// set resource bonus
-		if (resource[name].totalBonus != undefined) {
+		if (resource[name].totalBonus !== undefined) {
 			if (!set) {
 				set = {};
 			}
@@ -65,18 +65,18 @@ Game.Resources.set = function(resource, invertSign, uid) {
 
 	if (update) {
 		Game.Resources.Collection.update({
-			user_id: uid != undefined ? uid : Meteor.userId()
+			user_id: uid !== undefined ? uid : Meteor.userId()
 		}, update);
 	}
-}
+};
 
 Game.Resources.add = function(resource, uid) {
 	return Game.Resources.set(resource, false, uid);
-}
+};
 
 Game.Resources.spend = function(resource, uid) {
 	return Game.Resources.set(resource, true, uid);
-}
+};
 
 var rollRandomValues = function(object) {
 	for (var key in object) {
@@ -87,18 +87,19 @@ var rollRandomValues = function(object) {
 		}
 	}
 	return object;
-}
+};
 
 Game.Resources.rollProfit = function(drop) {
 	var max = 0;
-	for (var i = 0; i < drop.length; i++) {
+	var i = 0;
+	for (i = 0; i < drop.length; i++) {
 		max += drop[i].chance;
 	}
 
 	var rand = Game.Random.random() * max;
 	var val = 0;
 
-	for (var i = 0; i < drop.length; i++) {
+	for (i = 0; i < drop.length; i++) {
 		val += drop[i].chance;
 		if (rand <= val) {
 			break;
@@ -106,7 +107,7 @@ Game.Resources.rollProfit = function(drop) {
 	}
 
 	return rollRandomValues( drop[i].profit );
-}
+};
 
 Game.Resources.addProfit = function(profit) {
 	if (profit.resources) {
@@ -133,7 +134,7 @@ Game.Resources.addProfit = function(profit) {
 			$inc: { votePowerBonus: profit.votePower }
 		});
 	}
-}
+};
 
 Game.Resources.updateWithIncome = function(currentTime) {
 	var resources = Game.Resources.getValue();
@@ -185,11 +186,11 @@ Game.Resources.updateWithIncome = function(currentTime) {
 			delta,
 			resources.credits.bonusSeconds
 		)
-	}
+	};
 
 	for (var name in result) {
 		// set resource bonus
-		if (result[name].bonus != undefined) {
+		if (result[name].bonus !== undefined) {
 			var currentBonus = (resources[name] && resources[name].bonus)
 				? resources[name].bonus
 				: 0;
@@ -203,13 +204,13 @@ Game.Resources.updateWithIncome = function(currentTime) {
 
 	Game.Resources.add(result);
 	return result;
-}
+};
 
 Game.Resources.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Resources.getValue();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Resources.Collection.insert({
 			'user_id': user._id,
 			humans: {amount: 500 * 3},
@@ -218,13 +219,13 @@ Game.Resources.initialize = function(user) {
 			credits: {amount: 0},
 			honor: {amount: 0},
 			updated: Game.getCurrentTime()
-		})
+		});
 	}
-}
+};
 
 Game.Cards.complete = function(task) {
 	// no action on complete
-}
+};
 
 Meteor.methods({
 	getBonusResources: function(name) {
@@ -234,7 +235,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -257,7 +258,7 @@ Meteor.methods({
 		set[name] = {
 			amount: (currentValue[name].amount || 0) + currentValue[name].bonus,
 			bonus: 0
-		}
+		};
 
 		Game.Resources.Collection.update({'user_id': Meteor.userId()}, {$set: set});
 
@@ -271,7 +272,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -303,7 +304,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
@@ -334,14 +335,14 @@ Meteor.methods({
 				user_id: user._id
 			}, {
 				$set: set
-			})
+			});
 		}
 
 		var task = {
 			type: item.type,
 			engName: item.engName,
 			time: item.durationTime
-		}
+		};
 
 		if (item.cardGroup) {
 			task.group = item.cardGroup;
@@ -349,7 +350,7 @@ Meteor.methods({
 
 		// activate card
 		if (!Game.Queue.add(task)) {
-			throw new Meteor.Error('Эту карточку нельзя активировать сейчас')
+			throw new Meteor.Error('Эту карточку нельзя активировать сейчас');
 		}
 
 		// spend card
@@ -366,4 +367,4 @@ Meteor.publish('resources', function () {
 	}
 });
 
-}
+};

@@ -12,7 +12,7 @@ game.Mail.complain = {
 	senderBlocked: 1,
 	recipientBlocked: 2,
 	bothBlocked: 3
-}
+};
 
 Game.Mail = {
 	Collection: new Meteor.Collection('mail'),
@@ -25,4 +25,4 @@ Game.Mail = {
 	}
 };
 
-}
+};

@@ -59,6 +59,6 @@ Template.pages.helpers({
 			items: items,
 			hasFirst: from == 1,
 			hasLast: to == totalPages
-		}
+		};
 	}
 });

@@ -14,9 +14,9 @@ var events = {
 	'click .need_help': function(e, t) {
 		Blaze.remove(t.view);
 
-		ShowModalWindow(Template.needHelp)
+		ShowModalWindow(Template.needHelp);
 	}
-}
+};
 
 Template.support.events(events);
 Template.needHelp.events(events);

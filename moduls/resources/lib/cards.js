@@ -21,7 +21,7 @@ game.Card = function(options) {
 			item: this.engName
 		};
 		return Router.routes.house.path(options);
-	}
+	};
 
 	Game.Cards.items[this.engName] = this;
 
@@ -30,15 +30,15 @@ game.Card = function(options) {
 		return (resources && resources[this.engName] && resources[this.engName].amount)
 			? resources[this.engName].amount
 			: 0;
-	}
+	};
 
 	this.getPrice = function() {
 		return options.price;
-	}
+	};
 
 	this.currentLevel = function() {
 		return 0;
-	}
+	};
 
 	this.getActive = function() {
 		return Game.Queue.Collection.findOne({
@@ -47,7 +47,7 @@ game.Card = function(options) {
 			type: 'card',
 			engName: this.engName
 		});
-	}
+	};
 
 	this.canBuy = function() {
 		var price = this.getPrice();
@@ -63,7 +63,7 @@ game.Card = function(options) {
 		}
 
 		return true;
-	}
+	};
 
 	this.nextReloadTime = function() {
 		var resources = Game.Resources.getValue();
@@ -71,8 +71,8 @@ game.Card = function(options) {
 			return resources[this.engName].nextReloadTime;
 		}
 		return null;
-	}
-}
+	};
+};
 game.extend(game.Card, game.Item);
 
 Game.Cards = {
@@ -87,8 +87,8 @@ Game.Cards = {
 		}
 		return result;
 	}
-}
+};
 
 initCardsContent();
 
-}
+};

@@ -8,7 +8,7 @@ Game.Unit.Collection._ensureIndex({
 });
 
 Game.Unit.set = function(unit, invertSign) {
-	invertSign = invertSign == true ? -1 : 1;
+	invertSign = invertSign === true ? -1 : 1;
 
 	Game.Unit.initialize();
 
@@ -23,31 +23,31 @@ Game.Unit.set = function(unit, invertSign) {
 	});
 
 	return inc;
-}
+};
 
 Game.Unit.add = function(unit) {
 	return Game.Unit.set(unit, false);
-}
+};
 
 Game.Unit.remove = function(unit) {
 	return Game.Unit.set(unit, true);
-}
+};
 
 Game.Unit.complete = function(task) {
 	return Game.Unit.add(task);
-}
+};
 
 Game.Unit.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Unit.getHomeArmy();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Unit.Collection.insert({
 			user_id: user._id,
 			location: Game.Unit.location.HOME
-		})
+		});
 	}
-}
+};
 
 Game.Unit.removeArmy = function(id) {
 	if (Game.Unit.getHomeArmy()._id == id) {
@@ -55,7 +55,7 @@ Game.Unit.removeArmy = function(id) {
 	} else {
 		Game.Unit.Collection.remove({ _id: id });
 	}
-}
+};
 
 Game.Unit.createArmy = function(units, location) {
 	var record = {};
@@ -65,7 +65,7 @@ Game.Unit.createArmy = function(units, location) {
 	record.location = location;
 
 	return Game.Unit.Collection.insert(record);
-}
+};
 
 Game.Unit.updateArmy = function(id, units) {
 	var army = Game.Unit.getArmy(id);
@@ -73,7 +73,7 @@ Game.Unit.updateArmy = function(id, units) {
 		army.units = units;
 		Game.Unit.Collection.update({ _id: id }, army);
 	}
-}
+};
 
 Game.Unit.moveArmy = function (id, location) {
 	var army = Game.Unit.getArmy(id);
@@ -81,7 +81,7 @@ Game.Unit.moveArmy = function (id, location) {
 		army.location = location;
 		Game.Unit.Collection.update({ _id: id }, army);
 	}
-}
+};
 
 Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 	if (destLocation == Game.Unit.location.HOME) {
@@ -134,7 +134,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 
 	// insert new slice
 	return Game.Unit.createArmy(destUnits, destLocation);
-}
+};
 
 Game.Unit.mergeArmy = function(sourceId, destId) {
 	if (sourceId == destId) {
@@ -185,7 +185,7 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
 	if (mergeCount > 0) {
 		Game.Unit.updateArmy(destId, destUnits);
 	}
-}
+};
 
 Game.Unit.rollCount = function(name) {
 	if (_.isNumber(name)) {
@@ -222,14 +222,14 @@ Game.Unit.rollCount = function(name) {
 		case 'front':
 			return Game.Random.interval(100000, 249999);
 	}
-}
+};
 
 Game.Unit.calculateArmyCost = function(army) {
 	var cost = {
 		metals: 0,
 		crystals: 0,
 		humans: 0
-	}
+	};
 
 	for (var side in army) {
 		for (var group in army[side]) {
@@ -251,7 +251,7 @@ Game.Unit.calculateArmyCost = function(army) {
 	}
 
 	return cost;
-}
+};
 
 // ----------------------------------------------------------------------------
 // Battle
@@ -259,7 +259,7 @@ Game.Unit.calculateArmyCost = function(army) {
 
 Game.BattleHistory = {
 	Collection: new Meteor.Collection('battleHistory')
-}
+};
 
 Game.BattleHistory.Collection._ensureIndex({
 	user_id: 1
@@ -275,14 +275,14 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 		userArmy: userArmy,
 		enemyLocation: options.enemyLocation,
 		enemyArmy: enemyArmy
-	}
+	};
 
 	if (battleResults) {
 		history.userArmyRest = battleResults.userArmy;
-		history.enemyArmyRest = battleResults.enemyArmy,
-		history.reward = battleResults.reward,
-		history.artefacts = battleResults.artefacts,
-		history.result = battleResults.result
+		history.enemyArmyRest = battleResults.enemyArmy;
+		history.reward = battleResults.reward;
+		history.artefacts = battleResults.artefacts;
+		history.result = battleResults.result;
 	}
 
 	var historyId = Game.BattleHistory.Collection.insert(history);
@@ -298,7 +298,7 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	}
 
 	return historyId;
-}
+};
 
 Game.BattleHistory.set = function(id, set) {
 	Game.BattleHistory.Collection.update({
@@ -307,7 +307,7 @@ Game.BattleHistory.set = function(id, set) {
 	}, {
 		$set: set
 	});
-}
+};
 
 Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	var battle = new Game.Unit.Battle(userArmy, enemyArmy, options);
@@ -324,7 +324,7 @@ Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	}
 
 	return battle.results;
-}
+};
 
 Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
@@ -332,7 +332,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 	var writeLog = function(message) {
 		currentLog += message + '\n';
-	}
+	};
 
 	var hasAlive = function(units) {
 		for (var name in units) {
@@ -341,7 +341,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 		}
 		return false;
-	}
+	};
 
 	/**
 	 * Creates object with information for each unit from army object.
@@ -396,7 +396,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 						// vars
 						count: count,
 						life: count * model.characteristics.life
-					}
+					};
 
 					// save result of rollCount
 					// changes army original value!
@@ -406,7 +406,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		return units;
-	}
+	};
 
 	var fire = function(unit, enemyUnits) {
 		// no damage this round
@@ -419,9 +419,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var priorTargets = [];
 		var targets = [];
 
+		var i = 0;
+		var appliedDamage = 0;
+		var enemy = null;
+
 		for (var key in enemyUnits) {
 
-			var enemy = enemyUnits[key];
+			enemy = enemyUnits[key];
 
 			// check life
 			if (enemy.life <= 0) continue;
@@ -443,7 +447,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			// check if enemy is one of priority targets
 			if (unitPriorTargets) {
-				for (var i = 0; i < unitPriorTargets.length; i++) {
+				for (i = 0; i < unitPriorTargets.length; i++) {
 					if (enemy.side == unitPriorTargets[i].side
 					 && enemy.group == unitPriorTargets[i].group
 					 && enemy.name == unitPriorTargets[i].engName
@@ -469,13 +473,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			var totalDamage = unit.damage;
 
-			for (var i = 0; i < priorTargets.length; i++) {
+			for (i = 0; i < priorTargets.length; i++) {
 
-				var enemy = priorTargets[i];
+				enemy = priorTargets[i];
 				if (!enemy || enemy.life <= 0) continue;
 				if (i >= unitPriorTargetsDamage.length) continue;
 
-				var appliedDamage = Math.floor( totalDamage * unitPriorTargetsDamage[i] );
+				appliedDamage = Math.floor( totalDamage * unitPriorTargetsDamage[i] );
 
 				if (appliedDamage < 1) {
 					appliedDamage = 1;
@@ -505,12 +509,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			writeLog(unit.model.name + ' (' + unit.count + ') атакует оставшимся уроном ' + unit.damage);
 
-			for (var i = 0; i < targets.length; i++) {
+			for (i = 0; i < targets.length; i++) {
 
-				var enemy = targets[i];
+				enemy = targets[i];
 				if (enemy.life <= 0) continue;
 
-				var appliedDamage = Math.floor( unit.damage / (targets.length - i) );
+				appliedDamage = Math.floor( unit.damage / (targets.length - i) );
 
 				if (appliedDamage < 1) {
 					appliedDamage = 1;
@@ -534,7 +538,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (unit.damage <= 0) break;
 			}
 		}
-	}
+	};
 
 	var applyEffect = function(unit, friends, enemies, round, options) {
 		if (unit
@@ -550,17 +554,19 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 			}
 		}
-	}
+	};
 
 	var applyBattleEffects = function(userUnits, enemyUnits, round, options) {
-		for (var key in userUnits) {
+		var key = null;
+
+		for (key in userUnits) {
 			applyEffect( userUnits[key], userUnits, enemyUnits, round, options );
 		}
 
-		for (var key in enemyUnits) {
+		for (key in enemyUnits) {
 			applyEffect( enemyUnits[key], enemyUnits, userUnits, round, options );
 		}
-	}
+	};
 
 	var performRound = function(userUnits, enemyUnits, round, options) {
 
@@ -569,22 +575,27 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		writeLog('----------------------');
 
 		// calculate damage
-		for (var key in userUnits) {
+		var key = null;
+		var min = 0;
+		var max = 0;
+		var damage = 0;
+
+		for (key in userUnits) {
 			if (userUnits[key].model.characteristics.damage) {
-				var min = userUnits[key].model.characteristics.damage.min * userUnits[key].count;
-				var max = userUnits[key].model.characteristics.damage.max * userUnits[key].count;
-				var damage = Game.Random.interval( min, max ) * options.damageReduction; 
+				min = userUnits[key].model.characteristics.damage.min * userUnits[key].count;
+				max = userUnits[key].model.characteristics.damage.max * userUnits[key].count;
+				damage = Game.Random.interval( min, max ) * options.damageReduction; 
 				userUnits[key].damage = damage;
 			} else {
 				userUnits[key].damage = 0;
 			}
 		}
 
-		for (var key in enemyUnits) {
+		for (key in enemyUnits) {
 			if (enemyUnits[key].model.characteristics.damage) {
-				var min = enemyUnits[key].model.characteristics.damage.min * enemyUnits[key].count;
-				var max = enemyUnits[key].model.characteristics.damage.max * enemyUnits[key].count;
-				var damage = Game.Random.interval( min, max ) * options.damageReduction; 
+				min = enemyUnits[key].model.characteristics.damage.min * enemyUnits[key].count;
+				max = enemyUnits[key].model.characteristics.damage.max * enemyUnits[key].count;
+				damage = Game.Random.interval( min, max ) * options.damageReduction; 
 				enemyUnits[key].damage = damage;
 			} else {
 				enemyUnits[key].damage = 0;
@@ -592,31 +603,33 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		// attack
-		for (var key in userUnits) {
+		for (key in userUnits) {
 			fire( userUnits[key], enemyUnits );
 		}
 
 		writeLog('----------------------');
 
-		for (var key in enemyUnits) {
+		for (key in enemyUnits) {
 			fire( enemyUnits[key], userUnits);
 		}
 
 		writeLog('----------------------');
 
 		// calculate round results
+		var unitsLeft = 0;
+		var unitsKilled = 0;
 		var userKilled = {};
 
-		for (var key in userUnits) {
-			var unitsLeft = Math.ceil( userUnits[key].life / userUnits[key].model.characteristics.life );
-			var unitsKilled = userUnits[key].count - unitsLeft;
+		for (key in userUnits) {
+			unitsLeft = Math.ceil( userUnits[key].life / userUnits[key].model.characteristics.life );
+			unitsKilled = userUnits[key].count - unitsLeft;
 
 			userUnits[key].count = unitsLeft;
 			userKilled[key] = unitsKilled;
 		}
 
 		writeLog('Наши потери:');
-		for (var key in userKilled) {
+		for (key in userKilled) {
 			if (userKilled[key] > 0) {
 				writeLog('    ' + userUnits[key].model.name + ' = ' + userKilled[key]);
 			}
@@ -624,16 +637,16 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		var enemyKilled = {};
 
-		for (var key in enemyUnits) {
-			var unitsLeft = Math.ceil( enemyUnits[key].life / enemyUnits[key].model.characteristics.life );
-			var unitsKilled = enemyUnits[key].count - unitsLeft;
+		for (key in enemyUnits) {
+			unitsLeft = Math.ceil( enemyUnits[key].life / enemyUnits[key].model.characteristics.life );
+			unitsKilled = enemyUnits[key].count - unitsLeft;
 
 			enemyUnits[key].count = unitsLeft;
 			enemyKilled[key] = unitsKilled;
 		}
 
 		writeLog('Вражеские потери:');
-		for (var key in enemyKilled) {
+		for (key in enemyKilled) {
 			if (enemyKilled[key] > 0) {
 				writeLog('    ' + enemyUnits[key].model.name + ' = ' + enemyKilled[key]);
 			}
@@ -642,8 +655,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		return {
 			userKilled: userKilled,
 			enemyKilled: enemyKilled
-		}
-	}
+		};
+	};
 
 	var getPoints = function(resources) {
 		var points = 0;
@@ -653,7 +666,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 		}
 		return points;
-	}
+	};
 
 	this.constructor = function(userArmy, enemyArmy, options) {
 		// parse options
@@ -672,13 +685,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		var artefacts = (options && options.artefacts) ? options.artefacts : null;
 
-		var options = {
+		options = {
 			rouns: rounds,
 			damageReduction: damageReduction,
 			missionType: missionType,
 			missionLevel: missionLevel,
 			artefacts: artefacts
-		}
+		};
 
 		// parse user army
 		var userUnits = parseArmyToUnits( userArmy );
@@ -715,9 +728,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		writeLog('Наша армия:');
 		var userArmyRest = null;
 
-		for (var key in userUnits) {
+		var key = null;
+		var unit = null;
 
-			var unit = userUnits[key];
+		for (key in userUnits) {
+
+			unit = userUnits[key];
 			writeLog('    ' + unit.model.name + ' ' + unit.count);
 
 			if (unit.count > 0) {
@@ -738,9 +754,9 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var enemyArmyRest = null;
 		var enemyArmyKilled = null;
 		
-		for (var key in enemyUnits) {
+		for (key in enemyUnits) {
 
-			var unit = enemyUnits[key];
+			unit = enemyUnits[key];
 			writeLog('    ' + unit.model.name + ' ' + unit.count);
 
 			var killed = unit.startCount - unit.count;
@@ -828,7 +844,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		// pass gained artefacts
-		var artefacts = null;
+		artefacts = null;
 
 		if (options.artefacts) {
 			if (userArmyRest && !enemyArmyRest) {
@@ -852,10 +868,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			enemyArmy: enemyArmyRest,
 			reward: reward,
 			artefacts: artefacts
-		}
-	}
+		};
+	};
 	this.constructor(userArmy, enemyArmy, options);
-}
+};
 
 Meteor.publish('units', function () {
 	if (this.userId) {
@@ -863,4 +879,4 @@ Meteor.publish('units', function () {
 	}
 });
 
-}
+};

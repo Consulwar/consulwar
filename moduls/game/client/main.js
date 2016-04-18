@@ -45,7 +45,7 @@ Router.route('/', function () {
 
 	var user = Meteor.user();
 	if (user) {
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			Meteor.logout();
 			this.redirect('index');
 			alert('Аккаунт заблокирован');
@@ -62,9 +62,9 @@ Router.route('/', function () {
 
 	Meteor.call('onlineUsersCount', function(err, result) {
 		Session.set('onlineUsersCount', result);
-	})
+	});
 
-	if (window.Metrica != undefined) {
+	if (window.Metrica !== undefined) {
 		Metrica.hit(window.location.href, 'Index', document.referrer);
 	}
 
@@ -102,7 +102,7 @@ Meteor.subscribe('queue');
 
 test = Router.route('/test', function() {
 	console.log('yes');
-})
+});
 
 
 var isActualizeInprogress = false;
@@ -118,7 +118,7 @@ Game.actualizeGameInfo = function() {
 			}
 		});
 	}
-}
+};
 
 
 Session.set('serverTimeDelta', null);
@@ -167,7 +167,7 @@ Game.syncServerTime = function() {
 			}
 		}, 1000);
 	});
-}
+};
 Game.syncServerTime();
 
 
@@ -175,7 +175,7 @@ Tracker.autorun(function () {
 	if (Meteor.user() && Meteor.user().game) {
 		var user = Meteor.user();
 
-		if (user && user.blocked == true) {
+		if (user && user.blocked === true) {
 			Meteor.logout();
 			Router.go('index');
 			alert('Аккаунт заблокирован');
@@ -274,7 +274,7 @@ var helpers = {
 		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
 		var fleets = Game.SpaceEvents.getFleets().fetch();
 		
-		if (reinforcements.length == 0 && fleets.length == 0) {
+		if (reinforcements.length === 0 && fleets.length === 0) {
 			return null;
 		}
 
@@ -329,7 +329,7 @@ var helpers = {
 			reptileTime: reptileTime,
 			reptileId: reptileId,
 			isWaitingAttack: isWaitingAttack
-		}
+		};
 	},
 
 	fleetTime: function(time) {
@@ -361,7 +361,7 @@ Template.game.events({
 			} else {
 				Notifications.success('Бонусный металл получен', '+' + result);
 			}
-		})
+		});
 	},
 
 	'click progress.crystals': function(e, t) {
@@ -371,7 +371,7 @@ Template.game.events({
 			} else {
 				Notifications.success('Бонусный кристалл получен', '+' + result);
 			}
-		})
+		});
 	}
 });
 
@@ -380,14 +380,14 @@ ShowModalWindow = function(template, data) {
 		template, 
 		data, 
 		$('.over')[0]
-	)
-}
+	);
+};
 
 Template.item_price.events({
 	'click .resources .credits': function(e, t) {
 		Game.Payment.showWindow();
 	}
-})
+});
 
 Template.item_price.helpers({
 	getResources: function(price) {
@@ -410,6 +410,6 @@ Template.item_price.helpers({
 	isArtefact: function(key) {
 		return Game.Artefacts.items[key] ? true : false;
 	}
-})
+});
 
 });

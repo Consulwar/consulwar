@@ -22,4 +22,4 @@ initCosmosConfigLib = function() {
 
 	Game.Cosmos.COLLECT_ARTEFACTS_PERIOD = Meteor.settings.public.cosmos.collectArtefactsPeriod;
 
-}
+};

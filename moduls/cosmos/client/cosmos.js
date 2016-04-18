@@ -26,7 +26,7 @@ Game.Cosmos.showPage = function() {
 		isLoading.set(true);
 		this.render('cosmos', { to: 'permanent_content' });
 	}
-}
+};
 
 // ----------------------------------------------------------------------------
 // Cosmos battle history
@@ -64,7 +64,7 @@ Game.Cosmos.showHistory = function() {
 			}
 		});
 	});
-}
+};
 
 Template.cosmosHistory.helpers({
 	countTotal: function() { return Game.Statistic.getUserValue('battleHistoryCount'); },
@@ -122,7 +122,7 @@ var getArmyInfo = function(units, rest) {
 	}
 
 	return result.length > 0 ? result : null;
-}
+};
 
 var getBattleInfo = function(item) {
 	item.locationName = null;
@@ -137,14 +137,14 @@ var getBattleInfo = function(item) {
 		return {
 			engName: key,
 			amount: value
-		}
+		};
 	});
 
 	var lostResources = _.map(item.lostResources, function(value, key) {
 		return {
 			engName: key,
 			amount: value * -1
-		}
+		};
 	});
 
 	item.reward = item.reward.concat(lostResources);
@@ -154,14 +154,14 @@ var getBattleInfo = function(item) {
 			engName: key,
 			name: Game.Artefacts.items[key].name,
 			amount: value
-		}
+		};
 	});
 
 	item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
 	item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
 
 	return item;
-}
+};
 
 // ----------------------------------------------------------------------------
 // Fleets side menu
@@ -171,7 +171,7 @@ Game.Cosmos.showFleetsInfo = function() {
 	Router.current().render('cosmosFleetsInfo', {
 		to: 'cosmosSideInfo'
 	});
-}
+};
 
 var scrollMapToFleet = function(id) {
 	var path = pathViews[id];
@@ -195,7 +195,7 @@ var scrollMapToFleet = function(id) {
 
 		mapView.setView([position.x, position.y], 8);
 	}
-}
+};
 
 Template.cosmosFleetsInfo_table.helpers({
 	getTimeLeft: function(timeEnd) {
@@ -208,12 +208,15 @@ Template.cosmosFleetsInfo.helpers({
 	userFleets: function () {
 		var result = [];
 
-		var fleets = Game.SpaceEvents.getFleets().fetch();	
-		for (var i = 0; i < fleets.length; i++) {
+		var i = 0;
+		var data = null;
+
+		var fleets = Game.SpaceEvents.getFleets().fetch();
+		for (i = 0; i < fleets.length; i++) {
 			if (!fleets[i].info.isHumans) {
 				continue;
 			}
-			var data = {
+			data = {
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
@@ -239,8 +242,8 @@ Template.cosmosFleetsInfo.helpers({
 		}
 		
 		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
-		for (var i = 0; i < reinforcements.length; i++) {
-			var data = {
+		for (i = 0; i < reinforcements.length; i++) {
+			data = {
 				isReinforcement: true,
 				id: reinforcements[i]._id,
 				start: Game.Planets.getBase(),
@@ -295,7 +298,7 @@ Template.cosmosFleetsInfo_table.events({
 		Game.Cosmos.showShipInfo(id);
 		scrollMapToFleet(id);
 	}
-})
+});
 
 // ----------------------------------------------------------------------------
 // Planet side menu
@@ -308,7 +311,7 @@ Game.Cosmos.showPlanetInfo= function(id) {
 			id: id
 		}
 	});
-}
+};
 
 Game.Cosmos.getPlanetInfo = function(planet) {
 	if (!planet) {
@@ -344,13 +347,13 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 		info.mission = {
 			level: planet.mission.level,
 			name: Game.Battle.items[planet.mission.type].name
-		}
+		};
 	}
 
 	var units = {
 		fleet: Game.Planets.getFleetUnits(planet._id),
 		defense: Game.Planets.getDefenseUnits(planet._id)
-	}
+	};
 
 	if (units.fleet || units.defense) {
 		var side = (planet.mission) ? 'reptiles' : 'army';
@@ -374,7 +377,7 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 	}
 
 	return info;
-}
+};
 
 Template.cosmosPlanetInfo.helpers({
 	planet: function() {
@@ -426,7 +429,7 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 		type: Game.Planets.types[planet.type].name,
 		items: items
 	};
-}
+};
 
 Game.Cosmos.showPlanetPopup = function(id) {
 	if (!mapView || cosmosPopupView) {
@@ -453,14 +456,14 @@ Game.Cosmos.showPlanetPopup = function(id) {
 		},
 		$('.leaflet-popup-pane')[0]
 	);
-}
+};
 
 Game.Cosmos.hidePlanetPopup = function() {
 	if (cosmosPopupView) {
 		Blaze.remove( cosmosPopupView );
 		cosmosPopupView = null;
 	}
-}
+};
 
 // ----------------------------------------------------------------------------
 // Ship side menu
@@ -473,7 +476,7 @@ Game.Cosmos.showShipInfo = function(id) {
 			id: id
 		}
 	});
-}
+};
 
 Game.Cosmos.getShipInfo = function(spaceEvent) {
 	if (!spaceEvent || spaceEvent.status == Game.SpaceEvents.status.FINISHED) {
@@ -494,8 +497,8 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 		info.canSend = true;
 		info.mission = {
 			level: spaceEvent.info.mission.level,
-		name: Game.Battle.items[spaceEvent.info.mission.type].name
-		}
+			name: Game.Battle.items[spaceEvent.info.mission.type].name
+		};
 		info.status = 'Флот рептилий';
 	}
 
@@ -513,12 +516,12 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 				engName: key,
 				name: Game.Unit.items[side].fleet[key].name,
 				count: _.isString( units[key] ) ? game.Battle.count[ units[key] ] : units[key]
-			})
+			});
 		}
 	}
 
 	return info;
-}
+};
 
 Game.Cosmos.getReinforcementInfo = function(spaceEvent) {
 	if (!spaceEvent || spaceEvent.status == Game.SpaceEvents.status.FINISHED) {
@@ -541,12 +544,12 @@ Game.Cosmos.getReinforcementInfo = function(spaceEvent) {
 				engName: key,
 				name: Game.Unit.items.army.ground[key].name,
 				count: units[key]
-			})
+			});
 		}
 	}
 
 	return info;
-}
+};
 
 Template.cosmosShipInfo.onRendered(function() {
 	// show fleets info when ship removed
@@ -628,9 +631,10 @@ Game.Cosmos.showAttackMenu = function(id) {
 
 				// count sent
 				var sentCount = 0;
+				var i = 0;
 
 				var fleets = Game.SpaceEvents.getFleets().fetch();
-				for (var i = 0; i < fleets.length; i++) {
+				for (i = 0; i < fleets.length; i++) {
 					var fleet = fleets[i];
 
 					if (!fleet.info.isHumans) {
@@ -646,7 +650,7 @@ Game.Cosmos.showAttackMenu = function(id) {
 					}
 				}
 
-				for (var i = result.length; i < maxCount; i++) {
+				for (i = result.length; i < maxCount; i++) {
 					result.push({
 						isEmpty: true,
 						isSent: (sentCount > 0 ? true : false)
@@ -658,13 +662,13 @@ Game.Cosmos.showAttackMenu = function(id) {
 			}
 		}
 	});
-}
+};
 
 Game.Cosmos.hideAttackMenu = function() {
 	Router.current().render(null, {
 		to: 'cosmosAttackMenu'
-	})
-}
+	});
+};
 
 Template.cosmosAttackMenu.helpers({
 	ship: function() {
@@ -906,14 +910,14 @@ Template.cosmosAttackMenu.events({
 				engineLevel,
 				ship,
 				Session.get('serverTime')
-			)
+			);
 
 			if (!attack || !pathView) {
 				Notifications.info('Невозможно перехватить вражеский флот');
 				return;
 			}
 
-			var attackPoint = pathView.getPointAlongDistanceByCoef(attack.k)
+			var attackPoint = pathView.getPointAlongDistanceByCoef(attack.k);
 
 			Meteor.call(
 				'spaceEvents.attackReptFleet',
@@ -953,7 +957,7 @@ Game.Cosmos.renderCosmosObjects = function() {
 						iconSize: (planet.size + 3) * 4,
 						planet: planet
 					};
-				})
+				});
 			},
 
 			fleets: function() {
@@ -968,12 +972,12 @@ Game.Cosmos.renderCosmosObjects = function() {
 							spaceEvent.info.targetPosition
 						)
 					};
-				})
+				});
 			}
 		},
 		$('.leaflet-marker-pane')[0]
 	);
-}
+};
 
 Template.cosmosObjects.helpers({
 	zoom: function() {
@@ -993,7 +997,7 @@ Template.cosmosObjects.helpers({
 			marginLeft: iconSize * k * -0.5,
 			nameTop: -30,
 			nameLeft: -100 + iconSize * k * 0.5
-		}
+		};
 	},
 
 	getFleetAnimation: function(fleet) {
@@ -1006,7 +1010,7 @@ Template.cosmosObjects.helpers({
 				x: 0,
 				y: 0,
 				angle: 0
-			}
+			};
 		}
 
 		var currentDistance = Game.Planets.calcDistanceByTime(
@@ -1036,7 +1040,7 @@ Template.cosmosObjects.helpers({
 			x: coords.x,
 			y: coords.y,
 			angle: angleDeg
-		}
+		};
 	},
 
 	isHidden: function(x, y) {
@@ -1085,10 +1089,10 @@ Template.cosmos.onRendered(function() {
 			mapView.setView([homePlanet.x, homePlanet.y], 7);
 		}
 		isLoading.set(false);
-	}
+	};
 
 	var planets = Game.Planets.getAll().fetch();
-	if (planets.length == 0) {
+	if (planets.length === 0) {
 		Meteor.call('planet.initialize', function(err, data) {
 			alignMapToBasePlanet();
 		});
@@ -1111,14 +1115,14 @@ Template.cosmos.onRendered(function() {
 			0,
 			(event.info.isHumans ? '#56BAF2' : '#DC6257')
 		);
-	}
+	};
 
 	var removePath = function(id) {
 		if (mapView && pathViews[id]) {
 			pathViews[id].remove();
 			pathViews[id] = null;
 		}
-	}
+	};
 
 	observerSpaceEvents = Game.SpaceEvents.getAll().observeChanges({
 		added: function(id, event) {
@@ -1185,7 +1189,7 @@ Template.cosmos.helpers({
 	isLoading: function() {
 		return isLoading.get();
 	}
-})
+});
 
 Template.cosmos.events({
 	'click .map-fleet': function(e, t) {
@@ -1242,10 +1246,10 @@ Game.Planets.debugDrawGalactic = function(hands, segments, rotation, narrow, min
 
 		var color = '#00ff00';
 		if (segment > 0) {
-			if (hand % 2 == 0) {
-				color = (segment % 2 == 0) ? '#ffff00' : '#ff0000';
+			if (hand % 2 === 0) {
+				color = (segment % 2 === 0) ? '#ffff00' : '#ff0000';
 			} else {
-				color = (segment % 2 == 0) ? '#ffffff' : '#5555ff';
+				color = (segment % 2 === 0) ? '#ffffff' : '#5555ff';
 			}
 		}
 
@@ -1257,7 +1261,7 @@ Game.Planets.debugDrawGalactic = function(hands, segments, rotation, narrow, min
 		}
 
 		return amount;
-	}
+	};
 
 	var totalPlanets = debugDrawSegment(0, 0);
 
@@ -1268,7 +1272,7 @@ Game.Planets.debugDrawGalactic = function(hands, segments, rotation, narrow, min
 	}
 
 	console.log('Total planets generated: ', totalPlanets);
-}
+};
 
 Game.Planets.debugCalcFlyTime = function() {
 	for (var i = 0; i <= 100; i++) {
@@ -1286,11 +1290,11 @@ Game.Planets.debugCalcFlyTime = function() {
 		strDebug += Game.Planets.calcTotalTimeByDistance(40, maxSpeed, acceleration) + ' - ';
 		strDebug += Game.Planets.calcTotalTimeByDistance(80, maxSpeed, acceleration);
 
-		if (i % 10 == 0) {
+		if (i % 10 === 0) {
 			console.log('================================================');
 		}
 		console.log(strDebug);
 	}
-}
+};
 
-}
+};

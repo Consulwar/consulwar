@@ -4,4 +4,4 @@ initCosmosServer = function() {
 	initCosmosConfigServer();
 	initCosmosPlanetsServer();
 	initCosmosEventsServer();
-}
+};

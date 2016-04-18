@@ -8,11 +8,11 @@ game.PaymentItem = function(options) {
 	this.discount = options.discount;
 
 	Game.Payment.items[options.id] = this;
-}
+};
 
 Game.Payment = {
 	items: {}
-}
+};
 
 new game.PaymentItem({
 	id: 'paymentCredits1000',
@@ -73,4 +73,4 @@ new game.PaymentItem({
 	discount: { rub: 1250 }
 });
 
-}
+};

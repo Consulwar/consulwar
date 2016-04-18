@@ -17,25 +17,25 @@ Game.Mutual.showPage = function() {
 			}
 		});
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', {to: 'content'});
 	}
-}
+};
 
 Template.item_mutual.onDestroyed(function() {
 	this.data.subscribe.stop();
-})
+});
 
 Template.item_mutual.helpers({
 	count: function() {
 		return this.count.get();
 	}
-})
+});
 
 Template.top_investors.helpers({
 	investors: function() {
 		return Game.Investments.getTopInvestors(this.mutual);
 	}
-})
+});
 
 Template.item_mutual.events({
 	'click .resources .credits': function(e, t) {
@@ -71,4 +71,4 @@ Template.item_mutual.events({
 	}
 });
 
-}
+};

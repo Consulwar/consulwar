@@ -76,4 +76,4 @@ Template.colosseumReward.events({
 	}
 });
 
-}
+};

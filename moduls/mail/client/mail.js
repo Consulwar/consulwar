@@ -36,7 +36,7 @@ Game.Mail.showPage = function() {
 			}
 		});
 	}
-}
+};
 
 Template.mail.onRendered(function() {
 	// save template instance
@@ -60,15 +60,15 @@ Template.mail.onRendered(function() {
 
 		if (hash) {
 			// read letter
-			if (hash.indexOf('read') == 0) {
+			if (hash.indexOf('read') === 0) {
 				readLetter(hash.substr('read'.length + 1), template);
 			}
 			// compose letter
-			else if (hash.indexOf('compose') == 0) {
+			else if (hash.indexOf('compose') === 0) {
 				composeLetter(hash.substr('compose'.length + 1), template);
 			}
 			// reply
-			else if (hash.indexOf('reply') == 0) {
+			else if (hash.indexOf('reply') === 0) {
 				replyLetter(template.data.letter.get(), template);
 			}
 		}
@@ -80,7 +80,7 @@ Template.mail.onDestroyed(function() {
 		observer.stop();
 		observer = null;
 	}
-})
+});
 
 var reloadPageData = function(t) {
 	t.data.isLoading.set(true);
@@ -90,14 +90,14 @@ var reloadPageData = function(t) {
 			t.data.mail.set(data);
 		}
 	});
-}
+};
 
 var closeMessages = function(t) {
 	$('.over').empty();
 	t.$('.battle_letter').hide();
 	t.$('.letter').hide();
 	t.$('form').hide();
-}
+};
 
 var readLetter = function(id, t) {
 	t.data.isLoading.set(true);
@@ -154,13 +154,13 @@ var readLetter = function(id, t) {
 						canVote: !result.userAnswer // || !Game.User.getVotePower() ? false : true
 					}, 
 					$('.over')[0]
-				)
-			})
+				);
+			});
 		} else {
 			t.$('.letter').show();
 		}
 	});
-}
+};
 
 var replyLetter = function(letter, t) {
 	if (letter) {
@@ -197,13 +197,13 @@ var replyLetter = function(letter, t) {
 	textarea.focus();
 	textarea.selectionStart = 0;
 	textarea.selectionEnd = 0;
-}
+};
 
 var composeLetter = function(to, t) {
 	t.$('form').show();
 	t.$('form .recipient').val(to);
 	checkUsername(t);
-}
+};
 
 var checkUsername = function(t) {
 	var username = t.$('form .recipient').val();
@@ -214,7 +214,7 @@ var checkUsername = function(t) {
 	} else {
 		t.data.isRecipientOk.set(false);
 	}
-}
+};
 
 Template.mail.helpers({
 	isLoading: function() { return this.isLoading.get(); },
@@ -276,8 +276,8 @@ Template.mail.helpers({
 				startCount: value,
 				count: result[key],
 				object: Game.Unit.items.army.ground[key]
-			}
-		})
+			};
+		});
 	},
 
 	reptiles: function(start, result) {
@@ -288,8 +288,8 @@ Template.mail.helpers({
 				startCount: value,
 				count: result[key],
 				object: Game.Unit.items.reptiles.rground[key]
-			}
-		})
+			};
+		});
 	}
 });
 
@@ -324,7 +324,7 @@ Template.mail.events({
 	'click td:first-child': function(e, t) {
 		e.stopPropagation();
 		var checkbox = t.$(e.target).find('input');
-		checkbox.prop('checked', checkbox.prop('checked') == true ? false: true);
+		checkbox.prop('checked', checkbox.prop('checked') === true ? false: true);
 		if (t.$('td input[type="checkbox"]:checked').length > 0) {
 			t.$('.delete_selected').removeClass('disabled');
 		} else {
@@ -477,7 +477,7 @@ Game.Mail.showAdminPage = function() {
 			}
 		});
 	}
-}
+};
 
 Template.mailAdmin.onRendered(function() {
 	// save template instance
@@ -492,12 +492,12 @@ Template.mailAdmin.onRendered(function() {
 
 		if (hash) {
 			// read letter
-			if (hash.indexOf('read') == 0) {
+			if (hash.indexOf('read') === 0) {
 				adminReadLetter(hash.substr('read'.length + 1), template);
 			}
 		}
 	});
-})
+});
 
 var adminReadLetter = function(id, t) {
 	t.data.isLoading.set(true);
@@ -510,7 +510,7 @@ var adminReadLetter = function(id, t) {
 			t.$('.letter').show();
 		}
 	});
-}
+};
 
 Template.mailAdmin.helpers({
 	isLoading: function() { return this.isLoading.get(); },
@@ -543,7 +543,7 @@ Template.mailAdmin.events({
 		}
 
 		reason.trim();
-		if (reason.length == 0) {
+		if (reason.length === 0) {
 			Notifications.error('Не указана причина блокировки!');
 			return;
 		}
@@ -590,7 +590,7 @@ Template.mailAdmin.events({
 		}
 
 		reason = reason.trim();
-		if (reason.length == 0) {
+		if (reason.length === 0) {
 			Notifications.error('Не указана причина отклонения жалобы!');
 			return;
 		}
@@ -604,4 +604,4 @@ Template.mailAdmin.events({
 
 initMailQuizClient();
 
-}
+};

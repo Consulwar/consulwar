@@ -30,14 +30,14 @@ Game.Investments.add = function(item) {
 	Game.Mutual.add(item);
 
 	return inc;
-}
+};
 
 Game.Investments.initialize = function(item) {
 	var currentValue = Game.Investments.getValue(item);
 
 	var user = Meteor.user();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Investments.Collection.insert({
 			user_id: user._id,
 			username: user.username,
@@ -47,7 +47,7 @@ Game.Investments.initialize = function(item) {
 			resources: {}
 		});
 	}
-}
+};
 
 Meteor.publish('topInvestors', function(item) {
 	if (this.userId) {
@@ -55,4 +55,4 @@ Meteor.publish('topInvestors', function(item) {
 	}
 });
 
-}
+};

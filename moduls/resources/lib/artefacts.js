@@ -11,7 +11,7 @@ game.Artefact = function(options) {
 		return (resources && resources[this.engName] && resources[this.engName].amount)
 			? resources[this.engName].amount
 			: 0;
-	}
+	};
 
 	if (Game.Artefacts.items[options.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется артефакт ' + options.engName);
@@ -24,15 +24,15 @@ game.Artefact = function(options) {
 			item: this.engName
 		};
 		return Router.routes.house.path(options);
-	}
+	};
 
 	Game.Artefacts.items[options.engName] = this;
-}
+};
 
 Game.Artefacts = {
 	items: {}
-}
+};
 
 initArtefactsContent();
 
-}
+};

@@ -10,9 +10,9 @@ Game.Research.showPage = function() {
 	if (item) {
 		this.render('item_research', {to: 'content', data: {research: item}});
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', {to: 'content'});
 	}
-}
+};
 
 Template.item_research.events({
 	'click button.build': function(e, t) {
@@ -31,10 +31,10 @@ Template.item_research.events({
 			}
 		);
 
-		if (item.currentLevel() == 0) {
+		if (item.currentLevel() === 0) {
 			Router.go(item.url({group: item.group}));
 		}
 	}
 });
 
-}
+};

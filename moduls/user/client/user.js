@@ -29,7 +29,7 @@ Template.auth.events({
 				} else {
 					Notifications.success('Способ восстановления кодов доступа отправлен на почту');
 				}
-			})
+			});
 		}
 	}
 });
@@ -38,7 +38,7 @@ Template.auth.events({
 Template.register_window.created = function() {
 	Session.set('register_step', '1');
 	Session.set('register_points', 0);
-}
+};
 
 Template.register_window.helpers({
 	register_step: function() {
@@ -90,13 +90,13 @@ var validate_username = function(username) {
 				Session.set('err_username', false);
 				return false;
 			}
-		})
+		});
 	} else {
 		Session.set('err_username', 'Логин должен содержать хотя бы 1 символ');
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_password = function(password) {
 	if (password.length > 5) {
@@ -106,7 +106,7 @@ var validate_password = function(password) {
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_passwordr = function(password, passwordr) {
 	if (passwordr == password) {
@@ -116,7 +116,7 @@ var validate_passwordr = function(password, passwordr) {
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_email = function(email) {
 	if (email.indexOf('@') != -1) {
@@ -126,7 +126,7 @@ var validate_email = function(email) {
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_rules = function(rules) {
 	if (rules) {
@@ -136,7 +136,7 @@ var validate_rules = function(rules) {
 		return false;
 	}
 	return true;
-}
+};
 
 Template.register_window_step3.events({
 	'submit form': function(e, t) {
@@ -200,4 +200,4 @@ Template.register_window_step7.helpers({
 	points: function() {
 		return Session.get('register_points');
 	}
-})
+});

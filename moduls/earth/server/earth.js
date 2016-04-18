@@ -17,7 +17,7 @@ initEarthServerImport();
 
 // Auto import on server start
 // If db.zones is empty
-if (Game.EarthZones.Collection.find().count() == 0) {
+if (Game.EarthZones.Collection.find().count() === 0) {
 	Game.Earth.importZones();
 }
 
@@ -26,7 +26,7 @@ var checkIsStationaryUnit = function(side, group, name) {
 		'army.ground.relax',
 		'reptiles.ground.chipping'
 	].indexOf(side + '.' + group + '.' + name) != -1;
-}
+};
 
 var setupUnitHierarchy = function(units, side, group, name) {
 	if (!units) {
@@ -42,7 +42,7 @@ var setupUnitHierarchy = function(units, side, group, name) {
 		units[side][group][name] = 0;
 	}
 	return units;
-}
+};
 
 Game.Earth.addReinforcement = function(units) {
 	var currentZone = Game.EarthZones.Collection.findOne({
@@ -79,7 +79,7 @@ Game.Earth.addReinforcement = function(units) {
 	}, {
 		$inc: inc
 	});
-}
+};
 
 Game.Earth.countActivePlayers = function() {
 	return Meteor.users.find({
@@ -90,7 +90,7 @@ Game.Earth.countActivePlayers = function() {
 			$gt: 24999
 		}
 	}).count();
-}
+};
 
 Game.Earth.generateEnemyArmy = function(level) {
 	// count online players
@@ -120,7 +120,7 @@ Game.Earth.generateEnemyArmy = function(level) {
 			}
 		}
 	};
-}
+};
 
 Game.Earth.observeZone = function(name) {
 	if (!Game.Mutual.has('research', 'reccons')) {
@@ -140,7 +140,7 @@ Game.Earth.observeZone = function(name) {
 		throw new Meteor.Error('Точка с именем ' + name + ' не найдена');
 	}
 
-	if (!zone.links || zone.links.length == 0) {
+	if (!zone.links || zone.links.length === 0) {
 		throw new Meteor.Error('Точка с именем ' + name + ' не связана ни с одной зоной');
 	}
 
@@ -176,7 +176,7 @@ Game.Earth.observeZone = function(name) {
 			}
 		});
 	}
-}
+};
 
 Game.Earth.performBattleAtZone = function(name, options) {
 	var zone = Game.EarthZones.Collection.findOne({
@@ -252,7 +252,7 @@ Game.Earth.performBattleAtZone = function(name, options) {
 	}
 
 	return result;
-}
+};
 
 Game.Earth.setCurrentZone = function(name) {
 	Game.EarthZones.Collection.update({
@@ -269,8 +269,8 @@ Game.Earth.setCurrentZone = function(name) {
 		$set: {
 			isCurrent: true
 		}
-	})
-}
+	});
+};
 
 Game.Earth.moveArmy = function(destination) {
 	var currentZone = Game.EarthZones.Collection.findOne({
@@ -360,7 +360,7 @@ Game.Earth.moveArmy = function(destination) {
 	}
 
 	return destArmy;
-}
+};
 
 Game.Earth.retreat = function() {
 	// get current zone
@@ -402,7 +402,7 @@ Game.Earth.retreat = function() {
 	});
 
 	return movedArmy;
-}
+};
 
 Game.Earth.nextTurn = function() {
 	var currentZone = Game.EarthZones.Collection.findOne({
@@ -438,7 +438,7 @@ Game.Earth.nextTurn = function() {
 		}
 
 	}
-}
+};
 
 Game.Earth.createTurn = function() {
 	var currentZone = Game.EarthZones.Collection.findOne({
@@ -450,10 +450,12 @@ Game.Earth.createTurn = function() {
 	}
 
 	// create turn
+	var options = null;
+
 	if (currentZone.enemyArmy) {
 
 		// Got enemy at current zone! Proceed battle or retreat?
-		var options = {
+		options = {
 			type: 'battle',
 			timeStart: Game.getCurrentTime(),
 			actions: {
@@ -479,7 +481,7 @@ Game.Earth.createTurn = function() {
 			actionsList[ zonesAround[i].name ] = 0;
 		}
 
-		var options = {
+		options = {
 			type: 'move',
 			timeStart: Game.getCurrentTime(),
 			actions: actionsList,
@@ -493,7 +495,7 @@ Game.Earth.createTurn = function() {
 	if (options) {
 		Game.EarthTurns.Collection.insert(options);
 	}
-}
+};
 
 Game.Earth.checkTurn = function() {
 	var lastTurn = Game.EarthTurns.getLast();
@@ -504,6 +506,8 @@ Game.Earth.checkTurn = function() {
 
 	var battleResult = null;
 	var turnResult = null;
+	var movedArmy = null;
+	var battleOptions = null;
 
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
@@ -512,14 +516,14 @@ Game.Earth.checkTurn = function() {
 	if (lastTurn.type == 'move') {
 
 		var targetName = null;
-		for (var name in lastTurn.actions) {
-			if (targetName == null || lastTurn.actions[name] > lastTurn.actions[targetName]) {
-				targetName = name;
+		for (var zoneName in lastTurn.actions) {
+			if (targetName === null || lastTurn.actions[zoneName] > lastTurn.actions[targetName]) {
+				targetName = zoneName;
 			}
 		}
 
 		// try to move army
-		var movedArmy = (currentZone.name != targetName)
+		movedArmy = (currentZone.name != targetName)
 			? Game.Earth.moveArmy(targetName)
 			: null;
 
@@ -529,18 +533,18 @@ Game.Earth.checkTurn = function() {
 			Game.Earth.setCurrentZone(targetName);
 			turnResult = 'move';
 
-			var battleOptions = {
+			battleOptions = {
 				isEarth: true,
 				moveType: turnResult,
 				location: targetName,
 				userLocation: currentZone.name,
 				enemyLocation: targetName
-			}
+			};
 
 			battleResult = Game.Earth.performBattleAtZone(targetName, battleOptions);
 
 			// no battle, then save additional history
-			if (battleResult == null) {
+			if (battleResult === null) {
 				battleOptions.enemyLocation = null;
 				Game.BattleHistory.add(
 					movedArmy,
@@ -555,10 +559,11 @@ Game.Earth.checkTurn = function() {
 			// Stay at current zone
 			// Enemy can attack (chance 1/3)
 			var attackArmy = null;
+			var nearZone = null;
 
 			if (currentZone.name != 'South Africa' && Game.Random.interval(1, 99) <= 33) {
 				// find near enemy zone
-				var nearZone = Game.EarthZones.Collection.findOne({
+				nearZone = Game.EarthZones.Collection.findOne({
 					name: { $in: currentZone.links },
 					isVisible: true,
 					isEnemy: true,
@@ -598,13 +603,13 @@ Game.Earth.checkTurn = function() {
 				// attack
 				turnResult = 'defend';
 
-				var battleOptions = {
+				battleOptions = {
 					isEarth: true,
 					moveType: turnResult,
 					location: currentZone.name,
 					userLocation: currentZone.name,
 					enemyLocation: (nearZone ? nearZone.name : null)
-				}
+				};
 
 				Game.EarthZones.Collection.update({
 					name: currentZone.name
@@ -639,18 +644,18 @@ Game.Earth.checkTurn = function() {
 			// fight
 			turnResult = 'fight';
 
-			var battleOptions = {
+			battleOptions = {
 				isEarth: true,
 				moveType: turnResult,
 				location: currentZone.name,
 				userLocation: currentZone.name,
 				enemyLocation: currentZone.name
-			}
+			};
 
 			battleResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
 		} else {
 			// retreat
-			var movedArmy = Game.Earth.retreat();
+			movedArmy = Game.Earth.retreat();
 			turnResult = 'retreat';
 
 			// no battle, then save additional history
@@ -683,7 +688,7 @@ Game.Earth.checkTurn = function() {
 
 	// Create next turn
 	Game.Earth.createTurn();
-}
+};
 
 SyncedCron.add({
 	name: 'Следующий ход битвы на земле',
@@ -709,4 +714,4 @@ Meteor.publish('turns', function() {
 
 initEarthServerMethods();
 
-}
+};

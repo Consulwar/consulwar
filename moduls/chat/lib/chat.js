@@ -63,4 +63,4 @@ Game.Chat.Room = {
 	}
 };
 
-}
+};

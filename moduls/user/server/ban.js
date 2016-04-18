@@ -8,6 +8,6 @@ Game.BanHistory = {
 	},
 
 	Collection: new Meteor.Collection('banHistory')
-}
+};
 
-}
+};

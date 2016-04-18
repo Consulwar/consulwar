@@ -44,7 +44,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -75,7 +75,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -123,7 +123,7 @@ Meteor.methods({
 
 		Game.Quiz.Collection.update({_id: id}, {
 			$inc: inc
-		})
+		});
 
 		return Meteor.call('getQuiz', id);
 	},
@@ -135,7 +135,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -164,7 +164,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -185,5 +185,4 @@ Meteor.methods({
 	}
 });
 
-
-}
+};

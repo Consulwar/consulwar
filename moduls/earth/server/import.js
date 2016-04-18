@@ -68,7 +68,7 @@ var availableZones = [
 
 var autoLinkList = [
 	['Mozambique', 'Madagascar']
-]
+];
 
 Game.Earth.importZones = function() {
 	var geoJson = JSON.parse( Assets.getText("geo.json") );
@@ -100,7 +100,7 @@ Game.Earth.importZones = function() {
 
 	// Auto build connections
 	Game.Earth.autoLinkZones();
-}
+};
 
 Game.Earth.autoLinkZones = function() {
 
@@ -115,33 +115,39 @@ Game.Earth.autoLinkZones = function() {
 			}
 		}
 		return false;
-	}
+	};
 
 	var getPolygonCoordinates = function(geometry) {
 		var result = [];
 		var coords = geometry.coordinates;
+		
+		var i = 0;
+		var j = 0;
+		var k = 0;
+
 		if (geometry.type == 'MultiPolygon') {
-			for (var i = 0; i < coords.length; i++) {
-				for (var j = 0; j < coords[i].length; j++) {
-					for (var k = 0; k < coords[i][j].length; k++) {
+			for (i = 0; i < coords.length; i++) {
+				for (j = 0; j < coords[i].length; j++) {
+					for (k = 0; k < coords[i][j].length; k++) {
 						result.push(coords[i][j][k]);
 					}
 				}
 			}
 		} else {
-			for (var i = 0; i < coords.length; i++) {
-				for (var j = 0; j < coords[i].length; j++) {
+			for (i = 0; i < coords.length; i++) {
+				for (j = 0; j < coords[i].length; j++) {
 					result.push(coords[i][j]);
 				}
 			}
 		}
 		return result;
-	}
+	};
 
 	// check borders with same points
 	var zones = Game.EarthZones.Collection.find().fetch();
+	var i = 0;
 
-	for (var i = 0; i < zones.length - 1; i++) {
+	for (i = 0; i < zones.length - 1; i++) {
 		var firstZone = zones[i];
 		for (var j = i + 1; j < zones.length; j++) {
 			var secondZone = zones[j];
@@ -157,10 +163,10 @@ Game.Earth.autoLinkZones = function() {
 	}
 
 	// auto link from config
-	for (var i = 0; i < autoLinkList.length; i++) {
+	for (i = 0; i < autoLinkList.length; i++) {
 		Game.Earth.linkZones( autoLinkList[i][0], autoLinkList[i][1] );
 	}
-}
+};
 
 Game.Earth.linkZones = function(firstName, secondName) {
 	if (firstName == secondName) {
@@ -195,7 +201,7 @@ Game.Earth.linkZones = function(firstName, secondName) {
 		secondZone.links.push(firstName);
 		Game.EarthZones.Collection.update({ name: secondName }, secondZone);
 	}
-}
+};
 
 Game.Earth.unlinkZones = function(firstName, secondName) {
 	if (firstName == secondName) {
@@ -227,11 +233,11 @@ Game.Earth.unlinkZones = function(firstName, secondName) {
 		Game.EarthZones.Collection.update({ name: firstName }, firstZone);
 	}
 
-	var n = secondZone.links.indexOf(firstName);
+	n = secondZone.links.indexOf(firstName);
 	if (n >= 0) {
 		secondZone.links.splice(n, 1);
 		Game.EarthZones.Collection.update({ name: secondName }, secondZone);
 	}
-}
+};
 
-}
+};

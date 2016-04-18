@@ -1,6 +1,6 @@
 initCheatsClient = function() {
 
-Game.Cheats = {}
+Game.Cheats = {};
 
 // ----------------------------------------------------------------------------
 // Unit cheats
@@ -8,7 +8,7 @@ Game.Cheats = {}
 
 Game.Cheats.setUnitCount = function (group, name, count) {
 	Meteor.call('cheats.setUnitCount', group, name, count);
-}
+};
 
 Game.Cheats.testBattle = function() {
 	// fleet battle test
@@ -22,7 +22,7 @@ Game.Cheats.testBattle = function() {
 				flagship: 1
 			}
 		}
-	}
+	};
 	enemyArmy = {
 		reptiles: {
 			fleet: {
@@ -34,7 +34,7 @@ Game.Cheats.testBattle = function() {
 				trioniks: 1
 			}
 		}
-	}
+	};
 
 	// ground battle test
 	/* userArmy = {
@@ -54,7 +54,7 @@ Game.Cheats.testBattle = function() {
 				hbhr: 1
 			}
 		}
-	}
+	};
 	enemyArmy = {
 		reptiles: {
 			ground: {
@@ -72,19 +72,19 @@ Game.Cheats.testBattle = function() {
 				patron: 1
 			}
 		}
-	} */
+	}; */
 
 	options = {
 		rounds: 3,
 		damageReduction: 0,
 		missionType: 'patrolfleet',
 		missionLevel: 1
-	}
+	};
 
 	Meteor.call('cheats.performBattle', userArmy, enemyArmy, options, function(err, data) {
 		console.log(data);
 	});
-}
+};
 
 // ----------------------------------------------------------------------------
 // Cosmos cheats
@@ -94,27 +94,27 @@ Game.Cheats.testMissionGenerate = function(hand, segment) {
 	var planet = {
 		segment: segment,
 		hand: hand
-	}
+	};
 
 	Meteor.call('cheats.testMissionGenerate', planet, function (err, data) {
 		console.log(data);
 	});
-}
+};
 
 Game.Cheats.spawnTradeFleet = function() {
 	Meteor.call('cheats.spawnTradeFleet');
-}
+};
 
 Game.Cheats.sendReptileFleetToPlanet = function(planetName) {
 	var planet = Game.Planets.Collection.findOne({ name: planetName });
 	if (planet) {
 		Meteor.call('cheats.sendReptileFleetToPlanet', planet._id);
 	}
-}
+};
 
 Game.Cheats.generateAllPlanets = function() {
 	Meteor.call('cheats.generateAllPlanets');
-}
+};
 
 // ----------------------------------------------------------------------------
 // Resource, building and research cheats
@@ -122,19 +122,19 @@ Game.Cheats.generateAllPlanets = function() {
 
 Game.Cheats.addResource = function(id, amount) {
 	Meteor.call('cheats.addResource', id, amount);
-}
+};
 
 Game.Cheats.spendResource = function(id, amount) {
 	Meteor.call('cheats.spendResource', id, amount);
-}
+};
 
 Game.Cheats.setBuildingLevel = function(group, name, level) {
 	Meteor.call('cheats.setBuildingLevel', group, name, level);
-}
+};
 
 Game.Cheats.setResearchLevel = function(group, name, level) {
 	Meteor.call('cheats.setResearchLevel', group, name, level);
-}
+};
 
 // ----------------------------------------------------------------------------
 // Consul house cheats
@@ -142,11 +142,11 @@ Game.Cheats.setResearchLevel = function(group, name, level) {
 
 Game.Cheats.resetHouseItems = function() {
 	Meteor.call('cheats.resetHouseItems');
-}
+};
 
 Game.Cheats.buyAllHouseItems = function() {
 	Meteor.call('cheats.buyAllHouseItems');
-}
+};
 
 // ----------------------------------------------------------------------------
 // Quest cheats
@@ -154,10 +154,10 @@ Game.Cheats.buyAllHouseItems = function() {
 
 Game.Cheats.resetQuests = function() {
 	Meteor.call('cheats.resetQuests');
-}
+};
 
 Game.Cheats.completeQuests = function() {
 	Meteor.call('cheats.completeQuests');
-}
+};
 
-}
+};

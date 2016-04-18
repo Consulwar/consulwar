@@ -5,11 +5,11 @@ initBattleLib();
 game.Unit = function(options) {
 	game.Unit.superclass.constructor.apply(this, arguments);
 
-	if (Game.Unit.items['army'][this.side][this.engName]) {
+	if (Game.Unit.items.army[this.side][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
 	}
 
-	Game.Unit.items['army'][this.side][this.engName] = this;
+	Game.Unit.items.army[this.side][this.engName] = this;
 
 	this.url = function(options) {
 		options = options || {
@@ -18,7 +18,7 @@ game.Unit = function(options) {
 		};
 		
 		return Router.routes[this.type].path(options);
-	}
+	};
 
 	this.type = 'unit';
 	this.side = 'army';
@@ -28,11 +28,11 @@ game.extend(game.Unit, game.Item);
 game.ReptileUnit = function(options) {
 	game.ReptileUnit.superclass.constructor.apply(this, arguments);
 
-	if (Game.Unit.items['reptiles'][this.group][this.engName]) {
+	if (Game.Unit.items.reptiles[this.group][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит reptiles ' + this.group + ' ' + this.engName);
 	}
 
-	Game.Unit.items['reptiles'][this.group][this.engName] = this;
+	Game.Unit.items.reptiles[this.group][this.engName] = this;
 
 	this.url = function(options) {
 		options = options || {
@@ -41,31 +41,31 @@ game.ReptileUnit = function(options) {
 		};
 		
 		return Router.routes[this.type].path(options);
-	}
+	};
 
 	this.canBuild = function() {
 		return false;
-	}
+	};
 
 	this.currentLevel = function() {
 		return 0;
-	}
+	};
 
 	this.isEnoughResources = function() {
 		return true;
-	}
+	};
 
 	this.type = 'reptileUnit';
 	this.side = 'reptiles';
 };
-game.extend(game.ReptileUnit, game.Item)
+game.extend(game.ReptileUnit, game.Item);
 
 game.ReptileHero = function(options){
 	game.ReptileHero.superclass.constructor.apply(this, arguments);
 
 	this.type = 'reptileHero';
 };
-game.extend(game.ReptileHero, game.ReptileUnit)
+game.extend(game.ReptileHero, game.ReptileUnit);
 
 /*game.MutualUnit = function(options){
 	game.MutualUnit.superclass.constructor.apply(this, arguments);
@@ -175,7 +175,8 @@ Game.Unit = {
 			power *= options.damageReduction;
 			// count psi enemies
 			var psiCount = 0;
-			for (var key in enemies) {
+			var key = null;
+			for (key in enemies) {
 				if (enemies[key].model.engName == 'psimans'
 				 || enemies[key].model.engName == 'horror'
 				) {
@@ -188,7 +189,7 @@ Game.Unit = {
 			}
 			// apply effect
 			var message = unit.model.name + ' атакует ';
-			for (var key in enemies) {
+			for (key in enemies) {
 				var canAttack = true;
 				// if our psi count lower, attack only psi units
 				if (psiCount > unit.startCount
@@ -209,7 +210,7 @@ Game.Unit = {
 		}
 
 	}
-}
+};
 
 initUnitsContent();
 
@@ -247,4 +248,4 @@ for (var category in Game.Unit.items.reptiles) {
 }
 */
 
-}
+};

@@ -71,7 +71,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 		
@@ -105,7 +105,7 @@ Meteor.methods({
 			text = text.substr(0, 5000);
 		}
 
-		if (text.length == 0) {
+		if (text.length === 0) {
 			throw new Meteor.Error('Напиши хоть что-нибудь!');
 		}
 
@@ -116,6 +116,8 @@ Meteor.methods({
 			}
 		}).trim();
 
+		var parentId = null;
+
 		if (recipient == '[all]') {
 
 			if (['admin', 'helper'].indexOf(user.role) == -1) {
@@ -123,7 +125,7 @@ Meteor.methods({
 			}
 
 			// insert sender copy
-			var parentId = Game.Mail.Collection.insert({
+			parentId = Game.Mail.Collection.insert({
 				owner: user._id,
 				from: user._id,
 				sender: user.username,
@@ -189,7 +191,7 @@ Meteor.methods({
 			}
 
 			// insert sender copy
-			var parentId = Game.Mail.Collection.insert({
+			parentId = Game.Mail.Collection.insert({
 				owner: user._id,
 				from: user._id,
 				sender: user.username,
@@ -236,16 +238,18 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		var letter = null;
+
 		if (['admin', 'helper'].indexOf(user.role) >= 0) {
-			var letter = Game.Mail.Collection.findOne({
+			letter = Game.Mail.Collection.findOne({
 				_id: id
 			});
 		} else {
-			var letter = Game.Mail.Collection.findOne({
+			letter = Game.Mail.Collection.findOne({
 				_id: id,
 				owner: user._id
 			});
@@ -274,7 +278,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -304,7 +308,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -333,7 +337,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -416,7 +420,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -447,7 +451,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -492,7 +496,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -532,7 +536,7 @@ Meteor.methods({
 			limit: count
 		}).fetch();
 	}
-})
+});
 
 Meteor.publish('privateMailUnread', function() {
 	if (this.userId) {
@@ -558,4 +562,4 @@ Meteor.publish('privateMailUnread', function() {
 
 initMailQuizServer();
 
-}
+};

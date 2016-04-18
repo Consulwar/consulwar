@@ -60,4 +60,4 @@ Template.current_resources.helpers({
 	incomeEffects: function() { return Game.Resources.getIncome().effects; }
 });
 
-}
+};

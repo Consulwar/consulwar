@@ -8,7 +8,7 @@ GameRouteController = RouteController.extend({
 		}
 
 		var user = Meteor.user();
-		if (user && user.blocked == true) {
+		if (user && user.blocked === true) {
 			Meteor.logout();
 			this.redirect('index');
 			alert('Аккаунт заблокирован');
@@ -26,12 +26,12 @@ GameRouteController = RouteController.extend({
 			$('.permanent').hide(); // hide cosmos map!
 			this.next();
 		} else {
-			this.render('loading', {layout: 'loading_layout'})
+			this.render('loading', {layout: 'loading_layout'});
 		}
 	},
 
 	after: function() {
-		if (window.Metrica != undefined) {
+		if (window.Metrica !== undefined) {
 			Metrica.hit(window.location.href, 'Game', document.referrer);
 		}
 	}
@@ -81,7 +81,7 @@ var gameRoutes = {
 		cosmos: 'cosmos',
 		cosmosHistory: 'cosmos/history/:page'
 	}
-}
+};
 
 var gameActions = {
 	building: Game.Building.showPage,
@@ -107,24 +107,26 @@ var gameActions = {
 
 	cosmos: Game.Cosmos.showPage,
 	cosmosHistory: Game.Cosmos.showHistory
-}
+};
+
+var registerRoute = function(group, name, path, action) {
+	Router.route('/game/' + path, {
+		name: name,
+		controller: 'GameRouteController',
+		before: function() {
+			this.group = group;
+			this.next();
+		},
+		action: action
+	});
+};
 
 for (var group in gameRoutes) {
 	for (var name in gameRoutes[group]) {
-		if (gameActions[name] == undefined) {
+		if (gameActions[name] === undefined) {
 			throw new Error('Не найдено действие для роута', name, gameRoutes[group][name]);
 		}
-		(function(group, name, path, action) {
-			Router.route('/game/' + path, {
-				name: name,
-				controller: 'GameRouteController',
-				before: function() {
-					this.group = group;
-					this.next();
-				},
-				action: action
-			});
-		})(group, name, gameRoutes[group][name], gameActions[name]);
+		registerRoute(group, name, gameRoutes[group][name], gameActions[name]);
 	}
 }
 
@@ -133,7 +135,7 @@ Router.route('/game', {
 	action: function() {
 		Router.go('building', {group: 'residential'});
 	}
-})
+});
 
 Router.go(location.href.replace(location.origin, ''));
 
@@ -179,4 +181,4 @@ Router.route( 'pageNotFound', {
 	}
 });*/
 
-}
+};

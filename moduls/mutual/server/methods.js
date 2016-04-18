@@ -8,7 +8,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -71,7 +71,7 @@ Meteor.methods({
 		if (options.currency == 'credits') {
 			price = {
 				credits: price.credits
-			}
+			};
 		} else {
 			delete price.credits;
 		}
@@ -92,6 +92,6 @@ Meteor.methods({
 
 		Game.Investments.add(set);
 	}
-})
+});
 
-}
+};

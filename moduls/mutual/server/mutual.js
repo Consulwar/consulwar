@@ -15,17 +15,17 @@ Game.Mutual.add = function(item) {
 	});
 
 	return inc;
-}
+};
 
 Game.Mutual.initialize = function(group) {
 	var currentValue = Game.Mutual.getValue(group);
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Mutual.Collection.insert({
 			group: group
 		});
 	}
-}
+};
 
 Meteor.publish('mutualResearch', function () {
 	if (this.userId) {
@@ -57,7 +57,7 @@ Meteor.publish('mutual', function (item) {
 	if (this.userId) {
 		var find = {
 			group: item.group
-		}
+		};
 		var limit = {fields: {
 			group: 1
 		}};
@@ -95,4 +95,4 @@ Meteor.publish('mutual', function (item) {
 initMutualServerInvestments();
 initMutualServerMethods();
 
-}
+};

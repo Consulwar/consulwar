@@ -175,13 +175,13 @@ game.Item = function(options) {
 		this.group = options.group || this.side;
 
 		//game[this.menu][this.side][this.engName] = this;
-	}
+	};
 
 	this.constructor(options);
 
 	this.currentLevel = function() {
 		return Game.getObjectByType(this.type).get(this.group, this.engName);
-	}
+	};
 
 	this.getOverlayImage = function(currentLevel) {
 		currentLevel = currentLevel || this.currentLevel();
@@ -197,7 +197,7 @@ game.Item = function(options) {
 			return [this.type, this.group, this.engName, level].join('/') + '.png';
 		}
 		return null;
-	}
+	};
 
 	this.getOverlay = function() {
 		if (!this.overlay) {
@@ -217,13 +217,15 @@ game.Item = function(options) {
 			y: this.overlay.y,
 			z: this.overlay.z,
 			progress: progress
-		}
+		};
 
 		return result;
-	}
+	};
 
 	this.price = function(level) {
 		var curPrice = {};
+		var name = null;
+
 		if (this.type != 'unit'
 		 && this.type != 'reptileUnit'
 		 && this.type != 'mutual'
@@ -235,7 +237,7 @@ game.Item = function(options) {
 
 			var basePrice = this.basePrice(level);
 			var sum = 0;
-			for (var name in basePrice) {
+			for (name in basePrice) {
 				curPrice[name] = basePrice[name][1].call(
 					this,
 					level,
@@ -251,19 +253,19 @@ game.Item = function(options) {
 		} else {
 			level = level ? level : 1;
 
-			for (var name in this.basePrice) {
+			for (name in this.basePrice) {
 				curPrice[name] = this.basePrice[name] * level;
 			}
 		}
 
 		Object.defineProperty(curPrice, 'base', {
 			value: _.clone(curPrice)
-		})
+		});
 
 		curPrice = Game.Effect.Price.applyTo(this, curPrice);
 
 		return curPrice;
-	}
+	};
 
 	this.next = {
 		price: (function(level) {
@@ -271,7 +273,7 @@ game.Item = function(options) {
 
 			return this.price(level);
 		}).bind(this)
-	}
+	};
 
 	this.progress = function() {
 		var progressItem = Game.Queue.getGroup(this.group);
@@ -281,10 +283,10 @@ game.Item = function(options) {
 		} else {
 			return false;
 		}
-	}
+	};
 
 	this.isEnoughResources = function(count, currency) {
-		if (count == undefined) {
+		if (count === undefined) {
 			if (this.type == 'unit' || this.type == 'mutual') {
 				count = 1;
 			} else {
@@ -298,7 +300,7 @@ game.Item = function(options) {
 			if (currency == 'credits') {
 				price = {
 					credits: price.credits
-				}
+				};
 			} else {
 				delete price.credits;
 			}
@@ -316,7 +318,7 @@ game.Item = function(options) {
 		}
 
 		return true;
-	}
+	};
 
 	this.meetRequirements = function() {
 		if (this.requirements) {
@@ -327,7 +329,7 @@ game.Item = function(options) {
 			}
 		}
 		return true;
-	}
+	};
 
 	this.canBuild = function(count, currency) {
 		if (currency) {
@@ -341,13 +343,13 @@ game.Item = function(options) {
 		}
 
 		return this.meetRequirements() && this.isEnoughResources(count) && !Game.Queue.getGroup(this.group);
-	}
+	};
 
 	this.has = function(level) {
 		level = level || 1;
 		return (this.currentLevel() >= level);
-	}
-}
+	};
+};
 
 function extend(Child, Parent) {
 	var F = function() {};
@@ -464,7 +466,7 @@ Game = {
 				throw new Meteor.Error("Такого объекта нет");
 		}
 	}
-}
+};
 
 Game.Random = {
 	random: function() {
@@ -474,7 +476,7 @@ Game.Random = {
 	interval: function(min, max) {
 		return min + Math.round( Random.fraction() * (max - min) );
 	}
-}
+};
 
 Game.Effect = function(options) {
 	this.constructor = function(options) {
@@ -493,7 +495,7 @@ Game.Effect = function(options) {
 			},
 			enumerable: true
 		});
-	}
+	};
 
 	this.constructor(options);
 
@@ -511,14 +513,14 @@ Game.Effect = function(options) {
 			level: level,
 			result: this.result(level)
 		};
-	}
+	};
 
 	this.setProvider = function(provider) {
 		Object.defineProperty(this, 'provider', {
 			value: provider,
 			enumerable: false
 		});
-	}
+	};
 
 	this.register = function(obj) {
 		//this.provider = obj;
@@ -527,23 +529,23 @@ Game.Effect = function(options) {
 		if (this.condition && this.condition.type != 'all') {
 			// Если влияет только на конкретный объект
 			if (this.condition.name) {
-				if (Game.effects[this.type][this.condition.name] == undefined) {
+				if (Game.effects[this.type][this.condition.name] === undefined) {
 					Game.effects[this.type][this.condition.name] = {list: []};
 				}
 
 				Game.effects[this.type][this.condition.name].list.push(this);
 			} else {
-				if (Game.effects[this.type][this.condition.type] == undefined) {
+				if (Game.effects[this.type][this.condition.type] === undefined) {
 					Game.effects[this.type][this.condition.type] = {list: []};
 				}
 
 				if (this.condition.group) {
-					if (Game.effects[this.type][this.condition.type][this.condition.group] == undefined) {
+					if (Game.effects[this.type][this.condition.type][this.condition.group] === undefined) {
 						Game.effects[this.type][this.condition.type][this.condition.group] = {list: []};
 					}
 
 					if (this.condition.special) {
-						if (Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] == undefined) {
+						if (Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] === undefined) {
 							Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] = {list: []};
 						}
 						Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special].list.push(this);
@@ -555,21 +557,22 @@ Game.Effect = function(options) {
 				}
 			}
 		} else {
-			if (Game.effects[this.type] == undefined) {
+			if (Game.effects[this.type] === undefined) {
 				Game.effects[this.type] = {list: []};
 			}
 			Game.effects[this.type].list.push(this);
 		}
-	}
-}
+	};
+};
 
 Game.Effect.getRelatedTo = function(obj) {
 	var effects = {};
+	var i = 0;
 
 	// По имени
 	if (Game.effects[this.type][obj.engName]) {
-		for (var i = 0; i < Game.effects[this.type][obj.engName].list.length; i++) {
-			if (effects[Game.effects[this.type][obj.engName].list[i].priority] == undefined) {
+		for (i = 0; i < Game.effects[this.type][obj.engName].list.length; i++) {
+			if (effects[Game.effects[this.type][obj.engName].list[i].priority] === undefined) {
 				effects[Game.effects[this.type][obj.engName].list[i].priority] = [];
 			}
 
@@ -582,8 +585,8 @@ Game.Effect.getRelatedTo = function(obj) {
 	if (Game.effects[this.type][obj.type]) {
 		// По типу
 		if (Game.effects[this.type][obj.type].list) {
-			for (var i = 0; i < Game.effects[this.type][obj.type].list.length; i++) {
-				if (effects[Game.effects[this.type][obj.type].list[i].priority] == undefined) {
+			for (i = 0; i < Game.effects[this.type][obj.type].list.length; i++) {
+				if (effects[Game.effects[this.type][obj.type].list[i].priority] === undefined) {
 					effects[Game.effects[this.type][obj.type].list[i].priority] = [];
 				}
 
@@ -596,8 +599,8 @@ Game.Effect.getRelatedTo = function(obj) {
 		if (Game.effects[this.type][obj.type][obj.group]) {
 			// По группе
 			if (Game.effects[this.type][obj.type][obj.group].list) {
-				for (var i = 0; i < Game.effects[this.type][obj.type][obj.group].list.length; i++) {
-					if (effects[Game.effects[this.type][obj.type][obj.group].list[i].priority] == undefined) {
+				for (i = 0; i < Game.effects[this.type][obj.type][obj.group].list.length; i++) {
+					if (effects[Game.effects[this.type][obj.type][obj.group].list[i].priority] === undefined) {
 						effects[Game.effects[this.type][obj.type][obj.group].list[i].priority] = [];
 					}
 
@@ -613,8 +616,8 @@ Game.Effect.getRelatedTo = function(obj) {
 			 && Game.effects[this.type][obj.type][obj.group][obj.special]
 			 && Game.effects[this.type][obj.type][obj.group][obj.special].list
 			) {
-				for (var i = 0; i < Game.effects[this.type][obj.type][obj.group][obj.special].list.length; i++) {
-					if (effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] == undefined) {
+				for (i = 0; i < Game.effects[this.type][obj.type][obj.group][obj.special].list.length; i++) {
+					if (effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] === undefined) {
 						effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] = [];
 					}
 
@@ -627,12 +630,12 @@ Game.Effect.getRelatedTo = function(obj) {
 	}
 
 	// Общий
-	for (var i = 0; i < Game.effects[this.type].list.length; i++) {
-		if (effects[Game.effects[this.type].list[i].priority] == undefined) {
+	for (i = 0; i < Game.effects[this.type].list.length; i++) {
+		if (effects[Game.effects[this.type].list[i].priority] === undefined) {
 			effects[Game.effects[this.type].list[i].priority] = [];
 		}
 
-		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i])
+		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i]);
 	}
 
 	// Items and Cards
@@ -643,13 +646,12 @@ Game.Effect.getRelatedTo = function(obj) {
 		items = items.concat(cards);
 	}
 
-	for (var i = 0; i < items.length; i++) {
-		var effect = items[i].effect;
+	for (i = 0; i < items.length; i++) {
 		if (!items[i].effect) {
 			continue;
 		}
 		
-		for(var k = 0; k < items[i].effect.length; k++) {
+		for (var k = 0; k < items[i].effect.length; k++) {
 			var effect = items[i].effect[k];
 
 			if (effect.type == this.type) {
@@ -671,43 +673,44 @@ Game.Effect.getRelatedTo = function(obj) {
 					}
 				}
 
-				if (effects[effect.priority] == undefined) {
+				if (effects[effect.priority] === undefined) {
 					effects[effect.priority] = [];
 				}
 
-				effects[effect.priority].push(effect)
+				effects[effect.priority].push(effect);
 			}
 		}	
 	}
 
 	var result = {};
-
 	var cache = {};
+	var value = null;
+	var provider = null;
 
 	for (var priority in effects) {
 		result[priority] = {};
-		for (var i = 0; i < effects[priority].length; i++) {
+		for (i = 0; i < effects[priority].length; i++) {
 			if (_.isArray(effects[priority][i].affect)) {
 
 				// Cache for building & research
 				if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
-					var provider = effects[priority][i].provider;
+					provider = effects[priority][i].provider;
 					if (cache[provider.type] === undefined) {
 						cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
 					}
 
-					var value = effects[priority][i].result(
+					value = effects[priority][i].result(
 						cache[provider.type] && cache[provider.type][provider.group] && cache[provider.type][provider.group][provider.engName]
 							? cache[provider.type][provider.group][provider.engName]
 							: 0
 					);
 				} else {
-					var value = effects[priority][i].result();
+					value = effects[priority][i].result();
 				}
 
-				if (value && value != undefined) {
+				if (value && value !== undefined) {
 					for (var resource in effects[priority][i].affect) {
-						if (result[priority][effects[priority][i].affect[resource]] == undefined) {
+						if (result[priority][effects[priority][i].affect[resource]] === undefined) {
 							result[priority][effects[priority][i].affect[resource]] = [];
 						}
 
@@ -720,27 +723,27 @@ Game.Effect.getRelatedTo = function(obj) {
 					}
 				}
 			} else {
-				if (result[priority][effects[priority][i].affect] == undefined) {
+				if (result[priority][effects[priority][i].affect] === undefined) {
 					result[priority][effects[priority][i].affect] = [];
 				}
 
 				// Cache for building & research
 				if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
-					var provider = effects[priority][i].provider;
+					provider = effects[priority][i].provider;
 					if (cache[provider.type] === undefined) {
 						cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
 					}
 
-					var value = effects[priority][i].result(
+					value = effects[priority][i].result(
 						cache[provider.type] && cache[provider.type][provider.group] && cache[provider.type][provider.group][provider.engName]
 							? cache[provider.type][provider.group][provider.engName]
 							: 0
 					);
 				} else {
-					var value = effects[priority][i].result();
+					value = effects[priority][i].result();
 				}
 
-				if (value && value != undefined) {
+				if (value && value !== undefined) {
 					result[priority][effects[priority][i].affect].push({
 						value: (Math.floor((value * 100)) / 100),
 						provider: effects[priority][i].provider,
@@ -753,14 +756,14 @@ Game.Effect.getRelatedTo = function(obj) {
 	}
 
 	return result;
-}
+};
 
 Game.Effect.getAll = function() {
 	return this.getRelatedTo({});
-}
+};
 
 Game.Effect.getValue = function(hideEffects) {
-	hideEffects = hideEffects == undefined ? true : hideEffects;
+	hideEffects = hideEffects === undefined ? true : hideEffects;
 	var effects = this.getAll();
 
 	var result = {};
@@ -769,7 +772,7 @@ Game.Effect.getValue = function(hideEffects) {
 		value: effects,
 		configurable: true,
 		enumerable: !hideEffects
-	})
+	});
 
 	for (var priority in effects) {
 		for (var item in effects[priority]) {
@@ -778,7 +781,7 @@ Game.Effect.getValue = function(hideEffects) {
 				effect += effects[priority][item][i].value;
 			}
 
-			if (result[item] == undefined) {
+			if (result[item] === undefined) {
 				result[item] = 0;
 			}
 
@@ -791,18 +794,18 @@ Game.Effect.getValue = function(hideEffects) {
 	}
 
 	return result;
-}
+};
 
 // reduce - true = скидка, т.е. вычитаем эффекты
 Game.Effect.applyTo = function(target, obj, hideEffects) {
-	hideEffects = hideEffects == undefined ? true : hideEffects;
+	hideEffects = hideEffects === undefined ? true : hideEffects;
 	var effects = this.getRelatedTo(target);
 
 	Object.defineProperty(obj, 'effects', {
 		value: effects,
 		configurable: true,
 		enumerable: !hideEffects
-	})
+	});
 
 	for (var priority in effects) {
 		for (var item in effects[priority]) {
@@ -837,7 +840,7 @@ Game.Effect.applyTo = function(target, obj, hideEffects) {
 	}
 
 	return obj;
-}
+};
 
 Game.Effect.Income = function(options) {
 	Game.Effect.Income.superclass.constructor.apply(this, arguments);
@@ -848,7 +851,7 @@ Game.Effect.Income = function(options) {
 
 	this.type = 'income';
 	this.reduce = false;
-}
+};
 extend(Game.Effect.Income, Game.Effect);
 Game.Effect.Income.type = 'income';
 Game.Effect.Income.reduce = false;
@@ -858,7 +861,7 @@ Game.Effect.Price = function(options) {
 
 	this.type = 'price';
 	this.reduce = true;
-}
+};
 extend(Game.Effect.Price, Game.Effect);
 Game.Effect.Price.type = 'price';
 Game.Effect.Price.reduce = true;
@@ -869,7 +872,7 @@ Game.Effect.Military = function(options) {
 
 	this.type = 'military';
 	this.reduce = false;
-}
+};
 extend(Game.Effect.Military, Game.Effect);
 Game.Effect.Military.type = 'military';
 Game.Effect.Military.reduce = false;
@@ -879,7 +882,7 @@ Game.Effect.ProfitOnce = function(options) {
 
 	this.type = 'profitOnce';
 	this.reduce = true;
-}
+};
 extend(Game.Effect.ProfitOnce, Game.Effect);
 Game.Effect.ProfitOnce.type = 'profitOnce';
 Game.Effect.ProfitOnce.reduce = true;
@@ -889,7 +892,7 @@ Game.Effect.Special = function(options) {
 
 	this.type = 'special';
 	this.reduce = true;
-}
+};
 extend(Game.Effect.Special, Game.Effect);
 Game.Effect.Special.type = 'special';
 Game.Effect.Special.reduce = true;
@@ -925,12 +928,12 @@ Game.Queue = {
 		}
 		return false;
 	}
-}
+};
 
 
 game.Function = function(options) {
 	Game.functions[options.key] = options.func;
-}
+};
 
 Game.functions = {};
 

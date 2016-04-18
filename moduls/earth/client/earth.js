@@ -10,7 +10,7 @@ Game.Earth.showMap = function() {
 		to: 'content',
 		data: {}
 	});
-}
+};
 
 // ----------------------------------------------------------------------------
 // Earth battle history
@@ -47,7 +47,7 @@ Game.Earth.showHistory = function() {
 			}
 		});
 	});
-}
+};
 
 Template.earthHistory.helpers({
 	countTotal: function() { return Game.Statistic.getSystemValue('earthHistoryCount'); },
@@ -119,7 +119,7 @@ Game.Earth.showReserve = function() {
 			honor: new ReactiveVar(0)
 		}
 	});
-}
+};
 
 Template.reserve.helpers({
 	units: function() {
@@ -127,7 +127,7 @@ Template.reserve.helpers({
 			return {
 				engName: key,
 				max: val.currentLevel()
-			}
+			};
 		});
 	},
 
@@ -232,7 +232,7 @@ Game.Earth.showZone = function() {
 			name: name
 		}
 	});
-}
+};
 
 Template.earthZoneInfo.helpers({
 	info: function() {
@@ -242,26 +242,30 @@ Template.earthZoneInfo.helpers({
 		var currentUserPower = Game.EarthZones.calcUnitsHealth( zone.userArmy );
 		var currentEnemyPower = Game.EarthZones.calcUnitsHealth( zone.enemyArmy );
 
+		var side = null;
+		var group = null;
+		var name = null;
+
 		var userArmy = (zone.userArmy) ? [] : null;
-		for (var side in zone.userArmy) {
-			for (var group in zone.userArmy[side]) {
-				for (var name in zone.userArmy[side][group]) {
+		for (side in zone.userArmy) {
+			for (group in zone.userArmy[side]) {
+				for (name in zone.userArmy[side][group]) {
 					userArmy.push({
 						name: Game.Unit.items[side][group][name].name,
 						count: zone.userArmy[side][group][name]
-					})
+					});
 				}
 			}
 		}
 
 		var enemyArmy = (zone.enemyArmy) ? [] : null;
-		for (var side in zone.enemyArmy) {
-			for (var group in zone.enemyArmy[side]) {
-				for (var name in zone.enemyArmy[side][group]) {
+		for (side in zone.enemyArmy) {
+			for (group in zone.enemyArmy[side]) {
+				for (name in zone.enemyArmy[side][group]) {
 					enemyArmy.push({
 						name: Game.Unit.items[side][group][name].name,
 						count: zone.enemyArmy[side][group][name]
-					})
+					});
 				}
 			}
 		}
@@ -331,14 +335,14 @@ Game.Earth.showZonePopup = function(name, latlng) {
 		},
 		$('.leaflet-popup-pane')[0]
 	);
-}
+};
 
 Game.Earth.hideZonePopup = function() {
 	if (zonePopupView) {
 		Blaze.remove( zonePopupView );
 		zonePopupView = null;
 	}
-}
+};
 
 Template.earthZonePopup.helpers({
 	zone: function() {
@@ -356,7 +360,7 @@ Template.earthZonePopup.helpers({
 			return null;
 		}
 		if (!zone.isCurrent) {
-			if (turn.type != 'move' || turn.actions[zone.name] == undefined) {
+			if (turn.type != 'move' || turn.actions[zone.name] === undefined) {
 				return null;
 			}
 		}
@@ -441,7 +445,7 @@ var ZoneView = function(mapView, zoneData) {
 			zIndex: 100,
 			fillOpacity: 0.05,
 			fillColor: '#374a60'
-		}
+		};
 
 		var ourStyleHover = {
 			color: '#4a82c4',
@@ -449,23 +453,22 @@ var ZoneView = function(mapView, zoneData) {
 			opacity: 1,
 			fillOpacity: 0.2,
 			zIndex: 100
-		}
+		};
 
 		var enemyStyle = {
 			color: '#913b31',
 			weight: 2,
 			opacity: 0.1,
-			fillOpacity: 0,
 			fillOpacity: 0.05,
 			fillColor: '#913b31'
-		}
+		};
 
 		var enemyStyleHover = {
 			color: '#bd5348',
 			weight: 2,
 			fillOpacity: 0.2,
 			opacity: 1
-		}
+		};
 
 		polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
 
@@ -497,7 +500,7 @@ var ZoneView = function(mapView, zoneData) {
 		// marker.on('click', function(e) { console.log(zone.name); });
 
 		this.update();
-	}
+	};
 
 	this.update = function() {
 		zone = Game.EarthZones.getByName(this.name);
@@ -565,13 +568,13 @@ var ZoneView = function(mapView, zoneData) {
 			}
 
 		}
-	}
+	};
 
 	this.showPopup = function(e) {
 		if (e && e.latlng) {
 			Game.Earth.showZonePopup(zone.name, e.latlng);
 		}
-	}
+	};
 
 	this.hidePopup = Game.Earth.hideZonePopup;
 
@@ -600,7 +603,7 @@ var ZoneView = function(mapView, zoneData) {
 		} else {
 			this.showProgress(humanPower, reptilePower, iconSize * k);
 		}
-	}
+	};
 
 	this.showProgress = function(humans, reptiles, size) {
 		canvasElement.show();
@@ -653,7 +656,7 @@ var ZoneView = function(mapView, zoneData) {
 		context.lineWidth = lineWidth;
 		context.strokeStyle = '#4a82c4';
 		context.stroke();
-	}
+	};
 
 	this.hideProgress = function() {
 		canvasElement.hide();
@@ -665,14 +668,14 @@ var ZoneView = function(mapView, zoneData) {
 		}
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
-	}
+	};
 
 	this.updateText = function(value) {
 		element.find('span').html(value);
-	}
+	};
 
 	this.constructor();
-}
+};
 
 // ----------------------------------------------------------------------------
 // Line view (line on map which displays zone connection + vote result)
@@ -707,13 +710,13 @@ var LineView = function(start, finish) {
 		}).addTo(mapView);
 
 		textElement = $(text._icon);
-	}
+	};
 
 	this.update = function(value) {
 		if (textElement) {
 			textElement.html('<p>' + value + '</p>');
 		}
-	}
+	};
 
 	this.remove = function() {
 		if (line) {
@@ -730,10 +733,10 @@ var LineView = function(start, finish) {
 			text = null;
 			textElement = null;
 		}
-	}
+	};
 
 	this.constructor();
-}
+};
 
 // ----------------------------------------------------------------------------
 // Main
@@ -865,7 +868,7 @@ Template.earth.onRendered(function() {
 			lineViews[ name ].update( Math.round(value) + '%' );
 		}
 	});
-})
+});
 
 Template.earth.onDestroyed(function() {
 	Game.Earth.hideZonePopup();
@@ -887,4 +890,4 @@ Template.earth.onDestroyed(function() {
 	*/
 });
 
-}
+};

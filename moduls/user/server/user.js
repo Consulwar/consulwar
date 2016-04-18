@@ -41,7 +41,7 @@ Accounts.onCreateUser(function(option, user) {
 	option.username = option.username.replace(/\s+/g, ' ');
 
 	check(option.username, Match.Where(function(username) {
-		if (username.length == 0) {
+		if (username.length === 0) {
 			throw new Meteor.Error('Имя не должно быть пустым');
 		}
 
@@ -113,7 +113,7 @@ Accounts.onCreateUser(function(option, user) {
 	}.bind(this, user), 2000);
 
 	return user;
-})
+});
 
 //Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false}); 
 
@@ -155,7 +155,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -164,7 +164,7 @@ Meteor.methods({
 		check(name, String);
 		name = name.trim();
 
-		if (name.length == 0) {
+		if (name.length === 0) {
 			throw new Meteor.Error('Имя планеты не должно быть пустым');
 		}
 

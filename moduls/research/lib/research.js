@@ -16,7 +16,7 @@ game.Research = function(options){
 		};
 		
 		return Router.routes[this.type].path(options);
-	}
+	};
 
 	this.type = 'research';
 };
@@ -48,8 +48,8 @@ Game.Research = {
 		evolution: {},
 		fleetups: {}
 	}
-}
+};
 
 initResearchContent();
 
-}
+};

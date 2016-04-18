@@ -22,13 +22,13 @@ Game.House.defaultItems = {
 			isPlaced: true
 		}
 	}
-}
+};
 
 Game.House.initialize = function(user, isRewrite) {
 	user = user || Meteor.user();
 	var currentValue = Game.House.getValue();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.House.Collection.insert({
 			user_id: user._id,
 			items: Game.House.defaultItems
@@ -42,7 +42,7 @@ Game.House.initialize = function(user, isRewrite) {
 			}
 		});
 	}
-}
+};
 
 Game.House.update = function(data) {
 	Game.House.Collection.update({
@@ -50,7 +50,7 @@ Game.House.update = function(data) {
 	}, data);
 
 	return data;
-}
+};
 
 Meteor.methods({
 	'house.buyItem': function(group, id) {
@@ -60,7 +60,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -103,7 +103,7 @@ Meteor.methods({
 		// add item and spend price
 		house.items[group][id] = {
 			isPlaced: false
-		}
+		};
 		
 		Game.Resources.spend(item.getPrice());
 		Game.House.update(house);
@@ -116,7 +116,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -137,7 +137,7 @@ Meteor.methods({
 		house.items[group][id].isPlaced = true;
 		Game.House.update(house);
 	}
-})
+});
 
 Meteor.publish('houseItems', function () {
 	if (this.userId) {
@@ -147,4 +147,4 @@ Meteor.publish('houseItems', function () {
 	}
 });
 
-}
+};

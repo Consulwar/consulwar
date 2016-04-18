@@ -8,7 +8,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -92,6 +92,6 @@ Meteor.methods({
 			user_id: isEarth ? 'earth' : user._id
 		});
 	}
-})
+});
 
-}
+};

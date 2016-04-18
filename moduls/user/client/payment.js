@@ -8,7 +8,7 @@ initPaymentLib();
 
 Game.Payment.showWindow = function() {
 	Blaze.render(Template.payment, $('.over')[0]);
-}
+};
 
 Template.payment.helpers({
 	paymentItems: function() {
@@ -51,7 +51,7 @@ Template.paymentSide.events({
 		}
 
 		var code = t.find('.promo .code').value;
-		if (!code || code.length == 0) {
+		if (!code || code.length === 0) {
 			Notifications.error('Нужно ввести промо код');
 			return;
 		}
@@ -100,7 +100,7 @@ Game.Payment.showHistory = function() {
 			}
 		});
 	}
-}
+};
 
 Template.paymentHistory.helpers({
 	count: function() { return this.count; },
@@ -118,15 +118,15 @@ Template.paymentHistory.helpers({
 		for (var type in profit) {
 			switch (type) {
 				case 'resources':
-					for (var name in profit[type]) {
-						result += name + ': ' + parseInt(profit[type][name], 10) + ' ';
+					for (var resName in profit[type]) {
+						result += resName + ': ' + parseInt(profit[type][resName], 10) + ' ';
 					}
 					break;
 				case 'units':
-					for (var group in profit[type]) {
-						for (var name in profit[type][group]) {
-							result += Game.Unit.items.army[group][name].name + ': ';
-							result += parseInt(profit[type][group][name], 10) + ' ';
+					for (var unitGroup in profit[type]) {
+						for (var unitName in profit[type][unitGroup]) {
+							result += Game.Unit.items.army[unitGroup][unitName].name + ': ';
+							result += parseInt(profit[type][unitGroup][unitName], 10) + ' ';
 						}
 					}
 					break;
@@ -139,4 +139,4 @@ Template.paymentHistory.helpers({
 	}
 });
 
-}
+};

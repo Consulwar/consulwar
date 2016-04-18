@@ -39,7 +39,7 @@ Game.House.showPage = function() {
 			to: 'content'
 		});
 	}
-}
+};
 
 // ----------------------------------------------------------------------------
 // Consul house overview
@@ -178,4 +178,4 @@ Template.consulHouseCards.helpers({
 	}
 });
 
-}
+};

@@ -7,7 +7,7 @@ var activeTo = new ReactiveVar(null);
 
 Game.Market.showWindow = function() {
 	Blaze.render(Template.market, $('.over')[0]);
-}
+};
 
 Template.market.helpers({
 	activeFrom: function() { return activeFrom.get(); },
@@ -20,7 +20,7 @@ Template.market.helpers({
 			return {
 				name: key,
 				amount: userResource[key] ? userResource[key].amount : 0
-			}
+			};
 		});
 	},
 
@@ -33,7 +33,7 @@ Template.market.helpers({
 			return {
 				name: key,
 				rate: Game.Market.getExchangeRate(activeFrom.get(), key)
-			}
+			};
 		});
 	},
 
@@ -45,7 +45,7 @@ Template.market.helpers({
 var resetForm = function(t) {
 	t.$('.exchange .amount').val(0);
 	t.$('.exchange .result').html(0);
-}
+};
 
 var recalculateForm = function(t) {
 	var amount = parseInt( t.$('.exchange .amount').val(), 10 );
@@ -67,7 +67,7 @@ var recalculateForm = function(t) {
 	t.$('.exchange .result').html(
 		Game.Market.getExchangeAmount(activeFrom.get(), activeTo.get(), amount)
 	);
-}
+};
 
 Template.market.events({
 	'click .close': function(e, t) {
@@ -136,4 +136,4 @@ Template.market.events({
 	}
 });
 
-}
+};

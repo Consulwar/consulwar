@@ -16,15 +16,15 @@ Game.Unit.showPage = function() {
 			}
 		});
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', {to: 'content'});
 	}
-}
+};
 
 Template.unit.helpers({
 	count: function() {
 		return this.count.get();
 	}
-})
+});
 
 Template.unit.events({
 	'keyup .count, change .count': function(e, t) {
@@ -55,4 +55,4 @@ Template.unit.events({
 	}
 });
 
-}
+};

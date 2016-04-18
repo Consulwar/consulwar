@@ -6,7 +6,7 @@ Game.Resources = {
 	bonusStorage: 6,
 
 	getValue: function(uid) {
-		return Game.Resources.Collection.findOne({user_id: uid != undefined ? uid : Meteor.userId()});
+		return Game.Resources.Collection.findOne({user_id: uid !== undefined ? uid : Meteor.userId()});
 	},
 
 	/**
@@ -29,6 +29,7 @@ Game.Resources = {
 		delta += uncountedSeconds ? uncountedSeconds : 0;
 
 		var interval = 3600 * (halfToBonus ? 2 : 1);
+		var result = null;
 
 		// Добыча в секунду (дробное)
 		var incomePerSecond = income / interval;
@@ -48,7 +49,7 @@ Game.Resources = {
 			// Количетсво неиспользованных секунд
 			var secondsLeft = delta - usedSeconds;
 
-			var result = {
+			result = {
 				amount: amount,
 				bonusSeconds: secondsLeft
 			};
@@ -61,7 +62,7 @@ Game.Resources = {
 		} else {
 			var totalAmount = Math.floor((income * delta) / interval);
 
-			var result = {
+			result = {
 				amount: totalAmount,
 				bonusSeconds: 0
 			};
@@ -70,7 +71,7 @@ Game.Resources = {
 				result.bonus = totalAmount;
 			}
 		
-			return result
+			return result;
 		}
 	},
 
@@ -110,4 +111,4 @@ Game.Resources = {
 	}
 };
 
-}
+};

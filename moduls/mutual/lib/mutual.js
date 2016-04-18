@@ -5,7 +5,7 @@ game.MutualItem = function(options) {
 
 	this.constructor = function(options) {
 		this.investments = options.investments;
-	}
+	};
 
 	this.constructor(options);
 
@@ -16,18 +16,18 @@ game.MutualItem = function(options) {
 		};
 		
 		return Router.routes[this.type].path(options);
-	}
+	};
 
 	this.currentLevel = function() {
 		return Math.floor(this.currentInvestments() / this.investments);
-	}
+	};
 
 	this.currentInvestments = function() {
 		return Game.Mutual.get(this.group, this.engName) || 0;
-	}
+	};
 
 	this.type = 'mutual';
-}
+};
 game.extend(game.MutualItem, game.Item);
 
 game.MutualResearch = function(options){
@@ -69,7 +69,7 @@ Game.Mutual = {
 	items: {
 		research: {}
 	}
-}
+};
 
 Game.Investments = {
 	Collection: new Meteor.Collection('investments'),
@@ -110,8 +110,8 @@ Game.Investments = {
 		level = level || 1;
 		return Game.Mutual.get(group, name) >= level;
 	}*/
-}
+};
 
 initMutualContent();
 
-}
+};

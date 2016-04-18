@@ -10,18 +10,18 @@ game.Battle = function(options) {
 		this.level = options.level;
 
 		Game.Battle.items[this.engName] = this;
-	}
+	};
 
 	this.type = 'battle';
 
 	this.constructor(options);
-}
+};
 
 game.Battle.status = {
 	flight: 0,
 	back: 1,
 	ended: 2
-}
+};
 
 game.Battle.count = {
 	few: 'несколько',
@@ -38,17 +38,17 @@ game.Battle.count = {
 	army: 'армия',
 	group: 'группа армий',
 	front: 'фронт'
-}
+};
 
 Game.Battle = {
 	items: {}
-}
+};
 
 Game.Battle.result = {
 	tie: 0,
 	victory: 1,
 	defeat: 2
-}
+};
 
 initGalacticContentBattle();
 

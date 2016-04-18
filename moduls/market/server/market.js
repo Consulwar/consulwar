@@ -10,7 +10,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -34,6 +34,6 @@ Meteor.methods({
 		resourceAdd[resourceTo] = result;
 		Game.Resources.add(resourceAdd);
 	}
-})
+});
 
-}
+};

@@ -16,7 +16,7 @@ Game.Statistic.initialize = function(user) {
 			user_id: user._id
 		});
 	}
-}
+};
 
 Game.Statistic.incrementUser = function(uid, increment) {
 	Game.Statistic.Collection.update({
@@ -24,7 +24,7 @@ Game.Statistic.incrementUser = function(uid, increment) {
 	}, {
 		$inc: increment
 	});
-}
+};
 
 Game.Statistic.incrementAllUsers = function(increment) {
 	Game.Statistic.Collection.update({
@@ -34,7 +34,7 @@ Game.Statistic.incrementAllUsers = function(increment) {
 	}, {
 		multi: true
 	});
-}
+};
 
 Game.Statistic.incrementGame = function(increment) {
 	Game.Statistic.Collection.upsert({
@@ -42,7 +42,7 @@ Game.Statistic.incrementGame = function(increment) {
 	}, {
 		$inc: increment
 	});
-}
+};
 
 Game.Statistic.fixGame = function() {
 	var totalMailComplaints = Game.Mail.Collection.find({
@@ -61,7 +61,7 @@ Game.Statistic.fixGame = function() {
 			earthHistoryCount: earthHistoryCount
 		}
 	});
-}
+};
 
 Game.Statistic.fixUser = function(userId) {
 	var user = Meteor.users.findOne({
@@ -109,7 +109,7 @@ Game.Statistic.fixUser = function(userId) {
 			battleHistoryCount: battleHistoryCount
 		}
 	});
-}
+};
 
 Meteor.methods({
 	'statistic.fixGame': function() {
@@ -119,7 +119,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -137,7 +137,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -193,4 +193,4 @@ Meteor.publish('statistic', function() {
 	}
 });
 
-}
+};

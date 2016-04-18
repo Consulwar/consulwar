@@ -6,7 +6,7 @@ Game.User.convertUsernameToPlainname = function(name) {
 		result += letters[ name[i] ] ? letters[ name[i] ] : name[i]; 
 	}
 	return result;
-}
+};
 
 var letters = {
 	// Small english letters are equal
@@ -146,6 +146,6 @@ var letters = {
 	'Э': 'э',
 	'Ю': 'ю',
 	'Я': 'я'
-}
+};
 
 });

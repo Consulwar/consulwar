@@ -38,9 +38,9 @@ Game.Rating.showPage = function() {
 				: 1;
 
 			Router.go('statistics', { page: userPage } );
-		})
+		});
 	}
-}
+};
 
 Template.rating.helpers({
 	rank: function(rating) {
@@ -59,4 +59,4 @@ Template.rating.onRendered(function() {
 	}
 });
 
-}
+};

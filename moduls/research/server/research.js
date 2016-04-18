@@ -11,7 +11,7 @@ Game.Research.add = function(research) {
 	Game.Research.initialize();
 
 	var set = {};
-	set[research.group + '.' + research.engName] = research.level
+	set[research.group + '.' + research.engName] = research.level;
 
 	Game.Research.Collection.update({
 		user_id: Meteor.userId()
@@ -20,22 +20,22 @@ Game.Research.add = function(research) {
 	});
 
 	return set;
-}
+};
 
 Game.Research.complete = function(task) {
 	return Game.Research.add(task);
-}
+};
 
 Game.Research.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Research.getValue();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Research.Collection.insert({
 			'user_id': user._id
-		})
+		});
 	}
-}
+};
 
 Meteor.publish('researches', function () {
 	if (this.userId) {
@@ -43,4 +43,4 @@ Meteor.publish('researches', function () {
 	}
 });
 
-}
+};

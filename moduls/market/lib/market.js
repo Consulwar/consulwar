@@ -23,12 +23,12 @@ Game.Market = {
 			return 0;
 		}
 
-		var level = Game.Building.items.residential['tradingport']
-			? Game.Building.items.residential['tradingport'].currentLevel()
+		var level = Game.Building.items.residential.tradingport
+			? Game.Building.items.residential.tradingport.currentLevel()
 			: 0;
 
 		// can't change if no tradingport
-		if (level == 0) {
+		if (level === 0) {
 			return 0;
 		}
 
@@ -39,6 +39,6 @@ Game.Market = {
 	getExchangeAmount: function(resourceFrom, resourceTo, amount) {
 		return Math.floor( Game.Market.getExchangeRate(resourceFrom, resourceTo) * amount );
 	}
-}
+};
 
-}
+};

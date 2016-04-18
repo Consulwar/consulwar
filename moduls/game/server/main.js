@@ -1,7 +1,7 @@
 //BrowserPolicy.framing.allowAll();
 
 BrowserPolicy.content.allowOriginForAll('*');
-BrowserPolicy.content.allowEval('*')
+BrowserPolicy.content.allowEval('*');
 //heapdump = Meteor.npmRequire('heapdump');
 
 process.env.METEOR_DOWN_KEY = 'Some_great_key_for_testing_84124';
@@ -16,7 +16,7 @@ Game.checkIsProcessActive = function(processId) {
 		processId: processId
 	});
 	return process ? true : false;
-}
+};
 
 var heartbeat = function() {
 	var currentTime = Game.getCurrentTime();
@@ -30,7 +30,7 @@ var heartbeat = function() {
 	ApplicationCollection.remove({
 		timestamp: { $lt: currentTime - Game.PROCESS_TIMEOUT }
 	});
-}
+};
 
 heartbeat();
 Meteor.setInterval(heartbeat, 5000);
@@ -75,7 +75,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -83,8 +83,9 @@ Meteor.methods({
 
 		// Update queue tasks and resources
 		var needToCheckAgain = Game.Queue.checkAll();
-		
-		needToCheckAgain && Game.Queue.checkAll();
+		if (needToCheckAgain)  {
+			Game.Queue.checkAll();
+		}
 
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();

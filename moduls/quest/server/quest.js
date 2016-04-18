@@ -17,11 +17,11 @@ game.QuestLine = function(options, quests) {
 			throw new Meteor.Error('Ошибка в контенте', 'Не указано имя цепочки заданий');
 		}
 
-		if (Game.Quest.regularQuests[options.engName] != undefined) {
+		if (Game.Quest.regularQuests[options.engName] !== undefined) {
 			throw new Meteor.Error('Ошибка в контенте', 'Цепочка заданий с именем ' + options.engName + ' уже существует');
 		}
 
-		if (quests.length == 0) {
+		if (quests.length === 0) {
 			throw new Meteor.Error('Ошибка в контенте', 'Нет ни одного задания в цепочке ' + options.engName);
 		}
 
@@ -47,31 +47,31 @@ game.QuestLine = function(options, quests) {
 		this.questsMap = questsMap;
 		
 		Game.Quest.regularQuests[this.engName] = this;
-	}
+	};
 
 	this.constructor(options, quests);
 
 	this.firstStep = function() {
 		return this.quests[0];
-	}
+	};
 
 	this.findStep = function(engName) {
 		var i = this.questsMap[engName];
 		return (i >= 0 && i < this.quests.length) ? this.quests[i] : null;
-	}
+	};
 
 	this.nextStep = function(engName) {
 		var i = this.questsMap[engName];
 		return (i >= 0 && i < this.quests.length - 1) ? this.quests[i + 1] : null;
-	}
-}
+	};
+};
 
 game.DailyQuest = function(options) {
 	if (!options.engName) {
 		throw new Meteor.Error('Ошибка в контенте', 'Не указано имя ежедневного задания');
 	}
 
-	if (Game.Quest.dailyQuests[options.engName] != undefined) {
+	if (Game.Quest.dailyQuests[options.engName] !== undefined) {
 		throw new Meteor.Error('Ошибка в контенте', 'Ежедневное задание с именем ' + options.engName + ' уже существует');
 	}
 
@@ -82,7 +82,7 @@ game.DailyQuest = function(options) {
 	this.who = options.who || 'tamily';
 
 	Game.Quest.dailyQuests[this.engName] = this;
-}
+};
 
 initQuestContent();
 
@@ -90,7 +90,7 @@ Game.Quest.initialize = function(user, isRewrite) {
 	user = user || Meteor.user();
 	var quests = Game.Quest.getValue();
 
-	if (quests == undefined) {
+	if (quests === undefined) {
 		Game.Quest.Collection.insert({
 			user_id: user._id,
 			current: {},
@@ -107,7 +107,7 @@ Game.Quest.initialize = function(user, isRewrite) {
 			}
 		});
 	}
-}
+};
 
 Game.Quest.actualize = function() {
 	var user = Meteor.user();
@@ -116,7 +116,7 @@ Game.Quest.actualize = function() {
 		throw new Meteor.Error('Требуется авторизация');
 	}
 
-	if (user.blocked == true) {
+	if (user.blocked === true) {
 		throw new Meteor.Error('Аккаунт заблокирован');
 	}
 
@@ -127,16 +127,18 @@ Game.Quest.actualize = function() {
 	}
 	
 	var currentTime = Game.getCurrentTime();
+	var key = null;
+	var questLine = null;
 
 	// check inprogress quest lines
-	for (var key in quests.current) {
+	for (key in quests.current) {
 		var current = quests.current[key];
 
 		if (current.status != Game.Quest.status.INPROGRESS) {
 			continue;
 		}
 
-		var questLine = Game.Quest.regularQuests[key];
+		questLine = Game.Quest.regularQuests[key];
 		var quest = questLine.findStep(current.step);
 
 		if (quest.isDone()) {
@@ -145,8 +147,8 @@ Game.Quest.actualize = function() {
 	}
 
 	// try to start new quest line
-	for (var key in Game.Quest.regularQuests) {
-		var questLine = Game.Quest.regularQuests[key];
+	for (key in Game.Quest.regularQuests) {
+		questLine = Game.Quest.regularQuests[key];
 
 		if (quests.current[key] || quests.finished[key] || !questLine.canStart()) {
 			continue;
@@ -165,7 +167,7 @@ Game.Quest.actualize = function() {
 			appearTime: currentTime,
 			step: firstStep.engName,
 			who: questLine.who
-		}
+		};
 	}
 
 	// refresh daily quest
@@ -182,11 +184,11 @@ Game.Quest.actualize = function() {
 			startTime: currentTime,
 			name: Game.Quest.dailyQuests[choise].name,
 			who: Game.Quest.dailyQuests[choise].who
-		}
+		};
 	}
 
 	Game.Quest.Collection.update({ user_id: user._id }, quests);
-}
+};
 
 Meteor.methods({
 	'quests.sendAction': function(questId, action) {
@@ -196,7 +198,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -232,7 +234,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -257,7 +259,7 @@ Meteor.methods({
 				current.history[current.step] = {
 					result: Game.Quest.status.FINISHED,
 					startTime: current.startTime
-				}
+				};
 				// put next step
 				current.status = Game.Quest.status.PROMPT;
 				current.name = nextStep.conditionText;
@@ -285,7 +287,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -310,7 +312,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -333,7 +335,7 @@ Meteor.methods({
 			name: quest.name,
 			text: quest.text,
 			answers: answers
-		}
+		};
 	},
 
 	'quests.sendDailyAnswer': function(answer) {
@@ -343,7 +345,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked ]== true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
@@ -372,12 +374,12 @@ Meteor.methods({
 			var reward = {
 				metals: result == 'win' ? Math.floor( income.metals ) : 0,
 				crystals: result == 'win' ? Math.floor( income.crystals ) : 0
-			}
+			};
 
 			var set = {
 				'daily.status': Game.Quest.status.FINISHED,
 				'daily.result': quest.answers[answer][result]
-			}
+			};
 
 			Game.Resources.add(reward);
 
@@ -393,7 +395,7 @@ Meteor.methods({
 			};
 		}
 	}
-})
+});
 
 Meteor.publish('quest', function () {
 	if (this.userId) {
@@ -403,4 +405,4 @@ Meteor.publish('quest', function () {
 	}
 });
 
-}
+};

@@ -17,7 +17,7 @@ Game.Queue.Collection._ensureIndex({
 	user_id: 1,
 	status: 1,
 	finishTime: -1
-})
+});
 
 Game.Queue.add = function(item) {
 	if (!Meteor.userId()) {
@@ -39,13 +39,13 @@ Game.Queue.add = function(item) {
 		startTime: startTime,
 		finishTime: startTime + item.time,
 		createdTime: Game.getCurrentTime() // debug field
-	}
+	};
 
 	var select = {
 		user_id: Meteor.userId(),
 		type: item.type,
 		finishTime: { $gt: startTime }
-	}
+	};
 
 	// parse additonal options
 	if (item.eventId) {
@@ -77,7 +77,7 @@ Game.Queue.add = function(item) {
 	});
 
 	return result.insertedId ? true : false;
-}
+};
 
 Game.Queue.complete = function(taskId) {
 	if (!Meteor.userId()) {
@@ -92,7 +92,7 @@ Game.Queue.complete = function(taskId) {
 			status: Game.Queue.status.DONE
 		}
 	});
-}
+};
 
 var completeItems = function(items, needResourcesUpdate) {
 	for (var i = 0; i < items.length; i++) {
@@ -104,7 +104,7 @@ var completeItems = function(items, needResourcesUpdate) {
 		Game.getObjectByType( items[i].type ).complete( items[i] );
 		Game.Queue.complete( items[i]._id );
 	}
-}
+};
 
 Game.Queue.checkAll = function() {
 	if (!Meteor.userId()) {
@@ -123,7 +123,7 @@ Game.Queue.checkAll = function() {
 	}).fetch();
 
 	// Нет необработанных задач
-	if (items.length == 0) {
+	if (items.length === 0) {
 		// Рассчитать доход до текущего времени
 		Game.Resources.updateWithIncome(Game.getCurrentTime());
 		return;
@@ -198,7 +198,7 @@ Game.Queue.checkAll = function() {
 	}
 
 	return true;
-}
+};
 
 Meteor.publish('queue', function () {
 	if (this.userId) {

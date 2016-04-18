@@ -307,7 +307,7 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 		var engineLevel = 0;
 		var flyTime = Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel);
 
-		var shipOptions = {
+		Game.SpaceEvents.sendShip({
 			startPosition:  startPosition,
 			startPlanetId:  startPlanet._id,
 			targetPosition: targetPosition,
@@ -316,11 +316,10 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 			startTime:      timeCurrent,
 			flyTime:        flyTime,
 			isHumans:       false,
+			isOneway:       true,
 			engineLevel:    engineLevel,
 			mission:        mission
-		};
-
-		Game.SpaceEvents.sendShip(shipOptions);
+		});
 	}
 };
 
@@ -370,7 +369,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 			throw new Meteor.Error('Не получилось сгенерировать миссию для нападения');
 		}
 
-		var shipOptions = {
+		Game.SpaceEvents.sendShip({
 			startPosition:  startPosition,
 			startPlanetId:  startPlanet._id,
 			targetPosition: targetPosition,
@@ -379,11 +378,10 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 			startTime:      timeCurrent,
 			flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
 			isHumans:       false,
+			isOneway:       false,
 			engineLevel:    engineLevel,
 			mission:        mission
-		};
-
-		Game.SpaceEvents.sendShip(shipOptions);
+		});
 	}
 };
 
@@ -497,6 +495,15 @@ var completeReptilesArrival = function(event, planet) {
 		return; // empty reptiles ship!
 	}
 
+	// get enemy fleet
+	var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
+	var enemyArmy = (enemyFleet)
+		? { reptiles: { fleet: enemyFleet } }
+		: null;
+
+	// define user army
+	var userArmy = null;
+
 	if (!planet.mission && (planet.armyId || planet.isHome)) {
 		// reptiles attack our planet
 		var enemyLocation = (event.info.startPlanetId)
@@ -511,18 +518,11 @@ var completeReptilesArrival = function(event, planet) {
 			userLocation: planet._id,
 			enemyLocation: enemyLocation
 		};
-
-		// get enemy fleet
-		var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
-		var enemyArmy = (enemyFleet)
-			? { reptiles: { fleet: enemyFleet } }
-			: null;
 		
 		// get user fleet + defense
 		var userFleet = Game.Planets.getFleetUnits(planet._id);
 		var userDefense = Game.Planets.getDefenseUnits(planet._id);
 
-		var userArmy = null;
 		if (userFleet || userDefense) {
 			userArmy = { army: {} };
 			if (userFleet) {
@@ -544,20 +544,12 @@ var completeReptilesArrival = function(event, planet) {
 		if (userArmy && enemyArmy) {
 			// tie
 			Game.Unit.updateArmy(userArmyId, userArmy);
-			planet.mission.units = enemyArmy.reptiles.fleet;
+			event.info.mission.units = enemyArmy.reptiles.fleet;
 		} else if (!userArmy && enemyArmy) {
 			// reptiles won
 			Game.Unit.removeArmy(userArmyId);
-			if (planet.isHome) {
-				event.info.mission.units = enemyArmy.reptiles.fleet;
-			} else {
-				planet.armyId = null;
-				planet.mission = {
-					type: 'defencefleet',
-					level: event.info.mission.level,
-					units: enemyArmy.reptiles.fleet
-				};
-			}
+			planet.armyId = null;
+			event.info.mission.units = enemyArmy.reptiles.fleet;
 		} else if (userArmy && !enemyArmy) {
 			// humans won
 			Game.Unit.updateArmy(userArmyId, userArmy);
@@ -571,6 +563,7 @@ var completeReptilesArrival = function(event, planet) {
 			event.info.mission = null;
 		}
 
+		// after battle
 		if (enemyArmy) {
 			// collect all gained artefacts until defeat
 			if (!userArmy && !planet.isHome) {
@@ -615,37 +608,39 @@ var completeReptilesArrival = function(event, planet) {
 					});
 				}
 			}
+		}
+	}
 
+	if (enemyArmy) {
+		if (userArmy || planet.isHome || !event.info.isOneway) {
 			// return reptiles ship
-			if (userArmy || planet.isHome) {
-				Game.SpaceEvents.sendShip({
-					startPosition:  event.info.targetPosition,
-					startPlanetId:  event.info.targetId,
-					targetPosition: event.info.startPosition,
-					targetType:     Game.SpaceEvents.target.PLANET,
-					targetId:       event.info.startPlanetId,
-					startTime:      event.timeEnd,
-					flyTime:        Game.Planets.calcFlyTime(event.info.targetPosition, event.info.startPosition, event.info.engineLevel),
-					isHumans:       false,
-					isOneway:       true,
-					engineLevel:    event.info.engineLevel,
-					mission:        event.info.mission,
-					armyId:         null
-				});
+			Game.SpaceEvents.sendShip({
+				startPosition:  event.info.targetPosition,
+				startPlanetId:  event.info.targetId,
+				targetPosition: event.info.startPosition,
+				targetType:     Game.SpaceEvents.target.PLANET,
+				targetId:       event.info.startPlanetId,
+				startTime:      event.timeEnd,
+				flyTime:        Game.Planets.calcFlyTime(event.info.targetPosition, event.info.startPosition, event.info.engineLevel),
+				isHumans:       false,
+				isOneway:       true,
+				engineLevel:    event.info.engineLevel,
+				mission:        event.info.mission,
+				armyId:         null
+			});
+		} else {
+			if (!planet.mission) {
+				// fill empty planet
+				planet.mission = {
+					type: 'defencefleet',
+					level: event.info.mission.level,
+					units: event.info.mission.units
+				};
+			} else {
+				// restore mission units
+				planet.mission.units = null;
 			}
 		}
-
-	} else if (planet.mission) {
-		// reptiles planet
-		// TODO: implement mission merge!
-
-	} else {
-		// empty planet
-		planet.mission = {
-			type: 'defencefleet',
-			level: event.info.mission.level,
-			units: event.info.mission.units
-		};
 	}
 
 	planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;

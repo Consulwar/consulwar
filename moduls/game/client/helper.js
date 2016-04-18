@@ -143,9 +143,9 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 	var exponent = 0;
 	while (price.length > limit) {
 		price = (price / 1000);
-		if (price.toFixed(2).substr(-1) !== 0) {
+		if (price.toFixed(2).substr(-1) !== '0') {
 			price = price.toFixed(2);
-		} else if (price.toFixed(1).substr(-1) !== 0) {
+		} else if (price.toFixed(1).substr(-1) !== '0') {
 			price = price.toFixed(1);
 		} else {
 			price = Math.round(price);
@@ -170,9 +170,9 @@ var formatNumber = function (num, delimeter) {
 
 	return _.map(num, function(value) {
 		if (_.isNumber(value)) {
-			if (value.toFixed(2).substr(-1) !== 0) {
+			if (value.toFixed(2).substr(-1) !== '0') {
 				value = value.toFixed(2);
-			} else if (value.toFixed(1).substr(-1) !== 0) {
+			} else if (value.toFixed(1).substr(-1) !== '0') {
 				value = value.toFixed(1);
 			}
 		}

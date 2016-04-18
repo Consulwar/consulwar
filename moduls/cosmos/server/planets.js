@@ -6,46 +6,81 @@ Game.Planets.Collection._ensureIndex({
 
 Game.Planets.actualize = function() {
 	var planets = Game.Planets.getAll().fetch();
-	if (planets) {
-		for (var i = 0; i < planets.length; i++) {
-			Game.Planets.actualizePlanet( planets[i] );
-		}
-	}
-};
-
-Game.Planets.actualizePlanet = function(planet) {
-	if (!planet || planet.isHome) {
+	if (!planets) {
 		return;
 	}
 
-	var timeCurrent = Game.getCurrentTime();
+	var planet = null;
+	var i = 0;
 
-	// spawn enemies
-	if (!planet.mission
-	 && !planet.armyId
-	 &&  planet.timeRespawn <= timeCurrent
-	) {
-		if (Game.Random.random() >= 0.5) {
-			// create mission
-			planet.mission = Game.Planets.generateMission(planet);
-		} else {
-			// wait
-			planet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
+	// aggregate information about sectors
+	var sectors = {};
+
+	for (i = 0; i < planets.length; i++) {
+		planet = planets[i];
+
+		if (!sectors[planet.hand]) {
+			sectors[planet.hand] = {};
 		}
-		Game.Planets.update(planet);
+		if (!sectors[planet.hand][planet.segment]) {
+			sectors[planet.hand][planet.segment] = {
+				occupied: 0,
+				total: 0
+			};
+		}
+
+		if (planet.mission) {
+			sectors[planet.hand][planet.segment].occupied += 1;
+		}
+		sectors[planet.hand][planet.segment].total += 1;
 	}
 
-	// auto collect artefacts
-	if (planet.armyId && planet.timeArtefacts) {
-		var delta = timeCurrent - planet.timeArtefacts;
-		var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
-		if (count > 0) {
-			var artefacts = Game.Planets.getArtefacts(planet, count);
-			if (artefacts) {
-				Game.Resources.add(artefacts);
+	// update planets
+	var timeCurrent = Game.getCurrentTime();
+
+	for (i = 0; i < planets.length; i++) {
+		planet = planets[i];
+
+		// don't update home planet
+		if (planet.isHome) {
+			continue;
+		}
+
+		if (planet.armyId) {
+			// auto collect artefacts
+			if (planet.timeArtefacts) {
+				var delta = timeCurrent - planet.timeArtefacts;
+				var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
+				if (count > 0) {
+					var artefacts = Game.Planets.getArtefacts(planet, count);
+					if (artefacts) {
+						Game.Resources.add(artefacts);
+					}
+					planet.timeArtefacts += ( Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count );
+					Game.Planets.update(planet);
+				}
 			}
-			planet.timeArtefacts += ( Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count );
-			Game.Planets.update(planet);
+		} else {
+			// spawn enemies
+			if (planet.timeRespawn <= timeCurrent) {
+				if (!planet.mission) {
+					// create new mission
+					var sector = sectors[planet.hand][planet.segment];
+					if (sector.occupied < 2
+					 || sector.occupied < Math.floor(sector.total / 2)
+					) {
+						if (Game.Random.random() <= 0.5) {
+							planet.mission = Game.Planets.generateMission(planet);
+							sector.occupied += 1;
+						}
+					}
+				} else if (planet.mission.units) {
+					// restore previous
+					planet.mission.units = null;
+				}
+				planet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
+				Game.Planets.update(planet);
+			}
 		}
 	}
 };
@@ -533,9 +568,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 			size: size
 		};
 
-		var newId = Game.Planets.add(newPlanet);
-		Game.Planets.actualizePlanet(newPlanet);
-
+		Game.Planets.add(newPlanet);
 		freeSpots.splice(n, 1);
 	}
 };
@@ -603,6 +636,9 @@ Meteor.methods({
 			Game.Planets.generateSector(galactic, hand, segment, false);
 			Game.Planets.generateSector(galactic, hand, segment + 1, false);
 			Game.Planets.generateSector(galactic, hand, segment - 1, false);
+
+			// refresh all planets
+			Game.Planets.actualize();
 		}
 	},
 
@@ -639,6 +675,9 @@ Meteor.methods({
 		for (var i = 0; i < sectors.length; i++) {
 			Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
 		}
+
+		// refresh all planets
+		Game.Planets.actualize();
 	},
 
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {

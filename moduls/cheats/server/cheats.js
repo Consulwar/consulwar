@@ -32,8 +32,8 @@ if (process.env.NODE_ENV == 'development') {
 			return Game.Planets.generateMission(planet);
 		},
 
-		'cheats.spawnTradeFleet': function() {
-			Game.SpaceEvents.spawnTradeFleet();
+		'cheats.spawnTradeFleet': function(hand, segment) {
+			Game.SpaceEvents.spawnTradeFleet(hand, segment);
 		},
 
 		'cheats.sendReptileFleetToPlanet': function(planetId) {

@@ -297,6 +297,22 @@ Game.Planets.setLastAttackTime = function(time) {
 	}
 };
 
+Game.Planets.getLastTradeFleetTime = function() {
+	var home = Game.Planets.getBase();
+	if (home && home.timeLastTradeFleet) {
+		return home.timeLastTradeFleet;
+	}
+	return 0;
+};
+
+Game.Planets.setLastTradeFleetTime = function(time) {
+	var home = Game.Planets.getBase();
+	if (home) {
+		home.timeLastTradeFleet = time;
+		Game.Planets.update(home);
+	}
+};
+
 Game.Planets.generateMission = function(planet) {
 	// check planets
 	if (!planet) {
@@ -783,10 +799,10 @@ Meteor.methods({
 
 		// if planet is colony
 		if (!basePlanet.isHome && basePlanet.armyId) {
-			// add reptiles attack trigger (after 30 minutes)
+			// add reptiles attack trigger
 			Game.SpaceEvents.addTriggerAttack({
 				startTime: Game.getCurrentTime(),
-				delayTime: 1800,
+				delayTime: Game.Cosmos.TRIGGER_ATTACK_DELAY,
 				targetPlanet: basePlanet._id
 			});
 		}

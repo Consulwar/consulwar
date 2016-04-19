@@ -43,15 +43,12 @@ Game.SpaceEvents.actualize = function() {
 	}
 
 	// Try to spawn trade fleet
-	var tradeFleetsCount = Game.SpaceEvents.Collection.find({
-		user_id: Meteor.userId(),
-		type: Game.SpaceEvents.type.SHIP,
-		status: Game.SpaceEvents.status.STARTED,
-		'info.mission.type': 'tradefleet'
-	}).count();
-
-	if (tradeFleetsCount <= 0) {
-		Game.SpaceEvents.spawnTradeFleet();	
+	// TODO: Придумать что делать со временем спавна
+	//       сейчас все флоты появляются одновременно
+	var timeLastTradeFleet = Game.Planets.getLastTradeFleetTime();
+	if (timeCurrent >= timeLastTradeFleet + Game.Cosmos.TRADE_FLEET_PERIOD) {
+		Game.SpaceEvents.actualizeTradeFleets();
+		Game.Planets.setLastTradeFleetTime( timeCurrent );
 	}
 };
 
@@ -364,6 +361,14 @@ Game.SpaceEvents.sendShip = function(options) {
 		options.isOneway = true;
 	}
 
+	if (options.hand === undefined) {
+		options.hand = null;
+	}
+
+	if (options.segment === undefined) {
+		options.segment = null;
+	}
+
 	// insert event
 	var eventId = Game.SpaceEvents.add({
 		type: Game.SpaceEvents.type.SHIP,
@@ -380,7 +385,9 @@ Game.SpaceEvents.sendShip = function(options) {
 			targetType: options.targetType,
 			targetId: options.targetId,
 			mission: options.mission,
-			armyId: options.armyId
+			armyId: options.armyId,
+			hand: options.hand,
+			segment: options.segment
 		}
 	});
 
@@ -397,27 +404,124 @@ Game.SpaceEvents.sendShip = function(options) {
 	return null;
 };
 
-Game.SpaceEvents.spawnTradeFleet = function() {
-	// find available planets
-	var planets = Game.Planets.getAll().fetch();
-	var n = planets.length;
+Game.SpaceEvents.actualizeTradeFleets = function() {
+	// find fleets and group by sector
+	var fleets = Game.SpaceEvents.Collection.find({
+		user_id: Meteor.userId(),
+		type: Game.SpaceEvents.type.SHIP,
+		timeEnd: { $gt: Game.getCurrentTime() },
+		'info.mission.type': 'tradefleet'
+	}).fetch();
 
+	var i = 0;
+	var fleetsBySector = {};
+	for (i = 0; i < fleets.length; i++) {
+		var fleet = fleets[i];
+		if (!fleetsBySector[fleet.info.hand]) {
+			fleetsBySector[fleet.info.hand] = [];
+		}
+		fleetsBySector[fleet.info.hand].push(fleet.info.segment);
+	}
+
+	// find occupied hands and sectors
+	var occupied = {};
+	var colonies = Game.Planets.getColonies();
+
+	for (i = 0; i < colonies.length; i++) {
+		var planet = colonies[i];
+		if (!occupied[planet.hand]) {
+			occupied[planet.hand] = [];
+		}
+		occupied[planet.hand].push(planet.segment);
+	}
+
+	// check each occupied hand
+	for (var hand in occupied) {
+		// aggregate and sort hand sectors
+		var sectors = [];
+		for (i = 0; i < occupied[hand].length; i++) {
+			var segment = occupied[hand][i];
+			if (sectors.indexOf(segment) == -1) {
+				sectors.push(segment);
+			}
+			if (segment > 0 && sectors.indexOf(segment - 1) == -1) {
+				sectors.push(segment - 1);
+			}
+			if (segment < 9 && sectors.indexOf(segment + 1) == -1) {
+				sectors.push(segment + 1);
+			}
+		}
+
+		sectors.sort(function(a, b) {
+			return a - b;
+		});
+
+		// calculate intervals
+		var intervals = [];
+		var currentInterval = 0;
+
+		intervals.push([ sectors[0] ]);
+
+		for (i = 1; i < sectors.length; i++) {
+			if (sectors[i] - sectors[i - 1] > 1) {
+				currentInterval++;
+				intervals[currentInterval] = [];
+			}
+			intervals[currentInterval].unshift(sectors[i]);
+		}
+
+		for (i = 0; i < intervals.length; i++) {
+			var fleetsCount = Math.round( intervals[i].length / 3 );
+			var sectorsCount = Math.ceil( intervals[i].length / fleetsCount );
+			for (var k = 0; k < fleetsCount; k++) {
+				var startInterval = intervals[i].slice(k * sectorsCount, (k + 1) * sectorsCount);
+
+				// check existing fleet inside interval
+				var hasFleet = false;
+				for (var n = 0; n < startInterval.length; n++) {
+					if (fleetsBySector[hand]
+					 && fleetsBySector[hand].indexOf(startInterval[n]) != -1
+					) {
+						hasFleet = true;
+						break;
+					}
+				}
+				if (hasFleet) {
+					continue; // skip this interval
+				}
+
+				// spawn trade fleet
+				Game.SpaceEvents.spawnTradeFleet(
+					parseInt( hand ),
+					startInterval[ Game.Random.interval(0, startInterval.length - 1) ]
+				);
+			}
+		}
+	}
+}
+
+Game.SpaceEvents.spawnTradeFleet = function(hand, segment) {
+	// find planets inside hand
+	var finishPlanets = Game.Planets.Collection.find({
+		user_id: Meteor.userId(),
+		hand: hand,
+		mission: { $ne: null }
+	}).fetch();
+
+	// save segment planets as start planets
+	var n = finishPlanets.length;
+	var startPlanets = [];
 	while (n-- > 0) {
-		if (!planets[n].mission || planets[n].isHome) {
-			planets.splice(n, 1);
+		if (finishPlanets[n].segment == segment) {
+			startPlanets.push(finishPlanets[n]);
+			finishPlanets.splice(n, 1);
 		}
 	}
 
-	if (planets.length >= 2) {
+	if (startPlanets.length > 0 && finishPlanets.length > 0) {
 		// get two random planets
-		var randFrom = Game.Random.interval(0, planets.length - 1);
-		var randTo = randFrom;
-		while (randTo == randFrom) {
-			randTo = Game.Random.interval(0, planets.length - 1);
-		}
-
-		var startPlanet = planets[ randFrom ];
-		var targetPlanet = planets[ randTo ];
+		var startPlanet = startPlanets[ Game.Random.interval(0, startPlanets.length - 1) ];
+		var targetPlanet = finishPlanets[ Game.Random.interval(0, finishPlanets.length - 1) ];
 
 		// send ship
 		var timeCurrent = Game.getCurrentTime();
@@ -454,7 +558,9 @@ Game.SpaceEvents.spawnTradeFleet = function() {
 			isHumans:       false,
 			isOneway:       true,
 			engineLevel:    engineLevel,
-			mission:        mission
+			mission:        mission,
+			hand:           startPlanet.hand,
+			segment:        startPlanet.segment
 		});
 	}
 };
@@ -598,10 +704,10 @@ var completeHumansArrival = function(event, planet) {
 			planet.armyId = event.info.armyId;
 			// update artefacts time
 			planet.timeArtefacts = event.timeEnd;
-			// add reptiles attack trigger (after 30 minutes)
+			// add reptiles attack trigger
 			newTask = Game.SpaceEvents.addTriggerAttack({
 				startTime: event.timeEnd,
-				delayTime: 1800,
+				delayTime: Game.Cosmos.TRIGGER_ATTACK_DELAY,
 				targetPlanet: planet._id
 			});
 		}

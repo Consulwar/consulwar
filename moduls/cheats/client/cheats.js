@@ -101,8 +101,8 @@ Game.Cheats.testMissionGenerate = function(hand, segment) {
 	});
 };
 
-Game.Cheats.spawnTradeFleet = function() {
-	Meteor.call('cheats.spawnTradeFleet');
+Game.Cheats.spawnTradeFleet = function(hand, segment) {
+	Meteor.call('cheats.spawnTradeFleet', hand, segment);
 };
 
 Game.Cheats.sendReptileFleetToPlanet = function(planetName) {

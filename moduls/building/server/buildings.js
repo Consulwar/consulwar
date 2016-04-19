@@ -23,7 +23,7 @@ Game.Building.add = function(building) {
 
 Game.Building.complete = function(task) {
 	addBonus(task);
-	return Game.Building.add(task);
+	Game.Building.add(task);
 };
 
 Game.Building.initialize = function(user) {

@@ -23,7 +23,7 @@ Game.Research.add = function(research) {
 };
 
 Game.Research.complete = function(task) {
-	return Game.Research.add(task);
+	Game.Research.add(task);
 };
 
 Game.Research.initialize = function(user) {

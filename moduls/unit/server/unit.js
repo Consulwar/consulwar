@@ -34,7 +34,7 @@ Game.Unit.remove = function(unit) {
 };
 
 Game.Unit.complete = function(task) {
-	return Game.Unit.add(task);
+	Game.Unit.add(task);
 };
 
 Game.Unit.initialize = function(user) {

@@ -222,6 +222,8 @@ Game.Unit.rollCount = function(name) {
 		case 'front':
 			return Game.Random.interval(100000, 249999);
 	}
+
+	return 0;
 };
 
 Game.Unit.calculateArmyCost = function(army) {

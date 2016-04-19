@@ -144,6 +144,26 @@ Game.Unit = {
 		return Game.Unit.get(group, name) >= count;
 	},
 
+	calcUnitsHealth: function(units) {
+		if (!units) {
+			return 0;
+		}
+
+		var power = 0;
+		for (var side in units) {
+			for (var group in units[side]) {
+				for (var name in units[side][group]) {
+					var life = Game.Unit.items[side][group][name].characteristics.life;
+					var count = units[side][group][name];
+					if (life && count) {
+						power += (life * count);
+					}
+				}
+			}
+		}
+		return power;
+	},
+
 	items: {
 		army: {
 			fleet: {},

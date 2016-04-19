@@ -100,7 +100,10 @@ Game.SpaceEvents.complete = function(task) {
 			newTask = Game.SpaceEvents.completeShip(event);
 			break;
 		case Game.SpaceEvents.type.REINFORCEMENT:
-			Game.SpaceEvents.completeReinforcement(event);
+			newTask = Game.SpaceEvents.completeReinforcement(event);
+			break;
+		case Game.SpaceEvents.type.TRIGGER_ATTACK:
+			newTask = Game.SpaceEvents.completeTriggerAttack(event);
 			break;
 	}
 	
@@ -141,13 +144,15 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 
 	// add task into queue
 	if (eventId) {
-		Game.Queue.add({
+		return Game.Queue.add({
 			type: 'spaceEvent',
 			eventId: eventId,
 			startTime: options.startTime,
 			time: options.durationTime
 		});
 	}
+
+	return null;
 };
 
 Game.SpaceEvents.completeReinforcement = function(event) {
@@ -177,7 +182,132 @@ Game.SpaceEvents.completeReinforcement = function(event) {
 
 	// save reinforcements
 	Game.Earth.addReinforcement( arrived );
+
+	// reinforcements don't create new tasks
+	return null;
 };
+
+// ----------------------------------------------------------------------------
+// Trigger attack event
+// ----------------------------------------------------------------------------
+
+Game.SpaceEvents.addTriggerAttack = function(options) {
+	// mandatory options
+	if (options.startTime === undefined) {
+		throw new Meteor.Error('Не задано время старта');
+	}
+
+	if (options.delayTime === undefined) {
+		throw new Meteor.Error('Не задано время задержки');
+	}
+
+	if (options.targetPlanet === undefined) {
+		throw new Meteor.Error('Не задана планета');
+	}
+
+	// add event
+	var eventId = Game.SpaceEvents.add({
+		type: Game.SpaceEvents.type.TRIGGER_ATTACK,
+		status: Game.SpaceEvents.status.STARTED,
+		timeStart: options.startTime,
+		timeEnd: options.startTime + options.delayTime,
+		info: {
+			targetPlanet: options.targetPlanet
+		}
+	});
+
+	// add task into queue
+	if (eventId) {
+		return Game.Queue.add({
+			type: 'spaceEvent',
+			eventId: eventId,
+			startTime: options.startTime,
+			time: options.delayTime
+		});
+	}
+
+	return null;
+}
+
+Game.SpaceEvents.completeTriggerAttack = function(event) {
+	var planet = Game.Planets.getOne(event.info.targetPlanet);
+	if (!planet) {
+		return null; // no such planet
+	}
+
+	if (planet.isHome || !planet.armyId) {
+		return null; // no need to attack this planet
+	}
+
+	var reptilePlanets = Game.Planets.Collection.find({
+		user_id: Meteor.userId(),
+		mission: { $ne: null },
+		segment: planet.segment,
+		hand: planet.hand
+	}).fetch();
+
+	if (reptilePlanets.length === 0) {
+		return null; // no reptiles at this sector
+	}
+
+	// generate appropriate mission and calculate health
+	var mission = Game.Planets.generateMission(planet);
+
+	var enemyFleet = Game.Battle.items[mission.type].level[mission.level].enemies;
+	for (var name in enemyFleet) {
+		enemyFleet[name] = Game.Unit.rollCount( enemyFleet[name] );
+	}
+	var enemyHealth = Game.Unit.calcUnitsHealth({
+		reptiles: {
+			fleet: enemyFleet
+		}
+	});
+
+	var userArmy = Game.Unit.getArmy(planet.armyId);
+	var userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
+
+	// check attack possibility
+	if (userHealth > enemyHealth * 0.5 && Game.Random.random() > 0.35 ) {
+		return null; // not this time
+	}
+
+	// find nearest planet
+	var nearestPlanet = null;
+	var minDistance = Number.MAX_VALUE;
+	var curDistance = Number.MAX_VALUE;
+	for (var i = 0; i < reptilePlanets.length; i++) {
+		curDistance = Game.Planets.calcDistance(reptilePlanets[i], planet);
+		if (!nearestPlanet || curDistance < minDistance) {
+			nearestPlanet = reptilePlanets[i];
+			minDistance = curDistance;
+		}
+	}
+
+	// perform attack
+	var startPosition = {
+		x: nearestPlanet.x,
+		y: nearestPlanet.y
+	};
+
+	var targetPosition = {
+		x: planet.x,
+		y: planet.y
+	};
+
+	return Game.SpaceEvents.sendShip({
+		startPosition:  startPosition,
+		startPlanetId:  nearestPlanet._id,
+		targetPosition: targetPosition,
+		targetType:     Game.SpaceEvents.target.PLANET,
+		targetId:       planet._id,
+		startTime:      event.timeEnd,
+		flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, 1),
+		isHumans:       false,
+		isOneway:       false,
+		engineLevel:    1,
+		mission:        mission
+	});
+}
 
 // ----------------------------------------------------------------------------
 // Ship events
@@ -468,6 +598,12 @@ var completeHumansArrival = function(event, planet) {
 			planet.armyId = event.info.armyId;
 			// update artefacts time
 			planet.timeArtefacts = event.timeEnd;
+			// add reptiles attack trigger (after 30 minutes)
+			newTask = Game.SpaceEvents.addTriggerAttack({
+				startTime: event.timeEnd,
+				delayTime: 1800,
+				targetPlanet: planet._id
+			});
 		}
 	} else if (!battleResult || userArmy) {
 		// return ship

@@ -239,8 +239,8 @@ Template.earthZoneInfo.helpers({
 		var zone = Game.EarthZones.getByName(this.name);
 
 		var maxPower = Game.EarthZones.calcMaxHealth();
-		var currentUserPower = Game.EarthZones.calcUnitsHealth( zone.userArmy );
-		var currentEnemyPower = Game.EarthZones.calcUnitsHealth( zone.enemyArmy );
+		var currentUserPower = Game.Unit.calcUnitsHealth( zone.userArmy );
+		var currentEnemyPower = Game.Unit.calcUnitsHealth( zone.enemyArmy );
 
 		var side = null;
 		var group = null;
@@ -511,14 +511,14 @@ var ZoneView = function(mapView, zoneData) {
 			var maxPower = Game.EarthZones.calcMaxHealth();
 
 			if (maxPower > 0) {
-				var currentHumanPower = Game.EarthZones.calcUnitsHealth(zone.userArmy);
+				var currentHumanPower = Game.Unit.calcUnitsHealth(zone.userArmy);
 				humanPower = Math.round( (currentHumanPower / maxPower) * 100 );
 			} else {
 				humanPower = 0;
 			}
 
 			if (maxPower > 0) {
-				var currentReptilePower = Game.EarthZones.calcUnitsHealth(zone.enemyArmy);
+				var currentReptilePower = Game.Unit.calcUnitsHealth(zone.enemyArmy);
 				reptilePower = Math.round( (currentReptilePower / maxPower ) * 100);
 			} else {
 				reptilePower = 0;

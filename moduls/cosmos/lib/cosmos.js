@@ -534,7 +534,8 @@ Game.SpaceEvents = {
 	// event type
 	type: {
 		SHIP: 1,
-		REINFORCEMENT: 2
+		REINFORCEMENT: 2,
+		TRIGGER_ATTACK: 3
 	},
 
 	// event target

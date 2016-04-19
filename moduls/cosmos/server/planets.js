@@ -780,6 +780,16 @@ Meteor.methods({
 		};
 
 		Game.SpaceEvents.sendShip(shipOptions);
+
+		// if planet is colony
+		if (!basePlanet.isHome && basePlanet.armyId) {
+			// add reptiles attack trigger (after 30 minutes)
+			Game.SpaceEvents.addTriggerAttack({
+				startTime: Game.getCurrentTime(),
+				delayTime: 1800,
+				targetPlanet: basePlanet._id
+			});
+		}
 	}
 });
 

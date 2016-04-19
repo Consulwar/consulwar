@@ -1,15 +1,25 @@
 Meteor.startup(function() {
 /*
 {
-	_id: ,
-	user_id: ,
-	incomplete: true,
-	group: ,
-	engName: ,
-	startTime: ,
-	finishTime: ,
-	level: ,
-	count: 
+	// Required fields:
+	user_id
+	status
+	type
+	startTime
+	finishTime
+
+	// Additional for space event:
+	eventId
+
+	// Additional for unit:
+	group
+	engName
+	count
+	
+	// Additional for building, research:
+	group
+	engName
+	level
 }
 */
 
@@ -21,11 +31,11 @@ Game.Queue.Collection._ensureIndex({
 
 Game.Queue.add = function(item) {
 	if (!Meteor.userId()) {
-		return false;
+		return null;
 	}
 
 	if (item.group && Game.Queue.isBusy(item.group)) {
-		return false;
+		return null;
 	}
 
 	var startTime = item.startTime
@@ -34,7 +44,7 @@ Game.Queue.add = function(item) {
 
 	var set = {
 		user_id: Meteor.userId(),
-		status: 0,
+		status: Game.Queue.status.INCOMPLETE,
 		type: item.type,
 		startTime: startTime,
 		finishTime: startTime + item.time,
@@ -71,12 +81,24 @@ Game.Queue.add = function(item) {
 		select.count = item.count;
 	}
 
+	// check if task need to be processed right now
+	if (set.finishTime < Game.getCurrentTime()) {
+		// mark as processing in progress
+		set.status = Game.Queue.status.INPROGRESS;
+		set.processedTime = Game.getCurrentTime();
+		set.processId = Game.processId;
+	}
+
 	// try to insert new task
 	var result = Game.Queue.Collection.upsert(select, {
 		$setOnInsert: set
 	});
 
-	return result.insertedId ? true : false;
+	if (result.insertedId) {
+		set._id = result.insertedId;
+	}
+
+	return result.insertedId ? set : null;
 };
 
 Game.Queue.complete = function(taskId) {
@@ -95,20 +117,39 @@ Game.Queue.complete = function(taskId) {
 };
 
 var completeItems = function(items, needResourcesUpdate) {
-	for (var i = 0; i < items.length; i++) {
+	while (items.length > 0) {
+		var item = items.shift();
 		// Рассчитать доход до finishTime
 		if (needResourcesUpdate) {
-			Game.Resources.updateWithIncome( items[i].finishTime );
+			Game.Resources.updateWithIncome( item.finishTime );
 		}
-		// Применить результат и завершить задание
-		Game.getObjectByType( items[i].type ).complete( items[i] );
-		Game.Queue.complete( items[i]._id );
+		// Применить результат
+		var newTask = Game.getObjectByType( item.type ).complete( item );
+		// Если в результате получено новое задание, вставить его в массив
+		if (newTask
+		 && newTask.finishTime
+		 && newTask.finishTime < Game.getCurrentTime()
+		) {
+			var isInserted = false;
+			for (var i = 0; i < items.length; i++) {
+				if (newTask.finishTime <= items[i].finishTime) {
+					items.splice(i, 0, newTask);
+					isInserted = true;
+					break;
+				}
+			}
+			if (!isInserted) {
+				items.push(newTask);
+			}
+		}
+		// Отметить текущее задание как обработанное
+		Game.Queue.complete( item._id );
 	}
 };
 
 Game.Queue.checkAll = function() {
 	if (!Meteor.userId()) {
-		return;
+		return false;
 	}
 
 	// Выбираем необработанные задачи, которые должны завершиться
@@ -126,7 +167,7 @@ Game.Queue.checkAll = function() {
 	if (items.length === 0) {
 		// Рассчитать доход до текущего времени
 		Game.Resources.updateWithIncome(Game.getCurrentTime());
-		return;
+		return false;
 	}
 
 	var ids = [];
@@ -140,7 +181,7 @@ Game.Queue.checkAll = function() {
 			if (Game.getCurrentTime() - items[i].processedTime < Game.PROCESS_TIMEOUT
 			 || Game.checkIsProcessActive(items[i].processId)
 			) {
-				return;
+				return false;
 			}
 			// Если подхватили чужое задание, то не обновляем ресурсы
 			needUpdateResources = false;

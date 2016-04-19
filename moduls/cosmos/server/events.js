@@ -565,7 +565,31 @@ Game.SpaceEvents.spawnTradeFleet = function(hand, segment) {
 	}
 };
 
-Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
+Game.SpaceEvents.makeFun = function() {
+	if (Game.Planets.getLastFunTime() + Game.Cosmos.FUN_PERIOD > Game.getCurrentTime()) {
+		return false;
+	}
+
+	Game.Planets.setLastFunTime( Game.getCurrentTime() );
+
+	var mission = {
+		type: 'battlefleet',
+		level: 10
+	};
+
+	var colonies = Game.Planets.getColonies();
+	for (var i = 0; i < colonies.length; i++) {
+		var planet = colonies[i];
+		var fleets = planet.isHome ? 3 : 1;
+		for (var j = 0; j < fleets; j++) {
+			Game.SpaceEvents.sendReptileFleetToPlanet(planet._id, mission);
+		}
+	}
+
+	return true;
+}
+
+Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId, mission) {
 	// get target planet
 	var targetPlanet = Game.Planets.getOne(planetId);
 	if (!targetPlanet) {
@@ -603,9 +627,11 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId) {
 
 		var engineLevel = Game.Planets.getEngineLevel();
 
-		var mission = (targetPlanet.isHome)
-			? Game.Planets.getReptileAttackMission()
-			: Game.Planets.generateMission(targetPlanet);
+		if (!mission) {
+			mission = (targetPlanet.isHome)
+				? Game.Planets.getReptileAttackMission()
+				: Game.Planets.generateMission(targetPlanet);
+		}
 
 		if (!mission) {
 			throw new Meteor.Error('Не получилось сгенерировать миссию для нападения');

@@ -39,5 +39,6 @@
 		"tradeFleetPeriod": 120,
 		"attackPlayerPeriod": 120,
 		"triggerAttackDelay": 1800,
+		"funPeriod": 86400
 	}
 }

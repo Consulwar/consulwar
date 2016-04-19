@@ -2,6 +2,8 @@ initChatClient = function() {
 
 initChatLib();
 
+var soundNotprepared = new buzz.sound('/sound/notprepared.mp3');
+
 var currentRoomName = null;
 var lostConnectionTime = null;
 var chatSubscription = null;
@@ -317,7 +319,8 @@ var execClientCommand = function(message) {
 		 + '/remove moderator [username] - разжаловать модератора' + '\n'
 		 + '/d [n] [m] - бросить n кубиков с m гранями' + '\n'
 		 + '/me [text] - писать от третьего лица' + '\n'
-		 + '/сепукку - совершить сепукку и пожертвовать ресурсы';
+		 + '/сепукку - совершить сепукку и пожертвовать ресурсы' + '\n'
+		 + '/яготов - вы действительно так думаете?';
 		
 		alert(helpText);
 		return true;
@@ -540,6 +543,11 @@ Template.chat.events({
 				Notifications.error('Неполучилось отправить сообщение', errorMessage);
 			} else {
 				t.find('#message').reset();
+
+				// play sound 'you are not prepared!'
+				if (text.indexOf('/яготов') === 0) {
+					soundNotprepared.play();
+				}
 			}
 		});
 

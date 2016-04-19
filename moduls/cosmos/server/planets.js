@@ -297,6 +297,22 @@ Game.Planets.setLastAttackTime = function(time) {
 	}
 };
 
+Game.Planets.getLastTradeFleetTime = function() {
+	var home = Game.Planets.getBase();
+	if (home && home.timeLastTradeFleet) {
+		return home.timeLastTradeFleet;
+	}
+	return 0;
+};
+
+Game.Planets.setLastTradeFleetTime = function(time) {
+	var home = Game.Planets.getBase();
+	if (home) {
+		home.timeLastTradeFleet = time;
+		Game.Planets.update(home);
+	}
+};
+
 Game.Planets.generateMission = function(planet) {
 	// check planets
 	if (!planet) {

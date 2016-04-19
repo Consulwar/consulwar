@@ -36,6 +36,7 @@
 	},
 	"cosmos": {
 		"enemyRespawnPeriod": 120,
+		"tradeFleetPeriod": 120,
 		"attackPlayerPeriod": 120,
 		"triggerAttackDelay": 1800,
 	}

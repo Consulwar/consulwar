@@ -598,10 +598,10 @@ var completeHumansArrival = function(event, planet) {
 			planet.armyId = event.info.armyId;
 			// update artefacts time
 			planet.timeArtefacts = event.timeEnd;
-			// add reptiles attack trigger (after 30 minutes)
+			// add reptiles attack trigger
 			newTask = Game.SpaceEvents.addTriggerAttack({
 				startTime: event.timeEnd,
-				delayTime: 1800,
+				delayTime: Game.Cosmos.TRIGGER_ATTACK_DELAY,
 				targetPlanet: planet._id
 			});
 		}

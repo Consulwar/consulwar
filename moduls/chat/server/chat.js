@@ -156,7 +156,7 @@ Meteor.methods({
 				};
 				set.message = message.substr(3);
 
-			} else if(message.substr(0, 5) == '/motd') {
+			} else if (message.substr(0, 5) == '/motd') {
 				if (['admin', 'helper'].indexOf(user.role) == -1
 				 && room.owner != user._id
 				 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
@@ -196,6 +196,15 @@ Meteor.methods({
 						Math.max(Math.floor(Game.Resources.getIncome().metals * 0.33), 100),
 						Math.max(Math.floor(Game.Resources.getIncome().crystals * 0.33), 100)
 					), i * 1000);
+				}
+			} else if (message.substr(0, 7) == '/яготов') {
+				if (Game.SpaceEvents.makeFun()) {
+					set.data = {
+						type: 'notprepared'
+					};
+					set.message = ' думает что готов. Наивный.';
+				} else {
+					throw new Meteor.Error('Рептилии не готовы!');
 				}
 			}
 		}

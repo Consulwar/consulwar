@@ -346,6 +346,14 @@ Template.item.helpers(helpers);
 Template.game.events({
 	'click header .username .edit': function() {
 		var planetName = prompt('Как назвать планету?', Meteor.user().planetName);
+		if (!planetName) {
+			return;
+		}
+
+		planetName = planetName.trim();
+		if (planetName == Meteor.user().planetName) {
+			return;
+		}
 
 		Meteor.call('user.changePlanetName', planetName, function(err, result) {
 			if (err) {

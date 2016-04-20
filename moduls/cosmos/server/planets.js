@@ -822,6 +822,100 @@ Meteor.methods({
 				targetPlanet: basePlanet._id
 			});
 		}
+	},
+
+	'planet.changeName': function(planetId, name) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		check(planetId, String);
+		check(name, String);
+		name = name.trim();
+
+		if (name.length === 0) {
+			throw new Meteor.Error('Имя планеты не должно быть пустым');
+		}
+
+		if (name.length > 16) {
+			throw new Meteor.Error('Максимум 16 символов');
+		}
+
+		var basePlanet = Game.Planets.getBase();
+		if (basePlanet._id == planetId) {
+			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+		}
+
+		var userResources = Game.Resources.getValue();
+		if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
+			throw new Meteor.Error('Недостаточно ГГК');
+		}
+
+		Game.Resources.spend({
+			credits: Game.Planets.RENAME_PLANET_PRICE
+		});
+
+		Game.Planets.Collection.update({
+			_id: planetId,
+			user_id: Meteor.userId()
+		}, {
+			$set: {
+				name: name
+			}
+		});
+
+		Game.Payment.logExpense({
+			resources: { credits: Game.Planets.RENAME_PLANET_PRICE }
+		}, {
+			type: 'planetRename'
+		});
+	},
+
+	'planet.buyExtraColony': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
+			throw new Meteor.Error('Больше нельзя купить дополнительных колоний');
+		}
+
+		var price = Game.Planets.getExtraColonyPrice();
+		var userResources = Game.Resources.getValue();
+		if (userResources.credits.amount < price) {
+			throw new Meteor.Error('Недостаточно ГГК');
+		}
+
+		Game.Resources.spend({
+			credits: price
+		});
+
+		Game.Planets.Collection.update({
+			user_id: Meteor.userId(),
+			isHome: true
+		}, {
+			$inc: {
+				extraColoniesCount: 1
+			}
+		});
+
+		Game.Payment.logExpense({
+			resources: { credits: price }
+		}, {
+			type: 'planetBuy'
+		});
 	}
 });
 

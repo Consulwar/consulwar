@@ -106,12 +106,12 @@
 		</div>
 
 		<!-- control buttons -->
-		<!-- not implemented!
-		<ul class="resources cost">
-			<li class="credits">100500</li>
-		</ul>
-		<a class="btn-add">Дополнительная планета</a>
-		-->
+		{{#if canHaveMoreExtraColonies}}
+			<ul class="resources cost">
+				<li class="credits">{{extraColonyPrice}}</li>
+			</ul>
+			<a class="btn-add">Дополнительная колония</a>
+		{{/if}}
 		<a class="btn-all">Выбрать всех</a>
 		{{#if planet}}
 			{{#if planet.isHome}}
@@ -199,7 +199,7 @@
 <template name="cosmosPlanetInfo">
 	{{#if planet}}
 		{{#if planet.name}}
-			<h2>{{planet.name}} ({{planet.type}})</h2>
+			<h2><span class="edit" data-id="{{planet.id}}"></span> {{planet.name}} ({{planet.type}})</h2>
 		{{/if}}
 		{{#if planet.isHumans}}
 			<div class="header-humans">
@@ -377,13 +377,19 @@
 			</div>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
-			<h2>История боев пуста</h2>
+			{{#if lt countTotal 1}}
+				<h2>История боев пуста</h2>
+			{{/if}}
 		{{/if}}
 		<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
 	</div>
 
 	{{#if battle}}
 		{{> cosmosHistoryItem battle=battle}}
+	{{/if}}
+
+	{{#if isLoading}}
+		{{> loading}}
 	{{/if}}
 </template>
 

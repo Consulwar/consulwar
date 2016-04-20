@@ -32,43 +32,88 @@ Game.Cosmos.showPage = function() {
 // Cosmos battle history
 // ----------------------------------------------------------------------------
 
+var isHistoryLoading = new ReactiveVar(false);
+var historyBattles = new ReactiveArray();
+var historyBattle = new ReactiveVar(null);
+var historyPage = null;
+var historyCountPerPage = 20;
+
 Game.Cosmos.showHistory = function() {
-	var pageNumber = parseInt( this.params.page, 10 );
-	var itemId = this.getParams().hash;
-	var countPerPage = 20;
-
-	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, function(err, data) {
-		var battle = new ReactiveVar(null);
-
-		for (var i = 0; i < data.length; i++) {
-			data[i] = getBattleInfo( data[i] );
-			// check if current item
-			if (itemId && data[i]._id == itemId) {
-				battle.set( data[i] );
-			}
-		}
-
-		if (itemId && !battle.get()) {
-			Meteor.call('battleHistory.getById', itemId, function(err, data) {
-				battle.set( getBattleInfo(data) );
-			});
-		}
-
-		Router.current().render('cosmosHistory', {
-			to: 'content',
-			data: {
-				countPerPage: countPerPage,
-				battles: data,
-				battle: battle,
-				itemId: itemId
-			}
-		});
-	});
+	Router.current().render('cosmosHistory', { to: 'content' });
 };
 
+var loadHistoryBattle = function(itemId) {
+	// try to get record from cache
+	var isFound = false;
+	for (var i = 0; i < historyBattles.length; i++) {
+		if (historyBattles[i]._id == itemId) {
+			isFound = true;
+			historyBattle.set( historyBattles[i] );
+			break;
+		}
+	}
+
+	// not found, then load from server
+	if (!isFound) {
+		isHistoryLoading.set(true);
+		Meteor.call('battleHistory.getById', itemId, function(err, data) {
+			isHistoryLoading.set(false);
+			if (err) {
+				Notifications.error('Не удалось получить информацию о бое', err.error);
+			} else {
+				historyBattle.set( getBattleInfo(data) );
+			}
+		});
+	}
+};
+
+Template.cosmosHistory.onRendered(function() {
+	// run this function each time as page or hash cahnges
+	this.autorun(function() {
+		var pageNumber = parseInt( Router.current().getParams().page, 10 );
+		var itemId = Router.current().getParams().hash;
+
+		isHistoryLoading.set(false);
+		historyBattle.set(null);
+
+		if (pageNumber != historyPage) {
+			// new page, then need to load records
+			historyPage = pageNumber;
+			historyBattles.clear();
+			isHistoryLoading.set(true);
+
+			Meteor.call('battleHistory.getPage', pageNumber, historyCountPerPage, false, function(err, data) {
+				isHistoryLoading.set(false);
+				if (err) {
+					Notifications.error('Не удалось получить историю боев', err.error);
+				} else {
+					// parse data
+					for (var i = 0; i < data.length; i++) {
+						historyBattles.push( getBattleInfo( data[i] ) );
+					}
+					// load additional record
+					if (itemId) {
+						loadHistoryBattle(itemId);
+					}
+				}
+			});
+		} else if (itemId) {
+			// load additional record
+			loadHistoryBattle(itemId);
+		}
+	});
+});
+
+Template.cosmosHistory.onDestroyed(function() {
+	historyPage = null;
+});
+
 Template.cosmosHistory.helpers({
+	isLoading: function() { return isHistoryLoading.get(); },
 	countTotal: function() { return Game.Statistic.getUserValue('battleHistoryCount'); },
-	battle: function() { return this.battle.get(); }
+	countPerPage: function() { return historyCountPerPage; },
+	battle: function() { return historyBattle.get(); },
+	battles: function() { return historyBattles.list(); }
 });
 
 Template.cosmosHistoryItem.helpers({
@@ -402,6 +447,44 @@ Template.cosmosPlanetInfo.events({
 		var id = $(e.currentTarget).attr("data-id");
 		if (id) {
 			Game.Cosmos.showAttackMenu(id);
+		}
+	},
+
+	'click .edit': function(e, t) {
+		var id = e.currentTarget.dataset.id;
+		var targetPlanet = Game.Planets.getOne(id);
+		var basePlanet = Game.Planets.getBase();
+
+		var planetName = prompt('Как назвать планету?', targetPlanet.name);
+		if (!planetName) {
+			return;
+		}
+
+		planetName = planetName.trim();
+		if (planetName == targetPlanet.name) {
+			return;
+		}
+
+		if (id == basePlanet._id) {
+			Meteor.call('user.changePlanetName', planetName, function(err, result) {
+				if (err) {
+					Notifications.error('Невозможно сменить название планеты', err.error);
+				}
+			});
+		} else {
+			if (confirm('Изменение имени планеты стоит ' +  Game.Planets.RENAME_PLANET_PRICE + ' ГГК')) {
+				var userResources = Game.Resources.getValue();
+				if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
+					Notifications.error('Недостаточно ГГК');
+					return;
+				}
+
+				Meteor.call('planet.changeName', id, planetName, function(err, result) {
+					if (err) {
+						Notifications.error('Невозможно сменить название планеты', err.error);
+					}
+				});
+			}
 		}
 	}
 });
@@ -786,6 +869,14 @@ Template.cosmosAttackMenu.helpers({
 		}
 
 		return Game.Planets.checkCanHaveMoreColonies(baseId, isLeavingBase, targetId);
+	},
+
+	extraColonyPrice: function() {
+		return Game.Planets.getExtraColonyPrice();
+	},
+
+	canHaveMoreExtraColonies: function() {
+		return Game.Planets.getExtraColoniesCount() < Game.Planets.MAX_EXTRA_COLONIES;
 	}
 });
 
@@ -799,6 +890,30 @@ Template.cosmosAttackMenu.onRendered(function() {
 Template.cosmosAttackMenu.events({
 	'click .btn-close': function(e, t) {
 		Game.Cosmos.hideAttackMenu();
+	},
+
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	},
+	
+	'click .btn-add': function(e, t) {
+		var price = Game.Planets.getExtraColonyPrice();
+
+		if (!confirm('Дополнительная колония стоит ' + price + ' ГГК. Купить?')) {
+			return;
+		}
+
+		var userResources = Game.Resources.getValue();
+		if (userResources.credits.amount < price) {
+			Notifications.error('Недостаточно ГГК');
+			return;
+		}
+
+		Meteor.call('planet.buyExtraColony', function(err) {
+			if (err) {
+				Notifications.error('Не удалось купить дополнительную колонию', err.error);
+			}
+		});
 	},
 
 	'click .planets li': function(e, t) {

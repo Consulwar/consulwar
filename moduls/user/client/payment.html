@@ -64,6 +64,12 @@
 							{{#if eq this.source.type 'chatBalance'}}
 								Пополнение баланса комнаты в чате
 							{{/if}}
+							{{#if eq this.source.type 'planetRename'}}
+								Переименование планеты
+							{{/if}}
+							{{#if eq this.source.type 'planetBuy'}}
+								Покупка дополнительной колонии
+							{{/if}}
 						</td>
 					</tr>
 				{{/each}}

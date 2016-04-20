@@ -386,6 +386,7 @@ Meteor.methods({
 		var messageText = '';
 		if (time > 0) {
 			messageText += 'Администратор ' + user.username + ' заблокировал вам отправку писем.' + '\n';
+			messageText += 'Срок блокировки ' + Game.Helpers.formatSeconds(time);
 		} else {
 			messageText += 'Администратор ' + user.username + ' разблокировал вам отправку писем.';
 		}

@@ -1,34 +1,5 @@
 Meteor.startup(function() {
 
-Game.Helpers = {
-	formatDate: function(timestamp) {
-		var date = new Date(timestamp * 1000);
-		return (
-			('0' + date.getDate()).slice(-2) + '.'
-			+ ('0' + (date.getMonth() + 1)).slice(-2) + '.'
-			+ date.getFullYear() + ' '
-			+ ('0' + date.getHours()).slice(-2) + ':'
-			+ ('0' + date.getMinutes()).slice(-2) + ':'
-			+ ('0' + date.getSeconds()).slice(-2)
-		);
-	},
-
-	formatSeconds: function(seconds) {
-		if (seconds < 0) {
-			return '…';
-		}
-
-		var hours = Math.floor(seconds / 3600);
-		seconds -= hours * 3600;
-		var minutes = Math.floor(seconds / 60);
-		seconds -= minutes * 60;
-
-		return (hours > 99 ? hours : ('0' + hours).slice(-2)) + ':'
-			+ ('0' + minutes).slice(-2) + ':'
-			+ ('0' + seconds).slice(-2);
-	}
-};
-
 UI.registerHelper('user', function() {
 	return Meteor.user();
 });

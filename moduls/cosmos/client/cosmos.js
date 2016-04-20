@@ -38,6 +38,11 @@ Game.Cosmos.showHistory = function() {
 	var countPerPage = 20;
 
 	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, false, function(err, data) {
+		if (err) {
+			Notifications.error('Не удалось получить историю боев', err.error);
+			return;
+		}
+
 		var battle = new ReactiveVar(null);
 
 		for (var i = 0; i < data.length; i++) {
@@ -50,7 +55,11 @@ Game.Cosmos.showHistory = function() {
 
 		if (itemId && !battle.get()) {
 			Meteor.call('battleHistory.getById', itemId, function(err, data) {
-				battle.set( getBattleInfo(data) );
+				if (err) {
+					Notifications.error('Не удалось получить историю боев', err.error);
+				} else {
+					battle.set( getBattleInfo(data) );
+				}
 			});
 		}
 

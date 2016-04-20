@@ -481,6 +481,7 @@ Game.Random = {
 Game.Effect = function(options) {
 	this.constructor = function(options) {
 		this.name = options.name;
+		this.notImplemented = options.notImplemented;
 		this.pretext = options.pretext;
 		this.aftertext = options.aftertext;
 		this.condition = options.condition;

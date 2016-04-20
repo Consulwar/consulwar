@@ -37,7 +37,7 @@ Game.Cosmos.showHistory = function() {
 	var itemId = this.getParams().hash;
 	var countPerPage = 20;
 
-	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, function(err, data) {
+	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, false, function(err, data) {
 		var battle = new ReactiveVar(null);
 
 		for (var i = 0; i < data.length; i++) {
@@ -402,6 +402,44 @@ Template.cosmosPlanetInfo.events({
 		var id = $(e.currentTarget).attr("data-id");
 		if (id) {
 			Game.Cosmos.showAttackMenu(id);
+		}
+	},
+
+	'click .edit': function(e, t) {
+		var id = e.currentTarget.dataset.id;
+		var targetPlanet = Game.Planets.getOne(id);
+		var basePlanet = Game.Planets.getBase();
+
+		var planetName = prompt('Как назвать планету?', targetPlanet.name);
+		if (!planetName) {
+			return;
+		}
+
+		planetName = planetName.trim();
+		if (planetName == targetPlanet.name) {
+			return;
+		}
+
+		if (id == basePlanet._id) {
+			Meteor.call('user.changePlanetName', planetName, function(err, result) {
+				if (err) {
+					Notifications.error('Невозможно сменить название планеты', err.error);
+				}
+			});
+		} else {
+			if (confirm('Изменение имени планеты стоит ' +  Game.Planets.RENAME_PLANET_PRICE + ' ГГК')) {
+				var userResources = Game.Resources.getValue();
+				if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
+					Notifications.error('Недостаточно ГГК');
+					return;
+				}
+
+				Meteor.call('planet.changeName', id, planetName, function(err, result) {
+					if (err) {
+						Notifications.error('Невозможно сменить название планеты', err.error);
+					}
+				});
+			}
 		}
 	}
 });

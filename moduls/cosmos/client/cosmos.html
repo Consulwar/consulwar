@@ -199,7 +199,7 @@
 <template name="cosmosPlanetInfo">
 	{{#if planet}}
 		{{#if planet.name}}
-			<h2>{{planet.name}} ({{planet.type}})</h2>
+			<h2><span class="edit" data-id="{{planet.id}}"></span> {{planet.name}} ({{planet.type}})</h2>
 		{{/if}}
 		{{#if planet.isHumans}}
 			<div class="header-humans">

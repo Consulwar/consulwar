@@ -13,6 +13,8 @@ Game.Planets = {
 
 	Collection: new Meteor.Collection('planets'),
 
+	RENAME_PLANET_PRICE: 200,
+
 	getAll: function() {
 		return Game.Planets.Collection.find({
 			user_id: Meteor.userId()

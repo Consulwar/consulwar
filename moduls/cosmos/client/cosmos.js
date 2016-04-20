@@ -892,6 +892,10 @@ Template.cosmosAttackMenu.events({
 		Game.Cosmos.hideAttackMenu();
 	},
 
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	},
+	
 	'click .btn-add': function(e, t) {
 		var price = Game.Planets.getExtraColonyPrice();
 

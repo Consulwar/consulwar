@@ -224,7 +224,7 @@ Game.SpaceEvents.addTriggerAttack = function(options) {
 	}
 
 	return null;
-}
+};
 
 Game.SpaceEvents.completeTriggerAttack = function(event) {
 	var planet = Game.Planets.getOne(event.info.targetPlanet);
@@ -304,7 +304,7 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 		engineLevel:    1,
 		mission:        mission
 	});
-}
+};
 
 // ----------------------------------------------------------------------------
 // Ship events
@@ -498,7 +498,7 @@ Game.SpaceEvents.actualizeTradeFleets = function() {
 			}
 		}
 	}
-}
+};
 
 Game.SpaceEvents.spawnTradeFleet = function(hand, segment) {
 	// find planets inside hand
@@ -587,7 +587,7 @@ Game.SpaceEvents.makeFun = function() {
 	}
 
 	return true;
-}
+};
 
 Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId, mission) {
 	// get target planet

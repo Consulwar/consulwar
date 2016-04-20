@@ -169,8 +169,16 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 
 	var effectsValues = [];
 
+	var formatValue = function(value) {
+		if (target == 'time') {
+			return Game.Helpers.formatSeconds(value);
+		} else {
+			return formatNumber(value, ' - ');
+		}
+	}
+
 	if (isMultiValue || currentValue > 0) {
-		effectsValues.push({initial: formatNumber(currentValue, ' - ')});
+		effectsValues.push({ initial: formatValue(currentValue) });
 	}
 
 	var totalValue = _.clone(baseValue);
@@ -226,7 +234,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 						totalValue += effect.value * (invert ? -1 : 1);
 					}
 					
-					result.value = formatNumber(Math.abs(effect.value));
+					result.value = formatValue(Math.abs(effect.value));
 				} else {
 					if (isMultiValue) {
 						totalValue = _.mapObject(currentValue, function(value, key) {
@@ -239,7 +247,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 						).join(' - ');
 					} else {
 						totalValue += Math.floor(currentValue * (effect.value * 0.01)) * (invert ? -1 : 1);
-						result.value = formatNumber( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) );
+						result.value = formatValue( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) );
 					}
 					result.percent = Math.abs(effect.value);
 				}
@@ -251,7 +259,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 			}
 
 			if (effects[priority][target].length > 0) {
-				effectsValues.push({total: formatNumber(totalValue, ' - ')});
+				effectsValues.push({ total: formatValue(totalValue) });
 			}
 		} else {
 			if (priority % 2 !== 0) {

@@ -394,6 +394,14 @@ ShowModalWindow = function(template, data) {
 Template.item_price.events({
 	'click .resources .credits': function(e, t) {
 		Game.Payment.showWindow();
+	},
+
+	'click .resources .artefact': function(e, t) {
+		Router.go('house', {
+			group: 'house',
+			subgroup: 'artefacts',
+			item: e.currentTarget.dataset.id
+		});
 	}
 });
 

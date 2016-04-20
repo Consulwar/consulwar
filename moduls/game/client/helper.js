@@ -1,34 +1,5 @@
 Meteor.startup(function() {
 
-Game.Helpers = {
-	formatDate: function(timestamp) {
-		var date = new Date(timestamp * 1000);
-		return (
-			('0' + date.getDate()).slice(-2) + '.'
-			+ ('0' + (date.getMonth() + 1)).slice(-2) + '.'
-			+ date.getFullYear() + ' '
-			+ ('0' + date.getHours()).slice(-2) + ':'
-			+ ('0' + date.getMinutes()).slice(-2) + ':'
-			+ ('0' + date.getSeconds()).slice(-2)
-		);
-	},
-
-	formatSeconds: function(seconds) {
-		if (seconds < 0) {
-			return '…';
-		}
-
-		var hours = Math.floor(seconds / 3600);
-		seconds -= hours * 3600;
-		var minutes = Math.floor(seconds / 60);
-		seconds -= minutes * 60;
-
-		return (hours > 99 ? hours : ('0' + hours).slice(-2)) + ':'
-			+ ('0' + minutes).slice(-2) + ':'
-			+ ('0' + seconds).slice(-2);
-	}
-};
-
 UI.registerHelper('user', function() {
 	return Meteor.user();
 });
@@ -198,8 +169,16 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 
 	var effectsValues = [];
 
+	var formatValue = function(value) {
+		if (target == 'time') {
+			return Game.Helpers.formatSeconds(value);
+		} else {
+			return formatNumber(value, ' - ');
+		}
+	};
+
 	if (isMultiValue || currentValue > 0) {
-		effectsValues.push({initial: formatNumber(currentValue, ' - ')});
+		effectsValues.push({ initial: formatValue(currentValue) });
 	}
 
 	var totalValue = _.clone(baseValue);
@@ -255,7 +234,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 						totalValue += effect.value * (invert ? -1 : 1);
 					}
 					
-					result.value = formatNumber(Math.abs(effect.value));
+					result.value = formatValue(Math.abs(effect.value));
 				} else {
 					if (isMultiValue) {
 						totalValue = _.mapObject(currentValue, function(value, key) {
@@ -268,7 +247,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 						).join(' - ');
 					} else {
 						totalValue += Math.floor(currentValue * (effect.value * 0.01)) * (invert ? -1 : 1);
-						result.value = formatNumber( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) );
+						result.value = formatValue( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) );
 					}
 					result.percent = Math.abs(effect.value);
 				}
@@ -280,7 +259,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 			}
 
 			if (effects[priority][target].length > 0) {
-				effectsValues.push({total: formatNumber(totalValue, ' - ')});
+				effectsValues.push({ total: formatValue(totalValue) });
 			}
 		} else {
 			if (priority % 2 !== 0) {

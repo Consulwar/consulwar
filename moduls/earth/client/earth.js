@@ -16,42 +16,88 @@ Game.Earth.showMap = function() {
 // Earth battle history
 // ----------------------------------------------------------------------------
 
+var isHistoryLoading = new ReactiveVar(false);
+var historyBattles = new ReactiveArray();
+var historyBattle = new ReactiveVar(null);
+var historyPage = null;
+var historyCountPerPage = 20;
+
 Game.Earth.showHistory = function() {
-	var pageNumber = parseInt( this.params.page, 10 );
-	var itemId = this.getParams().hash;
-	var countPerPage = 20;
-
-	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, true, function(err, data) {
-		var battle = new ReactiveVar(null);
-
-		for (var i = 0; i < data.length; i++) {
-			// check if current item
-			if (itemId && data[i]._id == itemId) {
-				battle.set( data[i] );
-			}
-		}
-
-		if (itemId && !battle.get()) {
-			Meteor.call('battleHistory.getById', itemId, true, function(err, data) {
-				battle.set(data);
-			});
-		}
-
-		Router.current().render('earthHistory', {
-			to: 'content',
-			data: {
-				countPerPage: countPerPage,
-				battles: data,
-				battle: battle,
-				itemId: itemId
-			}
-		});
-	});
+	Router.current().render('earthHistory', { to: 'content' });
 };
 
+var loadHistoryBattle = function(itemId) {
+	// try to get record from cache
+	var isFound = false;
+	for (var i = 0; i < historyBattles.length; i++) {
+		if (historyBattles[i]._id == itemId) {
+			isFound = true;
+			historyBattle.set( historyBattles[i] );
+			break;
+		}
+	}
+
+	// not found, then load from server
+	if (!isFound) {
+		isHistoryLoading.set(true);
+		Meteor.call('battleHistory.getById', itemId, function(err, data) {
+			isHistoryLoading.set(false);
+			if (err) {
+				Notifications.error('Не удалось получить информацию о бое', err.error);
+			} else {
+				historyBattle.set(data);
+			}
+		});
+	}
+};
+
+Template.earthHistory.onRendered(function() {
+	// run this function each time as page or hash cahnges
+	this.autorun(function() {
+		var pageNumber = parseInt( Router.current().getParams().page, 10 );
+		var itemId = Router.current().getParams().hash;
+
+		isHistoryLoading.set(false);
+		historyBattle.set(null);
+
+		if (pageNumber != historyPage) {
+			// new page, then need to load records
+			historyPage = pageNumber;
+			historyBattles.clear();
+			isHistoryLoading.set(true);
+
+			Meteor.call('battleHistory.getPage', pageNumber, historyCountPerPage, true, function(err, data) {
+				isHistoryLoading.set(false);
+				if (err) {
+					Notifications.error('Не удалось получить историю боев', err.error);
+				} else {
+					// parse data
+					for (var i = 0; i < data.length; i++) {
+						historyBattles.push(data[i]);
+					}
+					// load additional record
+					if (itemId) {
+						loadHistoryBattle(itemId);
+					}
+				}
+			});
+		} else if (itemId) {
+			// load additional record
+			loadHistoryBattle(itemId);
+		}
+	});
+});
+
+Template.earthHistory.onDestroyed(function() {
+	historyPage = null;
+});
+
 Template.earthHistory.helpers({
+	isLoading: function() { return isHistoryLoading.get(); },
 	countTotal: function() { return Game.Statistic.getSystemValue('earthHistoryCount'); },
-	battle: function() { return this.battle.get(); }
+	countPerPage: function() { return historyCountPerPage; },
+	battle: function() { return historyBattle.get(); },
+	battles: function() { return historyBattles.list(); }
 });
 
 Template.earthHistoryItem.helpers({

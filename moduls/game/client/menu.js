@@ -21,12 +21,6 @@ var menu = {
 				additionalArea: 'tamily',
 				url: firstItemGroupURL(Game.Building.items.residential),
 				items: Game.Building.items.residential
-			}, 
-			military: {
-				name: 'Военный район',
-				additionalArea: 'thirdenginery',
-				url: firstItemGroupURL(Game.Building.items.military),
-				items: Game.Building.items.military
 			},
 			house: {
 				name: 'Палата консула',
@@ -73,6 +67,12 @@ var menu = {
 						items: Game.Cards.items
 					}
 				}
+			},
+			military: {
+				name: 'Военный район',
+				additionalArea: 'thirdenginery',
+				url: firstItemGroupURL(Game.Building.items.military),
+				items: Game.Building.items.military
 			}
 		}
 	}, 

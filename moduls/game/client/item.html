@@ -14,33 +14,37 @@
 
 <template name="item_effect">
 	{{#if item.effect}}
-			<div class="currentLevel">
-				{{#if item.maxLevel}}
-					{{#with item.effect.[0]}}
-						Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-					{{/with}}
+		<div class="currentLevel">
+			{{#if item.maxLevel}}
+				{{#with item.effect.[0]}}
+					Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+				{{/with}}
+			{{/if}}
+			{{#each item.effect}}
+				{{#if result}}
+					{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+					{{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+					<br/>
 				{{/if}}
+			{{/each}}
+		</div>
+
+		{{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
+			<div class="nextLevel">
+				{{#with item.effect.[0].next}}
+					Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+				{{/with}}
 				{{#each item.effect}}
-					{{#if result}}
-						{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
-					{{/if}}
+					{{#with this.next}}
+						{{#if and result (not (eq ../result result))}}
+							{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+							{{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+							<br/>
+						{{/if}}
+					{{/with}}
 				{{/each}}
 			</div>
-
-			{{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
-				<div class="nextLevel">
-					{{#with item.effect.[0].next}}
-						Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-					{{/with}}
-					{{#each item.effect}}
-						{{#with this.next}}
-							{{#if and result (not (eq ../result result))}}
-								{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
-							{{/if}}
-						{{/with}}
-					{{/each}}
-				</div>
-			{{/if}}
+		{{/if}}
 	{{/if}}
 </template>
 
@@ -91,7 +95,7 @@
 					<time>{{formatSeconds this.amount}}</time>
 				</li>
 			{{else}}
-				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}}>
+				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}} data-id="{{this.engName}}">
 					{{formatNumberWithISO this.amount}}
 				</li>
 			{{/if}}

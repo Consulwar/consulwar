@@ -14,6 +14,19 @@ Game.Planets = {
 	Collection: new Meteor.Collection('planets'),
 
 	RENAME_PLANET_PRICE: 200,
+	MAX_EXTRA_COLONIES: 8,
+
+	getExtraColoniesCount: function() {
+		var basePlanet = Game.Planets.getBase();
+		return (basePlanet && basePlanet.extraColoniesCount)
+			? basePlanet.extraColoniesCount
+			: 0;
+	},
+
+	getExtraColonyPrice: function() {
+		var count = Game.Planets.getExtraColoniesCount();
+		return 1000 + count * 1000;
+	},
 
 	getAll: function() {
 		return Game.Planets.Collection.find({
@@ -46,7 +59,7 @@ Game.Planets = {
 	},
 
 	getMaxColoniesCount: function() {
-		return 4 + Game.User.getLevel();
+		return 4 + Game.User.getLevel() + Game.Planets.getExtraColoniesCount();
 	},
 
 	getColoniesCount: function() {

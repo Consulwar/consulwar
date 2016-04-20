@@ -824,6 +824,14 @@ Template.cosmosAttackMenu.helpers({
 		}
 
 		return Game.Planets.checkCanHaveMoreColonies(baseId, isLeavingBase, targetId);
+	},
+
+	extraColonyPrice: function() {
+		return Game.Planets.getExtraColonyPrice();
+	},
+
+	canHaveMoreExtraColonies: function() {
+		return Game.Planets.getExtraColoniesCount() < Game.Planets.MAX_EXTRA_COLONIES;
 	}
 });
 
@@ -837,6 +845,26 @@ Template.cosmosAttackMenu.onRendered(function() {
 Template.cosmosAttackMenu.events({
 	'click .btn-close': function(e, t) {
 		Game.Cosmos.hideAttackMenu();
+	},
+
+	'click .btn-add': function(e, t) {
+		var price = Game.Planets.getExtraColonyPrice();
+
+		if (!confirm('Дополнительная колония стоит ' + price + ' ГГК. Купить?')) {
+			return;
+		}
+
+		var userResources = Game.Resources.getValue();
+		if (userResources.credits.amount < price) {
+			Notifications.error('Недостаточно ГГК');
+			return;
+		}
+
+		Meteor.call('planet.buyExtraColony', function(err) {
+			if (err) {
+				Notifications.error('Не удалось купить дополнительную колонию', err.error);
+			}
+		});
 	},
 
 	'click .planets li': function(e, t) {

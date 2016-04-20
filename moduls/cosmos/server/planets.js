@@ -875,6 +875,47 @@ Meteor.methods({
 		}, {
 			type: 'planetRename'
 		});
+	},
+
+	'planet.buyExtraColony': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
+			throw new Meteor.Error('Больше нельзя купить дополнительных колоний');
+		}
+
+		var price = Game.Planets.getExtraColonyPrice();
+		var userResources = Game.Resources.getValue();
+		if (userResources.credits.amount < price) {
+			throw new Meteor.Error('Недостаточно ГГК');
+		}
+
+		Game.Resources.spend({
+			credits: price
+		});
+
+		Game.Planets.Collection.update({
+			user_id: Meteor.userId(),
+			isHome: true
+		}, {
+			$inc: {
+				extraColoniesCount: 1
+			}
+		});
+
+		Game.Payment.logExpense({
+			resources: { credits: price }
+		}, {
+			type: 'planetBuy'
+		});
 	}
 });
 

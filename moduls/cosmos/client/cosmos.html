@@ -106,12 +106,12 @@
 		</div>
 
 		<!-- control buttons -->
-		<!-- not implemented!
-		<ul class="resources cost">
-			<li class="credits">100500</li>
-		</ul>
-		<a class="btn-add">Дополнительная планета</a>
-		-->
+		{{#if canHaveMoreExtraColonies}}
+			<ul class="resources cost">
+				<li class="credits">{{extraColonyPrice}}</li>
+			</ul>
+			<a class="btn-add">Дополнительная колония</a>
+		{{/if}}
 		<a class="btn-all">Выбрать всех</a>
 		{{#if planet}}
 			{{#if planet.isHome}}

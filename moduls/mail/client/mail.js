@@ -85,8 +85,10 @@ Template.mail.onDestroyed(function() {
 var reloadPageData = function(t) {
 	t.data.isLoading.set(true);
 	Meteor.call('mail.getPrivatePage', t.data.page, t.data.count, function(err, data) {
-		if (!err) {
-			t.data.isLoading.set(false);
+		t.data.isLoading.set(false);
+		if (err) {
+			Notifications.error('Не удалось загрузить письма', err.error);
+		} else {
 			t.data.mail.set(data);
 		}
 	});
@@ -105,7 +107,7 @@ var readLetter = function(id, t) {
 		t.data.isLoading.set(false);
 
 		if (err) {
-			Notifications.error(err.error);
+			Notifications.error('Не удалось загрузить письмо', err.error);
 			return;
 		}
 
@@ -132,29 +134,33 @@ var readLetter = function(id, t) {
 		} else if (letter.type == 'quiz') {
 			
 			Meteor.call('getQuiz', letter.text, function(err, result) {
-				Blaze.renderWithData(
-					Template.quiz, 
-					{
-						id: result._id,
-						userAnswer: result.userAnswer,
-						who: result.who || 'psm',
-						type: 'quiz',
-						title: result.name, 
-						text: result.text, 
-						options: $.map(result.options, function(value, name) {
-							return {
-								name: name,
-								text: value,
-								value: result.result[name] || 0,
-								totalVotes: result.totalVotes,
-							};
-						}),
-						totalVotes: result.totalVotes,
-						votePower: Game.User.getVotePower(),
-						canVote: !result.userAnswer // || !Game.User.getVotePower() ? false : true
-					}, 
-					$('.over')[0]
-				);
+				if (err) {
+					Notifications.error('Не удалось открыть викторину', err.error);
+				} else {
+					Blaze.renderWithData(
+						Template.quiz, 
+						{
+							id: result._id,
+							userAnswer: result.userAnswer,
+							who: result.who || 'psm',
+							type: 'quiz',
+							title: result.name, 
+							text: result.text, 
+							options: $.map(result.options, function(value, name) {
+								return {
+									name: name,
+									text: value,
+									value: result.result[name] || 0,
+									totalVotes: result.totalVotes,
+								};
+							}),
+							totalVotes: result.totalVotes,
+							votePower: Game.User.getVotePower(),
+							canVote: !result.userAnswer // || !Game.User.getVotePower() ? false : true
+						}, 
+						$('.over')[0]
+					);
+				}
 			});
 		} else {
 			t.$('.letter').show();
@@ -209,7 +215,9 @@ var checkUsername = function(t) {
 	var username = t.$('form .recipient').val();
 	if (username && username.length > 0) {
 		Meteor.call('user.checkUsernameExists', username, function(err, result) {
-			t.data.isRecipientOk.set(result);
+			if (!err) {
+				t.data.isRecipientOk.set(result);
+			}
 		});
 	} else {
 		t.data.isRecipientOk.set(false);
@@ -361,7 +369,9 @@ Template.mail.events({
 		
 		if (ids) {
 			Meteor.call('mail.removeLetters', ids, function(err, data) {
-				if (!err) {
+				if (err) {
+					Notifications.error('Не удалось удалить письма', err.error);
+				} else {
 					for (var i = 0; i < selected.length; i++) {
 						t.$(selected[i]).parents('tr').remove();
 					}
@@ -429,10 +439,10 @@ Template.mail.events({
 					Router.go('mail', { page: 1 });
 				} else {
 					var errorMessage = err.error;
-					if (err.reason) {
-						errorMessage += ' до ' + Game.formatDate(err.reason);
+					if (_.isNumber(err.reason)) {
+						errorMessage += ' до ' + Game.Helpers.formatDate(err.reason);
 					}
-					Notifications.error(errorMessage);
+					Notifications.error('Не удалось отправить письмо', errorMessage);
 				}
 			}
 		);
@@ -460,7 +470,9 @@ Game.Mail.showAdminPage = function() {
 	if (page && page > 0) {
 		isLoading.set(true);
 		Meteor.call('mail.getAdminPage', page, count, function(err, data) {
-			if (!err) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
 				isLoading.set(false);
 				mailAdmin.set(data);
 			}

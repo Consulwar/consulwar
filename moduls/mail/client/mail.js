@@ -135,7 +135,7 @@ var readLetter = function(id, t) {
 			
 			Meteor.call('getQuiz', letter.text, function(err, result) {
 				if (err) {
-					Notifications.error('Не удалось открыть викторину', err.error);
+					Notifications.error('Не удалось открыть опрос', err.error);
 				} else {
 					Blaze.renderWithData(
 						Template.quiz, 

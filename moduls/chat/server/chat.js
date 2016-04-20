@@ -204,7 +204,7 @@ Meteor.methods({
 					};
 					set.message = ' думает что готов. Наивный.';
 				} else {
-					throw new Meteor.Error('Рептилии не готовы!');
+					throw new Meteor.Error('Ты не готов!');
 				}
 			}
 		}

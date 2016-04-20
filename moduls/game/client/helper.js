@@ -175,7 +175,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 		} else {
 			return formatNumber(value, ' - ');
 		}
-	}
+	};
 
 	if (isMultiValue || currentValue > 0) {
 		effectsValues.push({ initial: formatValue(currentValue) });

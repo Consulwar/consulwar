@@ -180,6 +180,7 @@ Meteor.publish('statistic', function() {
 				]
 			}, {
 				fields: {
+					user_id: 1,
 					totalMail: 1,
 					totalMailAlltime: 1,
 					incomeHistoryCount: 1,

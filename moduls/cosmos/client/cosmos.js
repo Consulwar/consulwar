@@ -32,52 +32,88 @@ Game.Cosmos.showPage = function() {
 // Cosmos battle history
 // ----------------------------------------------------------------------------
 
+var isHistoryLoading = new ReactiveVar(false);
+var historyBattles = new ReactiveArray();
+var historyBattle = new ReactiveVar(null);
+var historyPage = null;
+var historyCountPerPage = 20;
+
 Game.Cosmos.showHistory = function() {
-	var pageNumber = parseInt( this.params.page, 10 );
-	var itemId = this.getParams().hash;
-	var countPerPage = 20;
+	Router.current().render('cosmosHistory', { to: 'content' });
+};
 
-	Meteor.call('battleHistory.getPage', pageNumber, countPerPage, false, function(err, data) {
-		if (err) {
-			Notifications.error('Не удалось получить историю боев', err.error);
-			return;
+var loadHistoryBattle = function(itemId) {
+	// try to get record from cache
+	var isFound = false;
+	for (var i = 0; i < historyBattles.length; i++) {
+		if (historyBattles[i]._id == itemId) {
+			isFound = true;
+			historyBattle.set( historyBattles[i] );
+			break;
 		}
+	}
 
-		var battle = new ReactiveVar(null);
-
-		for (var i = 0; i < data.length; i++) {
-			data[i] = getBattleInfo( data[i] );
-			// check if current item
-			if (itemId && data[i]._id == itemId) {
-				battle.set( data[i] );
+	// not found, then load from server
+	if (!isFound) {
+		isHistoryLoading.set(true);
+		Meteor.call('battleHistory.getById', itemId, function(err, data) {
+			isHistoryLoading.set(false);
+			if (err) {
+				Notifications.error('Не удалось получить информацию о бое', err.error);
+			} else {
+				historyBattle.set( getBattleInfo(data) );
 			}
-		}
+		});
+	}
+};
 
-		if (itemId && !battle.get()) {
-			Meteor.call('battleHistory.getById', itemId, function(err, data) {
+Template.cosmosHistory.onRendered(function() {
+	// run this function each time as page or hash cahnges
+	this.autorun(function() {
+		var pageNumber = parseInt( Router.current().getParams().page, 10 );
+		var itemId = Router.current().getParams().hash;
+
+		isHistoryLoading.set(false);
+		historyBattle.set(null);
+
+		if (pageNumber != historyPage) {
+			// new page, then need to load records
+			historyPage = pageNumber;
+			historyBattles.clear();
+			isHistoryLoading.set(true);
+
+			Meteor.call('battleHistory.getPage', pageNumber, historyCountPerPage, false, function(err, data) {
+				isHistoryLoading.set(false);
 				if (err) {
 					Notifications.error('Не удалось получить историю боев', err.error);
 				} else {
-					battle.set( getBattleInfo(data) );
+					// parse data
+					for (var i = 0; i < data.length; i++) {
+						historyBattles.push( getBattleInfo( data[i] ) );
+					}
+					// load additional record
+					if (itemId) {
+						loadHistoryBattle(itemId);
+					}
 				}
 			});
+		} else if (itemId) {
+			// load additional record
+			loadHistoryBattle(itemId);
 		}
-
-		Router.current().render('cosmosHistory', {
-			to: 'content',
-			data: {
-				countPerPage: countPerPage,
-				battles: data,
-				battle: battle,
-				itemId: itemId
-			}
-		});
 	});
-};
+});
+
+Template.cosmosHistory.onDestroyed(function() {
+	historyPage = null;
+});
 
 Template.cosmosHistory.helpers({
+	isLoading: function() { return isHistoryLoading.get(); },
 	countTotal: function() { return Game.Statistic.getUserValue('battleHistoryCount'); },
-	battle: function() { return this.battle.get(); }
+	countPerPage: function() { return historyCountPerPage; },
+	battle: function() { return historyBattle.get(); },
+	battles: function() { return historyBattles.list(); }
 });
 
 Template.cosmosHistoryItem.helpers({

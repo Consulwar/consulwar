@@ -377,13 +377,19 @@
 			</div>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
-			<h2>История боев пуста</h2>
+			{{#if lt countTotal 1}}
+				<h2>История боев пуста</h2>
+			{{/if}}
 		{{/if}}
 		<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
 	</div>
 
 	{{#if battle}}
 		{{> cosmosHistoryItem battle=battle}}
+	{{/if}}
+
+	{{#if isLoading}}
+		{{> loading}}
 	{{/if}}
 </template>
 

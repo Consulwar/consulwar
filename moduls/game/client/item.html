@@ -95,7 +95,7 @@
 					<time>{{formatSeconds this.amount}}</time>
 				</li>
 			{{else}}
-				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}}>
+				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}} data-id="{{this.engName}}">
 					{{formatNumberWithISO this.amount}}
 				</li>
 			{{/if}}

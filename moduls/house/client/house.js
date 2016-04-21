@@ -171,7 +171,7 @@ Template.consulHouseArtefacts.helpers({
 
 		// aggregate results
 		var result = nearest.splice(0, 3);
-		var n = 0;
+		n = 0;
 		while (result.length < 6 && top.length > 0) {
 			var planet = top.shift();
 			var isDuplicated = false;

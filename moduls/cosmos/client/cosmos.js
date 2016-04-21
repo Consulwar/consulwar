@@ -231,7 +231,7 @@ var scrollMapToPlanet = function(id) {
 	if (planet) {
 		mapView.setView([planet.x, planet.y], 7);
 	}
-}
+};
 
 var scrollMapToFleet = function(id) {
 	var path = pathViews[id];

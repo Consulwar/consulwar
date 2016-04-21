@@ -30,7 +30,8 @@ Game.Chat.Messages = {
 			}
 		}
 
-		var priceReduction = (1 - Game.Research.items.evolution.animalworld.currentLevel() * 0.001);
+		var effect = Game.Effect.Special.getValue(true, { engName: 'message' });
+		var priceReduction = 1 - effect.price * 0.01;
 
 		return { crystals: Math.ceil(Math.max(
 				Math.min(

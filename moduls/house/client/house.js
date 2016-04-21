@@ -45,9 +45,35 @@ Game.House.showPage = function() {
 // Consul house overview
 // ----------------------------------------------------------------------------
 
+var isLoading = new ReactiveVar(false);
+var houseItems = new ReactiveVar(null);
+
+Template.consulHouse.onRendered(function() {
+	this.autorun(function() {
+		var username = Router.current().getParams().hash;
+		if (!username || username == Meteor.user().username) {
+			houseItems.set( Game.House.getPlacedItems() );
+		} else {
+			houseItems.set(null);
+			isLoading.set(true);
+			Meteor.call('house.getPlacedItems', username, function(err, result) {
+				isLoading.set(false);
+				if (err) {
+					Notifications.error('Не удалось открыть палату консула', err.error);
+				} else {
+					houseItems.set(result);
+				}
+			});
+		}
+	});
+});
+
 Template.consulHouse.helpers({
-	items: function() {
-		return Game.House.getPlacedItems();
+	isLoading: function() { return isLoading.get(); },
+	items: function() { return houseItems.get(); },
+	consulName: function() {
+		var hash = Router.current().getParams().hash;
+		return (hash && hash != Meteor.user().username) ? hash : null;
 	}
 });
 

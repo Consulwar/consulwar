@@ -136,6 +136,50 @@ Meteor.methods({
 
 		house.items[group][id].isPlaced = true;
 		Game.House.update(house);
+	},
+
+	'house.getPlacedItems': function(login) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		check(login, String);
+
+		var consul = Meteor.users.findOne({
+			username: login
+		});
+
+		if (!consul) {
+			throw new Meteor.Error('Такой пользователь не существует');
+		}
+
+		var house = Game.House.Collection.findOne({
+			user_id: consul._id
+		});
+
+		if (!house || !house.items) {
+			throw new Meteor.Erro('У пользователя нет палаты');
+		}
+
+		var result = [];
+		for (var group in house.items) {
+			for (var name in house.items[group]) {
+				if (house.items[group][name].isPlaced) {
+					result.push({
+						subgroup: group,
+						engName: name
+					});
+				}
+			}
+		}
+
+		return result;
 	}
 });
 

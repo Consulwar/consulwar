@@ -218,6 +218,13 @@ Game.Cosmos.showFleetsInfo = function() {
 	});
 };
 
+var scrollMapToPlanet = function(id) {
+	var planet = Game.Planets.getOne(id);
+	if (planet) {
+		mapView.setView([planet.x, planet.y], 7);
+	}
+}
+
 var scrollMapToFleet = function(id) {
 	var path = pathViews[id];
 	var spaceEvent = Game.SpaceEvents.getOne(id);
@@ -1261,13 +1268,19 @@ Template.cosmos.onRendered(function() {
 		Game.Cosmos.showFleetsInfo();
 	});
 
-	// Scroll to fleet
+	// Scroll to space object on hash change
 	this.autorun(function() {
 		var hash = Router.current().getParams().hash;
 		if (hash) {
 			Tracker.nonreactive(function() {
-				Game.Cosmos.showShipInfo(hash);
-				scrollMapToFleet(hash);
+				var planet = Game.Planets.getOne(hash);
+				if (planet) {
+					Game.Cosmos.showPlanetInfo(hash);
+					scrollMapToPlanet(hash);
+				} else {
+					Game.Cosmos.showShipInfo(hash);
+					scrollMapToFleet(hash);
+				}
 			});
 		}
 	});

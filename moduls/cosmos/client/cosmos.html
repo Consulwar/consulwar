@@ -23,6 +23,11 @@
 				<li class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</li>
 			{{/each}}
 		</ul>
+		{{#if drop.cards}}
+			{{#each drop.cards}}
+				{{this.name}} {{this.chance}}%<br/>
+			{{/each}}
+		{{/if}}
 	</div>
 </template>
 
@@ -424,6 +429,18 @@
 					<ul>
 						{{#each battle.artefacts}}
 							<li class="{{this.engName}}" title="{{this.name}}">
+								{{formatNumberWithISO this.amount}}
+							</li>
+						{{/each}}
+					</ul>
+				</div>
+			{{/if}}
+			{{#if battle.cards}}
+				<div class="cards">
+					<ul>
+						{{#each battle.cards}}
+							<li class="{{this.engName}}" title="{{this.name}}">
+								{{this.name}}
 								{{formatNumberWithISO this.amount}}
 							</li>
 						{{/each}}

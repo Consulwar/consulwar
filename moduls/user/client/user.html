@@ -164,6 +164,9 @@
 							<a class="send_message" href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}">
 								<img src="/img/game/message.png">
 							</a>
+							<a class="open_house" href="{{pathFor 'house' group='house' hash=this.username}}">
+								Смотреть палату
+							</a>
 						</td>
 						<td>{{formatNumber this.rating}}</td>
 					</tr>

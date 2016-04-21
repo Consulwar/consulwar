@@ -34,6 +34,14 @@ Game.Planets = {
 		});
 	},
 
+	getByArtefact: function(artefact) {
+		var condition = {
+			user_id: Meteor.userId()
+		};
+		condition['artefacts.' + artefact] = { $gt: 0 };
+		return Game.Planets.Collection.find(condition).fetch();
+	},
+
 	getOne: function(id) {
 		return Game.Planets.Collection.findOne({
 			user_id: Meteor.userId(),

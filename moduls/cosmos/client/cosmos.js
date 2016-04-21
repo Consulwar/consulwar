@@ -202,6 +202,14 @@ var getBattleInfo = function(item) {
 		};
 	});
 
+	item.cards = _.map(item.cards, function(value, key) {
+		return {
+			engName: key,
+			name: Game.Cards.items[key].name,
+			amount: value
+		};
+	});
+
 	item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
 	item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
 
@@ -216,6 +224,13 @@ Game.Cosmos.showFleetsInfo = function() {
 	Router.current().render('cosmosFleetsInfo', {
 		to: 'cosmosSideInfo'
 	});
+};
+
+var scrollMapToPlanet = function(id) {
+	var planet = Game.Planets.getOne(id);
+	if (planet) {
+		mapView.setView([planet.x, planet.y], 7);
+	}
 };
 
 var scrollMapToFleet = function(id) {
@@ -507,10 +522,26 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 		});
 	}
 
+	var cards = null;
+	if (planet.mission
+	 && Game.Battle.items[ planet.mission.type ]
+	 && Game.Battle.items[ planet.mission.type ].level[ planet.mission.level ].cards
+	) {
+		var missionCards = Game.Battle.items[ planet.mission.type ].level[ planet.mission.level ].cards;
+		cards = _.map(missionCards, function(value, key) {
+			return {
+				engName: key,
+				chance: value,
+				name: Game.Cards.items[key].name
+			};
+		});
+	}
+
 	return {
 		name: planet.name,
 		type: Game.Planets.types[planet.type].name,
-		items: items
+		items: items,
+		cards: cards
 	};
 };
 
@@ -1261,13 +1292,19 @@ Template.cosmos.onRendered(function() {
 		Game.Cosmos.showFleetsInfo();
 	});
 
-	// Scroll to fleet
+	// Scroll to space object on hash change
 	this.autorun(function() {
 		var hash = Router.current().getParams().hash;
 		if (hash) {
 			Tracker.nonreactive(function() {
-				Game.Cosmos.showShipInfo(hash);
-				scrollMapToFleet(hash);
+				var planet = Game.Planets.getOne(hash);
+				if (planet) {
+					Game.Cosmos.showPlanetInfo(hash);
+					scrollMapToPlanet(hash);
+				} else {
+					Game.Cosmos.showShipInfo(hash);
+					scrollMapToFleet(hash);
+				}
 			});
 		}
 	});

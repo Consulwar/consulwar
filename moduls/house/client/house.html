@@ -1,10 +1,18 @@
 <template name="consulHouse">
+	{{#if consulName}}
+		<span class="page-title">
+			Палата консула {{consulName}}
+		</span>
+	{{/if}}
 	{{#if items}}
 		{{#each items}}
 			<div class="{{this.subgroup}}-{{this.engName}}"></div>
 		{{/each}}
 	{{/if}}
 	{{> paymentSide}}
+	{{#if isLoading}}
+		{{> loading}}
+	{{/if}}
 </template>
 
 <template name="consulHouseItem">
@@ -79,6 +87,21 @@
 			</ul>
 			{{#if item.description}}
 				<p>{{item.description}}</p>
+			{{/if}}
+			{{#if planets}}
+				{{#each planets}}
+					<a class="planet {{#if or this.isHome this.armyId}}humans{{/if}} {{#if this.mission}}reptiles{{/if}}" href="{{pathFor 'cosmos' hash=this._id}}">
+						{{this.name}} {{this.chance}}%
+					</a>
+				{{/each}}
+			{{else}}
+				<p class="warning">
+					{{#if eq item.engName 'ruby_plasmoid'}}
+						Этот артефакт может быть только синтезирован.
+					{{else}}
+						Вы ещё не открыли планеты с этим артефактом. Разведайте галактику.
+					{{/if}}
+				</p>
 			{{/if}}
 		</div>
 	</div>

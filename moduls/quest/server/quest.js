@@ -6,8 +6,6 @@ Game.Quest.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Quest.DAILY_QUEST_PERIOD = 14400;
-
 Game.Quest.regularQuests = {};
 Game.Quest.dailyQuests = {};
 
@@ -171,9 +169,12 @@ Game.Quest.actualize = function() {
 	}
 
 	// refresh daily quest
+	var effect = Game.Effect.Special.getValue(true, { engName: 'dailyQuestCount' });
+	var dailyQuestPeriod = 86400 / effect.count;
+
 	if (!quests.daily
 	 || (    quests.daily.status == Game.Quest.status.FINISHED
-	      && quests.daily.startTime + Game.Quest.DAILY_QUEST_PERIOD < currentTime )
+	      && quests.daily.startTime + dailyQuestPeriod < currentTime )
 	) {
 		var keys = Object.keys( Game.Quest.dailyQuests );
 		var choise = keys[ Game.Random.interval(0, keys.length - 1) ];
@@ -375,6 +376,8 @@ Meteor.methods({
 				metals: result == 'win' ? Math.floor( income.metals ) : 0,
 				crystals: result == 'win' ? Math.floor( income.crystals ) : 0
 			};
+			
+			reward = Game.Effect.Special.applyTo({ engName: 'dailyQuestReward' }, reward, true);
 
 			var set = {
 				'daily.status': Game.Quest.status.FINISHED,

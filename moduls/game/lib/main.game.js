@@ -631,12 +631,14 @@ Game.Effect.getRelatedTo = function(obj) {
 	}
 
 	// Общий
-	for (i = 0; i < Game.effects[this.type].list.length; i++) {
-		if (effects[Game.effects[this.type].list[i].priority] === undefined) {
-			effects[Game.effects[this.type].list[i].priority] = [];
-		}
+	if (this.type != 'special') {
+		for (i = 0; i < Game.effects[this.type].list.length; i++) {
+			if (effects[Game.effects[this.type].list[i].priority] === undefined) {
+				effects[Game.effects[this.type].list[i].priority] = [];
+			}
 
-		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i]);
+			effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i]);
+		}
 	}
 
 	// Items and Cards
@@ -763,10 +765,9 @@ Game.Effect.getAll = function() {
 	return this.getRelatedTo({});
 };
 
-Game.Effect.getValue = function(hideEffects) {
+Game.Effect.getValue = function(hideEffects, obj) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
-	var effects = this.getAll();
-
+	var effects = obj === undefined ? this.getAll() : this.getRelatedTo(obj);
 	var result = {};
 
 	Object.defineProperty(result, 'effects', {
@@ -882,21 +883,21 @@ Game.Effect.ProfitOnce = function(options) {
 	Game.Effect.ProfitOnce.superclass.constructor.apply(this, arguments);
 
 	this.type = 'profitOnce';
-	this.reduce = true;
+	this.reduce = false;
 };
 extend(Game.Effect.ProfitOnce, Game.Effect);
 Game.Effect.ProfitOnce.type = 'profitOnce';
-Game.Effect.ProfitOnce.reduce = true;
+Game.Effect.ProfitOnce.reduce = false;
 
 Game.Effect.Special = function(options) {
 	Game.Effect.Special.superclass.constructor.apply(this, arguments);
 
 	this.type = 'special';
-	this.reduce = true;
+	this.reduce = false;
 };
 extend(Game.Effect.Special, Game.Effect);
 Game.Effect.Special.type = 'special';
-Game.Effect.Special.reduce = true;
+Game.Effect.Special.reduce = false;
 
 
 Game.Queue = {

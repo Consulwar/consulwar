@@ -706,14 +706,19 @@ var completeHumansArrival = function(event, planet) {
 			planet.mission = null;
 		}
 
-		// add reward
+		// add battle reward
+		var reward = {};
 		if (battleResult.reward) {
-			Game.Resources.add( battleResult.reward );
+			_.extend(reward, battleResult.reward);
 		}
-
-		// add artefacts
 		if (battleResult.artefacts) {
-			Game.Resources.add(battleResult.artefacts);
+			_.extend(reward, battleResult.artefacts);
+		}
+		if (battleResult.cards) {
+			_.extend(reward, battleResult.cards);
+		}
+		if (_.keys(reward).length > 0) {
+			Game.Resources.add(reward);
 		}
 	}
 
@@ -816,6 +821,21 @@ var completeReptilesArrival = function(event, planet) {
 		var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
 		userArmy = battleResult.userArmy;
 		enemyArmy = battleResult.enemyArmy;
+
+		// add battle reward
+		var reward = {};
+		if (battleResult.reward) {
+			_.extend(reward, battleResult.reward);
+		}
+		if (battleResult.artefacts) {
+			_.extend(reward, battleResult.artefacts);
+		}
+		if (battleResult.cards) {
+			_.extend(reward, battleResult.cards);
+		}
+		if (_.keys(reward).length > 0) {
+			Game.Resources.add(reward);
+		}
 
 		// restore ground units
 		if (userArmyGround) {
@@ -1026,9 +1046,21 @@ var completeShipFight = function(event) {
 			Game.SpaceEvents.Collection.update({ _id: targetShip._id}, targetShip);
 		}
 
-		// add reward
+		// add battle reward
 		if ((firstArmy && event.info.isHumans) || (secondArmy && targetShip.info.isHumans)) {
-			Game.Resources.add( battleResult.reward );
+			var reward = {};
+			if (battleResult.reward) {
+				_.extend(reward, battleResult.reward);
+			}
+			if (battleResult.artefacts) {
+				_.extend(reward, battleResult.artefacts);
+			}
+			if (battleResult.cards) {
+				_.extend(reward, battleResult.cards);
+			}
+			if (_.keys(reward).length > 0) {
+				Game.Resources.add(reward);
+			}
 		}
 	}
 

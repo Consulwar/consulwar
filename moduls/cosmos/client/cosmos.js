@@ -202,6 +202,14 @@ var getBattleInfo = function(item) {
 		};
 	});
 
+	item.cards = _.map(item.cards, function(value, key) {
+		return {
+			engName: key,
+			name: Game.Cards.items[key].name,
+			amount: value
+		};
+	});
+
 	item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
 	item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
 
@@ -514,10 +522,26 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 		});
 	}
 
+	var cards = null;
+	if (planet.mission
+	 && Game.Battle.items[ planet.mission.type ]
+	 && Game.Battle.items[ planet.mission.type ].level[ planet.mission.level ].cards
+	) {
+		var missionCards = Game.Battle.items[ planet.mission.type ].level[ planet.mission.level ].cards;
+		cards = _.map(missionCards, function(value, key) {
+			return {
+				engName: key,
+				chance: value,
+				name: Game.Cards.items[key].name
+			};
+		});
+	}
+
 	return {
 		name: planet.name,
 		type: Game.Planets.types[planet.type].name,
-		items: items
+		items: items,
+		cards: cards
 	};
 };
 

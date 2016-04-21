@@ -280,11 +280,18 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	};
 
 	if (battleResults) {
+		history.result = battleResults.result;
 		history.userArmyRest = battleResults.userArmy;
 		history.enemyArmyRest = battleResults.enemyArmy;
-		history.reward = battleResults.reward;
-		history.artefacts = battleResults.artefacts;
-		history.result = battleResults.result;
+		if (battleResults.reward) {
+			history.reward = battleResults.reward;
+		}
+		if (battleResults.artefacts) {
+			history.artefacts = battleResults.artefacts;
+		}
+		if (battleResults.cards) {
+			history.cards = battleResults.cards;
+		}
 	}
 
 	var historyId = Game.BattleHistory.Collection.insert(history);
@@ -791,6 +798,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		// calculate reward
 		reward = null;
+		cards = null;
 
 		var mission = null;
 		if (options.missionType
@@ -843,6 +851,19 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (honor > 0) {
 				reward.honor = honor;
 			}
+
+			// mission cards drop
+			if (mission.level[ options.missionLevel ].cards) {
+				var missionCards = mission.level[ options.missionLevel ].cards;
+				for (var cardName in missionCards) {
+					if (Game.Random.random() <= missionCards[cardName]) {
+						if (!cards) {
+							cards = {};
+						}
+						cards[cardName] = 1;
+					}
+				}
+			}
 		}
 
 		// pass gained artefacts
@@ -869,7 +890,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			userArmy: userArmyRest,
 			enemyArmy: enemyArmyRest,
 			reward: reward,
-			artefacts: artefacts
+			artefacts: artefacts,
+			cards: cards
 		};
 	};
 	this.constructor(userArmy, enemyArmy, options);

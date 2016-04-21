@@ -631,12 +631,14 @@ Game.Effect.getRelatedTo = function(obj) {
 	}
 
 	// Общий
-	for (i = 0; i < Game.effects[this.type].list.length; i++) {
-		if (effects[Game.effects[this.type].list[i].priority] === undefined) {
-			effects[Game.effects[this.type].list[i].priority] = [];
-		}
+	if (this.type != 'special') {
+		for (i = 0; i < Game.effects[this.type].list.length; i++) {
+			if (effects[Game.effects[this.type].list[i].priority] === undefined) {
+				effects[Game.effects[this.type].list[i].priority] = [];
+			}
 
-		effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i]);
+			effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i]);
+		}
 	}
 
 	// Items and Cards
@@ -763,9 +765,9 @@ Game.Effect.getAll = function() {
 	return this.getRelatedTo({});
 };
 
-Game.Effect.getValue = function(hideEffects) {
+Game.Effect.getValue = function(hideEffects, obj) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
-	var effects = this.getAll();
+	var effects = obj === undefined ? this.getAll() : this.getRelatedTo(obj);
 
 	var result = {};
 

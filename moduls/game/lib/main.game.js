@@ -768,7 +768,6 @@ Game.Effect.getAll = function() {
 Game.Effect.getValue = function(hideEffects, obj) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
 	var effects = obj === undefined ? this.getAll() : this.getRelatedTo(obj);
-
 	var result = {};
 
 	Object.defineProperty(result, 'effects', {
@@ -884,21 +883,21 @@ Game.Effect.ProfitOnce = function(options) {
 	Game.Effect.ProfitOnce.superclass.constructor.apply(this, arguments);
 
 	this.type = 'profitOnce';
-	this.reduce = true;
+	this.reduce = false;
 };
 extend(Game.Effect.ProfitOnce, Game.Effect);
 Game.Effect.ProfitOnce.type = 'profitOnce';
-Game.Effect.ProfitOnce.reduce = true;
+Game.Effect.ProfitOnce.reduce = false;
 
 Game.Effect.Special = function(options) {
 	Game.Effect.Special.superclass.constructor.apply(this, arguments);
 
 	this.type = 'special';
-	this.reduce = true;
+	this.reduce = false;
 };
 extend(Game.Effect.Special, Game.Effect);
 Game.Effect.Special.type = 'special';
-Game.Effect.Special.reduce = true;
+Game.Effect.Special.reduce = false;
 
 
 Game.Queue = {

@@ -30,16 +30,12 @@ Game.Chat.Messages = {
 			}
 		}
 
-		var effect = Game.Effect.Special.getValue(true, { engName: 'message' });
-		var priceReduction = 1 - effect.price * 0.01;
-
-		return { crystals: Math.ceil(Math.max(
-				Math.min(
-					Math.floor(Game.Resources.getIncome().crystals / 30), 
-					10000), 
-				100
-			) * priceReduction)
+		var income = Math.floor(Game.Resources.getIncome().crystals / 30);
+		var basePrice = { 
+			crystals: Math.ceil(Math.max(Math.min(income, 10000), 100))
 		};
+
+		return Game.Effect.Price.applyTo({ engName: 'message' }, basePrice, true);
 	}
 };
 

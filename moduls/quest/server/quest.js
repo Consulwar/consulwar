@@ -169,7 +169,7 @@ Game.Quest.actualize = function() {
 	}
 
 	// refresh daily quest
-	var effect = Game.Effect.Special.getValue(true, { engName: 'dailyQuest' });
+	var effect = Game.Effect.Special.getValue(true, { engName: 'dailyQuestCount' });
 	var dailyQuestPeriod = 86400 / effect.count;
 
 	if (!quests.daily
@@ -376,10 +376,8 @@ Meteor.methods({
 				metals: result == 'win' ? Math.floor( income.metals ) : 0,
 				crystals: result == 'win' ? Math.floor( income.crystals ) : 0
 			};
-
-			var effect = Game.Effect.Special.getValue(true, { engName: 'dailyQuest' });
-			reward.metals += Math.floor( reward.metals * effect.reward );
-			reward.crystals += Math.floor( reward.crystals * effect.reward );
+			
+			reward = Game.Effect.Special.applyTo({ engName: 'dailyQuestReward' }, reward, true);
 
 			var set = {
 				'daily.status': Game.Quest.status.FINISHED,

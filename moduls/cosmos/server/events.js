@@ -843,9 +843,9 @@ var completeReptilesArrival = function(event, planet) {
 		}
 
 		// after battle
-		if (enemyArmy) {
+		if (battleResult.result == Game.Battle.result.defeat) {
 			// collect all gained artefacts until defeat
-			if (!userArmy && !planet.isHome) {
+			if (!planet.isHome) {
 				var delta = event.timeEnd - planet.timeArtefacts;
 				var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
 				if (count > 0){
@@ -858,9 +858,10 @@ var completeReptilesArrival = function(event, planet) {
 			}
 
 			// steal user resources
-			if (!userArmy && planet.isHome) {
+			if (planet.isHome) {
 				var userResources = Game.Resources.getValue();
 				var stealCost = Game.Unit.calculateArmyCost(enemyArmy);
+				var bunker = Game.Effect.Special.getValue(true, { engName: 'bunker' });
 
 				for (var resName in stealCost) {
 					var stealAmount = Math.floor(stealCost[resName] * 0.2); // 20%
@@ -869,7 +870,14 @@ var completeReptilesArrival = function(event, planet) {
 						? userResources[resName].amount
 						: 0;
 
-					// TODO: Implement resource storage!
+					// save some resources
+					if (bunker && bunker[resName]) {
+						if (bunker[resName] < userAmount) {
+							userAmount -= bunker[resName];
+						} else {
+							userAmount = 0;
+						}
+					}
 
 					if (stealAmount > userAmount) {
 						stealCost[resName] = userAmount;

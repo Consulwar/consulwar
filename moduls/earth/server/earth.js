@@ -693,7 +693,7 @@ Game.Earth.checkTurn = function() {
 SyncedCron.add({
 	name: 'Следующий ход битвы на земле',
 	schedule: function(parser) {
-		return parser.text('at 7:00pm every 1 day');
+		return parser.text('at 7:00 pm');
 	},
 	job: function() {
 		Game.Earth.nextTurn();

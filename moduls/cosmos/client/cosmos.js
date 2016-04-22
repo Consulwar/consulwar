@@ -25,6 +25,12 @@ Game.Cosmos.showPage = function() {
 	if (!mapView) {
 		isLoading.set(true);
 		this.render('cosmos', { to: 'permanent_content' });
+	} else {
+		Meteor.setTimeout(function() {
+			mapView.zoomIn();
+			mapView.zoomOut();
+			mapView.invalidateSize();
+		}, 100);
 	}
 };
 

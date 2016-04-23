@@ -815,8 +815,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			var killedCost = Game.Unit.calculateArmyCost(enemyArmyKilled);
 
-			// metals + crystals
 			if (userArmyRest && !enemyArmyRest) {
+				// metals + crystals
 				if (mission.level[ options.missionLevel ].reward) {
 					reward = mission.level[ options.missionLevel ].reward;
 				} else {
@@ -844,25 +844,25 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 						Math.floor( killedCost.crystals * 0.4 )
 					);
 				}
+
+				// cards
+				if (mission.level[ options.missionLevel ].cards) {
+					var missionCards = mission.level[ options.missionLevel ].cards;
+					for (var cardName in missionCards) {
+						if (Game.Random.random() <= missionCards[cardName]) {
+							if (!cards) {
+								cards = {};
+							}
+							cards[cardName] = 1;
+						}
+					}
+				}
 			}
 
 			// honor
 			var honor = Math.floor((getPoints(killedCost) / 100) * (mission.honor * 0.01));
 			if (honor > 0) {
 				reward.honor = honor;
-			}
-
-			// mission cards drop
-			if (mission.level[ options.missionLevel ].cards) {
-				var missionCards = mission.level[ options.missionLevel ].cards;
-				for (var cardName in missionCards) {
-					if (Game.Random.random() <= missionCards[cardName]) {
-						if (!cards) {
-							cards = {};
-						}
-						cards[cardName] = 1;
-					}
-				}
 			}
 		}
 

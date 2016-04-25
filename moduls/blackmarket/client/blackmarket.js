@@ -56,7 +56,7 @@ Template.blackmarket.helpers({
 
 Template.blackmarket.onRendered(function() {
 	resetAnimation(this);
-})
+});
 
 Template.blackmarket.events({
 	'click .close, click .take': function(e, t) {

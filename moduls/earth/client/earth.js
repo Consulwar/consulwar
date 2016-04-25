@@ -107,7 +107,7 @@ Template.earthHistoryItem.helpers({
 
 	getArmyInfo: function(units, rest) {
 		var result = [];
-		var wasBattle = (this.battle.userArmy && this.battle.enemyArmy) ? true : false;
+		var wasBattle = (this.battle.result === undefined) ? false : true;
 
 		for (var side in units) {
 			for (var group in units[side]) {

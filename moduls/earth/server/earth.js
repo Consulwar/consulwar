@@ -123,13 +123,7 @@ Game.Earth.generateEnemyArmy = function(level) {
 };
 
 Game.Earth.observeZone = function(name) {
-	if (!Game.Mutual.has('research', 'reccons')) {
-		throw new Meteor.Error('Нельзя разведать точки, еноты не изучены');
-	}
-
-	if (Game.Earth.countActivePlayers() < Game.Earth.MIN_ACTIVE_PLAYERS) {
-		throw new Meteor.Error('Нельзя разведать точки, мало активных игроков');
-	}
+	console.log('Observe zone ' + name);
 
 	// get target zone
 	var zone = Game.EarthZones.Collection.findOne({
@@ -149,6 +143,8 @@ Game.Earth.observeZone = function(name) {
 		name: { $in: zone.links },
 		isVisible: { $ne: true }
 	}).fetch();
+
+	console.log('New zones: ', zonesAround);
 
 	// calculate difficulty level
 	var visibleZones = Game.EarthZones.Collection.find({
@@ -179,6 +175,8 @@ Game.Earth.observeZone = function(name) {
 };
 
 Game.Earth.performBattleAtZone = function(name, options) {
+	console.log('Perform battle at ' + name);
+
 	var zone = Game.EarthZones.Collection.findOne({
 		name: name
 	});
@@ -188,6 +186,7 @@ Game.Earth.performBattleAtZone = function(name, options) {
 	}
 
 	if (!zone.enemyArmy) {
+		console.log('No enemy army, then no need to fight');
 		return null; // No need to fight!
 	}
 
@@ -251,10 +250,13 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		Game.Earth.retreat();
 	}
 
+	console.log('Battle result: ' + result);
 	return result;
 };
 
 Game.Earth.setCurrentZone = function(name) {
+	console.log('Set ' + name + ' as current zone');
+
 	Game.EarthZones.Collection.update({
 		isCurrent: true
 	}, {
@@ -273,6 +275,8 @@ Game.Earth.setCurrentZone = function(name) {
 };
 
 Game.Earth.moveArmy = function(destination) {
+	console.log('Move user army to ' + destination);
+
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
 	});
@@ -359,10 +363,13 @@ Game.Earth.moveArmy = function(destination) {
 		});
 	}
 
+	console.log('Moved army: ', destArmy);
 	return destArmy;
 };
 
 Game.Earth.retreat = function() {
+	console.log('Retreat!');
+
 	// get current zone
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
@@ -405,6 +412,8 @@ Game.Earth.retreat = function() {
 };
 
 Game.Earth.nextTurn = function() {
+	console.log('-------- Earth next turn start --------');
+
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
 	});
@@ -426,6 +435,10 @@ Game.Earth.nextTurn = function() {
 		) {
 			Game.Earth.observeZone(currentZone.name);
 			Game.Earth.createTurn();
+		} else {
+			console.log('Unacceptable conditions!');
+			console.log('Active players ' + Game.Earth.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
+			console.log('Mutual research is ' + Game.Mutual.has('research', 'reccons'));
 		}
 
 	} else {
@@ -438,9 +451,13 @@ Game.Earth.nextTurn = function() {
 		}
 
 	}
+
+	console.log('-------- Earth next turn end ----------');
 };
 
 Game.Earth.createTurn = function() {
+	console.log('Create next turn');
+
 	var currentZone = Game.EarthZones.Collection.findOne({
 		isCurrent: true
 	});
@@ -455,6 +472,8 @@ Game.Earth.createTurn = function() {
 	if (currentZone.enemyArmy) {
 
 		// Got enemy at current zone! Proceed battle or retreat?
+		console.log('Got enemy at current zone! Retreat or fight?');
+
 		options = {
 			type: 'battle',
 			timeStart: Game.getCurrentTime(),
@@ -469,6 +488,8 @@ Game.Earth.createTurn = function() {
 	} else {
 
 		// No enemy at current zone! What we gonna do?
+		console.log('No enemy at current zone! Move or wait?');
+
 		var zonesAround = Game.EarthZones.Collection.find({
 			name: { $in: currentZone.links },
 			isVisible: { $ne: false }
@@ -498,6 +519,8 @@ Game.Earth.createTurn = function() {
 };
 
 Game.Earth.checkTurn = function() {
+	console.log('Check current turn');
+
 	var lastTurn = Game.EarthTurns.getLast();
 
 	if (!lastTurn) {
@@ -529,6 +552,8 @@ Game.Earth.checkTurn = function() {
 
 		if (movedArmy) {
 
+			console.log('Consuls decided to move');
+
 			// Move and try to perform battle
 			Game.Earth.setCurrentZone(targetName);
 			turnResult = 'move';
@@ -555,6 +580,8 @@ Game.Earth.checkTurn = function() {
 			}
 
 		} else {
+
+			console.log('Consuls decided to wait');
 
 			// Stay at current zone
 			// Enemy can attack (chance 1/3)
@@ -601,6 +628,7 @@ Game.Earth.checkTurn = function() {
 
 			if (attackArmy) {
 				// attack
+				console.log('But enemy attacked!');
 				turnResult = 'defend';
 
 				battleOptions = {
@@ -620,6 +648,7 @@ Game.Earth.checkTurn = function() {
 				battleResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
 			} else {
 				// no battle
+				console.log('And nothing happened');
 				turnResult = 'wait';
 
 				// save additional history
@@ -642,6 +671,7 @@ Game.Earth.checkTurn = function() {
 		// Retreat or fight?
 		if (lastTurn.actions.battle > lastTurn.actions.retreat) {
 			// fight
+			console.log('Consuls decided to fight');
 			turnResult = 'fight';
 
 			battleOptions = {
@@ -655,11 +685,11 @@ Game.Earth.checkTurn = function() {
 			battleResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
 		} else {
 			// retreat
+			console.log('Consuls decided to retreat');
 			movedArmy = Game.Earth.retreat();
 			turnResult = 'retreat';
 
 			// no battle, then save additional history
-			var retreatZone = 
 			Game.BattleHistory.add(
 				movedArmy,
 				currentZone.enemyArmy,

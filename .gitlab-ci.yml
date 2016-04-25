@@ -1,5 +1,6 @@
 stages:
   - update
+  - test
   - deploy
 
 update_repo:
@@ -8,7 +9,11 @@ update_repo:
     - dev
   script:
     - cd /media/sf_dev/consulwar/ && git fetch git@gitlab.consulwar.ru:zav/consulwar.git && git checkout dev && git reset --hard dev && git pull
-    - cd /media/sf_dev/consulwar/content && git fetch git@gitlab.consulwar.ru:zav/consulwar-content.git && git checkout dev && git reset --hard dev && git pull
+
+run_jshint:
+  stage: test
+  script:
+    - cd /media/sf_dev/consulwar/ && jshint *
 
 job_deploy:
   stage: deploy

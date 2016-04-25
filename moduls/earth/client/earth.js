@@ -107,7 +107,7 @@ Template.earthHistoryItem.helpers({
 
 	getArmyInfo: function(units, rest) {
 		var result = [];
-		var wasBattle = (this.battle.userArmy && this.battle.enemyArmy) ? true : false;
+		var wasBattle = (this.battle.result === undefined) ? false : true;
 
 		for (var side in units) {
 			for (var group in units[side]) {
@@ -590,13 +590,18 @@ var ZoneView = function(mapView, zoneData) {
 			element.html('<canvas></canvas><span></span>');
 			canvasElement = element.find('canvas');
 
-			if (zone.isEnemy) {
+			element.removeClass('earth-marker-battle');
+			element.removeClass('earth-marker-enemy');
+			element.removeClass('earth-marker-our');
+
+			if (zone.enemyArmy && zone.userArmy) {
+				polygon.bringToFront();
+				element.addClass('earth-marker-battle');
+			} else if (zone.isEnemy) {
 				polygon.bringToBack();
 				element.addClass('earth-marker-enemy');
-				element.removeClass('earth-marker-our');
 			} else {
 				polygon.bringToFront();
-				element.removeClass('earth-marker-enemy');
 				element.addClass('earth-marker-our');
 			}
 
@@ -645,8 +650,10 @@ var ZoneView = function(mapView, zoneData) {
 			.css('margin-left', iconSize * k * -0.5);
 
 		if (zoom < 5) {
+			element.find('span').css('margin-top', iconSize * k * 0.7);
 			this.hideProgress();
 		} else {
+			element.find('span').css('margin-top', iconSize * k * 0.9);
 			this.showProgress(humanPower, reptilePower, iconSize * k);
 		}
 	};
@@ -682,7 +689,7 @@ var ZoneView = function(mapView, zoneData) {
 		context.beginPath();
 		context.arc(x + offset, y, radius, Math.PI * 0.5, Math.PI * -0.5, true);
 		context.lineWidth = lineWidth;
-		context.strokeStyle = '#913b31';
+		context.strokeStyle = '#4E312D';
 		context.stroke();
 		// draw enemy progress bar current value
 		context.beginPath();
@@ -878,6 +885,7 @@ Template.earth.onRendered(function() {
 		}
 
 		if (turn.type != 'move') {
+			/* don't show this info
 			var battle = 0;
 			var retreat = 0;
 
@@ -889,6 +897,7 @@ Template.earth.onRendered(function() {
 			zoneViews[ currentZone.name ].updateText(
 				'Воюем: ' + Math.round(battle) + '%' + '\n' + 'Отступаем: ' + Math.round(retreat) + '%'
 			);
+			*/
 			return;
 		}
 
@@ -899,7 +908,7 @@ Template.earth.onRendered(function() {
 				: 0;
 
 			if (name == currentZone.name) {
-				zoneViews[ currentZone.name ].updateText('Ждем: ' + Math.round(value) + '%');
+				zoneViews[ currentZone.name ].updateText( Math.round(value) + '%' );
 				continue;
 			}
 
@@ -910,8 +919,10 @@ Template.earth.onRendered(function() {
 				continue;
 			}
 
+			finish.updateText( Math.round(value) + '%' );
 			lineViews[ name ] = new LineView(start, finish);
-			lineViews[ name ].update( Math.round(value) + '%' );
+			// don't show text above line
+			// lineViews[ name ].update( Math.round(value) + '%' );
 		}
 	});
 });

@@ -77,6 +77,17 @@ if (process.env.NODE_ENV == 'development') {
 			});
 		},
 
+		'cheats.setMutualLevel': function(group, name, level) {
+			Game.Mutual.initialize(group);
+			var set = {};
+			set[name] = parseInt(level);
+			Game.Mutual.Collection.update({
+				group: group
+			}, {
+				$set: set
+			});
+		},
+
 		'cheats.resetHouseItems': function() {
 			Game.House.initialize(Meteor.user(), true);
 		},
@@ -129,6 +140,7 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.spendResource': addCheater,
 		'cheats.setBuildingLevel': addCheater,
 		'cheats.setResearchLevel': addCheater,
+		'cheats.setMutualLevel': addCheater,
 		'cheats.resetHouseItems': addCheater,
 		'cheats.buyAllHouseItems': addCheater,
 		'cheats.resetQuests': addCheater,

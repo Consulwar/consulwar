@@ -136,6 +136,10 @@ Game.Cheats.setResearchLevel = function(group, name, level) {
 	Meteor.call('cheats.setResearchLevel', group, name, level);
 };
 
+Game.Cheats.setMutualLevel = function(group, name, level) {
+	Meteor.call('cheats.setMutualLevel', group, name, level);
+}
+
 // ----------------------------------------------------------------------------
 // Consul house cheats
 // ----------------------------------------------------------------------------

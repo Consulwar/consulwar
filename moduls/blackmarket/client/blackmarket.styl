@@ -1,119 +1,99 @@
-.blackmarket-menu
-	position absolute
-	z-index 4
-	top 0px
-	left 124px
-	width 1333px
-	height 428px
-	padding 3.5px
-	background-color #090e14
-	
-	.disabled
-		-webkit-filter grayscale(1)
-		filter grayscale(1)
-
-	.btn-close-horizontal
-		display block
-		position absolute
-		left 585px
-		bottom 0px
-		width 164px
-		height 34px
-		cursor pointer
-		color #ffffff
-		background-image url(/img/game/earth/btn_close.png)
-		background-repeat no-repeat
-		background-position 0px 0px
-		&:hover
-			background-position 0px -34px
-			
-	ul
-		display block
-		
-		li
-			display inline-block
-			width 218px
-			height 380px
-			background-repeat no-repeat
-			background-position center 20px
-			text-align center
-			font-weight bold
-
-			.resources
-				position absolute
-				display block
-				margin-top 235px
-				margin-left 10px
-	
-	.description
-		display block
-		position absolute
-		margin-top 245px
-		margin-left 80px
-		width 140px
-		font-weight normal
-
-	.start
-		display block
-		position absolute
-		cursor pointer
-		margin-top 310px
-		margin-left 20px
-		width 181px
-		height 40px
-		padding-top 10px
-		color #FFFFFF
-		font-size 20px
-		background-image url(/img/game/quests/btn_take.png)
-		
-		&:hover
-			&:not([disabled])
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			&.disabled
-				-webkit-filter grayscale(1) brightness(1.4)
-				filter grayscale(1) brightness(1.4)
-
-
 .modal
-	&.blackmarket-reward
+	&.blackmarket
 		position fixed
 		z-index 100
 		top 50%
 		left 50%
-		margin -202px 0 0 -200px
-		width 403px
-		height 297px
+		margin -235px 0 0 -200px
+		width 470px
+		height 200px
 		padding 0
-		font-size 24px
 		font-weight bold
 		text-align center
 		color #FFFFFF
-		background-image none
-		background-color #000000
-			
-		h2
-			padding-top 25px
-		
-		ul
-			margin-top 25px
-			
-			&.units
-				span
-					display block
-					width 100%
-					height 40%
-					padding-top 60%
+		border none
+		background none
 
-		.take
+		.close
+			top 20px
+			right -60px
+
+		.top
 			display block
 			position absolute
+			left 0px
+			width 470px
+			height 177px
+			background-repeat no-repeat
+			background-image url(/img/game/blackmarket/container_top.png)
+			
+		.bottom
+			display block
+			position absolute
+			left 24px
+			width 427px
+			height 73px
+			background-repeat no-repeat
+			background-image url(/img/game/blackmarket/container_bottom.png)
+			
+		.container
+			display block
+			position absolute
+			left 62px
+			width 350px
+			overflow hidden
+			
+			.title
+				display none
+				position absolute
+				bottom 20px
+				left 0
+				width 100%
+				height 35px
+				padding-top 10px
+				font-size 22px
+				white-space nowrap
+				text-align center
+				background-color rgba(0, 0, 0, 0.5)
+
+		.resources
+			position absolute
+			left 200px
+			top 260px
+
+		.open
+			position absolute
+			display block
+			left 150px
+			top 340px
+			width 177px
+			height 34px
+			padding-top 12px
 			cursor pointer
+			color #FFFFFF
+			text-align center
+			text-transform uppercase
+			text-decoration none
+			font-weight bold
+			font-size 18px
+			background-image url(/img/game/earth/btn_spec.png)
+			background-repeat no-repeat
+			background-size 100% 100%
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+		.take
+			display none
+			position absolute
+			cursor pointer
+			left 150px
+			top 420px
 			width 181px
 			height 40px
 			padding-top 10px
-			bottom 20px
-			left 110px
+			font-weight bold
+			font-size 24px
 			color #FFFFFF
 			background-image url(/img/game/quests/btn_take.png)
 			

@@ -13,9 +13,6 @@ Game.Building.showPage = function() {
 			case 'tournaments':
 				this.render('colosseum', { to: 'content' });
 				break;
-			case 'containers':
-				this.render('blackmarket', { to: 'content' });
-				break;
 			default:
 				this.render('item_building', {to: 'content', data: { building: item } });
 				break;
@@ -56,7 +53,7 @@ Template.item_building.events({
 	},
 
 	'click button.blackmarket': function(e, t) {
-		Router.go('building', { group: 'residential', item: 'blackmarket', menu: 'containers' });
+		Game.Blackmarket.showWindow();
 	}
 });
 

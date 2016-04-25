@@ -24,7 +24,7 @@ var resetAnimation = function(t) {
 	t.$('.container')
 		.css('top', '180px')
 		.css('height', '0px');
-}
+};
 
 var startAnimation = function(t) {
 	t.$('.close').hide();
@@ -38,7 +38,7 @@ var startAnimation = function(t) {
 		t.$('.take').show();
 		t.$('.title').show();
 	});
-}
+};
 
 Template.blackmarket.helpers({
 	isLoading: function() {

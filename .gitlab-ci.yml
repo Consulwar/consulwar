@@ -13,7 +13,7 @@ update_repo:
 run_jshint:
   stage: test
   script:
-    - cd /media/sf_dev/consulwar/ && jshint *
+    - jshint *
 
 job_deploy:
   stage: deploy

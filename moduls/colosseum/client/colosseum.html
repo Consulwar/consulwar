@@ -4,7 +4,7 @@
 			{{#each tournaments}}
 				<li class="{{this.engName}}-icon {{#if or (not this.checkLevel) (gt timeCooldown 0)}}disabled{{/if}}">
 					{{this.name}}
-					{{#if lt timeCooldown 1}}
+					{{#if not timeCooldown}}
 						<ul class="resources">
 							<li class="honor">
 								{{formatNumber this.price.honor}}
@@ -20,7 +20,7 @@
 				</li>
 			{{/each}}
 		</ul>
-		{{#if gt timeCooldown 0}}
+		{{#if timeCooldown}}
 			<span class="cooldown">
 				Следующий турнир через {{formatSeconds timeCooldown}}
 			</span>

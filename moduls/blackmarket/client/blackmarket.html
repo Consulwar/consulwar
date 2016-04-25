@@ -1,52 +1,31 @@
 <template name="blackmarket">
-	<div class="blackmarket-menu">
-		<ul>
-			{{#each items}}
-				<li class="{{this.engName}}-icon">
-					{{this.name}}
-					<ul class="resources">
-						<li class="credits">
-							{{formatNumber this.getPrice.credits}}
-						</li>
-					</ul>
-					<span class="description">
-						{{this.description}}
-					</span>
-					<span class="start {{#if not this.checkPrice}}disabled{{/if}}" data-id="{{this.engName}}">
-						Купить сундук
-					</span>
-				</li>
-			{{/each}}
-		</ul>
-		<a class="btn-close-horizontal" href="{{pathFor 'building' group='residential' item='blackmarket'}}"></a>
-	</div>
-</template>
-
-<template name="blackmarketReward">
 	<div class="smoke"></div>
-	<div class="modal blackmarket-reward">
+	<div class="modal blackmarket">
 		<div class="close"></div>
-		<h2>Вы получили:</h2>
-		{{#if resources}}
-			<ul class="resources">
-				{{#each resources}}
-					<li class="{{this.engName}}">
-						{{formatNumber this.amount}}
-					</li>
-				{{/each}}
-			</ul>
+		<div class="container">
+			{{#if unit}}
+				<img 
+					alt="{{unit.name}}" 
+					src="
+					{{#unless unit.notImplemented}}
+						/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
+					{{else}}
+						/img/game/notimplemented.jpg
+					{{/unless}}
+					"
+				>
+				<span class="title">{{unit.name}}</span>
+			{{/if}}
+		</div>
+		<div class="top"></div>
+		<div class="bottom"></div>
+		<ul class="resources">
+			<li class="credits">{{credits}}</li>
+		</ul>
+		<div class="open">Открыть</div>
+		<div class="take">Забрать</div>
+		{{#if isLoading}}
+			{{> loading}}
 		{{/if}}
-		{{#if units}}
-			<ul class="items units">
-				{{#each units}}
-					<li class="unit">
-						<span class="{{this.engName}}-icon">
-							{{formatNumberWithISO this.amount}}
-						</span>
-					</li>
-				{{/each}}
-			</ul>
-		{{/if}}
-		<span class="take">Ок</span>
 	</div>
 </template>

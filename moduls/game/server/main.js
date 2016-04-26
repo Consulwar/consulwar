@@ -67,9 +67,18 @@ Meteor.startup(function () {
 	initDDPLimiter();
 });
 
-Router.route('/legalagreement', function() {
+Router.route('/legal/:filename?', function() {
+	var filename = 'legal.html';
+	switch (this.params.filename) {
+		case 'agreement':
+			filename = 'agreement.html';
+			break;
+		case 'rules':
+			filename = 'rules.html';
+			break;
+	}
 	this.response.setHeader('Content-Type', 'text/html');
-	this.response.end( Assets.getText('legalagreement.html') );
+	this.response.end( Assets.getText(filename) );
 }, { where: 'server' });
 
 Meteor.methods({

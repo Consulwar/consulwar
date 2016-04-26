@@ -12,7 +12,8 @@ Template.colosseum.helpers({
 	timeCooldown: function() {
 		var user = Meteor.user();
 		var level = Game.Building.items.residential.colosseum.currentLevel();
-		return user.timeLastTournament - Session.get('serverTime') + Game.Colosseum.getCooldownPeriod(level);
+		var timeLeft = user.timeLastTournament - Session.get('serverTime') + Game.Colosseum.getCooldownPeriod(level);
+		return timeLeft > 0 ? timeLeft : null;
 	}
 });
 

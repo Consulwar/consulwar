@@ -92,12 +92,17 @@
 
 		<label>
 			<input name="rules" type="checkbox">
-			<a href="#">С правилами ознакомлен и согласен</a>
+			<a href="#" class="show-legalagreement">С правилами ознакомлен и согласен</a>
 			<span class="error_text">{{err_rules}}</span>
 		</label>
 
 		<input type="submit" value="Понеслась моча по трубам">
 	</form>
+
+	<div class="legalagreement">
+		<iframe src="/legalagreement"></iframe>
+		<a href="#" class="hide-legalagreement">Назад</a>
+	</div>
 </template>
 
 <template name="register_window_step4">

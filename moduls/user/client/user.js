@@ -139,6 +139,16 @@ var validate_rules = function(rules) {
 };
 
 Template.register_window_step3.events({
+	'click .show-legalagreement': function(e, t) {
+		e.preventDefault();
+		t.$('.legalagreement').show();
+	},
+
+	'click .hide-legalagreement': function(e, t) {
+		e.preventDefault();
+		t.$('.legalagreement').hide();
+	},
+
 	'submit form': function(e, t) {
 		e.preventDefault();
 

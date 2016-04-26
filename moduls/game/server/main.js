@@ -67,6 +67,11 @@ Meteor.startup(function () {
 	initDDPLimiter();
 });
 
+Router.route('/legalagreement', function() {
+	this.response.setHeader('Content-Type', 'text/html');
+	this.response.end( Assets.getText('legalagreement.html') );
+}, { where: 'server' });
+
 Meteor.methods({
 	actualizeGameInfo: function() {
 		var user = Meteor.user();

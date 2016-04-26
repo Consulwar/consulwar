@@ -938,7 +938,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой комнаты');
 		}
 
-		var timeCondition = { $gt: Game.getCurrentTime() - 84600 };
+		var timeCondition = { $gt: Game.getCurrentTime() - (84600 * 7) };
 
 		if (options.isPrevious) {
 			timeCondition.$lte = options.timestamp;
@@ -1002,7 +1002,7 @@ Meteor.publish('chat', function (roomName) {
 		if (room) {
 			return Game.Chat.Messages.Collection.find({
 				room_id: room._id,
-				timestamp: { $gt: Game.getCurrentTime() - 84600 }
+				timestamp: { $gt: Game.getCurrentTime() - (84600 * 7) }
 			}, {
 				fields: {
 					_id: 1,

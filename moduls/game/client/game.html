@@ -27,7 +27,9 @@
 			</div>
 
 			{{> top_menu}}
-			<span class="servername"> <span>Сервер:</span> Reactor</span>
+			<span class="servername" data-tooltip="Время сервера" data-tooltip-direction="s">
+				{{formatDate serverTime}}
+			</span>
 		</header>
 
 		<div class="menu">

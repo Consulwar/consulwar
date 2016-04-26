@@ -139,14 +139,14 @@ var validate_rules = function(rules) {
 };
 
 Template.register_window_step3.events({
-	'click .show-legalagreement': function(e, t) {
+	'click .show-agreement': function(e, t) {
 		e.preventDefault();
-		t.$('.legalagreement').show();
+		t.$('.agreement').show();
 	},
 
-	'click .hide-legalagreement': function(e, t) {
+	'click .hide-agreement': function(e, t) {
 		e.preventDefault();
-		t.$('.legalagreement').hide();
+		t.$('.agreement').hide();
 	},
 
 	'submit form': function(e, t) {

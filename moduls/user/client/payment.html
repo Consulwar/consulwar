@@ -14,8 +14,16 @@
 		</ul>
 		<div class="hint">
 			Покупая ГГК вы соглашаетесь с 
-			<a href="#">условиями предоставления услуг</a>
+			<a href="/legal/agreement">условиями предоставления услуг</a>
 		</div>
+	</div>
+</template>
+
+<template name="paymentPlatbox">
+	<div class="smoke"></div>
+	<div class="payment platbox">
+		<div class="close"></div>
+		<iframe src="https://playground.platbox.com/paybox?{{url}}"></iframe>
 	</div>
 </template>
 

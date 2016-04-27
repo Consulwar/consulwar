@@ -7,6 +7,8 @@ game.Card = function(options) {
 
 	this.type = 'card';
 	this.cardGroup = options.cardGroup;
+	this.cardType = options.cardType;
+	this.isHidden = options.isHidden;
 	this.durationTime = options.durationTime;
 	this.reloadTime = options.reloadTime;
 

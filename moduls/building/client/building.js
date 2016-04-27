@@ -13,6 +13,9 @@ Game.Building.showPage = function() {
 			case 'tournaments':
 				this.render('colosseum', { to: 'content' });
 				break;
+			case 'bonus':
+				this.render('pulsecatcher', { to: 'content' });
+				break;
 			default:
 				this.render('item_building', {to: 'content', data: { building: item } });
 				break;
@@ -50,6 +53,10 @@ Template.item_building.events({
 
 	'click button.tournament': function(e, t) {
 		Router.go('building', { group: 'residential', item: 'colosseum', menu: 'tournaments' });
+	},
+
+	'click button.pulsecatcher': function(e, t) {
+		Router.go('building', { group: 'residential', item: 'pulsecatcher', menu: 'bonus' });
 	},
 
 	'click button.blackmarket': function(e, t) {

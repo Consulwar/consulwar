@@ -42,6 +42,10 @@
 			<button class="blackmarket" disabled="{{lt building.currentLevel 1}}">Открыть контайнер</button>
 		{{/if}}
 
+		{{#if eq building.engName 'pulsecatcher'}}
+			<button class="pulsecatcher" disabled="{{lt building.currentLevel 1}}">Получить бонус</button>
+		{{/if}}
+
 		<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>
 		
 		{{> Template.dynamic template=additionalArea}}

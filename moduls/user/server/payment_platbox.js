@@ -1,5 +1,19 @@
 initPaymentPlatboxServer = function() {
 
+if (!Meteor.settings.payment
+ || !Meteor.settings.payment.platbox
+ || !Meteor.settings.payment.platbox.secretKey
+ || !Meteor.settings.payment.platbox.merchantId
+ || !Meteor.settings.payment.platbox.project
+) {
+	throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры платежки (см. settings.sample payment.platbox)');
+}
+
+var SECRET_KEY = Meteor.settings.payment.platbox.secretKey;
+var MERCHANT_ID = Meteor.settings.payment.platbox.merchantId;
+var PROJECT = Meteor.settings.payment.platbox.project;
+
+
 var http = Meteor.npmRequire('http');
 
 var hostname = '0.0.0.0';
@@ -249,7 +263,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			transaction_id: data.platbox_tx_id,
 			payment_system: 'platbox'
 		});
-		
+
 		if (transaction) {
 			switch (transaction.status) {
 				case 'check':
@@ -317,7 +331,7 @@ var signString = function(str) {
 	return (
 		CryptoJS.HmacSHA256(
 			str, 
-			'fbbe9ca5b510a40fc2e9b9622d5300b4'
+			SECRET_KEY
 		).toString()
 	);
 }
@@ -349,7 +363,7 @@ Meteor.methods({
 			},
 			amount: (paymentItem.cost.rub * 100).toString(),
 			currency: 'RUB',
-			merchant_id: '63795c7dad1cfc35cc7c470ffc4a80a4',
+			merchant_id: MERCHANT_ID,
 			order: {
 				type: 'item_list',
 				item_list: [{
@@ -357,7 +371,7 @@ Meteor.methods({
 					profit: paymentItem.profit
 				}]
 			},
-			project: 'consulwar_test'
+			project: PROJECT
 		}
 
 		pay.sign = sign(pay);

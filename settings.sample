@@ -17,6 +17,13 @@
 			"collectArtefactsPeriod": 120
 		}
 	},
+	"payment": {
+		"platbox": {
+			"secretKey": "ABCDEFGHIJKLMNOP",
+			"merchantId": "42424242424242",
+			"project": "consulwar"
+		}
+	},
 	"kadira": { 
 		"appId": "***", 
 		"appSecret": "***" 

@@ -348,9 +348,32 @@ Meteor.methods({
 			task.group = item.cardGroup;
 		}
 
-		// activate card
-		if (!Game.Queue.add(task)) {
-			throw new Meteor.Error('Эту карточку нельзя активировать сейчас');
+		// try to find active card with same name
+		var currentCard = Game.Queue.Collection.findOne({
+			user_id: user._id,
+			engName: item.engName,
+			status: Game.Queue.status.INCOMPLETE,
+			finishTime: { $gt: Game.getCurrentTime() }
+		});
+
+		if (currentCard) {
+			// increase duration of current card
+			var updateResult = Game.Queue.Collection.update({
+				_id: currentCard._id,
+				status: Game.Queue.status.INCOMPLETE
+			}, {
+				$inc: {
+					finishTime: item.durationTime
+				}
+			});
+			if (updateResult < 1) {
+				throw new Meteor.Error('Не удалось продлить действие карты');
+			}
+		} else {
+			// activate new card
+			if (!Game.Queue.add(task)) {
+				throw new Meteor.Error('Эту карточку нельзя активировать сейчас');
+			}
 		}
 
 		// spend card

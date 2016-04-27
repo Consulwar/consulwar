@@ -15,7 +15,6 @@ var PROJECT = Meteor.settings.payment.platbox.project;
 
 
 var http = Meteor.npmRequire('http');
-
 var hostname = '0.0.0.0';
 var port = 4500;
 
@@ -24,9 +23,12 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 	if (request.url != '/paymentGateway') {
 		response.statusCode = 404;
 		response.end();
+		return;
 	}
 
 	// correct request url
+	console.log('Got payment request');
+
 	var body = '';
 	request.on('data', Meteor.bindEnvironment( function(chunk) {
 		body += chunk;
@@ -43,6 +45,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		try {
 			data = JSON.parse(body);
 		} catch (e) {
+			console.log('Error: json parse failed');
 			responseData = {
 				'status': 'error',
 				'code': 400,
@@ -55,6 +58,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 
 		// check signature
 		if (request.headers['x-signature'] != signString(body).toUpperCase()) {
+			console.log('Error: incorrect signature');
 			responseData = {
 				'status': 'error',
 				'code': 401,
@@ -64,6 +68,8 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
+
+		console.log('Request data:', data);
 
 		// check data format
 		if (!data
@@ -78,10 +84,12 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		 || !data.account.id
 		 || !data.order
 		 || !data.order.item_list
-		 ||  data.order.item_list.length == 0
+		 || !_.isArray(data.order.item_list)
+		 ||  data.order.item_list.length === 0
 		 || !data.order.item_list[0].id
-	     || !data.order.item_list[0].profit
-	    ) {
+		 || !data.order.item_list[0].profit
+		) {
+			console.log('Error: incorrect request data');
 			responseData = {
 				'status': 'error',
 				'code': 406,
@@ -90,14 +98,15 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
 			response.end( JSON.stringify(responseData) );
 			return;
-	    }
+		}
 
 		// check user account
 		var user = Meteor.users.findOne({
 			_id: data.account.id
 		});
 
-		if (!user || !user._id || user.blocked == true) {
+		if (!user || !user._id || user.blocked === true) {
+			console.log('Error: user not found or blocked');
 			responseData = {
 				'status': 'error',
 				'code': 1001,
@@ -115,6 +124,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		 || !paymentItem.profit
 		 || !_.isEqual(paymentItem.profit, data.order.item_list[0].profit)
 		) {
+			console.log('Error: incorrect payment item');
 			responseData = {
 				'status': 'error',
 				'code': 1005,
@@ -126,6 +136,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		}
 
 		if (data.payment.currency != 'RUB') {
+			console.log('Error: incorrect currency');
 			responseData = {
 				'status': 'error',
 				'code': 1002,
@@ -139,6 +150,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		if (data.payment.exponent != 2
 		 || data.payment.amount != (paymentItem.cost.rub * 100).toString()
 		) {
+			console.log('Error: incorrect payment amount');
 			responseData = {
 				'status': 'error',
 				'code': 1003,
@@ -168,6 +180,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			
 			if (checkResult.insertedId) {
 				// transaction inserted
+				console.log('Transaction created');
 				responseData = {
 					'status': 'ok',
 					'merchant_tx_id': checkResult.insertedId,
@@ -184,7 +197,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		// cancel transaction
 		else if (data.action == 'cancel') {
 			// try to cancel transaction
-			var cancelResult = Game.Payment.Transactions.Collection.upsert({
+			var cancelResult = Game.Payment.Transactions.Collection.update({
 				_id: data.merchant_tx_id,
 				user_id: user._id,
 				transaction_id: data.platbox_tx_id,
@@ -197,8 +210,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				}
 			});
 
-			if (cancelResult.numberAffected == 1) {
+			if (cancelResult == 1) {
 				// transaction canceled
+				console.log('Transaction canceled');
 				responseData = {
 					'status': 'ok',
 					'merchant_tx_timestamp': new Date().toISOString(),
@@ -215,8 +229,8 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 
 		// finish transaction
 		else if (data.action == 'pay') {
-			// try to 
-			var payResult = Game.Payment.Transactions.Collection.upsert({
+			// try to finish transaction
+			var payResult = Game.Payment.Transactions.Collection.update({
 				_id: data.merchant_tx_id,
 				user_id: user._id,
 				transaction_id: data.platbox_tx_id,
@@ -229,9 +243,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				}
 			});
 
-			if (payResult.numberAffected == 1) {
+			if (payResult == 1) {
 				// add profit
-				Game.Resources.add(data.order.item_list[0].profit.resources, data.account.id);
+				Game.Resources.addProfit(data.order.item_list[0].profit, data.account.id);
 				Game.Payment.logIncome(data.order.item_list[0].profit, {
 					type: 'payment',
 					item: paymentItem.id,
@@ -240,6 +254,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				}, data.account.id);
 
 				// send response
+				console.log('Transaction finished');
 				responseData = {
 					'status': 'ok',
 					'merchant_tx_timestamp': new Date().toISOString(),
@@ -281,6 +296,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			}
 		}
 
+		console.log('Error: transaction error ', errorCode);
 		responseData = {
 			'status': 'error',
 			'code': errorCode,
@@ -310,7 +326,7 @@ var objectRecursiveSort = function(obj) {
 	}), function(arr) {
 		return arr[0];
 	}));
-}
+};
 
 var sign = function(data) {
 	var sortedData = objectRecursiveSort(data);
@@ -325,7 +341,7 @@ var sign = function(data) {
 	}
 
 	return signString(JSON.stringify(forSign));
-}
+};
 
 var signString = function(str) {
 	return (
@@ -334,7 +350,7 @@ var signString = function(str) {
 			SECRET_KEY
 		).toString()
 	);
-}
+};
 
 Meteor.methods({
 	'platbox.getPaymentUrl': function(id) {
@@ -344,7 +360,7 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
@@ -372,7 +388,7 @@ Meteor.methods({
 				}]
 			},
 			project: PROJECT
-		}
+		};
 
 		pay.sign = sign(pay);
 

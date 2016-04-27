@@ -53,7 +53,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 400,
 				'description': 'Неверный формат сообщения'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -70,7 +70,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 401,
 				'description': 'Некорректная подпись запроса'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -129,7 +129,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 406,
 				'description': 'Неверные данные запроса'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -152,7 +152,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 1001,
 				'description': 'Учётная запись пользователя не найдена или заблокирована'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -172,7 +172,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 1005,
 				'description': 'Запрашиваемые товары или услуги недоступны'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -186,7 +186,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 1002,
 				'description': 'Неверная валюта платежа'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -203,7 +203,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 				'code': 1003,
 				'description': 'Неверная сумма платежа'
 			};
-			response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+			response.setHeader('X-Signature', signObject(responseData));
 			response.end( JSON.stringify(responseData) );
 			return;
 		}
@@ -228,7 +228,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			if (checkResult.insertedId) {
 				// transaction inserted
 				console.log('Transaction created');
-				console.log('platbox transaction id', data.platbox_tx_id);
+				console.log('platbox transaction id:', data.platbox_tx_id);
 				console.log('merchant transaction id:', checkResult.insertedId);
 				console.log('-------------------------------------');
 				responseData = {
@@ -238,7 +238,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 						'pin_code': '17RT42'
 					}
 				};
-				response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+				response.setHeader('X-Signature', signObject(responseData));
 				response.end( JSON.stringify(responseData) );
 				return;
 			}
@@ -263,7 +263,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			if (cancelResult == 1) {
 				// transaction canceled
 				console.log('Transaction canceled');
-				console.log('platbox transaction id', data.platbox_tx_id);
+				console.log('platbox transaction id:', data.platbox_tx_id);
 				console.log('merchant transaction id:', data.merchant_tx_id);
 				console.log('-------------------------------------');
 				responseData = {
@@ -274,7 +274,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 						'claim_code': 'UNIHORNY'
 					}
 				};
-				response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+				response.setHeader('X-Signature', signObject(responseData));
 				response.end( JSON.stringify(responseData) );
 				return;
 			}
@@ -309,7 +309,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 
 				// send response
 				console.log('Transaction finished');
-				console.log('platbox transaction id', data.platbox_tx_id);
+				console.log('platbox transaction id:', data.platbox_tx_id);
 				console.log('merchant transaction id:', data.merchant_tx_id);
 				console.log('-------------------------------------');
 				responseData = {
@@ -320,7 +320,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 						'claim_code': 'UNIHORNY'
 					}
 				};
-				response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+				response.setHeader('X-Signature', signObject(responseData));
 				response.end( JSON.stringify(responseData) );
 				return;
 			}
@@ -354,7 +354,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		}
 
 		console.log('Error: transaction error ', errorCode);
-		console.log('platbox transaction id', data.platbox_tx_id);
+		console.log('platbox transaction id:', data.platbox_tx_id);
 		console.log('merchant transaction id:', data.merchant_tx_id);
 		console.log('-------------------------------------');
 		responseData = {
@@ -362,7 +362,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			'code': errorCode,
 			'description': errorMessge
 		};
-		response.setHeader('X-Signature', signString( JSON.stringify(responseData) ));
+		response.setHeader('X-Signature', signObject(responseData));
 		response.end( JSON.stringify(responseData) );
 	}));
 }));
@@ -388,7 +388,7 @@ var objectRecursiveSort = function(obj) {
 	}));
 };
 
-var sign = function(data) {
+var signObject = function(data) {
 	var sortedData = objectRecursiveSort(data);
 	var forSign = {};
 
@@ -450,7 +450,7 @@ Meteor.methods({
 			project: PROJECT
 		};
 
-		pay.sign = sign(pay);
+		pay.sign = signObject(pay);
 
 		var url = '';
 		for (var key in pay) {

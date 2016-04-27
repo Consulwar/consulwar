@@ -27,7 +27,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 	}
 
 	// correct request url
-	console.log('Got payment request');
+	console.log('-------- Got payment request --------');
 
 	var body = '';
 	request.on('data', Meteor.bindEnvironment( function(chunk) {
@@ -45,7 +45,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		try {
 			data = JSON.parse(body);
 		} catch (e) {
-			console.log('Error: json parse failed');
+			console.log('Error: json parse failed!');
+			console.log('request body:', body);
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 400,
@@ -58,7 +60,11 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 
 		// check signature
 		if (request.headers['x-signature'] != signString(body).toUpperCase()) {
-			console.log('Error: incorrect signature');
+			console.log('Error: incorrect signature!');
+			console.log('x-signature:', request.headers['x-signature']);
+			console.log('signed string:', signString(body).toUpperCase());
+			console.log('request body:', body);
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 401,
@@ -69,27 +75,55 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			return;
 		}
 
-		console.log('Request data:', data);
-
 		// check data format
-		if (!data
-		 || !data.action
-		 || (data.action != 'check' && !data.merchant_tx_id)
-		 || !data.platbox_tx_id
-		 || !data.payment
-		 || !data.payment.amount
-		 || !data.payment.currency
-		 || !data.payment.exponent
-		 || !data.account
-		 || !data.account.id
-		 || !data.order
-		 || !data.order.item_list
-		 || !_.isArray(data.order.item_list)
-		 ||  data.order.item_list.length === 0
-		 || !data.order.item_list[0].id
-		 || !data.order.item_list[0].profit
-		) {
-			console.log('Error: incorrect request data');
+		var dataErrors = [];
+
+		if (!data) {
+			dataErrors.push('data is null');
+		} else {
+			// check action
+			if (!data.action) {
+				dataErrors.push('data.action required');
+			} else {
+				if (['check', 'pay', 'cancel'].indexOf(data.action) == -1) {
+					dataErrors.push('data.action must be check, pay or cancel');
+				} else if (data.action != 'check' && !data.merchant_tx_id) {
+					dataErrors.push('data.merchant_tx_id required');
+				}
+			}
+			// check payment info
+			if (!data.payment
+			 || !data.payment.amount
+			 || !data.payment.currency
+			 || !data.payment.exponent
+			) {
+				dataErrors.push('data.payment.amount required');
+				dataErrors.push('data.payment.currency required');
+				dataErrors.push('data.payment.exponent required');
+			}
+			// check account info
+			if (!data.account || !data.account.id) {
+				dataErrors.push('data.account.id required');
+			}
+			// check order items info
+			if (!data.order || !data.order.item_list) {
+				dataErrors.push('data.order.item_list required');
+			} else {
+				if (!_.isArray(data.order.item_list)
+				 ||  data.order.item_list.length === 0
+				 || !data.order.item_list[0].id
+				 || !data.order.item_list[0].profit
+				) {
+					dataErrors.push('data.order.item_list is incorrect');
+				}
+			}
+		}
+
+		if (dataErrors.length > 0) {
+			console.log('Error: incorrect request data!');
+			console.log('data:', data);
+			console.log(dataErrors.join('\n'));
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 406,
@@ -105,8 +139,14 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			_id: data.account.id
 		});
 
+		console.log('User id:', data.account.id);
+		if (user) {
+			console.log('User name:', user.username);
+		}
+
 		if (!user || !user._id || user.blocked === true) {
-			console.log('Error: user not found or blocked');
+			console.log('Error: user not found or blocked!');
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 1001,
@@ -124,7 +164,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		 || !paymentItem.profit
 		 || !_.isEqual(paymentItem.profit, data.order.item_list[0].profit)
 		) {
-			console.log('Error: incorrect payment item');
+			console.log('Error: incorrect payment item!');
+			console.log('payment item:', data.order.item_list[0]);
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 1005,
@@ -136,7 +178,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		}
 
 		if (data.payment.currency != 'RUB') {
-			console.log('Error: incorrect currency');
+			console.log('Error: incorrect currency!');
+			console.log('payment info:', data.payment);
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 1002,
@@ -151,6 +195,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		 || data.payment.amount != (paymentItem.cost.rub * 100).toString()
 		) {
 			console.log('Error: incorrect payment amount');
+			console.log('payment info:', data.payment);
+			console.log('item cost:', paymentItem.cost);
+			console.log('-------------------------------------');
 			responseData = {
 				'status': 'error',
 				'code': 1003,
@@ -181,6 +228,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			if (checkResult.insertedId) {
 				// transaction inserted
 				console.log('Transaction created');
+				console.log('platbox transaction id', data.platbox_tx_id);
+				console.log('merchant transaction id:', checkResult.insertedId);
+				console.log('-------------------------------------');
 				responseData = {
 					'status': 'ok',
 					'merchant_tx_id': checkResult.insertedId,
@@ -213,6 +263,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 			if (cancelResult == 1) {
 				// transaction canceled
 				console.log('Transaction canceled');
+				console.log('platbox transaction id', data.platbox_tx_id);
+				console.log('merchant transaction id:', data.merchant_tx_id);
+				console.log('-------------------------------------');
 				responseData = {
 					'status': 'ok',
 					'merchant_tx_timestamp': new Date().toISOString(),
@@ -245,6 +298,7 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 
 			if (payResult == 1) {
 				// add profit
+				console.log('Got profit');
 				Game.Resources.addProfit(data.order.item_list[0].profit, data.account.id);
 				Game.Payment.logIncome(data.order.item_list[0].profit, {
 					type: 'payment',
@@ -255,6 +309,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 
 				// send response
 				console.log('Transaction finished');
+				console.log('platbox transaction id', data.platbox_tx_id);
+				console.log('merchant transaction id:', data.merchant_tx_id);
+				console.log('-------------------------------------');
 				responseData = {
 					'status': 'ok',
 					'merchant_tx_timestamp': new Date().toISOString(),
@@ -297,6 +354,9 @@ var server = http.createServer( Meteor.bindEnvironment( function(request, respon
 		}
 
 		console.log('Error: transaction error ', errorCode);
+		console.log('platbox transaction id', data.platbox_tx_id);
+		console.log('merchant transaction id:', data.merchant_tx_id);
+		console.log('-------------------------------------');
 		responseData = {
 			'status': 'error',
 			'code': errorCode,
@@ -314,7 +374,7 @@ server.once('error', function(err) {
 });
 
 server.listen(port, hostname, function() {
-	console.log('Payment gateway at http://${hostname}:${port}/paymentGateway');
+	console.log('Payment gateway at http://' + hostname + ':' + port + '/paymentGateway');
 });
 
 var objectRecursiveSort = function(obj) {

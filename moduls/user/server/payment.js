@@ -1,10 +1,19 @@
 initPaymentServer = function() {
 
 initPaymentLib();
+initPaymentPlatboxServer();
 
 Game.Payment.Collection = new Meteor.Collection('paymentHistory');
 
 Game.Payment.Collection._ensureIndex({
+	user_id: 1
+});
+
+Game.Payment.Transactions = {
+	Collection: new Meteor.Collection('paymentTransactions')
+};
+
+Game.Payment.Transactions.Collection._ensureIndex({
 	user_id: 1
 });
 

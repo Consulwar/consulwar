@@ -127,7 +127,7 @@ Game.Resources.addProfit = function(profit, uid) {
 		}
 	}
 
-	if (profit.votePower && Meteor.userId()) {
+	if (profit.votePower) {
 		Meteor.users.update({
 			_id: uid !== undefined ? uid : Meteor.userId()
 		}, {

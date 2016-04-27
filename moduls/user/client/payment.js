@@ -24,13 +24,24 @@ Template.payment.events({
 	},
 
 	'click .paymentItems li': function(e, t) {
-		Meteor.call('user.buyPaymentItem', e.currentTarget.dataset.id, function(err, data) {
+		Meteor.call('platbox.getPaymentUrl', e.currentTarget.dataset.id, function(err, url) {
 			if (err) {
 				Notifications.error(err.error);
 			} else {
-				Notifications.success('Покупка завершена успешно');
+				Blaze.remove(t.view);
+				Blaze.renderWithData(Template.paymentPlatbox, {
+					url: url
+				},
+				$('.over')[0]);
 			}
 		});
+	}
+});
+
+Template.paymentPlatbox.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+		Blaze.render(Template.payment, $('.over')[0]);
 	}
 });
 

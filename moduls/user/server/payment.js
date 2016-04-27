@@ -1,10 +1,19 @@
 initPaymentServer = function() {
 
 initPaymentLib();
+initPaymentPlatboxServer();
 
 Game.Payment.Collection = new Meteor.Collection('paymentHistory');
 
 Game.Payment.Collection._ensureIndex({
+	user_id: 1
+});
+
+Game.Payment.Transactions = {
+	Collection: new Meteor.Collection('paymentTransactions')
+};
+
+Game.Payment.Transactions.Collection._ensureIndex({
 	user_id: 1
 });
 
@@ -39,66 +48,6 @@ Game.Payment.logExpense = function(profit, source, uid) {
 };
 
 Meteor.methods({
-	'user.buyPaymentItem': function(id) {
-
-		// TODO: Подключить систему приема платежей!
-
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		check(id, String);
-		var paymentItem = Game.Payment.items[id];
-
-		if (!paymentItem || !paymentItem.profit) {
-			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
-		}
-
-		// --------------------------------------------------------------------
-		// Этот код только для внутреннего теста
-		// TODO: Убрать когда подключим платежку
-		var history = Game.Payment.Collection.find({
-			user_id: user._id,
-			income: { $ne: false }
-		}).fetch();
-
-		var totalCredits = (
-			paymentItem.profit
-		 && paymentItem.profit.resources
-		 && paymentItem.profit.resources.credits
-		) ? paymentItem.profit.resources.credits : 0;
-
-		if (totalCredits > 0) {
-			for (var i = 0; i < history.length; i++) {
-				if (history[i].profit
-				 && history[i].profit.resources
-				 && history[i].profit.resources.credits
-				) {
-					totalCredits += history[i].profit.resources.credits;
-				}
-			}
-
-			if (totalCredits >= 5000) {
-				throw new Meteor.Error('Больше получить кредитов нельзя, пока идет внутренний тест');
-			}
-		}
-		// --------------------------------------------------------------------
-
-		// Ниже идет код для зачисления ресурсов при удачном платеже
-		// TODO: Перенести в callback
-		Game.Resources.addProfit(paymentItem.profit);
-		Game.Payment.logIncome(paymentItem.profit, {
-			type: 'payment',
-			item: paymentItem.id
-		});
-	},
-
 	'user.getPaymentHistory': function(isIncome, page, count) {
 		var user = Meteor.user();
 

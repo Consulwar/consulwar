@@ -109,9 +109,9 @@ Game.Resources.rollProfit = function(drop) {
 	return rollRandomValues( drop[i].profit );
 };
 
-Game.Resources.addProfit = function(profit) {
+Game.Resources.addProfit = function(profit, uid) {
 	if (profit.resources) {
-		Game.Resources.add(profit.resources);
+		Game.Resources.add(profit.resources, uid);
 	}
 
 	if (profit.units) {
@@ -122,14 +122,14 @@ Game.Resources.addProfit = function(profit) {
 					engName: name,
 					group: group,
 					count: parseInt( units[group][name], 10 )
-				});
+				}, uid);
 			}
 		}
 	}
 
-	if (profit.votePower && Meteor.userId()) {
+	if (profit.votePower) {
 		Meteor.users.update({
-			_id: Meteor.userId()
+			_id: uid !== undefined ? uid : Meteor.userId()
 		}, {
 			$inc: { votePowerBonus: profit.votePower }
 		});

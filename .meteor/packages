@@ -48,3 +48,5 @@ bevanhunt:leaflet
 manuel:reactivearray
 ddp-rate-limiter
 lookback:tooltips
+jparker:crypto-sha256
+jparker:crypto-hmac

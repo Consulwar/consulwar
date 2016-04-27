@@ -7,7 +7,7 @@ Game.Unit.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Unit.set = function(unit, invertSign) {
+Game.Unit.set = function(unit, invertSign, uid) {
 	invertSign = invertSign === true ? -1 : 1;
 
 	Game.Unit.initialize();
@@ -16,7 +16,7 @@ Game.Unit.set = function(unit, invertSign) {
 	inc['units.army.' + unit.group + '.' + unit.engName] = parseInt(unit.count * invertSign);
 
 	Game.Unit.Collection.update({
-		user_id: Meteor.userId(),
+		user_id: uid !== undefined ? uid : Meteor.userId(),
 		location: Game.Unit.location.HOME
 	}, {
 		$inc: inc
@@ -25,12 +25,12 @@ Game.Unit.set = function(unit, invertSign) {
 	return inc;
 };
 
-Game.Unit.add = function(unit) {
-	return Game.Unit.set(unit, false);
+Game.Unit.add = function(unit, uid) {
+	return Game.Unit.set(unit, false, uid);
 };
 
-Game.Unit.remove = function(unit) {
-	return Game.Unit.set(unit, true);
+Game.Unit.remove = function(unit, uid) {
+	return Game.Unit.set(unit, true, uid);
 };
 
 Game.Unit.complete = function(task) {

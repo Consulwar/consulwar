@@ -34,12 +34,28 @@
 			<button class="market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
 		{{/if}}
 
-		{{#if eq building.engName 'colosseum'}}
-			<button class="tournament" disabled="{{lt building.currentLevel 1}}">Устроить турнир</button>
-		{{/if}}
-
 		{{#if eq building.engName 'blackmarket'}}
 			<button class="blackmarket" disabled="{{lt building.currentLevel 1}}">Открыть контайнер</button>
+		{{/if}}
+
+		{{#if eq building.engName 'colosseum'}}
+			<a
+				class="tournament"
+				disabled="{{lt building.currentLevel 1}}"
+				href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
+			>
+				Устроить турнир
+			</a>
+		{{/if}}
+
+		{{#if eq building.engName 'pulsecatcher'}}
+			<a
+				class="pulsecatcher"
+				disabled="{{lt building.currentLevel 1}}"
+				href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
+			>
+				Получить бонус
+			</a>
 		{{/if}}
 
 		<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>

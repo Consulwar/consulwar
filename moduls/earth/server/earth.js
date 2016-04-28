@@ -721,14 +721,12 @@ Game.Earth.checkTurn = function() {
 SyncedCron.add({
 	name: 'Следующий ход битвы на земле',
 	schedule: function(parser) {
-		return parser.text('at 7:00 pm');
+		return parser.text(Game.Earth.UPDATE_SCHEDULE);
 	},
 	job: function() {
 		Game.Earth.nextTurn();
 	}
 });
-
-SyncedCron.start();
 
 Meteor.publish('zones', function () {
 	if (this.userId) {

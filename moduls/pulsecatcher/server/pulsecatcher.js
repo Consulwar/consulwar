@@ -39,7 +39,7 @@ Game.Pulsecatcher.startNextQuiz = function() {
 SyncedCron.add({
 	name: 'Следующее голосование по импульсному уловителю',
 	schedule: function(parser) {
-		return parser.text('at 7:00 pm');
+		return parser.text(Game.Pulsecatcher.UPDATE_SCHEDULE);
 	},
 	job: function() {
 		Game.Pulsecatcher.startNextQuiz();

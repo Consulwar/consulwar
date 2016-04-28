@@ -8,10 +8,6 @@ Meteor.subscribe('pulsecatcherQuizAnswer');
 var isLoading = new ReactiveVar(false);
 
 Template.pulsecatcher.helpers({
-	votePower: function() {
-		return Game.User.getVotePower();
-	},
-
 	quizBonusList: function() {
 		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz) {
@@ -42,9 +38,10 @@ Template.pulsecatcher.helpers({
 
 	calcVoteValue: function(answer) {
 		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
-		return activeQuiz && activeQuiz.totalVotes > 0
-			? activeQuiz.result[answer] / activeQuiz.totalVotes * 100
-			: 0;
+		if (!activeQuiz || activeQuiz.totalVotes === 0) {
+			return 0;
+		}
+		return activeQuiz.result[answer] / activeQuiz.totalVotes * 100;
 	},
 
 	choosenBonusList: function() {

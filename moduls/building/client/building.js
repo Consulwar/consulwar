@@ -51,14 +51,6 @@ Template.item_building.events({
 		Game.Market.showWindow();
 	},
 
-	'click button.tournament': function(e, t) {
-		Router.go('building', { group: 'residential', item: 'colosseum', menu: 'tournaments' });
-	},
-
-	'click button.pulsecatcher': function(e, t) {
-		Router.go('building', { group: 'residential', item: 'pulsecatcher', menu: 'bonus' });
-	},
-
 	'click button.blackmarket': function(e, t) {
 		Game.Blackmarket.showWindow();
 	}

@@ -55,4 +55,6 @@ Game.EarthTurns = {
 	}
 };
 
+initEarthConfigLib();
+
 };

@@ -15,6 +15,12 @@
 			"maxAcc": 2,
 			"speedFactor": 0.016666,
 			"collectArtefactsPeriod": 120
+		},
+		"earth": {
+			"schedule": "at 7:00 pm"
+		},
+		"pulsecatcher": {
+			"schedule": "at 7:00 pm"
 		}
 	},
 	"kadira": { 

@@ -34,10 +34,10 @@ Game.Pulsecatcher.startNextQuiz = function() {
 		result: result,
 		totalVotes: 0
 	});
-}
+};
 
 SyncedCron.add({
-	name: 'Следующий ход битвы на земле',
+	name: 'Следующее голосование по импульсному уловителю',
 	schedule: function(parser) {
 		return parser.text('at 7:00 pm');
 	},

@@ -281,7 +281,7 @@ Game.Cards.activate = function(item, user) {
 
 	// activate card
 	return Game.Queue.add(task);
-}
+};
 
 Meteor.methods({
 	getBonusResources: function(name) {

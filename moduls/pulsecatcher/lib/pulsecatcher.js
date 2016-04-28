@@ -25,7 +25,7 @@ Game.Pulsecatcher = {
 
 		var choosen = null;
 		for (var key in previousQuiz.result) {
-			if (choosen == null || previousQuiz.result[key] > previousQuiz.result[choosen]) {
+			if (choosen === null || previousQuiz.result[key] > previousQuiz.result[choosen]) {
 				choosen = key;
 			}
 		}

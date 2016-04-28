@@ -64,8 +64,9 @@ Meteor.startup(function () {
 	initColosseumServer();
 	initBlackmarketServer();
 	initPulsecatcherServer();
-
 	initDDPLimiter();
+
+	SyncedCron.start();
 });
 
 Router.route('/legal/:filename?', function() {

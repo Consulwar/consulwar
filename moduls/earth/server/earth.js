@@ -730,8 +730,6 @@ SyncedCron.add({
 	}
 });
 
-SyncedCron.start();
-
 Meteor.publish('zones', function () {
 	if (this.userId) {
 		return Game.EarthZones.Collection.find();

@@ -593,9 +593,7 @@ Game.Earth.checkTurn = function() {
 				nearZone = Game.EarthZones.Collection.findOne({
 					name: { $in: currentZone.links },
 					isVisible: true,
-					isEnemy: true,
-					userArmy: null,
-					enemyArmy: { $ne: null }
+					isEnemy: true
 				});
 
 				// get 10 - 50 % of enemy army

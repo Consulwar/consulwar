@@ -227,6 +227,62 @@ Game.Cards.complete = function(task) {
 	// no action on complete
 };
 
+Game.Cards.activate = function(item, user) {
+	// check reload time
+	if (item.reloadTime) {
+		var nextReloadTime = item.nextReloadTime();
+		if (nextReloadTime > Game.getCurrentTime()) {
+			return false;
+		}
+
+		// set next reload time
+		var set = {};
+		set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
+
+		Game.Resources.Collection.update({
+			user_id: user._id
+		}, {
+			$set: set
+		});
+	}
+
+	// prepare queue task
+	var task = {
+		type: item.type,
+		engName: item.engName,
+		time: item.durationTime
+	};
+
+	if (item.cardGroup) {
+		task.group = item.cardGroup;
+	}
+
+	// try to find active card with same name
+	var currentCard = Game.Queue.Collection.findOne({
+		user_id: user._id,
+		engName: item.engName,
+		status: Game.Queue.status.INCOMPLETE,
+		finishTime: { $gt: Game.getCurrentTime() }
+	});
+
+	if (currentCard) {
+		// stop current
+		Game.Queue.Collection.update({
+			_id: currentCard._id
+		}, {
+			$set: {
+				status: Game.Queue.status.DONE,
+				finishTime: Game.getCurrentTime() - 1
+			}
+		});
+		// new card time + time left
+		task.time += currentCard.finishTime - Game.getCurrentTime();
+	}
+
+	// activate card
+	return Game.Queue.add(task);
+}
+
 Meteor.methods({
 	getBonusResources: function(name) {
 		var user = Meteor.user();
@@ -320,63 +376,10 @@ Meteor.methods({
 			throw new Meteor.Error('Карточки заночились');
 		}
 
-		// check reload time
-		if (item.reloadTime) {
-			var nextReloadTime = item.nextReloadTime();
-			if (nextReloadTime > Game.getCurrentTime()) {
-				throw new Meteor.Error('Не прошло время перезарядки');
-			}
-
-			// set next reload time
-			var set = {};
-			set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
-
-			Game.Resources.Collection.update({
-				user_id: user._id
-			}, {
-				$set: set
-			});
+		if (!Game.Cards.activate(item, user)) {
+			throw new Meteor.Error('Эта карточка не может быть активирована сейчас');
 		}
 
-		var task = {
-			type: item.type,
-			engName: item.engName,
-			time: item.durationTime
-		};
-
-		if (item.cardGroup) {
-			task.group = item.cardGroup;
-		}
-
-		// try to find active card with same name
-		var currentCard = Game.Queue.Collection.findOne({
-			user_id: user._id,
-			engName: item.engName,
-			status: Game.Queue.status.INCOMPLETE,
-			finishTime: { $gt: Game.getCurrentTime() }
-		});
-
-		if (currentCard) {
-			// increase duration of current card
-			var updateResult = Game.Queue.Collection.update({
-				_id: currentCard._id,
-				status: Game.Queue.status.INCOMPLETE
-			}, {
-				$inc: {
-					finishTime: item.durationTime
-				}
-			});
-			if (updateResult < 1) {
-				throw new Meteor.Error('Не удалось продлить действие карты');
-			}
-		} else {
-			// activate new card
-			if (!Game.Queue.add(task)) {
-				throw new Meteor.Error('Эту карточку нельзя активировать сейчас');
-			}
-		}
-
-		// spend card
 		var cardResource = {};
 		cardResource[id] = 1;
 		Game.Resources.spend(cardResource);

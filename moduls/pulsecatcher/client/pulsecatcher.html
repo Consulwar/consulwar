@@ -1,6 +1,51 @@
 <template name="pulsecatcher">
 	<div class="pulsecatcher-menu">
-		GUI Уловителя!
+		{{#if choosenBonusList}}
+			<div class="choosen-info">
+				Доступные бонусы
+			</div>
+			<ul class="choosen">
+				{{#each choosenBonusList}}
+					<li class="{{this.card.engName}}-icon">
+						<span class="effect">
+							{{#each this.card.effect}}
+								{{#if result}}
+									{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
+								{{/if}}
+							{{/each}}
+						</span>
+						{{#if this.canActivate}}
+							<span class="activate">Активировать</span>
+						{{else}}
+							<span class="time">{{formatSeconds (getTimeLeft this.card)}}</span>
+						{{/if}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if quizBonusList}}
+			<div class="quiz-info">
+				Проголосуйте за бонус следующего дня (сила вашего голоса <span>{{votePower}}</span>)
+			</div>
+			<ul class="quiz">
+				{{#each quizBonusList}}
+					<li class="{{this.engName}}-icon">
+						<span class="effect">
+							{{#each this.effect}}
+								{{#if result}}
+									{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
+								{{/if}}
+							{{/each}}
+						</span>
+						{{#if hasVote}}
+							<span class="result">{{calcVoteValue this.engName}}%</span>
+						{{else}}
+							<span class="vote" data-id="{{this.engName}}">Выбрать</span>
+						{{/if}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
 		<a class="btn-close-horizontal" href="{{pathFor 'building' group='residential' item='pulsecatcher'}}"></a>
 	</div>
 </template>

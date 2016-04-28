@@ -11,6 +11,11 @@ Game.Quiz.Collection._ensureIndex({
 	endDate: -1
 });
 
+Game.Quiz.Answer.Collection._ensureIndex({
+	user_id: 1,
+	quiz_id: 1
+});
+
 /*
 Meteor.call('createQuiz', {
 	who: 'zav',

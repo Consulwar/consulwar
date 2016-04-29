@@ -47,6 +47,29 @@ SyncedCron.add({
 });
 
 Meteor.methods({
+	'pulsecatcher.voteBonus': function(answer) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+		
+		if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
+			throw new Meteor.Error('Нужно построить Импульсный уловитель');
+		}
+
+		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+		if (!activeQuiz) {
+			throw new Meteor.Error('Голосование пока не доступно');
+		}
+
+		Meteor.call('quizAnswer', activeQuiz._id, answer);
+	},
+
 	'pulsecatcher.activateBonus': function() {
 		var user = Meteor.user();
 
@@ -58,6 +81,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
+		if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
+			throw new Meteor.Error('Нужно построить Импульсный уловитель');
+		}
+
 		var previousQuiz = Game.Pulsecatcher.getPreviousQuiz();
 		var choosen = Game.Pulsecatcher.getChoosenBonus(previousQuiz);
 

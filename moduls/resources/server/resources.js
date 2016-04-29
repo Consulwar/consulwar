@@ -376,8 +376,9 @@ Meteor.methods({
 			throw new Meteor.Error('Карточки заночились');
 		}
 
-		if (!Game.Cards.activate(item, user)) {
-			throw new Meteor.Error('Эта карточка не может быть активирована сейчас');
+		var isCardActivated = Game.Cards.activate(item, user);
+		if (!isCardActivated) {
+			throw new Meteor.Error('Не удалось активировать карточку');
 		}
 
 		var cardResource = {};

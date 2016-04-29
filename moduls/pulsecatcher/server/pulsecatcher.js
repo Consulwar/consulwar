@@ -109,8 +109,9 @@ Meteor.methods({
 			throw new Meteor.Error('Вы уже активировали бонус');
 		}
 
-		if (!Game.Cards.activate(choosen, user)) {
-			throw new Meteor.Error('Бонус не может быть активирован сейчас');
+		var isCardActivated = Game.Cards.activate(choosen, user);
+		if (!isCardActivated) {
+			throw new Meteor.Error('Не удалось активировать бонус');
 		}
 	}
 });

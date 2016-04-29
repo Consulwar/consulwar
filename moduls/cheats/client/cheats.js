@@ -128,6 +128,14 @@ Game.Cheats.spendResource = function(id, amount) {
 	Meteor.call('cheats.spendResource', id, amount);
 };
 
+Game.Cheats.addCard = function(id, amount) {
+	Meteor.call('cheats.addCard', id, amount);
+};
+
+Game.Cheats.spendCard = function(id, amount) {
+	Meteor.call('cheats.spendCard', id, amount);
+};
+
 Game.Cheats.setBuildingLevel = function(group, name, level) {
 	Meteor.call('cheats.setBuildingLevel', group, name, level);
 };

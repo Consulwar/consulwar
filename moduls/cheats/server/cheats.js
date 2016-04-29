@@ -61,6 +61,18 @@ if (process.env.NODE_ENV == 'development') {
 			Game.Resources.spend(resources);
 		},
 
+		'cheats.addCard': function(id, amount) {
+			var cards = {};
+			cards[id] = amount;
+			Game.Cards.add(cards);
+		},
+
+		'cheats.spendCard': function(id, amount) {
+			var cards = {};
+			cards[id] = amount;
+			Game.Cards.spend(cards);
+		},
+
 		'cheats.setBuildingLevel': function(group, name, level) {
 			Game.Building.add({
 				group: group,
@@ -138,6 +150,8 @@ if (process.env.NODE_ENV == 'development') {
 		'cheats.generateAllPlanets': addCheater,
 		'cheats.addResource': addCheater,
 		'cheats.spendResource': addCheater,
+		'cheats.addCard': addCheater,
+		'cheats.spendCard': addCheater,
 		'cheats.setBuildingLevel': addCheater,
 		'cheats.setResearchLevel': addCheater,
 		'cheats.setMutualLevel': addCheater,

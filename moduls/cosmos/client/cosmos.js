@@ -211,7 +211,7 @@ var getBattleInfo = function(item) {
 	item.cards = _.map(item.cards, function(value, key) {
 		return {
 			engName: key,
-			name: Game.Cards.items[key].name,
+			name: Game.Cards.items.general[key].name,
 			amount: value
 		};
 	});
@@ -538,7 +538,7 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 			return {
 				engName: key,
 				chance: value,
-				name: Game.Cards.items[key].name
+				name: Game.Cards.items.general[key].name
 			};
 		});
 	}

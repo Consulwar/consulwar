@@ -28,7 +28,7 @@ Game.Research.complete = function(task) {
 
 Game.Research.initialize = function(user) {
 	user = user || Meteor.user();
-	var currentValue = Game.Research.getValue();
+	var currentValue = Game.Research.getValue(user._id);
 
 	if (currentValue === undefined) {
 		Game.Research.Collection.insert({

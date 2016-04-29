@@ -48,6 +48,7 @@ Meteor.startup(function () {
 	initPaymentServer();
 	initRatingServer();
 	initResourcesServer();
+	initCardsServer();
 	initBuildingServer();
 	initResearchServer();
 	initUnitServer();

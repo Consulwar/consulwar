@@ -17,9 +17,9 @@ Template.pulsecatcher.helpers({
 		}
 
 		var list = [];
-		for (var key in Game.Cards.items) {
+		for (var key in Game.Cards.items.pulsecatcher) {
 			if (activeQuiz.options[key]) {
-				list.push( Game.Cards.items[key] );
+				list.push( Game.Cards.items.pulsecatcher[key] );
 			}
 		}
 		return list;
@@ -62,7 +62,7 @@ Template.pulsecatcher.helpers({
 			});
 			// check if choosen already activated
 			if (choosen && choosen.engName == key) {
-				var task = activeList[key].getActive();
+				var task = activeList[key].getActiveTask();
 				if (task.startTime >= previousQuiz.endDate) {
 					canActivateChoosen = false;
 				}
@@ -70,7 +70,7 @@ Template.pulsecatcher.helpers({
 		}
 
 		result.sort(function(a, b) {
-			return b.card.getActive().startTime - a.card.getActive().startTime;
+			return b.card.getActiveTask().startTime - a.card.getActiveTask().startTime;
 		});
 
 		if (choosen && canActivateChoosen && result.length < 2) {
@@ -84,7 +84,7 @@ Template.pulsecatcher.helpers({
 	},
 
 	getTimeLeft: function(card) {
-		var task = card.getActive();
+		var task = card.getActiveTask();
 		var finishTime = (task) ? task.finishTime : 0;
 		var timeLeft = finishTime - Session.get('serverTime');
 		return (timeLeft > 0) ? timeLeft : 0;

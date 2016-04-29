@@ -43,16 +43,20 @@ Meteor.methods({
 		var price = item.price(options.count);
 		set.time = price.time;
 
-		if (Game.Queue.add(set)) {
-			Game.Resources.spend(price);
-			Meteor.users.update({
-				_id: user._id
-			}, {
-				$inc: {
-					rating: Game.Resources.calculateRatingFromResources(price)
-				}
-			});
+		var isTaskInserted = Game.Queue.add(set);
+		if (!isTaskInserted) {
+			throw new Meteor.Error('Не удалось начать подготовку юнитов');
 		}
+
+		Game.Resources.spend(price);
+		
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$inc: {
+				rating: Game.Resources.calculateRatingFromResources(price)
+			}
+		});
 	},
 
 	'battleHistory.getPage': function(page, count, isEarth) {

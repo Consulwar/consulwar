@@ -2,7 +2,6 @@ initResourcesServer = function() {
 
 initResourcesLib();
 initArtefactsLib();
-initCardsLib();
 
 Game.Resources.Collection._ensureIndex({
 	user_id: 1
@@ -223,66 +222,6 @@ Game.Resources.initialize = function(user) {
 	}
 };
 
-Game.Cards.complete = function(task) {
-	// no action on complete
-};
-
-Game.Cards.activate = function(item, user) {
-	// check reload time
-	if (item.reloadTime) {
-		var nextReloadTime = item.nextReloadTime();
-		if (nextReloadTime > Game.getCurrentTime()) {
-			return false;
-		}
-
-		// set next reload time
-		var set = {};
-		set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
-
-		Game.Resources.Collection.update({
-			user_id: user._id
-		}, {
-			$set: set
-		});
-	}
-
-	// prepare queue task
-	var task = {
-		type: item.type,
-		engName: item.engName,
-		time: item.durationTime
-	};
-
-	if (item.cardGroup) {
-		task.group = item.cardGroup;
-	}
-
-	// try to find active card with same name
-	var currentCard = Game.Queue.Collection.findOne({
-		user_id: user._id,
-		engName: item.engName,
-		status: Game.Queue.status.INCOMPLETE,
-		finishTime: { $gt: Game.getCurrentTime() }
-	});
-
-	if (currentCard) {
-		// stop current
-		Game.Queue.Collection.update({
-			_id: currentCard._id
-		}, {
-			$set: {
-				status: Game.Queue.status.DONE,
-				finishTime: Game.getCurrentTime() - 1
-			}
-		});
-		// new card time + time left
-		task.time += currentCard.finishTime - Game.getCurrentTime();
-	}
-
-	// activate card
-	return Game.Queue.add(task);
-};
-
 Meteor.methods({
 	getBonusResources: function(name) {
 		var user = Meteor.user();
@@ -319,73 +258,8 @@ Meteor.methods({
 		Game.Resources.Collection.update({'user_id': Meteor.userId()}, {$set: set});
 
 		return currentValue[name].bonus;
-	},
-
-	'cards.buy': function(id) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		if (!Game.Cards.items[id]) {
-			throw new Meteor.Error('Нет такой карточки');
-		}
-
-		var item = Game.Cards.items[id];
-
-		Meteor.call('actualizeGameInfo');
-
-		if (!item.canBuy()) {
-			throw new Meteor.Error('Нельзя купить эту карточку');
-		}
-		
-		// spend price
-		Game.Resources.spend(item.getPrice());
-
-		// add card
-		var cardResource = {};
-		cardResource[id] = 1;
-		Game.Resources.add(cardResource);
-	},
-
-	'cards.activate': function(id) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-		
-		if (!Game.Cards.items[id]) {
-			throw new Meteor.Error('Нет такой карточки');
-		}
-
-		Meteor.call('actualizeGameInfo');
-
-		var item = Game.Cards.items[id];
-
-		if (item.amount() <= 0) {
-			throw new Meteor.Error('Карточки заночились');
-		}
-
-		if (!Game.Cards.activate(item, user)) {
-			throw new Meteor.Error('Эта карточка не может быть активирована сейчас');
-		}
-
-		var cardResource = {};
-		cardResource[id] = 1;
-		Game.Resources.spend(cardResource);
 	}
 });
-
 
 Meteor.publish('resources', function () {
 	if (this.userId) {

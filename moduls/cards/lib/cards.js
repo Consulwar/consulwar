@@ -8,12 +8,13 @@ game.Card = function(options) {
 	this.type = 'card';
 	this.cardGroup = options.cardGroup;
 	this.cardType = options.cardType;
-	this.isHidden = options.isHidden;
 	this.durationTime = options.durationTime;
 	this.reloadTime = options.reloadTime;
 
-	if (Game.Cards.items[this.engName]) {
-		throw new Meteor.Error('Ошибка в контенте', 'Дублируется карточка ' + this.engName);
+	for (var key in Game.Cards.items) {
+		if (Game.Cards.items[key][this.engName]) {
+			throw new Meteor.Error('Ошибка в контенте', 'Дублируется карточка ' + this.engName);
+		}
 	}
 
 	this.url = function(options) {
@@ -25,12 +26,12 @@ game.Card = function(options) {
 		return Router.routes.house.path(options);
 	};
 
-	Game.Cards.items[this.engName] = this;
+	Game.Cards.items[this.cardType][this.engName] = this;
 
 	this.amount = function() {
-		var resources = Game.Resources.getValue();
-		return (resources && resources[this.engName] && resources[this.engName].amount)
-			? resources[this.engName].amount
+		var cards = Game.Cards.getValue();
+		return (cards && cards[this.engName] && cards[this.engName].amount)
+			? cards[this.engName].amount
 			: 0;
 	};
 
@@ -42,7 +43,7 @@ game.Card = function(options) {
 		return 0;
 	};
 
-	this.getActive = function() {
+	this.getActiveTask = function() {
 		return Game.Queue.Collection.findOne({
 			user_id: Meteor.userId(),
 			status: Game.Queue.status.INCOMPLETE,
@@ -68,9 +69,9 @@ game.Card = function(options) {
 	};
 
 	this.nextReloadTime = function() {
-		var resources = Game.Resources.getValue();
-		if (resources[this.engName] && resources[this.engName].nextReloadTime) {
-			return resources[this.engName].nextReloadTime;
+		var cards = Game.Cards.getValue();
+		if (cards[this.engName] && cards[this.engName].nextReloadTime) {
+			return cards[this.engName].nextReloadTime;
 		}
 		return null;
 	};
@@ -78,13 +79,26 @@ game.Card = function(options) {
 game.extend(game.Card, game.Item);
 
 Game.Cards = {
-	items: {},
+	Collection: new Meteor.Collection('cards'),
+
+	items: {
+		general: {},
+		pulsecatcher: {}
+	},
+
+	getValue: function(uid) {
+		return Game.Cards.Collection.findOne({
+			user_id: uid === undefined ? Meteor.userId() : uid
+		});
+	},
 
 	getActive: function() {
 		var result = [];
-		for (var key in Game.Cards.items) {
-			if (Game.Cards.items[key].getActive()) {
-				result.push(Game.Cards.items[key]);
+		for (var type in Game.Cards.items) {
+			for (var name in Game.Cards.items[type]) {
+				if (Game.Cards.items[type][name].getActiveTask()) {
+					result.push(Game.Cards.items[type][name]);
+				}
 			}
 		}
 		return result;

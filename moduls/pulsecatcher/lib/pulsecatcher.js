@@ -30,16 +30,16 @@ Game.Pulsecatcher = {
 			}
 		}
 
-		return Game.Cards.items[choosen] ? Game.Cards.items[choosen] : null;
+		return Game.Cards.items.pulsecatcher[choosen] ? Game.Cards.items.pulsecatcher[choosen] : null;
 	},
 
 	getActiveBonusList: function() {
 		var result = {};
-		for (var key in Game.Cards.items) {
-			if (Game.Cards.items[key].cardType == 'pulsecatcher'
-			 && Game.Cards.items[key].getActive()
+		for (var key in Game.Cards.items.pulsecatcher) {
+			if (Game.Cards.items.pulsecatcher[key].cardType == 'pulsecatcher'
+			 && Game.Cards.items.pulsecatcher[key].getActiveTask()
 			) {
-				result[key] = Game.Cards.items[key];
+				result[key] = Game.Cards.items.pulsecatcher[key];
 			}
 		}
 		return result;

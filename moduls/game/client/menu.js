@@ -63,8 +63,8 @@ var menu = {
 						engName: 'cards',
 						meetRequirements: true,
 						isEnoughResources: true,
-						url: firstItemUrl(Game.Cards.items),
-						items: Game.Cards.items
+						url: firstItemUrl(Game.Cards.items.general),
+						items: Game.Cards.items.general
 					}
 				}
 			},

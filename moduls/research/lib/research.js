@@ -25,8 +25,10 @@ game.extend(game.Research, game.Item);
 Game.Research = {
 	Collection: new Meteor.Collection('researches'),
 
-	getValue: function() {
-		return Game.Research.Collection.findOne({user_id: Meteor.userId()});
+	getValue: function(uid) {
+		return Game.Research.Collection.findOne({
+			user_id: uid === undefined ? Meteor.userId() : uid
+		});
 	},
 
 	get: function(group, name) {

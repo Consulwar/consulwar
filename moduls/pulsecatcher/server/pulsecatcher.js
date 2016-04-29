@@ -19,11 +19,9 @@ Game.Pulsecatcher.startNextQuiz = function() {
 	var options = {};
 	var result = {};
 
-	for (var key in Game.Cards.items) {
-		if (Game.Cards.items[key].cardType == 'pulsecatcher') {
-			options[key] = Game.Cards.items[key].name;
-			result[key] = 0;
-		}
+	for (var key in Game.Cards.items.pulsecatcher) {
+		options[key] = Game.Cards.items.pulsecatcher[key].name;
+		result[key] = 0;
 	}
 
 	Game.Quiz.Collection.insert({
@@ -98,7 +96,7 @@ Meteor.methods({
 		for (var key in activeList) {
 			// check if choosen already activated
 			if (choosen && choosen.engName == key) {
-				var task = activeList[key].getActive();
+				var task = activeList[key].getActiveTask();
 				if (task.startTime >= previousQuiz.endDate) {
 					canActivateChoosen = false;
 				}

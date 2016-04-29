@@ -3,6 +3,7 @@ Meteor.startup(function () {
 initPaymentClient();
 initRatingClient();
 initResourcesClient();
+initCardsClient();
 initBuildingClient();
 initResearchClient();
 initUnitClient();

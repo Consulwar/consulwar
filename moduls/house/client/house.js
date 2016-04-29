@@ -20,7 +20,7 @@ Game.House.showPage = function() {
 			item = Game.Artefacts.items[item];
 		} else if (subgroup == 'cards') {
 			templateName = 'consulHouseCards';
-			item = Game.Cards.items[item];
+			item = Game.Cards.items.general[item];
 		} else {
 			templateName = 'consulHouseItem';
 			item = Game.House.items[subgroup][item];
@@ -233,7 +233,7 @@ Template.consulHouseCards.helpers({
 		}
 
 		var currentTime = Session.get('serverTime');
-		var task = this.item.getActive();
+		var task = this.item.getActiveTask();
 		if (task && task.finishTime > currentTime) {
 			return false;
 		}
@@ -247,7 +247,7 @@ Template.consulHouseCards.helpers({
 	},
 
 	finishTime: function() {
-		var task = this.item.getActive();
+		var task = this.item.getActiveTask();
 		return (task) ? task.finishTime : null;
 	},
 
@@ -257,7 +257,7 @@ Template.consulHouseCards.helpers({
 	},
 
 	subgroupItems: function() {
-		return _.map(Game.Cards.items, function(item) {
+		return _.map(Game.Cards.items.general, function(item) {
 			return item;
 		});
 	}

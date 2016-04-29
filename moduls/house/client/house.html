@@ -128,17 +128,15 @@
 		<div class="description">
 			<ul class ="consul-artefacts">
 				{{#each subgroupItems}}
-					{{#if not this.isHidden}}
-						<li>
-							{{this.name}}
-							<a 
-								class="
-									{{this.engName}} 
-									{{#if eq ../item.engName this.engName}}active{{/if}}"
-								href="{{this.url}}"
-							>{{formatNumberWithISO this.amount}}</a>
-						</li>
-					{{/if}}
+					<li>
+						{{this.name}}
+						<a 
+							class="
+								{{this.engName}} 
+								{{#if eq ../item.engName this.engName}}active{{/if}}"
+							href="{{this.url}}"
+						>{{formatNumberWithISO this.amount}}</a>
+					</li>
 				{{/each}}
 			</ul>
 			{{#if item.description}}

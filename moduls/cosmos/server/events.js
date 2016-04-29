@@ -714,11 +714,12 @@ var completeHumansArrival = function(event, planet) {
 		if (battleResult.artefacts) {
 			_.extend(reward, battleResult.artefacts);
 		}
-		if (battleResult.cards) {
-			_.extend(reward, battleResult.cards);
-		}
 		if (_.keys(reward).length > 0) {
 			Game.Resources.add(reward);
+		}
+		// add battle cards
+		if (battleResult.cards) {
+			Game.Cards.add(battleResult.cards);
 		}
 	}
 
@@ -830,11 +831,12 @@ var completeReptilesArrival = function(event, planet) {
 		if (battleResult.artefacts) {
 			_.extend(reward, battleResult.artefacts);
 		}
-		if (battleResult.cards) {
-			_.extend(reward, battleResult.cards);
-		}
 		if (_.keys(reward).length > 0) {
 			Game.Resources.add(reward);
+		}
+		// add battle cards
+		if (battleResult.cards) {
+			Game.Cards.add(battleResult.cards);
 		}
 
 		// restore ground units
@@ -1055,11 +1057,12 @@ var completeShipFight = function(event) {
 			if (battleResult.artefacts) {
 				_.extend(reward, battleResult.artefacts);
 			}
-			if (battleResult.cards) {
-				_.extend(reward, battleResult.cards);
-			}
 			if (_.keys(reward).length > 0) {
 				Game.Resources.add(reward);
+			}
+			// add battle cards
+			if (battleResult.cards) {
+				Game.Cards.add(battleResult.cards);
 			}
 		}
 	}

@@ -186,6 +186,11 @@
 		text-decoration none
 		text-align center
 		
+		&.disabled
+			pointer-events none
+			-webkit-filter grayscale(1)
+			filter grayscale(1)
+
 		&:hover
 			-webkit-filter brightness(1.2)
 			filter brightness(1.2)

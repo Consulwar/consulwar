@@ -3,11 +3,13 @@ initPulsecatcherClient = function() {
 initPulsecatcherLib();
 
 Meteor.subscribe('pulsecatcherQuiz');
-Meteor.subscribe('pulsecatcherQuizAnswer');
+var quizAnswerSubscription = Meteor.subscribe('pulsecatcherQuizAnswer');
 
 var isLoading = new ReactiveVar(false);
 
 Template.pulsecatcher.helpers({
+	isLoading: function() { return isLoading.get(); },
+
 	quizBonusList: function() {
 		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz) {
@@ -23,7 +25,7 @@ Template.pulsecatcher.helpers({
 		return list;
 	},
 
-	hasVote: function() {
+	userVote: function() {
 		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz) {
 			return false;
@@ -33,7 +35,8 @@ Template.pulsecatcher.helpers({
 			user_id: Meteor.userId(), 
 			quiz_id: activeQuiz._id
 		});
-		return userAnswer ? true : false;
+
+		return userAnswer;
 	},
 
 	calcVoteValue: function(answer) {
@@ -41,7 +44,7 @@ Template.pulsecatcher.helpers({
 		if (!activeQuiz || activeQuiz.totalVotes === 0) {
 			return 0;
 		}
-		return activeQuiz.result[answer] / activeQuiz.totalVotes * 100;
+		return Math.round( activeQuiz.result[answer] / activeQuiz.totalVotes * 100 );
 	},
 
 	choosenBonusList: function() {
@@ -77,7 +80,7 @@ Template.pulsecatcher.helpers({
 			});
 		}
 
-		return result;
+		return result.length > 0 ? result : null;
 	},
 
 	getTimeLeft: function(card) {
@@ -94,12 +97,17 @@ Template.pulsecatcher.events({
 		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
 		if (answer && activeQuiz && !isLoading.get()) {
 			isLoading.set(true);
-			Meteor.call('quizAnswer', activeQuiz._id, answer, function(err, result) {
+			Meteor.call('pulsecatcher.voteBonus', answer, function(err, result) {
 				isLoading.set(false);
 				if (err) {
 					Notifications.error('Не удалось проголосовать', err.error);
 				} else {
 					Notifications.success('Вы успешно проголосовали');
+					// refresh answer subscription
+					if (quizAnswerSubscription) {
+						quizAnswerSubscription.stop();
+					}
+					quizAnswerSubscription = Meteor.subscribe('pulsecatcherQuizAnswer');
 				}
 			});
 		}

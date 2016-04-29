@@ -1,5 +1,10 @@
 <template name="pulsecatcher">
 	<div class="pulsecatcher-menu">
+		{{#if and (not choosenBonusList) (not quizBonusList)}}
+			<div class="info">
+				Голосование пока не доступно. Вернитесь сюда позже.
+			</div>
+		{{/if}}
 		{{#if choosenBonusList}}
 			<div class="choosen-info">
 				Доступные бонусы
@@ -37,8 +42,10 @@
 								{{/if}}
 							{{/each}}
 						</span>
-						{{#if hasVote}}
-							<span class="result">{{calcVoteValue this.engName}}%</span>
+						{{#if userVote}}
+							<span class="result {{#if eq userVote.answer this.engName}}user{{/if}}">
+								{{calcVoteValue this.engName}}%
+							</span>
 						{{else}}
 							<span class="vote" data-id="{{this.engName}}">Выбрать</span>
 						{{/if}}
@@ -47,5 +54,8 @@
 			</ul>
 		{{/if}}
 		<a class="btn-close-horizontal" href="{{pathFor 'building' group='residential' item='pulsecatcher'}}"></a>
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>

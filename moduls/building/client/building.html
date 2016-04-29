@@ -40,8 +40,7 @@
 
 		{{#if eq building.engName 'colosseum'}}
 			<a
-				class="tournament"
-				disabled="{{lt building.currentLevel 1}}"
+				class="tournament {{#if lt building.currentLevel 1}}disabled{{/if}}"
 				href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
 			>
 				Устроить турнир
@@ -50,8 +49,7 @@
 
 		{{#if eq building.engName 'pulsecatcher'}}
 			<a
-				class="pulsecatcher"
-				disabled="{{lt building.currentLevel 1}}"
+				class="pulsecatcher {{#if lt building.currentLevel 1}}disabled{{/if}}"
 				href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
 			>
 				Получить бонус

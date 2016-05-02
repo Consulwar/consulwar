@@ -7,57 +7,56 @@ initPaymentLib();
 // ----------------------------------------------------------------------------
 
 var canShowReward = false;
+var isPaymentSuccess = false;
 var paymentView = null;
 var platboxView = null;
 var rewardView = null;
 
-var hideAllWindows = function() {
+var showPaymentWindow = function() {
+	if (!paymentView) {
+		canShowReward = true;
+		paymentView = Blaze.render(Template.payment, $('.over')[0]);
+	}
+}
+
+var hidePaymentWindow = function() {
 	if (paymentView) {
 		Blaze.remove(paymentView);
 		paymentView = null;
 	}
-	if (platboxView) {
-		Blaze.remove(platboxView);
-		platboxView = null;
-	}
-	if (rewardView) {
-		Blaze.remove(rewardView);
-		rewardView = null;
+}
+
+var showPlatboxWindow = function(url) {
+	if (url && !platboxView) {
+		isPaymentSuccess = false;
+		platboxView = Blaze.renderWithData(Template.paymentPlatbox, { url: url }, $('.over')[0]);
 	}
 };
 
-var showPlatboxWindow = function(url) {
-	if (url) {
-		hideAllWindows();
-		platboxView = Blaze.renderWithData(Template.paymentPlatbox, { url: url }, $('.over')[0]);
+var hidePlatboxWindow = function() {
+	if (platboxView) {
+		Blaze.remove(platboxView);
+		platboxView = null;
 	}
 };
 
 var showRewardWindow = function(itemId) {
 	var item = Game.Payment.items[itemId];
 	if (item && !rewardView) {
+		isPaymentSuccess = true;
 		rewardView = Blaze.renderWithData(Template.paymentReward, { item: item }, $('.over')[0]);
 	}
 };
 
-Meteor.subscribe('paymentHistory');
-
-Game.Payment.Collection.find({}).observeChanges({
-	added: function(id, fields) {
-		if (canShowReward
-		 && fields
-		 && fields.source
-		 && fields.source.type == 'payment'
-		) {
-			showRewardWindow(fields.source.item);
-		}
+var hideRewardWindow = function() {
+	if (rewardView) {
+		Blaze.remove(rewardView);
+		rewardView = null;
 	}
-});
+};
 
 Game.Payment.showWindow = function() {
-	canShowReward = true;
-	hideAllWindows();
-	paymentView = Blaze.render(Template.payment, $('.over')[0]);
+	showPaymentWindow();
 };
 
 Template.payment.helpers({
@@ -70,7 +69,7 @@ Template.payment.helpers({
 
 Template.payment.events({
 	'click .close': function(e, t) {
-		hideAllWindows();
+		hidePaymentWindow();
 	},
 
 	'click .paymentItems li': function(e, t) {
@@ -78,6 +77,7 @@ Template.payment.events({
 			if (err) {
 				Notifications.error(err.error);
 			} else {
+				hidePaymentWindow();
 				showPlatboxWindow(url);
 			}
 		});
@@ -86,14 +86,30 @@ Template.payment.events({
 
 Template.paymentPlatbox.events({
 	'click .close': function(e, t) {
-		Game.Payment.showWindow();
+		hidePlatboxWindow();
+		if (!isPaymentSuccess) {
+			showPaymentWindow();
+		}
 	}
 });
 
 Template.paymentReward.events({
 	'click .close, click .take': function(e, t) {
-		Blaze.remove(rewardView);
-		rewardView = null;
+		hideRewardWindow();
+	}
+});
+
+Meteor.subscribe('paymentHistory');
+
+Game.Payment.Collection.find({}).observeChanges({
+	added: function(id, fields) {
+		if (canShowReward
+		 && fields
+		 && fields.source
+		 && fields.source.type == 'payment'
+		) {
+			showRewardWindow(fields.source.item);
+		}
 	}
 });
 

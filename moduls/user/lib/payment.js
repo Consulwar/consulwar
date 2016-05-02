@@ -3,6 +3,7 @@ initPaymentLib = function() {
 game.PaymentItem = function(options) {
 	this.id = options.id;
 	this.name = options.name;
+	this.description = options.description;
 	this.profit = options.profit;
 	this.cost = options.cost;
 	this.discount = options.discount;
@@ -11,12 +12,14 @@ game.PaymentItem = function(options) {
 };
 
 Game.Payment = {
+	Collection: new Meteor.Collection('paymentHistory'),
 	items: {}
 };
 
 new game.PaymentItem({
 	id: 'paymentCredits1000',
 	name: '1000 ГГК',
+	description: 'Война дело дорогое, но главное начать',
 	profit: {
 		resources: { credits: 1000 }
 	},
@@ -26,6 +29,7 @@ new game.PaymentItem({
 new game.PaymentItem({
 	id: 'paymentCredits2500',
 	name: '2500 ГГК',
+	description: 'Неплохой стартовый капитал',
 	profit: {
 		resources: { credits: 2500 }
 	},
@@ -36,6 +40,7 @@ new game.PaymentItem({
 new game.PaymentItem({
 	id: 'paymentCredits5000',
 	name: '5000 ГГК',
+	description: 'На это можно построить флот',
 	profit: {
 		resources: { credits: 5000 }
 	},
@@ -46,6 +51,7 @@ new game.PaymentItem({
 new game.PaymentItem({
 	id: 'paymentCredits10000',
 	name: '10000 ГГК',
+	description: 'Силу в тебе я ощущаю',
 	profit: {
 		resources: { credits: 10000 }
 	},
@@ -56,6 +62,7 @@ new game.PaymentItem({
 new game.PaymentItem({
 	id: 'paymentCredits25000',
 	name: '25000 ГГК',
+	description: 'Слышу трепет Рептилоидных задниц',
 	profit: {
 		resources: { credits: 25000 }
 	},
@@ -66,6 +73,7 @@ new game.PaymentItem({
 new game.PaymentItem({
 	id: 'paymentCredits50000',
 	name: '50000 ГГК',
+	description: 'Теперь Рептилоиды точно ахуеют',
 	profit: {
 		resources: { credits: 50000 }
 	},

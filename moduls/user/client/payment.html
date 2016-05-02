@@ -12,10 +12,6 @@
 				</li>
 			{{/each}}
 		</ul>
-		<div class="hint">
-			Покупая ГГК вы соглашаетесь с 
-			<a href="/legal/agreement">условиями предоставления услуг</a>
-		</div>
 	</div>
 </template>
 
@@ -24,6 +20,17 @@
 	<div class="payment platbox">
 		<div class="close"></div>
 		<iframe src="https://playground.platbox.com/paybox?{{url}}"></iframe>
+	</div>
+</template>
+
+<template name="paymentReward">
+	<div class="smoke reward"></div>
+	<div class="payment reward">
+		<div class="close"></div>
+		<img src="/img/game/quests/credits.png">
+		<div class="count">{{formatNumber item.profit.resources.credits}}</div>
+		<div class="description">{{item.description}}</div>
+		<div class="take">Забрать</div>
 	</div>
 </template>
 

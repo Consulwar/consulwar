@@ -2,6 +2,9 @@
 	<div id="map-battle"></div>
 	<a class="map-control-home"></a>
 	<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боев</a>
+	{{#if isSelection}}
+		<a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
+	{{/if}}
 	<div class="map-planet-info">
 		{{> yield "cosmosSideInfo"}}
 	</div>
@@ -272,6 +275,7 @@
 			class="
 				leaflet-marker-icon 
 				map-planet-marker 
+				{{#if isHighlighted this.planet._id}}highlighted{{/if}}
 				{{this.planet.type}} 
 				leaflet-zoom-hide 
 				leaflet-interactive 

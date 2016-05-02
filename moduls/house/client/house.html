@@ -94,6 +94,7 @@
 						{{this.name}} {{this.chance}}%
 					</a>
 				{{/each}}
+				<a class="findall" href="{{pathFor 'cosmos' hash=item.engName}}">Показать все планеты</a>
 			{{else}}
 				<p class="warning">
 					{{#if eq item.engName 'ruby_plasmoid'}}

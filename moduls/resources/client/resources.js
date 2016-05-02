@@ -37,6 +37,13 @@ Tracker.autorun(function(){
 			baseValue.metals.bonus
 		);
 
+		baseValue.honor = Game.Resources.calculateFinalAmount(
+			baseValue.honor.amount, 
+			income.honor, 
+			delta,
+			baseValue.honor.bonusSeconds
+		);
+
 		baseValue.credits = Game.Resources.calculateFinalAmount(
 			baseValue.credits.amount, 
 			income.credits, 

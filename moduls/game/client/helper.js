@@ -337,8 +337,8 @@ Template.tooltipTable.helpers({
 		if (!this.price || this.target == 'time') {
 			return null;
 		}
-
-		var userResources = Game.Resources.getValue();
+		
+		var userResources = Game.Resources.currentValue.get();
 		var current = userResources[this.target] ? userResources[this.target].amount : 0;
 
 		return (current < this.price) ? current : null;
@@ -353,9 +353,10 @@ Template.tooltipTable.helpers({
 		if (!income) {
 			return null;
 		}
-
-		var userResources = Game.Resources.getValue();
+		
+		var userResources = Game.Resources.currentValue.get();
 		var current = userResources[this.target] ? userResources[this.target].amount : 0;
+
 		if (current >= this.price) {
 			return null;
 		}

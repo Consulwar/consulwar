@@ -35,8 +35,7 @@ var showPlatboxWindow = function(url) {
 
 var showRewardWindow = function(itemId) {
 	var item = Game.Payment.items[itemId];
-	if (item) {
-		hideAllWindows();
+	if (item && !rewardView) {
 		rewardView = Blaze.renderWithData(Template.paymentReward, { item: item }, $('.over')[0]);
 	}
 };
@@ -93,7 +92,8 @@ Template.paymentPlatbox.events({
 
 Template.paymentReward.events({
 	'click .close, click .take': function(e, t) {
-		Game.Payment.showWindow();
+		Blaze.remove(rewardView);
+		rewardView = null;
 	}
 });
 

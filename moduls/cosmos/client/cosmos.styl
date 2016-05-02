@@ -116,6 +116,9 @@
 	outline none
 	cursor pointer
 
+	&.highlighted
+		border-color #c6e84c
+
 	&.zoom-lt-7
 		border-width 2px
 
@@ -557,21 +560,27 @@
 		
 
 .btn-history
+.btn-selection
 	cursor pointer
 	display block
 	position absolute
 	z-index 2
 	bottom 10px
-	left 10px
 	font-size 16px
 	text-align center
 	text-decoration none
 	padding-top 14px
 	padding-bottom 14px
-	width 150px
+	width 180px
 	background-color #000000
 	border 2px solid #80BAEC
 	color #80BAEC
+	
+.btn-history
+	left 10px
+	
+.btn-selection
+	left 200px
 
 
 .btn-back

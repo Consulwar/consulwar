@@ -15,6 +15,7 @@ var pathViews = {};
 var observerSpaceEvents = null;
 var cosmosObjectsView = null;
 var cosmosPopupView = null;
+var selectedPlanets = new ReactiveArray();
 
 Game.Cosmos.showPage = function() {
 	// clear content
@@ -1204,6 +1205,11 @@ Template.cosmosObjects.helpers({
 		} else {
 			return true;
 		}
+	},
+
+	isHighlighted: function(id) {
+		selectedPlanets.depend();
+		return selectedPlanets.indexOf(id) != -1;
 	}
 });
 
@@ -1306,11 +1312,23 @@ Template.cosmos.onRendered(function() {
 		var hash = Router.current().getParams().hash;
 		if (hash) {
 			Tracker.nonreactive(function() {
-				var planet = Game.Planets.getOne(hash);
-				if (planet) {
+				// highlight planets by artefact
+				if (Game.Artefacts.items[hash]) {
+					selectedPlanets.clear();
+					var planets = Game.Planets.getByArtefact(hash);
+					if (planets && planets.length > 0) {
+						for (var i = 0; i < planets.length; i++) {
+							selectedPlanets.push(planets[i]._id);
+						}
+					}
+				}
+				// select planet
+				else if (Game.Planets.getOne(hash)) {
 					Game.Cosmos.showPlanetInfo(hash);
 					scrollMapToPlanet(hash);
-				} else {
+				}
+				// select ship
+				else {
 					Game.Cosmos.showShipInfo(hash);
 					scrollMapToFleet(hash);
 				}
@@ -1349,14 +1367,23 @@ Template.cosmos.onDestroyed(function() {
 Template.cosmos.helpers({
 	isLoading: function() {
 		return isLoading.get();
+	},
+
+	isSelection: function() {
+		selectedPlanets.depend();
+		return selectedPlanets.length > 0;
 	}
 });
 
 Template.cosmos.events({
+	'click .btn-selection': function(e, t) {
+		selectedPlanets.clear();
+	},
+
 	'click .map-fleet': function(e, t) {
 		var id = $(e.currentTarget).attr('data-id');
 		if (id) {
-			Game.Cosmos.showShipInfo(id);	
+			Game.Cosmos.showShipInfo(id);
 		}
 	},
 

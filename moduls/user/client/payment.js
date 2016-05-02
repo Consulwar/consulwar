@@ -17,14 +17,14 @@ var showPaymentWindow = function() {
 		canShowReward = true;
 		paymentView = Blaze.render(Template.payment, $('.over')[0]);
 	}
-}
+};
 
 var hidePaymentWindow = function() {
 	if (paymentView) {
 		Blaze.remove(paymentView);
 		paymentView = null;
 	}
-}
+};
 
 var showPlatboxWindow = function(url) {
 	if (url && !platboxView) {

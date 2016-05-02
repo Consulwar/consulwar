@@ -81,9 +81,14 @@ game = {
 	}
 };
 
+game.itemCurrentOrder = 0;
+
 game.Item = function(options) {
 	this.constructor = function(options) {
 		var self = this;
+
+		this.order = game.itemCurrentOrder;
+		game.itemCurrentOrder++;
 
 		this.name = options.name;
 		this.engName = options.engName;

@@ -165,12 +165,15 @@ var getArmyInfo = function(units, rest) {
 
 				result.push({
 					name: Game.Unit.items[side][group][name].name,
+					order: Game.Unit.items[side][group][name].order,
 					start: countStart,
 					end: countAfter
 				});
 			}
 		}
 	}
+
+	result = _.sortBy(result, function(item) { return item.order; });
 
 	return result.length > 0 ? result : null;
 };

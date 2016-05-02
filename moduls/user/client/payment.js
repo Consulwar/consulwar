@@ -6,8 +6,59 @@ initPaymentLib();
 // Payment modal window
 // ----------------------------------------------------------------------------
 
+var canShowReward = false;
+var paymentView = null;
+var platboxView = null;
+var rewardView = null;
+
+var hideAllWindows = function() {
+	if (paymentView) {
+		Blaze.remove(paymentView);
+		paymentView = null;
+	}
+	if (platboxView) {
+		Blaze.remove(platboxView);
+		platboxView = null;
+	}
+	if (rewardView) {
+		Blaze.remove(rewardView);
+		rewardView = null;
+	}
+};
+
+var showPlatboxWindow = function(url) {
+	if (url) {
+		hideAllWindows();
+		platboxView = Blaze.renderWithData(Template.paymentPlatbox, { url: url }, $('.over')[0]);
+	}
+};
+
+var showRewardWindow = function(itemId) {
+	var item = Game.Payment.items[itemId];
+	if (item) {
+		hideAllWindows();
+		rewardView = Blaze.renderWithData(Template.paymentReward, { item: item }, $('.over')[0]);
+	}
+};
+
+Meteor.subscribe('paymentHistory');
+
+Game.Payment.Collection.find({}).observeChanges({
+	added: function(id, fields) {
+		if (canShowReward
+		 && fields
+		 && fields.source
+		 && fields.source.type == 'payment'
+		) {
+			showRewardWindow(fields.source.item);
+		}
+	}
+});
+
 Game.Payment.showWindow = function() {
-	Blaze.render(Template.payment, $('.over')[0]);
+	canShowReward = true;
+	hideAllWindows();
+	paymentView = Blaze.render(Template.payment, $('.over')[0]);
 };
 
 Template.payment.helpers({
@@ -20,7 +71,7 @@ Template.payment.helpers({
 
 Template.payment.events({
 	'click .close': function(e, t) {
-		Blaze.remove(t.view);
+		hideAllWindows();
 	},
 
 	'click .paymentItems li': function(e, t) {
@@ -28,11 +79,7 @@ Template.payment.events({
 			if (err) {
 				Notifications.error(err.error);
 			} else {
-				Blaze.remove(t.view);
-				Blaze.renderWithData(Template.paymentPlatbox, {
-					url: url
-				},
-				$('.over')[0]);
+				showPlatboxWindow(url);
 			}
 		});
 	}
@@ -40,8 +87,13 @@ Template.payment.events({
 
 Template.paymentPlatbox.events({
 	'click .close': function(e, t) {
-		Blaze.remove(t.view);
-		Blaze.render(Template.payment, $('.over')[0]);
+		Game.Payment.showWindow();
+	}
+});
+
+Template.paymentReward.events({
+	'click .close, click .take': function(e, t) {
+		Game.Payment.showWindow();
 	}
 });
 

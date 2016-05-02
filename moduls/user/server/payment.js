@@ -3,8 +3,6 @@ initPaymentServer = function() {
 initPaymentLib();
 initPaymentPlatboxServer();
 
-Game.Payment.Collection = new Meteor.Collection('paymentHistory');
-
 Game.Payment.Collection._ensureIndex({
 	user_id: 1
 });
@@ -75,6 +73,42 @@ Meteor.methods({
 		}).fetch();
 	}
 });
+
+Meteor.publish('paymentHistory', function() {
+	if (this.userId) {
+		return Game.Payment.Collection.find({
+			user_id: this.userId,
+			income: true
+		}, {
+			limit: 1,
+			sort: {
+				timestamp: -1
+			}
+		});
+	} else {
+		this.ready();
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Public methods only for development!
+// ----------------------------------------------------------------------------
+
+if (process.env.NODE_ENV == 'development') {
+	Meteor.methods({
+		'payment.testItem': function(id) {
+			var item = Game.Payment.items[id];
+			if (!item) {
+				throw new Meteor.Error('Непральный id');
+			}
+
+			Game.Payment.logIncome(item.profit, {
+				type: 'payment',
+				item: item.id
+			});
+		}
+	});
+}
 
 // ----------------------------------------------------------------------------
 // Promo codes

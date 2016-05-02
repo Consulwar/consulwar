@@ -134,5 +134,11 @@
 				{{/if}}
 			</tr>
 		{{/each}}
+		{{#if or current (eq current 0)}}
+			<tr class="current"><td colspan="4">В наличии: {{formatNumber current}}</td></tr>
+		{{/if}}
+		{{#if gt time 0}}
+			<tr class="time"><td colspan="4">Накопится через: {{formatSeconds time}}</td></tr>
+		{{/if}}
 	</table>
 </template>

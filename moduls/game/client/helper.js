@@ -282,6 +282,8 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 
 	return {
 		'data-tooltip': Blaze.toHTMLWithData(Template.tooltipTable, {
+			target: target,
+			price: invert ? price[target] : null,
 			values: effectsValues
 		}),
 		'data-tooltip-direction': side || 's'
@@ -330,5 +332,37 @@ UI.registerHelper('militaryTooltip', function(characteristics, target) {
 	return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w');
 });
 
+Template.tooltipTable.helpers({
+	current: function() {
+		if (!this.price || this.target == 'time') {
+			return null;
+		}
+		
+		var userResources = Game.Resources.currentValue.get();
+		var current = userResources[this.target] ? userResources[this.target].amount : 0;
+
+		return (current < this.price) ? current : null;
+	},
+
+	time: function() {
+		if (!this.price || this.target == 'time') {
+			return null;
+		}
+
+		var income = Game.Resources.getIncome()[this.target];
+		if (!income) {
+			return null;
+		}
+		
+		var userResources = Game.Resources.currentValue.get();
+		var current = userResources[this.target] ? userResources[this.target].amount : 0;
+
+		if (current >= this.price) {
+			return null;
+		}
+
+		return Math.round((this.price - current) / income * 3600);
+	}
+});
 
 });

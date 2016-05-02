@@ -16,6 +16,7 @@ var observerSpaceEvents = null;
 var cosmosObjectsView = null;
 var cosmosPopupView = null;
 var selectedPlanets = new ReactiveArray();
+var isPopupLocked = false;
 
 Game.Cosmos.showPage = function() {
 	// clear content
@@ -231,6 +232,7 @@ var getBattleInfo = function(item) {
 // ----------------------------------------------------------------------------
 
 Game.Cosmos.showFleetsInfo = function() {
+	Game.Cosmos.hidePlanetPopup();
 	Router.current().render('cosmosFleetsInfo', {
 		to: 'cosmosSideInfo'
 	});
@@ -374,7 +376,8 @@ Template.cosmosFleetsInfo_table.events({
 // Planet side menu
 // ----------------------------------------------------------------------------
 
-Game.Cosmos.showPlanetInfo= function(id) {
+Game.Cosmos.showPlanetInfo = function(id) {
+	Game.Cosmos.showPlanetPopup(id, true);
 	Router.current().render('cosmosPlanetInfo', {
 		to: 'cosmosSideInfo',
 		data: {
@@ -527,7 +530,7 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 	for (var key in planet.artefacts) {
 		items.push({
 			id: key,
-			name: Game.Artefacts.items[key].engName,
+			name: Game.Artefacts.items[key].name,
 			chance: planet.artefacts[key]
 		});
 	}
@@ -555,8 +558,8 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 	};
 };
 
-Game.Cosmos.showPlanetPopup = function(id) {
-	if (!mapView || cosmosPopupView) {
+Game.Cosmos.showPlanetPopup = function(id, isLock) {
+	if (!mapView) {
 		return;
 	}
 
@@ -564,6 +567,12 @@ Game.Cosmos.showPlanetPopup = function(id) {
 	var dropInfo = Game.Cosmos.getPlanetPopupInfo(planet);
 	if (!dropInfo) {
 		return;
+	}
+
+	Game.Cosmos.hidePlanetPopup();
+
+	if (isLock) {
+		isPopupLocked = true;
 	}
 
 	cosmosPopupView = Blaze.renderWithData(
@@ -587,6 +596,7 @@ Game.Cosmos.hidePlanetPopup = function() {
 		Blaze.remove( cosmosPopupView );
 		cosmosPopupView = null;
 	}
+	isPopupLocked = false;
 };
 
 // ----------------------------------------------------------------------------
@@ -594,6 +604,7 @@ Game.Cosmos.hidePlanetPopup = function() {
 // ----------------------------------------------------------------------------
 
 Game.Cosmos.showShipInfo = function(id) {
+	Game.Cosmos.hidePlanetPopup();
 	Router.current().render('cosmosShipInfo', {
 		to: 'cosmosSideInfo',
 		data: {
@@ -1395,12 +1406,16 @@ Template.cosmos.events({
 	},
 
 	'mouseover .map-planet-marker': function(e, t) {
-		var id = $(e.currentTarget).attr('data-id');
-		Game.Cosmos.showPlanetPopup.call(t, id);
+		if (!isPopupLocked) {
+			var id = $(e.currentTarget).attr('data-id');
+			Game.Cosmos.showPlanetPopup.call(t, id);
+		}
 	},
 
 	'mouseout .map-planet-marker': function(e, t) {
-		Game.Cosmos.hidePlanetPopup();
+		if (!isPopupLocked) {
+			Game.Cosmos.hidePlanetPopup();
+		}
 	},
 
 	'click .map-control-home': function(e, t) {

@@ -96,3 +96,40 @@
 		{{/if}}
 	</div>
 </template>
+
+<template name="promocodeReward">
+	<div class="smoke"></div>
+	<div class="promocode">
+		{{#if resources}}
+			<ul class="resources">
+				{{#each resources}}
+					<li class="{{this.engName}}">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if artefacts}}
+			<ul class="resources">
+				{{#each artefacts}}
+					<li class="{{this.engName}} artefact">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if units}}
+			<ul class="units">
+				{{#each units}}
+					<li class="{{this.engName}}-icon">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if profit.votePower}}
+			<span class="votepower">Сила голоса +{{profit.votePower}}</span>
+		{{/if}}
+		<span class="take">Награда</span>
+	</div>
+</template>

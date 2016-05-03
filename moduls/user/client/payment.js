@@ -137,12 +137,12 @@ Template.paymentSide.events({
 
 		isPromoLoading.set(true);
 
-		Meteor.call('user.activatePromoCode', code, function(err, data) {
+		Meteor.call('user.activatePromoCode', code, function(err, profit) {
 			isPromoLoading.set(false);
 			if (err) {
 				Notifications.error(err.error);
 			} else {
-				Notifications.success('Промо код активирован');
+				Game.Payment.showPromocodeReward(profit);
 			}
 		});
 	}
@@ -215,6 +215,80 @@ Template.paymentHistory.helpers({
 			}
 		}
 		return result;
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Reward window
+// ----------------------------------------------------------------------------
+
+Game.Payment.showPromocodeReward = function(profit) {
+	Blaze.renderWithData(Template.promocodeReward, { profit: profit }, $('.over')[0]);
+};
+
+Template.promocodeReward.helpers({
+	resources: function() {
+		if (!this.profit || !this.profit.resources) {
+			return null;
+		}
+
+		var result = [];
+
+		for (var key in this.profit.resources) {
+			if (!Game.Artefacts.items[key]) {
+				result.push({
+					engName: key,
+					amount: this.profit.resources[key]
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	},
+
+	artefacts: function() {
+		if (!this.profit || !this.profit.resources) {
+			return null;
+		}
+		
+		var result = [];
+
+		for (var key in this.profit.resources) {
+			if (Game.Artefacts.items[key]) {
+				result.push({
+					engName: key,
+					amount: this.profit.resources[key]
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	},
+
+	units: function() {
+		if (!this.profit || !this.profit.units) {
+			return null;
+		}
+
+		var units = this.profit.units;
+		var result = [];
+
+		for (var group in units) {
+			for (var name in units[group]) {
+				result.push({
+					engName: name,
+					amount: units[group][name]
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	}
+});
+
+Template.promocodeReward.events({
+	'click .take': function(e, t) {
+		Blaze.remove(t.view);
 	}
 });
 

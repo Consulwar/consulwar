@@ -339,6 +339,8 @@ Meteor.methods({
 			profit: profit,
 			timestamp: Game.getCurrentTime()
 		});
+
+		return profit;
 	}
 });
 

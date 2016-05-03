@@ -3,6 +3,7 @@ accounts-password@1.1.8
 accounts-ui@1.1.9
 accounts-ui-unstyled@1.1.12
 allow-deny@1.0.4
+altapp:recaptcha@2.0.1
 autoupdate@1.2.9
 babel-compiler@6.6.4
 babel-runtime@0.1.8
@@ -38,6 +39,7 @@ email@1.0.12
 fastclick@1.0.11
 geojson-utils@1.0.8
 gfk:notifications@1.1.4
+handlebars@1.0.7
 hot-code-push@1.0.4
 html-tools@1.0.9
 htmljs@1.0.9

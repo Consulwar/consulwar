@@ -76,17 +76,33 @@ Accounts.onCreateUser(function(option, user) {
 		return true;
 	}));
 
+	if (Meteor.settings.public.isInviteRequired) {
 
-	check(option.code, String);
-	var valid_code_id = Meteor.call('checkInviteCode', option.code);
+		// registration by invite
+		check(option.code, String);
+		var valid_code_id = Meteor.call('user.checkInviteCode', option.code);
 
-	if (valid_code_id) {
-		Invites.remove({_id: valid_code_id});
+		if (valid_code_id) {
+			Invites.remove({ _id: valid_code_id });
+			user.inviteCode = option.code;
+		} else {
+			throw new Meteor.Error('Некорректный код приглашения');
+		}
+
 	} else {
-		throw new Meteor.Error('Некорректный код приглашения');
-	}
-	user.inviteCode = option.code;
 
+		// registration by captcha
+		check(option.captcha, String);
+		var recaptchaResponse = reCAPTCHA.verifyCaptcha(Meteor.call('user.getIpAddress'), option.captcha);
+
+		if (!recaptchaResponse.success) {
+			throw new Meteor.Error('Вы робот');
+		}
+
+	}
+
+	// TODO: Удалить это позже!
+	throw new Meteor.Error('Все четко, но это пока тест!');
 
 	user.username = option.username;
 	user.plain_username = Game.User.convertUsernameToPlainname(option.username);
@@ -117,6 +133,9 @@ Accounts.onCreateUser(function(option, user) {
 
 //Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false}); 
 
+reCAPTCHA.config({
+	privatekey: Meteor.settings.recaptcha.privatekey
+});
 
 Meteor.methods({
 	'totalUsersCount': function() {
@@ -125,6 +144,11 @@ Meteor.methods({
 
 	'onlineUsersCount': function() {
 		return Meteor.users.find({'status.online': true}).count();
+	},
+
+	'user.getIpAddress': function() {
+		// TODO: Подумать как избавиться от этой херни!
+		return this.connection.clientAddress;
 	},
 
 	'user.checkUsernameExists': function(username) {

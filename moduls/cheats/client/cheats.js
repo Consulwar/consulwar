@@ -15,6 +15,7 @@ Game.Cheats.testBattle = function() {
 	userArmy = {
 		army: {
 			fleet: {
+				gammadrone: 2000,
 				wasp: 1000,
 				cruiser: 500,
 				battleship: 1,

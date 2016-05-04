@@ -501,7 +501,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					enemy.life -= appliedDamage;
 				}
 
-				unit.damage -= appliedDamage;
+				// save hit info
+				if (!enemy.hits[unit.name]) {
+					enemy.hits[unit.name] = 0;
+				}
+				enemy.hits[unit.name] += appliedDamage;
+				// -----------------------------
 
 				if (enemy.life > 0) {
 					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage);
@@ -536,6 +541,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					enemy.life -= appliedDamage;	
 				}
 
+				// save hit info
+				if (!enemy.hits[unit.name]) {
+					enemy.hits[unit.name] = 0;
+				}
+				enemy.hits[unit.name] += appliedDamage;
+				// -----------------------------
+
 				unit.damage -= appliedDamage;
 
 				if (enemy.life > 0) {
@@ -549,7 +561,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 	};
 
-	var applyEffect = function(unit, friends, enemies, round, options) {
+	var applyEffect = function(unit, friends, enemies, round, stage, options) {
+		/*
 		if (unit
 		 && unit.model
 		 && unit.model.triggers
@@ -563,17 +576,29 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 			}
 		}
+		*/
+		if (unit && unit.model && unit.model.effect) {
+			var effects = unit.model.effect;
+			for (var i = 0; i < effects.length; i++) {
+				if (_.isFunction(effects[i][stage])) {
+					var result = effects[i][stage](unit, friends, enemies, round, options);
+					if (result && result.length > 0) {
+						writeLog(result);
+					}
+				}
+			}
+		}
 	};
 
-	var applyBattleEffects = function(userUnits, enemyUnits, round, options) {
+	var applyBattleEffects = function(userUnits, enemyUnits, round, stage, options) {
 		var key = null;
 
 		for (key in userUnits) {
-			applyEffect( userUnits[key], userUnits, enemyUnits, round, options );
+			applyEffect( userUnits[key], userUnits, enemyUnits, round, stage, options );
 		}
 
 		for (key in enemyUnits) {
-			applyEffect( enemyUnits[key], enemyUnits, userUnits, round, options );
+			applyEffect( enemyUnits[key], enemyUnits, userUnits, round, stage, options );
 		}
 	};
 
@@ -582,6 +607,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		writeLog('----------------------');
 		writeLog('Раунд ' + round);
 		writeLog('----------------------');
+
+		applyBattleEffects(userUnits, enemyUnits, round, 'onRoundStart', options);
 
 		// calculate damage
 		var key = null;
@@ -598,6 +625,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			} else {
 				userUnits[key].damage = 0;
 			}
+			userUnits[key].hits = {};
 		}
 
 		for (key in enemyUnits) {
@@ -609,20 +637,47 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			} else {
 				enemyUnits[key].damage = 0;
 			}
+			enemyUnits[key].hits = {};
 		}
 
 		// attack
 		for (key in userUnits) {
-			fire( userUnits[key], enemyUnits );
+			fire( userUnits[key], enemyUnits, round );
 		}
 
 		writeLog('----------------------');
 
 		for (key in enemyUnits) {
-			fire( enemyUnits[key], userUnits);
+			fire( enemyUnits[key], userUnits, round );
 		}
 
 		writeLog('----------------------');
+
+
+		console.log('before');
+		for (key in userUnits) {
+			console.log('---------------------');
+			console.log(key, userUnits[key].hits);
+		}
+
+		for (key in enemyUnits) {
+			console.log('---------------------');
+			console.log(key, enemyUnits[key].hits);
+		}
+
+		applyBattleEffects(userUnits, enemyUnits, round, 'onAttack', options);
+
+		console.log('after');
+		for (key in userUnits) {
+			console.log('---------------------');
+			console.log(key, userUnits[key].hits);
+		}
+		
+		for (key in enemyUnits) {
+			console.log('---------------------');
+			console.log(key, enemyUnits[key].hits);
+		}
+
 
 		// calculate round results
 		var unitsLeft = 0;
@@ -660,6 +715,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				writeLog('    ' + enemyUnits[key].model.name + ' = ' + enemyKilled[key]);
 			}
 		}
+
+		applyBattleEffects(userUnits, enemyUnits, round, 'onRoundEnd', options);
 
 		return {
 			userKilled: userKilled,
@@ -713,18 +770,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var round = 1;
 
 		while (!isFinished) {
-
-			if (round <= 1) {
-				applyBattleEffects(userUnits, enemyUnits, 'before', options);
-			}
-
 			performRound(userUnits, enemyUnits, round, options);
-
 			if (hasAlive(userUnits) && hasAlive(enemyUnits) && round < rounds) {
-				applyBattleEffects(userUnits, enemyUnits, round, options);
 				round++;
 			} else {
-				applyBattleEffects(userUnits, enemyUnits, 'after', options);
 				isFinished = true;
 			}
 		}

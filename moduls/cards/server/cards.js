@@ -48,6 +48,11 @@ Game.Cards.complete = function(task) {
 };
 
 Game.Cards.activate = function(item, user) {
+	// check input
+	if (!item || !user) {
+		return false;
+	}
+
 	// check reload time
 	if (item.reloadTime) {
 		var nextReloadTime = item.nextReloadTime();

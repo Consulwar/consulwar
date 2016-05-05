@@ -150,13 +150,13 @@ Meteor.methods({
 					}
 				};
 
-			} else if (message.substr(0, 3) == '/me') {
+			} else if (message.indexOf('/me') === 0) {
 				set.data = {
 					type: 'status'
 				};
 				set.message = message.substr(3);
 
-			} else if (message.substr(0, 5) == '/motd') {
+			} else if (message.indexOf('/motd') === 0) {
 				if (['admin', 'helper'].indexOf(user.role) == -1
 				 && room.owner != user._id
 				 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
@@ -166,7 +166,7 @@ Meteor.methods({
 
 				set.message = message.substr(5).trim();
 
-			} else if (message.substr(0, 8) == '/сепукку') {
+			} else if (message.indexOf('/сепукку') === 0) {
 				if (userResources.crystals.amount < 0
 				 || userResources.metals.amount < 0
 				 || userResources.honor.amount < 0
@@ -197,7 +197,7 @@ Meteor.methods({
 						Math.max(Math.floor(Game.Resources.getIncome().crystals * 0.33), 100)
 					), i * 1000);
 				}
-			} else if (message.substr(0, 7) == '/яготов') {
+			} else if (message.indexOf('/яготов') === 0) {
 				if (Game.SpaceEvents.makeFun()) {
 					set.data = {
 						type: 'notprepared'
@@ -205,6 +205,20 @@ Meteor.methods({
 					set.message = ' думает что готов. Наивный.';
 				} else {
 					throw new Meteor.Error('Ты не готов!');
+				}
+			} else if (message.indexOf('/ilovereptiles') === 0) {
+				if (Game.Cards.activate(Game.Cards.items.penalty.penaltyHumans, user)) {
+					var humans = Math.floor( userResources.humans.amount * 0.05 );
+					if (humans > 0) {
+						Game.Resources.spend({ humans: humans });
+					}
+
+					set.data = {
+						type: 'lovereptiles'
+					};
+					set.message = ' признался что поддерживает Рептилоидов. Совет Галактики в Шоке.';
+				} else {
+					throw new Meteor.Error('Совет Галактики все ещё в Шоке!');
 				}
 			}
 		}
@@ -234,7 +248,7 @@ Meteor.methods({
 		}
 
 		// insert message
-		if (message.substr(0, 5) == '/motd') {
+		if (message.indexOf('/motd') === 0) {
 			Game.Chat.Room.Collection.update({
 				_id: room._id
 			}, {

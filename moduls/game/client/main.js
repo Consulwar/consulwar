@@ -23,6 +23,19 @@ initColosseumClient();
 initBlackmarketClient();
 initPulsecatcherClient();
 
+
+var preloadImages = function(images) {
+	for (var i = 0; i < images.length; i++) {
+		var img = new Image();
+		img.src = images[i];
+	}
+};
+
+preloadImages([
+	'/img/error.png'
+]);
+
+
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",
 	assetsUrl: "//d1culzimi74ed4.cloudfront.net/",

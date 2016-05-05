@@ -173,6 +173,28 @@ Game.syncServerTime = function() {
 Game.syncServerTime();
 
 
+var retryIntervalId = null;
+var retryTime = null;
+
+Tracker.autorun(function() {
+	if (Meteor.status().status === "waiting") {
+		retryTime = Math.floor( Meteor.status().retryTime / 1000 );
+		if (!retryIntervalId) {
+			retryIntervalId = Meteor.setInterval(function() {
+				var time = retryTime - Math.floor(new Date().valueOf() / 1000);
+				Session.set('reconnectTime', (time > 0 ? time : null));
+			}, 1000);
+		}
+	} else {
+		if (retryIntervalId) {
+			Meteor.clearInterval(retryIntervalId);
+			retryIntervalId = null;
+		}
+		Session.set('reconnectTime', null);
+	}
+});
+
+
 Tracker.autorun(function () {
 	if (Meteor.user() && Meteor.user().game) {
 		var user = Meteor.user();

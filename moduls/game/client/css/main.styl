@@ -31,14 +31,27 @@ a
 	color #fff
 
 .disconnected
-	color red
+	display inline-block
 	position fixed
-	top 100px
+	z-index 100
+	top 50%
+	left 50%
+	min-width 400px
+	padding 80px 20px 20px 20px
+	transform translate(-50%, -50%)
+	color #F2643E
 	text-align center
-	width 100%
-	z-index 1000
-	font-size 30px
+	font-size 18px
 	font-weight bold
+	border 2px solid #742222
+	border-radius 10px
+	background-position center 20px
+	background-repeat no-repeat
+	background-image url(/img/error.png)
+	background-color #0b0d0f
+	
+	span
+		color #FFFFFF
 
 ul.notifications {
 	position: fixed;

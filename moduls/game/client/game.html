@@ -1,22 +1,18 @@
 <template name="game">
 	{{#unless connection.connected}}
-	<div class="disconnected">
-		Связь прервана<br/>
-		{{#if eq connection.status 'connecting'}}Попытка восстановления…<br/>{{/if}}
-		
-		
-		{{#unless eq connection.status 'connecting'}}
-		{{#unless eq connection.status 'waiting'}}
-		{{connection.status}}<br/>
-		{{/unless}}
-		{{/unless}}
-
-		 
-		{{#if eq connection.status 'waiting'}}
-		Восстановление связи через {{reconnectTime}}
-		{{/if}}
-	</div>
-	<div class="smoke"></div>
+		<div class="smoke"></div>
+		<div class="disconnected">
+			Связь прервана<br/>
+			{{#if eq connection.status 'connecting'}}Попытка восстановления…<br/>{{/if}}
+			{{#unless eq connection.status 'connecting'}}
+				{{#unless eq connection.status 'waiting'}}
+					{{connection.status}}<br/>
+				{{/unless}}
+			{{/unless}}
+			{{#if eq connection.status 'waiting'}}
+				Восстановление связи через <span>{{formatSeconds reconnectTime}}</span>
+			{{/if}}
+		</div>
 	{{/unless}}
 
 	<div class="game">

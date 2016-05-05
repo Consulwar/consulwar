@@ -141,9 +141,6 @@ var validate_rules = function(rules) {
 	return true;
 };
 
-// Вот такая хрень может помочь, но хз когда её вызывать!
-//$('.g-recaptcha-bubble-arrow').parent().css('zoom', 'reset')
-
 reCAPTCHA.config({
 	publickey: Meteor.settings.public.recaptcha.publickey,
 	hl: 'ru'

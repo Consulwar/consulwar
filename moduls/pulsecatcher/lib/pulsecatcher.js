@@ -47,6 +47,5 @@ Game.Pulsecatcher = {
 };
 
 initPulsecatcherConfigLib();
-initPulsecatcherContent();
 
 };

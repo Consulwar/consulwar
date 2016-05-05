@@ -83,7 +83,8 @@ Game.Cards = {
 
 	items: {
 		general: {},
-		pulsecatcher: {}
+		pulsecatcher: {},
+		penalty: {}
 	},
 
 	getValue: function(uid) {

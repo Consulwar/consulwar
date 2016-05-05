@@ -10,7 +10,7 @@
 				{{/unless}}
 			{{/unless}}
 			{{#if eq connection.status 'waiting'}}
-				Восстановление связи через <span>{{reconnectTime}}</span>
+				Восстановление связи через <span>{{formatSeconds reconnectTime}}</span>
 			{{/if}}
 		</div>
 	{{/unless}}

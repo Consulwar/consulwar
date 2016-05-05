@@ -70,7 +70,7 @@ game.Card = function(options) {
 
 	this.nextReloadTime = function() {
 		var cards = Game.Cards.getValue();
-		if (cards[this.engName] && cards[this.engName].nextReloadTime) {
+		if (cards && cards[this.engName] && cards[this.engName].nextReloadTime) {
 			return cards[this.engName].nextReloadTime;
 		}
 		return null;

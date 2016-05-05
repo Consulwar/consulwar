@@ -101,9 +101,6 @@ Accounts.onCreateUser(function(option, user) {
 
 	}
 
-	// TODO: Удалить это позже!
-	throw new Meteor.Error('Все четко, но это пока тест!');
-
 	user.username = option.username;
 	user.plain_username = Game.User.convertUsernameToPlainname(option.username);
 	user.planetName = (

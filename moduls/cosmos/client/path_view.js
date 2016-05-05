@@ -72,13 +72,12 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 
 	var getIntersectedPlantents = function(point1, point2) {
 		var planets = [];
-		var minRadius = Game.Planets.MIN_PLANET_DISTANCE / 2;
 
 		for (var i = 0; i < allPlanets.length; i++) {
 			var planetView = allPlanets[i];
 
-			if (calcDistanse(point1.x, point1.y, planetView.x, planetView.y) < minRadius) continue;
-			if (calcDistanse(point2.x, point2.y, planetView.x, planetView.y) < minRadius) continue;
+			if (point1.x == planetView.x && point1.y == planetView.y) continue;
+			if (point2.x == planetView.x && point2.y == planetView.y) continue;
 
 			if (hitLineVsCircle(point1.x, point1.y, point2.x, point2.y, planetView.x, planetView.y, planetView.radius)) {
 				planets.push(planetView);

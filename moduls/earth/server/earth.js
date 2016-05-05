@@ -405,6 +405,7 @@ Game.Earth.retreat = function() {
 	Game.EarthZones.Collection.update({
 		name: currentZone.name
 	}, {
+		$set: { isEnemy: true },
 		$unset: { userArmy: 1 }
 	});
 

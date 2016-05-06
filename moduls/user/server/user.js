@@ -93,7 +93,9 @@ Accounts.onCreateUser(function(option, user) {
 
 		// registration by captcha
 		check(option.captcha, String);
-		var recaptchaResponse = reCAPTCHA.verifyCaptcha(Meteor.call('user.getIpAddress'), option.captcha);
+
+		var ipAddress = Meteor.call('user.getIpAddress', Meteor.settings.recaptcha.privatekey);
+		var recaptchaResponse = reCAPTCHA.verifyCaptcha(ipAddress, option.captcha);
 
 		if (!recaptchaResponse.success) {
 			throw new Meteor.Error('Вы робот');
@@ -143,8 +145,10 @@ Meteor.methods({
 		return Meteor.users.find({'status.online': true}).count();
 	},
 
-	'user.getIpAddress': function() {
-		// TODO: Подумать как избавиться от этой херни!
+	'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
+		if (key != Meteor.settings.recaptcha.privatekey) {
+			return null;
+		}
 		return this.connection.clientAddress;
 	},
 

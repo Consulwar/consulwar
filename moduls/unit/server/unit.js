@@ -397,6 +397,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 					units[ side + '.' + group + '.' + name ] = {
 						// constants
+						key: side + '.' + group + '.' + name,
 						side: side,
 						group: group,
 						name: name,
@@ -502,12 +503,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 
 				// save hit info
-				if (!enemy.hits[unit.name]) {
-					enemy.hits[unit.name] = 0;
+				if (!enemy.hits[unit.key]) {
+					enemy.hits[unit.key] = 0;
 				}
-				enemy.hits[unit.name] += appliedDamage;
-				// -----------------------------
+				enemy.hits[unit.key] += appliedDamage;
 
+				// write log
 				if (enemy.life > 0) {
 					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage);
 				} else {
@@ -538,18 +539,18 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					appliedDamage = enemy.life;
 					enemy.life = 0;
 				} else {
-					enemy.life -= appliedDamage;	
+					enemy.life -= appliedDamage;
 				}
-
-				// save hit info
-				if (!enemy.hits[unit.name]) {
-					enemy.hits[unit.name] = 0;
-				}
-				enemy.hits[unit.name] += appliedDamage;
-				// -----------------------------
 
 				unit.damage -= appliedDamage;
 
+				// save hit info
+				if (!enemy.hits[unit.key]) {
+					enemy.hits[unit.key] = 0;
+				}
+				enemy.hits[unit.key] += appliedDamage;
+				
+				// write log
 				if (enemy.life > 0) {
 					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage);
 				} else {
@@ -562,23 +563,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 	};
 
 	var applyEffect = function(unit, friends, enemies, round, stage, options) {
-		/*
-		if (unit
-		 && unit.model
-		 && unit.model.triggers
-		 && unit.model.triggers.battle
-		) {
-			var effects = unit.model.triggers.battle;
-			for (var i = 0; i < effects.length; i++) {
-				var result = effects[i].applyEffect(unit, friends, enemies, round, options);
-				if (result && result.length > 0) {
-					writeLog(result);
-				}
-			}
-		}
-		*/
-		if (unit && unit.model && unit.model.effect) {
-			var effects = unit.model.effect;
+		if (unit && unit.model && unit.model.battleEffects) {
+			var effects = unit.model.battleEffects;
 			for (var i = 0; i < effects.length; i++) {
 				if (_.isFunction(effects[i][stage])) {
 					var result = effects[i][stage](unit, friends, enemies, round, options);
@@ -608,8 +594,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		writeLog('Раунд ' + round);
 		writeLog('----------------------');
 
-		applyBattleEffects(userUnits, enemyUnits, round, 'onRoundStart', options);
-
 		// calculate damage
 		var key = null;
 		var min = 0;
@@ -626,6 +610,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				userUnits[key].damage = 0;
 			}
 			userUnits[key].hits = {};
+			userUnits[key].deaths = 0;
 		}
 
 		for (key in enemyUnits) {
@@ -638,7 +623,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				enemyUnits[key].damage = 0;
 			}
 			enemyUnits[key].hits = {};
+			enemyUnits[key].deaths = 0;
 		}
+
+		applyBattleEffects(userUnits, enemyUnits, round, 'onRoundStart', options);
 
 		// attack
 		for (key in userUnits) {
@@ -653,31 +641,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		writeLog('----------------------');
 
-
-		console.log('before');
-		for (key in userUnits) {
-			console.log('---------------------');
-			console.log(key, userUnits[key].hits);
-		}
-
-		for (key in enemyUnits) {
-			console.log('---------------------');
-			console.log(key, enemyUnits[key].hits);
-		}
-
 		applyBattleEffects(userUnits, enemyUnits, round, 'onAttack', options);
-
-		console.log('after');
-		for (key in userUnits) {
-			console.log('---------------------');
-			console.log(key, userUnits[key].hits);
-		}
-		
-		for (key in enemyUnits) {
-			console.log('---------------------');
-			console.log(key, enemyUnits[key].hits);
-		}
-
 
 		// calculate round results
 		var unitsLeft = 0;
@@ -690,6 +654,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			userUnits[key].count = unitsLeft;
 			userKilled[key] = unitsKilled;
+
+			userUnits[key].killed = unitsKilled;
 		}
 
 		writeLog('Наши потери:');
@@ -707,6 +673,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 			enemyUnits[key].count = unitsLeft;
 			enemyKilled[key] = unitsKilled;
+
+			enemyUnits[key].killed = unitsKilled;
 		}
 
 		writeLog('Вражеские потери:');
@@ -775,6 +743,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				round++;
 			} else {
 				isFinished = true;
+				applyBattleEffects(userUnits, enemyUnits, round, 'onBattleEnd', options);
 			}
 		}
 

@@ -34,6 +34,8 @@ var letters = [
 	'4', '5', '6', '7', '8', '9'
 ];
 
+var tempKey = uuid.new();
+
 Accounts.onCreateUser(function(option, user) {
 	check(option.username, String);
 
@@ -94,7 +96,7 @@ Accounts.onCreateUser(function(option, user) {
 		// registration by captcha
 		check(option.captcha, String);
 
-		var ipAddress = Meteor.call('user.getIpAddress', Meteor.settings.recaptcha.privatekey);
+		var ipAddress = Meteor.call('user.getIpAddress', tempKey);
 		var recaptchaResponse = reCAPTCHA.verifyCaptcha(ipAddress, option.captcha);
 
 		if (!recaptchaResponse.success) {
@@ -146,7 +148,7 @@ Meteor.methods({
 	},
 
 	'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
-		if (key != Meteor.settings.recaptcha.privatekey) {
+		if (key != tempKey) {
 			return null;
 		}
 		return this.connection.clientAddress;

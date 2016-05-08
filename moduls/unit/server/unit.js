@@ -738,7 +738,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var round = 1;
 
 		while (!isFinished) {
+			if (round == 1) {
+				applyBattleEffects(userUnits, enemyUnits, round, 'onBattleStart', options);
+			}
+
 			performRound(userUnits, enemyUnits, round, options);
+			
 			if (hasAlive(userUnits) && hasAlive(enemyUnits) && round < rounds) {
 				round++;
 			} else {

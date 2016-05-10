@@ -217,12 +217,21 @@
 			&:hover
 				background-color #5C5C5C
 	
+	.g-recaptcha
+		position relative
+		zoom reset
+		
+		iframe
+			position absolute
+			transform scale(0.86)
+			transform-origin 0 0
+
 	label
 		display block
 		
 		.title
 			color #FE9528
-			padding-bottom 10px
+			padding-bottom 5px
 			
 		a
 			font-size 12px
@@ -238,7 +247,7 @@
 		background-color #C0C0C0
 		border-radius 5px
 		box-shadow inset 2px 2px 2px #000
-		margin-bottom 20px
+		margin-bottom 15px
 		
 	input[type="checkbox"]
 		vertical-align middle
@@ -252,6 +261,7 @@
 		font-size 18px
 		font-weight bold
 		cursor pointer
+		margin-top 15px
 		-webkit-filter brightness(0.8)
 		filter brightness(0.8)
 		

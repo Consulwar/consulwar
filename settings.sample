@@ -21,7 +21,14 @@
 		},
 		"pulsecatcher": {
 			"schedule": "at 7:00 pm"
+		},
+		"isInviteRequired": true,
+		"recaptcha": {
+			"publickey": "ABCDEFGHIJKLMNOP"
 		}
+	},
+	"recaptcha": {
+		"privatekey": "ABCDEFGHIJKLMNOP"
 	},
 	"payment": {
 		"platbox": {

@@ -51,3 +51,4 @@ jparker:crypto-sha256
 jparker:crypto-hmac
 standard-minifier-css
 standard-minifier-js
+altapp:recaptcha

@@ -57,6 +57,17 @@ requirements-icon-notimplemented(menu, sub, name)
 	filter grayscale(1) !important
 	cursor not-allowed !important
 
+// --------------------------------------
+// This is mega super hack for recaptcha
+// --------------------------------------
+body > div:last-child
+	zoom reset
+	transform scale(0.86)
+
+body > div:last-child > div
+	zoom reset
+// --------------------------------------
+
 @import '{}/moduls/unit/client/unit.styl'
 
 .game

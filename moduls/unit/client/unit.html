@@ -24,7 +24,7 @@
 
 			<p>{{unit.description}}</p>
 			
-			{{> item_effect item=unit}}
+			{{> unitBattleEffects unit=unit}}
 		</div>
 
 		{{> item_characteristic item=unit}}
@@ -39,4 +39,18 @@
 		
 		{{> Template.dynamic template=additionalArea}}
 	</div>
+</template>
+
+<template name="unitBattleEffects">
+	{{#if unit.battleEffects}}
+		<div class="currentLevel">
+			{{#each unit.battleEffects}}
+				{{#if result}}
+					{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+					{{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+					<br/>
+				{{/if}}
+			{{/each}}
+		</div>
+	{{/if}}
 </template>

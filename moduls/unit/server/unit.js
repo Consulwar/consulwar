@@ -318,6 +318,94 @@ Game.BattleHistory.set = function(id, set) {
 	});
 };
 
+
+/*
+Метод Game.Unit.performBattle принимает следующие аргументы:
+userArmy - наша армия
+enemyArmy - вражеская армия
+options {
+	rounds: 3, - максимальное количество раундов
+	damageReduction: 75, - на сколько уменьшается наносимый урон в процентах
+	missionType: 'patrolfleet', - тип миссии
+	missionLevel: 10, - уровень сложности миссии
+	artefacts: { Объект с артефактами }
+}
+
+Перед началом боя наша и вражеская армии перегоняются из вот такого формата:
+{
+	reptiles: {
+		fleet: {
+			blade: 10,
+			dragon: 2,
+			...
+		},
+		...
+	}
+}
+
+В следующий формат:
+{
+	'reptiles.fleet.blade': {
+		key: 'reptiles.fleet.blade',
+		side: 'reptiles',
+		group: 'fleet',
+		name: 'blade',
+		model: { Объект контента game.Unit или game.ReptileUnit },
+		startCount: 10, - начальное количество (не изменяется)
+		count: 10, - текущее количество
+		life: 1000, - жизни
+		damage: 100500, - урон рассчитанный для текущего раунда
+		hits: {}, - список полученных повреждений в текущем раунде
+		killed: 0 - колчиество убитых юнитов в текущем раунде
+	},
+	...
+}
+
+1. Перед началом битвы применяются спец способности привязанные к onBattleStart.
+Можно использовать поля count, life.
+Поля hits, killed, damage ещё не актуальны.
+
+2. Начинается очередной раунд. Рассчитывается значение damage и обнуляются значения hits и killed.
+
+3. Применяются спец способности привязанные к onRoundStart.
+Можно использовать поля count, life, damage.
+Поля hits, killed ещё не актуальны.
+
+4. Армии наносят повреждения друг другу по следующим правилам:
+	- 40% урона по первой приоритеной цели из списка
+	- 30% урона по второй приоритетной цели из списка
+	- 20% урона по третьей приоритетной цели из списка
+	- Оставшийся урон равномерно распределяется по всем целям
+
+Полученные повреждения вычитаются из поля life и сохраняются в hits:
+{
+	'reptiles.fleet.blade': 200,
+	'reptiles.fleet.shadow': 1400,
+	...
+}
+
+5. Применяются спец способности привязанные к onAttack.
+Можно использовать поля life, hits.
+Поле damage уже не актуально.
+Поле count будет рассчитано на основе значения поля life.
+Поле killed ещё не рассчитано.
+
+6. Применяются полученные повреждения, то есть рассчитываются значения count и killed.
+
+7. Применяются спец способности привязанные к onRoundEnd.
+Можно использовать поля count, life, killed.
+Поля damage, hits уже не актуальны.
+
+8. Если обе армии ещё живы и максимальное количество раундов не превышено,
+то начинаем очередной раунд (то есть возвращаемся к пункту 2).
+
+9. Применяются спец спобособности привязанные к onBattleEnd.
+Можно использовать любые поля по своему усмотрению.
+
+10. Рассчитываются результаты битвы (награда, убитые, выжившие)
+
+*/
+
 Game.Unit.performBattle = function(userArmy, enemyArmy, options) {
 	var battle = new Game.Unit.Battle(userArmy, enemyArmy, options);
 
@@ -352,35 +440,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		return false;
 	};
 
-	/**
-	 * Creates object with information for each unit from army object.
-	 *
-	 * army object example:
-	 * {
-	 *   reptiles: {
-	 *     fleet: {
-	 *       blade: 10,
-	 *       dragon: 2
-	 *     }
-	 *   }
-	 * }
-	 *
-	 * result object example:
-	 * {
-	 *   'reptiles.fleet.blade': {
-	 *     side: 'reptiles',
-	 *     group: 'fleet',
-	 *     name: 'blade',
-	 *     model: { Object from content },
-	 *     startCount: 10,
-	 *     count: 10,
-	 *     life: 10000
-	 *   },
-	 *   ...
-	 * }
-	 *
-	 * Warning! Properties 'count' and 'life' could be changed by other functions!
-	 */
 	var parseArmyToUnits = function(army) {
 		if (!army) {
 			return null;
@@ -501,6 +560,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				} else {
 					enemy.life -= appliedDamage;
 				}
+				unit.damage -= appliedDamage;
 
 				// save hit info
 				if (!enemy.hits[unit.key]) {
@@ -508,12 +568,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 				enemy.hits[unit.key] += appliedDamage;
 
-				// write log
-				if (enemy.life > 0) {
-					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage);
-				} else {
-					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage + ' и умирает');
-				}
+				writeLog('    ' + enemy.model.name + ' ' + appliedDamage);
 
 				if (unit.damage <= 0) return;
 			}
@@ -541,7 +596,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				} else {
 					enemy.life -= appliedDamage;
 				}
-
 				unit.damage -= appliedDamage;
 
 				// save hit info
@@ -550,12 +604,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 				enemy.hits[unit.key] += appliedDamage;
 				
-				// write log
-				if (enemy.life > 0) {
-					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage);
-				} else {
-					writeLog('    ' + enemy.model.name + ' получает урон ' + appliedDamage + ' и умирает');
-				}
+				writeLog('    ' + enemy.model.name + ' ' + appliedDamage);
 
 				if (unit.damage <= 0) break;
 			}
@@ -590,9 +639,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 	var performRound = function(userUnits, enemyUnits, round, options) {
 
-		writeLog('----------------------');
+		writeLog('');
+		writeLog('------------------------------');
 		writeLog('Раунд ' + round);
-		writeLog('----------------------');
+		writeLog('------------------------------');
 
 		// calculate damage
 		var key = null;
@@ -629,67 +679,87 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		applyBattleEffects(userUnits, enemyUnits, round, 'onRoundStart', options);
 
 		// attack
+		writeLog('---- Наша атака --------------');
 		for (key in userUnits) {
 			fire( userUnits[key], enemyUnits, round );
 		}
 
-		writeLog('----------------------');
-
+		writeLog('---- Вражеская атака ---------');
 		for (key in enemyUnits) {
 			fire( enemyUnits[key], userUnits, round );
 		}
 
-		writeLog('----------------------');
-
+		writeLog('---- Спец способности --------');
 		applyBattleEffects(userUnits, enemyUnits, round, 'onAttack', options);
+
+		var attackerKey = null;
+		var attacks = null;
+		var total = 0;
+
+		writeLog('---- Наши повреждения --------');
+		for (key in userUnits) {
+			attacks = [];
+			total = 0;
+			for (attackerKey in userUnits[key].hits) {
+				if (userUnits[key].hits[attackerKey] > 0 && enemyUnits[attackerKey]) {
+					total += userUnits[key].hits[attackerKey];
+					attacks.push('    ' + userUnits[key].hits[attackerKey] + ' от ' + enemyUnits[attackerKey].model.name);
+				}
+			}
+			if (total > 0) {
+				writeLog(userUnits[key].model.name + ' получает урон ' + total + '\n' + attacks.join('\n'));
+			}
+		}
+
+		writeLog('---- Вражеские повреждения ---');
+		for (key in enemyUnits) {
+			attacks = [];
+			total = 0;
+			for (attackerKey in enemyUnits[key].hits) {
+				if (enemyUnits[key].hits[attackerKey] > 0 && userUnits[attackerKey]) {
+					total += enemyUnits[key].hits[attackerKey];
+					attacks.push('    ' + enemyUnits[key].hits[attackerKey] + ' от ' + userUnits[attackerKey].model.name);
+				}
+			}
+			if (total > 0) {
+				writeLog(enemyUnits[key].model.name + ' получает урон ' + total + '\n' + attacks.join('\n'));
+			}
+		}
 
 		// calculate round results
 		var unitsLeft = 0;
 		var unitsKilled = 0;
-		var userKilled = {};
 
+		writeLog('---- Наши потери -------------');
 		for (key in userUnits) {
 			unitsLeft = Math.ceil( userUnits[key].life / userUnits[key].model.characteristics.life );
 			unitsKilled = userUnits[key].count - unitsLeft;
 
 			userUnits[key].count = unitsLeft;
-			userKilled[key] = unitsKilled;
-
 			userUnits[key].killed = unitsKilled;
-		}
 
-		writeLog('Наши потери:');
-		for (key in userKilled) {
-			if (userKilled[key] > 0) {
-				writeLog('    ' + userUnits[key].model.name + ' = ' + userKilled[key]);
+			if (userUnits[key].killed > 0) {
+				writeLog('    ' + userUnits[key].model.name + ' = ' + userUnits[key].killed);
 			}
 		}
 
-		var enemyKilled = {};
-
+		writeLog('---- Вражеские потери --------');
 		for (key in enemyUnits) {
 			unitsLeft = Math.ceil( enemyUnits[key].life / enemyUnits[key].model.characteristics.life );
 			unitsKilled = enemyUnits[key].count - unitsLeft;
 
 			enemyUnits[key].count = unitsLeft;
-			enemyKilled[key] = unitsKilled;
-
 			enemyUnits[key].killed = unitsKilled;
-		}
 
-		writeLog('Вражеские потери:');
-		for (key in enemyKilled) {
-			if (enemyKilled[key] > 0) {
-				writeLog('    ' + enemyUnits[key].model.name + ' = ' + enemyKilled[key]);
+			if (enemyUnits[key].killed > 0) {
+				writeLog('    ' + enemyUnits[key].model.name + ' = ' + enemyUnits[key].killed);
 			}
 		}
 
+		writeLog('---- Спец способности --------');
 		applyBattleEffects(userUnits, enemyUnits, round, 'onRoundEnd', options);
 
-		return {
-			userKilled: userKilled,
-			enemyKilled: enemyKilled
-		};
+		writeLog('');
 	};
 
 	var getPoints = function(resources) {
@@ -753,6 +823,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		// show results
+		writeLog('');
 		writeLog('----------------------');
 		writeLog('Бой закончен');
 		writeLog('----------------------');
@@ -764,10 +835,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var unit = null;
 
 		for (key in userUnits) {
-
 			unit = userUnits[key];
-			writeLog('    ' + unit.model.name + ' ' + unit.count);
-
+			
 			if (unit.count > 0) {
 				if (!userArmyRest) {
 					userArmyRest = {};
@@ -779,6 +848,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					userArmyRest[unit.side][unit.group] = {};
 				}
 				userArmyRest[unit.side][unit.group][unit.name] = unit.count;
+				writeLog('    ' + unit.model.name + ' ' + unit.count);
 			}
 		}
 
@@ -787,9 +857,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var enemyArmyKilled = null;
 		
 		for (key in enemyUnits) {
-
 			unit = enemyUnits[key];
-			writeLog('    ' + unit.model.name + ' ' + unit.count);
 
 			var killed = unit.startCount - unit.count;
 			if (killed > 0) {
@@ -816,6 +884,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					enemyArmyRest[unit.side][unit.group] = {};
 				}
 				enemyArmyRest[unit.side][unit.group][unit.name] = unit.count;
+				writeLog('    ' + unit.model.name + ' ' + unit.count);
 			}
 		}
 

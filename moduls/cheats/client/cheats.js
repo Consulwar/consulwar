@@ -15,24 +15,50 @@ Game.Cheats.testBattle = function() {
 	userArmy = {
 		army: {
 			fleet: {
-				gammadrone: 2000,
-				wasp: 1000,
-				cruiser: 500,
-				battleship: 1,
-				carrier: 1,
+				gammadrone: 100,
+				wasp: 50,
+				mirage: 40,
+				frigate: 30,
+				truckc: 20,
+				cruiser: 10,
+				battleship: 9,
+				carrier: 8,
+				dreadnought: 6,
+				railgun: 4,
+				reaper: 2,
 				flagship: 1
+			},
+			defense: {
+				bomb: 100,
+				ionbomb: 50,
+				turret: 40,
+				laserturret: 30,
+				snipergun: 20,
+				railcannon: 10,
+				plasmakiller: 9,
+				tyrant: 8,
+				crystalgun: 6,
+				trilinear: 4,
+				deforbital: 2,
+				doomsdaygun: 1
 			}
 		}
 	};
 	enemyArmy = {
 		reptiles: {
 			fleet: {
-				blade: 100,
-				dragon: 20,
-				hydra: 10,
-				armadillo: 1,
-				shadow: 1,
-				trioniks: 1
+				sphero: 100,
+				blade: 50,
+				lacertian: 40,
+				wyvern: 30,
+				trioniks: 20,
+				dragon: 10,
+				hydra: 9,
+				armadillo: 8,
+				prism: 6,
+				octopus: 4,
+				godzilla: 2,
+				shadow: 100
 			}
 		}
 	};

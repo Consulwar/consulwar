@@ -141,10 +141,12 @@ var validate_rules = function(rules) {
 	return true;
 };
 
-reCAPTCHA.config({
-	publickey: Meteor.settings.public.recaptcha.publickey,
-	hl: 'ru'
-});
+if (!Meteor.settings.public.isInviteRequired) {
+	reCAPTCHA.config({
+		publickey: Meteor.settings.public.recaptcha.publickey,
+		hl: 'ru'
+	});
+}
 
 Template.register_window_step3.events({
 	'click .show-agreement': function(e, t) {

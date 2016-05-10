@@ -134,9 +134,17 @@ Accounts.onCreateUser(function(option, user) {
 
 //Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false}); 
 
-reCAPTCHA.config({
-	privatekey: Meteor.settings.recaptcha.privatekey
-});
+if (!Meteor.settings.public.isInviteRequired) {
+	if (!Meteor.settings.recaptcha.privatekey
+	 || !Meteor.settings.public.recaptcha.publickey
+	) {
+		throw new Meteor.Error('Ошибка в настройках', 'Не заполнены ключи для recaptcha (см. settings.sample recaptcha)');
+	}
+
+	reCAPTCHA.config({
+		privatekey: Meteor.settings.recaptcha.privatekey
+	});
+}
 
 Meteor.methods({
 	'totalUsersCount': function() {

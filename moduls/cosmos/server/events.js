@@ -1198,6 +1198,7 @@ Meteor.methods({
 			startTime:      timeCurrent,
 			flyTime:        timeAttack,
 			isHumans:       true,
+			isOneway:       false,
 			engineLevel:    engineLevel,
 			mission:        null,
 			armyId:         newArmyId

@@ -483,7 +483,7 @@ Game.Random = {
 	},
 
 	chance: function(chance) {
-		return Game.Random.interval(1, 99) <= chance ? true : false;
+		return Game.Random.interval(1, 100) <= chance ? true : false;
 	}
 };
 

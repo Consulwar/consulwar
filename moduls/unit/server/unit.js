@@ -299,20 +299,8 @@ Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 			history.cards = battleResults.cards;
 		}
 	}
-
-	var historyId = Game.BattleHistory.Collection.insert(history);
-
-	if (options.isEarth) {
-		Game.Statistic.incrementGame({
-			earthHistoryCount: 1
-		});
-	} else if (Meteor.userId()) {
-		Game.Statistic.incrementUser(Meteor.userId(), {
-			battleHistoryCount: 1
-		});
-	}
-
-	return historyId;
+	
+	return Game.BattleHistory.Collection.insert(history);
 };
 
 Game.BattleHistory.set = function(id, set) {

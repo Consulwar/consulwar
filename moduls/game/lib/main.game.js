@@ -480,6 +480,10 @@ Game.Random = {
 
 	interval: function(min, max) {
 		return min + Math.round( Random.fraction() * (max - min) );
+	},
+
+	chance: function(chance) {
+		return Game.Random.interval(1, 100) <= chance ? true : false;
 	}
 };
 

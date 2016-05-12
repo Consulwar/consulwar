@@ -22,6 +22,7 @@ game.Unit = function(options) {
 
 	this.type = 'unit';
 	this.side = 'army';
+	this.battleEffects = options.battleEffects;
 };
 game.extend(game.Unit, game.Item);
 
@@ -57,6 +58,7 @@ game.ReptileUnit = function(options) {
 
 	this.type = 'reptileUnit';
 	this.side = 'reptiles';
+	this.battleEffects = options.battleEffects;
 };
 game.extend(game.ReptileUnit, game.Item);
 
@@ -66,6 +68,10 @@ game.ReptileHero = function(options){
 	this.type = 'reptileHero';
 };
 game.extend(game.ReptileHero, game.ReptileUnit);
+
+game.BattleEffect = function(options) {
+	Game.Unit.battleEffects[options.key] = options.func;
+};
 
 /*game.MutualUnit = function(options){
 	game.MutualUnit.superclass.constructor.apply(this, arguments);
@@ -100,6 +106,7 @@ game.Hero = function(options){
 };
 game.extend(game.Hero, game.MutualItem)
 */
+
 Game.Unit = {
 
 	location: {
@@ -177,59 +184,7 @@ Game.Unit = {
 		}
 	},
 
-	battleEffects: {
-
-		psi: function(unit, friends, enemies, round, options) {
-			// check round
-			if (round != 'before') {
-				return false;
-			}
-			// get effect power
-			var power = 0;
-			var psieffect = Game.Mutual.get('research', 'psieffect');
-			if (psieffect <= 0) {
-				power = Game.Random.interval(1, 5) / 100;
-			} else {
-				power = Game.Random.interval(6, 10) / 100;
-			}
-			power *= options.damageReduction;
-			// count psi enemies
-			var psiCount = 0;
-			var key = null;
-			for (key in enemies) {
-				if (enemies[key].model.engName == 'psimans'
-				 || enemies[key].model.engName == 'horror'
-				) {
-					psiCount += enemies[key].startCount;
-				}
-			}
-			// if psi equal, idle
-			if (psiCount == unit.startCount) {
-				return unit.model.name + ' ничего не может сделать';
-			}
-			// apply effect
-			var message = unit.model.name + ' атакует ';
-			for (key in enemies) {
-				var canAttack = true;
-				// if our psi count lower, attack only psi units
-				if (psiCount > unit.startCount
-				 && enemies[key].model.engName != 'psimans'
-				 && enemies[key].model.engName != 'horror'
-				) {
-					canAttack = false;
-				}
-				// attack
-				if (canAttack) {
-					var appliedDamage = Math.floor( enemies[key].life * power );
-					enemies[key].life -= appliedDamage;
-					enemies[key].count = Math.ceil( enemies[key].life / enemies[key].model.characteristics.life );
-					message += enemies[key].model.name + ' (-' + appliedDamage + ') ';
-				}
-			}
-			return message;
-		}
-
-	}
+	battleEffects: {}
 };
 
 initUnitsContent();

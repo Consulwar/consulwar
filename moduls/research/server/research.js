@@ -24,6 +24,10 @@ Game.Research.add = function(research) {
 
 Game.Research.complete = function(task) {
 	Game.Research.add(task);
+
+	Game.Statistic.incrementUser(Meteor.userId(), {
+		'research.total': 1
+	});
 };
 
 Game.Research.initialize = function(user) {

@@ -94,7 +94,7 @@ Template.earthHistory.onDestroyed(function() {
 
 Template.earthHistory.helpers({
 	isLoading: function() { return isHistoryLoading.get(); },
-	countTotal: function() { return Game.Statistic.getSystemValue('earthHistoryCount'); },
+	countTotal: function() { return Game.Statistic.getSystemValue('battle.total'); },
 	countPerPage: function() { return historyCountPerPage; },
 	battle: function() { return historyBattle.get(); },
 	battles: function() { return historyBattles.list(); }

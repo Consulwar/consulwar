@@ -45,21 +45,21 @@ Game.Statistic.incrementGame = function(increment) {
 };
 
 Game.Statistic.fixGame = function() {
-	var totalMailComplaints = Game.Mail.Collection.find({
+	// fix only essential for GUI values!
+	var set = {};
+
+	set['mail.complaint'] = Game.Mail.Collection.find({
 		complaint: true
 	}).count();
 
-	var earthHistoryCount = Game.BattleHistory.Collection.find({
+	set['battle.total'] = Game.BattleHistory.Collection.find({
 		user_id: 'earth'
 	}).count();
 
 	Game.Statistic.Collection.upsert({
 		user_id: 'system'
 	}, {
-		$set: {
-			totalMailComplaints: totalMailComplaints,
-			earthHistoryCount: earthHistoryCount
-		}
+		$set: set
 	});
 };
 
@@ -72,42 +72,39 @@ Game.Statistic.fixUser = function(userId) {
 		throw new Meteor.Error('Пользователь не существует');
 	}
 
+	// fix only essential for GUI values!
+	var set = {};
+
 	// mail
-	var totalMail = Game.Mail.Collection.find({
+	set['mail.current'] = Game.Mail.Collection.find({
 		owner: user._id,
 		deleted: { $ne: true }
 	}).count();
 
-	var totalMailAlltime = Game.Mail.Collection.find({
+	set['mail.total'] = Game.Mail.Collection.find({
 		owner: user._id
 	}).count();
 
 	// payment
-	var incomeHistoryCount = Game.Payment.Collection.find({
+	set['payment.income'] = Game.Payment.Collection.find({
 		user_id: user._id,
 		income: true
 	}).count();
 
-	var expenseHistoryCount = Game.Payment.Collection.find({
+	set['payment.expense'] = Game.Payment.Collection.find({
 		user_id: user._id,
 		income: { $ne: true }
 	}).count();
 
 	// cosmos
-	var battleHistoryCount = Game.BattleHistory.Collection.find({
+	set['battle.total'] = Game.BattleHistory.Collection.find({
 		user_id: user._id
 	}).count();
 
 	Game.Statistic.Collection.upsert({
 		user_id: user._id
 	}, {
-		$set: {
-			totalMail: totalMail,
-			totalMailAlltime: totalMailAlltime,
-			incomeHistoryCount: incomeHistoryCount,
-			expenseHistoryCount: expenseHistoryCount,
-			battleHistoryCount: battleHistoryCount
-		}
+		$set: set
 	});
 };
 
@@ -181,13 +178,17 @@ Meteor.publish('statistic', function() {
 			}, {
 				fields: {
 					user_id: 1,
-					totalMail: 1,
-					totalMailAlltime: 1,
-					incomeHistoryCount: 1,
-					expenseHistoryCount: 1,
-					battleHistoryCount: 1,
-					// system fields
-					earthHistoryCount: 1
+					resources: 1,
+					cards: 1,
+					quests: 1,
+					units: 1,
+					reptiles: 1,
+					reinforcements: 1,
+					cosmos: 1,
+					battle: 1,
+					chat: 1,
+					mail: 1,
+					payment: 1
 				}
 			});
 		}

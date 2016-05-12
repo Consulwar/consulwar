@@ -70,11 +70,40 @@ Game.Resources.set = function(resource, invertSign, uid) {
 };
 
 Game.Resources.add = function(resource, uid) {
-	return Game.Resources.set(resource, false, uid);
+	Game.Resources.set(resource, false, uid);
+	saveStatistic('resources.gained', resource, uid);
 };
 
 Game.Resources.spend = function(resource, uid) {
-	return Game.Resources.set(resource, true, uid);
+	Game.Resources.set(resource, true, uid);
+	saveStatistic('resources.spent', resource, uid);
+};
+
+Game.Resources.steal = function(resource, uid) {
+	Game.Resources.set(resource, true, uid);
+	saveStatistic('resources.stolen', resource, uid);
+};
+
+var saveStatistic = function(field, resources, uid) {
+	var increment = {};
+	increment[field + '.total'] = 0;
+
+	for (var key in resources) {
+		if (key == 'time') {
+			continue;
+		}
+
+		var amount = (resources[key].amount !== undefined)
+			? parseInt( resources[key].amount )
+			: parseInt( resources[key] );
+
+		increment[field + '.' + key] = amount;
+		increment[field + '.total'] += amount;
+	}
+	
+	if (increment[field + '.total'] > 0) {
+		Game.Statistic.incrementUser(uid !== undefined ? uid : Meteor.userId(), increment);
+	}
 };
 
 var rollRandomValues = function(object) {

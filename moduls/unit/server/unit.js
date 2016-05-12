@@ -35,6 +35,12 @@ Game.Unit.remove = function(unit, uid) {
 
 Game.Unit.complete = function(task) {
 	Game.Unit.add(task);
+
+	// save statistic
+	var increment = {};
+	increment['units.build.total'] = task.count;
+	increment['units.build.army.' + task.group + '.' + task.engName] = task.count;
+	Game.Statistic.incrementUser(Meteor.userId(), increment);
 };
 
 Game.Unit.initialize = function(user) {
@@ -695,6 +701,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var artefacts = (options && options.artefacts) ? options.artefacts : null;
 
 		options = {
+			isEarth: options.isEarth,
 			rouns: rounds,
 			damageReduction: damageReduction,
 			missionType: missionType,
@@ -893,6 +900,56 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			artefacts: artefacts,
 			cards: cards
 		};
+
+		// save statistic
+		var name = null;
+		var amount = null;
+		var increment = {};
+
+		increment['battle.total'] = 1;
+		if (result == Game.Battle.result.tie) {
+			increment['battle.tie'] = 1;
+		} else if (result == Game.Battle.result.victory) {
+			increment['battle.victory'] = 1;
+		} else if (result == Game.Battle.result.defeat) {
+			increment['battle.defeat'] = 1;
+		}
+
+		if (options.missionType && options.missionLevel) {
+			var missionKey = options.missionType + '.' + missionLevel;
+			increment['battle.' + missionKey + '.total'] = 1;
+			if (result == Game.Battle.result.tie) {
+				increment['battle.' + missionKey + '.tie'] = 1;
+			} else if (result == Game.Battle.result.victory) {
+				increment['battle.' +  missionKey + '.victory'] = 1;
+			} else if (result == Game.Battle.result.defeat) {
+				increment['battle.' +  missionKey + '.defeat'] = 1;
+			}
+		}
+
+		increment['units.lost.total'] = 0;
+		for (name in userUnits) {
+			amount = userUnits[name].startCount - userUnits[name].count;
+			if (amount > 0) {
+				increment['units.lost.' + name] = amount;
+				increment['units.lost.total'] += amount;
+			}
+		}
+
+		increment['reptiles.killed.total'] = 0;
+		for (name in enemyUnits) {
+			amount = enemyUnits[name].startCount - enemyUnits[name].count;
+			if (amount > 0) {
+				increment['reptiles.killed.' + name] = amount;
+				increment['reptiles.killed.total'] += amount;
+			}
+		}
+
+		if (options.isEarth) {
+			Game.Statistic.incrementGame(increment);
+		} else {
+			Game.Statistic.incrementUser(Meteor.userId(), increment);
+		}
 	};
 	this.constructor(userArmy, enemyArmy, options);
 };

@@ -124,6 +124,9 @@ Meteor.methods({
 			set.role = user.role;
 		}
 
+		var stats = {};
+		stats['chat.messages'] = 1;
+
 		if (message.substr(0, 1) == '/') {
 			var reg = new RegExp(/^\/d (\d )?(\d{1,2})$/);
 			if (message == '/d' || reg.test(message)) {
@@ -149,12 +152,14 @@ Meteor.methods({
 						edges: edges
 					}
 				};
+				stats['chat.dice'] = 1;
 
 			} else if (message.indexOf('/me') === 0) {
 				set.data = {
 					type: 'status'
 				};
 				set.message = message.substr(3);
+				stats['chat.status'] = 1;
 
 			} else if (message.indexOf('/motd') === 0) {
 				if (['admin', 'helper'].indexOf(user.role) == -1
@@ -165,6 +170,7 @@ Meteor.methods({
 				}
 
 				set.message = message.substr(5).trim();
+				stats['chat.motd'] = 1;
 
 			} else if (message.indexOf('/сепукку') === 0) {
 				if (userResources.crystals.amount < 0
@@ -178,6 +184,7 @@ Meteor.methods({
 					type: 'sepukku'
 				};
 				set.message = message.substr(8);
+				stats['chat.sepukku'] = 1;
 
 				var income = Game.Resources.getIncome();
 
@@ -203,6 +210,7 @@ Meteor.methods({
 						type: 'notprepared'
 					};
 					set.message = ' думает что готов. Наивный.';
+					stats['chat.notprepared'] = 1;
 				} else {
 					throw new Meteor.Error('Ты не готов!');
 				}
@@ -217,6 +225,8 @@ Meteor.methods({
 						type: 'lovereptiles'
 					};
 					set.message = ' признался что поддерживает Рептилоидов. Совет Галактики в Шоке.';
+
+					stats['chat.lovereptiles'] = 1;
 				} else {
 					throw new Meteor.Error('Совет Галактики все ещё в Шоке!');
 				}
@@ -232,6 +242,7 @@ Meteor.methods({
 			}
 
 			Game.Resources.spend({ crystals: dicePrice });
+			stats['chat.spent.crystals'] = dicePrice;
 		}
 
 		// message price
@@ -244,6 +255,9 @@ Meteor.methods({
 				});
 			} else {
 				Game.Resources.spend(price);
+				for (var key in price) {
+					stats['chat.spent.' + key] = parseInt( price[key] );
+				}
 			}
 		}
 
@@ -259,6 +273,9 @@ Meteor.methods({
 		} else {
 			Game.Chat.Messages.Collection.insert(set);
 		}
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, stats);
 	},
 
 	'chat.blockUser': function(options) {
@@ -527,6 +544,11 @@ Meteor.methods({
 		}
 
 		Game.Chat.Room.Collection.insert(room);
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'chat.rooms.created': 1
+		});
 	},
 
 	'chat.removeRoom': function(name) {
@@ -563,6 +585,11 @@ Meteor.methods({
 			_id: room._id
 		}, {
 			$set: { deleted: true }
+		});
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'chat.rooms.deleted': 1
 		});
 	},
 
@@ -661,6 +688,11 @@ Meteor.methods({
 			},
 			timestamp: Game.getCurrentTime()
 		});
+
+		// save statistic
+		var stats = {};
+		stats['chat.spent.credits'] = credits;
+		Game.Statistic.incrementUser(user._id, stats);
 	},
 
 	'chat.addModeratorToRoom': function(roomName, username) {

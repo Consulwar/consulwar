@@ -226,7 +226,7 @@ var checkUsername = function(t) {
 
 Template.mail.helpers({
 	isLoading: function() { return this.isLoading.get(); },
-	countTotal: function() { return Game.Statistic.getUserValue('totalMail'); },
+	countTotal: function() { return Game.Statistic.getUserValue('mail.current'); },
 	mail: function() { return this.mail.get(); },
 	letter: function() { return this.letter.get(); },
 	userId: function() { return Meteor.userId(); },
@@ -526,7 +526,7 @@ var adminReadLetter = function(id, t) {
 
 Template.mailAdmin.helpers({
 	isLoading: function() { return this.isLoading.get(); },
-	countTotal: function() { return Game.Statistic.getSystemValue('totalMailComplaints'); },
+	countTotal: function() { return Game.Statistic.getSystemValue('mail.complaint'); },
 	mail: function() { return this.mail.get(); },
 	letter: function() { return this.letter.get(); }
 });

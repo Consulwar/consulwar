@@ -12,11 +12,15 @@ Game.Investments.add = function(item) {
 	Game.Investments.initialize(item);
 
 	var inc = {
-		investments: parseInt(item.investments)
+		investments: parseInt( item.investments )
 	};
 
+	var stats = {};
+	stats['investments.total'] = parseInt( item.investments );
+
 	for (var resource in item.price) {
-		inc['resources.' + resource] = parseInt(item.price[resource]);
+		inc['resources.' + resource] = parseInt( item.price[resource] );
+		stats['investments.' + resource] = parseInt( item.price[resource] );
 	}
 
 	Game.Investments.Collection.update({
@@ -28,6 +32,8 @@ Game.Investments.add = function(item) {
 	});
 
 	Game.Mutual.add(item);
+
+	Game.Statistic.incrementUser(Meteor.userId(), stats);
 
 	return inc;
 };

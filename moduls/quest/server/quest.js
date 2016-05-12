@@ -278,6 +278,12 @@ Meteor.methods({
 			if (prevStep && prevStep.reward) {
 				Game.Resources.add(prevStep.reward);
 			}
+
+			// save statistic
+			Game.Statistic.incrementUser(user._id, {
+				'quests.regular.completed': 1,
+				'quests.regular.completedQuestLines': ( nextStep ? 0 : 1 )
+			});
 		}
 	},
 
@@ -392,6 +398,14 @@ Meteor.methods({
 				$set: set
 			});
 
+			// save statistic
+			Game.Statistic.incrementUser(user._id, {
+				'quests.daily.total': 1,
+				'quests.daily.win': ( result == 'win' ? 1 : 0 ),
+				'quests.daily.fail': ( result == 'win' ? 0 : 1 )
+			});
+
+			// return result
 			return {
 				text: quest.answers[answer][result],
 				reward: reward

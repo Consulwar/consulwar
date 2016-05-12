@@ -30,11 +30,10 @@ Game.Payment.log = function(isIncome, profit, source, uid) {
 	Game.Payment.Collection.insert(record);
 
 	// update user statistics
-	var increment = isIncome
-		? { incomeHistoryCount: 1 }
-		: { expenseHistoryCount: 1 };
-
-	Game.Statistic.incrementUser(record.user_id, increment);
+	Game.Statistic.incrementUser(record.user_id, {
+		'payment.income': ( isIncome ? 1 : 0 ),
+		'payment.expense': ( isIncome ? 0 : 1 )
+	});
 };
 
 Game.Payment.logIncome = function(profit, source, uid) {

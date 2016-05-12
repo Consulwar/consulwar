@@ -118,7 +118,7 @@ Template.cosmosHistory.onDestroyed(function() {
 
 Template.cosmosHistory.helpers({
 	isLoading: function() { return isHistoryLoading.get(); },
-	countTotal: function() { return Game.Statistic.getUserValue('battleHistoryCount'); },
+	countTotal: function() { return Game.Statistic.getUserValue('battle.total'); },
 	countPerPage: function() { return historyCountPerPage; },
 	battle: function() { return historyBattle.get(); },
 	battles: function() { return historyBattles.list(); }

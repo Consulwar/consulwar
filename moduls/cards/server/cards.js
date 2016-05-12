@@ -138,6 +138,11 @@ Meteor.methods({
 		var cards = {};
 		cards[id] = 1;
 		Game.Cards.add(cards);
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'cards.bought': 1
+		});
 	},
 
 	'cards.activate': function(id) {
@@ -170,6 +175,11 @@ Meteor.methods({
 		var cards = {};
 		cards[id] = 1;
 		Game.Cards.spend(cards);
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'cards.activated': 1
+		});
 	}
 });
 

@@ -908,7 +908,7 @@ var completeReptilesArrival = function(event, planet) {
 					}
 				}
 
-				Game.Resources.spend(stealCost);
+				Game.Resources.steal(stealCost);
 
 				// save history
 				if (battleResult) {
@@ -1202,6 +1202,11 @@ Meteor.methods({
 			engineLevel:    engineLevel,
 			mission:        null,
 			armyId:         newArmyId
+		});
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'cosmos.fleets.sent': 1
 		});
 	}
 });

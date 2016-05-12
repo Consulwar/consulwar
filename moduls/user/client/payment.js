@@ -185,8 +185,8 @@ Template.paymentHistory.helpers({
 	count: function() { return this.count; },
 	countTotal: function() {
 		return this.isIncome
-			? Game.Statistic.getUserValue('incomeHistoryCount')
-			: Game.Statistic.getUserValue('expenseHistoryCount');
+			? Game.Statistic.getUserValue('payment.income')
+			: Game.Statistic.getUserValue('payment.expense');
 	},
 
 	isLoading: function() { return isLoading.get(); },

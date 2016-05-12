@@ -708,6 +708,11 @@ Meteor.methods({
 			Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
 		}
 
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'cosmos.planets.discovered': 1
+		});
+
 		// refresh all planets
 		Game.Planets.actualize();
 	},
@@ -779,7 +784,7 @@ Meteor.methods({
 		// update base planet
 		var baseArmy = Game.Unit.getArmy(basePlanet.armyId);
 		if (!baseArmy) {
-			basePlanet.armyId = null;	
+			basePlanet.armyId = null;
 		}
 		basePlanet.timeRespawn = Game.getCurrentTime() + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 		Game.Planets.update(basePlanet);
@@ -822,6 +827,11 @@ Meteor.methods({
 				targetPlanet: basePlanet._id
 			});
 		}
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, {
+			'cosmos.fleets.sent': 1
+		});
 	},
 
 	'planet.changeName': function(planetId, name) {

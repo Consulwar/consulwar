@@ -24,6 +24,10 @@ Game.Building.add = function(building) {
 Game.Building.complete = function(task) {
 	addBonus(task);
 	Game.Building.add(task);
+
+	Game.Statistic.incrementUser(Meteor.userId(), {
+		'building.total': 1
+	});
 };
 
 Game.Building.initialize = function(user) {

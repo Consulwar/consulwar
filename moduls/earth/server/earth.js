@@ -55,6 +55,8 @@ Game.Earth.addReinforcement = function(units) {
 
 	var honor = 0;
 	var inc = {};
+	var stats = {};
+	stats['reinforcements.arrived.total'] = 0;
 
 	for (var side in units) {
 		for (var group in units[side]) {
@@ -65,11 +67,15 @@ Game.Earth.addReinforcement = function(units) {
 						Game.Unit.items[side][group][name].price(count)
 					);
 					inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
+					stats['reinforcements.arrived.' + side + '.' + group + '.' + name] = count;
+					stats['reinforcements.arrived.total'] += count;
 				}
 			}
 		}
 	}
 	
+	Game.Statistic.incrementUser(Meteor.userId(), stats);
+
 	Game.Resources.add({
 		honor: honor
 	});

@@ -103,13 +103,22 @@ Meteor.methods({
 		// Game.Earth.addReinforcement( { army: { ground: units } } );
 
 		// remove units
+		var stats = {};
+		stats['reinforcements.sent.total'] = 0;
+
 		for (name in units) {
 			Game.Unit.remove({
 				group: 'ground',
 				engName: name,
 				count: units[name]
 			});
+
+			stats['reinforcements.sent.army.ground.' + name] = units[name];
+			stats['reinforcements.sent.total'] += units[name];
 		}
+
+		// save statistic
+		Game.Statistic.incrementUser(user._id, stats);
 	}
 });
 

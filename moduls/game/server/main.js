@@ -60,6 +60,7 @@ Meteor.startup(function () {
 	initChatServer();
 	initQuestServer();
 	initStatisticServer();
+	initAchievementsServer();
 	initCheatsServer();
 	initMarketServer();
 	initColosseumServer();

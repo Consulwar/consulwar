@@ -17,6 +17,7 @@ initQuestClient();
 initRouterClient();
 initMenuClient();
 initStatisticClient();
+initAchievementsClient();
 initCheatsClient();
 initMarketClient();
 initColosseumClient();

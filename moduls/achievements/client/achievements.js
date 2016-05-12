@@ -1,0 +1,3 @@
+initAchievementsClient = function() {
+	initAchievementsLib();
+};

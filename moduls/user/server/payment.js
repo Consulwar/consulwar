@@ -31,7 +31,7 @@ Game.Payment.log = function(isIncome, profit, source, uid) {
 
 	// update user statistics
 	Game.Statistic.incrementUser(record.user_id, {
-		'payment.icome': ( isIncome ? 1 : 0 ),
+		'payment.income': ( isIncome ? 1 : 0 ),
 		'payment.expense': ( isIncome ? 0 : 1 )
 	});
 };

@@ -9,7 +9,7 @@ Game.Statistic = {
 		});
 
 		return field.split('.').reduce(function(obj, key) {
-			return (obj !== undefined) ? obj[key] : obj;
+			return (obj !== undefined && obj[key] !== undefined) ? obj[key] : 0;
 		}, statistic);
 	},
 
@@ -19,7 +19,7 @@ Game.Statistic = {
 		});
 		
 		return field.split('.').reduce(function(obj, key) {
-			return (obj !== undefined) ? obj[key] : obj;
+			return (obj !== undefined && obj[key] !== undefined) ? obj[key] : 0;
 		}, statistic);
 	}
 };

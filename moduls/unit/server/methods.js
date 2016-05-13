@@ -33,6 +33,17 @@ Meteor.methods({
 			throw new Meteor.Error('Не достаточно ресурсов');
 		}
 
+		if (item.maxCount !== undefined) {
+			var countDelta = item.maxCount - item.totalCount();
+			if (countDelta < 1) {
+				throw new Meteor.Error('Достигнуто максимальное количество юнитов данного типа');	
+			}
+
+			if (countDelta < options.count) {
+				options.count = countDelta;
+			}
+		}
+
 		var set = {
 			type: item.type,
 			group: item.group,

@@ -25,6 +25,12 @@
 			<p>{{unit.description}}</p>
 			
 			{{> unitBattleEffects unit=unit}}
+
+			{{#if unit.maxCount}}
+				<div class="limit">
+					Всего юнитов {{formatNumber unit.totalCount}} из {{formatNumber unit.maxCount}}
+				</div>
+			{{/if}}
 		</div>
 
 		{{> item_characteristic item=unit}}

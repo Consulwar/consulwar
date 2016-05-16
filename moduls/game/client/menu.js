@@ -374,7 +374,7 @@ var helpers = {
 	income: function() {
 		return Game.Resources.getIncome();
 	},
-	bonusStorage: function() { return Game.Resources.bonusStorage; },
+	bonusStorage: function() { return Game.Resources.bonusStorage; }
 };
 
 Template.items_menu.helpers(helpers);

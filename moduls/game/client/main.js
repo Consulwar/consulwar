@@ -25,6 +25,7 @@ initBlackmarketClient();
 initPulsecatcherClient();
 
 
+/*
 var preloadImages = function(images) {
 	for (var i = 0; i < images.length; i++) {
 		var img = new Image();
@@ -35,6 +36,7 @@ var preloadImages = function(images) {
 preloadImages([
 	'/img/error.png'
 ]);
+*/
 
 
 ChdFeedbackWidget.init({

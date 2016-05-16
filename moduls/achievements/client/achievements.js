@@ -2,13 +2,14 @@ initAchievementsClient = function() {
 
 initAchievementsLib();
 
-Meteor.subscribe('achievements');
-
-Game.Achievements.Collection.find({ user_id: Meteor.userId() }).observeChanges({
+Meteor.users.find({ _id: Meteor.userId() }).observeChanges({
 	changed: function(id, fields) {
-		for (var key in fields) {
+		if (!fields.achievements) {
+			return;
+		}
+		for (var key in fields.achievements) {
 			var item = Game.Achievements.items[key];
-			var level = fields[key];
+			var level = fields.achievements[key];
 			if (item && level) {
 				Notifications.success('Получено достижение', item.name(level));
 			}

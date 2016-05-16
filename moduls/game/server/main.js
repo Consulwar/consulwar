@@ -130,7 +130,8 @@ Meteor.publish('game', function () {
 				rating: 1,
 				votePowerBonus: 1,
 				isChatFree: 1,
-				timeLastTournament: 1
+				timeLastTournament: 1,
+				achievements: 1
 			}
 		});
 	}

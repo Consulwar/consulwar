@@ -6,12 +6,6 @@ Game.Achievements.actualize = function() {
 	var statistic = Game.Statistic.getUser();
 	var achievements = Game.Achievements.getValue();
 
-	if (!achievements) {
-		Game.Achievements.Collection.insert({
-			user_id: Meteor.userId()
-		});
-	}
-
 	var set = null;
 	for (var key in Game.Achievements.items) {
 		var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
@@ -20,13 +14,13 @@ Game.Achievements.actualize = function() {
 			if (!set) {
 				set = {};
 			}
-			set[key] = progressLevel;
+			set['achievements.' + key] = progressLevel;
 		}
 	}
 
 	if (set) {
-		Game.Achievements.Collection.update({
-			user_id: Meteor.userId()
+		Meteor.users.update({
+			_id: Meteor.userId()
 		}, {
 			$set: set
 		});
@@ -71,23 +65,13 @@ Meteor.methods({
 		}
 
 		var set = {};
-		set[achievementId] = level;
+		set['achievements.' + achievementId] = level;
 
-		Game.Achievements.Collection.upsert({
-			user_id: target._id
+		Meteor.users.update({
+			_id: target._id
 		}, {
 			$set: set
 		});
-	}
-});
-
-Meteor.publish('achievements', function() {
-	if (this.userId) {
-		return Game.Achievements.Collection.find({
-			user_id: this.userId
-		});
-	} else {
-		this.ready();
 	}
 });
 

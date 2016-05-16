@@ -11,6 +11,23 @@ game.Unit = function(options) {
 
 	Game.Unit.items.army[this.side][this.engName] = this;
 
+	this.star = function() {
+		if (!options.fleetup || !Game.Research.items.fleetups[options.fleetup]) {
+			return 0;
+		}
+
+		var level = Game.Research.items.fleetups[options.fleetup].currentLevel();
+		if (level < 10) {
+			return 0;
+		} else if (level < 50) {
+			return 1;
+		} else if (level < 100) {
+			return 2;
+		} else {
+			return 3;
+		}
+	};
+
 	this.url = function(options) {
 		options = options || {
 			group: this.group,

@@ -188,9 +188,40 @@
 		background-position center center
 		background-repeat no-repeat
 		cursor pointer
-		overflow hidden
 		
+		&.star1:before
+			content ""
+			position absolute
+			top -22px
+			left 50%
+			transform translate(-50%, 0)
+			width 23px
+			height 18px
+			background-image url(/img/game/star.png)
+			
+		&.star2:before
+			content ""
+			position absolute
+			top -22px
+			left 50%
+			transform translate(-50%, 0)
+			width 46px
+			height 18px
+			background-image url(/img/game/star.png)
+			
+		&.star3:before
+			content ""
+			position absolute
+			top -22px
+			left 50%
+			transform translate(-50%, 0)
+			width 69px
+			height 18px
+			background-image url(/img/game/star.png)
+
 		a
+			border-radius 10px
+			
 			.level
 				position absolute
 				display block

@@ -86,7 +86,7 @@
 		{{#each items}}
 			{{#let progress=this.progress}}
 				<li 
-					class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}}" 
+					class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if this.star}}star{{this.star}}{{/if}}" 
 					data-tooltip="{{this.name}}"
 					data-tooltip-direction="n"
 				>

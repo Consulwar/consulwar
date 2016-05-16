@@ -60,6 +60,7 @@ Meteor.startup(function () {
 	initChatServer();
 	initQuestServer();
 	initStatisticServer();
+	initAchievementsServer();
 	initCheatsServer();
 	initMarketServer();
 	initColosseumServer();
@@ -107,6 +108,7 @@ Meteor.methods({
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();
 		Game.Quest.actualize();
+		Game.Achievements.actualize();
 
 		return true;
 	},

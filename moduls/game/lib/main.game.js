@@ -467,8 +467,11 @@ Game = {
 			case 'card':
 				return Game.Cards;
 
+			case 'achievement':
+				return Game.Achievements;
+
 			default:
-				throw new Meteor.Error("Такого объекта нет");
+				throw new Meteor.Error('Такого объекта нет');
 		}
 	}
 };
@@ -650,12 +653,17 @@ Game.Effect.getRelatedTo = function(obj) {
 		}
 	}
 
-	// Items and Cards
+	// Items, Cards, Achievements
 	var items = Game.House.getPlacedItems();
 
 	var cards = Game.Cards.getActive();
 	if (cards && cards.length > 0) {
 		items = items.concat(cards);
+	}
+
+	var achievements = Game.Achievements.getCompleted();
+	if (achievements && achievements.length > 0) {
+		items = items.concat(achievements);
 	}
 
 	for (i = 0; i < items.length; i++) {

@@ -179,6 +179,8 @@ Meteor.publish('statistic', function() {
 				fields: {
 					user_id: 1,
 					resources: 1,
+					building: 1,
+					research: 1,
 					cards: 1,
 					quests: 1,
 					units: 1,

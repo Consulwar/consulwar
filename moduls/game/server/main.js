@@ -108,6 +108,7 @@ Meteor.methods({
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();
 		Game.Quest.actualize();
+		Game.Achievements.actualize();
 
 		return true;
 	},

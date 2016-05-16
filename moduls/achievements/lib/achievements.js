@@ -9,12 +9,12 @@ game.Achievement = function(options) {
 	this.field = options.field;
 	this.levels = options.levels;
 
-	this.maxLevel = (function() {
-		return this.levels.length;
-	}).bind(this);
+	this.progressLevel = (function(statistic) {
+		if (!this.field || !this.levels) {
+			return 0;
+		}
 
-	this.currentLevel = (function() {
-		var value = Game.Statistic.getUserValue(this.field);
+		var value = Game.Statistic.getUserValue(this.field, statistic);
 		for (var i = 0; i < this.levels.length; i++) {
 			if (value < this.levels[i]) {
 				return i;
@@ -23,8 +23,11 @@ game.Achievement = function(options) {
 		return i;
 	}).bind(this);
 
-	this.currentProgress = (function() {
-		return Game.Statistic.getUserValue(this.field);
+	this.currentLevel = (function(achievements) {
+		if (achievements === undefined) {
+			achievements = Game.Achievements.getValue();
+		}
+		return (achievements && achievements[this.engName]) ? achievements[this.engName] : 0;
 	}).bind(this);
 
 	this.name = (function(level) {
@@ -54,15 +57,26 @@ game.Achievement = function(options) {
 game.extend(game.Achievement, game.Item);
 
 Game.Achievements = {
+	Collection: new Meteor.Collection('achievements'),
+
 	items: {},
+
+	getValue: function() {
+		return Game.Achievements.Collection.findOne({
+			user_id: Meteor.userId()
+		});
+	},
 
 	getCompleted: function() {
 		var result = [];
-		for (var key in Game.Achievements.items) {
-			if (Game.Achievements.items[key].currentLevel() > 0) {
+		var value = Game.Achievements.getValue();
+
+		for (var key in value) {
+			if (Game.Achievements.items[key] && value[key] > 0) {
 				result.push(Game.Achievements.items[key]);
 			}
 		}
+
 		return result;
 	}
 };

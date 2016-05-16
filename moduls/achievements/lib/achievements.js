@@ -57,14 +57,10 @@ game.Achievement = function(options) {
 game.extend(game.Achievement, game.Item);
 
 Game.Achievements = {
-	Collection: new Meteor.Collection('achievements'),
-
 	items: {},
 
 	getValue: function() {
-		return Game.Achievements.Collection.findOne({
-			user_id: Meteor.userId()
-		});
+		return Meteor.user().achievements;
 	},
 
 	getCompleted: function() {

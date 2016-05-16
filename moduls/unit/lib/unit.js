@@ -37,9 +37,28 @@ game.Unit = function(options) {
 		return Router.routes[this.type].path(options);
 	};
 
+	this.totalCount = function() {
+		var armies = Game.Unit.Collection.find({
+			user_id: Meteor.userId()
+		}).fetch();
+
+		var result = 0;
+		for (var i = 0; i < armies.length; i++) {
+			if (armies[i].units
+			 && armies[i].units.army
+			 && armies[i].units.army[this.group]
+			 && armies[i].units.army[this.group][this.engName]
+			) {
+				result += parseInt( armies[i].units.army[this.group][this.engName] );
+			}
+		}
+		return result;
+	};
+
 	this.type = 'unit';
 	this.side = 'army';
 	this.battleEffects = options.battleEffects;
+	this.maxCount = options.maxCount;
 };
 game.extend(game.Unit, game.Item);
 

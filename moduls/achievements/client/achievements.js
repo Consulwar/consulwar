@@ -9,8 +9,9 @@ Meteor.users.find({ _id: Meteor.userId() }).observeChanges({
 		}
 		for (var key in fields.achievements) {
 			var item = Game.Achievements.items[key];
-			var level = fields.achievements[key];
-			if (item && level) {
+			var level = fields.achievements[key].level;
+			var timestamp = fields.achievements[key].timestamp;
+			if (item && level && timestamp >= Session.get('serverTime')) {
 				Notifications.success('Получено достижение', item.name(level));
 			}
 		}

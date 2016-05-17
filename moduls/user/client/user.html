@@ -170,7 +170,7 @@
 							{{#if gt this.rating 25000}}
 								<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>
 							{{/if}}
-							{{#each achievements}}
+							{{#each (achievements this)}}
 								<img 
 									src="/img/game/achievements/{{this.engName}}{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png" 
 									alt="{{this.name}}" 

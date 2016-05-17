@@ -14,7 +14,10 @@ Game.Achievements.actualize = function() {
 			if (!set) {
 				set = {};
 			}
-			set['achievements.' + key] = progressLevel;
+			set['achievements.' + key] = {
+				level: progressLevel,
+				timestamp: Game.getCurrentTime()
+			};
 		}
 	}
 
@@ -65,7 +68,10 @@ Meteor.methods({
 		}
 
 		var set = {};
-		set['achievements.' + achievementId] = level;
+		set['achievements.' + achievementId] = {
+			level: level,
+			timestamp: Game.getCurrentTime()
+		};
 
 		Meteor.users.update({
 			_id: target._id

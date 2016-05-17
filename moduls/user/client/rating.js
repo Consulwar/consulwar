@@ -55,8 +55,14 @@ Template.rating.helpers({
 		return Game.User.getLevel(rating);
 	},
 
-	achievements: function () {
-		return Game.Achievements.getCompleted();
+	achievements: function (user) {
+		var result = [];
+		for (var key in user.achievements) {
+			if (Game.Achievements.items[key] && user.achievements[key].level > 0) {
+				result.push(Game.Achievements.items[key]);
+			}
+		}
+		return result;
 	},
 
 	mailHash: function(username) {

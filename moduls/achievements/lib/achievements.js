@@ -27,7 +27,10 @@ game.Achievement = function(options) {
 		if (achievements === undefined) {
 			achievements = Game.Achievements.getValue();
 		}
-		return (achievements && achievements[this.engName]) ? achievements[this.engName] : 0;
+		if (achievements && achievements[this.engName] && achievements[this.engName].level) {
+			return achievements[this.engName].level;
+		}
+		return 0;
 	}).bind(this);
 
 	this.maxLevel = (function () {
@@ -72,7 +75,7 @@ Game.Achievements = {
 		var value = Game.Achievements.getValue();
 
 		for (var key in value) {
-			if (Game.Achievements.items[key] && value[key] > 0) {
+			if (Game.Achievements.items[key] && value[key] && value[key].level > 0) {
 				result.push(Game.Achievements.items[key]);
 			}
 		}

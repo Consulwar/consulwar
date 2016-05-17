@@ -12,7 +12,7 @@ Meteor.users.find({ _id: Meteor.userId() }).observeChanges({
 			var level = fields.achievements[key].level;
 			var timestamp = fields.achievements[key].timestamp;
 			if (item && level && timestamp >= Session.get('serverTime')) {
-				Notifications.success('Получено достижение', item.name(level));
+				Notifications.info('Получено достижение', item.name(level));
 			}
 		}
 	}

@@ -996,14 +996,17 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		if (options.missionType && options.missionLevel) {
-			var missionKey = options.missionType + '.' + missionLevel;
-			increment['battle.' + missionKey + '.total'] = 1;
+			increment['battle.' + options.missionType + '.total'] = 1;
+			increment['battle.' + options.missionType + '.' + options.missionLevel + '.total'] = 1;
 			if (result == Game.Battle.result.tie) {
-				increment['battle.' + missionKey + '.tie'] = 1;
+				increment['battle.' + options.missionType + '.tie'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.tie'] = 1;
 			} else if (result == Game.Battle.result.victory) {
-				increment['battle.' +  missionKey + '.victory'] = 1;
+				increment['battle.' + options.missionType + '.victory'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.victory'] = 1;
 			} else if (result == Game.Battle.result.defeat) {
-				increment['battle.' +  missionKey + '.defeat'] = 1;
+				increment['battle.' + options.missionType + '.defeat'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.defeat'] = 1;
 			}
 		}
 

@@ -167,9 +167,17 @@
 						<td>{{this.place}}</td>
 						<td>{{this.username}}</td>
 						<td>
-							{{#if this.cheater}}<img src="/img/game/achivments/cheater.png"/>{{/if}}
-							{{#if gt this.rating 25000}}<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>{{/if}}
-							</td>
+							{{#if gt this.rating 25000}}
+								<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>
+							{{/if}}
+							{{#each achievements}}
+								<img 
+									src="/img/game/achievements/{{this.engName}}{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png" 
+									alt="{{this.name}}" 
+									data-tooltip="{{this.name}}: {{this.description}}"
+								/>
+							{{/each}}
+						</td>
 						<td>
 							<a class="send_message" href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}">
 								<img src="/img/game/message.png">

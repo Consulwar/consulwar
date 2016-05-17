@@ -30,6 +30,10 @@ game.Achievement = function(options) {
 		return (achievements && achievements[this.engName]) ? achievements[this.engName] : 0;
 	}).bind(this);
 
+	this.maxLevel = (function () {
+		return (options.levels) ? options.levels.length : 1;
+	}).bind(this);
+
 	this.name = (function(level) {
 		if (_.isArray(options.name)) {
 			level = (level !== undefined) ? level : this.currentLevel();

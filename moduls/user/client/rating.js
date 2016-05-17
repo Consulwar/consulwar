@@ -55,6 +55,10 @@ Template.rating.helpers({
 		return Game.User.getLevel(rating);
 	},
 
+	achievements: function () {
+		return Game.Achievements.getCompleted();
+	},
+
 	mailHash: function(username) {
 		return 'compose/' + username;
 	}

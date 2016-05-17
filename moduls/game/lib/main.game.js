@@ -100,7 +100,7 @@ game.Item = function(options) {
 
 			for (var i = 0; i < options.effect.length; i++) {
 				if (options.effect[i].register) {
-					if (!this.doNotRegisterEffect) {
+					if (!this.doNotRegisterEffect || options.effect[i].type == 'special') {
 						options.effect[i].register(this);
 					} else {
 						options.effect[i].setProvider(this);

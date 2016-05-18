@@ -936,7 +936,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (mission.level[ options.missionLevel ].cards) {
 					var missionCards = mission.level[ options.missionLevel ].cards;
 					for (var cardName in missionCards) {
-						if (Game.Random.random() <= missionCards[cardName]) {
+						if (Game.Random.chance( missionCards[cardName] )) {
 							if (!cards) {
 								cards = {};
 							}

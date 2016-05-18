@@ -50,6 +50,29 @@ a
 	span
 		color #FFFFFF
 
-ul.notifications {
-	position: fixed;
-}
+ul
+	&.notifications
+		position fixed
+		width 450px
+		
+		li
+			&.notification
+				background-color rgba(0, 0, 0, 0.8)
+				
+				&.info
+					color #56BAF2
+				
+				&.success
+					color #B5D054
+				
+				&.error
+					color #D65F53
+				
+				.title
+				.message
+					overflow hidden
+					text-overflow ellipsis
+					white-space nowrap
+				
+				.closeButton
+					display none

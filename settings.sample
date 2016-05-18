@@ -17,10 +17,10 @@
 			"collectArtefactsPeriod": 120
 		},
 		"earth": {
-			"schedule": "at 7:00 pm"
+			"schedule": "at 4:00 pm"
 		},
 		"pulsecatcher": {
-			"schedule": "at 7:00 pm"
+			"schedule": "at 4:00 pm"
 		},
 		"isInviteRequired": true,
 		"recaptcha": {

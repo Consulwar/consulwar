@@ -76,12 +76,6 @@ UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, 
 	);
 });
 
-/*
-UI.registerHelper('formatTimestamp', function(timestamp) {
-	var date = new Date(timestamp);
-	return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
-});*/
-
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
 
 UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);

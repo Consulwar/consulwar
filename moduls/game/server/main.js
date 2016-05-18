@@ -39,7 +39,7 @@ Meteor.setInterval(heartbeat, 5000);
 SyncedCron.config({
 	log: true,
 	collectionName: 'cronHistory',
-	utc: false,
+	utc: true,
 	collectionTTL: 604800
 });
 

@@ -958,17 +958,22 @@ Game.functions = {};
 
 initFunctionsContent();
 
-
 Game.Helpers = {
-	formatDate: function(timestamp) {
-		var date = new Date(timestamp * 1000);
+	formatDate: function(timestamp, offset) {
+		// offset in minutes
+		if (offset === undefined || !_.isNumber(offset)) {
+			// if not defined, then use local offset
+			offset = new Date().getTimezoneOffset();
+		}
+
+		var date = new Date((timestamp - (offset * 60)) * 1000);
 		return (
-			('0' + date.getDate()).slice(-2) + '.'
-			+ ('0' + (date.getMonth() + 1)).slice(-2) + '.'
-			+ date.getFullYear() + ' '
-			+ ('0' + date.getHours()).slice(-2) + ':'
-			+ ('0' + date.getMinutes()).slice(-2) + ':'
-			+ ('0' + date.getSeconds()).slice(-2)
+			  ('0' + date.getUTCDate()).slice(-2) + '.'
+			+ ('0' + (date.getUTCMonth() + 1)).slice(-2) + '.'
+			+ date.getUTCFullYear() + ' '
+			+ ('0' + date.getUTCHours()).slice(-2) + ':'
+			+ ('0' + date.getUTCMinutes()).slice(-2) + ':'
+			+ ('0' + date.getUTCSeconds()).slice(-2)
 		);
 	},
 

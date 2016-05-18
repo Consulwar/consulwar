@@ -2,8 +2,8 @@ initEarthLib = function() {
 
 Game.Earth = {
 	checkReinforceTime: function(currentTime) {
-		var hours = new Date(currentTime * 1000).getHours();
-		return (hours >= 17 && hours < 19) ? false : true;
+		var hours = new Date(currentTime * 1000).getUTCHours();
+		return (hours >= 14 && hours < 16) ? false : true;
 	}
 };
 

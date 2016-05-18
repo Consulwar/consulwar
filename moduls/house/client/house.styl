@@ -54,6 +54,12 @@ house-element('avatar', 'johnsnow', 580, 110, 10)
 house-group-icon('artefacts')
 house-group-icon('cards')
 
+house-group-icon('donate')
+house-item-icon('donate', 'uncleBuilder')
+house-item-icon('donate', 'nuclearComplex')
+house-item-icon('donate', 'robotsPilots')
+
+
 .house
 	
 	button
@@ -230,3 +236,104 @@ house-group-icon('cards')
 		
 		&:hover
 			border 3px solid #D59B3C
+
+
+.donate
+	position absolute
+	z-index 4
+	top 0px
+	left 124px
+	width 1340px
+	height 435px
+	background-color #090e14
+	background-image url(/img/game/house/donate/back.jpg)
+	background-size 100% 100%
+	
+	.info
+		margin 10px
+		padding 10px
+		width 380px
+		height 395px
+		background-color rgba(0, 0, 0, 0.8)
+		
+		.title
+			margin-bottom 30px
+			font-size 18px
+			font-weight bold
+			color #FFFFFF
+			
+		.description
+			font-size 14px
+			font-weight normal
+			color #527CA2
+			margin-bottom 30px
+			
+		.duration
+			font-size 14px
+			font-weight bold
+			color #FFFFFF
+			margin-bottom 5px
+			
+		.effect
+			font-size 14px
+			font-weight bold
+			color #E9A844
+			margin-bottom 5px
+
+		.resources
+			margin-top 25px
+			
+			li
+				width 100%
+
+	.donate-items
+		display block
+		position absolute
+		top 10px
+		left 420px
+		
+		li
+			display inline-block
+			width 300px
+			height 415px
+			background-repeat no-repeat
+			background-position center top
+			text-align center
+			font-weight bold
+			-webkit-filter grayscale(1)
+			filter grayscale(1)
+			
+			&.active
+				-webkit-filter grayscale(0)
+				filter grayscale(0)
+			
+			a
+				display block
+				width 300px
+				height 360px
+			
+			.time
+				display block
+				width 280px
+				height 37px
+				margin-left 10px
+				padding-top 18px
+				background-color rgba(0, 0, 0, 0.8)
+				text-align center
+				font-size 14px
+				font-weight bold
+				color #FFFFFF
+
+			.buy
+				display block
+				cursor pointer
+				margin 0 auto
+				width 181px
+				height 40px
+				padding-top 10px
+				color #FFFFFF
+				font-size 20px
+				background-image url(/img/game/quests/btn_take.png)
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)

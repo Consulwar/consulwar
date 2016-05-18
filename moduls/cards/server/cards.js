@@ -109,6 +109,11 @@ Game.Cards.activate = function(item, user) {
 };
 
 Meteor.methods({
+	'cards.buyAndActivate': function (id) {
+		Meteor.call('cards.buy', id);
+		Meteor.call('cards.activate', id);
+	},
+
 	'cards.buy': function(id) {
 		var user = Meteor.user();
 
@@ -120,13 +125,13 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		if (!Game.Cards.items.general[id]) {
+		var item = Game.Cards.getItem(id);
+		if (!item) {
 			throw new Meteor.Error('Нет такой карточки');
 		}
 
 		Meteor.call('actualizeGameInfo');
 
-		var item = Game.Cards.items.general[id];
 		if (!item.canBuy()) {
 			throw new Meteor.Error('Нельзя купить эту карточку');
 		}
@@ -156,13 +161,13 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
-		if (!Game.Cards.items.general[id]) {
+		var item = Game.Cards.getItem(id);
+		if (!item) {
 			throw new Meteor.Error('Нет такой карточки');
 		}
 
 		Meteor.call('actualizeGameInfo');
 
-		var item = Game.Cards.items.general[id];
 		if (item.amount() <= 0) {
 			throw new Meteor.Error('Карточки заночились');
 		}

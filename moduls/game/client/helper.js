@@ -83,8 +83,9 @@ UI.registerHelper('formatTimestamp', function(timestamp) {
 });*/
 
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
-
 UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);
+UI.registerHelper('formatTime', Game.Helpers.formatTime);
+UI.registerHelper('getNumeralEnding', Game.Helpers.getNumeralEnding);
 
 var iso = {
 	0: '',

@@ -26,6 +26,22 @@ var menu = {
 				name: 'Палата консула',
 				url: Router.routes.house.path({ group: 'house' }),
 				items: {
+					donate: {
+						name: 'Донат',
+						engName: 'donate',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.Cards.items.donate),
+						items: Game.Cards.items.donate
+					},
+					/* cards: {
+						name: 'Карточки',
+						engName: 'cards',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.Cards.items.general),
+						items: Game.Cards.items.general
+					}, */
 					room: {
 						name: 'Палата',
 						engName: 'room',
@@ -57,14 +73,6 @@ var menu = {
 						isEnoughResources: true,
 						url: firstItemUrl(Game.Artefacts.items),
 						items: Game.Artefacts.items
-					},
-					cards: {
-						name: 'Карточки',
-						engName: 'cards',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.Cards.items.general),
-						items: Game.Cards.items.general
 					}
 				}
 			},

@@ -82,8 +82,8 @@ Game.Cards = {
 	Collection: new Meteor.Collection('cards'),
 
 	items: {
-		donate: {},
 		general: {},
+		donate: {},
 		pulsecatcher: {},
 		penalty: {}
 	},
@@ -104,6 +104,15 @@ Game.Cards = {
 			}
 		}
 		return result;
+	},
+
+	getItem: function (id) { 
+		for (var type in Game.Cards.items) {
+			if (Game.Cards.items[type][id]) {
+				return Game.Cards.items[type][id];
+			}
+		}
+		return null;
 	}
 };
 

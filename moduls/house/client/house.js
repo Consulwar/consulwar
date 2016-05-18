@@ -272,7 +272,19 @@ Template.consulHouseCards.helpers({
 
 Template.consulHouseDonate.events({
 	'click .buy': function (e, t) {
-		console.log('buy', e.currentTarget.dataset.id);
+		var item = Game.Cards.getItem(e.currentTarget.dataset.id);
+		if (!item || !item.canBuy()) {
+			Notifications.error('Не хватает ГГК');
+			return;
+		}
+
+		Meteor.call('cards.buyAndActivate', e.currentTarget.dataset.id, function (err, result) {
+			if (err) {
+				Notifications.error('Не удалось купить бонус', err.error);
+			} else {
+				Notifications.success('Бонус куплен');
+			}
+		});
 	}
 });
 

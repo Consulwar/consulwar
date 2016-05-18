@@ -2,35 +2,49 @@ initAchievementsServer = function() {
 
 initAchievementsLib();
 
-Game.Achievements.actualize = function() {
-	var statistic = Game.Statistic.getUser();
-	var achievements = Game.Achievements.getValue();
-
-	var set = null;
-	for (var key in Game.Achievements.items) {
-		var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
-		var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
-		if (progressLevel > currentLevel) {
-			if (!set) {
-				set = {};
-			}
-			set['achievements.' + key] = {
-				level: progressLevel,
-				timestamp: Game.getCurrentTime()
-			};
-		}
-	}
-
-	if (set) {
-		Meteor.users.update({
-			_id: Meteor.userId()
-		}, {
-			$set: set
-		});
-	}
-};
-
 Meteor.methods({
+	'achievements.complete': function(completed) {
+		var user = Meteor.user();
+
+		if (!(user && user._id)) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var statistic = Game.Statistic.getUser();
+		var achievements = Game.Achievements.getValue();
+
+		var set = null;
+		for (var key in completed) {
+			var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
+			var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
+			if (completed[key] == progressLevel && progressLevel > currentLevel) {
+				if (!set) {
+					set = {};
+				}
+				set['achievements.' + key] = {
+					level: progressLevel,
+					timestamp: Game.getCurrentTime()
+				};
+			} else {
+				delete completed[key];
+			}
+		}
+
+		if (set) {
+			Meteor.users.update({
+				_id: Meteor.userId()
+			}, {
+				$set: set
+			});
+		}
+
+		return completed;
+	},
+
 	'achievements.give': function(username, achievementId, level) {
 		var user = Meteor.user();
 

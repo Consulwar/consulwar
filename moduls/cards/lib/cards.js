@@ -20,7 +20,7 @@ game.Card = function(options) {
 	this.url = function(options) {
 		options = options || {
 			group: 'house',
-			subgroup: 'cards',
+			subgroup: (this.cardType != 'general' ? this.cardType : 'cards'),
 			item: this.engName
 		};
 		return Router.routes.house.path(options);
@@ -82,6 +82,7 @@ Game.Cards = {
 	Collection: new Meteor.Collection('cards'),
 
 	items: {
+		donate: {},
 		general: {},
 		pulsecatcher: {},
 		penalty: {}

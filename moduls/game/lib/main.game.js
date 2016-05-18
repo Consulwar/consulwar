@@ -958,7 +958,6 @@ Game.functions = {};
 
 initFunctionsContent();
 
-
 Game.Helpers = {
 	formatDate: function(timestamp) {
 		var date = new Date(timestamp * 1000);
@@ -985,5 +984,55 @@ Game.Helpers = {
 		return (hours > 99 ? hours : ('0' + hours).slice(-2)) + ':'
 			+ ('0' + minutes).slice(-2) + ':'
 			+ ('0' + seconds).slice(-2);
+	},
+
+	getNumeralEnding: function (num, endings) {
+		if (!endings || endings.length === 0) {
+			return '';
+		}
+
+		var i = 0;
+		if (num < 5 || num > 20) {
+			var m = num % 10;
+			if (m == 1) {
+				i = 1;
+			} else if (m > 1 && m < 5) {
+				i = 2;
+			}
+		}
+
+		return (i < endings.length) ? endings[i] : endings[endings.length - 1];
+	},
+
+	formatTime: function (seconds) {
+		if (seconds < 0) {
+			return '…';
+		}
+
+		var result = [];
+
+		var days = Math.floor(seconds / 86400);
+		if (days > 0) {
+			seconds -= days * 86400;
+			result.push(days + ' ' + Game.Helpers.getNumeralEnding(days, ['дней', 'день', 'дня']));
+		}
+
+		var hours = Math.floor(seconds / 3600);
+		if (hours > 0) {
+			seconds -= hours * 3600;
+			result.push(hours + ' ' + Game.Helpers.getNumeralEnding(hours, ['часов', 'час', 'часа']));
+		}
+
+		var minutes = Math.floor(seconds / 60);
+		if (minutes > 0) {
+			seconds -= minutes * 60;
+			result.push(minutes + ' ' + Game.Helpers.getNumeralEnding(minutes, ['минут', 'минута', 'минуты']));
+		}
+
+		if (seconds > 0) {
+			result.push(('0' + seconds).slice(-2));
+		}
+
+		return result.join(' ');
 	}
 };

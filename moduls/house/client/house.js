@@ -21,6 +21,9 @@ Game.House.showPage = function() {
 		} else if (subgroup == 'cards') {
 			templateName = 'consulHouseCards';
 			item = Game.Cards.items.general[item];
+		} else if (subgroup == 'donate') {
+			templateName = 'consulHouseDonate';
+			item = Game.Cards.items.donate[item];
 		} else {
 			templateName = 'consulHouseItem';
 			item = Game.House.items[subgroup][item];
@@ -262,5 +265,34 @@ Template.consulHouseCards.helpers({
 		});
 	}
 });
+
+// ----------------------------------------------------------------------------
+// Consul house donate menu
+// ----------------------------------------------------------------------------
+
+Template.consulHouseDonate.events({
+	'click .buy': function (e, t) {
+		console.log('buy', e.currentTarget.dataset.id);
+	}
+});
+
+Template.consulHouseDonate.helpers({
+	getTimeLeft: function(item) {
+		var task = item.getActiveTask();
+		if (!task) {
+			return 0;
+		}
+
+		var timeLeft = task.finishTime - Session.get('serverTime');
+		return (timeLeft > 0) ? timeLeft : 0;
+	},
+
+	subgroupItems: function() {
+		return _.map(Game.Cards.items.donate, function(item) {
+			return item;
+		});
+	}
+});
+
 
 };

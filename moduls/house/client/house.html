@@ -163,3 +163,29 @@
 		{{/if}}
 	</div>
 </template>
+
+<template name="consulHouseDonate">
+	<div class="donate">
+		<div class="info">
+			<div class="title">{{item.name}}</div>
+			<div class="description">{{item.description}}</div>
+			<div class="duration">Срок действия: {{formatTime item.durationTime}}</div>
+			{{#each item.effect}}
+				<div class="effect">{{this.pretext}}{{this.result}}{{this.aftertext}}</div>
+			{{/each}}
+			{{> item_price price=(item.getPrice 1)}}
+		</div>
+		<ul class="donate-items">
+			{{#each subgroupItems}}
+				<li class="donate-{{this.engName}}-icon {{#if eq ../item.engName this.engName}}active{{/if}}">
+					<a href="{{this.url}}"></a>
+					{{#if this.getActiveTask}}
+						<span class="time">{{formatTime (getTimeLeft this)}}</span>
+					{{else}}
+						<span class="buy" data-id="{{this.engName}}">Купить</span>
+					{{/if}}
+				</li>
+			{{/each}}
+		</ul>
+	</div>	
+</template>

@@ -110,41 +110,8 @@ Game.Cards.activate = function(item, user) {
 
 Meteor.methods({
 	'cards.buyAndActivate': function (id) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		var item = Game.Cards.getItem(id);
-		if (!item) {
-			throw new Meteor.Error('Нет такой карточки');
-		}
-
-		Meteor.call('actualizeGameInfo');
-		
-		if (!item.canBuy()) {
-			throw new Meteor.Error('Нельзя купить эту карточку');
-		}
-		
-		// spend price
-		Game.Resources.spend(item.getPrice());
-
-		// activate
-		var isCardActivated = Game.Cards.activate(item, user);
-		if (!isCardActivated) {
-			throw new Meteor.Error('Не удалось активировать карточку');
-		}
-
-		// save statistic
-		Game.Statistic.incrementUser(user._id, {
-			'cards.bought': 1,
-			'cards.activated': 1
-		});
+		Meteor.call('cards.buy', id);
+		Meteor.call('cards.activate', id);
 	},
 
 	'cards.buy': function(id) {

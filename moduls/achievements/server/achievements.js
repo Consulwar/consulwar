@@ -34,11 +34,9 @@ Meteor.methods({
 					result = {};
 				}
 
-				set['achievements.' + key] = {
-					level: progressLevel,
-					timestamp: Game.getCurrentTime()
-				};
-				
+				set['achievements.' + key + '.level'] = progressLevel;
+				set['achievements.' + key + '.timestamps.' + progressLevel] = Game.getCurrentTime();
+
 				result[key] = progressLevel;
 			}
 		}

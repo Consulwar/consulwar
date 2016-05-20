@@ -17,20 +17,29 @@ Meteor.methods({
 		var statistic = Game.Statistic.getUser();
 		var achievements = Game.Achievements.getValue();
 
+		var result = null;
 		var set = null;
+
 		for (var key in completed) {
+			if (!Game.Achievements.items[key]) {
+				continue;
+			}
+
 			var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
 			var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
+
 			if (completed[key] == progressLevel && progressLevel > currentLevel) {
 				if (!set) {
 					set = {};
+					result = {};
 				}
+
 				set['achievements.' + key] = {
 					level: progressLevel,
 					timestamp: Game.getCurrentTime()
 				};
-			} else {
-				delete completed[key];
+				
+				result[key] = progressLevel;
 			}
 		}
 
@@ -42,7 +51,7 @@ Meteor.methods({
 			});
 		}
 
-		return completed;
+		return result;
 	},
 
 	'achievements.give': function(username, achievementId, level) {

@@ -172,9 +172,26 @@
 							{{/if}}
 							{{#each (achievements this)}}
 								<img 
-									src="/img/game/achievements/{{this.engName}}{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png" 
+									src="
+										/img/game/achievements/{{this.engName}}
+										{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png
+										" 
 									alt="{{this.name}}" 
-									data-tooltip="{{this.name}}: {{this.description}}"
+									data-tooltip="
+										<div class='title'>{{this.name}}</div>
+										<div class='text'>{{this.description}}</div>
+										{{#if this.effect}}
+											{{#each this.effect}}
+												{{#if (this.result ../currentLevel)}}
+													<div class='effect'>
+														{{this.pretext}}
+														{{this.result ../currentLevel}}
+														{{this.aftertext}}
+													</div>
+												{{/if}}
+											{{/each}}
+										{{/if}}
+										"
 								/>
 							{{/each}}
 						</td>

@@ -57,11 +57,23 @@ Template.rating.helpers({
 
 	achievements: function (user) {
 		var result = [];
+
 		for (var key in user.achievements) {
-			if (Game.Achievements.items[key] && user.achievements[key].level > 0) {
-				result.push(Game.Achievements.items[key]);
+			var item = Game.Achievements.items[key];
+			var level = user.achievements[key].level;
+			
+			if (item && level > 0) {
+				result.push({
+					engName: item.engName,
+					name: item.name(level),
+					description: item.description(level),
+					currentLevel: level,
+					maxLevel: item.maxLevel(),
+					effect: item.effect
+				});
 			}
 		}
+
 		return result;
 	},
 

@@ -13,8 +13,7 @@ Meteor.methods({
 		}, {
 			fields: {
 				username: 1,
-				rating: 1,
-				cheater: 1
+				rating: 1
 			},
 			sort: {rating: -1}
 		}).count();
@@ -24,8 +23,7 @@ Meteor.methods({
 		}, {
 			fields: {
 				username: 1,
-				rating: 1,
-				cheater: 1
+				rating: 1
 			},
 			sort: {rating: -1}
 		}).count();
@@ -56,7 +54,7 @@ Meteor.methods({
 			fields: {
 				username: 1,
 				rating: 1,
-				cheater: 1
+				achievements: 1
 			},
 			sort: {rating: -1},
 			skip: (page > 0) ? (page - 1) * count : 0,

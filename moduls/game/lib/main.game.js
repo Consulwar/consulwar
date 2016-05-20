@@ -541,12 +541,12 @@ Game.Effect = function(options) {
 
 		if (this.condition && this.condition.type != 'all') {
 			// Если влияет только на конкретный объект
-			if (this.condition.name) {
-				if (Game.effects[this.type][this.condition.name] === undefined) {
-					Game.effects[this.type][this.condition.name] = {list: []};
+			if (this.condition.engName) {
+				if (Game.effects[this.type][this.condition.engName] === undefined) {
+					Game.effects[this.type][this.condition.engName] = {list: []};
 				}
 
-				Game.effects[this.type][this.condition.name].list.push(this);
+				Game.effects[this.type][this.condition.engName].list.push(this);
 			} else {
 				if (Game.effects[this.type][this.condition.type] === undefined) {
 					Game.effects[this.type][this.condition.type] = {list: []};
@@ -676,7 +676,7 @@ Game.Effect.getRelatedTo = function(obj) {
 
 			if (effect.type == this.type) {
 				if (effect.condition) {
-					if (effect.condition.name && obj.name != effect.condition.name) {
+					if (effect.condition.engName && obj.engName != effect.condition.engName) {
 						continue;
 					}
 

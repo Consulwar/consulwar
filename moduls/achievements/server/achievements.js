@@ -2,32 +2,58 @@ initAchievementsServer = function() {
 
 initAchievementsLib();
 
-Game.Achievements.actualize = function() {
-	var statistic = Game.Statistic.getUser();
-	var achievements = Game.Achievements.getValue();
-
-	var set = null;
-	for (var key in Game.Achievements.items) {
-		var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
-		var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
-		if (progressLevel > currentLevel) {
-			if (!set) {
-				set = {};
-			}
-			set['achievements.' + key] = progressLevel;
-		}
-	}
-
-	if (set) {
-		Meteor.users.update({
-			_id: Meteor.userId()
-		}, {
-			$set: set
-		});
-	}
-};
-
 Meteor.methods({
+	'achievements.complete': function(completed) {
+		var user = Meteor.user();
+
+		if (!(user && user._id)) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var statistic = Game.Statistic.getUser();
+		var achievements = Game.Achievements.getValue();
+
+		var result = null;
+		var set = null;
+
+		for (var key in completed) {
+			if (!Game.Achievements.items[key]) {
+				continue;
+			}
+
+			var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
+			var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
+
+			if (completed[key] == progressLevel && progressLevel > currentLevel) {
+				if (!set) {
+					set = {};
+					result = {};
+				}
+
+				set['achievements.' + key] = {
+					level: progressLevel,
+					timestamp: Game.getCurrentTime()
+				};
+				
+				result[key] = progressLevel;
+			}
+		}
+
+		if (set) {
+			Meteor.users.update({
+				_id: Meteor.userId()
+			}, {
+				$set: set
+			});
+		}
+
+		return result;
+	},
+
 	'achievements.give': function(username, achievementId, level) {
 		var user = Meteor.user();
 
@@ -65,7 +91,10 @@ Meteor.methods({
 		}
 
 		var set = {};
-		set['achievements.' + achievementId] = level;
+		set['achievements.' + achievementId] = {
+			level: level,
+			timestamp: Game.getCurrentTime()
+		};
 
 		Meteor.users.update({
 			_id: target._id

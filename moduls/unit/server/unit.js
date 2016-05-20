@@ -640,16 +640,19 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		// calculate damage
 		var key = null;
-		var min = 0;
-		var max = 0;
-		var damage = 0;
+		var damage = null;
 
 		for (key in userUnits) {
 			if (userUnits[key].model.characteristics.damage) {
-				min = userUnits[key].model.characteristics.damage.min * userUnits[key].count;
-				max = userUnits[key].model.characteristics.damage.max * userUnits[key].count;
-				damage = Game.Random.interval( min, max ) * options.damageReduction; 
-				userUnits[key].damage = damage;
+				damage = Game.Effect.Special.applyTo(
+					{ engName: 'roundDamage' + round }, 
+					userUnits[key].model.characteristics,
+					true
+				).damage;
+				userUnits[key].damage = Math.floor(
+					Game.Random.interval( damage.min, damage.max ) * 
+					userUnits[key].count * options.damageReduction
+				);
 			} else {
 				userUnits[key].damage = 0;
 			}
@@ -659,10 +662,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		for (key in enemyUnits) {
 			if (enemyUnits[key].model.characteristics.damage) {
-				min = enemyUnits[key].model.characteristics.damage.min * enemyUnits[key].count;
-				max = enemyUnits[key].model.characteristics.damage.max * enemyUnits[key].count;
-				damage = Game.Random.interval( min, max ) * options.damageReduction; 
-				enemyUnits[key].damage = damage;
+				damage = enemyUnits[key].model.characteristics.damage;
+				enemyUnits[key].damage = Math.floor(
+					Game.Random.interval( damage.min, damage.max ) * 
+					enemyUnits[key].count * options.damageReduction
+				);
 			} else {
 				enemyUnits[key].damage = 0;
 			}
@@ -911,6 +915,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					reward.crystals = Math.floor( killedCost.crystals * 0.1 );
 				}
 
+				// reward bonus
+				if (options.missionType == 'tradefleet') {
+					reward = Game.Effect.Special.applyTo({ engName: 'tradefleetBonus' }, reward, true);
+				}
+
 				// truckc grab extra reward
 				var truckCount = 0;
 
@@ -996,14 +1005,17 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		if (options.missionType && options.missionLevel) {
-			var missionKey = options.missionType + '.' + missionLevel;
-			increment['battle.' + missionKey + '.total'] = 1;
+			increment['battle.' + options.missionType + '.total'] = 1;
+			increment['battle.' + options.missionType + '.' + options.missionLevel + '.total'] = 1;
 			if (result == Game.Battle.result.tie) {
-				increment['battle.' + missionKey + '.tie'] = 1;
+				increment['battle.' + options.missionType + '.tie'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.tie'] = 1;
 			} else if (result == Game.Battle.result.victory) {
-				increment['battle.' +  missionKey + '.victory'] = 1;
+				increment['battle.' + options.missionType + '.victory'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.victory'] = 1;
 			} else if (result == Game.Battle.result.defeat) {
-				increment['battle.' +  missionKey + '.defeat'] = 1;
+				increment['battle.' + options.missionType + '.defeat'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.defeat'] = 1;
 			}
 		}
 

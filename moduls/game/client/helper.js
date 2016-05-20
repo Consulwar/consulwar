@@ -103,12 +103,25 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 			? 3
 			: limit
 		: 5);
-	price = price.toString();
 
 	var exponent = 0;
-	while (price.length > limit) {
-		price = Math.round(price / 1000).toString();
+	var rest = 0;
+	while (price.toString().length > limit) {
+		rest = price % 1000;
+		price = Math.floor(price / 1000);
 		exponent++;
+	}
+
+	rest = ('00' + rest.toString()).substr(-3);
+	price = price.toString();
+
+	if (price.length <= limit - 2 && rest.substr(1, 1) !== '0') {
+		rest = '.' + rest.substr(0, 2);
+	} else if (price.length <= limit - 1 && rest.substr(0, 1) !== '0') {
+		rest = '.' + rest.substr(0, 1);
+	} else {
+		price = Math.round(price + '.' + rest).toString();
+		rest = '';
 	}
 
 	price = price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -117,7 +130,7 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 		return 'o_O ??';
 	}
 
-	return price + iso[exponent];
+	return price + rest + iso[exponent];
 });
 
 var formatNumber = function (num, delimeter) {

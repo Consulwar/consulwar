@@ -93,7 +93,6 @@ var iso = {
 	8: 'Y'
 };
 
-
 UI.registerHelper('formatNumberWithISO', function(price, limit) {
 	if (!_.isNumber(price)) {
 		return price;
@@ -108,15 +107,7 @@ UI.registerHelper('formatNumberWithISO', function(price, limit) {
 
 	var exponent = 0;
 	while (price.length > limit) {
-		price = (price / 1000);
-		if (price.toFixed(2).substr(-1) !== '0') {
-			price = price.toFixed(2);
-		} else if (price.toFixed(1).substr(-1) !== '0') {
-			price = price.toFixed(1);
-		} else {
-			price = Math.round(price);
-		}
-		price = price.toString();
+		price = Math.round(price / 1000).toString();
 		exponent++;
 	}
 

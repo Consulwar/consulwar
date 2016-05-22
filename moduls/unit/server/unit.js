@@ -933,11 +933,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (truckCount > 0) {
 					reward.metals += Math.min(
 						truckCount * 2000,
-						Math.floor( killedCost.metals * 0.4 )
+						Math.floor( reward.metals * 0.4 )
 					);
 					reward.crystals += Math.min(
 						truckCount * 1000,
-						Math.floor( killedCost.crystals * 0.4 )
+						Math.floor( reward.crystals * 0.4 )
 					);
 				}
 

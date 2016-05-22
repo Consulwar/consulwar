@@ -931,12 +931,13 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				}
 
 				if (truckCount > 0) {
+					var truckCapacity = Game.Effect.Special.getValue(true, { engName: 'truckCapacity' });
 					reward.metals += Math.min(
-						truckCount * 2000,
+						truckCount * truckCapacity.metals,
 						Math.floor( killedCost.metals * 0.4 )
 					);
 					reward.crystals += Math.min(
-						truckCount * 1000,
+						truckCount * truckCapacity.crystals,
 						Math.floor( killedCost.crystals * 0.4 )
 					);
 				}

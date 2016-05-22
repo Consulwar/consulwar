@@ -189,16 +189,19 @@ var menu = {
 		items: {
 			fleet: {
 				name: 'Комический флот',
+				additionalArea: 'general',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 				items: Game.Unit.items.reptiles.fleet
 			}, 
 			heroes: {
 				name: 'Герои',
+				additionalArea: 'general',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.heroes),
 				items: Game.Unit.items.reptiles.heroes
 			}, 
 			ground: {
 				name: 'Армия',
+				additionalArea: 'general',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.ground),
 				items: Game.Unit.items.reptiles.ground
 			}

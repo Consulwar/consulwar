@@ -54,6 +54,10 @@ var loadHistoryBattle = function(itemId) {
 Template.earthHistory.onRendered(function() {
 	// run this function each time as page or hash cahnges
 	this.autorun(function() {
+		if (Router.current().route.getName() != 'earthHistory') {
+			return;
+		}
+		
 		var pageNumber = parseInt( Router.current().getParams().page, 10 );
 		var itemId = Router.current().getParams().hash;
 

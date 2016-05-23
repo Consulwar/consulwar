@@ -283,6 +283,48 @@ Template.promocodeReward.helpers({
 		}
 
 		return result.length > 0 ? result : null;
+	},
+
+	cards: function () {
+		if (!this.profit || !this.profit.cards) {
+			return null;
+		}
+
+		var cards = this.profit.cards;
+		var result = [];
+
+		for (var name in cards) {
+			var item = Game.Cards.getItem(name);
+			if (item) {
+				result.push({
+					engName: name,
+					group: item.cardType,
+					amount: cards[name]
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	},
+
+	houseItems: function () {
+		if (!this.profit || !this.profit.houseItems) {
+			return null;
+		}
+
+		var items = this.profit.houseItems;
+		var result = [];
+
+		for (var group in items) {
+			for (var name in items[group]) {
+				result.push({
+					engName: name,
+					group: group
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
 	}
 });
 

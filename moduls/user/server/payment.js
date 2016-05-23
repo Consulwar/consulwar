@@ -116,8 +116,11 @@ if (process.env.NODE_ENV == 'development') {
 {
 	code: 'pewpew11',
 	maxActivations: 42, // not required
+	                    // if not specified, then only 1 activation
 	validthru: timestamp, // not required
 	type: string, // not required
+	              // random - get random item from Game.PromoCode.randomItems
+	              // once:#type - give this type once per user (examples once:votePower, once:startBonus etc.)
 	profit: {
 		resources: {
 			credits: 100,
@@ -135,9 +138,24 @@ if (process.env.NODE_ENV == 'development') {
 			},
 			...
 		},
+		cards: {
+			uncleBuilder: 1,
+			...
+		},
+		houseItems: {
+			tron: {
+				gameofthrones: 1,
+				...
+			},
+			...
+		}
 		votePower: 5
 	}
 }
+
+Meteor.call('admin.addPromoCode', { code: 'testCard', profit: { cards: { uncleBuilder: 2 } } } )
+Meteor.call('admin.addPromoCode', { code: 'testItem', profit: { houseItems: { tron: { gameofthrones: 1} } } } )
+
 */
 
 Game.PromoCode = {
@@ -206,6 +224,8 @@ Meteor.methods({
 			    !options.profit.resources
 			 && !options.profit.units
 			 && !options.profit.votePower
+			 && !options.profit.cards
+			 && !options.profit.houseItems
 			) {
 				isProfitOk = false;
 			}

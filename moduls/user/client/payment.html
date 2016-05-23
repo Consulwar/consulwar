@@ -127,6 +127,22 @@
 				{{/each}}
 			</ul>
 		{{/if}}
+		{{#if cards}}
+			<ul class="cards">
+				{{#each cards}}
+					<li class="{{this.group}}-{{this.engName}}-icon">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if houseItems}}
+			<ul class="houseItems">
+				{{#each houseItems}}
+					<li class="{{this.group}}-{{this.engName}}-icon"></li>
+				{{/each}}
+			</ul>
+		{{/if}}
 		{{#if profit.votePower}}
 			<span class="votepower">Сила голоса +{{profit.votePower}}</span>
 		{{/if}}

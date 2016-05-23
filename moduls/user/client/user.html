@@ -182,11 +182,19 @@
 							{{/each}}
 						</td>
 						<td>
-							<a class="send_message" href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}">
+							<a
+								class="send_message"
+								href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}"
+								data-tooltip="Написать сообщение"
+							>
 								<img src="/img/game/message.png">
 							</a>
-							<a class="open_house" href="{{pathFor 'house' group='house' hash=this.username}}">
-								Смотреть палату
+							<a
+								class="open_house"
+								href="{{pathFor 'house' group='house' hash=this.username}}"
+								data-tooltip="Смотреь палату"
+							>
+								<img src="/img/game/house.png">
 							</a>
 						</td>
 						<td>{{formatNumber this.rating}}</td>

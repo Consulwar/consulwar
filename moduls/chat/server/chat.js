@@ -176,6 +176,7 @@ Meteor.methods({
 				if (userResources.crystals.amount < 0
 				 || userResources.metals.amount < 0
 				 || userResources.honor.amount < 0
+				 || userResources.credits.amount < 0
 				) {
 					throw new Meteor.Error('Вы слишком бедны что бы совершать сепукку');
 				}
@@ -192,7 +193,8 @@ Meteor.methods({
 					Game.Resources.spend({
 						metals: {amount: metals},
 						crystals: {amount: crystals},
-						honor: 100
+						honor: 100,
+						credits: 5
 					}, uid);
 				};
 
@@ -231,18 +233,6 @@ Meteor.methods({
 					throw new Meteor.Error('Совет Галактики все ещё в Шоке!');
 				}
 			}
-		}
-
-		// dice price check and spend
-		if (set.data && set.data.type == 'dice') {
-			var dicePrice = 5000 * set.data.dice.dices.amount;
-
-			if (userResources.crystals.amount < dicePrice) {
-				throw new Meteor.Error('У вас не достаточно кристаллов чтобы бросить кубики');
-			}
-
-			Game.Resources.spend({ crystals: dicePrice });
-			stats['chat.spent.crystals'] = dicePrice;
 		}
 
 		// message price

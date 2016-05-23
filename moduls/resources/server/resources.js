@@ -162,6 +162,18 @@ Game.Resources.addProfit = function(profit, uid) {
 			$inc: { votePowerBonus: profit.votePower }
 		});
 	}
+
+	if (profit.cards) {
+		Game.Cards.add(profit.cards);
+	}
+
+	if (profit.houseItems) {
+		for (var itemGroup in profit.houseItems) {
+			for (var itemName in profit.houseItems[itemGroup]) {
+				Game.House.add(itemGroup, itemName);
+			}
+		}
+	}
 };
 
 Game.Resources.updateWithIncome = function(currentTime) {
@@ -241,9 +253,9 @@ Game.Resources.initialize = function(user) {
 	if (currentValue === undefined) {
 		Game.Resources.Collection.insert({
 			'user_id': user._id,
-			humans: {amount: 500 * 3},
-			metals: {amount: 3000 * 3},
-			crystals: {amount: 1500 * 3},
+			humans: {amount: 5000},
+			metals: {amount: 20000},
+			crystals: {amount: 15000},
 			credits: {amount: 0},
 			honor: {amount: 0},
 			updated: Game.getCurrentTime()

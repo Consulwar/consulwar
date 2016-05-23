@@ -333,14 +333,14 @@ UI.registerHelper('militaryTooltip', function(characteristics, target) {
 
 Template.tooltipTable.helpers({
 	current: function() {
-		if (!this.price || this.target == 'time') {
+		if (this.target == 'time') {
 			return null;
 		}
 		
 		var userResources = Game.Resources.currentValue.get();
 		var current = userResources[this.target] ? userResources[this.target].amount : 0;
 
-		return (current < this.price) ? current : null;
+		return (!this.price || current < this.price) ? current : null;
 	},
 
 	time: function() {

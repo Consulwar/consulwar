@@ -264,7 +264,7 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 	var userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
 
 	// check attack possibility
-	if (userHealth > enemyHealth * 0.5 && Game.Random.random() > 0.35 ) {
+	if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {
 		return null; // not this time
 	}
 

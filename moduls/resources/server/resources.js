@@ -253,9 +253,9 @@ Game.Resources.initialize = function(user) {
 	if (currentValue === undefined) {
 		Game.Resources.Collection.insert({
 			'user_id': user._id,
-			humans: {amount: 500 * 3},
-			metals: {amount: 3000 * 3},
-			crystals: {amount: 1500 * 3},
+			humans: {amount: 5000},
+			metals: {amount: 20000},
+			crystals: {amount: 15000},
 			credits: {amount: 0},
 			honor: {amount: 0},
 			updated: Game.getCurrentTime()

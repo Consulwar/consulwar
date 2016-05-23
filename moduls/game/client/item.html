@@ -96,7 +96,7 @@
 				</li>
 			{{else}}
 				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}} data-id="{{this.engName}}">
-					{{formatNumberWithISO this.amount}}
+					{{formatNumberWithISO this.amount 6}}
 				</li>
 			{{/if}}
 		{{/each}}

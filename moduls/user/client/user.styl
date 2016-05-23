@@ -1,4 +1,3 @@
-.auth,
 .register
 	position absolute
 	top 65px
@@ -10,33 +9,29 @@
 	background-position top left
 	
 .auth
-	margin-left -540px
-	background-image url(/img/username_bg.png)
+	position absolute
+	top 20px
+	left 50%
+	margin-left 150px
 	
 	input[name="username"],
 	input[name="password"]
-		width 244px
-		height 10px
-		margin-bottom 12px
-		padding 9px 0 9px 34px
-		background-color #C0C0C0
-		border 0
+		width 180px
+		height 15px
+		padding 5px
+		margin-right 10px
+		margin-bottom 15px
+		background-color #000000
+		border 2px solid #ffffff
 		border-radius 5px
-		box-shadow inset 2px 2px 2px #000
-		background-repeat no-repeat
-		background-position 7px center
+		font-size 14px
+		color #ffffff
 		
 		&::-webkit-input-placeholder
-			color #000201
+			color #ffffff
 			
 		&::-moz-placeholder
-			color #000201
-		
-	input[name="username"]
-		background-image url(/img/i_username.png)
-		
-	input[name="password"]
-		background-image url(/img/i_password.png)
+			color #ffffff
 		
 	select
 		width 278px
@@ -53,16 +48,18 @@
 			color #993A2E
 			
 	label
-		margin-bottom 12px
+		margin-right 20px
 		
 	input[name="remember"]
 		vertical-align middle
-		margin-right 5px
 		
 	input[type="submit"]
-		width 248px
-		height 31px
-		margin 12px 0 6px
+		display block
+		position absolute
+		top 0px
+		left 410px
+		width 32px
+		height 59px
 		color transparent
 		border 0
 		background-color transparent
@@ -71,26 +68,34 @@
 		cursor pointer
 		
 		&:hover
-			background-image url(/img/auth_submit_a.png)
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 	
 	a
 		position relative
 		color #D4D4D3
 		margin-right 20px
 
-.register
-	margin-left 225px
-	background-image url(/img/register_bg.png)
+.consul_here
+	position absolute
+	top 110px
+	left 50%
+	margin-left -320px
+	width 600px
+	padding 5px 20px
+	background -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)
+	background -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 25%,rgba(0,0,0,0.5) 75%,rgba(0,0,0,0) 100%)
+	background linear-gradient(to right, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 25%,rgba(0,0,0,0.5) 75%,rgba(0,0,0,0) 100%)
 	
-	.consul_here
+	>a
 		display block
-		width 258px
-		height 43px
-		padding 10px
-		margin 22px auto 30px
-		background-color #983a2e
+		width 300px
+		height 38px
+		padding 14px
+		margin 0 auto
+		background-color #d65f52
 		color #fffbfc
-		font-size 35px
+		font-size 28px
 		text-decoration none
 		text-align center
 		border-radius 10px
@@ -98,11 +103,6 @@
 		&:hover
 			-webkit-filter brightness(1.2)
 			filter brightness(1.2)
-			
-	p
-		margin 0 auto
-		width 190px
-		text-align center
 
 
 .smoke
@@ -464,4 +464,10 @@
 					
 				&:nth-child(4)
 					width 400px
+				
+				a
+					text-decoration none
+
+				img
+					margin-left 5px
 		

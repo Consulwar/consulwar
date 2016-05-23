@@ -1,73 +1,78 @@
 .index
-	background-image url(/img/bg.jpg)
+	background-image url(/img/banner1.jpg)
 	background-repeat no-repeat
-	background-position top center
+	background-position center 100px
+	background-color #0d1013
+	
 	header
 		position relative
-		height 33px
-		//width 1080px
-		padding: 17px 0 0
-		margin-bottom 680px
-		
-		background-color rgba(0, 0, 0,.5)
-		color #993A2E
+		height 100px
+		margin-bottom 774px
 		
 		.logo
 			position absolute
 			left 50%
-			margin-left -540px
+			margin-left -640px
+			margin-top 50px
+			color #c4c4c4
+			width 500px
+			text-align center
 			
 		.stats
 			position absolute
-			right 50%
-			margin-right -540px
+			left 50%
+			margin-left -640px
+			margin-top 20px
+			font-size 16px
 			
 			>span
-				margin 0 30px
+				margin 0 40px
+				color #939393
 				
 			.count
-				color #DEDEDE
+				color #e9a844
 
 	.center_image
 		position absolute
-		top 100px
+		top 20px
 		left 50%
 		margin-left -172.5px
 		width 347px
 		height 39px
 		text-align center
 		
-	h1
-		color #599EC1
-		margin-top 64px
-		margin-bottom 20px
-		text-align center
+		>h3
+			margin-top 5px
 
-	.description,
-	.subdescription,
-	.awards,
-	.feedback,
+	.awards
+	.feedback
 	.screenshots
+		margin 0 auto
+		padding-top 50px
 		text-align center
 	
 	.screenshots
+		max-width 1024px
+		
 		li
+			margin 10px
 			display inline-block
 
 	.description
-		width 808px
-		padding 16px
+		position absolute
+		top 100px
+		height 774px
+		width 100%
 		margin 0 auto
-		background-color rgba(0, 0, 0, .4)
-		text-align center
-		border-radius 5px
 		
-		.consul
-			color #BC5345
-
-	.subdescription
-		text-align center
-		color #2C5D77
+		>span
+			display block
+			position absolute
+			bottom 0
+			padding 16px
+			background-color rgba(0, 0, 0, 0.5)
+			text-align center
+			font-size 16px
 		
 	.feedback
 		li
@@ -75,14 +80,11 @@
 			width 362px
 			height 150px
 			padding 12px
-			background-color #1D292D
+			background-color none
 			text-align left
 			vertical-align middle
 			border-radius 5px
 			margin 0 15px
-			
-			&:nth-child(even)
-				background-color #161C1F
 			
 			img
 				float left

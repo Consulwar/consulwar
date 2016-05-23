@@ -253,7 +253,7 @@ game.Item = function(options) {
 			}
 
 			if (!curPrice.time) {
-				curPrice.time = Math.floor(sum / 12);
+				curPrice.time = Math.max( Math.floor(sum / 12), 30 );
 			}
 		} else {
 			level = level ? level : 1;

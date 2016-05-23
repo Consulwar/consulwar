@@ -33,11 +33,11 @@ game.extend(game.MutualItem, game.Item);
 game.MutualResearch = function(options){
 	game.MutualResearch.superclass.constructor.apply(this, arguments);
 
-	if (Game.Mutual.items.research[this.engName]) {
+	if (Game.Mutual.items[this.group][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется общее исследование ' + this.engName);
 	}
 
-	Game.Mutual.items.research[this.engName] = this;
+	Game.Mutual.items[this.group][this.engName] = this;
 
 	//this.type = 'MutualResearch';
 	this.group = 'research';
@@ -67,7 +67,8 @@ Game.Mutual = {
 	},
 
 	items: {
-		research: {}
+		research: {},
+		council: {}
 	}
 };
 

@@ -8,31 +8,91 @@
 				<th class="time">Время</th>
 				<th class="status">Статус</th>
 			</tr>
-			{{#each mail}}
-			<tr data-id="{{this._id}}" class="{{#if eq this.from 0}}from_tamily{{/if}} {{#if eq this.from 1}}from_system {{#if eq this.type 'fleetbattle'}}{{#if eq this.text.result 'Победа'}}battle_win{{else}}{{#if eq this.text.result 'Ничья'}}battle_draw{{else}}battle_lose{{/if}}{{/if}}{{/if}}{{#if eq this.type 'quiz'}}quiz{{/if}}{{/if}}">
-				<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
-				<td>{{this.name}}</td>
-				<td>{{this.subject}}</td>
-				<td>{{formatDate this.timestamp}}</td>
-				<td>{{this.status}}</td>
-			</tr>
-			{{/each}}
 		</table>
-		<a class="delete_selected" href="#">Удалить выделенное</a> &nbsp;&nbsp;&nbsp; <a class="new_message" href="#">Написать сообщение</a>
+		<div class="data">
+			<table>
+				{{#if eq page 1}}
+					{{#let quest=dailyQuest}}
+						{{#if quest}}
+							<tr class="from_tamily">
+								<td></td>
+								<td>{{quest.name}}</td>
+								<td>{{quest.subject}}</td>
+								<td>{{formatDate quest.timestamp}}</td>
+								<td>{{quest.status}}</td>
+							</tr>
+						{{/if}}
+					{{/let}}
+				{{/if}}
+				{{#each mail}}
+					<tr 
+						data-id="{{this._id}}"
+						class="
+							{{#if eq this.from 0}}from_tamily{{/if}} 
+							{{#if eq this.from 1}}
+								from_system 
+								{{#if eq this.type 'fleetbattle'}}
+									{{#if eq this.text.result 'Победа'}}
+										battle_win 
+									{{else}}
+										{{#if eq this.text.result 'Ничья'}}
+											battle_draw 
+										{{else}}
+											battle_lose 
+										{{/if}}
+									{{/if}}
+								{{/if}}
+								{{#if eq this.type 'quiz'}}quiz{{/if}}
+							{{/if}}
+						"
+					>
+						<td>{{#unless eq this.from 0}}<input type="checkbox"/>{{/unless}}</td>
+						<td>{{letterName this}}</td>
+						<td>{{this.subject}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+						<td>{{letterStatus this}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+
+		<span class="delete_selected disabled">Удалить выделенное</span>
+		<span class="new_message">Написать сообщение</span>
+
+		{{#if isAdmin}}
+			<span class="admin_page">Жалобы</span>
+		{{/if}}
+
+		{{> pages total=countTotal perPage=count}}
 
 		<div class="letter">
 			<button class="back">Назад</button>
 			{{#with letter}}
-			<span class="name">{{#if eq from Meteor.userId}} 
-			{{recipient}}
-			{{else}}
-			{{sender}}
-			{{/if}}</span>
-			<span class="subject">{{subject}}</span>
-			<time>{{formatDate timestamp}}</time>
-			<div class="text">{{{nl2br text}}}</div>
+				<span class="name">{{sender}}</span>
+				<span class="subject">{{subject}}</span>
+				<time>{{formatDate timestamp}}</time>
+				<div class="text">{{{nl2br text}}}</div>
 			{{/with}}
-			<button class="reply">Ответить</button>
+			{{#if canComplain letter}}
+				{{#if letter.complaint}}
+					<span class="complaint">
+						{{#if letter.resolved}}
+							{{#if eq letter.resolution 0}}
+								Администратор отклонил жалобу
+							{{else}}
+								Жалоба обработана
+							{{/if}}
+						{{else}}
+							Жалоба отправлена
+						{{/if}}
+					</span>
+				{{else}}
+					<button class="complain">Пожаловаться</button>
+				{{/if}}
+			{{/if}}
+			{{#if canReply letter}}
+				<button class="reply">Ответить</button>
+			{{/if}}
 		</div>
 
 		<div class="battle_letter">
@@ -135,16 +195,21 @@
 			{{/with}}
 		</div>
 
-
 		<form>
 			<button class="back">Назад</button>
 			<div>
-				<label>Кому написать: <input class="recipient" />[x]</label>
-				<label>Тема сообщения: <input class="subject" /></label>
-				<textarea></textarea>
+				<label class="{{#if isRecipientOk}}check{{else}}cross{{/if}}">
+					Кому написать: <input class="recipient"/>
+				</label>
+				<label>Тема сообщения: <input class="subject" maxlength="200"/></label>
+				<textarea maxlength="5000"></textarea>
 			</div>
 			<input type="submit"/>
 		</form>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>
 
@@ -163,14 +228,74 @@
 		
 		<br/>
 		{{#if canVote}}
-		{{#each options}}
-		<a data-option="{{this.name}}" class="neutral {{this.mood}}" href="#">{{this.text}}</a>
-		{{/each}}
+			{{#each options}}
+				<a data-option="{{this.name}}" class="neutral {{this.mood}}" href="#">{{this.text}}</a>
+			{{/each}}
 		{{else}}
-		{{#each options}}
-		<progress data-option="{{this.text}}" data-percent="{{#with multiply this.value 100}}{{div this ../totalVotes}}{{/with}}" value="{{this.value}}" max="{{totalVotes}}"></progress>
-		{{/each}}
+			{{#each options}}
+				<progress 
+					data-option="{{this.text}}" 
+					data-percent="{{#with multiply this.value 100}}{{div this ../totalVotes}}{{/with}}" 
+					value="{{this.value}}" 
+					max="{{totalVotes}}"
+				>
+				</progress>
+			{{/each}}
 		{{/if}}
 		<div class="close"></div>
+	</div>
+</template>
+
+<template name="mailAdmin">
+	<div class="mail">
+		<table>
+			<tr class="header">
+				<th></th>
+				<th class="name">Отправитель</th>
+				<th class="name">Получатель</th>
+				<th class="subject">Тема</th>
+				<th class="time">Время</th>
+				<th class="status">Статус</th>
+			</tr>
+		</table>
+		<div class="data">
+			<table>
+				{{#each mail}}
+					<tr data-id="{{this._id}}">
+						<td></td>
+						<td>{{this.sender}}</td>
+						<td>{{this.recipient}}</td>
+						<td>{{this.subject}}</td>
+						<td>{{formatDate this.timestamp}}</td>
+						<td>{{#if this.resolved}}Обработана{{/if}}</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+
+		{{> pages total=countTotal perPage=count}}
+
+		<div class="letter">
+			<button class="back">Назад</button>
+			{{#with letter}}
+				<span class="name">{{sender}}</span>
+				<span class="subject">{{subject}}</span>
+				<time>{{formatDate timestamp}}</time>
+				<div class="text">{{{nl2br text}}}</div>
+				<button class="block" data-username="{{sender}}">
+					Заблокировать {{sender}}
+				</button>
+				<button class="block" data-username="{{recipient}}">
+					Заблокировать {{recipient}}
+				</button>
+				{{#unless resolved}}
+					<button class="cancel">Отклонить жалобу</button>
+				{{/unless}}
+			{{/with}}
+		</div>
+
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
 	</div>
 </template>

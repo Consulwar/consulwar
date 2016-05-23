@@ -1,14 +1,58 @@
-Meteor.startup(function () {
+initMutualLib = function () {
 
-Game.Global = {
-	Collection: new Meteor.Collection('global'),
+game.MutualItem = function(options) {
+	game.MutualItem.superclass.constructor.apply(this, arguments);
+
+	this.constructor = function(options) {
+		this.investments = options.investments;
+	};
+
+	this.constructor(options);
+
+	this.url = function(options) {
+		options = options || {
+			group: this.group,
+			item: this.engName
+		};
+		
+		return Router.routes[this.type].path(options);
+	};
+
+	this.currentLevel = function() {
+		return Math.floor(this.currentInvestments() / this.investments);
+	};
+
+	this.currentInvestments = function() {
+		return Game.Mutual.get(this.group, this.engName) || 0;
+	};
+
+	this.type = 'mutual';
+};
+game.extend(game.MutualItem, game.Item);
+
+game.MutualResearch = function(options){
+	game.MutualResearch.superclass.constructor.apply(this, arguments);
+
+	if (Game.Mutual.items[this.group][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется общее исследование ' + this.engName);
+	}
+
+	Game.Mutual.items[this.group][this.engName] = this;
+
+	//this.type = 'MutualResearch';
+	this.group = 'research';
+};
+game.extend(game.MutualResearch, game.MutualItem);
+
+Game.Mutual = {
+	Collection: new Meteor.Collection('mutual'),
 
 	getValue: function(group) {
-		return Game.Global.Collection.findOne({group: group});
+		return Game.Mutual.Collection.findOne({group: group});
 	},
 
 	get: function(group, name) {
-		var item = Game.Global.getValue(group);
+		var item = Game.Mutual.getValue(group);
 
 		if (item && item[name]) {
 			return item[name];
@@ -19,11 +63,14 @@ Game.Global = {
 
 	has: function(group, name, level) {
 		level = level || 1;
-		return Game.Global.get(group, name) >= level;
+		return Game.Mutual.get(group, name) >= level;
 	},
 
-	items: {}
-}
+	items: {
+		research: {},
+		council: {}
+	}
+};
 
 Game.Investments = {
 	Collection: new Meteor.Collection('investments'),
@@ -51,7 +98,7 @@ Game.Investments = {
 	items: {}
 /*
 	get: function(group, name) {
-		var item = Game.Global.getValue(group);
+		var item = Game.Mutual.getValue(group);
 
 		if (item && item[name]) {
 			return item[name];
@@ -62,8 +109,10 @@ Game.Investments = {
 
 	has: function(group, name, level) {
 		level = level || 1;
-		return Game.Global.get(group, name) >= level;
+		return Game.Mutual.get(group, name) >= level;
 	}*/
-}
+};
 
-});
+initMutualContent();
+
+};

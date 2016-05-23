@@ -1,33 +1,31 @@
 <template name="game">
 	{{#unless connection.connected}}
-	<div class="disconnected">
-		Связь прервана<br/>
-		{{#if eq connection.status 'connecting'}}Попытка восстановления…<br/>{{/if}}
-		
-		
-		{{#unless eq connection.status 'connecting'}}
-		{{#unless eq connection.status 'waiting'}}
-		{{connection.status}}<br/>
-		{{/unless}}
-		{{/unless}}
-
-		 
-		{{#if eq connection.status 'waiting'}}
-		Восстановление связи через {{reconnectTime}}
-		{{/if}}
-	</div>
-	<div class="smoke"></div>
+		<div class="smoke"></div>
+		<div class="disconnected">
+			Связь прервана<br/>
+			{{#if eq connection.status 'connecting'}}Попытка восстановления…<br/>{{/if}}
+			{{#unless eq connection.status 'connecting'}}
+				{{#unless eq connection.status 'waiting'}}
+					{{connection.status}}<br/>
+				{{/unless}}
+			{{/unless}}
+			{{#if eq connection.status 'waiting'}}
+				Восстановление связи через <span>{{formatSeconds reconnectTime}}</span>
+			{{/if}}
+		</div>
 	{{/unless}}
 
 	<div class="game">
 		<header>
 			<div class="username">
-				<span>Консул</span> {{login}}
+				<span>Консул</span> {{username}}
 				<span class="planet_name">Планета:</span> {{planetName}} <a class="edit" href="#"></a>
 			</div>
 
 			{{> top_menu}}
-			<span class="servername"> <span>Сервер:</span> Reactor</span>
+			<span class="servername" data-tooltip="Время сервера" data-tooltip-direction="s">
+				{{formatDate serverTime -180}}
+			</span>
 		</header>
 
 		<div class="menu">
@@ -35,35 +33,50 @@
 
 			{{> game_menu}}
 
-			<div class="fleet_info {{#if currentBattle}}battle{{/if}}">
-				{{#unless currentBattle}}
-				Нет передвижений флота
+			<div class="fleet_info {{#if and fleetInfo fleetInfo.isWaitingAttack}}attack{{/if}}">
+				{{#if fleetInfo}}
+					{{#with fleetInfo}}
+						{{#if reinforcements}}
+							<a class="humans" href="{{pathFor 'cosmos' hash=reinforcementsId}}">
+								Подкрепление 
+								{{#if gt reinforcements 1}}({{reinforcements}}) {{/if}}
+								{{formatSeconds (fleetTime reinforcementsTime)}}
+							</a><br/>
+						{{/if}}
+						{{#if consul}}
+							<a class="humans" href="{{pathFor 'cosmos' hash=consulId}}">
+								Флот консула 
+								{{#if gt consul 1}}({{consul}}) {{/if}}
+								{{formatSeconds (fleetTime consulTime)}}
+							</a><br/>
+						{{/if}}
+						{{#if reptile}}
+							<a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
+								Флот рептилий 
+								{{#if gt reptile 1}}({{reptile}}) {{/if}}
+								{{formatSeconds (fleetTime reptileTime)}}
+							</a><br/>
+						{{/if}}
+					{{/with}}
 				{{else}}
-				{{#if eq currentBattle.status 0}}Космический бой{{else}}Возвращение флота{{/if}} через {{formatSeconds currentBattle.remaining}}
-				{{/unless}}
+					<br/>
+					Нет передвижений флота
+				{{/if}}
 			</div>
 		</div>
 		
-		<div class="content {{active_menu}} {{active_side}} {{active_item.type}}">
+		<div class="content">
 			{{> side_menu}}
 
 			{{> overlay_menu}}
 
 			{{>yield region="content"}}
-			
-			
-			{{#if eq active_menu 'planet'}}
-			<div class="additional_area quest {{#if eq active_side 'residential'}}{{#if currentQuest}}{{#if eq currentQuest.status 0}}prompt{{/if}} {{#if eq currentQuest.status 3}}finished{{/if}}{{/if}}{{/if}}">
+
+			{{> additional_area}}
+
+			<div class="permanent">
+				{{>yield region="permanent_content"}}
 			</div>
-			{{/if}}
-			{{#if eq active_menu 'army'}}
-			<div class="additional_area quest">
-			</div>
-			{{/if}}
-			{{#if eq active_menu 'research'}}
-			<div class="additional_area quest">
-			</div>
-			{{/if}}
 		</div>
 
 		{{> items_menu}}
@@ -72,6 +85,7 @@
 
 	</div>
 	{{> notifications}}
+	{{> tooltips }}
 </template>
 
 <template name="item">
@@ -132,21 +146,27 @@
 					{{/each}}
 				</ul>
 				{{/if}}
-				{{active_item.characteristics.effect.name}}
+				{{#each item.triggers.battle}}
+				{{this.name}}
+				{{/each}}
 
-				{{#if active_item.characteristics.air}}
+				{{#if eq active_item.characteristics.special 'air'}}
 				*Воздушная единица<br/>
 				{{/if}}
 
-				{{#if eq active_item.characteristics.attackAir false}}
+				{{#each active_item.characteristics.notAttack}}
+				{{#if eq this 'air'}}
 				*Не атакует воздушные цели
 				{{/if}}
+				{{/each}}
 				
 				<span class="damage" {{militaryTooltip active_item.characteristics.effects 'damage'}}>
-					{{#if active_item.characteristics.damage}}{{#with multiply active_item.characteristics.damage 0.8}}{{formatNumber this}}{{/with}} —{{/if}} 
-					{{formatNumber active_item.characteristics.damage}}
+					{{#if active_item.characteristics.damage}}
+					{{formatNumberWithISO active_item.characteristics.damage.min}} —
+					{{formatNumberWithISO active_item.characteristics.damage.max}}
+					{{/if}}
 				</span>
-				<span class="life" {{militaryTooltip active_item.characteristics.effects 'life'}}>{{formatNumber active_item.characteristics.life}}</span>
+				<span class="life" {{militaryTooltip active_item.characteristics.effects 'life'}}>{{formatNumberWithISO active_item.characteristics.life}}</span>
 			</div>
 		{{/if}}
 
@@ -154,23 +174,23 @@
 
 		<ul class="resources">
 			{{#with price}}
-			{{#unless eq active_item.type 'global'}}
+			{{#unless eq active_item.type 'mutual'}}
 			<li class="time" {{priceTooltip priceEffects 'time'}}>Время строительства: <time>{{#if currentConstruction}}{{#if eq active_item.engName currentConstruction.engName}}{{formatSeconds constructionRemaningTime}}{{else}}{{formatSeconds time}}{{/if}}{{else}}{{formatSeconds time}}{{/if}}</time></li>
 			{{/unless}}
-			{{#if humans}}<li class="humans" {{priceTooltip priceEffects 'humans'}}>{{formatNumber humans}}</li>{{/if}}
-			{{#if honor}}<li class="honor" {{priceTooltip priceEffects 'honor'}}>{{formatNumber honor}}</li>{{/if}}
-			{{#if metals}}<li class="metals" {{priceTooltip priceEffects 'metals'}}>{{formatNumber metals}}</li>{{/if}}
-			{{#if crystals}}<li class="crystals" {{priceTooltip priceEffects 'crystals'}}>{{formatNumber crystals}}</li>{{/if}}
-			{{#if eq active_item.type 'global'}}<li class="button"><button class="build" data-action="invest" data-currency="resources" disabled="{{not enoughResources}}">Вложить ресурсы</button></li>{{/if}}
+			{{#if humans}}<li class="humans" {{priceTooltip priceEffects 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
+			{{#if honor}}<li class="honor" {{priceTooltip priceEffects 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
+			{{#if metals}}<li class="metals" {{priceTooltip priceEffects 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}
+			{{#if crystals}}<li class="crystals" {{priceTooltip priceEffects 'crystals'}}>{{formatNumberWithISO crystals}}</li>{{/if}}
+			{{#if eq active_item.type 'mutual'}}<li class="button"><button class="build" data-action="invest" data-currency="resources" disabled="{{not enoughResources}}">Вложить ресурсы</button></li>{{/if}}
 			{{#if credits}}
-			{{#if eq active_item.type 'global'}}<li></li>{{/if}}
-			<li class="credits" {{priceTooltip priceEffects 'credits'}}>{{formatNumber credits}}</li>
-			{{#if eq active_item.type 'global'}}<li class="button">или<button class="build" data-action="invest" data-currency="credits" disabled="{{not enoughCredits}}">Вложить кредиты</button></li>{{/if}}
+			{{#if eq active_item.type 'mutual'}}<li></li>{{/if}}
+			<li class="credits" {{priceTooltip priceEffects 'credits'}}>{{formatNumberWithISO credits}}</li>
+			{{#if eq active_item.type 'mutual'}}<li class="button">или<button class="build" data-action="invest" data-currency="credits" disabled="{{not enoughCredits}}">Вложить кредиты</button></li>{{/if}}
 			{{/if}}
 			{{/with}}
 		</ul>
 
-		{{#unless eq active_item.type 'global'}}
+		{{#unless eq active_item.type 'mutual'}}
 		<button class="build" disabled="{{disableBuild}}">Отдать приказ</button>
 		{{else}}
 		<progress max="{{active_item.investments}}" value="{{investments}}"></progress>
@@ -180,7 +200,7 @@
 		<input class="count" type="number" placeholder="Количество" value="1"/>
 		{{/if}}
 
-		{{#if eq active_item.type 'global'}}
+		{{#if eq active_item.type 'mutual'}}
 		<input class="count" type="number" placeholder="Количество" value="1"/>
 		{{/if}}
 	
@@ -196,19 +216,4 @@
 		{{constructionRemaningTime}}
 	</div>
 	{{/if}}
-</template>
-
-<template name="top_investors">
-	<div class="additional_area">
-		<ol>
-		{{#each investors}}
-			<li>
-				{{this.login}} — {{this.investments}} вложений<br/>
-				{{#if this.resources.metals}}<span class="metals">{{this.resources.metals}} металла</span>{{/if}} 
-				{{#if this.resources.crystals}}<span class="crystals">{{this.resources.crystals}} кристалла</span>{{/if}} 
-				{{#if this.resources.credits}}<span class="credits">{{this.resources.credits}} кредитов</span>{{/if}}
-			</li>
-		{{/each}}
-		</ol>
-	</div>
 </template>

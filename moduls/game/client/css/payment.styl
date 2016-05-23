@@ -1,0 +1,328 @@
+payment-icon(name)
+	.{name}-icon
+		background-image url("/img/game/payment/" name ".png")
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+
+
+payment-icon('paymentCredits1000')
+payment-icon('paymentCredits2500')
+payment-icon('paymentCredits5000')
+payment-icon('paymentCredits10000')
+payment-icon('paymentCredits25000')
+payment-icon('paymentCredits50000')
+
+
+.side_payment
+	position absolute
+	width 340px
+	height 433px
+	top 0px
+	right 0px
+	z-index 2
+	color #B1B1B1
+	
+	h2
+		color #E9A844
+		font-size 20px
+		font-weight bold
+		text-align center
+		padding-top 10px
+		
+	a
+		display inline-block
+		width 165px
+		color #56BAF2
+		text-align center
+		text-decoration none
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+			
+	.buy
+		display block
+		cursor pointer
+		background-image url(/img/game/payment/buy.png)
+		background-repeat no-repeat
+		margin 20px 10px
+		width 145px
+		height 95px
+		padding-left 170px
+		padding-top 10px
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+				
+		.yellow
+			color #E9A844
+			
+		.blue
+			color #56BAF2
+
+	.promo
+		position absolute
+		display block
+		bottom 0px
+		right 0px
+		width 340px
+
+		.hint
+			position absolute
+			display block
+			right 0px
+			bottom 60px
+			width 100%
+			text-align center
+			font-size 14px
+			
+		.send
+			position absolute
+			display block
+			bottom 4px
+			right 10px
+			width 80px
+			height 20px
+			padding 10px 10px
+			margin 5px
+			background-image url(/img/game/payment/btn-back.png)
+			background-repeat no-repeat
+			font-size 16px
+			font-weight bold
+			text-align center
+			color #FFFFFF
+			cursor pointer
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+		.code
+			position absolute
+			right 130px
+			bottom 10px
+			width 176px
+			height 33px
+			border-radius 5px
+			padding 2px 10px
+			-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+			-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+			box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+			border 2px solid #335168
+			background-color #adadad
+			font-size 16px
+			font-weight bold
+
+.smoke
+	&.reward
+		z-index 199
+
+.payment
+	position fixed
+	z-index 100
+	top 50%
+	left 50%
+	margin -270px 0 0 -450px
+	width 835px
+	height 500px
+	border 1px solid #E9A844
+	border-radius 5px
+	background-color #040506
+	font-size 16px
+	color #ABAFB2
+
+	&.platbox
+		width 1030px
+		height 95%
+		max-height 730px
+		top 2.5%
+		left 50%
+		margin-left -515px
+		margin-top 0
+		padding 10px
+		
+		iframe
+			width 100%
+			height 100%
+			background-color #FFFFFF
+			
+	&.reward
+		z-index 200
+		width 272px
+		height 367px
+		margin -200px 0 0 -183px
+		border none
+		background-image url(img/game/payment/reward-back.jpg)
+		background-repeat no-repeat
+		
+		.close
+			top -10px
+			right 4px
+			
+		img
+			margin-top 50px
+			margin-left 85px
+			
+		.count
+			color #C6E846
+			font-size 24px
+			font-weight bold
+			text-align center
+
+		.description
+			margin 20px
+			color #E9A844
+			font-size 18px
+			font-weight normal
+			text-align center
+			
+		.take
+			display block
+			cursor pointer
+			width 181px
+			height 40px
+			padding-top 10px
+			margin-left 45px
+			color #FFFFFF
+			font-size 24px
+			font-weight bold
+			text-align center
+			background-image url(/img/game/quests/btn_take.png)
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+	.paymentItems
+		display block
+		width 100%
+		margin 17px
+		
+		li
+			cursor pointer
+			display inline-block
+			width 260px
+			height 50px
+			padding-top 170px
+			background-repeat no-repeat
+			background-position center top
+			color #FFFFFF
+			text-align center
+			font-size 24px
+			
+			span
+				color #B5D054
+				font-size 18px
+
+	.close
+		position absolute
+		top -22px
+		right -22px
+		height 44px
+		width 44px
+		padding 0
+		margin 0
+		background-image url(/img/game/payment/close.png)
+		background-repeat no-repeat
+		cursor pointer
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+		
+
+.content
+	.paymentHistory
+		position relative
+		height 435px
+		margin-left 0px
+		background-color #04080B
+		z-index 10
+	
+		.data
+			height 355px
+			overflow-y auto
+			
+		table
+			width 100%
+			border-collapse collapse
+
+			tr
+				height 40px
+
+				&:nth-child(odd):not(.header)
+					background-color #0B121A
+				
+				&:nth-child(even)
+					background-color #0E1821
+				
+			td, th
+				text-align left
+					
+				&:nth-child(1)
+					padding-left 10px
+					width 150px
+			
+				&:nth-child(2)
+					width 350px
+				
+				&:nth-child(3)
+					width 200px
+
+
+.promocode
+	display inline-block
+	position fixed
+	z-index 100
+	top 50%
+	left 50%
+	transform translate(-50%, -50%)
+	padding 20px
+	text-align center
+	color #FFFFFF
+	border 2px solid #E9A844
+	border-radius 5px
+	background-image none
+	background-color #0b0d0f
+
+	ul
+		margin-bottom 20px
+
+	.units
+		display block
+		
+		li
+			position relative
+			display inline-block
+			width 120px
+			height 20px
+			padding-top 120px
+			background-repeat no-repeat
+			background-position top center
+			font-weight bold
+	
+	.votepower
+		display block
+		margin-bottom 20px
+		color #ffb74a
+		font-size 24px
+		font-weight bold
+
+	.take
+		display block
+		position relative
+		cursor pointer
+		width 181px
+		height 40px
+		margin 0 auto
+		padding-top 10px
+		color #FFFFFF
+		font-size 24px
+		font-weight bold
+		background-image url(/img/game/quests/btn_take.png)
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)

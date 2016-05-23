@@ -1,6 +1,7 @@
 initResourcesClient = function() {
 
 initResourcesLib();
+initArtefactsLib();
 
 Meteor.subscribe('resources');
 
@@ -36,6 +37,13 @@ Tracker.autorun(function(){
 			baseValue.metals.bonus
 		);
 
+		baseValue.honor = Game.Resources.calculateFinalAmount(
+			baseValue.honor.amount, 
+			income.honor, 
+			delta,
+			baseValue.honor.bonusSeconds
+		);
+
 		baseValue.credits = Game.Resources.calculateFinalAmount(
 			baseValue.credits.amount, 
 			income.credits, 
@@ -45,11 +53,17 @@ Tracker.autorun(function(){
 
 		Game.Resources.currentValue.set(baseValue);
 	}
-})
+});
+
+Template.current_resources.events({
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	}
+});
 
 Template.current_resources.helpers({
 	resources: function() { return Game.Resources.currentValue.get(); },
 	incomeEffects: function() { return Game.Resources.getIncome().effects; }
 });
 
-}
+};

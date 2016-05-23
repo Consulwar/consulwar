@@ -1,0 +1,69 @@
+.market
+	padding 17px
+
+	h2
+		width 100%
+		text-align center
+		
+	ul
+		display block
+		width 100%
+		margin-top 10px
+	
+		li
+			cursor pointer
+			display inline-block
+			width 80px
+			background-color #0B121A
+			
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+				
+			&.active
+				background-color #0E1821
+
+	.from
+		position absolute
+		width 410px
+		left 17px
+		top 70px
+		
+	.to
+		position absolute
+		width 410px
+		right 17px
+		top 70px
+		
+	.exchange
+		display block
+		position absolute
+		bottom 0px
+		left 0px
+		width 100%
+		height 120px
+		text-align center
+
+		input
+			height 40px
+			border-radius 5px
+			-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75)
+			-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75)
+			box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75)
+			border 2px solid #335168
+			background-color #adadad
+			text-align center
+			
+		.btn-all
+		.btn-exchange
+		.btn-add
+		.btn-reset
+			cursor pointer
+			display inline-block
+			font-size 16px
+			text-align center
+			padding 14px
+			margin 4px
+			background-color #000
+			border 2px solid #80baec
+			color #80baec

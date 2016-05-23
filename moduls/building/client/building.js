@@ -1,16 +1,29 @@
-initBuldingClient = function() {
+initBuildingClient = function() {
 
-initBuldingLib();
+initBuildingLib();
+
+Meteor.subscribe('buildings');
 
 Game.Building.showPage = function() {
 	var item = Game.Building.items[this.params.group][this.params.item];
+	var menu = this.params.menu;
 	
 	if (item) {
-		this.render('item_building', {to: 'content', data: {building: item}});
+		switch (menu) {
+			case 'tournaments':
+				this.render('colosseum', { to: 'content' });
+				break;
+			case 'bonus':
+				this.render('pulsecatcher', { to: 'content' });
+				break;
+			default:
+				this.render('item_building', {to: 'content', data: { building: item } });
+				break;
+		}
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', { to: 'content' });
 	}
-}
+};
 
 Template.item_building.events({
 	'click button.build': function(e, t) {
@@ -29,10 +42,18 @@ Template.item_building.events({
 			}
 		);
 
-		if (item.currentLevel() == 0) {
+		if (item.currentLevel() === 0) {
 			Router.go(item.url({group: item.group}));
 		}
+	},
+
+	'click button.market': function(e, t) {
+		Game.Market.showWindow();
+	},
+
+	'click button.blackmarket': function(e, t) {
+		Game.Blackmarket.showWindow();
 	}
 });
 
-}
+};

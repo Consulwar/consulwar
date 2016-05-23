@@ -1,0 +1,31 @@
+<template name="blackmarket">
+	<div class="smoke"></div>
+	<div class="modal blackmarket">
+		<div class="close"></div>
+		<div class="container">
+			{{#if unit}}
+				<img 
+					alt="{{unit.name}}" 
+					src="
+					{{#unless unit.notImplemented}}
+						/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
+					{{else}}
+						/img/game/notimplemented.jpg
+					{{/unless}}
+					"
+				>
+				<span class="title">{{unit.name}}</span>
+			{{/if}}
+		</div>
+		<div class="top"></div>
+		<div class="bottom"></div>
+		<ul class="resources">
+			<li class="credits">{{credits}}</li>
+		</ul>
+		<div class="open">Открыть</div>
+		<div class="take">Забрать</div>
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
+	</div>
+</template>

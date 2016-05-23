@@ -34,13 +34,33 @@ var letters = [
 	'4', '5', '6', '7', '8', '9'
 ];
 
+var tempKey = uuid.new();
+
 Accounts.onCreateUser(function(option, user) {
-	check(option.login, String);
+	check(option.username, String);
 
-	option.login = option.login.trim();
+	option.username = option.username.trim();
+	option.username = option.username.replace(/\s+/g, ' ');
 
-	check(option.login, Match.Where(function(login) {
-		return login.length > 0 && login.length <= 16;
+	check(option.username, Match.Where(function(username) {
+		if (username.length === 0) {
+			throw new Meteor.Error('Имя не должно быть пустым');
+		}
+
+		if (username.length > 16) {
+			throw new Meteor.Error('Максимальная длинна имени 16 символов');
+		}
+
+		if (!username.match(/^[а-яА-Яa-zA-Z0-9_\- ]+$/)) {
+			throw new Meteor.Error('Имя может содержать пробел, тире, нижнее подчеркивание, буквы и цифры');
+		}
+
+		var hasName = Meteor.call('user.checkPlainnameExists', option.username);
+		if (hasName) {
+			throw new Meteor.Error('Такое имя занято');
+		}
+
+		return true;
 	}));
 
 	check(option.email, Match.Where(function(email) {
@@ -58,20 +78,35 @@ Accounts.onCreateUser(function(option, user) {
 		return true;
 	}));
 
+	if (Meteor.settings.public.isInviteRequired) {
 
-	check(option.code, Match.Where(function(code) {
-		var valid_code_id = Meteor.call('checkInviteCode', code);
+		// registration by invite
+		check(option.code, String);
+		var valid_code_id = Meteor.call('user.checkInviteCode', option.code);
 
 		if (valid_code_id) {
-			Invites.remove({_id: valid_code_id});
+			Invites.remove({ _id: valid_code_id });
+			user.inviteCode = option.code;
+		} else {
+			throw new Meteor.Error('Некорректный код приглашения');
 		}
 
-		return valid_code_id;
-	}));
+	} else {
 
-	user.inviteCode = option.code;
+		// registration by captcha
+		check(option.captcha, String);
 
-	user.login = option.login;
+		var ipAddress = Meteor.call('user.getIpAddress', tempKey);
+		var recaptchaResponse = reCAPTCHA.verifyCaptcha(ipAddress, option.captcha);
+
+		if (!recaptchaResponse.success) {
+			throw new Meteor.Error('Вы робот');
+		}
+
+	}
+
+	user.username = option.username;
+	user.plain_username = Game.User.convertUsernameToPlainname(option.username);
 	user.planetName = (
 		  letters[Math.floor(Math.random()*36)]
 		+ letters[Math.floor(Math.random()*36)]
@@ -82,33 +117,34 @@ Accounts.onCreateUser(function(option, user) {
 		+ letters[Math.floor(Math.random()*36)]);
 
 	user.game = {
-		updated: Math.floor(new Date().valueOf() / 1000),
-		/*resources: {
-			humans: {amount: 500},
-			metals: {amount: 3000},
-			crystals: {amount: 1500},
-			credits: {amount: 0},
-			honor: {amount: 0}
-		},*/
-		quests: {
-			current: null,
-			finished: {},
-			daily: null
-		}
+		updated: Game.getCurrentTime()
 	};
 
 	Game.Resources.initialize(user);
-
+	Game.House.initialize(user);
+	Game.Quest.initialize(user);
+	Game.Statistic.initialize(user);
 
 	Meteor.setTimeout(function(user) {
 		Accounts.sendVerificationEmail(user._id);
 	}.bind(this, user), 2000);
 
 	return user;
-})
+});
 
 //Accounts.config({sendVerificationEmail: true, forbidClientAccountCreation: false}); 
 
+if (!Meteor.settings.public.isInviteRequired) {
+	if (!Meteor.settings.recaptcha.privatekey
+	 || !Meteor.settings.public.recaptcha.publickey
+	) {
+		throw new Meteor.Error('Ошибка в настройках', 'Не заполнены ключи для recaptcha (см. settings.sample recaptcha)');
+	}
+
+	reCAPTCHA.config({
+		privatekey: Meteor.settings.recaptcha.privatekey
+	});
+}
 
 Meteor.methods({
 	'totalUsersCount': function() {
@@ -117,6 +153,76 @@ Meteor.methods({
 
 	'onlineUsersCount': function() {
 		return Meteor.users.find({'status.online': true}).count();
+	},
+
+	'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
+		if (key != tempKey) {
+			return null;
+		}
+		return this.connection.clientAddress;
+	},
+
+	'user.checkUsernameExists': function(username) {
+		check(username, String);
+
+		if (Meteor.users.findOne({ username: username })) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+
+	'user.checkPlainnameExists': function(username) {
+		check(username, String);
+
+		var plainname = Game.User.convertUsernameToPlainname(username);
+		if (Meteor.users.findOne({ plain_username: plainname })) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+
+	'user.changePlanetName': function(name) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('user.changePlanetName: ', new Date(), user.username);
+
+		check(name, String);
+		name = name.trim();
+
+		if (name.length === 0) {
+			throw new Meteor.Error('Имя планеты не должно быть пустым');
+		}
+
+		if (name.length > 16) {
+			throw new Meteor.Error('Максимум 16 символов');
+		}
+
+		Meteor.users.update({
+			_id: Meteor.userId()
+		}, {
+			$set: {
+				planetName: name
+			}
+		});
+
+		Game.Planets.Collection.update({
+			user_id: Meteor.userId(),
+			isHome: true
+		}, {
+			$set: {
+				name: name
+			}
+		});
 	}
 });
 

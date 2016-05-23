@@ -25,9 +25,7 @@ mrt:fancybox
 yasinuslu:metrika
 brentjanderson:buzz
 percolate:synced-cron
-bevanhunt:leaflet
 djedi:sanitize-html
-standard-minifiers
 meteor-base
 mobile-experience
 mongo
@@ -45,3 +43,12 @@ check
 
 npm-container
 reactive-var
+bevanhunt:leaflet
+manuel:reactivearray
+ddp-rate-limiter
+lookback:tooltips
+jparker:crypto-sha256
+jparker:crypto-hmac
+standard-minifier-css
+standard-minifier-js
+altapp:recaptcha

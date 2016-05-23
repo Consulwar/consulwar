@@ -1,27 +1,63 @@
-Meteor.startup(function () {
+initChatLib = function() {
 
-Game.Chat = {
+Game.Chat = {};
+
+Game.Chat.Messages = {
+	LOAD_COUNT: 20,
+	LIMIT: 1000,
+	FREE_CHAT_PRICE: 5000,
+
 	Collection: new Meteor.Collection("messages"),
 
-	getMessagePrice: function() {
+	getPrice: function(room) {
 		var user = Meteor.user();
 
-		if (user.role && ['admin', 'helper'].indexOf(user.role) != -1) {
-			return 0;
+		if (user.isChatFree) {
+			return null;
 		}
 
-		//var messageEffect = Game.Effect.Special.getRelatedTo({engName: 'message'});
-		//var priceReduction = messageEffect && messageEffect[2] && messageEffect[2].price && messageEffect[2].price.length ? (1 - (messageEffect[2].price[0].value / 100)) : 1;
+		if (user.role && ['admin', 'helper'].indexOf(user.role) != -1) {
+			return null;
+		}
 
-		return 10;/*Math.ceil(Math.max(
-			Math.min(
-				Math.floor(Game.Resources.getIncome().crystals / 30), 
-				10000), 
-			100
-		) * priceReduction);*/
+		if (room) {
+			if (room.name == 'help') {
+				return null;
+			}
+
+			if (room.isOwnerPays) {
+				return { credits: 1 };
+			}
+		}
+
+		var income = Math.floor(Game.Resources.getIncome().crystals / 30);
+		var basePrice = { 
+			crystals: Math.ceil(Math.max(Math.min(income, 10000), 100))
+		};
+
+		return Game.Effect.Price.applyTo({ engName: 'message' }, basePrice, true);
 	}
 };
 
+Game.Chat.Room = {
+	USERS_LIMIT: 50,
+	MODERATORS_LIMIT: 10,
 
+	Collection: new Meteor.Collection('chatRooms'),
 
-});
+	getPrice: function(room) {
+		var user = Meteor.user();
+
+		if (user.role && ['admin'].indexOf(user.role) != -1) {
+			return null;
+		}
+
+		if (room.isPublic) {
+			return room.isOwnerPays ? { credits: 2500 } : { credits: 5000 };
+		}
+
+		return room.isOwnerPays ? { credits: 500 } : { credits: 1000 };
+	}
+};
+
+};

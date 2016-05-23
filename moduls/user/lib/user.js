@@ -1,8 +1,15 @@
 Meteor.startup(function () {
 
 Game.User = {
-	getVotePower: function(rating) {
-		var rating = rating || Meteor.user().rating;
+	getVotePower: function() {
+		var bonus = Meteor.user().votePowerBonus || 0;
+		var level = Game.User.getLevel( Meteor.user().rating );
+		
+		return level + bonus;
+	},
+
+	getLevel: function(rating) {
+		rating = rating || Meteor.user().rating;
 
 		if (!rating || rating < 25000) {
 			return 0;
@@ -22,6 +29,6 @@ Game.User = {
 			return 7;
 		}
 	}
-}
+};
 
 });

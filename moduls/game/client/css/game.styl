@@ -18,10 +18,18 @@ side-icon(name)
 bottom-icon(type, group, name)
 	.{name}-icon
 		background-image url("/img/game/" type "/" group "/i/" name ".png")
+		
+bottom-icon-notimplemented(type, group, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_icon.png")
 
 bottom-side-icon(type, side, group, name)
 	.{name}-icon
 		background-image url("/img/game/" type "/" side "/" group "/i/" name ".png")
+		
+bottom-side-icon-notimplemented(type, side, group, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_icon.png")
 
 overlay-image(menu, sub, name, x, y, z)
 	.{name}-icon:before
@@ -39,16 +47,33 @@ overlay-item(name, x, y, z)
 requirements-icon(menu, sub, name)
 	.{name}-icon
 		background-image url("/img/game/" menu "/" sub "/r/" name ".jpg")
+		
+requirements-icon-notimplemented(menu, sub, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_req.jpg")
 
 :disabled
 	-webkit-filter grayscale(1) !important
 	filter grayscale(1) !important
 	cursor not-allowed !important
 
+// --------------------------------------
+// This is mega super hack for recaptcha
+// --------------------------------------
+body > div:last-child
+	zoom reset
+	transform scale(0.86)
+
+body > div:last-child > div
+	zoom reset
+// --------------------------------------
+
+@import '{}/moduls/unit/client/unit.styl'
+
 .game
 	@import '{}/moduls/building/client/building.styl'
 	@import '{}/moduls/research/client/research.styl'
-	@import '{}/moduls/unit/client/unit.styl'
+	@import '{}/moduls/mutual/client/mutual.styl'
 	@import '{}/moduls/mail/client/mail.styl'
 	@import '{}/moduls/chat/client/chat.styl'
 	@import '{}/moduls/game/client/css/menu.styl'
@@ -127,6 +152,7 @@ requirements-icon(menu, sub, name)
 		background-image url(/img/game/bg.jpg)
 		background-repeat no-repeat
 		background-position 124px top
+		overflow hidden
 		
 			
 		&.counsul
@@ -147,7 +173,7 @@ requirements-icon(menu, sub, name)
 					text-decoration none
 					text-transform uppercase
 		
-		.information.global .additional_area
+		.information.mutual .additional_area
 			position absolute
 			width 300px
 			height auto
@@ -166,6 +192,78 @@ requirements-icon(menu, sub, name)
 			background-repeat no-repeat
 			background-position top center
 			
+			.title
+				position absolute
+				bottom 0
+				left 0
+				margin 0
+				width 100%
+				height 35px
+				padding-top 10px
+				font-size 22px
+				color #FFFFFF
+				font-weight bold
+				white-space nowrap
+				text-align center
+				background-color rgba(0, 0, 0, 0.5)
+
+			.quests-switch
+				display block
+				position absolute
+				right 25px
+				bottom 50px
+				width 36px
+				height 36px
+				background-position center center
+				background-repeat no-repeat
+
+				&:hover
+					-webkit-filter brightness(1.5)
+					filter brightness(1.5)
+
+				&.open
+					background-image url(/img/game/arrow_open.png)
+					
+				&.close
+					background-image url(/img/game/arrow_close.png)
+
+			.quests
+				position absolute
+				display block
+				left 32px
+				bottom 90px
+				
+				li
+					cursor pointer
+					display inline-block
+					padding 10px
+					width 250px
+					border-radius 10px
+					font-weight bold
+					font-size 16px
+					overflow hidden
+					text-overflow ellipsis
+					text-align left
+					white-space nowrap
+					background rgb(0, 0, 0)
+					background rgba(0, 0, 0, 0.8)
+				
+					&:hover
+						-webkit-filter brightness(1.4)
+						filter brightness(1.4)
+
+				.prompt
+					border-color #ffffff
+					color #ffffff
+				
+				.inprogress
+					border-color #56baf2
+					color #56baf2
+					
+				.finished
+					border-color #e9a844
+					color #e9a844
+
 			&.quest
 				cursor pointer
 
@@ -182,40 +280,55 @@ requirements-icon(menu, sub, name)
 					content url(/img/game/quests/hasreward.png)
 			
 			&.bolz
+				background-size 88%
 				background-image url(/img/game/bolz.jpg)
 
-		&.residential  .additional_area.quest
-			background-image url(/img/game/quests/tamily.jpg)
+		.additional_area.quest.tamily
+			background-size 88%
+			background-image url(/img/game/tamily.jpg)
 		
-		&.counsul  .additional_area.quest
-			background-image url(/img/game/quests/portal.jpg)
+		.additional_area.quest.portal
+			background-image url(/img/game/portal.jpg)
 		
-		&.military  .additional_area.quest
-			background-image url(/img/game/quests/thirdenginery.jpg)
+		.additional_area.quest.thirdenginery
+			background-size 88%
+			background-image url(/img/game/thirdenginery.jpg)
 		
-		&.fleet  .additional_area.quest
-			background-image url(/img/game/quests/vaha.jpg)
+		.additional_area.quest.vaha
+			background-size 88%
+			background-image url(/img/game/vaha.jpg)
 		
-		&.heroes  .additional_area.quest
-			background-image url(/img/game/quests/psm.jpg)
+		.additional_area.quest.psm
+			background-size 88%
+			background-image url(/img/game/psm.jpg)
 		
-		&.ground  .additional_area.quest
-			background-image url(/img/game/quests/tilps.jpg)
+		.additional_area.quest.tilps
+			background-size 88%
+			background-image url(/img/game/tilps.jpg)
 		
-		&.evolution  .additional_area.quest
-			background-image url(/img/game/quests/nataly.jpg)
+		.additional_area.quest.nataly
+			background-size 88%
+			background-image url(/img/game/nataly.jpg)
 		
-		&.fleetups  .additional_area.quest
-			background-image url(/img/game/quests/mechanic.jpg)
+		.additional_area.quest.mechanic
+			background-size 88%
+			background-image url(/img/game/mechanic.jpg)
 		
-		&.global  .additional_area.quest
-			background-image url(/img/game/quests/calibrator.jpg)
+		.additional_area.quest.calibrator
+			background-size 88%
+			background-image url(/img/game/calibrator.jpg)
 		
-		&.reinforcement  .additional_area.quest
-			background-image url(/img/game/quests/bolz.jpg)
+		.additional_area.quest.bolz
+			background-size 88%
+			background-image url(/img/game/bolz.jpg)
 		
-		&.private  .additional_area.quest
-			background-image url(/img/game/quests/renexis.jpg)
+		.additional_area.quest.renexis
+			background-size 88%
+			background-image url(/img/game/renexis.jpg)
+			
+		.additional_area.quest.general
+			background-size 88%
+			background-image url(/img/game/unit/reptiles/heroes/general.jpg)
 	
 	.currentConstruction
 		position absolute

@@ -1,12 +1,36 @@
 <template name="unit">
 	<div class="information {{unit.type}}">
-		<img src="/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg">
+		<div class="image">
+			<img 
+				alt="{{unit.name}}" 
+				src="
+				{{#unless unit.notImplemented}}
+					/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
+				{{else}}
+					/img/game/notimplemented.jpg
+				{{/unless}}
+				"
+			>
+			<span class="title">{{unit.name}}</span>
+			{{#if unit.currentLevel}}
+				<span class="level" title="{{formatNumber unit.currentLevel}}">
+					{{formatNumberWithISO unit.currentLevel}} 
+					{{declension unit.currentLevel 'юнит' '' 'а' 'ов'}}
+				</span>
+			{{/if}}
+		</div>
 		<div class="description">
 			{{> item_requirements requirements=unit.requirements}}
 
 			<p>{{unit.description}}</p>
 			
-			{{> item_effect item=unit}}
+			{{> unitBattleEffects unit=unit}}
+
+			{{#if unit.maxCount}}
+				<div class="limit">
+					Всего юнитов {{formatNumber unit.totalCount}} из {{formatNumber unit.maxCount}}
+				</div>
+			{{/if}}
 		</div>
 
 		{{> item_characteristic item=unit}}
@@ -16,9 +40,23 @@
 
 			<input class="count" type="number" placeholder="Количество" value="{{count}}"/>
 
-			<button class="build" disabled="{{not unit.canBuild}}">Отдать приказ</button>
+			<button class="build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
 		{{/unless}}
 		
 		{{> Template.dynamic template=additionalArea}}
 	</div>
+</template>
+
+<template name="unitBattleEffects">
+	{{#if unit.battleEffects}}
+		<div class="currentLevel">
+			{{#each unit.battleEffects}}
+				{{#if result}}
+					{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+					{{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+					<br/>
+				{{/if}}
+			{{/each}}
+		</div>
+	{{/if}}
 </template>

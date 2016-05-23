@@ -2,6 +2,8 @@ initUnitClient = function() {
 
 initUnitLib();
 
+Meteor.subscribe('units');
+
 Game.Unit.showPage = function() {
 	var item = Game.Unit.items[this.group][this.params.group][this.params.item];
 	
@@ -14,24 +16,24 @@ Game.Unit.showPage = function() {
 			}
 		});
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', {to: 'content'});
 	}
-}
+};
 
 Template.unit.helpers({
 	count: function() {
 		return this.count.get();
 	}
-})
+});
 
 Template.unit.events({
 	'keyup .count, change .count': function(e, t) {
-		var value = parseInt(e.target.value.replace(/\D/g,''), 10);
-		value = value > 0 ? value : 1;
-
-		e.target.value = value;
-
-		this.count.set(value);
+		if (e.type == 'change' || e.target.value.length > 0) {
+			var value = parseInt(e.target.value.replace(/\D/g,''), 10);
+			value = value > 0 ? value : 1;
+			e.target.value = value;
+			this.count.set(value);
+		}
 	},
 
 	'click button.build': function(e, t) {
@@ -53,4 +55,4 @@ Template.unit.events({
 	}
 });
 
-}
+};

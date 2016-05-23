@@ -1,0 +1,39 @@
+stages:
+  - update
+  - test
+  - deploy
+
+run_jshint:
+  stage: test
+  script:
+    - jshint *
+
+
+update_repo_dev:
+  stage: update
+  only:
+    - dev
+  script:
+    - cd /media/sf_dev/consulwar-dev/ && git fetch git@gitlab.consulwar.ru:zav/consulwar.git && git checkout dev && git reset --hard dev && git pull
+
+job_deploy_dev:
+  stage: deploy
+  only:
+    - dev
+  script:
+    - cd /media/sf_dev/consulwar-dev/ && sudo mupx deploy
+
+
+update_repo_master:
+  stage: update
+  only:
+    - master
+  script:
+    - cd /media/sf_dev/consulwar-master/ && git fetch git@gitlab.consulwar.ru:zav/consulwar.git && git checkout master && git reset --hard master && git pull
+
+job_deploy_master:
+  stage: deploy
+  only:
+    - master
+  script:
+    - cd /media/sf_dev/consulwar-master/ && sudo mupx deploy

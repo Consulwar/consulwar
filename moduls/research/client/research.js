@@ -2,15 +2,17 @@ initResearchClient = function() {
 
 initResearchLib();
 
+Meteor.subscribe('researches');
+
 Game.Research.showPage = function() {
 	var item = Game.Research.items[this.params.group][this.params.item];
 
 	if (item) {
 		this.render('item_research', {to: 'content', data: {research: item}});
 	} else {
-		this.render('empty', {to: 'content'})
+		this.render('empty', {to: 'content'});
 	}
-}
+};
 
 Template.item_research.events({
 	'click button.build': function(e, t) {
@@ -29,10 +31,10 @@ Template.item_research.events({
 			}
 		);
 
-		if (item.currentLevel() == 0) {
+		if (item.currentLevel() === 0) {
 			Router.go(item.url({group: item.group}));
 		}
 	}
 });
 
-}
+};

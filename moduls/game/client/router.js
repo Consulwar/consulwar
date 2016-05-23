@@ -8,7 +8,7 @@ GameRouteController = RouteController.extend({
 		}
 
 		var user = Meteor.user();
-		if (user && user.blocked == true) {
+		if (user && user.blocked === true) {
 			Meteor.logout();
 			this.redirect('index');
 			alert('Аккаунт заблокирован');
@@ -23,14 +23,16 @@ GameRouteController = RouteController.extend({
 
 		if (this.ready()) {
 			this.render('game');
+			Tooltips.hide(); // hide all tooltips
+			$('.permanent').hide(); // hide cosmos map!
 			this.next();
 		} else {
-			this.render('loading', {layout: 'loading_layout'})
+			this.render('loading', {layout: 'loading_layout'});
 		}
 	},
 
 	after: function() {
-		if (window.Metrica != undefined) {
+		if (window.Metrica !== undefined) {
 			Metrica.hit(window.location.href, 'Game', document.referrer);
 		}
 	}
@@ -40,59 +42,104 @@ GameRouteController = RouteController.extend({
 
 var gameRoutes = {
 	planet: {
-		building: 'planet/:group(residential|military)/:item?',
-		//consul: 'planet/consul/:id?'
+		building: 'planet/:group(residential|military)/:item?/:menu?',
+		house: 'planet/:group(house)/:subgroup?/:item?'
+	},
+
+	wallet: {
+		walletHistory: 'wallet/history/:type(income|expense)/:page'
 	},
 
 	army: {
-		unit: 'army/:group(fleet|defence|ground)/:item?',
+		unit: 'army/:group(fleet|defense|ground)/:item?',
 	},
 
 	reptiles: {
-		reptileUnit: 'reptiles/:group(fleet|heroes|ground)/:item?'
+		reptileUnit: 'reptiles/:group(fleet|ground)/:item?',
+		reptileHero: 'reptiles/:group(heroes)/:item?'
 	},
 
 	research: {
 		research: 'research/:group(evolution|fleetups)/:item?'
 	},
+
+	mutual: {
+		mutual: 'mutual/:group(research)/:item?',
+		earth: 'mutual/:group(earth)',
+		earthReserve: 'mutual/:group(earth)/reserve',
+		earthZone: 'mutual/:group(earth)/zone/:name?',
+		earthHistory: 'mutual/:group(earth)/history/:page',
+		statistics: 'mutual/statistics/:page?'
+	},
 	
 	communication: {
-		chat: 'communication/chat/:channel?',
-		mail: 'communication/mail/:page?'
+		chat: 'communication/chat/:room',
+		mail: 'communication/mail/:page',
+		mailAdmin: 'communication/mailadmin/:page'
+	},
+
+	cosmos: {
+		cosmos: 'cosmos',
+		cosmosHistory: 'cosmos/history/:page'
 	}
-}
+};
 
 var gameActions = {
 	building: Game.Building.showPage,
 	research: Game.Research.showPage,
-
-	//consul: null,
+	house: Game.House.showPage,
+	
+	walletHistory: Game.Payment.showHistory,
 
 	chat: Game.Chat.showPage,
 	mail: Game.Mail.showPage,
+	mailAdmin: Game.Mail.showAdminPage,
 
 	unit: Game.Unit.showPage,
 	reptileUnit: Game.Unit.showPage,
-}
+	reptileHero: Game.Unit.showPage,
+
+	mutual: Game.Mutual.showPage,
+	earth: Game.Earth.showMap,
+	earthReserve: Game.Earth.showReserve,
+	earthZone: Game.Earth.showZone,
+	earthHistory: Game.Earth.showHistory,
+	statistics: Game.Rating.showPage,
+
+	cosmos: Game.Cosmos.showPage,
+	cosmosHistory: Game.Cosmos.showHistory
+};
+
+var registerRoute = function(group, name, path, action) {
+	Router.route('/game/' + path, {
+		name: name,
+		controller: 'GameRouteController',
+		before: function() {
+			this.group = group;
+			this.next();
+		},
+		action: action
+	});
+};
 
 for (var group in gameRoutes) {
 	for (var name in gameRoutes[group]) {
-		if (gameActions[name] == undefined) {
+		if (gameActions[name] === undefined) {
 			throw new Error('Не найдено действие для роута', name, gameRoutes[group][name]);
 		}
-		(function(group, name, path, action) {
-			Router.route('/game/' + path, {
-				name: name,
-				controller: 'GameRouteController',
-				before: function() {
-					this.group = group;
-					this.next();
-				},
-				action: action
-			});
-		})(group, name, gameRoutes[group][name], gameActions[name]);
+		registerRoute(group, name, gameRoutes[group][name], gameActions[name]);
 	}
 }
+
+Router.route('/game', {
+	name: 'game',
+	action: function() {
+		Router.go('building', {group: 'residential'});
+	}
+});
+
+Router.go(location.href.replace(location.origin, ''));
+
 /*
 game/planet/residential
 game/planet/military
@@ -108,7 +155,7 @@ game/army/ground
 
 game/research/evolution
 game/research/fleetups
-game/research/global
+game/research/mutual
 
 game/battle/space
 game/battle/earth
@@ -135,4 +182,4 @@ Router.route( 'pageNotFound', {
 	}
 });*/
 
-}
+};

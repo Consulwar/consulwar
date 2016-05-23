@@ -1,0 +1,135 @@
+<template name="payment">
+	<div class="smoke"></div>
+	<div class="payment">
+		<div class="close"></div>
+		<ul class="paymentItems">
+			{{#each paymentItems}}
+				<li class="{{this.id}}-icon" data-id="{{this.id}}">
+					{{this.cost.rub}} руб
+					{{#if and this.discount this.discount.rub}}
+						<span>- {{this.discount.rub}} руб</span>
+					{{/if}}
+				</li>
+			{{/each}}
+		</ul>
+	</div>
+</template>
+
+<template name="paymentPlatbox">
+	<div class="smoke"></div>
+	<div class="payment platbox">
+		<div class="close"></div>
+		<iframe src="https://playground.platbox.com/paybox?{{url}}"></iframe>
+	</div>
+</template>
+
+<template name="paymentReward">
+	<div class="smoke reward"></div>
+	<div class="payment reward">
+		<div class="close"></div>
+		<img src="/img/game/quests/credits.png">
+		<div class="count">{{formatNumber item.profit.resources.credits}}</div>
+		<div class="description">{{item.description}}</div>
+		<div class="take">Забрать</div>
+	</div>
+</template>
+
+<template name="paymentSide">
+	<div class="side_payment">
+		<h2>Грязные галактические кредиты</h2>
+		<div class="buy">
+			Покупая <span class="yellow">Кредиты</span> ты поддерживаешь независимого <span class="blue">российского разработчика.</span>
+		</div>
+		<a href="{{pathFor 'walletHistory' type='income' page=1}}">История покупок</a>
+		<a href="{{pathFor 'walletHistory' type='expense' page=1}}">История расходов</a>
+		<div class="promo">
+			<span class="hint">Введите промо код, если он у вас конечно есть</span>
+			<input class="code"/>
+			<span class="send">Награда</span>
+		</div>
+	</div>
+</template>
+
+<template name="paymentHistory">
+	<div class="paymentHistory">
+		<a class="btn-close" href="{{pathFor 'house' group='house'}}"></a>
+		<table>
+			<tr class="header">
+				<th>Время</th>
+				<th>{{#if isIncome}}Получено{{else}}Потрачено{{/if}}</th>
+				<th></th>
+			</tr>
+		</table>
+		<div class="data">
+			<table>
+				{{#each history}}
+					<tr>
+						<td>{{formatDate this.timestamp}}</td>
+						<td>{{getProfit this.profit}}</td>
+						<td>
+							{{#if eq this.source.type 'payment'}}
+								Покупка: {{this.source.item}}
+							{{/if}}
+							{{#if eq this.source.type 'promo'}}
+								Промо код: {{this.source.code}}
+							{{/if}}
+							{{#if eq this.source.type 'chatFree'}}
+								Не платить за ссаный чат
+							{{/if}}
+							{{#if eq this.source.type 'chatBalance'}}
+								Пополнение баланса комнаты в чате
+							{{/if}}
+							{{#if eq this.source.type 'planetRename'}}
+								Переименование планеты
+							{{/if}}
+							{{#if eq this.source.type 'planetBuy'}}
+								Покупка дополнительной колонии
+							{{/if}}
+						</td>
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+		{{> pages total=countTotal perPage=count}}
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
+	</div>
+</template>
+
+<template name="promocodeReward">
+	<div class="smoke"></div>
+	<div class="promocode">
+		{{#if resources}}
+			<ul class="resources">
+				{{#each resources}}
+					<li class="{{this.engName}}">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if artefacts}}
+			<ul class="resources">
+				{{#each artefacts}}
+					<li class="{{this.engName}} artefact">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if units}}
+			<ul class="units">
+				{{#each units}}
+					<li class="{{this.engName}}-icon">
+						{{formatNumber this.amount}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		{{#if profit.votePower}}
+			<span class="votepower">Сила голоса +{{profit.votePower}}</span>
+		{{/if}}
+		<span class="take">Награда</span>
+	</div>
+</template>

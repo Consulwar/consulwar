@@ -1,0 +1,191 @@
+<template name="consulHouse">
+	{{#if consulName}}
+		<span class="page-title">
+			Палата консула {{consulName}}
+		</span>
+	{{/if}}
+	{{#if items}}
+		{{#each items}}
+			<div class="{{this.subgroup}}-{{this.engName}}"></div>
+		{{/each}}
+	{{/if}}
+	{{> paymentSide}}
+	{{#if isLoading}}
+		{{> loading}}
+	{{/if}}
+</template>
+
+<template name="consulHouseItem">
+	<div class="information house">
+		<div class="image">
+			<img src="/img/game/house/{{subgroup}}/i/{{item.engName}}.jpg">
+			<span class="title">{{item.name}}</span>
+		</div>
+		<div class="description">
+			<ul class ="consul-items">
+				{{#each subgroupItems}}
+					<li>
+						<a 
+							class="
+								{{subgroup}}-{{this.engName}}-icon 
+								{{#if this.checkBought}}
+									has
+								{{else}}
+									{{#if this.isNew}}new{{/if}}
+								{{/if}} 
+								{{#if eq ../item.engName this.engName}}active{{/if}} 
+								{{#if this.checkPlaced}}placed{{/if}}"
+							href="{{this.url}}"
+						></a>
+					</li>
+				{{/each}}
+			</ul>
+			<p>
+				{{item.description}}
+			</p>
+
+			{{> item_effect item=item}}
+		</div>
+		{{#if item.checkBought}}
+			{{#unless item.checkPlaced}}
+				<button class="place">Установить</button>
+			{{/unless}}
+		{{else}}
+			{{#if item.isUnique}}
+				<div class="unique"></div>
+			{{else}}
+				{{#if item.getPrice}}
+					{{> item_price price=(item.getPrice 1)}}
+					<button class="buy">Приобрести</button>
+				{{/if}}
+			{{/if}}
+		{{/if}}
+	</div>
+</template>
+
+<template name="consulHouseArtefacts">
+	<div class="information house">
+		<div class="image">
+			<img src="/img/artefacts/{{item.group}}/{{item.engName}}.jpg">
+			<span class="title">{{item.name}}</span>
+			{{#if gt item.amount 0}}
+				<span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>
+			{{/if}}
+		</div>
+		<div class="description">
+			<ul class ="consul-artefacts">
+				{{#each subgroupItems}}
+					<li>
+						<a 
+							class="
+								{{this.engName}} 
+								{{#if eq ../item.engName this.engName}}active{{/if}}"
+							href="{{this.url}}"
+						>{{formatNumberWithISO this.amount}}</a>
+					</li>
+				{{/each}}
+			</ul>
+			{{#if item.description}}
+				<p>{{item.description}}</p>
+			{{/if}}
+			{{#if planets}}
+				{{#each planets}}
+					<a class="planet {{#if or this.isHome this.armyId}}humans{{/if}} {{#if this.mission}}reptiles{{/if}}" href="{{pathFor 'cosmos' hash=this._id}}">
+						{{this.name}} {{this.chance}}%
+					</a>
+				{{/each}}
+				<a class="findall" href="{{pathFor 'cosmos' hash=item.engName}}">Показать все планеты</a>
+			{{else}}
+				<p class="warning">
+					{{#if eq item.engName 'ruby_plasmoid'}}
+						Этот артефакт может быть только синтезирован.
+					{{else}}
+						Вы ещё не открыли планеты с этим артефактом. Разведайте галактику.
+					{{/if}}
+				</p>
+			{{/if}}
+		</div>
+	</div>
+</template>
+
+<template name="consulHouseCards">
+	<div class="information house">
+		<div class="image">
+			<img 
+				alt="{{item.name}}" 
+				src="
+				{{#unless item.notImplemented}}
+					/img/game/item/{{item.engName}}.jpg
+				{{else}}
+					/img/game/notimplemented.jpg
+				{{/unless}}
+				"
+			>
+			<span class="title">{{item.name}}</span>
+			{{#if gt item.amount 0}}
+				<span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>
+			{{/if}}
+		</div>
+		<div class="description">
+			<ul class ="consul-artefacts">
+				{{#each subgroupItems}}
+					<li>
+						{{this.name}}
+						<a 
+							class="
+								{{this.engName}} 
+								{{#if eq ../item.engName this.engName}}active{{/if}}"
+							href="{{this.url}}"
+						>{{formatNumberWithISO this.amount}}</a>
+					</li>
+				{{/each}}
+			</ul>
+			{{#if item.description}}
+				<p>{{{item.description}}}</p>
+			{{/if}}
+
+			{{> item_effect item=item}}
+
+			{{#if finishTime}}
+				<p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft finishTime)}}</p>
+			{{else}}
+				{{#if reloadTime}}
+					<p>Можно повторно активировать через {{formatSeconds (getTimeLeft reloadTime)}}</p>
+				{{/if}}
+			{{/if}}
+		</div>
+		{{#if canActivate}}
+			<button class="activate">Активировать</button>
+		{{/if}}
+		{{#if item.getPrice}}
+			{{> item_price price=(item.getPrice 1)}}
+			<button class="buy">Приобрести</button>
+		{{/if}}
+	</div>
+</template>
+
+<template name="consulHouseDonate">
+	<div class="donate">
+		<div class="info">
+			<div class="title">{{item.name}}</div>
+			<div class="description">{{item.description}}</div>
+			<div class="duration">Срок действия: {{formatTime item.durationTime}}</div>
+			{{#each item.effect}}
+				<div class="effect">{{this.pretext}}{{this.result}}{{this.aftertext}}</div>
+			{{/each}}
+			{{> item_price price=(item.getPrice 1)}}
+		</div>
+		<ul class="donate-items">
+			{{#each subgroupItems}}
+				<li class="donate-{{this.engName}}-icon {{#if eq ../item.engName this.engName}}active{{/if}}">
+					<a href="{{this.url}}"></a>
+					{{#if this.getActiveTask}}
+						<span class="time">{{formatTime (getTimeLeft this)}}</span>
+					{{else}}
+						<span class="buy" data-id="{{this.engName}}">Купить</span>
+					{{/if}}
+				</li>
+			{{/each}}
+		</ul>
+	</div>	
+</template>

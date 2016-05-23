@@ -23,7 +23,7 @@
 	padding-bottom 18px
 	
 	.resources
-		width 490px
+		margin-right 20px
 	
 	ul,
 	.fleet_info
@@ -31,9 +31,9 @@
 		vertical-align top
 	
 	.fleet_info
-		width 324px
-		height 44px
-		padding 25px 24px 0 0
+		width 328px
+		height 60px
+		padding 9px 20px 0 0
 		background-image url(/img/game/fleet_bg.png)
 		background-repeat no-repeat
 		background-position center center
@@ -41,8 +41,21 @@
 		text-align right
 		font-size 16px
 		
-		&.battle
-			color #2EB6E0
+		&.attack:before
+			content ""
+			position absolute
+			display block
+			width 73px
+			height 49px
+			background-image url(/img/game/attack.png)
+			background-position-x 15px
+			background-repeat no-repeat
+			
+		a
+			text-decoration none
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
 	
 	.game_menu 
 		a
@@ -72,15 +85,15 @@
 		menu-icon('research')
 		menu-icon('powerups')
 		menu-icon('alliance')
-		menu-icon('galactic')
-		menu-icon('battle')
+		menu-icon('cosmos')
 		menu-icon('communication')
 		menu-icon('reptiles')
+		menu-icon('mutual')
 		
-		.messages.has_new_mail,
-		.messages.has_new_mail.active,
-		.messages.has_new_mail:hover
-			background-image url(/img/game/menu/messages_n.png)
+		.communication-icon.has_new_mail,
+		.communication-icon.has_new_mail.active,
+		.communication-icon.has_new_mail:hover
+			background-image url(/img/game/menu/communication_n.png)
 
 .side_menu
 	float left
@@ -92,7 +105,7 @@
 		height 145px
 		background-color #04070C
 		cursor pointer
-		background-position center center
+		background-position center 30px
 		background-repeat no-repeat
 
 		&:hover,
@@ -116,7 +129,10 @@
 	a
 		display block
 		width 100%
-		height 100%
+		height 50px
+		padding-top 95px
+		text-align center
+		text-decoration none
 	
 	.helpusplease
 		padding 3px
@@ -150,13 +166,12 @@
 	&.bottom_menu
 		position relative
 		margin 25px auto 0
-		width 1428px
+		width 1464px
 		text-align left
 		
 		li
-			margin-right 20px
+			margin-right 10px
 			margin-bottom 35px
-			overflow visible
 			
 	li
 		position relative
@@ -165,16 +180,74 @@
 		margin-bottom 15px
 		vertical-align top
 		text-align center
-		width 117px
-		height 117px
+		width 105px
+		height 105px
 		background-color #090E14
 		border 2px solid #263D4F
 		border-radius 10px
 		background-position center center
 		background-repeat no-repeat
 		cursor pointer
-		overflow hidden
 		
+		&.star1:before
+			content ""
+			position absolute
+			top -22px
+			left 50%
+			transform translate(-50%, 0)
+			width 23px
+			height 18px
+			background-image url(/img/game/star.png)
+			
+		&.star2:before
+			content ""
+			position absolute
+			top -22px
+			left 50%
+			transform translate(-50%, 0)
+			width 46px
+			height 18px
+			background-image url(/img/game/star.png)
+			
+		&.star3:before
+			content ""
+			position absolute
+			top -22px
+			left 50%
+			transform translate(-50%, 0)
+			width 69px
+			height 18px
+			background-image url(/img/game/star.png)
+
+		a
+			border-radius 10px
+			
+			.level
+				position absolute
+				display block
+				z-index 1
+				top 6px
+				left 7px
+				width 30px
+				height 25px
+				padding-top 5px
+				text-align center
+				font-size 18px
+				border-radius 50%
+				color #fff
+				background-color rgba(0, 0, 0, 0.65)
+			
+			.count
+				position absolute
+				display block
+				z-index 1
+				top 6px
+				left 0
+				padding 5px
+				text-align right
+				background linear-gradient(to right, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 60%)
+				font-size 14px
+
 		&.battle
 			a, div
 				-webkit-filter grayscale(0.5) brightness(0.75)
@@ -187,6 +260,8 @@
 			-webkit-filter grayscale(1)
 			filter grayscale(1)
 			transition filter .5s, -webkit-filter .5s
+			background-size 100%
+			overflow hidden
 			
 			&:hover
 				-webkit-filter grayscale(0)
@@ -207,31 +282,38 @@
 			background-image url(/img/game/disabled.png)
 			background-position center center
 			background-repeat no-repeat
-			
-		&:not(.disabled):before
-			content attr(data-level)
-			position absolute
-			top 135px
-			left 0
-			width 100%
-			text-align center
-			color #E7B04C
-			font-size 18px
 		
-		&.progress:before
-			content url(/img/game/progress.png)
-			top 133px
-			text-align left
+		&.progress 
+			a
+				&:before
+					content ''
+					display block
+					position absolute
+					top 6px
+					right 6px
+					z-index 1
+					width 30px
+					height 25px
+					padding-top 5px
+					background-color rgba(0, 0, 0, 0.65)
+					background-image url(/img/game/progress_small.png)
+					background-position center center
+					background-repeat no-repeat
+					border-radius 50%
 			
-		&.progress:after
-			content attr(data-remaining)
-			position absolute
-			top 135px
-			left 35px
-			width 75px
-			text-align left
-			color #E7B04C
-			font-size 18px
+				&:after
+					content attr(data-remaining)
+					display block
+					position absolute
+					left 0
+					bottom 0
+					width 100%
+					height 22px
+					padding-top 3px
+					text-align center
+					color #fff
+					font-size 18px
+					background-color rgba(0, 0, 0, 0.65)
 			
 			
 		&:last-child
@@ -265,6 +347,7 @@
 	z-index: 1
 	background-repeat no-repeat
 	background-position top left
+	overflow hidden
 
 	a
 		position absolute
@@ -281,6 +364,51 @@
 		&:hover:before
 			-webkit-filter brightness(1.1)
 			filter brightness(1.1)
+				
+		img
+			position absolute
+			z-index 1
+			
+			&:hover
+				-webkit-filter brightness(1.1)
+				filter brightness(1.1)
+			
+			&[progress]
+				z-index 2
+				
+			+ img
+				opacity 0.8
+
+			&[progress="100"]
+				-webkit-filter blur(20px)
+				filter blur(20px)
+			&[progress="90"]
+				-webkit-filter blur(18px)
+				filter blur(18px)
+			&[progress="80"]
+				-webkit-filter blur(16px)
+				filter blur(16px)
+			&[progress="70"]
+				-webkit-filter blur(12px)
+				filter blur(12px)
+			&[progress="60"]
+				-webkit-filter blur(8px)
+				filter blur(8px)
+			&[progress="50"]
+				-webkit-filter blur(6px)
+				filter blur(6px)
+			&[progress="40"]
+				-webkit-filter blur(4px)
+				filter blur(4px)
+			&[progress="30"]
+				-webkit-filter blur(3px)
+				filter blur(3px)
+			&[progress="20"]
+				-webkit-filter blur(2px)
+				filter blur(2px)
+			&[progress="10"]
+				-webkit-filter blur(1px)
+				filter blur(1px)
 		
 		/*&.new:before
 			filter blur(5px)

@@ -32,9 +32,9 @@ Template.quiz.events({
 						canVote: !result.userAnswer /*|| !Game.User.getVotePower() ? false : true*/
 					}, 
 					$('.over')[0]
-				)
+				);
 			}
-		})
+		});
 	},
 
 	'click .close': function(e, t) {
@@ -42,4 +42,4 @@ Template.quiz.events({
 	}
 });
 
-}
+};

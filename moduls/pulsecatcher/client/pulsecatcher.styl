@@ -1,0 +1,130 @@
+pulsecatcher-icon(id, name)
+	.{id}-icon
+		background-image url("/img/game/pulsecatcher/" name ".jpg")
+
+pulsecatcher-icon('pulsecatcherFleet', 'fleet')
+pulsecatcher-icon('pulsecatcherResearch', 'research')
+pulsecatcher-icon('pulsecatcherResources', 'resources')
+
+
+.pulsecatcher-menu
+	position absolute
+	z-index 4
+	top 0px
+	left 124px
+	width 1333px
+	height 428px
+	padding 3.5px
+	background-color #090e14
+
+	.info
+		display block
+		margin-top 150px
+		text-align center
+		font-size 28px
+
+	.choosen-info
+	.quiz-info
+		display block
+		position absolute
+		top 7px
+		color #CFC399
+		text-align center
+		font-weight bold
+
+	.choosen-info
+		left 0px
+		width 500px
+		
+	.quiz-info
+		right 0px
+		width 750px
+		
+		span
+			color #FFFFFF
+
+	.btn-close-horizontal
+		display block
+		position absolute
+		left 590px
+		bottom 0px
+		width 164px
+		height 34px
+		cursor pointer
+		color #ffffff
+		background-image url(/img/game/earth/btn_close.png)
+		background-repeat no-repeat
+		background-position 0px 0px
+		&:hover
+			background-position 0px -34px
+			
+	ul
+		display inline-block
+		&.choosen
+			float left
+		&.quiz
+			float right
+
+		li
+			display inline-block
+			vertical-align top
+			width 250px
+			height 100px
+			padding-top 290px
+			background-repeat no-repeat
+			background-position center 30px
+			text-align center
+			font-weight bold
+	
+	.effect
+		display block
+		position absolute
+		width 250px
+
+	.time
+	.result
+		display block
+		position absolute
+		margin-top 50px
+		width 250px
+		font-size 28px
+		
+		&.user
+			color #C6E84C
+
+	.vote
+		display block
+		position absolute
+		cursor pointer
+		width 177px
+		height 34px
+		margin-top 40px
+		margin-left 37px
+		padding-top 12px
+		color #FFFFFF
+		text-align center
+		text-decoration none
+		font-weight bold
+		font-size 18px
+		background-image url(/img/game/earth/btn_spec.png)
+		background-repeat no-repeat
+		background-size 100% 100%
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+	
+	.activate
+		display block
+		position absolute
+		cursor pointer
+		margin-top 40px
+		margin-left 40px
+		width 181px
+		height 38px
+		padding-top 12px
+		color #FFFFFF
+		font-size 18px
+		background-image url(/img/game/quests/btn_take.png)
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)

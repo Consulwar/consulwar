@@ -1,6 +1,21 @@
 initMailQuizServer = function() {
 
 initMailQuizLib();
+
+Game.Quiz.Collection._ensureIndex({
+	user_id: 1,
+	quiz_id: 1
+});
+
+Game.Quiz.Collection._ensureIndex({
+	endDate: -1
+});
+
+Game.Quiz.Answer.Collection._ensureIndex({
+	user_id: 1,
+	quiz_id: 1
+});
+
 /*
 Meteor.call('createQuiz', {
 	who: 'zav',
@@ -11,8 +26,8 @@ Meteor.call('createQuiz', {
 		yes: 'Принять подкрепление',
 		more: 'Ещё!!!'
 	},
-	startDate: Math.floor(new Date().valueOf() / 1000),
-	endDate: Math.floor(new Date().valueOf() / 1000) + (60*60*24),
+	startDate: Game.getCurrentTime(),
+	endDate: Game.getCurrentTime() + (60*60*24),
 	result: {
 		no: 0,
 		yes: 0,
@@ -34,11 +49,11 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('getQuiz: ', new Date(), user.login);
+		console.log('getQuiz: ', new Date(), user.username);
 
 		check(id, String);
 
@@ -65,11 +80,11 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('quizAnswer: ', new Date(), user.login);
+		console.log('quizAnswer: ', new Date(), user.username);
 
 		check(id, String);
 		check(answer, String);
@@ -84,7 +99,7 @@ Meteor.methods({
 			throw new Meteor.Error('Такого ответа не существует');
 		}
 
-		if (quiz.endDate < Math.floor(new Date().valueOf() / 1000)) {
+		if (quiz.endDate < Game.getCurrentTime()) {
 			throw new Meteor.Error('Опрос уже завершен');
 		}
 
@@ -104,7 +119,7 @@ Meteor.methods({
 			quiz_id: id,
 			answer: answer,
 			power: votePower,
-			date: Math.floor(new Date().valueOf() / 1000)
+			date: Game.getCurrentTime()
 		});
 
 		var inc = {};
@@ -113,7 +128,7 @@ Meteor.methods({
 
 		Game.Quiz.Collection.update({_id: id}, {
 			$inc: inc
-		})
+		});
 
 		return Meteor.call('getQuiz', id);
 	},
@@ -125,13 +140,13 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('createQuiz: ', new Date(), user.login);
+		console.log('createQuiz: ', new Date(), user.username);
 
-		if (user.login != 'Zav') {
+		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 
@@ -154,13 +169,13 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('sendQuiz: ', new Date(), user.login);
+		console.log('sendQuiz: ', new Date(), user.username);
 
-		if (user.login != 'Zav') {
+		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 		check(id, String);
@@ -175,5 +190,4 @@ Meteor.methods({
 	}
 });
 
-
-}
+};

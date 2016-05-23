@@ -2,7 +2,7 @@ Template.auth.events({
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		var email = t.find('input[name="login"]').value
+		var email = t.find('input[name="username"]').value
 		, password = t.find('input[name="password"]').value;
 
 		Meteor.loginWithPassword(email, password, function(err){
@@ -13,6 +13,24 @@ Template.auth.events({
 			}
 		});
 		return false; 
+	},
+
+	'click .forgotPassword': function(e, t) {
+		e.preventDefault();
+
+		var email = prompt('Email?');
+
+		if (email) {
+			Accounts.forgotPassword({
+				email: email
+			}, function(err) {
+				if (err) {
+					Notifications.error('Восстановление пароля не дуалось', err.error);
+				} else {
+					Notifications.success('Способ восстановления кодов доступа отправлен на почту');
+				}
+			});
+		}
 	}
 });
 
@@ -20,7 +38,7 @@ Template.auth.events({
 Template.register_window.created = function() {
 	Session.set('register_step', '1');
 	Session.set('register_points', 0);
-}
+};
 
 Template.register_window.helpers({
 	register_step: function() {
@@ -43,6 +61,9 @@ Template.register_window.events({
 });
 
 Template.register_window_step3.helpers({
+	isInviteRequired: function() {
+		return Meteor.settings.public.isInviteRequired;
+	},
 	err_username: function() {
 		return Session.get('err_username');
 	},
@@ -63,22 +84,22 @@ Template.register_window_step3.helpers({
 	}
 });
 
-var validate_login = function(login) {
-	if (login.length > 0) {
-		Meteor.call('isLoginExists', login, function(err, exists) {
+var validate_username = function(username) {
+	if (username.length > 0) {
+		Meteor.call('user.checkPlainnameExists', username, function(err, exists) {
 			if (exists) {
 				Session.set('err_username', 'Такой логин уже используется');
 			} else {
 				Session.set('err_username', false);
 				return false;
 			}
-		})
+		});
 	} else {
 		Session.set('err_username', 'Логин должен содержать хотя бы 1 символ');
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_password = function(password) {
 	if (password.length > 5) {
@@ -88,7 +109,7 @@ var validate_password = function(password) {
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_passwordr = function(password, passwordr) {
 	if (passwordr == password) {
@@ -98,7 +119,7 @@ var validate_passwordr = function(password, passwordr) {
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_email = function(email) {
 	if (email.indexOf('@') != -1) {
@@ -108,7 +129,7 @@ var validate_email = function(email) {
 		return false;
 	}
 	return true;
-}
+};
 
 var validate_rules = function(rules) {
 	if (rules) {
@@ -118,29 +139,59 @@ var validate_rules = function(rules) {
 		return false;
 	}
 	return true;
+};
+
+if (!Meteor.settings.public.isInviteRequired) {
+	reCAPTCHA.config({
+		publickey: Meteor.settings.public.recaptcha.publickey,
+		hl: 'ru'
+	});
 }
 
 Template.register_window_step3.events({
+	'click .show-agreement': function(e, t) {
+		e.preventDefault();
+		t.$('.agreement').show();
+	},
+
+	'click .hide-agreement': function(e, t) {
+		e.preventDefault();
+		t.$('.agreement').hide();
+	},
+
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		var login = t.find('input[name="login"]').value
+		var username = t.find('input[name="username"]').value
 		  , email = t.find('input[name="email"]').value
 		  , password = t.find('input[name="password"]').value
 		  , passwordr = t.find('input[name="passwordr"]').value
-		  , code = t.find('input[name="code"]').value
 		  , rules = t.find('input[name="rules"]').checked;
 
-		if (validate_login(login) 
-			&& validate_password(password)
-			&& validate_passwordr(password, passwordr)
-			&& validate_email(email)
-			&& validate_rules(rules)) {
+		if (!validate_username(username) 
+		 || !validate_password(password)
+		 || !validate_passwordr(password, passwordr)
+		 || !validate_email(email)
+		 || !validate_rules(rules)
+		) {
+			return false;
+		}
 
-			Meteor.call('checkInviteCode', code, function(error, result) {
+		var options = {
+			email: email,
+			password: password,
+			username: username
+		};
+
+		if (Meteor.settings.public.isInviteRequired) {
+
+			// registration by invite
+			options.code = t.find('input[name="code"]').value;
+
+			Meteor.call('user.checkInviteCode', options.code, function(error, result) {
 				if (result) {
 					Session.set('err_code', false);
-					Accounts.createUser({email: email, password: password, login: login, code: code}, function(err) {
+					Accounts.createUser(options, function(err) {
 						if (err) {
 							Notifications.error('Не удалось зарегистрировать пользователя', err.error);
 						} else {
@@ -151,14 +202,31 @@ Template.register_window_step3.events({
 					Session.set('err_code', '<a href="https://boomstarter.ru/projects/zav/57753">Неверный код</a>');
 				}
 			});
+
+		} else {
+
+			// registration by captcha
+			Session.set('err_code', false);
+
+			options.captcha = grecaptcha.getResponse();
+			grecaptcha.reset();
+
+			Accounts.createUser(options, function(err) {
+				if (err) {
+					Notifications.error('Не удалось зарегистрировать пользователя', err.error);
+				} else {
+					Session.set('register_step', 4);
+				}
+			});
+
 		}
 
 		return false;
 	},
 
-	'blur [name="login"]': function(e, t) {
-		var login = e.target.value;
-		validate_login(login);
+	'blur [name="username"]': function(e, t) {
+		var username = e.target.value;
+		validate_username(username);
 	},
 
 	'blur [name="password"]': function(e, t) {
@@ -182,4 +250,4 @@ Template.register_window_step7.helpers({
 	points: function() {
 		return Session.get('register_points');
 	}
-})
+});

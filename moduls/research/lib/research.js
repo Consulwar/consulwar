@@ -3,6 +3,10 @@ initResearchLib = function() {
 game.Research = function(options){
 	game.Research.superclass.constructor.apply(this, arguments);
 
+	if (Game.Research.items[this.group][this.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется исследование ' + this.group + ' ' + this.engName);
+	}
+
 	Game.Research.items[this.group][this.engName] = this;
 
 	this.url = function(options) {
@@ -12,29 +16,19 @@ game.Research = function(options){
 		};
 		
 		return Router.routes[this.type].path(options);
-	}
+	};
 
 	this.type = 'research';
 };
 game.extend(game.Research, game.Item);
 
-game.GlobalResearch = function(options){
-	game.GlobalResearch.superclass.constructor.apply(this, arguments);
-
-	Game.Research.items[this.engName] = this;
-
-	//this.type = 'globalResearch';
-	this.group = 'research';
-};
-game.extend(game.GlobalResearch, game.GlobalItem);
-
-
-
 Game.Research = {
 	Collection: new Meteor.Collection('researches'),
 
-	getValue: function() {
-		return Game.Research.Collection.findOne({user_id: Meteor.userId()});
+	getValue: function(uid) {
+		return Game.Research.Collection.findOne({
+			user_id: uid === undefined ? Meteor.userId() : uid
+		});
 	},
 
 	get: function(group, name) {
@@ -56,8 +50,8 @@ Game.Research = {
 		evolution: {},
 		fleetups: {}
 	}
-}
+};
 
 initResearchContent();
 
-}
+};

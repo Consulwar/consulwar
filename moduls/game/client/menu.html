@@ -1,7 +1,7 @@
 <template name="top_menu">
 	<ul class="top_menu">
-		<li><a href="{{pathFor 'chat'}}">Чат</a></li>
-		<li><a href="">Статистика</a></li>
+		<li><a href="{{pathFor 'chat' room=chatRoom}}">Чат</a></li>
+		<li><a href="{{pathFor 'statistics'}}">Статистика</a></li>
 		<!--<li><a href="">Настройки</a></li>-->
 		<li><a href="javascript: ShowModalWindow(Template.support)">Служба поддержки</a></li>
 		<li><a href="http://ru.consulwar.wikia.com" target="_blank">Неофициальная вики</a></li>
@@ -12,7 +12,12 @@
 <template name="game_menu">
 	<ul class="game_menu">
 		{{#each menu}}
-			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}} {{this.additionalClass}}">
+			<li 
+				class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}} 
+				{{this.additionalClass}}"
+				data-tooltip="{{this.name}}"
+				data-tooltip-direction="s"
+			>
 				<a href="{{this.url}}"></a>
 			</li>
 		{{/each}}
@@ -22,7 +27,9 @@
 <template name="side_menu">
 	<ul class="side_menu">
 		{{#each sides}}
-			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}"><a href="{{this.url}}"></a></li>
+			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}">
+				<a href="{{getUrl this}}">{{this.name}}</a>
+			</li>
 		{{/each}}
 		{{#if eq sides.length 2}}
 			<!--<li class="helpusplease">
@@ -37,15 +44,63 @@
 	</ul>
 </template>
 
+<template name="additional_area">
+	{{#if sideHero}}
+		<div 
+			class="
+				additional_area 
+				quest
+				{{sideHero}} 
+				{{#if gt status -1}}
+					{{#if eq status 0}}prompt{{/if}}
+					{{#if eq status 3}}finished{{/if}}
+				{{/if}}"
+		>
+			{{#if sideHeroName}}
+				<span class="title">{{sideHeroName}}</span>
+			{{/if}}
+			{{#if quests}}
+				{{#if isOpened}}
+					<ul class="quests">
+						{{#each quests}}
+							<li 
+								data-id="{{this.engName}}"
+								class="
+									{{#if eq this.status 0}}prompt{{/if}}
+									{{#if eq this.status 1}}inprogress{{/if}}
+									{{#if eq this.status 3}}finished{{/if}}"
+							>
+								{{this.name}}
+							</li>
+						{{/each}}
+					</ul>
+				{{/if}}
+				<a class="quests-switch {{#if isOpened}}close{{else}}open{{/if}}"></a>
+			{{/if}}
+		</div>
+	{{/if}}
+</template>
+
 <template name="items_menu">
 	<ul class="bottom_menu items">
 		{{#each items}}
 			{{#let progress=this.progress}}
 				<li 
-					class="{{#if eq this.url currentUrl}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}}" 
-					data-level="{{#if this.currentLevel}}{{this.currentLevel}}{{/if}}" 
-					data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}">
-					<a class="{{this.engName}}-icon" href="{{this.url}}"></a>
+					class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if this.star}}star{{this.star}}{{/if}}" 
+					data-tooltip="{{this.name}}"
+					data-tooltip-direction="n"
+				>
+					<a 
+						class="{{this.engName}}-icon" 
+						href="{{this.url}}"
+						data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
+					>
+						{{#if this.currentLevel}}
+							<span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
+								{{formatNumberWithISO this.currentLevel 3}}
+							</span>
+						{{/if}}
+					</a>
 				</li>
 			{{/let}}
 		{{/each}}
@@ -55,15 +110,43 @@
 <template name="overlay_menu">
 	<div class="overlay {{menuGroup}} {{itemGroup}}">
 		{{#each items}}
-			{{#if gt this.currentLevel 0}}
-				<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
-			{{/if}}
-			
-			{{#let progress=this.progress}}
-				{{#if progress}}
-					<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
+			{{#if this.overlay}}
+				{{#let overlay=this.getOverlay}}
+					{{#if and (overlay (or overlay.img overlay.progress))}}
+						<a 
+							href="{{this.url}}"
+							title="{{this.name}}"
+							style="
+								top: {{overlay.y}}px;
+								left: {{overlay.x}}px;
+								z-index: {{overlay.z}};
+							"
+							>
+
+							{{#if overlay.img}}
+								<img src="/img/game/{{overlay.img}}" alt=""/>
+							{{/if}}
+
+							{{#if and overlay.progress (not (eq overlay.img overlay.progress.img))}}
+								<img 
+									src="/img/game/{{overlay.progress.img}}" 
+									progress="{{percentRound10 overlay.progress}}" 
+									alt=""/>
+							{{/if}}
+						</a>
+					{{/if}}
+				{{/let}}
+			{{else}}
+				{{#if gt this.currentLevel 0}}
+					<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
 				{{/if}}
-			{{/let}}
+				
+				{{#let progress=this.progress}}
+					{{#if and progress (eq progress.level 1)}}
+						<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
+					{{/if}}
+				{{/let}}
+			{{/if}}
 		{{/each}}
 		
 		{{#if eq currentUrl (pathFor route='building' group='residential')}}

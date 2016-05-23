@@ -1,17 +1,43 @@
 Meteor.startup(function () {
 
+initPaymentClient();
+initRatingClient();
 initResourcesClient();
-initBuldingClient();
+initCardsClient();
+initBuildingClient();
 initResearchClient();
 initUnitClient();
-
+initCosmosClient();
+initEarthClient();
+initHouseClient();
+initMutualClient();
 initMailClient();
-
-initQuestLib();
-
-initMenuClient();
-
+initChatClient();
+initQuestClient();
 initRouterClient();
+initMenuClient();
+initStatisticClient();
+initAchievementsClient();
+initCheatsClient();
+initMarketClient();
+initColosseumClient();
+initBlackmarketClient();
+initPulsecatcherClient();
+
+
+/*
+var preloadImages = function(images) {
+	for (var i = 0; i < images.length; i++) {
+		var img = new Image();
+		img.src = images[i];
+	}
+};
+
+preloadImages([
+	'/img/error.png'
+]);
+*/
+
 
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",
@@ -27,19 +53,7 @@ Notifications.defaultOptions.timeout = 5000;
 
 Router.configure({
 	loadingTemplate: 'loading'
-})
-/*
-Router.map(function() {
-	this.route('index', {path: '/'})
-
-	this.route('register', {
-		path: '/register',
-		layoutTemplate: 'index',
-		yieldTemplates: {
-			'register_window': {to: 'modal'}
-		}
-	});
-})*/
+});
 
 Router.route('/', function () {
 	Session.set('totalUsersCount', '…');
@@ -49,7 +63,7 @@ Router.route('/', function () {
 
 	var user = Meteor.user();
 	if (user) {
-		if (user.blocked == true) {
+		if (user.blocked === true) {
 			Meteor.logout();
 			this.redirect('index');
 			alert('Аккаунт заблокирован');
@@ -66,9 +80,9 @@ Router.route('/', function () {
 
 	Meteor.call('onlineUsersCount', function(err, result) {
 		Session.set('onlineUsersCount', result);
-	})
+	});
 
-	if (window.Metrica != undefined) {
+	if (window.Metrica !== undefined) {
 		Metrica.hit(window.location.href, 'Index', document.referrer);
 	}
 
@@ -101,210 +115,99 @@ Router.route('register', {
 
 
 Meteor.subscribe('game');
-Meteor.subscribe('mail');
 Meteor.subscribe('queue');
-Meteor.subscribe('buildings');
-Meteor.subscribe('units');
-Meteor.subscribe('researches');
-Meteor.subscribe('globalResearch');
 
-
-Meteor.subscribe('chat');
-Meteor.subscribe('online');
 
 test = Router.route('/test', function() {
 	console.log('yes');
-})
-
-
-var menu = {
-	planet: {
-		residential: game.planet.residential, 
-		counsul: game.planet.counsul, 
-		military: game.planet.military,
-	},
-	army: {
-		fleet: game.army.fleet,
-		heroes: game.army.heroes,
-		ground: game.army.ground
-	},
-	research: {
-		evolution: game.research.evolution,
-		fleetups: game.research.fleetups,
-		global: game.research.global
-	},
-	/*powerups: {
-		avaliable: [],
-		activated: [],
-		bought: []
-	},
-	alliance: {
-		info: [],
-		find: [],
-		create: []
-	},*/
-	battle: {
-		attack: _.map(Game.Battle.items, function(value) {
-			return value;
-		}),
-		reinforcement: [],
-		//statistics: [],
-		earth: []
-	},
-	/*battle: {
-		events: [],
-		reinforcement: [],
-		history: []
-	},*/
-	messages: {
-		'private': [],
-		//alliance: [],
-		all: []
-	},
-	reptiles: {
-		rfleet: game.reptiles.rfleet,
-		rheroes: game.reptiles.rheroes,
-		rground: game.reptiles.rground
-	}
-}
-
-/*
-Router.route('/game/:menu?/:side?/:item?', {
-	name: 'game',
-
-	before: function() {
-		if (!Meteor.userId()) {
-			this.redirect('index');
-			return;
-		}
-
-		var user = Meteor.user();
-		if (user && user.blocked == true) {
-			Meteor.logout();
-			this.redirect('index');
-			alert('Аккаунт заблокирован');
-		}
-
-		if (this.params.menu && (this.params.menu in menu || this.params.menu in game)) {
-			if (!(this.params.side && (this.params.side in menu[this.params.menu] || this.params.side in game[this.params.menu]))) {
-				return this.redirect('game', {
-					menu: this.params.menu,
-					side: Object.keys(menu[this.params.menu])[0]
-				})
-			}
-		} else {
-			return this.redirect('game', {menu: 'planet'});
-		}
-			
-		this.wait(Meteor.subscribe('game'));
-		this.wait(Meteor.subscribe('resources'));
-		this.wait(Meteor.subscribe('queue'));
-		this.wait(Meteor.subscribe('buildings'));
-		this.wait(Meteor.subscribe('units'));
-		this.wait(Meteor.subscribe('researches'));
-
-		if (this.ready()) {
-			Session.set('active_menu', null);
-			Session.set('active_side', null);
-			Session.set('active_item', null);
-			Session.set('point_info', null);
-
-			Session.set('price', null);
-			Session.set('priceEffects', null);
-			Session.set('level', null);
-			Session.set('investments', null);
-			Session.set('effect', null);
-			Session.set('requirements', null);
-
-			Session.set('active_menu', this.params.menu);
-			Session.set('active_side', this.params.side);
-			this.next();
-		} else {
-			this.render('loading', {layout: 'loading_layout'})
-		}
-	},
-
-	after: function() {
-		if (window.Metrica != undefined) {
-			Metrica.hit(window.location.href, 'Game', document.referrer);
-		}
-	},
-
-	action: function() {
-		this.render('game');
-
-		if (this.params.menu == 'messages') {
-			if (['all', 'alliance'].indexOf(this.params.side) != -1) {
-				this.render('chat', {to: 'content'});
-			} else {
-				this.render('mail', {to: 'content'});
-			}	
-		} else if (this.params.menu == 'battle') {
-			if (this.params.side == 'statistics') {
-				var self = this;
-				Meteor.call('getTopUsers', function(err, users) {
-					for(var i = 0; i < users.length; i++) {
-						users[i].place = i + 1;
-					}
-
-					self.render('rating', {to: 'content', data: {users: users}});
-				});
-			} else if (this.params.side == 'reinforcement') {
-				this.render('reserve', {to: 'content'});
-			} else if (this.params.side == 'earth') {
-				this.render('earth', {to: 'content'});
-
-				if (this.params.item) {
-					var item = Game.Point.items[this.params.item];
-					Session.set('active_item', item);
-					Meteor.call('getPointInfo', this.params.item, function(err, info) {
-						Session.set('point_info', info);
-					});
-						
-				}
-			} else {
-				//this.render('battle', {to: 'content'});
-				var item = Game.Battle.items[this.params.item];
-				Session.set('active_item', item);
-				this.render('battle', {to: 'content'});
-				Session.set('currentBattleLevel', 1);
-				$('select.battle_level').val(1);
-			}	
-		} else if (this.params.item && game[this.params.menu][this.params.side][this.params.item]) {
-			var item = game[this.params.menu][this.params.side][this.params.item];
-			Session.set('active_item', item);
-			this.render('build', {to: 'content'});
-		} else {
-			this.render('empty', {to: 'content'});
-		}
-
-		updateItemInformation();
-	
-	
-	}
 });
-*/
+
+
+var isActualizeInprogress = false;
+
+Game.actualizeGameInfo = function() {
+	console.log('actualize...');
+	if (!isActualizeInprogress) {
+		isActualizeInprogress = true;
+		Meteor.call('actualizeGameInfo', function(err) {
+			isActualizeInprogress = false;
+			if (err) {
+				Game.syncServerTime();
+			}
+		});
+	}
+};
+
 
 Session.set('serverTimeDelta', null);
 Session.setDefault('serverTime', Math.floor(new Date().valueOf() / 1000));
 
-Meteor.call('getCurrentTime', function(error, result) {
-	Session.set('serverTimeDelta', new Date().valueOf() - result);
-	var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
-	Session.set('serverTime', serverTime);
+var syncTimeFunctionId = null;
+var refreshQueueFunctionId = null;
 
-	Meteor.setInterval(function() {
+Game.syncServerTime = function() {
+	if (refreshQueueFunctionId) {
+		Meteor.clearInterval(refreshQueueFunctionId);
+		refreshQueueFunctionId = null;
+	}
+
+	Meteor.call('getCurrentTime', function(error, result) {
+		if (error) {
+			// call Game.syncServerTime again after 10 seconds
+			if (!syncTimeFunctionId) {
+				syncTimeFunctionId = Meteor.setTimeout(Game.syncServerTime, 10000);
+			}
+			return;
+		}
+
+		// clear timeout id
+		if (syncTimeFunctionId) {
+			Meteor.clearTimeout(syncTimeFunctionId);
+			syncTimeFunctionId = null;
+		}
+
+		// got server time
+		Session.set('serverTimeDelta', new Date().valueOf() - result);
 		var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
 		Session.set('serverTime', serverTime);
 
-		var queue = Game.Queue.getAll();
-		for (var i = 0; i < queue.length; i++) {
-			if (queue[i].finishTime <= serverTime) {
-				Meteor.call('actualizeGameInfo');
-				break;
+		// refresh time each second
+		refreshQueueFunctionId = Meteor.setInterval(function() {
+			var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
+			Session.set('serverTime', serverTime);
+
+			var queue = Game.Queue.getAll();
+			for (var i = 0; i < queue.length; i++) {
+				if (queue[i].finishTime <= serverTime) {
+					Game.actualizeGameInfo();
+					break;
+				}
 			}
+		}, 1000);
+	});
+};
+Game.syncServerTime();
+
+
+var retryIntervalId = null;
+var retryTime = null;
+
+Tracker.autorun(function() {
+	if (Meteor.status().status === "waiting") {
+		retryTime = Math.floor( Meteor.status().retryTime / 1000 );
+		if (!retryIntervalId) {
+			retryIntervalId = Meteor.setInterval(function() {
+				var time = retryTime - Math.floor(new Date().valueOf() / 1000);
+				Session.set('reconnectTime', (time > 0 ? time : null));
+			}, 1000);
 		}
-	}, 1000);
+	} else {
+		if (retryIntervalId) {
+			Meteor.clearInterval(retryIntervalId);
+			retryIntervalId = null;
+		}
+		Session.set('reconnectTime', null);
+	}
 });
 
 
@@ -312,7 +215,7 @@ Tracker.autorun(function () {
 	if (Meteor.user() && Meteor.user().game) {
 		var user = Meteor.user();
 
-		if (user && user.blocked == true) {
+		if (user && user.blocked === true) {
 			Meteor.logout();
 			Router.go('index');
 			alert('Аккаунт заблокирован');
@@ -323,44 +226,36 @@ Tracker.autorun(function () {
 		//var resources = Game.Resources.getValue();
 		//Session.set('resources', resources);
 
-		Session.set('currentQuest', user.game.quests.current);
-		Session.set('login', user.login);
+		Session.set('username', user.username);
 		Session.set('planetName', user.planetName);
 	}
 });
 
-global = {
+mutual = {
 	item: null,
 	sub: null
 };
 
 
-Meteor.setInterval(function() {
-	console.log('actualize...');
-	Meteor.call('actualizeGameInfo');
-}, 60000);
+Meteor.setInterval(Game.actualizeGameInfo, 60000);
 
 var hasNewMailStatus = false;
 Tracker.autorun(function() {
 	var user = Meteor.user();
-	if (user && user.game && user.game.quests.daily.status != game.Quest.status.finished
-		|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-		&& !hasNewMailStatus) {
+	if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread() && !hasNewMailStatus) {
 		hasNewMailStatus = true;
 	} else {
 		hasNewMailStatus = false;
 	}
 });
 
-Accounts.onLogin(function() {
-	Meteor.call('actualizeGameInfo');
-});
+Accounts.onLogin(Game.actualizeGameInfo);
 /*
 Deps.autorun(function(){
 	var user = Meteor.user();
 	if(user && user.game){
 		console.log('actualize...', _.clone(Meteor.user()));
-		Meteor.call('actualizeGameInfo');
+		Game.actualizeGameInfo();
 	}
 });*/
 
@@ -387,8 +282,6 @@ var helpers = {
 	enoughCredits: function() { return Session.get('enoughCredits'); },
 	effect: function() { return Session.get('effect'); },
 
-	currentQuest: function() { return Session.get('currentQuest'); },
-
 	currentConstruction: function() { return Session.get('currentConstruction'); },
 	constructionRemaningTime: function() {
 		var currentConstruction = Session.get('currentConstruction');
@@ -407,116 +300,107 @@ var helpers = {
 		}
 	},
 	resources: function() { return Session.get('resources'); },
-	login: function() { return Session.get('login'); },
+	username: function() { return Session.get('username'); },
 	planetName: function() { return Session.get('planetName'); },
 
-	currentBattle: function() { return Session.get('currentBattle'); },
-
 	hasNewMail: function() { 
-		return (
-			Meteor.user().game.quests.daily.status != game.Quest.status.finished
-			|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-		); 
+		return (Game.Quest.hasNewDaily() || Game.Mail.hasUnread());
 	},
 
 	connection: function() { return Meteor.status(); },
-	reconnectTime: function() { return Session.get('reconnectTime'); }
+	reconnectTime: function() { return Session.get('reconnectTime'); },
+
+	fleetInfo: function() {
+		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
+		var fleets = Game.SpaceEvents.getFleets().fetch();
+		
+		if (reinforcements.length === 0 && fleets.length === 0) {
+			return null;
+		}
+
+		var consul = 0;
+		var consulTime = Number.MAX_VALUE;
+		var consulId = null;
+		var reptile = 0;
+		var reptileTime = Number.MAX_VALUE;
+		var reptileId = null;
+		var isWaitingAttack = false;
+
+		for (var i = 0; i < fleets.length; i++) {
+			if (fleets[i].info.isHumans) {
+				consul++;
+				if (consulTime > fleets[i].timeEnd) {
+					consulTime = fleets[i].timeEnd;
+					consulId = fleets[i]._id;
+				}
+			} else {
+				reptile++;
+				if (reptileTime > fleets[i].timeEnd) {
+					reptileTime = fleets[i].timeEnd;
+					reptileId = fleets[i]._id;
+				}
+				// check attack
+				if (!isWaitingAttack) {
+					if (fleets[i].info.targetType == Game.SpaceEvents.target.SHIP) {
+						// check ship
+						var ship = Game.SpaceEvents.getOne(fleets[i].info.targetId);
+						if (ship && ship.info.isHumans) {
+							isWaitingAttack = true;
+						}
+					} else if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET) {
+						// check planet
+						var planet = Game.Planets.getOne(fleets[i].info.targetId);
+						if (planet && (planet.isHome || planet.armyId)) {
+							isWaitingAttack = true;
+						}
+					}
+				}
+			}
+		}
+
+		return {
+			reinforcements: reinforcements.length,
+			reinforcementsTime: reinforcements.length > 0 ? reinforcements[0].timeEnd : 0,
+			reinforcementsId: reinforcements.length > 0 ? reinforcements[0]._id : null,
+			consul: consul,
+			consulTime: consulTime,
+			consulId: consulId,
+			reptile: reptile,
+			reptileTime: reptileTime,
+			reptileId: reptileId,
+			isWaitingAttack: isWaitingAttack
+		};
+	},
+
+	fleetTime: function(time) {
+		var timeLeft = time - Session.get('serverTime');
+		return (timeLeft > 0) ? timeLeft : 0;
+	}
 };
 
 
 Template.game.helpers(helpers);
-//Template.build.helpers(helpers);
 Template.item.helpers(helpers);
-Template.battle.helpers(helpers);
-
-Template.top_investors.helpers({
-	investors: function() {
-		return Game.Investments.getTopInvestors(Session.get('active_item'));
-	}
-})
-
-Session.set('honor', 0);
-Template.reserve.onRendered(function() {
-	Session.set('honor', 0);
-})
-
-Template.reserve.helpers({
-	units: function() {
-		return _.map(game.army.ground, function(val, key) {
-			return {
-				engName: key,
-				count: game.army.ground[key].currentLevel()
-			}
-		}).concat(_.map({hbhr: game.army.heroes.hbhr, lost: game.army.heroes.lost}, function(val, key) {
-			return {
-				engName: key,
-				count: game.army.heroes[key].currentLevel()
-			}
-		}))
-	},
-
-	honor: function() { return Session.get('honor'); }
-})
-
-Template.reserve.events({
-	'click .items li': function(e, t) {
-		if (!$(e.currentTarget).hasClass('disabled')) {
-			$(e.currentTarget).toggleClass('active');
-
-			var current = $(e.currentTarget).find('div')[0];
-			var name = current.className;
-			var count = current.dataset.count;
-			var honor = Session.get('honor');
-				
-			if (['hbhr', 'lost'].indexOf(name) != -1) {
-				honor += Game.Resources.calculateHonorFromReinforcement(game.army.heroes[name].price(count)) * ($(e.currentTarget).hasClass('active') ? 1 : -1 )
-			} else {
-				honor += Game.Resources.calculateHonorFromReinforcement(game.army.ground[name].price(count)) * ($(e.currentTarget).hasClass('active') ? 1 : -1 )
-			}
-
-			Session.set('honor', honor);
-		}
-	},
-
-	'click .select_all': function() {
-		$('.items li:not(.disabled,.active)').click();
-	},
-
-	'click .send_reinforcement': function() {
-		var active = $('.reserve .active div');
-		var units = [];
-		for (var i = 0; i < active.length; i++) {
-			var name = active[i].className;
-			
-			units.push(name);
-		}
-
-		$('.reserve .active').removeClass('active');
-		Session.set('SendToReserve', 0);
-
-		Meteor.call('sendReinforcement', units, function(err, result) {
-			if (err) {
-				Notifications.error(err);
-			} else {
-				Notifications.info('Получено ' + result + ' чести', 'Замечательно!');
-				Session.set('honor', 0);
-			}
-		});
-	}
-})
 
 
 Template.game.events({
 	'click header .username .edit': function() {
 		var planetName = prompt('Как назвать планету?', Meteor.user().planetName);
+		if (!planetName) {
+			return;
+		}
 
-		Meteor.call('changePlanetName', planetName, function(err, result) {
+		planetName = planetName.trim();
+		if (planetName == Meteor.user().planetName) {
+			return;
+		}
+
+		Meteor.call('user.changePlanetName', planetName, function(err, result) {
 			if (err) {
 				Notifications.error('Невозможно сменить название планеты', err.error);
 			}
 		});
 	},
-
 
 	'click progress.metals': function(e, t) {
 		Meteor.call('getBonusResources', 'metals', function(error, result) {
@@ -525,7 +409,7 @@ Template.game.events({
 			} else {
 				Notifications.success('Бонусный металл получен', '+' + result);
 			}
-		})
+		});
 	},
 
 	'click progress.crystals': function(e, t) {
@@ -535,220 +419,53 @@ Template.game.events({
 			} else {
 				Notifications.success('Бонусный кристалл получен', '+' + result);
 			}
-		})
-	},
-
-	'click .game .content .quest': function() {
-		var who = '';
-		var text = '';
-		switch(Session.get('active_side')) {
-			case 'residential':
-				who = 'tamily';
-				break;
-			case 'counsul':
-				who = 'portal';
-				return ShowModalWindow(Template.support);
-				break;
-			case 'military':
-				who = 'thirdenginery';
-				text = 'Третий Инженерный на связи! Приятно вас снова видеть, Консул, после предыдущей работы над техникой во время первой волны освобождения Земли, нас перебросили в военную отрасль немного другого формата. В общем, мы теперь работаем над военными зданиями, правитель. Качество Гарантируем.';
-				break;
-			case 'fleet':
-				who = 'vaha';
-				text = 'Понятия не имею хуля я тут делаю, но эти ебланы из Совета не подпускают меня к войскам до начала боя. Посадили меня курировать флот консулов... Да ну и хер с ним, по летающим мишеням  стрелять веселее, верно ведь, Консул?';
-				break;
-			case 'heroes':
-				who = 'psm';
-				text = 'Рад, что вы снова с нами, Консул. Портал вновь открыт, но не время расслабляться. Вам, как и многим другим Консулам, придётся через многое пройти, чтобы победить Рептилий, но я уверен, что вы справитесь. На связи, Консул.';
-				break;
-			case 'ground':
-				who = 'tilps';
-				text = 'Я слежу за подготовкой солдат и техники к бою, Консул. Задача не из лёгких доложу я вам, но ведь никто не говорил, что будет просто, верно? В любом случае у нас с вами одна цель, спасибо за помощь, Консул. Мы это очень ценим, даже Вахаёбович, хотя он и не признается никогда.';
-				break;
-			case 'evolution':
-				who = 'nataly';
-				text = 'О! Здравствуйте, Командующий. Думаю, вы помните меня как руководителя десятой инженерной бригады. Ну что же это я, конечно помните. Теперь мы работаем над системами улучшения различных приборов, а так же совершаем новые открытия. Двигаем вперёд научный прогресс! В общем, Консул, если вам нужно что-то улучшить — сразу ко мне. И помните, для науки нет ничего невозможного!';
-				break;
-			case 'fleetups':
-				who = 'mechanic';
-				text = 'У меня много имён: Защитник, Перевозчик... но ты, Консул, можешь называть меня Механик. Я занимаюсь тем, что доставляю свежайшие и мощнейшие технологии для усиления флота. Если хочешь господствовать в небе, то ты обратился по адресу. Я сделаю твой флот в разы мощнее чем эти железяки чешуйчатых. Естественно не за бесплатно…';
-				break;
-			case 'global':
-				who = 'calibrator';
-				text = 'О, Консул! Я вас не заметил… я тут это, калибрую потихоньку. Знаете, тысячи различных приказов поступают ото всех Консулов галактики. Всё это нужно отсортировать, каталогизировать и разослать в научные отделы, а после, когда технология будет исследована, ещё и сообщить в Лаборатории на каждую из колоний… ох, извините, что загружаю. Пора возвращаться к калибровке.';
-				break;
-			case 'reinforcement':
-				who = 'bolz';
-				text = 'Доброго дня вам, Консул. Или сейчас ночь? В космосе хрен разберёшь. Если у вас есть какие-то войска на отправку, закидывайте это мясо в трюмы, мои ребята доставят их на Землю с ветерком... ну или не доставят, тут уж как повезёт.';
-				break;
-			case 'private':
-				who = 'renexis';
-				text = 'Привет';
-				break;
-		}
-
-
-		if (who == 'tamily') {
-			var quest = Meteor.user().game.quests.current;
-
-			if (quest.status == game.Quest.status.finished) {
-				Blaze.renderWithData(
-					Template.reward, 
-					{
-						type: 'quest',
-						title: [
-							'Замечательно!', 
-							'Прекрасно!', 
-							'Отличная Работа!', 
-							'Супер! Потрясающе!', 
-							'Уникальный Талант!', 
-							'Слава Консулу! ', 
-							'Невероятно!', 
-							'Изумительно!'
-						][Math.floor(Math.random()*8)],
-						reward: quest.reward
-					}, 
-					$('.over')[0]
-				)
-			} else {
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: 'tamily',
-						type: 'quest',
-						title: quest.conditionText, 
-						text: quest.text, 
-						reward: quest.reward,
-						options: $.map(quest.options, function(values, name) {
-							values.name = name;
-							return values;
-						}),
-						isPrompt: quest.status == game.Quest.status.prompt
-					}, 
-					$('.over')[0]
-				)
-			}
-		} else {
-			Blaze.renderWithData(
-				Template.quest, 
-				{
-					who: who,
-					type: 'quest',
-					//title: quest.conditionText, 
-					text: text
-				}, 
-				$('.over')[0]
-			)
-		}
+		});
 	}
 });
-
-Template.quest.events({
-	'click a': function(e, t) {
-		if (t.data.type == 'quest') {
-			Meteor.call('questAction', e.target.dataset.option);
-			Blaze.remove(t.view);
-		} else {
-			Meteor.call('dailyQuestAnswer', e.target.dataset.option, function(err, result) {
-				var user = Meteor.user();
-				Blaze.remove(t.view);
-
-				Blaze.renderWithData(
-					Template.quest, 
-					{
-						who: user.game.quests.daily.who || 'tamily',
-						type: 'daily',
-						title: user.game.quests.daily.name,
-						text: result.text,
-						reward: result.reward
-					}, 
-					$('.over')[0]
-				)
-			})
-		}
-	},
-
-	'click .close': function(e, t) {
-		Blaze.remove(t.view);
-	}
-});
-
-Template.reward.events({
-	'click .reward': function(e, t) {
-		Meteor.call('getReward');
-		Blaze.remove(t.view);
-	}
-});
-/*
-Template.build.events({
-	'keyup .count, change .count': function(e, t) {
-		var value = e.target.value.replace(/\D/g,'');
-		value = value > 0 ? value : 1;
-
-		var item = game[Session.get('active_menu')][Session.get('active_side')][Session.get('active_item').engName];
-
-		var price = item.price(value);
-		Session.set('price', price);
-		Session.set('priceEffects', price.effects);
-		Session.set('basePrice', price.base);
-
-		Session.set('disableBuild', item.canBuild(value) ? false : true);
-	},
-
-	'click button.build': function(e, t) {
-		var active_menu = Session.get('active_menu')
-		  , active_side = Session.get('active_side')
-		  , active_item = Session.get('active_item').engName;
-
-		var item = game[active_menu][active_side][active_item];
-
-		var build = {
-			menu: active_menu, 
-			side: active_side, 
-			item: active_item, 
-		};
-
-		if (item.type == 'unit') {
-			var value = parseInt(t.find('.count[type="number"]').value);
-			check(value, Number)
-			build.count = value;
-		}
-
-		if (e.target.dataset.action == 'invest') {
-			build.investments = parseInt(t.find('.count[type="number"]').value);
-			Meteor.call('invest', build, e.target.dataset.currency,
-				function(error, message) {
-					if (error) {
-						Notifications.error('Невозможно вложиться', error.error);
-					}
-				}
-			);
-		} else {
-			Meteor.call('build', build,
-				function(error, message) {
-					if (error) {
-						Notifications.error('Невозможно начать строительство', error.error);
-					} else {
-						Notifications.success('Строительство запущено');
-					}
-				}
-			);
-
-			if (item.type != 'unit' && game[active_menu][active_side][active_item].currentLevel() == 0) {
-				Router.go('game', {menu: active_menu, side: active_side});
-			}
-		}
-	}
-});*/
 
 ShowModalWindow = function(template, data) {
 	Blaze.renderWithData(
 		template, 
 		data, 
 		$('.over')[0]
-	)
-}
+	);
+};
 
+Template.item_price.events({
+	'click .resources .credits': function(e, t) {
+		Game.Payment.showWindow();
+	},
 
+	'click .resources .artefact': function(e, t) {
+		Router.go('house', {
+			group: 'house',
+			subgroup: 'artefacts',
+			item: e.currentTarget.dataset.id
+		});
+	}
+});
+
+Template.item_price.helpers({
+	getResources: function(price) {
+		var result = [];
+		for (var name in price) {
+			var item = {
+				engName: name,
+				amount: price[name],
+				price: price
+			};
+			if (name == 'time') {
+				result.unshift(item);
+			} else {
+				result.push(item);
+			}
+		}
+		return result;
+	},
+
+	isArtefact: function(key) {
+		return Game.Artefacts.items[key] ? true : false;
+	}
+});
 
 });

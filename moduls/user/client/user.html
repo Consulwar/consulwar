@@ -1,6 +1,6 @@
 <template name="auth">
 	<form class="auth" name="">
-		<input name="login" type="text" placeholder="Email">
+		<input name="username" type="text" placeholder="Email">
 		<input name="password" type="password" placeholder="*********">
 
 		<select disabled>
@@ -14,7 +14,7 @@
 
 		<input type="submit" value="Запуск канала связи">
 
-		<a href="#"><del>забыли пароль?</del></a>
+		<a href="#" class="forgotPassword">забыли пароль?</a>
 		<a class="start_registration" href="{{pathFor 'register'}}">Регистрация</a>
 	</form>
 </template>
@@ -63,7 +63,7 @@
 	<form>
 		<label>
 			<div class="title">Как нам называть вас, Консул?</div>
-			<input class="{{#if err_username}}err{{/if}}" name="login" type="text" placeholder="Ваш логин">
+			<input class="{{#if err_username}}err{{/if}}" name="username" type="text" placeholder="Ваш логин">
 			<span class="error_text">{{err_username}}</span>
 		</label>
 		<label>
@@ -87,17 +87,27 @@
 			<option>Сервер: Реактор</option>
 		</select>
 		-->
-		<input class="{{#if err_code}}err{{/if}}" name="code" type="text" placeholder="Код приглашения">
-		<span class="error_text">{{{err_code}}}</span>
+
+		{{#if isInviteRequired}}
+			<input class="{{#if err_code}}err{{/if}}" name="code" type="text" placeholder="Код приглашения">
+			<span class="error_text">{{{err_code}}}</span>
+		{{else}}
+			{{> reCAPTCHA}}
+		{{/if}}
 
 		<label>
 			<input name="rules" type="checkbox">
-			<a href="#">С правилами ознакомлен и согласен</a>
+			<a href="#" class="show-agreement">С правилами ознакомлен и согласен</a>
 			<span class="error_text">{{err_rules}}</span>
 		</label>
 
 		<input type="submit" value="Понеслась моча по трубам">
 	</form>
+
+	<div class="agreement">
+		<iframe src="/legal/agreement"></iframe>
+		<a href="#" class="hide-agreement">Назад</a>
+	</div>
 </template>
 
 <template name="register_window_step4">
@@ -112,7 +122,7 @@
 	<p>Мы прекрасно понимаем, о, Великий Консул, что вы слишком серьёзная фигура, чтобы тратить своё время на нас. Но позвольте узнать нам побольше о ваших желаниях и предпочтениях. Какой вы правитель, Консул — ваша светлость?</p>
 	<a data-step="6" data-points="1" class="positive" href="#">Я добрый, честный и справедливый правитель.</a>
 	<a data-step="6" data-points="1" class="positive" href="#">Я властный и безжалостный завоеватель!</a>
-	<a class="negative" href="{{pathFor 'game'}}">Так, мне это надоело, я Консул! У меня нет времени на глупости.</a>
+	<a class="negative" href="{{pathFor 'building' group='residential'}}">Так, мне это надоело, я Консул! У меня нет времени на глупости.</a>
 </template>
 
 <template name="register_window_step6">
@@ -120,7 +130,7 @@
 	<p>Какой способ борьбы с захватчиками вы предпочитаете?</p>
 	<a data-step="7" data-points="1" class="neutral" href="#">Я буду править своим народом и посылать на войну своих солдат</a>
 	<a data-step="7" data-points="2" class="positive" href="#">Я лично возглавлю флот! Рептилиям не спрятаться от меня даже в самых труднодоступных местах! </a>
-	<a class="negative" href="{{pathFor 'game'}}">А вот теперь мне действительно пора…</a>
+	<a class="negative" href="{{pathFor 'building' group='residential'}}">А вот теперь мне действительно пора…</a>
 </template>
 
 <template name="register_window_step7">
@@ -135,33 +145,72 @@
 		{{/if}}{{/if}}{{/if}}
 
 	</p>
-	<a class="positive" href="{{pathFor 'game'}}">Я в курсе, детка, а теперь подать мне мой трон!</a>
+	<a class="positive" href="{{pathFor 'building' group='residential'}}">Я в курсе, детка, а теперь подать мне мой трон!</a>
 </template>
 
 <template name="rating">
 	<div class="rating">
-		<table>
-			<tr>
-				<th>Место</th>
-				<th>Ник</th>
-				<th>Награды</th>
-				<th>Действия</th>
-				<th>Рейтинг</th>
-			</tr>
-			<tbody>
-				{{#each users}}
-				<tr class="{{#if eq this.login user.login}}me{{/if}}" id="{{this.login}}">
-					<td>{{this.place}}</td>
-					<td>{{this.login}}</td>
-					<td>
-						{{#if this.cheater}}<img src="/img/game/achivments/cheater.png"/>{{/if}}
-						{{#if gt this.rating 25000}}<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>{{/if}}
-						</td>
-					<td><a class="send_message" href="{{pathFor 'game' menu='messages' side='private' hash=this.login}}"><img src="/img/game/message.png"></a></td>
-					<td>{{formatNumber this.rating}}</td>
+		{{#if users}}
+			<table>
+				<tr class="header">
+					<th>Место</th>
+					<th>Ник</th>
+					<th>Награды</th>
+					<th>Действия</th>
+					<th>Рейтинг</th>
 				</tr>
-				{{/each}}
-			</tbody>
-		</table>
+			</table>
+			<div class="data">
+				<table>
+					{{#each users}}
+					<tr class="{{#if eq this.username user.username}}me{{/if}}" id="{{this.username}}">
+						<td>{{this.place}}</td>
+						<td>{{this.username}}</td>
+						<td>
+							{{#if gt this.rating 25000}}
+								<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>
+							{{/if}}
+							{{#each (achievements this)}}
+								<img 
+									src="
+										/img/game/achievements/{{this.engName}}
+										{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png
+										" 
+									alt="{{this.name}}" 
+									data-tooltip="
+										<div class='title'>{{this.name}}</div>
+										<div class='text'>{{this.description}}</div>
+										{{#if this.effect}}
+											{{#each this.effect}}
+												{{#if (this.result ../currentLevel)}}
+													<div class='effect'>
+														{{this.pretext}}
+														{{this.result ../currentLevel}}
+														{{this.aftertext}}
+													</div>
+												{{/if}}
+											{{/each}}
+										{{/if}}
+										"
+								/>
+							{{/each}}
+						</td>
+						<td>
+							<a class="send_message" href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}">
+								<img src="/img/game/message.png">
+							</a>
+							<a class="open_house" href="{{pathFor 'house' group='house' hash=this.username}}">
+								Смотреть палату
+							</a>
+						</td>
+						<td>{{formatNumber this.rating}}</td>
+					</tr>
+					{{/each}}
+				</table>
+			</div>
+			{{> pages total=countTotal perPage=countPerPage}}
+		{{else}}
+			<h2>Нет статистики</h2>
+		{{/if}}
 	</div>
 </template>

@@ -4,7 +4,7 @@
 		<span class="title">Необходимые технологии:</span>
 		{{#each requirements}}
 		<a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">
-			{{#unless eq this.[0].level 1}}{{this.[1]}} уровень{{/unless}}
+			{{#if gt this.[1] 1}}{{this.[1]}} уровень{{/if}}
 			<div class="{{this.[0].type}}">{{this.[0].name}}</div>
 		</a>
 		{{/each}}
@@ -14,19 +14,37 @@
 
 <template name="item_effect">
 	{{#if item.effect}}
-		{{#with item.effect}}
-			<div class="currentLevel">
-				Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-				{{name}}{{pretext}}{{result}}{{aftertext}} {{unit}}
-			</div>
-
-				{{#with next}}
-				<div class="nextLevel">
-					Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-					{{name}}{{pretext}}{{result}}{{aftertext}} {{unit}}
-				</div>
+		<div class="currentLevel">
+			{{#if item.maxLevel}}
+				{{#with item.effect.[0]}}
+					Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
 				{{/with}}
-		{{/with}}
+			{{/if}}
+			{{#each item.effect}}
+				{{#if result}}
+					{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+					{{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+					<br/>
+				{{/if}}
+			{{/each}}
+		</div>
+
+		{{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
+			<div class="nextLevel">
+				{{#with item.effect.[0].next}}
+					Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+				{{/with}}
+				{{#each item.effect}}
+					{{#with this.next}}
+						{{#if and result (not (eq ../result result))}}
+							{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+							{{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+							<br/>
+						{{/if}}
+					{{/with}}
+				{{/each}}
+			</div>
+		{{/if}}
 	{{/if}}
 </template>
 
@@ -35,30 +53,34 @@
 		<div class="characteristics">
 			{{#if item.targets}}
 				Приоритеты атаки:
-				<ul class="targets">
+				<ol class="targets">
 					{{#each item.targets}}
 						<li><a href="{{this.url}}">{{this.name}}</a></li>
 					{{/each}}
-				</ul>
+				</ol>
 			{{/if}}
-			{{item.characteristics.effect.name}}
+			{{#each item.triggers.battle}}
+			{{this.name}}
+			{{/each}}
 
-			{{#if item.characteristics.air}}
+			{{#if eq item.characteristics.special 'air'}}
 				*Воздушная единица<br/>
 			{{/if}}
 
-			{{#if eq item.characteristics.attackAir false}}
+			{{#each item.characteristics.notAttack}}
+			{{#if eq this 'air'}}
 				*Не атакует воздушные цели
 			{{/if}}
+			{{/each}}
 			
-			<span class="damage" {{militaryTooltip item.characteristics.effects 'damage'}}>
-				{{#if item.characteristics.damage}}
-					{{formatNumber (multiply item.characteristics.damage 0.8)}} —
-					{{formatNumber item.characteristics.damage}}
-				{{/if}} 
-			</span>
-			<span class="life" {{militaryTooltip item.characteristics.effects 'life'}}>
-				{{formatNumber item.characteristics.life}}
+			{{#if item.characteristics.damage}}
+				<span class="damage" {{militaryTooltip item.characteristics 'damage'}}>
+					{{formatNumberWithISO item.characteristics.damage.min}} —
+					{{formatNumberWithISO item.characteristics.damage.max}}
+				</span>
+			{{/if}} 
+			<span class="life" {{militaryTooltip item.characteristics 'life'}}>
+				{{formatNumberWithISO item.characteristics.life}}
 			</span>
 		</div>
 	{{/if}}
@@ -66,16 +88,57 @@
 
 <template name="item_price">
 	<ul class="resources">
-		{{#with price}}
-			<li class="time" {{priceTooltip . 'time'}}>
-				Время строительства: 
-				<time>{{formatSeconds time}}</time>
-			</li>
-			{{#if humans}}<li class="humans" {{priceTooltip . 'humans'}}>{{formatNumber humans}}</li>{{/if}}
-			{{#if honor}}<li class="honor" {{priceTooltip . 'honor'}}>{{formatNumber honor}}</li>{{/if}}
-			{{#if metals}}<li class="metals" {{priceTooltip . 'metals'}}>{{formatNumber metals}}</li>{{/if}}
-			{{#if crystals}}<li class="crystals" {{priceTooltip . 'crystals'}}>{{formatNumber crystals}}</li>{{/if}}
-			{{#if credits}}<li class="credits" {{priceTooltip . 'credits'}}>{{formatNumber credits}}</li>{{/if}}
-		{{/with}}
+		{{#each (getResources price)}}
+			{{#if eq this.engName 'time'}}
+				<li class="time" {{priceTooltip price 'time'}}>
+					Время строительства: 
+					<time>{{formatSeconds this.amount}}</time>
+				</li>
+			{{else}}
+				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact{{/if}}" {{priceTooltip price this.engName}} data-id="{{this.engName}}">
+					{{formatNumberWithISO this.amount}}
+				</li>
+			{{/if}}
+		{{/each}}
 	</ul>
+</template>
+
+<template name="tooltipTable">
+	<table>
+		{{#each values}}
+			<tr class="
+				{{#if this.total}}total{{/if}}
+				{{#if this.negative}}negative{{/if}}
+				{{#if this.final}}final{{/if}}
+			">
+				{{#if or this.initial this.total}}
+					<td colspan="4">
+						{{#if this.initial}}
+							Начальное значение: {{this.initial}}
+						{{else}}
+							{{#if this.final}}
+								Всего:
+							{{else}}
+								Итог:
+							{{/if}} 
+							{{this.total}}
+						{{/if}}
+					</td>
+				{{else}}
+					<td>{{this.sign}}</td>
+					<td>{{this.value}}</td>
+					{{#if this.percent}}
+						<td>{{this.percent}}%</td>
+					{{/if}}
+					<td colspan="{{#if not this.percent}}2{{else}}1{{/if}}">{{this.source}}</td>
+				{{/if}}
+			</tr>
+		{{/each}}
+		{{#if or current (eq current 0)}}
+			<tr class="current"><td colspan="4">В наличии: {{formatNumber current}}</td></tr>
+		{{/if}}
+		{{#if gt time 0}}
+			<tr class="time"><td colspan="4">Накопится через: {{formatSeconds time}}</td></tr>
+		{{/if}}
+	</table>
 </template>

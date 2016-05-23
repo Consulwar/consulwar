@@ -31,15 +31,48 @@ a
 	color #fff
 
 .disconnected
-	color red
+	display inline-block
 	position fixed
-	top 100px
+	z-index 100
+	top 50%
+	left 50%
+	min-width 400px
+	padding 20px
+	transform translate(-50%, -50%)
+	color #F2643E
 	text-align center
-	width 100%
-	z-index 1000
-	font-size 30px
+	font-size 18px
 	font-weight bold
+	border 2px solid #742222
+	border-radius 10px
+	background-color #0b0d0f
+	
+	span
+		color #FFFFFF
 
-ul.notifications {
-	position: fixed;
-}
+ul
+	&.notifications
+		position fixed
+		width 450px
+		
+		li
+			&.notification
+				background-color rgba(0, 0, 0, 0.8)
+				
+				&.info
+					color #56BAF2
+				
+				&.success
+					color #B5D054
+				
+				&.error
+					color #D65F53
+				
+				.title
+				.message
+					overflow hidden
+					text-overflow ellipsis
+					white-space nowrap
+				
+				.closeButton
+					display none

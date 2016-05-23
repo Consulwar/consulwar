@@ -1,136 +1,377 @@
 initMenuClient = function() {
 
+var firstItemGroupURL = function(items) {
+	var firstItem = items[_.keys(items)[0]];
+	return firstItem.url({group: firstItem.group});
+};
+
+var firstItemUrl = function(items) {
+	var firstItem = items[_.keys(items)[0]];
+	return firstItem.url();
+};
+
 var menu = {
 	planet: {
-		residential: Game.Building.items.residential, 
-		//counsul: game.planet.counsul, 
-		military: Game.Building.items.military,
-	},
+		name: 'Планета',
+		routeName: ['building', 'house', 'walletHistory'],
+		url: firstItemGroupURL(Game.Building.items.residential),
+		items: {
+			residential: {
+				name: 'Жилой район',
+				additionalArea: 'tamily',
+				url: firstItemGroupURL(Game.Building.items.residential),
+				items: Game.Building.items.residential
+			},
+			house: {
+				name: 'Палата консула',
+				url: Router.routes.house.path({ group: 'house' }),
+				items: {
+					donate: {
+						name: 'Донат',
+						engName: 'donate',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.Cards.items.donate),
+						items: Game.Cards.items.donate
+					},
+					/* cards: {
+						name: 'Карточки',
+						engName: 'cards',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.Cards.items.general),
+						items: Game.Cards.items.general
+					}, */
+					room: {
+						name: 'Палата',
+						engName: 'room',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.House.items.room),
+						items: Game.House.items.room
+					},
+					tron: {
+						name: 'Трон',
+						engName: 'tron',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.House.items.tron),
+						items: Game.House.items.tron
+					},
+					avatar: {
+						name: 'Аватар',
+						engName: 'avatar',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.House.items.avatar),
+						items: Game.House.items.avatar
+					},
+					artefacts: {
+						name: 'Артефакты',
+						engName: 'artefacts',
+						meetRequirements: true,
+						isEnoughResources: true,
+						url: firstItemUrl(Game.Artefacts.items),
+						items: Game.Artefacts.items
+					}
+				}
+			},
+			military: {
+				name: 'Военный район',
+				additionalArea: 'thirdenginery',
+				url: firstItemGroupURL(Game.Building.items.military),
+				items: Game.Building.items.military
+			}
+		}
+	}, 
 	research: {
-		evolution: Game.Research.items.evolution,
-		fleetups: Game.Research.items.fleetups,
-		//global: game.research.global
-	},
+		name: 'Исследования',
+		routeName: ['research'],
+		url: firstItemGroupURL(Game.Research.items.evolution),
+		items: {
+			evolution: {
+				name: 'Эволюционные исследования',
+				additionalArea: 'nataly',
+				url: firstItemGroupURL(Game.Research.items.evolution),
+				items: Game.Research.items.evolution
+			}, 
+			fleetups: {
+				name: 'Улучшения флота',
+				additionalArea: 'mechanic',
+				url: firstItemGroupURL(Game.Research.items.fleetups),
+				items: Game.Research.items.fleetups
+			}
+		}
+	}, 
 	army: {
-		fleet: Game.Unit.items.army.fleet,
-		//heroes: game.army.heroes,
-		ground: Game.Unit.items.army.ground
+		name: 'Войска',
+		routeName: ['unit'],
+		url: firstItemGroupURL(Game.Unit.items.army.fleet),
+		items: {
+			fleet: {
+				name: 'Комический флот',
+				additionalArea: 'bolz',
+				url: firstItemGroupURL(Game.Unit.items.army.fleet),
+				items: Game.Unit.items.army.fleet
+			}, 
+			defense: {
+				name: 'Планетарная оборона',
+				additionalArea: 'vaha',
+				url: firstItemGroupURL(Game.Unit.items.army.defense),
+				items: Game.Unit.items.army.defense
+			}, 
+			ground: {
+				name: 'Армия',
+				additionalArea: 'tilps',
+				url: firstItemGroupURL(Game.Unit.items.army.ground),
+				items: Game.Unit.items.army.ground
+			}
+		}
+	}, 
+	cosmos: {
+		name: 'Космос',
+		routeName: ['cosmos', 'cosmosHistory'],
+		url: Router.routes.cosmos.path()
 	},
-	/*powerups: {
-		avaliable: [],
-		activated: [],
-		bought: []
+	communication: {
+		name: 'Связь',
+		routeName: ['mail', 'chat'],
+		url: Router.routes.mail.path({ page: 1 }),
+		additionalClass: function() {
+			if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread()) {
+				return 'has_new_mail';
+			} else {
+				return '';
+			}
+		},
+		items: {
+			mail: {
+				name: 'Почта',
+				url: Router.routes.mail.path({ page: 1 })
+			}, 
+			chat: {
+				name: 'Чат',
+				url: Router.routes.chat.path({ room: 'general' }),
+				getUrl: function() {
+					var activeRoom = Session.get('chatRoom');
+					return Router.routes.chat.path({
+						room: activeRoom ? activeRoom : 'general'
+					});
+				}
+			}
+		}
 	},
-	alliance: {
-		info: [],
-		find: [],
-		create: []
-	},*/
-	/*battle: {
-		attack: _.map(Game.Battle.items, function(value) {
-			return value;
-		}),
-		reinforcement: [],
-		//statistics: [],
-		earth: []
-	},*/
-	/*battle: {
-		events: [],
-		reinforcement: [],
-		history: []
-	},*/
-	/*communication: {
-		mail: {},
-		chat: {}
-	},*/
+	mutual: {
+		name: 'Общее',
+		routeName: ['mutual', 'earth', 'earthHistory', 'statistics'],
+		url: Router.routes.earth.path({ group: 'earth' }),
+		items: {
+			earth: {
+				name: 'Земля',
+				url: Router.routes.earth.path({ group: 'earth' })
+			},
+			research: {
+				name: 'Исследования',
+				additionalArea: 'calibrator',
+				url: firstItemGroupURL(Game.Mutual.items.research),
+				items: Game.Mutual.items.research
+			},
+			statistics: {
+				name: 'Статистика',
+				url: Router.routes.statistics.path()
+			}
+		}
+	},
 	reptiles: {
-		fleet: Game.Unit.items.reptiles.fleet,
-		heroes: Game.Unit.items.reptiles.heroes,
-		ground: Game.Unit.items.reptiles.ground
+		name: 'Рептилии',
+		routeName: ['reptileUnit', 'reptileHero'],
+		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
+		items: {
+			fleet: {
+				name: 'Комический флот',
+				additionalArea: 'general',
+				url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
+				items: Game.Unit.items.reptiles.fleet
+			}, 
+			heroes: {
+				name: 'Герои',
+				additionalArea: 'general',
+				url: firstItemGroupURL(Game.Unit.items.reptiles.heroes),
+				items: Game.Unit.items.reptiles.heroes
+			}, 
+			ground: {
+				name: 'Армия',
+				additionalArea: 'general',
+				url: firstItemGroupURL(Game.Unit.items.reptiles.ground),
+				items: Game.Unit.items.reptiles.ground
+			}
+		}
 	}
-}
+};
 
+var getMenu = function(menu, isActive) {
+	var currentRouteName = Router.current().route.getName();
+
+	return _.map(menu, function(menu, key) {
+		return {
+			engName: key,
+			name: menu.name,
+			url: menu.url,
+			getUrl: menu.getUrl,
+			tooltip: menu.items,
+			isActive: isActive(menu, key),
+			additionalClass: menu.additionalClass
+		};
+	});
+};
+
+Template.top_menu.helpers({
+	chatRoom: function() {
+		var activeRoom = Session.get('chatRoom');
+		return activeRoom ? activeRoom : 'general';
+	}
+});
 
 Template.game_menu.helpers({
 	menu: function() {
-		var currentRouteName = Router.current().route.getName();
-
-		return _.map(menu, function(menu, key) {
-			var groups = _.keys(menu);
-			var firstGroupKeys = groups && _.keys(menu[groups[0]]);
-
-			if (groups.length && firstGroupKeys.length) {
-				var firstItem = menu[groups[0]][firstGroupKeys[0]];
-
-				return {
-					engName: key,
-					url: firstItem.url({group: firstItem.group}),
-					isActive: _.find(menu, function(group) {
-						return group[_.keys(group)[0]].type == currentRouteName
-					}),
-					
-				};
-			} else {
-				return {
-					engName: key,
-					url: Router.routes[groups[0]].path(),
-					isActive: groups[0] == currentRouteName,
-					additionalClass: 
-						(key == 'communication' && (
-							Meteor.user().game.quests.daily.status != game.Quest.status.finished
-							|| Game.Mail.Collection.findOne({status: game.Mail.status.unread, to: Meteor.userId()})
-						)) 
-						? 'has_new_mail' 
-						: ''
-				}
-			}
+		return getMenu(menu, function(item) {
+			return item.routeName.indexOf(Router.current().route.getName()) != -1;
 		});
 	}
 });
+
 Template.side_menu.helpers({
 	sides: function() {
-		var currentRouteName = Router.current().route.getName();
+		var group = Router.current().group;
 
-		return _.map(menu[Router.current().group], function(items, side) {
-			var itemsKeys = _.keys(items);
+		if (!menu[group]) {
+			return null;
+		}
 
-			if (itemsKeys.length) {
-				var firstItem = items[itemsKeys[0]];
+		return getMenu(menu[group].items, function(item, key) {
+			return Router.current().url.indexOf(key) == item.url.indexOf(key);
+		});
+	},
 
-				return {
-					engName: side,
-					//currentConstruction: sideConstruction,
-					//constructionRemaningTime: sideConstruction ? sideConstruction.finishTime - Session.get('serverTime') : null,
-					//progress: sideConstruction ? true : false,
-					url: firstItem.url({group: firstItem.group}),
-					isActive: firstItem.group == Router.current().params.group
-				}
-			} else {
-				return {
-					engName: side,
-					//currentConstruction: sideConstruction,
-					//constructionRemaningTime: sideConstruction ? sideConstruction.finishTime - Session.get('serverTime') : null,
-					//progress: sideConstruction ? true : false,
-					url: Router.routes[side].path(),
-					isActive: side == currentRouteName
-				}
-			}
-		})
+	getUrl: function(item) {
+		return item.getUrl ? item.getUrl() : item.url;
 	}
 });
 
+var getSideHeroByRoute = function(route) {
+	return (
+		route &&
+		route.group &&
+		route.params.group &&
+		menu[route.group] &&
+		menu[route.group].items &&
+		menu[route.group].items[route.params.group] &&
+		menu[route.group].items[route.params.group].additionalArea
+	);
+};
+
+Session.set('sideQuestsOpened', false);
+
+Template.additional_area.events({
+	'click .close': function(e, t) {
+		e.stopPropagation();
+		Session.set('sideQuestsOpened', false);
+	},
+
+	'click .open': function(e, t) {
+		e.stopPropagation();
+		Session.set('sideQuestsOpened', true);
+	},
+
+	'click .quest': function(e, t) {
+		var who = getSideHeroByRoute( Router.current() );
+		if (!who) {
+			return;
+		}
+
+		if (who == 'portal') {
+			return ShowModalWindow( Template.support );
+		}
+
+		var currentQuest = Game.Quest.getOneByHero(who);
+		if (currentQuest) {
+			Game.Quest.showQuest(currentQuest.engName);
+		} else {
+			Game.Quest.showGreeteing(who);
+		}
+	},
+
+	'click .quests li': function(e, t) {
+		e.stopPropagation();
+		var id = $(e.currentTarget).attr('data-id');
+		if (id) {
+			Game.Quest.showQuest(id);
+		}
+	}
+});
+
+Template.additional_area.helpers({
+	sideHero: function() {
+		return getSideHeroByRoute( Router.current() );	
+	},
+
+	sideHeroName: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		return who && Game.Persons[who] ? Game.Persons[who].name : null;
+	},
+
+	status: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		var quest = (who) ? Game.Quest.getOneByHero(who) : null;
+		return (quest) ? quest.status : null;
+	},
+
+	isOpened: function() {
+		return Session.get('sideQuestsOpened');
+	},
+
+	quests: function() {
+		var who = getSideHeroByRoute( Router.current() );
+		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
+		if (quests) {
+			return _.map(quests, function(item) {
+				return {
+					engName: item.engName,
+					name: item.name,
+					status: item.status
+				};
+			});
+		}
+		return null;
+	}
+});
 
 var helpers = {
 	items: function() {
-		return _.toArray(menu[Router.current().group][Router.current().params.group]);
+		if (Router.current().params.group) {
+			return _.toArray(menu[Router.current().group].items[Router.current().params.group].items);
+		} else {
+			return [];
+		}
 	},
 	currentUrl: function() {
 		// Iron router при первом открытии возвращет полный пусть. Обрезаем.
 		var currentUrl = Router.current().url;
 		return currentUrl.substr(currentUrl.indexOf('/game'));
 	},
+	isPartOfUrl: function(url, part) {
+		// special check for consul house items
+		if (Router.current().params.group == 'house') {
+			var item = Router.current().params.item;
+			if (item) {
+				return part.indexOf(url.substr(0, url.indexOf('/' + item))) != -1;
+			}
+		}
+		// other items
+		return url.indexOf(part) != -1;
+	},
 	percentRound10: function(progress) {
-		return Math.floor((progress.finishTime - Session.get('serverTime')) * 10 / (progress.finishTime - progress.startTime)) * 10
+		return Math.floor((progress.finishTime - Session.get('serverTime')) * 10 / (progress.finishTime - progress.startTime)) * 10;
 	},
 	menuGroup: function() {
 		return Router.current().group;
@@ -144,10 +385,10 @@ var helpers = {
 	income: function() {
 		return Game.Resources.getIncome();
 	},
-	bonusStorage: function() { return Game.Resources.bonusStorage; },
+	bonusStorage: function() { return Game.Resources.bonusStorage; }
 };
 
 Template.items_menu.helpers(helpers);
 Template.overlay_menu.helpers(helpers);
 
-}
+};

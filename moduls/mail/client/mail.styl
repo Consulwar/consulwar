@@ -3,21 +3,29 @@
 
 .mail
 	position relative
-	//width 1000px
+	z-index 2
 	height 435px
 	margin-left 124px
 	background-color #04080B
-	overflow-y auto
-	
-	>table
+
+	.data
+		height 355px
+		overflow-y auto
+
+	table
 		width 100%
 		border-collapse collapse
 		
+		input
+			cursor pointer
+
 		tr
 			height 40px
-			
 			cursor pointer
 			
+			&.header
+				cursor auto
+
 			&:nth-child(odd):not(.header)
 				background-color #0B121A
 			
@@ -45,46 +53,78 @@
 		td, th
 			text-align left
 				
-		td:first-child, th:first-child
-			width 20px
-			padding 12px
-			text-align center
+			&:nth-child(1)
+				width 40px
+				text-align center
 		
-		.name
-			width 180px
+			&:nth-child(2)
+				width 180px
 			
-		.subject
-			width 330px
+			&:nth-child(3)
+				width 330px
 			
-		.time
-			width 150px
+			&:nth-child(4)
+				width 150px
 			
-	.delete_selected, .new_message
-		display inline-block
-		color #5cabc1
-		border 2px solid #5cabc1
+	.delete_selected, .new_message, .admin_page
+		display block
+		position absolute
+		color #2D7B9F
+		border 2px solid #2D7B9F
 		background-color #000
-		padding 10px 15px
+		padding 8px 15px
 		font-size 16px
+		font-weight bold
+		text-decoration none
 		cursor pointer
 		
 		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 	
+	.delete_selected
+		left 2px
+		bottom 2px
+		
+		&.disabled
+			cursor default
+			-webkit-filter brightness(0.5)
+			filter brightness(0.5)
+
+	.new_message
+		right 2px
+		bottom 2px
+		
+	.admin_page
+		top 2px
+		right 2px
+	
+	.complaint
+		display: inline-block;
+		font-size: 16px;
+		font-weight: bold;
+		padding: 15px;
+		color: #d55f51;
+
+	blockquote
+		padding 10px
+		color #BBBBBB
+		background-color #1A2631
+		border 1px solid #000000
+
 	.letter, .battle_letter, .battle_on_earth_letter, form
 		display none
-		position fixed
-		top 142px
-		//left 0
+		position absolute
+		top 0px
+		left 0px
 		width 100%
-		height 442px
+		height 100%
 		background-color #04080B
-	
+
 	.letter, .battle_letter, .battle_on_earth_letter
 		
 		.text
-			width 980px
+			width 1305px
 			height 300px
 			background-color #0E1821
 			color #fff
@@ -105,9 +145,21 @@
 			padding 14px
 		
 		label
+			display inline-block
 			color #50B2EF
+			background-repeat no-repeat
+			background-position center right
 			
-			&:not(:first-child)
+			&.check
+				background-image url(/img/game/check.png)
+		
+			&.cross
+				background-image url(/img/game/cross.png)
+
+			&:nth-child(1)
+				padding-right 40px
+				
+			&:nth-child(2)
 				margin-left 30px
 			
 			input
@@ -122,7 +174,7 @@
 					width 300px
 				
 		textarea
-			width 950px
+			width 1290px
 			height 220px
 			background-color #17212B
 			color #fff
@@ -134,16 +186,21 @@
 	button, input[type="submit"]
 		border 2px solid #2D7B9F
 		color #2D7B9F
-		padding 10px 5px
+		padding 10px 15px
 		margin 5px
 		background transparent
+		font-size 16px
 		font-weight bold
 		cursor pointer
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 			
 	input[type="submit"],
 	.reply
-		position relative
-		left 880px
+		position absolute
+		right 10px
 		
 	.battle_letter, 
 	.battle_on_earth_letter

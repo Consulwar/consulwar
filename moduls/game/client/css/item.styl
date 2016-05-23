@@ -1,3 +1,15 @@
+.content
+	.page-title
+		position absolute
+		z-index 100
+		top 55px
+		left 124px
+		padding 10px 10px 10px 20px
+		background linear-gradient(to right, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0) 100%)
+		font-size 20px
+		min-width 40px
+		text-align right
+
 .information
 	position relative
 	z-index 3
@@ -7,24 +19,44 @@
 	height 428px
 	background-color #090e14
 		
-	&.global
+	&.mutual
 		
 		.description
 			p
 				//max-width 600px
-			
-			.requirements
-				margin 10px 0
 		
 		.count
 			bottom 55px
 
-	img
+	.image
+		position relative
 		display inline-block
 		width 350px
-		height 428px
+		height 430px
 		margin-right 20px
 		// 372 16
+		.title
+			position absolute
+			bottom 0
+			left 0
+			width 100%
+			height 35px
+			padding-top 10px
+			font-size 22px
+			white-space nowrap
+			text-align center
+			background-color rgba(0, 0, 0, 0.5)
+		
+		.level
+			position absolute
+			top 55px
+			left 0
+			padding 10px 10px 10px 20px
+			background linear-gradient(to right, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0) 100%)
+			font-size 20px
+			min-width 40px
+			text-align right
+			
 			
 	p
 		//max-width 700px
@@ -48,6 +80,7 @@
 			float right
 			width 240px
 			margin-left 30px
+			margin-bottom 10px
 			
 			.title
 				font-size 16px
@@ -65,18 +98,26 @@
 			
 		.currentLevel
 			margin-top 10px
-			color: #42617D
+			color #42617D
 			
 		.nextLevel
 			margin-top 10px
-			color: #88A23F
+			color #88A23F
+			
+		.limit
+			margin-top 10px
+			color #FFB74A
+
+		.notImplemented
+		.warning
+			color #FFB74A
 		
 	.characteristics
 		position absolute
 		bottom 125px
 		left 390px
-		width 225px
-		padding 10px 114px 10px 10px
+		width 300px
+		padding 10px 40px 10px 10px
 		border 1px solid #3D1E1B
 		background-color #000
 		margin-top 20px
@@ -114,10 +155,10 @@
 				padding 0 6.5px
 		
 		.targets
-			color #d3912e
-			
-			li
-				display block
+			width 150px
+			padding-left 20px
+			a
+				color #d3912e
 	
 	.build
 		color #91B935
@@ -131,6 +172,29 @@
 			color #5cabc1
 			border-color #5cabc1
 		
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
+				
+	.market,
+	.tournament,
+	.blackmarket,
+	.pulsecatcher
+		color #3591B9
+		border 2px solid #3591B9
+		background-color #000
+		padding 20px 0px
+		width 200px
+		font-size 16px
+		cursor pointer
+		text-decoration none
+		text-align center
+		
+		&.disabled
+			pointer-events none
+			-webkit-filter grayscale(1)
+			filter grayscale(1)
+
 		&:hover
 			-webkit-filter brightness(1.2)
 			filter brightness(1.2)
@@ -167,6 +231,14 @@
 	>.build
 		position absolute
 		bottom 15px
+		left 750px
+		
+	>.market,
+	>.tournament,
+	>.blackmarket,
+	>.pulsecatcher
+		position absolute
+		bottom 85px
 		left 750px
 	
 	progress
@@ -236,3 +308,51 @@
 				background-color rgba(0, 0, 0, 0.5)
 				text-align center
 				color #ddd
+
+.tooltip
+	z-index 500
+	background-color rgba(0, 0, 0, 0.8)
+	padding 10px
+	border 2px solid #e3c26a
+	border-radius 10px
+	
+	&.hide
+		display none
+	
+	.title
+		color #ffffff
+		
+	.text
+		color #56baf2
+		margin-top 10px
+		margin-bottom 10px
+		
+	.effect
+		color #ffb74a
+
+	tr
+		&.total + tr > td
+			padding-top 10px
+			
+		&.total td
+			border-top 1px dashed #dfdfdf
+
+		&.negative td
+			color #ff7566
+		
+		&.final td
+			color #ffffff
+			font-weight bold
+			
+		&.current td,
+		&.time td
+			color #ffb74a
+
+	td
+		color #56baf2
+		padding 4px
+		text-align right
+
+		&:last-child
+			color #dfdfdf
+			text-align left

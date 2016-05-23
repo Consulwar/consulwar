@@ -1,0 +1,66 @@
+<template name="colosseum">
+	<div class="colosseum-menu">
+		<ul>
+			{{#each tournaments}}
+				<li class="{{this.engName}}-icon {{#if or (not this.checkLevel) (gt timeCooldown 0)}}disabled{{/if}}">
+					{{this.name}}
+					{{#if not timeCooldown}}
+						<ul class="resources">
+							<li class="honor">
+								{{formatNumber this.price.honor}}
+							</li>
+						</ul>
+						<span class="description">
+							{{this.description}}
+						</span>
+						<span class="start {{#if not this.checkPrice}}disabled{{/if}}" data-id="{{this.engName}}">
+							Начать турнир
+						</span>
+					{{/if}}
+				</li>
+			{{/each}}
+		</ul>
+		{{#if timeCooldown}}
+			<span class="cooldown">
+				Следующий турнир через {{formatSeconds timeCooldown}}
+			</span>
+		{{/if}}
+		<a class="btn-close-horizontal" href="{{pathFor 'building' group='residential' item='colosseum'}}"></a>
+	</div>
+</template>
+
+<template name="colosseumReward">
+	<div class="smoke"></div>
+	{{#if artefact}}
+		<div class="modal artefact {{artefact.group}}">
+			<h2>Удача!</h2>
+			<ul class="resources">
+				<li class="{{artefact.engName}}">
+					{{formatNumber artefact.amount}}
+				</li>
+			</ul>
+			<span class="take">Награда</span>
+		</div>
+	{{else}}
+		<div class="modal reward">
+			<div class="close"></div>
+			<ul>
+				{{#if reward.metals}}
+					<li class="metals">
+						<div class="name">Металл</div>
+						<img src="/img/game/quests/metals.png">
+						<div class="count">{{formatNumber reward.metals}}</div>
+					</li>
+				{{/if}}
+				{{#if reward.crystals}}
+					<li class="crystals">
+						<div class="name">Кристалл</div>
+						<img src="/img/game/quests/crystals.png">
+						<div class="count">{{formatNumber reward.crystals}}</div>
+					</li>
+				{{/if}}
+			</ul>
+			<span class="take">Награда</span>
+		</div>		
+	{{/if}}
+</template>

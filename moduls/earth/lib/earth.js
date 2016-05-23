@@ -1,45 +1,60 @@
-Meteor.startup(function() {
+initEarthLib = function() {
 
-game.PointType = function(options) {
-	this.constructor = function(options) {
-		this.name = options.name;
-		this.engName = options.engName;
-
-		this.effects = options.effects;
-
-		Game.Point.types.items[this.engName] = this;
+Game.Earth = {
+	checkReinforceTime: function(currentTime) {
+		var hours = new Date(currentTime * 1000).getUTCHours();
+		return (hours >= 14 && hours < 16) ? false : true;
 	}
+};
 
-	this.constructor(options);
-}
+Game.EarthZones = {
+	Collection: new Meteor.Collection('zones'),
 
-game.Point = function(options) {
-	this.constructor = function(options) {
-		this.engName = options.engName;
+	getAll: function() {
+		return Game.EarthZones.Collection.find();
+	},
 
-		this.type = options.type;
-
-		Game.Point.items[this.engName] = this;
-	}
-
-	this.constructor(options);
-}
-
-Game.Point = {
-	Collection: new Meteor.Collection('points'),
-
-	getValue: function(name) {
-		return Game.Point.Collection.findOne({
+	getByName: function(name) {
+		return Game.EarthZones.Collection.findOne({
 			name: name
 		});
 	},
 
-	types: {
-		items: {}
+	getCurrent: function() {
+		return Game.EarthZones.Collection.findOne({
+			isCurrent: true
+		});
 	},
-	items: {}
-}
 
-initGalacticContentEarth();
+	calcMaxHealth: function() {
+		var max = 0;
+		var zones = Game.EarthZones.getAll().fetch();
+		for (var i = 0; i < zones.length; i++) {
+			// calc user army
+			var userHealth = Game.Unit.calcUnitsHealth( zones[i].userArmy );
+			if (userHealth > max) {
+				max = userHealth;
+			}
+			// calc enemy army
+			var enemyHealth = Game.Unit.calcUnitsHealth( zones[i].enemyArmy );
+			if (enemyHealth > max) {
+				max = enemyHealth;
+			}
+		}
+		return max;
+	}
+};
 
-});
+Game.EarthTurns = {
+	Collection: new Meteor.Collection('turns'),
+
+	getLast: function() {
+		return Game.EarthTurns.Collection.findOne({}, {
+			sort: { timeStart: -1 }
+		});
+	}
+};
+
+initEarthConfigLib();
+
+};

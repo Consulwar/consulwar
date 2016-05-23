@@ -1,0 +1,64 @@
+{
+	"public": {
+		"yandex": {
+			"id": 123
+		},
+		"mapbox": {
+			"id": "***",
+			"accessToken": "***"
+		},
+		"cosmos": {
+			"speedConfig": [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100 ],
+			"minSpeed": 3,
+			"maxSpeed": 80,
+			"minAcc": 0.4,
+			"maxAcc": 2,
+			"speedFactor": 0.016666,
+			"collectArtefactsPeriod": 120
+		},
+		"earth": {
+			"schedule": "at 4:00 pm"
+		},
+		"pulsecatcher": {
+			"schedule": "at 4:00 pm"
+		},
+		"isInviteRequired": true,
+		"recaptcha": {
+			"publickey": "ABCDEFGHIJKLMNOP"
+		}
+	},
+	"recaptcha": {
+		"privatekey": "ABCDEFGHIJKLMNOP"
+	},
+	"payment": {
+		"platbox": {
+			"secretKey": "ABCDEFGHIJKLMNOP",
+			"merchantId": "42424242424242",
+			"project": "consulwar"
+		}
+	},
+	"kadira": { 
+		"appId": "***", 
+		"appSecret": "***" 
+	},
+	"mail": {
+		"protocol": "smtp",
+		"username": "***",
+		"password": "***",
+		"server":   "smtp.gmail.com",
+		"port": 25,
+		"from": "*** <***@***>",
+		"sitename": "***"
+	},
+	"earth": {
+		"reinforcementsDelay": 120,
+		"minActivePlayers": 100
+	},
+	"cosmos": {
+		"enemyRespawnPeriod": 120,
+		"tradeFleetPeriod": 120,
+		"attackPlayerPeriod": 120,
+		"triggerAttackDelay": 1800,
+		"funPeriod": 86400
+	}
+}

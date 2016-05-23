@@ -1,56 +1,59 @@
-Meteor.startup(function() {
+initMutualServerInvestments = function () {
 
-Game.Investments.set = function(item) {
+Game.Investments.Collection._ensureIndex({
+	user_id: 1
+});
+
+Game.Investments.Collection._ensureIndex({
+	investments: -1
+});
+
+Game.Investments.add = function(item) {
 	Game.Investments.initialize(item);
 
-	var currentValue = Game.Investments.getValue(item);
-
-	var set = {
-		investments: parseInt((currentValue.investments || 0) + item.investments)
+	var inc = {
+		investments: parseInt( item.investments )
 	};
 
-	for (var resource in item.price) {
-		set['resources.' + resource] = parseInt((currentValue.resources[resource] || 0) + item.price[resource])
-	}
+	var stats = {};
+	stats['investments.total'] = parseInt( item.investments );
 
-	//console.log(item, set);
+	for (var resource in item.price) {
+		inc['resources.' + resource] = parseInt( item.price[resource] );
+		stats['investments.' + resource] = parseInt( item.price[resource] );
+	}
 
 	Game.Investments.Collection.update({
 		user_id: Meteor.userId(),
 		group: item.group,
 		engName: item.engName
 	}, {
-		$set: set
+		$inc: inc
 	});
 
-	Game.Global.add(item);
+	Game.Mutual.add(item);
 
-	return set;
-}
+	Game.Statistic.incrementUser(Meteor.userId(), stats);
 
-Game.Investments.add = function(item) {
-	return Game.Investments.set(item);
-}
+	return inc;
+};
 
 Game.Investments.initialize = function(item) {
 	var currentValue = Game.Investments.getValue(item);
 
 	var user = Meteor.user();
 
-	if (currentValue == undefined) {
+	if (currentValue === undefined) {
 		Game.Investments.Collection.insert({
 			user_id: user._id,
-			login: user.login,
+			username: user.username,
 			group: item.group,
 			engName: item.engName,
 			investments: 0,
-			resources: {
-
-			}
-		})
+			resources: {}
+		});
 	}
-}
-
+};
 
 Meteor.publish('topInvestors', function(item) {
 	if (this.userId) {
@@ -58,4 +61,4 @@ Meteor.publish('topInvestors', function(item) {
 	}
 });
 
-});
+};

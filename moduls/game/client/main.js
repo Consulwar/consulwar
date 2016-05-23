@@ -127,7 +127,7 @@ var isActualizeInprogress = false;
 
 Game.actualizeGameInfo = function() {
 	console.log('actualize...');
-	if (!isActualizeInprogress) {
+	if (!isActualizeInprogress && Meteor.user()) {
 		isActualizeInprogress = true;
 		Meteor.call('actualizeGameInfo', function(err) {
 			isActualizeInprogress = false;

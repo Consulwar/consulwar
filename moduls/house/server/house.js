@@ -44,6 +44,19 @@ Game.House.initialize = function(user, isRewrite) {
 	}
 };
 
+Game.House.add = function (group, id) {
+	var set = {};
+	set['items.' + group + '.' + id] = {
+		isPlaced: false
+	};
+
+	Game.House.Collection.update({
+		user_id: Meteor.userId()
+	}, {
+		$set: set
+	});
+};
+
 Game.House.update = function(data) {
 	Game.House.Collection.update({
 		user_id: Meteor.userId()

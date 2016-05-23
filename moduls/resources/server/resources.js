@@ -162,6 +162,18 @@ Game.Resources.addProfit = function(profit, uid) {
 			$inc: { votePowerBonus: profit.votePower }
 		});
 	}
+
+	if (profit.cards) {
+		Game.Cards.add(profit.cards);
+	}
+
+	if (profit.houseItems) {
+		for (var itemGroup in profit.houseItems) {
+			for (var itemName in profit.houseItems[itemGroup]) {
+				Game.House.add(itemGroup, itemName);
+			}
+		}
+	}
 };
 
 Game.Resources.updateWithIncome = function(currentTime) {

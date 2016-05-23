@@ -271,6 +271,16 @@ Template.consulHouseCards.helpers({
 // ----------------------------------------------------------------------------
 
 Template.consulHouseDonate.events({
+	'click .activate': function (e, t) {
+		Meteor.call('cards.activate', e.currentTarget.dataset.id, function (err, result) {
+			if (err) {
+				Notifications.error('Не удалось активировать бонус', err.error);
+			} else {
+				Notifications.success('Бонус активирован');
+			}
+		});
+	},
+	
 	'click .buy': function (e, t) {
 		var item = Game.Cards.getItem(e.currentTarget.dataset.id);
 		if (!item || !item.canBuy()) {

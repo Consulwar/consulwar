@@ -182,7 +182,11 @@
 					{{#if this.getActiveTask}}
 						<span class="time">{{formatTime (getTimeLeft this)}}</span>
 					{{else}}
-						<span class="buy" data-id="{{this.engName}}">Купить</span>
+						{{#if gt this.amount 0}}
+							<span class="activate" data-id="{{this.engName}}">Активировать</span>
+						{{else}}
+							<span class="buy" data-id="{{this.engName}}">Купить</span>
+						{{/if}}
 					{{/if}}
 				</li>
 			{{/each}}

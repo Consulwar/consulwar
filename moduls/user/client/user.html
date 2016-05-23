@@ -1,34 +1,25 @@
 <template name="auth">
 	<form class="auth" name="">
-		<input name="username" type="text" placeholder="Email">
-		<input name="password" type="password" placeholder="*********">
+		<input name="username" type="text" placeholder="логин">
+		<input name="password" type="password" placeholder="пароль">
 
-		<select disabled>
-			<option>Сервер: Реактор</option>
-		</select>
+		<br/>
 
 		<label>
 			<input name="remember" type="checkbox">
-			Запомни меня, ибо Я вернусь!
+			Запомни меня
 		</label>
 
-		<input type="submit" value="Запуск канала связи">
+		<a href="#" class="forgotPassword">пароль утерян</a>
+		<a class="start_registration" href="{{pathFor 'register'}}">регистрация</a>
 
-		<a href="#" class="forgotPassword">забыли пароль?</a>
-		<a class="start_registration" href="{{pathFor 'register'}}">Регистрация</a>
+		<input type="submit" value="">
 	</form>
 </template>
 
 <template name="register">
-	<div class="register">
-		<a class="consul_here start_registration" href="{{pathFor 'register'}}">Консул прибыл</a>
-		<p>
-			Подать мне мою корону, 
-			одежду и мотоцикл! 
-		</p>
-		<p>
-			Консул прибыл на поле боя.
-		</p>
+	<div class="consul_here">
+		<a class="start_registration" href="{{pathFor 'register'}}">Консул готов к Бою</a>
 	</div>
 </template>
 

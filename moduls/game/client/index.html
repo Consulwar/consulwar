@@ -1,50 +1,45 @@
 <template name="index">
 	<div class="index">
 		<header>
-			<span class="logo">Здесь должно быть крутое лого нашей компании, но у нас её нет</span>
 			<div class="stats">
 				<span class="registred">Зарегистрировано: <span class="count">{{totalUsersCount}}</span></span>
 				<span class="online">Онлайн: <span class="count">{{onlineUsersCount}}</span></span>
 			</div>
+			<span class="logo">Мы - маленькая студия из пары человек, стараемся сделать интересный и качественный проект, мы благодарим вас за помощь и вашу поддержку.</span>
 		</header>
 
-		{{> auth}}
-		
 		<div class="center_image">
 			<img src="/img/consuls.png" alt="Consuls. Когда противник крайне ебуч, приходят они">
-			<h4>Закрытый бета тест</h4>
+			<h3>открытый бета тест</h3>
 		</div>
+
+		<div class="description">
+			<span>
+				Консулы это не просто игра, это целая параллельная вселенная, где наша родная планета захвачена Рептилоидными силами противника и только тебе, Консул, люди могут доверить контроль, и лишь от тебя зависит, что ждёт этот мир: яркий свет победы или бездонная тьма поражения. Контроль над собственной планетой, власть над людьми, уникальная система решений, путём выбора плана действий всем консулатом. Думаешь ты просто так сидел столько лет на диване и доказывал свою правоту в интернете? А вот и нет! Это была подготовка, ты избранный, Консул! Теперь главное не обосраться...
+			</span> 
+		</div>
+
+		{{> auth}}
 
 		{{> register}}
 
-		<div class="description">
-			<p>
-				<span class="consul">Консулы</span> это не просто игра, это целая параллельная вселенная, 
-				где наша родная планета захвачена 
-				Рептилоидными силами противника и только тебе, <span class="consul">Консул</span>, 
-				люди могут доверить контроль, и лишь от тебя 
-				зависит, что ждёт этот мир: яркий свет победы
-				 или бездонная тьма поражения. Контроль над собственной планетой, власть над людьми, уникальная система решений, 
-				путём выбора плана действий всем 
-				консулатом. Думаешь ты просто так сидел столько лет на диване и доказывал свою правоту в интернете?
-			</p>
-
-			А вот и нет! Это была подготовка, ты избранный, <span class="consul">Консул!</span>
-		</div>
-		
-		<div class="subdescription">Теперь главное не обосраться... </div>
-
-
-		<h1>На данный момент идёт <a href="https://boomstarter.ru/projects/zav/57753">Закрытый Бета Тест</a></h1>
-		
-
 		<div class="awards">
-			<h1>Наши награды:</h1>
 			<img src="/img/awards.png" alt="">
 		</div>
 
+		<div class="screenshots">
+			<ul>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/1.jpg"><img src="/img/screenshots/1p.jpg" alt="" /></a></li>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/2.jpg"><img src="/img/screenshots/2p.jpg" alt="" /></a></li>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/3.jpg"><img src="/img/screenshots/3p.jpg" alt="" /></a></li>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/4.jpg"><img src="/img/screenshots/4p.jpg" alt="" /></a></li>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/5.jpg"><img src="/img/screenshots/5p.jpg" alt="" /></a></li>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/6.jpg"><img src="/img/screenshots/6p.jpg" alt="" /></a></li>
+				<li><a class="fancybox" rel="group" href="/img/screenshots/7.jpg"><img src="/img/screenshots/7p.jpg" alt="" /></a></li>
+			</ul>
+		</div>
+
 		<div class="feedback">
-			<h1>Отзывы наших игроков:</h1>
 			<ul>
 				<li>
 					<img src="/img/ot1.png">
@@ -71,20 +66,6 @@
 					</p>
 					<div class="suggest">Отзыв от чёрного парня даёт всем понять какие мы расово терпимые и продвинутые ребята.</div>
 				</li>
-			</ul>
-		</div>
-
-		<div class="screenshots">
-			<h1>Галерея скриншотов:</h1>
-
-			<ul>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/1.jpg"><img src="/img/screenshots/1p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/2.jpg"><img src="/img/screenshots/2p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/3.jpg"><img src="/img/screenshots/3p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/4.jpg"><img src="/img/screenshots/4p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/5.jpg"><img src="/img/screenshots/5p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/6.jpg"><img src="/img/screenshots/6p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/7.jpg"><img src="/img/screenshots/7p.jpg" alt="" /></a></li>
 			</ul>
 		</div>
 

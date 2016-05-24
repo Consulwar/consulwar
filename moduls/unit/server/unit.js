@@ -250,9 +250,15 @@ Game.Unit.calculateArmyCost = function(army) {
 
 				var price = Game.Unit.items[side][group][name].price(count);
 				if (price && price.base) {
-					cost.metals += price.base.metals;
-					cost.crystals += price.base.crystals;
-					cost.humans += price.base.humans;
+					if (price.base.metals) {
+						cost.metals += price.base.metals;
+					}
+					if (price.base.crystals) {
+						cost.crystals += price.base.crystals;
+					}
+					if (price.base.humans) {
+						cost.humans += price.base.humans;
+					}
 				}
 			}
 		}

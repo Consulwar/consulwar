@@ -159,26 +159,38 @@ Game.SpaceEvents.completeReinforcement = function(event) {
 	var k = 1 - (killedPercent / 100);
 
 	var units = event.info.units;
-	var arrived = {};
+	var arrived = null;
+
 	for (var side in units) {
-		arrived[side] = {};
 		for (var group in units[side]) {
-			arrived[side][group] = {};
 			for (var name in units[side][group]) {
 				var count = parseInt( units[side][group][name], 10 );
 				var result = Math.floor( count * k );
 				// if result < 1, check chance instead of percents
 				if (result < 1) {
-					result = Game.Random.random() > k ? 1 : 0;
+					result = Game.Random.random() < k ? 1 : 0;
 				}
 				// save result
-				arrived[side][group][name] = result;
+				if (result > 0) {
+					if (!arrived) {
+						arrived = {};
+					}
+					if (!arrived[side]) {
+						arrived[side] = {};
+					}
+					if (!arrived[side][group]) {
+						arrived[side][group] = {};
+					}
+					arrived[side][group][name] = result;
+				}
 			}
 		}
 	}
 
 	// save reinforcements
-	Game.Earth.addReinforcement( arrived );
+	if (arrived) {
+		Game.Earth.addReinforcement( arrived );
+	}
 
 	// reinforcements don't create new tasks
 	return null;

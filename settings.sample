@@ -32,6 +32,7 @@
 	},
 	"payment": {
 		"platbox": {
+			"url": "https://playground.platbox.com/paybox",
 			"secretKey": "ABCDEFGHIJKLMNOP",
 			"merchantId": "42424242424242",
 			"project": "consulwar"

@@ -29,6 +29,10 @@ Game.Resources.set = function(resource, invertSign, uid) {
 			? resource[name].amount
 			: resource[name];
 
+		if (isNaN(increment)) {
+			increment = 0;
+		}
+
 		inc[name + '.amount'] = parseInt(increment * invertSign);
 
 		// set resource bonus seconds
@@ -198,6 +202,35 @@ Game.Resources.updateWithIncome = function(currentTime) {
 		}
 	});
 
+	// fix values if NaN
+	var fixedSet = {};
+
+	if (isNaN(resources.humans.amount)) {
+		fixedSet['humans.amount'] = 0;
+	}
+	if (isNaN(resources.metals.amount)) {
+		fixedSet['metals.amount'] = 0;
+	}
+	if (isNaN(resources.crystals.amount)) {
+		fixedSet['crystals.amount'] = 0;
+	}
+	if (isNaN(resources.honor.amount)) {
+		fixedSet['honor.amount'] = 0;
+	}
+	if (isNaN(resources.credits.amount)) {
+		fixedSet['credits.amount'] = 0;
+	}
+
+	if (_.keys(fixedSet).length > 0) {
+		console.log('User ' + Meteor.userId() + ' got NaN resource value!', _.keys(fixedSet));
+		Game.Resources.Collection.update({
+			user_id: Meteor.userId()
+		}, {
+			$set: fixedSet
+		});
+	}
+
+	// calculate income
 	var result = {
 		humans: Game.Resources.calculateProduction(
 			income.humans, 

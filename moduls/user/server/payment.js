@@ -175,11 +175,25 @@ Game.PromoCode.History.Collection._ensureIndex({
 });
 
 Game.PromoCode.randomItems =  [{
-	resources: { credits: 10 }
+	resources: { metals: 50000, crystals: 15000 }
 }, {
-	resources: { crystals: 100 }
+	resources: { credits: 100 }
 }, {
-	resources: { humans: 200 }
+	resources: { honor: 250 }
+}, {
+	units: { fleet: { wasp: 30 } }
+}, {
+	units: { fleet: { mirage: 15 } }
+}, {
+	units: { defense: { bomb: 150 } }
+}, {
+	units: { defense: { turret: 20 } }
+}, {
+	units: { ground: { horizontalbarman: 50 } }
+}, {
+	units: { ground: { agmogedcar: 5 } }
+}, {
+	units: { ground: { fast: 5 } }
 }];
 
 Meteor.methods({

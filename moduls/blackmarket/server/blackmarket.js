@@ -14,8 +14,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		if (Game.Building.items.residential.blackmarket.currentLevel() < 1) {
-			throw new Meteor.Error('Нужно построить черный рынок');
+		if (Game.Building.items.residential.spaceport.currentLevel() < 1) {
+			throw new Meteor.Error('Нужно построить космопорт');
 		}
 
 		var pack = Game.Blackmarket.items[id];

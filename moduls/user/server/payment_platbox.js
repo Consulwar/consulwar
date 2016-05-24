@@ -401,6 +401,7 @@ Meteor.methods({
 			currency: 'RUB',
 			merchant_id: MERCHANT_ID,
 			order: {
+				id: uuid.new(),
 				type: 'item_list',
 				item_list: [{
 					id: id,

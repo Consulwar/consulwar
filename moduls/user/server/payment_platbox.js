@@ -2,6 +2,7 @@ initPaymentPlatboxServer = function() {
 
 if (!Meteor.settings.payment
  || !Meteor.settings.payment.platbox
+ || !Meteor.settings.payment.platbox.url
  || !Meteor.settings.payment.platbox.secretKey
  || !Meteor.settings.payment.platbox.merchantId
  || !Meteor.settings.payment.platbox.project
@@ -9,6 +10,7 @@ if (!Meteor.settings.payment
 	throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры платежки (см. settings.sample payment.platbox)');
 }
 
+var BASE_URL = Meteor.settings.payment.platbox.url;
 var SECRET_KEY = Meteor.settings.payment.platbox.secretKey;
 var MERCHANT_ID = Meteor.settings.payment.platbox.merchantId;
 var PROJECT = Meteor.settings.payment.platbox.project;
@@ -421,7 +423,7 @@ Meteor.methods({
 			url += '&';
 		}
 
-		return url.substr(0, url.length - 1);
+		return BASE_URL + '?' + url.substr(0, url.length - 1);
 	}
 });
 	

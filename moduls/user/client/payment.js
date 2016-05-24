@@ -209,6 +209,23 @@ Template.paymentHistory.helpers({
 						}
 					}
 					break;
+				case 'cards':
+					for (var cardId in profit[type]) {
+						var card = Game.Cards.getItem(cardId);
+						if (card) {
+							result += card.name + ': ';
+							result += parseInt(profit[type][cardId], 10) + ' ';
+						}
+					}
+					break;
+				case 'houseItems':
+					for (var houseItemGroup in profit[type]) {
+						for (var houseItemName in profit[type][houseItemGroup]) {
+							result += Game.House.items[houseItemGroup][houseItemName].name + ': ';
+							result += parseInt(profit[type][houseItemGroup][houseItemName], 10) + ' ';
+						}
+					}
+					break;
 				case 'votePower':
 					result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
 					break;

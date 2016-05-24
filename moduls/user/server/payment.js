@@ -115,13 +115,16 @@ if (process.env.NODE_ENV == 'development') {
 /*
 {
 	code: 'pewpew11',
+
 	maxActivations: 42, // not required
 	                    // if not specified, then only 1 activation
+
 	validthru: timestamp, // not required
+
 	type: string, // not required
-	              // random - get random item from Game.PromoCode.randomItems
 	              // once:#type - give this type once per user (examples once:votePower, once:startBonus etc.)
-	profit: {
+
+	profit: { // if profit = 'random', then selects random item from Game.PromoCode.randomItems
 		resources: {
 			credits: 100,
 			humans: 40,
@@ -153,8 +156,11 @@ if (process.env.NODE_ENV == 'development') {
 	}
 }
 
-Meteor.call('admin.addPromoCode', { code: 'testCard', profit: { cards: { uncleBuilder: 2 } } } )
-Meteor.call('admin.addPromoCode', { code: 'testItem', profit: { houseItems: { tron: { gameofthrones: 1} } } } )
+Examples:
+Meteor.call('admin.addPromoCode', { code: 'testCard', profit: { cards: { uncleBuilder: 2 } } } );
+Meteor.call('admin.addPromoCode', { code: 'testItem', profit: { houseItems: { tron: { gameofthrones: 1} } } } );
+Meteor.call('admin.addPromoCode', { code: 'testRand', profit: 'random' );
+Meteor.call('admin.addPromoCode', { code: 'testOnce', profit: { resources: { credits: 1 } }, type: 'once:test' );
 
 */
 

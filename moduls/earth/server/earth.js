@@ -74,17 +74,19 @@ Game.Earth.addReinforcement = function(units) {
 		}
 	}
 	
-	Game.Statistic.incrementUser(Meteor.userId(), stats);
+	if (stats['reinforcements.arrived.total'] > 0) {
+		Game.Statistic.incrementUser(Meteor.userId(), stats);
 
-	Game.Resources.add({
-		honor: honor
-	});
+		Game.Resources.add({
+			honor: honor
+		});
 
-	Game.EarthZones.Collection.update({
-		isCurrent: true
-	}, {
-		$inc: inc
-	});
+		Game.EarthZones.Collection.update({
+			isCurrent: true
+		}, {
+			$inc: inc
+		});
+	}
 };
 
 Game.Earth.countActivePlayers = function() {

@@ -974,7 +974,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой комнаты');
 		}
 
-		var timeCondition = { $gt: Game.getCurrentTime() - (84600 * 7) };
+		var timeCondition = { $gt: Game.getCurrentTime() - (Game.getCurrentTime() % 86400) - (86400 * 6) };
 
 		if (options.isPrevious) {
 			timeCondition.$lte = options.timestamp;
@@ -1009,14 +1009,20 @@ Meteor.methods({
 Meteor.publish('chatRoom', function(roomName) {
 	if (this.userId) {
 		check(roomName, String);
-		return Game.Chat.Room.Collection.find({
+
+		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
-			deleted: { $ne: true },
-			$or: [
-				{ users: { $in: [ this.userId ] } },
-				{ isPublic: true }
-			]
+			deleted: { $ne: true }
 		});
+
+		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
+			return Game.Chat.Room.Collection.find({
+				name: roomName,
+				deleted: { $ne: true }
+			});
+		} else {
+			return null;
+		}
 	} else {
 		this.ready();
 	}
@@ -1028,17 +1034,13 @@ Meteor.publish('chat', function (roomName) {
 
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
-			deleted: { $ne: true },
-			$or: [
-				{ users: { $in: [ this.userId ] } },
-				{ isPublic: true }
-			]
+			deleted: { $ne: true }
 		});
 
-		if (room) {
+		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
 			return Game.Chat.Messages.Collection.find({
 				room_id: room._id,
-				timestamp: { $gt: Game.getCurrentTime() - (84600 * 7) }
+				timestamp: { $gt: Game.getCurrentTime() - (Game.getCurrentTime() % 86400) - (86400 * 6) }
 			}, {
 				fields: {
 					_id: 1,
@@ -1057,6 +1059,8 @@ Meteor.publish('chat', function (roomName) {
 				},
 				limit: Game.Chat.Messages.LOAD_COUNT
 			});
+		} else {
+			return null;
 		}
 	} else {
 		this.ready();

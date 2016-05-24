@@ -233,6 +233,10 @@ Meteor.methods({
 			throw new Meteor.Error('Такой код уже существует');
 		}
 
+		if (!options.profit) {
+			throw new Meteor.Error('Не задано поле profit');
+		}
+
 		var isProfitOk = true;
 
 		if (_.isObject(options.profit)) {

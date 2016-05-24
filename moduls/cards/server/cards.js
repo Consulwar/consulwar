@@ -137,7 +137,20 @@ Meteor.methods({
 		}
 		
 		// spend price
-		Game.Resources.spend(item.getPrice());
+		var price = item.getPrice();
+		
+		if (price) {
+			Game.Resources.spend(price);
+
+			if (price.credits) {
+				Game.Payment.logExpense({
+					resources: { credits: price.credits }
+				}, {
+					type: 'card',
+					cardId: item.engName
+				});
+			}
+		}
 
 		// add card
 		var cards = {};

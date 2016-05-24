@@ -31,8 +31,11 @@
 		{{/if}}
 
 		{{#if eq building.engName 'tradingport'}}
-			<button class="blackmarket" disabled="{{lt building.currentLevel 1}}">Открыть контейнер</button>
 			<button class="market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
+		{{/if}}
+
+		{{#if eq building.engName 'spaceport'}}
+			<button class="blackmarket" disabled="{{lt building.currentLevel 1}}">Открыть контейнер</button>
 		{{/if}}
 
 		{{#if eq building.engName 'colosseum'}}

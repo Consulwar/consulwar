@@ -16,7 +16,10 @@ Meteor.methods({
 
 		var userResources = Game.Resources.getValue();
 
-		if (!userResources[resourceFrom] || userResources[resourceFrom].amount < amount) {
+		if (!userResources[resourceFrom]
+		 || !userResources[resourceFrom].amount
+		 ||  userResources[resourceFrom].amount < amount
+		) {
 			throw new Meteor.Error('Недостаточно ресурсов');
 		}
 

@@ -860,12 +860,14 @@ var completeReptilesArrival = function(event, planet) {
 		}
 
 		// update user army
-		if (userArmy) {
-			Game.Unit.updateArmy(userArmyData._id, userArmy);
-		} else {
-			Game.Unit.removeArmy(userArmyData._id);
-			if (!planet.isHome) {
-				planet.armyId = null;
+		if (userArmyData) {
+			if (userArmy) {
+				Game.Unit.updateArmy(userArmyData._id, userArmy);
+			} else {
+				Game.Unit.removeArmy(userArmyData._id);
+				if (!planet.isHome) {
+					planet.armyId = null;
+				}
 			}
 		}
 

@@ -8,6 +8,10 @@ Game.Quiz.Collection._ensureIndex({
 });
 
 Game.Quiz.Collection._ensureIndex({
+	type: 1
+});
+
+Game.Quiz.Collection._ensureIndex({
 	endDate: -1
 });
 

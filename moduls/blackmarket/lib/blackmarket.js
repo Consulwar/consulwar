@@ -14,8 +14,7 @@ game.BlackmarketPack = function(options) {
 	this.drop = options.drop;
 
 	this.getPrice = function() {
-		var level = Game.Building.items.residential.blackmarket.currentLevel();
-		return { credits: options.price.credits - level };
+		return Game.Effect.Price.applyTo({ engName: 'containerPrice' }, _.clone(options.price), true);
 	};
 
 	this.checkPrice = function() {

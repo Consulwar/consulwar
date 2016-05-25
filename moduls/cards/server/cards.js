@@ -2,6 +2,10 @@ initCardsServer = function() {
 	
 initCardsLib();
 
+Game.Cards.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Cards.initialize = function(user) {
 	user = user || Meteor.user();
 	var currentValue = Game.Cards.getValue(user._id);

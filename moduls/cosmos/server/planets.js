@@ -1,7 +1,8 @@
 initCosmosPlanetsServer = function() {
 
 Game.Planets.Collection._ensureIndex({
-	user_id: 1
+	user_id: 1,
+	isHome: 1
 });
 
 Game.Planets.actualize = function() {

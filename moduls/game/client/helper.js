@@ -154,7 +154,7 @@ var formatNumber = function (num, delimeter) {
 UI.registerHelper('formatNumber', formatNumber);
 
 
-var getEffectsTooltip = function(price, effects, target, invert, side) {
+var getEffectsTooltip = function(price, effects, target, invert, side, isShowCurrent) {
 	if (price.base === undefined) {
 		return 'disabled';
 	}
@@ -281,6 +281,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side) {
 
 	return {
 		'data-tooltip': Blaze.toHTMLWithData(Template.tooltipTable, {
+			isShowCurrent: isShowCurrent,
 			target: target,
 			price: invert ? price[target] : null,
 			values: effectsValues
@@ -318,22 +319,22 @@ Tracker.autorun(function() {
 });
 
 UI.registerHelper('priceTooltip', function(price, target) {
-	return getEffectsTooltip(price, price.effects, target, true, 'n');
+	return getEffectsTooltip(price, price.effects, target, true, 'n', true);
 });
 
 UI.registerHelper('incomeTooltip', function(effects, target) {
 	var income = {base: {}};
 	income.base[target] = 0;
-	return getEffectsTooltip(income, effects, target, false, 's');
+	return getEffectsTooltip(income, effects, target, false, 's', true);
 });
 
 UI.registerHelper('militaryTooltip', function(characteristics, target) {
-	return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w');
+	return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w', false);
 });
 
 Template.tooltipTable.helpers({
 	current: function() {
-		if (this.target == 'time') {
+		if (this.target == 'time' || !this.isShowCurrent) {
 			return null;
 		}
 		
@@ -344,7 +345,7 @@ Template.tooltipTable.helpers({
 	},
 
 	time: function() {
-		if (!this.price || this.target == 'time') {
+		if (!this.price || this.target == 'time' || !this.isShowCurrent) {
 			return null;
 		}
 

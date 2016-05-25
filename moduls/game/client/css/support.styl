@@ -1,20 +1,36 @@
-.modal.support
-	width 560px
-	height 100px
-	margin -50px 0 0 -280px
+.support
+	display inline-block
+	position fixed
+	z-index 100
+	top 50%
+	left 50%
+	transform translate(-50%, -50%)
+	text-align center
+	color #FFFFFF
+	border 1px solid #2D4D5C
+	border-radius 5px
+	background-image none
+	background-color #0b0d0f
 
-	.a
-		display inline-block
-		border 2px solid #2D7B9F
-		color #2D7B9F
-		padding 10px 5px
-		margin 5px
-		background transparent
-		font-weight bold
+	.close
+		position absolute
+		top -22px
+		right -22px
+		height 44px
+		width 44px
+		padding 0
+		margin 0
+		background-image url(/img/game/close.png)
+		background-repeat no-repeat
 		cursor pointer
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 	
-	.need_help,
+	.need_help
 	.write_message
+		display block
 		color #91B935
 		border 2px solid #91B935
 		background-color #000
@@ -22,7 +38,8 @@
 		font-size 16px
 		cursor pointer
 		width auto
-		margin 20px
+		margin 30px
+		text-decoration none
 		
 		&.write_message
 			color #5cabc1
@@ -33,8 +50,5 @@
 			filter brightness(1.2)
 
 	&.needHelp
-		width 528px
-		height 502px
 		background transparent
 		border 0
-		margin -251px 0 0 -264px

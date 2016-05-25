@@ -1010,16 +1010,15 @@ Meteor.publish('chatRoom', function(roomName) {
 	if (this.userId) {
 		check(roomName, String);
 
-		var room = Game.Chat.Room.Collection.findOne({
+		var cursor = Game.Chat.Room.Collection.find({
 			name: roomName,
 			deleted: { $ne: true }
 		});
 
+		var room = (cursor) ? cursor.fetch()[0] : null;
+
 		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
-			return Game.Chat.Room.Collection.find({
-				name: roomName,
-				deleted: { $ne: true }
-			});
+			return cursor;
 		} else {
 			return null;
 		}

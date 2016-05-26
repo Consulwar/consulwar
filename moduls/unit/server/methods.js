@@ -48,7 +48,8 @@ Meteor.methods({
 			type: item.type,
 			group: item.group,
 			engName: item.engName,
-			count: options.count
+			count: options.count,
+			dontNeedResourcesUpdate: true
 		};
 
 		var price = item.price(options.count);

@@ -20,6 +20,9 @@ Meteor.startup(function() {
 	group
 	engName
 	level
+
+	// Additional options:
+	dontNeedResourcesUpdate
 }
 */
 
@@ -81,6 +84,10 @@ Game.Queue.add = function(item) {
 		select.count = item.count;
 	}
 
+	if (item.dontNeedResourcesUpdate) {
+		set.dontNeedResourcesUpdate = true;
+	}
+
 	// check if task need to be processed right now
 	if (set.finishTime < Game.getCurrentTime()) {
 		// mark as processing in progress
@@ -120,7 +127,7 @@ var completeItems = function(items, needResourcesUpdate) {
 	while (items.length > 0) {
 		var item = items.shift();
 		// Рассчитать доход до finishTime
-		if (needResourcesUpdate) {
+		if (needResourcesUpdate && !item.dontNeedResourcesUpdate) {
 			Game.Resources.updateWithIncome( item.finishTime );
 		}
 		// Применить результат

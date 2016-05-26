@@ -95,14 +95,27 @@ Game.Cards = {
 	},
 
 	getActive: function() {
+		var tasks = Game.Queue.Collection.find({
+			user_id: Meteor.userId(),
+			status: Game.Queue.status.INCOMPLETE
+		}).fetch();
+
+		var active = {};
+		for (var i = 0; i < tasks.length; i++) {
+			if (tasks[i].type == 'card') {
+				active[tasks[i].engName] = true;
+			}
+		}
+
 		var result = [];
 		for (var type in Game.Cards.items) {
 			for (var name in Game.Cards.items[type]) {
-				if (Game.Cards.items[type][name].getActiveTask()) {
+				if (active[name]) {
 					result.push(Game.Cards.items[type][name]);
 				}
 			}
 		}
+		
 		return result;
 	},
 

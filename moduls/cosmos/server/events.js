@@ -146,7 +146,8 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 			type: 'spaceEvent',
 			eventId: eventId,
 			startTime: options.startTime,
-			time: options.durationTime
+			time: options.durationTime,
+			dontNeedResourcesUpdate: true
 		});
 	}
 
@@ -232,7 +233,8 @@ Game.SpaceEvents.addTriggerAttack = function(options) {
 			type: 'spaceEvent',
 			eventId: eventId,
 			startTime: options.startTime,
-			time: options.delayTime
+			time: options.delayTime,
+			dontNeedResourcesUpdate: true
 		});
 	}
 
@@ -249,12 +251,17 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 		return null; // no need to attack this planet
 	}
 
-	var reptilePlanets = Game.Planets.Collection.find({
-		user_id: Meteor.userId(),
-		mission: { $ne: null },
-		segment: planet.segment,
-		hand: planet.hand
-	}).fetch();
+	// get reptile planets at this sector
+	var reptilePlanets = [];
+	var planets = Game.Planets.getAll().fetch();
+	for (var n = 0; n < planets.length; n++) {
+		if (planets[n].hand == planet.hand
+		 && planets[n].segment == planet.segment
+		 && planets[n].mission
+		) {
+			reptilePlanets.push(planets[n]);
+		}
+	}
 
 	if (reptilePlanets.length === 0) {
 		return null; // no reptiles at this sector
@@ -406,11 +413,19 @@ Game.SpaceEvents.sendShip = function(options) {
 
 	// add task into queue
 	if (eventId) {
+		// check if need resource update before task completion
+		var dontNeedResourcesUpdate = true;
+		if (!options.isHumans && options.targetId == Game.Planets.getBase()._id) {
+			dontNeedResourcesUpdate = false;
+		}
+
+		// add task
 		return Game.Queue.add({
 			type: 'spaceEvent',
 			eventId: eventId,
 			startTime: options.startTime,
-			time: options.flyTime
+			time: options.flyTime,
+			dontNeedResourcesUpdate: dontNeedResourcesUpdate
 		});
 	}
 	

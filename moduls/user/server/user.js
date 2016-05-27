@@ -17,8 +17,30 @@ if (Meteor.settings.mail) {
 
 	// A Function that takes a user object and a url, and returns the body text for the email.
 	// Note: if you need to return HTML instead, use Accounts.emailTemplates.verifyEmail.html
-	Accounts.emailTemplates.verifyEmail.text = function(user, url) {
-		return 'Нажав на эту ссылку, вы подтверждаете, что данная почта недоступна Рептилоидам, что канал связи с параллельной вселенной защищён и вы, истинно Великий Консул - являетесь единственным пользователем данного аккаунта. Удачи в Бою и да прибудет с вами Летающий Макаронный Монстр.: ' + url;
+	Accounts.emailTemplates.verifyEmail.html = function(user, url) {
+		var unsubscribeUrl = 'http://consulwar.ru/unsubscribe@mail=' + user.emails[0].address;
+		var html = '<p>Нажав на эту ссылку, вы подтверждаете, что данная почта недоступна Рептилоидам, что канал связи с параллельной вселенной защищён и вы, истинно Великий Консул - являетесь единственным пользователем данного аккаунта. Удачи в Бою и да прибудет с вами Летающий Макаронный Монстр.: ';
+		html += '<a href="' + url + '">' + url + '</a></p>';
+		html += '<p>Этот адрес электронной почты был получен нами после вашей регистрации в игре ConsulWar и подключения к каналу связи. Это письмо вы получили, так как был запущен новый сервер и открыт новый канал связи.</p>';
+		html += '<p>Если вас больше не интересует спасение параллельной вселенной, и вы больше не хотите получать рассылку от проекта ConsulWar, нажмите на ссылку: ';
+		html += '<a href="' + unsubscribeUrl + '">' + unsubscribeUrl + '</a></p>';
+		html += '<p>После этого вы перестанете получать письма от проекта ConsulWar</p>';
+		return html;
+	};
+
+	Accounts.emailTemplates.resetPassword.subject = function (user) {
+		return 'Сброс пароля';
+	};
+
+	Accounts.emailTemplates.resetPassword.html = function (user, url) {
+		var unsubscribeUrl = 'http://consulwar.ru/unsubscribe@mail=' + user.emails[0].address;
+		var html = '<p>Чтобы сбросить пароль нажмите на ссылку: ';
+		html += '<a href="' + url + '">' + url + '</a></p>';
+		html += '<p>Этот адрес электронной почты был получен нами после вашей регистрации в игре ConsulWar и подключения к каналу связи. Это письмо вы получили, так как был запущен новый сервер и открыт новый канал связи.</p>';
+		html += '<p>Если вас больше не интересует спасение параллельной вселенной, и вы больше не хотите получать рассылку от проекта ConsulWar, нажмите на ссылку: ';
+		html += '<a href="' + unsubscribeUrl + '">' + unsubscribeUrl + '</a></p>';
+		html += '<p>После этого вы перестанете получать письма от проекта ConsulWar</p>';
+		return html;
 	};
 
 } else if (process.env.NODE_ENV != 'development') {

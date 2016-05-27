@@ -85,6 +85,34 @@ Router.route('/legal/:filename?', function() {
 	this.response.end( Assets.getText(filename) );
 }, { where: 'server' });
 
+Router.route('/unsubscribe', function() {
+	var mail = this.params.query.mail;
+	check(mail, String);
+	
+	var user = Accounts.findUserByEmail(mail);
+	if (!user) {
+		this.response.setHeader('Content-Type', 'text/html; charset=utf-8');
+		this.response.end('Ошибка');
+		return;
+	}
+
+	for (var i = 0; i < user.emails.length; i++) {
+		if (user.emails[i].address == mail) {
+			var set = {};
+			set['emails.' + i.toString() + '.unsubscribed'] = true;
+			Meteor.users.update({
+				_id: user._id
+			}, {
+				$set: set
+			});
+			break;
+		}
+	}
+
+	this.response.setHeader('Content-Type', 'text/html; charset=utf-8');
+	this.response.end('Вы отписаны');
+}, { where: 'server' });
+
 Meteor.methods({
 	actualizeGameInfo: function() {
 		var user = Meteor.user();

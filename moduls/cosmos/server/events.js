@@ -216,6 +216,17 @@ Game.SpaceEvents.addTriggerAttack = function(options) {
 		throw new Meteor.Error('Не задана планета');
 	}
 
+	var trigger = Game.SpaceEvents.Collection.findOne({
+		user_id: Meteor.userId(),
+		type: Game.SpaceEvents.type.TRIGGER_ATTACK,
+		status: Game.SpaceEvents.status.STARTED,
+		'info.targetPlanet': options.targetPlanet
+	});
+
+	if (trigger) {
+		return null; // already has active trigger
+	}
+
 	// add event
 	var eventId = Game.SpaceEvents.add({
 		type: Game.SpaceEvents.type.TRIGGER_ATTACK,
@@ -267,7 +278,16 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 		return null; // no reptiles at this sector
 	}
 
-	// generate appropriate mission and calculate health
+	// calculate user health
+	var userArmy = Game.Unit.getArmy(planet.armyId);
+	if (!userArmy || !userArmy.units) {
+		console.log('Strange shit suddenly appeared! Space event id:', event._id);
+		return null; // strange shit suddenly appeared
+	}
+
+	var userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
+
+	// generate appropriate mission and calculate enemy health
 	var mission = Game.Planets.generateMission(planet);
 
 	var enemyFleet = Game.Battle.items[mission.type].level[mission.level].enemies;
@@ -279,9 +299,6 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 			fleet: enemyFleet
 		}
 	});
-
-	var userArmy = Game.Unit.getArmy(planet.armyId);
-	var userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
 
 	// check attack possibility
 	if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {

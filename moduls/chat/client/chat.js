@@ -589,7 +589,12 @@ Template.chat.events({
 		Meteor.call('chat.loadMore', options, function(err, data) {
 			isLoading.set(false);
 
-			if (!err && data) {
+			if (err) {
+				Notifications.error('Не удалось загрузить сообщения', err.error);
+				return;
+			}
+
+			if (data) {
 				for (var i = 0; i < data.length; i++) {
 					if (messages.length >= Game.Chat.Messages.LIMIT) {
 						break;

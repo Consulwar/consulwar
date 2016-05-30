@@ -734,4 +734,27 @@ Template.chat.events({
 	}
 });
 
+// ----------------------------------------------------------------------------
+// Rooms bottom menu
+// ----------------------------------------------------------------------------
+
+var roomsList = new ReactiveVar(null);
+
+Template.chatRoomsList.onRendered(function() {
+	if (!roomsList.get()) {
+		Meteor.call('chat.getRoomsList', function(err, data) {
+			if (!err) {
+				roomsList.set(data);
+			}
+		});
+	}
+});
+
+Template.chatRoomsList.helpers({
+	rooms: function() {
+		return roomsList.get();
+	}
+});
+
+
 };

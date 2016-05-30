@@ -12,17 +12,20 @@ Game.Chat.Room.Collection._ensureIndex({
 });
 
 // create defaul rooms on server startup
-var createDefaulRoom = function(name) {
+var createDefaulRoom = function(name, title, isFree) {
 	if (!Game.Chat.Room.Collection.findOne({ name: name })) {
 		Game.Chat.Room.Collection.insert({
 			name: name,
-			isPublic: true
+			title: title,
+			isPublic: true,
+			isOfficial: true,
+			isFree: isFree
 		});
 	}
 };
 
-createDefaulRoom('general');
-createDefaulRoom('help');
+createDefaulRoom('general', 'Основной', false);
+createDefaulRoom('help', 'Помощь', true);
 
 Meteor.methods({
 	'chat.sendMessage': function(message, roomName) {
@@ -1002,6 +1005,22 @@ Meteor.methods({
 				timestamp: -1
 			},
 			limit: Game.Chat.Messages.LOAD_COUNT
+		}).fetch();
+	},
+
+	'chat.getRoomsList': function() {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		return Game.Chat.Room.Collection.find({
+			isOfficial: true
 		}).fetch();
 	}
 });

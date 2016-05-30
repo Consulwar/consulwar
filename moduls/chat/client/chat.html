@@ -139,4 +139,20 @@
 			</form>
 		{{/if}}
 	</div>
+
+	{{> chatRoomsList}}
+</template>
+
+<template name="chatRoomsList">
+	{{#if rooms}}
+		<ul class="chatRoomsList">
+			{{#each rooms}}
+				<li class="{{this.name}}">
+					<a href="{{pathFor 'chat' room=this.name}}">
+						{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{/if}}
 </template>

@@ -7,7 +7,7 @@ Game.Chat.Messages = {
 	LIMIT: 1000,
 	FREE_CHAT_PRICE: 5000,
 
-	Collection: new Meteor.Collection("messages"),
+	Collection: new Meteor.Collection('messages'),
 
 	getPrice: function(room) {
 		var user = Meteor.user();
@@ -21,7 +21,7 @@ Game.Chat.Messages = {
 		}
 
 		if (room) {
-			if (room.name == 'help') {
+			if (room.isFree) {
 				return null;
 			}
 

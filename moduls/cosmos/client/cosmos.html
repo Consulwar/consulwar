@@ -1,5 +1,7 @@
 <template name="cosmos">
-	<div id="map-battle"></div>
+	<div id="map-battle-container">
+		<div id="map-battle"></div>
+	</div>
 	<a class="map-control-home"></a>
 	<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боев</a>
 	{{#if isSelection}}

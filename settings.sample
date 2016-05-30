@@ -61,5 +61,11 @@
 		"attackPlayerPeriod": 120,
 		"triggerAttackDelay": 1800,
 		"funPeriod": 86400
+	},
+	"ddplimiter": {
+		"isEnabled": true,
+		"isDebug": false,
+		"numRequests": 5,
+		"timeInterval": 10000
 	}
 }

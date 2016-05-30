@@ -64,7 +64,6 @@
 	},
 	"ddplimiter": {
 		"isEnabled": true,
-		"isDebug": false,
 		"numRequests": 5,
 		"timeInterval": 10000
 	}

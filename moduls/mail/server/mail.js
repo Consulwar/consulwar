@@ -75,6 +75,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 		
+		console.log('mail.sendLetter: ', new Date(), user.username);
+
 		var block = Game.BanHistory.Collection.findOne({
 			user_id: user._id,
 			type: Game.BanHistory.type.mail
@@ -242,6 +244,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('mail.getLetter: ', new Date(), user.username);
+
 		var letter = null;
 
 		if (['admin', 'helper'].indexOf(user.role) >= 0) {
@@ -282,6 +286,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('mail.complainLetter: ', new Date(), user.username);
+
 		check(id, String);
 
 		var updateCount = Game.Mail.Collection.update({
@@ -312,6 +318,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('mail.removeLetters: ', new Date(), user.username);
+
 		var updateCount = Game.Mail.Collection.update({
 			_id: { $in: ids },
 			owner: user._id
@@ -340,6 +348,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('mail.blockUser: ', new Date(), user.username);
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
@@ -425,6 +435,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('mail.resolveComplaint: ', new Date(), user.username);
+
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
 		}
@@ -455,6 +467,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('mail.getPrivatePage: ', new Date(), user.username);
 
 		check(page, Match.Integer);
 		check(count, Match.Integer);
@@ -500,6 +514,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('mail.getAdminPage: ', new Date(), user.username);
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');

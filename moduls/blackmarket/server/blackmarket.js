@@ -18,6 +18,8 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить космопорт');
 		}
 
+		console.log('blackmarket.buyPack: ', new Date(), user.username);
+
 		var pack = Game.Blackmarket.items[id];
 
 		if (!pack) {

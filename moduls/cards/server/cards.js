@@ -125,6 +125,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('cards.buy: ', new Date(), user.username);
+
 		var item = Game.Cards.getItem(id);
 		if (!item) {
 			throw new Meteor.Error('Нет такой карточки');
@@ -174,6 +176,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
+		console.log('cards.activate: ', new Date(), user.username);
+
 		var item = Game.Cards.getItem(id);
 		if (!item) {
 			throw new Meteor.Error('Нет такой карточки');

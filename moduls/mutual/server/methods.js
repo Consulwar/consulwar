@@ -12,11 +12,11 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('mutual.invest: ', new Date(), user.username);
+
 		if (Game.User.getLevel() < 1) {
 			throw new Meteor.Error('Чтобы участвовать в общих исследованиях нужно подрости');
 		}
-
-		console.log('mutual.invest: ', new Date(), user.username);
 
 		check(options, Object);
 		check(options.group, String);

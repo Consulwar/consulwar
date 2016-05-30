@@ -36,6 +36,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.sendMessage: ', new Date(), user.username);
+
 		// check global block
 		var blockGlobal = Game.BanHistory.Collection.findOne({
 			user_id: user._id,
@@ -279,6 +281,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.blockUser: ', new Date(), user.username);
+
 		if (!options || !options.username) {
 			throw new Meteor.Error('Не указан логин');
 		}
@@ -396,6 +400,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.banAccount: ', new Date(), user.username);
+
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
@@ -425,6 +431,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('chat.cheaterVaip: ', new Date(), user.username);
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -480,6 +488,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('chat.createRoom: ', new Date(), user.username);
 
 		// check room name
 		check(name, String);
@@ -552,6 +562,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.removeRoom: ', new Date(), user.username);
+
 		check(name, String);
 
 		if (['general', 'help'].indexOf(name) != -1) {
@@ -594,6 +606,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.buyFreeChat: ', new Date(), user.username);
+
 		var resources = Game.Resources.getValue();
 
 		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
@@ -625,6 +639,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('chat.addCreditsToRoom: ', new Date(), user.username);
 
 		check(credits, Match.Integer);
 
@@ -696,6 +712,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.addModeratorToRoom: ', new Date(), user.username);
+
 		check(roomName, String);
 		check(username, String);
 
@@ -766,6 +784,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.removeModeratorFromRoom: ', new Date(), user.username);
+
 		check(roomName, String);
 		check(username, String);
 
@@ -817,6 +837,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('chat.addUserToRoom: ', new Date(), user.username);
 
 		check(roomName, String);
 		check(username, String);
@@ -887,6 +909,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.removeUserFromRoom: ', new Date(), user.username);
+
 		check(roomName, String);
 		check(username, String);
 
@@ -956,6 +980,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('chat.loadMore: ', new Date(), user.username);
 
 		check(options, Object);
 		check(options.roomName, String);

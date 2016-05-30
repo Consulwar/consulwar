@@ -148,14 +148,17 @@ if (!Meteor.settings.public.isInviteRequired) {
 
 Meteor.methods({
 	'totalUsersCount': function() {
+		console.log('user.totalUsersCount: ', new Date(), this.connection.clientAddress);
 		return Meteor.users.find().count();
 	},
 
 	'onlineUsersCount': function() {
+		console.log('user.onlineUsersCount: ', new Date(), this.connection.clientAddress);
 		return Meteor.users.find({'status.online': true}).count();
 	},
 
 	'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
+		console.log('user.getIpAddress: ', new Date(), this.connection.clientAddress);
 		if (key != tempKey) {
 			return null;
 		}
@@ -163,6 +166,8 @@ Meteor.methods({
 	},
 
 	'user.checkUsernameExists': function(username) {
+		console.log('user.checkUsernameExists: ', new Date(), this.connection.clientAddress);
+
 		check(username, String);
 
 		if (Meteor.users.findOne({ username: username })) {
@@ -173,6 +178,8 @@ Meteor.methods({
 	},
 
 	'user.checkPlainnameExists': function(username) {
+		console.log('user.checkPlainnameExists: ', new Date(), this.connection.clientAddress);
+
 		check(username, String);
 
 		var plainname = Game.User.convertUsernameToPlainname(username);

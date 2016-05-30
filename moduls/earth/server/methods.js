@@ -13,6 +13,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('earth.voteAction: ', new Date(), user.username);
+
 		// check turn
 		var lastTurn = Game.EarthTurns.getLast();
 
@@ -61,6 +63,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
+
+		console.log('earth.sendReinforcement: ', new Date(), user.username);
 
 		var currentTime = Game.getCurrentTime();
 

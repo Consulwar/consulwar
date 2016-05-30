@@ -308,6 +308,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('getBonusResources: ', new Date(), user.username);
+
 		if (name != 'crystals' && name != 'metals') {
 			throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? ха-ха');
 		}

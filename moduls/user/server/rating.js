@@ -8,6 +8,12 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('rating.getUserPosition: ', new Date(), user.username);
+
 		var position = Meteor.users.find({
 			rating: { $gt: user.rating }
 		}, {
@@ -35,17 +41,23 @@ Meteor.methods({
 	},
 
 	'rating.getPage': function(page, count) {
+		var user = Meteor.user();
+		
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('rating.getPage: ', new Date(), user.username);
+
 		check(page, Match.Integer);
 		check(count, Match.Integer);
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
-		}
-
-		var user = Meteor.user();
-		
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
 		}
 
 		var result = Meteor.users.find({

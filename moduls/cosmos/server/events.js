@@ -1158,6 +1158,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('spaceEvents.attackReptFleet: ', new Date(), user.username);
+
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}

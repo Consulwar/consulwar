@@ -384,6 +384,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('platbox.getPaymentUrl: ', new Date(), user.username);
+
 		// check payment item
 		check(id, String);
 		var paymentItem = Game.Payment.items[id];

@@ -77,6 +77,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('house.buyItem: ', new Date(), user.username);
+
 		// check config
 		if (!Game.House.items[group] || !Game.House.items[group][id]) {
 			throw new Meteor.Error('Нет такого предмета');
@@ -133,6 +135,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('house.placeItem: ', new Date(), user.username);
+
 		var house = Game.House.getValue();
 
 		if (!house) {
@@ -161,6 +165,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
+
+		console.log('house.getPlacedItems: ', new Date(), user.username);
 
 		check(login, String);
 

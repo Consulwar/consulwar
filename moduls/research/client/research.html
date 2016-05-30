@@ -24,13 +24,17 @@
 			{{> item_effect item=research}}
 		</div>
 
-		{{#if research.progress}}
-			{{> item_price price=research.next.price}}
-		{{else}}
-			{{> item_price price=research.price}}
+		{{#if gt research.maxLevel research.currentLevel}}
+			{{#if research.progress}}
+				{{> item_price price=research.next.price}}
+			{{else}}
+				{{> item_price price=research.price}}
+			{{/if}}
 		{{/if}}
 
-		<button class="build" disabled="{{not research.canBuild}}">Отдать приказ</button>
+		{{#if gt research.maxLevel research.currentLevel}}
+			<button class="build" disabled="{{not research.canBuild}}">Отдать приказ</button>
+		{{/if}}
 		
 		{{> Template.dynamic template=additionalArea}}
 	</div>

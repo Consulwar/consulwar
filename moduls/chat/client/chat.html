@@ -28,7 +28,7 @@
 			{{/if}}
 			{{#each messages}}
 				<li
-					data-tooltip="{{#if not this.isMotd}}{{formatDate this.timestamp}}{{/if}}"
+					data-tooltip="{{#if not this.isMotd}}{{formatDate this.timestamp -180}}{{/if}}"
 					data-tooltip-direction="w"
 					class="
 						{{this.role}} 
@@ -72,7 +72,7 @@
 						{{#if eq this.data.type 'block'}}
 							заблокировал
 							{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-							для {{this.message}} до {{formatDate (sum data.timestamp data.period)}}
+							для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
 						{{/if}}
 						{{#if eq this.data.type 'add'}}
 							добавил в чат {{this.message}}

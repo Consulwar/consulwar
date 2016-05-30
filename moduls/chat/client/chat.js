@@ -102,7 +102,7 @@ Game.Chat.showPage = function() {
 };
 
 Template.chat.onRendered(function() {
-	Meteor.setTimeout(scrollChatToBottom.bind(this, true));
+	var template = this;
 
 	// run this function each time as: 
 	// - room changes
@@ -151,6 +151,7 @@ Template.chat.onRendered(function() {
 				// set as last active chat room
 				Session.set('chatRoom', roomName);
 				currentRoomName = roomName;
+				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
 			} else {
 				// load after last message timestamp
 				isLoading.set(true);
@@ -174,6 +175,7 @@ Template.chat.onRendered(function() {
 					// subscribe after loading
 					chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 					chatSubscription = Meteor.subscribe('chat', roomName);
+					Meteor.setTimeout(scrollChatToBottom.bind(template, true));
 				});
 			}
 		}
@@ -190,7 +192,7 @@ Template.chat.onDestroyed(function() {
 var scrollChatToBottom = function(force) {
 	var container = $('ul.messages');
 
-	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 50) > container[0].scrollHeight)) {
+	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 100) > container[0].scrollHeight)) {
 		container[0].scrollTop = container[0].scrollHeight;
 	}
 };

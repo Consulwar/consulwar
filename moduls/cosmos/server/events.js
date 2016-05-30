@@ -1006,11 +1006,11 @@ var completeReptilesArrival = function(event, planet) {
 var completeShipFight = function(event) {
 	var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
 	if (!targetShip) {
-		return null; // target ship not found
+		throw new Meteor.Error('Корабль не найден ' + event.info.targetId);
 	}
 
 	if (event.info.isHumans == targetShip.info.isHumans) {
-		return null; // fight is impossible
+		throw new Meteor.Error('Невозможна битва между одной стороной конфликта');
 	}
 
 	var newTask = null;

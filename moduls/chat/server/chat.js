@@ -1019,6 +1019,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('chat.getRoomsList: ', new Date(), user.username);
+
 		return Game.Chat.Room.Collection.find({
 			isOfficial: true
 		}).fetch();

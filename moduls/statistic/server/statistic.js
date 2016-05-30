@@ -120,6 +120,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('statistic.fixGame: ', new Date(), user.username);
+
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора');
 		}
@@ -137,6 +139,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		console.log('statistic.fixUser: ', new Date(), user.username);
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора или модератора');

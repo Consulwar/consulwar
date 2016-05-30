@@ -14,6 +14,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		console.log('colosseum.startTournament: ', new Date(), user.username);
+
 		var tournament = Game.Colosseum.tournaments[id];
 
 		if (!tournament) {

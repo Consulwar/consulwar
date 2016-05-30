@@ -81,6 +81,12 @@ Meteor.methods({
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		console.log('battleHistory.getPage: ', new Date(), user.username);
+
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
@@ -102,6 +108,12 @@ Meteor.methods({
 		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		console.log('battleHistory.getById: ', new Date(), user.username);
 
 		return Game.BattleHistory.Collection.findOne({
 			_id: id,

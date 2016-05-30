@@ -14,6 +14,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		console.log('achievements.complete: ', new Date(), user.username);
+
 		var statistic = Game.Statistic.getUser();
 		var achievements = Game.Achievements.getValue();
 
@@ -66,6 +68,8 @@ Meteor.methods({
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
+
+		console.log('achievements.give: ', new Date(), user.username);
 
 		check(username, String);
 		check(achievementId, String);

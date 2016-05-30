@@ -24,10 +24,12 @@
 			{{> item_effect item=building}}
 		</div>
 
-		{{#if building.progress}}
-			{{> item_price price=building.next.price}}
-		{{else}}
-			{{> item_price price=building.price}}
+		{{#if gt building.maxLevel building.currentLevel}}
+			{{#if building.progress}}
+				{{> item_price price=building.next.price}}
+			{{else}}
+				{{> item_price price=building.price}}
+			{{/if}}
 		{{/if}}
 
 		{{#if eq building.engName 'tradingport'}}
@@ -56,7 +58,9 @@
 			</a>
 		{{/if}}
 
-		<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>
+		{{#if gt building.maxLevel building.currentLevel}}
+			<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>
+		{{/if}}
 		
 		{{> Template.dynamic template=additionalArea}}
 	</div>

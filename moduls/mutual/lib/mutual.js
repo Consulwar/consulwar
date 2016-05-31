@@ -63,7 +63,10 @@ Game.Mutual = {
 
 	has: function(group, name, level) {
 		level = level || 1;
-		return Game.Mutual.get(group, name) >= level;
+		if (Game.Mutual.items[group] && Game.Mutual.items[group][name]) {
+			return Game.Mutual.items[group][name].currentLevel() >= level;
+		}
+		return false;
 	},
 
 	items: {

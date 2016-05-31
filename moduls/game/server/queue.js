@@ -229,7 +229,7 @@ Game.Queue.checkAll = function() {
 		var observer = cursor.observeChanges({
 			removed: function(id, fields) {
 				// Ожидаем пока другой процесс обработает свои задачи
-				if (cursor.count() <= updatedCount) {
+				if (cursor.count() <= updatedCount && observer) {
 					completeItems(cursor.fetch(), needUpdateResources);
 					observer.stop();
 					observer = null;
@@ -238,7 +238,7 @@ Game.Queue.checkAll = function() {
 		});
 
 		// На всякий случай проверяем не обработались ли задачи
-		if (cursor.count() <= updatedCount) {
+		if (cursor.count() <= updatedCount && observer) {
 			completeItems(cursor.fetch(), needUpdateResources);
 			observer.stop();
 			observer = null;

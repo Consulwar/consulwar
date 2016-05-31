@@ -168,6 +168,27 @@ game.Item = function(options) {
 				},
 				enumerable: true
 			});
+
+			// TODO: Продумать и переделать эту хрень!
+			//       Если битва идет на земле, то мы не можем использовать characteristics,
+			//       так как Meteor.userId() выкидывает исключение.
+			//       По этому был создан этот метод, чтобы применять эффекты только из
+			//       общих исследований.
+			Object.defineProperty(this, 'earthCharacteristics', {
+				get: function() {
+					var characteristics = _.clone(options.characteristics);
+					if (options.characteristics.damage) {
+						characteristics.damage = _.clone(options.characteristics.damage);
+					}
+
+					// Выбираем только общие эффекты (последний аргумент = true)
+					var result = Game.Effect.Military.applyTo(this, characteristics, false, true);
+					result.base = options.characteristics;
+
+					return result;
+				},
+				enumerable: true
+			});
 			// --------------------------------------------------------------
 		}
 
@@ -581,7 +602,7 @@ Game.Effect = function(options) {
 	};
 };
 
-Game.Effect.getRelatedTo = function(obj) {
+Game.Effect.getRelatedTo = function(obj, isOnlyMutual) {
 	var effects = {};
 	var i = 0;
 
@@ -656,53 +677,59 @@ Game.Effect.getRelatedTo = function(obj) {
 		}
 	}
 
-	// Items, Cards, Achievements
-	var items = Game.House.getPlacedItems();
+	// TODO: Убрать эту херню позже!
+	//       Смотри метод earthCharacteristics!
+	if (!isOnlyMutual) {
 
-	var cards = Game.Cards.getActive();
-	if (cards && cards.length > 0) {
-		items = items.concat(cards);
-	}
+		// Items, Cards, Achievements
+		var items = Game.House.getPlacedItems();
 
-	var achievements = Game.Achievements.getCompleted();
-	if (achievements && achievements.length > 0) {
-		items = items.concat(achievements);
-	}
-
-	for (i = 0; i < items.length; i++) {
-		if (!items[i].effect) {
-			continue;
+		var cards = Game.Cards.getActive();
+		if (cards && cards.length > 0) {
+			items = items.concat(cards);
 		}
-		
-		for (var k = 0; k < items[i].effect.length; k++) {
-			var effect = items[i].effect[k];
 
-			if (effect.type == this.type) {
-				if (effect.condition) {
-					if (effect.condition.engName && obj.engName != effect.condition.engName) {
-						continue;
-					}
+		var achievements = Game.Achievements.getCompleted();
+		if (achievements && achievements.length > 0) {
+			items = items.concat(achievements);
+		}
 
-					if (effect.condition.type && obj.type != effect.condition.type) {
-						continue;
-					}
-
-					if (effect.condition.group && obj.group != effect.condition.group) {
-						continue;
-					}
-
-					if (effect.condition.special && obj.special != effect.condition.special) {
-						continue;
-					}
-				}
-
-				if (effects[effect.priority] === undefined) {
-					effects[effect.priority] = [];
-				}
-
-				effects[effect.priority].push(effect);
+		for (i = 0; i < items.length; i++) {
+			if (!items[i].effect) {
+				continue;
 			}
-		}	
+			
+			for (var k = 0; k < items[i].effect.length; k++) {
+				var effect = items[i].effect[k];
+
+				if (effect.type == this.type) {
+					if (effect.condition) {
+						if (effect.condition.engName && obj.engName != effect.condition.engName) {
+							continue;
+						}
+
+						if (effect.condition.type && obj.type != effect.condition.type) {
+							continue;
+						}
+
+						if (effect.condition.group && obj.group != effect.condition.group) {
+							continue;
+						}
+
+						if (effect.condition.special && obj.special != effect.condition.special) {
+							continue;
+						}
+					}
+
+					if (effects[effect.priority] === undefined) {
+						effects[effect.priority] = [];
+					}
+
+					effects[effect.priority].push(effect);
+				}
+			}	
+		}
+
 	}
 
 	var result = {};
@@ -713,6 +740,13 @@ Game.Effect.getRelatedTo = function(obj) {
 	for (var priority in effects) {
 		result[priority] = {};
 		for (i = 0; i < effects[priority].length; i++) {
+
+			// TODO: Убрать эту херню позже!
+			//       Смотри метод earthCharacteristics!
+			if (isOnlyMutual && effects[priority][i].provider.type != 'mutual') {
+				continue;
+			}
+
 			if (_.isArray(effects[priority][i].affect)) {
 
 				// Cache for building & research
@@ -819,9 +853,9 @@ Game.Effect.getValue = function(hideEffects, obj) {
 };
 
 // reduce - true = скидка, т.е. вычитаем эффекты
-Game.Effect.applyTo = function(target, obj, hideEffects) {
+Game.Effect.applyTo = function(target, obj, hideEffects, isOnlyMutual) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
-	var effects = this.getRelatedTo(target);
+	var effects = this.getRelatedTo(target, isOnlyMutual);
 
 	Object.defineProperty(obj, 'effects', {
 		value: effects,

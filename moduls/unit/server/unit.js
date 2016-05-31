@@ -428,7 +428,9 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 	var currentLog = '';
 
 	var writeLog = function(message) {
-		currentLog += message + '\n';
+		// Выключил лог, так как он нигде не юзается, а память жрет.
+		// И вообще мы его будем переделывать!
+		// currentLog += message + '\n';
 	};
 
 	var hasAlive = function(units) {
@@ -454,6 +456,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					var count = Game.Unit.rollCount( army[side][group][name] );
 					var model = Game.Unit.items[side][group][name];
 
+					// get characteristics once before battle
+					var characteristics = (options && options.isEarth)
+						? model.earthCharacteristics
+						: model.characteristics;
+
 					units[ side + '.' + group + '.' + name ] = {
 						// constants
 						key: side + '.' + group + '.' + name,
@@ -462,9 +469,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 						name: name,
 						model: model,
 						startCount: count,
+						characteristics: characteristics,
 						// vars
 						count: count,
-						life: count * model.characteristics.life
+						life: count * characteristics.life
 					};
 
 					// save result of rollCount
@@ -500,8 +508,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (enemy.life <= 0) continue;
 
 			// test enemy special group vs unit special group
-			var enemySpecial = enemy.model.characteristics.special;
-			var unitNotAttack = unit.model.characteristics.notAttack;
+			var enemySpecial = enemy.characteristics.special;
+			var unitNotAttack = unit.characteristics.notAttack;
 
 			if (enemySpecial
 			 && unitNotAttack
@@ -649,11 +657,14 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var damage = null;
 
 		for (key in userUnits) {
-			if (userUnits[key].model.characteristics.damage) {
+			if (userUnits[key].characteristics.damage) {
 				damage = Game.Effect.Special.applyTo(
 					{ engName: 'roundDamage' + round }, 
-					userUnits[key].model.characteristics,
-					true
+					userUnits[key].characteristics,
+					true,
+					// TODO: Убрать эту херню позже!
+					//       Смотри метод earthCharacteristics!
+					options.isEarth
 				).damage;
 				userUnits[key].damage = Math.floor(
 					Game.Random.interval( damage.min, damage.max ) * 
@@ -667,8 +678,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		for (key in enemyUnits) {
-			if (enemyUnits[key].model.characteristics.damage) {
-				damage = enemyUnits[key].model.characteristics.damage;
+			if (enemyUnits[key].characteristics.damage) {
+				damage = enemyUnits[key].characteristics.damage;
 				enemyUnits[key].damage = Math.floor(
 					Game.Random.interval( damage.min, damage.max ) * 
 					enemyUnits[key].count * options.damageReduction
@@ -736,7 +747,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		writeLog('---- Наши потери -------------');
 		for (key in userUnits) {
-			unitsLeft = Math.ceil( userUnits[key].life / userUnits[key].model.characteristics.life );
+			unitsLeft = Math.ceil( userUnits[key].life / userUnits[key].characteristics.life );
 			unitsKilled = userUnits[key].count - unitsLeft;
 
 			userUnits[key].count = unitsLeft;
@@ -749,7 +760,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 		writeLog('---- Вражеские потери --------');
 		for (key in enemyUnits) {
-			unitsLeft = Math.ceil( enemyUnits[key].life / enemyUnits[key].model.characteristics.life );
+			unitsLeft = Math.ceil( enemyUnits[key].life / enemyUnits[key].characteristics.life );
 			unitsKilled = enemyUnits[key].count - unitsLeft;
 
 			enemyUnits[key].count = unitsLeft;
@@ -794,7 +805,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		var artefacts = (options && options.artefacts) ? options.artefacts : null;
 
 		options = {
-			isEarth: options.isEarth,
+			isEarth: options ? options.isEarth : false,
 			rouns: rounds,
 			damageReduction: damageReduction,
 			missionType: missionType,

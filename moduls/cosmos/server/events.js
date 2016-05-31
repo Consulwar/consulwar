@@ -216,6 +216,17 @@ Game.SpaceEvents.addTriggerAttack = function(options) {
 		throw new Meteor.Error('Не задана планета');
 	}
 
+	var trigger = Game.SpaceEvents.Collection.findOne({
+		user_id: Meteor.userId(),
+		type: Game.SpaceEvents.type.TRIGGER_ATTACK,
+		status: Game.SpaceEvents.status.STARTED,
+		'info.targetPlanet': options.targetPlanet
+	});
+
+	if (trigger) {
+		return null; // already has active trigger
+	}
+
 	// add event
 	var eventId = Game.SpaceEvents.add({
 		type: Game.SpaceEvents.type.TRIGGER_ATTACK,
@@ -267,7 +278,16 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 		return null; // no reptiles at this sector
 	}
 
-	// generate appropriate mission and calculate health
+	// calculate user health
+	var userArmy = Game.Unit.getArmy(planet.armyId);
+	if (!userArmy || !userArmy.units) {
+		console.log('Strange shit suddenly appeared! Space event id:', event._id);
+		return null; // strange shit suddenly appeared
+	}
+
+	var userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
+
+	// generate appropriate mission and calculate enemy health
 	var mission = Game.Planets.generateMission(planet);
 
 	var enemyFleet = Game.Battle.items[mission.type].level[mission.level].enemies;
@@ -279,9 +299,6 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 			fleet: enemyFleet
 		}
 	});
-
-	var userArmy = Game.Unit.getArmy(planet.armyId);
-	var userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
 
 	// check attack possibility
 	if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {
@@ -780,7 +797,7 @@ var completeHumansArrival = function(event, planet) {
 			targetType:     Game.SpaceEvents.target.PLANET,
 			targetId:       event.info.startPlanetId,
 			startTime:      event.timeEnd,
-			flyTime:        Game.Planets.calcFlyTime(event.info.targetPosition, event.info.startPosition, event.info.engineLevel),
+			flyTime:        event.timeEnd - event.timeStart,
 			isHumans:       true,
 			isOneway:       true,
 			engineLevel:    event.info.engineLevel,
@@ -789,7 +806,6 @@ var completeHumansArrival = function(event, planet) {
 		});
 	}
 
-	planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 	Game.Planets.update(planet);
 
 	if (!battleResult || (userArmy && !enemyArmy)) {
@@ -960,7 +976,7 @@ var completeReptilesArrival = function(event, planet) {
 				targetType:     Game.SpaceEvents.target.PLANET,
 				targetId:       event.info.startPlanetId,
 				startTime:      event.timeEnd,
-				flyTime:        Game.Planets.calcFlyTime(event.info.targetPosition, event.info.startPosition, event.info.engineLevel),
+				flyTime:        event.timeEnd - event.timeStart,
 				isHumans:       false,
 				isOneway:       true,
 				engineLevel:    event.info.engineLevel,
@@ -982,7 +998,6 @@ var completeReptilesArrival = function(event, planet) {
 		}
 	}
 
-	planet.timeRespawn = event.timeEnd + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
 	Game.Planets.update(planet);
 
 	return newTask;
@@ -991,7 +1006,7 @@ var completeReptilesArrival = function(event, planet) {
 var completeShipFight = function(event) {
 	var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
 	if (!targetShip) {
-		throw new Meteor.Error('Корабль с id = ' + event.info.targetId + ' не существует');
+		throw new Meteor.Error('Корабль не найден ' + event.info.targetId);
 	}
 
 	if (event.info.isHumans == targetShip.info.isHumans) {
@@ -1106,7 +1121,7 @@ var completeShipFight = function(event) {
 			targetType:     Game.SpaceEvents.target.PLANET,
 			targetId:       event.info.startPlanetId,
 			startTime:      event.timeEnd,
-			flyTime:        Game.Planets.calcFlyTime(event.info.targetPosition, event.info.startPosition, event.info.engineLevel),
+			flyTime:        event.timeEnd - event.timeStart,
 			isHumans:       event.info.isHumans,
 			engineLevel:    event.info.engineLevel,
 			mission:        event.info.mission,
@@ -1174,6 +1189,14 @@ Meteor.methods({
 			throw new Meteor.Error('Корабль не существует');
 		}
 
+		if (!enemyShip.info || !enemyShip.info.mission) {
+			throw new Meteor.Error('Данные корабля испорчены');
+		}
+
+		if (enemyShip.info.isHumans) {
+			throw new Meteor.Error('Нельзя перехватить свой корабль');
+		}
+
 		var engineLevel = Game.Planets.getEngineLevel();
 
 		var startPosition = {
@@ -1215,9 +1238,9 @@ Meteor.methods({
 		// update base planet
 		var baseArmy = Game.Unit.getArmy(basePlanet.armyId);
 		if (!baseArmy) {
-			basePlanet.armyId = null;	
+			basePlanet.armyId = null;
 		}
-		basePlanet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
+
 		Game.Planets.update(basePlanet);
 
 		// send ship

@@ -223,56 +223,7 @@ Template.paymentHistory.helpers({
 	isLoading: function() { return isLoading.get(); },
 	history: function() { return history.get(); },
 
-	getProfit: function(profit) {
-		var result = '';
-		for (var type in profit) {
-			switch (type) {
-				case 'resources':
-					for (var resName in profit[type]) {
-						result += resName + ': ' + parseInt(profit[type][resName], 10) + ' ';
-					}
-					break;
-				case 'units':
-					for (var unitGroup in profit[type]) {
-						for (var unitName in profit[type][unitGroup]) {
-							result += Game.Unit.items.army[unitGroup][unitName].name + ': ';
-							result += parseInt(profit[type][unitGroup][unitName], 10) + ' ';
-						}
-					}
-					break;
-				case 'cards':
-					for (var cardId in profit[type]) {
-						var card = Game.Cards.getItem(cardId);
-						if (card) {
-							result += card.name + ': ';
-							result += parseInt(profit[type][cardId], 10) + ' ';
-						}
-					}
-					break;
-				case 'houseItems':
-					for (var houseItemGroup in profit[type]) {
-						for (var houseItemName in profit[type][houseItemGroup]) {
-							result += Game.House.items[houseItemGroup][houseItemName].name + ': ';
-							result += parseInt(profit[type][houseItemGroup][houseItemName], 10) + ' ';
-						}
-					}
-					break;
-				case 'containers':
-					for (var containerId in profit[type]) {
-						var container = Game.Containers.items[containerId];
-						if (container) {
-							result += 'Бесплатный контейнер: ';
-							result += parseInt(profit[type][containerId], 10) + ' ';
-						}
-					}
-					break;
-				case 'votePower':
-					result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
-					break;
-			}
-		}
-		return result;
-	}
+	formatProfit: function(profit) { return formatProfit(profit); }
 });
 
 // ----------------------------------------------------------------------------
@@ -570,26 +521,97 @@ Template.promocodeCreate.events({
 
 		}
 
-		Meteor.call('admin.addPromoCode', object, function(err) {
-			if (err) {
-				Notifications.error('Не удалось создать промо код', err.error);
-			} else {
-				Notifications.success('Промо код успешно создан');
-			}
-		});
+		if (_.isObject(object) && confirm('Создать промо код: \n' + JSON.stringify(object))) {
+			Meteor.call('admin.addPromoCode', object, function(err) {
+				if (err) {
+					Notifications.error('Не удалось создать промо код', err.error);
+				} else {
+					Notifications.success('Промо код успешно создан');
+				}
+			});
+		}
 	}
 });
 
 Game.Payment.showPromocodeHistory = function() {
-	// TODO: implement
+	var page = parseInt( Router.current().getParams().page, 10 );
+	var count = 20;
+
+	if (page && page > 0) {
+		history.set(null);
+		isLoading.set(true);
+
+		Meteor.call('admin.getPromocodeHistory', page, count, function(err, data) {
+			isLoading.set(false);
+			if (err) {
+				Notifications.error('Не удалось загрузить историю', err.error);
+			} else {
+				history.set(data);
+			}
+		});
+
+		this.render('promocodeHistory', {
+			to: 'content',
+			data: {
+				count: count
+			}
+		});
+	}
 };
 
 Template.promocodeHistory.helpers({
-
+	count: function() { return this.count; },
+	countTotal: function() { return Game.Statistic.getSystemValue('promocode.total'); },
+	isLoading: function() { return isLoading.get(); },
+	history: function() { return history.get(); },
+	formatProfit: function(profit) { return formatProfit(profit); }
 });
 
-Template.promocodeHistory.events({
 
-});
+var formatProfit = function(profit) {
+	if (profit == 'random') {
+		return 'Случайная награда';
+	}
+
+	var result = '';
+	for (var type in profit) {
+		switch (type) {
+			case 'resources':
+				for (var resName in profit[type]) {
+					result += resName + ': ' + parseInt(profit[type][resName], 10) + ' ';
+				}
+				break;
+			case 'units':
+				for (var unitGroup in profit[type]) {
+					for (var unitName in profit[type][unitGroup]) {
+						result += Game.Unit.items.army[unitGroup][unitName].name + ': ';
+						result += parseInt(profit[type][unitGroup][unitName], 10) + ' ';
+					}
+				}
+				break;
+			case 'cards':
+				for (var cardId in profit[type]) {
+					var card = Game.Cards.getItem(cardId);
+					if (card) {
+						result += card.name + ': ';
+						result += parseInt(profit[type][cardId], 10) + ' ';
+					}
+				}
+				break;
+			case 'houseItems':
+				for (var houseItemGroup in profit[type]) {
+					for (var houseItemName in profit[type][houseItemGroup]) {
+						result += Game.House.items[houseItemGroup][houseItemName].name + ': ';
+						result += parseInt(profit[type][houseItemGroup][houseItemName], 10) + ' ';
+					}
+				}
+				break;
+			case 'votePower':
+				result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
+				break;
+		}
+	}
+	return result;
+};
 
 };

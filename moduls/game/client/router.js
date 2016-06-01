@@ -50,7 +50,7 @@ var gameRoutes = {
 		walletHistory: 'wallet/history/:type(income|expense)/:page'
 	},
 
-	promocode: {
+	admin: {
 		promocodeHistory: 'promocode/history/:page'
 	},
 

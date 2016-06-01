@@ -50,9 +50,14 @@ Game.House.add = function (group, id) {
 		isPlaced: false
 	};
 
-	Game.House.Collection.update({
+	var condition = {
 		user_id: Meteor.userId()
-	}, {
+	};
+	condition['items.' + group + '.' + id] = {
+		$exists: false
+	};
+
+	Game.House.Collection.update(condition, {
 		$set: set
 	});
 };

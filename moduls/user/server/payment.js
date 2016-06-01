@@ -276,6 +276,36 @@ Game.PromoCode.randomItems =  [{
 }];
 
 Meteor.methods({
+	'admin.getPromocodeHistory': function(page, count) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('admin.getPromocodeHistory: ', new Date(), user.username);
+
+		if (['admin'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+		}
+
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		return Game.PromoCode.Collection.find({}, {
+			sort: {
+				timestamp: -1
+			},
+			skip: page > 1 ? (page - 1) * count : 0, 
+			limit: count
+		}).fetch();
+	},
+
 	'admin.addPromoCode': function(options) {
 		var user = Meteor.user();
 
@@ -338,7 +368,8 @@ Meteor.methods({
 		var promoCode = {
 			code: options.code,
 			profit: options.profit,
-			activations: 0
+			activations: 0,
+			timestamp: Game.getCurrentTime()
 		};
 
 		// check not required options
@@ -361,6 +392,11 @@ Meteor.methods({
 
 		// insert code
 		Game.PromoCode.Collection.insert(promoCode);
+
+		// increment statistic
+		Game.Statistic.incrementGame({
+			'promocode.total': 1
+		});
 	},
 
 	'user.activatePromoCode': function(code) {
@@ -455,6 +491,11 @@ Meteor.methods({
 			type: promoCode.type,
 			profit: profit,
 			timestamp: Game.getCurrentTime()
+		});
+
+		// increment statistic
+		Game.Statistic.incrementUser(user._id, {
+			'promocode.total': 1
 		});
 
 		return profit;

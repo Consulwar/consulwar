@@ -69,6 +69,19 @@ payment-icon('paymentCredits50000')
 		right 0px
 		width 340px
 
+		.create
+			position absolute
+			display block
+			cursor pointer
+			bottom 100px
+			width 100%
+			text-align center
+			color #56BAF2
+		
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+		
 		.hint
 			position absolute
 			display block
@@ -335,6 +348,76 @@ payment-icon('paymentCredits50000')
 		font-size 24px
 		font-weight bold
 		background-image url(/img/game/quests/btn_take.png)
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+				
+
+.promocodeCreate
+	display inline-block
+	position fixed
+	z-index 100
+	top 50%
+	left 50%
+	transform translate(-50%, -50%)
+	padding 20px
+	text-align center
+	color #FFFFFF
+	border 2px solid #E9A844
+	border-radius 5px
+	background-image none
+	background-color #0b0d0f
+
+	label
+		display inline-block
+
+	input
+	select
+		font-weight bold
+		padding 2px
+
+	textarea
+		width 900px
+		height 70px
+
+	.profit
+		display block
+		width 900px
+
+		li
+			display inline-block
+			width 430px
+			margin 5px
+
+	.create
+		display block
+		position relative
+		cursor pointer
+		width 181px
+		height 40px
+		margin 0 auto
+		padding-top 10px
+		color #FFFFFF
+		font-size 24px
+		font-weight bold
+		background-image url(/img/game/quests/btn_take.png)
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+
+	.close
+		position absolute
+		top -22px
+		right -22px
+		height 44px
+		width 44px
+		padding 0
+		margin 0
+		background-image url(/img/game/payment/close.png)
+		background-repeat no-repeat
+		cursor pointer
 		
 		&:hover
 			-webkit-filter brightness(1.4)

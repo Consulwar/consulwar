@@ -119,9 +119,19 @@ Game.Payment.Income.Collection.find({}).observeChanges({
 
 var isPromoLoading = new ReactiveVar(false);
 
+Template.paymentSide.helpers({
+	isAdmin: function() {
+		return Meteor.user().role == 'admin';
+	}
+});
+
 Template.paymentSide.events({
 	'click .buy': function(e, t) {
 		Game.Payment.showWindow();
+	},
+
+	'click .create': function(e, t) {
+		Game.Payment.showPromocodeCreate();
 	},
 
 	'click .promo .send': function(e, t) {
@@ -400,6 +410,186 @@ Template.promocodeReward.events({
 	'click .take': function(e, t) {
 		Blaze.remove(t.view);
 	}
+});
+
+// ----------------------------------------------------------------------------
+// Promo code admin
+// ----------------------------------------------------------------------------
+
+Game.Payment.showPromocodeCreate = function() {
+	Blaze.render(Template.promocodeCreate, $('.over')[0]);
+};
+
+Template.promocodeCreate.helpers({
+	loopCount: function(count) {
+		var result = [];
+		while (count-- > 0) {
+			result.push(count);
+		}
+		return result;
+	},
+
+	options: function() {
+		var result = [];
+
+		result.push({ name: '----------------------------------------' });
+
+		result.push({ id: 'votePower', name: 'Сила голоса' });
+
+		result.push({ name: '----------------------------------------' });
+
+		result.push({ id: 'resources.humans', name: 'Люди' });
+		result.push({ id: 'resources.metals', name: 'Металл' });
+		result.push({ id: 'resources.crystals', name: 'Кристалл' });
+		result.push({ id: 'resources.honor', name: 'Честь' });
+		result.push({ id: 'resources.credits', name: 'ГГК' });
+
+		result.push({ name: '----------------------------------------' });
+
+		for (var cardName in Game.Cards.items.donate) {
+			result.push({
+				id: 'cards.' + cardName,
+				name: Game.Cards.items.donate[cardName].name
+			});
+		}
+
+		result.push({ name: '----------------------------------------' });
+
+		for (var unitGroup in Game.Unit.items.army) {
+			for (var unitName in Game.Unit.items.army[unitGroup]) {
+				result.push({
+					id: 'units.' + unitGroup + '.' + unitName,
+					name: Game.Unit.items.army[unitGroup][unitName].name
+				});
+			}
+		}
+
+		result.push({ name: '----------------------------------------' });
+
+		for (var itemGroup in Game.House.items) {
+			for (var itemName in Game.House.items[itemGroup]) {
+				result.push({
+					id: 'houseItems.' + itemGroup + '.' + itemName,
+					name: Game.House.items[itemGroup][itemName].name
+				});
+			}
+		}
+
+		return result;
+	}
+});
+
+Template.promocodeCreate.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	},
+
+	'click .create': function(e, t) {
+		var object = null;
+		
+		var scriptText = t.find('textarea').value;
+		if (scriptText && scriptText.length > 0) {
+
+			// Create by script text
+			try {
+				object = JSON.parse(scriptText);
+			} catch (e) {
+				Notifications.error('Ошибка в скрипте', e.message);
+				return;
+			}
+
+			if (!_.isObject(object)) {
+				Notifications.error('Ошибка в скрипте', 'Это не json, а хуй знает что');
+				return;
+			}
+
+		} else {
+
+			// Create by GUI
+			object = {};
+
+			object.code = t.find('input[name="code"]').value;
+
+			var maxActivations = parseInt( t.find('input[name="maxActivations"]').value );
+			if (maxActivations > 1) {
+				object.maxActivations = maxActivations;
+			}
+
+			var minutes = parseInt( t.find('input[name="minutes"]').value );
+			if (minutes > 0) {
+				object.validthru = Game.getCurrentTime() + (minutes * 60);
+			}
+
+			var type = t.find('input[name="type"]').value
+			if (type && type.length > 0) {
+				object.type = type;
+			}
+
+			if (t.find('input[name="random"]').checked) {
+				object.profit = 'random';
+			} else {
+				var elements = $('.profit li');
+				for (var i = 0; i < elements.length; i++) {
+					var id = $(elements[i]).find(':selected').attr('name')
+					var count = parseInt( $(elements[i]).find('input').val() );
+					if (id && count > 0) {
+						if (!object.profit) {
+							object.profit = {};
+						};
+
+						var keys = id.split('.');
+						var curObj = object.profit;
+
+						for (var j = 0; j < keys.length; j++) {
+							var key = keys[j];
+							if (j == keys.length - 1) {
+								if (!curObj[key]) {
+									curObj[key] = 0;
+								}
+								curObj[key] += count;
+							} else {
+								if (!curObj[key]) {
+									curObj[key] = {};
+								}
+								curObj = curObj[key];
+							}
+						}
+					}
+				}
+			}
+
+			if (!object.code || object.code.length < 1) {
+				Notifications.error('Введите название промо кода');
+				return;
+			}
+
+			if (!object.profit) {
+				Notifications.error('Укажите награду из списка или выберите рандом');
+				return;
+			}
+
+		}
+
+		Meteor.call('admin.addPromoCode', object, function(err) {
+			if (err) {
+				Notifications.error('Не удалось создать промо код', err.error);
+			} else {
+				Notifications.success('Промо код успешно создан');
+			}
+		});
+	}
+});
+
+Game.Payment.showPromocodeHistory = function() {
+	// TODO: implement
+};
+
+Template.promocodeHistory.helpers({
+
+});
+
+Template.promocodeHistory.events({
+
 });
 
 };

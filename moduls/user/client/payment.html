@@ -43,6 +43,9 @@
 		<a href="{{pathFor 'walletHistory' type='income' page=1}}">История покупок</a>
 		<a href="{{pathFor 'walletHistory' type='expense' page=1}}">История расходов</a>
 		<div class="promo">
+			{{#if isAdmin}}
+				<span class="create">Создать промо код</span>
+			{{/if}}
 			<span class="hint">Введите промо код, если он у вас конечно есть</span>
 			<input class="code"/>
 			<span class="send">Награда</span>
@@ -210,4 +213,57 @@
 		{{/if}}
 		<span class="take">Награда</span>
 	</div>
+</template>
+
+<template name="promocodeCreate">
+	<div class="smoke"></div>
+	<div class="promocodeCreate">
+		<div class="close"></div>
+
+		<label>
+			<div class="title">Название кода</div>
+			<input name="code" type="text"/>
+		</label>
+
+		<label>
+			<div class="title">Количество активаций</div>
+			<input name="maxActivations" type="text"/>
+		</label>
+
+		<label>
+			<div class="title">Время действия (в минутах)</div>
+			<input name="minutes" type="text"/>
+		</label>
+
+		<label>
+			<div class="title">Тип кода</div>
+			<input name="type" type="text"/>
+		</label>
+
+		<label>
+			<div class="title">Рандомная награда</div>
+			<input type="checkbox" name="random"/>
+		</label>
+
+		<ul class="profit">
+			{{#each loopCount 10}}
+				<li>
+					<select>
+						{{#each options}}
+							<option name="{{this.id}}">{{this.name}}</option>
+						{{/each}}
+					</select>
+					<input type="text"/>
+				</li>
+			{{/each}}
+		</ul>
+
+		<textarea class="script"></textarea>
+
+		<div class="create">Создать</div>
+	</div>
+</template>
+
+<template name="promocodeHistory">
+	Здесь будет история
 </template>

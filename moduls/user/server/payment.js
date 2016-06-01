@@ -276,7 +276,7 @@ Game.PromoCode.randomItems =  [{
 }];
 
 Meteor.methods({
-	'admin.getPromocodeHistory': function(page, count) {
+	'admin.getPromocodeHistory': function(options) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -293,17 +293,66 @@ Meteor.methods({
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
-		if (count > 100) {
+		check(options, Object);
+		check(options.page, Match.Integer);
+		check(options.count, Match.Integer);
+
+		if (options.count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
-		return Game.PromoCode.Collection.find({}, {
-			sort: {
-				timestamp: -1
-			},
-			skip: page > 1 ? (page - 1) * count : 0, 
-			limit: count
-		}).fetch();
+		var records = null;
+		var count = 0;
+
+		if (options.username) {
+
+			check(options.username, String);
+			var target = Meteor.users.findOne({
+				username: options.username
+			});
+
+			if (!target) {
+				throw new Meteor.Error('Такого пользователя не существует');
+			}
+
+			records = Game.PromoCode.History.Collection.find({
+				user_id: target._id
+			}, {
+				sort: {
+					timestamp: -1
+				},
+				skip: options.page > 1 ? (options.page - 1) * options.count : 0, 
+				limit: options.count
+			}).fetch();
+
+			count = Game.PromoCode.History.Collection.find({
+				user_id: target._id
+			}).count();
+
+		} else {
+
+			var conditions = {};
+			if (options.code) {
+				check(options.code, String);
+				conditions.code = options.code;
+			}
+
+			records = Game.PromoCode.Collection.find(conditions, {
+				sort: {
+					timestamp: -1
+				},
+				skip: options.page > 1 ? (options.page - 1) * options.count : 0, 
+				limit: options.count
+			}).fetch();
+
+			count = Game.PromoCode.Collection.find(conditions).count();
+
+		}
+
+		return {
+			records: records,
+			count: count
+		}
 	},
 
 	'admin.addPromoCode': function(options) {

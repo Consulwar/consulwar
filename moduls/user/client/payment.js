@@ -533,35 +533,58 @@ Template.promocodeCreate.events({
 	}
 });
 
-Game.Payment.showPromocodeHistory = function() {
-	var page = parseInt( Router.current().getParams().page, 10 );
-	var count = 20;
 
-	if (page && page > 0) {
+// TODO: Разобраться почему уходит по два запроса!
+//       В истории покупок так же!
+
+var countTotal = new ReactiveVar(null);
+
+Game.Payment.showPromocodeHistory = function() {
+	var options = {};
+
+	options.page = parseInt( Router.current().getParams().page, 10 );
+	options.count = 20;
+
+	var filterType = Router.current().getParams().filterType;
+	var filterValue = Router.current().getParams().filterValue;
+	if (filterType == 'username') {
+		options.username = filterValue;
+	}
+	if (filterType == 'code') {
+		options.code = filterValue;
+	}
+
+	if (options.page && options.page > 0) {
 		history.set(null);
+		countTotal.set(null);
 		isLoading.set(true);
 
-		Meteor.call('admin.getPromocodeHistory', page, count, function(err, data) {
+		Meteor.call('admin.getPromocodeHistory', options, function(err, data) {
 			isLoading.set(false);
 			if (err) {
 				Notifications.error('Не удалось загрузить историю', err.error);
 			} else {
-				history.set(data);
+				history.set(data.records);
+				countTotal.set(data.count);
 			}
 		});
 
 		this.render('promocodeHistory', {
 			to: 'content',
 			data: {
-				count: count
+				count: options.count,
+				username: options.username,
+				code: options.code
 			}
 		});
 	}
 };
 
 Template.promocodeHistory.helpers({
+	username: function() { return this.username; },
+	code: function() { return this.code; },
 	count: function() { return this.count; },
-	countTotal: function() { return Game.Statistic.getSystemValue('promocode.total'); },
+	countTotal: function() { return countTotal.get(); },
 	isLoading: function() { return isLoading.get(); },
 	history: function() { return history.get(); },
 	formatProfit: function(profit) { return formatProfit(profit); }

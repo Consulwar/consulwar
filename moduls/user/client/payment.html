@@ -265,5 +265,41 @@
 </template>
 
 <template name="promocodeHistory">
+<<<<<<< HEAD
 	Здесь будет история
+=======
+	<div class="promocodeHistory">
+		<a class="btn-close" href="{{pathFor 'house' group='house'}}"></a>
+		<table>
+			<tr class="header">
+				<th>Код</th>
+				<th>Награда</th>
+				<th>{{#if username}}Активирован{{else}}Создан{{/if}}</th>
+				{{#if not username}}
+					<th>Годен до{</th>
+					<th>Активировано</th>
+				{{/if}}
+			</tr>
+		</table>
+		<div class="data">
+			<table>
+				{{#each history}}
+					<tr>
+						<td>{{this.code}}</td>
+						<td>{{formatProfit this.profit}}</td>
+						<td>{{#if this.timestamp}}{{formatDate this.timestamp}}{{/if}}</td>
+						{{#if not username}}
+							<td>{{#if this.validthru}}{{formatDate this.validthru}}{{/if}}</td>
+							<td>{{this.activations}} из {{this.maxActivations}}</td>
+						{{/if}}
+					</tr>
+				{{/each}}
+			</table>
+		</div>
+		{{> pages total=countTotal perPage=count}}
+		{{#if isLoading}}
+			{{> loading}}
+		{{/if}}
+	</div>
+>>>>>>> 1da6831... #73: Promo code history filters by username and code
 </template>

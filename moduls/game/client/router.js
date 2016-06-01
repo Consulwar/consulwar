@@ -51,7 +51,7 @@ var gameRoutes = {
 	},
 
 	admin: {
-		promocodeHistory: 'promocode/history/:page'
+		promocodeHistory: 'promocode/history/:page/:filterType?/:filterValue?'
 	},
 
 	army: {

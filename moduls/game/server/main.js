@@ -80,6 +80,9 @@ Router.route('/legal/:filename?', function() {
 		case 'rules':
 			filename = 'rules.html';
 			break;
+		case 'price':
+			filename = 'price.html';
+			break;
 	}
 	this.response.setHeader('Content-Type', 'text/html');
 	this.response.end( Assets.getText(filename) );

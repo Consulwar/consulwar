@@ -32,13 +32,24 @@ Meteor.methods({
 			throw new Meteor.Error('Невозможно купить сундук');
 		}
 
-		// spend resources
-		Game.Resources.spend(pack.getPrice());
-
-		// add reward
+		// roll profit
 		var profit = Game.Resources.rollProfit(pack.drop);
 		if (profit) {
 			Game.Resources.addProfit(profit);
+		}
+
+		// spend resources
+		var price = pack.getPrice();
+		
+		if (price) {
+			Game.Resources.spend(price);
+
+			if (price.credits) {
+				Game.Payment.Expense.log(price.credits, 'blackmarketPack', {
+					packId: pack.engName,
+					profit: profit
+				});
+			}
 		}
 
 		return profit;

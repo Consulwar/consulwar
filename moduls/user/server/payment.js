@@ -3,49 +3,90 @@ initPaymentServer = function() {
 initPaymentLib();
 initPaymentPlatboxServer();
 
-Game.Payment.Collection._ensureIndex({
-	user_id: 1
-});
+Game.Payment.Expense = {
+	Collection: new Meteor.Collection('paymentExpense')
+};
 
 Game.Payment.Transactions = {
 	Collection: new Meteor.Collection('paymentTransactions')
 };
 
+Game.Payment.Income.Collection._ensureIndex({
+	user_id: 1
+});
+
+Game.Payment.Expense.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Payment.Transactions.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Payment.log = function(isIncome, profit, source, uid) {
+Game.Payment.Income.log = function(profit, source, uid) {
 	var record = {
 		user_id: uid ? uid : Meteor.userId(),
 		profit: profit,
-		timestamp: Game.getCurrentTime(),
-		income: isIncome
+		timestamp: Game.getCurrentTime()
 	};
 
 	if (source) {
 		record.source = source;
 	}
 
-	Game.Payment.Collection.insert(record);
+	Game.Payment.Income.Collection.insert(record);
 
 	// update user statistics
 	Game.Statistic.incrementUser(record.user_id, {
-		'payment.income': ( isIncome ? 1 : 0 ),
-		'payment.expense': ( isIncome ? 0 : 1 )
+		'payment.income': 1
 	});
 };
 
-Game.Payment.logIncome = function(profit, source, uid) {
-	Game.Payment.log(true, profit, source, uid);
-};
+Game.Payment.Expense.log = function(credits, type, info, uid) {
+	var userId = uid ? uid : Meteor.userId();
 
-Game.Payment.logExpense = function(profit, source, uid) {
-	Game.Payment.log(false, profit, source, uid);
+	// prepare expense item
+	var item = {
+		credits: credits,
+		timestamp: Game.getCurrentTime()
+	};
+
+	if (info) {
+		item.info = info;
+	};
+
+	// upsert document
+	var result = Game.Payment.Expense.Collection.upsert({
+		user_id: userId,
+		type: type,
+		timeCreated: { $gt: Game.getCurrentTime() - 86400 }
+	}, {
+		$setOnInsert: {
+			user_id: userId,
+			type: type,
+			timeCreated: Game.getCurrentTime()
+		},
+		$set: {
+			timeUpdated: Game.getCurrentTime()
+		},
+		$inc: {
+			credits: credits
+		},
+		$push: {
+			items: item
+		}
+	});
+
+	// update user statistics
+	if (result.insertedId) {
+		Game.Statistic.incrementUser(userId, {
+			'payment.expense': 1
+		});
+	}
 };
 
 Meteor.methods({
-	'user.getPaymentHistory': function(isIncome, page, count) {
+	'user.getPaymentIncomeHistory': function(page, count) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -56,15 +97,14 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.getPaymentHistory: ', new Date(), user.username);
+		console.log('user.getPaymentIncomeHistory: ', new Date(), user.username);
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
-		return Game.Payment.Collection.find({
-			user_id: user._id,
-			income: isIncome ? true : false
+		return Game.Payment.Income.Collection.find({
+			user_id: user._id
 		}, {
 			sort: {
 				timestamp: -1
@@ -75,11 +115,10 @@ Meteor.methods({
 	}
 });
 
-Meteor.publish('paymentHistory', function() {
+Meteor.publish('paymentIncome', function() {
 	if (this.userId) {
-		return Game.Payment.Collection.find({
-			user_id: this.userId,
-			income: true
+		return Game.Payment.Income.Collection.find({
+			user_id: this.userId
 		}, {
 			limit: 1,
 			sort: {
@@ -103,7 +142,7 @@ if (process.env.NODE_ENV == 'development') {
 				throw new Meteor.Error('Непральный id');
 			}
 
-			Game.Payment.logIncome(item.profit, {
+			Game.Payment.Income.log(item.profit, {
 				type: 'payment',
 				item: item.id
 			});
@@ -369,7 +408,7 @@ Meteor.methods({
 		// add profit
 		if (profit) {
 			Game.Resources.addProfit(profit);
-			Game.Payment.logIncome(profit, {
+			Game.Payment.Income.log(profit, {
 				type: 'promo',
 				code: promoCode.code
 			});

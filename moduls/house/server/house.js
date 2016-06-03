@@ -120,7 +120,17 @@ Meteor.methods({
 			isPlaced: false
 		};
 		
-		Game.Resources.spend(item.getPrice());
+		var price = item.getPrice();
+
+		Game.Resources.spend(price);
+
+		if (price.credits) {
+			Game.Payment.Expense.log(price.credits, 'houseItem', {
+				group: group,
+				id: id
+			});
+		}
+
 		Game.House.update(house);
 	},
 

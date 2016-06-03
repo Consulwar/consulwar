@@ -85,6 +85,14 @@ Meteor.methods({
 
 		Game.Resources.spend(price);
 
+		if (price.credits) {
+			Game.Payment.Expense.log(price.credits, 'mutualInvest', {
+				group: set.group,
+				name: set.engName,
+				count: set.investments
+			});
+		}
+
 		var honor = Game.Resources.calculateHonorFromMutualResearch(price);
 		if (honor > 0) {
 			Game.Resources.add({ honor: honor });

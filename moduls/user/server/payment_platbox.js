@@ -274,7 +274,7 @@ Router.route('/paymentGateway', function () {
 			// add profit
 			console.log('Got profit');
 			Game.Resources.addProfit(data.order.item_list[0].profit, data.account.id);
-			Game.Payment.logIncome(data.order.item_list[0].profit, {
+			Game.Payment.Income.log(data.order.item_list[0].profit, {
 				type: 'payment',
 				item: paymentItem.id,
 				transaction_id: data.platbox_tx_id,

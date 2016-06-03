@@ -866,8 +866,8 @@ Meteor.methods({
 			throw new Meteor.Error('Максимум 16 символов');
 		}
 
-		var basePlanet = Game.Planets.getBase();
-		if (basePlanet._id == planetId) {
+		var planet = Game.Planets.getOne(planetId);
+		if (!planet || planet.isHome) {
 			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
 		}
 
@@ -881,18 +881,17 @@ Meteor.methods({
 		});
 
 		Game.Planets.Collection.update({
-			_id: planetId,
-			user_id: Meteor.userId()
+			_id: planet._id
 		}, {
 			$set: {
 				name: name
 			}
 		});
 
-		Game.Payment.logExpense({
-			resources: { credits: Game.Planets.RENAME_PLANET_PRICE }
-		}, {
-			type: 'planetRename'
+		Game.Payment.Expense.log(Game.Planets.RENAME_PLANET_PRICE, 'planetRename', {
+			planetId: planetId,
+			newName: name,
+			previousName: planet.name
 		});
 	},
 
@@ -932,11 +931,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Payment.logExpense({
-			resources: { credits: price }
-		}, {
-			type: 'planetBuy'
-		});
+		Game.Payment.Expense.log(price, 'planetBuy');
 	}
 });
 

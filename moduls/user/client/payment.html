@@ -53,47 +53,98 @@
 <template name="paymentHistory">
 	<div class="paymentHistory">
 		<a class="btn-close" href="{{pathFor 'house' group='house'}}"></a>
-		<table>
-			<tr class="header">
-				<th>Время</th>
-				<th>{{#if isIncome}}Получено{{else}}Потрачено{{/if}}</th>
-				<th></th>
-			</tr>
-		</table>
-		<div class="data">
+
+		{{#if isIncome}}
+
 			<table>
-				{{#each history}}
-					<tr>
-						<td>{{formatDate this.timestamp}}</td>
-						<td>{{getProfit this.profit}}</td>
-						<td>
-							{{#if eq this.source.type 'payment'}}
-								Покупка: {{this.source.item}}
-							{{/if}}
-							{{#if eq this.source.type 'promo'}}
-								Промо код: {{this.source.code}}
-							{{/if}}
-							{{#if eq this.source.type 'chatFree'}}
-								Не платить за ссаный чат
-							{{/if}}
-							{{#if eq this.source.type 'chatBalance'}}
-								Пополнение баланса комнаты в чате
-							{{/if}}
-							{{#if eq this.source.type 'planetRename'}}
-								Переименование планеты
-							{{/if}}
-							{{#if eq this.source.type 'planetBuy'}}
-								Покупка дополнительной колонии
-							{{/if}}
-							{{#if eq this.source.type 'card'}}
-								Покупка карточки
-							{{/if}}
-						</td>
-					</tr>
-				{{/each}}
+				<tr class="header">
+					<th>Время</th>
+					<th>Получено</th>
+					<th></th>
+				</tr>
 			</table>
-		</div>
+			<div class="data">
+				<table>
+					{{#each history}}
+						<tr>
+							<td>{{formatDate this.timestamp}}</td>
+							<td>{{getProfit this.profit}}</td>
+							<td>
+								{{#if eq this.source.type 'payment'}}
+									Покупка: {{this.source.item}}
+								{{/if}}
+								{{#if eq this.source.type 'promo'}}
+									Промо код: {{this.source.code}}
+								{{/if}}
+							</td>
+						</tr>
+					{{/each}}
+				</table>
+			</div>
+
+		{{else}}
+
+			<table>
+				<tr class="header">
+					<th>Время</th>
+					<th>Потрачено кредитов</th>
+					<th></th>
+				</tr>
+			</table>
+			<div class="data">
+				<table>
+					{{#each history}}
+						<tr>
+							<td>{{formatDate this.timeUpdated}}</td>
+							<td>{{formatNumber this.credits}}</td>
+							<td>
+								{{#if eq this.type 'chatFree'}}
+									Не платить за ссаный чат
+								{{/if}}
+								{{#if eq this.type 'chatBalance'}}
+									Пополнение баланса комнаты в чате
+								{{/if}}
+								{{#if eq this.type 'planetRename'}}
+									Переименование планеты
+								{{/if}}
+								{{#if eq this.type 'planetBuy'}}
+									Покупка дополнительной колонии
+								{{/if}}
+								{{#if eq this.type 'card'}}
+									Покупка карточки
+								{{/if}}
+								{{#if eq this.type 'unitBuild'}}
+									Покупка юнитов
+								{{/if}}
+								{{#if eq this.type 'mutualInvest'}}
+									Вложение в общие исследования
+								{{/if}}
+								{{#if eq this.type 'building'}}
+									Постройка здания
+								{{/if}}
+								{{#if eq this.type 'researchStart'}}
+									Покупка исследования
+								{{/if}}
+								{{#if eq this.type 'houseItem'}}
+									Покупка предмета в палате
+								{{/if}}
+								{{#if eq this.type 'blackmarketPack'}}
+									Покупка контейнера
+								{{/if}}
+
+								{{#if gt this.items.length 1}}
+									({{this.items.length}})
+								{{/if}}
+							</td>
+						</tr>
+					{{/each}}
+				</table>
+			</div>
+
+		{{/if}}
+
 		{{> pages total=countTotal perPage=count}}
+
 		{{#if isLoading}}
 			{{> loading}}
 		{{/if}}

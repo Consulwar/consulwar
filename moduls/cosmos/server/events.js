@@ -1094,21 +1094,19 @@ var completeShipFight = function(event) {
 		}
 
 		// add battle reward
-		if ((firstArmy && event.info.isHumans) || (secondArmy && targetShip.info.isHumans)) {
-			var reward = {};
-			if (battleResult.reward) {
-				_.extend(reward, battleResult.reward);
-			}
-			if (battleResult.artefacts) {
-				_.extend(reward, battleResult.artefacts);
-			}
-			if (_.keys(reward).length > 0) {
-				Game.Resources.add(reward);
-			}
-			// add battle cards
-			if (battleResult.cards) {
-				Game.Cards.add(battleResult.cards);
-			}
+		var reward = {};
+		if (battleResult.reward) {
+			_.extend(reward, battleResult.reward);
+		}
+		if (battleResult.artefacts) {
+			_.extend(reward, battleResult.artefacts);
+		}
+		if (_.keys(reward).length > 0) {
+			Game.Resources.add(reward);
+		}
+		// add battle cards
+		if (battleResult.cards) {
+			Game.Cards.add(battleResult.cards);
 		}
 	}
 

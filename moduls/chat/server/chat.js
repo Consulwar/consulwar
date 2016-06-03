@@ -211,6 +211,9 @@ Meteor.methods({
 						Math.max(Math.floor(Game.Resources.getIncome().crystals * 0.33), 100)
 					), i * 1000);
 				}
+
+				Game.Payment.Expense.log(50, 'sepukku');
+				
 			} else if (message.indexOf('/яготов') === 0) {
 				if (Game.SpaceEvents.makeFun()) {
 					set.data = {

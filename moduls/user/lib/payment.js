@@ -20,8 +20,6 @@ Game.Payment.Income = {
 	Collection: new Meteor.Collection('paymentIncome')
 };
 
-Game.Payment.Expense
-
 new game.PaymentItem({
 	id: 'paymentCredits1000',
 	name: '1000 ГГК',

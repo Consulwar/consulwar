@@ -53,7 +53,7 @@ Game.Payment.Expense.log = function(credits, type, info, uid) {
 
 	if (info) {
 		item.info = info;
-	};
+	}
 
 	// upsert document
 	var result = Game.Payment.Expense.Collection.upsert({

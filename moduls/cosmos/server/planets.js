@@ -717,9 +717,6 @@ Meteor.methods({
 		Game.Statistic.incrementUser(user._id, {
 			'cosmos.planets.discovered': 1
 		});
-
-		// refresh all planets
-		Game.Planets.actualize();
 	},
 
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {

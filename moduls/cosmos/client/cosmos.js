@@ -1515,4 +1515,20 @@ Game.Planets.debugCalcFlyTime = function() {
 	}
 };
 
+Game.Planets.debugDump = function() {
+	var dumpItems = function(items) {
+		var dump = '';
+		for (var i = 0; i < items.length; i++) {
+			dump += (i > 0 ? ',' : '') + JSON.stringify(items[i]);
+		}
+		console.log('[' + dump + '];');
+	};
+
+	console.log('--------------- PLANETS ----------------');
+	dumpItems( Game.Planets.Collection.find().fetch() );
+	
+	console.log('------------ SPACE EVENTS --------------');
+	dumpItems( Game.SpaceEvents.Collection.find({status: 1}).fetch());
+};
+
 };

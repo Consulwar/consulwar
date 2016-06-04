@@ -981,4 +981,50 @@ Game.Planets.debugCalcArtefactsChances = function() {
 	}
 };
 
+// Ask user to type in console Game.Planets.debugDump()
+Game.Planets.debugImportCosmos = function(userId, planets, spaceEvents) {
+	// clear cosmos + queue
+	Game.Planets.Collection.remove({user_id: userId});
+	Game.Queue.Collection.remove({user_id: userId});
+	Game.SpaceEvents.Collection.remove({user_id: userId});
+
+	// import planets
+	var i = 0;
+	for (i = 0; i < planets.length; i++) {
+		var planet = planets[i];
+		delete planet._id;
+		planet.user_id = userId;
+		Game.Planets.Collection.insert(planet);
+	}
+
+	// calculate oldest space event time delta
+	var curTime = Game.getCurrentTime();
+	var minTime = Number.MAX_VALUE;
+	for (i = 0; i < spaceEvents.length; i++) {
+		if (spaceEvents[i].timeStart < minTime) {
+			minTime = spaceEvents[i].timeStart;
+		}
+	}
+
+	var deltaTime = curTime - minTime;
+
+	// import space events
+	for (i = 0; i < spaceEvents.length; i++) {
+		var event = spaceEvents[i];
+		delete event._id;
+		event.timeStart += deltaTime;
+		event.timeEnd += deltaTime;
+		event.user_id = userId;
+		Game.SpaceEvents.Collection.insert(event);
+	}
+};
+
+if (process.env.NODE_ENV == 'development') {
+	Meteor.methods({
+		'debug.importCosmos': function(planets, spaceEvents) {
+			Game.Planets.debugImportCosmos(Meteor.userId(), planets, spaceEvents);
+		}
+	});
+}
+
 };

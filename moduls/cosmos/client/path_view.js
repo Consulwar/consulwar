@@ -76,8 +76,8 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		for (var i = 0; i < allPlanets.length; i++) {
 			var planetView = allPlanets[i];
 
-			if (point1.x == planetView.x && point1.y == planetView.y) continue;
-			if (point2.x == planetView.x && point2.y == planetView.y) continue;
+			if (calcDistanse(point1.x, point1.y, planetView.x, planetView.y) < planetView.radius) continue;
+			if (calcDistanse(point2.x, point2.y, planetView.x, planetView.y) < planetView.radius) continue;
 
 			if (hitLineVsCircle(point1.x, point1.y, point2.x, point2.y, planetView.x, planetView.y, planetView.radius)) {
 				planets.push(planetView);
@@ -171,15 +171,20 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		coords.push(startPoint);
 
 		var planets = getIntersectedPlantents(startPoint, finishPoint);
+		var n = 0;
 
 		while (planets.length) {
-
 			var closestPlanet = planets[0];
 
 			var point = getConnectionPoints(coords[coords.length - 1], closestPlanet, finishPoint);
 			coords.push(point);
 
 			planets = getIntersectedPlantents(point, finishPoint);
+
+			if (n++ > 50) {
+				console.log('Path build failed! Near planet:', closestPlanet);
+				break;
+			}
 		}
 
 		coords.push(finishPoint);

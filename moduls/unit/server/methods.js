@@ -62,6 +62,14 @@ Meteor.methods({
 
 		Game.Resources.spend(price);
 		
+		if (price.credits) {
+			Game.Payment.Expense.log(price.credits, 'unitBuild', {
+				group: set.group,
+				name: set.engName,
+				count: set.count
+			});
+		}
+
 		Meteor.users.update({
 			_id: user._id
 		}, {

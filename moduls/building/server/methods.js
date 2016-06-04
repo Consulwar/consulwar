@@ -47,6 +47,14 @@ Meteor.methods({
 
 		Game.Resources.spend(price);
 		
+		if (price.credits) {
+			Game.Payment.Expense.log(price.credits, 'building', {
+				group: set.group,
+				name: set.engName,
+				level: set.level
+			});
+		}
+
 		Meteor.users.update({
 			_id: user._id
 		}, {

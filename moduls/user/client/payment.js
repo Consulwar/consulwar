@@ -99,9 +99,9 @@ Template.paymentReward.events({
 	}
 });
 
-Meteor.subscribe('paymentHistory');
+Meteor.subscribe('paymentIncome');
 
-Game.Payment.Collection.find({}).observeChanges({
+Game.Payment.Income.Collection.find({}).observeChanges({
 	added: function(id, fields) {
 		if (canShowReward
 		 && fields
@@ -154,19 +154,33 @@ Template.paymentSide.events({
 
 var isLoading = new ReactiveVar(false);
 var history = new ReactiveVar(null);
+var historyCurrentPage = null;
+var hisotryCurrentType = null;
 
 Game.Payment.showHistory = function() {
-	var isIncome = Router.current().getParams().type == 'income';
+	var type = Router.current().getParams().type;
 	var page = parseInt( Router.current().getParams().page, 10 );
 	var count = 20;
+	var isIncome = (type  == 'income') ? true : false;
+
+	if (page == historyCurrentPage && type == hisotryCurrentType) {
+		return; // Fucking Iron router! Prevent calling this action two times!
+	}
 
 	if (page && page > 0) {
+		hisotryCurrentType = type;
+		historyCurrentPage = page;
+
 		history.set(null);
 		isLoading.set(true);
 
-		Meteor.call('user.getPaymentHistory', isIncome, page, count, function(err, data) {
+		var methodName = isIncome ? 'user.getPaymentIncomeHistory' : 'user.getPaymentExpenseHistory';
+
+		Meteor.call(methodName, page, count, function(err, data) {
 			isLoading.set(false);
-			if (!err) {
+			if (err) {
+				Notifications.error('Не удалось загрузить историю', err.error);
+			} else {
 				history.set(data);
 			}
 		});
@@ -181,7 +195,14 @@ Game.Payment.showHistory = function() {
 	}
 };
 
+Template.paymentHistory.onDestroyed(function() {
+	historyCurrentPage = null;
+	hisotryCurrentType = null;
+});
+
 Template.paymentHistory.helpers({
+	isIncome: function() { return this.isIncome; },
+
 	count: function() { return this.count; },
 	countTotal: function() {
 		return this.isIncome

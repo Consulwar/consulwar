@@ -86,14 +86,12 @@ Game.Statistic.fixUser = function(userId) {
 	}).count();
 
 	// payment
-	set['payment.income'] = Game.Payment.Collection.find({
-		user_id: user._id,
-		income: true
+	set['payment.income'] = Game.Payment.Income.Collection.find({
+		user_id: user._id
 	}).count();
 
-	set['payment.expense'] = Game.Payment.Collection.find({
-		user_id: user._id,
-		income: { $ne: true }
+	set['payment.expense'] = Game.Payment.Expense.Collection.find({
+		user_id: user._id
 	}).count();
 
 	// cosmos

@@ -768,6 +768,17 @@ Game.Cosmos.showAttackMenu = function(id) {
 					}
 				}
 
+				// sort colonies by name, but home planet always first
+				result.sort(function(a, b) {
+					if (a.isHome) {
+						return -1;
+					}
+					if (b.isHome) {
+						return 1;
+					}
+					return (a.name < b.name) ? -1 : 1;
+				});
+
 				// count sent
 				var sentCount = 0;
 				var i = 0;
@@ -1502,6 +1513,22 @@ Game.Planets.debugCalcFlyTime = function() {
 		}
 		console.log(strDebug);
 	}
+};
+
+Game.Planets.debugDump = function() {
+	var dumpItems = function(items) {
+		var dump = '';
+		for (var i = 0; i < items.length; i++) {
+			dump += (i > 0 ? ',' : '') + JSON.stringify(items[i]);
+		}
+		console.log('[' + dump + '];');
+	};
+
+	console.log('--------------- PLANETS ----------------');
+	dumpItems( Game.Planets.Collection.find().fetch() );
+	
+	console.log('------------ SPACE EVENTS --------------');
+	dumpItems( Game.SpaceEvents.Collection.find({status: 1}).fetch());
 };
 
 };

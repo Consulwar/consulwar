@@ -149,10 +149,7 @@ Meteor.methods({
 			Game.Resources.spend(price);
 
 			if (price.credits) {
-				Game.Payment.logExpense({
-					resources: { credits: price.credits }
-				}, {
-					type: 'card',
+				Game.Payment.Expense.log(price.credits, 'card', {
 					cardId: item.engName
 				});
 			}

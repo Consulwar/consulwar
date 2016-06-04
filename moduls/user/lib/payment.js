@@ -12,8 +12,12 @@ game.PaymentItem = function(options) {
 };
 
 Game.Payment = {
-	Collection: new Meteor.Collection('paymentHistory'),
 	items: {}
+};
+
+Game.Payment.Income = {
+	// This collection is required on client side for notification window!
+	Collection: new Meteor.Collection('paymentIncome')
 };
 
 new game.PaymentItem({

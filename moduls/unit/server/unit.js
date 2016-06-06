@@ -926,7 +926,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			if (userArmyRest && !enemyArmyRest) {
 				// metals + crystals
 				if (mission.level[ options.missionLevel ].reward) {
-					reward = mission.level[ options.missionLevel ].reward;
+					reward.metals = mission.level[ options.missionLevel ].reward.metals;
+					reward.crystals = mission.level[ options.missionLevel ].reward.crystals;
 				} else {
 					reward.metals = Math.floor( killedCost.metals * 0.1 );
 					reward.crystals = Math.floor( killedCost.crystals * 0.1 );

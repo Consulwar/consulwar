@@ -1,9 +1,11 @@
-initBlackmarketClient = function() {
+initContainersClient = function() {
 
-initBlackmarketLib();
+initContainersLib();
 
-Game.Blackmarket.showWindow = function() {
-	Blaze.render( Template.blackmarket, $('.over')[0] );
+Meteor.subscribe('containers');
+
+Game.Containers.showWindow = function() {
+	Blaze.render( Template.containers, $('.over')[0] );
 };
 
 var isLoading = new ReactiveVar(false);
@@ -18,6 +20,7 @@ var resetAnimation = function(t) {
 	t.$('.close').show();
 	t.$('.open').show();
 	t.$('.resources').show();
+	t.$('.amount').show();
 
 	t.$('.top').css('top', '100px');
 	t.$('.bottom').css('top', '180px');
@@ -30,6 +33,7 @@ var startAnimation = function(t) {
 	t.$('.close').hide();
 	t.$('.open').hide();
 	t.$('.resources').hide();
+	t.$('.amount').hide();
 
 	var duration = 1000;
 	t.$('.top').animate({ top: '-114px' }, duration);
@@ -40,7 +44,7 @@ var startAnimation = function(t) {
 	});
 };
 
-Template.blackmarket.helpers({
+Template.containers.helpers({
 	isLoading: function() {
 		return isLoading.get();
 	},
@@ -50,15 +54,19 @@ Template.blackmarket.helpers({
 	},
 
 	credits: function() {
-		return Game.Blackmarket.items.blackmarketPack1.getPrice().credits;
+		return Game.Containers.items.defaultContainer.getPrice().credits;
+	},
+
+	amount: function() {
+		return Game.Containers.items.defaultContainer.amount();
 	}
 });
 
-Template.blackmarket.onRendered(function() {
+Template.containers.onRendered(function() {
 	resetAnimation(this);
 });
 
-Template.blackmarket.events({
+Template.containers.events({
 	'click .close, click .take': function(e, t) {
 		if (isLoading.get()) {
 			return;
@@ -72,7 +80,7 @@ Template.blackmarket.events({
 			return;
 		}
 
-		var item = Game.Blackmarket.items.blackmarketPack1;
+		var item = Game.Containers.items.defaultContainer;
 
 		if (!item.checkPrice()) {
 			Notifications.error('Недостаточно средств');
@@ -80,10 +88,10 @@ Template.blackmarket.events({
 		}
 
 		isLoading.set(true);
-		Meteor.call('blackmarket.buyPack', item.engName, function(err, profit) {
+		Meteor.call('containers.open', item.engName, function(err, profit) {
 			isLoading.set(false);
 			if (err) {
-				Notifications.error('Не удалось открыть контайнер', err.error);
+				Notifications.error('Не удалось открыть контейнер', err.error);
 				return;
 			}
 			// show reward

@@ -64,7 +64,7 @@ Meteor.startup(function () {
 	initCheatsServer();
 	initMarketServer();
 	initColosseumServer();
-	initBlackmarketServer();
+	initContainersServer();
 	initPulsecatcherServer();
 	initDDPLimiter();
 

@@ -51,8 +51,8 @@ Template.item_building.events({
 		Game.Market.showWindow();
 	},
 
-	'click button.blackmarket': function(e, t) {
-		Game.Blackmarket.showWindow();
+	'click button.containers': function(e, t) {
+		Game.Containers.showWindow();
 	}
 });
 

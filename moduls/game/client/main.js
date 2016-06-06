@@ -21,7 +21,7 @@ initAchievementsClient();
 initCheatsClient();
 initMarketClient();
 initColosseumClient();
-initBlackmarketClient();
+initContainersClient();
 initPulsecatcherClient();
 
 

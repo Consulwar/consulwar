@@ -1,6 +1,7 @@
 initColosseumServer = function() {
 
 initColosseumLib();
+initColosseumContentServer();
 
 Meteor.methods({
 	'colosseum.startTournament': function(id) {

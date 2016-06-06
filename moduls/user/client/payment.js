@@ -247,6 +247,15 @@ Template.paymentHistory.helpers({
 						}
 					}
 					break;
+				case 'containers':
+					for (var containerId in profit[type]) {
+						var container = Game.Containers.items[containerId];
+						if (container) {
+							result += 'Бесплатный контейнер: ';
+							result += parseInt(profit[type][containerId], 10) + ' ';
+						}
+					}
+					break;
 				case 'votePower':
 					result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
 					break;
@@ -338,6 +347,27 @@ Template.promocodeReward.helpers({
 					engName: name,
 					group: item.cardType,
 					amount: cards[name]
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	},
+
+	containers: function () {
+		if (!this.profit || !this.profit.containers) {
+			return null;
+		}
+
+		var containers = this.profit.containers;
+		var result = [];
+
+		for (var name in containers) {
+			var item = Game.Containers.items[name];
+			if (item) {
+				result.push({
+					engName: name,
+					amount: containers[name]
 				});
 			}
 		}

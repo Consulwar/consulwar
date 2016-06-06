@@ -168,9 +168,8 @@ Game.SpaceEvents.completeReinforcement = function(event) {
 			for (var name in units[side][group]) {
 				var count = parseInt( units[side][group][name], 10 );
 				var result = Math.floor( count * k );
-				// if result < 1, check chance instead of percents
-				if (result < 1) {
-					result = Game.Random.random() < k ? 1 : 0;
+				if (Game.Random.random() < (count * k) % 1) {
+					result += 1;
 				}
 				// save result
 				if (result > 0) {

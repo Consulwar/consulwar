@@ -1,6 +1,6 @@
-<template name="blackmarket">
+<template name="containers">
 	<div class="smoke"></div>
-	<div class="modal blackmarket">
+	<div class="modal containers">
 		<div class="close"></div>
 		<div class="container">
 			{{#if unit}}
@@ -19,9 +19,15 @@
 		</div>
 		<div class="top"></div>
 		<div class="bottom"></div>
-		<ul class="resources">
-			<li class="credits">{{credits}}</li>
-		</ul>
+		{{#if lt amount 1}}
+			<ul class="resources">
+				<li class="credits">{{credits}}</li>
+			</ul>
+		{{else}}
+			<div class="amount">
+				Бесплатных контейнеров: {{amount}}
+			</div>
+		{{/if}}
 		<div class="open">Открыть</div>
 		<div class="take">Забрать</div>
 		{{#if isLoading}}

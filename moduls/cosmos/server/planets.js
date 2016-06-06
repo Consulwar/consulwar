@@ -763,7 +763,7 @@ Meteor.methods({
 				// test selected units vs available units
 				var baseUnits = Game.Planets.getFleetUnits(baseId);
 				for (var name in baseUnits) {
-					if (baseUnits[name] != units[name]) {
+					if (baseUnits[name] > 0 && (!units[name] || baseUnits[name] > units[name])) {
 						// not all selected, so we don't leaving base
 						isLeavingBase = false;
 						break;

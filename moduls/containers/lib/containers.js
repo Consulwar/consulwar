@@ -1,11 +1,11 @@
-initBlackmarketLib = function() {
+initContainersLib = function() {
 
-game.BlackmarketPack = function(options) {
-	if (Game.Blackmarket.items[options.engName]) {
-		throw new Meteor.Error('Ошибка в контенте', 'Дублируется сундук на черном рынке ' + options.engName);
+game.Container = function(options) {
+	if (Game.Containers.items[options.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется контейнер ' + options.engName);
 	}
 
-	Game.Blackmarket.items[options.engName] = this;
+	Game.Containers.items[options.engName] = this;
 
 	this.engName = options.engName;
 	this.name = options.name;
@@ -29,25 +29,25 @@ game.BlackmarketPack = function(options) {
 	};
 
 	this.amount = function() {
-		var packs = Game.Blackmarket.getValue();
-		return (packs && packs[this.engName] && packs[this.engName].amount)
-			? packs[this.engName].amount
+		var items = Game.Containers.getValue();
+		return (items && items[this.engName] && items[this.engName].amount)
+			? items[this.engName].amount
 			: 0;
 	};
 };
 
-Game.Blackmarket = {
-	Collection: new Meteor.Collection('blackmarketPacks'),
+Game.Containers = {
+	Collection: new Meteor.Collection('containers'),
 
 	items: {},
 
 	getValue: function(uid) {
-		return Game.Blackmarket.Collection.findOne({
+		return Game.Containers.Collection.findOne({
 			user_id: uid === undefined ? Meteor.userId() : uid
 		});
 	}
 };
 
-initBlackmarketContent();
+initContainersContent();
 
 };

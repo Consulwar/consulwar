@@ -128,7 +128,7 @@
 								{{#if eq this.type 'houseItem'}}
 									Покупка предмета в палате
 								{{/if}}
-								{{#if eq this.type 'blackmarketPack'}}
+								{{#if eq this.type 'container'}}
 									Покупка контейнера
 								{{/if}}
 								{{#if eq this.type 'sepukku'}}
@@ -200,9 +200,9 @@
 				{{/each}}
 			</ul>
 		{{/if}}
-		{{#if blackmarketPacks}}
-			{{#each blackmarketPacks}}
-				<span class="blackmarket">Бесплатный контейнер +{{this.amount}}</span>
+		{{#if containers}}
+			{{#each containers}}
+				<span class="containers">Бесплатный контейнер +{{this.amount}}</span>
 			{{/each}}
 		{{/if}}
 		{{#if profit.votePower}}

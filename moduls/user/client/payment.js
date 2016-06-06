@@ -247,12 +247,12 @@ Template.paymentHistory.helpers({
 						}
 					}
 					break;
-				case 'blackmarketPacks':
-					for (var packId in profit[type]) {
-						var pack = Game.Blackmarket.items[packId];
-						if (pack) {
+				case 'containers':
+					for (var containerId in profit[type]) {
+						var container = Game.Containers.items[containerId];
+						if (container) {
 							result += 'Бесплатный контейнер: ';
-							result += parseInt(profit[type][packId], 10) + ' ';
+							result += parseInt(profit[type][containerId], 10) + ' ';
 						}
 					}
 					break;
@@ -354,20 +354,20 @@ Template.promocodeReward.helpers({
 		return result.length > 0 ? result : null;
 	},
 
-	blackmarketPacks: function () {
-		if (!this.profit || !this.profit.blackmarketPacks) {
+	containers: function () {
+		if (!this.profit || !this.profit.containers) {
 			return null;
 		}
 
-		var packs = this.profit.blackmarketPacks;
+		var containers = this.profit.containers;
 		var result = [];
 
-		for (var name in packs) {
-			var item = Game.Blackmarket.items[name];
+		for (var name in containers) {
+			var item = Game.Containers.items[name];
 			if (item) {
 				result.push({
 					engName: name,
-					amount: packs[name]
+					amount: containers[name]
 				});
 			}
 		}

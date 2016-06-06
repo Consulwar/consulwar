@@ -221,8 +221,8 @@ if (process.env.NODE_ENV == 'development') {
 			},
 			...
 		},
-		blackmarketPacks: {
-			blackmarketPack1: 1,
+		containers: {
+			defaultContainer: 1,
 			...
 		},
 		votePower: 5
@@ -320,7 +320,7 @@ Meteor.methods({
 			 && !options.profit.units
 			 && !options.profit.votePower
 			 && !options.profit.cards
-			 && !options.profit.blackmarketPacks
+			 && !options.profit.containers
 			 && !options.profit.houseItems
 			) {
 				isProfitOk = false;

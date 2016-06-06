@@ -171,8 +171,8 @@ Game.Resources.addProfit = function(profit, uid) {
 		Game.Cards.add(profit.cards);
 	}
 
-	if (profit.blackmarketPacks) {
-		Game.Blackmarket.add(profit.blackmarketPacks);
+	if (profit.containers) {
+		Game.Containers.add(profit.containers);
 	}
 
 	if (profit.houseItems) {

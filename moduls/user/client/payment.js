@@ -533,11 +533,9 @@ Template.promocodeCreate.events({
 	}
 });
 
-
-// TODO: Разобраться почему уходит по два запроса!
-//       В истории покупок так же!
-
 var countTotal = new ReactiveVar(null);
+var historyCurrentFilterType = null;
+var historyCurrentFilterValue = null;
 
 Game.Payment.showPromocodeHistory = function() {
 	var options = {};
@@ -554,7 +552,18 @@ Game.Payment.showPromocodeHistory = function() {
 		options.code = filterValue;
 	}
 
+	if (options.page == historyCurrentPage
+	 && filterType == historyCurrentFilterType
+	 && filterValue == historyCurrentFilterValue
+	) {
+		return; // Fucking Iron router! Prevent calling this action two times!
+	}
+
 	if (options.page && options.page > 0) {
+		historyCurrentPage = options.page;
+		historyCurrentFilterType = filterType;
+		historyCurrentFilterValue = filterValue;
+
 		history.set(null);
 		countTotal.set(null);
 		isLoading.set(true);
@@ -579,6 +588,12 @@ Game.Payment.showPromocodeHistory = function() {
 		});
 	}
 };
+
+Template.promocodeHistory.onDestroyed(function() {
+	historyCurrentPage = null;
+	historyCurrentFilterType = null;
+	historyCurrentFilterValue = null;
+});
 
 Template.promocodeHistory.helpers({
 	username: function() { return this.username; },

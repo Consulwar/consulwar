@@ -45,6 +45,7 @@
 		<div class="promo">
 			{{#if isAdmin}}
 				<span class="create">Создать промо код</span>
+				<a href="{{pathFor 'promocodeHistory' page=1}}" class="promoHistory">История промо кодов</a>
 			{{/if}}
 			<span class="hint">Введите промо код, если он у вас конечно есть</span>
 			<input class="code"/>
@@ -265,9 +266,6 @@
 </template>
 
 <template name="promocodeHistory">
-<<<<<<< HEAD
-	Здесь будет история
-=======
 	<div class="promocodeHistory">
 		<a class="btn-close" href="{{pathFor 'house' group='house'}}"></a>
 		<table>
@@ -276,7 +274,7 @@
 				<th>Награда</th>
 				<th>{{#if username}}Активирован{{else}}Создан{{/if}}</th>
 				{{#if not username}}
-					<th>Годен до{</th>
+					<th>Годен до</th>
 					<th>Активировано</th>
 				{{/if}}
 			</tr>
@@ -301,5 +299,4 @@
 			{{> loading}}
 		{{/if}}
 	</div>
->>>>>>> 1da6831... #73: Promo code history filters by username and code
 </template>

@@ -1,6 +1,7 @@
 initBlackmarketServer = function() {
 
 initBlackmarketLib();
+initBlackmarketContentServer();
 
 Meteor.methods({
 	'blackmarket.buyPack': function(id) {

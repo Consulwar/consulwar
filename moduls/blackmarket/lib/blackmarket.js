@@ -27,10 +27,25 @@ game.BlackmarketPack = function(options) {
 		}
 		return true;
 	};
+
+	this.amount = function() {
+		var packs = Game.Blackmarket.getValue();
+		return (packs && packs[this.engName] && packs[this.engName].amount)
+			? packs[this.engName].amount
+			: 0;
+	};
 };
 
 Game.Blackmarket = {
-	items: {}
+	Collection: new Meteor.Collection('blackmarketPacks'),
+
+	items: {},
+
+	getValue: function(uid) {
+		return Game.Blackmarket.Collection.findOne({
+			user_id: uid === undefined ? Meteor.userId() : uid
+		});
+	}
 };
 
 initBlackmarketContent();

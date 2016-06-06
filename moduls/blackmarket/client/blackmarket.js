@@ -2,6 +2,8 @@ initBlackmarketClient = function() {
 
 initBlackmarketLib();
 
+Meteor.subscribe('blackmarket');
+
 Game.Blackmarket.showWindow = function() {
 	Blaze.render( Template.blackmarket, $('.over')[0] );
 };
@@ -18,6 +20,7 @@ var resetAnimation = function(t) {
 	t.$('.close').show();
 	t.$('.open').show();
 	t.$('.resources').show();
+	t.$('.amount').show();
 
 	t.$('.top').css('top', '100px');
 	t.$('.bottom').css('top', '180px');
@@ -30,6 +33,7 @@ var startAnimation = function(t) {
 	t.$('.close').hide();
 	t.$('.open').hide();
 	t.$('.resources').hide();
+	t.$('.amount').hide();
 
 	var duration = 1000;
 	t.$('.top').animate({ top: '-114px' }, duration);
@@ -51,6 +55,10 @@ Template.blackmarket.helpers({
 
 	credits: function() {
 		return Game.Blackmarket.items.blackmarketPack1.getPrice().credits;
+	},
+
+	amount: function() {
+		return Game.Blackmarket.items.blackmarketPack1.amount();
 	}
 });
 
@@ -80,7 +88,7 @@ Template.blackmarket.events({
 		}
 
 		isLoading.set(true);
-		Meteor.call('blackmarket.buyPack', item.engName, function(err, profit) {
+		Meteor.call('blackmarket.openPack', item.engName, function(err, profit) {
 			isLoading.set(false);
 			if (err) {
 				Notifications.error('Не удалось открыть контайнер', err.error);

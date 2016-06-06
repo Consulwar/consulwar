@@ -200,6 +200,11 @@
 				{{/each}}
 			</ul>
 		{{/if}}
+		{{#if blackmarketPacks}}
+			{{#each blackmarketPacks}}
+				<span class="blackmarket">Бесплатный контейнер +{{this.amount}}</span>
+			{{/each}}
+		{{/if}}
 		{{#if profit.votePower}}
 			<span class="votepower">Сила голоса +{{profit.votePower}}</span>
 		{{/if}}

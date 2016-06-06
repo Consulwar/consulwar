@@ -171,6 +171,10 @@ Game.Resources.addProfit = function(profit, uid) {
 		Game.Cards.add(profit.cards);
 	}
 
+	if (profit.blackmarketPacks) {
+		Game.Blackmarket.add(profit.blackmarketPacks);
+	}
+
 	if (profit.houseItems) {
 		for (var itemGroup in profit.houseItems) {
 			for (var itemName in profit.houseItems[itemGroup]) {

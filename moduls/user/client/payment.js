@@ -247,6 +247,15 @@ Template.paymentHistory.helpers({
 						}
 					}
 					break;
+				case 'blackmarketPacks':
+					for (var packId in profit[type]) {
+						var pack = Game.Blackmarket.items[packId];
+						if (pack) {
+							result += 'Бесплатный контейнер: ';
+							result += parseInt(profit[type][packId], 10) + ' ';
+						}
+					}
+					break;
 				case 'votePower':
 					result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
 					break;
@@ -338,6 +347,27 @@ Template.promocodeReward.helpers({
 					engName: name,
 					group: item.cardType,
 					amount: cards[name]
+				});
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	},
+
+	blackmarketPacks: function () {
+		if (!this.profit || !this.profit.blackmarketPacks) {
+			return null;
+		}
+
+		var packs = this.profit.blackmarketPacks;
+		var result = [];
+
+		for (var name in packs) {
+			var item = Game.Blackmarket.items[name];
+			if (item) {
+				result.push({
+					engName: name,
+					amount: packs[name]
 				});
 			}
 		}

@@ -276,6 +276,85 @@ Game.PromoCode.randomItems =  [{
 }];
 
 Meteor.methods({
+	'admin.getPromocodeHistory': function(options) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('admin.getPromocodeHistory: ', new Date(), user.username);
+
+		if (['admin'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+		}
+
+		check(options, Object);
+		check(options.page, Match.Integer);
+		check(options.count, Match.Integer);
+
+		if (options.count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		var records = null;
+		var count = 0;
+
+		if (options.username) {
+
+			check(options.username, String);
+			var target = Meteor.users.findOne({
+				username: options.username
+			});
+
+			if (!target) {
+				throw new Meteor.Error('Такого пользователя не существует');
+			}
+
+			records = Game.PromoCode.History.Collection.find({
+				user_id: target._id
+			}, {
+				sort: {
+					timestamp: -1
+				},
+				skip: options.page > 1 ? (options.page - 1) * options.count : 0, 
+				limit: options.count
+			}).fetch();
+
+			count = Game.PromoCode.History.Collection.find({
+				user_id: target._id
+			}).count();
+
+		} else {
+
+			var conditions = {};
+			if (options.code) {
+				check(options.code, String);
+				conditions.code = options.code;
+			}
+
+			records = Game.PromoCode.Collection.find(conditions, {
+				sort: {
+					timestamp: -1
+				},
+				skip: options.page > 1 ? (options.page - 1) * options.count : 0, 
+				limit: options.count
+			}).fetch();
+
+			count = Game.PromoCode.Collection.find(conditions).count();
+
+		}
+
+		return {
+			records: records,
+			count: count
+		};
+	},
+
 	'admin.addPromoCode': function(options) {
 		var user = Meteor.user();
 
@@ -338,7 +417,8 @@ Meteor.methods({
 		var promoCode = {
 			code: options.code,
 			profit: options.profit,
-			activations: 0
+			activations: 0,
+			timestamp: Game.getCurrentTime()
 		};
 
 		// check not required options
@@ -361,6 +441,11 @@ Meteor.methods({
 
 		// insert code
 		Game.PromoCode.Collection.insert(promoCode);
+
+		// increment statistic
+		Game.Statistic.incrementGame({
+			'promocode.total': 1
+		});
 	},
 
 	'user.activatePromoCode': function(code) {
@@ -455,6 +540,11 @@ Meteor.methods({
 			type: promoCode.type,
 			profit: profit,
 			timestamp: Game.getCurrentTime()
+		});
+
+		// increment statistic
+		Game.Statistic.incrementUser(user._id, {
+			'promocode.total': 1
 		});
 
 		return profit;

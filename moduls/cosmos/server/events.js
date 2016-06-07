@@ -986,7 +986,7 @@ var completeReptilesArrival = function(event, planet) {
 			if (!planet.mission) {
 				// fill empty planet
 				planet.mission = {
-					type: 'defencefleet',
+					type: event.info.mission.type == 'tradefleet' ? 'patrolfleet' : event.info.mission.type,
 					level: event.info.mission.level,
 					units: event.info.mission.units
 				};

@@ -389,6 +389,10 @@ Template.promocodeCreate.helpers({
 
 		result.push({ name: '----------------------------------------' });
 
+		result.push({ id: 'containers.defaultContainer', name: 'Бесплатный контейнер' });		
+
+		result.push({ name: '----------------------------------------' });
+
 		result.push({ id: 'resources.humans', name: 'Люди' });
 		result.push({ id: 'resources.metals', name: 'Металл' });
 		result.push({ id: 'resources.crystals', name: 'Кристалл' });
@@ -605,6 +609,32 @@ Template.promocodeHistory.helpers({
 	formatProfit: function(profit) { return formatProfit(profit); }
 });
 
+Template.promocodeHistory.events({
+	'change input[name="username"]': function(e, t) {
+		// reset code filter
+		t.find('input[name="code"]').value = '';
+		// get username filter
+		var username = e.currentTarget.value;
+		if (username && username.length > 0) {
+			Router.go('promocodeHistory', { page: 1, filterType: 'username', filterValue: username });
+		} else {
+			Router.go('promocodeHistory', { page: 1 });
+		}
+	},
+
+	'change input[name="code"]': function(e, t) {
+		// reset username filter
+		t.find('input[name="username"]').value = '';
+		// get code filter
+		var code = e.currentTarget.value;
+		if (code && code.length > 0) {
+			Router.go('promocodeHistory', { page: 1, filterType: 'code', filterValue: code });
+		} else {
+			Router.go('promocodeHistory', { page: 1 });
+		}
+	}
+});
+
 
 var formatProfit = function(profit) {
 	if (profit == 'random') {
@@ -641,6 +671,15 @@ var formatProfit = function(profit) {
 					for (var houseItemName in profit[type][houseItemGroup]) {
 						result += Game.House.items[houseItemGroup][houseItemName].name + ': ';
 						result += parseInt(profit[type][houseItemGroup][houseItemName], 10) + ' ';
+					}
+				}
+				break;
+			case 'containers':
+				for (var containerId in profit[type]) {
+					var container = Game.Containers.items[containerId];
+					if (container) {
+						result += 'Бесплатный контейнер: ';
+						result += parseInt(profit[type][containerId], 10) + ' '
 					}
 				}
 				break;

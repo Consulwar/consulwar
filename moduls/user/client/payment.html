@@ -72,7 +72,7 @@
 					{{#each history}}
 						<tr>
 							<td>{{formatDate this.timestamp}}</td>
-							<td>{{getProfit this.profit}}</td>
+							<td>{{formatProfit this.profit}}</td>
 							<td>
 								{{#if eq this.source.type 'payment'}}
 									Покупка: {{this.source.item}}
@@ -225,22 +225,18 @@
 			<div class="title">Название кода</div>
 			<input name="code" type="text"/>
 		</label>
-
 		<label>
 			<div class="title">Количество активаций</div>
 			<input name="maxActivations" type="text"/>
 		</label>
-
 		<label>
 			<div class="title">Время действия (в минутах)</div>
 			<input name="minutes" type="text"/>
 		</label>
-
 		<label>
 			<div class="title">Тип кода</div>
 			<input name="type" type="text"/>
 		</label>
-
 		<label>
 			<div class="title">Рандомная награда</div>
 			<input type="checkbox" name="random"/>
@@ -286,7 +282,7 @@
 						<td>{{this.code}}</td>
 						<td>{{formatProfit this.profit}}</td>
 						<td>{{#if this.timestamp}}{{formatDate this.timestamp}}{{/if}}</td>
-						{{#if not username}}
+						{{#if not ../username}}
 							<td>{{#if this.validthru}}{{formatDate this.validthru}}{{/if}}</td>
 							<td>{{this.activations}} из {{this.maxActivations}}</td>
 						{{/if}}
@@ -294,7 +290,12 @@
 				{{/each}}
 			</table>
 		</div>
+
+		<input type="text" name="username" placeholder="Имя пользователя"/>
+		<input type="text" name="code" placeholder="Промо код"/>
+
 		{{> pages total=countTotal perPage=count}}
+
 		{{#if isLoading}}
 			{{> loading}}
 		{{/if}}

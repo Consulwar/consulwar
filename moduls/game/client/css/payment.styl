@@ -378,15 +378,35 @@ payment-icon('paymentCredits50000')
 
 	label
 		display inline-block
+		
+		.title
+			margin-bottom 5px
+			margin-top 5px
 
 	input
 	select
+		width 200px
 		font-weight bold
-		padding 2px
+		padding 5px
+		border 2px solid #006382
+		background-color #C0C0C0
+		border-radius 5px
+		box-shadow inset 2px 2px 2px #000
+
+	input[name="random"]
+		box-shadow none
+		width 20px
+		height 20px
 
 	textarea
-		width 900px
+		width 850px
 		height 70px
+		margin-top 20px
+		paddin 5px
+		border 2px solid #006382
+		background-color #C0C0C0
+		border-radius 5px
+		box-shadow inset 2px 2px 2px #000
 
 	.profit
 		display block
@@ -404,6 +424,7 @@ payment-icon('paymentCredits50000')
 		width 181px
 		height 40px
 		margin 0 auto
+		margin-top 20px
 		padding-top 10px
 		color #FFFFFF
 		font-size 24px
@@ -439,6 +460,31 @@ payment-icon('paymentCredits50000')
 		background-color #04080B
 		z-index 10
 	
+		input[name="username"]
+		input[name="code"]
+			position absolute
+			top 400px
+			width 180px
+			height 15px
+			padding 5px
+			border 2px solid #006382
+			background-color #C0C0C0
+			border-radius 5px
+			box-shadow inset 2px 2px 2px #000
+			font-size 14px
+			font-weight bold
+			color #000000
+					
+			&::-webkit-input-placeholder
+				font-weight normal
+				color #333333
+				
+		input[name="username"]
+			left 20px
+
+		input[name="code"]
+			right 20px
+
 		.data
 			height 355px
 			overflow-y auto

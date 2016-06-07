@@ -82,7 +82,7 @@ Template.containers.events({
 
 		var item = Game.Containers.items.defaultContainer;
 
-		if (!item.checkPrice()) {
+		if (item.amount() <= 0 && !item.checkPrice()) {
 			Notifications.error('Недостаточно средств');
 			return;
 		}

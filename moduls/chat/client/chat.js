@@ -108,6 +108,12 @@ Template.chat.onRendered(function() {
 	// - room changes
 	// - connection status changes
 	this.autorun(function() {
+		// get current server time
+		var serverTime = 0;
+		Tracker.nonreactive(function() {
+			serverTime = Session.get('serverTime');
+		});
+
 		// stop previous subscription if has
 		if (chatSubscription) {
 			chatSubscription.stop();
@@ -117,14 +123,14 @@ Template.chat.onRendered(function() {
 		// check connection status
 		if (Meteor.status().status != 'connected') {
 			if (!lostConnectionTime) {
-				lostConnectionTime = Game.getCurrentTime();
+				lostConnectionTime = serverTime;
 			}
 			return; // connection lost
 		}
 
 		// calculate period after connection lost
 		var noConnectionPeriod = lostConnectionTime
-			? Game.getCurrentTime() - lostConnectionTime
+			? serverTime - lostConnectionTime
 			: 0;
 
 		lostConnectionTime = null;
@@ -134,8 +140,8 @@ Template.chat.onRendered(function() {
 
 		if (roomName) {
 			if (roomName != currentRoomName // new room
-			 || messages.length === 0        // or don't have any messages
-			 || noConnectionPeriod >= 3600  // or lost connection more than 30 min
+			 || messages.length === 0       // or don't have any messages
+			 || noConnectionPeriod >= 1800  // or lost connection more than 30 min
 			) {
 				// reset current room
 				messages.clear();

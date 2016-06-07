@@ -33,7 +33,7 @@ Game.Market = {
 		}
 
 		var rate = Game.Market.exchangeRates[resourceFrom][resourceTo];
-		return rate + (1 - rate) / 200 * level; // + 0.5% each tradingport level
+		return rate * (1 + level * 0.05); // + 0.5% each tradingport level
 	},
 
 	getExchangeAmount: function(resourceFrom, resourceTo, amount) {

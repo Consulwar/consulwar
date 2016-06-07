@@ -3,16 +3,16 @@ initMarketLib = function() {
 Game.Market = {
 	exchangeRates: {
 		humans:{
-			metals: 1 / 2,
-			crystals: 1 / 4
+			metals: (4 / 1) / 4,
+			crystals: (4 / 3) / 4
 		},
 		metals: {
-			humans: 1 / 16,
-			crystals: 1 / 12
+			humans: (1 / 4) / 4,
+			crystals: (1 / 3) / 4
 		},
 		crystals: {
-			humans: 1 / 6,
-			metals: 1 / 4
+			humans: (3 / 4) / 4,
+			metals: (3 / 1) / 4
 		}
 	},
 

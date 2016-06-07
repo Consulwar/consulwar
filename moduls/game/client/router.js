@@ -50,6 +50,10 @@ var gameRoutes = {
 		walletHistory: 'wallet/history/:type(income|expense)/:page'
 	},
 
+	admin: {
+		promocodeHistory: 'promocode/history/:page/:filterType?/:filterValue?'
+	},
+
 	army: {
 		unit: 'army/:group(fleet|defense|ground)/:item?',
 	},
@@ -90,6 +94,7 @@ var gameActions = {
 	house: Game.House.showPage,
 	
 	walletHistory: Game.Payment.showHistory,
+	promocodeHistory: Game.Payment.showPromocodeHistory,
 
 	chat: Game.Chat.showPage,
 	mail: Game.Mail.showPage,

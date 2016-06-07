@@ -56,6 +56,8 @@ Game.Statistic.fixGame = function() {
 		user_id: 'earth'
 	}).count();
 
+	set['promocode.total'] = Game.PromoCode.Collection.find({}).count();
+
 	Game.Statistic.Collection.upsert({
 		user_id: 'system'
 	}, {

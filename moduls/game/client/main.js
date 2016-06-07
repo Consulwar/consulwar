@@ -132,13 +132,19 @@ Game.actualizeGameInfo = function() {
 		Meteor.call('actualizeGameInfo', function(err) {
 			isActualizeInprogress = false;
 			if (err) {
-				Game.syncServerTime();
+				TimeSync.resync();
+				// Game.syncServerTime();
 			}
 		});
 	}
 };
 
 
+Tracker.autorun(function() {
+	Session.set('serverTime', Math.floor( TimeSync.serverTime() / 1000 ));
+});
+
+/*
 Session.set('serverTimeDelta', null);
 Session.setDefault('serverTime', Math.floor(new Date().valueOf() / 1000));
 
@@ -187,6 +193,7 @@ Game.syncServerTime = function() {
 	});
 };
 Game.syncServerTime();
+*/
 
 
 var retryIntervalId = null;

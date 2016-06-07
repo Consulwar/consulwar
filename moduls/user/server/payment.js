@@ -352,7 +352,7 @@ Meteor.methods({
 		return {
 			records: records,
 			count: count
-		}
+		};
 	},
 
 	'admin.addPromoCode': function(options) {

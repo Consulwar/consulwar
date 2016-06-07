@@ -448,8 +448,8 @@ Template.promocodeCreate.events({
 			// Create by script text
 			try {
 				object = JSON.parse(scriptText);
-			} catch (e) {
-				Notifications.error('Ошибка в скрипте', e.message);
+			} catch (error) {
+				Notifications.error('Ошибка в скрипте', error.message);
 				return;
 			}
 
@@ -475,7 +475,7 @@ Template.promocodeCreate.events({
 				object.validthru = Game.getCurrentTime() + (minutes * 60);
 			}
 
-			var type = t.find('input[name="type"]').value
+			var type = t.find('input[name="type"]').value;
 			if (type && type.length > 0) {
 				object.type = type;
 			}
@@ -485,12 +485,12 @@ Template.promocodeCreate.events({
 			} else {
 				var elements = $('.profit li');
 				for (var i = 0; i < elements.length; i++) {
-					var id = $(elements[i]).find(':selected').attr('name')
+					var id = $(elements[i]).find(':selected').attr('name');
 					var count = parseInt( $(elements[i]).find('input').val() );
 					if (id && count > 0) {
 						if (!object.profit) {
 							object.profit = {};
-						};
+						}
 
 						var keys = id.split('.');
 						var curObj = object.profit;
@@ -679,7 +679,7 @@ var formatProfit = function(profit) {
 					var container = Game.Containers.items[containerId];
 					if (container) {
 						result += 'Бесплатный контейнер: ';
-						result += parseInt(profit[type][containerId], 10) + ' '
+						result += parseInt(profit[type][containerId], 10) + ' ';
 					}
 				}
 				break;

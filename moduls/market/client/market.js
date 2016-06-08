@@ -2,6 +2,7 @@ initMarketClient = function() {
 
 initMarketLib();
 
+var isLoading = new ReactiveVar(false);
 var activeFrom = new ReactiveVar(null);
 var activeTo = new ReactiveVar(null);
 
@@ -10,6 +11,7 @@ Game.Market.showWindow = function() {
 };
 
 Template.market.helpers({
+	isLoading: function() { return isLoading.get(); },
 	activeFrom: function() { return activeFrom.get(); },
 	activeTo: function() { return activeTo.get(); },
 
@@ -116,6 +118,10 @@ Template.market.events({
 	},
 
 	'click .exchange .btn-exchange': function(e, t) {
+		if (isLoading.get()) {
+			return;
+		}
+
 		var amount = t.$('.exchange .amount').val();
 		var from = activeFrom.get();
 		var to = activeTo.get();
@@ -125,7 +131,9 @@ Template.market.events({
 			return;
 		}
 
+		isLoading.set(true);
 		Meteor.call('market.exchange', activeFrom.get(), activeTo.get(), amount, function(err, data) {
+			isLoading.set(false);
 			if (err) {
 				Notifications.error(err.error);
 			} else {

@@ -37,8 +37,8 @@ Template.market.helpers({
 		});
 	},
 
-	formatRate: function(rate) {
-		return rate > 0 ? '1 / ' + Math.ceil( ( 1 / rate ) * 10000 ) / 10000 : null;
+	formatRate: function(name, rate) {
+		return '1 / ' + (Game.Market.getExchangeAmount(activeFrom.get(), name, 1000) / 1000);
 	}
 });
 

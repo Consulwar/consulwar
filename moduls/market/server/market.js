@@ -27,7 +27,7 @@ Meteor.methods({
 
 		var result = Game.Market.getExchangeAmount(resourceFrom, resourceTo, amount);
 
-		if (!result) {
+		if (result <= 0) {
 			throw new Meteor.Error('Невозможно совершить обмен');
 		}
 

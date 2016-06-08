@@ -26,18 +26,22 @@ Game.Market = {
 		var level = Game.Building.items.residential.tradingport
 			? Game.Building.items.residential.tradingport.currentLevel()
 			: 0;
-
-		// can't change if no tradingport
+		
 		if (level === 0) {
-			return 0;
+			return 0; // can't change if no tradingport
 		}
 
-		var rate = Game.Market.exchangeRates[resourceFrom][resourceTo];
-		return rate * (1 + level * 0.05); // + 0.5% each tradingport level
+		return Game.Market.exchangeRates[resourceFrom][resourceTo];
 	},
 
 	getExchangeAmount: function(resourceFrom, resourceTo, amount) {
-		return Math.floor( Game.Market.getExchangeRate(resourceFrom, resourceTo) * amount );
+		amount = Game.Effect.Special.applyTo(
+			{ engName: 'tradingBonus' },
+			{ amount: amount * Game.Market.getExchangeRate(resourceFrom, resourceTo) },
+			true
+		).amount;
+
+		return Math.round(amount);
 	}
 };
 

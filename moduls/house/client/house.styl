@@ -1,5 +1,5 @@
 house-element(group, name, x, y, z)
-	.{group}-{name}
+	.{group}-{name}:before
 		position absolute
 		display block
 		content url("/img/game/house/" group "/" name ".png")
@@ -8,7 +8,7 @@ house-element(group, name, x, y, z)
 		z-index z
 
 house-element-back(group, name)
-	.{group}-{name}
+	.{group}-{name}:before
 		position absolute
 		display block
 		content url("/img/game/house/" group "/" name ".jpg")

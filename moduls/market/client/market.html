@@ -29,7 +29,7 @@
 							data-name="{{this.name}}" 
 							class="{{this.name}} {{#if eq activeTo this.name}}active{{/if}}"
 						>
-							{{formatRate this.rate}}
+							{{formatRate this.name this.rate}}
 						</li>
 					{{/each}}
 				</ul>

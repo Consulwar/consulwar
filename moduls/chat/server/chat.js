@@ -27,6 +27,62 @@ var createDefaulRoom = function(name, title, isFree) {
 createDefaulRoom('general', 'Основной', false);
 createDefaulRoom('help', 'Помощь', true);
 
+
+var checkHasGlobalBan = function(userId) {
+	var blockGlobal = Game.BanHistory.Collection.findOne({
+		user_id: userId,
+		type: Game.BanHistory.type.chat,
+		room_id: { $exists: false }
+	}, {
+		sort: {
+			timestamp: -1
+		}
+	});
+
+	if (blockGlobal && Game.getCurrentTime() < blockGlobal.timestamp + blockGlobal.period) {
+		throw new Meteor.Error('Чат заблокирован', blockGlobal.timestamp + blockGlobal.period);
+	}
+};
+
+var checkHasRoomBan = function(userId, roomId, roomName) {
+	var blockRoom = Game.BanHistory.Collection.findOne({
+		user_id: userId,
+		type: Game.BanHistory.type.chat,
+		room_id: roomId
+	}, {
+		sort: {
+			timestamp: -1
+		}
+	});
+
+	if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
+		throw new Meteor.Error('Чат ' + roomName + ' заблокирован', blockRoom.timestamp + blockRoom.period);
+	}
+};
+
+var getAccessLevel = function(user, room) {
+	if (user) {
+		if (user.role == 'admin') {
+			return 4;
+		}
+		if (user.role == 'helper') {
+			return 3;
+		}
+
+		if (room) {
+			if (room.owner && room.owner == user._id) {
+				return 2;
+			}
+			if (room.moderators && room.moderators.indexOf(user.username) != -1) {
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+};
+
+
 Meteor.methods({
 	'chat.sendMessage': function(message, roomName) {
 		var user = Meteor.user();
@@ -39,22 +95,9 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.sendMessage: ', new Date(), user.username);
-
-		// check global block
-		var blockGlobal = Game.BanHistory.Collection.findOne({
-			user_id: user._id,
-			type: Game.BanHistory.type.chat,
-			room_id: { $exists: false }
-		}, {
-			sort: {
-				timestamp: -1
-			}
-		});
-
-		if (blockGlobal && Game.getCurrentTime() < blockGlobal.timestamp + blockGlobal.period) {
-			throw new Meteor.Error('Чат заблокирован', blockGlobal.timestamp + blockGlobal.period);
-		}
 
 		// check room name
 		check(roomName, String);
@@ -71,21 +114,8 @@ Meteor.methods({
 		if (!room.isPublic && room.users.indexOf(user._id) == -1) {
 			throw new Meteor.Error('Вы не можете писать в эту комнату');
 		}
-
-		// check room block
-		var blockRoom = Game.BanHistory.Collection.findOne({
-			user_id: user._id,
-			type: Game.BanHistory.type.chat,
-			room_id: room._id
-		}, {
-			sort: {
-				timestamp: -1
-			}
-		});
-
-		if (blockRoom && Game.getCurrentTime() < blockRoom.timestamp + blockRoom.period) {
-			throw new Meteor.Error('Чат ' + roomName + ' заблокирован', blockRoom.timestamp + blockRoom.period);
-		}
+		
+		checkHasRoomBan(user._id, room._id, room.name);
 
 		// check message
 		check(message, String);
@@ -287,6 +317,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.blockUser: ', new Date(), user.username);
 
 		if (!options || !options.username) {
@@ -309,6 +341,8 @@ Meteor.methods({
 				throw new Meteor.Error('Нет такой комнаты');
 			}
 
+			checkHasRoomBan(user._id, room._id, room.name);
+
 			// local block
 			if (['admin', 'helper'].indexOf(user.role) == -1
 			 && room.owner != user._id
@@ -330,6 +364,10 @@ Meteor.methods({
 
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
+		}
+
+		if (getAccessLevel(user, room) <= getAccessLevel(target, room)) {
+			throw new Meteor.Error('Вы бессильны перед великим ' + target.username);
 		}
 
 		if (options.time) {
@@ -495,6 +533,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.createRoom: ', new Date(), user.username);
 
 		// check room name
@@ -567,6 +607,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		checkHasGlobalBan(user._id);
 
 		console.log('chat.removeRoom: ', new Date(), user.username);
 
@@ -711,6 +753,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.addModeratorToRoom: ', new Date(), user.username);
 
 		check(roomName, String);
@@ -724,6 +768,8 @@ Meteor.methods({
 		if (!room) {
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
 
 		if (user.role != 'admin' && room.owner != user._id) {
 			throw new Meteor.Error('Вы не можете назначать модераторов в этой комнате');
@@ -783,6 +829,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.removeModeratorFromRoom: ', new Date(), user.username);
 
 		check(roomName, String);
@@ -796,6 +844,8 @@ Meteor.methods({
 		if (!room) {
 			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
 		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
 
 		if (user.role != 'admin' && room.owner != user._id) {
 			throw new Meteor.Error('Вы не можете удалять модераторов из этой комнаты');
@@ -837,6 +887,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.addUserToRoom: ', new Date(), user.username);
 
 		check(roomName, String);
@@ -854,6 +906,8 @@ Meteor.methods({
 		if (room.isPublic) {
 			throw new Meteor.Error('Невозможно добавить пользователя');
 		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
 
 		if (room.owner != user._id) {
 			throw new Meteor.Error('Это не твоя комната');
@@ -908,6 +962,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		checkHasGlobalBan(user._id);
+
 		console.log('chat.removeUserFromRoom: ', new Date(), user.username);
 
 		check(roomName, String);
@@ -925,6 +981,8 @@ Meteor.methods({
 		if (room.isPublic) {
 			throw new Meteor.Error('Невозможно удалить пользователя');
 		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
 
 		if (room.owner != user._id) {
 			throw new Meteor.Error('Это не твоя комната');

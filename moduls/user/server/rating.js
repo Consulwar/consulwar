@@ -36,7 +36,7 @@ Meteor.methods({
 
 		return {
 			total: total,
-			position: position
+			position: position + 1
 		};
 	},
 

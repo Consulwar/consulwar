@@ -83,9 +83,9 @@ Template.rating.helpers({
 });
 
 Template.rating.onRendered(function() {
-	var userRow = $('#' + Meteor.user().username)[0];
+	var userRow = $('#' + Meteor.userId())[0];
 	if (userRow) {
-		$('.rating .data')[0].scrollTop = userRow.offsetTop + 200;
+		$('.rating .data')[0].scrollTop = userRow.offsetTop - 150;
 	}
 });
 

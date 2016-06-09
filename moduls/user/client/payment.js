@@ -472,7 +472,7 @@ Template.promocodeCreate.events({
 
 			var minutes = parseInt( t.find('input[name="minutes"]').value );
 			if (minutes > 0) {
-				object.validthru = Game.getCurrentTime() + (minutes * 60);
+				object.validPeriod = minutes * 60;
 			}
 
 			var type = t.find('input[name="type"]').value;

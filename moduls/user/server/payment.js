@@ -190,6 +190,8 @@ if (process.env.NODE_ENV == 'development') {
 
 	validthru: timestamp, // not required
 
+	validPeriod: seconds, // not required
+
 	type: string, // not required
 	              // once:#type - give this type once per user (examples once:votePower, once:startBonus etc.)
 
@@ -432,6 +434,9 @@ Meteor.methods({
 		if (options.validthru) {
 			check(options.validthru, Match.Integer);
 			promoCode.validthru = options.validthru;
+		} else if (options.validPeriod) {
+			check(options.validPeriod, Match.Integer);
+			promoCode.validthru = Game.getCurrentTime() + options.validPeriod;
 		}
 
 		if (options.type) {

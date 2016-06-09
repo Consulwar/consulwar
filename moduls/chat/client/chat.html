@@ -208,7 +208,7 @@
 		<div class="close"></div>
 
 		<label>
-			<span class="title">Сумма пополениня в ГГК</span>
+			<span class="title">Сумма пополениня в ГГК:</span>
 			<input type="text" name="credits" value="{{credits}}"/>
 		</label>
 		<div class="button accept">Пополнить</div>
@@ -228,19 +228,81 @@
 	</div>
 </template>
 
-<template name="chatBlock">
+<template name="chatControl">
 	<div class="smoke"></div>
-	<div class="chatBlock">
+	<div class="chatControl">
 		<div class="close"></div>
-		настройки + создание
-	</div>
-</template>
+		
+		<div class="roomControl">
+			<h2>Создание / Удаление комнаты</h2>
+			<label>
+				<span class="title">Название:</span>
+				<input type="text" name="credits"/>
+				<span class="hint">максимум 15 символов</span>
+			</label>
+			<div class="button removeRoom"></div>
+			<label>
+				<span class="title">Тип комнаты:</span>
+				<div class="radioBlock">
+					<input type="radio" name="roomType" value="public"/> публичная
+				</div>
+				<div class="radioBlock">
+					<input type="radio" name="roomType" value="private" checked="checked"/> приватная
+				</div>
+			</label>
+			<label>
+				<span class="title">Оплата за сообщения:</span>
+				<div class="radioBlock">
+					<input type="radio" name="roomPayment" value="crystals"/> кристаллы
+				</div>
+				<div class="radioBlock">
+					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
+				</div>
+			</label>
+			<div class="creditsBlock">
+				<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
+				<div class="amount">200</div>
+			</div>
+			<div class="button accept create">Создать комнату</div>
+		</div>
 
-<template name="chatSettings">
-	<div class="smoke"></div>
-	<div class="chatSettings">
-		<div class="close"></div>
-		настройки + создание
+		<div class="userControl">
+			<h2>Управление пользователями</h2>
+			<label>
+				<span class="title">Никнейм Консула:</span>
+				<input type="text" name="credits"/>
+			</label>
+			<label>
+				<span class="title">Время бана в минутах:</span>
+				<input type="text" name="credits"/>
+			</label>
+			<label>
+				<span class="title">Причина бана:</span>
+				<textarea></textarea>
+			</label>
+			<label>
+				<span class="title">Тип бана / разбана:</span>
+				<div class="radioBlock">
+					<input type="radio" name="blockType" value="local" checked="checked"/> локально
+				</div>
+				<div class="radioBlock">
+					<input type="radio" name="blockType" value="global"/> глобально
+				</div>
+			</label>
+			<div class="controlBlock">
+				<div class="button accept block">Наказать</div>
+				<div class="button accept unblock">Простить</div>
+				<div class="button cancel removeUser">Удалить из чата</div>
+			</div>
+			<div class="controlBlock">
+				<label>
+					<span class="title">Никнейм модератора:</span>
+					<input type="text" name="credits"/>
+				</label>
+				<div class="button accept addModerator">Назначить</div>
+				<div class="button accept removeModerator">Разжаловать</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -248,6 +310,25 @@
 	<div class="smoke"></div>
 	<div class="chatIcons">
 		<div class="close"></div>
-		иконки
+		
+		<div class="tabItems">Ваши иконки</div>
+		<div class="tabShop">Купить иконку</div>
+
+		<div class="icons">
+			{{#each iconGroups}}
+				<h2 class="{{this.engName}}">{{this.name}}</h2>
+				{{#if this.items}}
+					<ul>
+						{{#each this.items}}
+							<li>
+								<img src="/img/game/chat/icons/{{../engName}}/{{this}}.png"/>
+							</li>
+						{{/each}}
+					</ul>
+				{{else}}
+					<span>У вас нет иконок такого типа</span>
+				{{/if}}
+			{{/each}}
+		</div>
 	</div>
 </template>

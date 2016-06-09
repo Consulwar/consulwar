@@ -751,6 +751,10 @@ Template.chatRoomsList.helpers({
 	}
 });
 
+// TODO: Implement icons buy and selection!
+// TODO: Room balance history with pagination!
+// TODO: Tooltips!
+
 // ----------------------------------------------------------------------------
 // Accept window
 // ----------------------------------------------------------------------------
@@ -758,16 +762,18 @@ Template.chatRoomsList.helpers({
 var acceptWindowView = null;
 
 Game.Chat.showAcceptWindow = function(message, onAccept, onCancel) {
-	acceptWindowView = Blaze.renderWithData(
-		Template.chatAccept, {
-			message: message,
-			onAccept: onAccept,
-			onCancel: onCancel
-		}, $('.over')[0]
-	);
+	if (!acceptWindowView) {
+		acceptWindowView = Blaze.renderWithData(
+			Template.chatAccept, {
+				message: message,
+				onAccept: onAccept,
+				onCancel: onCancel
+			}, $('.over')[0]
+		);
+	}
 };
 
-Game.Chat.closeAcceptWindow = function(callback) {
+var closeAcceptWindow = function(callback) {
 	if (acceptWindowView) {
 		Blaze.remove(acceptWindowView);
 		acceptWindowView = null;
@@ -779,15 +785,15 @@ Game.Chat.closeAcceptWindow = function(callback) {
 
 Template.chatAccept.events({
 	'click .close': function(e, t) {
-		Game.Chat.closeAcceptWindow(t.data.onCancel);
+		closeAcceptWindow(t.data.onCancel);
 	},
 
 	'click .cancel': function(e, t) {
-		Game.Chat.closeAcceptWindow(t.data.onCancel);
+		closeAcceptWindow(t.data.onCancel);
 	},
 
 	'click .accept': function(e, t) {
-		Game.Chat.closeAcceptWindow(t.data.onAccept);
+		closeAcceptWindow(t.data.onAccept);
 	}
 });
 
@@ -795,8 +801,12 @@ Template.chatAccept.events({
 // Help and rules window
 // ----------------------------------------------------------------------------
 
+var helpWindowView = null;
+
 Game.Chat.showHelpWindow = function() {
-	Blaze.render(Template.chatHelp, $('.over')[0]);
+	if (!helpWindowView) {
+		helpWindowView = Blaze.render(Template.chatHelp, $('.over')[0]);
+	}
 };
 
 Template.chatHelp.onRendered(function() {
@@ -808,7 +818,10 @@ Template.chatHelp.onRendered(function() {
 
 Template.chatHelp.events({
 	'click .close': function(e, t) {
-		Blaze.remove(t.view);
+		if (helpWindowView) {
+			Blaze.remove(helpWindowView);
+			helpWindowView = null;
+		}
 	},
 
 	'click .tabCommands': function(e, t) {
@@ -830,52 +843,29 @@ Template.chatHelp.events({
 // Balance window
 // ----------------------------------------------------------------------------
 
+var balanceWindowView = null;
+
 Game.Chat.showBalanceWindow = function(roomName, credits) {
-	Blaze.renderWithData(
-		Template.chatBalance, {
-			roomName: roomName,
-			credits: credits
-		}, $('.over')[0]
-	);
+	if (!balanceWindowView) {
+		balanceWindowView = Blaze.renderWithData(
+			Template.chatBalance, {
+				roomName: roomName,
+				credits: credits
+			}, $('.over')[0]
+		);
+	}
 };
-
-Template.chatBalance.helpers({
-
-});
 
 Template.chatBalance.events({
 	'click .close': function(e, t) {
-		Blaze.remove(t.view);
+		if (balanceWindowView) {
+			Blaze.remove(balanceWindowView);
+			balanceWindowView = null;
+		}
 	},
 
 	'click .accept': function(e, t) {
-		// TODO: пополнить баланс
-	}
-});
-
-// ----------------------------------------------------------------------------
-// Block window
-// ----------------------------------------------------------------------------
-
-Game.Chat.showBlockWindow = function(username) {
-	Blaze.renderWithData(
-		Template.chatBlock, {
-			username: username
-		}, $('.over')[0]
-	);
-};
-
-Template.chatBlock.helpers({
-
-});
-
-Template.chatBlock.events({
-	'click .close': function(e, t) {
-		Blaze.remove(t.view);
-	},
-
-	'click .accept': function(e, t) {
-		// TODO: заблокировать
+		// TODO: implement
 	}
 });
 
@@ -883,17 +873,20 @@ Template.chatBlock.events({
 // Settings and create window
 // ----------------------------------------------------------------------------
 
-Game.Chat.showSettingsWindow = function() {
-	Blaze.renderWithData(Template.chatSettings, { }, $('.over')[0]);
+var controlWindowView = null;
+
+Game.Chat.showControlWindow = function() {
+	if (!controlWindowView) {
+		controlWindowView = Blaze.renderWithData(Template.chatControl, { }, $('.over')[0]);
+	}
 };
 
-Template.chatSettings.helpers({
-
-});
-
-Template.chatSettings.events({
+Template.chatControl.events({
 	'click .close': function(e, t) {
-		Blaze.remove(t.view);
+		if (controlWindowView) {
+			Blaze.remove(controlWindowView);
+			controlWindowView = null;
+		}
 	}
 });
 
@@ -901,17 +894,49 @@ Template.chatSettings.events({
 // Icons window
 // ----------------------------------------------------------------------------
 
+var iconsWindowView = null;
+
 Game.Chat.showIconsWindow = function() {
-	Blaze.renderWithData(Template.chatIcons, { }, $('.over')[0]);
+	if (!iconsWindowView) {
+		iconsWindowView = Blaze.renderWithData(Template.chatIcons, { }, $('.over')[0]);
+	}
 };
 
-Template.chatIcons.helpers({
+Template.chatIcons.onRendered(function() {
+	this.$('.tabItems').addClass('active');
+	this.$('.tabShop').removeClass('active');
+});
 
+Template.chatIcons.helpers({
+	iconGroups: function() {
+		result = [{
+			engName: 'common',
+			name: 'Стандартные',
+			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		}, {
+			engName: 'extra',
+			name: 'Дополнительные',
+			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+		}, {
+			engName: 'rare',
+			name: 'Редкие',
+			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		}, {
+			engName: 'exclusive',
+			name: 'Эксклюзивные',
+			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		}];
+
+		return result;
+	}
 });
 
 Template.chatIcons.events({
 	'click .close': function(e, t) {
-		Blaze.remove(t.view);
+		if (iconsWindowView) {
+			Blaze.remove(iconsWindowView);
+			iconsWindowView = null;
+		}
 	}
 });
 

@@ -313,25 +313,7 @@ var removeModerator = function(roomName, username) {
 var execClientCommand = function(message) {
 	// show help
 	if (message.indexOf('/help') === 0) {
-		var helpText = ''
-		 + 'Доступные команды:' + '\n'
-		 + '/create channel - создать комнату' + '\n'
-		 + '/remove channel - удалить текущую комнату' + '\n'
-		 + '/join [channel] - присоединиться к комнате' + '\n'
-		 + '/add credits [amount] - пополнить баланс комнаты' + '\n'
-		 + '/add user [username] - добавить пользователя к комнате' + '\n'
-		 + '/remove user [username] - удалить пользователя из комнаты' + '\n'
-		 + '/block [username] - наказать пользователя' + '\n'
-		 + '/unblock [username] - простить пользователя' + '\n'
-		 + '/add moderator [username] - назначить модератора' + '\n'
-		 + '/remove moderator [username] - разжаловать модератора' + '\n'
-		 + '/d [n] [m] - бросить n кубиков с m гранями' + '\n'
-		 + '/me [text] - писать от третьего лица' + '\n'
-		 + '/сепукку - совершить сепукку и пожертвовать ресурсы' + '\n'
-		 + '/яготов - вы действительно так думаете?' + '\n'
-		 + '/ilovereptiles - признаться в любви к Рептилоидам';
-		
-		alert(helpText);
+		Game.Chat.showHelpWindow();
 		return true;
 	}
 	// create new channel
@@ -769,5 +751,168 @@ Template.chatRoomsList.helpers({
 	}
 });
 
+// ----------------------------------------------------------------------------
+// Accept window
+// ----------------------------------------------------------------------------
+
+var acceptWindowView = null;
+
+Game.Chat.showAcceptWindow = function(message, onAccept, onCancel) {
+	acceptWindowView = Blaze.renderWithData(
+		Template.chatAccept, {
+			message: message,
+			onAccept: onAccept,
+			onCancel: onCancel
+		}, $('.over')[0]
+	);
+};
+
+Game.Chat.closeAcceptWindow = function(callback) {
+	if (acceptWindowView) {
+		Blaze.remove(acceptWindowView);
+		acceptWindowView = null;
+	}
+	if (_.isFunction(callback)) {
+		callback.call();
+	}
+};
+
+Template.chatAccept.events({
+	'click .close': function(e, t) {
+		Game.Chat.closeAcceptWindow(t.data.onCancel);
+	},
+
+	'click .cancel': function(e, t) {
+		Game.Chat.closeAcceptWindow(t.data.onCancel);
+	},
+
+	'click .accept': function(e, t) {
+		Game.Chat.closeAcceptWindow(t.data.onAccept);
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Help and rules window
+// ----------------------------------------------------------------------------
+
+Game.Chat.showHelpWindow = function() {
+	Blaze.render(Template.chatHelp, $('.over')[0]);
+};
+
+Template.chatHelp.onRendered(function() {
+	this.$('.tabRules').removeClass('active');
+	this.$('.rules').hide();
+	this.$('.tabCommands').addClass('active');
+	this.$('.commands').show();
+});
+
+Template.chatHelp.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	},
+
+	'click .tabCommands': function(e, t) {
+		t.$('.tabRules').removeClass('active');
+		t.$('.rules').hide();
+		t.$('.tabCommands').addClass('active');
+		t.$('.commands').show();
+	},
+
+	'click .tabRules': function(e, t) {
+		t.$('.tabCommands').removeClass('active');
+		t.$('.commands').hide();
+		t.$('.tabRules').addClass('active');
+		t.$('.rules').show();
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Balance window
+// ----------------------------------------------------------------------------
+
+Game.Chat.showBalanceWindow = function(roomName, credits) {
+	Blaze.renderWithData(
+		Template.chatBalance, {
+			roomName: roomName,
+			credits: credits
+		}, $('.over')[0]
+	);
+};
+
+Template.chatBalance.helpers({
+
+});
+
+Template.chatBalance.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	},
+
+	'click .accept': function(e, t) {
+		// TODO: пополнить баланс
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Block window
+// ----------------------------------------------------------------------------
+
+Game.Chat.showBlockWindow = function(username) {
+	Blaze.renderWithData(
+		Template.chatBlock, {
+			username: username
+		}, $('.over')[0]
+	);
+};
+
+Template.chatBlock.helpers({
+
+});
+
+Template.chatBlock.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	},
+
+	'click .accept': function(e, t) {
+		// TODO: заблокировать
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Settings and create window
+// ----------------------------------------------------------------------------
+
+Game.Chat.showSettingsWindow = function() {
+	Blaze.renderWithData(Template.chatSettings, { }, $('.over')[0]);
+};
+
+Template.chatSettings.helpers({
+
+});
+
+Template.chatSettings.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Icons window
+// ----------------------------------------------------------------------------
+
+Game.Chat.showIconsWindow = function() {
+	Blaze.renderWithData(Template.chatIcons, { }, $('.over')[0]);
+};
+
+Template.chatIcons.helpers({
+
+});
+
+Template.chatIcons.events({
+	'click .close': function(e, t) {
+		Blaze.remove(t.view);
+	}
+});
 
 };

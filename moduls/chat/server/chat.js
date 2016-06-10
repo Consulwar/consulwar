@@ -11,6 +11,15 @@ Game.Chat.Room.Collection._ensureIndex({
 	name: 1
 });
 
+Game.Chat.BalanceHistory = {
+	Collection: new Meteor.Collection('chatBalanceHistory')
+};
+
+Game.Chat.BalanceHistory.Collection._ensureIndex({
+	roomName: 1,
+	timestamp: -1
+});
+
 // create defaul rooms on server startup
 var createDefaulRoom = function(name, title, isFree) {
 	if (!Game.Chat.Room.Collection.findOne({ name: name })) {
@@ -724,6 +733,14 @@ Meteor.methods({
 			roomId: room._id
 		});
 
+		Game.Chat.BalanceHistory.Collection.insert({
+			roomName: roomName,
+			credits: credits,
+			timestamp: Game.getCurrentTime(),
+			user_id: user._id,
+			username: user.username
+		});
+
 		Game.Chat.Messages.Collection.insert({
 			room_id: room._id,
 			user_id: user._id,
@@ -1104,6 +1121,53 @@ Meteor.methods({
 		return Game.Chat.Room.Collection.find({
 			isOfficial: true
 		}).fetch();
+	},
+
+	'chat.getBalanceHistory': function(roomName, page, count) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName,
+			deleted: { $ne: true },
+			$or: [
+				{ users: { $in: [ user._id ] } },
+				{ isPublic: true }
+			]
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Нет такой комнаты');
+		}
+
+		check(page, Match.Integer);
+		check(count, Match.Integer);
+
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		var result = Game.Chat.BalanceHistory.Collection.find({
+			roomName: roomName
+		}, {
+			sort: {timestamp: -1},
+			skip: (page > 0) ? (page - 1) * count : 0,
+			limit: count
+		});
+
+		return {
+			data: result.fetch(),
+			count: result.count()
+		};
 	}
 });
 

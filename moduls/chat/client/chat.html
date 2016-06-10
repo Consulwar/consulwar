@@ -233,13 +233,17 @@
 
 		<span class="historyTitle">История пополнения</span>
 		<div class="data">
-			<table>
-				<tr>
-					<td>Валера</td>
-					<td>500</td>
-					<td>12.05.16</td>
-				</tr>
-			</table>
+			{{#if history}}
+				<table>
+					{{#each history}}
+						<tr>
+							<td>{{this.username}}</td>
+							<td>{{formatNumber this.credits}}</td>
+							<td>{{formatDate this.timestamp -180}}</td>
+						</tr>
+					{{/each}}
+				</table>
+			{{/if}}
 		</div>
 
 		<div class="pages"></div>

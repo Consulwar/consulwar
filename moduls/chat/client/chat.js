@@ -241,12 +241,6 @@ var removeRoom = function(name) {
 };
 
 var addCredits = function(roomName, credits) {
-	credits = parseInt( credits, 10 );
-	if (credits <= 0) {
-		Notifications.error('Укажите сумму кредитов!');
-		return;
-	}
-
 	Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
@@ -343,7 +337,7 @@ var execClientCommand = function(message) {
 	}
 	// add funds to channel
 	else if (message.indexOf('/add credits') === 0) {
-		addCredits(Router.current().params.room, message.substr('/add credits'.length).trim());
+		addCredits(Router.current().params.room, parseInt(message.substr('/add credits'.length).trim()));
 		return true;
 	}
 	// add user to channel
@@ -627,11 +621,7 @@ Template.chat.events({
 	},
 
 	'click .chat .addCredits': function(e, t) {
-		var roomName = Router.current().params.room;
-		var credits = prompt('Положить кредиты на счет комнаты:', '1000');
-		if (credits) {
-			addCredits(roomName, credits);
-		}
+		Game.Chat.showBalanceWindow(Router.current().params.room, 1000);
 	},
 
 	'click li a.block': function(e, t) {
@@ -844,6 +834,8 @@ Template.chatHelp.events({
 // ----------------------------------------------------------------------------
 
 var balanceWindowView = null;
+var balanceHistory = new ReactiveVar(null);
+var balanceHistoryCount = new ReactiveVar(null);
 
 Game.Chat.showBalanceWindow = function(roomName, credits) {
 	if (!balanceWindowView) {
@@ -856,6 +848,29 @@ Game.Chat.showBalanceWindow = function(roomName, credits) {
 	}
 };
 
+var loadBalanceHistory = function(roomName, page) {
+	balanceHistory.set(null);
+	balanceHistoryCount.set(null);
+
+	Meteor.call('chat.getBalanceHistory', roomName, page, 20, function(err, result) {
+		if (err) {
+			Notifications.error('Не удалось загрузить историю пополнения', err.error);
+		} else {
+			balanceHistory.set(result.data);
+			balanceHistoryCount.set(result.count);
+		}
+	});
+};
+
+Template.chatBalance.onRendered(function() {
+	loadBalanceHistory(this.data.roomName, 1);
+});
+
+Template.chatBalance.helpers({
+	countTotal: function() { return balanceHistoryCount.get(); },
+	history: function() { return balanceHistory.get(); }
+});
+
 Template.chatBalance.events({
 	'click .close': function(e, t) {
 		if (balanceWindowView) {
@@ -865,7 +880,18 @@ Template.chatBalance.events({
 	},
 
 	'click .accept': function(e, t) {
-		// TODO: implement
+		var credits = parseInt( t.find('input[name="credits"]').value );
+		if (!credits || credits < 100) {
+			Notifications.error('Минимальная сумма 100 ГГК');
+			return;
+		}
+
+		addCredits(t.data.roomName, credits);
+
+		if (balanceWindowView) {
+			Blaze.remove(balanceWindowView);
+			balanceWindowView = null;
+		}
 	}
 });
 

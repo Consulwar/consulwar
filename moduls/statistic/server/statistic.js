@@ -27,13 +27,9 @@ Game.Statistic.incrementUser = function(uid, increment) {
 };
 
 Game.Statistic.incrementAllUsers = function(increment) {
-	Game.Statistic.Collection.update({
-		user_id: { $ne: 'system' }
-	}, {
-		$inc: increment
-	}, {
-		multi: true
-	});
+	var bulkOp = Game.Statistic.Collection.rawCollection().initializeUnorderedBulkOp();
+	bulkOp.find({ user_id: { $ne: 'system' } }).update({ $inc: increment });
+	bulkOp.execute(function(err, data) {});
 };
 
 Game.Statistic.incrementGame = function(increment) {

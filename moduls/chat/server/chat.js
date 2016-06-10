@@ -1119,8 +1119,52 @@ Meteor.methods({
 		console.log('chat.getRoomsList: ', new Date(), user.username);
 
 		return Game.Chat.Room.Collection.find({
-			isOfficial: true
+			isOfficial: { $ne: true },
+			deleted: { $ne: true },
+			$or: [
+				{ users: { $in: [ user._id ] } },
+				{ isPublic: true }
+			]
 		}).fetch();
+	},
+
+	'chat.setupRoomsVisibility': function(rooms) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(rooms, Object);
+
+		var visible = [];
+		var hidden = [];
+
+		for (var key in rooms) {
+			if (rooms[key]) {
+				visible.push(key);
+			} else {
+				hidden.push(key);
+			}
+		}
+			
+		var update = null;
+
+		if (visible.length > 0) {
+			update = { $pull: {} };
+			update.$pull['settings.chat.hiddenRooms'] = { $in: visible };
+			Meteor.users.update({ _id: user._id }, update);
+		}
+
+		if (hidden.length > 0) {
+			update = { $addToSet: {} };
+			update.$addToSet['settings.chat.hiddenRooms'] = { $each: hidden };
+			Meteor.users.update({ _id: user._id }, update);
+		}
 	},
 
 	'chat.getBalanceHistory': function(roomName, page, count) {
@@ -1168,6 +1212,34 @@ Meteor.methods({
 			data: result.fetch(),
 			count: result.count()
 		};
+	},
+
+	'chat.buyAvatar': function(group, id) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		// TODO: implement
+	},
+
+	'chat.selectAvatar': function(group, id) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		// TODO: implement
 	}
 });
 

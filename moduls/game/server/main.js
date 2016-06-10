@@ -162,7 +162,8 @@ Meteor.publish('game', function () {
 				votePowerBonus: 1,
 				isChatFree: 1,
 				timeLastTournament: 1,
-				achievements: 1
+				achievements: 1,
+				settings: 1
 			}
 		});
 	}

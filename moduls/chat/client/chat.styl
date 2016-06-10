@@ -4,32 +4,84 @@
 
 .chat
 	position relative
+	padding 0px
 	z-index 2
-	margin-left 124px
-	padding 3.5px
-	height 428px
+	height 574px
 	background-color #0C131D
 	
+	.control
+		position absolute
+		top 0px
+		left 0px
+		width 198px
+		
+		.settings
+		.info
+		.dollar
+			cursor pointer
+			display inline-block
+			width 65px
+			height 66px
+			background-repeat no-repeat
+		.settings
+			background-image url(/img/game/chat/settings-disabled.png)
+			&:hover
+				background-image url(/img/game/chat/settings.png)
+		.info
+			background-image url(/img/game/chat/info-disabled.png)
+			&:hover
+				background-image url(/img/game/chat/info.png)
+		.dollar
+			background-image url(/img/game/chat/dollar-disabled.png)
+			&:hover
+				background-image url(/img/game/chat/dollar.png)
+
 	.messages
-		position relative
-		height 338px
-		width 1100px
-		padding 11px
+		position absolute
+		left 198px
+		top 46px
+		height 470px
+		width 1080px
 		overflow-y auto
 		overflow-x hidden
 		
 		li
+			cursor pointer
 			position relative
 			display block
+			margin-bottom 5px
+			margin-left 5px
 			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+			.username
+				position absolute
+				top 3px
+				left 50px
+				width 150px
+				
+				&.me
+					color #ABC851
+				
+			.role
+				position absolute
+				top 22px
+				left 50px
+				width 150px
+				
+			.message
+				position absolute
+				top 3px
+				left 200px
+				line-height 19px
+
 			span
 				color #C4ABA1
 				
 				&:not(.dice)
 					cursor pointer
-				
-				&.me
-					color #ABC851
 					
 				&.dice
 					color #3eb5f1
@@ -48,79 +100,43 @@
 				text-align center
 				color #A15755
 
-			&.remove
-				color red
-				
-			&.removeModerator
+			.remove
+			.removeModerator
+			.block
 				color red
 
-			&.lovereptiles
-			&.notprepared
+			.lovereptiles
+			.notprepared
 				font-style italic
 				color red
-
-			&.block
-				color red
 			
-			&.add
+			.add
+			.addfunds
+			.addModerator
+			.unblock
 				color green
 				
-			&.addfunds
-				color green
-			
-			&.addModerator
-				color green
-
-			&.unblock
-				color green
-				
-			&.sepukku
+			.sepukku
 				color #ff5441
 				
-			&.status
+			.status
 				font-style italic
 					
-			&.admin
-				span:not(.dice):not(.me)
-					color #C04C3F
+			.admin
+				color #C04C3F
 					
-			&.helper
-				span:not(.dice):not(.me)
-					color #8D5AA7
-
-			.block
-				position absolute
-				top 0
-				right 70px
-				display none
-				font-style normal
-				color #777777
-				&:hover
-					color #FFFFFF
-			
-			.unblock
-				position absolute
-				top 0
-				right 5px
-				display none
-				font-style normal
-				color #777777
-				&:hover
-					color #FFFFFF
-			
-			&:hover
-				background-color rgba(255, 255, 255, 0.02)
-				.block
-					display block
-				.unblock
-					display block
+			.helper
+				color #8D5AA7
 	
 	form
-		height 69px
+		position absolute
+		left 198px
+		top 516px
+		height 58px
 		
 		textarea
-			width 445px
-			height 62px
+			width 800px
+			height 52px
 			padding 2px
 			border 1px solid #1D2D3C
 			background-color #090E14
@@ -143,14 +159,15 @@
 			overflow hidden
 
 		[type="submit"]
-			width 120px
-			height 68px
-			padding 2px
-			border 1px solid #1D2D3C
-			background-color #090E14
-			color #5787AF
+			width 58px
+			height 58px
+			background-repeat no-repeat
+			background-image url(/img/game/chat/send-disabled.png)
 			vertical-align top
 			cursor pointer
+			
+			&:hover
+				background-image url(/img/game/chat/send.png)
 			
 		ul
 			display inline-block
@@ -168,77 +185,104 @@
 			cursor pointer
 		
 	.participants
-		list-style-type none
-		float right
+		position absolute
+		top 0px
+		right 0px
 		width 180px
 		height 338px
-		overflow-y auto
-		overflow-x hidden
-		padding 11px
-		text-align left
-		
-		li
-			color #777777
-		
-			span
-				cursor pointer
+
+		ul
+			margin-top 46px
+			overflow-y auto
+			overflow-x hidden
+			padding 11px
+			text-align left
+			list-style-type none
 			
-			&.online
-				color #FFFFFF
-			
-			.addModerator, .removeModerator, .createRoom, .removeRoom
-				cursor pointer
+			li
 				color #777777
-				&:hover
-					color #FFFFFF
-
-			.remove
-				display none
-				float right
-				cursor pointer
-				color #777777
-				&:hover
-					color #FFFFFF
 			
-			&:hover
-				background-color rgba(255, 255, 255, 0.02)
-				.remove
-					display block
+				span
+					cursor pointer
+				
+				&.online
+					color #FFFFFF
+				
+				&:hover
+					background-color rgba(255, 255, 255, 0.02)
 
-	.addCredits
-		cursor pointer	
 
-	#control
+	.roomsList
 		position absolute
-		right 0px
-		bottom 0px
-		height 69px
+		top 0px
+		left 195px
+		width 1084px
+		height 46px
 
+		.general
+		.help
+		.arrow-left
+		.arrow-right
+		.arrow-down
+			cursor pointer
+			display inline-block
+			width 46px
+			height 46px
+			background-repeat no-repeat
+			background-size 100% 100%
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+			
+		.general
+			background-image url(/img/game/chat/general-disabled.png)
+			&.active
+				background-image url(/img/game/chat/general.png)
+				
+		.help
+			background-image url(/img/game/chat/help-disabled.png)
+			&.active
+				background-image url(/img/game/chat/help.png)
+				
+		.arrow-left
+			background-image url(/img/game/chat/left-arrow-disabled.png)
+			&.active
+				background-image url(/img/game/chat/left-arrow.png)
+				
+		.arrow-right
+			background-image url(/img/game/chat/right-arrow-disabled.png)
+			&.active
+				background-image url(/img/game/chat/right-arrow.png)
+				
+		.arrow-down
+			background-image url(/img/game/chat/arrow-down.png)
 
-.chatRoomsList
-	position relative
-	margin 25px auto 0
-	width 1464px
-	text-align left
-	
-	li
-		display inline-block
-		border-radius 10px
-		background-color #6B722D
-		margin-right 10px
-		
-		&.general
-			background-color #C17700
+		ul
+			display inline-block
+			vertical-align top
+			
+			li
+				display inline-block
+				background-color #6B722D
+				width 150px
+				height 46px
 
-		&.help
-			background-color #3B8386
-
-		a
-			display block
-			padding 10px
-			text-decoration none
-			font-weight bold
-			color #FFFFFF
+				a
+					display inline-block
+					text-decoration none
+					font-weight bold
+					color #FFFFFF
+					
+				.hide
+					cursor pointer
+					display inline-block
+					width 30px
+					height 30px
+					background-image url(/img/game/cosmomap/button_close.png)
+					background-repeat no-repeat
+				
+					&:hover
+						background-image url(/img/game/cosmomap/button_close_active.png)
 			
 
 .chatAccept

@@ -18,6 +18,7 @@
 		.settings
 		.info
 		.dollar
+			float left
 			cursor pointer
 			display inline-block
 			width 65px
@@ -224,6 +225,7 @@
 		.arrow-left
 		.arrow-right
 		.arrow-down
+			float left
 			cursor pointer
 			display inline-block
 			width 46px
@@ -255,14 +257,17 @@
 				background-image url(/img/game/chat/right-arrow.png)
 				
 		.arrow-down
+			float right
 			background-image url(/img/game/chat/arrow-down.png)
 
 		ul
+			float left
 			display inline-block
 			vertical-align top
 			
 			li
 				display inline-block
+				float left
 				background-color #6B722D
 				width 150px
 				height 46px
@@ -599,7 +604,7 @@
 			
 
 .chatIcons
-	width 800px
+	width 880px
 	font-weight bold
 	font-size 14px
 	
@@ -617,12 +622,12 @@
 		background-repeat no-repeat
 		background-color #030405
 		
+		&.active
+			background-color #13161b
+
 		&:hover
 			-webkit-filter brightness(1.4)
 			filter brightness(1.4)
-				
-		&.active
-			background-color #13161b
 			
 	.tabItems
 		color #56baf2
@@ -652,8 +657,27 @@
 	
 	ul
 		display block
+		vertical-align top
 		margin 10px 0px
 		
 		li
 			cursor pointer
 			display inline-block
+			padding 5px
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+			
+			&.selected
+				border 2px solid #FFFFFF
+
+			.credits
+				display block
+				height 17px
+				padding-top 3px
+				padding-left 22px
+				background-image url(/img/game/credits.png)
+				background-repeat no-repeat
+				background-size 20px 20px
+				color #C6E84C

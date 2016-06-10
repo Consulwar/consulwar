@@ -11,6 +11,10 @@ Game.Chat.Room.Collection._ensureIndex({
 	name: 1
 });
 
+Game.Chat.Icons.Collection._ensureIndex({
+	user_id: 1
+});
+
 Game.Chat.BalanceHistory = {
 	Collection: new Meteor.Collection('chatBalanceHistory')
 };
@@ -166,6 +170,10 @@ Meteor.methods({
 
 		if (user.role) {
 			set.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			set.iconPath = user.settings.chat.icon;
 		}
 
 		var stats = {};
@@ -1096,7 +1104,8 @@ Meteor.methods({
 				type: 1,
 				role: 1,
 				cheater: 1,
-				room: 1
+				room: 1,
+				iconPath: 1
 			},
 			sort: {
 				timestamp: -1
@@ -1214,7 +1223,7 @@ Meteor.methods({
 		};
 	},
 
-	'chat.buyAvatar': function(group, id) {
+	'chat.buyIcon': function(group, engName) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -1225,10 +1234,35 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		// TODO: implement
+		var icon = Game.Chat.Icons.getIcon(group, engName);
+		if (!icon) {
+			throw new Meteor.Error('Нет такой иконки');
+		}
+
+		if (!icon.canBuy()) {
+			throw new Meteor.Error('Вы не можете купить эту иконку');
+		}
+
+		Game.Resources.spend(icon.price);
+
+		if (icon.price.credits) {
+			Game.Payment.Expense.log(icon.price.credits, 'chatIcon', {
+				group: group,
+				engName: engName
+			});
+		}
+		
+		var update = { $addToSet: {} };
+		update.$addToSet[group] = engName;
+
+		if (icon.isUnique) {
+			Game.Chat.Icons.Collection.upsert({ user_id: 'unique' }, update);
+		}
+
+		Game.Chat.Icons.Collection.upsert({ user_id: user._id }, update);
 	},
 
-	'chat.selectAvatar': function(group, id) {
+	'chat.selectIcon': function(group, engName) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -1239,7 +1273,22 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		// TODO: implement
+		var icon = Game.Chat.Icons.getIcon(group, engName);
+		if (!icon) {
+			throw new Meteor.Error('Нет такой иконки');
+		}
+
+		if (!icon.checkHas()) {
+			throw new Meteor.Error('Иконку сначала нужно купить');
+		}
+
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$set: {
+				'settings.chat.icon': group + '/' + engName
+			}
+		});
 	}
 });
 
@@ -1288,7 +1337,8 @@ Meteor.publish('chat', function (roomName) {
 					type: 1,
 					role: 1,
 					cheater: 1,
-					room: 1
+					room: 1,
+					iconPath: 1
 				},
 				sort: {
 					timestamp: -1
@@ -1298,6 +1348,19 @@ Meteor.publish('chat', function (roomName) {
 		} else {
 			return null;
 		}
+	} else {
+		this.ready();
+	}
+});
+
+Meteor.publish('chatIcons', function() {
+	if (this.userId) {
+		return Game.Chat.Icons.Collection.find({
+			$or: [
+				{ user_id: this.userId },
+				{ user_id: 'unique' }
+			]
+		});
 	} else {
 		this.ready();
 	}

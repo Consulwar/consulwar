@@ -2,6 +2,8 @@ initChatClient = function() {
 
 initChatLib();
 
+Meteor.subscribe('chatIcons');
+
 var soundNotprepared = new buzz.sound('/sound/notprepared.mp3');
 
 var currentRoomName = null;
@@ -413,6 +415,14 @@ Template.chat.helpers({
 		});
 	},
 
+	iconPath: function() {
+		var user = Meteor.user();
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			return user.settings.chat.icon;
+		}
+		return 'common/1';
+	},
+
 	users: function() {
 		var roomName = Router.current().params.room;
 		var room = Game.Chat.Room.Collection.findOne({
@@ -716,6 +726,18 @@ Template.chat.events({
 		if (confirm('Вы действительно хотите удалить текущую комнату?')) {
 			removeRoom(Router.current().params.room);
 		}
+	},
+
+	'click .dollar': function(e, t) {
+		Game.Chat.showIconsWindow();
+	},
+
+	'click .info': function(e, t) {
+		Game.Chat.showHelpWindow();
+	},
+
+	'click .settings': function(e, t) {
+		Game.Chat.showControlWindow();
 	}
 });
 
@@ -921,6 +943,7 @@ Template.chatControl.events({
 // ----------------------------------------------------------------------------
 
 var iconsWindowView = null;
+var iconsWindowTab = new ReactiveVar(null);
 
 Game.Chat.showIconsWindow = function() {
 	if (!iconsWindowView) {
@@ -929,29 +952,42 @@ Game.Chat.showIconsWindow = function() {
 };
 
 Template.chatIcons.onRendered(function() {
+	iconsWindowTab.set('items');
 	this.$('.tabItems').addClass('active');
 	this.$('.tabShop').removeClass('active');
 });
 
 Template.chatIcons.helpers({
+	currentTab: function() { return iconsWindowTab.get(); },
+
 	iconGroups: function() {
-		result = [{
-			engName: 'common',
-			name: 'Стандартные',
-			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-		}, {
-			engName: 'extra',
-			name: 'Дополнительные',
-			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-		}, {
-			engName: 'rare',
-			name: 'Редкие',
-			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-		}, {
-			engName: 'exclusive',
-			name: 'Эксклюзивные',
-			items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-		}];
+		var currentTab = iconsWindowTab.get();
+		var result = [];
+
+		for (var key in Game.Chat.Icons.items) {
+			if (currentTab == 'shop' && Game.Chat.Icons.items[key].isDefault) {
+				continue;
+			}
+
+			var group = {
+				engName: Game.Chat.Icons.items[key].engName,
+				name: Game.Chat.Icons.items[key].name
+			};
+
+			var icons = [];
+			for (var iconKey in Game.Chat.Icons.items[key].icons) {
+				var icon = Game.Chat.Icons.items[key].icons[iconKey];
+				if (currentTab == 'shop' || icon.checkHas()) {
+					icons.push(icon);
+				}
+			}
+
+			if (icons.length > 0) {
+				group.items = icons;
+			}
+
+			result.push(group);
+		}
 
 		return result;
 	}
@@ -963,6 +999,48 @@ Template.chatIcons.events({
 			Blaze.remove(iconsWindowView);
 			iconsWindowView = null;
 		}
+	},
+
+	'click .tabItems': function(e, t) {
+		iconsWindowTab.set('items');
+		t.$('.tabItems').addClass('active');
+		t.$('.tabShop').removeClass('active');
+	},
+
+	'click .tabShop': function(e, t) {
+		iconsWindowTab.set('shop');
+		t.$('.tabItems').removeClass('active');
+		t.$('.tabShop').addClass('active');
+	},
+
+	'click .buy': function(e, t) {
+		var group = e.currentTarget.dataset.group;
+		var id = e.currentTarget.dataset.id;
+
+		// TODO: Добавить проверки на клиенте + загрузку
+
+		Meteor.call('chat.buyIcon', group, id, function(err, result) {
+			if (err) {
+				Notifications.error('Не удалось купить иконку', err.error);
+			} else {
+				Notifications.success('Вы купили иконку');
+			}
+		});
+	},
+
+	'click .select': function(e, t) {
+		var group = e.currentTarget.dataset.group;
+		var id = e.currentTarget.dataset.id;
+
+		// TODO: Добавить проверки на клиенте + загрузку
+
+		Meteor.call('chat.selectIcon', group, id, function(err, result) {
+			if (err) {
+				Notifications.error('Не удалось выбрать иконку', err.error);
+			} else {
+				Notifications.success('Вы поменяли иконку');
+			}
+		});
 	}
 });
 

@@ -4,7 +4,7 @@
 
 		<div class="control">
 			<div class="user">
-				<img src="/img/game/chat/icons/common/1.png"/>
+				<img src="/img/game/chat/icons/{{iconPath}}.png"/>
 				Нафигачер
 			</div>
 
@@ -75,7 +75,7 @@
 					data-tooltip-direction="w"
 					class="{{#if this.isMotd}}motd{{/if}}"
 				>
-					<img src="/img/game/chat/icons/common/1sm.png"/>
+					<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
 					<div 
 						class="
 							username 
@@ -337,20 +337,37 @@
 		<div class="tabShop">Купить иконку</div>
 
 		<div class="icons">
-			{{#each iconGroups}}
-				<h2 class="{{this.engName}}">{{this.name}}</h2>
-				{{#if this.items}}
-					<ul>
-						{{#each this.items}}
-							<li>
-								<img src="/img/game/chat/icons/{{../engName}}/{{this}}.png"/>
-							</li>
-						{{/each}}
-					</ul>
-				{{else}}
-					<span>У вас нет иконок такого типа</span>
-				{{/if}}
-			{{/each}}
+			{{#let tab=currentTab}}
+				{{#each iconGroups}}
+					<h2 class="{{this.engName}}">{{this.name}}</h2>
+					{{#if this.items}}
+						<ul>
+							{{#each this.items}}
+								<li 
+									class="
+										{{#if this.checkSelected}}selected{{/if}}
+										{{#if and (eq tab 'shop') this.canBuy}}buy{{/if}}
+										{{#if this.checkHas}}select{{/if}}"
+									data-group="{{this.group}}"
+									data-id="{{this.engName}}"
+									data-tooltip="
+										{{#if and (eq tab 'shop') this.canBuy}}купить{{/if}}
+										{{#if this.checkHas}}выбрать{{/if}}"
+								>
+									<img src="/img/game/chat/icons/{{this.group}}/{{this.engName}}.png"/>
+									{{#if and (eq tab 'shop') this.canBuy}}
+										<span class="credits">
+											{{formatNumber this.price.credits}}
+										</span>
+									{{/if}}
+								</li>
+							{{/each}}
+						</ul>
+					{{else}}
+						<span>У вас нет иконок такого типа</span>
+					{{/if}}
+				{{/each}}
+			{{/let}}
 		</div>
 	</div>
 </template>

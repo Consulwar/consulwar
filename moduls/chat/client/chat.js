@@ -206,9 +206,17 @@ var scrollChatToBottom = function(force) {
 };
 
 var createRoom = function(name, isPublic, isOwnerPays) {
-	var message = 'Имя комнаты: ' +  name + '\n'
-	            + 'Тип комнаты: ' + (isPublic ? 'публичная' : 'приватная') + '\n'
-	            + 'Оплата сообщений: ' + (isOwnerPays ? 'ГГК' : 'кристаллы' );
+	if (!name || name.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+	
+	if (name.length > 15) {
+		Notifications.error('Максимальная длинна имени 15 символов');
+		return;
+	}
+
+	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + name;
 
 	var price = Game.Chat.Room.getPrice({
 		isPublic: isPublic,
@@ -216,43 +224,77 @@ var createRoom = function(name, isPublic, isOwnerPays) {
 	});
 
 	if (price && price.credits) {
-		message += '\n' + 'Стоимость создания: ' + price.credits + ' ГГК';
+		message += ' за ' + price.credits + ' ГГК';
 	}
 
-	if (confirm(message)) {
+	Game.Chat.showAcceptWindow(message, function() {
 		Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
 			} else {
 				Notifications.success('Вы успешно создали комнату ' + name);
+				closeControlWindow();
 				Router.go('chat', { room: name });
 			}
 		});
-	}
+	});
 };
 
 var removeRoom = function(name) {
-	Meteor.call('chat.removeRoom', name, function(err, data) {
-		if (err) {
-			Notifications.error(err.error);
-		} else {
-			Notifications.success('Вы успешно удалили комнату ' + name);
-			Router.go('chat', { room: 'general' });
-		}
+	if (!name || name.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	Game.Chat.showAcceptWindow('Удалить комнату ' + name, function() {
+		Meteor.call('chat.removeRoom', name, function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
+				Notifications.success('Вы успешно удалили комнату ' + name);
+				closeControlWindow();
+				Router.go('chat', { room: 'general' });
+			}
+		});
 	});
 };
 
 var addCredits = function(roomName, credits) {
-	Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
-		if (err) {
-			Notifications.error(err.error);
-		} else {
-			Notifications.success('Кредиты успешно зачисленны на счет комнаты');
-		}
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!credits || credits < 100) {
+		Notifications.error('Минимальная сумма 100 ГГК');
+		return;
+	}
+
+	var message = 'Зачислить ' + credits + ' ГГК на счет конматы ' + roomName;
+
+	Game.Chat.showAcceptWindow(message, function() {
+		Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
+				Notifications.success('Кредиты успешно зачисленны на счет комнаты');
+				closeBalanceWindow();
+			}
+		});
 	});
 };
 
 var addUser = function(roomName, username) {
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!username || username.length <= 0) {
+		Notifications.error('Укажите имя пользователя');
+		return;
+	}
+
 	Meteor.call('chat.addUserToRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
@@ -263,16 +305,35 @@ var addUser = function(roomName, username) {
 };
 
 var removeUser = function(roomName, username) {
-	Meteor.call('chat.removeUserFromRoom', roomName, username, function(err, data) {
-		if (err) {
-			Notifications.error(err.error);
-		} else {
-			Notifications.success('Пользователь удален из комнаты');
-		}
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!username || username.length <= 0) {
+		Notifications.error('Укажите имя пользователя');
+		return;
+	}
+
+	var message = 'Удалить из комнаты ' + roomName + ' пользователя ' + username;
+
+	Game.Chat.showAcceptWindow(message, function() {
+		Meteor.call('chat.removeUserFromRoom', roomName, username, function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			} else {
+				Notifications.success('Пользователь удален из комнаты');
+			}
+		});
 	});
 };
 
 var blockUser = function(options) {
+	if (!options || !options.username || options.username.length <= 0) {
+		Notifications.error('Укажите имя пользователя');
+		return;
+	}
+	
 	Meteor.call('chat.blockUser', options, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
@@ -287,6 +348,15 @@ var blockUser = function(options) {
 };
 
 var addModerator = function(roomName, username) {
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!username || username.length <= 0) {
+		Notifications.error('Укажите имя модератора');
+		return;
+	}
 	Meteor.call('chat.addModeratorToRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
@@ -297,6 +367,16 @@ var addModerator = function(roomName, username) {
 };
 
 var removeModerator = function(roomName, username) {
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!username || username.length <= 0) {
+		Notifications.error('Укажите имя модератора');
+		return;
+	}
+
 	Meteor.call('chat.removeModeratorFromRoom', roomName, username, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
@@ -327,9 +407,7 @@ var execClientCommand = function(message) {
 	}
 	// remove current channel
 	else if (message.indexOf('/remove channel') === 0) {
-		if (confirm('Вы действительно хотите удалить текущую комнату?')) {
-			removeRoom(Router.current().params.room);
-		}
+		removeRoom(Router.current().params.room);
 		return true;
 	}
 	// join existing channel
@@ -473,39 +551,6 @@ Template.chat.helpers({
 
 	startWith: function(text, value) {
 		return (text.substr(0, value.length) == value);
-	},
-
-	canControlRoom: function() {
-		if (['admin'].indexOf(Meteor.user().role) != -1) {
-			return true;
-		}
-
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			owner: Meteor.userId()
-		});
-	},
-
-	canControlUsers: function() {
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			owner: Meteor.userId(),
-			isPublic: { $ne: true }
-		});
-	},
-
-	canControlBlock: function() {
-		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			return true;
-		}
-
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			$or: [
-				{ owner: Meteor.userId() },
-				{ moderators: { $in: [ Meteor.user().username ] } }
-			]
-		});
 	}
 });
 
@@ -611,121 +656,25 @@ Template.chat.events({
 	'click .chat .buyFreeChat': function(e, t) {
 		e.preventDefault();
 
-		if (!confirm('Вы точно хотите больше никогда не платить за ссаный чат?')) {
-			return;
-		}
-
-		var resources = Game.Resources.getValue();
-		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
-			Notifications.error('Недостаточно средств');
-			return;
-		}
-
-		Meteor.call('chat.buyFreeChat', function(err, data) {
-			if (err) {
-				Notifications.error(err.error);
-			} else {
-				Notifications.success('Ура! Теперь не нужно платить за ссаный чат!');
+		Game.Chat.showAcceptWindow('Вы точно хотите больше никогда не платить за ссаный чат?', function() {
+			var resources = Game.Resources.getValue();
+			if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
+				Notifications.error('Недостаточно средств');
+				return;
 			}
+
+			Meteor.call('chat.buyFreeChat', function(err, data) {
+				if (err) {
+					Notifications.error(err.error);
+				} else {
+					Notifications.success('Ура! Теперь не нужно платить за ссаный чат!');
+				}
+			});
 		});
 	},
 
 	'click .chat .addCredits': function(e, t) {
 		Game.Chat.showBalanceWindow(Router.current().params.room, 1000);
-	},
-
-	'click li a.block': function(e, t) {
-		e.preventDefault();
-
-		var time = prompt('Укажите время блокировки в секундах', '86400');
-		if (!time) {
-			return;
-		}
-
-		var isLocal = true;
-		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			isLocal = confirm('Блокировать только эту комнату?');
-		}
-
-		blockUser({
-			roomName: isLocal ? Router.current().params.room : null,
-			username: e.currentTarget.dataset.username,
-			time: parseInt(time, 10)
-		});
-	},
-
-	'click li a.unblock': function(e, t) {
-		e.preventDefault();
-
-		var isLocal = true;
-		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			isLocal = confirm('Разблокировать только эту комнату?');
-		}
-
-		blockUser({
-			roomName: isLocal ? Router.current().params.room : null,
-			username: e.currentTarget.dataset.username,
-			time: 0
-		});
-	},
-
-	'click li a.remove': function(e, t) {
-		e.preventDefault();
-
-		var username = e.currentTarget.dataset.username;
-		if (confirm('Удалить из комнаты пользователя ' + username + '?')) {
-			removeUser(Router.current().params.room, username);
-		}
-	},
-
-	'submit .chat #control': function(e, t) {
-		e.preventDefault();
-
-		var username = t.find('#control input[name="username"]').value;
-		var roomName = Router.current().params.room;
-
-		addUser(roomName, username);
-		t.find('#control input[name="username"]').value = '';
-	},
-
-	'click li a.addModerator': function(e, t) {
-		e.preventDefault();
-
-		var username = prompt('Укажите логин');
-		if (username) {
-			addModerator(Router.current().params.room, username);
-		}
-	},
-
-	'click li a.removeModerator': function(e, t) {
-		e.preventDefault();
-
-		var username = prompt('Укажите логин');
-		if (username) {
-			removeModerator(Router.current().params.room, username);
-		}
-	},
-
-	'click li a.createRoom': function(e, t) {
-		e.preventDefault();
-
-		var name = prompt('Введите название комнаты');
-		if (!name) {
-			return true;
-		}
-
-		var isPublic = confirm('Комната будет публичной?');
-		var isOwnerPays = confirm('Сообщения оплачиваются грязными галлактическими кредитами?');
-
-		createRoom(name, isPublic, isOwnerPays);
-	},
-
-	'click li a.removeRoom': function(e, t) {
-		e.preventDefault();
-
-		if (confirm('Вы действительно хотите удалить текущую комнату?')) {
-			removeRoom(Router.current().params.room);
-		}
 	},
 
 	'click .dollar': function(e, t) {
@@ -870,6 +819,10 @@ Game.Chat.showBalanceWindow = function(roomName, credits) {
 	}
 };
 
+var closeBalanceWindow = function() {
+
+};
+
 var loadBalanceHistory = function(roomName, page) {
 	balanceHistory.set(null);
 	balanceHistoryCount.set(null);
@@ -895,25 +848,11 @@ Template.chatBalance.helpers({
 
 Template.chatBalance.events({
 	'click .close': function(e, t) {
-		if (balanceWindowView) {
-			Blaze.remove(balanceWindowView);
-			balanceWindowView = null;
-		}
+		closeBalanceWindow();
 	},
 
 	'click .accept': function(e, t) {
-		var credits = parseInt( t.find('input[name="credits"]').value );
-		if (!credits || credits < 100) {
-			Notifications.error('Минимальная сумма 100 ГГК');
-			return;
-		}
-
-		addCredits(t.data.roomName, credits);
-
-		if (balanceWindowView) {
-			Blaze.remove(balanceWindowView);
-			balanceWindowView = null;
-		}
+		addCredits(t.data.roomName, t.find('input[name="credits"]').value );
 	}
 });
 
@@ -922,19 +861,130 @@ Template.chatBalance.events({
 // ----------------------------------------------------------------------------
 
 var controlWindowView = null;
+var createPriceCredits = new ReactiveVar(null);
 
 Game.Chat.showControlWindow = function() {
 	if (!controlWindowView) {
-		controlWindowView = Blaze.renderWithData(Template.chatControl, { }, $('.over')[0]);
+		controlWindowView = Blaze.render(Template.chatControl, $('.over')[0]);
 	}
 };
 
+var closeControlWindow = function() {
+	if (controlWindowView) {
+		Blaze.remove(controlWindowView);
+		controlWindowView = null;
+	}
+};
+
+var calculateCreatePriceCredits = function(t) {
+	var price = Game.Chat.Room.getPrice({
+		isPublic: t.find('input[name="roomType"]:checked').value == 'public',
+		isOwnerPays: t.find('input[name="roomPayment"]:checked').value == 'credits'
+	});
+
+	if (price) {
+		createPriceCredits.set(price.credits);
+	} else {
+		createPriceCredits.set(null);
+	}
+};
+
+Template.chatControl.onRendered(function() {
+	calculateCreatePriceCredits(this);
+});
+
+Template.chatControl.helpers({
+	canControlRoom: function() {
+		if (['admin'].indexOf(Meteor.user().role) != -1) {
+			return true;
+		}
+
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			owner: Meteor.userId()
+		});
+	},
+
+	canControlUsers: function() {
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			owner: Meteor.userId(),
+			isPublic: { $ne: true }
+		});
+	},
+
+	canControlBlock: function() {
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			return true;
+		}
+
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room,
+			$or: [
+				{ owner: Meteor.userId() },
+				{ moderators: { $in: [ Meteor.user().username ] } }
+			]
+		});
+	},
+
+	credits: function() {
+		return createPriceCredits.get();
+	}
+});
+
 Template.chatControl.events({
 	'click .close': function(e, t) {
-		if (controlWindowView) {
-			Blaze.remove(controlWindowView);
-			controlWindowView = null;
-		}
+		closeControlWindow();
+	},
+
+	'click input[name="roomType"], click input[name="roomPayment"]': function(e, t) {
+		calculateCreatePriceCredits(t);
+	},
+
+	'click .create': function(e, t) {
+		createRoom(
+			t.find('input[name="roomname"]').value,
+			t.find('input[name="roomType"]:checked').value == 'public',
+			t.find('input[name="roomPayment"]:checked').value == 'credits'
+		);
+	},
+
+	'click .removeRoom': function(e, t) {
+		removeRoom(Router.current().params.room);
+	},
+
+	'click .block': function(e, t) {
+		blockUser({
+			roomName: t.find('input[name="blockType"]:checked').value == 'local'
+				? Router.current().params.room
+				: null,
+			username: t.find('input[name="username"]').value,
+			time: parseInt( t.find('input[name="period"]').value * 60 ),
+			reason: t.find('textarea[name="reason"]').value
+		});
+	},
+
+	'click .unblock': function(e, t) {
+		blockUser({
+			roomName: t.find('input[name="blockType"]:checked').value == 'local'
+				? Router.current().params.room
+				: null,
+			username: t.find('input[name="username"]').value,
+			time: 0,
+			reason: t.find('textarea[name="reason"]').value
+		});
+	},
+
+	'click .removeUser': function(e, t) {
+		removeUser(Router.current().params.room, t.find('input[name="username"]').value);
+	},
+
+	'click .addModerator': function(e, t) {
+		addModerator(Router.current().params.room, t.find('input[name="moderatorname"]').value);
+	},
+
+	'click .removeModerator': function(e, t) {
+		removeModerator(Router.current().params.room, t.find('input[name="moderatorname"]').value);
 	}
 });
 
@@ -1017,14 +1067,22 @@ Template.chatIcons.events({
 		var group = e.currentTarget.dataset.group;
 		var id = e.currentTarget.dataset.id;
 
-		// TODO: Добавить проверки на клиенте + загрузку
+		var icon = Game.Chat.Icons.getIcon(group, id);
+		if (!icon || !icon.canBuy()) {
+			Notifications.error('Вы не можете купить эту иконку');
+			return;
+		}
 
-		Meteor.call('chat.buyIcon', group, id, function(err, result) {
-			if (err) {
-				Notifications.error('Не удалось купить иконку', err.error);
-			} else {
-				Notifications.success('Вы купили иконку');
-			}
+		var message = 'Купить иконку за ' + icon.price.credits + ' ГГК';
+
+		Game.Chat.showAcceptWindow(message, function() {
+			Meteor.call('chat.buyIcon', group, id, function(err, result) {
+				if (err) {
+					Notifications.error('Не удалось купить иконку', err.error);
+				} else {
+					Notifications.success('Вы купили иконку');
+				}
+			});
 		});
 	},
 
@@ -1032,14 +1090,22 @@ Template.chatIcons.events({
 		var group = e.currentTarget.dataset.group;
 		var id = e.currentTarget.dataset.id;
 
-		// TODO: Добавить проверки на клиенте + загрузку
+		var icon = Game.Chat.Icons.getIcon(group, id);
+		if (!icon || !icon.checkHas()) {
+			Notifications.error('Вы не можете выбрать эту иконку');
+			return;
+		}
 
-		Meteor.call('chat.selectIcon', group, id, function(err, result) {
-			if (err) {
-				Notifications.error('Не удалось выбрать иконку', err.error);
-			} else {
-				Notifications.success('Вы поменяли иконку');
-			}
+		var message = 'Сменить иконку';
+
+		Game.Chat.showAcceptWindow(message, function() {
+			Meteor.call('chat.selectIcon', group, id, function(err, result) {
+				if (err) {
+					Notifications.error('Не удалось выбрать иконку', err.error);
+				} else {
+					Notifications.success('Вы поменяли иконку');
+				}
+			});
 		});
 	}
 });

@@ -407,7 +407,9 @@ Meteor.methods({
 
 		if (options.reason) {
 			check(options.reason, String);
-			history.reason = options.reason;
+			if (options.reason.length > 0) {
+				history.reason = options.reason;
+			}
 		}
 
 		Game.BanHistory.Collection.insert(history);
@@ -1023,7 +1025,7 @@ Meteor.methods({
 		});
 
 		var message = {
-			room: room._id,
+			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,

@@ -15,7 +15,13 @@
 
 			{{#if price}}
 				<div>
-					<span>Внимание! Каждое сообщение будет стоить вам:</span>
+					<span>
+						{{#if price.credits}}
+							Сообщения оплачиваются из общего баланса комнаты:
+						{{else}}
+							Внимание! Каждое сообщение будет стоить вам:
+						{{/if}}
+					</span>
 					<ul class="resources" title="Стоимость сообщения">
 						{{#if price.crystals}}
 							<li class="crystals">{{price.crystals}}</li>
@@ -176,8 +182,8 @@
 </template>
 
 <template name="chatAccept">
-	<div class="smoke"></div>
-	<div class="chatAccept">
+	<div class="smoke" style="z-index: 199;"></div>
+	<div class="chatAccept" style="z-index: 200;">
 		<div class="close"></div>
 		<span class="title">Подтвердите действие</span>
 		<span class="message">{{message}}</span>
@@ -259,10 +265,12 @@
 			<h2>Создание / Удаление комнаты</h2>
 			<label>
 				<span class="title">Название:</span>
-				<input type="text" name="credits"/>
+				<input type="text" name="roomname"/>
 				<span class="hint">максимум 15 символов</span>
 			</label>
-			<div class="button removeRoom"></div>
+			{{#if canControlRoom}}
+				<div class="button removeRoom"></div>
+			{{/if}}
 			<label>
 				<span class="title">Тип комнаты:</span>
 				<div class="radioBlock">
@@ -281,50 +289,58 @@
 					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
 				</div>
 			</label>
-			<div class="creditsBlock">
-				<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
-				<div class="amount">200</div>
-			</div>
+			{{#if credits}}
+				<div class="creditsBlock">
+					<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
+					<div class="amount">{{credits}}</div>
+				</div>
+			{{/if}}
 			<div class="button accept create">Создать комнату</div>
 		</div>
 
-		<div class="userControl">
-			<h2>Управление пользователями</h2>
-			<label>
-				<span class="title">Никнейм Консула:</span>
-				<input type="text" name="credits"/>
-			</label>
-			<label>
-				<span class="title">Время бана в минутах:</span>
-				<input type="text" name="credits"/>
-			</label>
-			<label>
-				<span class="title">Причина бана:</span>
-				<textarea></textarea>
-			</label>
-			<label>
-				<span class="title">Тип бана / разбана:</span>
-				<div class="radioBlock">
-					<input type="radio" name="blockType" value="local" checked="checked"/> локально
-				</div>
-				<div class="radioBlock">
-					<input type="radio" name="blockType" value="global"/> глобально
-				</div>
-			</label>
-			<div class="controlBlock">
-				<div class="button accept block">Наказать</div>
-				<div class="button accept unblock">Простить</div>
-				<div class="button cancel removeUser">Удалить из чата</div>
-			</div>
-			<div class="controlBlock">
+		{{#if canControlBlock}}
+			<div class="userControl">
+				<h2>Управление пользователями</h2>
 				<label>
-					<span class="title">Никнейм модератора:</span>
-					<input type="text" name="credits"/>
+					<span class="title">Никнейм Консула:</span>
+					<input type="text" name="username"/>
 				</label>
-				<div class="button accept addModerator">Назначить</div>
-				<div class="button accept removeModerator">Разжаловать</div>
+				<label>
+					<span class="title">Время бана в минутах:</span>
+					<input type="text" name="period"/>
+				</label>
+				<label>
+					<span class="title">Причина бана:</span>
+					<textarea name="reason"></textarea>
+				</label>
+				<label>
+					<span class="title">Тип бана / разбана:</span>
+					<div class="radioBlock">
+						<input type="radio" name="blockType" value="local" checked="checked"/> локально
+					</div>
+					<div class="radioBlock">
+						<input type="radio" name="blockType" value="global"/> глобально
+					</div>
+				</label>
+				<div class="controlBlock">
+					<div class="button accept block">Наказать</div>
+					<div class="button accept unblock">Простить</div>
+					{{#if canControlUsers}}
+						<div class="button cancel removeUser">Удалить из чата</div>
+					{{/if}}
+				</div>
+				{{#if canControlRoom}}
+					<div class="controlBlock">
+						<label>
+							<span class="title">Никнейм модератора:</span>
+							<input type="text" name="moderatorname"/>
+						</label>
+						<div class="button accept addModerator">Назначить</div>
+						<div class="button accept removeModerator">Разжаловать</div>
+					</div>
+				{{/if}}
 			</div>
-		</div>
+		{{/if}}
 	</div>
 </template>
 

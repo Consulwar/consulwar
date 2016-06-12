@@ -1,5 +1,8 @@
 initChatClient = function() {
 
+// TODO: Reload rooms list after create or remove
+// TODO: Balance history pagination
+
 initChatLib();
 
 Meteor.subscribe('chatIcons');
@@ -868,6 +871,17 @@ Template.chatUserPopup.events({
 // ----------------------------------------------------------------------------
 
 var roomsList = new ReactiveVar(null);
+var isAnimation = false;
+
+Template.chatRoomsList.onRendered(function() {
+	if (!roomsList.get()) {
+		Meteor.call('chat.getRoomsList', function(err, data) {
+			if (!err) {
+				roomsList.set(data);
+			}
+		});
+	}
+});
 
 var checkIsRoomVisible = function(roomName) {
 	var user = Meteor.user();
@@ -882,15 +896,20 @@ var checkIsRoomVisible = function(roomName) {
 	return true;
 };
 
-Template.chatRoomsList.onRendered(function() {
-	if (!roomsList.get()) {
-		Meteor.call('chat.getRoomsList', function(err, data) {
-			if (!err) {
-				roomsList.set(data);
-			}
-		});
-	}
-});
+var canAnimateLeft = function(t) {
+	var left = parseInt( t.$('ul').css('left') );
+	return (left >= 0) ? false : true;
+};
+
+var canAnimateRight = function(t) {
+	var left = parseInt( t.$('ul').css('left') );
+	var contentWidth = 0;
+	t.$('ul li').each(function() {
+		contentWidth  += $(this).outerWidth(true);
+	});
+	var containerWidth = t.$('ul').width();
+	return (contentWidth + left > containerWidth) ? true : false;
+};
 
 Template.chatRoomsList.helpers({
 	rooms: function() { return roomsList.get(); },
@@ -899,11 +918,21 @@ Template.chatRoomsList.helpers({
 
 Template.chatRoomsList.events({
 	'click .arrow-left': function(e, t) {
-		t.$('ul').animate({ left: '+=150px' });
+		if (!isAnimation && canAnimateLeft(t)) {
+			isAnimation = true;
+			t.$('ul').animate({ left: '+=300px' }, function() {
+				isAnimation = false;
+			});
+		}
 	},
 
 	'click .arrow-right': function(e, t) {
-		t.$('ul').animate({ left: '-=150px' });
+		if (!isAnimation && canAnimateRight(t)) {
+			isAnimation = true;
+			t.$('ul').animate({ left: '-=300px' }, function() {
+				isAnimation = false;
+			});
+		}
 	},
 
 	'click .arrow-down': function(e, t) {

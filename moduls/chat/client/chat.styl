@@ -256,17 +256,23 @@
 				background-image url(/img/game/chat/right-arrow.png)
 				
 		.arrow-down
-			float right
 			background-image url(/img/game/chat/arrow-down.png)
 
-		ul
-			float left
+		.listContainer
 			display inline-block
+			float left
+			width 853px
+			height 46px
+			overflow hidden
+
+		ul
+			position relative
+			white-space nowrap
 			vertical-align top
 			
 			li
 				display inline-block
-				float left
+				float none
 				background-color #6B722D
 				width 150px
 				height 46px
@@ -290,6 +296,30 @@
 
 	.roomsPopup
 		position absolute
+		top 46px
+		right 185px
+		background-color #000000
+		
+		ul
+			display block
+			
+			li
+				display block
+				
+		.save
+			display inline-block
+			cursor pointer
+			background-repeat no-repeat
+			background-size 100% 100%
+			background-image url(/img/game/chat/accept.png)
+			font-size 24px
+			font-weight bold
+			text-align center
+			color #FFFFFF
+		
+			&:hover:not(.disabled)
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)			
 
 	.userPopup
 		position absolute

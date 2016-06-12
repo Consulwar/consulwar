@@ -591,7 +591,7 @@ Template.chat.helpers({
 
 Template.chat.events({
 	'click .chat': function(e, t) {
-		hideUserPopup();
+		hidePopups();
 	},
 
 	'submit .chat #message': function(e, t) {
@@ -746,6 +746,11 @@ Template.chat.events({
 	}
 });
 
+var hidePopups = function() {
+	hideUserPopup();
+	hideRoomsPopup();
+};
+
 // ----------------------------------------------------------------------------
 // User control popup
 // ----------------------------------------------------------------------------
@@ -753,8 +758,7 @@ Template.chat.events({
 var userPopupView = null;
 
 Game.Chat.showUserPopup = function(x, y, username) {
-	hideUserPopup();
-
+	hidePopups();
 	if (username != Meteor.user().username) {
 		userPopupView = Blaze.renderWithData(
 			Template.chatUserPopup, {
@@ -822,6 +826,19 @@ Template.chatUserPopup.events({
 
 var roomsList = new ReactiveVar(null);
 
+var checkIsRoomVisible = function(roomName) {
+	var user = Meteor.user();
+	if (user
+	 && user.settings
+	 && user.settings.chat
+	 && user.settings.chat.hiddenRooms
+	 && user.settings.chat.hiddenRooms.indexOf(roomName) != -1
+	) {
+		return false;
+	}
+	return true;
+};
+
 Template.chatRoomsList.onRendered(function() {
 	if (!roomsList.get()) {
 		Meteor.call('chat.getRoomsList', function(err, data) {
@@ -833,8 +850,75 @@ Template.chatRoomsList.onRendered(function() {
 });
 
 Template.chatRoomsList.helpers({
-	rooms: function() {
-		return roomsList.get();
+	rooms: function() { return roomsList.get(); },
+	isVisible: function(roomName) { return checkIsRoomVisible(roomName); }
+});
+
+Template.chatRoomsList.events({
+	'click .arrow-left': function(e, t) {
+		t.$('ul').animate({ left: '+=150px' });
+	},
+
+	'click .arrow-right': function(e, t) {
+		t.$('ul').animate({ left: '-=150px' });
+	},
+
+	'click .arrow-down': function(e, t) {
+		e.stopPropagation();
+		Game.Chat.showRoomsPopup();
+	},
+
+	'click .hide': function(e, t) {
+		rooms = {};
+		rooms[e.currentTarget.dataset.roomname] = false;
+		Meteor.call('chat.setupRoomsVisibility', rooms, function(err, data) {
+			if (err) {
+				Notifications.error(err.error);
+			}
+		});
+	}
+});
+
+var roomsPopupView = null;
+
+Game.Chat.showRoomsPopup = function() {
+	if (!roomsPopupView) {
+		hidePopups();
+		roomsPopupView = Blaze.render(Template.chatRoomsPopup, $('.chat')[0]);
+	}
+};
+
+var hideRoomsPopup = function() {
+	if (roomsPopupView) {
+		Blaze.remove(roomsPopupView);
+		roomsPopupView = null;
+	}
+};
+
+Template.chatRoomsPopup.helpers({
+	rooms: function() { return roomsList.get(); },
+	isVisible: function(roomName) { return checkIsRoomVisible(roomName); }
+});
+
+Template.chatRoomsPopup.events({
+	'click li': function(e, t) {
+		e.stopPropagation();
+	},
+
+	'click .save': function(e, t) {
+		var rooms = {};
+
+		t.$('li').each(function(index, element) {
+			rooms[element.dataset.roomname] = $(element).find(':checked').length > 0;
+		});
+
+		if (_.keys(rooms).length > 0) {
+			Meteor.call('chat.setupRoomsVisibility', rooms, function(err, data) {
+				if (err) {
+					Notifications.error(err.error);
+				}
+			});
+		}
 	}
 });
 

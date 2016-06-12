@@ -189,19 +189,39 @@
 		<span class="help"></span>
 		{{#if rooms}}
 			<span class="arrow-left"></span>
-			<ul>
-				{{#each rooms}}
-					<li>
-						<a href="{{pathFor 'chat' room=this.name}}">
-							{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
-						</a>
-						<span class="hide"></span>
-					</li>
-				{{/each}}
-			</ul>
+			<div class="listContainer">
+				<ul>
+					{{#each rooms}}
+						{{#if isVisible this.name}}
+							<li>
+								<a href="{{pathFor 'chat' room=this.name}}">
+									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
+								</a>
+								<span class="hide" data-roomname="{{this.name}}"></span>
+							</li>
+						{{/if}}
+					{{/each}}
+				</ul>
+			</div>
 			<span class="arrow-right"></span>
 		{{/if}}
 		<span class="arrow-down"></span>
+	</div>
+</template>
+
+<template name="chatRoomsPopup">
+	<div class="roomsPopup">
+		{{#if rooms}}
+			<ul>
+				{{#each rooms}}
+					<li data-roomname="{{this.name}}">
+						<input type="checkbox" checked="{{isVisible this.name}}"/>
+						{{this.name}}
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+		<div class="save">Сохранить</div>
 	</div>
 </template>
 

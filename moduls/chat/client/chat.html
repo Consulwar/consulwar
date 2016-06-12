@@ -185,8 +185,8 @@
 
 <template name="chatRoomsList">
 	<div class="roomsList">
-		<span class="general"></span>
-		<span class="help"></span>
+		<a class="general" href="{{pathFor 'chat' room='general'}}"></a>
+		<a class="help" href="{{pathFor 'chat' room='help'}}"></a>
 		{{#if rooms}}
 			<span class="arrow-left"></span>
 			<div class="listContainer">
@@ -265,7 +265,7 @@
 		</div>
 
 		<div class="rules">
-			<p>TODO: Сверстать правила!</p>
+			<iframe src="/legal/rules"></iframe>
 		</div>
 	</div>
 </template>

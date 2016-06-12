@@ -7,14 +7,32 @@
 	padding 0px
 	z-index 2
 	height 574px
-	background-color #0C131D
+	background-color #101217
 	
+	.username
+		color #c4aba1
+	.role
+		color #acdaf9
+	
+	.admin
+		color #d65f52
+	.helper
+		color #a57fce
+	.owner
+		color #e9a844
+	.moderator
+		color #56baf2
+
 	.control
 		position absolute
 		top 0px
 		left 0px
 		width 198px
 		
+		.user
+			img
+				vertical-align middle
+
 		.settings
 		.info
 		.dollar
@@ -50,8 +68,8 @@
 			cursor pointer
 			position relative
 			display block
-			margin-bottom 5px
-			margin-left 5px
+			padding 2.5px
+			background-color #13161b
 			
 			&:hover
 				-webkit-filter brightness(1.4)
@@ -77,6 +95,7 @@
 				top 3px
 				left 200px
 				line-height 19px
+				color #dcdcdc
 
 			span
 				color #C4ABA1
@@ -95,7 +114,8 @@
 			&.more
 				cursor pointer
 				text-align center
-				color #9399b1
+				color #dfdfdf
+				background-color #0f1116
 			
 			&.limit
 				text-align center
@@ -122,13 +142,7 @@
 				
 			.status
 				font-style italic
-					
-			.admin
-				color #C04C3F
-					
-			.helper
-				color #8D5AA7
-	
+
 	form
 		position absolute
 		left 198px
@@ -139,8 +153,8 @@
 			width 800px
 			height 52px
 			padding 2px
-			border 1px solid #1D2D3C
-			background-color #090E14
+			border 1px solid #151515
+			background-color #0b0b0b
 			color #fff
 			resize none
 			vertical-align top
@@ -264,6 +278,7 @@
 			width 853px
 			height 46px
 			overflow hidden
+			background-color #090a0d
 
 		ul
 			position relative
@@ -273,19 +288,22 @@
 			li
 				display inline-block
 				float none
-				background-color #6B722D
-				width 150px
-				height 46px
+				background-color #090a0d
+				height 38px
+				padding 8px
 
 				a
+					vertical-align middle
 					display inline-block
 					text-decoration none
 					font-weight bold
-					color #FFFFFF
+					color #dfdfdf
 					
 				.hide
+					vertical-align middle
 					cursor pointer
 					display inline-block
+					margin-left 10px
 					width 30px
 					height 30px
 					background-image url(/img/game/cosmomap/button_close.png)
@@ -361,7 +379,6 @@
 				&:hover
 					-webkit-filter brightness(1.4)
 					filter brightness(1.4)
-
 
 .chatAccept
 .chatHelp
@@ -579,7 +596,7 @@
 		background-color #13161b
 
 .chatControl
-	width 880px // TODO: fix css
+	width 880px
 	
 	h2
 		font-size 14px

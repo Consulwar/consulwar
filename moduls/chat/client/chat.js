@@ -265,6 +265,7 @@ var addCredits = function(roomName, credits) {
 		return;
 	}
 
+	credits = parseInt(credits);
 	if (!credits || credits < 100) {
 		Notifications.error('Минимальная сумма 100 ГГК');
 		return;
@@ -479,15 +480,25 @@ var execClientCommand = function(message) {
 };
 
 
+var isOwner = function(userId) {
+	return Game.Chat.Room.Collection.findOne({
+		name: Router.current().params.room,
+		owner: userId
+	});
+};
+
+var isModerator = function(username) {
+	return Game.Chat.Room.Collection.findOne({
+		name: Router.current().params.room,
+		moderators: { $in: [ username ] }
+	});
+};
+
 var canControlRoom = function() {
 	if (['admin'].indexOf(Meteor.user().role) != -1) {
 		return true;
 	}
-
-	return Game.Chat.Room.Collection.findOne({
-		name: Router.current().params.room,
-		owner: Meteor.userId()
-	});
+	return isOwner(Meteor.userId());
 };
 
 var canControlUsers = function() {
@@ -502,16 +513,39 @@ var canControlBlock = function() {
 	if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
 		return true;
 	}
-
-	return Game.Chat.Room.Collection.findOne({
-		name: Router.current().params.room,
-		$or: [
-			{ owner: Meteor.userId() },
-			{ moderators: { $in: [ Meteor.user().username ] } }
-		]
-	});
+	if (isOwner(Meteor.userId()) || isModerator(Meteor.user().username)) {
+		return true;
+	}
+	return false;
 };
 
+
+var getUserRole = function(userId, username, role, rating) {
+	if (role == 'admin') {
+		return {
+			id: role,
+			name: 'Администратор'
+		};
+	} else if (role == 'helper') {
+		return {
+			id: role,
+			name: 'Помошник'
+		};
+	} else if (isOwner(userId)) {
+		return {
+			id: 'owner',
+			name: 'Владелец'
+		};
+	} else if (isModerator(username)) {
+		return {
+			id: 'moderator',
+			name: 'Модератор'
+		};
+	}
+	return {
+		name: 'Ранг ' + Game.User.getLevel(rating)
+	};
+};
 
 Template.chat.helpers({
 	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
@@ -521,6 +555,15 @@ Template.chat.helpers({
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
 	messages: function() { return messages.list(); },
+
+	getUserRole: function() {
+		var user = Meteor.user();
+		return getUserRole(user._id, user.username, user.role, user.rating);
+	},
+
+	getUserRoleByMessage: function(message) {
+		return getUserRole(message.user_id, message.username, message.role, message.rating);
+	},
 
 	room: function() {
 		return Game.Chat.Room.Collection.findOne({
@@ -1098,7 +1141,7 @@ var calculateCreatePriceCredits = function(t) {
 	if (price) {
 		createPriceCredits.set(price.credits);
 	} else {
-		createPriceCredits.set(null);
+		createPriceCredits.set(0);
 	}
 };
 

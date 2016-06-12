@@ -164,6 +164,7 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			message: message,
 			timestamp: Game.getCurrentTime()
 		};
@@ -423,6 +424,7 @@ Meteor.methods({
 				user_id: user._id,
 				username: user.username,
 				alliance: user.alliance,
+				rating: user.rating,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
 					reason: history.reason,
@@ -785,6 +787,7 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'addfunds',
 				amount: credits
@@ -876,6 +879,7 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'addModerator'
 			},
@@ -944,6 +948,7 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'removeModerator'
 			},
@@ -1029,6 +1034,7 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'add'
 			},
@@ -1115,6 +1121,7 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'remove'
 			},
@@ -1177,6 +1184,7 @@ Meteor.methods({
 		}, {
 			fields: {
 				_id: 1,
+				user_id: 1,
 				username: 1,
 				message: 1,
 				data: 1,
@@ -1410,6 +1418,7 @@ Meteor.publish('chat', function (roomName) {
 			}, {
 				fields: {
 					_id: 1,
+					user_id: 1,
 					username: 1,
 					message: 1,
 					data: 1,

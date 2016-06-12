@@ -333,7 +333,7 @@ var blockUser = function(options) {
 		Notifications.error('Укажите имя пользователя');
 		return;
 	}
-	
+
 	Meteor.call('chat.blockUser', options, function(err, data) {
 		if (err) {
 			Notifications.error(err.error);
@@ -478,6 +478,41 @@ var execClientCommand = function(message) {
 	return false;
 };
 
+
+var canControlRoom = function() {
+	if (['admin'].indexOf(Meteor.user().role) != -1) {
+		return true;
+	}
+
+	return Game.Chat.Room.Collection.findOne({
+		name: Router.current().params.room,
+		owner: Meteor.userId()
+	});
+};
+
+var canControlUsers = function() {
+	return Game.Chat.Room.Collection.findOne({
+		name: Router.current().params.room,
+		owner: Meteor.userId(),
+		isPublic: { $ne: true }
+	});
+};
+
+var canControlBlock = function() {
+	if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+		return true;
+	}
+
+	return Game.Chat.Room.Collection.findOne({
+		name: Router.current().params.room,
+		$or: [
+			{ owner: Meteor.userId() },
+			{ moderators: { $in: [ Meteor.user().username ] } }
+		]
+	});
+};
+
+
 Template.chat.helpers({
 	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
 	isChatFree: function() { return Meteor.user().isChatFree; },
@@ -555,7 +590,10 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
-	// submit message
+	'click .chat': function(e, t) {
+		hideUserPopup();
+	},
+
 	'submit .chat #message': function(e, t) {
 		e.preventDefault();
 
@@ -600,8 +638,26 @@ Template.chat.events({
 		}
 	},
 
-	'click .messages span:not(.dice), click .participants span': function(e, t) {
+	'click .participants span': function(e, t) {
 		t.find('#message textarea[name="text"]').value +=  '@' + e.currentTarget.innerHTML.trim();
+	},
+
+	'click .messages li': function(e, t) {
+		e.stopPropagation();
+
+		var username = e.currentTarget.dataset.username;
+		if (!username || username.length <= 0) {
+			return;
+		}
+
+		var parentPosition = t.$('.messages').position();
+		var position = $(e.currentTarget).position();
+
+		Game.Chat.showUserPopup(
+			position.left + parentPosition.left + 200,
+			position.top + parentPosition.top,
+			username
+		);
 	},
 
 	// load previous messages
@@ -691,7 +747,77 @@ Template.chat.events({
 });
 
 // ----------------------------------------------------------------------------
-// Rooms bottom menu
+// User control popup
+// ----------------------------------------------------------------------------
+
+var userPopupView = null;
+
+Game.Chat.showUserPopup = function(x, y, username) {
+	hideUserPopup();
+
+	if (username != Meteor.user().username) {
+		userPopupView = Blaze.renderWithData(
+			Template.chatUserPopup, {
+				x: x,
+				y: y,
+				username: username
+			}, $('.chat')[0]
+		);
+	}
+};
+
+var hideUserPopup = function() {
+	if (userPopupView) {
+		Blaze.remove(userPopupView);
+		userPopupView = null;
+	}
+};
+
+Template.chatUserPopup.onRendered(function() {
+	this.$('.rooms').hide();
+});
+
+Template.chatUserPopup.helpers({
+	canControlBlock: function() { return canControlBlock(); },
+
+	rooms: function() {
+		var rooms = roomsList.get();
+		if (!rooms) {
+			return null;
+		}
+
+		var result = [];
+		for (var i = 0; i < rooms.length; i++) {
+			if (!rooms[i].isPublic && rooms[i].owner == Meteor.userId()) {
+				result.push(rooms[i]);	
+			}
+		}
+
+		return result.length > 0 ? result : null;
+	}
+});
+
+Template.chatUserPopup.events({
+	'click .response': function(e, t) {
+		$('.chat #message textarea[name="text"]').get(0).value +=  '@' + t.data.username;
+	},
+
+	'click .add': function(e, t) {
+		e.stopPropagation();
+		t.$('.rooms').show();
+	},
+
+	'click .rooms li': function(e, t) {
+		addUser(e.currentTarget.dataset.roomname, t.data.username);
+	},
+
+	'click .block': function(e, t) {
+		Game.Chat.showControlWindow(t.data.username);
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Rooms list + popup
 // ----------------------------------------------------------------------------
 
 var roomsList = new ReactiveVar(null);
@@ -711,10 +837,6 @@ Template.chatRoomsList.helpers({
 		return roomsList.get();
 	}
 });
-
-// TODO: Implement icons buy and selection!
-// TODO: Room balance history with pagination!
-// TODO: Tooltips!
 
 // ----------------------------------------------------------------------------
 // Accept window
@@ -820,7 +942,10 @@ Game.Chat.showBalanceWindow = function(roomName, credits) {
 };
 
 var closeBalanceWindow = function() {
-
+	if (balanceWindowView) {
+		Blaze.remove(balanceWindowView);
+		balanceWindowView = null;
+	}
 };
 
 var loadBalanceHistory = function(roomName, page) {
@@ -863,9 +988,13 @@ Template.chatBalance.events({
 var controlWindowView = null;
 var createPriceCredits = new ReactiveVar(null);
 
-Game.Chat.showControlWindow = function() {
+Game.Chat.showControlWindow = function(username) {
 	if (!controlWindowView) {
-		controlWindowView = Blaze.render(Template.chatControl, $('.over')[0]);
+		controlWindowView = Blaze.renderWithData(
+			Template.chatControl, {
+				username: username
+			}, $('.over')[0]
+		);
 	}
 };
 
@@ -894,42 +1023,10 @@ Template.chatControl.onRendered(function() {
 });
 
 Template.chatControl.helpers({
-	canControlRoom: function() {
-		if (['admin'].indexOf(Meteor.user().role) != -1) {
-			return true;
-		}
-
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			owner: Meteor.userId()
-		});
-	},
-
-	canControlUsers: function() {
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			owner: Meteor.userId(),
-			isPublic: { $ne: true }
-		});
-	},
-
-	canControlBlock: function() {
-		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			return true;
-		}
-
-		return Game.Chat.Room.Collection.findOne({
-			name: Router.current().params.room,
-			$or: [
-				{ owner: Meteor.userId() },
-				{ moderators: { $in: [ Meteor.user().username ] } }
-			]
-		});
-	},
-
-	credits: function() {
-		return createPriceCredits.get();
-	}
+	canControlRoom: function() { return canControlRoom(); },
+	canControlUsers: function() { return canControlUsers(); },
+	canControlBlock: function() { return canControlBlock(); },
+	credits: function() { return createPriceCredits.get(); }
 });
 
 Template.chatControl.events({

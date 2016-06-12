@@ -212,7 +212,6 @@
 				&:hover
 					background-color rgba(255, 255, 255, 0.02)
 
-
 	.roomsList
 		position absolute
 		top 0px
@@ -288,7 +287,51 @@
 				
 					&:hover
 						background-image url(/img/game/cosmomap/button_close_active.png)
+
+	.roomsPopup
+		position absolute
+
+	.userPopup
+		position absolute
+		
+		.response
+		.add
+		.block
+			float left
+			cursor pointer
+			display inline-block
+			width 48px
+			height 48px
+			background-repeat no-repeat
+			background-size 100% 100%
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
 			
+		.response
+			background-image url(/img/game/chat/arrow-down.png)
+		
+		.add
+			background-image url(/img/game/chat/add.png)
+				
+		.block
+			background-image url(/img/game/chat/ban.png)
+			
+		.rooms
+			display none
+			position absolute
+			top 48px
+			left 48px
+			background-color #000000
+			
+			li
+				cursor pointer
+				display block
+				
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
 
 .chatAccept
 .chatHelp

@@ -78,7 +78,8 @@
 			{{#each messages}}
 				<li
 					data-tooltip="{{#if not this.isMotd}}{{formatDate this.timestamp -180}}{{/if}}"
-					data-tooltip-direction="w"
+					data-tooltip-direction="w" 
+					data-username="{{this.username}}" 
 					class="{{#if this.isMotd}}motd{{/if}}"
 				>
 					<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
@@ -156,6 +157,29 @@
 			<textarea name="text" maxlength="140"></textarea>
 			<input type="submit" value=""/>
 		</form>
+	</div>
+</template>
+
+<template name="chatUserPopup">
+	<div class="userPopup" style="left: {{x}}px; top: {{y}}px;">
+		<div class="response"></div>
+		{{#if rooms}}
+			<div class="add"></div>
+		{{/if}}
+		{{#if canControlBlock}}
+			<div class="block"></div>
+		{{/if}}
+		<div class="rooms">
+			{{#if rooms}}
+				<ul>
+					{{#each rooms}}
+						<li data-roomname="{{this.name}}">
+							{{this.name}}
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+		</div>
 	</div>
 </template>
 
@@ -303,7 +327,7 @@
 				<h2>Управление пользователями</h2>
 				<label>
 					<span class="title">Никнейм Консула:</span>
-					<input type="text" name="username"/>
+					<input type="text" name="username" value="{{username}}"/>
 				</label>
 				<label>
 					<span class="title">Время бана в минутах:</span>

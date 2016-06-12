@@ -405,23 +405,41 @@ Meteor.methods({
 			history.room_id = room._id;
 		}
 
+		if (options.reason) {
+			check(options.reason, String);
+			history.reason = options.reason;
+		}
+
 		Game.BanHistory.Collection.insert(history);
 
 		// send message
+		var message = null;
+
 		if (options.roomName) {
-			Game.Chat.Messages.Collection.insert({
+			message = {
 				room_id: room._id,
 				user_id: user._id,
 				username: user.username,
 				alliance: user.alliance,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
+					reason: history.reason,
 					timestamp: Game.getCurrentTime(),
 					period: time
 				},
 				message: target.username,
 				timestamp: Game.getCurrentTime()
-			});
+			};
+
+			if (user.role) {
+				message.role = user.role;
+			}
+
+			if (user.settings && user.settings.chat && user.settings.chat.icon) {
+				message.iconPath = user.settings.chat.icon;
+			}
+
+			Game.Chat.Messages.Collection.insert(message);
 		} else {
 			var rooms = Game.Chat.Room.Collection.find({
 				deleted: { $ne: true },
@@ -432,20 +450,31 @@ Meteor.methods({
 			}).fetch();
 
 			for (var i = 0; i < rooms.length; i++) {
-				Game.Chat.Messages.Collection.insert({
+				message = {
 					room_id: rooms[i]._id,
 					user_id: user._id,
 					username: user.username,
 					alliance: user.alliance,
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
+						reason: history.reason,
 						timestamp: Game.getCurrentTime(),
 						period: time,
 						global: true
 					},
 					message: target.username,
 					timestamp: Game.getCurrentTime()
-				});
+				};
+
+				if (user.role) {
+					message.role = user.role;
+				}
+
+				if (user.settings && user.settings.chat && user.settings.chat.icon) {
+					message.iconPath = user.settings.chat.icon;
+				}
+
+				Game.Chat.Messages.Collection.insert(message);
 			}
 		}
 	},
@@ -749,7 +778,7 @@ Meteor.methods({
 			username: user.username
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
@@ -759,7 +788,17 @@ Meteor.methods({
 				amount: credits
 			},
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 
 		// save statistic
 		var stats = {};
@@ -830,7 +869,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
@@ -840,7 +879,17 @@ Meteor.methods({
 			},
 			message: target.username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.removeModeratorFromRoom': function(roomName, username) {
@@ -888,7 +937,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
@@ -898,7 +947,17 @@ Meteor.methods({
 			},
 			message: username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.addUserToRoom': function(roomName, username) {
@@ -963,7 +1022,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room: room._id,
 			user_id: user._id,
 			username: user.username,
@@ -973,7 +1032,17 @@ Meteor.methods({
 			},
 			message: target.username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.removeUserFromRoom': function(roomName, username) {
@@ -1039,7 +1108,7 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
@@ -1049,7 +1118,17 @@ Meteor.methods({
 			},
 			message: target.username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.loadMore': function(options) {

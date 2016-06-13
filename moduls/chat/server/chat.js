@@ -11,6 +11,19 @@ Game.Chat.Room.Collection._ensureIndex({
 	name: 1
 });
 
+Game.Chat.Icons.Collection._ensureIndex({
+	user_id: 1
+});
+
+Game.Chat.BalanceHistory = {
+	Collection: new Meteor.Collection('chatBalanceHistory')
+};
+
+Game.Chat.BalanceHistory.Collection._ensureIndex({
+	room_id: 1,
+	timestamp: -1
+});
+
 // create defaul rooms on server startup
 var createDefaulRoom = function(name, title, isFree) {
 	if (!Game.Chat.Room.Collection.findOne({ name: name })) {
@@ -120,7 +133,7 @@ Meteor.methods({
 		// check message
 		check(message, String);
 
-		message = sanitizeHtml(message.trim().substr(0, 140), {
+		message = sanitizeHtml(message.trim().substr(0, 175), {
 			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
 			allowedAttributes: {
 				'a': [ 'href' ]
@@ -151,12 +164,17 @@ Meteor.methods({
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			message: message,
 			timestamp: Game.getCurrentTime()
 		};
 
 		if (user.role) {
 			set.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			set.iconPath = user.settings.chat.icon;
 		}
 
 		var stats = {};
@@ -388,23 +406,44 @@ Meteor.methods({
 			history.room_id = room._id;
 		}
 
+		if (options.reason) {
+			check(options.reason, String);
+			if (options.reason.length > 0) {
+				history.reason = options.reason;
+			}
+		}
+
 		Game.BanHistory.Collection.insert(history);
 
 		// send message
+		var message = null;
+
 		if (options.roomName) {
-			Game.Chat.Messages.Collection.insert({
+			message = {
 				room_id: room._id,
 				user_id: user._id,
 				username: user.username,
 				alliance: user.alliance,
+				rating: user.rating,
 				data: {
 					type: time <= 0 ? 'unblock' : 'block',
+					reason: history.reason,
 					timestamp: Game.getCurrentTime(),
 					period: time
 				},
 				message: target.username,
 				timestamp: Game.getCurrentTime()
-			});
+			};
+
+			if (user.role) {
+				message.role = user.role;
+			}
+
+			if (user.settings && user.settings.chat && user.settings.chat.icon) {
+				message.iconPath = user.settings.chat.icon;
+			}
+
+			Game.Chat.Messages.Collection.insert(message);
 		} else {
 			var rooms = Game.Chat.Room.Collection.find({
 				deleted: { $ne: true },
@@ -415,20 +454,31 @@ Meteor.methods({
 			}).fetch();
 
 			for (var i = 0; i < rooms.length; i++) {
-				Game.Chat.Messages.Collection.insert({
+				message = {
 					room_id: rooms[i]._id,
 					user_id: user._id,
 					username: user.username,
 					alliance: user.alliance,
 					data: {
 						type: time <= 0 ? 'unblock' : 'block',
+						reason: history.reason,
 						timestamp: Game.getCurrentTime(),
 						period: time,
 						global: true
 					},
 					message: target.username,
 					timestamp: Game.getCurrentTime()
-				});
+				};
+
+				if (user.role) {
+					message.role = user.role;
+				}
+
+				if (user.settings && user.settings.chat && user.settings.chat.icon) {
+					message.iconPath = user.settings.chat.icon;
+				}
+
+				Game.Chat.Messages.Collection.insert(message);
 			}
 		}
 	},
@@ -724,17 +774,36 @@ Meteor.methods({
 			roomId: room._id
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		Game.Chat.BalanceHistory.Collection.insert({
+			room_id: room._id,
+			credits: credits,
+			timestamp: Game.getCurrentTime(),
+			user_id: user._id,
+			username: user.username
+		});
+
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'addfunds',
 				amount: credits
 			},
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 
 		// save statistic
 		var stats = {};
@@ -805,17 +874,28 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'addModerator'
 			},
 			message: target.username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.removeModeratorFromRoom': function(roomName, username) {
@@ -863,17 +943,28 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'removeModerator'
 			},
 			message: username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.addUserToRoom': function(roomName, username) {
@@ -938,17 +1029,28 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
-			room: room._id,
+		var message = {
+			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'add'
 			},
 			message: target.username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.removeUserFromRoom': function(roomName, username) {
@@ -1014,17 +1116,28 @@ Meteor.methods({
 			}
 		});
 
-		Game.Chat.Messages.Collection.insert({
+		var message = {
 			room_id: room._id,
 			user_id: user._id,
 			username: user.username,
 			alliance: user.alliance,
+			rating: user.rating,
 			data: {
 				type: 'remove'
 			},
 			message: target.username,
 			timestamp: Game.getCurrentTime()
-		});
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.loadMore': function(options) {
@@ -1071,6 +1184,7 @@ Meteor.methods({
 		}, {
 			fields: {
 				_id: 1,
+				user_id: 1,
 				username: 1,
 				message: 1,
 				data: 1,
@@ -1079,7 +1193,9 @@ Meteor.methods({
 				type: 1,
 				role: 1,
 				cheater: 1,
-				room: 1
+				room: 1,
+				iconPath: 1,
+				rating: 1
 			},
 			sort: {
 				timestamp: -1
@@ -1102,8 +1218,203 @@ Meteor.methods({
 		console.log('chat.getRoomsList: ', new Date(), user.username);
 
 		return Game.Chat.Room.Collection.find({
-			isOfficial: true
+			isOfficial: { $ne: true },
+			deleted: { $ne: true },
+			$or: [
+				{ users: { $in: [ user._id ] } },
+				{ isPublic: true }
+			]
 		}).fetch();
+	},
+
+	'chat.setupRoomsVisibility': function(rooms) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(rooms, Object);
+
+		var visible = [];
+		var hidden = [];
+
+		for (var key in rooms) {
+			if (_.isString(key) && key.length <= 32) {
+				if (rooms[key]) {
+					visible.push(key);
+				} else {
+					hidden.push(key);
+				}
+			}
+		}
+			
+		var update = null;
+
+		if (visible.length > 0) {
+			update = { $pull: {} };
+			update.$pull['settings.chat.hiddenRooms'] = { $in: visible };
+			Meteor.users.update({ _id: user._id }, update);
+		}
+
+		if (hidden.length > 0) {
+			update = { $addToSet: {} };
+			update.$addToSet['settings.chat.hiddenRooms'] = { $each: hidden };
+			Meteor.users.update({ _id: user._id }, update);
+		}
+	},
+
+	'chat.getBalanceHistory': function(roomName, page, count) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(roomName, String);
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName,
+			deleted: { $ne: true },
+			$or: [
+				{ users: { $in: [ user._id ] } },
+				{ isPublic: true }
+			]
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Нет такой комнаты');
+		}
+
+		check(page, Match.Integer);
+		check(count, Match.Integer);
+
+		if (count > 100) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		var result = Game.Chat.BalanceHistory.Collection.find({
+			room_id: room._id
+		}, {
+			sort: {timestamp: -1},
+			skip: (page > 0) ? (page - 1) * count : 0,
+			limit: count
+		});
+
+		return {
+			data: result.fetch(),
+			count: result.count()
+		};
+	},
+
+	'chat.buyIcon': function(group, engName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var icon = Game.Chat.Icons.getIcon(group, engName);
+		if (!icon) {
+			throw new Meteor.Error('Нет такой иконки');
+		}
+
+		if (!icon.canBuy()) {
+			throw new Meteor.Error('Вы не можете купить эту иконку');
+		}
+
+		Game.Resources.spend(icon.price);
+
+		if (icon.price.credits) {
+			Game.Payment.Expense.log(icon.price.credits, 'chatIcon', {
+				group: group,
+				engName: engName
+			});
+		}
+		
+		var update = { $addToSet: {} };
+		update.$addToSet[group] = engName;
+
+		Game.Chat.Icons.Collection.upsert({ user_id: user._id }, update);
+
+		if (icon.isUnique) {
+			update = { $set: {} };
+			update.$set[group + '.' + engName] = {
+				user_id: user._id,
+				username: user.username,
+				timestamp: Game.getCurrentTime()
+			};
+
+			Game.Chat.Icons.Collection.upsert({ user_id: 'unique' }, update);
+		}
+	},
+
+	'chat.selectIcon': function(group, engName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var icon = Game.Chat.Icons.getIcon(group, engName);
+		if (!icon) {
+			throw new Meteor.Error('Нет такой иконки');
+		}
+
+		if (!icon.checkHas()) {
+			throw new Meteor.Error('Иконку сначала нужно купить');
+		}
+
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$set: {
+				'settings.chat.icon': group + '/' + engName
+			}
+		});
+	},
+
+	'chat.setUserIcon': function(username, iconPath) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+		}
+
+		check(username, String);
+		check(iconPath, String);
+
+		Meteor.users.update({
+			username: username
+		}, {
+			$set: {
+				'settings.chat.icon': iconPath
+			}
+		});
 	}
 });
 
@@ -1144,6 +1455,7 @@ Meteor.publish('chat', function (roomName) {
 			}, {
 				fields: {
 					_id: 1,
+					user_id: 1,
 					username: 1,
 					message: 1,
 					data: 1,
@@ -1152,7 +1464,9 @@ Meteor.publish('chat', function (roomName) {
 					type: 1,
 					role: 1,
 					cheater: 1,
-					room: 1
+					room: 1,
+					iconPath: 1,
+					rating: 1
 				},
 				sort: {
 					timestamp: -1
@@ -1162,6 +1476,26 @@ Meteor.publish('chat', function (roomName) {
 		} else {
 			return null;
 		}
+	} else {
+		this.ready();
+	}
+});
+
+Meteor.publish('chatIconsUser', function() {
+	if (this.userId) {
+		return Game.Chat.Icons.Collection.find({
+			user_id: this.userId
+		});
+	} else {
+		this.ready();
+	}
+});
+
+Meteor.publish('chatIconsUnique', function() {
+	if (this.userId) {
+		return Game.Chat.Icons.Collection.find({
+			user_id: 'unique'
+		});
 	} else {
 		this.ready();
 	}

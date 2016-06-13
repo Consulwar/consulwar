@@ -9,7 +9,7 @@ Game.User = {
 	},
 
 	getLevel: function(rating) {
-		rating = rating || Meteor.user().rating;
+		rating = _.isNumber(rating) ? rating : Meteor.user().rating;
 
 		if (!rating || rating < 25000) {
 			return 0;

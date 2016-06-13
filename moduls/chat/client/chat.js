@@ -1,7 +1,8 @@
 initChatClient = function() {
 
-// TODO: Reload rooms list after create or remove
-// TODO: Balance history pagination
+// TODO: Balance history pages!
+// TODO: Color names in participants list!
+// TODO: Change rooms list arrows state (active /not active)!
 
 initChatLib();
 
@@ -203,7 +204,7 @@ Template.chat.onDestroyed(function() {
 var scrollChatToBottom = function(force) {
 	var container = $('ul.messages');
 
-	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 100) > container[0].scrollHeight)) {
+	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 200) > container[0].scrollHeight)) {
 		container[0].scrollTop = container[0].scrollHeight;
 	}
 };
@@ -237,6 +238,7 @@ var createRoom = function(name, isPublic, isOwnerPays) {
 			} else {
 				Notifications.success('Вы успешно создали комнату ' + name);
 				closeControlWindow();
+				loadRoomsList();
 				Router.go('chat', { room: name });
 			}
 		});
@@ -544,9 +546,15 @@ var getUserRole = function(userId, username, role, rating) {
 			id: 'moderator',
 			name: 'Модератор'
 		};
+	} else if (_.isNumber(rating)) {
+		return {
+			id: '',
+			name: 'Ранг ' + Game.User.getLevel(rating)
+		};
 	}
 	return {
-		name: 'Ранг ' + Game.User.getLevel(rating)
+		id: '',
+		name: ''
 	};
 };
 
@@ -636,7 +644,7 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
-	'click .chat': function(e, t) {
+	'click .chat, scroll .messages': function(e, t) {
 		hidePopups();
 	},
 
@@ -852,7 +860,7 @@ Template.chatUserPopup.events({
 		$('.chat #message textarea[name="text"]').get(0).value +=  '@' + t.data.username;
 	},
 
-	'click .add': function(e, t) {
+	'click .add.active': function(e, t) {
 		e.stopPropagation();
 		t.$('.rooms').show();
 	},
@@ -861,7 +869,7 @@ Template.chatUserPopup.events({
 		addUser(e.currentTarget.dataset.roomname, t.data.username);
 	},
 
-	'click .block': function(e, t) {
+	'click .block.active': function(e, t) {
 		Game.Chat.showControlWindow(t.data.username);
 	}
 });
@@ -873,13 +881,17 @@ Template.chatUserPopup.events({
 var roomsList = new ReactiveVar(null);
 var isAnimation = false;
 
+var loadRoomsList = function() {
+	Meteor.call('chat.getRoomsList', function(err, data) {
+		if (!err) {
+			roomsList.set(data);
+		}
+	});
+};
+
 Template.chatRoomsList.onRendered(function() {
 	if (!roomsList.get()) {
-		Meteor.call('chat.getRoomsList', function(err, data) {
-			if (!err) {
-				roomsList.set(data);
-			}
-		});
+		loadRoomsList();
 	}
 });
 
@@ -913,7 +925,10 @@ var canAnimateRight = function(t) {
 
 Template.chatRoomsList.helpers({
 	rooms: function() { return roomsList.get(); },
-	isVisible: function(roomName) { return checkIsRoomVisible(roomName); }
+	isVisible: function(roomName) { return checkIsRoomVisible(roomName); },
+	isActive: function(roomName) {
+		return Router.current().params.room == roomName
+	}
 });
 
 Template.chatRoomsList.events({
@@ -1182,7 +1197,14 @@ Template.chatControl.helpers({
 	canControlRoom: function() { return canControlRoom(); },
 	canControlUsers: function() { return canControlUsers(); },
 	canControlBlock: function() { return canControlBlock(); },
-	credits: function() { return createPriceCredits.get(); }
+	credits: function() { return createPriceCredits.get(); },
+
+	isGlobalControl: function() {
+		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
+			return true;
+		}
+		return false;
+	}
 });
 
 Template.chatControl.events({
@@ -1202,22 +1224,28 @@ Template.chatControl.events({
 		);
 	},
 
-	'click .removeRoom': function(e, t) {
+	'click .removeRoom:not(.disabled)': function(e, t) {
 		removeRoom(Router.current().params.room);
 	},
 
-	'click .block': function(e, t) {
+	'click .block:not(.disabled)': function(e, t) {
+		var time = parseInt( t.find('input[name="period"]').value * 60 );
+		if (!time || time <= 0) {
+			Notifications.error('Укажите время блокировки');
+			return;
+		}
+
 		blockUser({
 			roomName: t.find('input[name="blockType"]:checked').value == 'local'
 				? Router.current().params.room
 				: null,
 			username: t.find('input[name="username"]').value,
-			time: parseInt( t.find('input[name="period"]').value * 60 ),
+			time: time,
 			reason: t.find('textarea[name="reason"]').value
 		});
 	},
 
-	'click .unblock': function(e, t) {
+	'click .unblock:not(.disabled)': function(e, t) {
 		blockUser({
 			roomName: t.find('input[name="blockType"]:checked').value == 'local'
 				? Router.current().params.room
@@ -1228,15 +1256,15 @@ Template.chatControl.events({
 		});
 	},
 
-	'click .removeUser': function(e, t) {
+	'click .removeUser:not(.disabled)': function(e, t) {
 		removeUser(Router.current().params.room, t.find('input[name="username"]').value);
 	},
 
-	'click .addModerator': function(e, t) {
+	'click .addModerator:not(.disabled)': function(e, t) {
 		addModerator(Router.current().params.room, t.find('input[name="moderatorname"]').value);
 	},
 
-	'click .removeModerator': function(e, t) {
+	'click .removeModerator:not(.disabled)': function(e, t) {
 		removeModerator(Router.current().params.room, t.find('input[name="moderatorname"]').value);
 	}
 });

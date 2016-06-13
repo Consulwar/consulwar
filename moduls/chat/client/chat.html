@@ -10,13 +10,24 @@
 				</div>
 			{{/let}}
 
-			<div>настройки и помощь</div>
+			<div class="title">настройки и помощь</div>
 			<div class="settings"></div>
 			<div class="info"></div>
 			<div class="dollar"></div>
 
+			{{#if room}}
+				{{#if room.isOwnerPays}}
+					<div class="addCredits" data-tooltip="Пополнить баланс комнаты">
+						<span>В этом чате сейчас есть:</span>
+						<ul class="resources">
+							<li class="credits">{{room.credits}}</li>
+						</ul>
+					</div>
+				{{/if}}
+			{{/if}}
+
 			{{#if price}}
-				<div>
+				<div class="price">
 					<span>
 						{{#if price.credits}}
 							Сообщения оплачиваются из общего баланса комнаты:
@@ -24,7 +35,7 @@
 							Внимание! Каждое сообщение будет стоить вам:
 						{{/if}}
 					</span>
-					<ul class="resources" title="Стоимость сообщения">
+					<ul class="resources" data-tooltip="Стоимость сообщения">
 						{{#if price.crystals}}
 							<li class="crystals">{{price.crystals}}</li>
 						{{/if}}
@@ -35,21 +46,10 @@
 				</div>
 			{{/if}}
 
-			{{#if room}}
-				{{#if room.isOwnerPays}}
-					<div>
-						<span>В этом чате сейчас есть:</span>
-						<ul class="resources" title="Баланс комнаты">
-							<li class="credits addCredits">{{room.credits}}</li>
-						</ul>
-					</div>
-				{{/if}}
-			{{/if}}
-
 			{{#if price}}
 				{{#unless isChatFree}}
-					<div>
-						<button class="buyFreeChat">Больше никогда не платить за ссаный чат</button>
+					<div class="buyFreeChat">
+						<span>Больше никогда не платить за ссаный чат</span>
 						<ul class="resources">
 							<li class="credits">{{formatNumberWithISO freeChatPrice}}</li>
 						</ul>
@@ -72,88 +72,95 @@
 
 		<ul class="messages">
 			{{#if hasMore}}
-				<li class="more">показать предыдущие сообщения</li>
+				<li class="more">
+					<span>показать предыдущие сообщения</span>
+				</li>
 			{{/if}}
 			{{#if gotLimit}}
 				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
 			{{/if}}
 			{{#each messages}}
-				<li
-					data-tooltip="{{#if not this.isMotd}}{{formatDate this.timestamp -180}}{{/if}}"
-					data-tooltip-direction="w" 
-					data-username="{{this.username}}" 
-					class="{{#if this.isMotd}}motd{{/if}}"
-				>
-					<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
-					{{#let messageRole=(getUserRoleByMessage this)}}
+				{{#if this.isMotd}}
+					<li class="motd">
+						{{this.message}}
+					</li>
+				{{else}}
+					<li
+						data-tooltip="{{formatDate this.timestamp -180}}"
+						data-tooltip-direction="w" 
+						data-username="{{this.username}}"
+					>
+						<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
+						{{#let messageRole=(getUserRoleByMessage this)}}
+							<div 
+								class="
+									username 
+									{{messageRole.id}} 
+									{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+									{{#if eq this.username user.username}}me{{/if}}"
+							>
+								{{this.username}}
+							</div>
+							<div class="role {{messageRole.id}}">
+								{{messageRole.name}}
+							</div>
+						{{/let}}
 						<div 
 							class="
-								username 
-								{{messageRole.id}} 
-								{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-								{{#if eq this.username user.username}}me{{/if}}"
+								message 
+								{{#if this.data}}status{{/if}} 
+								{{this.data.type}}"
 						>
-							{{this.username}}
+							{{#if this.data}}
+								{{#if eq this.data.type 'dice'}}
+									бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+									{{#each this.data.dice.dices.values}}
+										<span class="dice">{{this}}</span> 
+									{{/each}}
+								{{/if}}
+								{{#if eq this.data.type 'status'}}
+									{{{highlightUser this.message}}}
+								{{/if}}
+								{{#if eq this.data.type 'notprepared'}}
+									{{{highlightUser this.message}}}
+								{{/if}}
+								{{#if eq this.data.type 'lovereptiles'}}
+									{{{highlightUser this.message}}}
+								{{/if}}
+								{{#if eq this.data.type 'sepukku'}}
+									совершил кровавое сепукку.
+								{{/if}}
+								{{#if eq this.data.type 'unblock'}}
+									разблокировал
+									{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+									для {{this.message}}
+								{{/if}}
+								{{#if eq this.data.type 'block'}}
+									заблокировал
+									{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+									для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
+								{{/if}}
+								{{#if eq this.data.type 'add'}}
+									добавил в чат {{this.message}}
+								{{/if}}
+								{{#if eq this.data.type 'remove'}}
+									удалил из чата {{this.message}}
+								{{/if}}
+								{{#if eq this.data.type 'addModerator'}}
+									назначил модератора {{this.message}}
+								{{/if}}
+								{{#if eq this.data.type 'removeModerator'}}
+									разжаловал модератора {{this.message}}
+								{{/if}}
+								{{#if eq this.data.type 'addfunds'}}
+									пополнил баланс чата на {{this.data.amount}} ГГК
+								{{/if}}
+							{{else}}
+								{{{highlightUser this.message}}}
+							{{/if}}
 						</div>
-						<div class="role {{messageRole.id}}">
-							{{messageRole.name}}
-						</div>
-					{{/let}}
-					<div 
-						class="
-							message 
-							{{#if this.data}}status{{/if}} 
-							{{this.data.type}}"
-					>
-						{{#if this.data}}
-							{{#if eq this.data.type 'dice'}}
-								бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
-								{{#each this.data.dice.dices.values}}
-									<span class="dice">{{this}}</span> 
-								{{/each}}
-							{{/if}}
-							{{#if eq this.data.type 'status'}}
-								{{{highlightUser this.message}}}
-							{{/if}}
-							{{#if eq this.data.type 'notprepared'}}
-								{{{highlightUser this.message}}}
-							{{/if}}
-							{{#if eq this.data.type 'lovereptiles'}}
-								{{{highlightUser this.message}}}
-							{{/if}}
-							{{#if eq this.data.type 'sepukku'}}
-								совершил кровавое сепукку.
-							{{/if}}
-							{{#if eq this.data.type 'unblock'}}
-								разблокировал
-								{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-								для {{this.message}}
-							{{/if}}
-							{{#if eq this.data.type 'block'}}
-								заблокировал
-								{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-								для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
-							{{/if}}
-							{{#if eq this.data.type 'add'}}
-								добавил в чат {{this.message}}
-							{{/if}}
-							{{#if eq this.data.type 'remove'}}
-								удалил из чата {{this.message}}
-							{{/if}}
-							{{#if eq this.data.type 'addModerator'}}
-								назначил модератора {{this.message}}
-							{{/if}}
-							{{#if eq this.data.type 'removeModerator'}}
-								разжаловал модератора {{this.message}}
-							{{/if}}
-							{{#if eq this.data.type 'addfunds'}}
-								пополнил баланс чата на {{this.data.amount}} ГГК
-							{{/if}}
-						{{else}}
-							{{{highlightUser this.message}}}
-						{{/if}}
-					</div>
-				</li>
+					</li>
+				{{/if}}
 			{{/each}}
 		</ul>
 
@@ -166,13 +173,9 @@
 
 <template name="chatUserPopup">
 	<div class="userPopup" style="left: {{x}}px; top: {{y}}px;">
-		<div class="response"></div>
-		{{#if rooms}}
-			<div class="add"></div>
-		{{/if}}
-		{{#if canControlBlock}}
-			<div class="block"></div>
-		{{/if}}
+		<div class="response active"></div>
+		<div class="add {{#if rooms}}active{{/if}}"></div>
+		<div class="block {{#if canControlBlock}}active{{/if}}"></div>
 		<div class="rooms">
 			{{#if rooms}}
 				<ul>
@@ -189,15 +192,15 @@
 
 <template name="chatRoomsList">
 	<div class="roomsList">
-		<a class="general" href="{{pathFor 'chat' room='general'}}"></a>
-		<a class="help" href="{{pathFor 'chat' room='help'}}"></a>
+		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}"></a>
+		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}"></a>
 		{{#if rooms}}
-			<span class="arrow-left"></span>
+			<span class="arrow-left active"></span>
 			<div class="listContainer">
 				<ul>
 					{{#each rooms}}
 						{{#if isVisible this.name}}
-							<li>
+							<li class="{{#if isActive this.name}}active{{/if}}">
 								<a href="{{pathFor 'chat' room=this.name}}">
 									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
 								</a>
@@ -207,7 +210,7 @@
 					{{/each}}
 				</ul>
 			</div>
-			<span class="arrow-right"></span>
+			<span class="arrow-right active"></span>
 		{{/if}}
 		<span class="arrow-down"></span>
 	</div>
@@ -285,7 +288,7 @@
 		</label>
 		<div class="button accept">Пополнить</div>
 
-		<span class="historyTitle">История пополнения</span>
+		<span class="historyTitle">История пополнений</span>
 		<div class="data">
 			{{#if history}}
 				<table>
@@ -297,6 +300,8 @@
 						</tr>
 					{{/each}}
 				</table>
+			{{else}}
+				<span>История пополнений пуста</span>
 			{{/if}}
 		</div>
 
@@ -316,9 +321,7 @@
 				<input type="text" name="roomname"/>
 				<span class="hint">максимум 15 символов</span>
 			</label>
-			{{#if canControlRoom}}
-				<div class="button removeRoom"></div>
-			{{/if}}
+			<div class="button removeRoom {{#if not canControlRoom}}disabled{{/if}}"></div>
 			<label>
 				<span class="title">Тип комнаты:</span>
 				<div class="radioBlock">
@@ -344,49 +347,53 @@
 			<div class="button accept create">Создать комнату</div>
 		</div>
 
-		{{#if canControlBlock}}
-			<div class="userControl">
-				<h2>Управление пользователями</h2>
-				<label>
-					<span class="title">Никнейм Консула:</span>
-					<input type="text" name="username" value="{{username}}"/>
-				</label>
-				<label>
-					<span class="title">Время бана в минутах:</span>
-					<input type="text" name="period"/>
-				</label>
-				<label>
-					<span class="title">Причина бана:</span>
-					<textarea name="reason"></textarea>
-				</label>
-				<label>
-					<span class="title">Тип бана / разбана:</span>
-					<div class="radioBlock">
-						<input type="radio" name="blockType" value="local" checked="checked"/> локально
-					</div>
-					<div class="radioBlock">
-						<input type="radio" name="blockType" value="global"/> глобально
-					</div>
-				</label>
-				<div class="controlBlock">
-					<div class="button accept block">Наказать</div>
-					<div class="button accept unblock">Простить</div>
-					{{#if canControlUsers}}
-						<div class="button cancel removeUser">Удалить из чата</div>
-					{{/if}}
+		<div class="userControl">
+			<h2>Управление пользователями</h2>
+			<label>
+				<span class="title">Никнейм Консула:</span>
+				<input type="text" name="username" value="{{username}}" disabled="{{#if not canControlBlock}}disabled{{/if}}"/>
+			</label>
+			<label>
+				<span class="title">Время бана в минутах:</span>
+				<input type="text" name="period" disabled="{{#if not canControlBlock}}disabled{{/if}}"/>
+			</label>
+			<label>
+				<span class="title">Причина бана:</span>
+				<textarea name="reason" disabled="{{#if not canControlBlock}}disabled{{/if}}"></textarea>
+			</label>
+			<label>
+				<span class="title">Тип бана / разбана:</span>
+				<div class="radioBlock">
+					<input type="radio" name="blockType" value="local" checked="checked" disabled="{{#if not canControlBlock}}disabled{{/if}}"/> локально
 				</div>
-				{{#if canControlRoom}}
-					<div class="controlBlock">
-						<label>
-							<span class="title">Никнейм модератора:</span>
-							<input type="text" name="moderatorname"/>
-						</label>
-						<div class="button accept addModerator">Назначить</div>
-						<div class="button accept removeModerator">Разжаловать</div>
-					</div>
-				{{/if}}
+				<div class="radioBlock">
+					<input type="radio" name="blockType" value="global" disabled="{{#if or (not canControlBlock) (not isGlobalControl)}}disabled{{/if}}"/> глобально
+				</div>
+			</label>
+			<div class="controlBlock">
+				<div class="button accept block {{#if not canControlBlock}}disabled{{/if}}">
+					Наказать
+				</div>
+				<div class="button accept unblock {{#if not canControlBlock}}disabled{{/if}}">
+					Простить
+				</div>
+				<div class="button cancel removeUser {{#if not canControlUsers}}disabled{{/if}}">
+					Удалить из чата
+				</div>
 			</div>
-		{{/if}}
+			<div class="controlBlock">
+				<label>
+					<span class="title">Никнейм модератора:</span>
+					<input type="text" name="moderatorname" disabled="{{#if not canControlRoom}}disabled{{/if}}"/>
+				</label>
+				<div class="button accept addModerator {{#if not canControlRoom}}disabled{{/if}}">
+					Назначить
+				</div>
+				<div class="button accept removeModerator {{#if not canControlRoom}}disabled{{/if}}">
+					Разжаловать
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -407,26 +414,55 @@
 							{{#each this.items}}
 								<li 
 									class="
-										{{#if this.checkSelected}}selected{{/if}}
-										{{#if and (eq tab 'shop') this.canBuy}}buy{{/if}}
-										{{#if this.checkHas}}select{{/if}}"
+										{{#if this.checkSelected}}
+											selected
+										{{else}}
+											{{#if this.checkHas}}
+												select
+											{{else}}
+												{{#if and (eq tab 'shop') (not this.checkUniqueSold)}}
+													buy
+												{{/if}}
+											{{/if}}
+										{{/if}}
+										"
 									data-group="{{this.group}}"
 									data-id="{{this.engName}}"
 									data-tooltip="
-										{{#if and (eq tab 'shop') this.canBuy}}купить{{/if}}
-										{{#if this.checkHas}}выбрать{{/if}}"
+										{{#if this.checkSelected}}
+											Текущая
+										{{else}}
+											{{#if this.checkHas}}
+												Выбрать
+											{{else}}
+												{{#if and (eq tab 'shop')}}
+													{{#if this.checkUniqueSold}}
+														Куплена другим игроком
+													{{else}}
+														Купить
+													{{/if}}
+												{{/if}}
+											{{/if}}
+										{{/if}}
+										"
 								>
 									<img src="/img/game/chat/icons/{{this.group}}/{{this.engName}}.png"/>
-									{{#if and (eq tab 'shop') this.canBuy}}
-										<span class="credits">
-											{{formatNumber this.price.credits}}
-										</span>
+									{{#if and (eq tab 'shop')}}
+										{{#if this.checkHas}}
+											<span class="has">Куплена</span>
+										{{else}}
+											{{#if not this.checkUniqueSold}}
+												<span class="credits">
+													{{formatNumber this.price.credits}}
+												</span>
+											{{/if}}
+										{{/if}}
 									{{/if}}
 								</li>
 							{{/each}}
 						</ul>
 					{{else}}
-						<span>У вас нет иконок такого типа</span>
+						<div class="info">У вас нет иконок такого типа</div>
 					{{/if}}
 				{{/each}}
 			{{/let}}

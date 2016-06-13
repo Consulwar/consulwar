@@ -117,11 +117,8 @@ game.ChatIcon = function(group, options) {
 			return false;
 		}
 
-		if (this.isUnique) {
-			var value = Game.Chat.Icons.getValueUnique();
-			if (value && value[this.group] && value[this.group].indexOf(this.engName) != -1) {
-				return false;
-			}
+		if (this.checkUniqueSold()) {
+			return false;
 		}
 
 		if (!this.price) {
@@ -136,7 +133,17 @@ game.ChatIcon = function(group, options) {
 		}
 
 		return true;
-	}
+	};
+
+	this.checkUniqueSold = function() {
+		if (this.isUnique) {
+			var value = Game.Chat.Icons.getValueUnique();
+			if (value && value[this.group] && value[this.group].indexOf(this.engName) != -1) {
+				return true;
+			}
+		}
+		return false;
+	};
 
 	this.checkSelected = function() {
 		var user = Meteor.user();

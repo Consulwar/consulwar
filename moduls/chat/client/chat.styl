@@ -33,6 +33,11 @@
 			img
 				vertical-align middle
 
+		.title
+			padding 10px 0px
+			text-align center
+			color #e0e0e0
+
 		.settings
 		.info
 		.dollar
@@ -54,6 +59,69 @@
 			background-image url(/img/game/chat/dollar-disabled.png)
 			&:hover
 				background-image url(/img/game/chat/dollar.png)
+
+		.price
+			display block
+			position absolute
+			top 395px
+			width 185px
+			height 65px
+			padding 5px
+			text-align center
+			
+			span
+				display block
+				position absolute
+				width 120px
+				color #e9a844
+			
+			ul
+				display block
+				position absolute
+				right 0
+				
+		.addCredits
+			display block
+			position absolute
+			top 300px
+			width 185px
+			height 65px
+			padding 5px
+			text-align center
+			
+			span
+				display block
+				position absolute
+				margin-top 10px
+				width 120px
+				color #e8e8e8
+				
+			ul
+				display block
+				position absolute
+				right 0
+				
+		.buyFreeChat
+			cursor pointer
+			display block
+			position absolute
+			top 495px
+			width 185px
+			height 65px
+			padding 5px
+			color #b5d054
+			border 2px solid #b5d054
+			background-color #090E14
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+					
+			span
+				display block
+				position absolute
+				margin-top 5px
+				margin-left 70px
 
 	.messages
 		position absolute
@@ -108,14 +176,21 @@
 			
 			&.motd
 				text-align center
-				span
-					display none
 
 			&.more
 				cursor pointer
 				text-align center
-				color #dfdfdf
 				background-color #0f1116
+				
+				span
+					color #dfdfdf
+				
+					&:before
+					&:after
+						margin 0 20px
+						vertical-align middle
+						display inline-block
+						content url(/img/game/chat/more.png)
 			
 			&.limit
 				text-align center
@@ -183,21 +258,6 @@
 			
 			&:hover
 				background-image url(/img/game/chat/send.png)
-			
-		ul
-			display inline-block
-			padding-top 5px
-		
-		button
-			width 200px
-			height 58px
-			color #C8F909
-			border 1px solid #C8F909
-			background-color #090E14
-			padding 0 15px
-			margin-top 6px
-			vertical-align top
-			cursor pointer
 		
 	.participants
 		position absolute
@@ -292,6 +352,9 @@
 				height 38px
 				padding 8px
 
+				&.active
+					background-color #13161b
+
 				a
 					vertical-align middle
 					display inline-block
@@ -316,13 +379,25 @@
 		position absolute
 		top 46px
 		right 185px
-		background-color #000000
+		background-color #0b0b0b
+		width 200px
 		
 		ul
 			display block
+			max-height 500px
+			overflow-x hidden
+			overflow-y auto
 			
 			li
 				display block
+				padding 10px
+				font-weight bold
+				color #56baf2
+				
+				input
+					vertical-align middle
+					margin-right 10px
+			
 				
 		.save
 			display inline-block
@@ -334,10 +409,16 @@
 			font-weight bold
 			text-align center
 			color #FFFFFF
+			width 150px
+			height 35px
+			padding-top 5px
+			margin-top 10px
+			margin-bottom 10px
+			margin-left 25px
 		
 			&:hover:not(.disabled)
 				-webkit-filter brightness(1.4)
-				filter brightness(1.4)			
+				filter brightness(1.4)
 
 	.userPopup
 		position absolute
@@ -346,24 +427,30 @@
 		.add
 		.block
 			float left
-			cursor pointer
 			display inline-block
 			width 48px
 			height 48px
 			background-repeat no-repeat
 			background-size 100% 100%
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
 			
 		.response
 			background-image url(/img/game/chat/arrow-down.png)
 		
 		.add
-			background-image url(/img/game/chat/add.png)
+			background-image url(/img/game/chat/add-disabled.png)
+			&.active
+				background-image url(/img/game/chat/add.png)
 				
 		.block
-			background-image url(/img/game/chat/ban.png)
+			background-image url(/img/game/chat/ban-disabled.png)
+			&.active
+				background-image url(/img/game/chat/ban.png)
+			
+		.active
+			cursor pointer
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
 			
 		.rooms
 			display none
@@ -371,10 +458,18 @@
 			top 48px
 			left 48px
 			background-color #000000
+			width 200px
+			max-height 300px
+			overflow-x hidden
+			overflow-y auto
+			
 			
 			li
 				cursor pointer
 				display block
+				padding 10px
+				font-weight bold
+				color #56baf2
 				
 				&:hover
 					-webkit-filter brightness(1.4)
@@ -433,7 +528,11 @@
 		&:hover:not(.disabled)
 			-webkit-filter brightness(1.4)
 			filter brightness(1.4)
-				
+
+		&.disabled
+			-webkit-filter grayscale(1)
+			filter grayscale(1)
+
 		&.accept
 		&.cancel
 			width 106px
@@ -589,6 +688,10 @@
 		
 		table
 			width 100%
+		
+		span
+			display block
+			text-align center
 	
 	.pages
 		width 100%
@@ -706,6 +809,11 @@
 	
 	h2
 		font-size 14px
+		
+	.info
+		margin-top 10px
+		margin-bottom 20px
+		color #888888
 
 	.tabItems
 	.tabShop
@@ -746,7 +854,7 @@
 	.icons
 		margin-top 10px
 		margin-bottom 10px
-		padding 10px
+		padding 5px
 		height 500px
 		overflow hidden
 		overflow-y auto
@@ -759,6 +867,7 @@
 		li
 			cursor pointer
 			display inline-block
+			vertical-align top
 			padding 5px
 			
 			&:hover
@@ -766,7 +875,14 @@
 				filter brightness(1.4)
 			
 			&.selected
-				border 2px solid #FFFFFF
+				border 4px solid #56baf2
+
+			.has
+				display block
+				height 17px
+				padding-top 3px
+				text-align center
+				color #888888
 
 			.credits
 				display block

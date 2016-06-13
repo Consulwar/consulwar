@@ -671,7 +671,7 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
-	'click .chat, scroll .messages': function(e, t) {
+	'click .chat': function(e, t) {
 		hidePopups();
 	},
 
@@ -851,6 +851,12 @@ Game.Chat.showUserPopup = function(x, y, username) {
 				username: username
 			}, $('.chat')[0]
 		);
+
+		$('ul.messages li').each(function(index, element) {
+			if (element.dataset.username == username) {
+				$(element).addClass('selected');
+			}
+		});
 	}
 };
 
@@ -858,6 +864,10 @@ var hideUserPopup = function() {
 	if (userPopupView) {
 		Blaze.remove(userPopupView);
 		userPopupView = null;
+
+		$('ul.messages li').each(function(index, element) {
+			$(element).removeClass('selected');
+		});
 	}
 };
 

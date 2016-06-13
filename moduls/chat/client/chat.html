@@ -82,7 +82,9 @@
 			{{#each messages}}
 				{{#if this.isMotd}}
 					<li class="motd">
-						{{this.message}}
+						<div>
+							{{{this.message}}}
+						</div>
 					</li>
 				{{else}}
 					<li>
@@ -229,8 +231,10 @@
 			<ul>
 				{{#each rooms}}
 					<li data-roomname="{{this.name}}">
-						<input type="checkbox" checked="{{isVisible this.name}}"/>
-						{{this.name}}
+						<label>
+							<input type="checkbox" checked="{{isVisible this.name}}"/>
+							{{this.name}}
+						</label>
 					</li>
 				{{/each}}
 			</ul>
@@ -330,24 +334,24 @@
 				<span class="hint">максимум 32 символа</span>
 			</label>
 			<div class="button removeRoom {{#if not canControlRoom}}disabled{{/if}}"></div>
-			<label>
+			<div class="radioBlock">
 				<span class="title">Тип комнаты:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="roomType" value="public"/> публичная
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="roomType" value="private" checked="checked"/> приватная
-				</div>
-			</label>
-			<label>
+				</label>
+			</div>
+			<div class="radioBlock">
 				<span class="title">Оплата за сообщения:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="roomPayment" value="crystals"/> кристаллы
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
-				</div>
-			</label>
+				</label>
+			</div>
 			<div class="creditsBlock">
 				<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
 				<div class="amount">{{credits}}</div>
@@ -369,15 +373,15 @@
 				<span class="title">Причина бана:</span>
 				<textarea name="reason" disabled="{{#if not canControlBlock}}disabled{{/if}}"></textarea>
 			</label>
-			<label>
+			<div class="radioBlock">
 				<span class="title">Тип бана / разбана:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="blockType" value="local" checked="checked" disabled="{{#if not canControlBlock}}disabled{{/if}}"/> локально
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="blockType" value="global" disabled="{{#if or (not canControlBlock) (not isGlobalControl)}}disabled{{/if}}"/> глобально
-				</div>
-			</label>
+				</label>
+			</div>
 			<div class="controlBlock">
 				<div class="button accept block {{#if not canControlBlock}}disabled{{/if}}">
 					Наказать

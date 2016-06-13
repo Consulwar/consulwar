@@ -20,7 +20,7 @@ Game.Chat.BalanceHistory = {
 };
 
 Game.Chat.BalanceHistory.Collection._ensureIndex({
-	roomName: 1,
+	room_id: 1,
 	timestamp: -1
 });
 
@@ -775,7 +775,7 @@ Meteor.methods({
 		});
 
 		Game.Chat.BalanceHistory.Collection.insert({
-			roomName: roomName,
+			room_id: room._id,
 			credits: credits,
 			timestamp: Game.getCurrentTime(),
 			user_id: user._id,
@@ -1302,7 +1302,7 @@ Meteor.methods({
 		}
 
 		var result = Game.Chat.BalanceHistory.Collection.find({
-			roomName: roomName
+			room_id: room._id
 		}, {
 			sort: {timestamp: -1},
 			skip: (page > 0) ? (page - 1) * count : 0,

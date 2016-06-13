@@ -93,7 +93,7 @@ game.ChatIcon = function(group, options) {
 
 	this.isDefault = (options.isDefault !== undefined) ? options.isDefault : group.isDefault;
 	this.isUnique = (options.isUnique !== undefined) ? options.isUnique : group.isUnique;
-	this.price = (options.price != undefined) ? options.price : group.price;
+	this.price = (options.price !== undefined) ? options.price : group.price;
 
 	this.checkHas = function() {
 		if (this.isDefault) {

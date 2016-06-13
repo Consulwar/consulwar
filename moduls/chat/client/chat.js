@@ -163,7 +163,7 @@ Template.chat.onRendered(function() {
 				// set as last active chat room
 				Session.set('chatRoom', roomName);
 				currentRoomName = roomName;
-				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
+				Meteor.setTimeout(scrollChatToBottom.bind(template, true), 500);
 			} else {
 				// load after last message timestamp
 				isLoading.set(true);
@@ -187,7 +187,7 @@ Template.chat.onRendered(function() {
 					// subscribe after loading
 					chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 					chatSubscription = Meteor.subscribe('chat', roomName);
-					Meteor.setTimeout(scrollChatToBottom.bind(template, true));
+					Meteor.setTimeout(scrollChatToBottom.bind(template, true), 500);
 				});
 			}
 		}
@@ -204,7 +204,7 @@ Template.chat.onDestroyed(function() {
 var scrollChatToBottom = function(force) {
 	var container = $('ul.messages');
 
-	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 200) > container[0].scrollHeight)) {
+	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 300) > container[0].scrollHeight)) {
 		container[0].scrollTop = container[0].scrollHeight;
 	}
 };
@@ -922,7 +922,7 @@ Template.chatRoomsList.helpers({
 	rooms: function() { return roomsList.get(); },
 	isVisible: function(roomName) { return checkIsRoomVisible(roomName); },
 	isActive: function(roomName) {
-		return Router.current().params.room == roomName
+		return Router.current().params.room == roomName;
 	}
 });
 

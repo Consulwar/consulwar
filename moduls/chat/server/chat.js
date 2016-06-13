@@ -133,7 +133,7 @@ Meteor.methods({
 		// check message
 		check(message, String);
 
-		message = sanitizeHtml(message.trim().substr(0, 140), {
+		message = sanitizeHtml(message.trim().substr(0, 175), {
 			allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
 			allowedAttributes: {
 				'a': [ 'href' ]
@@ -1344,11 +1344,18 @@ Meteor.methods({
 		var update = { $addToSet: {} };
 		update.$addToSet[group] = engName;
 
+		Game.Chat.Icons.Collection.upsert({ user_id: user._id }, update);
+
 		if (icon.isUnique) {
+			update = { $set: {} };
+			update.$set[group + '.' + engName] = {
+				user_id: user._id,
+				username: user.username,
+				timestamp: Game.getCurrentTime()
+			};
+
 			Game.Chat.Icons.Collection.upsert({ user_id: 'unique' }, update);
 		}
-
-		Game.Chat.Icons.Collection.upsert({ user_id: user._id }, update);
 	},
 
 	'chat.selectIcon': function(group, engName) {
@@ -1376,6 +1383,33 @@ Meteor.methods({
 		}, {
 			$set: {
 				'settings.chat.icon': group + '/' + engName
+			}
+		});
+	},
+
+	'chat.setUserIcon': function(username, iconPath) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (['admin'].indexOf(user.role) == -1) {
+			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+		}
+
+		check(username, String);
+		check(iconPath, String);
+
+		Meteor.users.update({
+			username: username
+		}, {
+			$set: {
+				'settings.chat.icon': iconPath
 			}
 		});
 	}

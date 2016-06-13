@@ -138,7 +138,7 @@ game.ChatIcon = function(group, options) {
 	this.checkUniqueSold = function() {
 		if (this.isUnique) {
 			var value = Game.Chat.Icons.getValueUnique();
-			if (value && value[this.group] && value[this.group].indexOf(this.engName) != -1) {
+			if (value && value[this.group] && value[this.group][this.engName]) {
 				return true;
 			}
 		}

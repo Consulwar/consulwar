@@ -546,15 +546,10 @@ var getUserRole = function(userId, username, role, rating) {
 			id: 'moderator',
 			name: 'Модератор'
 		};
-	} else if (_.isNumber(rating)) {
-		return {
-			id: '',
-			name: 'Ранг ' + Game.User.getLevel(rating)
-		};
 	}
 	return {
 		id: '',
-		name: ''
+		name: Game.User.getLevelName(rating)
 	};
 };
 
@@ -687,7 +682,7 @@ Template.chat.events({
 	},
 
 	'keypress textarea[name="text"]': function(e, t) {
-		if (e.ctrlKey && (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter')) {
+		if (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter') {
 			t.find('#message input[type="submit"]').click();
 		}
 	},

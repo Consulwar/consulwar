@@ -1194,7 +1194,8 @@ Meteor.methods({
 				role: 1,
 				cheater: 1,
 				room: 1,
-				iconPath: 1
+				iconPath: 1,
+				rating: 1
 			},
 			sort: {
 				timestamp: -1
@@ -1243,10 +1244,12 @@ Meteor.methods({
 		var hidden = [];
 
 		for (var key in rooms) {
-			if (rooms[key]) {
-				visible.push(key);
-			} else {
-				hidden.push(key);
+			if (_.isString(key) && key.length <= 32) {
+				if (rooms[key]) {
+					visible.push(key);
+				} else {
+					hidden.push(key);
+				}
 			}
 		}
 			
@@ -1462,7 +1465,8 @@ Meteor.publish('chat', function (roomName) {
 					role: 1,
 					cheater: 1,
 					room: 1,
-					iconPath: 1
+					iconPath: 1,
+					rating: 1
 				},
 				sort: {
 					timestamp: -1
@@ -1477,13 +1481,20 @@ Meteor.publish('chat', function (roomName) {
 	}
 });
 
-Meteor.publish('chatIcons', function() {
+Meteor.publish('chatIconsUser', function() {
 	if (this.userId) {
 		return Game.Chat.Icons.Collection.find({
-			$or: [
-				{ user_id: this.userId },
-				{ user_id: 'unique' }
-			]
+			user_id: this.userId
+		});
+	} else {
+		this.ready();
+	}
+});
+
+Meteor.publish('chatIconsUnique', function() {
+	if (this.userId) {
+		return Game.Chat.Icons.Collection.find({
+			user_id: 'unique'
 		});
 	} else {
 		this.ready();

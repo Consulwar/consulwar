@@ -1,12 +1,14 @@
 initChatClient = function() {
 
+// TODO: Replace all confirms and prompts with new GUI!
 // TODO: Balance history pages!
 // TODO: Color names in participants list!
 // TODO: Change rooms list arrows state (active /not active)!
 
 initChatLib();
 
-Meteor.subscribe('chatIcons');
+Meteor.subscribe('chatIconsUser');
+Meteor.subscribe('chatIconsUnique');
 
 var soundNotprepared = new buzz.sound('/sound/notprepared.mp3');
 

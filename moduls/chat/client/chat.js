@@ -1,6 +1,5 @@
 initChatClient = function() {
 
-// TODO: Replace all confirms and prompts with new GUI!
 // TODO: Balance history pages!
 // TODO: Color names in participants list!
 // TODO: Change rooms list arrows state (active /not active)!
@@ -233,7 +232,7 @@ var createRoom = function(name, isPublic, isOwnerPays) {
 		message += ' за ' + price.credits + ' ГГК';
 	}
 
-	Game.Chat.showAcceptWindow(message, function() {
+	Game.showAcceptWindow(message, function() {
 		Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
@@ -253,7 +252,7 @@ var removeRoom = function(name) {
 		return;
 	}
 
-	Game.Chat.showAcceptWindow('Удалить комнату ' + name, function() {
+	Game.showAcceptWindow('Удалить комнату ' + name, function() {
 		Meteor.call('chat.removeRoom', name, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
@@ -280,7 +279,7 @@ var addCredits = function(roomName, credits) {
 
 	var message = 'Зачислить ' + credits + ' ГГК на счет конматы ' + roomName;
 
-	Game.Chat.showAcceptWindow(message, function() {
+	Game.showAcceptWindow(message, function() {
 		Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
@@ -325,7 +324,7 @@ var removeUser = function(roomName, username) {
 
 	var message = 'Удалить из комнаты ' + roomName + ' пользователя ' + username;
 
-	Game.Chat.showAcceptWindow(message, function() {
+	Game.showAcceptWindow(message, function() {
 		Meteor.call('chat.removeUserFromRoom', roomName, username, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
@@ -402,15 +401,7 @@ var execClientCommand = function(message) {
 	}
 	// create new channel
 	else if (message.indexOf('/create channel') === 0) {
-		var name = prompt('Введите название комнаты');
-		if (!name) {
-			return true;
-		}
-
-		var isPublic = confirm('Комната будет публичной?');
-		var isOwnerPays = confirm('Сообщения оплачиваются грязными галлактическими кредитами?');
-
-		createRoom(name, isPublic, isOwnerPays);
+		Game.Chat.showControlWindow();
 		return true;
 	}
 	// remove current channel
@@ -440,35 +431,12 @@ var execClientCommand = function(message) {
 	}
 	// block user
 	else if (message.indexOf('/block') === 0) {
-		var time = prompt('Укажите время блокировки в секундах', '86400');
-		if (!time) {
-			return;
-		}
-
-		var isLocalBlock = true;
-		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			isLocalBlock = confirm('Блокировать только эту комнату?');
-		}
-
-		blockUser({
-			roomName: isLocalBlock ? Router.current().params.room : null,
-			username: message.substr('/block'.length).trim(),
-			time: parseInt(time, 10)
-		});
+		Game.Chat.showControlWindow( message.substr('/block'.length).trim() );
 		return true;
 	}
 	// unblock user
 	else if (message.indexOf('/unblock') === 0) {
-		var isLocalUnblock = true;
-		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
-			isLocalUnblock = confirm('Разблокировать только эту комнату?');
-		}
-
-		blockUser({
-			roomName: isLocalUnblock ? Router.current().params.room : null,
-			username: message.substr('/unblock'.length).trim(),
-			time: 0
-		});
+		Game.Chat.showControlWindow( message.substr('/block'.length).trim() );
 		return true;
 	}
 	// add moderator
@@ -796,7 +764,7 @@ Template.chat.events({
 	'click .chat .buyFreeChat': function(e, t) {
 		e.preventDefault();
 
-		Game.Chat.showAcceptWindow('Вы точно хотите больше никогда не платить за ссаный чат?', function() {
+		Game.showAcceptWindow('Вы точно хотите больше никогда не платить за ссаный чат?', function() {
 			var resources = Game.Resources.getValue();
 			if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
 				Notifications.error('Недостаточно средств');
@@ -1046,48 +1014,6 @@ Template.chatRoomsPopup.events({
 				}
 			});
 		}
-	}
-});
-
-// ----------------------------------------------------------------------------
-// Accept window
-// ----------------------------------------------------------------------------
-
-var acceptWindowView = null;
-
-Game.Chat.showAcceptWindow = function(message, onAccept, onCancel) {
-	if (!acceptWindowView) {
-		acceptWindowView = Blaze.renderWithData(
-			Template.chatAccept, {
-				message: message,
-				onAccept: onAccept,
-				onCancel: onCancel
-			}, $('.over')[0]
-		);
-	}
-};
-
-var closeAcceptWindow = function(callback) {
-	if (acceptWindowView) {
-		Blaze.remove(acceptWindowView);
-		acceptWindowView = null;
-	}
-	if (_.isFunction(callback)) {
-		callback.call();
-	}
-};
-
-Template.chatAccept.events({
-	'click .close': function(e, t) {
-		closeAcceptWindow(t.data.onCancel);
-	},
-
-	'click .cancel': function(e, t) {
-		closeAcceptWindow(t.data.onCancel);
-	},
-
-	'click .accept': function(e, t) {
-		closeAcceptWindow(t.data.onAccept);
 	}
 });
 
@@ -1396,7 +1322,7 @@ Template.chatIcons.events({
 
 		var message = 'Купить иконку за ' + icon.price.credits + ' ГГК';
 
-		Game.Chat.showAcceptWindow(message, function() {
+		Game.showAcceptWindow(message, function() {
 			Meteor.call('chat.buyIcon', group, id, function(err, result) {
 				if (err) {
 					Notifications.error('Не удалось купить иконку', err.error);
@@ -1419,7 +1345,7 @@ Template.chatIcons.events({
 
 		var message = 'Сменить иконку';
 
-		Game.Chat.showAcceptWindow(message, function() {
+		Game.showAcceptWindow(message, function() {
 			Meteor.call('chat.selectIcon', group, id, function(err, result) {
 				if (err) {
 					Notifications.error('Не удалось выбрать иконку', err.error);

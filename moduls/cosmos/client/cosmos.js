@@ -487,37 +487,38 @@ Template.cosmosPlanetInfo.events({
 		var targetPlanet = Game.Planets.getOne(id);
 		var basePlanet = Game.Planets.getBase();
 
-		var planetName = prompt('Как назвать планету?', targetPlanet.name);
-		if (!planetName) {
-			return;
-		}
+		Game.showInputWindow('Как назвать планету?', targetPlanet.name, function(planetName) {
+			if (!planetName) {
+				return;
+			}
 
-		planetName = planetName.trim();
-		if (planetName == targetPlanet.name) {
-			return;
-		}
+			planetName = planetName.trim();
+			if (planetName == targetPlanet.name) {
+				return;
+			}
 
-		if (id == basePlanet._id) {
-			Meteor.call('user.changePlanetName', planetName, function(err, result) {
-				if (err) {
-					Notifications.error('Невозможно сменить название планеты', err.error);
-				}
-			});
-		} else {
-			if (confirm('Изменение имени планеты стоит ' +  Game.Planets.RENAME_PLANET_PRICE + ' ГГК')) {
-				var userResources = Game.Resources.getValue();
-				if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
-					Notifications.error('Недостаточно ГГК');
-					return;
-				}
-
-				Meteor.call('planet.changeName', id, planetName, function(err, result) {
+			if (id == basePlanet._id) {
+				Meteor.call('user.changePlanetName', planetName, function(err, result) {
 					if (err) {
 						Notifications.error('Невозможно сменить название планеты', err.error);
 					}
 				});
+			} else {
+				Game.showAcceptWindow('Изменение имени планеты стоит ' +  Game.Planets.RENAME_PLANET_PRICE + ' ГГК', function() {
+					var userResources = Game.Resources.getValue();
+					if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
+						Notifications.error('Недостаточно ГГК');
+						return;
+					}
+
+					Meteor.call('planet.changeName', id, planetName, function(err, result) {
+						if (err) {
+							Notifications.error('Невозможно сменить название планеты', err.error);
+						}
+					});
+				});
 			}
-		}
+		});
 	}
 });
 
@@ -966,20 +967,18 @@ Template.cosmosAttackMenu.events({
 	'click .btn-add': function(e, t) {
 		var price = Game.Planets.getExtraColonyPrice();
 
-		if (!confirm('Дополнительная колония стоит ' + price + ' ГГК. Купить?')) {
-			return;
-		}
-
-		var userResources = Game.Resources.getValue();
-		if (userResources.credits.amount < price) {
-			Notifications.error('Недостаточно ГГК');
-			return;
-		}
-
-		Meteor.call('planet.buyExtraColony', function(err) {
-			if (err) {
-				Notifications.error('Не удалось купить дополнительную колонию', err.error);
+		Game.showAcceptWindow('Дополнительная колония стоит ' + price + ' ГГК. Купить?', function() {
+			var userResources = Game.Resources.getValue();
+			if (userResources.credits.amount < price) {
+				Notifications.error('Недостаточно ГГК');
+				return;
 			}
+
+			Meteor.call('planet.buyExtraColony', function(err) {
+				if (err) {
+					Notifications.error('Не удалось купить дополнительную колонию', err.error);
+				}
+			});
 		});
 	},
 

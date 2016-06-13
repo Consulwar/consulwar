@@ -18,19 +18,19 @@ Template.auth.events({
 	'click .forgotPassword': function(e, t) {
 		e.preventDefault();
 
-		var email = prompt('Email?');
-
-		if (email) {
-			Accounts.forgotPassword({
-				email: email
-			}, function(err) {
-				if (err) {
-					Notifications.error('Восстановление пароля не дуалось', err.error);
-				} else {
-					Notifications.success('Способ восстановления кодов доступа отправлен на почту');
-				}
-			});
-		}
+		Game.showInputWindow('Укажите email', '', function(email) {
+			if (email) {
+				Accounts.forgotPassword({
+					email: email
+				}, function(err) {
+					if (err) {
+						Notifications.error('Восстановление пароля не дуалось', err.error);
+					} else {
+						Notifications.success('Способ восстановления кодов доступа отправлен на почту');
+					}
+				});
+			}
+		});
 	}
 });
 

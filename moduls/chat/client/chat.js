@@ -562,7 +562,37 @@ Template.chat.helpers({
 	isLoading: function() { return isLoading.get(); },
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
-	messages: function() { return messages.list(); },
+	messages: function() { 
+		var msgs = messages.list();
+		if (!msgs.length) return [];
+
+		var groupedMessages = [];
+		var group = 0;
+		var part = {};
+		for (var i = 0; i < msgs.length; i++) {
+			if (i > 0 &&
+				(msgs[i - 1].username != msgs[i].username ||
+				msgs[i - 1].role != msgs[i].role ||
+				msgs[i - 1].iconPath != msgs[i].iconPath)) {
+				group++;
+			}
+
+			part = {
+				_id: msgs[i]._id,
+				message: msgs[i].message,
+				data: msgs[i].data,
+				timestamp: msgs[i].timestamp,
+			};
+
+			if (!groupedMessages[group]) {
+				groupedMessages[group] = msgs[i];
+				groupedMessages[group].parts = [];
+			}
+			groupedMessages[group].parts.push(part);
+		}
+
+		return groupedMessages;
+	},
 
 	getUserRole: function() {
 		var user = Meteor.user();
@@ -690,10 +720,16 @@ Template.chat.events({
 	},
 
 	'click .participants span': function(e, t) {
-		t.find('#message textarea[name="text"]').value +=  '@' + e.currentTarget.innerHTML.trim();
+		t.find('#message textarea[name="text"]').value +=  '@' + e.currentTarget.innerHTML.trim() + ', ';
+		t.find('#message textarea[name="text"]').focus();
 	},
 
-	'click .messages li': function(e, t) {
+	'click .messages .message': function(e, t) {
+		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).parent().find('.profile').data('username') + ', ';
+		t.find('#message textarea[name="text"]').focus();
+	},
+
+	'click .messages li .profile': function(e, t) {
 		e.stopPropagation();
 
 		var username = e.currentTarget.dataset.username;
@@ -701,12 +737,9 @@ Template.chat.events({
 			return;
 		}
 
-		var parentPosition = t.$('.messages').position();
-		var position = $(e.currentTarget).position();
-
 		Game.Chat.showUserPopup(
-			position.left + parentPosition.left + 200,
-			position.top + parentPosition.top,
+			e.pageX,
+			e.pageY - 40,
 			username
 		);
 	},

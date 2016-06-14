@@ -85,79 +85,83 @@
 						{{this.message}}
 					</li>
 				{{else}}
-					<li
-						data-tooltip="{{formatDate this.timestamp -180}}"
-						data-tooltip-direction="w" 
-						data-username="{{this.username}}"
-					>
-						<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
-						{{#let messageRole=(getUserRoleByMessage this)}}
-							<div 
-								class="
-									username 
-									{{messageRole.id}} 
-									{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-									{{#if eq this.username user.username}}me{{/if}}"
-							>
-								{{this.username}}
-							</div>
-							<div class="role {{messageRole.id}}">
-								{{messageRole.name}}
-							</div>
-						{{/let}}
+					<li>
 						<div 
-							class="
-								message 
-								{{#if this.data}}status{{/if}} 
-								{{this.data.type}}"
+							class="profile"
+							data-username="{{this.username}}"
 						>
-							{{#if this.data}}
-								{{#if eq this.data.type 'dice'}}
-									бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
-									{{#each this.data.dice.dices.values}}
-										<span class="dice">{{this}}</span> 
-									{{/each}}
-								{{/if}}
-								{{#if eq this.data.type 'status'}}
-									{{{highlightUser this.message}}}
-								{{/if}}
-								{{#if eq this.data.type 'notprepared'}}
-									{{{highlightUser this.message}}}
-								{{/if}}
-								{{#if eq this.data.type 'lovereptiles'}}
-									{{{highlightUser this.message}}}
-								{{/if}}
-								{{#if eq this.data.type 'sepukku'}}
-									совершил кровавое сепукку.
-								{{/if}}
-								{{#if eq this.data.type 'unblock'}}
-									разблокировал
-									{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-									для {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'block'}}
-									заблокировал
-									{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-									для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
-								{{/if}}
-								{{#if eq this.data.type 'add'}}
-									добавил в чат {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'remove'}}
-									удалил из чата {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'addModerator'}}
-									назначил модератора {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'removeModerator'}}
-									разжаловал модератора {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'addfunds'}}
-									пополнил баланс чата на {{this.data.amount}} ГГК
-								{{/if}}
-							{{else}}
-								{{{highlightUser this.message}}}
-							{{/if}}
+							<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
+							{{#let messageRole=(getUserRoleByMessage this)}}
+								<div 
+									class="
+										username 
+										{{messageRole.id}} 
+										{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+										{{#if eq this.username user.username}}me{{/if}}"
+								>
+									{{this.username}}
+								</div>
+								<div class="role {{messageRole.id}}">
+									{{messageRole.name}}
+								</div>
+							{{/let}}
+						</div>
+						<div class="message">
+							{{#each this.parts}}
+								<p
+									data-tooltip="{{formatDate this.timestamp -180}}"
+									data-tooltip-direction="w" 
+									class="{{#if this.data}}status{{/if}} {{this.data.type}}"
+								>
+									{{#if this.data}}
+										{{#if eq this.data.type 'dice'}}
+											бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+											{{#each this.data.dice.dices.values}}
+												<span class="dice">{{this}}</span> 
+											{{/each}}
+										{{/if}}
+										{{#if eq this.data.type 'status'}}
+											{{{highlightUser this.message}}}
+										{{/if}}
+										{{#if eq this.data.type 'notprepared'}}
+											{{{highlightUser this.message}}}
+										{{/if}}
+										{{#if eq this.data.type 'lovereptiles'}}
+											{{{highlightUser this.message}}}
+										{{/if}}
+										{{#if eq this.data.type 'sepukku'}}
+											совершил кровавое сепукку.
+										{{/if}}
+										{{#if eq this.data.type 'unblock'}}
+											разблокировал
+											{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+											для {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'block'}}
+											заблокировал
+											{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+											для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
+										{{/if}}
+										{{#if eq this.data.type 'add'}}
+											добавил в чат {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'remove'}}
+											удалил из чата {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'addModerator'}}
+											назначил модератора {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'removeModerator'}}
+											разжаловал модератора {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'addfunds'}}
+											пополнил баланс чата на {{this.data.amount}} ГГК
+										{{/if}}
+									{{else}}
+										{{{highlightUser this.message}}}
+									{{/if}}
+								</p>
+							{{/each}}
 						</div>
 					</li>
 				{{/if}}

@@ -9,6 +9,12 @@
 	height 574px
 	background-color #101217
 	
+	.profile
+		position relative
+		display inline-block
+		width 195px
+		vertical-align top
+	
 	.username
 		color #c4aba1
 	.role
@@ -142,7 +148,8 @@
 			padding 2.5px
 			background-color #13161b
 			
-			&:hover
+			.profile:hover,
+			p:hover
 				-webkit-filter brightness(1.4)
 				filter brightness(1.4)
 
@@ -162,9 +169,10 @@
 				width 150px
 				
 			.message
-				position absolute
-				top 3px
-				left 200px
+				position relative
+				display inline-block
+				vertical-align top
+				max-width 840px
 				line-height 19px
 				color #dcdcdc
 

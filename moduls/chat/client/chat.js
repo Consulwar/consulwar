@@ -1,7 +1,6 @@
 initChatClient = function() {
 
 // TODO: Balance history pages!
-// TODO: Color names in participants list!
 // TODO: Change rooms list arrows state (active /not active)!
 
 initChatLib();
@@ -595,26 +594,59 @@ Template.chat.helpers({
 			return null;
 		}
 
-		// private room -> users list
+		var users = [];
+		
 		if (!room.isPublic) {
-			return room.usernames;
+
+			// private room -> users list
+			for (var i = 0; i < room.users.length; i++) {
+				users.push({
+					name: room.usernames[i],
+					role: getUserRole(room.users[i], room.usernames[i]).id
+				});
+			}
+
+		} else {
+
+			// public room -> find from last messages
+			messages.depend();
+
+			var names = [ Meteor.user().username ];
+			users.push({
+				name: Meteor.user().username,
+				role: getUserRole(Meteor.userId(), Meteor.user().username, Meteor.user().role).id
+			});
+
+			var time = Session.get('serverTime') - 1800;
+			var n = messages.length;
+			while (n-- > 0) {
+				if (messages[n].timestamp < time) {
+					break;
+				}
+				if (names.indexOf(messages[n].username) == -1) {
+					names.push(messages[n].username);
+					users.push({
+						name: messages[n].username,
+						role: getUserRole(messages[n].user_id, messages[n].username, messages[n].role).id
+					});
+				}
+			}
+
 		}
 
-		// public room -> find from last messages
-		messages.depend();
-		var users = [ Meteor.user().username ];
-		var time = Session.get('serverTime') - 1800;
-		var n = messages.length;
-		while (n-- > 0) {
-			if (messages[n].timestamp < time) {
-				break;
-			}
-			if (users.indexOf(messages[n].username) == -1) {
-				users.push(messages[n].username);
-			}
+		if (users.length > 0) {
+			return users.sort(function(a, b) {
+				if (a.name < b.name) {
+					return -1;
+				}
+				if (a.name > b.name) {
+					return 1;
+				}
+				return 0;
+			});
 		}
 
-		return users.length > 0 ? users.sort() : null;
+		return null;
 	},
 
 	price: function() {
@@ -820,7 +852,7 @@ Game.Chat.showUserPopup = function(x, y, username) {
 			}, $('.chat')[0]
 		);
 
-		$('ul.messages li').each(function(index, element) {
+		$('.profile').each(function(index, element) {
 			if (element.dataset.username == username) {
 				$(element).addClass('selected');
 			}
@@ -833,7 +865,7 @@ var hideUserPopup = function() {
 		Blaze.remove(userPopupView);
 		userPopupView = null;
 
-		$('ul.messages li').each(function(index, element) {
+		$('.profile').each(function(index, element) {
 			$(element).removeClass('selected');
 		});
 	}
@@ -1066,6 +1098,7 @@ Template.chatHelp.events({
 var balanceWindowView = null;
 var balanceHistory = new ReactiveVar(null);
 var balanceHistoryCount = new ReactiveVar(null);
+var balanceLoading = new ReactiveVar(false);
 
 Game.Chat.showBalanceWindow = function(roomName, credits) {
 	if (!balanceWindowView) {
@@ -1086,10 +1119,16 @@ var closeBalanceWindow = function() {
 };
 
 var loadBalanceHistory = function(roomName, page) {
+	if (balanceLoading.get()) {
+		return;
+	}
+
 	balanceHistory.set(null);
 	balanceHistoryCount.set(null);
+	balanceLoading.set(true);
 
 	Meteor.call('chat.getBalanceHistory', roomName, page, 20, function(err, result) {
+		balanceLoading.set(false);
 		if (err) {
 			Notifications.error('Не удалось загрузить историю пополнения', err.error);
 		} else {
@@ -1105,7 +1144,8 @@ Template.chatBalance.onRendered(function() {
 
 Template.chatBalance.helpers({
 	countTotal: function() { return balanceHistoryCount.get(); },
-	history: function() { return balanceHistory.get(); }
+	history: function() { return balanceHistory.get(); },
+	isLoading: function() { return balanceLoading.get(); }
 });
 
 Template.chatBalance.events({

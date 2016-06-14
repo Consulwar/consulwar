@@ -63,7 +63,7 @@
 				<ul>
 					{{#each users}}
 						<li class="online">
-							<span>{{this}}</span>
+							<span class="{{this.role}}">{{this.name}}</span>
 						</li>
 					{{/each}}
 				</ul>
@@ -210,7 +210,13 @@
 					{{#each rooms}}
 						{{#if isVisible this.name}}
 							<li class="{{#if isActive this.name}}active{{/if}}">
-								<a href="{{pathFor 'chat' room=this.name}}">
+								<a 
+									href="{{pathFor 'chat' room=this.name}}" 
+									class="
+										{{#if this.isPublic}}public{{/if}} 
+										{{#if this.isOwnerPays}}credits{{/if}}
+									"
+								>
 									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
 								</a>
 								<span class="hide" data-roomname="{{this.name}}"></span>
@@ -291,18 +297,22 @@
 
 		<span class="historyTitle">История пополнений</span>
 		<div class="data">
-			{{#if history}}
-				<table>
-					{{#each history}}
-						<tr>
-							<td>{{this.username}}</td>
-							<td>{{formatNumber this.credits}}</td>
-							<td>{{formatDate this.timestamp -180}}</td>
-						</tr>
-					{{/each}}
-				</table>
+			{{#if isLoading}}
+				<span>Загрузка ...</span>
 			{{else}}
-				<span>История пополнений пуста</span>
+				{{#if history}}
+					<table>
+						{{#each history}}
+							<tr>
+								<td>{{this.username}}</td>
+								<td>{{formatNumber this.credits}}</td>
+								<td>{{formatDate this.timestamp -180}}</td>
+							</tr>
+						{{/each}}
+					</table>
+				{{else}}
+					<span>История пополнений пуста</span>
+				{{/if}}
 			{{/if}}
 		</div>
 

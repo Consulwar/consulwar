@@ -157,6 +157,9 @@
 										{{#if eq this.data.type 'addfunds'}}
 											пополнил баланс чата на {{this.data.amount}} ГГК
 										{{/if}}
+										{{#if eq this.data.type 'coub'}}
+											<iframe src="//coub.com/embed/{{this.data.id}}?muted=false&autostart=false&originalSize=false&startWithHD=false" allowfullscreen="true" frameborder="0" width="800" height="240"></iframe>
+										{{/if}}
 									{{else}}
 										{{{highlightUser this.message}}}
 									{{/if}}
@@ -269,6 +272,7 @@
 				<tr><td>/remove moderator [username]</td><td>разжаловать модератора</td></tr>
 				<tr><td>/d [n] [m]</td><td>бросить n кубиков с m гранями</td></tr>
 				<tr><td>/me [text]</td><td>писать от третьего лица</td></tr>
+				<tr><td>/coub [id|link]</td><td>показать коуб (50ггк)</td></tr>
 				<tr><td>/сепукку</td><td>совершить сепукку и пожертвовать ресурсы</td></tr>
 				<tr><td>/яготов</td><td>вы действительно так думаете?</td></tr>
 				<tr><td>/ilovereptiles</td><td>признаться в любви к Рептилоидам</td></tr>

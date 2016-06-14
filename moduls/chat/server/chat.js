@@ -232,6 +232,8 @@ Meteor.methods({
 				}
 				
 				stats['chat.coub'] = 1;
+
+				Game.Payment.Expense.log(price.credits, 'coub');
 			} else if (message.indexOf('/motd') === 0) {
 				if (['admin', 'helper'].indexOf(user.role) == -1
 				 && room.owner != user._id

@@ -1,7 +1,6 @@
 initChatClient = function() {
 
 // TODO: Balance history pages!
-// TODO: Change rooms list arrows state (active /not active)!
 
 initChatLib();
 
@@ -920,6 +919,8 @@ Template.chatUserPopup.events({
 
 var roomsList = new ReactiveVar(null);
 var isAnimation = false;
+var isArrowLeft = new ReactiveVar(false);
+var isArrowRight = new ReactiveVar(false);
 
 var loadRoomsList = function() {
 	Meteor.call('chat.getRoomsList', function(err, data) {
@@ -930,9 +931,21 @@ var loadRoomsList = function() {
 };
 
 Template.chatRoomsList.onRendered(function() {
+	// load rooms list
 	if (!roomsList.get()) {
 		loadRoomsList();
 	}
+
+	// disable arrows
+	isArrowLeft.set(false);
+	isArrowRight.set(false);
+
+	// each second refresh arrows
+	var t = this;
+	this.autorun(function() {
+		Session.get('serverTime');
+		refreshArrows(t);
+	});
 });
 
 var checkIsRoomVisible = function(roomName) {
@@ -946,6 +959,13 @@ var checkIsRoomVisible = function(roomName) {
 		return false;
 	}
 	return true;
+};
+
+var refreshArrows = function(t) {
+	if (t) {
+		isArrowLeft.set( canAnimateLeft(t) );
+		isArrowRight.set( canAnimateRight(t) );
+	}
 };
 
 var canAnimateLeft = function(t) {
@@ -968,7 +988,9 @@ Template.chatRoomsList.helpers({
 	isVisible: function(roomName) { return checkIsRoomVisible(roomName); },
 	isActive: function(roomName) {
 		return Router.current().params.room == roomName;
-	}
+	},
+	isArrowLeft: function() { return isArrowLeft.get(); },
+	isArrowRight: function() { return isArrowRight.get(); }
 });
 
 Template.chatRoomsList.events({
@@ -977,6 +999,7 @@ Template.chatRoomsList.events({
 			isAnimation = true;
 			t.$('ul').animate({ left: '+=300px' }, function() {
 				isAnimation = false;
+				refreshArrows(t);
 			});
 		}
 	},
@@ -986,6 +1009,7 @@ Template.chatRoomsList.events({
 			isAnimation = true;
 			t.$('ul').animate({ left: '-=300px' }, function() {
 				isAnimation = false;
+				refreshArrows(t);
 			});
 		}
 	},

@@ -204,7 +204,7 @@
 		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}"></a>
 		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}"></a>
 		{{#if rooms}}
-			<span class="arrow-left active"></span>
+			<span class="arrow-left {{#if isArrowLeft}}active{{/if}}"></span>
 			<div class="listContainer">
 				<ul>
 					{{#each rooms}}
@@ -225,7 +225,7 @@
 					{{/each}}
 				</ul>
 			</div>
-			<span class="arrow-right active"></span>
+			<span class="arrow-right {{#if isArrowRight}}active{{/if}}"></span>
 		{{/if}}
 		<span class="arrow-down"></span>
 	</div>

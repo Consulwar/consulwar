@@ -12,6 +12,9 @@ Template.pages.helpers({
 	},
 
 	current: function() {
+		if (this.isModal) {
+			return parseInt( this.currentPage, 10 );
+		}
 		return parseInt( Router.current().params.page, 10 );
 	},
 
@@ -30,8 +33,9 @@ Template.pages.helpers({
 		}
 
 		// calc start page
-		var maxVisible = 11;
-		var from = Router.current().params.page - Math.floor( maxVisible / 2 );
+		var maxVisible = (this.maxVisible) ? this.maxVisible : 11;
+		var currentPage = (this.isModal) ? this.currentPage : Router.current().params.page;
+		var from = currentPage - Math.floor( maxVisible / 2 );
 		if (totalPages - from < maxVisible) {
 			from = totalPages - maxVisible + 1;
 		}

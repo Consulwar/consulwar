@@ -180,6 +180,8 @@ Meteor.methods({
 		var stats = {};
 		stats['chat.messages'] = 1;
 
+		var userPayAnyway = false;
+
 		if (message.substr(0, 1) == '/') {
 			var reg = new RegExp(/^\/d (\d )?(\d{1,2})$/);
 			if (message == '/d' || reg.test(message)) {
@@ -214,6 +216,24 @@ Meteor.methods({
 				set.message = message.substr(3);
 				stats['chat.status'] = 1;
 
+			} else if (message.indexOf('/coub') === 0) {
+				price = {credits: 50};
+				userPayAnyway = true;
+				if (userResources.credits.amount < price.credits) {
+					throw new Meteor.Error('У Вас недостаточно ресурсов');
+				}
+				set.data = {
+					type: 'coub',
+					id: _.last(message.substr(3).trim().split('/'))
+				};
+
+				if (set.data.id.length < 3 || set.data.id.length > 10) {
+					throw new Meteor.Error('Ошибка распознавания ID coub');
+				}
+				
+				stats['chat.coub'] = 1;
+
+				Game.Payment.Expense.log(price.credits, 'coub');
 			} else if (message.indexOf('/motd') === 0) {
 				if (['admin', 'helper'].indexOf(user.role) == -1
 				 && room.owner != user._id
@@ -293,7 +313,7 @@ Meteor.methods({
 
 		// message price
 		if (price) {
-			if (room.isOwnerPays) {
+			if (!userPayAnyway && room.isOwnerPays) {
 				Game.Chat.Room.Collection.update({
 					_id: room._id
 				}, {

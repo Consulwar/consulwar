@@ -525,14 +525,16 @@ Template.promocodeCreate.events({
 
 		}
 
-		if (_.isObject(object) && confirm('Создать промо код: \n' + JSON.stringify(object))) {
-			Meteor.call('admin.addPromoCode', object, function(err) {
-				if (err) {
-					Notifications.error('Не удалось создать промо код', err.error);
-				} else {
-					Notifications.success('Промо код успешно создан');
-				}
-			});
+		if (_.isObject(object)) {
+			Game.showAcceptWindow('Создать промо код: \n' + JSON.stringify(object), function() {
+				Meteor.call('admin.addPromoCode', object, function(err) {
+					if (err) {
+						Notifications.error('Не удалось создать промо код', err.error);
+					} else {
+						Notifications.success('Промо код успешно создан');
+					}
+				});
+			});	
 		}
 	}
 });

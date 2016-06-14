@@ -63,7 +63,7 @@
 				<ul>
 					{{#each users}}
 						<li class="online">
-							<span>{{this}}</span>
+							<span class="{{this.role}}">{{this.name}}</span>
 						</li>
 					{{/each}}
 				</ul>
@@ -82,82 +82,91 @@
 			{{#each messages}}
 				{{#if this.isMotd}}
 					<li class="motd">
-						{{this.message}}
+						<div>
+							{{{this.message}}}
+						</div>
 					</li>
 				{{else}}
-					<li
-						data-tooltip="{{formatDate this.timestamp -180}}"
-						data-tooltip-direction="w" 
-						data-username="{{this.username}}"
-					>
-						<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
-						{{#let messageRole=(getUserRoleByMessage this)}}
-							<div 
-								class="
-									username 
-									{{messageRole.id}} 
-									{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-									{{#if eq this.username user.username}}me{{/if}}"
-							>
-								{{this.username}}
-							</div>
-							<div class="role {{messageRole.id}}">
-								{{messageRole.name}}
-							</div>
-						{{/let}}
+					<li>
 						<div 
-							class="
-								message 
-								{{#if this.data}}status{{/if}} 
-								{{this.data.type}}"
+							class="profile"
+							data-username="{{this.username}}"
 						>
-							{{#if this.data}}
-								{{#if eq this.data.type 'dice'}}
-									бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
-									{{#each this.data.dice.dices.values}}
-										<span class="dice">{{this}}</span> 
-									{{/each}}
-								{{/if}}
-								{{#if eq this.data.type 'status'}}
-									{{{highlightUser this.message}}}
-								{{/if}}
-								{{#if eq this.data.type 'notprepared'}}
-									{{{highlightUser this.message}}}
-								{{/if}}
-								{{#if eq this.data.type 'lovereptiles'}}
-									{{{highlightUser this.message}}}
-								{{/if}}
-								{{#if eq this.data.type 'sepukku'}}
-									совершил кровавое сепукку.
-								{{/if}}
-								{{#if eq this.data.type 'unblock'}}
-									разблокировал
-									{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-									для {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'block'}}
-									заблокировал
-									{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-									для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
-								{{/if}}
-								{{#if eq this.data.type 'add'}}
-									добавил в чат {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'remove'}}
-									удалил из чата {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'addModerator'}}
-									назначил модератора {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'removeModerator'}}
-									разжаловал модератора {{this.message}}
-								{{/if}}
-								{{#if eq this.data.type 'addfunds'}}
-									пополнил баланс чата на {{this.data.amount}} ГГК
-								{{/if}}
-							{{else}}
-								{{{highlightUser this.message}}}
-							{{/if}}
+							<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
+							{{#let messageRole=(getUserRoleByMessage this)}}
+								<div 
+									class="
+										username 
+										{{messageRole.id}} 
+										{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+										{{#if eq this.username user.username}}me{{/if}}"
+								>
+									{{this.username}}
+								</div>
+								<div class="role {{messageRole.id}}">
+									{{messageRole.name}}
+								</div>
+							{{/let}}
+						</div>
+						<div class="message">
+							{{#each this.parts}}
+								<p
+									data-tooltip="{{formatDate this.timestamp -180}}"
+									data-tooltip-direction="w" 
+									class="{{#if this.data}}status{{/if}} {{this.data.type}}"
+								>
+									{{#if this.data}}
+										{{#if eq this.data.type 'dice'}}
+											бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+											{{#each this.data.dice.dices.values}}
+												<span class="dice">{{this}}</span> 
+											{{/each}}
+										{{/if}}
+										{{#if eq this.data.type 'status'}}
+											{{{highlightUser this.message}}}
+										{{/if}}
+										{{#if eq this.data.type 'notprepared'}}
+											{{{highlightUser this.message}}}
+										{{/if}}
+										{{#if eq this.data.type 'lovereptiles'}}
+											{{{highlightUser this.message}}}
+										{{/if}}
+										{{#if eq this.data.type 'sepukku'}}
+											совершил кровавое сепукку.
+										{{/if}}
+										{{#if eq this.data.type 'unblock'}}
+											разблокировал
+											{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+											для {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'block'}}
+											заблокировал
+											{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+											для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
+										{{/if}}
+										{{#if eq this.data.type 'add'}}
+											добавил в чат {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'remove'}}
+											удалил из чата {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'addModerator'}}
+											назначил модератора {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'removeModerator'}}
+											разжаловал модератора {{this.message}}
+										{{/if}}
+										{{#if eq this.data.type 'addfunds'}}
+											пополнил баланс чата на {{this.data.amount}} ГГК
+										{{/if}}
+										{{#if eq this.data.type 'coub'}}
+											<iframe src="//coub.com/embed/{{this.data.id}}?muted=false&autostart=false&originalSize=false&startWithHD=false" allowfullscreen="true" frameborder="0" width="800" height="240"></iframe>
+										{{/if}}
+									{{else}}
+										{{{highlightUser this.message}}}
+									{{/if}}
+								</p>
+							{{/each}}
 						</div>
 					</li>
 				{{/if}}
@@ -195,13 +204,19 @@
 		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}"></a>
 		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}"></a>
 		{{#if rooms}}
-			<span class="arrow-left active"></span>
+			<span class="arrow-left {{#if isArrowLeft}}active{{/if}}"></span>
 			<div class="listContainer">
 				<ul>
 					{{#each rooms}}
 						{{#if isVisible this.name}}
 							<li class="{{#if isActive this.name}}active{{/if}}">
-								<a href="{{pathFor 'chat' room=this.name}}">
+								<a 
+									href="{{pathFor 'chat' room=this.name}}" 
+									class="
+										{{#if this.isPublic}}public{{/if}} 
+										{{#if this.isOwnerPays}}credits{{/if}}
+									"
+								>
 									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
 								</a>
 								<span class="hide" data-roomname="{{this.name}}"></span>
@@ -210,7 +225,7 @@
 					{{/each}}
 				</ul>
 			</div>
-			<span class="arrow-right active"></span>
+			<span class="arrow-right {{#if isArrowRight}}active{{/if}}"></span>
 		{{/if}}
 		<span class="arrow-down"></span>
 	</div>
@@ -222,24 +237,15 @@
 			<ul>
 				{{#each rooms}}
 					<li data-roomname="{{this.name}}">
-						<input type="checkbox" checked="{{isVisible this.name}}"/>
-						{{this.name}}
+						<label>
+							<input type="checkbox" checked="{{isVisible this.name}}"/>
+							{{this.name}}
+						</label>
 					</li>
 				{{/each}}
 			</ul>
 		{{/if}}
 		<div class="save">Сохранить</div>
-	</div>
-</template>
-
-<template name="chatAccept">
-	<div class="smoke" style="z-index: 199;"></div>
-	<div class="chatAccept" style="z-index: 200;">
-		<div class="close"></div>
-		<span class="title">Подтвердите действие</span>
-		<span class="message">{{message}}</span>
-		<div class="button accept">Да</div>
-		<div class="button cancel">Нет</div>
 	</div>
 </template>
 
@@ -265,6 +271,7 @@
 				<tr><td>/remove moderator [username]</td><td>разжаловать модератора</td></tr>
 				<tr><td>/d [n] [m]</td><td>бросить n кубиков с m гранями</td></tr>
 				<tr><td>/me [text]</td><td>писать от третьего лица</td></tr>
+				<tr><td>/coub [id|link]</td><td>показать коуб (50ггк)</td></tr>
 				<tr><td>/сепукку</td><td>совершить сепукку и пожертвовать ресурсы</td></tr>
 				<tr><td>/яготов</td><td>вы действительно так думаете?</td></tr>
 				<tr><td>/ilovereptiles</td><td>признаться в любви к Рептилоидам</td></tr>
@@ -290,22 +297,28 @@
 
 		<span class="historyTitle">История пополнений</span>
 		<div class="data">
-			{{#if history}}
-				<table>
-					{{#each history}}
-						<tr>
-							<td>{{this.username}}</td>
-							<td>{{formatNumber this.credits}}</td>
-							<td>{{formatDate this.timestamp -180}}</td>
-						</tr>
-					{{/each}}
-				</table>
+			{{#if isLoading}}
+				<span>Загрузка ...</span>
 			{{else}}
-				<span>История пополнений пуста</span>
+				{{#if history}}
+					<table>
+						{{#each history}}
+							<tr>
+								<td>{{this.username}}</td>
+								<td>{{formatNumber this.credits}}</td>
+								<td>{{formatDate this.timestamp -180}}</td>
+							</tr>
+						{{/each}}
+					</table>
+				{{else}}
+					<span>История пополнений пуста</span>
+				{{/if}}
 			{{/if}}
 		</div>
 
-		<div class="pages"></div>
+		<div class="pages">
+			{{> pages isModal=true total=countTotal perPage=count currentPage=currentPage maxVisible=8 }}
+		</div>
 	</div>
 </template>
 
@@ -322,24 +335,24 @@
 				<span class="hint">максимум 32 символа</span>
 			</label>
 			<div class="button removeRoom {{#if not canControlRoom}}disabled{{/if}}"></div>
-			<label>
+			<div class="radioBlock">
 				<span class="title">Тип комнаты:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="roomType" value="public"/> публичная
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="roomType" value="private" checked="checked"/> приватная
-				</div>
-			</label>
-			<label>
+				</label>
+			</div>
+			<div class="radioBlock">
 				<span class="title">Оплата за сообщения:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="roomPayment" value="crystals"/> кристаллы
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
-				</div>
-			</label>
+				</label>
+			</div>
 			<div class="creditsBlock">
 				<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
 				<div class="amount">{{credits}}</div>
@@ -361,15 +374,15 @@
 				<span class="title">Причина бана:</span>
 				<textarea name="reason" disabled="{{#if not canControlBlock}}disabled{{/if}}"></textarea>
 			</label>
-			<label>
+			<div class="radioBlock">
 				<span class="title">Тип бана / разбана:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="blockType" value="local" checked="checked" disabled="{{#if not canControlBlock}}disabled{{/if}}"/> локально
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="blockType" value="global" disabled="{{#if or (not canControlBlock) (not isGlobalControl)}}disabled{{/if}}"/> глобально
-				</div>
-			</label>
+				</label>
+			</div>
 			<div class="controlBlock">
 				<div class="button accept block {{#if not canControlBlock}}disabled{{/if}}">
 					Наказать

@@ -385,20 +385,17 @@ Template.item.helpers(helpers);
 
 Template.game.events({
 	'click header .username .edit': function() {
-		var planetName = prompt('Как назвать планету?', Meteor.user().planetName);
-		if (!planetName) {
-			return;
-		}
-
-		planetName = planetName.trim();
-		if (planetName == Meteor.user().planetName) {
-			return;
-		}
-
-		Meteor.call('user.changePlanetName', planetName, function(err, result) {
-			if (err) {
-				Notifications.error('Невозможно сменить название планеты', err.error);
+		Game.showInputWindow('Как назвать планету?', Meteor.user().planetName, function(planetName) {
+			planetName = planetName.trim();
+			if (planetName == Meteor.user().planetName) {
+				return;
 			}
+
+			Meteor.call('user.changePlanetName', planetName, function(err, result) {
+				if (err) {
+					Notifications.error('Невозможно сменить название планеты', err.error);
+				}
+			});
 		});
 	},
 
@@ -465,6 +462,91 @@ Template.item_price.helpers({
 
 	isArtefact: function(key) {
 		return Game.Artefacts.items[key] ? true : false;
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Accept window
+// ----------------------------------------------------------------------------
+
+var acceptWindowView = null;
+
+Game.showAcceptWindow = function(message, onAccept, onCancel) {
+	if (!acceptWindowView) {
+		acceptWindowView = Blaze.renderWithData(
+			Template.acceptWindow, {
+				message: message,
+				onAccept: onAccept,
+				onCancel: onCancel
+			}, $('.over')[0]
+		);
+	}
+};
+
+var closeAcceptWindow = function(callback) {
+	if (acceptWindowView) {
+		Blaze.remove(acceptWindowView);
+		acceptWindowView = null;
+	}
+	if (_.isFunction(callback)) {
+		callback.call();
+	}
+};
+
+Template.acceptWindow.events({
+	'click .close': function(e, t) {
+		closeAcceptWindow(t.data.onCancel);
+	},
+
+	'click .cancel': function(e, t) {
+		closeAcceptWindow(t.data.onCancel);
+	},
+
+	'click .accept': function(e, t) {
+		closeAcceptWindow(t.data.onAccept);
+	}
+});
+
+// ----------------------------------------------------------------------------
+// Input window
+// ----------------------------------------------------------------------------
+
+var inputWindowView = null;
+
+Game.showInputWindow = function(message, value, onAccept, onCancel) {
+	if (!inputWindowView) {
+		inputWindowView = Blaze.renderWithData(
+			Template.inputWindow, {
+				message: message,
+				value: value,
+				onAccept: onAccept,
+				onCancel: onCancel
+			}, $('.over')[0]
+		);
+	}
+};
+
+var closeInputWindow = function(callback, value) {
+	if (inputWindowView) {
+		Blaze.remove(inputWindowView);
+		inputWindowView = null;
+	}
+	if (_.isFunction(callback)) {
+		callback.call(this, value);
+	}
+};
+
+Template.inputWindow.events({
+	'click .close': function(e, t) {
+		closeInputWindow(t.data.onCancel, t.find('input').value);
+	},
+
+	'click .cancel': function(e, t) {
+		closeInputWindow(t.data.onCancel, t.find('input').value);
+	},
+
+	'click .accept': function(e, t) {
+		closeInputWindow(t.data.onAccept, t.find('input').value);
 	}
 });
 

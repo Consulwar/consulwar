@@ -63,7 +63,7 @@
 				<ul>
 					{{#each users}}
 						<li class="online">
-							<span>{{this}}</span>
+							<span class="{{this.role}}">{{this.name}}</span>
 						</li>
 					{{/each}}
 				</ul>
@@ -82,7 +82,9 @@
 			{{#each messages}}
 				{{#if this.isMotd}}
 					<li class="motd">
-						{{this.message}}
+						<div>
+							{{{this.message}}}
+						</div>
 					</li>
 				{{else}}
 					<li>
@@ -202,13 +204,19 @@
 		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}"></a>
 		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}"></a>
 		{{#if rooms}}
-			<span class="arrow-left active"></span>
+			<span class="arrow-left {{#if isArrowLeft}}active{{/if}}"></span>
 			<div class="listContainer">
 				<ul>
 					{{#each rooms}}
 						{{#if isVisible this.name}}
 							<li class="{{#if isActive this.name}}active{{/if}}">
-								<a href="{{pathFor 'chat' room=this.name}}">
+								<a 
+									href="{{pathFor 'chat' room=this.name}}" 
+									class="
+										{{#if this.isPublic}}public{{/if}} 
+										{{#if this.isOwnerPays}}credits{{/if}}
+									"
+								>
 									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
 								</a>
 								<span class="hide" data-roomname="{{this.name}}"></span>
@@ -217,7 +225,7 @@
 					{{/each}}
 				</ul>
 			</div>
-			<span class="arrow-right active"></span>
+			<span class="arrow-right {{#if isArrowRight}}active{{/if}}"></span>
 		{{/if}}
 		<span class="arrow-down"></span>
 	</div>
@@ -229,24 +237,15 @@
 			<ul>
 				{{#each rooms}}
 					<li data-roomname="{{this.name}}">
-						<input type="checkbox" checked="{{isVisible this.name}}"/>
-						{{this.name}}
+						<label>
+							<input type="checkbox" checked="{{isVisible this.name}}"/>
+							{{this.name}}
+						</label>
 					</li>
 				{{/each}}
 			</ul>
 		{{/if}}
 		<div class="save">Сохранить</div>
-	</div>
-</template>
-
-<template name="chatAccept">
-	<div class="smoke" style="z-index: 199;"></div>
-	<div class="chatAccept" style="z-index: 200;">
-		<div class="close"></div>
-		<span class="title">Подтвердите действие</span>
-		<span class="message">{{message}}</span>
-		<div class="button accept">Да</div>
-		<div class="button cancel">Нет</div>
 	</div>
 </template>
 
@@ -298,22 +297,28 @@
 
 		<span class="historyTitle">История пополнений</span>
 		<div class="data">
-			{{#if history}}
-				<table>
-					{{#each history}}
-						<tr>
-							<td>{{this.username}}</td>
-							<td>{{formatNumber this.credits}}</td>
-							<td>{{formatDate this.timestamp -180}}</td>
-						</tr>
-					{{/each}}
-				</table>
+			{{#if isLoading}}
+				<span>Загрузка ...</span>
 			{{else}}
-				<span>История пополнений пуста</span>
+				{{#if history}}
+					<table>
+						{{#each history}}
+							<tr>
+								<td>{{this.username}}</td>
+								<td>{{formatNumber this.credits}}</td>
+								<td>{{formatDate this.timestamp -180}}</td>
+							</tr>
+						{{/each}}
+					</table>
+				{{else}}
+					<span>История пополнений пуста</span>
+				{{/if}}
 			{{/if}}
 		</div>
 
-		<div class="pages"></div>
+		<div class="pages">
+			{{> pages isModal=true total=countTotal perPage=count currentPage=currentPage maxVisible=8 }}
+		</div>
 	</div>
 </template>
 
@@ -330,24 +335,24 @@
 				<span class="hint">максимум 32 символа</span>
 			</label>
 			<div class="button removeRoom {{#if not canControlRoom}}disabled{{/if}}"></div>
-			<label>
+			<div class="radioBlock">
 				<span class="title">Тип комнаты:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="roomType" value="public"/> публичная
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="roomType" value="private" checked="checked"/> приватная
-				</div>
-			</label>
-			<label>
+				</label>
+			</div>
+			<div class="radioBlock">
 				<span class="title">Оплата за сообщения:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="roomPayment" value="crystals"/> кристаллы
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
-				</div>
-			</label>
+				</label>
+			</div>
 			<div class="creditsBlock">
 				<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
 				<div class="amount">{{credits}}</div>
@@ -369,15 +374,15 @@
 				<span class="title">Причина бана:</span>
 				<textarea name="reason" disabled="{{#if not canControlBlock}}disabled{{/if}}"></textarea>
 			</label>
-			<label>
+			<div class="radioBlock">
 				<span class="title">Тип бана / разбана:</span>
-				<div class="radioBlock">
+				<label>
 					<input type="radio" name="blockType" value="local" checked="checked" disabled="{{#if not canControlBlock}}disabled{{/if}}"/> локально
-				</div>
-				<div class="radioBlock">
+				</label>
+				<label>
 					<input type="radio" name="blockType" value="global" disabled="{{#if or (not canControlBlock) (not isGlobalControl)}}disabled{{/if}}"/> глобально
-				</div>
-			</label>
+				</label>
+			</div>
 			<div class="controlBlock">
 				<div class="button accept block {{#if not canControlBlock}}disabled{{/if}}">
 					Наказать

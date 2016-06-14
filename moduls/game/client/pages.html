@@ -7,29 +7,34 @@
 						<a 
 							class="{{#if eq 1 current}}active{{/if}}"
 							href="{{route 1}}"
-							title="Первая страница"
+							data-page="1" 
+							data-tooltip="Первая страница"
 						>
 							&lt;
 						</a>
 					</li>
 				{{/unless}}
-				{{#each pages.items}}
-					<li>
-						<a
-							class="{{#if eq this.page current}}active{{/if}}"
-							href="{{route this.page}}"
-							title="{{this.start}} - {{this.end}}"
-						>
-							{{this.page}}
-						</a>
-					</li>
-				{{/each}}
+				{{#let currentPage=current}}
+					{{#each pages.items}}
+						<li>
+							<a
+								class="{{#if eq this.page currentPage}}active{{/if}}"
+								href="{{route this.page}}" 
+								data-page="{{this.page}}" 
+								data-tooltip="{{this.start}} - {{this.end}}"
+							>
+								{{this.page}}
+							</a>
+						</li>
+					{{/each}}
+				{{/let}}
 				{{#unless pages.hasLast}}
 					<li>
 						<a 
 							class="{{#if eq maxPage current}}active{{/if}}"
-							href="{{route maxPage}}"
-							title="Последняя страница"
+							href="{{route maxPage}}" 
+							data-page="{{maxPage}}" 
+							data-tooltip="Последняя страница"
 						>
 							&gt;
 						</a>

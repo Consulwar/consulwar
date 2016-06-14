@@ -549,44 +549,46 @@ Template.mailAdmin.events({
 
 		var username = e.currentTarget.dataset.username;
 
-		var reason = prompt('Заблокировать почту для пользователя ' + username, 'Нарушение правил');
-		if (!reason) {
-			return;
-		}
+		Game.showInputWindow('Заблокировать почту для пользователя ' + username, 'Нарушение правил', function(reason) {
+			if (!reason) {
+				return;
+			}
 
-		reason.trim();
-		if (reason.length === 0) {
-			Notifications.error('Не указана причина блокировки!');
-			return;
-		}
+			reason.trim();
+			if (reason.length === 0) {
+				Notifications.error('Не указана причина блокировки!');
+				return;
+			}
 
-		var time = prompt('Укажите время блокировки в секундах', '86400');
-		if (!time) {
-			return;
-		}
+			Game.showInputWindow('Укажите время блокировки в секундах', '86400', function(time) {
+				if (!time) {
+					return;
+				}
 
-		time = parseInt( time, 10 );
+				time = parseInt( time, 10 );
 
-		if (time <= 0) {
-			Notifications.error('Не задано время блокировки');
-			return;
-		}
+				if (time <= 0) {
+					Notifications.error('Не задано время блокировки');
+					return;
+				}
 
-		Meteor.call('mail.blockUser', {
-			username: username,
-			time: time,
-			reason: reason,
-			letterId: letter._id
+				Meteor.call('mail.blockUser', {
+					username: username,
+					time: time,
+					reason: reason,
+					letterId: letter._id
+				});
+
+				var resolution = (letter.sender == username)
+					? game.Mail.complain.senderBlocked
+					: game.Mail.complain.recipientBlocked;
+
+				Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
+
+				Router.go('mailAdmin', { page: t.data.page });
+				Notifications.success('Пользователь ' + username + ' заблокирован');
+			});
 		});
-
-		var resolution = (letter.sender == username)
-			? game.Mail.complain.senderBlocked
-			: game.Mail.complain.recipientBlocked;
-
-		Meteor.call('mail.resolveComplaint', letter._id, resolution, reason);
-
-		Router.go('mailAdmin', { page: t.data.page });
-		Notifications.success('Пользователь ' + username + ' заблокирован');
 	},
 
 	'click button.cancel': function(e, t) {
@@ -595,22 +597,22 @@ Template.mailAdmin.events({
 			return;
 		}
 
-		var reason = prompt('Укажите причину отклонения жалобы', 'Нарушений не найдено');
+		Game.showInputWindow('Укажите причину отклонения жалобы', 'Нарушений не найдено', function(reason) {
+			if (!reason) {
+				return;
+			}
 
-		if (!reason) {
-			return;
-		}
+			reason = reason.trim();
+			if (reason.length === 0) {
+				Notifications.error('Не указана причина отклонения жалобы!');
+				return;
+			}
 
-		reason = reason.trim();
-		if (reason.length === 0) {
-			Notifications.error('Не указана причина отклонения жалобы!');
-			return;
-		}
+			Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
 
-		Meteor.call('mail.resolveComplaint', letter._id, game.Mail.complain.canceled, reason);
-
-		Router.go('mailAdmin', { page: t.data.page });
-		Notifications.success('Жалоба отклонена');
+			Router.go('mailAdmin', { page: t.data.page });
+			Notifications.success('Жалоба отклонена');
+		});
 	}
 });
 

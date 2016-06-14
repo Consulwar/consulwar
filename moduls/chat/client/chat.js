@@ -1,7 +1,5 @@
 initChatClient = function() {
 
-// TODO: Balance history pages!
-
 initChatLib();
 
 Meteor.subscribe('chatIconsUser');
@@ -1128,6 +1126,8 @@ Game.Chat.showBalanceWindow = function(roomName, credits) {
 	if (!balanceWindowView) {
 		balanceWindowView = Blaze.renderWithData(
 			Template.chatBalance, {
+				currentPage: 1,
+				count: 20,
 				roomName: roomName,
 				credits: credits
 			}, $('.over')[0]
@@ -1142,7 +1142,7 @@ var closeBalanceWindow = function() {
 	}
 };
 
-var loadBalanceHistory = function(roomName, page) {
+var loadBalanceHistory = function(roomName, page, count) {
 	if (balanceLoading.get()) {
 		return;
 	}
@@ -1151,7 +1151,7 @@ var loadBalanceHistory = function(roomName, page) {
 	balanceHistoryCount.set(null);
 	balanceLoading.set(true);
 
-	Meteor.call('chat.getBalanceHistory', roomName, page, 20, function(err, result) {
+	Meteor.call('chat.getBalanceHistory', roomName, page, count, function(err, result) {
 		balanceLoading.set(false);
 		if (err) {
 			Notifications.error('Не удалось загрузить историю пополнения', err.error);
@@ -1163,10 +1163,12 @@ var loadBalanceHistory = function(roomName, page) {
 };
 
 Template.chatBalance.onRendered(function() {
-	loadBalanceHistory(this.data.roomName, 1);
+	loadBalanceHistory(this.data.roomName, this.data.currentPage, this.data.count);
 });
 
 Template.chatBalance.helpers({
+	count: function() { return this.count; },
+	currentPage: function() { return this.currentPage; },
 	countTotal: function() { return balanceHistoryCount.get(); },
 	history: function() { return balanceHistory.get(); },
 	isLoading: function() { return balanceLoading.get(); }
@@ -1179,6 +1181,17 @@ Template.chatBalance.events({
 
 	'click .accept': function(e, t) {
 		addCredits(t.data.roomName, t.find('input[name="credits"]').value );
+	},
+
+	'click .pages a': function(e, t) {
+		e.preventDefault();
+
+		var page = parseInt( e.currentTarget.dataset.page, 10 );
+		if (page != t.data.currentPage) {
+			Tooltips.hide();
+			t.data.currentPage = page;
+			loadBalanceHistory(t.data.roomName, page, t.data.count);
+		}
 	}
 });
 

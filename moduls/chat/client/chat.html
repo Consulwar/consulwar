@@ -316,7 +316,9 @@
 			{{/if}}
 		</div>
 
-		<div class="pages"></div>
+		<div class="pages">
+			{{> pages isModal=true total=countTotal perPage=count currentPage=currentPage maxVisible=8 }}
+		</div>
 	</div>
 </template>
 

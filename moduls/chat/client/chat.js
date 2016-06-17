@@ -535,7 +535,8 @@ Template.chat.helpers({
 		var part = {};
 		for (var i = 0; i < msgs.length; i++) {
 			if (i > 0 &&
-				(msgs[i - 1].username != msgs[i].username ||
+				(msgs[i].isMotd || msgs[i - 1].isMotd ||
+				msgs[i - 1].username != msgs[i].username ||
 				msgs[i - 1].role != msgs[i].role ||
 				msgs[i - 1].iconPath != msgs[i].iconPath)) {
 				group++;

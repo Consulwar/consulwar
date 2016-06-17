@@ -829,10 +829,12 @@ Template.earth.onRendered(function() {
 		mapView.setView([47.36865, 8.539183], 4);
 		mapView.spin(false);
 
-		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-			id: Meteor.settings.public.mapbox.id,
-			accessToken: Meteor.settings.public.mapbox.accessToken
-		}).addTo(mapView);
+		if (Meteor.settings.public.mapbox && Meteor.settings.public.mapbox.on) {
+			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+				id: Meteor.settings.public.mapbox.id,
+				accessToken: Meteor.settings.public.mapbox.accessToken
+			}).addTo(mapView);
+		}
 		
 		mapView.on('click', function(e) {
 			Game.Earth.hideZonePopup();

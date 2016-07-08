@@ -112,7 +112,7 @@ game.ChatIcon = function(group, options) {
 
 	this.meetRequirements = function() {
 		return this.requirements && this.requirements.rank <= Game.User.getLevel();
-	}
+	};
 
 	this.canBuy = function() {
 		if (this.isDefault) {

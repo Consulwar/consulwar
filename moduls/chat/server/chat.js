@@ -1351,6 +1351,10 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой иконки');
 		}
 
+		if (!icon.meetRequirements()) {
+			throw new Meteor.Error('Вы не удовлетворяете требованиям иконки');
+		}
+
 		if (!icon.canBuy()) {
 			throw new Meteor.Error('Вы не можете купить эту иконку');
 		}
@@ -1395,6 +1399,14 @@ Meteor.methods({
 		var icon = Game.Chat.Icons.getIcon(group, engName);
 		if (!icon) {
 			throw new Meteor.Error('Нет такой иконки');
+		}
+
+		if (!icon.meetRequirements()) {
+			throw new Meteor.Error('Вы не удовлетворяете требованиям иконки');
+		}
+
+		if (!icon.checkHas()) {
+			throw new Meteor.Error('Иконку сначала нужно купить');
 		}
 
 		if (!icon.checkHas()) {

@@ -289,7 +289,7 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
 	// generate appropriate mission and calculate enemy health
 	var mission = Game.Planets.generateMission(planet);
 
-	var enemyFleet = Game.Battle.items[mission.type].level[mission.level].enemies;
+	var enemyFleet = _.clone(Game.Battle.items[mission.type].level[mission.level].enemies);
 	for (var name in enemyFleet) {
 		enemyFleet[name] = Game.Unit.rollCount( enemyFleet[name] );
 	}

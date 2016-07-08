@@ -84,6 +84,7 @@ game.ChatIconGroup = function(options) {
 game.ChatIcon = function(group, options) {
 	this.group = group.engName;
 	this.engName = options.engName;
+	this.requirements = options.requirements;
 
 	if (group.icons[this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется иконка в группе ' + this.group);
@@ -106,6 +107,10 @@ game.ChatIcon = function(group, options) {
 		}
 
 		return false;
+	};
+
+	this.meetRequirements = function() {
+		return this.requirements === undefined || (this.requirements && this.requirements.rank <= Game.User.getLevel());
 	};
 
 	this.canBuy = function() {

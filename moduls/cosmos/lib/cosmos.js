@@ -140,7 +140,7 @@ Game.Planets = {
 			if (planet.mission.units) {
 				return planet.mission.units;
 			} else {
-				return Game.Battle.items[planet.mission.type].level[planet.mission.level].enemies;
+				return _.clone(Game.Battle.items[planet.mission.type].level[planet.mission.level].enemies);
 			}
 		} else if (planet.armyId || planet.isHome) {
 			var army = (planet.isHome) 
@@ -650,7 +650,7 @@ Game.SpaceEvents = {
 			if (info.mission.units) {
 				return info.mission.units;
 			} else {
-				return Game.Battle.items[info.mission.type].level[info.mission.level].enemies;
+				return _.clone(Game.Battle.items[info.mission.type].level[info.mission.level].enemies);
 			}
 		} else if (info.armyId) {
 			var army = Game.Unit.getArmy(info.armyId);

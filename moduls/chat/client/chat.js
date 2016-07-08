@@ -1398,6 +1398,10 @@ Template.chatIcons.events({
 			return;
 		}
 
+		if (!icon.meetRequirements()) {
+			return Notifications.Error('Вы не удовлетворяете требованиям иконки');
+		}
+
 		var message = 'Купить иконку за ' + icon.price.credits + ' ГГК';
 
 		Game.showAcceptWindow(message, function() {
@@ -1417,8 +1421,11 @@ Template.chatIcons.events({
 
 		var icon = Game.Chat.Icons.getIcon(group, id);
 		if (!icon || !icon.checkHas()) {
-			Notifications.error('Вы не можете выбрать эту иконку');
-			return;
+			return Notifications.error('Вы не можете выбрать эту иконку');
+		}
+
+		if (!icon.meetRequirements()) {
+			return Notifications.Error('Вы не удовлетворяете требованиям иконки');
 		}
 
 		var message = 'Сменить иконку';

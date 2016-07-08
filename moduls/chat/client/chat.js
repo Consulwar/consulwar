@@ -1393,7 +1393,7 @@ Template.chatIcons.events({
 		var id = e.currentTarget.dataset.id;
 
 		var icon = Game.Chat.Icons.getIcon(group, id);
-		if (!icon || !icon.canBuy()) {
+		if (!icon || !icon.canBuy() || !icon.meetRequirements()) {
 			Notifications.error('Вы не можете купить эту иконку');
 			return;
 		}

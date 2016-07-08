@@ -442,22 +442,27 @@
 									data-group="{{this.group}}"
 									data-id="{{this.engName}}"
 									data-tooltip="
-										{{#if this.checkSelected}}
-											Текущая
+										{{#if not this.meetRequirements}}
+											Доступна с {{this.requirements.rank}} ранга
 										{{else}}
-											{{#if this.checkHas}}
-												Выбрать
+											{{#if this.checkSelected}}
+												Текущая
 											{{else}}
-												{{#if and (eq tab 'shop')}}
-													{{#if this.checkUniqueSold}}
-														Куплена другим игроком
-													{{else}}
-														Купить
+												{{#if this.checkHas}}
+													Выбрать
+												{{else}}
+													{{#if and (eq tab 'shop')}}
+														{{#if this.checkUniqueSold}}
+															Куплена другим игроком
+														{{else}}
+															Купить
+														{{/if}}
 													{{/if}}
 												{{/if}}
 											{{/if}}
 										{{/if}}
 										"
+									disabled="{{not this.meetRequirements}}"
 								>
 									<img src="/img/game/chat/icons/{{this.group}}/{{this.engName}}.png"/>
 									{{#if and (eq tab 'shop')}}

@@ -115,16 +115,16 @@ Game.Earth.generateEnemyArmy = function(level) {
 	return {
 		reptiles: {
 			ground: {
-				striker: Math.floor( 1000 * players * difficulty ),
-				ripper: Math.floor( 900 * players * difficulty ),
-				horror: Math.floor( 10 * players * difficulty ),
-				slider: Math.floor( 8 * players * difficulty ),
-				breaker: Math.floor( 12 * players * difficulty ),
-				crusher: Math.floor( 1 * players * difficulty ),
-				geccon: Math.floor( 3 * players * difficulty ),
-				amfizben: Math.floor( 20 * players * difficulty ),
-				amphibian: Math.floor( 14 * players * difficulty ),
-				chipping: Math.floor( 1 * players * difficulty )
+				striker: Math.floor( 1000 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				ripper: Math.floor( 900 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				horror: Math.floor( 10 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				slider: Math.floor( 8 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				breaker: Math.floor( 12 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				crusher: Math.floor( 1 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				geccon: Math.floor( 3 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				amfizben: Math.floor( 20 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				amphibian: Math.floor( 14 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
+				chipping: Math.floor( 1 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT )
 			}
 		}
 	};
@@ -197,6 +197,8 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		console.log('No enemy army, then no need to fight');
 		return null; // No need to fight!
 	}
+
+	options.damageReduction = Game.Earth.DAMAGE_REDUCTION;
 
 	var battleResult = Game.Unit.performBattle(
 		zone.userArmy,

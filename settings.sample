@@ -53,7 +53,9 @@
 	},
 	"earth": {
 		"reinforcementsDelay": 120,
-		"minActivePlayers": 100
+		"minActivePlayers": 100,
+		"spawnCoefficient": 0.1,
+		"damageReduction": 95
 	},
 	"cosmos": {
 		"enemyRespawnPeriod": 120,

@@ -266,7 +266,8 @@ Router.route('/paymentGateway', function () {
 		}, {
 			$set: {
 				status: 'pay',
-				time_updated: Game.getCurrentTime()
+				time_updated: Game.getCurrentTime(),
+				amount: paymentItem.cost.rub
 			}
 		});
 

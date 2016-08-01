@@ -1249,13 +1249,13 @@ Template.chatControlInput.onCreated(function helloOnCreated(instance) {
 });
 
 Template.chatControlInput.helpers({
-  counter() {
+  counter: function() {
     return Template.instance().counter.get();
   }
 });
 
 Template.chatControlInput.events({
-  'keyup'(event, instance) {
+  'keyup': function(event, instance) {
     instance.counter.set(+instance.data.max - event.currentTarget.value.length);
   }
 });

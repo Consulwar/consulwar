@@ -749,11 +749,15 @@
 		color #C6E84C
 		font-weight bold
 		text-align center
+
+		.hint
+			width 200px
+			float left
 		
 		.amount
 			display inline-block
 			width 50px
-			margin-top 10px
+			margin-top 0px
 			padding-top 48px
 			background-repeat no-repeat
 			background-position top center
@@ -764,7 +768,8 @@
 			width 66px
 			height 66px
 			background-image url(/img/game/chat/delete.png)
-			
+			margin-top 10px
+			position absolute
 			&.disabled
 				background-image url(/img/game/chat/delete-disabled.png)
 
@@ -813,8 +818,24 @@
 			font-size 14px
 			margin-top 5px
 			
+		.relative
+			position relative
+
+			input
+				padding-right 25px
+
+			.input-count
+				display block
+				color #ffffff
+				font-size 14px
+				margin-top -25px
+				padding-right -30px
+				position absolute
+				right 10px
+
 		>textarea
 			width 415px
+			height 50px
 			
 		input[type="radio"]
 			margin-right 15px

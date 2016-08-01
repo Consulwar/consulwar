@@ -322,6 +322,16 @@
 	</div>
 </template>
 
+<template name="chatControlInput">
+	<label>
+		<span class="title">{{spanText}}</span>
+		<div class = "relative">
+			<input type="text" name={{name}}>
+			<span class="input-count">{{counter}}</span>
+		</div>
+	</label>
+</template>
+
 <template name="chatControl">
 	<div class="smoke"></div>
 	<div class="chatControl">
@@ -329,12 +339,11 @@
 		
 		<div class="roomControl">
 			<h2>Создание / Удаление комнаты</h2>
-			<label>
-				<span class="title">Название:</span>
-				<input type="text" name="roomname"/>
-				<span class="hint">максимум 32 символа</span>
-			</label>
+
+			{{> chatControlInput spanText ="Название:" name = "roomtitle" max = "32"}}
 			<div class="button removeRoom {{#if not canControlRoom}}disabled{{/if}}"></div>
+			{{> chatControlInput spanText ="URL:" name = "roomurl" max = "32"}}
+
 			<div class="radioBlock">
 				<span class="title">Тип комнаты:</span>
 				<label>

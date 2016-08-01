@@ -206,18 +206,28 @@ var scrollChatToBottom = function(force) {
 	}
 };
 
-var createRoom = function(name, isPublic, isOwnerPays) {
-	if (!name || name.length <= 0) {
+var createRoom = function(title, url , isPublic, isOwnerPays) {
+	if (!title || title.length <= 0) {
 		Notifications.error('Укажите имя комнаты');
 		return;
 	}
 	
-	if (name.length > 15) {
-		Notifications.error('Максимальная длинна имени 15 символов');
+	if (title.length > 32) {
+		Notifications.error('Максимальная длинна имени 32 символов');
 		return;
 	}
 
-	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + name;
+	if (!url || url.length <= 0) {
+		Notifications.error('Укажите URL комнаты');
+		return;
+	}
+	
+	if (url.length > 32) {
+		Notifications.error('Максимальная длинна URL 32 символов');
+		return;
+	}
+
+	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + title;
 
 	var price = Game.Chat.Room.getPrice({
 		isPublic: isPublic,
@@ -229,14 +239,14 @@ var createRoom = function(name, isPublic, isOwnerPays) {
 	}
 
 	Game.showAcceptWindow(message, function() {
-		Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
+		Meteor.call('chat.createRoom', title, url , isPublic, isOwnerPays, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
 			} else {
-				Notifications.success('Вы успешно создали комнату ' + name);
+				Notifications.success('Вы успешно создали комнату ' + title);
 				closeControlWindow();
 				loadRoomsList();
-				Router.go('chat', { room: name });
+				Router.go('chat', { room: url });
 			}
 		});
 	});
@@ -1233,6 +1243,23 @@ var calculateCreatePriceCredits = function(t) {
 	}
 };
 
+
+Template.chatControlInput.onCreated(function helloOnCreated(instance) {
+  this.counter = new ReactiveVar(+this.data.max);
+});
+
+Template.chatControlInput.helpers({
+  counter() {
+    return Template.instance().counter.get();
+  }
+});
+
+Template.chatControlInput.events({
+  'keyup'(event, instance) {
+    instance.counter.set(+instance.data.max - event.currentTarget.value.length);
+  }
+});
+
 Template.chatControl.onRendered(function() {
 	calculateCreatePriceCredits(this);
 });
@@ -1262,7 +1289,8 @@ Template.chatControl.events({
 
 	'click .create': function(e, t) {
 		createRoom(
-			t.find('input[name="roomname"]').value,
+			t.find('input[name="roomtitle"]').value,
+			t.find('input[name="roomurl"]').value,
 			t.find('input[name="roomType"]:checked').value == 'public',
 			t.find('input[name="roomPayment"]:checked').value == 'credits'
 		);

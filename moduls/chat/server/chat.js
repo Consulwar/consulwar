@@ -592,7 +592,7 @@ Meteor.methods({
 		});
 	},
 
-	'chat.createRoom': function(name, isPublic, isOwnerPays) {
+	'chat.createRoom': function(title, url, isPublic, isOwnerPays) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -608,28 +608,48 @@ Meteor.methods({
 		console.log('chat.createRoom: ', new Date(), user.username);
 
 		// check room name
-		check(name, String);
+		check(title, String);
+		check(url, String);
 
-		if (name.length > 32) {
+		if (title.length > 32) {
 			throw new Meteor.Error('Имя комнаты должно быть не длиннее 32 символов');
 		}
 
-		if (!name.match(/^[a-zA-Z0-9_\-]+$/)) {
-			throw new Meteor.Error('Имя комнаты должно состоять только из латинских букв, цифр, дефисов и подчеркиваний');
+		if (!title.match(/^[а-яА-Яa-zA-Z0-9_\-]+$/)) {
+			throw new Meteor.Error('Имя комнаты должно состоять только из русских и латинских букв, цифр, дефисов и подчеркиваний');
+		}
+
+
+		if (url.length > 32) {
+			throw new Meteor.Error('URL комнаты должно быть не длиннее 32 символов');
+		}
+
+		if (!url.match(/^[a-zA-Z0-9_\-]+$/)) {
+			throw new Meteor.Error('URL комнаты должно состоять только из латинских букв, цифр, дефисов и подчеркиваний');
 		}
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: name,
+			name: url,
 			deleted: { $ne: true }
 		});
 
 		if (room) {
-			throw new Meteor.Error('Коната с именем ' + name + ' уже существует');
+			throw new Meteor.Error('Комната с URL ' + url + ' уже существует');
+		}
+
+		room = Game.Chat.Room.Collection.findOne({
+			title: title,
+			deleted: { $ne: true }
+		});
+
+		if (room) {
+			throw new Meteor.Error('Коната с именем ' + title + ' уже существует');
 		}
 
 		// prepare room
 		room = {
-			name: name,
+			name: url,
+			title: title,
 			owner: user._id
 		};
 
@@ -694,7 +714,7 @@ Meteor.methods({
 		});
 
 		if (!room) {
-			throw new Meteor.Error('Коната с именем ' + name + ' не существует');
+			throw new Meteor.Error('Комната с именем ' + name + ' не существует');
 		}
 
 		if (user.role != 'admin' && room.owner != user._id) {

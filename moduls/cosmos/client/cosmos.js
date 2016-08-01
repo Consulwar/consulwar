@@ -890,8 +890,8 @@ Template.cosmosAttackMenu.helpers({
 
 		var units = [];
 
-		for (var key in army) {
-			if (army[key] <= 0) {
+		for (var key in Game.Unit.items.army.fleet) {
+			if (!army[key] && army[key] <= 0) {
 				continue;
 			}
 			

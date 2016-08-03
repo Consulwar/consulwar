@@ -615,11 +615,6 @@ Meteor.methods({
 			throw new Meteor.Error('Имя комнаты должно быть не длиннее 32 символов');
 		}
 
-		if (!title.match(/^[а-яА-Яa-zA-Z0-9_\-]+$/)) {
-			throw new Meteor.Error('Имя комнаты должно состоять только из русских и латинских букв, цифр, дефисов и подчеркиваний');
-		}
-
-
 		if (url.length > 32) {
 			throw new Meteor.Error('URL комнаты должно быть не длиннее 32 символов');
 		}
@@ -629,21 +624,19 @@ Meteor.methods({
 		}
 
 		var room = Game.Chat.Room.Collection.findOne({
-			name: url,
+			$or: {
+				name: url,
+				title: title
+			},
 			deleted: { $ne: true }
 		});
 
 		if (room) {
-			throw new Meteor.Error('Комната с URL ' + url + ' уже существует');
-		}
-
-		room = Game.Chat.Room.Collection.findOne({
-			title: title,
-			deleted: { $ne: true }
-		});
-
-		if (room) {
-			throw new Meteor.Error('Коната с именем ' + title + ' уже существует');
+			throw new Meteor.Error('Комната с ' + (
+				room.title == title
+					? 'именем ' + title
+					: 'URL ' + url
+			) + ' уже существует');
 		}
 
 		// prepare room

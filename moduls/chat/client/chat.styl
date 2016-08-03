@@ -721,6 +721,19 @@
 .chatControl
 	width 880px
 	
+	.inputWithCounter
+		&:after
+			content attr(data-counter)
+			display inline-block
+			color #ffffff
+			font-size 14px
+			width 20px
+			margin 3px 0 0 -28px
+			text-align center
+
+		input
+			padding-right 25px
+	
 	h2
 		font-size 14px
 		color #e9a844
@@ -768,8 +781,7 @@
 			width 66px
 			height 66px
 			background-image url(/img/game/chat/delete.png)
-			margin-top 10px
-			position absolute
+			margin-bottom -28px
 			&.disabled
 				background-image url(/img/game/chat/delete-disabled.png)
 
@@ -817,21 +829,6 @@
 			color #adadad
 			font-size 14px
 			margin-top 5px
-			
-		.relative
-			position relative
-
-			input
-				padding-right 25px
-
-			.input-count
-				display block
-				color #ffffff
-				font-size 14px
-				margin-top -25px
-				padding-right -30px
-				position absolute
-				right 10px
 
 		>textarea
 			width 415px

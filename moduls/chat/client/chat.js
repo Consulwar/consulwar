@@ -206,28 +206,24 @@ var scrollChatToBottom = function(force) {
 	}
 };
 
-var createRoom = function(title, url , isPublic, isOwnerPays) {
+var createRoom = function(title, url, isPublic, isOwnerPays) {
 	if (!title || title.length <= 0) {
-		Notifications.error('Укажите имя комнаты');
-		return;
+		return Notifications.error('Укажите имя комнаты');
 	}
 	
 	if (title.length > 32) {
-		Notifications.error('Максимальная длинна имени 32 символов');
-		return;
+		return Notifications.error('Максимальная длинна имени 32 символов');
 	}
 
 	if (!url || url.length <= 0) {
-		Notifications.error('Укажите URL комнаты');
-		return;
+		return Notifications.error('Укажите URL комнаты');
 	}
 	
 	if (url.length > 32) {
-		Notifications.error('Максимальная длинна URL 32 символов');
-		return;
+		return Notifications.error('Максимальная длинна URL 32 символов');
 	}
 
-	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + title;
+	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + title + " и URL " + url;
 
 	var price = Game.Chat.Room.getPrice({
 		isPublic: isPublic,
@@ -244,6 +240,10 @@ var createRoom = function(title, url , isPublic, isOwnerPays) {
 				Notifications.error(err.error);
 			} else {
 				Notifications.success('Вы успешно создали комнату ' + title);
+				Notifications.success(
+					'Комната будет доступна по ссылке:',
+					document.location.hostname + Router.path("chat", { room: url })
+				);
 				closeControlWindow();
 				loadRoomsList();
 				Router.go('chat', { room: url });
@@ -1244,20 +1244,20 @@ var calculateCreatePriceCredits = function(t) {
 };
 
 
-Template.chatControlInput.onCreated(function helloOnCreated(instance) {
-  this.counter = new ReactiveVar(+this.data.max);
+Template.inputWithCounter.onCreated(function(instance) {
+	this.counter = new ReactiveVar(parseInt(this.data.max,10));
 });
 
-Template.chatControlInput.helpers({
-  counter: function() {
-    return Template.instance().counter.get();
-  }
+Template.inputWithCounter.helpers({
+	counter: function() {
+		return Template.instance().counter.get();
+	}
 });
 
-Template.chatControlInput.events({
-  'keyup': function(event, instance) {
-    instance.counter.set(+instance.data.max - event.currentTarget.value.length);
-  }
+Template.inputWithCounter.events({
+	'keyup input[type="text"]': function(event, instance) {
+		instance.counter.set(parseInt(instance.data.max) - event.currentTarget.value.length);
+	}
 });
 
 Template.chatControl.onRendered(function() {
@@ -1289,8 +1289,8 @@ Template.chatControl.events({
 
 	'click .create': function(e, t) {
 		createRoom(
-			t.find('input[name="roomtitle"]').value,
-			t.find('input[name="roomurl"]').value,
+			t.find('input[name="roomTitle"]').value,
+			t.find('input[name="roomUrl"]').value,
 			t.find('input[name="roomType"]:checked').value == 'public',
 			t.find('input[name="roomPayment"]:checked').value == 'credits'
 		);

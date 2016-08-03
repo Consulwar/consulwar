@@ -223,7 +223,7 @@ var createRoom = function(title, url, isPublic, isOwnerPays) {
 		return Notifications.error('Максимальная длинна URL 32 символов');
 	}
 
-	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + title + " и URL " + url;
+	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + title + ' и URL ' + url;
 
 	var price = Game.Chat.Room.getPrice({
 		isPublic: isPublic,
@@ -1255,7 +1255,7 @@ Template.inputWithCounter.helpers({
 });
 
 Template.inputWithCounter.events({
-	'keyup input[type="text"]': function(event, instance) {
+	'input input[type="text"]': function(event, instance) {
 		instance.counter.set(parseInt(instance.data.max) - event.currentTarget.value.length);
 	}
 });

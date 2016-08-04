@@ -143,7 +143,29 @@ Router.route('/game', {
 	}
 });
 
-Router.go(location.href.replace(location.origin, ''));
+Router.route('/logout', function () {
+	Meteor.logout();
+	this.redirect('index');
+});
+
+Router.route('register', {
+	path: '/register',
+	layoutTemplate: 'index',
+	yieldTemplates: {
+		'register_window': {to: 'modal'}
+	}
+});
+
+Router.route( 'pageNotFound', {
+	path: '/(.+)',
+	action: function() {
+		if(Meteor.user()){
+			return this.redirect('game');
+		} else {
+			return this.redirect('index');
+		}
+	}
+});
 
 /*
 game/planet/residential

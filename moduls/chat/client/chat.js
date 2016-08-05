@@ -245,7 +245,7 @@ var createRoom = function(title, url, isPublic, isOwnerPays) {
 				Notifications.success('Вы успешно создали комнату ' + title);
 				Notifications.success(
 					'Комната будет доступна по ссылке:',
-					document.location.hostname + Router.path("chat", { room: url })
+					Router.path("chat", { room: url })
 				);
 				closeControlWindow();
 				loadRoomsList();

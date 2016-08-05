@@ -1255,8 +1255,13 @@ Template.inputWithCounter.helpers({
 });
 
 Template.inputWithCounter.events({
-	'input input[type="text"]': function(event, instance) {
-		instance.counter.set(parseInt(instance.data.max) - event.currentTarget.value.length);
+	'keyup input[type="text"], change input[type="text"]': function(e, t) {
+		t.counter.set(parseInt(t.data.max) - e.currentTarget.value.length);
+		if(t.counter.get() < 0){
+			t.$('label').addClass('err');
+		} else {
+			t.$('label').removeClass('err');
+		}
 	}
 });
 

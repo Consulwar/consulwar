@@ -721,11 +721,15 @@
 .chatControl
 	width 880px
 	
+	.inputWithCounter.err
+		color #dc6257
+
 	.inputWithCounter
+		color #dfdfdf
+		
 		&:after
 			content attr(data-counter)
 			display inline-block
-			color #ffffff
 			font-size 14px
 			width 20px
 			margin 3px 0 0 -28px
@@ -733,7 +737,7 @@
 
 		input
 			padding-right 25px
-	
+
 	h2
 		font-size 14px
 		color #e9a844

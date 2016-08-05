@@ -156,7 +156,7 @@ Router.route('register', {
 	}
 });
 
-Router.route( 'pageNotFound', {
+Router.route('pageNotFound', {
 	path: '/(.+)',
 	action: function() {
 		if(Meteor.user()){

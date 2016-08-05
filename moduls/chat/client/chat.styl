@@ -720,13 +720,13 @@
 
 .chatControl
 	width 880px
-	
-	.inputWithCounter.err:after
-		color #dc6257
 
 	.inputWithCounter
 		color #dfdfdf
 		
+		&.err:after
+			color #dc6257
+
 		&:after
 			content attr(data-counter)
 			display inline-block

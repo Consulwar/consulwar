@@ -100,20 +100,6 @@ Template.index.events({
 	} 
 });
 
-Router.route('/logout', function () {
-	Meteor.logout();
-	this.redirect('index');
-});
-
-Router.route('register', {
-	path: '/register',
-	layoutTemplate: 'index',
-	yieldTemplates: {
-		'register_window': {to: 'modal'}
-	}
-});
-
-
 Meteor.subscribe('game');
 Meteor.subscribe('queue');
 

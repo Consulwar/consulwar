@@ -46,7 +46,7 @@ SyncedCron.config({
 Meteor.startup(function () {
 	initBanHistoryServer();
 	initPaymentServer();
-	initRatingServer();
+	initStatisticServer();
 	initResourcesServer();
 	initCardsServer();
 	initBuildingServer();
@@ -59,8 +59,6 @@ Meteor.startup(function () {
 	initMailServer();
 	initChatServer();
 	initQuestServer();
-	initStatisticServer();
-	initAchievementsServer();
 	initCheatsServer();
 	initMarketServer();
 	initColosseumServer();

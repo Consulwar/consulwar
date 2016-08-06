@@ -1,5 +1,6 @@
 initStatisticServer = function() {
-	
+
+initRatingServer();
 initStatisticLib();
 
 Game.Statistic.Collection._ensureIndex({
@@ -196,5 +197,7 @@ Meteor.publish('statistic', function() {
 		}
 	}
 });
+
+initAchievementsServer();
 
 };

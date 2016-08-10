@@ -1,4 +1,4 @@
-initAchievementsLib = function() {
+initStatisticAchievementsLib = function() {
 
 game.Achievement = function(options) {
 	this.doNotRegisterEffect = true;

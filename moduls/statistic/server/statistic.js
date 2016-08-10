@@ -155,7 +155,7 @@ Meteor.methods({
 		Game.Statistic.fixUser(target._id);
 	},
 
-	'rating.getUserPosition': function() {
+	'statistic.getUserPositionInRating': function() {
 		var user = Meteor.user();
 		
 		if (!user || !user._id) {
@@ -166,7 +166,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('rating.getUserPosition: ', new Date(), user.username);
+		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
 
 		var position = Meteor.users.find({
 			rating: { $gt: user.rating }
@@ -194,7 +194,7 @@ Meteor.methods({
 		};
 	},
 
-	'rating.getPage': function(page, count) {
+	'statistic.getPageInRating': function(page, count) {
 		var user = Meteor.user();
 		
 		if (!user || !user._id) {
@@ -205,7 +205,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('rating.getPage: ', new Date(), user.username);
+		console.log('statistic.getPageInRating: ', new Date(), user.username);
 
 		check(page, Match.Integer);
 		check(count, Match.Integer);

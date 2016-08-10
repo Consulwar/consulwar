@@ -17,7 +17,7 @@ Game.Rating.showPage = function() {
 			element.scrollTop = 0;
 		}
 		// show required page
-		Meteor.call('rating.getPage', pageNumber, countPerPage, function(err, data) {
+		Meteor.call('statistic.getPageInRating', pageNumber, countPerPage, function(err, data) {
 			if (err) {
 				Notifications.error('Не удалось загрузить страницу', err.error);
 			} else {
@@ -40,7 +40,7 @@ Game.Rating.showPage = function() {
 		});
 	} else {
 		// redirect to user page
-		Meteor.call('rating.getUserPosition', function(err, data) {
+		Meteor.call('statistic.getUserPositionInRating', function(err, data) {
 			if (err) {
 				Notifications.error('Не удалось загрузить страницу', err.error);
 			} else {

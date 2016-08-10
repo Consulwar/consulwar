@@ -1,0 +1,74 @@
+<template name="rating">
+	<div class="rating">
+		{{#if users}}
+			<table>
+				<tr class="header">
+					<th>Место</th>
+					<th>Ник</th>
+					<th>Награды</th>
+					<th>Действия</th>
+					<th>Рейтинг</th>
+				</tr>
+			</table>
+			<div class="data">
+				<table>
+					{{#each users}}
+					<tr class="{{#if eq this.username user.username}}me{{/if}}" id="{{this._id}}">
+						<td>{{this.place}}</td>
+						<td>{{this.username}}</td>
+						<td>
+							{{#if gt this.rating 25000}}
+								<img src="/img/game/battle/statistics/{{rank this.rating}}.png"/>
+							{{/if}}
+							{{#each (achievements this)}}
+								<img 
+									src="
+										/img/game/achievements/{{this.engName}}
+										{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png
+										" 
+									alt="{{this.name}}" 
+									data-tooltip="
+										<div class='title'>{{this.name}}</div>
+										<div class='text'>{{this.description}}</div>
+										{{#if this.effect}}
+											{{#each this.effect}}
+												{{#if (this.result ../currentLevel)}}
+													<div class='effect'>
+														{{this.pretext}}
+														{{this.result ../currentLevel}}
+														{{this.aftertext}}
+													</div>
+												{{/if}}
+											{{/each}}
+										{{/if}}
+										"
+								/>
+							{{/each}}
+						</td>
+						<td>
+							<a
+								class="send_message"
+								href="{{pathFor 'mail' page=1 hash=(mailHash this.username)}}"
+								data-tooltip="Написать сообщение"
+							>
+								<img src="/img/game/message.png">
+							</a>
+							<a
+								class="open_house"
+								href="{{pathFor 'house' group='house' hash=this.username}}"
+								data-tooltip="Смотреь палату"
+							>
+								<img src="/img/game/house.png">
+							</a>
+						</td>
+						<td>{{formatNumber this.rating}}</td>
+					</tr>
+					{{/each}}
+				</table>
+			</div>
+			{{> pages total=countTotal perPage=countPerPage}}
+		{{else}}
+			<h2>Нет статистики</h2>
+		{{/if}}
+	</div>
+</template>

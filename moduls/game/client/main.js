@@ -1,9 +1,9 @@
 Meteor.startup(function () {
 
 initPaymentClient();
-initRatingClient();
 initResourcesClient();
 initCardsClient();
+initStatisticClient();
 initBuildingClient();
 initResearchClient();
 initUnitClient();
@@ -16,8 +16,6 @@ initChatClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();
-initStatisticClient();
-initAchievementsClient();
 initCheatsClient();
 initMarketClient();
 initColosseumClient();

@@ -144,7 +144,7 @@ var scrollToSelectedUser = function() {
 	if (userRow) {
 		$('.rating .data')[0].scrollTop = userRow.offsetTop - 150;
 	}
-}
+};
 
 Template.rating.onRendered(scrollToSelectedUser);
 

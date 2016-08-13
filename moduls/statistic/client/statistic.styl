@@ -5,7 +5,36 @@
 		margin-left 124px
 		background-color #04080B
 		z-index 10
-		
+
+		.button
+			cursor pointer
+			display block
+			position absolute
+			width 40px
+			height 40px
+			background-repeat no-repeat
+			background-position center
+
+		.search
+			left 44px
+			background-image url("/img/game/search.png")
+
+		.returnToUser
+			left 0px
+			background-image url("/img/game/my_position.png")
+			
+		input
+			padding 10px 7px
+			border 2px solid #006382
+			background-color #C0C0C0
+			border-radius 5px
+			box-shadow inset 2px 2px 2px #000
+			color #000000
+			font-weight bold
+			font-size 14px
+			position absolute
+			left 88px
+
 		h2
 			padding-top 20px
 			width 100%
@@ -23,12 +52,17 @@
 			tr
 				height 40px
 				
-				&:nth-child(odd):not(.header)
+				&:nth-child(odd):not(.header):not(.selectedUser)
 					background-color #0B121A
 				
 				&:nth-child(even)
 					background-color #0E1821
-					
+				
+				&.selectedUser
+					color #0081e5
+					background-color #000015
+					border-left: 10px solid #56bbf3
+
 				&.me
 					color #ABC851
 				

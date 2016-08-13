@@ -13,7 +13,10 @@
 			<div class="data">
 				<table>
 					{{#each users}}
-					<tr class="{{#if eq this.username user.username}}me{{/if}}" id="{{this._id}}">
+					<tr class="
+						{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
+						{{#if eq this.username user.username}}me{{/if}}
+						" id="{{this._id}}">
 						<td>{{this.place}}</td>
 						<td>{{this.username}}</td>
 						<td>
@@ -66,6 +69,9 @@
 					{{/each}}
 				</table>
 			</div>
+			<div class="button returnToUser"></div>
+			<div class="button search"></div>
+			<input type="text" name="searchUserInRating" placeholder="Имя консула" value="{{credits}}"/>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			<h2>Нет статистики</h2>

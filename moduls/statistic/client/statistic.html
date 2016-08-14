@@ -83,7 +83,7 @@
 			"></div>
 			<input 
 				type="text" name="searchUserInRating" placeholder="Имя консула" 
-				value="{{#if neq user.username selectedUserName}}{{selectedUserName}}{{/if}}"
+				value="{{#if not (eq user.username selectedUserName)}}{{selectedUserName}}{{/if}}"
 			>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}

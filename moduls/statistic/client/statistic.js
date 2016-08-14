@@ -76,9 +76,10 @@ var showUser = function(selectedUserName) {
 		if (err) {
 			Notifications.error('Не удалось загрузить страницу', err.error);
 		} else {
-			var userPage = (data.total > 0 && data.position > 0)
+			var userPage = (data.total > 0 && data.position > 0
 				? Math.ceil( data.position / countPerPage )
-				: 1;
+				: 1
+			);
 			Router.go(
 				'statistics',
 				{ page: userPage },
@@ -128,7 +129,7 @@ Template.rating.helpers({
 
 var searchUser = function (e , t) {
 	showUser(t.$('input[name="searchUserInRating"]').val());
-}
+};
 
 Template.rating.events({
 	'keyup input[name="searchUserInRating"]': function(e, t) {

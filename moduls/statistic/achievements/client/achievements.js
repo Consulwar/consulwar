@@ -1,6 +1,6 @@
-initAchievementsClient = function() {
+initStatisticAchievementsClient = function() {
 
-initAchievementsLib();
+initStatisticAchievementsLib();
 
 var isSent = false;
 

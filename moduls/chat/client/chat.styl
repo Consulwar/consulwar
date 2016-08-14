@@ -720,7 +720,24 @@
 
 .chatControl
 	width 880px
-	
+
+	.inputWithCounter
+		color #dfdfdf
+		
+		&.err:after
+			color #dc6257
+
+		&:after
+			content attr(data-counter)
+			display inline-block
+			font-size 14px
+			width 20px
+			margin 3px 0 0 -28px
+			text-align center
+
+		input
+			padding-right 25px
+
 	h2
 		font-size 14px
 		color #e9a844
@@ -744,16 +761,18 @@
 		margin-top 20px
 		
 	.creditsBlock
-		margin-top 8px
-		margin-bottom 8px
+		display flex
+		margin-bottom 15px
 		color #C6E84C
 		font-weight bold
 		text-align center
+
+		.hint
+			width 250px
+			margin-top 5px
 		
 		.amount
-			display inline-block
 			width 50px
-			margin-top 10px
 			padding-top 48px
 			background-repeat no-repeat
 			background-position top center
@@ -764,7 +783,7 @@
 			width 66px
 			height 66px
 			background-image url(/img/game/chat/delete.png)
-			
+			margin-bottom -28px
 			&.disabled
 				background-image url(/img/game/chat/delete-disabled.png)
 
@@ -812,9 +831,10 @@
 			color #adadad
 			font-size 14px
 			margin-top 5px
-			
+
 		>textarea
 			width 415px
+			height 50px
 			
 		input[type="radio"]
 			margin-right 15px

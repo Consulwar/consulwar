@@ -322,6 +322,13 @@
 	</div>
 </template>
 
+<template name="inputWithCounter">
+	<label class="inputWithCounter" data-counter={{counter}}>
+		<span class="title">{{spanText}}:</span>
+		<input type="text" placeholder="{{placeholder}}" name="{{name}}">
+	</label>
+</template>
+
 <template name="chatControl">
 	<div class="smoke"></div>
 	<div class="chatControl">
@@ -329,12 +336,21 @@
 		
 		<div class="roomControl">
 			<h2>Создание / Удаление комнаты</h2>
-			<label>
-				<span class="title">Название:</span>
-				<input type="text" name="roomname"/>
-				<span class="hint">максимум 32 символа</span>
-			</label>
+
+			{{> inputWithCounter
+				spanText="Название"
+				placeholder="Примерная комната"
+				name="roomTitle"
+				max="32"
+			}}
 			<div class="button removeRoom {{#if not canControlRoom}}disabled{{/if}}"></div>
+			{{> inputWithCounter
+				spanText="URL"
+				placeholder="example"
+				name="roomUrl"
+				max="32"
+			}}
+
 			<div class="radioBlock">
 				<span class="title">Тип комнаты:</span>
 				<label>

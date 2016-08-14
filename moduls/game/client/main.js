@@ -1,9 +1,9 @@
 Meteor.startup(function () {
 
 initPaymentClient();
-initRatingClient();
 initResourcesClient();
 initCardsClient();
+initStatisticClient();
 initBuildingClient();
 initResearchClient();
 initUnitClient();
@@ -16,8 +16,6 @@ initChatClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();
-initStatisticClient();
-initAchievementsClient();
 initCheatsClient();
 initMarketClient();
 initColosseumClient();
@@ -99,20 +97,6 @@ Template.index.events({
 		e.preventDefault();
 	} 
 });
-
-Router.route('/logout', function () {
-	Meteor.logout();
-	this.redirect('index');
-});
-
-Router.route('register', {
-	path: '/register',
-	layoutTemplate: 'index',
-	yieldTemplates: {
-		'register_window': {to: 'modal'}
-	}
-});
-
 
 Meteor.subscribe('game');
 Meteor.subscribe('queue');

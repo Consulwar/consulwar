@@ -206,18 +206,27 @@ var scrollChatToBottom = function(force) {
 	}
 };
 
-var createRoom = function(name, isPublic, isOwnerPays) {
-	if (!name || name.length <= 0) {
-		Notifications.error('Укажите имя комнаты');
-		return;
+var createRoom = function(title, url, isPublic, isOwnerPays) {
+	if (!title || title.length <= 0) {
+		return Notifications.error('Укажите имя комнаты');
 	}
 	
-	if (name.length > 15) {
-		Notifications.error('Максимальная длинна имени 15 символов');
-		return;
+	if (title.length > 32) {
+		return Notifications.error('Максимальная длинна имени 32 символов');
 	}
 
-	var message = 'Создать ' + (isPublic ? 'публичную' : 'приватную') + ' комнату с именем ' + name;
+	if (!url || url.length <= 0) {
+		return Notifications.error('Укажите URL комнаты');
+	}
+	
+	if (url.length > 32) {
+		return Notifications.error('Максимальная длинна URL 32 символов');
+	}
+
+	var message = (
+		'Создать ' + (isPublic ? 'публичную' : 'приватную') +
+		' комнату с именем «' + title + '» и URL «' + url + '»'
+	);
 
 	var price = Game.Chat.Room.getPrice({
 		isPublic: isPublic,
@@ -229,14 +238,18 @@ var createRoom = function(name, isPublic, isOwnerPays) {
 	}
 
 	Game.showAcceptWindow(message, function() {
-		Meteor.call('chat.createRoom', name, isPublic, isOwnerPays, function(err, data) {
+		Meteor.call('chat.createRoom', title, url , isPublic, isOwnerPays, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
 			} else {
-				Notifications.success('Вы успешно создали комнату ' + name);
+				Notifications.success('Вы успешно создали комнату ' + title);
+				Notifications.success(
+					'Комната будет доступна по ссылке:',
+					Router.path("chat", { room: url })
+				);
 				closeControlWindow();
 				loadRoomsList();
-				Router.go('chat', { room: name });
+				Router.go('chat', { room: url });
 			}
 		});
 	});
@@ -1233,6 +1246,28 @@ var calculateCreatePriceCredits = function(t) {
 	}
 };
 
+
+Template.inputWithCounter.onCreated(function(instance) {
+	this.counter = new ReactiveVar(parseInt(this.data.max,10));
+});
+
+Template.inputWithCounter.helpers({
+	counter: function() {
+		return Template.instance().counter.get();
+	}
+});
+
+Template.inputWithCounter.events({
+	'keyup input[type="text"], change input[type="text"]': function(e, t) {
+		t.counter.set(parseInt(t.data.max) - e.currentTarget.value.length);
+		if(t.counter.get() < 0){
+			t.$('label').addClass('err');
+		} else {
+			t.$('label').removeClass('err');
+		}
+	}
+});
+
 Template.chatControl.onRendered(function() {
 	calculateCreatePriceCredits(this);
 });
@@ -1262,7 +1297,8 @@ Template.chatControl.events({
 
 	'click .create': function(e, t) {
 		createRoom(
-			t.find('input[name="roomname"]').value,
+			t.find('input[name="roomTitle"]').value,
+			t.find('input[name="roomUrl"]').value,
 			t.find('input[name="roomType"]:checked').value == 'public',
 			t.find('input[name="roomPayment"]:checked').value == 'credits'
 		);

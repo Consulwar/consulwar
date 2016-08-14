@@ -891,14 +891,15 @@ Template.cosmosAttackMenu.helpers({
 		var units = [];
 
 		for (var key in Game.Unit.items.army.fleet) {
-			if (!army[key] && army[key] <= 0) {
-				continue;
+			var max = 0;
+			if (army[key] && army[key] > 0) {
+				max = army[key];
 			}
 			
 			units.push({
 				engName: key,
 				name: Game.Unit.items.army.fleet[key].name,
-				max: army[key],
+				max: max,
 				count: 0
 			});
 		}

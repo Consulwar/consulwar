@@ -21,7 +21,7 @@ job_deploy_dev:
   only:
     - dev
   script:
-    - cd /media/sf_dev/consulwar-dev/ && sudo mupс deploy
+    - cd /media/sf_dev/consulwar-dev/ && sudo mupc deploy
 
 
 update_repo_master:
@@ -36,4 +36,4 @@ job_deploy_master:
   only:
     - master
   script:
-    - cd /media/sf_dev/consulwar-master/ && sudo mupс deploy
+    - cd /media/sf_dev/consulwar-master/ && sudo mupc deploy

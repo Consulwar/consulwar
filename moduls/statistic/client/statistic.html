@@ -66,6 +66,13 @@
 							>
 								<img src="/img/game/house.png">
 							</a>
+							<a
+								class="show_detail_statistic"
+								href="{{detailStatisticRoute this.username}}"
+								data-tooltip="Смотреть подробную статистику"
+							>
+								<img src="/img/game/detail_statistic.png">
+							</a>
 						</td>
 						<td>{{formatNumber this.rating}}</td>
 					</tr>
@@ -83,13 +90,47 @@
 				button search
 				{{#if and selectedUserName (not (eq user.username selectedUserName))}}active{{/if}}
 			"></div>
-			<input 
-				type="text" name="searchUserInRating" placeholder="Имя консула" 
-				value="{{#if not (eq user.username selectedUserName)}}{{selectedUserName}}{{/if}}"
-			>
+			<input type="text" name="searchUserInRating" placeholder="Имя консула">
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			<h2>Нет статистики</h2>
 		{{/if}}
+		{{#if detailStatisticView}}
+			{{> detailStatistic}}
+		{{/if}}
+	</div>
+</template>
+
+<template name="detailStatistic">
+	<div class="smoke"></div>
+	<div class="detailStatistic">
+		<div class="close"></div>
+
+		<div class="tabDevelopment">Развитие{{data1}}</div>
+		<div class="tabWar">Боевые</div>
+		<div class="tabConsul">Консул</div>
+		<div class="tabAnother">Другое</div>
+
+		<div class="development">
+			<ul>
+				{{#each developmentTexts}}
+					<li>
+						<span>{{this}}</span>
+					</li>
+				{{/each}}
+			</ul>
+		</div>
+
+		<div class="war">
+			
+		</div>
+
+		<div class="consul">
+			
+		</div>
+
+		<div class="another">
+			
+		</div>
 	</div>
 </template>

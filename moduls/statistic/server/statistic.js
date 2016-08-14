@@ -244,6 +244,22 @@ Meteor.methods({
 			users: result.fetch(),
 			count: result.count()
 		};
+	},
+
+	'statistic.getUserStatistic': function(userName) {
+		var user = Meteor.users.findOne({username: userName});
+		
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		var statistic = Game.Statistic.Collection.findOne({user_id: user._id});
+
+		return statistic;
 	}
 });
 

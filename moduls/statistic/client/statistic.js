@@ -5,14 +5,26 @@ initStatisticLib();
 Meteor.subscribe('statistic');
 
 var isLoading = new ReactiveVar(false);
+var isLoading = new ReactiveVar(false);
+var detailStatisticView = new ReactiveVar(false);
 
 Game.Rating = {};
 
 Game.Rating.showPage = function() {
 	var pageNumber = parseInt( this.params.page, 10 );
-	var selectedUserName = Router.current().getParams().hash;
+	var hash = Router.current().getParams().hash;
+	var selectedUserName;
+	var detail = false;
 	var countPerPage = 20;
 
+	if (hash) {
+		var hashArray = hash.split("/");
+		selectedUserName = hashArray[0];
+		if (hashArray[1] == "detail") {
+			Game.Statistic.showDetailStatistic(selectedUserName);
+			detail = true;
+		}
+	}
 	isLoading.set(true);
 
 	if (pageNumber) {
@@ -22,7 +34,6 @@ Game.Rating.showPage = function() {
 			element.scrollTop = 0;
 		}
 		// show required page
-		//this.render('loading', {layout: 'loading_layout'});
 		Meteor.call('statistic.getPageInRating', pageNumber, countPerPage, function(err, data) {
 			if (err) {
 				Notifications.error('Не удалось загрузить страницу', err.error);
@@ -39,7 +50,7 @@ Game.Rating.showPage = function() {
 				}
 
 				if (selectedUserName && !selectedUserСontain) {
-					showUser(selectedUserName);
+					showUser(selectedUserName, detail);
 					return;
 				}
 
@@ -59,11 +70,11 @@ Game.Rating.showPage = function() {
 			isLoading.set(false);
 		});
 	} else {
-		showUser(selectedUserName || Meteor.user().username);
+		showUser(selectedUserName || Meteor.user().username, detail);
 	}
 };
 
-var showUser = function(selectedUserName) {
+var showUser = function(selectedUserName, detail) {
 	if (!selectedUserName){
 		return Notifications.error('Введите имя пользователя');
 	}
@@ -83,7 +94,7 @@ var showUser = function(selectedUserName) {
 			Router.go(
 				'statistics',
 				{ page: userPage },
-				{ hash: selectedUserName } 
+				{ hash: selectedUserName + ( detail ? "/detail" : "" ) } 
 			);
 		}
 
@@ -94,6 +105,10 @@ var showUser = function(selectedUserName) {
 Template.rating.helpers({
 	isLoading: function() {
 		return isLoading.get();
+	},
+
+	detailStatisticView: function() {
+		return detailStatisticView.get();
 	},
 
 	rank: function(rating) {
@@ -124,6 +139,14 @@ Template.rating.helpers({
 
 	mailHash: function(username) {
 		return 'compose/' + username;
+	},
+
+	detailStatisticRoute: function (userName) {
+		return Router.path(
+			'statistics',
+			{ page: Router.current().params.page },
+			{ hash: userName + "/detail" }
+		);
 	}
 });
 
@@ -152,6 +175,43 @@ var scrollToSelectedUser = function() {
 		$('.rating .data')[0].scrollTop = userRow.offsetTop - 150;
 	}
 };
+
+var texts = [];
+
+Game.Statistic.showDetailStatistic = function(userName){
+	isLoading.set(true);
+
+	Meteor.call('statistic.getUserStatistic', userName, function(err, data) {
+		if (err) {
+			Notifications.error('Не удалось загрузить статистику пользователя', err.error);
+		} else {
+			console.log(data);
+			texts[0] = data.user_id;
+			detailStatisticView.set(true);
+		}
+	});
+};
+
+Game.Statistic.hideDetailStatistic = function(){
+	detailStatisticView.set(false);
+	Router.go(
+		'statistics',
+		{ page: Router.current().params.page },
+		{ hash: Router.current().params.hash.match(/.+(?=\/)/) }
+	);
+};
+
+Template.detailStatistic.helpers({
+	developmentTexts: function () {
+		return texts;
+	}
+});
+
+Template.detailStatistic.events({
+	'click .close': function(e, t) {
+		Game.Statistic.hideDetailStatistic();
+	}
+});
 
 Template.rating.onRendered(scrollToSelectedUser);
 

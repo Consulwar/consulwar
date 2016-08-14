@@ -6,6 +6,11 @@
 		background-color #04080B
 		z-index 10
 
+		.show_detail_statistic
+			img
+				width 30px
+				height 30px
+
 		.button
 			cursor pointer
 			display block
@@ -106,3 +111,71 @@
 
 				img
 					margin-left 5px
+
+
+.detailStatistic
+	display block
+	position fixed
+	z-index 100
+	top 50%
+	left 50%
+	transform translate(-50%, -50%)
+	background-image none
+	background-color #13161b
+	width 560px
+	transform translate(-50%, -200px)
+	background-color #030303
+	font-size 0
+
+	.close
+		right -30px
+		top -30px
+		cursor pointer
+		display block
+		position absolute
+		z-index 4
+		width 30px
+		height 30px
+		background-image url(/img/game/cosmomap/button_close.png)
+		background-repeat no-repeat
+	
+		&:hover
+			background-image url(/img/game/cosmomap/button_close_active.png)
+
+	.tabWar
+	.tabDevelopment
+	.tabConsul
+	.tabAnother
+		display inline-block
+		cursor pointer
+		width 25%
+		height 30px
+		padding-top 10px
+		background-color #13161b
+		text-align center
+		font-size 14px
+		font-weight bold
+		color #e8e8e8
+		margin 0px
+		
+		&.active
+			background-color #292f3b
+			color #56baf2
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+		
+	.development
+	.consul
+	.war
+	.another
+		padding 50px 10px 10px 10px
+		font-weight bold
+		font-size 14px
+		color #888888
+	
+	.consul
+	.war
+	.another
+		display none

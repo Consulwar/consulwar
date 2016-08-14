@@ -1,6 +1,6 @@
-initAchievementsServer = function() {
+initStatisticAchievementsServer = function() {
 
-initAchievementsLib();
+initStatisticAchievementsLib();
 
 Meteor.methods({
 	'achievements.complete': function(completed) {

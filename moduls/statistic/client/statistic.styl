@@ -14,12 +14,22 @@
 			height 40px
 			background-repeat no-repeat
 			background-position center
+			-webkit-filter brightness(0.4)
+			filter brightness(0.4)
+
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+
+			&.active
+				-webkit-filter brightness(1)
+				filter brightness(1)
 
 		.search
 			left 44px
 			background-image url("/img/game/search.png")
 
-		.returnToUser
+		.returnToMe
 			left 0px
 			background-image url("/img/game/my_position.png")
 			
@@ -48,6 +58,7 @@
 		table
 			width 100%
 			border-collapse collapse
+			position relative
 
 			tr
 				height 40px
@@ -61,7 +72,14 @@
 				&.selectedUser
 					color #0081e5
 					background-color #000015
-					border-left: 10px solid #56bbf3
+
+					&:after
+						position absolute
+						left 0
+						content " "
+						height 40px
+						width 5px
+						background-color #56bbf3
 
 				&.me
 					color #ABC851

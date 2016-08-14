@@ -6,6 +6,10 @@ Game.Statistic.Collection._ensureIndex({
 	user_id: 1
 });
 
+Meteor.users._ensureIndex({
+	rating: 1
+});
+
 Game.Statistic.initialize = function(user) {
 	var statistic = Game.Statistic.Collection.findOne({
 		user_id: user._id
@@ -166,10 +170,9 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
+		check(selectedUserName, String);
 		
-		var selectedUser = (selectedUserName)
-			? Meteor.users.findOne({ username: selectedUserName })
-			: user;
+		var selectedUser = Meteor.users.findOne({ username: selectedUserName });
 			
 		if (!selectedUser) {
 			throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
@@ -183,7 +186,8 @@ Meteor.methods({
 			fields: {
 				username: 1,
 				rating: 1
-			}
+			},
+			sort: {rating: -1}
 		}).count();
 
 
@@ -193,7 +197,8 @@ Meteor.methods({
 			fields: {
 				username: 1,
 				rating: 1
-			}
+			},
+			sort: {rating: -1}
 		}).count();
 
 		return {

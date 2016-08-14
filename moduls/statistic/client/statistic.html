@@ -16,7 +16,8 @@
 					<tr class="
 						{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
 						{{#if eq this.username user.username}}me{{/if}}
-						" id="{{this._id}}">
+						" id="{{this._id}}"
+					>
 						<td>{{this.place}}</td>
 						<td>{{this.username}}</td>
 						<td>
@@ -68,10 +69,22 @@
 					</tr>
 					{{/each}}
 				</table>
+				{{#if isLoading}}
+					{{> loading}}
+				{{/if}}
 			</div>
-			<div class="button returnToUser"></div>
-			<div class="button search"></div>
-			<input type="text" name="searchUserInRating" placeholder="Имя консула" value="{{credits}}"/>
+			<div class="
+				button returnToMe 
+				{{#if eq user.username selectedUserName}}active{{/if}}
+			"></div>
+			<div class="
+				button search
+				{{#if selectedUserName}}active{{/if}}
+			"></div>
+			<input 
+				type="text" name="searchUserInRating" placeholder="Имя консула" 
+				value="{{#if neq user.username selectedUserName}}{{selectedUserName}}{{/if}}"
+			>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			<h2>Нет статистики</h2>

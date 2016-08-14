@@ -16,6 +16,10 @@ UI.registerHelper('eq', function(a, b) {
 	return a === b;
 });
 
+UI.registerHelper('neq', function(a, b) {
+	return a !== b;
+});
+
 UI.registerHelper('and', function(a, b) {
 	return a && b;
 });

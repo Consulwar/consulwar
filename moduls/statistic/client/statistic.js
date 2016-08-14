@@ -4,12 +4,16 @@ initStatisticLib();
 
 Meteor.subscribe('statistic');
 
+var isLoading = new ReactiveVar(false);
+
 Game.Rating = {};
 
 Game.Rating.showPage = function() {
-	var pageNumber = parseInt( this.params.page, 10 ),
-		selectedUserName = Router.current().getParams().hash,
-		countPerPage = 20;
+	var pageNumber = parseInt( this.params.page, 10 );
+	var selectedUserName = Router.current().getParams().hash;
+	var countPerPage = 20;
+
+	isLoading.set(true);
 
 	if (pageNumber) {
 		// reset scroll
@@ -18,13 +22,14 @@ Game.Rating.showPage = function() {
 			element.scrollTop = 0;
 		}
 		// show required page
+		//this.render('loading', {layout: 'loading_layout'});
 		Meteor.call('statistic.getPageInRating', pageNumber, countPerPage, function(err, data) {
 			if (err) {
 				Notifications.error('Не удалось загрузить страницу', err.error);
 			} else {
-				var skip = (pageNumber - 1) * countPerPage,
-					users = data.users,
-					selectedUserСontain = false;
+				var skip = (pageNumber - 1) * countPerPage;
+				var users = data.users;
+				var selectedUserСontain = false;
 
 				for (var i = 0; i < users.length; i++) {
 					users[i].place = skip + i + 1;
@@ -50,22 +55,11 @@ Game.Rating.showPage = function() {
 
 				Meteor.setTimeout(scrollToSelectedUser);
 			}
+
+			isLoading.set(false);
 		});
 	} else {
-		Meteor.call('statistic.getUserPositionInRating', selectedUserName, function(err, data) {
-			if (err) {
-				Notifications.error('Не удалось загрузить страницу', err.error);
-			} else {
-				var userPage = (data.total > 0 && data.position > 0)
-					? Math.ceil( data.position / countPerPage )
-					: 1;
-				Router.go(
-					'statistics',
-					{ page: userPage },
-					{ hash: selectedUserName || Meteor.user().username } 
-				);
-			}
-		});
+		showUser(selectedUserName || Meteor.user().username);
 	}
 };
 
@@ -73,7 +67,11 @@ var showUser = function(selectedUserName) {
 	if (!selectedUserName){
 		return Notifications.error('Введите имя пользователя');
 	}
+
 	var countPerPage = 20;
+	
+	isLoading.set(true);
+
 	Meteor.call('statistic.getUserPositionInRating', selectedUserName, function(err, data) {
 		if (err) {
 			Notifications.error('Не удалось загрузить страницу', err.error);
@@ -87,10 +85,16 @@ var showUser = function(selectedUserName) {
 				{ hash: selectedUserName } 
 			);
 		}
+
+		isLoading.set(false);
 	});
 };
 
 Template.rating.helpers({
+	isLoading: function() {
+		return isLoading.get();
+	},
+
 	rank: function(rating) {
 		return Game.User.getLevel(rating);
 	},
@@ -122,19 +126,21 @@ Template.rating.helpers({
 	}
 });
 
+var searchUser = function (e , t) {
+	showUser(t.$('input[name="searchUserInRating"]').val());
+}
+
 Template.rating.events({
 	'keyup input[name="searchUserInRating"]': function(e, t) {
 		if (e.keyCode == 13) {
-			showUser(e.currentTarget.value);
+			searchUser(e, t);
 		}
 	},
 
-	'click .search': function(e, t) {
-		showUser(t.$('input[name="searchUserInRating"]').get(0).value);
-	},
+	'click .search': searchUser,
 
-	'click .returnToUser': function(e, t) {
-		t.$('input[name="searchUserInRating"]').get(0).value = '';
+	'click .returnToMe': function(e, t) {
+		t.$('input[name="searchUserInRating"]').val('');
 		showUser(Meteor.user().username);
 	}
 });

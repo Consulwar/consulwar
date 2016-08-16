@@ -15,7 +15,7 @@
 					{{#each users}}
 					<tr 
 						class="
-							{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
+							{{#if eq this.username selectedUserName}}selectedUser{{/if}}
 							{{#if eq this.username user.username}}me{{/if}}
 							" 
 						id="{{this._id}}"
@@ -106,12 +106,13 @@
 	<div class="detailStatistic">
 		<div class="close"></div>
 
-		<div class="tabDevelopment">Развитие{{data1}}</div>
-		<div class="tabWar">Боевые</div>
-		<div class="tabConsul">Консул</div>
-		<div class="tabAnother">Другое</div>
-
-		<div class="development">
+		<div class="tabs">
+			<div class="tab development active" data-name="development">Развитие{{data1}}</div>
+			<div class="tab war" data-name="war">Боевые</div>
+			<div class="tab consul" data-name="consul">Консул</div>
+			<div class="tab another" data-name="another">Другое</div>
+		</div>
+		<div class="page development">
 			<ul>
 				{{#each developmentTexts}}
 					<li>
@@ -121,15 +122,15 @@
 			</ul>
 		</div>
 
-		<div class="war">
+		<div class="page war">
 			
 		</div>
 
-		<div class="consul">
+		<div class="page consul">
 			
 		</div>
 
-		<div class="another">
+		<div class="page another">
 			
 		</div>
 	</div>

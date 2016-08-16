@@ -141,41 +141,41 @@
 	
 		&:hover
 			background-image url(/img/game/cosmomap/button_close_active.png)
-
-	.tabWar
-	.tabDevelopment
-	.tabConsul
-	.tabAnother
-		display inline-block
-		cursor pointer
-		width 25%
-		height 30px
-		padding-top 10px
-		background-color #13161b
-		text-align center
-		font-size 14px
-		font-weight bold
-		color #e8e8e8
-		margin 0px
+	.tab
+		&.war
+		&.development
+		&.consul
+		&.another
+			display inline-block
+			cursor pointer
+			width 25%
+			height 30px
+			padding-top 10px
+			background-color #13161b
+			text-align center
+			font-size 14px
+			font-weight bold
+			color #e8e8e8
+			margin 0px
+			
+			&.active
+				background-color #292f3b
+				color #56baf2
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+	.page
+		&.development
+		&.consul
+		&.war
+		&.another
+			padding 50px 10px 10px 10px
+			font-weight bold
+			font-size 14px
+			color #888888
 		
-		&.active
-			background-color #292f3b
-			color #56baf2
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-		
-	.development
-	.consul
-	.war
-	.another
-		padding 50px 10px 10px 10px
-		font-weight bold
-		font-size 14px
-		color #888888
-	
-	.consul
-	.war
-	.another
-		display none
+		&.consul
+		&.war
+		&.another
+			display none

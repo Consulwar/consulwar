@@ -57,7 +57,7 @@ Game.Rating.showPage = function() {
 					if (user.username == selectedUserName) {
 						selectedUserСontain = true;
 					}
-				})
+				});
 
 				if (selectedUserName && !selectedUserСontain) {
 					showUser(selectedUserName, detail);
@@ -115,7 +115,7 @@ var showUserDetailStatistic = function(userName) {
 			detailStatisticData.set(data);
 		}
 	});
-}
+};
 
 var hideUserDetailStatistic = function() {
 	detailStatisticView.set(false);

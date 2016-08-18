@@ -166,11 +166,14 @@
 				-webkit-filter brightness(1.4)
 				filter brightness(1.4)
 	.page
+		height 400px
+		overflow-y auto
+
 		&.development
 		&.consul
 		&.war
 		&.another
-			padding 50px 10px 10px 10px
+			padding 10px
 			font-weight bold
 			font-size 14px
 			color #888888
@@ -179,3 +182,38 @@
 		&.war
 		&.another
 			display none
+
+.treeline, .treeline ul, .treeline li
+	margin 0
+	padding 0
+	line-height 1.2
+	list-style none
+
+.treeline
+	h1, h2, h3, h4, h5, h6
+		margin 0
+		font-weight normal
+		color #56baf2
+		font-weight bold
+	.header
+		position relative
+		padding-left 1.2em
+
+	ul
+		margin 0 0 0 25px
+	li
+		&:last-child
+			&:before
+				width calc(1.1em - 1px)
+
+.treeline > li:not(:only-child), .treeline li li
+	position relative
+	padding 5px 0 0 20px
+
+.treeline li li:before, .treeline > li:not(:only-child):before
+	content ""
+	position absolute
+	top 0
+	left 0
+	width 2.1em
+	height .7em

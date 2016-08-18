@@ -250,14 +250,18 @@ Meteor.methods({
 		var user = Meteor.users.findOne({username: userName});
 		
 		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
+			throw new Meteor.Error('Пользователь не найден');
 		}
 
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
+		check(userName, String);
 
-		var statistic = Game.Statistic.Collection.findOne({user_id: user._id});
+		var statistic = Game.Statistic.Collection.findOne({
+			user_id: user._id
+		}, {
+			fields: {
+				payment: 0
+			}
+		});
 
 		return statistic;
 	}

@@ -5,8 +5,8 @@ initStatisticLib();
 Meteor.subscribe('statistic');
 
 var isLoading = new ReactiveVar(true);
-var detailStatisticView = new ReactiveVar(false);
-var detailStatisticData = new ReactiveVar({});
+var detailStatisticTab = new ReactiveVar(null);
+var detailStatisticData = new ReactiveVar(null);
 var users = new ReactiveVar();
 var countTotal = new ReactiveVar(false);
 var reactiveSelectedUserName = new ReactiveVar(false);
@@ -26,11 +26,29 @@ Game.Rating.showPage = function() {
 	if (hash) {
 		var hashArray = hash.split('/');
 		selectedUserName = hashArray[0];
-		reactiveSelectedUserName.set(selectedUserName);
 		if (hashArray[1] == 'detail') {
-			showUserDetailStatistic(selectedUserName);
+			if (selectedUserName == reactiveSelectedUserName.get()) {
+				detailStatisticTab.set(hashArray[2] || 'development');
+				return;
+			}
+
+			isLoading.set(true);
+
+			Meteor.call('statistic.getUserStatistic', selectedUserName, function(err, data) {
+				isLoading.set(false);
+				if (err) {
+					Notifications.error('Не удалось загрузить статистику пользователя', err.error);
+				} else {
+					detailStatisticData.set(data);
+					detailStatisticTab.set(hashArray[2] || 'development');
+				}
+			});
 			detail = true;
+		} else {
+			detailStatisticTab.set(null);
+			detailStatisticData.set(null);
 		}
+		reactiveSelectedUserName.set(selectedUserName);
 	} else {
 		reactiveSelectedUserName.set('');
 	}
@@ -70,10 +88,8 @@ Game.Rating.showPage = function() {
 				Meteor.setTimeout(scrollToSelectedUser);
 			}
 		});
-	} else if (!pageNumber){
+	} else if (!pageNumber) {
 		showUser(selectedUserName || Meteor.user().username, detail);
-	} else {
-		Meteor.setTimeout(scrollToSelectedUser);
 	}
 };
 
@@ -99,31 +115,10 @@ var showUser = function(userName, detail) {
 				{ page: userPage },
 				{ hash: userName + ( detail ? '/detail' : '' ) } 
 			);
+
+			Meteor.setTimeout(scrollToSelectedUser);
 		}
 	});
-};
-
-var showUserDetailStatistic = function(userName) {
-	isLoading.set(true);
-
-	Meteor.call('statistic.getUserStatistic', userName, function(err, data) {
-		isLoading.set(false);
-		if (err) {
-			Notifications.error('Не удалось загрузить статистику пользователя', err.error);
-		} else {
-			detailStatisticView.set(true);
-			detailStatisticData.set(data);
-		}
-	});
-};
-
-var hideUserDetailStatistic = function() {
-	detailStatisticView.set(false);
-	Router.go(
-		'statistics',
-		{ page: lastPageNumber },
-		{ hash: reactiveSelectedUserName.get() }
-	);
 };
 
 Template.rating.helpers({
@@ -143,8 +138,8 @@ Template.rating.helpers({
 		return reactiveSelectedUserName.get();
 	},
 
-	detailStatisticView: function() {
-		return detailStatisticView.get();
+	detailStatisticTab: function() {
+		return detailStatisticTab.get();
 	},
 
 	countPerPage: countPerPage,
@@ -177,14 +172,6 @@ Template.rating.helpers({
 
 	mailHash: function(username) {
 		return 'compose/' + username;
-	},
-
-	detailStatisticRoute: function (userName) {
-		return Router.path(
-			'statistics',
-			{ page: Router.current().params.page },
-			{ hash: userName + '/detail' }
-		);
 	}
 });
 
@@ -204,42 +191,8 @@ Template.rating.events({
 	'click .returnToMe': function(e, t) {
 		t.$('input[name="searchUserInRating"]').val('');
 		showUser(Meteor.user().username);
-	},
-
-	'click .tab': function(e, t) {
-		t.$('.tab').removeClass('active');
-		$(e.currentTarget).addClass('active');
-		t.$('.page').hide();
-		t.$('.' + $(e.currentTarget).data('name')).show();
 	}
 });
-
-var getField = function(obj, path) {
-	var fields = path.split('.');
-	return fields.reduce(function(last, now) {
-		if (_.isObject(last)) {
-			return last[now];
-		} else {
-			return last;
-		}
-	}, obj) || 0;
-};
-
-var createHtmlStatisticThree = function(statisticThree, data, path) {
-	var ul = $('<ul>');
-	for (var key in statisticThree) {
-		var newPath = (path) ? path + '.' + key : key;
-		if (_.isObject(statisticThree[key])) {
-			ul.append($('<li><h3>' + (dictionary[key]||key) + '</h3></li>'));
-			ul.append(createHtmlStatisticThree(statisticThree[key], data, newPath));
-		} else {
-			var num = getField(data, newPath);
-			var text = ( dictionary[key]||key ) + ': ' + num;
-			ul.append($('<li>', {text: text}));
-		}
-	}
-	return ul;
-};
 
 var scrollToSelectedUser = function() {
 	var userRow = $('.selectedUser')[0];
@@ -248,396 +201,38 @@ var scrollToSelectedUser = function() {
 	}
 };
 
-Template.detailStatistic.helpers({
-	statisticThree: function(name) {
-		return $('<ul class="treeline">').append(
-			createHtmlStatisticThree(statisticThree[name], detailStatisticData.get(), '')
-		)[0].outerHTML;
+Template.detailTable.helpers({
+	lookup: function(obj) {
+		var answer = obj;
+		for(var i = 1; (i < arguments.length - 1) && (arguments[i] != undefined); i++) {
+				answer = answer && answer[arguments[i]];
+		}
+		return answer || 0;
 	}
 });
 
-Template.detailStatistic.events({
-	'click .close': function(e, t) {
-		hideUserDetailStatistic();
+Template.detailStatistic.helpers({
+	data: function() {
+		return detailStatisticData.get();
+	},
+
+	activeTab: function() {
+		return detailStatisticTab.get();
+	},
+
+	levelsArray: function(maxLevel) {
+		var levels = [];
+		for(var i = 1; i <= maxLevel; i++) {
+			arr.push({
+				engName: i,
+				name: i
+			})
+		};
+		return levels;
 	}
 });
 
 Template.rating.onRendered(scrollToSelectedUser);
-
-var dictionary = {
-    '1': '1.',
-    '2': '2.',
-    '3': '3.',
-    '4': '4.',
-    '5': '5.',
-    '6': '6.',
-    '7': '7.',
-    '8': '8.',
-    '9': '9.',
-    'army.ground': 'Земля',
-    'reptiles.fleet': 'Флот',
-    'resources': 'Ресурсы',
-    'gained': 'Получено',
-    'total': 'Всего',
-    'spent': 'Потрачено',
-    'humans': 'Люди',
-    'crystals': 'Кристаллы',
-    'metals': 'Метал',
-    'honor': 'Медали',
-    'credits': 'Кредитов',
-    'weapon_parts': 'Обломки корабля',
-    'silver_plasmoid': 'Серебрянный плазмоид',
-    'crystal_fragments': 'Осколки кристалла',
-    'ship_details': 'Детали корабля',
-    'meteor_fragments': 'Обломки метеорита',
-    'secret_technology': 'Секретные технологии',
-    'emerald_plasmoid': 'Изумрудный плазмоид',
-    'nanowires': 'Нанопроводка',
-    'amethyst_plasmoid': 'Аметистовый плазмоид',
-    'building': 'Строения',
-    'research': 'Исследования',
-    'battle': 'Битвы',
-    'fleet': 'Флот',
-    'defencefleet': 'Защитный флот',
-    'patrolfleet': 'Патрульный флот',
-    'tradefleet': 'Торговый флот',
-    'battlefleet': 'Боевой флот',
-    'cosmos': 'Космос',
-    'fleets': 'Флот',
-    'planets': 'Планеты',
-    'reptiles': 'Рептилоиды',
-    'killed': 'Убито',
-    'reinforcements': 'Подкрепление',
-    'army': 'Армия',
-    'ground': 'Земля',
-    'arrived': 'Прибыло',
-    'quests': 'Квесты',
-    'regular': 'Регулярные',
-    'daily': 'Ежедневные',
-    'chat': 'Чат',
-    'rooms': 'Комнаты',
-    'units': 'Юниты',
-    'defense': 'Защищено',
-    'lost': 'Потерянные',
-    'mail': 'Почта',
-    'investments': 'Инвестиции',
-    'promocode': 'Промокоды',
-    'cards': 'Карты',
-    'sent': 'Отправлено',
-    'discovered': 'Исследовано',
-    'victory': 'Побед',
-    'defeat': 'Поражений',
-    'sphero': 'Сферо',
-    'trioniks': 'Трионикс',
-    'blade': 'Клинок',
-    'lacertian': 'Ящер',
-    'wyvern': 'Виверна',
-    'dragon': 'Дракон',
-    'fathers': 'Отцы',
-    'agmogedcar': 'Бгоневички',
-    'fast': 'Скорострелы',
-    'grandmother': 'Бабули',
-    'completed': 'Завершено',
-    'completedQuestLines': 'Завершено цепочек',
-    'win': 'Побед',
-    'fail': 'Поражений',
-    'messages': 'Сообщений',
-    'status': 'Статус',
-    'created': 'Создано',
-    'motd': '',
-    'dice': 'Брошено костей',
-    'coub': 'Коубов',
-    'gammadrone': 'Гаммадрон',
-    'truckc': 'Трак С',
-    'wasp': 'Оса',
-    'frigate': 'Фригат',
-    'mirage': 'Мираж',
-    'cruiser': 'Крейсер',
-    'bomb': 'Мины',
-    'ionbomb': 'Ионные Мины',
-    'turret': 'Турель',
-    'laserturret': 'Лазерная Туррель',
-    'carrier': 'Перевезено',
-    'current': 'Текущий',
-    'bought': 'Куплено',
-    'activated': 'Активированно',
-    'build': 'Построено'
-};
-
-var statisticThree = {
-	development: {
-		'resources': {
-			'gained': {
-				'humans': 4586298,
-				'crystals': 7016266,
-				'metals': 25791417,
-				'honor': 201339,
-				'credits': 52499,
-				'weapon_parts': 94,
-				'silver_plasmoid': 267,
-				'crystal_fragments': 186,
-				'ship_details': 109,
-				'meteor_fragments': 152,
-				'secret_technology': 17,
-				'emerald_plasmoid': 64,
-				'nanowires': 10,
-				'amethyst_plasmoid': 5,
-				'total': 37648723
-			},
-			'spent': {
-				'metals': 43227117,
-				'crystals': 11388630,
-				'humans': 767286,
-				'honor': 180009,
-				'credits': 12525,
-				'emerald_plasmoid': 58,
-				'meteor_fragments': 140,
-				'crystal_fragments': 180,
-				'silver_plasmoid': 202,
-				'secret_technology': 16,
-				'total': 37648723
-			}
-		},
-
-		'building': {
-			'total': 661
-		},
-
-		'research': {
-			'total': 355
-		},
-
-		'units': {
-			'build': {
-				'total': 30773,
-				'army': {
-					'ground': {
-						'fathers': 12047,
-						'agmogedcar': 6,
-						'fast': 22,
-						'grandmother': 10
-					},
-					'fleet': {
-						'gammadrone': 16249,
-						'truckc': 94,
-						'wasp': 9,
-						'frigate': 4,
-						'mirage': 7,
-						'cruiser': 1
-					},
-					'defense': {
-						'bomb': 755,
-						'ionbomb': 3,
-						'turret': 1565,
-						'laserturret': 1
-					}
-				}
-			},
-			'lost': {
-				'total': 2870,
-				'army': {
-					'fleet': {
-						'gammadrone': 1748,
-						'wasp': 12,
-						'mirage': 31,
-						'truckc': 52,
-						'frigate': 3,
-						'cruiser': 2,
-						'carrier': 1
-					},
-					'defense': {
-						'ionbomb': 102,
-						'bomb': 854,
-						'turret': 65
-					}
-				}
-			}
-		}
-	},
-
-	war: {
-		'cosmos': {
-			'fleets': {
-				'sent': 117
-			},
-			'planets': {
-				'discovered': 61
-			}
-		},
-		'battle': {
-			'victory': 55,
-			'defeat': 2,
-			'total': 57,
-			'patrolfleet': {
-				'1': {
-					'total': 9,
-					'victory': 9
-				},
-				'2': {
-					'total': 1,
-					'victory': 1
-				},
-				'5': {
-					'total': 3,
-					'victory': 3
-				},
-				'6': {
-					'total': 2,
-					'victory': 2
-				},
-				'total': 15,
-				'victory': 15,
-				'defeat': 1
-			},
-			'defencefleet': {
-				'1': {
-					'total': 1,
-					'victory': 1
-				},
-				'2': {
-					'total': 2,
-					'victory': 2
-				},
-				'3': {
-					'total': 2,
-					'victory': 2
-				},
-				'8': {
-					'total': 1,
-					'defeat': 1
-				},
-				'total': 6,
-				'victory': 5
-			},
-			'tradefleet': {
-				'1': {
-					'total': 11,
-					'victory': 11
-				},
-				'2': {
-					'total': 6,
-					'victory': 6
-				},
-				'3': {
-					'total': 5,
-					'victory': 5
-				},
-				'4': {
-					'total': 1,
-					'victory': 1
-				},
-				'5': {
-					'total': 2,
-					'victory': 2
-				},
-				'6': {
-					'total': 1,
-					'victory': 1
-				},
-				'total': 26,
-				'victory': 26
-			},
-			'battlefleet': {
-				'2': {
-					'total': 1,
-					'defeat': 1
-				},
-				'3': {
-					'total': 6,
-					'victory': 6
-				},
-				'4': {
-					'total': 3,
-					'victory': 3
-				},
-				'total': 10,
-				'defeat': 1,
-				'victory': 9
-			}
-		},
-		'reptiles': {
-			'killed': {
-				'total': 2566,
-				'reptiles.fleet': {
-					'sphero': 1117,
-					'trioniks': 133,
-					'blade': 876,
-					'lacertian': 319,
-					'wyvern': 69,
-					'dragon': 52
-				}
-			}
-		},
-
-		'reinforcements': {
-			'sent': {
-				'total': 12086,
-				'army.ground': {
-					'fathers': 12047,
-					'agmogedcar': 6,
-					'fast': 22,
-					'lost': 1,
-					'grandmother': 10
-				}
-			},
-			'arrived': {
-				'total': 10639,
-				'army.ground': {
-					'fathers': 10606,
-					'agmogedcar': 4,
-					'fast': 19,
-					'lost': 1,
-					'grandmother': 9
-				}
-			}
-		},
-	},
-
-	consul: {
-		'quests': {
-			'regular': {
-				'completed': 105,
-				'completedQuestLines': 1
-			},
-			'daily': {
-				'total': 133,
-				'win': 69,
-				'fail': 64
-			}
-		},
-		'chat': {
-			'messages': 10180,
-			'status': 29,
-			'motd': 17,
-			'dice': 13,
-			'coub': 3,
-			'rooms': {
-				'created': 1
-			},
-			'spent': {
-				'credits': 550
-			}
-		},
-		'mail': {
-			'current': 532,
-			'total': 532
-		},
-
-		'investments': {
-			'total': 4,
-			'metals': 21000,
-			'crystals': 21000,
-			'credits': 100
-		},
-		'promocode': {
-			'total': 8
-		},
-		'cards': {
-			'bought': 3,
-			'activated': 3
-		}
-	}
-};
 
 initStatisticAchievementsClient();
 

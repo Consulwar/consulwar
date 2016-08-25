@@ -1,6 +1,6 @@
 <template name="rating">
 	<div class="rating">
-		{{#if users}}
+		{{#if (or users isLoading)}}
 			<table>
 				<tr class="header">
 					<th>Место</th>
@@ -68,7 +68,7 @@
 							</a>
 							<a
 								class="show_detail_statistic"
-								href="{{detailStatisticRoute this.username}}"
+								href="#{{this.username}}/detail/development"
 								data-tooltip="Смотреть подробную статистику"
 							>
 								<img src="/img/game/detail_statistic.png">
@@ -90,42 +90,416 @@
 				button search
 				{{#if and selectedUserName (not (eq user.username selectedUserName))}}active{{/if}}
 			"></div>
-			<input type="text" name="searchUserInRating" placeholder="Имя консула">
+			<input
+				type="text" name="searchUserInRating" placeholder="Имя консула"
+				value="{{#if not (eq user.username selectedUserName)}}{{selectedUserName}}{{/if}}"
+			>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			<h2>Нет статистики</h2>
 		{{/if}}
-		{{#if detailStatisticView}}
-			{{> detailStatistic}}
-		{{/if}}
 	</div>
+	{{#if detailStatisticTab}}
+		{{> detailStatistic userName=selectedUserName}}
+	{{/if}}
 </template>
 
 <template name="detailStatistic">
 	<div class="smoke"></div>
 	<div class="detailStatistic">
-		<div class="close"></div>
+		<a class="close" href="#{{this.userName}}"></a>
 
 		<div class="tabs">
-			<div class="tab development active" data-name="development">Развитие{{data1}}</div>
-			<div class="tab war" data-name="war">Боевые</div>
-			<div class="tab consul" data-name="consul">Консул</div>
-			<div class="tab another" data-name="another">Другое</div>
+			<a 
+				class="tab {{#if (eq activeTab "development")}}active{{/if}}"
+				href="#{{this.userName}}/detail/development"
+			>
+				Развитие
+			</a>
+			<a 
+				class="tab {{#if (eq activeTab "war")}}active{{/if}}"
+				href="#{{this.userName}}/detail/war"
+			>
+				Боевые
+			</a>
+			<a 
+				class="tab {{#if (eq activeTab "consul")}}active{{/if}}"
+				href="#{{this.userName}}/detail/consul"
+			>
+				Консул
+			</a>
+			<a 
+				class="tab {{#if (eq activeTab "another")}}active{{/if}}"
+				href="#{{this.userName}}/detail/another"
+			>
+				Другое
+			</a>
 		</div>
-		<div class="page development">
-			{{{statisticThree "development"}}}
+		
+		<div class="page {{#if (and data (eq activeTab "development"))}}active{{/if}}">
+			<h1>
+				Построено {{or data.building.total 0}} 
+				{{declension data.building.total "строен" "ие" "ия" "ий"}}
+			</h1>
+			<h1>
+				Исследовано {{or data.research.total 0}} 
+				{{declension data.research.total "исследован" "ие" "ия" "ий"}}
+			</h1>
+			{{>detailTable 
+				title="Ресурсы"
+				columns=(makeArray
+					(makeObject 
+						title="Добыто"
+						data=data.resources.gained
+					)
+					(makeObject 
+						title="Потрачено"
+						data=data.resources.spent
+					)
+					(makeObject 
+						title="Инвестировано"
+						data=data.investments
+					)
+				)
+				items=(makeArray 
+					(makeObject
+						engName="humans"
+						name="Люди"
+					)
+					(makeObject
+						engName="metals"
+						name="металлы"
+					)
+					(makeObject
+						engName="crystals"
+						name="Кристаллы"
+					)
+					(makeObject
+						engName="honor"
+						name="Честь"
+					)
+					(makeObject
+						engName="credits"
+						name="Кредиты"
+					)
+				)
+			}}
+
+			{{>detailTable 
+				title="Артефакты"
+				columns=(makeArray
+					(makeObject 
+						title="Добыто"
+						data=data.resources.gained
+					)
+					(makeObject 
+						title="Потрачено"
+						data=data.resources.spent
+					)
+				)
+				items=(toArray Game.Artefacts.items)
+			}}
+
+			{{>detailTable 
+				title="Космический флот"
+				columns=(makeArray
+					(makeObject 
+						title="Построено"
+						data=data.units.build.army.fleet
+					)
+					(makeObject 
+						title="Потеряно"
+						data=data.units.lost.army.fleet
+					)
+				)
+				items=(toArray Game.Unit.items.army.fleet)
+			}}
+
+			{{>detailTable 
+				title="Планетарная оборона"
+				columns=(makeArray
+					(makeObject 
+						title="Построено"
+						data=data.units.build.army.defense
+					)
+					(makeObject 
+						title="Потеряно"
+						data=data.units.lost.army.defense
+					)
+				)
+				items=(toArray Game.Unit.items.army.defense)
+			}}
+
+			{{>detailTable 
+				title="Наземные войска"
+				columns=(makeArray
+					(makeObject 
+						title="Построено"
+						data=data.units.build.army.ground
+					)
+					(makeObject 
+						title="Потеряно"
+						data=data.units.lost.army.ground
+					)
+				)
+				items=(toArray Game.Unit.items.army.ground)
+			}}
 		</div>
 
-		<div class="page war">
-			{{{statisticThree "war"}}}
+		<div class="page {{#if (and data (eq activeTab "war"))}}active{{/if}}">
+			{{>detailTable 
+				title="Подкрепление"
+				columns=(makeArray
+					(makeObject 
+						title="Отправлено"
+						data=data.reinforcements.sent.army.ground
+					)
+					(makeObject 
+						title="Получено"
+						data=data.reinforcements.arrived.army.ground
+					)
+				)
+				items=(toArray Game.Unit.items.army.ground)
+			}}
+
+			{{>detailTable 
+				title="Космический флот рептилий"
+				columns=(makeArray
+					(makeObject 
+						title="Уничтожено"
+						data=data.reptiles.killed.reptiles.fleet
+					)
+				)
+				items=(toArray Game.Unit.items.reptiles.fleet)
+			}}
+
+			{{>detailTable 
+				title="Наземные войска рептилий"
+				columns=(makeArray
+					(makeObject 
+						title="Уничтожено"
+						data=data.reptiles.killed.reptiles.ground
+					)
+				)
+				items=(toArray Game.Unit.items.reptiles.ground)
+			}}
+
+			{{>detailTable 
+				title="Патрульный флот"
+				firstColumnName="Уровень"
+				total=true
+				columns=(makeArray
+					(makeObject 
+						title="Битв"
+						data=data.battle.patrolfleet
+						field="total"
+					)
+					(makeObject 
+						title="Побед"
+						data=data.battle.patrolfleet
+						field="victory"
+					)
+					(makeObject 
+						title="Ничьих"
+						data=data.battle.patrolfleet
+						field="tie"
+					)
+					(makeObject 
+						title="Поражений"
+						data=data.battle.patrolfleet
+						field="defeat"
+					)
+				)
+				items=(levelsArray 10)
+			}}
+
+
+			{{>detailTable 
+				title="Защитный флот"
+				firstColumnName="Уровень"
+				total=true
+				columns=(makeArray
+					(makeObject 
+						title="Битв"
+						data=data.battle.defencefleet
+						field="total"
+					)
+					(makeObject 
+						title="Побед"
+						data=data.battle.defencefleet
+						field="victory"
+					)
+					(makeObject 
+						title="Ничьих"
+						data=data.battle.defencefleet
+						field="tie"
+					)
+					(makeObject 
+						title="Поражений"
+						data=data.battle.defencefleet
+						field="defeat"
+					)
+				)
+				items=(levelsArray 10)
+			}}
+
+			{{>detailTable 
+				title="Торговый флот"
+				firstColumnName="Уровень"
+				total=true
+				columns=(makeArray
+					(makeObject 
+						title="Битв"
+						data=data.battle.tradefleet
+						field="total"
+					)
+					(makeObject 
+						title="Побед"
+						data=data.battle.tradefleet
+						field="victory"
+					)
+					(makeObject 
+						title="Ничьих"
+						data=data.battle.tradefleet
+						field="tie"
+					)
+					(makeObject 
+						title="Поражений"
+						data=data.battle.tradefleet
+						field="defeat"
+					)
+				)
+				items=(levelsArray 10)
+			}}
+
+			{{>detailTable 
+				title="Боевой флот"
+				firstColumnName="Уровень"
+				total=true
+				columns=(makeArray
+					(makeObject 
+						title="Битв"
+						data=data.battle.battlefleet
+						field="total"
+					)
+					(makeObject 
+						title="Побед"
+						data=data.battle.battlefleet
+						field="victory"
+					)
+					(makeObject 
+						title="Ничьих"
+						data=data.battle.battlefleet
+						field="tie"
+					)
+					(makeObject 
+						title="Поражений"
+						data=data.battle.battlefleet
+						field="defeat"
+					)
+				)
+				items=(levelsArray 10)
+			}}
 		</div>
 
-		<div class="page consul">
-			{{{statisticThree "consul"}}}
+		<div class="page {{#if (and data (eq activeTab "consul"))}}active{{/if}}">
+			<h1>
+				Выполнил {{or data.quests.regular.completed 0}} 
+				{{declension data.quests.regular.completed "" "регулярный квест" "регулярных квеста" "регулярных квестов"}} 
+				и {{or data.quests.regular.completedQuestLines 0}} 
+				{{declension data.quests.regular.completedQuestLines "цепочк" "а" "и" "ек"}}
+			</h1>
+			<h1>
+				Выполнил
+				{{or data.quests.daily.win 0}} и 
+				провалил
+				{{or data.quests.daily.fail 0}} 
+				{{declension data.quests.daily.fail "" "ежедневный квест" "ежедневных квеста" "ежедневных квестов"}}
+			</h1>
+			<h1>
+				Написал {{or data.mail.total 0}} {{declension data.mail.total "пис" "ьмо" "ьма" "ем"}}
+			</h1>
+			<h1>
+				Отправил {{or data.chat.messages 0}} {{declension data.chat.messages "сообщени" "е" "я" "й"}}
+			</h1>
+			<h1>
+				Измененил {{or data.chat.status 0}} {{declension data.chat.status "статус" "" "а" "ов"}}
+			</h1>
+			<h1>
+				Установил {{or data.chat.motd 0}} {{declension data.chat.motd "сообщен" "ие" "ия" "ий"}} дня
+			</h1>
+			<h1>
+				Бросил {{or data.chat.dice 0}} {{declension data.chat.dice "кост" "ь" "и" "ей"}}
+			</h1>
+			<h1>
+				Признался в любви к рептилоидам {{or data.chat.lovereptiles 0}} 
+				{{declension data.chat.lovereptiles "раз" "" "а" ""}}
+			</h1>
+			<h1>
+				Совершил {{or data.chat.sepukku 0}} {{declension data.chat.sepukku "кровав" "ое" "ых" "ых"}} сепукку
+			</h1>
+			<h1>
+				Был не готов {{or data.chat.notprepared 0}} {{declension data.chat.notprepared "раз" "" "а" ""}}
+			</h1>
+			<h1>
+				Создал {{or data.chat.rooms.created 0}} {{declension data.chat.rooms.created "комнат" "у" "ы" ""}}
+			</h1>
+			<h1>
+				Удалил {{or data.chat.rooms.deleted 0}} {{declension data.chat.rooms.deleted "комнат" "у" "ы" ""}}
+			</h1>
+			<h1>
+				Потратил в чате {{formatNumberWithISO (or data.chat.spent.crystals 0)}} 
+				{{declension data.chat.spent.crystals "кристалл" "" "а" "ов"}} и 
+				{{formatNumberWithISO (or data.chat.spent.credits 0)}} 
+				{{declension data.chat.spent.credits "кредит" "" "а" "ов"}}
+			</h1>
 		</div>
 
-		<div class="page another">
-			{{{statisticThree "another"}}}
+		<div class="page {{#if (and data (eq activeTab "another"))}}active{{/if}}">
+			<h1>
+				{{declension data.cosmos.fleets.sent "Отправлен" "" "о" "о"}} 
+				{{or data.cosmos.fleets.sent 0}} 
+				{{declension data.cosmos.fleets.sent "флот" "" "а" "ов"}}
+			</h1>
+			<h1>
+				{{declension data.cosmos.planets.discovered "Исследован" "а" "о" "о"}} 
+				{{or data.cosmos.planets.discovered 0}} 
+				{{declension data.cosmos.planets.discovered "планет" "а" "ы" ""}}
+			</h1>
+		</div>
+
+		<div class="page {{#if (not data)}}active{{/if}}">
+			{{> loading}}
 		</div>
 	</div>
+</template>
+
+<template name="detailTable">
+	<h1>{{this.title}}</h1>
+	<table>
+		<tr>
+			<th>{{or this.firstColumnName "Название"}}</th>
+			{{#each columns}}
+				<th>{{this.title}}</th>
+			{{/each}}
+		</tr>
+		
+		{{#each items}}
+			<tr>
+				<td>{{this.name}}</td>
+				{{#each ../columns}}
+					<td>{{formatNumberWithISO (lookup this.data (../engName) field)}}</td>
+				{{/each}}
+			</tr>
+		{{/each}}
+
+		{{#if this.total}}
+			<tr>
+				<td><h4>Всего</h4></td>
+				{{#each columns}}
+					<td><h4>{{or (formatNumberWithISO this.data.[total]) 0}}</h4></td>
+				{{/each}}
+			</tr>
+		{{/if}}
+	</table>
 </template>

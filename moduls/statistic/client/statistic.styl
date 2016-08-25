@@ -121,10 +121,10 @@
 	left 50%
 	transform translate(-50%, -50%)
 	background-image none
-	background-color #13161b
-	width 560px
-	transform translate(-50%, -200px)
 	background-color #030303
+	width 560px
+	height 400px
+	transform translate(-50%, -200px)
 	font-size 0
 
 	.close
@@ -142,78 +142,60 @@
 		&:hover
 			background-image url(/img/game/cosmomap/button_close_active.png)
 	.tab
-		&.war
-		&.development
-		&.consul
-		&.another
-			display inline-block
-			cursor pointer
-			width 25%
-			height 30px
-			padding-top 10px
-			background-color #13161b
-			text-align center
-			font-size 14px
-			font-weight bold
-			color #e8e8e8
-			margin 0px
-			
-			&.active
-				background-color #292f3b
-				color #56baf2
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
+		display inline-block
+		cursor pointer
+		width 25%
+		height 30px
+		padding-top 10px
+		background-color #13161b
+		text-align center
+		font-weight bold
+		font-size 14px
+		color #e8e8e8
+		margin 0px
+		text-decoration none
+		
+		&.active
+			background-color #292f3b
+			color #56baf2
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
 	.page
 		height 400px
 		overflow-y auto
+		padding 10px
+		font-weight bold
+		font-size 14px
+		color #888888
+		display none
+		background-color #030303
 
-		&.development
-		&.consul
-		&.war
-		&.another
-			padding 10px
-			font-weight bold
-			font-size 14px
-			color #888888
-		
-		&.consul
-		&.war
-		&.another
-			display none
+		&.active
+			display block
 
-.treeline, .treeline ul, .treeline li
-	margin 0
-	padding 0
-	line-height 1.2
-	list-style none
-
-.treeline
-	h1, h2, h3, h4, h5, h6
-		margin 0
-		font-weight normal
+	th, h1, h2, h3, h4, h5, h6
+		margin 5px 0 5px 0
 		color #56baf2
 		font-weight bold
-	.header
-		position relative
-		padding-left 1.2em
+		text-align left
 
-	ul
-		margin 0 0 0 25px
-	li
-		&:last-child
-			&:before
-				width calc(1.1em - 1px)
+	table
+		width 100%
+		display block
+		color #ffffff
 
-.treeline > li:not(:only-child), .treeline li li
-	position relative
-	padding 5px 0 0 20px
+		&:after
+			display block
+			content ""
+			margin-top 10px
+			width 100%
+			height 10px
+			background-color #13161b
 
-.treeline li li:before, .treeline > li:not(:only-child):before
-	content ""
-	position absolute
-	top 0
-	left 0
-	width 2.1em
-	height .7em
+		tr
+			width 100%
+
+			td
+				width 25%

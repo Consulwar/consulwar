@@ -259,7 +259,18 @@ Meteor.methods({
 			user_id: user._id
 		}, {
 			fields: {
-				payment: 0
+				user_id: 1,
+				resources: 1,
+				building: 1,
+				research: 1,
+				quests: 1,
+				units: 1,
+				reptiles: 1,
+				reinforcements: 1,
+				cosmos: 1,
+				battle: 1,
+				chat: 1,
+				mail: 1
 			}
 		});
 

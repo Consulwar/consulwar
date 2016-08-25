@@ -64,6 +64,22 @@ UI.registerHelper('not', function(value) {
 	return !value;
 });
 
+UI.registerHelper('toArray', function(obj) {
+	return _.toArray(obj);
+});
+
+UI.registerHelper('makeArray', function() {
+	return _.toArray(arguments).slice(0, -1);
+});
+
+UI.registerHelper('makeObject', function() {
+	return arguments[0].hash;
+});
+
+UI.registerHelper('dynHelper', function(name, data) {
+	return Blaze._globalHelpers[name](data);
+});
+
 UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {
 	return zeroForm + (
 		(/^[0,2-9]?[1]$/.test(number))

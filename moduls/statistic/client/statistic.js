@@ -204,7 +204,7 @@ var scrollToSelectedUser = function() {
 Template.detailTable.helpers({
 	lookup: function(obj) {
 		var answer = obj;
-		for(var i = 1; (i < arguments.length - 1) && (arguments[i] != undefined); i++) {
+		for(var i = 1; (i < arguments.length - 1) && (arguments[i] !== undefined); i++) {
 				answer = answer && answer[arguments[i]];
 		}
 		return answer || 0;
@@ -226,8 +226,8 @@ Template.detailStatistic.helpers({
 			arr.push({
 				engName: i,
 				name: i
-			})
-		};
+			});
+		}
 		return levels;
 	}
 });

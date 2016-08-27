@@ -78,7 +78,8 @@ UI.registerHelper('makeObject', function() {
 
 UI.registerHelper('lookup', function(obj) {
 	var answer = obj;
-	for(var i = 1; (i < arguments.length - 1) && (arguments[i] !== undefined); i++) {
+	for(var i = 1; (i < arguments.length - 1); i++) {
+		if (arguments[i] === undefined) break;
 		answer = answer && answer[arguments[i]];
 	}
 	return answer || undefined;

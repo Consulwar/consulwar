@@ -24,10 +24,21 @@ Game.Rating.showPage = function() {
 
 	if (hash) {
 		newSelectedUserName = hash[0];
+
+		this.render('rating', { 
+			to: 'content',
+			data: {
+				selectedUserName: newSelectedUserName,
+				countPerPage: countPerPage,
+				users: users,
+				countTotal: countTotal
+			} 
+		});
+
 		if (hash[1] == 'detail') {
 			var tab = hash[2];
 			if (selectedUserName == newSelectedUserName) {
-				renderDetailStatistic(this, selectedUserName, tab, detailStatisticData);
+				renderDetailStatistic.call(this, selectedUserName, tab, detailStatisticData);
 				return;
 			}
 
@@ -39,7 +50,7 @@ Game.Rating.showPage = function() {
 					Notifications.error('Не удалось загрузить статистику пользователя', err.error);
 				} else {
 					detailStatisticData = data;
-					renderDetailStatistic(self, selectedUserName, tab, detailStatisticData);
+					renderDetailStatistic.call(self, selectedUserName, tab, detailStatisticData);
 				}
 			});
 			showDetailStatistic = true;
@@ -51,16 +62,6 @@ Game.Rating.showPage = function() {
 		selectedUserName = null;
 		this.render('empty', { to: 'detailStatistic' });
 	}
-
-	this.render('rating', { 
-		to: 'content',
-		data: {
-			selectedUserName: selectedUserName,
-			countPerPage: countPerPage,
-			users: users,
-			countTotal: countTotal
-		} 
-	});
 
 	if (pageNumber && pageNumber != lastPageNumber) {
 		lastPageNumber = pageNumber;
@@ -77,16 +78,16 @@ Game.Rating.showPage = function() {
 				Notifications.error('Не удалось загрузить страницу', err.error);
 			} else {
 				var skip = (pageNumber - 1) * countPerPage;
-				var selectedUserСontain = false;
+				var selectedUserContain = false;
 
 				data.users.forEach(function(user, i) {
 					user.place = skip + i + 1;
 					if (user.username == selectedUserName) {
-						selectedUserСontain = true;
+						selectedUserContain = true;
 					}
 				});
 
-				if (selectedUserName && !selectedUserСontain) {
+				if (selectedUserName && !selectedUserContain) {
 					showUser(selectedUserName, showDetailStatistic);
 					return;
 				}
@@ -112,15 +113,15 @@ Game.Rating.showPage = function() {
 	}
 };
 
-var renderDetailStatistic = function(self, userName, activeTab, detailStatisticData){
-	self.render('detailStatistic', {
+var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
+	this.render('detailStatistic', {
 		to: 'detailStatistic',
 		data: {
 			userName: userName,
 			activeTab: activeTab
 		}
 	});
-	self.render( activeTab + 'Page', {
+	this.render( activeTab + 'DetailStatisticPage', {
 		to: 'detailStatisticPage',
 		data: {
 			data: detailStatisticData
@@ -218,16 +219,16 @@ var scrollToSelectedUser = function() {
 	}
 };
 
-Template.warPage.helpers({
-	levels: function(maxLevel) {
-		var levels = [];
-		for(var i = 1; i <= maxLevel; i++) {
-			levels.push({
+Template.battleDetailStatisticPage.helpers({
+	numberedFirstColumn: function(maxNum) {
+		var column = [];
+		for(var i = 1; i <= maxNum; i++) {
+			column.push({
 				engName: i,
 				name: i
 			});
 		}
-		return levels;
+		return column;
 	}
 });
 

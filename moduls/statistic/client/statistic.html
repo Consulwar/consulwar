@@ -104,7 +104,7 @@
 		{{/if}}
 	</div>
 
-	{{>yield region="detailStatistic"}}
+	{{ >yield region="detailStatistic"}}
 </template>
 
 <template name="detailStatistic">
@@ -120,7 +120,7 @@
 				)
 				(makeObject 
 					title="Боевые"
-					path="war"
+					path="battle"
 				)
 				(makeObject 
 					title="Консул"
@@ -141,21 +141,12 @@
 		{{/each}}
 
 		<div class="page">
-			{{>yield region="detailStatisticPage"}}
+			{{ >yield region="detailStatisticPage"}}
 		</div>
 	</div>
 </template>
 
-<template name="tab">
-	<a
-		class="tab {{#if (eq this.activeTab this.tab)}}active{{/if}}"
-		href="#{{this.userName}}/detail/{{this.tab}}"
-	>
-		{{this.title}}
-	</a>
-</template>
-
-<template name="detailTable">
+<template name="statisticDetailTable">
 	<h1>{{this.title}}</h1>
 	<table>
 		<tr>
@@ -185,7 +176,7 @@
 	</table>
 </template>
 
-<template name="developmentPage">
+<template name="developmentDetailStatisticPage">
 	<h1>
 		{{#if this.data.building.total}}
 			Построено {{this.data.building.total}} 
@@ -196,13 +187,13 @@
 	</h1>
 	<h1>
 		{{#if this.data.research.total}}
-			Исследовано {{this.data.research.total}} 
+			Проведено {{this.data.research.total}} 
 			{{declension this.data.research.total "исследован" "ие" "ия" "ий"}}
 		{{else}}
-			Не исследовано ни одного исследования
+			Не проведено ни одного исследования
 		{{/if}}
 	</h1>
-	{{>detailTable 
+	{{ >statisticDetailTable 
 		title="Ресурсы"
 		columns=(makeArray
 			(makeObject 
@@ -242,7 +233,7 @@
 		)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Артефакты"
 		columns=(makeArray
 			(makeObject 
@@ -257,7 +248,7 @@
 		items=(toArray Game.Artefacts.items)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Космический флот"
 		columns=(makeArray
 			(makeObject 
@@ -272,7 +263,7 @@
 		items=(toArray Game.Unit.items.army.fleet)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Планетарная оборона"
 		columns=(makeArray
 			(makeObject 
@@ -287,7 +278,7 @@
 		items=(toArray Game.Unit.items.army.defense)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Наземные войска"
 		columns=(makeArray
 			(makeObject 
@@ -303,8 +294,8 @@
 	}}
 </template>
 
-<template name="warPage">
-	{{>detailTable 
+<template name="battleDetailStatisticPage">
+	{{> statisticDetailTable 
 		title="Подкрепление"
 		columns=(makeArray
 			(makeObject 
@@ -319,7 +310,7 @@
 		items=(toArray Game.Unit.items.army.ground)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Космический флот рептилий"
 		columns=(makeArray
 			(makeObject 
@@ -330,7 +321,7 @@
 		items=(toArray Game.Unit.items.reptiles.fleet)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Наземные войска рептилий"
 		columns=(makeArray
 			(makeObject 
@@ -341,7 +332,7 @@
 		items=(toArray Game.Unit.items.reptiles.ground)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Патрульный флот"
 		firstColumnName="Уровень"
 		showTotal=true
@@ -367,11 +358,11 @@
 				field="defeat"
 			)
 		)
-		items=(levels 10)
+		items=(numberedFirstColumn 10)
 	}}
 
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Защитный флот"
 		firstColumnName="Уровень"
 		showTotal=true
@@ -397,10 +388,10 @@
 				field="defeat"
 			)
 		)
-		items=(levels 10)
+		items=(numberedFirstColumn 10)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Торговый флот"
 		firstColumnName="Уровень"
 		showTotal=true
@@ -426,10 +417,10 @@
 				field="defeat"
 			)
 		)
-		items=(levels 10)
+		items=(numberedFirstColumn 10)
 	}}
 
-	{{>detailTable 
+	{{> statisticDetailTable 
 		title="Боевой флот"
 		firstColumnName="Уровень"
 		showTotal=true
@@ -455,11 +446,11 @@
 				field="defeat"
 			)
 		)
-		items=(levels 10)
+		items=(numberedFirstColumn 10)
 	}}
 </template>
 
-<template name="consulPage">
+<template name="consulDetailStatisticPage">
 	<h1>
 		{{#if this.data.quests.regular.completed}}
 			Выполнил {{this.data.quests.regular.completed}} 
@@ -594,7 +585,7 @@
 	{{/if}}
 </template>
 
-<template name="anotherPage">
+<template name="anotherDetailStatisticPage">
 	<h1>
 		{{#if this.data.cosmos.fleets.sent}}
 			{{declension this.data.cosmos.fleets.sent "Отправлен" "" "о" "о"}} 

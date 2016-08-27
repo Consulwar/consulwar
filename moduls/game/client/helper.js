@@ -77,14 +77,14 @@ UI.registerHelper('makeObject', function() {
 });
 
 UI.registerHelper('lookup', function(obj) {
-	var answer = obj;
+	var result = obj;
 	for(var i = 1; i < (arguments.length - 1); i++) {
-		if (arguments[i] === undefined) {
+		if (!_isObject(result)) {
 			return undefined;
 		}
-		answer = answer && answer[arguments[i]];
+		result = result[arguments[i]];
 	}
-	return answer || undefined;
+	return result;
 });
 
 UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {

@@ -4,75 +4,140 @@ initStatisticLib();
 
 Meteor.subscribe('statistic');
 
-var isLoading = new ReactiveVar(false);
+var isLoading = new ReactiveVar(true);
+var detailStatisticData;
+var selectedUserName;
+var lastPageNumber;
+var countPerPage = 20;
+var users;
+var countTotal;
+
 
 Game.Rating = {};
 
 Game.Rating.showPage = function() {
+	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
-	var selectedUserName = Router.current().getParams().hash;
-	var countPerPage = 20;
+	var hash = this.getParams().hash && this.getParams().hash.split('/');
+	var newSelectedUserName;
+	var showDetailStatistic = false;
 
-	isLoading.set(true);
+	if (hash) {
+		newSelectedUserName = hash[0];
 
-	if (pageNumber) {
+		this.render('rating', { 
+			to: 'content',
+			data: {
+				selectedUserName: newSelectedUserName,
+				countPerPage: countPerPage,
+				users: users,
+				countTotal: countTotal
+			} 
+		});
+
+		if (hash[1] == 'detail') {
+			var tab = hash[2];
+			if (selectedUserName == newSelectedUserName) {
+				renderDetailStatistic.call(this, selectedUserName, tab, detailStatisticData);
+				return;
+			}
+
+			isLoading.set(true);
+
+			Meteor.call('statistic.getUserStatistic', newSelectedUserName, function(err, data) {
+				isLoading.set(false);
+				if (err) {
+					Notifications.error('Не удалось загрузить статистику пользователя', err.error);
+				} else {
+					detailStatisticData = data;
+					renderDetailStatistic.call(self, selectedUserName, tab, detailStatisticData);
+				}
+			});
+			showDetailStatistic = true;
+		} else {
+			this.render('empty', { to: 'detailStatistic' });
+		}
+		selectedUserName = newSelectedUserName;
+	} else {
+		selectedUserName = null;
+		this.render('empty', { to: 'detailStatistic' });
+	}
+
+	if (pageNumber && pageNumber != lastPageNumber) {
+		lastPageNumber = pageNumber;
 		// reset scroll
 		var element = $('.rating .data')[0];
 		if (element) {
 			element.scrollTop = 0;
 		}
+		isLoading.set(true);
 		// show required page
-		//this.render('loading', {layout: 'loading_layout'});
 		Meteor.call('statistic.getPageInRating', pageNumber, countPerPage, function(err, data) {
+			isLoading.set(false);
 			if (err) {
 				Notifications.error('Не удалось загрузить страницу', err.error);
 			} else {
 				var skip = (pageNumber - 1) * countPerPage;
-				var users = data.users;
-				var selectedUserСontain = false;
+				var selectedUserContain = false;
+
+				users = data.users;
+				countTotal = data.count;
 
 				for (var i = 0; i < users.length; i++) {
 					users[i].place = skip + i + 1;
 					if (users[i].username == selectedUserName) {
-						selectedUserСontain = true;
+						selectedUserContain = true;
 					}
 				}
 
-				if (selectedUserName && !selectedUserСontain) {
-					showUser(selectedUserName);
+				if (selectedUserName && !selectedUserContain) {
+					showUser(selectedUserName, showDetailStatistic);
 					return;
 				}
 
-				Router.current().render('rating', {
+				self.render('rating', { 
 					to: 'content',
 					data: {
+						selectedUserName: selectedUserName,
 						countPerPage: countPerPage,
-						countTotal: data.count,
 						users: users,
-						selectedUserName: selectedUserName
-					}
+						countTotal: countTotal
+					} 
 				});
 
 				Meteor.setTimeout(scrollToSelectedUser);
 			}
-
-			isLoading.set(false);
 		});
-	} else {
-		showUser(selectedUserName || Meteor.user().username);
+	} else if (!pageNumber) {
+		showUser(selectedUserName || Meteor.user().username, showDetailStatistic);
 	}
 };
 
-var showUser = function(selectedUserName) {
-	if (!selectedUserName){
+var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
+	this.render('detailStatistic', {
+		to: 'detailStatistic',
+		data: {
+			userName: userName,
+			activeTab: activeTab
+		}
+	});
+	this.render( activeTab + 'DetailStatisticPage', {
+		to: 'detailStatisticPage',
+		data: {
+			data: detailStatisticData
+		}
+	});
+};
+
+var showUser = function(userName, showDetailStatistic) {
+	if (!userName){
 		return Notifications.error('Введите имя пользователя');
 	}
-
-	var countPerPage = 20;
 	
 	isLoading.set(true);
 
-	Meteor.call('statistic.getUserPositionInRating', selectedUserName, function(err, data) {
+	Meteor.call('statistic.getUserPositionInRating', userName, function(err, data) {
+		isLoading.set(false);
 		if (err) {
 			Notifications.error('Не удалось загрузить страницу', err.error);
 		} else {
@@ -80,14 +145,15 @@ var showUser = function(selectedUserName) {
 				? Math.ceil( data.position / countPerPage )
 				: 1
 			);
+
 			Router.go(
 				'statistics',
 				{ page: userPage },
-				{ hash: selectedUserName } 
+				{ hash: userName + ( showDetailStatistic ? '/detail' : '' ) } 
 			);
-		}
 
-		isLoading.set(false);
+			Meteor.setTimeout(scrollToSelectedUser);
+		}
 	});
 };
 
@@ -152,6 +218,19 @@ var scrollToSelectedUser = function() {
 		$('.rating .data')[0].scrollTop = userRow.offsetTop - 150;
 	}
 };
+
+Template.battleDetailStatisticPage.helpers({
+	numberedFirstColumn: function(maxNum) {
+		var column = [];
+		for(var i = 1; i <= maxNum; i++) {
+			column.push({
+				engName: i,
+				name: i
+			});
+		}
+		return column;
+	}
+});
 
 Template.rating.onRendered(scrollToSelectedUser);
 

@@ -66,6 +66,13 @@
 							>
 								<img src="/img/game/house.png">
 							</a>
+							<a
+								class="show_detail_statistic"
+								href="#{{this.username}}/detail/development"
+								data-tooltip="Смотреть подробную статистику"
+							>
+								<img src="/img/game/detail_statistic.png">
+							</a>
 						</td>
 						<td>{{formatNumber this.rating}}</td>
 					</tr>
@@ -77,19 +84,530 @@
 			</div>
 			<div class="
 				button returnToMe 
-				{{#if eq user.username selectedUserName}}active{{/if}}
+				{{#if eq user.username this.selectedUserName}}active{{/if}}
 			"></div>
 			<div class="
 				button search
-				{{#if and selectedUserName (not (eq user.username selectedUserName))}}active{{/if}}
+				{{#if and this.selectedUserName (not (eq user.username this.selectedUserName))}}active{{/if}}
 			"></div>
-			<input 
-				type="text" name="searchUserInRating" placeholder="Имя консула" 
-				value="{{#if not (eq user.username selectedUserName)}}{{selectedUserName}}{{/if}}"
+			<input
+				type="text" name="searchUserInRating" placeholder="Имя консула"
+				value="{{#if not (eq user.username this.selectedUserName)}}{{this.selectedUserName}}{{/if}}"
 			>
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
-			<h2>Нет статистики</h2>
+			{{#if isLoading}}
+				{{> loading}}
+			{{else}}
+				<h2>Нет статистики</h2>
+			{{/if}}
 		{{/if}}
 	</div>
+
+	{{ >yield region="detailStatistic"}}
+</template>
+
+<template name="detailStatistic">
+	<div class="smoke"></div>
+	<div class="detailStatistic">
+		<a class="close" href="#{{this.userName}}"></a>
+
+		{{#each
+			(makeArray 
+				(makeObject 
+					title="Развитие"
+					path="development"
+				)
+				(makeObject 
+					title="Боевые"
+					path="battle"
+				)
+				(makeObject 
+					title="Консул"
+					path="consul"
+				)
+				(makeObject 
+					title="Другое"
+					path="another"
+				)
+			)
+		}}
+			<a 
+				class="tab {{#if (eq ../activeTab path)}}active{{/if}}"
+				href="#{{../userName}}/detail/{{path}}"
+			>
+				{{title}}
+			</a>
+		{{/each}}
+
+		<div class="page">
+			{{ >yield region="detailStatisticPage"}}
+		</div>
+	</div>
+</template>
+
+<template name="statisticDetailTable">
+	<h1>{{this.title}}</h1>
+	<table>
+		<tr>
+			<th>{{or this.firstColumnName "Название"}}</th>
+			{{#each columns}}
+				<th>{{this.title}}</th>
+			{{/each}}
+		</tr>
+		
+		{{#each items}}
+			<tr>
+				<td>{{this.name}}</td>
+				{{#each ../columns}}
+					<td>
+						{{#if field}}
+							{{or (formatNumberWithISO (lookup this.data (../engName) field)) 0}}
+						{{else}}
+							{{or (formatNumberWithISO (lookup this.data (../engName))) 0}}
+						{{/if}}
+					</td>
+				{{/each}}
+			</tr>
+		{{/each}}
+
+		{{#if this.showTotal}}
+			<tr>
+				<td><h4>Всего</h4></td>
+				{{#each columns}}
+					<td><h4>{{or (formatNumberWithISO this.data.[total]) 0}}</h4></td>
+				{{/each}}
+			</tr>
+		{{/if}}
+	</table>
+</template>
+
+<template name="developmentDetailStatisticPage">
+	<h1>
+		{{#if this.data.building.total}}
+			Построено {{this.data.building.total}} 
+			{{declension this.data.building.total "здани" "е" "я" "й"}}
+		{{else}}
+			Не построено ни одного здания
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.research.total}}
+			Проведено {{this.data.research.total}} 
+			{{declension this.data.research.total "исследован" "ие" "ия" "ий"}}
+		{{else}}
+			Не проведено ни одного исследования
+		{{/if}}
+	</h1>
+	{{ >statisticDetailTable 
+		title="Ресурсы"
+		columns=(makeArray
+			(makeObject 
+				title="Добыто"
+				data=this.data.resources.gained
+			)
+			(makeObject 
+				title="Потрачено"
+				data=this.data.resources.spent
+			)
+			(makeObject 
+				title="Инвестировано"
+				data=this.data.investments
+			)
+		)
+		items=(makeArray 
+			(makeObject
+				engName="humans"
+				name="Люди"
+			)
+			(makeObject
+				engName="metals"
+				name="металлы"
+			)
+			(makeObject
+				engName="crystals"
+				name="Кристаллы"
+			)
+			(makeObject
+				engName="honor"
+				name="Честь"
+			)
+			(makeObject
+				engName="credits"
+				name="Кредиты"
+			)
+		)
+	}}
+
+	{{> statisticDetailTable 
+		title="Артефакты"
+		columns=(makeArray
+			(makeObject 
+				title="Добыто"
+				data=this.data.resources.gained
+			)
+			(makeObject 
+				title="Потрачено"
+				data=this.data.resources.spent
+			)
+		)
+		items=(toArray Game.Artefacts.items)
+	}}
+
+	{{> statisticDetailTable 
+		title="Космический флот"
+		columns=(makeArray
+			(makeObject 
+				title="Построено"
+				data=this.data.units.build.army.fleet
+			)
+			(makeObject 
+				title="Потеряно"
+				data=this.data.units.lost.army.fleet
+			)
+		)
+		items=(toArray Game.Unit.items.army.fleet)
+	}}
+
+	{{> statisticDetailTable 
+		title="Планетарная оборона"
+		columns=(makeArray
+			(makeObject 
+				title="Построено"
+				data=this.data.units.build.army.defense
+			)
+			(makeObject 
+				title="Потеряно"
+				data=this.data.units.lost.army.defense
+			)
+		)
+		items=(toArray Game.Unit.items.army.defense)
+	}}
+
+	{{> statisticDetailTable 
+		title="Наземные войска"
+		columns=(makeArray
+			(makeObject 
+				title="Построено"
+				data=this.data.units.build.army.ground
+			)
+			(makeObject 
+				title="Потеряно"
+				data=this.data.units.lost.army.ground
+			)
+		)
+		items=(toArray Game.Unit.items.army.ground)
+	}}
+</template>
+
+<template name="battleDetailStatisticPage">
+	{{> statisticDetailTable 
+		title="Подкрепление"
+		columns=(makeArray
+			(makeObject 
+				title="Отправлено"
+				data=this.data.reinforcements.sent.army.ground
+			)
+			(makeObject 
+				title="Получено"
+				data=this.data.reinforcements.arrived.army.ground
+			)
+		)
+		items=(toArray Game.Unit.items.army.ground)
+	}}
+
+	{{> statisticDetailTable 
+		title="Космический флот рептилий"
+		columns=(makeArray
+			(makeObject 
+				title="Уничтожено"
+				data=this.data.reptiles.killed.reptiles.fleet
+			)
+		)
+		items=(toArray Game.Unit.items.reptiles.fleet)
+	}}
+
+	{{> statisticDetailTable 
+		title="Наземные войска рептилий"
+		columns=(makeArray
+			(makeObject 
+				title="Уничтожено"
+				data=this.data.reptiles.killed.reptiles.ground
+			)
+		)
+		items=(toArray Game.Unit.items.reptiles.ground)
+	}}
+
+	{{> statisticDetailTable 
+		title="Патрульный флот"
+		firstColumnName="Уровень"
+		showTotal=true
+		columns=(makeArray
+			(makeObject 
+				title="Битв"
+				data=this.data.battle.patrolfleet
+				field="total"
+			)
+			(makeObject 
+				title="Побед"
+				data=this.data.battle.patrolfleet
+				field="victory"
+			)
+			(makeObject 
+				title="Ничьих"
+				data=this.data.battle.patrolfleet
+				field="tie"
+			)
+			(makeObject 
+				title="Поражений"
+				data=this.data.battle.patrolfleet
+				field="defeat"
+			)
+		)
+		items=(numberedFirstColumn 10)
+	}}
+
+
+	{{> statisticDetailTable 
+		title="Защитный флот"
+		firstColumnName="Уровень"
+		showTotal=true
+		columns=(makeArray
+			(makeObject 
+				title="Битв"
+				data=this.data.battle.defencefleet
+				field="total"
+			)
+			(makeObject 
+				title="Побед"
+				data=this.data.battle.defencefleet
+				field="victory"
+			)
+			(makeObject 
+				title="Ничьих"
+				data=this.data.battle.defencefleet
+				field="tie"
+			)
+			(makeObject 
+				title="Поражений"
+				data=this.data.battle.defencefleet
+				field="defeat"
+			)
+		)
+		items=(numberedFirstColumn 10)
+	}}
+
+	{{> statisticDetailTable 
+		title="Торговый флот"
+		firstColumnName="Уровень"
+		showTotal=true
+		columns=(makeArray
+			(makeObject 
+				title="Битв"
+				data=this.data.battle.tradefleet
+				field="total"
+			)
+			(makeObject 
+				title="Побед"
+				data=this.data.battle.tradefleet
+				field="victory"
+			)
+			(makeObject 
+				title="Ничьих"
+				data=this.data.battle.tradefleet
+				field="tie"
+			)
+			(makeObject 
+				title="Поражений"
+				data=this.data.battle.tradefleet
+				field="defeat"
+			)
+		)
+		items=(numberedFirstColumn 10)
+	}}
+
+	{{> statisticDetailTable 
+		title="Боевой флот"
+		firstColumnName="Уровень"
+		showTotal=true
+		columns=(makeArray
+			(makeObject 
+				title="Битв"
+				data=this.data.battle.battlefleet
+				field="total"
+			)
+			(makeObject 
+				title="Побед"
+				data=this.data.battle.battlefleet
+				field="victory"
+			)
+			(makeObject 
+				title="Ничьих"
+				data=this.data.battle.battlefleet
+				field="tie"
+			)
+			(makeObject 
+				title="Поражений"
+				data=this.data.battle.battlefleet
+				field="defeat"
+			)
+		)
+		items=(numberedFirstColumn 10)
+	}}
+</template>
+
+<template name="consulDetailStatisticPage">
+	<h1>
+		{{#if this.data.quests.regular.completed}}
+			Выполнил {{this.data.quests.regular.completed}} 
+			{{declension this.data.quests.regular.completed "регулярны" "й" "х" "х"}} 
+			{{declension this.data.quests.regular.completed "квест" "" "а" "ов"}}
+		{{else}}
+			Не выполнил ни одного квеста
+		{{/if}}
+		 и 
+		{{#if this.data.quests.regular.completedQuestLines}}
+			завершил {{this.data.quests.regular.completedQuestLines}} 
+			{{declension this.data.quests.regular.completedQuestLines "цепочк" "а" "и" "ек"}}
+		{{else}}
+			не завершил ни одной цепочки
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.quests.daily.win}}
+			Выполнил {{this.data.quests.daily.win}}
+		{{else}}
+			Не выполнил ни одного
+		{{/if}}
+		 и 
+		{{#if this.data.quests.daily.fail}}
+			провалил
+			{{this.data.quests.daily.fail}} 
+			{{declension this.data.quests.daily.fail "ежедневны" "й" "х" "х"}} 
+			{{declension this.data.quests.daily.fail "квест" "" "а" "ов"}}
+		{{else}}
+			не провалил ни одного ежедневного квеста
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.mail.total}}
+			Написал {{this.data.mail.total}} {{declension this.data.mail.total "пис" "ьмо" "ьма" "ем"}}
+		{{else}}
+			Никогда не писал писем
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.messages}}
+			Отправил {{this.data.chat.messages}} {{declension this.data.chat.messages "сообщени" "е" "я" "й"}}
+		{{else}}
+			Не отправил ни одного сообщения
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.status}}
+			Измененил {{this.data.chat.status}} {{declension this.data.chat.status "статус" "" "а" "ов"}}
+		{{else}}
+			Никогда не изменял статус
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.motd}}
+			Установил {{this.data.chat.motd}} {{declension this.data.chat.motd "сообщен" "ие" "ия" "ий"}} дня
+		{{else}}
+			Не установил ни одного сообщения дня
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.dice}}
+			Бросил {{this.data.chat.dice}} {{declension this.data.chat.dice "кост" "ь" "и" "ей"}}
+		{{else}}
+			Не бросил ни одной кости
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.lovereptiles}}
+			Признался в любви к рептилоидам {{this.data.chat.lovereptiles}} 
+			{{declension this.data.chat.lovereptiles "раз" "" "а" ""}}
+		{{else}}
+			Не признавался в любви к рептилоидам
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.sepukku}}
+			Совершил {{this.data.chat.sepukku}} 
+			{{declension this.data.chat.sepukku "кровав" "ое" "ых" "ых"}} сепукку
+		{{else}}
+			Не совершал кровавое сепукку
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.notprepared}}
+			Был не готов {{this.data.chat.notprepared}} 
+			{{declension this.data.chat.notprepared "раз" "" "а" ""}}
+		{{else}}
+			Всегда был готов
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.rooms.created}}
+			Создал {{this.data.chat.rooms.created}} 
+			{{declension this.data.chat.rooms.created "комнат" "у" "ы" ""}}
+		{{else}}
+			Не создал ни одной комнаты
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.rooms.deleted}}
+			Удалил {{this.data.chat.rooms.deleted}} 
+			{{declension this.data.chat.rooms.deleted "комнат" "у" "ы" ""}}
+		{{else}}
+			Не удалил ни одной комнаты
+		{{/if}}
+	</h1>
+	{{#if (and this.data.chat.spent.crystals this.data.chat.spent.credits)}}
+		<h1>
+			Потратил в чате {{formatNumberWithISO this.data.chat.spent.crystals}} 
+			{{declension this.data.chat.spent.crystals "кристалл" "" "а" "ов"}} и 
+			{{formatNumberWithISO this.data.chat.spent.credits}} 
+			{{declension this.data.chat.spent.credits "кредит" "" "а" "ов"}}
+		</h1>
+	{{else}}
+		<h1>
+			{{#if this.data.chat.spent.crystals}}
+				Потратил в чате {{formatNumberWithISO this.data.chat.spent.crystals}} 
+				{{declension this.data.chat.spent.crystals "кристалл" "" "а" "ов"}}
+			{{else}}
+				Не потратил в чате ни одного кристалла
+			{{/if}}
+		</h1>
+		<h1>
+			{{#if this.data.chat.spent.credits}}
+				Потратил в чате {{formatNumberWithISO this.data.chat.spent.credits}} 
+				{{declension this.data.chat.spent.credits "кредит" "" "а" "ов"}}
+			{{else}}
+				Не потратил в чате ни одного кредита
+			{{/if}}
+		</h1>
+	{{/if}}
+</template>
+
+<template name="anotherDetailStatisticPage">
+	<h1>
+		{{#if this.data.cosmos.fleets.sent}}
+			{{declension this.data.cosmos.fleets.sent "Отправлен" "" "о" "о"}} 
+			{{this.data.cosmos.fleets.sent}} 
+			{{declension this.data.cosmos.fleets.sent "флот" "" "а" "ов"}}
+		{{else}}
+			Не отправлено ни одного флота
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.cosmos.planets.discovered}}
+			{{declension this.data.cosmos.planets.discovered "Исследован" "а" "о" "о"}} 
+			{{this.data.cosmos.planets.discovered}} 
+			{{declension this.data.cosmos.planets.discovered "планет" "а" "ы" ""}}
+		{{else}}
+			Не исследовано ни одной планеты
+		{{/if}}
+	</h1>
 </template>

@@ -161,13 +161,13 @@ Meteor.methods({
 
 	'statistic.getUserPositionInRating': function(selectedUserName) {
 		var user = Meteor.user();
-		
+
 		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
 		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
+			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
 		check(selectedUserName, String);
@@ -209,13 +209,13 @@ Meteor.methods({
 
 	'statistic.getPageInRating': function(page, count) {
 		var user = Meteor.user();
-		
+
 		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');
 		}
 
 		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
+			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
 		console.log('statistic.getPageInRating: ', new Date(), user.username);
@@ -244,6 +244,47 @@ Meteor.methods({
 			users: result.fetch(),
 			count: result.count()
 		};
+	},
+
+	'statistic.getUserStatistic': function(userName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var selectedUser = Meteor.users.findOne({username: userName});
+		
+		if (!selectedUser || !selectedUser._id) {
+			throw new Meteor.Error('Пользователь не найден');
+		}
+
+		check(userName, String);
+
+		var statistic = Game.Statistic.Collection.findOne({
+			user_id: selectedUser._id
+		}, {
+			fields: {
+				user_id: 1,
+				resources: 1,
+				building: 1,
+				research: 1,
+				quests: 1,
+				units: 1,
+				reptiles: 1,
+				reinforcements: 1,
+				cosmos: 1,
+				battle: 1,
+				chat: 1,
+				mail: 1
+			}
+		});
+
+		return statistic;
 	}
 });
 

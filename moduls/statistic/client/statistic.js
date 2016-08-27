@@ -80,20 +80,20 @@ Game.Rating.showPage = function() {
 				var skip = (pageNumber - 1) * countPerPage;
 				var selectedUserContain = false;
 
-				data.users.forEach(function(user, i) {
-					user.place = skip + i + 1;
-					if (user.username == selectedUserName) {
+				users = data.users;
+				countTotal = data.count;
+
+				for (var i = 0; i < users.length; i++) {
+					users[i].place = skip + i + 1;
+					if (users[i].username == selectedUserName) {
 						selectedUserContain = true;
 					}
-				});
+				}
 
 				if (selectedUserName && !selectedUserContain) {
 					showUser(selectedUserName, showDetailStatistic);
 					return;
 				}
-
-				users = data.users;
-				countTotal = data.count;
 
 				self.render('rating', { 
 					to: 'content',

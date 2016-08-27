@@ -79,7 +79,7 @@ UI.registerHelper('makeObject', function() {
 UI.registerHelper('lookup', function(obj) {
 	var result = obj;
 	for(var i = 1; i < (arguments.length - 1); i++) {
-		if (!_isObject(result)) {
+		if (!_.isObject(result)) {
 			return undefined;
 		}
 		result = result[arguments[i]];

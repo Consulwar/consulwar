@@ -37,7 +37,7 @@ Game.Rating.showPage = function() {
 
 		if (hash[1] == 'detail') {
 			var tab = hash[2];
-			if (selectedUserName == newSelectedUserName) {
+			if (selectedUserName == newSelectedUserName && detailStatisticData) {
 				renderDetailStatistic.call(this, selectedUserName, tab, detailStatisticData);
 				return;
 			}
@@ -135,6 +135,8 @@ var showUser = function(userName, showDetailStatistic) {
 	}
 	
 	isLoading.set(true);
+	
+	detailStatisticData = null;
 
 	Meteor.call('statistic.getUserPositionInRating', userName, function(err, data) {
 		isLoading.set(false);

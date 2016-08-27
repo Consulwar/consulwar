@@ -160,7 +160,13 @@
 			<tr>
 				<td>{{this.name}}</td>
 				{{#each ../columns}}
-					<td>{{or (formatNumberWithISO (lookup this.data (../engName) field)) 0}}</td>
+					<td>
+						{{#if field}}
+							{{or (formatNumberWithISO (lookup this.data (../engName) field)) 0}}
+						{{else}}
+							{{or (formatNumberWithISO (lookup this.data (../engName))) 0}}
+						{{/if}}
+					</td>
 				{{/each}}
 			</tr>
 		{{/each}}

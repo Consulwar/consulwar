@@ -76,8 +76,12 @@ UI.registerHelper('makeObject', function() {
 	return arguments[0].hash;
 });
 
-UI.registerHelper('dynHelper', function(name, data) {
-	return Blaze._globalHelpers[name](data);
+UI.registerHelper('lookup', function(obj) {
+	var answer = obj;
+	for(var i = 1; (i < arguments.length - 1) && (arguments[i] !== undefined); i++) {
+		answer = answer && answer[arguments[i]];
+	}
+	return answer || undefined;
 });
 
 UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {

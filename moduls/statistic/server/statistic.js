@@ -108,17 +108,23 @@ Game.Statistic.fixUser = function(userId) {
 	});
 };
 
+var checkAuthorization = function() {
+	var user = Meteor.user();
+
+	if (!user || !user._id) {
+		throw new Meteor.Error('Требуется авторизация');
+	}
+
+	if (user.blocked === true) {
+		throw new Meteor.Error('Аккаунт заблокирован.');
+	}
+};
+
 Meteor.methods({
 	'statistic.fixGame': function() {
 		var user = Meteor.user();
 
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
+		checkAuthorization();
 
 		console.log('statistic.fixGame: ', new Date(), user.username);
 
@@ -132,13 +138,7 @@ Meteor.methods({
 	'statistic.fixUser': function(username) {
 		var user = Meteor.user();
 
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
+		checkAuthorization();
 
 		console.log('statistic.fixUser: ', new Date(), user.username);
 
@@ -162,13 +162,7 @@ Meteor.methods({
 	'statistic.getUserPositionInRating': function(selectedUserName) {
 		var user = Meteor.user();
 		
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
+		checkAuthorization();
 
 		check(selectedUserName, String);
 		
@@ -210,13 +204,7 @@ Meteor.methods({
 	'statistic.getPageInRating': function(page, count) {
 		var user = Meteor.user();
 		
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
+		checkAuthorization();
 
 		console.log('statistic.getPageInRating: ', new Date(), user.username);
 
@@ -247,6 +235,8 @@ Meteor.methods({
 	},
 
 	'statistic.getUserStatistic': function(userName) {
+		checkAuthorization();
+
 		var user = Meteor.users.findOne({username: userName});
 		
 		if (!user || !user._id) {

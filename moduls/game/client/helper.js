@@ -64,6 +64,29 @@ UI.registerHelper('not', function(value) {
 	return !value;
 });
 
+UI.registerHelper('toArray', function(obj) {
+	return _.toArray(obj);
+});
+
+UI.registerHelper('makeArray', function() {
+	return _.toArray(arguments).slice(0, -1);
+});
+
+UI.registerHelper('makeObject', function() {
+	return arguments[0].hash;
+});
+
+UI.registerHelper('lookup', function(obj) {
+	var result = obj;
+	for(var i = 1; i < (arguments.length - 1); i++) {
+		if (!_.isObject(result)) {
+			return undefined;
+		}
+		result = result[arguments[i]];
+	}
+	return result;
+});
+
 UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {
 	return zeroForm + (
 		(/^[0,2-9]?[1]$/.test(number))

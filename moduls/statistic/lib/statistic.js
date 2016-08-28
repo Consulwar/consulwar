@@ -11,8 +11,8 @@ Game.Statistic = {
 		general: 'rating',
 		science: 'research.total',
 		communication: 'chat.messages',
-		cosmos: 'cosmos.planets.discovered',
-		battle: 'resources.gained.honor'
+		cosmos: 'resources.gained.honor',
+		battle: 'reinforcements.sent.total'
 	},
 
 	getUser: function() {

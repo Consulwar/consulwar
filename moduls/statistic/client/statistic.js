@@ -28,7 +28,7 @@ Game.Rating.showPage = function() {
 	if (hash) {
 		newSelectedUserName = hash[0];
 
-		renderRating.call(this);
+		renderRating.call(this, newSelectedUserName);
 
 		if (hash[1] == 'detail') {
 			var tab = hash[2];
@@ -93,7 +93,7 @@ Game.Rating.showPage = function() {
 					return;
 				}
 
-				renderRating.call(self);
+				renderRating.call(self, selectedUserName);
 
 				Meteor.setTimeout(scrollToSelectedUser);
 			}
@@ -119,11 +119,11 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 	});
 };
 
-var renderRating = function(){
+var renderRating = function(userName){
 	this.render('rating', { 
 		to: 'content',
 		data: {
-			selectedUserName: selectedUserName,
+			selectedUserName: userName,
 			countPerPage: countPerPage,
 			users: users,
 			countTotal: countTotal,
@@ -141,7 +141,7 @@ var showUser = function(userName, showDetailStatistic) {
 	
 	detailStatisticData = null;
 
-	Meteor.call('statistic.getUserPositionInRating', userName, function(err, data) {
+	Meteor.call('statistic.getUserPositionInRating', statisticType, userName, function(err, data) {
 		isLoading.set(false);
 		if (err) {
 			Notifications.error('Не удалось загрузить страницу', err.error);

@@ -19,7 +19,7 @@ Game.Statistic.Collection._ensureIndex({
 });
 
 Game.Statistic.Collection._ensureIndex({
-	'cosmos.planets.discovered': 1
+	'reinforcements.sent.total': 1
 });
 
 Game.Statistic.Collection._ensureIndex({
@@ -176,7 +176,7 @@ Meteor.methods({
 		Game.Statistic.fixUser(target._id);
 	},
 
-	'statistic.getUserPositionInRating': function(selectedUserName) {
+	'statistic.getUserPositionInRating': function(type, selectedUserName) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -188,6 +188,7 @@ Meteor.methods({
 		}
 
 		check(selectedUserName, String);
+		check(type, String);
 		
 		var selectedUser = Meteor.users.findOne({ username: selectedUserName });
 			
@@ -197,26 +198,64 @@ Meteor.methods({
 		
 		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
 		
-		var position = Meteor.users.find({
-			rating: { $gt: selectedUser.rating }
-		}, {
-			fields: {
-				username: 1,
-				rating: 1
-			},
-			sort: {rating: -1}
-		}).count();
+		var position;
+		var total;
 
+		if (type == "general") {
+			position = Meteor.users.find({
+				rating: { $gt: selectedUser.rating }
+			}, {
+				fields: {
+					username: 1,
+					rating: 1
+				},
+				sort: {rating: -1}
+			}).count();
 
-		var total = Meteor.users.find({
-			rating: { $gt: 0 }
-		}, {
-			fields: {
-				username: 1,
-				rating: 1
-			},
-			sort: {rating: -1}
-		}).count();
+			total = Meteor.users.find({
+				rating: { $gt: 0 }
+			}, {
+				fields: {
+					username: 1,
+					rating: 1
+				},
+				sort: {rating: -1}
+			}).count();
+		} else {
+			var selectedUserStatistic = Game.Statistic.Collection.findOne({ user_id: selectedUser._id });
+			var sortField = Game.Statistic.getSortFieldForType(type);
+
+			if (!sortField) {
+				throw new Meteor.Error('Несуществующий тип статистики');
+			}
+			
+			var selector = {};
+			selector[sortField] = { 
+				$gt: Game.Statistic.getUserValue(sortField, selectedUserStatistic) 
+			};
+
+			var fields = {
+				username: 1
+			};
+			fields[sortField] = 1;
+
+			var sort = {};
+			sort[sortField] = -1;
+
+			position = Game.Statistic.Collection.find(selector, {
+				fields: fields,
+				sort: sort
+			}).count();
+
+			selector[sortField] = { 
+				$gt: 0 
+			};
+
+			total = Game.Statistic.Collection.find(selector, {
+				fields: fields,
+				sort: sort
+			}).count();
+		}
 
 		return {
 			total: total,
@@ -268,13 +307,15 @@ Meteor.methods({
 			});
 		} else {
 			var selector = {};
-				selector[sortField] = { $gt: 0 };
-				var fields = {
-					username: 1
-				};
-				fields[sortField] = 1;
-				var sort = {};
-				sort[sortField] = -1;
+			selector[sortField] = { $gt: 0 };
+
+			var fields = {
+				username: 1
+			};
+			fields[sortField] = 1;
+
+			var sort = {};
+			sort[sortField] = -1;
 
 			result = Game.Statistic.Collection.find(selector, {
 				fields: fields,

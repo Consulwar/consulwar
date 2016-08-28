@@ -251,8 +251,10 @@ Meteor.methods({
 			throw new Meteor.Error('Несуществующий тип статистики');
 		}
 
+		var result;
+
 		if (type == "general") {
-			var result = Meteor.users.find({
+			result = Meteor.users.find({
 				rating: { $gt: 0 }
 			}, {
 				fields: {
@@ -274,7 +276,7 @@ Meteor.methods({
 				var sort = {};
 				sort[sortField] = -1;
 
-			var result = Game.Statistic.Collection.find(selector, {
+			result = Game.Statistic.Collection.find(selector, {
 				fields: fields,
 				sort: sort,
 				skip: (page > 0) ? (page - 1) * count : 0,

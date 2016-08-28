@@ -178,7 +178,7 @@ var menu = {
 			},
 			statistics: {
 				name: 'Статистика',
-				url: Router.routes.statistics.path()
+				url: Router.routes.statistics.path({ type: 'general'})
 			}
 		}
 	},

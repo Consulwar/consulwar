@@ -10,6 +10,22 @@ Meteor.users._ensureIndex({
 	rating: 1
 });
 
+Game.Statistic.Collection._ensureIndex({
+	'research.total': 1
+});
+
+Game.Statistic.Collection._ensureIndex({
+	'chat.messages': 1
+});
+
+Game.Statistic.Collection._ensureIndex({
+	'cosmos.planets.discovered': 1
+});
+
+Game.Statistic.Collection._ensureIndex({
+	'resources.gained.honor': 1
+});
+
 Game.Statistic.initialize = function(user) {
 	var statistic = Game.Statistic.Collection.findOne({
 		user_id: user._id
@@ -17,7 +33,8 @@ Game.Statistic.initialize = function(user) {
 
 	if (!statistic) {
 		Game.Statistic.Collection.insert({
-			user_id: user._id
+			user_id: user._id,
+			username: user.username
 		});
 	}
 };
@@ -207,7 +224,7 @@ Meteor.methods({
 		};
 	},
 
-	'statistic.getPageInRating': function(page, count) {
+	'statistic.getPageInRating': function(type, page, count) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -222,23 +239,48 @@ Meteor.methods({
 
 		check(page, Match.Integer);
 		check(count, Match.Integer);
+		check(type, String);
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
-		var result = Meteor.users.find({
-			rating: { $gt: 0 }
-		}, {
-			fields: {
-				username: 1,
-				rating: 1,
-				achievements: 1
-			},
-			sort: {rating: -1},
-			skip: (page > 0) ? (page - 1) * count : 0,
-			limit: count
-		});
+		var sortField = Game.Statistic.getSortFieldForType(type);
+
+		if (!sortField) {
+			throw new Meteor.Error('Несуществующий тип статистики');
+		}
+
+		if (type == "general") {
+			var result = Meteor.users.find({
+				rating: { $gt: 0 }
+			}, {
+				fields: {
+					username: 1,
+					rating: 1,
+					achievements: 1
+				},
+				sort: {rating: -1},
+				skip: (page > 0) ? (page - 1) * count : 0,
+				limit: count
+			});
+		} else {
+			var selector = {};
+				selector[sortField] = { $gt: 0 };
+				var fields = {
+					username: 1
+				};
+				fields[sortField] = 1;
+				var sort = {};
+				sort[sortField] = -1;
+
+			var result = Game.Statistic.Collection.find(selector, {
+				fields: fields,
+				sort: sort,
+				skip: (page > 0) ? (page - 1) * count : 0,
+				limit: count
+			});
+		}
 
 		return {
 			users: result.fetch(),

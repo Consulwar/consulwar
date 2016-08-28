@@ -7,7 +7,13 @@
 					<th>Ник</th>
 					<th>Награды</th>
 					<th>Действия</th>
-					<th>Рейтинг</th>
+					<th>
+						{{#if eq statisticType "general"}}Рейтинг{{/if}}
+						{{#if eq statisticType "science"}}Всего исследований{{/if}}
+						{{#if eq statisticType "cosmos"}}Открыто планет{{/if}}
+						{{#if eq statisticType "battle"}}Честь{{/if}}
+						{{#if eq statisticType "communication"}}Сообщений{{/if}}
+					</th>
 				</tr>
 			</table>
 			<div class="data">

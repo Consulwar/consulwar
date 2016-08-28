@@ -3,6 +3,18 @@ initStatisticLib = function() {
 Game.Statistic = {
 	Collection: new Meteor.Collection('statistic'),
 
+	getSortFieldForType: function(type) {
+		return this.sortFieldsForTypes[type];
+	},
+
+	sortFieldsForTypes: {
+		general: 'rating',
+		science: 'research.total',
+		communication: 'chat.messages',
+		cosmos: 'cosmos.planets.discovered',
+		battle: 'resources.gained.honor'
+	},
+
 	getUser: function() {
 		return Game.Statistic.Collection.findOne({
 			user_id: Meteor.userId()

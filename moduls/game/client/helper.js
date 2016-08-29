@@ -92,7 +92,7 @@ UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, 
 		(/^(.*[0,2-9])?[1]$/.test(number))
 		? singleForm
 		: (
-			(/^(.*([0,2-9]?)[2-4]$)/.test(number))
+			(/^(.*[0,2-9])?[2-4]$/.test(number))
 			? twoForm
 			: manyForm
 		)

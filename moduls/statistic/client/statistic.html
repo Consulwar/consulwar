@@ -185,7 +185,7 @@
 <template name="developmentDetailStatisticPage">
 	<h1>
 		{{#if this.data.building.total}}
-			Построено {{this.data.building.total}} 
+			Построено {{formatNumberWithISO this.data.building.total}} 
 			{{declension this.data.building.total "здани" "е" "я" "й"}}
 		{{else}}
 			Не построено ни одного здания
@@ -193,7 +193,7 @@
 	</h1>
 	<h1>
 		{{#if this.data.research.total}}
-			Проведено {{this.data.research.total}} 
+			Проведено {{formatNumberWithISO this.data.research.total}} 
 			{{declension this.data.research.total "исследован" "ие" "ия" "ий"}}
 		{{else}}
 			Не проведено ни одного исследования
@@ -446,7 +446,7 @@
 		 и 
 		{{#if this.data.quests.regular.completedQuestLines}}
 			завершил {{this.data.quests.regular.completedQuestLines}} 
-			{{declension this.data.quests.regular.completedQuestLines "цепочк" "а" "и" "ек"}}
+			{{declension this.data.quests.regular.completedQuestLines "цепочк" "у" "и" "ек"}}
 		{{else}}
 			не завершил ни одной цепочки
 		{{/if}}
@@ -469,14 +469,14 @@
 	</h1>
 	<h1>
 		{{#if this.data.mail.total}}
-			Написал {{this.data.mail.total}} {{declension this.data.mail.total "пис" "ьмо" "ьма" "ем"}}
+			Написал {{formatNumberWithISO this.data.mail.total}} {{declension this.data.mail.total "пис" "ьмо" "ьма" "ем"}}
 		{{else}}
 			Никогда не писал писем
 		{{/if}}
 	</h1>
 	<h1>
 		{{#if this.data.chat.messages}}
-			Отправил {{this.data.chat.messages}} {{declension this.data.chat.messages "сообщени" "е" "я" "й"}}
+			Отправил {{formatNumberWithISO this.data.chat.messages}} {{declension this.data.chat.messages "сообщени" "е" "я" "й"}}
 		{{else}}
 			Не отправил ни одного сообщения
 		{{/if}}
@@ -506,7 +506,7 @@
 	</h1>
 	<h1>
 		{{#if this.data.chat.dice}}
-			Бросил {{this.data.chat.dice}} {{declension this.data.chat.dice "кост" "ь" "и" "ей"}}
+			Бросил {{this.data.chat.dice}} {{declension this.data.chat.dice "кост" "ь" "ей" "ей"}}
 		{{else}}
 			Не бросил ни одной кости
 		{{/if}}
@@ -565,7 +565,7 @@
 	<h1>
 		{{#if this.data.cosmos.fleets.sent}}
 			{{declension this.data.cosmos.fleets.sent "Отправлен" "" "о" "о"}} 
-			{{this.data.cosmos.fleets.sent}} 
+			{{formatNumberWithISO this.data.cosmos.fleets.sent}} 
 			{{declension this.data.cosmos.fleets.sent "флот" "" "а" "ов"}}
 		{{else}}
 			Не отправлено ни одного флота

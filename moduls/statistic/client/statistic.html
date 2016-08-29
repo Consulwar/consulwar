@@ -283,17 +283,6 @@
 		)
 		items=(toArray Game.Unit.items.army.defense)
 	}}
-
-	{{> statisticDetailTable 
-		title="Наземные войска"
-		columns=(makeArray
-			(makeObject 
-				title="Построено"
-				data=this.data.units.build.army.ground
-			)
-		)
-		items=(toArray Game.Unit.items.army.ground)
-	}}
 </template>
 
 <template name="battleDetailStatisticPage">
@@ -301,11 +290,15 @@
 		title="Подкрепление"
 		columns=(makeArray
 			(makeObject 
+				title="Построено"
+				data=this.data.units.build.army.ground
+			)
+			(makeObject 
 				title="Отправлено"
 				data=this.data.reinforcements.sent.army.ground
 			)
 			(makeObject 
-				title="Получено"
+				title="Долетело"
 				data=this.data.reinforcements.arrived.army.ground
 			)
 		)

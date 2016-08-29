@@ -88,15 +88,15 @@ UI.registerHelper('lookup', function(obj) {
 });
 
 UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {
-	return zeroForm + (
-		(/[0,2-9]?[1]$/.test(number))
-		? singleForm
-		: (
-			(/[0,2-9]?[2-4]$/.test(number))
-			? twoForm
-			: manyForm
-		)
-	);
+    return zeroForm + (
+        (/([0,2-9][1]$)|(^1$)/.test(number))
+        ? singleForm
+        : (
+            (/([0,2-9][2-4]$)|(^[2-4]$)/.test(number))
+            ? twoForm
+            : manyForm
+        )
+    );
 });
 
 UI.registerHelper('formatDate', Game.Helpers.formatDate);

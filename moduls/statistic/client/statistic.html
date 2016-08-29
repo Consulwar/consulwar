@@ -181,7 +181,7 @@
 			<tr>
 				<td><h4>Всего</h4></td>
 				{{#each columns}}
-					<td><h4>{{or (formatNumberWithISO this.data.[total]) 0}}</h4></td>
+					<td><h4>{{or (formatNumberWithISO (lookup this.data this.field)) 0}}</h4></td>
 				{{/each}}
 			</tr>
 		{{/if}}
@@ -297,10 +297,6 @@
 				title="Построено"
 				data=this.data.units.build.army.ground
 			)
-			(makeObject 
-				title="Потеряно"
-				data=this.data.units.lost.army.ground
-			)
 		)
 		items=(toArray Game.Unit.items.army.ground)
 	}}
@@ -334,17 +330,6 @@
 	}}
 
 	{{> statisticDetailTable 
-		title="Наземные войска рептилий"
-		columns=(makeArray
-			(makeObject 
-				title="Уничтожено"
-				data=this.data.reptiles.killed.reptiles.ground
-			)
-		)
-		items=(toArray Game.Unit.items.reptiles.ground)
-	}}
-
-	{{> statisticDetailTable 
 		title="Патрульный флот"
 		firstColumnName="Уровень"
 		showTotal=true
@@ -375,7 +360,7 @@
 
 
 	{{> statisticDetailTable 
-		title="Защитный флот"
+		title="Ряды обороны"
 		firstColumnName="Уровень"
 		showTotal=true
 		columns=(makeArray
@@ -511,9 +496,18 @@
 	</h1>
 	<h1>
 		{{#if this.data.chat.status}}
-			Измененил {{this.data.chat.status}} {{declension this.data.chat.status "статус" "" "а" "ов"}}
+			Говорил о себе в третьем лице {{this.data.chat.status}} 
+			{{declension this.data.chat.status "раз" "" "а" ""}}
 		{{else}}
-			Никогда не изменял статус
+			Никогда не говорил о себе в третьем лице
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.chat.coub}}
+			Показал коуб {{this.data.chat.coub}} 
+			{{declension this.data.chat.coub "раз" "" "а" ""}}
+		{{else}}
+			Ни разу не показывал коуб
 		{{/if}}
 	</h1>
 	<h1>
@@ -570,31 +564,14 @@
 			Не удалил ни одной комнаты
 		{{/if}}
 	</h1>
-	{{#if (and this.data.chat.spent.crystals this.data.chat.spent.credits)}}
-		<h1>
+	<h1>
+		{{#if this.data.chat.spent.crystals}}
 			Потратил в чате {{formatNumberWithISO this.data.chat.spent.crystals}} 
-			{{declension this.data.chat.spent.crystals "кристалл" "" "а" "ов"}} и 
-			{{formatNumberWithISO this.data.chat.spent.credits}} 
-			{{declension this.data.chat.spent.credits "кредит" "" "а" "ов"}}
-		</h1>
-	{{else}}
-		<h1>
-			{{#if this.data.chat.spent.crystals}}
-				Потратил в чате {{formatNumberWithISO this.data.chat.spent.crystals}} 
-				{{declension this.data.chat.spent.crystals "кристалл" "" "а" "ов"}}
-			{{else}}
-				Не потратил в чате ни одного кристалла
-			{{/if}}
-		</h1>
-		<h1>
-			{{#if this.data.chat.spent.credits}}
-				Потратил в чате {{formatNumberWithISO this.data.chat.spent.credits}} 
-				{{declension this.data.chat.spent.credits "кредит" "" "а" "ов"}}
-			{{else}}
-				Не потратил в чате ни одного кредита
-			{{/if}}
-		</h1>
-	{{/if}}
+			{{declension this.data.chat.spent.crystals "кристалл" "" "а" "ов"}}
+		{{else}}
+			Не потратил в чате ни одного кристалла
+		{{/if}}
+	</h1>
 </template>
 
 <template name="anotherDetailStatisticPage">
@@ -614,6 +591,15 @@
 			{{declension this.data.cosmos.planets.discovered "планет" "а" "ы" ""}}
 		{{else}}
 			Не исследовано ни одной планеты
+		{{/if}}
+	</h1>
+	<h1>
+		{{#if this.data.promocode.total}}
+			{{declension this.data.promocode.total "Активирован" "" "о" "о"}} 
+			{{this.data.promocode.total}} 
+			{{declension this.data.promocode.total "промокод" "" "а" "ов"}}
+		{{else}}
+			Не активировано ни одного промокода
 		{{/if}}
 	</h1>
 </template>

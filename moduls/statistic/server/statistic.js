@@ -364,9 +364,24 @@ Meteor.methods({
 				cosmos: 1,
 				battle: 1,
 				chat: 1,
-				mail: 1
+				mail: 1,
+				investments: 1,
+				promocode: 1
 			}
 		});
+
+		if (statistic.resources.spent) {
+			delete statistic.resources.spent.credits;
+			delete statistic.resources.spent.total;
+		}
+		if (statistic.resources.gained) {
+			delete statistic.resources.gained.credits;
+			delete statistic.resources.gained.total;
+		}
+		if (statistic.investments) {
+			delete statistic.investments.credits;
+			delete statistic.investments.total;
+		}
 
 		return statistic;
 	}
@@ -406,7 +421,9 @@ Meteor.publish('statistic', function() {
 					battle: 1,
 					chat: 1,
 					mail: 1,
-					payment: 1
+					payment: 1,
+					investments: 1,
+					promocode: 1
 				}
 			});
 		}

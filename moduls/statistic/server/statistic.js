@@ -298,7 +298,10 @@ Meteor.methods({
 				fields: {
 					username: 1,
 					rating: 1,
-					achievements: 1
+					achievements: 1,
+					'settings.chat.iconPath': 1,
+					createdAt: 1,
+					'status.lastLogin.date': 1
 				},
 				sort: {rating: -1},
 				skip: (page > 0) ? (page - 1) * count : 0,

@@ -30,6 +30,8 @@ Game.Rating.showPage = function() {
 
 		renderRating.call(this, newSelectedUserName, countPerPage, countTotal, users, statisticType);
 
+		console.log(this);
+
 		if (hash[1] == 'detail') {
 			var tab = hash[2];
 			if (selectedUserName == newSelectedUserName && detailStatisticData) {
@@ -189,8 +191,17 @@ Template.rating.helpers({
 				});
 			}
 		}
-
+		console.log(result);
 		return result;
+	},
+
+	formattedRegistrationDate: function (user) {
+		var date = new Date(user.game.updated * 1000);
+		var day = date.getDate();
+		day = (day < 10) ? '0' + day : day;
+		var month = date.getMonth();
+		month = (month < 10) ? '0' + month : month;
+		return day + "." + month + "." + date.getFullYear();
 	},
 
 	mailHash: function(username) {

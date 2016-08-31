@@ -1,26 +1,31 @@
 <template name="statistic">
 	<div class="statistic">
 		<div class="types">
-			<div 
-				class="button general active"
+			<a 
+				class="button general {{#if eq statisticType "general"}}active{{/if}}"
 				data-tooltip="Общая статистика"
-			></div>
-			<div 
-				class="button science"
+				href="{{pathFor 'statistics' type='general' hash=selectedUserName}}"
+			></a>
+			<a 
+				class="button science {{#if eq statisticType "science"}}active{{/if}}"
 				data-tooltip="Наука"
-			></div>
-			<div 
-				class="button cosmos"
+				href="{{pathFor 'statistics' type='science' hash=selectedUserName}}"
+			></a>
+			<a 
+				class="button cosmos {{#if eq statisticType "cosmos"}}active{{/if}}"
 				data-tooltip="Космос"
-			></div>
-			<div 
-				class="button battle"
+				href="{{pathFor 'statistics' type='cosmos' hash=selectedUserName}}"
+			></a>
+			<a 
+				class="button battle {{#if eq statisticType "battle"}}active{{/if}}"
 				data-tooltip="Война"
-			></div>
-			<div 
-				class="button communication"
+				href="{{pathFor 'statistics' type='battle' hash=selectedUserName}}"
+			></a>
+			<a 
+				class="button communication {{#if eq statisticType "communication"}}active{{/if}}"
 				data-tooltip="Общение"
-			></div>
+				href="{{pathFor 'statistics' type='communication' hash=selectedUserName}}"
+			></a>
 		</div>
 		<div 
 			class="
@@ -82,7 +87,7 @@
 
 		<div class="consulInfo">
 			<div class="user">
-				<img src="/img/game/chat/icons/{{iconPath}}.png"/>
+				<img src="/img/game/chat/icons/{{iconPath (findUserByName selectedUserName users)}}.png"/>
 				<div class="text">
 					<span class="userName">{{selectedUserName}}</span>
 					<br>

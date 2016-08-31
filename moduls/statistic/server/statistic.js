@@ -299,7 +299,7 @@ Meteor.methods({
 					username: 1,
 					rating: 1,
 					achievements: 1,
-					'settings.chat.iconPath': 1,
+					'settings.chat.icon': 1,
 					createdAt: 1,
 					'status.lastLogin.date': 1
 				},

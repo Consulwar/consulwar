@@ -90,6 +90,8 @@ Game.Rating.showPage = function() {
 					}
 				}
 
+				console.log(users);
+
 				if (selectedUserName && !selectedUserContain) {
 					showUser(selectedUserName, showDetailStatistic, statisticType);
 					return;
@@ -122,7 +124,7 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 };
 
 var renderRating = function(userName, countPerPage, countTotal, users, statisticType){
-	this.render('rating', { 
+	this.render('statistic', { 
 		to: 'content',
 		data: {
 			selectedUserName: userName,
@@ -164,7 +166,7 @@ var showUser = function(userName, showDetailStatistic, statisticType) {
 	});
 };
 
-Template.rating.helpers({
+Template.statistic.helpers({
 	isLoading: function() {
 		return isLoading.get();
 	},
@@ -204,6 +206,28 @@ Template.rating.helpers({
 		return day + "." + month + "." + date.getFullYear();
 	},
 
+	iconPath: function(user) {
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			return user.settings.chat.icon;
+		}
+		return 'common/1';
+	},
+
+	findUserByName: function(userName, users) {
+		if(!_.isArray(users)) {
+			return null;
+		}
+
+		for(var i = 0; i < users.length; i++) {
+			if(userName == users[i].username) {
+				console.log(users[i]);
+				return users[i];
+			}
+		}
+
+		return null;
+	},
+
 	mailHash: function(username) {
 		return 'compose/' + username;
 	}
@@ -213,7 +237,7 @@ var searchUser = function (e , t) {
 	showUser(t.$('input[name="searchUserInRating"]').val(), false, statisticType);
 };
 
-Template.rating.events({
+Template.statistic.events({
 	'keyup input[name="searchUserInRating"]': function(e, t) {
 		if (e.keyCode == 13) {
 			searchUser(e, t);
@@ -221,6 +245,10 @@ Template.rating.events({
 	},
 
 	'click .search': searchUser,
+
+	'click .rating .data tr': function(e, t) {
+		showUser(e.currentTarget.cells[1].innerHTML, false, statisticType);
+	},
 
 	'click .returnToMe': function(e, t) {
 		t.$('input[name="searchUserInRating"]').val('');
@@ -248,7 +276,7 @@ Template.battleDetailStatisticPage.helpers({
 	}
 });
 
-Template.rating.onRendered(scrollToSelectedUser);
+Template.statistic.onRendered(scrollToSelectedUser);
 
 initStatisticAchievementsClient();
 

@@ -200,6 +200,11 @@ Meteor.methods({
 		
 		var position;
 		var total;
+		var sortField = Game.Statistic.getSortFieldForType(type);
+
+		if (!sortField) {
+			throw new Meteor.Error('Несуществующий тип статистики');
+		}
 
 		if (type == "general") {
 			position = Meteor.users.find({
@@ -223,12 +228,6 @@ Meteor.methods({
 			}).count();
 		} else {
 			var selectedUserStatistic = Game.Statistic.Collection.findOne({ user_id: selectedUser._id });
-			var sortField = Game.Statistic.getSortFieldForType(type);
-
-			if (!sortField) {
-				throw new Meteor.Error('Несуществующий тип статистики');
-			}
-			
 			var selector = {};
 			selector[sortField] = { 
 				$gt: Game.Statistic.getUserValue(sortField, selectedUserStatistic) 

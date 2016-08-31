@@ -28,7 +28,7 @@ Game.Rating.showPage = function() {
 	if (hash) {
 		newSelectedUserName = hash[0];
 
-		renderRating.call(this, newSelectedUserName);
+		renderRating.call(this, newSelectedUserName, countPerPage, countTotal, users, statisticType);
 
 		if (hash[1] == 'detail') {
 			var tab = hash[2];
@@ -89,17 +89,17 @@ Game.Rating.showPage = function() {
 				}
 
 				if (selectedUserName && !selectedUserContain) {
-					showUser(selectedUserName, showDetailStatistic);
+					showUser(selectedUserName, showDetailStatistic, statisticType);
 					return;
 				}
 
-				renderRating.call(self, selectedUserName);
+				renderRating.call(self, selectedUserName, countPerPage, countTotal, users, statisticType);
 
 				Meteor.setTimeout(scrollToSelectedUser);
 			}
 		});
 	} else if (!pageNumber) {
-		showUser(selectedUserName || Meteor.user().username, showDetailStatistic);
+		showUser(selectedUserName || Meteor.user().username, showDetailStatistic, statisticType);
 	}
 };
 
@@ -119,7 +119,7 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 	});
 };
 
-var renderRating = function(userName){
+var renderRating = function(userName, countPerPage, countTotal, users, statisticType){
 	this.render('rating', { 
 		to: 'content',
 		data: {
@@ -132,7 +132,7 @@ var renderRating = function(userName){
 	});
 };
 
-var showUser = function(userName, showDetailStatistic) {
+var showUser = function(userName, showDetailStatistic, statisticType) {
 	if (!userName){
 		return Notifications.error('Введите имя пользователя');
 	}
@@ -199,7 +199,7 @@ Template.rating.helpers({
 });
 
 var searchUser = function (e , t) {
-	showUser(t.$('input[name="searchUserInRating"]').val());
+	showUser(t.$('input[name="searchUserInRating"]').val(), false, statisticType);
 };
 
 Template.rating.events({
@@ -213,7 +213,7 @@ Template.rating.events({
 
 	'click .returnToMe': function(e, t) {
 		t.$('input[name="searchUserInRating"]').val('');
-		showUser(Meteor.user().username);
+		showUser(Meteor.user().username, false, statisticType);
 	}
 });
 

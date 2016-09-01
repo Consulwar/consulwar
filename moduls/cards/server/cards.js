@@ -214,4 +214,39 @@ Meteor.publish('cards', function () {
 	}
 });
 
+SyncedCron.add({
+	name: 'Выдача контейнеров за донат',
+	schedule: function(parser) {
+		return parser.text('at 1:00 am');
+	},
+	job: function() {
+		var users = Game.Queue.Collection.find({
+			engName: 'Crazy', 
+			finishTime: {
+				$gt: Game.getCurrentTime()
+			}
+		}, {
+			user_id: 1
+		}).fetch();
+
+		console.log('Give containers to ', users.length, ' users');
+
+		for (var i = 0; i < users.length; i++) {
+			console.log('Give to ', users[i].user_id);
+
+			Game.Containers.initialize({
+				_id: users[i].user_id
+			});
+
+			Game.Containers.Collection.update({
+				user_id: users[i].user_id
+			}, {
+				$inc: {
+					'defaultContainer.amount': 1
+				}
+			});
+		}
+	}
+});
+
 };

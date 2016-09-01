@@ -175,6 +175,7 @@
 			{{/each}}
 			{{> item_price price=(item.getPrice 1)}}
 		</div>
+		{{!--
 		<ul class="donate-items">
 			{{#each subgroupItems}}
 				<li class="donate-{{this.engName}}-icon {{#if eq ../item.engName this.engName}}active{{/if}}">
@@ -190,6 +191,33 @@
 					{{/if}}
 				</li>
 			{{/each}}
+		</ul>
+		--}}
+		<ul class="donate-items">
+				<li class="donate-uncleBuilder-icon active" style="position: absolute;z-index: 9;left: 125px;"></li>
+			
+				<li class="donate-nuclearComplex-icon active" style="
+					position: absolute;
+					left: 300px;
+					z-index: 10;
+				"></li>
+			
+				<li class="donate-robotsPilots-icon active" style="
+					position: absolute;
+					left: 470px;
+					z-index: 9;
+				"></li>
+			
+				<li class="donate-Crazy-icon active" style="
+					position: absolute;
+					width: 900px;
+					height: 600px;
+					z-index: 20;
+				">
+					<a href="/game/planet/house/donate/Crazy"></a>
+					<span class="buy" data-id="Crazy">Купить</span>
+				</li>
+			
 		</ul>
 	</div>	
 </template>

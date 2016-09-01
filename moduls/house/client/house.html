@@ -215,7 +215,15 @@
 					z-index: 20;
 				">
 					<a href="/game/planet/house/donate/Crazy"></a>
-					<span class="buy" data-id="Crazy">Купить</span>
+					{{#if subgroupItems.[0].getActiveTask}}
+						<span class="time" style="margin: 0 auto;">{{formatTime (getTimeLeft subgroupItems.[0])}}</span>
+					{{else}}
+						{{#if gt subgroupItems.[0].amount 0}}
+							<span class="activate" data-id="{{subgroupItems.[0].engName}}">Активировать</span>
+						{{else}}
+							<span class="buy" data-id="{{subgroupItems.[0].engName}}">Купить</span>
+						{{/if}}
+					{{/if}}
 				</li>
 			
 		</ul>

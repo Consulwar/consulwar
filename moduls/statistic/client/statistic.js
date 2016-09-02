@@ -19,6 +19,9 @@ var selectedUser;
 Game.Rating = {};
 
 Game.Rating.showPage = function() {
+	if (firstDraw) {
+		this.render('loading', { to: 'content' });
+	}
 	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
 	statisticType = this.params.type;
@@ -231,7 +234,7 @@ var showUser = function(userName, showDetailStatistic, statisticType, lastPageNu
 	});
 };
 
-Template.statistic.helpers({
+Template.rating.helpers({
 	isLoading: function() {
 		return isLoading.get();
 	}
@@ -315,15 +318,18 @@ Template.statistic.events({
 	},
 
 	'click .types .button': function(e, t) {
+		var statisticType = $(e.currentTarget).data("statistictype");
+		t.$('.types .button').removeClass('active');
+		t.$('.types .' + statisticType).addClass('active');
 		t.$('input[name="searchUserInRating"]').val('');
-		showUser(selectedUserName || Meteor.user().username, false, $(e.currentTarget).data("statistictype"), lastPageNumber);
+		showUser(selectedUserName || Meteor.user().username, false, statisticType, lastPageNumber);
 	}
 
 });
 
 var scrollToSelectedUser = function() {
 	var userRow = $('.selectedUser')[0];
-	var rating = $('.rating .data .custom-scroll_inner');
+	var rating = $('.rating .data');
 	if(!userRow) {
 		rating.scrollTop(0);
 	} else if ( 
@@ -347,10 +353,7 @@ Template.battleDetailStatisticPage.helpers({
 	}
 });
 
-Template.statistic.onRendered(function() {
-	$('.rating .data .custom-scroll_inner').customScroll();
-	scrollToSelectedUser();
-});
+Template.statistic.onRendered(scrollToSelectedUser);
 
 initStatisticAchievementsClient();
 

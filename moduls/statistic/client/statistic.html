@@ -160,27 +160,22 @@
 					</th>
 				</tr>
 			</table>
-			<div class="data custom-scroll_container">
-				<div class="custom-scroll_inner">
-					<table>
-						{{#each users}}
-						<tr 
-							class="
-								{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
-								{{#if eq this.username user.username}}me{{/if}}
-								" 
-							id="{{this._id}}"
-						>
-							<td>{{this.place}}</td>
-							<td>{{this.username}}</td>
-							<td>{{formatNumber this.rating}}</td>
-						</tr>
-						{{/each}}
-					</table>
-				
-				<div class="custom-scroll_bar"></div>
-  				<div class="custom-scroll_bar-x"></div>
-				</div>
+			<div class="data">
+				<table>
+					{{#each users}}
+					<tr 
+						class="
+							{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
+							{{#if eq this.username user.username}}me{{/if}}
+							" 
+						id="{{this._id}}"
+					>
+						<td>{{this.place}}</td>
+						<td>{{this.username}}</td>
+						<td>{{formatNumber this.rating}}</td>
+					</tr>
+					{{/each}}
+				</table>
 				{{#if isLoading}}
 					{{> loading}}
 				{{/if}}

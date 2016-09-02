@@ -142,12 +142,14 @@
 				width 70px
 				height 70px
 
-				&.active:after
-					position absolute
-					left 0
-					content " "
-					height 70px
-					width 5px
+				&.active
+					background-color #0c1409
+					&:after
+						position absolute
+						left 0
+						content " "
+						height 70px
+						width 5px
 
 			.general
 				background-image url("/img/game/statistics/general.png")
@@ -180,11 +182,11 @@
 
 		.search
 			left 130px
-			background-image url("/img/game/search.png")
+			background-image url("/img/game/statistics/search.png")
 
 		.returnToMe
-			left 70px
-			background-image url("/img/game/my_position.png")
+			left 80px
+			background-image url("/img/game/statistics/my_position.png")
 			
 		input
 			top 0px
@@ -199,15 +201,21 @@
 			font-size 14px
 			position absolute
 			left 174px
+			width 185px
 
 	.rating
 		position absolute
 		top 55px
 		height 435px
-		width 305px
-		margin-left 80px
+		width 310px
+		margin-left 75px
 		background-color #04080B
 		z-index 10
+
+
+		.custom-scroll_bar-y
+			background linear-gradient(to top, #f14d3e 0%, #e4aca4 100%)
+			opacity 1
 
 		h2
 			padding-top 20px

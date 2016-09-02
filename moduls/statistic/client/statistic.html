@@ -1,32 +1,38 @@
 <template name="statistic">
 	<div class="statistic">
 		<div class="types">
-			<a 
-				class="button general {{#if eq statisticType "general"}}active{{/if}}"
-				data-tooltip="Общая статистика"
-				href="{{pathFor 'statistics' type='general' hash=selectedUserName}}"
-			></a>
-			<a 
-				class="button science {{#if eq statisticType "science"}}active{{/if}}"
-				data-tooltip="Наука"
-				href="{{pathFor 'statistics' type='science' hash=selectedUserName}}"
-			></a>
-			<a 
-				class="button cosmos {{#if eq statisticType "cosmos"}}active{{/if}}"
-				data-tooltip="Космос"
-				href="{{pathFor 'statistics' type='cosmos' hash=selectedUserName}}"
-			></a>
-			<a 
-				class="button battle {{#if eq statisticType "battle"}}active{{/if}}"
-				data-tooltip="Война"
-				href="{{pathFor 'statistics' type='battle' hash=selectedUserName}}"
-			></a>
-			<a 
-				class="button communication {{#if eq statisticType "communication"}}active{{/if}}"
-				data-tooltip="Общение"
-				href="{{pathFor 'statistics' type='communication' hash=selectedUserName}}"
-			></a>
+			{{#each
+				(makeArray 
+					(makeObject 
+						tooltip="Общая статистика"
+						statisticType="general"
+					)
+					(makeObject 
+						tooltip="Наука"
+						statisticType="science"
+					)
+					(makeObject 
+						tooltip="Космос"
+						statisticType="cosmos"
+					)
+					(makeObject 
+						tooltip="Война"
+						statisticType="battle"
+					)
+					(makeObject 
+						tooltip="Общение"
+						statisticType="communication"
+					)
+				)
+			}}
+				<div
+					class="button {{statisticType}} {{#if (eq ../statisticType statisticType)}}active{{/if}}"
+					data-tooltip="{{tooltip}}"
+					data-statistictype="{{statisticType}}"
+				></div>
+			{{/each}}
 		</div>
+
 		<div 
 			class="
 				button returnToMe 
@@ -109,7 +115,7 @@
 			<div class="text">
 				Сила голоса
 				<br>
-				<span class="number">{{Game.User.getVotePower}}</span>
+				<span class="number">{{Game.User.getVotePower selectedUser}}</span>
 			</div>
 		</div>
 		<div class="additionalButtons">
@@ -145,25 +151,36 @@
 				<tr class="header">
 					<th>Место</th>
 					<th>Ник</th>
-					<th>Рейтинг</th>
+					<th>
+						{{#if eq statisticType "general"}}Рейтинг{{/if}}
+						{{#if eq statisticType "science"}}Исследовано технологий{{/if}}
+						{{#if eq statisticType "cosmos"}}Честь{{/if}}
+						{{#if eq statisticType "battle"}}Отправлено юнитов{{/if}}
+						{{#if eq statisticType "communication"}}Отправлено сообщений{{/if}}
+					</th>
 				</tr>
 			</table>
-			<div class="data">
-				<table>
-					{{#each users}}
-					<tr 
-						class="
-							{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
-							{{#if eq this.username user.username}}me{{/if}}
-							" 
-						id="{{this._id}}"
-					>
-						<td>{{this.place}}</td>
-						<td>{{this.username}}</td>
-						<td>{{formatNumber this.rating}}</td>
-					</tr>
-					{{/each}}
-				</table>
+			<div class="data custom-scroll_container">
+				<div class="custom-scroll_inner">
+					<table>
+						{{#each users}}
+						<tr 
+							class="
+								{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
+								{{#if eq this.username user.username}}me{{/if}}
+								" 
+							id="{{this._id}}"
+						>
+							<td>{{this.place}}</td>
+							<td>{{this.username}}</td>
+							<td>{{formatNumber this.rating}}</td>
+						</tr>
+						{{/each}}
+					</table>
+				
+				<div class="custom-scroll_bar"></div>
+  				<div class="custom-scroll_bar-x"></div>
+				</div>
 				{{#if isLoading}}
 					{{> loading}}
 				{{/if}}

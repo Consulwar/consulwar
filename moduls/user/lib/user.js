@@ -1,9 +1,10 @@
 Meteor.startup(function () {
 
 Game.User = {
-	getVotePower: function() {
-		var bonus = Meteor.user().votePowerBonus || 0;
-		var level = Game.User.getLevel( Meteor.user().rating );
+	getVotePower: function(user) {
+		user = user || Meteor.user();
+		var bonus = user.votePowerBonus || 0;
+		var level = Game.User.getLevel( user.rating );
 		
 		return level + bonus;
 	},

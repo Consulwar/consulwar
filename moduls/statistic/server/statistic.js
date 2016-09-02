@@ -403,11 +403,13 @@ Meteor.methods({
 			username: userName
 		}, {
 			fields: {
+				rating: 1,
 				username: 1,
 				achievements: 1,
 				'settings.chat.icon': 1,
 				createdAt: 1,
-				'status.lastLogin.date': 1
+				'status.lastLogin.date': 1,
+				votePowerBonus: 1
 			}
 		});
 

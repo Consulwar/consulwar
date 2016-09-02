@@ -362,7 +362,7 @@ game.Item = function(options) {
 			var price = this.price(count); 
 			if (
 			    (currency == 'credits' && price.credits) 
-			 || (currency == 'resources' && (price.metals || price.crystals || price.humans))
+			 || (currency == 'resources' && (price.metals || price.crystals || price.humans || price.honor))
 			) {
 				return this.meetRequirements() && this.isEnoughResources(count, currency);
 			}

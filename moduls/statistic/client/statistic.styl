@@ -46,13 +46,14 @@
 					height 70px
 					padding-top 10px
 
-					.active
-						font-weight bold
-						color #56baf2
-						&:after
-								content "Активен"
+					.status
+						&.active
+							font-weight bold
+							color #56baf2
+							&:after
+									content "Активен"
 
-						&.not
+						&:not(.active)
 							color red
 							&:after
 								content "Не активен"
@@ -93,6 +94,10 @@
 			.additionalButtons
 				height 70px
 				margin-left 10px
+
+				a:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
 
 		.achievements
 			background-color #131313

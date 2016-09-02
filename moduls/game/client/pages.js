@@ -8,7 +8,9 @@ Template.pages.helpers({
 		}
 		// set page
 		params.page = page;
-		return Router.routes[ current.route.getName() ].path(params);
+		return Router.routes[ current.route.getName() ].path( 
+			params, { hash: current.params.hash }
+		);
 	},
 
 	current: function() {

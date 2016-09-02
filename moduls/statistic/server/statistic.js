@@ -297,11 +297,7 @@ Meteor.methods({
 			}, {
 				fields: {
 					username: 1,
-					rating: 1,
-					achievements: 1,
-					'settings.chat.icon': 1,
-					createdAt: 1,
-					'status.lastLogin.date': 1
+					rating: 1
 				},
 				sort: {rating: -1},
 				skip: (page > 0) ? (page - 1) * count : 0,
@@ -344,13 +340,14 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		check(userName, String);
+
 		var selectedUser = Meteor.users.findOne({username: userName});
 		
 		if (!selectedUser || !selectedUser._id) {
 			throw new Meteor.Error('Пользователь не найден');
 		}
 
-		check(userName, String);
 
 		var statistic = Game.Statistic.Collection.findOne({
 			user_id: selectedUser._id
@@ -387,6 +384,38 @@ Meteor.methods({
 		}
 
 		return statistic;
+	},
+
+	'statistic.getUserInfo': function(userName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(userName, String);
+
+		var userInfo = Meteor.users.findOne({
+			username: userName
+		}, {
+			fields: {
+				username: 1,
+				achievements: 1,
+				'settings.chat.icon': 1,
+				createdAt: 1,
+				'status.lastLogin.date': 1
+			}
+		});
+
+		if (!userInfo || !userInfo._id) {
+			throw new Meteor.Error('Пользователь не найден');
+		}
+
+		return userInfo;
 	}
 });
 

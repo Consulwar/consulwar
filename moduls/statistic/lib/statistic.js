@@ -4,12 +4,12 @@ Game.Statistic = {
 	Collection: new Meteor.Collection('statistic'),
 
 	getSortFieldForType: function(type) {
-		check(type);
+		check(type, String);
 		return this.sortFieldsForTypes[type] && this.sortFieldsForTypes[type].field;
 	},
 
 	getSortFieldNameForType: function(type) {
-		check(type);
+		check(type, String);
 		return this.sortFieldsForTypes[type] && this.sortFieldsForTypes[type].name;
 	},
 

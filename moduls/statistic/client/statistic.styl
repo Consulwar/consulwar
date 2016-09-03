@@ -57,12 +57,16 @@ side-statistic-icon(name, background)
 
 			.user
 				display flex
-				width 600px
+				width 300px
 				height 70px
+
+				img
+					width 70px
+					height 70px
 
 				.text
 					margin-left 10px
-					padding-top 5px
+					padding-top 15px
 					height 70px
 					font-size 18px
 					font-weight bold
@@ -73,28 +77,23 @@ side-statistic-icon(name, background)
 					.allianceName
 						color #56baf2
 
-				.activity
-					font-size 15px
-					margin-left 40px
-					width 300px
-					height 70px
+			.activity
+				font-size 15px
+				width 300px
+				height 70px
+				list-style-type none
+
+				li
 					padding-top 10px
 
-					.status
-						&.active
-							font-weight bold
-							color #56baf2
-							&:after
-								content "Активен"
+				.status
+					font-weight bold
 
-						&:not(.active)
-							color red
-							&:after
-								content "Не активен"
+					&.active
+						color #56baf2
 
-				img
-					width 70px
-					height 70px
+					&:not(.active)
+						color red
 
 			.powerOfVoice
 				display flex
@@ -103,15 +102,17 @@ side-statistic-icon(name, background)
 				border 2px solid #6b5737
 				background-color #131313
 
-				.icon
+				&:before
 					display block
+					content ""
 					width 85px
 					height 70px
 					background-repeat no-repeat
 					background-position center
 					background-image url("/img/game/statistics/power_of_voice.png")
 
-				.text
+				ul
+					list-style-type none
 					font-size 14px
 					font-weight bold
 					display block
@@ -124,10 +125,23 @@ side-statistic-icon(name, background)
 						font-size 24px
 						color #e9a844
 
-
 			.additionalButtons
 				height 70px
 				margin-left 10px
+
+				a
+					width 70px
+					height 70px
+					background-repeat no-repeat
+
+				.send_message
+					background-image url("/img/game/statistics/message.png")
+
+				.open_house
+					background-image url("/img/game/statistics/house.png")
+
+				.show_detail_statistic
+					background-image url("/img/game/statistics/detail.png")
 
 				a:hover
 					-webkit-filter brightness(1.4)

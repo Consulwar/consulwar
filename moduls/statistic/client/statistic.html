@@ -60,30 +60,31 @@
 <template name="consulInfo">
 	<div class="consulInfo">
 		<div class="user">
-			<img src="/img/game/chat/icons/{{iconPath selectedUser}}.png"/>
+			<img src="/img/game/chat/icons/{{iconPath selectedUser}}.png" alt="Иконка консула"/>
 			<div class="text">
-				<span class="userName">{{selectedUser.username}}</span>
-				<br>
-				<span>Консул</span>
-				<br>
-				<span class="allianceName">Название альянса</span>
-			</div>
-			<div class="activity">
-				Статус консула был получен: <span class="registryDate">
-					{{formattedRegistrationDate selectedUser}}
-				</span>
-				<br>
-				<br>
-				Активность: <span class="status {{#if (userActive selectedUser)}}active{{/if}}"></span>
+				<div class="userName">{{selectedUser.username}}</div>
+				<div>Консул</div>
 			</div>
 		</div>
+		<ul class="activity">
+			<li>
+				Статус консула был получен: 
+				<span class="registryDate">
+					{{formattedRegistrationDate selectedUser}}
+				</span>
+			</li>
+			<li>
+				Активность: 
+				<span class="status {{#if (userActive selectedUser)}}active{{/if}}">
+					{{#if (userActive selectedUser)}}Активен{{else}}Не активен{{/if}}
+				</span>
+			</li>
+		</ul>
 		<div class="powerOfVoice">
-			<div class="icon"></div>
-			<div class="text">
-				Сила голоса
-				<br>
-				<span class="number">{{Game.User.getVotePower selectedUser}}</span>
-			</div>
+			<ul>
+				<li>Сила голоса</li>
+				<li class="number">{{Game.User.getVotePower selectedUser}}</li>
+			</ul>
 		</div>
 		<div class="additionalButtons">
 			<a
@@ -91,21 +92,18 @@
 				href="{{pathFor 'mail' page=1 hash=(mailHash selectedUser.username)}}"
 				data-tooltip="Написать сообщение"
 			>
-				<img src="/img/game/statistics/message.png">
 			</a>
 			<a
 				class="open_house"
 				href="{{pathFor 'house' group='house' hash=selectedUser.username}}"
 				data-tooltip="Смотреь палату"
 			>
-				<img src="/img/game/statistics/house.png">
 			</a>
 			<a
 				class="show_detail_statistic"
-				href="#{{selectedUser.username}}/detail/development"
+				href="{{pathFor 'statistics' group=statisticType page=ratingPage hash=(sum selectedUser.username '/detail/development')}}"
 				data-tooltip="Смотреть подробную статистику"
 			>
-				<img src="/img/game/statistics/detail.png">
 			</a>
 		</div>
 	</div>
@@ -118,13 +116,7 @@
 				<tr class="header">
 					<th>Место</th>
 					<th>Ник</th>
-					<th>
-						{{#if eq statisticType "general"}}Рейтинг{{/if}}
-						{{#if eq statisticType "science"}}Исследовано технологий{{/if}}
-						{{#if eq statisticType "cosmos"}}Честь{{/if}}
-						{{#if eq statisticType "battle"}}Отправлено юнитов{{/if}}
-						{{#if eq statisticType "communication"}}Отправлено сообщений{{/if}}
-					</th>
+					<th>{{Game.Statistic.getSortFieldNameForType statisticType}}</th>
 				</tr>
 			</table>
 			<div class="data">

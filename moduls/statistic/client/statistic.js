@@ -38,7 +38,7 @@ Game.Rating.showPage = function() {
 		newSelectedUserName = hash[0];
 
 		if (newSelectedUserName != selectedUserName) {
-			renderConsulInfo.call(this, newSelectedUserName);
+			renderConsulInfo.call(this, newSelectedUserName, pageNumber);
 		}
 
 		if (statisticType == lastStatisticType) {
@@ -127,7 +127,7 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 	});
 };
 
-var renderConsulInfo = function(userName) {
+var renderConsulInfo = function(userName, page) {
 	var self = this;
 	firstDraw = false;
 	isLoading.set(true);
@@ -140,7 +140,9 @@ var renderConsulInfo = function(userName) {
 			self.render('consulInfo', {
 				to: 'consulInfo',
 				data: {
-					selectedUser: selectedUser
+					selectedUser: selectedUser,
+					statisticType: statisticType,
+					ratingPage: page
 				} 
 			});
 

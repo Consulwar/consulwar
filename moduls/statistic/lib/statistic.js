@@ -4,15 +4,36 @@ Game.Statistic = {
 	Collection: new Meteor.Collection('statistic'),
 
 	getSortFieldForType: function(type) {
-		return this.sortFieldsForTypes[type];
+		check(type);
+		return this.sortFieldsForTypes[type] && this.sortFieldsForTypes[type].field;
+	},
+
+	getSortFieldNameForType: function(type) {
+		check(type);
+		return this.sortFieldsForTypes[type] && this.sortFieldsForTypes[type].name;
 	},
 
 	sortFieldsForTypes: {
-		general: 'rating',
-		science: 'research.total',
-		communication: 'chat.messages',
-		cosmos: 'resources.gained.honor',
-		battle: 'reinforcements.sent.total'
+		general: {
+			field: 'rating',
+			name: 'Рейтинг'
+		},
+		science: {
+			field: 'research.total',
+			name: 'Исследовано технологий'
+		},
+		communication: {
+			field: 'chat.messages',
+			name: 'Всего сообщений'
+		},
+		cosmos: {
+			field: 'resources.gained.honor',
+			name: 'Честь'
+		},
+		battle: {
+			field: 'reinforcements.sent.total',
+			name: 'Отправлено сообщений'
+		}
 	},
 
 	getUser: function() {

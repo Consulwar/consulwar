@@ -1,38 +1,5 @@
 <template name="statistic">
 	<div class="statistic">
-		<div class="types">
-			{{#each
-				(makeArray 
-					(makeObject 
-						tooltip="Общая статистика"
-						statisticType="general"
-					)
-					(makeObject 
-						tooltip="Наука"
-						statisticType="science"
-					)
-					(makeObject 
-						tooltip="Космос"
-						statisticType="cosmos"
-					)
-					(makeObject 
-						tooltip="Война"
-						statisticType="battle"
-					)
-					(makeObject 
-						tooltip="Общение"
-						statisticType="communication"
-					)
-				)
-			}}
-				<div
-					class="button {{statisticType}} {{#if (eq ../statisticType statisticType)}}active{{/if}}"
-					data-tooltip="{{tooltip}}"
-					data-statistictype="{{statisticType}}"
-				></div>
-			{{/each}}
-		</div>
-
 		<div 
 			class="
 				button returnToMe 

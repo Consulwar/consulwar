@@ -161,6 +161,28 @@ var menu = {
 			}
 		}
 	},
+	statistics: {
+		name: 'Статистика',
+		routeName: ['general', 'science', 'cosmos', 'battle', 'communication'],
+		url: Router.routes.statistics.path({ group: 'general'}),
+		items: {
+			general: {
+				url: Router.routes.statistics.path({ group: 'general' })
+			},
+			science: {
+				url: Router.routes.statistics.path({ group: 'science' })
+			},
+			cosmos: {
+				url: Router.routes.statistics.path({ group: 'cosmos' })
+			},
+			battle: {
+				url: Router.routes.statistics.path({ group: 'battle' })
+			},
+			communication: {
+				url: Router.routes.statistics.path({ group: 'communication' })
+			}
+		}
+	},
 	mutual: {
 		name: 'Общее',
 		routeName: ['mutual', 'earth', 'earthHistory', 'statistics'],
@@ -175,10 +197,6 @@ var menu = {
 				additionalArea: 'calibrator',
 				url: firstItemGroupURL(Game.Mutual.items.research),
 				items: Game.Mutual.items.research
-			},
-			statistics: {
-				name: 'Статистика',
-				url: Router.routes.statistics.path({ type: 'general'})
 			}
 		}
 	},
@@ -211,7 +229,7 @@ var menu = {
 
 var getMenu = function(menu, isActive) {
 	var currentRouteName = Router.current().route.getName();
-
+	menu = _.omit(menu , "statistics");
 	return _.map(menu, function(menu, key) {
 		return {
 			engName: key,

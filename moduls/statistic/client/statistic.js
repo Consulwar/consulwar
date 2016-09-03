@@ -24,7 +24,7 @@ Game.Rating.showPage = function() {
 	}
 	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
-	statisticType = this.params.type;
+	statisticType = this.params.group;
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
 	var newSelectedUserName;
 	var showDetailStatistic = false;
@@ -69,7 +69,7 @@ Game.Rating.showPage = function() {
 		}
 		selectedUserName = newSelectedUserName;
 	} else {
-		showUser(Meteor.user().username, showDetailStatistic, "general", lastPageNumber);
+		showUser(Meteor.user().username, showDetailStatistic, statisticType || "general", lastPageNumber); //убрать ||
 		this.render('empty', { to: 'detailStatistic' });
 		return;
 	}
@@ -205,8 +205,8 @@ var showUser = function(userName, showDetailStatistic, statisticType, lastPageNu
 	if (user && statisticType == lastStatisticType) {
 		Router.go(
 			'statistics',
-			{ page: lastPageNumber, type: statisticType },
-			{ hash: userName + ( showDetailStatistic ? '/detail' : '' ) } 
+			{ page: lastPageNumber, group: statisticType },
+			{ hash: userName + ( showDetailStatistic ? '/detail' : '' ), replaceState: true } 
 		);
 		$('input[name="searchUserInRating"]').val("");
 		return;
@@ -226,8 +226,8 @@ var showUser = function(userName, showDetailStatistic, statisticType, lastPageNu
 
 			Router.go(
 				'statistics',
-				{ page: userPage, type: statisticType || 'general' },
-				{ hash: userName + ( showDetailStatistic ? '/detail' : '' ) } 
+				{ page: userPage, group: statisticType || 'general' },
+				{ hash: userName + ( showDetailStatistic ? '/detail' : '' ), replaceState: true } 
 			);
 			$('input[name="searchUserInRating"]').val("");
 		}
@@ -315,16 +315,7 @@ Template.statistic.events({
 	'click .returnToMe': function(e, t) {
 		t.$('input[name="searchUserInRating"]').val('');
 		showUser(Meteor.user().username, false, statisticType, lastPageNumber);
-	},
-
-	'click .types .button': function(e, t) {
-		var statisticType = $(e.currentTarget).data("statistictype");
-		t.$('.types .button').removeClass('active');
-		t.$('.types .' + statisticType).addClass('active');
-		t.$('input[name="searchUserInRating"]').val('');
-		showUser(selectedUserName || Meteor.user().username, false, statisticType, lastPageNumber);
 	}
-
 });
 
 var scrollToSelectedUser = function() {

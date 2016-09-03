@@ -99,6 +99,15 @@ UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, 
 	);
 });
 
+UI.registerHelper('formatYearMonthDay', function(dateString) {
+	var date = new Date(dateString);
+	var day = date.getDate();
+	day = (day < 10) ? '0' + day : day;
+	var month = date.getMonth();
+	month = (month < 10) ? '0' + month : month;
+	return day + "." + month + "." + date.getFullYear();
+}); 
+
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
 UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);
 UI.registerHelper('formatTime', Game.Helpers.formatTime);

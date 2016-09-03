@@ -209,22 +209,10 @@ Meteor.methods({
 		if (type == "general") {
 			position = Meteor.users.find({
 				rating: { $gt: selectedUser.rating }
-			}, {
-				fields: {
-					username: 1,
-					rating: 1
-				},
-				sort: {rating: -1}
 			}).count();
 
 			total = Meteor.users.find({
 				rating: { $gt: 0 }
-			}, {
-				fields: {
-					username: 1,
-					rating: 1
-				},
-				sort: {rating: -1}
 			}).count();
 		} else {
 			var selectedUserStatistic = Game.Statistic.Collection.findOne({ user_id: selectedUser._id });
@@ -241,19 +229,13 @@ Meteor.methods({
 			var sort = {};
 			sort[sortField] = -1;
 
-			position = Game.Statistic.Collection.find(selector, {
-				fields: fields,
-				sort: sort
-			}).count();
+			position = Game.Statistic.Collection.find(selector).count();
 
 			selector[sortField] = { 
 				$gt: 0 
 			};
 
-			total = Game.Statistic.Collection.find(selector, {
-				fields: fields,
-				sort: sort
-			}).count();
+			total = Game.Statistic.Collection.find(selector).count();
 		}
 
 		return {

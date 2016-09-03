@@ -26,11 +26,11 @@ side-statistic-icon(name, background)
 
 .content
 	.side_menu
-		side-statistic-icon('general', #42c7ff)
-		side-statistic-icon('science', #a6b131)
-		side-statistic-icon('cosmos', #d6645e)
-		side-statistic-icon('battle', #d6925e)
-		side-statistic-icon('communication', #785ed6)
+		side-statistic-icon(general, #42c7ff)
+		side-statistic-icon(science, #a6b131)
+		side-statistic-icon(cosmos, #d6645e)
+		side-statistic-icon(battle, #d6925e)
+		side-statistic-icon(communication, #785ed6)
 
 	.statistic
 		position relative
@@ -109,7 +109,7 @@ side-statistic-icon(name, background)
 					height 70px
 					background-repeat no-repeat
 					background-position center
-					background-image url("/img/game/statistics/power_of_voice.png")
+					background-image url(/img/game/statistics/power_of_voice.png)
 
 				ul
 					list-style-type none
@@ -135,13 +135,13 @@ side-statistic-icon(name, background)
 					background-repeat no-repeat
 
 				.send_message
-					background-image url("/img/game/statistics/message.png")
+					background-image url(/img/game/statistics/message.png)
 
 				.open_house
-					background-image url("/img/game/statistics/house.png")
+					background-image url(/img/game/statistics/house.png)
 
 				.show_detail_statistic
-					background-image url("/img/game/statistics/detail.png")
+					background-image url(/img/game/statistics/detail.png)
 
 				a:hover
 					-webkit-filter brightness(1.4)
@@ -178,28 +178,6 @@ side-statistic-icon(name, background)
 				-webkit-filter brightness(1)
 				filter brightness(1)
 
-		.types
-			width 100px
-			display none
-
-			.general
-			.science
-			.cosmos
-			.battle
-			.communication
-				margin-left 5px
-				width 70px
-				height 70px
-
-				&.active
-					background-color #0c1409
-					&:after
-						position absolute
-						left 0
-						content " "
-						height 70px
-						width 5px
-
 		.search, .returnToMe
 			margin-top 10px
 			display block
@@ -210,11 +188,11 @@ side-statistic-icon(name, background)
 
 		.search
 			left 60px
-			background-image url("/img/game/statistics/search.png")
+			background-image url(/img/game/statistics/search.png)
 
 		.returnToMe
 			left 10px
-			background-image url("/img/game/statistics/my_position.png")
+			background-image url(/img/game/statistics/my_position.png)
 			
 		input
 			top 0px

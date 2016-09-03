@@ -60,7 +60,7 @@
 <template name="consulInfo">
 	<div class="consulInfo">
 		<div class="user">
-			<img src="/img/game/chat/icons/{{iconPath selectedUser}}.png" alt="Иконка консула"/>
+			<img src="/img/game/chat/icons/{{Game.User.iconPath selectedUser}}.png" alt="Иконка консула"/>
 			<div class="text">
 				<div class="userName">{{selectedUser.username}}</div>
 				<div>Консул</div>
@@ -70,7 +70,7 @@
 			<li>
 				Статус консула был получен: 
 				<span class="registryDate">
-					{{formattedRegistrationDate selectedUser}}
+					{{formatYearMonthDay selectedUser.createdAt}}
 				</span>
 			</li>
 			<li>
@@ -89,7 +89,7 @@
 		<div class="additionalButtons">
 			<a
 				class="send_message"
-				href="{{pathFor 'mail' page=1 hash=(mailHash selectedUser.username)}}"
+				href="{{pathFor 'mail' page=1 hash=(Game.Mail.userHash selectedUser.username)}}"
 				data-tooltip="Написать сообщение"
 			>
 			</a>
@@ -126,7 +126,8 @@
 						class="
 							{{#if eq this.username ../selectedUserName}}selectedUser{{/if}}
 							{{#if eq this.username user.username}}me{{/if}}
-							" 
+							"
+						data-username="{{this.username}}"
 						id="{{this._id}}"
 					>
 						<td>{{this.place}}</td>

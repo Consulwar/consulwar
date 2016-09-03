@@ -22,6 +22,7 @@ Game.Rating.showPage = function() {
 	if (firstDraw) {
 		this.render('loading', { to: 'content' });
 	}
+	var user = Meteor.user(); 
 	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
 	statisticType = this.params.group;
@@ -30,7 +31,7 @@ Game.Rating.showPage = function() {
 	var showDetailStatistic = false;
 
 	if (!statisticType) {
-		showUser(selectedUserName || Meteor.user().username, showDetailStatistic, "general", lastPageNumber);
+		showUser(selectedUserName || user.username, showDetailStatistic, "general", lastPageNumber);
 		return;
 	}
 
@@ -69,7 +70,7 @@ Game.Rating.showPage = function() {
 		}
 		selectedUserName = newSelectedUserName;
 	} else {
-		showUser(Meteor.user().username, showDetailStatistic, statisticType || "general", lastPageNumber); //убрать ||
+		showUser(user.username, showDetailStatistic, statisticType || "general", lastPageNumber); //убрать ||
 		this.render('empty', { to: 'detailStatistic' });
 		return;
 	}
@@ -107,7 +108,7 @@ Game.Rating.showPage = function() {
 			}
 		});
 	} else if (!pageNumber) {
-		showUser(selectedUserName || Meteor.user().username, showDetailStatistic, statisticType, lastPageNumber);
+		showUser(selectedUserName || user.username, showDetailStatistic, statisticType, lastPageNumber);
 	}
 };
 
@@ -196,13 +197,9 @@ var showUser = function(userName, showDetailStatistic, statisticType, lastPageNu
 	
 	detailStatisticData = null;
 
-	var user;
-	for(var i = 0; i < users.length; i++) {
-		if(userName == users[i].username) {
-			user = users[i];
-			break;
-		}
-	}
+	var user = _.find(users, function(user){ 
+		return userName == user.username; 
+	});
 
 	if (user && statisticType == lastStatisticType) {
 		Router.go(
@@ -271,29 +268,9 @@ Template.achievements.helpers({
 });
 
 Template.consulInfo.helpers({
-	iconPath: function(user) {
-		if (user.settings && user.settings.chat && user.settings.chat.icon) {
-			return user.settings.chat.icon;
-		}
-		return 'common/1';
-	},
-
 	userActive: function(user) {
 		var lastLoginDate = new Date(user.status.lastLogin.date);
-		return (Session.get('serverTime') - lastLoginDate / 1000 ) / (60 * 60 * 24) < 3;
-	},
-
-	mailHash: function(username) {
-		return 'compose/' + username;
-	},
-
-	formattedRegistrationDate: function (user) {
-		var date = new Date(user.createdAt);
-		var day = date.getDate();
-		day = (day < 10) ? '0' + day : day;
-		var month = date.getMonth();
-		month = (month < 10) ? '0' + month : month;
-		return day + "." + month + "." + date.getFullYear();
+		return (Game.getCurrentTime() - lastLoginDate / 1000 ) / (60 * 60 * 24) < 3;
 	}
 });
 
@@ -311,7 +288,7 @@ Template.statistic.events({
 	'click .search': searchUser,
 
 	'click .rating .data tr': function(e, t) {
-		showUser(e.currentTarget.cells[1].innerHTML, false, statisticType, lastPageNumber);
+		showUser(e.currentTarget.dataset.username, false, statisticType, lastPageNumber);
 	},
 
 	'click .returnToMe': function(e, t) {

@@ -9,6 +9,13 @@ Game.User = {
 		return level + bonus;
 	},
 
+	iconPath: function(user) {
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			return user.settings.chat.icon;
+		}
+		return 'common/1';
+	},
+
 	getLevel: function(rating) {
 		rating = _.isNumber(rating) ? rating : Meteor.user().rating;
 

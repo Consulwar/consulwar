@@ -217,15 +217,17 @@ Meteor.methods({
 		} else {
 			var fields = {};
 			fields[sortField] = 1;
-			var selectedUserStatistic = Game.Statistic.Collection.findOne({ 
-				user_id: selectedUser._id 
-			}, {
-				fields: fields
-			});
 
 			var selector = {};
 			selector[sortField] = { 
-				$gt: Game.Statistic.getUserValue(sortField, selectedUserStatistic) 
+				$gt: Game.Statistic.getUserValue(
+					sortField,
+					Game.Statistic.Collection.findOne({ 
+						user_id: selectedUser._id 
+					}, {
+						fields: fields
+					})
+				)
 			};
 
 			position = Game.Statistic.Collection.find(selector).count();

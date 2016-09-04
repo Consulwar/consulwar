@@ -1,23 +1,5 @@
 <template name="statistic">
 	<div class="statistic">
-		<div 
-			class="
-				button returnToMe 
-				{{#if eq user.username selectedUserName}}active{{/if}}
-			"
-			data-tooltip="Вернуться к своему консулу"
-		></div>
-		<div 
-			class="
-				button search
-				{{#if and selectedUserName (not (eq user.username selectedUserName))}}active{{/if}}
-			"
-			data-tooltip="Поиск консула в статистике"
-		></div>
-		<input
-			type="text" name="searchUserInRating" placeholder="Имя консула"
-		>
-		
 		{{> yield region="rating"}}
 
 		{{> yield region="consulInfo"}}
@@ -137,6 +119,26 @@
 <template name="rating">
 	<div class="rating">
 		{{#if users}}
+			<div class="searchBlock">
+				<div 
+					class="
+						button returnToMe 
+						{{#if eq user.username selectedUserName}}active{{/if}}
+					"
+					data-tooltip="Вернуться к своему консулу"
+				></div>
+				<div 
+					class="
+						button search
+						{{#if and selectedUserName (not (eq user.username selectedUserName))}}active{{/if}}
+					"
+					data-tooltip="Поиск консула в статистике"
+				></div>
+				<input
+					type="text" name="searchUserInRating" placeholder="Имя консула"
+				>
+			</div>
+
 			<table>
 				<tr class="header">
 					<th>Место</th>

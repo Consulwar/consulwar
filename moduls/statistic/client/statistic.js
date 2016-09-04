@@ -160,11 +160,7 @@ var renderConsulInfo = function(userName, page) {
 
 var renderRating = function(userName, countPerPage, countTotal, users, statisticType) {
 	this.render('statistic', { 
-		to: 'content',
-		data: {
-			selectedUserName: userName,
-			statisticType: statisticType
-		} 
+		to: 'content'
 	});
 
 	this.render('rating', { 
@@ -239,6 +235,29 @@ Template.rating.helpers({
 	}
 });
 
+var searchUser = function (e , t) {
+	showUser(t.$('input[name="searchUserInRating"]').val(), false, statisticType, lastPageNumber);
+};
+
+Template.rating.events({
+	'keyup input[name="searchUserInRating"]': function(e, t) {
+		if (e.keyCode == 13) {
+			searchUser(e, t);
+		}
+	},
+
+	'click .search': searchUser,
+
+	'click .data tr': function(e, t) {
+		showUser(e.currentTarget.dataset.username, false, statisticType, lastPageNumber);
+	},
+
+	'click .returnToMe': function(e, t) {
+		t.$('input[name="searchUserInRating"]').val('');
+		showUser(Meteor.user().username, false, statisticType, lastPageNumber);
+	}
+});
+
 Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
@@ -283,29 +302,6 @@ Template.consulInfo.helpers({
 	userActive: function(user) {
 		var lastLoginDate = new Date(user.status.lastLogin.date);
 		return (Game.getCurrentTime() - lastLoginDate / 1000 ) / (60 * 60 * 24) < 3;
-	}
-});
-
-var searchUser = function (e , t) {
-	showUser(t.$('input[name="searchUserInRating"]').val(), false, statisticType, lastPageNumber);
-};
-
-Template.statistic.events({
-	'keyup input[name="searchUserInRating"]': function(e, t) {
-		if (e.keyCode == 13) {
-			searchUser(e, t);
-		}
-	},
-
-	'click .search': searchUser,
-
-	'click .rating .data tr': function(e, t) {
-		showUser(e.currentTarget.dataset.username, false, statisticType, lastPageNumber);
-	},
-
-	'click .returnToMe': function(e, t) {
-		t.$('input[name="searchUserInRating"]').val('');
-		showUser(Meteor.user().username, false, statisticType, lastPageNumber);
 	}
 });
 

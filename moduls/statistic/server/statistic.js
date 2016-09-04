@@ -200,7 +200,7 @@ Meteor.methods({
 		
 		var position;
 		var total;
-		var sortField = Game.Statistic.getSortFieldForType(type);
+		var sortField = Game.Statistic.getSortFieldForType(type).field;
 
 		if (!sortField) {
 			throw new Meteor.Error('Несуществующий тип статистики');
@@ -215,19 +215,18 @@ Meteor.methods({
 				rating: { $gt: 0 }
 			}).count();
 		} else {
-			var selectedUserStatistic = Game.Statistic.Collection.findOne({ user_id: selectedUser._id });
+			var fields = {};
+			fields[sortField] = 1;
+			var selectedUserStatistic = Game.Statistic.Collection.findOne({ 
+				user_id: selectedUser._id 
+			}, {
+				fields: fields
+			});
+
 			var selector = {};
 			selector[sortField] = { 
 				$gt: Game.Statistic.getUserValue(sortField, selectedUserStatistic) 
 			};
-
-			var fields = {
-				username: 1
-			};
-			fields[sortField] = 1;
-
-			var sort = {};
-			sort[sortField] = -1;
 
 			position = Game.Statistic.Collection.find(selector).count();
 
@@ -265,7 +264,7 @@ Meteor.methods({
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
-		var sortField = Game.Statistic.getSortFieldForType(type);
+		var sortField = Game.Statistic.getSortFieldForType(type).field;
 
 		if (!sortField) {
 			throw new Meteor.Error('Несуществующий тип статистики');

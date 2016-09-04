@@ -11,13 +11,12 @@ var lastPageNumber;
 var users = [];
 var countTotal;
 var lastStatisticType;
-var firstDraw = true; //при первой отрисовке редиректит на страницу с выбранным пользователем
 var selectedUser;
 
 Game.Rating = {};
 
 Game.Rating.showPage = function() {
-	if (firstDraw) {
+	if (!selectedUser) {
 		this.render('loading', { to: 'content' });
 	}
 	var countPerPage = 20;
@@ -75,7 +74,7 @@ Game.Rating.showPage = function() {
 			} else {
 				var skip = (pageNumber - 1) * countPerPage;
 				var selectedUserContain = false;
-				var sortField = Game.Statistic.getSortFieldForType(statisticType);
+				var sortField = Game.Statistic.getSortFieldForType(statisticType).field;
 				users = data.users;
 				countTotal = data.count;
 
@@ -87,7 +86,7 @@ Game.Rating.showPage = function() {
 					}
 				}
 
-				if (selectedUserName && !selectedUserContain && (firstDraw || statisticType != lastStatisticType)) {
+				if (selectedUserName && !selectedUserContain && (!selectedUser || statisticType != lastStatisticType)) {
 					showUser({
 						userName: selectedUserName, 
 						showDetailStatistic: showDetailStatistic, 
@@ -134,7 +133,6 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 
 var renderConsulInfo = function(userName, page, statisticType) {
 	var self = this;
-	firstDraw = false;
 	isLoading.set(true);
 	Meteor.call('statistic.getUserInfo', userName, function(err, data) {
 		isLoading.set(false);
@@ -279,7 +277,8 @@ Template.achievements.helpers({
 
 		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
-			var level = user.achievements && user.achievements[key] && user.achievements[key].level;
+			var isActive = user.achievements && user.achievements[key];
+			var level = isActive && user.achievements[key].level;
 			var maxLevel = item.maxLevel();
 
 			var nextLevel = item.nextLevel(level || 0);
@@ -299,7 +298,7 @@ Template.achievements.helpers({
 					nextLevelDescription: nextLevelDescription,
 					nextLevelName: nextLevelName,
 					effect: item.effect,
-					isActive: level
+					isActive: isActive
 				});
 			}
 		}

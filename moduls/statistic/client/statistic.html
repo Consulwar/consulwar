@@ -30,38 +30,36 @@
 					{{#if this.isActive}}
 						<div class='title'>{{this.name}}</div>
 						<div class='text'>{{this.description}}</div>
-					{{/if}}
-					{{#if this.effect}}
-						{{#each this.effect}}
-							{{#if (this.result ../currentLevel)}}
-								<div class='effect'>
-									{{this.pretext}}
-									{{this.result ../currentLevel}}
-									{{this.aftertext}}
-								</div>
-							{{/if}}
-						{{/each}}
+						{{> achievementEffect effect=this.effect level=currentLevel}}
+					{{else}}
+						<div class='disabled'>Следующий уровень:</div>
 					{{/if}}
 					{{#if this.nextLevel}}
-						<div class='next'>Следующий уровень: </div>
+						{{#if this.isActive}}
+							<div class='next'>Следующий уровень:</div>
+						{{/if}}
 						<div class='title'>{{this.nextLevelName}}</div>
 						<div class='text'>{{this.nextLevelDescription}}</div>
-						{{#if this.effect}}
-							{{#each this.effect}}
-								{{#if (this.result ../nextLevel)}}
-									<div class='effect'>
-										{{this.pretext}}
-										{{this.result ../nextLevel}}
-										{{this.aftertext}}
-									</div>
-								{{/if}}
-							{{/each}}
-						{{/if}}
+						{{> achievementEffect effect=this.effect level=nextLevel}}
 					{{/if}}
 					"
 			/>
 		{{/each}}
 	</div>
+</template>
+
+<template name="achievementEffect">
+	{{#if this.effect}}
+		{{#each this.effect}}
+			{{#if (this.result ../levelevel)}}
+				<div class='effect'>
+					{{this.pretext}}
+					{{this.result ../level}}
+					{{this.aftertext}}
+				</div>
+			{{/if}}
+		{{/each}}
+	{{/if}}
 </template>
 
 <template name="consulInfo">
@@ -143,7 +141,7 @@
 				<tr class="header">
 					<th>Место</th>
 					<th>Ник</th>
-					<th>{{Game.Statistic.getSortFieldNameForType statisticType}}</th>
+					<th>{{lookup (Game.Statistic.getSortFieldForType statisticType) 'title'}}</th>
 				</tr>
 			</table>
 			<div class="data">

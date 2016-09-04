@@ -1,38 +1,37 @@
 initStatisticLib = function() {
 
+
 Game.Statistic = {
 	Collection: new Meteor.Collection('statistic'),
 
 	getSortFieldForType: function(type) {
 		check(type, String);
-		return this.sortFieldsForTypes[type] && this.sortFieldsForTypes[type].field;
-	},
-
-	getSortFieldNameForType: function(type) {
-		check(type, String);
-		return this.sortFieldsForTypes[type] && this.sortFieldsForTypes[type].name;
+		if (!this.sortFieldsForTypes.hasOwnProperty(type)) {
+			throw new Meteor.Error('Несуществующий тип статистики');
+		}
+		return this.sortFieldsForTypes[type];
 	},
 
 	sortFieldsForTypes: {
 		general: {
 			field: 'rating',
-			name: 'Рейтинг'
+			title: 'Рейтинг'
 		},
 		science: {
 			field: 'research.total',
-			name: 'Исследовано технологий'
+			title: 'Исследовано технологий'
 		},
 		communication: {
 			field: 'chat.messages',
-			name: 'Всего сообщений'
+			title: 'Всего сообщений'
 		},
 		cosmos: {
 			field: 'resources.gained.honor',
-			name: 'Честь'
+			title: 'Честь'
 		},
 		battle: {
 			field: 'reinforcements.sent.total',
-			name: 'Отправлено войск'
+			title: 'Отправлено войск'
 		}
 	},
 

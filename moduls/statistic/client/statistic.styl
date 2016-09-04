@@ -166,27 +166,11 @@ side-statistic-icon(name, background)
 					-webkit-filter grayscale(1)
 					filter grayscale(1)
 
-		.button
-			cursor pointer
-			display block
-			background-repeat no-repeat
-			background-position center
-			-webkit-filter grayscale(1)
-			filter grayscale(1)
-
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-
-			&.active
-				-webkit-filter brightness(1)
-				filter brightness(1)
-
 	.rating
 		position absolute
 		height 435px
 		width 315px
-		background-color #04080B
+		background-color #000
 		z-index 10
 
 		.searchBlock
@@ -202,6 +186,19 @@ side-statistic-icon(name, background)
 				top 0px
 				width 40px
 				height 40px
+				cursor pointer
+				background-repeat no-repeat
+				background-position center
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+				&.active
+					-webkit-filter brightness(1)
+					filter brightness(1)
 
 			.search
 				left 60px
@@ -244,7 +241,7 @@ side-statistic-icon(name, background)
 			tr
 				height 40px
 				
-				&:nth-child(odd):not(.header):not(.selectedUser):not(:hover)
+				&:nth-child(odd)
 					background-color #0B121A
 				
 				&:nth-child(even)
@@ -253,6 +250,9 @@ side-statistic-icon(name, background)
 				&:hover:not(.header)
 					cursor pointer
 					background-color #000015
+
+				&.header
+					background-color #000
 
 				&.selectedUser
 					color #0081e5

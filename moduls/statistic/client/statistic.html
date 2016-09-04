@@ -165,7 +165,7 @@
 					{{> loading}}
 				{{/if}}
 			</div>
-			{{> pages total=countTotal perPage=countPerPage maxVisible=5}}
+			{{> pages total=countTotal perPage=countPerPage maxVisible=5 saveHash=true}}
 		{{else}}
 			{{#if isLoading}}
 				{{> loading}}

@@ -183,7 +183,7 @@ Meteor.methods({
 		var userPayAnyway = false;
 
 		if (message.substr(0, 1) == '/') {
-			var reg = new RegExp(/^\/d (\d )?((?:100)|(?:\d{1,2}))( (?:\+|-)?(?:\d+))?$/);
+			var reg = new RegExp(/^\/d (\d+ )?(\d+)( (?:\+|-)?\d+)?$/);
 			if (message == '/d' || reg.test(message)) {
 				var dices = 1;
 				var edges = 6;
@@ -192,8 +192,18 @@ Meteor.methods({
 				if (message != '/d') {
 					var dice = reg.exec(message);
 					dices = dice[1] === undefined ? 1 : (parseInt(dice[1]) || 1);
-					edges = parseInt(dice[2]) < 2 ? 2 : parseInt(dice[2]);
+					edges = parseInt(dice[2]);
 					modifier = dice[3] === undefined ? 0 : parseInt(dice[3]);
+
+					if (dices < 1 || dices > 9) {
+						throw new Meteor.Error('Вы можете бросить от 1 до 9 костей');
+					}
+					if (edges < 2 || edges > 100) {
+						throw new Meteor.Error('Вы можете бросить кости с кол-вом граней от 2 до 100');
+					}
+					if (modifier >= Math.abs(edges)) {
+						throw new Meteor.Error('Модуль модификатора должен быть меньше кол-ва граней');
+					}
 				}
 
 				set.data = {

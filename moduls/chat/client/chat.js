@@ -730,6 +730,7 @@ Template.chat.events({
 
 	'keypress textarea[name="text"]': function(e, t) {
 		if (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter') {
+			e.preventDefault();
 			t.find('#message input[type="submit"]').click();
 		}
 	},

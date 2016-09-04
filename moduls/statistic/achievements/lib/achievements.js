@@ -37,6 +37,11 @@ game.Achievement = function(options) {
 		return (options.levels) ? options.levels.length : 1;
 	}).bind(this);
 
+	this.nextLevel = (function (level) {
+		if (!level) return 1;
+		return (options.levels && level < options.levels.length - 1) ? level + 1 : null;
+	}).bind(this);
+
 	this.name = (function(level) {
 		if (_.isArray(options.name)) {
 			level = (level !== undefined) ? level : this.currentLevel();

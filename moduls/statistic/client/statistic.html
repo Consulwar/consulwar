@@ -32,12 +32,13 @@
 	<div class="achievements">
 		{{#each (achievements selectedUser)}}
 			<img 
+				class="{{#if this.isActive}}active{{/if}}"
 				src="
 					/img/game/achievements/{{this.engName}}
-					{{#if gt this.maxLevel 1}}{{this.currentLevel}}{{/if}}.png
+					{{#if gt this.maxLevel 1}}{{or this.currentLevel 1}}{{/if}}.png
 					" 
 				alt="{{this.name}}" 
-				data-tooltip="
+				{{!--data-tooltip="
 					<div class='title'>{{this.name}}</div>
 					<div class='text'>{{this.description}}</div>
 					{{#if this.effect}}
@@ -50,6 +51,40 @@
 								</div>
 							{{/if}}
 						{{/each}}
+					{{/if}}
+					"
+				--}}
+				data-tooltip="
+					{{#if this.isActive}}
+						<div class='title'>{{this.name}}</div>
+						<div class='text'>{{this.description}}</div>
+					{{/if}}
+					{{#if this.effect}}
+						{{#each this.effect}}
+							{{#if (this.result ../currentLevel)}}
+								<div class='effect'>
+									{{this.pretext}}
+									{{this.result ../currentLevel}}
+									{{this.aftertext}}
+								</div>
+							{{/if}}
+						{{/each}}
+					{{/if}}
+					{{#if this.nextLevel}}
+						<div class='next'>Следующий уровень: </div>
+						<div class='title'>{{this.nextLevelName}}</div>
+						<div class='text'>{{this.nextLevelDescription}}</div>
+						{{#if this.effect}}
+							{{#each this.effect}}
+								{{#if (this.result ../nextLevel)}}
+									<div class='effect'>
+										{{this.pretext}}
+										{{this.result ../nextLevel}}
+										{{this.aftertext}}
+									</div>
+								{{/if}}
+							{{/each}}
+						{{/if}}
 					{{/if}}
 					"
 			/>

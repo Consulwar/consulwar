@@ -243,23 +243,29 @@ Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
 
-		for (var key in user.achievements) {
+		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
-			var level = user.achievements[key].level;
+			var level = user.achievements[key] && user.achievements[key].level;
+			var maxLevel = item.maxLevel();
+
+			var nextLevel = item.nextLevel(level || 0);
+			var nextLevelDescription = item.description(nextLevel);
+			var nextLevelName = item.name(nextLevel);
 			
-			if (
-				item && level > 0 && 
-				(item.statisticType == this.statisticType || 
-					(!item.statisticType && this.statisticType == 'general')
-				)
+			if (item.statisticType == this.statisticType ||
+				(!item.statisticType && this.statisticType == 'general') //уберу эту проверку когда добавлю группы ачивкам
 			) {
 				result.push({
 					engName: item.engName,
 					name: item.name(level),
 					description: item.description(level),
 					currentLevel: level,
-					maxLevel: item.maxLevel(),
-					effect: item.effect
+					maxLevel: maxLevel,
+					nextLevel: nextLevel,
+					nextLevelDescription: nextLevelDescription,
+					nextLevelName: nextLevelName,
+					effect: item.effect,
+					isActive: level
 				});
 			}
 		}

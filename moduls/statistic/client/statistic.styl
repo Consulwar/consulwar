@@ -162,6 +162,10 @@ side-statistic-icon(name, background)
 				height 70px
 				margin 10px
 
+				&:not(.active)
+					-webkit-filter grayscale(1)
+					filter grayscale(1)
+
 		.button
 			cursor pointer
 			display block
@@ -178,7 +182,7 @@ side-statistic-icon(name, background)
 				-webkit-filter brightness(1)
 				filter brightness(1)
 
-		.search, .returnToMe
+		.search,.returnToMe
 			margin-top 10px
 			display block
 			position absolute

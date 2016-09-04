@@ -151,15 +151,21 @@ var renderConsulInfo = function(userName, page, statisticType) {
 				} 
 			});
 
-			self.render('achievements', { 
-				to: 'achievements',
-				data: {
-					selectedUser: selectedUser,
-					statisticType: statisticType
-				} 
-			});
+			renderAchievements.call(self, selectedUser, statisticType);
 		}
 	});
+};
+
+var renderAchievements = function(selectedUser, statisticType) {
+	if (selectedUser && selectedUser) {
+		this.render('achievements', { 
+			to: 'achievements',
+			data: {
+				selectedUser: selectedUser,
+				statisticType: statisticType
+			}
+		});
+	}
 };
 
 var renderRating = function(userName, countPerPage, countTotal, users, statisticType) {
@@ -179,15 +185,8 @@ var renderRating = function(userName, countPerPage, countTotal, users, statistic
 	});
 
 	Meteor.setTimeout(scrollToSelectedUser);
-	if (selectedUser && selectedUser.achievements) {
-		this.render('achievements', { 
-			to: 'achievements',
-			data: {
-				selectedUser: selectedUser,
-				statisticType: statisticType
-			}
-		});
-	}
+
+	renderAchievements.call(this, selectedUser, statisticType);
 };
 //userName, showDetailStatistic, statisticType, lastPageNumber
 var showUser = function(options) {
@@ -326,7 +325,7 @@ var scrollToSelectedUser = function() {
 		rating.scrollTop(0);
 	} else if ( 
 		userRow.offsetTop < rating.scrollTop() - 10 ||
-		userRow.offsetTop > (rating.scrollTop() + 320)
+		userRow.offsetTop > (rating.scrollTop() + rating.height() - 10)
 	) {
 		rating.scrollTop(userRow.offsetTop - 150);
 	}

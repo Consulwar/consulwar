@@ -183,16 +183,17 @@ Meteor.methods({
 		var userPayAnyway = false;
 
 		if (message.substr(0, 1) == '/') {
-			var reg = new RegExp(/^\/d (\d )?(\d{1,2})$/);
+			var reg = new RegExp(/^\/d (\d )?((?:100)|(?:\d{1,2}))( (?:\+|-)?(?:\d+))?$/);
 			if (message == '/d' || reg.test(message)) {
-
 				var dices = 1;
 				var edges = 6;
+				var modifier = 0;
 
 				if (message != '/d') {
 					var dice = reg.exec(message);
 					dices = dice[1] === undefined ? 1 : (parseInt(dice[1]) || 1);
 					edges = parseInt(dice[2]) < 2 ? 2 : parseInt(dice[2]);
+					modifier = dice[3] === undefined ? 0 : parseInt(dice[3]);
 				}
 
 				set.data = {
@@ -201,7 +202,7 @@ Meteor.methods({
 						dices: {
 							amount: dices,
 							values: _.map(_.range(dices), function() {
-								return _.random(1, edges);
+								return Math.max(Math.min(_.random(1, edges) + modifier, edges), 1);
 							})
 						},
 						edges: edges
@@ -308,6 +309,8 @@ Meteor.methods({
 				} else {
 					throw new Meteor.Error('Совет Галактики все ещё в Шоке!');
 				}
+			} else {
+				throw new Meteor.Error('Неправильная команда, введите /help для помощи');
 			}
 		}
 

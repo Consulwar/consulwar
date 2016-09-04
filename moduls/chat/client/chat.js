@@ -710,7 +710,11 @@ Template.chat.events({
 				if (_.isNumber(err.reason)) {
 					errorMessage += ' до ' + Game.Helpers.formatDate(err.reason);
 				}
-				Notifications.error('Неполучилось отправить сообщение', errorMessage);
+				if (text && text[0] == "/") {
+					Notifications.error('Неполучилось выполнить команду', errorMessage);
+				} else {
+					Notifications.error('Неполучилось отправить сообщение', errorMessage);
+				}
 			} else {
 				t.find('#message').reset();
 

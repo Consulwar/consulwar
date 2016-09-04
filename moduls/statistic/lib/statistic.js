@@ -32,7 +32,7 @@ Game.Statistic = {
 		},
 		battle: {
 			field: 'reinforcements.sent.total',
-			name: 'Отправлено сообщений'
+			name: 'Отправлено войск'
 		}
 	},
 

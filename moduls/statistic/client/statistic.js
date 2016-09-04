@@ -243,6 +243,8 @@ Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
 
+		console.log(user.achievements);
+
 		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
 			var level = user.achievements[key] && user.achievements[key].level;
@@ -270,6 +272,10 @@ Template.achievements.helpers({
 			}
 		}
 		return result;
+	},
+
+	rank: function(rating) {
+		return Game.User.getLevel(rating);
 	}
 });
 

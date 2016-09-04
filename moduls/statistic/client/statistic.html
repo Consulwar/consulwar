@@ -30,6 +30,12 @@
 
 <template name="achievements">
 	<div class="achievements">
+		<img 
+			class="{{#if gt selectedUser.rating 25000}}active{{/if}}"
+			data-tooltip="{{rank selectedUser.rating}} ранг"
+			src="/img/game/battle/statistics/{{or (rank selectedUser.rating) 1}}.png"
+			alt="Ранг"
+		/>
 		{{#each (achievements selectedUser)}}
 			<img 
 				class="{{#if this.isActive}}active{{/if}}"
@@ -37,23 +43,7 @@
 					/img/game/achievements/{{this.engName}}
 					{{#if gt this.maxLevel 1}}{{or this.currentLevel 1}}{{/if}}.png
 					" 
-				alt="{{this.name}}" 
-				{{!--data-tooltip="
-					<div class='title'>{{this.name}}</div>
-					<div class='text'>{{this.description}}</div>
-					{{#if this.effect}}
-						{{#each this.effect}}
-							{{#if (this.result ../currentLevel)}}
-								<div class='effect'>
-									{{this.pretext}}
-									{{this.result ../currentLevel}}
-									{{this.aftertext}}
-								</div>
-							{{/if}}
-						{{/each}}
-					{{/if}}
-					"
-				--}}
+				alt="{{this.name}}"
 				data-tooltip="
 					{{#if this.isActive}}
 						<div class='title'>{{this.name}}</div>

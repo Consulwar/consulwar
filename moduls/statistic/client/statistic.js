@@ -8,11 +8,9 @@ var isLoading = new ReactiveVar(true);
 var detailStatisticData;
 var selectedUserName;
 var lastPageNumber;
-var countPerPage = 20;
 var users = [];
 var countTotal;
 var lastStatisticType;
-var statisticType;
 var firstDraw = true; //при первой отрисовке редиректит на страницу с выбранным пользователем
 var selectedUser;
 
@@ -22,40 +20,35 @@ Game.Rating.showPage = function() {
 	if (firstDraw) {
 		this.render('loading', { to: 'content' });
 	}
+	var countPerPage = 20;
 	var user = Meteor.user(); 
 	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
-	statisticType = this.params.group;
+	var statisticType = this.params.group;
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
-	var newSelectedUserName;
 	var showDetailStatistic = false;
 
-	if (!statisticType) {
-		showUser(selectedUserName || user.username, showDetailStatistic, "general", lastPageNumber);
-		return;
-	}
+	if (hash && statisticType && pageNumber) {
 
-	if (hash) {
-		newSelectedUserName = hash[0];
-
-		if (newSelectedUserName != selectedUserName) {
-			renderConsulInfo.call(this, newSelectedUserName, pageNumber);
+		if (hash[0] != selectedUserName) {
+			selectedUserName = hash[0];
+			renderConsulInfo.call(this, selectedUserName, pageNumber, statisticType);
 		}
 
 		if (statisticType == lastStatisticType) {
-			renderRating.call(this, newSelectedUserName, countPerPage, countTotal, users, statisticType);
+			renderRating.call(this, selectedUserName, countPerPage, countTotal, users, statisticType);
 		}
 
 		if (hash[1] == 'detail') {
 			var tab = hash[2];
-			if (selectedUserName == newSelectedUserName && detailStatisticData) {
+			if (selectedUserName == selectedUserName && detailStatisticData) {
 				renderDetailStatistic.call(this, selectedUserName, tab, detailStatisticData);
 				return;
 			}
 
 			isLoading.set(true);
 
-			Meteor.call('statistic.getUserStatistic', newSelectedUserName, function(err, data) {
+			Meteor.call('statistic.getUserStatistic', selectedUserName, function(err, data) {
 				isLoading.set(false);
 				if (err) {
 					Notifications.error('Не удалось загрузить статистику пользователя', err.error);
@@ -68,14 +61,11 @@ Game.Rating.showPage = function() {
 		} else {
 			this.render('empty', { to: 'detailStatistic' });
 		}
-		selectedUserName = newSelectedUserName;
 	} else {
-		showUser(user.username, showDetailStatistic, statisticType || "general", lastPageNumber); //убрать ||
 		this.render('empty', { to: 'detailStatistic' });
-		return;
 	}
 	var pageChanged = (pageNumber != lastPageNumber || statisticType != lastStatisticType);
-	if (pageNumber && statisticType && pageChanged) {
+	if (pageNumber && statisticType && pageChanged && statisticType) {
 		isLoading.set(true);
 		// show required page
 		Meteor.call('statistic.getPageInRating', statisticType, pageNumber, countPerPage, function(err, data) {
@@ -98,7 +88,13 @@ Game.Rating.showPage = function() {
 				}
 
 				if (selectedUserName && !selectedUserContain && (firstDraw || statisticType != lastStatisticType)) {
-					showUser(selectedUserName, showDetailStatistic, statisticType, lastPageNumber);
+					showUser({
+						userName: selectedUserName, 
+						showDetailStatistic: showDetailStatistic, 
+						statisticType: statisticType,
+						lastPageNumber: lastPageNumber,
+						countPerPage: countPerPage
+					});
 				}
 
 				renderRating.call(self, selectedUserName, countPerPage, countTotal, users, statisticType);
@@ -107,8 +103,16 @@ Game.Rating.showPage = function() {
 				lastPageNumber = pageNumber;
 			}
 		});
-	} else if (!pageNumber) {
-		showUser(selectedUserName || user.username, showDetailStatistic, statisticType, lastPageNumber);
+	} 
+
+	if (!pageNumber || !statisticType) {
+		showUser({
+			userName: selectedUserName || user.username, 
+			showDetailStatistic: showDetailStatistic, 
+			statisticType: statisticType || "general",
+			lastPageNumber: lastPageNumber,
+			countPerPage: countPerPage
+		});
 	}
 };
 
@@ -128,7 +132,7 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 	});
 };
 
-var renderConsulInfo = function(userName, page) {
+var renderConsulInfo = function(userName, page, statisticType) {
 	var self = this;
 	firstDraw = false;
 	isLoading.set(true);
@@ -185,23 +189,26 @@ var renderRating = function(userName, countPerPage, countTotal, users, statistic
 		});
 	}
 };
-
-var showUser = function(userName, showDetailStatistic, statisticType, lastPageNumber) {
-	if (!userName){
+//userName, showDetailStatistic, statisticType, lastPageNumber
+var showUser = function(options) {
+	if (!options.userName){
 		return Notifications.error('Введите имя пользователя');
 	}
 	
 	detailStatisticData = null;
 
 	var user = _.find(users, function(user){ 
-		return userName == user.username; 
+		return options.userName == user.username; 
 	});
 
-	if (user && statisticType == lastStatisticType) {
+	if (user && options.statisticType == lastStatisticType && options.lastPageNumber) {
 		Router.go(
 			'statistics',
-			{ page: lastPageNumber, group: statisticType },
-			{ hash: userName + ( showDetailStatistic ? '/detail' : '' ), replaceState: true } 
+			{ page: options.lastPageNumber, group: options.statisticType },
+			{ 
+				hash: options.userName + ( options.showDetailStatistic ? '/detail' : '' ),
+				replaceState: true
+			}
 		);
 		$('input[name="searchUserInRating"]').val("");
 		return;
@@ -209,20 +216,23 @@ var showUser = function(userName, showDetailStatistic, statisticType, lastPageNu
 
 	isLoading.set(true);
 
-	Meteor.call('statistic.getUserPositionInRating', statisticType, userName, function(err, data) {
+	Meteor.call('statistic.getUserPositionInRating', options.statisticType, options.userName, function(err, data) {
 		isLoading.set(false);
 		if (err) {
 			Notifications.error('Не удалось загрузить страницу', err.error);
 		} else {
 			var userPage = (data.total > 0 && data.position > 0
-				? Math.ceil( data.position / countPerPage )
+				? Math.ceil( data.position / options.countPerPage )
 				: 1
 			);
 
 			Router.go(
 				'statistics',
-				{ page: userPage, group: statisticType || 'general' },
-				{ hash: userName + ( showDetailStatistic ? '/detail' : '' ), replaceState: true } 
+				{ page: userPage, group: options.statisticType || 'general' },
+				{
+					hash: options.userName + ( options.showDetailStatistic ? '/detail' : '' ),
+					replaceState: true
+				} 
 			);
 			$('input[name="searchUserInRating"]').val("");
 		}
@@ -235,8 +245,14 @@ Template.rating.helpers({
 	}
 });
 
-var searchUser = function (e , t) {
-	showUser(t.$('input[name="searchUserInRating"]').val(), false, statisticType, lastPageNumber);
+var searchUser = function (e , t, userName) {
+	showUser({
+		userName: userName || t.$('input[name="searchUserInRating"]').val(), 
+		showDetailStatistic: false, 
+		statisticType: t.data.statisticType,
+		lastPageNumber: lastPageNumber,
+		countPerPage: t.data.countPerPage
+	});
 };
 
 Template.rating.events({
@@ -249,12 +265,12 @@ Template.rating.events({
 	'click .search': searchUser,
 
 	'click .data tr': function(e, t) {
-		showUser(e.currentTarget.dataset.username, false, statisticType, lastPageNumber);
+		searchUser(e, t, e.currentTarget.dataset.username);
 	},
 
 	'click .returnToMe': function(e, t) {
 		t.$('input[name="searchUserInRating"]').val('');
-		showUser(Meteor.user().username, false, statisticType, lastPageNumber);
+		searchUser(e, t, Meteor.user().username);
 	}
 });
 
@@ -262,11 +278,9 @@ Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
 
-		console.log(user.achievements);
-
 		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
-			var level = user.achievements[key] && user.achievements[key].level;
+			var level = user.achievements && user.achievements[key] && user.achievements[key].level;
 			var maxLevel = item.maxLevel();
 
 			var nextLevel = item.nextLevel(level || 0);

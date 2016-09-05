@@ -408,7 +408,7 @@ var changeDiceModifierForRoom = function(roomName, modifier) {
 		return;
 	}
 
-	if (!modifier) {
+	if (!Match.test(modifier, Match.Integer)) {
 		Notifications.error('Укажите модификатор');
 		return;
 	}
@@ -739,9 +739,9 @@ Template.chat.events({
 					errorMessage += ' до ' + Game.Helpers.formatDate(err.reason);
 				}
 				if (text && text[0] == "/") {
-					Notifications.error('Неполучилось выполнить команду', errorMessage);
+					Notifications.error('Не получилось выполнить команду', errorMessage);
 				} else {
-					Notifications.error('Неполучилось отправить сообщение', errorMessage);
+					Notifications.error('Не получилось отправить сообщение', errorMessage);
 				}
 			} else {
 				t.find('#message').reset();

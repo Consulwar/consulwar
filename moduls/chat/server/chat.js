@@ -192,9 +192,15 @@ Meteor.methods({
 
 				if (message != '/d') {
 					var dice = reg.exec(message);
-					dices = dice[1] === undefined ? 1 : (parseInt(dice[1]) || 1);
+					dices = (dice[1] === undefined
+						? 1
+						: (parseInt(dice[1]) || 1)
+					);
 					edges = parseInt(dice[2]);
-					modifier = dice[3] === undefined ? 0 : parseInt(dice[3]);
+					modifier = (dice[3] === undefined
+						? 0
+						: parseInt(dice[3])
+					);
 
 					if (dices < 1 || dices > 9) {
 						throw new Meteor.Error('Вы можете бросить от 1 до 9 костей');
@@ -215,7 +221,7 @@ Meteor.methods({
 							values: _.map(_.range(dices), function() {
 								return Math.max(
 									Math.min(
-										_.random(1, edges) + modifier + roomModifier, 
+										Game.Random.interval(1, edges) + modifier + roomModifier, 
 										edges
 									),
 									1
@@ -245,7 +251,7 @@ Meteor.methods({
 						preText: meDice[1] || '',
 						afterText: meDice[3] || '',
 						variables: variables,
-						selected: _.random(0, variables.length-1)
+						selected: Game.Random.interval(0, variables.length-1)
 					}
 				};
 				stats['chat.medice'] = 1;
@@ -905,6 +911,10 @@ Meteor.methods({
 		check(roomName, String);
 		check(modifier, Match.Integer);
 
+		if (Math.abs(modifier) >= 100) {
+			throw new Meteor.Error('Модификатор должен находиться в диапазоне от -100 до 100');
+		}
+
 		var room = Game.Chat.Room.Collection.findOne({
 			name: roomName,
 			deleted: { $ne: true }
@@ -916,7 +926,10 @@ Meteor.methods({
 
 		checkHasRoomBan(user._id, room._id, room.name);
 
-		if (user.role != 'admin' && room.owner != user._id) {
+		if (user.role != 'admin'
+		 && room.owner != user._id
+		 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
+		) {
 			throw new Meteor.Error('Вы не можете изменять модификатор в этой комнате');
 		}
 

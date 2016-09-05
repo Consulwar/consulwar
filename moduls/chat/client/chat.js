@@ -50,7 +50,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 		addMessage(message);
 
 		// limit max count
-		while (messages.length > Game.Chat.Messages.LIMIT) {
+		while (messages.length > Meteor.settings.chat.messages.limit) {
 			messages.shift();
 		}
 
@@ -177,7 +177,7 @@ Template.chat.onRendered(function() {
 						for (var i = 0; i < data.length; i++) {
 							addMessage(data[i]);
 						}
-						while (messages.length > Game.Chat.Messages.LIMIT) {
+						while (messages.length > Meteor.settings.chat.messages.limit) {
 							messages.shift();
 						}
 					}
@@ -561,9 +561,9 @@ var getUserRole = function(userId, username, role, rating) {
 };
 
 Template.chat.helpers({
-	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
+	freeChatPrice: function() { return Meteor.settings.chat.messages.freeChatPrice; },
 	isChatFree: function() { return Meteor.user().isChatFree; },
-	maxMessages: function() { return Game.Chat.Messages.LIMIT; },
+	maxMessages: function() { return Meteor.settings.chat.messages.limit; },
 	isLoading: function() { return isLoading.get(); },
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
@@ -817,18 +817,18 @@ Template.chat.events({
 
 			if (data) {
 				for (var i = 0; i < data.length; i++) {
-					if (messages.length >= Game.Chat.Messages.LIMIT) {
+					if (messages.length >= Meteor.settings.chat.messages.limit) {
 						break;
 					}
 					addMessage(data[i]);
 				}
 
-				if (messages.length >= Game.Chat.Messages.LIMIT) {
+				if (messages.length >= Meteor.settings.chat.messages.limit) {
 					gotLimit.set(true);
 				}
 
-				if (messages.length >= Game.Chat.Messages.LIMIT
-				 || data.length < Game.Chat.Messages.LOAD_COUNT
+				if (messages.length >= Meteor.settings.chat.messages.limit
+				 || data.length < Meteor.settings.chat.messages.loadCount
 				) {
 					hasMore.set(false);
 				}
@@ -842,7 +842,7 @@ Template.chat.events({
 
 		Game.showAcceptWindow('Вы точно хотите больше никогда не платить за ссаный чат?', function() {
 			var resources = Game.Resources.getValue();
-			if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
+			if (resources.credits.amount < Meteor.settings.chat.messages.freeChatPrice) {
 				Notifications.error('Недостаточно средств');
 				return;
 			}

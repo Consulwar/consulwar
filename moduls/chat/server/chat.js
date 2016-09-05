@@ -236,14 +236,14 @@ Meteor.methods({
 				stats['chat.dice'] = 1;
 
 			} else if (message.indexOf('/med') === 0) {
-				var meDiceReg = new RegExp(/^\/med ([^#]*)#(.+#.+)+#([^#]*)$/);
+				var meDiceReg = new RegExp(/^\/med ([^%]*)%(.+%.+)+%([^%]*)$/);
 				var meDice = meDiceReg.exec(message);
 
 				if (!meDice || !meDice[2]) {
-					throw new Meteor.Error('Введите #несколько#вариантов# развития событий');
+					throw new Meteor.Error('Введите %несколько%вариантов% развития событий');
 				}
 
-				var variables = meDice[2].split("#");
+				var variables = meDice[2].split("%");
 
 				set.data = {
 					type: 'medice',

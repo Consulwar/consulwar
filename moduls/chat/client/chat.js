@@ -769,6 +769,9 @@ Template.chat.events({
 	},
 
 	'click .messages .message': function(e, t) {
+		if (document.getSelection && document.getSelection().toString()) {
+			return;
+		}
 		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).parent().find('.profile').data('username') + ', ';
 		t.find('#message textarea[name="text"]').focus();
 	},

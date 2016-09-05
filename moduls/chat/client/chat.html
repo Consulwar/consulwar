@@ -117,10 +117,31 @@
 								>
 									{{#if this.data}}
 										{{#if eq this.data.type 'dice'}}
-											бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+											бросил {{this.data.dice.dices.amount}} 
+											{{declension this.data.dice.dices.amount "кубик" "" "а" "в"}} с 
+											{{this.data.dice.edges}} 
+											{{declension this.data.dice.edges "гран" "ью" "ями" "ями"}}: 
 											{{#each this.data.dice.dices.values}}
 												<span class="dice">{{this}}</span> 
 											{{/each}}
+											(модификатор: {{this.data.dice.modifier}} 
+											модификатор чата: {{this.data.dice.roomModifier}})
+										{{/if}}
+										{{#if eq this.data.type 'medice'}}
+											{{this.data.medice.preText}}
+											{{#each this.data.medice.variables}}
+												<span 
+													class="
+														medice
+														{{#if eq @index ../data.medice.selected}}selected{{/if}}
+														"
+												>{{this}}
+												</span>
+											{{/each}}
+											{{this.data.medice.afterText}}
+										{{/if}}
+										{{#if eq this.data.type 'changeDiceModifier'}}
+											установил модификатор для игральных костей: {{this.data.modifier}}
 										{{/if}}
 										{{#if eq this.data.type 'status'}}
 											{{{highlightUser this.message}}}

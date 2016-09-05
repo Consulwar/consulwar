@@ -188,6 +188,7 @@ Meteor.methods({
 				var dices = 1;
 				var edges = 6;
 				var modifier = 0;
+				var roomModifier = room.diceModifier || 0;
 
 				if (message != '/d') {
 					var dice = reg.exec(message);
@@ -201,8 +202,8 @@ Meteor.methods({
 					if (edges < 2 || edges > 100) {
 						throw new Meteor.Error('Вы можете бросить кости с кол-вом граней от 2 до 100');
 					}
-					if (modifier >= Math.abs(edges)) {
-						throw new Meteor.Error('Модуль модификатора должен быть меньше кол-ва граней');
+					if (Math.abs(modifier) >= 100) {
+						throw new Meteor.Error('Модификатор должен находиться в диапазоне от -100 до 100');
 					}
 				}
 
@@ -212,13 +213,42 @@ Meteor.methods({
 						dices: {
 							amount: dices,
 							values: _.map(_.range(dices), function() {
-								return Math.max(Math.min(_.random(1, edges) + modifier, edges), 1);
+								return Math.max(
+									Math.min(
+										_.random(1, edges) + modifier + roomModifier, 
+										edges
+									),
+									1
+								);
 							})
 						},
+						modifier: modifier,
+						roomModifier: roomModifier,
 						edges: edges
 					}
 				};
 				stats['chat.dice'] = 1;
+
+			} else if (message.indexOf('/med') === 0) {
+				var meDiceReg = new RegExp(/^\/med ([^#]*)#(.+#.+)+#([^#]*)$/);
+				var meDice = meDiceReg.exec(message);
+
+				if (!meDice || !meDice[2]) {
+					throw new Meteor.Error('Введите #несколько#вариантов# развития событий');
+				}
+
+				var variables = meDice[2].split("#");
+
+				set.data = {
+					type: 'medice',
+					medice: {
+						preText: meDice[1] || '',
+						afterText: meDice[3] || '',
+						variables: variables,
+						selected: _.random(0, variables.length-1)
+					}
+				};
+				stats['chat.medice'] = 1;
 
 			} else if (message.indexOf('/me') === 0) {
 				set.data = {
@@ -855,6 +885,71 @@ Meteor.methods({
 		var stats = {};
 		stats['chat.spent.credits'] = credits;
 		Game.Statistic.incrementUser(user._id, stats);
+	},
+
+	'chat.changeDiceModifierForRoom': function(roomName, modifier) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		checkHasGlobalBan(user._id);
+
+		console.log('chat.changeDiceModifierForRoom: ', new Date(), user.username);
+
+		check(roomName, String);
+		check(modifier, Match.Integer);
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName,
+			deleted: { $ne: true }
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Комната с именем ' + roomName + ' не существует');
+		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
+
+		if (user.role != 'admin' && room.owner != user._id) {
+			throw new Meteor.Error('Вы не можете изменять модификатор в этой комнате');
+		}
+
+		Game.Chat.Room.Collection.update({
+			_id: room._id
+		}, {
+			$set: {
+				diceModifier: modifier
+			}
+		});
+
+		var message = {
+			room_id: room._id,
+			user_id: user._id,
+			username: user.username,
+			alliance: user.alliance,
+			rating: user.rating,
+			data: {
+				type: 'changeDiceModifier',
+				modifier: modifier
+			},
+			timestamp: Game.getCurrentTime()
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.addModeratorToRoom': function(roomName, username) {

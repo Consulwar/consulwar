@@ -402,6 +402,26 @@ var removeModerator = function(roomName, username) {
 	});
 };
 
+var changeDiceModifierForRoom = function(roomName, modifier) {
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!modifier) {
+		Notifications.error('Укажите модификатор');
+		return;
+	}
+
+	Meteor.call('chat.changeDiceModifierForRoom', roomName, modifier, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Модификатор установлен');
+		}
+	});
+};
+
 var execClientCommand = function(message) {
 	// show help
 	if (message.indexOf('/help') === 0) {
@@ -456,6 +476,14 @@ var execClientCommand = function(message) {
 	// remove moderator
 	else if (message.indexOf('/remove moderator') === 0) {
 		removeModerator(Router.current().params.room, message.substr('/remove moderator'.length).trim());
+		return true;
+	}
+	// set modifier for dices of room
+	else if (message.indexOf('/d mod') === 0) {
+		changeDiceModifierForRoom(
+			Router.current().params.room, 
+			parseInt(message.substr('/d mod'.length).trim())
+		);
 		return true;
 	}
 

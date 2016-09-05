@@ -307,6 +307,14 @@ Template.achievements.helpers({
 
 	rank: function(rating) {
 		return Game.User.getLevel(rating);
+	},
+
+	tooltip: function(achievement) {
+		return {
+			'data-tooltip': Blaze.toHTMLWithData(Template.achievementTooltip, {
+				achievement: achievement
+			})
+		};
 	}
 });
 

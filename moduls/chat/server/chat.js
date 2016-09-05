@@ -784,13 +784,13 @@ Meteor.methods({
 
 		var resources = Game.Resources.getValue();
 
-		if (resources.credits.amount < Meteor.settings.chat.messages.freeChatPrice) {
+		if (resources.credits.amount < Game.Chat.Messages.FREE_CHAT_PRICE) {
 			throw new Meteor.Error('Недостаточно средств');
 		}
 
-		Game.Resources.spend({ credits: Meteor.settings.chat.messages.freeChatPrice });
+		Game.Resources.spend({ credits: Game.Chat.Messages.FREE_CHAT_PRICE });
 
-		Game.Payment.Expense.log(Meteor.settings.chat.messages.freeChatPrice, 'chatFree');
+		Game.Payment.Expense.log(Game.Chat.Messages.FREE_CHAT_PRICE, 'chatFree');
 
 		Meteor.users.update({
 			_id: user._id
@@ -1341,7 +1341,7 @@ Meteor.methods({
 			sort: {
 				timestamp: -1
 			},
-			limit: Meteor.settings.chat.messages.loadCount
+			limit: Game.Chat.Messages.LOAD_COUNT
 		}).fetch();
 	},
 
@@ -1624,7 +1624,7 @@ Meteor.publish('chat', function (roomName) {
 				sort: {
 					timestamp: -1
 				},
-				limit: Meteor.settings.chat.messages.loadCount
+				limit: Game.Chat.Messages.LOAD_COUNT
 			});
 		} else {
 			return null;

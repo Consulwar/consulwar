@@ -68,7 +68,7 @@ Game.Cards.activate = function(item, user) {
 		var set = {};
 		set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
 
-		Game.Cards.Collection.update({
+		Game.Cards.Collection.upsert({
 			user_id: user._id
 		}, {
 			$set: set

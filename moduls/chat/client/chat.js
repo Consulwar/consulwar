@@ -730,9 +730,11 @@ Template.chat.events({
 		}
 
 		isSending.set(true);
+		t.$('input[type="submit"]')[0].disabled = true;
 
 		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
 			isSending.set(false);
+			t.$('input[type="submit"]')[0].disabled = false;
 			if (err) {
 				var errorMessage = err.error;
 				if (_.isNumber(err.reason)) {

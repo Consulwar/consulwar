@@ -1,31 +1,36 @@
 side-statistic-icon(name, background)
 	.{name}-icon
 		background-image url("/img/game/side/" name ".png")
-		-webkit-filter grayscale(1)
-		filter grayscale(1)
-		width 70px
-		height 70px
-		background-position 5px center
 
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
+		&.active:after
+			background-color background
 
-		&.active
-			-webkit-filter brightness(1)
-			filter brightness(1)
-			background-color #090e14
-			&:after
-				background-color background
-				position absolute
-				top 0
-				left 0
-				content " "
-				height 70px
-				width 5px
 
 .content
 	.side_menu
+		.general-icon, .science-icon, .cosmos-icon, .battle-icon, .communication-icon
+			-webkit-filter grayscale(1)
+			filter grayscale(1)
+			width 70px
+			height 70px
+			background-position 5px center
+
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+			&.active
+				-webkit-filter brightness(1)
+				filter brightness(1)
+				background-color #090e14
+				&:after
+					position absolute
+					top 0
+					left 0
+					content " "
+					height 70px
+					width 5px
+
 		side-statistic-icon(general, #42c7ff)
 		side-statistic-icon(science, #a6b131)
 		side-statistic-icon(cosmos, #d6645e)
@@ -95,7 +100,7 @@ side-statistic-icon(name, background)
 					&:not(.active)
 						color red
 
-			.powerOfVoice
+			.voicePower
 				display flex
 				width 200px
 				height 70px

@@ -19,7 +19,7 @@ Game.Rating.showPage = function() {
 	if (!selectedUser) {
 		this.render('loading', { to: 'content' });
 	}
-	var countPerPage = 20;
+	var countPerPage = Game.Statistic.COUNT_PER_PAGE;
 	var user = Meteor.user(); 
 	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
@@ -64,7 +64,7 @@ Game.Rating.showPage = function() {
 		this.render('empty', { to: 'detailStatistic' });
 	}
 	var pageChanged = (pageNumber != lastPageNumber || statisticType != lastStatisticType);
-	if (pageNumber && statisticType && pageChanged && statisticType) {
+	if (pageChanged && pageNumber && statisticType) {
 		isLoading.set(true);
 		// show required page
 		Meteor.call('statistic.getPageInRating', statisticType, pageNumber, countPerPage, function(err, data) {
@@ -87,7 +87,7 @@ Game.Rating.showPage = function() {
 				}
 
 				if (selectedUserName && !selectedUserContain && (!selectedUser || statisticType != lastStatisticType)) {
-					showUser({
+					redirectToUser({
 						userName: selectedUserName, 
 						showDetailStatistic: showDetailStatistic, 
 						statisticType: statisticType,
@@ -105,7 +105,7 @@ Game.Rating.showPage = function() {
 	} 
 
 	if (!pageNumber || !statisticType) {
-		showUser({
+		redirectToUser({
 			userName: selectedUserName || user.username, 
 			showDetailStatistic: showDetailStatistic, 
 			statisticType: statisticType || "general",
@@ -155,7 +155,7 @@ var renderConsulInfo = function(userName, page, statisticType) {
 };
 
 var renderAchievements = function(selectedUser, statisticType) {
-	if (selectedUser && selectedUser) {
+	if (selectedUser) {
 		this.render('achievements', { 
 			to: 'achievements',
 			data: {
@@ -187,7 +187,7 @@ var renderRating = function(userName, countPerPage, countTotal, users, statistic
 	renderAchievements.call(this, selectedUser, statisticType);
 };
 //userName, showDetailStatistic, statisticType, lastPageNumber
-var showUser = function(options) {
+var redirectToUser = function(options) {
 	if (!options.userName){
 		return Notifications.error('Введите имя пользователя');
 	}
@@ -243,7 +243,7 @@ Template.rating.helpers({
 });
 
 var searchUser = function (e , t, userName) {
-	showUser({
+	redirectToUser({
 		userName: userName || t.$('input[name="searchUserInRating"]').val(), 
 		showDetailStatistic: false, 
 		statisticType: t.data.statisticType,
@@ -277,13 +277,9 @@ Template.achievements.helpers({
 
 		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
-			var isActive = user.achievements && user.achievements[key];
-			var level = isActive && user.achievements[key].level;
-			var maxLevel = item.maxLevel();
-
+			var isGained = user.achievements && user.achievements[key];
+			var level = isGained && user.achievements[key].level;
 			var nextLevel = item.nextLevel(level || 0);
-			var nextLevelDescription = item.description(nextLevel);
-			var nextLevelName = item.name(nextLevel);
 			
 			if (item.statisticType == this.statisticType ||
 				(!item.statisticType && this.statisticType == 'general') //уберу эту проверку когда добавлю группы ачивкам
@@ -293,12 +289,12 @@ Template.achievements.helpers({
 					name: item.name(level),
 					description: item.description(level),
 					currentLevel: level,
-					maxLevel: maxLevel,
+					maxLevel: item.maxLevel(),
 					nextLevel: nextLevel,
-					nextLevelDescription: nextLevelDescription,
-					nextLevelName: nextLevelName,
+					nextLevelDescription: item.description(nextLevel),
+					nextLevelName: item.name(nextLevel),
 					effect: item.effect,
-					isActive: isActive
+					isGained: isGained
 				});
 			}
 		}

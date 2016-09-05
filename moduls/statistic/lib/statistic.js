@@ -68,4 +68,6 @@ Game.Statistic = {
 	}
 };
 
+initStatisticConfigLib();
+
 };

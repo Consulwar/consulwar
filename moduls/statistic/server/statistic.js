@@ -190,7 +190,11 @@ Meteor.methods({
 		check(selectedUserName, String);
 		check(type, String);
 		
-		var selectedUser = Meteor.users.findOne({ username: selectedUserName });
+		var selectedUser = Meteor.users.findOne({
+			username: selectedUserName
+		}, {
+			fields: { rating: 1 }
+		});
 			
 		if (!selectedUser) {
 			throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
@@ -201,10 +205,6 @@ Meteor.methods({
 		var position;
 		var total;
 		var sortField = Game.Statistic.getSortFieldForType(type).field;
-
-		if (!sortField) {
-			throw new Meteor.Error('Несуществующий тип статистики');
-		}
 
 		if (type == "general") {
 			position = Meteor.users.find({
@@ -245,7 +245,7 @@ Meteor.methods({
 		};
 	},
 
-	'statistic.getPageInRating': function(type, page, count) {
+	'statistic.getPageInRating': function(type, page, countPerPage) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -259,19 +259,14 @@ Meteor.methods({
 		console.log('statistic.getPageInRating: ', new Date(), user.username);
 
 		check(page, Match.Integer);
-		check(count, Match.Integer);
+		check(countPerPage, Match.Integer);
 		check(type, String);
 
-		if (count > 100) {
+		if (countPerPage > Game.Statistic.COUNT_PER_PAGE) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
 		var sortField = Game.Statistic.getSortFieldForType(type).field;
-
-		if (!sortField) {
-			throw new Meteor.Error('Несуществующий тип статистики');
-		}
-
 		var result;
 
 		if (type == "general") {
@@ -283,8 +278,8 @@ Meteor.methods({
 					rating: 1
 				},
 				sort: {rating: -1},
-				skip: (page > 0) ? (page - 1) * count : 0,
-				limit: count
+				skip: (page > 0) ? (page - 1) * countPerPage : 0,
+				limit: countPerPage
 			});
 		} else {
 			var selector = {};
@@ -301,8 +296,8 @@ Meteor.methods({
 			result = Game.Statistic.Collection.find(selector, {
 				fields: fields,
 				sort: sort,
-				skip: (page > 0) ? (page - 1) * count : 0,
-				limit: count
+				skip: (page > 0) ? (page - 1) * countPerPage : 0,
+				limit: countPerPage
 			});
 		}
 

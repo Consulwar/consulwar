@@ -25,6 +25,9 @@
 		"isInviteRequired": true,
 		"recaptcha": {
 			"publickey": "ABCDEFGHIJKLMNOP"
+		},
+		"statistic": {
+			"countPerPage": 20
 		}
 	},
 	"recaptcha": {

@@ -197,6 +197,10 @@ var menu = {
 				additionalArea: 'calibrator',
 				url: firstItemGroupURL(Game.Mutual.items.research),
 				items: Game.Mutual.items.research
+			},
+			statistics: {
+				name: 'Статистика',
+				url: Router.routes.statistics.path({ group: 'general' })
 			}
 		}
 	},
@@ -229,7 +233,7 @@ var menu = {
 
 var getMenu = function(menu, isActive) {
 	var currentRouteName = Router.current().route.getName();
-	menu = _.omit(menu , "statistics");
+	//menu = _.omit(menu , "statistics");
 	return _.map(menu, function(menu, key) {
 		return {
 			engName: key,

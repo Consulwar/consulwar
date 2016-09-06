@@ -25,7 +25,7 @@ Game.Rating.showPage = function() {
 	var pageNumber = parseInt( this.params.page, 10 );
 	var statisticType = this.params.group;
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
-	var showDetailStatistic = false;
+	var detailStatisticTab;
 
 	if (hash && statisticType && pageNumber) {
 
@@ -39,9 +39,9 @@ Game.Rating.showPage = function() {
 		}
 
 		if (hash[1] == 'detail') {
-			var tab = hash[2];
+			detailStatisticTab = hash[2];
 			if (selectedUserName == selectedUserName && detailStatisticData) {
-				renderDetailStatistic.call(this, selectedUserName, tab, detailStatisticData);
+				renderDetailStatistic.call(this, selectedUserName, detailStatisticTab, detailStatisticData);
 				return;
 			}
 
@@ -53,10 +53,10 @@ Game.Rating.showPage = function() {
 					Notifications.error('Не удалось загрузить статистику пользователя', err.error);
 				} else {
 					detailStatisticData = data;
-					renderDetailStatistic.call(self, selectedUserName, tab, detailStatisticData);
+					renderDetailStatistic.call(self, selectedUserName, detailStatisticTab, detailStatisticData);
 				}
 			});
-			showDetailStatistic = true;
+			detailStatisticTab = 'development';
 		} else {
 			this.render('empty', { to: 'detailStatistic' });
 		}
@@ -87,9 +87,9 @@ Game.Rating.showPage = function() {
 				}
 
 				if (selectedUserName && !selectedUserContain && (!selectedUser || statisticType != lastStatisticType)) {
-					redirectToUser({
+					Game.Statistic.redirectToUser({
 						userName: selectedUserName, 
-						showDetailStatistic: showDetailStatistic, 
+						detailStatisticTab: detailStatisticTab, 
 						statisticType: statisticType,
 						lastPageNumber: lastPageNumber,
 						countPerPage: countPerPage
@@ -105,9 +105,9 @@ Game.Rating.showPage = function() {
 	} 
 
 	if (!pageNumber || !statisticType) {
-		redirectToUser({
+		Game.Statistic.redirectToUser({
 			userName: selectedUserName || user.username, 
-			showDetailStatistic: showDetailStatistic, 
+			detailStatisticTab: detailStatisticTab, 
 			statisticType: statisticType || "general",
 			lastPageNumber: lastPageNumber,
 			countPerPage: countPerPage
@@ -186,8 +186,16 @@ var renderRating = function(userName, countPerPage, countTotal, users, statistic
 
 	renderAchievements.call(this, selectedUser, statisticType);
 };
-//userName, showDetailStatistic, statisticType, lastPageNumber
-var redirectToUser = function(options) {
+
+//userName, detailStatisticTab, statisticType, lastPageNumber
+Game.Statistic.userHash = function (userName, detailStatisticTab) {
+	return userName + ( detailStatisticTab 
+		? "/detail/" + detailStatisticTab 
+		: ""
+	)
+};
+
+Game.Statistic.redirectToUser = function(options) {
 	if (!options.userName){
 		return Notifications.error('Введите имя пользователя');
 	}
@@ -203,7 +211,7 @@ var redirectToUser = function(options) {
 			'statistics',
 			{ page: options.lastPageNumber, group: options.statisticType },
 			{ 
-				hash: options.userName + ( options.showDetailStatistic ? '/detail' : '' ),
+				hash: Game.Statistic.userHash(options.userName, options.detailStatisticTab),
 				replaceState: true
 			}
 		);
@@ -227,7 +235,7 @@ var redirectToUser = function(options) {
 				'statistics',
 				{ page: userPage, group: options.statisticType || 'general' },
 				{
-					hash: options.userName + ( options.showDetailStatistic ? '/detail' : '' ),
+					hash: Game.Statistic.userHash(options.userName, options.detailStatisticTab),
 					replaceState: true
 				} 
 			);
@@ -243,9 +251,8 @@ Template.rating.helpers({
 });
 
 var searchUser = function (e , t, userName) {
-	redirectToUser({
-		userName: userName || t.$('input[name="searchUserInRating"]').val(), 
-		showDetailStatistic: false, 
+	Game.Statistic.redirectToUser({
+		userName: userName || t.$('input[name="searchUserInRating"]').val(),
 		statisticType: t.data.statisticType,
 		lastPageNumber: lastPageNumber,
 		countPerPage: t.data.countPerPage
@@ -279,7 +286,7 @@ Template.achievements.helpers({
 			var item = Game.Achievements.items[key];
 			var isGained = user.achievements && user.achievements[key];
 			var level = isGained && user.achievements[key].level;
-			var nextLevel = item.nextLevel(level || 0);
+			var nextLevel = item.nextLevel(level);
 			
 			if (item.statisticType == this.statisticType ||
 				(!item.statisticType && this.statisticType == 'general') //уберу эту проверку когда добавлю группы ачивкам

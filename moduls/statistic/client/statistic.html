@@ -106,7 +106,12 @@
 			</a>
 			<a
 				class="show_detail_statistic"
-				href="{{pathFor 'statistics' group=statisticType page=ratingPage hash=(sum selectedUser.username '/detail/development')}}"
+				href="{{
+					pathFor 'statistics' 
+					group=statisticType 
+					page=ratingPage 
+					hash=(Game.Statistic.userHash selectedUser.username 'development')
+				}}"
 				data-tooltip="Смотреть подробную статистику"
 			>
 			</a>
@@ -203,7 +208,7 @@
 		}}
 			<a 
 				class="tab {{#if (eq ../activeTab path)}}active{{/if}}"
-				href="#{{../userName}}/detail/{{path}}"
+				href="#{{Game.Statistic.userHash ../userName path}}"
 			>
 				{{title}}
 			</a>

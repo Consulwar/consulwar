@@ -63,16 +63,22 @@ game.Achievement = function(options) {
 		}
 	}).bind(this);
 
-	if (Game.Achievements.items[options.engName]) {
-		throw new Meteor.Error('Ошибка в контенте', 'Дублируется достижение ' + options.engName);
+	if (Game.Achievements.items[options.group][options.engName]) {
+		throw new Meteor.Error('Ошибка в контенте', 'Дублируется достижение ' + options.group + ' ' + options.engName);
 	}
 
-	Game.Achievements.items[options.engName] = this;
+	Game.Achievements.items[options.group][options.engName] = this;
 };
 game.extend(game.Achievement, game.Item);
 
 Game.Achievements = {
-	items: {},
+	items: {
+		general: {},
+		science: {},
+		cosmos: {},
+		battle: {},
+		communication: {}
+	},
 
 	getValue: function() {
 		return Meteor.user().achievements;
@@ -82,9 +88,11 @@ Game.Achievements = {
 		var result = [];
 		var value = Game.Achievements.getValue();
 
-		for (var key in value) {
-			if (Game.Achievements.items[key] && value[key] && value[key].level > 0) {
-				result.push(Game.Achievements.items[key]);
+		for (var group in Game.Achievements.items) {
+			for (var key in value) {
+				if (Game.Achievements.items[group][key] && value[group][key] && value[group][key].level > 0) {
+					result.push(Game.Achievements.items[group][key]);
+				}
 			}
 		}
 

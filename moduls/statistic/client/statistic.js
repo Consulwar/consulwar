@@ -281,15 +281,15 @@ Template.rating.events({
 Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
+		console.log(user.achievements);
 
-		for (var key in Game.Achievements.items) {
-			var item = Game.Achievements.items[key];
-			var level = item.currentLevel();
+		for (var key in Game.Achievements.items[this.statisticType]) {
+			console.log(this.statisticType, key);
+			var item = Game.Achievements.items[this.statisticType][key];
+			var level = item.currentLevel(user.achievements || {});
 			var nextLevel = item.nextLevel();
 			
-			if (item.statisticType == this.statisticType ||
-				(!item.statisticType && this.statisticType == 'general') //уберу эту проверку когда добавлю группы ачивкам
-			) {
+			if (item.group == this.statisticType) {
 				result.push({
 					engName: item.engName,
 					name: item.name(level),

@@ -10,7 +10,7 @@ var selectedUserName;
 var lastPageNumber;
 var users = [];
 var countTotal;
-var lastStatisticType;
+var laststatisticGroup;
 var selectedUser;
 
 Game.Rating = {};
@@ -23,19 +23,19 @@ Game.Rating.showPage = function() {
 	var user = Meteor.user(); 
 	var self = this;
 	var pageNumber = parseInt( this.params.page, 10 );
-	var statisticType = this.params.group;
+	var statisticGroup = this.params.group;
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
 	var detailStatisticTab;
 
-	if (hash && statisticType && pageNumber) {
+	if (hash && statisticGroup && pageNumber) {
 
 		if (hash[0] != selectedUserName) {
 			selectedUserName = hash[0];
-			renderConsulInfo.call(this, selectedUserName, pageNumber, statisticType);
+			renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
 		}
 
-		if (statisticType == lastStatisticType) {
-			renderRating.call(this, selectedUserName, countPerPage, countTotal, users, statisticType);
+		if (statisticGroup == laststatisticGroup) {
+			renderRating.call(this, selectedUserName, countPerPage, countTotal, users, statisticGroup);
 		}
 
 		if (hash[1] == 'detail') {
@@ -63,18 +63,18 @@ Game.Rating.showPage = function() {
 	} else {
 		this.render('empty', { to: 'detailStatistic' });
 	}
-	var pageChanged = (pageNumber != lastPageNumber || statisticType != lastStatisticType);
-	if (pageChanged && pageNumber && statisticType) {
+	var pageChanged = (pageNumber != lastPageNumber || statisticGroup != laststatisticGroup);
+	if (pageChanged && pageNumber && statisticGroup) {
 		isLoading.set(true);
 		// show required page
-		Meteor.call('statistic.getPageInRating', statisticType, pageNumber, countPerPage, function(err, data) {
+		Meteor.call('statistic.getPageInRating', statisticGroup, pageNumber, countPerPage, function(err, data) {
 			isLoading.set(false);
 			if (err) {
 				Notifications.error('Не удалось загрузить страницу', err.error);
 			} else {
 				var skip = (pageNumber - 1) * countPerPage;
 				var selectedUserContain = false;
-				var sortField = Game.Statistic.getSortFieldForType(statisticType).field;
+				var sortField = Game.Statistic.getSortFieldForType(statisticGroup).field;
 				users = data.users;
 				countTotal = data.count;
 
@@ -86,29 +86,29 @@ Game.Rating.showPage = function() {
 					}
 				}
 
-				if (selectedUserName && !selectedUserContain && (!selectedUser || statisticType != lastStatisticType)) {
+				if (selectedUserName && !selectedUserContain && (!selectedUser || statisticGroup != laststatisticGroup)) {
 					Game.Statistic.redirectToUser({
 						userName: selectedUserName, 
 						detailStatisticTab: detailStatisticTab, 
-						statisticType: statisticType,
+						statisticGroup: statisticGroup,
 						lastPageNumber: lastPageNumber,
 						countPerPage: countPerPage
 					});
 				}
 
-				renderRating.call(self, selectedUserName, countPerPage, countTotal, users, statisticType);
+				renderRating.call(self, selectedUserName, countPerPage, countTotal, users, statisticGroup);
 
-				lastStatisticType = statisticType;
+				laststatisticGroup = statisticGroup;
 				lastPageNumber = pageNumber;
 			}
 		});
 	} 
 
-	if (!pageNumber || !statisticType) {
+	if (!pageNumber || !statisticGroup) {
 		Game.Statistic.redirectToUser({
 			userName: selectedUserName || user.username, 
 			detailStatisticTab: detailStatisticTab, 
-			statisticType: statisticType || "general",
+			statisticGroup: statisticGroup || "general",
 			lastPageNumber: lastPageNumber,
 			countPerPage: countPerPage
 		});
@@ -131,7 +131,7 @@ var renderDetailStatistic = function(userName, activeTab, detailStatisticData){
 	});
 };
 
-var renderConsulInfo = function(userName, page, statisticType) {
+var renderConsulInfo = function(userName, page, statisticGroup) {
 	var self = this;
 	isLoading.set(true);
 	Meteor.call('statistic.getUserInfo', userName, function(err, data) {
@@ -144,29 +144,29 @@ var renderConsulInfo = function(userName, page, statisticType) {
 				to: 'consulInfo',
 				data: {
 					selectedUser: selectedUser,
-					statisticType: statisticType,
+					statisticGroup: statisticGroup,
 					ratingPage: page
 				} 
 			});
 
-			renderAchievements.call(self, selectedUser, statisticType);
+			renderAchievements.call(self, selectedUser, statisticGroup);
 		}
 	});
 };
 
-var renderAchievements = function(selectedUser, statisticType) {
+var renderAchievements = function(selectedUser, statisticGroup) {
 	if (selectedUser) {
 		this.render('achievements', { 
 			to: 'achievements',
 			data: {
 				selectedUser: selectedUser,
-				statisticType: statisticType
+				statisticGroup: statisticGroup
 			}
 		});
 	}
 };
 
-var renderRating = function(userName, countPerPage, countTotal, users, statisticType) {
+var renderRating = function(userName, countPerPage, countTotal, users, statisticGroup) {
 	this.render('statistic', { 
 		to: 'content'
 	});
@@ -178,16 +178,15 @@ var renderRating = function(userName, countPerPage, countTotal, users, statistic
 			countPerPage: countPerPage,
 			users: users,
 			countTotal: countTotal,
-			statisticType: statisticType
+			statisticGroup: statisticGroup
 		} 
 	});
 
 	Meteor.setTimeout(scrollToSelectedUser);
 
-	renderAchievements.call(this, selectedUser, statisticType);
+	renderAchievements.call(this, selectedUser, statisticGroup);
 };
 
-//userName, detailStatisticTab, statisticType, lastPageNumber
 Game.Statistic.userHash = function (userName, detailStatisticTab) {
 	return userName + ( detailStatisticTab 
 		? "/detail/" + detailStatisticTab 
@@ -206,10 +205,10 @@ Game.Statistic.redirectToUser = function(options) {
 		return options.userName == user.username; 
 	});
 
-	if (user && options.statisticType == lastStatisticType && options.lastPageNumber) {
+	if (user && options.statisticGroup == laststatisticGroup && options.lastPageNumber) {
 		Router.go(
 			'statistics',
-			{ page: options.lastPageNumber, group: options.statisticType },
+			{ page: options.lastPageNumber, group: options.statisticGroup },
 			{ 
 				hash: Game.Statistic.userHash(options.userName, options.detailStatisticTab),
 				replaceState: true
@@ -221,7 +220,7 @@ Game.Statistic.redirectToUser = function(options) {
 
 	isLoading.set(true);
 
-	Meteor.call('statistic.getUserPositionInRating', options.statisticType, options.userName, function(err, data) {
+	Meteor.call('statistic.getUserPositionInRating', options.statisticGroup, options.userName, function(err, data) {
 		isLoading.set(false);
 		if (err) {
 			Notifications.error('Не удалось загрузить страницу', err.error);
@@ -233,7 +232,7 @@ Game.Statistic.redirectToUser = function(options) {
 
 			Router.go(
 				'statistics',
-				{ page: userPage, group: options.statisticType || 'general' },
+				{ page: userPage, group: options.statisticGroup || 'general' },
 				{
 					hash: Game.Statistic.userHash(options.userName, options.detailStatisticTab),
 					replaceState: true
@@ -253,7 +252,7 @@ Template.rating.helpers({
 var searchUser = function (e , t, userName) {
 	Game.Statistic.redirectToUser({
 		userName: userName || t.$('input[name="searchUserInRating"]').val(),
-		statisticType: t.data.statisticType,
+		statisticGroup: t.data.statisticGroup,
 		lastPageNumber: lastPageNumber,
 		countPerPage: t.data.countPerPage
 	});
@@ -284,12 +283,10 @@ Template.achievements.helpers({
 
 		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
-			var level = item.currentLevel();
-			var nextLevel = item.nextLevel();
+			var level = item.currentLevel(user.achievements || null);
+			var nextLevel = item.nextLevel(user.achievements || null);
 			
-			if (item.statisticType == this.statisticType ||
-				(!item.statisticType && this.statisticType == 'general') //уберу эту проверку когда добавлю группы ачивкам
-			) {
+			if (item.group == this.statisticGroup) {
 				result.push({
 					engName: item.engName,
 					name: item.name(level),

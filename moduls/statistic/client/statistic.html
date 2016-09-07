@@ -12,17 +12,19 @@
 
 <template name="achievements">
 	<div class="achievements">
-		<img 
-			class="{{#if gt selectedUser.rating 25000}}active{{/if}}"
-			src="/img/game/statistics/achievements/rank{{or (Game.User.getLevel selectedUser.rating) 1}}.png"
-			alt="Ранг"
-			data-tooltip="{{useTemplate 
-				'rankTooltip' 
-				rating=selectedUser.rating 
-				rank=(Game.User.getLevel selectedUser.rating)
-				nextRank=(sum 1 (Game.User.getLevel selectedUser.rating))
-			}}"
-		/>
+		{{#if eq statisticGroup 'general'}}
+			<img 
+				class="{{#if gt selectedUser.rating 25000}}active{{/if}}"
+				src="/img/game/statistics/achievements/rank{{or (Game.User.getLevel selectedUser.rating) 1}}.png"
+				alt="Ранг"
+				data-tooltip="{{useTemplate 
+					'rankTooltip' 
+					rating=selectedUser.rating 
+					rank=(Game.User.getLevel selectedUser.rating)
+					nextRank=(sum 1 (Game.User.getLevel selectedUser.rating))
+				}}"
+			/>
+		{{/if}}
 		{{#each (achievements selectedUser)}}
 			<img 
 				class="{{#if this.currentLevel}}active{{/if}}"
@@ -129,7 +131,7 @@
 				class="show_detail_statistic"
 				href="{{
 					pathFor 'statistics' 
-					group=statisticType 
+					group=statisticGroup 
 					page=ratingPage 
 					hash=(Game.Statistic.userHash selectedUser.username 'development')
 				}}"
@@ -167,7 +169,7 @@
 				<tr class="header">
 					<th>Место</th>
 					<th>Ник</th>
-					<th>{{lookup (Game.Statistic.getSortFieldForType statisticType) 'title'}}</th>
+					<th>{{lookup (Game.Statistic.getSortFieldForType statisticGroup) 'title'}}</th>
 				</tr>
 			</table>
 			<div class="data">

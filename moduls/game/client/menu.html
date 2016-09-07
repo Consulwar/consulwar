@@ -27,7 +27,10 @@
 <template name="side_menu">
 	<ul class="side_menu">
 		{{#each sides}}
-			<li class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}">
+			<li 
+				class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}"
+				data-tooltip="{{this.tooltip}}"
+			>
 				<a href="{{getUrl this}}">{{this.name}}</a>
 			</li>
 		{{/each}}

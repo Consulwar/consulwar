@@ -168,18 +168,23 @@ var menu = {
 		doNotShowInGameMenu: true,
 		items: {
 			general: {
+				tooltip: "Общая статистика",
 				url: Router.routes.statistics.path({ group: 'general' })
 			},
 			science: {
+				tooltip: "Наука",
 				url: Router.routes.statistics.path({ group: 'science' })
 			},
 			cosmos: {
+				tooltip: "Космос",
 				url: Router.routes.statistics.path({ group: 'cosmos' })
 			},
 			battle: {
+				tooltip: "Война",
 				url: Router.routes.statistics.path({ group: 'battle' })
 			},
 			communication: {
+				tooltip: "Общение",
 				url: Router.routes.statistics.path({ group: 'communication' })
 			}
 		}
@@ -233,14 +238,13 @@ var menu = {
 };
 
 var getMenu = function(menu, isActive) {
-	var currentRouteName = Router.current().route.getName();
 	return _.map(menu, function(menu, key) {
 		return {
 			engName: key,
 			name: menu.name,
 			url: menu.url,
 			getUrl: menu.getUrl,
-			tooltip: menu.items,
+			tooltip: menu.tooltip,
 			isActive: isActive(menu, key),
 			additionalClass: menu.additionalClass
 		};

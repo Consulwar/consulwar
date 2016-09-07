@@ -192,7 +192,7 @@ Game.Statistic.userHash = function (userName, detailStatisticTab) {
 	return userName + ( detailStatisticTab 
 		? "/detail/" + detailStatisticTab 
 		: ""
-	)
+	);
 };
 
 Game.Statistic.redirectToUser = function(options) {

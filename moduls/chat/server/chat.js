@@ -228,8 +228,6 @@ Meteor.methods({
 								);
 							})
 						},
-						modifier: modifier,
-						roomModifier: roomModifier,
 						edges: edges
 					}
 				};

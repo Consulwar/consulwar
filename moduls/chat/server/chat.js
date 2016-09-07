@@ -233,6 +233,12 @@ Meteor.methods({
 						edges: edges
 					}
 				};
+				if (modifier) {
+					set.data.dice.modifier = modifier;
+				}
+				if (roomModifier) {
+					set.data.dice.roomModifier = roomModifier;
+				}
 				stats['chat.dice'] = 1;
 
 			} else if (message.indexOf('/med') === 0) {

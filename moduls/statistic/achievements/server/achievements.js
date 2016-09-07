@@ -22,26 +22,24 @@ Meteor.methods({
 		var result = null;
 		var set = null;
 
-		for (var group in completed) {
-			for (var key in completed[group]) {
-				if (!Game.Achievements.items[group][key]) {
-					continue;
+		for (var key in completed) {
+			if (!Game.Achievements.items[key]) {
+				continue;
+			}
+
+			var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
+			var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
+
+			if (completed[key] == progressLevel && progressLevel > currentLevel) {
+				if (!set) {
+					set = {};
+					result = {};
 				}
 
-				var currentLevel = Game.Achievements.items[group][key].currentLevel(achievements);
-				var progressLevel = Game.Achievements.items[group][key].progressLevel(statistic);
+				set['achievements.' + key + '.level'] = progressLevel;
+				set['achievements.' + key + '.timestamps.' + progressLevel] = Game.getCurrentTime();
 
-				if (completed[group][key] == progressLevel && progressLevel > currentLevel) {
-					if (!set) {
-						set = {};
-						result = {};
-					}
-
-					set['achievements.' + key + '.level'] = progressLevel;
-					set['achievements.' + key + '.timestamps.' + progressLevel] = Game.getCurrentTime();
-
-					result[key] = progressLevel;
-				}
+				result[key] = progressLevel;
 			}
 		}
 

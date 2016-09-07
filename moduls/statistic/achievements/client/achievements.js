@@ -23,19 +23,14 @@ Game.Statistic.Collection.find({ user_id: Meteor.userId() }).observeChanges({
 		var achievements = Game.Achievements.getValue();
 
 		var completed = null;
-		for (var group in Game.Achievements.items) {
-			for (var key in Game.Achievements.items) {
-				var currentLevel = Game.Achievements.items[group][key].currentLevel(achievements);
-				var progressLevel = Game.Achievements.items[group][key].progressLevel(statistic);
-				if (progressLevel > currentLevel) {
-					if (!completed) {
-						completed = {};
-					}
-					if (!completed[group]) {
-						completed[group] = {};
-					}
-					completed[group][key] = progressLevel;
+		for (var key in Game.Achievements.items) {
+			var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
+			var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
+			if (progressLevel > currentLevel) {
+				if (!completed) {
+					completed = {};
 				}
+				completed[key] = progressLevel;
 			}
 		}
 

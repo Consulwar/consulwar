@@ -165,6 +165,7 @@ var menu = {
 		name: 'Статистика',
 		routeName: ['general', 'science', 'cosmos', 'battle', 'communication'],
 		url: Router.routes.statistics.path({ group: 'general'}),
+		doNotShowInGameMenu: true,
 		items: {
 			general: {
 				url: Router.routes.statistics.path({ group: 'general' })
@@ -233,7 +234,6 @@ var menu = {
 
 var getMenu = function(menu, isActive) {
 	var currentRouteName = Router.current().route.getName();
-	//menu = _.omit(menu , "statistics");
 	return _.map(menu, function(menu, key) {
 		return {
 			engName: key,
@@ -258,6 +258,8 @@ Template.game_menu.helpers({
 	menu: function() {
 		return getMenu(menu, function(item) {
 			return item.routeName.indexOf(Router.current().route.getName()) != -1;
+		}).filter(function(item) {
+			return !menu[item.engName].doNotShowInGameMenu;
 		});
 	}
 });

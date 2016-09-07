@@ -284,9 +284,8 @@ Template.achievements.helpers({
 
 		for (var key in Game.Achievements.items) {
 			var item = Game.Achievements.items[key];
-			var isGained = user.achievements && user.achievements[key];
-			var level = isGained && user.achievements[key].level;
-			var nextLevel = item.nextLevel(level);
+			var level = item.currentLevel();
+			var nextLevel = item.nextLevel();
 			
 			if (item.statisticType == this.statisticType ||
 				(!item.statisticType && this.statisticType == 'general') //уберу эту проверку когда добавлю группы ачивкам
@@ -300,8 +299,7 @@ Template.achievements.helpers({
 					nextLevel: nextLevel,
 					nextLevelDescription: item.description(nextLevel),
 					nextLevelName: item.name(nextLevel),
-					effect: item.effect,
-					isGained: isGained
+					effect: item.effect
 				});
 			}
 		}

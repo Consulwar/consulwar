@@ -16,48 +16,39 @@ Game.User = {
 		return 'common/1';
 	},
 
+	levels: [
+		{ rating: 0, name: 'Новичек' },
+		{ rating: 25000, name: 'Консул' },
+		{ rating: 100000, name: 'Правитель' },
+		{ rating: 500000, name: 'Император' },
+		{ rating: 2500000, name: 'Великий' },
+		{ rating: 10000000, name: 'Высший' },
+		{ rating: 25000000, name: 'Непогрешимый' },
+		{ rating: 50000000, name: 'Лик всемогущего' }
+	],
+
 	getLevel: function(rating) {
 		rating = _.isNumber(rating) ? rating : Meteor.user().rating;
 
-		if (!rating || rating < 25000) {
-			return 0;
-		} else if (rating < 100000) {
-			return 1;
-		} else if (rating < 500000) {
-			return 2;
-		} else if (rating < 2500000) {
-			return 3;
-		} else if (rating < 10000000) {
-			return 4;
-		} else if (rating < 25000000) {
-			return 5;
-		} else if (rating < 50000000) {
-			return 6;
-		} else {
-			return 7;
+		for (var level = 0; level < this.levels.length; level++) {
+			if (rating < this.levels[level + 1].rating) {
+				return level;
+			}
 		}
+	},
+
+	getRatingForLevel: function(level) {
+		level = _.isNumber(level) ? level : 0;
+		return this.levels[level].rating;
+	},
+
+	getMaxLevel: function() {
+		return this.levels.length - 1;
 	},
 
 	getLevelName: function(rating) {
 		rating = _.isNumber(rating) ? rating : Meteor.user().rating;
-
-		if (!rating || rating < 25000) {
-			return 'Новичек';
-		} else if (rating < 100000) {
-			return 'Консул';
-		} else if (rating < 500000) {
-			return 'Правитель';
-		} else if (rating < 2500000) {
-			return 'Император';
-		} else if (rating < 10000000) {
-			return 'Великий';
-		} else if (rating < 25000000) {
-			return 'Высший';
-		} else if (rating < 50000000) {
-			return 'Непогрешимый';
-		} else {
-			return 'Лик всемогущего';
-		}
+		return this.levels[this.getLevel(rating)].name;
 	}
 };
 

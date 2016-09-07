@@ -14,22 +14,45 @@
 	<div class="achievements">
 		<img 
 			class="{{#if gt selectedUser.rating 25000}}active{{/if}}"
-			data-tooltip="{{rank selectedUser.rating}} ранг"
-			src="/img/game/battle/statistics/{{or (rank selectedUser.rating) 1}}.png"
+			src="/img/game/statistics/achievements/rank{{or (Game.User.getLevel selectedUser.rating) 1}}.png"
 			alt="Ранг"
+			data-tooltip="{{useTemplate 
+				'rankTooltip' 
+				rating=selectedUser.rating 
+				rank=(Game.User.getLevel selectedUser.rating)
+				nextRank=(sum 1 (Game.User.getLevel selectedUser.rating))
+			}}"
 		/>
 		{{#each (achievements selectedUser)}}
 			<img 
-				class="{{#if this.isGained}}active{{/if}}"
+				class="{{#if this.currentLevel}}active{{/if}}"
 				src="
-					/img/game/achievements/{{this.engName}}
+					/img/game/statistics/achievements/{{this.engName}}
 					{{#if gt this.maxLevel 1}}{{or this.currentLevel 1}}{{/if}}.png
 					" 
 				alt="{{this.name}}"
-				{{tooltip this}}
+				data-tooltip="{{useTemplate 'achievementTooltip' achievement=this}}"
 			/>
 		{{/each}}
 	</div>
+</template>
+
+<template name="rankTooltip">
+	{{#if this.rank}}
+		<div class="title">{{Game.User.getLevelName this.rating}}</div>
+		<div class="text">Рейтинг {{formatNumber (Game.User.getRatingForLevel this.rank)}}</div>
+		<div class="effect">+{{this.rank}} {{declension this.rank "планет" "а" "ы" ""}}</div>
+		<div class="effect">+{{this.rank}} к силе голоса</div>
+	{{/if}}
+	{{#if (gt Game.User.getMaxLevel this.rank)}}
+		{{#if this.rank}}
+			<div class="next_level">Следующий уровень:</div>
+		{{/if}}
+		<div class="title">{{Game.User.getLevelName (Game.User.getRatingForLevel this.nextRank)}}</div>
+		<div class="text">Рейтинг {{formatNumber (Game.User.getRatingForLevel this.nextRank)}}</div>
+		<div class="effect">+{{this.nextRank}} {{declension this.nextRank "планет" "а" "ы" ""}}</div>
+		<div class="effect">+{{this.nextRank}} к силе голоса</div>
+	{{/if}}
 </template>
 
 <template name="achievementEffect">
@@ -45,16 +68,14 @@
 </template>
 
 <template name="achievementTooltip">
-	{{#if achievement.isGained}}
+	{{#if achievement.currentLevel}}
 		<div class="title">{{achievement.name}}</div>
 		<div class="text">{{achievement.description}}</div>
 		{{> achievementEffect effect=achievement.effect level=achievement.currentLevel}}
-	{{else}}
-		<div class="disabled">Следующий уровень:</div>
 	{{/if}}
 	{{#if achievement.nextLevel}}
-		{{#if achievement.isGained}}
-			<div class="next">Следующий уровень:</div>
+		{{#if achievement.currentLevel}}
+			<div class="next_level">Следующий уровень:</div>
 		{{/if}}
 		<div class="title">{{achievement.nextLevelName}}</div>
 		<div class="text">{{achievement.nextLevelDescription}}</div>

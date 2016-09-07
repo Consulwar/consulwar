@@ -33,11 +33,12 @@ game.Achievement = function(options) {
 		return 0;
 	}).bind(this);
 	
-	this.nextLevel = (function (level) {
-		if (!level) {
-			return 1;
+	this.nextLevel = (function (achievements) {
+		var currentLevel = this.currentLevel(achievements);
+		if (currentLevel < this.maxLevel()) {
+			return currentLevel + 1;
 		}
-		return (options.levels && level < options.levels.length - 1) ? level + 1 : null;
+		return 0;
 	}).bind(this);
 
 	this.maxLevel = (function () {

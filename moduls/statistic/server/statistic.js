@@ -344,6 +344,7 @@ Meteor.methods({
 				chat: 1,
 				mail: 1,
 				investments: 1,
+				colosseum: 1,
 				promocode: 1
 			}
 		});
@@ -435,7 +436,8 @@ Meteor.publish('statistic', function() {
 					mail: 1,
 					payment: 1,
 					investments: 1,
-					promocode: 1
+					promocode: 1,
+					colosseum: 1
 				}
 			});
 		}

@@ -63,6 +63,9 @@
 			{{#if (this.result ../level)}}
 				<div class='effect'>
 					{{this.pretext}}{{this.result ../level}}{{this.aftertext}}
+					{{#if this.notImplemented}}
+						<span class="notImplemented">В разработке!</span>
+					{{/if}}
 				</div>
 			{{/if}}
 		{{/each}}
@@ -71,7 +74,12 @@
 
 <template name="achievementTooltip">
 	{{#if achievement.currentLevel}}
-		<div class="title">{{achievement.name}}</div>
+		<div class="title">
+			{{achievement.name}}
+			{{#if achievement.notImplemented}}
+				<span class="notImplemented">В разработке!</span>
+			{{/if}}
+		</div>
 		<div class="text">{{achievement.description}}</div>
 		{{> achievementEffect effect=achievement.effect level=achievement.currentLevel}}
 	{{/if}}
@@ -238,7 +246,7 @@
 		{{/each}}
 
 		<div class="page">
-			{{ >yield region="detailStatisticPage"}}
+			{{> yield region="detailStatisticPage"}}
 		</div>
 	</div>
 </template>
@@ -296,7 +304,7 @@
 			Не проведено ни одного исследования
 		{{/if}}
 	</h1>
-	{{ >statisticDetailTable 
+	{{> statisticDetailTable 
 		title="Ресурсы"
 		columns=(makeArray
 			(makeObject 
@@ -328,6 +336,34 @@
 			(makeObject
 				engName="honor"
 				name="Честь"
+			)
+		)
+	}}
+
+	{{> statisticDetailTable 
+		title="Торговля"
+		columns=(makeArray
+			(makeObject 
+				title="Куплено"
+				data=this.data.resources.bought
+			)
+			(makeObject 
+				title="Продано"
+				data=this.data.resources.sold
+			)
+		)
+		items=(makeArray 
+			(makeObject
+				engName="humans"
+				name="Люди"
+			)
+			(makeObject
+				engName="metals"
+				name="металлы"
+			)
+			(makeObject
+				engName="crystals"
+				name="Кристаллы"
 			)
 		)
 	}}
@@ -655,6 +691,16 @@
 </template>
 
 <template name="anotherDetailStatisticPage">
+	{{> statisticDetailTable 
+		title="Турниры"
+		columns=(makeArray
+			(makeObject 
+				title="Проведено"
+				data=this.data.colosseum.tournaments
+			)
+		)
+		items=(toArray Game.Colosseum.tournaments)
+	}}
 	<h1>
 		{{#if this.data.cosmos.fleets.sent}}
 			{{declension this.data.cosmos.fleets.sent "Отправлен" "" "о" "о"}} 

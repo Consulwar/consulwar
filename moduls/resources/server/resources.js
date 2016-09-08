@@ -88,6 +88,18 @@ Game.Resources.steal = function(resource, uid) {
 	saveStatistic('resources.stolen', resource, uid);
 };
 
+Game.Resources.sold = function(resource, uid) {
+	Game.Resources.set(resource, true, uid);
+	saveStatistic('resources.sold', resource, uid);
+	saveStatistic('resources.spent', resource, uid);
+};
+
+Game.Resources.bought = function(resource, uid) {
+	Game.Resources.set(resource, false, uid);
+	saveStatistic('resources.bought', resource, uid);
+	saveStatistic('resources.gained', resource, uid);
+};
+
 var saveStatistic = function(field, resources, uid) {
 	var increment = {};
 	increment[field + '.total'] = 0;

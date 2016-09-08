@@ -288,6 +288,7 @@ Template.achievements.helpers({
 			
 			if (item.group == this.statisticGroup) {
 				result.push({
+					notImplemented: item.notImplemented,
 					engName: item.engName,
 					name: item.name(level),
 					description: item.description(level),

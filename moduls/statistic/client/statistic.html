@@ -60,26 +60,21 @@
 <template name="achievementEffect">
 	{{#if this.effect}}
 		{{#each this.effect}}
-			{{#if (this.result ../level)}}
-				<div class='effect'>
+			{{#unless (eq (this.result ../level) 0)}}
+				<div class="effect">
 					{{this.pretext}}{{this.result ../level}}{{this.aftertext}}
 					{{#if this.notImplemented}}
 						<span class="notImplemented">В разработке!</span>
 					{{/if}}
 				</div>
-			{{/if}}
+			{{/unless}}
 		{{/each}}
 	{{/if}}
 </template>
 
 <template name="achievementTooltip">
 	{{#if achievement.currentLevel}}
-		<div class="title">
-			{{achievement.name}}
-			{{#if achievement.notImplemented}}
-				<span class="notImplemented">В разработке!</span>
-			{{/if}}
-		</div>
+		<div class="title">{{achievement.name}}</div>
 		<div class="text">{{achievement.description}}</div>
 		{{> achievementEffect effect=achievement.effect level=achievement.currentLevel}}
 	{{/if}}
@@ -87,7 +82,12 @@
 		{{#if achievement.currentLevel}}
 			<div class="next_level">Следующий уровень:</div>
 		{{/if}}
-		<div class="title">{{achievement.nextLevelName}}</div>
+		<div class="title">
+			{{achievement.nextLevelName}}
+			{{#if achievement.notImplemented}}
+				<span class="notImplemented">В разработке!</span>
+			{{/if}}
+		</div>
 		<div class="text">{{achievement.nextLevelDescription}}</div>
 		{{> achievementEffect effect=achievement.effect level=achievement.nextLevel}}
 	{{/if}}

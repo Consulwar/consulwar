@@ -281,8 +281,8 @@ Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
 
-		for (var key in Game.Achievements.items) {
-			var item = Game.Achievements.items[key];
+		for (var key in Game.Achievements.items[this.statisticGroup]) {
+			var item = Game.Achievements.items[this.statisticGroup][key];
 			var level = item.currentLevel(user.achievements || null);
 			var nextLevel = item.nextLevel(user.achievements || null);
 			

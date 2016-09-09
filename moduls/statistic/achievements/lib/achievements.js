@@ -108,6 +108,10 @@ Game.Achievements = {
 	}
 };
 
-initAchievementsContent();
+initAchievementsContentGeneral();
+initAchievementsContentCosmos();
+initAchievementsContentBattle();
+initAchievementsContentScience();
+initAchievementsContentCommunication();
 
 };

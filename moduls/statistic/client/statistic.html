@@ -280,7 +280,13 @@
 			<tr>
 				<td><h4>Всего</h4></td>
 				{{#each columns}}
-					<td><h4>{{or (formatNumberWithISO (lookup this.data this.field)) 0}}</h4></td>
+					<td><h4>
+						{{#if field}}
+							{{or (formatNumberWithISO (lookup this.data this.field)) 0}}
+						{{else}}
+							{{or (formatNumberWithISO this.data.total) 0}}
+						{{/if}}
+					</h4></td>
 				{{/each}}
 			</tr>
 		{{/if}}
@@ -693,6 +699,7 @@
 <template name="anotherDetailStatisticPage">
 	{{> statisticDetailTable 
 		title="Турниры"
+		showTotal=true
 		columns=(makeArray
 			(makeObject 
 				title="Проведено"

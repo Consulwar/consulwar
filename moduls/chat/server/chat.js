@@ -183,7 +183,7 @@ Meteor.methods({
 		var userPayAnyway = false;
 
 		if (message.substr(0, 1) == '/') {
-			var reg = new RegExp(/^\/d (\d+ )?(\d+)( (?:\+|-)?\d+)?$/);
+			var reg = new RegExp(/^\/d (\d+ )?(\d+)(\s?(?:\+|-)?\d+)?$/);
 			if (message == '/d' || reg.test(message)) {
 				var dices = 1;
 				var edges = 6;

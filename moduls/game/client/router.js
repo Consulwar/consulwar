@@ -66,14 +66,17 @@ var gameRoutes = {
 	research: {
 		research: 'research/:group(evolution|fleetups)/:item?'
 	},
+	
+	statistics: {
+		statistics: 'statistics/:group(general|science|cosmos|battle|communication)?/:page?'
+	},
 
 	mutual: {
 		mutual: 'mutual/:group(research)/:item?',
 		earth: 'mutual/:group(earth)',
 		earthReserve: 'mutual/:group(earth)/reserve',
 		earthZone: 'mutual/:group(earth)/zone/:name?',
-		earthHistory: 'mutual/:group(earth)/history/:page',
-		statistics: 'mutual/statistics/:page?'
+		earthHistory: 'mutual/:group(earth)/history/:page'
 	},
 	
 	communication: {

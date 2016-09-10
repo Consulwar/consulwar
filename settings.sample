@@ -36,6 +36,9 @@
 				"usersLimit": 20,
 				"moderatorsLimit": 10
 			}
+		},
+		"statistic": {
+			"countPerPage": 20
 		}
 	},
 	"recaptcha": {

@@ -1,5 +1,5 @@
 Template.pages.helpers({
-	route: function(page) {
+	route: function(page, saveHash) {
 		var current = Router.current();
 		// get all params from current route
 		var params = {};
@@ -8,7 +8,15 @@ Template.pages.helpers({
 		}
 		// set page
 		params.page = page;
-		return Router.routes[ current.route.getName() ].path(params);
+
+		var options = {};
+		if (saveHash) {
+			options.hash = current.params.hash;
+		}
+
+		return Router.routes[ current.route.getName() ].path( 
+			params, options
+		);
 	},
 
 	current: function() {

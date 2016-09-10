@@ -1,26 +1,20 @@
+side-statistic-icon(name, background)
+	.{name}-icon
+		background-image url("/img/game/side/" name ".png")
+
+		&.active:after
+			background-color background
+
+
 .content
-	.rating
-		position relative
-		height 435px
-		margin-left 124px
-		background-color #04080B
-		z-index 10
-
-		.show_detail_statistic
-			img
-				width 30px
-				height 30px
-
-		.button
-			cursor pointer
-			display block
-			position absolute
-			width 40px
-			height 40px
-			background-repeat no-repeat
-			background-position center
+	.side_menu
+		.general-icon, .science-icon, .cosmos-icon, .battle-icon, .communication-icon
+			font-size 0
 			-webkit-filter grayscale(1)
 			filter grayscale(1)
+			width 70px
+			height 70px
+			background-position 5px center
 
 			&:hover
 				-webkit-filter brightness(1.4)
@@ -29,26 +23,216 @@
 			&.active
 				-webkit-filter brightness(1)
 				filter brightness(1)
+				background-color #090e14
+				&:after
+					position absolute
+					top 0
+					left 0
+					content " "
+					height 70px
+					width 5px
 
-		.search
-			left 44px
-			background-image url("/img/game/search.png")
+		side-statistic-icon(general, #42c7ff)
+		side-statistic-icon(science, #a6b131)
+		side-statistic-icon(cosmos, #d6645e)
+		side-statistic-icon(battle, #d6925e)
+		side-statistic-icon(communication, #785ed6)
 
-		.returnToMe
-			left 0px
-			background-image url("/img/game/my_position.png")
-			
-		input
-			padding 10px 7px
-			border 2px solid #006382
-			background-color #C0C0C0
-			border-radius 5px
-			box-shadow inset 2px 2px 2px #000
-			color #000000
-			font-weight bold
-			font-size 14px
+	.statistic
+		position relative
+		height 430px
+		margin-left 70px
+		background-color #04080B
+		z-index 10
+
+		.consulInfo
+			background-color #0E1821
 			position absolute
-			left 88px
+			display flex
+			left 315px
+			top 0px
+			height 70px
+			width 1040px
+			padding 20px
+	
+			a
+				text-decoration none
+				display inline-block
+				width 70px
+				height 70px
+
+			.user
+				display flex
+				width 300px
+				height 70px
+
+				img
+					width 70px
+					height 70px
+
+				.text
+					margin-left 10px
+					padding-top 15px
+					height 70px
+					font-size 18px
+					font-weight bold
+
+					.userName
+						color #d6b69c
+
+					.allianceName
+						color #56baf2
+
+			.activity
+				font-size 15px
+				width 300px
+				height 70px
+				list-style-type none
+
+				li
+					padding-top 10px
+
+				.status
+					font-weight bold
+
+					&.active
+						color #56baf2
+
+					&:not(.active)
+						color red
+
+			.voicePower
+				display flex
+				width 200px
+				height 70px
+				border 2px solid #6b5737
+				background-color #131313
+
+				&:before
+					display block
+					content ""
+					width 85px
+					height 70px
+					background-repeat no-repeat
+					background-position center
+					background-image url(/img/game/statistics/power_of_voice.png)
+
+				ul
+					list-style-type none
+					font-size 14px
+					font-weight bold
+					display block
+					width 110px
+					height 70px
+					text-align center
+					padding-top 15px
+
+					.number
+						font-size 24px
+						color #e9a844
+
+			.additionalButtons
+				height 70px
+				margin-left 10px
+
+				a
+					width 70px
+					height 70px
+					background-repeat no-repeat
+
+				.send_message
+					background-image url(/img/game/statistics/message.png)
+
+				.open_house
+					background-image url(/img/game/statistics/house.png)
+
+				.show_detail_statistic
+					background-image url(/img/game/statistics/detail.png)
+
+				a:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+		.achievements
+			background-color #131313
+			position absolute
+			display block
+			left 315px
+			top 110px
+			height 285px
+			width 1040px
+			padding 20px
+
+			img
+				width 70px
+				height 70px
+				margin 10px
+
+				&:not(.active)
+					-webkit-filter grayscale(1)
+					filter grayscale(1)
+
+	.rating
+		position absolute
+		height 435px
+		width 315px
+		background-color #000
+		z-index 10
+
+		.spinner-container
+			position absolute
+			top 0px
+
+
+		.searchBlock
+			position relative
+			display block
+			width 40px
+			height 50px
+
+			.search, .returnToMe
+				margin-top 10px
+				display block
+				position absolute
+				top 0px
+				width 40px
+				height 40px
+				cursor pointer
+				background-repeat no-repeat
+				background-position center
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+				&.active
+					-webkit-filter brightness(1)
+					filter brightness(1)
+
+			.search
+				left 60px
+				background-image url(/img/game/statistics/search.png)
+
+			.returnToMe
+				left 10px
+				background-image url(/img/game/statistics/my_position.png)
+				
+			input
+				top 0px
+				margin-top 10px
+				padding 10px 7px
+				border 2px solid #006382
+				background-color #C0C0C0
+				border-radius 5px
+				box-shadow inset 2px 2px 2px #000
+				color #000000
+				font-weight bold
+				font-size 14px
+				position absolute
+				left 104px
+				width 185px
 
 		h2
 			padding-top 20px
@@ -57,7 +241,7 @@
 
 		.data
 			display block
-			height 355px
+			height 305px
 			overflow-y auto
 
 		table
@@ -68,12 +252,19 @@
 			tr
 				height 40px
 				
-				&:nth-child(odd):not(.header):not(.selectedUser)
+				&:nth-child(odd)
 					background-color #0B121A
 				
 				&:nth-child(even)
 					background-color #0E1821
 				
+				&:hover:not(.header)
+					cursor pointer
+					background-color #000015
+
+				&.header
+					background-color #000
+
 				&.selectedUser
 					color #0081e5
 					background-color #000015
@@ -93,21 +284,15 @@
 				text-align left
 				
 				&:nth-child(1)
-					width 100px
+					width 50px
 					padding 12px
 					text-align center
 
 				&:nth-child(2)
-					width 300px
-					
+					width 150px
+
 				&:nth-child(3)
-					width 400px
-					
-				&:nth-child(4)
-					width 400px
-				
-				a
-					text-decoration none
+					width 100px
 
 				img
 					margin-left 5px

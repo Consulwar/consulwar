@@ -3,10 +3,6 @@ initChatLib = function() {
 Game.Chat = {};
 
 Game.Chat.Messages = {
-	LOAD_COUNT: 20,
-	LIMIT: 1000,
-	FREE_CHAT_PRICE: 5000,
-
 	Collection: new Meteor.Collection('messages'),
 
 	getPrice: function(room) {
@@ -34,15 +30,17 @@ Game.Chat.Messages = {
 		var basePrice = { 
 			crystals: Math.ceil(Math.max(Math.min(income, 10000), 100))
 		};
+		var price = Game.Effect.Price.applyTo({ engName: 'message' }, basePrice, true);
+		if (!price || !price.crystals) {
+			return null;
+		}
 
-		return Game.Effect.Price.applyTo({ engName: 'message' }, basePrice, true);
+		return price;
 	}
 };
 
 Game.Chat.Room = {
-	USERS_LIMIT: 50,
-	MODERATORS_LIMIT: 10,
-
+	
 	Collection: new Meteor.Collection('chatRooms'),
 
 	getPrice: function(room) {
@@ -187,6 +185,8 @@ Game.Chat.Icons = {
 	}
 };
 
+
+initChatConfigLib();
 initChatContent();
 
 };

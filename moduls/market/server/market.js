@@ -33,11 +33,11 @@ Meteor.methods({
 
 		var resourceSpend = {};
 		resourceSpend[resourceFrom] = amount;
-		Game.Resources.spend(resourceSpend);
+		Game.Resources.sold(resourceSpend);
 
 		var resourceAdd = {};
 		resourceAdd[resourceTo] = result;
-		Game.Resources.add(resourceAdd);
+		Game.Resources.bought(resourceAdd);
 	}
 });
 

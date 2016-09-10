@@ -2,7 +2,7 @@
 	<div id="map-battle-container">
 		<div id="map-battle"></div>
 	</div>
-	<a class="map-control-home"></a>
+	<button class="map-control-home"></button>
 	<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боев</a>
 	{{#if isSelection}}
 		<a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
@@ -120,22 +120,22 @@
 			<ul class="resources cost">
 				<li class="credits">{{extraColonyPrice}}</li>
 			</ul>
-			<a class="btn-add">Дополнительная колония</a>
+			<button class="btn-add">Дополнительная колония</button>
 		{{/if}}
-		<a class="btn-all">Выбрать всех</a>
+		<button class="btn-all">Выбрать всех</button>
 		{{#if planet}}
 			{{#if planet.isHome}}
-				<a class="btn-attack defend">Отправить</a>
+				<button class="btn-attack defend">Отправить</button>
 			{{else}}
-				<a class="btn-attack defend {{#if not canHaveMoreColonies}}disabled{{/if}}">
+				<button class="btn-attack defend {{#if not canHaveMoreColonies}}disabled{{/if}}">
 					Захватить
-				</a>
-				<a class="btn-attack return">{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}</a>
+				</button>
+				<button class="btn-attack return">{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}</button>
 			{{/if}}
 		{{else}}
-			<a class="btn-attack return">Перехватить</a>
+			<button class="btn-attack return">Перехватить</button>
 		{{/if}}
-		<a class="btn-close"></a>
+		<button class="btn-close"></button>
 	</div>
 </template>
 
@@ -234,7 +234,7 @@
 			<p>Сбор артефактов: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
 		{{/if}}
 		{{#if planet.canSend}}
-			<a class="button-attack open" data-id="{{planet.id}}">Отправить</a>
+			<button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
 		{{/if}}
 	{{/if}}
 </template>
@@ -264,7 +264,7 @@
 			<p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
 		{{/if}}
 		{{#if ship.canSend}}
-			<a class="button-attack open" data-id="{{ship.id}}">Перехватить</a>
+			<button class="button-attack open" data-id="{{ship.id}}">Перехватить</button>
 		{{/if}}
 	{{/if}}
 </template>

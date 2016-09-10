@@ -155,17 +155,11 @@
 		{{#if users}}
 			<div class="searchBlock">
 				<div 
-					class="
-						button returnToMe 
-						{{#if eq user.username selectedUserName}}active{{/if}}
-					"
+					class="button returnToMe"
 					data-tooltip="Вернуться к своему консулу"
 				></div>
 				<div 
-					class="
-						button search
-						{{#if and selectedUserName (not (eq user.username selectedUserName))}}active{{/if}}
-					"
+					class="button search"
 					data-tooltip="Поиск консула в статистике"
 				></div>
 				<input

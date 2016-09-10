@@ -7,6 +7,9 @@ side-statistic-icon(name, background)
 
 
 .content
+	&.statistics
+		height 600px
+
 	.side_menu
 		.general-icon, .science-icon, .cosmos-icon, .battle-icon, .communication-icon
 			font-size 0
@@ -40,20 +43,20 @@ side-statistic-icon(name, background)
 
 	.statistic
 		position relative
-		height 430px
+		height 594px
 		margin-left 70px
 		background-color #04080B
 		z-index 10
 
 		.consulInfo
-			background-color #0E1821
+			background-color #13161b
 			position absolute
 			display flex
 			left 315px
 			top 0px
 			height 70px
-			width 1040px
-			padding 20px
+			width 1044px
+			padding 18px
 	
 			a
 				text-decoration none
@@ -139,6 +142,12 @@ side-statistic-icon(name, background)
 					width 70px
 					height 70px
 					background-repeat no-repeat
+					-webkit-filter grayscale(1)
+					filter grayscale(1)
+
+					&:hover
+						-webkit-filter grayscale(0)
+						filter grayscale(0)
 
 				.send_message
 					background-image url(/img/game/statistics/message.png)
@@ -149,17 +158,14 @@ side-statistic-icon(name, background)
 				.show_detail_statistic
 					background-image url(/img/game/statistics/detail.png)
 
-				a:hover
-					-webkit-filter brightness(1.4)
-					filter brightness(1.4)
 
 		.achievements
 			background-color #131313
 			position absolute
 			display block
 			left 315px
-			top 110px
-			height 285px
+			top 106px
+			height 454px
 			width 1040px
 			padding 20px
 
@@ -167,14 +173,16 @@ side-statistic-icon(name, background)
 				width 70px
 				height 70px
 				margin 10px
+				-webkit-filter grayscale(1) brightness(0.2)
+				filter grayscale(1) brightness(0.2)
 
-				&:not(.active)
-					-webkit-filter grayscale(1)
-					filter grayscale(1)
+				&.active
+					-webkit-filter brightness(1)
+					filter brightness(1)
 
 	.rating
 		position absolute
-		height 435px
+		height 600px
 		width 315px
 		background-color #000
 		z-index 10
@@ -187,11 +195,11 @@ side-statistic-icon(name, background)
 		.searchBlock
 			position relative
 			display block
-			width 40px
-			height 50px
+			width 315px
+			height 40px
+			background-color #13161b
 
 			.search, .returnToMe
-				margin-top 10px
 				display block
 				position absolute
 				top 0px
@@ -204,25 +212,21 @@ side-statistic-icon(name, background)
 				filter grayscale(1)
 
 				&:hover
-					-webkit-filter brightness(1.4)
-					filter brightness(1.4)
-
-				&.active
 					-webkit-filter brightness(1)
 					filter brightness(1)
 
 			.search
-				left 60px
+				left 100px
 				background-image url(/img/game/statistics/search.png)
 
 			.returnToMe
-				left 10px
+				left 5px
 				background-image url(/img/game/statistics/my_position.png)
 				
 			input
 				top 0px
-				margin-top 10px
-				padding 10px 7px
+				margin-top 3px
+				padding 8px 7px
 				border 2px solid #006382
 				background-color #C0C0C0
 				border-radius 5px
@@ -231,8 +235,8 @@ side-statistic-icon(name, background)
 				font-weight bold
 				font-size 14px
 				position absolute
-				left 104px
-				width 185px
+				left 145px
+				width 150px
 
 		h2
 			padding-top 20px
@@ -241,7 +245,7 @@ side-statistic-icon(name, background)
 
 		.data
 			display block
-			height 305px
+			height 480px
 			overflow-y auto
 
 		table

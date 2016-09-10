@@ -64,8 +64,14 @@
 				{{/if}}
 			</div>
 		</div>
-		
-		<div class="content">
+
+		<div class="
+			content
+			{{#if (eq currentRouteName 'statistics')}}
+				statistics
+			{{/if}}
+			"
+		>
 			{{> side_menu}}
 
 			{{> overlay_menu}}

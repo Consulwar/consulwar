@@ -15,7 +15,7 @@
 		{{#if eq statisticGroup 'general'}}
 			<img 
 				class="{{#if gt selectedUser.rating 25000}}active{{/if}}"
-				src="/img/game/statistics/achievements/rank{{or (Game.User.getLevel selectedUser.rating) 1}}.png"
+				src="/img/game/statistics/achievements/general/rank{{or (Game.User.getLevel selectedUser.rating) 1}}.png"
 				alt="Ранг"
 				data-tooltip="{{useTemplate 
 					'rankTooltip' 
@@ -29,7 +29,7 @@
 			<img 
 				class="{{#if this.currentLevel}}active{{/if}}"
 				src="
-					/img/game/statistics/achievements/{{this.engName}}
+					/img/game/statistics/achievements/{{../statisticGroup}}/{{this.engName}}
 					{{#if gt this.maxLevel 1}}{{or this.currentLevel 1}}{{/if}}.png
 					" 
 				alt="{{this.name}}"

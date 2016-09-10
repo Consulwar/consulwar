@@ -80,6 +80,10 @@ UI.registerHelper('makeObject', function() {
 	return arguments[0].hash;
 });
 
+UI.registerHelper('useTemplate', function(templateName) {
+	return Blaze.toHTMLWithData(Template[templateName], arguments[1].hash);
+});
+
 UI.registerHelper('lookup', function(obj) {
 	var result = obj;
 	for(var i = 1; i < (arguments.length - 1); i++) {
@@ -102,6 +106,15 @@ UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, 
 		)
 	);
 });
+
+UI.registerHelper('formatYearMonthDay', function(dateString) {
+	var date = new Date(dateString);
+	var day = date.getDate();
+	day = (day < 10) ? '0' + day : day;
+	var month = date.getMonth();
+	month = (month < 10) ? '0' + month : month;
+	return day + "." + month + "." + date.getFullYear();
+}); 
 
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
 UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);

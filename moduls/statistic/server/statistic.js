@@ -10,6 +10,22 @@ Meteor.users._ensureIndex({
 	rating: 1
 });
 
+Game.Statistic.Collection._ensureIndex({
+	'research.total': 1
+});
+
+Game.Statistic.Collection._ensureIndex({
+	'chat.messages': 1
+});
+
+Game.Statistic.Collection._ensureIndex({
+	'reinforcements.sent.total': 1
+});
+
+Game.Statistic.Collection._ensureIndex({
+	'resources.gained.honor': 1
+});
+
 Game.Statistic.initialize = function(user) {
 	var statistic = Game.Statistic.Collection.findOne({
 		user_id: user._id
@@ -17,7 +33,8 @@ Game.Statistic.initialize = function(user) {
 
 	if (!statistic) {
 		Game.Statistic.Collection.insert({
-			user_id: user._id
+			user_id: user._id,
+			username: user.username
 		});
 	}
 };
@@ -159,7 +176,7 @@ Meteor.methods({
 		Game.Statistic.fixUser(target._id);
 	},
 
-	'statistic.getUserPositionInRating': function(selectedUserName) {
+	'statistic.getUserPositionInRating': function(type, selectedUserName) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -171,8 +188,13 @@ Meteor.methods({
 		}
 
 		check(selectedUserName, String);
+		check(type, String);
 		
-		var selectedUser = Meteor.users.findOne({ username: selectedUserName });
+		var selectedUser = Meteor.users.findOne({
+			username: selectedUserName
+		}, {
+			fields: { rating: 1 }
+		});
 			
 		if (!selectedUser) {
 			throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
@@ -180,26 +202,42 @@ Meteor.methods({
 		
 		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
 		
-		var position = Meteor.users.find({
-			rating: { $gt: selectedUser.rating }
-		}, {
-			fields: {
-				username: 1,
-				rating: 1
-			},
-			sort: {rating: -1}
-		}).count();
+		var position;
+		var total;
+		var sortField = Game.Statistic.getSortFieldForType(type).field;
 
+		if (type == "general") {
+			position = Meteor.users.find({
+				rating: { $gt: selectedUser.rating }
+			}).count();
 
-		var total = Meteor.users.find({
-			rating: { $gt: 0 }
-		}, {
-			fields: {
-				username: 1,
-				rating: 1
-			},
-			sort: {rating: -1}
-		}).count();
+			total = Meteor.users.find({
+				rating: { $gt: 0 }
+			}).count();
+		} else {
+			var fields = {};
+			fields[sortField] = 1;
+
+			var selector = {};
+			selector[sortField] = { 
+				$gt: Game.Statistic.getUserValue(
+					sortField,
+					Game.Statistic.Collection.findOne({ 
+						user_id: selectedUser._id 
+					}, {
+						fields: fields
+					})
+				)
+			};
+
+			position = Game.Statistic.Collection.find(selector).count();
+
+			selector[sortField] = { 
+				$gt: 0 
+			};
+
+			total = Game.Statistic.Collection.find(selector).count();
+		}
 
 		return {
 			total: total,
@@ -207,7 +245,7 @@ Meteor.methods({
 		};
 	},
 
-	'statistic.getPageInRating': function(page, count) {
+	'statistic.getPageInRating': function(type, page, countPerPage) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -221,24 +259,47 @@ Meteor.methods({
 		console.log('statistic.getPageInRating: ', new Date(), user.username);
 
 		check(page, Match.Integer);
-		check(count, Match.Integer);
+		check(countPerPage, Match.Integer);
+		check(type, String);
 
-		if (count > 100) {
+		if (countPerPage > Game.Statistic.COUNT_PER_PAGE) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
 		}
 
-		var result = Meteor.users.find({
-			rating: { $gt: 0 }
-		}, {
-			fields: {
-				username: 1,
-				rating: 1,
-				achievements: 1
-			},
-			sort: {rating: -1},
-			skip: (page > 0) ? (page - 1) * count : 0,
-			limit: count
-		});
+		var sortField = Game.Statistic.getSortFieldForType(type).field;
+		var result;
+
+		if (type == "general") {
+			result = Meteor.users.find({
+				rating: { $gt: 0 }
+			}, {
+				fields: {
+					username: 1,
+					rating: 1
+				},
+				sort: {rating: -1},
+				skip: (page > 0) ? (page - 1) * countPerPage : 0,
+				limit: countPerPage
+			});
+		} else {
+			var selector = {};
+			selector[sortField] = { $gt: 0 };
+
+			var fields = {
+				username: 1
+			};
+			fields[sortField] = 1;
+
+			var sort = {};
+			sort[sortField] = -1;
+
+			result = Game.Statistic.Collection.find(selector, {
+				fields: fields,
+				sort: sort,
+				skip: (page > 0) ? (page - 1) * countPerPage : 0,
+				limit: countPerPage
+			});
+		}
 
 		return {
 			users: result.fetch(),
@@ -257,13 +318,14 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		check(userName, String);
+
 		var selectedUser = Meteor.users.findOne({username: userName});
 		
 		if (!selectedUser || !selectedUser._id) {
 			throw new Meteor.Error('Пользователь не найден');
 		}
 
-		check(userName, String);
 
 		var statistic = Game.Statistic.Collection.findOne({
 			user_id: selectedUser._id
@@ -282,6 +344,7 @@ Meteor.methods({
 				chat: 1,
 				mail: 1,
 				investments: 1,
+				colosseum: 1,
 				promocode: 1
 			}
 		});
@@ -300,6 +363,40 @@ Meteor.methods({
 		}
 
 		return statistic;
+	},
+
+	'statistic.getUserInfo': function(userName) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		check(userName, String);
+
+		var userInfo = Meteor.users.findOne({
+			username: userName
+		}, {
+			fields: {
+				rating: 1,
+				username: 1,
+				achievements: 1,
+				'settings.chat.icon': 1,
+				createdAt: 1,
+				'status.lastLogin.date': 1,
+				votePowerBonus: 1
+			}
+		});
+
+		if (!userInfo || !userInfo._id) {
+			throw new Meteor.Error('Пользователь не найден');
+		}
+
+		return userInfo;
 	}
 });
 
@@ -339,7 +436,8 @@ Meteor.publish('statistic', function() {
 					mail: 1,
 					payment: 1,
 					investments: 1,
-					promocode: 1
+					promocode: 1,
+					colosseum: 1
 				}
 			});
 		}

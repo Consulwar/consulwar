@@ -1,7 +1,39 @@
 initStatisticLib = function() {
 
+
 Game.Statistic = {
 	Collection: new Meteor.Collection('statistic'),
+
+	getSortFieldForType: function(type) {
+		check(type, String);
+		if (!this.sortFieldsForTypes.hasOwnProperty(type)) {
+			throw new Meteor.Error('Несуществующий тип статистики');
+		}
+		return this.sortFieldsForTypes[type];
+	},
+
+	sortFieldsForTypes: {
+		general: {
+			field: 'rating',
+			title: 'Рейтинг'
+		},
+		science: {
+			field: 'research.total',
+			title: 'Исследовано технологий'
+		},
+		communication: {
+			field: 'chat.messages',
+			title: 'Всего сообщений'
+		},
+		cosmos: {
+			field: 'resources.gained.honor',
+			title: 'Честь'
+		},
+		battle: {
+			field: 'reinforcements.sent.total',
+			title: 'Отправлено войск'
+		}
+	},
 
 	getUser: function() {
 		return Game.Statistic.Collection.findOne({
@@ -35,5 +67,7 @@ Game.Statistic = {
 		}, statistic);
 	}
 };
+
+initStatisticConfigLib();
 
 };

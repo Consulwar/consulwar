@@ -50,6 +50,11 @@ Meteor.methods({
 			Game.Resources.addProfit(profit);
 		}
 
+		var stats = { 'colosseum.tournaments.total': 1 };
+		stats['colosseum.tournaments.' + tournament.engName] = 1;
+
+		Game.Statistic.incrementUser(user._id, stats);
+
 		return profit;
 	}
 });

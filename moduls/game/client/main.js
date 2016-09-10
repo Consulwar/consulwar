@@ -244,6 +244,7 @@ Deps.autorun(function(){
 });*/
 
 var helpers = {
+	currentRouteName: function() { return Router.current().route.getName(); },
 	information: function() {
 		return Session.get('active_item');
 	},

@@ -6,21 +6,8 @@ Game.Cards.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Cards.initialize = function(user) {
-	user = user || Meteor.user();
-	var currentValue = Game.Cards.getValue(user._id);
-
-	if (currentValue === undefined) {
-		Game.Cards.Collection.insert({
-			'user_id': user._id
-		});
-	}
-};
-
 Game.Cards.increment = function(cards, invertSign) {
 	invertSign = invertSign === true ? -1 : 1;
-
-	Game.Cards.initialize();
 
 	var inc = null;
 	for (var key in cards) {
@@ -31,7 +18,7 @@ Game.Cards.increment = function(cards, invertSign) {
 	}
 
 	if (inc) {
-		Game.Cards.Collection.update({
+		Game.Cards.Collection.upsert({
 			user_id: Meteor.userId()
 		}, {
 			$inc: inc
@@ -68,7 +55,7 @@ Game.Cards.activate = function(item, user) {
 		var set = {};
 		set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
 
-		Game.Cards.Collection.update({
+		Game.Cards.Collection.upsert({
 			user_id: user._id
 		}, {
 			$set: set
@@ -234,11 +221,7 @@ SyncedCron.add({
 		for (var i = 0; i < users.length; i++) {
 			console.log('Give to ', users[i].user_id);
 
-			Game.Containers.initialize({
-				_id: users[i].user_id
-			});
-
-			Game.Containers.Collection.update({
+			Game.Containers.Collection.upsert({
 				user_id: users[i].user_id
 			}, {
 				$inc: {

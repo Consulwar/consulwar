@@ -52,6 +52,10 @@ UI.registerHelper('sum', function(a, b) {
 	return a + b;
 });
 
+UI.registerHelper('abs', function(number) {
+	return Math.abs(number);
+});
+
 UI.registerHelper('substract', function(a, b) {
 	return a - b;
 });

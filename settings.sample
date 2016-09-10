@@ -25,6 +25,17 @@
 		"isInviteRequired": true,
 		"recaptcha": {
 			"publickey": "ABCDEFGHIJKLMNOP"
+		},	
+		"chat": {
+			"messages": {
+				"limit": 1000,
+				"loadCount": 20,
+				"freeChatPrice": 5000
+			},
+			"room": {
+				"usersLimit": 20,
+				"moderatorsLimit": 10
+			}
 		},
 		"statistic": {
 			"countPerPage": 20

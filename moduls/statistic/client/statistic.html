@@ -647,6 +647,14 @@
 		{{/if}}
 	</h1>
 	<h1>
+		{{#if this.data.chat.dice}}
+			Принято {{this.data.chat.medice}} {{declension this.data.chat.medice "решени" "е" "я" "й"}} 
+			с помощью костей
+		{{else}}
+			Не принял ни одного решения с помощью костей
+		{{/if}}
+	</h1>
+	<h1>
 		{{#if this.data.chat.lovereptiles}}
 			Признался в любви к рептилоидам {{this.data.chat.lovereptiles}} 
 			{{declension this.data.chat.lovereptiles "раз" "" "а" ""}}

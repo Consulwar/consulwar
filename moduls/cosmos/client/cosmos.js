@@ -1024,6 +1024,7 @@ Template.cosmosAttackMenu.events({
 
 	'click .btn-attack:not(.disabled)': function(e, t) {
 		var isOneway = $(e.currentTarget).hasClass('defend');
+		var defendButtonEnabled = !t.$('.btn-attack defend').hasClass('disabled');
 
 		var baseId = t.data.activeColonyId.get();
 		var basePlanet = Game.Planets.getOne(baseId);
@@ -1065,6 +1066,7 @@ Template.cosmosAttackMenu.events({
 
 		if (planet) {
 			// Send to planet
+			$('.btn-attack').addClass('disabled');
 			Meteor.call(
 				'planet.sendFleet',
 				basePlanet._id,
@@ -1072,6 +1074,11 @@ Template.cosmosAttackMenu.events({
 				units,
 				isOneway,
 				function(err) {
+					if (defendButtonEnabled) {
+						$('.btn-attack defend').removeClass('disabled');
+					}
+					$('.btn-attack return').removeClass('disabled');
+
 					if (err) {
 						Notifications.error('Не удалось отправить флот', err.error);
 					} else {
@@ -1100,7 +1107,7 @@ Template.cosmosAttackMenu.events({
 			}
 
 			var attackPoint = pathView.getPointAlongDistanceByCoef(attack.k);
-
+			$('.btn-attack').addClass('disabled');
 			Meteor.call(
 				'spaceEvents.attackReptFleet',
 				basePlanet._id,
@@ -1109,6 +1116,11 @@ Template.cosmosAttackMenu.events({
 				attackPoint.x, 
 				attackPoint.y,
 				function(err) {
+					if (defendButtonEnabled) {
+						$('.btn-attack defend').removeClass('disabled');
+					}
+					$('.btn-attack return').removeClass('disabled');
+					
 					if (err) {
 						Notifications.error('Не удалось отправить флот', err.error);
 					} else {

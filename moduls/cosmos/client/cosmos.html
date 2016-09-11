@@ -125,15 +125,17 @@
 		<button class="btn-all">Выбрать всех</button>
 		{{#if planet}}
 			{{#if planet.isHome}}
-				<button class="btn-attack defend">Отправить</button>
+				<button class="btn-attack defend" disabled={{isFleetSended}}>Отправить</button>
 			{{else}}
-				<button class="btn-attack defend {{#if not canHaveMoreColonies}}disabled{{/if}}">
+				<button class="btn-attack defend" disabled={{or (not canHaveMoreColonies) isFleetSended}}>
 					Захватить
 				</button>
-				<button class="btn-attack return">{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}</button>
+				<button class="btn-attack return" disabled={{isFleetSended}}>
+					{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
+				</button>
 			{{/if}}
 		{{else}}
-			<button class="btn-attack return">Перехватить</button>
+			<button class="btn-attack return" disabled={{isFleetSended}}>Перехватить</button>
 		{{/if}}
 		<button class="btn-close"></button>
 	</div>

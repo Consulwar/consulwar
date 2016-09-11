@@ -786,9 +786,11 @@ Template.chat.events({
 			return;
 		}
 
+		var chatOffset = $('.content .chat').offset();
+
 		Game.Chat.showUserPopup(
-			e.pageX,
-			e.pageY - 40,
+			e.pageX - chatOffset.left,
+			e.pageY - chatOffset.top,
 			username
 		);
 	},

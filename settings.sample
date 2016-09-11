@@ -25,6 +25,20 @@
 		"isInviteRequired": true,
 		"recaptcha": {
 			"publickey": "ABCDEFGHIJKLMNOP"
+		},	
+		"chat": {
+			"messages": {
+				"limit": 1000,
+				"loadCount": 20,
+				"freeChatPrice": 5000
+			},
+			"room": {
+				"usersLimit": 20,
+				"moderatorsLimit": 10
+			}
+		},
+		"statistic": {
+			"countPerPage": 20
 		}
 	},
 	"recaptcha": {
@@ -55,7 +69,21 @@
 		"reinforcementsDelay": 120,
 		"minActivePlayers": 100,
 		"spawnCoefficient": 0.1,
-		"damageReduction": 95
+		"damageReduction": 95,
+		"spawn": {
+			"striker": 10000,
+			"ripper": 9000,
+			"horror": 100,
+			"slider": 80,
+			"breaker": 120,
+			"crusher": 10,
+			"geccon": 30,
+			"amfizben": 200,
+			"amphibian": 140,
+			"chipping": 10,
+			"toofucking": 5,
+			"patron": 10
+		}
 	},
 	"cosmos": {
 		"enemyRespawnPeriod": 120,

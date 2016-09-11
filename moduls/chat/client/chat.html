@@ -117,10 +117,52 @@
 								>
 									{{#if this.data}}
 										{{#if eq this.data.type 'dice'}}
-											бросил {{this.data.dice.dices.amount}} кубик(а, ов) с {{this.data.dice.edges}} гранями каждый: 
+											бросил {{this.data.dice.dices.amount}} 
+											{{declension this.data.dice.dices.amount "кубик" "" "а" "ов"}} с 
+											{{this.data.dice.edges}} 
+											{{declension this.data.dice.edges "гран" "ью" "ями" "ями"}}: 
 											{{#each this.data.dice.dices.values}}
 												<span class="dice">{{this}}</span> 
 											{{/each}}
+											{{#if (or this.data.dice.modifier this.data.dice.roomModifier)}}
+												(
+												{{> coloredNumber number=this.data.dice.modifier}} 
+												{{#if (and this.data.dice.modifier this.data.dice.roomModifier)}}
+													 / 
+												{{/if}}
+												{{> coloredNumber 
+													number=this.data.dice.roomModifier
+													class="roomModifier"
+												}}
+												)
+											{{/if}}
+										{{/if}}
+										{{#if eq this.data.type 'medice'}}
+											{{this.data.medice.preText}}
+												{{#each this.data.medice.variables}}
+													<span 
+														class="
+															medice
+															{{#if eq @index ../data.medice.selected}}
+																selected
+															{{/if}}
+															"
+													>
+														{{this}}
+													</span>
+												{{/each}}
+											{{this.data.medice.afterText}}
+										{{/if}}
+										{{#if eq this.data.type 'changeDiceModifier'}}
+											{{#if eq this.data.modifier 0}}
+												удалил модификатор для игральных костей
+											{{else}}
+												установил модификатор для игральных костей: 
+												{{> coloredNumber 
+													number=this.data.modifier
+													class="roomModifier"
+												}}
+											{{/if}}
 										{{/if}}
 										{{#if eq this.data.type 'status'}}
 											{{{highlightUser this.message}}}
@@ -178,6 +220,19 @@
 			<input type="submit" value=""/>
 		</form>
 	</div>
+</template>
+
+<template name="coloredNumber">
+	{{#if gt this.number 0}}
+		<span class="{{this.class}} positive_number">
+			+{{this.number}}
+		</span>
+	{{/if}}
+	{{#if lt this.number 0}}
+		<span class="{{this.class}} negative_number">
+			–{{abs this.number}}
+		</span>
+	{{/if}}
 </template>
 
 <template name="chatUserPopup">
@@ -269,7 +324,9 @@
 				<tr><td>/unblock [username]</td><td>простить пользователя</td></tr>
 				<tr><td>/add moderator [username]</td><td>назначить модератора</td></tr>
 				<tr><td>/remove moderator [username]</td><td>разжаловать модератора</td></tr>
-				<tr><td>/d [n] [m]</td><td>бросить n кубиков с m гранями</td></tr>
+				<tr><td>/d [n] [m] [(+|-)k]</td><td>бросить n кубиков с m гранями и модификатором k</td></tr>
+				<tr><td>/d mod [(+|-)k]</td><td>задать модификатор костей для чата</td></tr>
+				<tr><td>/med текст %1%2%3% текст</td><td>выбрать случайное развитие событий</td></tr>
 				<tr><td>/me [text]</td><td>писать от третьего лица</td></tr>
 				<tr><td>/coub [id|link]</td><td>показать коуб (50ггк)</td></tr>
 				<tr><td>/сепукку</td><td>совершить сепукку и пожертвовать ресурсы</td></tr>

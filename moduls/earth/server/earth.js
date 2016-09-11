@@ -111,23 +111,19 @@ Game.Earth.generateEnemyArmy = function(level) {
 	// count difficulty modifier
 	var difficulty = Math.pow(1.5, level);
 
-	// generate units
-	return {
+	var enemies = {
 		reptiles: {
-			ground: {
-				striker: Math.floor( 1000 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				ripper: Math.floor( 900 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				horror: Math.floor( 10 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				slider: Math.floor( 8 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				breaker: Math.floor( 12 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				crusher: Math.floor( 1 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				geccon: Math.floor( 3 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				amfizben: Math.floor( 20 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				amphibian: Math.floor( 14 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT ),
-				chipping: Math.floor( 1 * players * difficulty * Game.Earth.SPAWN_COEFFICIENT )
-			}
+			ground: {}
 		}
 	};
+
+	for (var name in Game.Earth.SPAWN) {
+		enemies.reptiles.ground[name] = Math.floor(
+			Game.Earth.SPAWN[name] * players * difficulty * Game.Earth.SPAWN_COEFFICIENT
+		);
+	}
+	// generate units
+	return enemies;
 };
 
 Game.Earth.observeZone = function(name) {

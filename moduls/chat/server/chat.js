@@ -183,16 +183,34 @@ Meteor.methods({
 		var userPayAnyway = false;
 
 		if (message.substr(0, 1) == '/') {
-			var reg = new RegExp(/^\/d (\d )?(\d{1,2})$/);
+			var reg = new RegExp(/^\/d (\d+ )?(\d+)(\s?(?:\+|-)?\d+)?$/);
 			if (message == '/d' || reg.test(message)) {
-
 				var dices = 1;
 				var edges = 6;
+				var modifier = 0;
+				var roomModifier = room.diceModifier || 0;
 
 				if (message != '/d') {
 					var dice = reg.exec(message);
-					dices = dice[1] === undefined ? 1 : (parseInt(dice[1]) || 1);
-					edges = parseInt(dice[2]) < 2 ? 2 : parseInt(dice[2]);
+					dices = (dice[1] === undefined
+						? 1
+						: (parseInt(dice[1]) || 1)
+					);
+					edges = parseInt(dice[2]);
+					modifier = (dice[3] === undefined
+						? 0
+						: parseInt(dice[3])
+					);
+
+					if (dices < 1 || dices > 9) {
+						throw new Meteor.Error('Вы можете бросить от 1 до 9 костей');
+					}
+					if (edges < 2 || edges > 100) {
+						throw new Meteor.Error('Вы можете бросить кости с кол-вом граней от 2 до 100');
+					}
+					if (Math.abs(modifier) >= 100) {
+						throw new Meteor.Error('Модификатор должен находиться в диапазоне от -100 до 100');
+					}
 				}
 
 				set.data = {
@@ -201,13 +219,46 @@ Meteor.methods({
 						dices: {
 							amount: dices,
 							values: _.map(_.range(dices), function() {
-								return _.random(1, edges);
+								return Math.max(
+									Math.min(
+										Game.Random.interval(1, edges) + modifier + roomModifier, 
+										edges
+									),
+									1
+								);
 							})
 						},
 						edges: edges
 					}
 				};
+				if (modifier) {
+					set.data.dice.modifier = modifier;
+				}
+				if (roomModifier) {
+					set.data.dice.roomModifier = roomModifier;
+				}
 				stats['chat.dice'] = 1;
+
+			} else if (message.indexOf('/med') === 0) {
+				var meDiceReg = new RegExp(/^\/med ([^%]*)%(.+%.+)+%([^%]*)$/);
+				var meDice = meDiceReg.exec(message);
+
+				if (!meDice || !meDice[2]) {
+					throw new Meteor.Error('Введите %несколько%вариантов% развития событий');
+				}
+
+				var variables = meDice[2].split("%");
+
+				set.data = {
+					type: 'medice',
+					medice: {
+						preText: meDice[1] || '',
+						afterText: meDice[3] || '',
+						variables: variables,
+						selected: Game.Random.interval(0, variables.length-1)
+					}
+				};
+				stats['chat.medice'] = 1;
 
 			} else if (message.indexOf('/me') === 0) {
 				set.data = {
@@ -308,6 +359,8 @@ Meteor.methods({
 				} else {
 					throw new Meteor.Error('Совет Галактики все ещё в Шоке!');
 				}
+			} else {
+				throw new Meteor.Error('Неправильная команда, введите /help для помощи');
 			}
 		}
 
@@ -842,6 +895,78 @@ Meteor.methods({
 		var stats = {};
 		stats['chat.spent.credits'] = credits;
 		Game.Statistic.incrementUser(user._id, stats);
+	},
+
+	'chat.changeDiceModifierForRoom': function(roomName, modifier) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		checkHasGlobalBan(user._id);
+
+		console.log('chat.changeDiceModifierForRoom: ', new Date(), user.username);
+
+		check(roomName, String);
+		check(modifier, Match.Integer);
+
+		if (Math.abs(modifier) >= 100) {
+			throw new Meteor.Error('Модификатор должен находиться в диапазоне от -100 до 100');
+		}
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName,
+			deleted: { $ne: true }
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Комната с именем ' + roomName + ' не существует');
+		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
+
+		if (user.role != 'admin'
+		 && room.owner != user._id
+		 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
+		) {
+			throw new Meteor.Error('Вы не можете изменять модификатор в этой комнате');
+		}
+
+		Game.Chat.Room.Collection.update({
+			_id: room._id
+		}, {
+			$set: {
+				diceModifier: modifier
+			}
+		});
+
+		var message = {
+			room_id: room._id,
+			user_id: user._id,
+			username: user.username,
+			alliance: user.alliance,
+			rating: user.rating,
+			data: {
+				type: 'changeDiceModifier',
+				modifier: modifier
+			},
+			timestamp: Game.getCurrentTime()
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
 	},
 
 	'chat.addModeratorToRoom': function(roomName, username) {

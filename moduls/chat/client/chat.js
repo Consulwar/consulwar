@@ -402,6 +402,26 @@ var removeModerator = function(roomName, username) {
 	});
 };
 
+var changeDiceModifierForRoom = function(roomName, modifier) {
+	if (!roomName || roomName.length <= 0) {
+		Notifications.error('Укажите имя комнаты');
+		return;
+	}
+
+	if (!Match.test(modifier, Match.Integer)) {
+		Notifications.error('Укажите модификатор');
+		return;
+	}
+
+	Meteor.call('chat.changeDiceModifierForRoom', roomName, modifier, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Модификатор установлен');
+		}
+	});
+};
+
 var execClientCommand = function(message) {
 	// show help
 	if (message.indexOf('/help') === 0) {
@@ -456,6 +476,14 @@ var execClientCommand = function(message) {
 	// remove moderator
 	else if (message.indexOf('/remove moderator') === 0) {
 		removeModerator(Router.current().params.room, message.substr('/remove moderator'.length).trim());
+		return true;
+	}
+	// set modifier for dices of room
+	else if (message.indexOf('/d mod') === 0) {
+		changeDiceModifierForRoom(
+			Router.current().params.room, 
+			parseInt(message.substr('/d mod'.length).trim())
+		);
 		return true;
 	}
 
@@ -702,15 +730,21 @@ Template.chat.events({
 		}
 
 		isSending.set(true);
+		t.$('input[type="submit"]').attr('disabled', true);
 
 		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
 			isSending.set(false);
+			t.$('input[type="submit"]').attr('disabled', false);
 			if (err) {
 				var errorMessage = err.error;
 				if (_.isNumber(err.reason)) {
 					errorMessage += ' до ' + Game.Helpers.formatDate(err.reason);
 				}
-				Notifications.error('Неполучилось отправить сообщение', errorMessage);
+				if (text && text[0] == "/") {
+					Notifications.error('Не получилось выполнить команду', errorMessage);
+				} else {
+					Notifications.error('Не получилось отправить сообщение', errorMessage);
+				}
 			} else {
 				t.find('#message').reset();
 
@@ -726,6 +760,7 @@ Template.chat.events({
 
 	'keypress textarea[name="text"]': function(e, t) {
 		if (e.keyCode == 10 || e.keyCode == 13 || e.key == 'Enter') {
+			e.preventDefault();
 			t.find('#message input[type="submit"]').click();
 		}
 	},
@@ -736,6 +771,9 @@ Template.chat.events({
 	},
 
 	'click .messages .message': function(e, t) {
+		if (document.getSelection && document.getSelection().toString()) {
+			return;
+		}
 		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).parent().find('.profile').data('username') + ', ';
 		t.find('#message textarea[name="text"]').focus();
 	},
@@ -747,10 +785,10 @@ Template.chat.events({
 		if (!username || username.length <= 0) {
 			return;
 		}
-
+		var chatOffset = t.$('.chat').offset();
 		Game.Chat.showUserPopup(
-			e.pageX,
-			e.pageY - 40,
+			e.pageX - chatOffset.left + 2,
+			e.pageY - chatOffset.top + 2,
 			username
 		);
 	},

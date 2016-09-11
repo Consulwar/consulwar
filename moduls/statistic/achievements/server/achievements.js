@@ -22,24 +22,30 @@ Meteor.methods({
 		var result = null;
 		var set = null;
 
-		for (var key in completed) {
-			if (!Game.Achievements.items[key]) {
-				continue;
-			}
-
-			var currentLevel = Game.Achievements.items[key].currentLevel(achievements);
-			var progressLevel = Game.Achievements.items[key].progressLevel(statistic);
-
-			if (completed[key] == progressLevel && progressLevel > currentLevel) {
-				if (!set) {
-					set = {};
-					result = {};
+		for (var group in completed) {
+			for (var key in completed[group]) {
+				if (!Game.Achievements.items[group][key]) {
+					continue;
 				}
 
-				set['achievements.' + key + '.level'] = progressLevel;
-				set['achievements.' + key + '.timestamps.' + progressLevel] = Game.getCurrentTime();
+				var currentLevel = Game.Achievements.items[group][key].currentLevel(achievements);
+				var progressLevel = Game.Achievements.items[group][key].progressLevel(statistic);
 
-				result[key] = progressLevel;
+				if (completed[group][key] == progressLevel && progressLevel > currentLevel) {
+					if (!set) {
+						set = {};
+						result = {};
+					}
+					if (!set[group]) {
+						set[group] = {};
+						result[group] = {};
+					}
+
+					set[group]['achievements.' + key + '.level'] = progressLevel;
+					set[group]['achievements.' + key + '.timestamps.' + progressLevel] = Game.getCurrentTime();
+
+					result[group][key] = progressLevel;
+				}
 			}
 		}
 
@@ -54,7 +60,7 @@ Meteor.methods({
 		return result;
 	},
 
-	'achievements.give': function(username, achievementId, level) {
+	'achievements.give': function(username, achievementGroup, achievementId, level) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -73,6 +79,7 @@ Meteor.methods({
 
 		check(username, String);
 		check(achievementId, String);
+		check(achievementGroup, String);
 
 		if (level) {
 			check(level, Match.Integer);
@@ -88,12 +95,12 @@ Meteor.methods({
 			throw new Meteor.Error('Некорректно указан логин');
 		}
 
-		if (!Game.Achievements.items[achievementId]) {
+		if (!Game.Achievements.items[achievementGroup][achievementId]) {
 			throw new Meteor.Error('Такого достижения нет');
 		}
 
 		var set = {};
-		set['achievements.' + achievementId] = {
+		set['achievements.' + achievementGroup + '.' + achievementId] = {
 			level: level,
 			timestamp: Game.getCurrentTime()
 		};

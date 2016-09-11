@@ -22,6 +22,10 @@ Game.Mail = {
 			status: game.Mail.status.unread,
 			to: Meteor.userId()
 		});
+	},
+
+	userHash: function(userName) {
+		return 'compose/' + userName;
 	}
 };
 

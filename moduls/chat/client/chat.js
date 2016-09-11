@@ -785,10 +785,10 @@ Template.chat.events({
 		if (!username || username.length <= 0) {
 			return;
 		}
-		var chatOffset = t.$('.chat').offset();
+
 		Game.Chat.showUserPopup(
-			e.pageX - chatOffset.left + 2,
-			e.pageY - chatOffset.top + 2,
+			e.pageX,
+			e.pageY - 40,
 			username
 		);
 	},

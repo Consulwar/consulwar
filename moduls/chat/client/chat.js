@@ -560,6 +560,20 @@ var getUserRole = function(userId, username, role, rating) {
 	};
 };
 
+Template.chatMessage.helpers({
+	getUserRoleByMessage: function(message) {
+		return getUserRole(message.user_id, message.username, message.role, message.rating);
+	},
+
+	highlightUser: function(text) {
+		if (text.indexOf('/me') === 0) {
+			text = text.substr(3);
+		}
+
+		return text.replace('@' + Meteor.user().username, '<span class="me">@' + Meteor.user().username + '</span>');
+	}
+});
+
 Template.chat.helpers({
 	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
 	isChatFree: function() { return Meteor.user().isChatFree; },

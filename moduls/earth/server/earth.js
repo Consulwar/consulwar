@@ -115,7 +115,7 @@ Game.Earth.generateEnemyArmy = function(level) {
 		reptiles: {
 			ground: {}
 		}
-	}
+	};
 
 	for (var name in Game.Earth.SPAWN) {
 		enemies.reptiles.ground[name] = Math.floor(

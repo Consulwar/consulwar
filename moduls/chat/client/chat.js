@@ -787,10 +787,10 @@ Template.chat.events({
 		}
 
 		var chatOffset = $('.content .chat').offset();
-
+		var zoom = getComputedStyle(document.body).zoom;
 		Game.Chat.showUserPopup(
-			e.pageX - chatOffset.left,
-			e.pageY - chatOffset.top,
+			e.pageX / zoom - chatOffset.left + 5,
+			e.pageY / zoom - chatOffset.top + 5,
 			username
 		);
 	},
@@ -900,7 +900,7 @@ Game.Chat.showUserPopup = function(x, y, username) {
 				x: x,
 				y: y,
 				username: username
-			}, $('.chat')[0]
+			}, $('.content .chat')[0]
 		);
 
 		$('.profile').each(function(index, element) {

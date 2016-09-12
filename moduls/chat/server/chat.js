@@ -219,13 +219,7 @@ Meteor.methods({
 						dices: {
 							amount: dices,
 							values: _.map(_.range(dices), function() {
-								return Math.max(
-									Math.min(
-										Game.Random.interval(1, edges) + modifier + roomModifier, 
-										edges
-									),
-									1
-								);
+								return Game.Random.interval(1, edges) + modifier + roomModifier;
 							})
 						},
 						edges: edges
@@ -1358,7 +1352,7 @@ Meteor.methods({
 			sort: {
 				timestamp: -1
 			},
-			limit: Game.Chat.Messages.LOAD_COUNT
+			limit: Game.Chat.Messages.SUBSCRIBE_LIMIT
 		}).fetch();
 	},
 
@@ -1670,5 +1664,7 @@ Meteor.publish('chatIconsUnique', function() {
 		this.ready();
 	}
 });
+
+initChatConfigServer();
 
 };

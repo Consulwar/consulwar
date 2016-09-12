@@ -38,7 +38,7 @@
 		{{#unless eq unit.side 'reptiles'}}
 			{{> item_price price=(unit.price count)}}
 
-			<input class="count" type="number" placeholder="Количество" value="{{count}}"/>
+			<input class="count" type="number" placeholder="Количество" value="1"/>
 
 			<button class="build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
 		{{/unless}}

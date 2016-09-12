@@ -65,6 +65,11 @@
 		"from": "*** <***@***>",
 		"sitename": "***"
 	},
+	"chat": {
+		"messages": {
+			"subscribeLimit": 20
+		}
+	},
 	"earth": {
 		"reinforcementsDelay": 120,
 		"minActivePlayers": 100,

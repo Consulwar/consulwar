@@ -29,7 +29,7 @@ Game.Rating.showPage = function() {
 
 	if (hash && statisticGroup && pageNumber) {
 
-		if (hash[0] != selectedUserName) {
+		if (hash[0] != selectedUserName || statisticGroup != laststatisticGroup) {
 			selectedUserName = hash[0];
 			renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
 		}

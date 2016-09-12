@@ -28,7 +28,7 @@ Game.User = {
 	],
 
 	getLevel: function(rating) {
-		rating = _.isNumber(rating) ? rating : Meteor.user().rating;
+		rating = _.isNumber(rating) ? rating : Meteor.user().rating || 0;
 
 		for (var level = 0; level < this.levels.length; level++) {
 			if (rating < this.levels[level + 1].rating) {
@@ -47,7 +47,6 @@ Game.User = {
 	},
 
 	getLevelName: function(rating) {
-		rating = _.isNumber(rating) ? rating : Meteor.user().rating;
 		return this.levels[this.getLevel(rating)].name;
 	}
 };

@@ -2,9 +2,9 @@ initBuildingsSpecialPulsecatcherServer = function() {
 
 initBuildingsSpecialPulsecatcherLib();
 
-Game.Pulsecatcher.startNextQuiz = function() {
+Game.Building.special.Pulsecatcher.startNextQuiz = function() {
 	// finish active quiz
-	var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+	var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
 	if (activeQuiz) {
 		Game.Quiz.Collection.update({
 			_id: activeQuiz._id
@@ -37,10 +37,10 @@ Game.Pulsecatcher.startNextQuiz = function() {
 SyncedCron.add({
 	name: 'Следующее голосование по импульсному уловителю',
 	schedule: function(parser) {
-		return parser.text(Game.Pulsecatcher.UPDATE_SCHEDULE);
+		return parser.text(Game.Building.special.Pulsecatcher.UPDATE_SCHEDULE);
 	},
 	job: function() {
-		Game.Pulsecatcher.startNextQuiz();
+		Game.Building.special.Pulsecatcher.startNextQuiz();
 	}
 });
 
@@ -62,7 +62,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
 		}
 
-		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz) {
 			throw new Meteor.Error('Голосование пока не доступно');
 		}
@@ -87,14 +87,14 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
 		}
 
-		var previousQuiz = Game.Pulsecatcher.getPreviousQuiz();
-		var choosen = Game.Pulsecatcher.getChoosenBonus(previousQuiz);
+		var previousQuiz = Game.Building.special.Pulsecatcher.getPreviousQuiz();
+		var choosen = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
 
 		if (!choosen) {
 			throw new Meteor.Error('Нет доступных бонусов');
 		}
 
-		var activeList = Game.Pulsecatcher.getActiveBonusList();
+		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
 		var canActivateChoosen = true;
 
 		for (var key in activeList) {
@@ -155,7 +155,7 @@ Meteor.publish('pulsecatcherQuizAnswer', function() {
 
 if (process.env.NODE_ENV == 'development') {
 	Meteor.methods({
-		'pulsecatcher.startNextQuiz': Game.Pulsecatcher.startNextQuiz
+		'pulsecatcher.startNextQuiz': Game.Building.special.Pulsecatcher.startNextQuiz
 	});
 }
 

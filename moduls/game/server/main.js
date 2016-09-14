@@ -49,7 +49,7 @@ Meteor.startup(function () {
 	initStatisticServer();
 	initResourcesServer();
 	initCardsServer();
-	initBuildingServer();
+	initBuildingsServer();
 	initResearchServer();
 	initUnitServer();
 	initCosmosServer();
@@ -60,10 +60,6 @@ Meteor.startup(function () {
 	initChatServer();
 	initQuestServer();
 	initCheatsServer();
-	initBuildingsSpecialMarketServer();
-	initBuildingsSpecialColosseumServer();
-	initBuildingsSpecialContainersServer();
-	initBuildingsSpecialPulsecatcherServer();
 	initDDPLimiter();
 
 	SyncedCron.start();

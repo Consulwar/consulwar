@@ -1,6 +1,6 @@
 initBuildingsSpecialMarketLib = function() {
 	
-Game.Market = {
+Game.Building.special.Market = {
 	exchangeRates: {
 		humans:{
 			metals: (4 / 1) / 4,
@@ -17,8 +17,8 @@ Game.Market = {
 	},
 
 	getExchangeRate: function(resourceFrom, resourceTo) {
-		if (!Game.Market.exchangeRates[resourceFrom]
-		 || !Game.Market.exchangeRates[resourceFrom][resourceTo]
+		if (!Game.Building.special.Market.exchangeRates[resourceFrom]
+		 || !Game.Building.special.Market.exchangeRates[resourceFrom][resourceTo]
 		) {
 			return 0;
 		}
@@ -31,13 +31,13 @@ Game.Market = {
 			return 0; // can't change if no tradingport
 		}
 
-		return Game.Market.exchangeRates[resourceFrom][resourceTo];
+		return Game.Building.special.Market.exchangeRates[resourceFrom][resourceTo];
 	},
 
 	getExchangeAmount: function(resourceFrom, resourceTo, amount) {
 		amount = Game.Effect.Special.applyTo(
 			{ engName: 'tradingBonus' },
-			{ amount: amount * Game.Market.getExchangeRate(resourceFrom, resourceTo) },
+			{ amount: amount * Game.Building.special.Market.getExchangeRate(resourceFrom, resourceTo) },
 			true
 		).amount;
 

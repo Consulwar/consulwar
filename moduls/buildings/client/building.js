@@ -1,6 +1,6 @@
-initBuildingClient = function() {
+initBuildingsClient = function() {
 
-initBuildingLib();
+initBuildingsLib();
 
 Meteor.subscribe('buildings');
 
@@ -48,12 +48,18 @@ Template.item_building.events({
 	},
 
 	'click button.market': function(e, t) {
-		Game.Market.showWindow();
+		Game.Building.special.Market.showWindow();
 	},
 
 	'click button.containers': function(e, t) {
 		Game.Containers.showWindow();
 	}
 });
+
+
+initBuildingsSpecialMarketClient();
+initBuildingsSpecialColosseumClient();
+initBuildingsSpecialContainersClient();
+initBuildingsSpecialPulsecatcherClient();
 
 };

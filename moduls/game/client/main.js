@@ -4,7 +4,7 @@ initPaymentClient();
 initResourcesClient();
 initCardsClient();
 initStatisticClient();
-initBuildingClient();
+initBuildingsClient();
 initResearchClient();
 initUnitClient();
 initCosmosClient();
@@ -17,10 +17,6 @@ initQuestClient();
 initRouterClient();
 initMenuClient();
 initCheatsClient();
-initBuildingsSpecialMarketClient();
-initBuildingsSpecialColosseumClient();
-initBuildingsSpecialContainersClient();
-initBuildingsSpecialPulsecatcherClient();
 
 
 /*

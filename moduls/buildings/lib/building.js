@@ -1,4 +1,4 @@
-initBuildingLib = function() {
+initBuildingsLib = function() {
 
 game.Building = function(options){
 	game.Building.superclass.constructor.apply(this, arguments);
@@ -46,9 +46,11 @@ Game.Building = {
 	items: {
 		residential: {},
 		military: {}
-	}
+	},
+
+	special: {}
 };
 
-initBuildingContent();
+initBuildingsContent();
 
 };

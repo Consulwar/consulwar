@@ -6,7 +6,7 @@ var isLoading = new ReactiveVar(false);
 var activeFrom = new ReactiveVar(null);
 var activeTo = new ReactiveVar(null);
 
-Game.Market.showWindow = function() {
+Game.Building.special.Market.showWindow = function() {
 	Blaze.render(Template.market, $('.over')[0]);
 };
 
@@ -18,7 +18,7 @@ Template.market.helpers({
 	itemsFrom: function() {
 		var userResource = Game.Resources.getValue();
 
-		return _.map(Game.Market.exchangeRates, function(item, key) {
+		return _.map(Game.Building.special.Market.exchangeRates, function(item, key) {
 			return {
 				name: key,
 				amount: userResource[key] ? userResource[key].amount : 0
@@ -31,16 +31,16 @@ Template.market.helpers({
 			return null;
 		}
 
-		return _.map(Game.Market.exchangeRates[ activeFrom.get() ], function(item, key) {
+		return _.map(Game.Building.special.Market.exchangeRates[ activeFrom.get() ], function(item, key) {
 			return {
 				name: key,
-				rate: Game.Market.getExchangeRate(activeFrom.get(), key)
+				rate: Game.Building.special.Market.getExchangeRate(activeFrom.get(), key)
 			};
 		});
 	},
 
 	formatRate: function(name, rate) {
-		return '1 / ' + (Game.Market.getExchangeAmount(activeFrom.get(), name, 1000) / 1000);
+		return '1 / ' + (Game.Building.special.Market.getExchangeAmount(activeFrom.get(), name, 1000) / 1000);
 	}
 });
 
@@ -67,7 +67,7 @@ var recalculateForm = function(t) {
 
 	t.$('.exchange .amount').val(amount);
 	t.$('.exchange .result').html(
-		Game.Market.getExchangeAmount(activeFrom.get(), activeTo.get(), amount)
+		Game.Building.special.Market.getExchangeAmount(activeFrom.get(), activeTo.get(), amount)
 	);
 };
 
@@ -111,7 +111,7 @@ Template.market.events({
 			if (userResources[from] && userResources[from].amount > 0) {
 				t.$('.exchange .amount').val(userResources[from].amount);
 				t.$('.exchange .result').html(
-					Game.Market.getExchangeAmount(from, to, userResources[from].amount)
+					Game.Building.special.Market.getExchangeAmount(from, to, userResources[from].amount)
 				);
 			}
 		}
@@ -126,7 +126,7 @@ Template.market.events({
 		var from = activeFrom.get();
 		var to = activeTo.get();
 
-		if (Game.Market.getExchangeAmount(from, to, amount) <= 0) {
+		if (Game.Building.special.Market.getExchangeAmount(from, to, amount) <= 0) {
 			Notifications.error('Невозможно совершить обмен');
 			return;
 		}

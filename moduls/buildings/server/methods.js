@@ -1,4 +1,4 @@
-initBuildingServerMethods = function(){
+initBuildingsServerMethods = function(){
 
 Meteor.methods({
 	'building.build': function(options) {

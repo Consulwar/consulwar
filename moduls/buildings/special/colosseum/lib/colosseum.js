@@ -1,11 +1,11 @@
 initBuildingsSpecialColosseumLib = function() {
 
 game.ColosseumTournament = function(options) {
-	if (Game.Colosseum.tournaments[options.engName]) {
+	if (Game.Building.special.Colosseum.tournaments[options.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется турнир ' + options.engName);
 	}
 
-	Game.Colosseum.tournaments[options.engName] = this;
+	Game.Building.special.Colosseum.tournaments[options.engName] = this;
 
 	this.engName = options.engName;
 	this.name = options.name;
@@ -29,7 +29,7 @@ game.ColosseumTournament = function(options) {
 	};
 };
 
-Game.Colosseum = {
+Game.Building.special.Colosseum = {
 	tournaments: {},
 
 	getCooldownPeriod: function(level) {
@@ -42,7 +42,7 @@ Game.Colosseum = {
 
 		if (user
 		 && user.timeLastTournament
-		 && user.timeLastTournament > Game.getCurrentTime() - Game.Colosseum.getCooldownPeriod(level)
+		 && user.timeLastTournament > Game.Building.special.getCurrentTime() - Game.Building.special.Colosseum.getCooldownPeriod(level)
 		) {
 			return false;
 		}

@@ -1,6 +1,6 @@
-initBuildingServer = function() {
+initBuildingsServer = function() {
 
-initBuildingLib();
+initBuildingsLib();
 
 Game.Building.Collection._ensureIndex({
 	user_id: 1
@@ -97,6 +97,10 @@ Meteor.publish('buildings', function () {
 	}
 });
 
-initBuildingServerMethods();
+initBuildingsServerMethods();
+initBuildingsSpecialMarketServer();
+initBuildingsSpecialColosseumServer();
+initBuildingsSpecialContainersServer();
+initBuildingsSpecialPulsecatcherServer();
 
 };

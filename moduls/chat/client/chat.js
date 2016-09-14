@@ -783,7 +783,7 @@ Template.chat.events({
 
 		var chatOffset = $('.content .chat').offset();
 		var zoom = getComputedStyle(document.body).zoom;
-		var userPopupWidth = 48 * 3;
+		var userPopupWidth = 48 * 4;
 		Game.Chat.showUserPopup(
 			Math.min(
 				e.pageX / zoom - chatOffset.left + 5, 

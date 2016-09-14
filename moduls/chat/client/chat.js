@@ -765,11 +765,6 @@ Template.chat.events({
 		}
 	},
 
-	'click .participants span': function(e, t) {
-		t.find('#message textarea[name="text"]').value +=  '@' + e.currentTarget.innerHTML.trim() + ', ';
-		t.find('#message textarea[name="text"]').focus();
-	},
-
 	'click .messages .message': function(e, t) {
 		if (document.getSelection && document.getSelection().toString()) {
 			return;
@@ -778,7 +773,7 @@ Template.chat.events({
 		t.find('#message textarea[name="text"]').focus();
 	},
 
-	'click .messages li .profile': function(e, t) {
+	'click .messages li .profile, click .participants .online': function(e, t) {
 		e.stopPropagation();
 
 		var username = e.currentTarget.dataset.username;
@@ -788,8 +783,12 @@ Template.chat.events({
 
 		var chatOffset = $('.content .chat').offset();
 		var zoom = getComputedStyle(document.body).zoom;
+		var userPopupWidth = 48 * 3;
 		Game.Chat.showUserPopup(
-			e.pageX / zoom - chatOffset.left + 5,
+			Math.min(
+				e.pageX / zoom - chatOffset.left + 5, 
+				$('.content .chat').width() - userPopupWidth
+			),
 			e.pageY / zoom - chatOffset.top + 5,
 			username
 		);

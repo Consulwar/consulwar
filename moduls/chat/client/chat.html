@@ -62,7 +62,7 @@
 			<div class="participants">
 				<ul>
 					{{#each users}}
-						<li class="online">
+						<li class="online" data-username="{{this.name}}">
 							<span class="{{this.role}}">{{this.name}}</span>
 						</li>
 					{{/each}}

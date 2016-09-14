@@ -1,4 +1,4 @@
-initMarketLib = function() {
+initBuildingsSpecialMarketLib = function() {
 	
 Game.Market = {
 	exchangeRates: {

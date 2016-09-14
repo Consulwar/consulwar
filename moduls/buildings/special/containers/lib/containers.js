@@ -1,4 +1,4 @@
-initContainersLib = function() {
+initBuildingsSpecialContainersLib = function() {
 
 game.Container = function(options) {
 	if (Game.Containers.items[options.engName]) {
@@ -48,6 +48,6 @@ Game.Containers = {
 	}
 };
 
-initContainersContent();
+initBuildingsSpecialContainersContent();
 
 };

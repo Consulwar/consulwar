@@ -1,6 +1,6 @@
-initPulsecatcherClient = function() {
+initBuildingsSpecialPulsecatcherClient = function() {
 
-initPulsecatcherLib();
+initBuildingsSpecialPulsecatcherLib();
 
 Meteor.subscribe('pulsecatcherQuiz');
 var quizAnswerSubscription = Meteor.subscribe('pulsecatcherQuizAnswer');

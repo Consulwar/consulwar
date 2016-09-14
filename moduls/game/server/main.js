@@ -60,10 +60,10 @@ Meteor.startup(function () {
 	initChatServer();
 	initQuestServer();
 	initCheatsServer();
-	initMarketServer();
-	initColosseumServer();
-	initContainersServer();
-	initPulsecatcherServer();
+	initBuildingsSpecialMarketServer();
+	initBuildingsSpecialColosseumServer();
+	initBuildingsSpecialContainersServer();
+	initBuildingsSpecialPulsecatcherServer();
 	initDDPLimiter();
 
 	SyncedCron.start();

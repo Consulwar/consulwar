@@ -1,6 +1,6 @@
-initMarketClient = function() {
+initBuildingsSpecialMarketClient = function() {
 
-initMarketLib();
+initBuildingsSpecialMarketLib();
 
 var isLoading = new ReactiveVar(false);
 var activeFrom = new ReactiveVar(null);

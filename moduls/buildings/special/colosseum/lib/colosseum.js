@@ -1,4 +1,4 @@
-initColosseumLib = function() {
+initBuildingsSpecialColosseumLib = function() {
 
 game.ColosseumTournament = function(options) {
 	if (Game.Colosseum.tournaments[options.engName]) {
@@ -51,6 +51,6 @@ Game.Colosseum = {
 	}
 };
 
-initColosseumContent();
+initBuildingsSpecialColosseumContent();
 
 };

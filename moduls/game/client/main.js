@@ -17,10 +17,10 @@ initQuestClient();
 initRouterClient();
 initMenuClient();
 initCheatsClient();
-initMarketClient();
-initColosseumClient();
-initContainersClient();
-initPulsecatcherClient();
+initBuildingsSpecialMarketClient();
+initBuildingsSpecialColosseumClient();
+initBuildingsSpecialContainersClient();
+initBuildingsSpecialPulsecatcherClient();
 
 
 /*

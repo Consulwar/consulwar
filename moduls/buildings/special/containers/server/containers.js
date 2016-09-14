@@ -1,7 +1,7 @@
-initContainersServer = function() {
+initBuildingsSpecialContainersServer = function() {
 
-initContainersLib();
-initContainersContentServer();
+initBuildingsSpecialContainersLib();
+initBuildingsSpecialContainersContentServer();
 
 Game.Containers.Collection._ensureIndex({
 	user_id: 1

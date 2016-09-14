@@ -1,6 +1,6 @@
-initContainersClient = function() {
+initBuildingsSpecialContainersClient = function() {
 
-initContainersLib();
+initBuildingsSpecialContainersLib();
 
 Meteor.subscribe('containers');
 

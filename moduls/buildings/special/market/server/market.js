@@ -1,6 +1,6 @@
-initMarketServer = function() {
+initBuildingsSpecialMarketServer = function() {
 
-initMarketLib();
+initBuildingsSpecialMarketLib();
 
 Meteor.methods({
 	'market.exchange': function(resourceFrom, resourceTo, amount) {

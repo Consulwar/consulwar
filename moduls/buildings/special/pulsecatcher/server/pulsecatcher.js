@@ -1,6 +1,6 @@
-initPulsecatcherServer = function() {
+initBuildingsSpecialPulsecatcherServer = function() {
 
-initPulsecatcherLib();
+initBuildingsSpecialPulsecatcherLib();
 
 Game.Pulsecatcher.startNextQuiz = function() {
 	// finish active quiz

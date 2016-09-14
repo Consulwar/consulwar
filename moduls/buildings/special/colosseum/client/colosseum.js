@@ -1,6 +1,6 @@
-initColosseumClient = function() {
+initBuildingsSpecialColosseumClient = function() {
 
-initColosseumLib();
+initBuildingsSpecialColosseumLib();
 
 Template.colosseum.helpers({
 	tournaments: function() {

@@ -4,7 +4,7 @@ initPaymentClient();
 initResourcesClient();
 initCardsClient();
 initStatisticClient();
-initBuildingsClient();
+initBuildingClient();
 initResearchClient();
 initUnitClient();
 initCosmosClient();

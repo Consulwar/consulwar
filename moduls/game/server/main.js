@@ -49,7 +49,7 @@ Meteor.startup(function () {
 	initStatisticServer();
 	initResourcesServer();
 	initCardsServer();
-	initBuildingsServer();
+	initBuildingServer();
 	initResearchServer();
 	initUnitServer();
 	initCosmosServer();

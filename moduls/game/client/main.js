@@ -543,5 +543,5 @@ Template.inputWindow.events({
 		closeInputWindow(t.data.onAccept, t.find('input').value);
 	}
 });
-console.log('main2');
+
 });

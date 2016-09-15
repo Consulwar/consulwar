@@ -367,6 +367,15 @@ var helpers = {
 Template.game.helpers(helpers);
 Template.item.helpers(helpers);
 
+Template.game.onRendered(function(){
+	var currentQuest = Game.Quest.getOneByHero('tamily');
+	if (currentQuest
+	 && currentQuest.engName == 'tutorial'
+	 && currentQuest.status == Game.Quest.status.PROMPT
+	) {
+		Game.Quest.showQuest('tutorial');
+	}
+});
 
 Template.game.events({
 	'click header .username .edit': function() {

@@ -27,13 +27,12 @@ Game.Rating.showPage = function() {
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
 	var detailStatisticTab;
 
+	if (hash && (hash[0] != selectedUserName || statisticGroup != laststatisticGroup)) {
+		selectedUserName = hash[0];
+		renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
+	}
+
 	if (hash && statisticGroup && pageNumber) {
-
-		if (hash[0] != selectedUserName || statisticGroup != laststatisticGroup) {
-			selectedUserName = hash[0];
-			renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
-		}
-
 		if (statisticGroup == laststatisticGroup) {
 			renderRating.call(this, selectedUserName, countPerPage, countTotal, users, statisticGroup);
 		}

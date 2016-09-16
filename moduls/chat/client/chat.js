@@ -13,6 +13,8 @@ var chatSubscription = null;
 var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
+var messagesCounter = 0;
+var tempMessages = [];
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
@@ -20,37 +22,108 @@ var gotLimit = new ReactiveVar(false);
 
 var addMessage = function(message) {
 	var i = 0;
-	var n = messages.length;
+	var n = tempMessages.length;
 	var isDuplicated = false;
 
 	while (n-- > 0) {
 		// check if duplicated
-		if (messages[n]._id == message._id) {
+		if (tempMessages[n]._id == message._id) {
 			isDuplicated = true;
 			break;
 		}
 		// find position
-		if (i === 0 && messages[n].timestamp <= message.timestamp) {
+		if (i === 0 && tempMessages[n].timestamp <= message.timestamp) {
 			i = n + 1;
 		}
 		// break check
-		if (messages[n].timestamp < message.timestamp) {
+		if (tempMessages[n].timestamp < message.timestamp) {
 			break;
 		}
 	}
-
+	message.parts = [message];
 	if (!isDuplicated) {
-		messages.splice(i, 0, message);
+		tempMessages.splice(i, 0, message);
 	}
+};
+
+var addMessageInGroupedList = function(message){
+	var lastMessage = messages[messages.length-1];
+	var part = {
+		_id: message._id,
+		message: message.message,
+		data: message.data,
+		timestamp: message.timestamp,
+	};
+	if (!lastMessage || message.isMotd || lastMessage.isMotd ||
+		lastMessage.username != message.username ||
+		lastMessage.role != message.role ||
+		lastMessage.iconPath != message.iconPath)
+	{
+		message.parts = [part];
+		messages.push(message);
+	} else {
+		lastMessage.parts.push(part);
+		updateMessageGroup(messages.length-1);
+	}
+	
+};
+
+var updateMessageGroup = function(index) {
+	messages.splice(index,1,messages[index]);
+};
+
+var groupMessagesList = function(msgs) {
+	//var msgs = messages.list();
+	if (!msgs.length) return [];
+
+	var groupedMessages = [];
+	var group = 0;
+	var part = {};
+	for (var i = 0; i < msgs.length; i++) {
+		if (i > 0 &&
+			(msgs[i].isMotd || msgs[i - 1].isMotd ||
+			msgs[i - 1].username != msgs[i].username ||
+			msgs[i - 1].role != msgs[i].role ||
+			msgs[i - 1].iconPath != msgs[i].iconPath)) {
+			group++;
+		}
+
+		part = {
+			_id: msgs[i]._id,
+			message: msgs[i].message,
+			data: msgs[i].data,
+			timestamp: msgs[i].timestamp,
+		};
+
+		if (!groupedMessages[group]) {
+			groupedMessages[group] = msgs[i];
+			groupedMessages[group].parts = [];
+		}
+		groupedMessages[group].parts.push(part);
+	}
+	return groupedMessages;
 };
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
-		addMessage(message);
+		messagesCounter++;
+		if(messagesCounter > Game.Chat.Messages.LOAD_COUNT) {	
+			addMessageInGroupedList(message);
+		} else if (messagesCounter < Game.Chat.Messages.LOAD_COUNT) {
+			addMessage(message);
+		} else {
+			addMessage(message);
+			debugger;
+			var groupedMessages = groupMessagesList(tempMessages);
+			messages.push.apply(messages, groupedMessages);
+		}
 
 		// limit max count
-		while (messages.length > Game.Chat.Messages.LIMIT) {
+		while (messagesCounter > Game.Chat.Messages.LIMIT) {
+
+			//если isMotd то -1 скорее всего
+			messagesCounter -= messages[0].parts.length;
 			messages.shift();
 		}
 
@@ -164,7 +237,7 @@ Template.chat.onRendered(function() {
 			} else {
 				// load after last message timestamp
 				isLoading.set(true);
-
+				debugger;
 				var options = {
 					roomName: roomName,
 					timestamp: messages[ messages.length - 1 ].timestamp
@@ -581,37 +654,8 @@ Template.chat.helpers({
 	isLoading: function() { return isLoading.get(); },
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
-	messages: function() { 
-		var msgs = messages.list();
-		if (!msgs.length) return [];
-
-		var groupedMessages = [];
-		var group = 0;
-		var part = {};
-		for (var i = 0; i < msgs.length; i++) {
-			if (i > 0 &&
-				(msgs[i].isMotd || msgs[i - 1].isMotd ||
-				msgs[i - 1].username != msgs[i].username ||
-				msgs[i - 1].role != msgs[i].role ||
-				msgs[i - 1].iconPath != msgs[i].iconPath)) {
-				group++;
-			}
-
-			part = {
-				_id: msgs[i]._id,
-				message: msgs[i].message,
-				data: msgs[i].data,
-				timestamp: msgs[i].timestamp,
-			};
-
-			if (!groupedMessages[group]) {
-				groupedMessages[group] = msgs[i];
-				groupedMessages[group].parts = [];
-			}
-			groupedMessages[group].parts.push(part);
-		}
-
-		return groupedMessages;
+	messages: function() {
+		return messages.list();
 	},
 
 	getUserRole: function() {
@@ -837,10 +881,12 @@ Template.chat.events({
 			}
 
 			if (data) {
+				tempMessages = [];
 				for (var i = 0; i < data.length; i++) {
 					if (messages.length >= Game.Chat.Messages.LIMIT) {
 						break;
 					}
+					messagesCounter++;
 					addMessage(data[i]);
 				}
 
@@ -853,6 +899,9 @@ Template.chat.events({
 				) {
 					hasMore.set(false);
 				}
+
+				var groupedMessages = groupMessagesList(tempMessages);
+				messages.unshift.apply(messages, groupedMessages);
 			}
 		});
 	},

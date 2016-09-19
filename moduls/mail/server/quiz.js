@@ -42,7 +42,7 @@ Meteor.call('createQuiz', {
 	console.log(err, res);
 })
 
-Meteor.call('sendQuiz', "QHb4rZPTz9WYqp5qD");
+Meteor.call('sendQuiz', "5Pfr6ustyDRfFfcuA");
 */
 
 Meteor.methods({
@@ -150,7 +150,7 @@ Meteor.methods({
 
 		console.log('createQuiz: ', new Date(), user.username);
 
-		if (user.username != 'Zav') {
+		if (user.username != 'dreamniker') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 
@@ -179,7 +179,7 @@ Meteor.methods({
 
 		console.log('sendQuiz: ', new Date(), user.username);
 
-		if (user.username != 'Zav') {
+		if (user.username != 'dreamniker') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 		check(id, String);

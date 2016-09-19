@@ -1,5 +1,11 @@
 initChatClient = function() {
 
+/*
+1) Ищем перед каким сообщением вставлять новое
+2) 
+
+*/
+
 initChatLib();
 
 Meteor.subscribe('chatIconsUser');
@@ -19,6 +25,7 @@ var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
+var subscriptionIsReady = false;
 
 var addMessage = function(message) {
 	var i = 0;
@@ -72,6 +79,32 @@ var updateMessageGroup = function(index) {
 	messages.splice(index,1,messages[index]);
 };
 
+var addMessages = function(tempMessages) {
+	var groupedMessages = groupMessagesList(tempMessages);
+	var startTimeStamp = groupedMessages[0].timestamp;
+	var endTimeStamp = groupedMessages[groupedMessages.length - 1].timestamp;
+
+	var start = 0;
+	var end = messages.length - 1;
+
+	for(var i = 0; i < messages.length; i++) {
+		if (startTimeStamp > messages[i].timestamp) {
+			start = i - 1;
+		}
+		if (endTimeStamp > messages[i].timestamp) {
+			end = i - 1;
+		}
+	}
+
+	if (start < messages.length - 1 && groupedMessages[groupedMessages.length - 1].username == messages[start].username) {
+		console.log("group");
+	}
+
+	tempMessages.length = 0;
+	groupedMessages.unshift(start, 0);
+	messages.splice.apply(messages, groupedMessages);
+};
+
 var groupMessagesList = function(msgs) {
 	//var msgs = messages.list();
 	if (!msgs.length) return [];
@@ -108,15 +141,10 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
 		messagesCounter++;
-		if(messagesCounter > Game.Chat.Messages.LOAD_COUNT) {	
+		if(subscriptionIsReady && tempMessages.length == 0) {	
 			addMessageInGroupedList(message);
-		} else if (messagesCounter < Game.Chat.Messages.LOAD_COUNT) {
-			addMessage(message);
 		} else {
 			addMessage(message);
-			debugger;
-			var groupedMessages = groupMessagesList(tempMessages);
-			messages.push.apply(messages, groupedMessages);
 		}
 
 		// limit max count
@@ -213,7 +241,7 @@ Template.chat.onRendered(function() {
 		
 		// get route room name
 		var roomName = Router.current().getParams().room;
-
+		isLoading.set(true);
 		if (roomName) {
 			if (roomName != currentRoomName // new room
 			 || messages.length === 0       // or don't have any messages
@@ -222,44 +250,23 @@ Template.chat.onRendered(function() {
 				// reset current room
 				messages.clear();
 				hasMore.set(true);
-				isLoading.set(false);
 				isSending.set(false);
 				gotLimit.set(false);
-				
-				// subscribe
-				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
-				chatSubscription = Meteor.subscribe('chat', roomName);
+
 
 				// set as last active chat room
 				Session.set('chatRoom', roomName);
 				currentRoomName = roomName;
-				Meteor.setTimeout(scrollChatToBottom.bind(template, true), 500);
-			} else {
-				// load after last message timestamp
-				isLoading.set(true);
-				debugger;
-				var options = {
-					roomName: roomName,
-					timestamp: messages[ messages.length - 1 ].timestamp
-				};
-
-				Meteor.call('chat.loadMore', options, function(err, data) {
-					isLoading.set(false);
-					// insert loaded messages
-					if (!err && data) {
-						for (var i = 0; i < data.length; i++) {
-							addMessage(data[i]);
-						}
-						while (messages.length > Game.Chat.Messages.LIMIT) {
-							messages.shift();
-						}
-					}
-					// subscribe after loading
-					chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
-					chatSubscription = Meteor.subscribe('chat', roomName);
-					Meteor.setTimeout(scrollChatToBottom.bind(template, true), 500);
-				});
 			}
+			// subscribe
+			chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
+			chatSubscription = Meteor.subscribe('chat', roomName, function() {
+				isLoading.set(false);
+				addMessages(tempMessages);
+				subscriptionIsReady = true;
+				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
+				console.log('ready');
+			});
 		}
 	});
 });
@@ -889,6 +896,7 @@ Template.chat.events({
 					messagesCounter++;
 					addMessage(data[i]);
 				}
+				addMessages(tempMessages);
 
 				if (messages.length >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);
@@ -899,9 +907,8 @@ Template.chat.events({
 				) {
 					hasMore.set(false);
 				}
-
-				var groupedMessages = groupMessagesList(tempMessages);
-				messages.unshift.apply(messages, groupedMessages);
+				//var groupedMessages = groupMessagesList(tempMessages);
+				//messages.unshift.apply(messages, groupedMessages);
 			}
 		});
 	},

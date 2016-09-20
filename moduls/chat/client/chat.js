@@ -81,32 +81,70 @@ var updateMessageGroup = function(index) {
 
 var addMessages = function(tempMessages) {
 	var groupedMessages = groupMessagesList(tempMessages);
-	var startTimeStamp = groupedMessages[0].timestamp;
-	var endTimeStamp = groupedMessages[groupedMessages.length - 1].timestamp;
+	var startTimeStamp = groupedMessages[0].parts[groupedMessages[0].parts.length - 1].timestamp;
+	var endTimeStamp = groupedMessages[groupedMessages.length - 1].parts[groupedMessages[groupedMessages.length - 1].parts.length - 1].timestamp;
 
 	var start = 0;
-	var end = messages.length - 1;
+	var end = 0;
+	var deleted = 0;
 
 	for(var i = 0; i < messages.length; i++) {
-		if (startTimeStamp > messages[i].timestamp) {
-			start = i - 1;
+		var lastMessageTimeStamp = messages[i].parts[messages[i].parts.length - 1].timestamp;
+		if (startTimeStamp >= lastMessageTimeStamp) {
+			start = i + 1;
 		}
-		if (endTimeStamp > messages[i].timestamp) {
-			end = i - 1;
+		if (endTimeStamp >= lastMessageTimeStamp) {
+			end = i + 1;
 		}
 	}
 
-	if (start < messages.length - 1 && groupedMessages[groupedMessages.length - 1].username == messages[start].username) {
-		console.log("group");
+	console.log("start", start, "end", end);
+
+
+	//debugger;	
+	
+	if (messages.length > 0
+		 && end < messages.length
+		 && end >= 0
+		 && groupedMessages[groupedMessages.length - 1].username == messages[end].username
+	) {
+		console.log(groupedMessages[groupedMessages.length - 1].username , messages[end].username);
+		deleted++;
+		groupedMessages[groupedMessages.length - 1].parts.push.apply(groupedMessages[groupedMessages.length - 1].parts, messages[end].parts);
+		groupedMessages[groupedMessages.length - 1].parts = _.uniq(
+			groupedMessages[groupedMessages.length - 1].parts,
+			false,
+			function(message) {
+				return message._id;
+			}
+		);
 	}
+
+	if (messages.length > 0
+		 && start > 0
+		 && groupedMessages[0].username == messages[start - 1].username
+	) {
+		console.log("blya");
+		//deleted++;
+		start--;
+		groupedMessages[0].parts.unshift.apply(groupedMessages[0].parts, messages[start].parts);
+		groupedMessages[0].parts = _.uniq(
+			groupedMessages[0].parts,
+			false,
+			function(message) {
+				return message._id;
+			}
+		);
+	}
+
+	deleted += end - start;
 
 	tempMessages.length = 0;
-	groupedMessages.unshift(start, 0);
+	groupedMessages.unshift(start, deleted);
 	messages.splice.apply(messages, groupedMessages);
 };
 
 var groupMessagesList = function(msgs) {
-	//var msgs = messages.list();
 	if (!msgs.length) return [];
 
 	var groupedMessages = [];
@@ -260,6 +298,7 @@ Template.chat.onRendered(function() {
 			}
 			// subscribe
 			chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
+			subscriptionIsReady = false;
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
 				addMessages(tempMessages);

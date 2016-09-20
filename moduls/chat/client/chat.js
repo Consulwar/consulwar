@@ -30,14 +30,8 @@ var subscriptionIsReady = false;
 var addMessage = function(message) {
 	var i = 0;
 	var n = tempMessages.length;
-	var isDuplicated = false;
 
 	while (n-- > 0) {
-		// check if duplicated
-		if (tempMessages[n]._id == message._id) {
-			isDuplicated = true;
-			break;
-		}
 		// find position
 		if (i === 0 && tempMessages[n].timestamp <= message.timestamp) {
 			i = n + 1;
@@ -48,9 +42,7 @@ var addMessage = function(message) {
 		}
 	}
 	message.parts = [message];
-	if (!isDuplicated) {
-		tempMessages.splice(i, 0, message);
-	}
+	tempMessages.splice(i, 0, message);
 };
 
 var addMessageInGroupedList = function(message){
@@ -70,23 +62,9 @@ var addMessageInGroupedList = function(message){
 		messages.push(message);
 	} else {
 		lastMessage.parts.push(part);
-		updateMessageGroup(messages.length-1);
+		messages.splice(messages.length-1,1,lastMessage);
 	}
 	
-};
-
-var updateMessageGroup = function(index) {
-	messages.splice(index,1,messages[index]);
-};
-
-var haveDuplicate = function(a, b) {
-	for (var i = 0; i < a.length; i++) {
-		for (var j = 0; j < b.length; j++) {
-			if (a[i]._id == b[j]._id) {
-				return true;
-			}
-		}
-	}
 };
 
 var uniqMessages = function(messages) {
@@ -120,7 +98,6 @@ var addMessages = function(tempMessages) {
 		}
 	}
 
-	console.log("start", start, "end", end);
 	var missedMessages;
 	if (messages.length > 0
 		 && end < messages.length
@@ -131,7 +108,7 @@ var addMessages = function(tempMessages) {
 		groupedMessages[groupedMessages.length - 1].parts = uniqMessages(groupedMessages[groupedMessages.length - 1].parts);
 		end++;
 	}
-
+	console.log(start, end);
 	if (messages.length > 0
 		 && start > 0
 		 && groupedMessages[0].username == messages[start - 1].username
@@ -146,6 +123,7 @@ var addMessages = function(tempMessages) {
 			groupedMessages[0].parts = unitedMessages;
 		}
 	} else if(messages.length > 0 && start > 0) {
+		//debugger;
 		missedMessages = true;
 	}
 

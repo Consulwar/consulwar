@@ -108,7 +108,10 @@ var addMessages = function(tempMessages) {
 	var end = 0;
 
 	for(var i = 0; i < messages.length; i++) {
-		var lastMessageTimeStamp = messages[i].parts[messages[i].parts.length - 1].timestamp;
+		var lastMessageTimeStamp = (messages[i].parts
+			? messages[i].parts[messages[i].parts.length - 1].timestamp
+			: messages[i].timestamp
+		);
 		if (startTimeStamp >= lastMessageTimeStamp) {
 			start = i + 1;
 		}
@@ -117,9 +120,8 @@ var addMessages = function(tempMessages) {
 		}
 	}
 
-	var moreMessages = false;
 	console.log("start", start, "end", end);
-	
+	var missedMessages;
 	if (messages.length > 0
 		 && end < messages.length
 		 && end >= 0
@@ -138,22 +140,24 @@ var addMessages = function(tempMessages) {
 		var startLength = unitedMessages.length;
 		unitedMessages = uniqMessages(unitedMessages);
 		if(startLength == unitedMessages.length) {
-			moreMessages = true;
+			missedMessages = true;
 		} else {
 			start--;
 			groupedMessages[0].parts = unitedMessages;
 		}
+	} else if(messages.length > 0 && start > 0) {
+		missedMessages = true;
 	}
 
 	var deleted = end - start;
 
-	if (moreMessages) {
+	if (missedMessages) {
 		if(groupedMessages[0].parts.length == 1) {
 			groupedMessages.shift();
 		} else {
 			groupedMessages[0].parts.shift();
 		}
-		groupedMessages.unshift({more: true});
+		groupedMessages[0].haveAllowedPreviousMessages = true;
 	}
 
 	tempMessages.length = 0;
@@ -917,7 +921,7 @@ Template.chat.events({
 	},
 
 	// load previous messages
-	'click .chat .more': function(e, t) {
+	'click .chat .more, click .chat .missed': function(e, t) {
 		if (isLoading.get()) {
 			return;
 		}
@@ -931,7 +935,7 @@ Template.chat.events({
 
 		var options = {
 			roomName: roomName,
-			timestamp: messages[0].timestamp,
+			timestamp: parseInt(e.currentTarget.dataset.timestamp, 10) || messages[0].timestamp,
 			isPrevious: true
 		};
 		

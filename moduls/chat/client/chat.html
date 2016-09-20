@@ -80,19 +80,18 @@
 				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
 			{{/if}}
 			{{#each messages}}
-				{{#if (or this.isMotd this.more)}}
-					{{#if this.isMotd}}
-						<li class="motd">
-							<div>
-								{{{this.message}}}
-							</div>
-						</li>
-					{{else}}
-						<li class="more">
+				{{#if this.isMotd}}
+					<li class="motd">
+						<div>
+							{{{this.message}}}
+						</div>
+					</li>
+				{{else}}
+					{{#if this.haveAllowedPreviousMessages}}
+						<li class="missed" data-timestamp="{{this.timestamp}}">
 							<span>показать пропущенные сообщения</span>
 						</li>
 					{{/if}}
-				{{else}}
 					{{> chatMessage this}}
 				{{/if}}
 

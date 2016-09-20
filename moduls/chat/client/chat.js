@@ -143,6 +143,16 @@ var addMessages = function(tempMessages) {
 	messages.splice.apply(messages, groupedMessages);
 };
 
+var joinMessages = function(start) {
+	if(messages[start]
+	 && messages[start + 1]
+	 && messages[start].username == messages[start + 1].username
+	) {
+		messages[start].parts = messages[start].parts.concat(messages[start + 1].parts);
+		messages.splice(start + 1, 1);
+	}
+};
+
 var groupMessagesList = function(msgs) {
 	if (!msgs.length) return [];
 
@@ -178,7 +188,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
 		messagesCounter++;
-		if(subscriptionIsReady && tempMessages.length == 0) {	
+		if (subscriptionIsReady && tempMessages.length == 0) {	
 			addMessageInGroupedList(message);
 		} else {
 			addMessage(message);
@@ -211,7 +221,8 @@ var addMotd = function(message) {
 				hasSame = true;
 			} else {
 				// found different motd, remove it
-				messages[n].splice(n, 1);
+				messages.splice(n, 1);
+				joinMessages(n - 1);
 			}
 			break;
 		}

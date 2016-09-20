@@ -1,10 +1,5 @@
 initChatClient = function() {
 
-/*
-1) Ищем перед каким сообщением вставлять новое
-2) 
-
-*/
 
 initChatLib();
 
@@ -19,33 +14,23 @@ var chatSubscription = null;
 var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
-var messagesCounter = 0;
-var tempMessages = [];
+var messagesCount = 0;
+var cacheMessages = [];
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
-var subscriptionIsReady = false;
 
-var addMessage = function(message) {
-	var i = 0;
-	var n = tempMessages.length;
+var cacheMessage = function(message) {
+	var i = _.sortedIndex(cacheMessages, message, function(message){
+		return message.timestamp;
+	});
 
-	while (n-- > 0) {
-		// find position
-		if (i === 0 && tempMessages[n].timestamp <= message.timestamp) {
-			i = n + 1;
-		}
-		// break check
-		if (tempMessages[n].timestamp < message.timestamp) {
-			break;
-		}
-	}
 	message.parts = [message];
-	tempMessages.splice(i, 0, message);
+	cacheMessages.splice(i, 0, message);
 };
 
-var addMessageInGroupedList = function(message){
+var addMessage = function(message){
 	var lastMessage = messages[messages.length-1];
 	var part = {
 		_id: message._id,
@@ -77,10 +62,10 @@ var uniqMessages = function(messages) {
 	);
 };
 
-var addMessages = function(tempMessages) {
-	var groupedMessages = groupMessagesList(tempMessages);
+var addMessages = function(cacheMessages) {
+	var groupedMessages = groupMessagesList(cacheMessages);
 	var startTimeStamp = groupedMessages[0].parts[groupedMessages[0].parts.length - 1].timestamp;
-	var endTimeStamp = tempMessages[tempMessages.length - 1].timestamp;
+	var endTimeStamp = cacheMessages[cacheMessages.length - 1].timestamp;
 
 	var start = 0;
 	var end = 0;
@@ -99,13 +84,14 @@ var addMessages = function(tempMessages) {
 	}
 
 	var missedMessages;
+	var lastGroupedMessage = groupedMessages[groupedMessages.length - 1];
 	if (messages.length > 0
 		 && end < messages.length
 		 && end >= 0
-		 && groupedMessages[groupedMessages.length - 1].username == messages[end].username
+		 && lastGroupedMessage.username == messages[end].username
 	) {
-		groupedMessages[groupedMessages.length - 1].parts.push.apply(groupedMessages[groupedMessages.length - 1].parts, messages[end].parts);
-		groupedMessages[groupedMessages.length - 1].parts = uniqMessages(groupedMessages[groupedMessages.length - 1].parts);
+		lastGroupedMessage.parts.push.apply(lastGroupedMessage.parts, messages[end].parts);
+		lastGroupedMessage.parts = uniqMessages(lastGroupedMessage.parts);
 		end++;
 	}
 
@@ -123,7 +109,6 @@ var addMessages = function(tempMessages) {
 			groupedMessages[0].parts = unitedMessages;
 		}
 	} else if(messages.length > 0 && start > 0) {
-		//debugger;
 		missedMessages = true;
 	}
 
@@ -138,7 +123,7 @@ var addMessages = function(tempMessages) {
 		groupedMessages[0].haveAllowedPreviousMessages = true;
 	}
 
-	tempMessages.length = 0;
+	cacheMessages.length = 0;
 	groupedMessages.unshift(start, deleted);
 	messages.splice.apply(messages, groupedMessages);
 };
@@ -187,18 +172,18 @@ var groupMessagesList = function(msgs) {
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
-		messagesCounter++;
-		if (subscriptionIsReady && tempMessages.length == 0) {	
-			addMessageInGroupedList(message);
-		} else {
+		messagesCount++;
+		if (chatSubscription.ready() && cacheMessages.length == 0) {	
 			addMessage(message);
+		} else {
+			cacheMessage(message);
 		}
 
 		// limit max count
-		while (messagesCounter > Game.Chat.Messages.LIMIT) {
+		while (messagesCount > Game.Chat.Messages.LIMIT) {
 
 			//если isMotd то -1 скорее всего
-			messagesCounter -= messages[0].parts.length;
+			messagesCount -= messages[0].parts.length;
 			messages.shift();
 		}
 
@@ -208,7 +193,6 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 });
 
 var removeMotd = function() {
-	return;
 	var n = messages.length;
 
 	while (n-- > 0) {
@@ -320,12 +304,10 @@ Template.chat.onRendered(function() {
 				currentRoomName = roomName;
 			}
 			// subscribe
-			subscriptionIsReady = false;
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
 				removeMotd();
-				addMessages(tempMessages);
-				subscriptionIsReady = true;
+				addMessages(cacheMessages);
 				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
 				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 			});
@@ -950,27 +932,25 @@ Template.chat.events({
 			}
 
 			if (data) {
-				tempMessages = [];
+				cacheMessages = [];
 				for (var i = 0; i < data.length; i++) {
-					if (messages.length >= Game.Chat.Messages.LIMIT) {
+					if (messagesCount >= Game.Chat.Messages.LIMIT) {
 						break;
 					}
-					messagesCounter++;
-					addMessage(data[i]);
+					messagesCount++;
+					cacheMessage(data[i]);
 				}
-				addMessages(tempMessages);
+				addMessages(cacheMessages);
 
-				if (messages.length >= Game.Chat.Messages.LIMIT) {
+				if (messagesCount >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);
 				}
 
-				if (messages.length >= Game.Chat.Messages.LIMIT
+				if (messagesCount >= Game.Chat.Messages.LIMIT
 				 || data.length < Game.Chat.Messages.LOAD_COUNT
 				) {
 					hasMore.set(false);
 				}
-				//var groupedMessages = groupMessagesList(tempMessages);
-				//messages.unshift.apply(messages, groupedMessages);
 			}
 		});
 	},

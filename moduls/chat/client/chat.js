@@ -108,7 +108,7 @@ var addMessages = function(tempMessages) {
 		groupedMessages[groupedMessages.length - 1].parts = uniqMessages(groupedMessages[groupedMessages.length - 1].parts);
 		end++;
 	}
-	
+
 	if (messages.length > 0
 		 && start > 0
 		 && groupedMessages[0].username == messages[start - 1].username
@@ -206,6 +206,19 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 		Meteor.setTimeout(scrollChatToBottom);
 	}
 });
+
+var removeMotd = function() {
+	return;
+	var n = messages.length;
+
+	while (n-- > 0) {
+		if (messages[n].isMotd) {
+			messages.splice(n, 1);
+			joinMessages(n - 1);
+			break;
+		}
+	}
+};
 
 var addMotd = function(message) {
 	message.isMotd = true;
@@ -310,6 +323,7 @@ Template.chat.onRendered(function() {
 			subscriptionIsReady = false;
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
+				removeMotd();
 				addMessages(tempMessages);
 				subscriptionIsReady = true;
 				Meteor.setTimeout(scrollChatToBottom.bind(template, true));

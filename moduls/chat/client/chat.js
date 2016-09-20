@@ -47,7 +47,8 @@ var addMessage = function(message){
 		messages.push(message);
 	} else {
 		lastMessage.parts.push(part);
-		messages.splice(messages.length-1,1,lastMessage);
+		messages.pop();
+		messages.push(lastMessage);
 	}
 	
 };

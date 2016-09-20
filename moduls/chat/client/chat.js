@@ -79,14 +79,33 @@ var updateMessageGroup = function(index) {
 	messages.splice(index,1,messages[index]);
 };
 
+var haveDuplicate = function(a, b) {
+	for (var i = 0; i < a.length; i++) {
+		for (var j = 0; j < b.length; j++) {
+			if (a[i]._id == b[j]._id) {
+				return true;
+			}
+		}
+	}
+};
+
+var uniqMessages = function(messages) {
+	return _.uniq(
+		messages,
+		false,
+		function(message) {
+			return message._id;
+		}
+	);
+};
+
 var addMessages = function(tempMessages) {
 	var groupedMessages = groupMessagesList(tempMessages);
 	var startTimeStamp = groupedMessages[0].parts[groupedMessages[0].parts.length - 1].timestamp;
-	var endTimeStamp = groupedMessages[groupedMessages.length - 1].parts[groupedMessages[groupedMessages.length - 1].parts.length - 1].timestamp;
+	var endTimeStamp = tempMessages[tempMessages.length - 1].timestamp;
 
 	var start = 0;
 	var end = 0;
-	var deleted = 0;
 
 	for(var i = 0; i < messages.length; i++) {
 		var lastMessageTimeStamp = messages[i].parts[messages[i].parts.length - 1].timestamp;
@@ -98,46 +117,44 @@ var addMessages = function(tempMessages) {
 		}
 	}
 
+	var moreMessages = false;
 	console.log("start", start, "end", end);
-
-
-	//debugger;	
 	
 	if (messages.length > 0
 		 && end < messages.length
 		 && end >= 0
 		 && groupedMessages[groupedMessages.length - 1].username == messages[end].username
 	) {
-		console.log(groupedMessages[groupedMessages.length - 1].username , messages[end].username);
-		deleted++;
 		groupedMessages[groupedMessages.length - 1].parts.push.apply(groupedMessages[groupedMessages.length - 1].parts, messages[end].parts);
-		groupedMessages[groupedMessages.length - 1].parts = _.uniq(
-			groupedMessages[groupedMessages.length - 1].parts,
-			false,
-			function(message) {
-				return message._id;
-			}
-		);
+		groupedMessages[groupedMessages.length - 1].parts = uniqMessages(groupedMessages[groupedMessages.length - 1].parts);
+		end++;
 	}
 
 	if (messages.length > 0
 		 && start > 0
 		 && groupedMessages[0].username == messages[start - 1].username
 	) {
-		console.log("blya");
-		//deleted++;
-		start--;
-		groupedMessages[0].parts.unshift.apply(groupedMessages[0].parts, messages[start].parts);
-		groupedMessages[0].parts = _.uniq(
-			groupedMessages[0].parts,
-			false,
-			function(message) {
-				return message._id;
-			}
-		);
+		var unitedMessages = messages[start - 1].parts.concat(groupedMessages[0].parts);
+		var startLength = unitedMessages.length;
+		unitedMessages = uniqMessages(unitedMessages);
+		if(startLength == unitedMessages.length) {
+			moreMessages = true;
+		} else {
+			start--;
+			groupedMessages[0].parts = unitedMessages;
+		}
 	}
 
-	deleted += end - start;
+	var deleted = end - start;
+
+	if (moreMessages) {
+		if(groupedMessages[0].parts.length == 1) {
+			groupedMessages.shift();
+		} else {
+			groupedMessages[0].parts.shift();
+		}
+		groupedMessages.unshift({more: true});
+	}
 
 	tempMessages.length = 0;
 	groupedMessages.unshift(start, deleted);

@@ -108,7 +108,7 @@ var addMessages = function(tempMessages) {
 		groupedMessages[groupedMessages.length - 1].parts = uniqMessages(groupedMessages[groupedMessages.length - 1].parts);
 		end++;
 	}
-	console.log(start, end);
+	
 	if (messages.length > 0
 		 && start > 0
 		 && groupedMessages[0].username == messages[start - 1].username
@@ -307,14 +307,13 @@ Template.chat.onRendered(function() {
 				currentRoomName = roomName;
 			}
 			// subscribe
-			chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 			subscriptionIsReady = false;
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
 				addMessages(tempMessages);
 				subscriptionIsReady = true;
 				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
-				console.log('ready');
+				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 			});
 		}
 	});

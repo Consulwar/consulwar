@@ -1,5 +1,9 @@
 Meteor.startup(function() {
 
+UI.registerHelper('log', function(a) {
+	console.log(a);
+});	
+
 UI.registerHelper('user', function() {
 	return Meteor.user();
 });
@@ -70,6 +74,10 @@ UI.registerHelper('not', function(value) {
 
 UI.registerHelper('toArray', function(obj) {
 	return _.toArray(obj);
+});
+
+UI.registerHelper('keys', function(obj) {
+	return _.keys(obj);
 });
 
 UI.registerHelper('makeArray', function() {

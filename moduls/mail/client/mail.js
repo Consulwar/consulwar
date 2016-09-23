@@ -136,31 +136,6 @@ var readLetter = function(id, t) {
 				if (err) {
 					Notifications.error('Не удалось открыть опрос', err.error);
 				} else {
-					var obj = {
-						id: result._id,
-						userAnswer: result.questions[0].userAnswer,
-						who: result.questions[0].who || 'psm',
-						type: 'quiz',
-						title: result.questions[0].name, 
-						text: result.questions[0].text, 
-						options: $.map(result.questions[0].options, function(value, name) {
-							return {
-								name: name,
-								text: value,
-								value: result.questions[0].result[name] || 0,
-								totalVotes: result.questions[0].totalVotes,
-							};
-						}),
-						totalVotes: result.totalVotes,
-						votePower: Game.User.getVotePower(),
-						canVote: !result.userAnswer // || !Game.User.getVotePower() ? false : true
-					};
-					obj = {
-						a:1,
-						b:2,
-						c:3
-					};
-					console.log(result, result);
 					Blaze.renderWithData(
 						Template.quiz, 
 						{

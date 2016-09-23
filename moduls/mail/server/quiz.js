@@ -52,7 +52,7 @@ Meteor.call('createQuiz', {
 	name: 'подкрепление.',
 	questions: [{
 		who: 'zav',
-		title: 'подкрепление.',
+		name: 'подкрепление.',
 		text: 'Отсылаю вам личные резервы, Консулы. У меня уйдет много времени, что бы восстановить его. Не просрите.<br/>50 000 отцов, 45 000 турникмэнов, 5 000 псиоников, 8000 бгонивечков, 10 000 изи, 800 мамок, 3 000 елдаков, 10 000 скорострелов, 7 000 бабуль. Удачи.',
 		options: {
 			no: 'Отказаться от подкрепления',
@@ -62,7 +62,7 @@ Meteor.call('createQuiz', {
 	},
 	{
 		who: 'psm',
-		title: 'нифига не подкрепление',
+		name: 'нифига не подкрепление',
 		text: 'А я вам нифига не отсылаю',
 		options: {
 			no: 'Пожаловаться заву',
@@ -101,7 +101,7 @@ Meteor.methods({
 		var quiz = Game.Quiz.getValue(id);
 
 		if (userAnswer) {
-			quiz.userAnswers = userAnswer.answers;
+			quiz.userAnswer = userAnswer;
 		}
 
 		//console.log(quiz);
@@ -109,7 +109,7 @@ Meteor.methods({
 		return quiz;
 	},
 
-	quizAnswer: function(id, questionNum, answer) {
+	quizAnswer: function(id, answer, questionNum) {
 		var user = Meteor.user();
 
 		if (!(user && user._id)) {
@@ -123,67 +123,112 @@ Meteor.methods({
 		console.log('quizAnswer: ', new Date(), user.username);
 
 		check(id, String);
-		check(questionNum, Match.Integer);
 		check(answer, String);
 
 		var quiz = Game.Quiz.getValue(id);
 
-		if (!quiz || !quiz.questions) {
+		if (!quiz) {
 			throw new Meteor.Error('Такого опроса не существует');
 		}
+		var userAnswer;
+		var votePower;
+		var inc;
 
-		if (!quiz.questions[questionNum]) {
-			throw new Meteor.Error('Такого номера вопроса не существует');
-		}
+		if (quiz.questions) {
+			check(questionNum, Match.Integer);
 
-		if (!quiz.questions[questionNum].options.hasOwnProperty(answer)) {
-			throw new Meteor.Error('Такого ответа не существует');
-		}
+			if (!quiz.questions[questionNum]) {
+				throw new Meteor.Error('Такого номера вопроса не существует');
+			}
 
-		if (quiz.endDate < Game.getCurrentTime()) {
-			throw new Meteor.Error('Опрос уже завершен');
-		}
+			if (!quiz.questions[questionNum].options.hasOwnProperty(answer)) {
+				throw new Meteor.Error('Такого ответа не существует');
+			}
 
-		var userAnswer = Game.Quiz.Answer.Collection.findOne({
-			user_id: Meteor.userId(), 
-			quiz_id: id
-		});
+			if (quiz.endDate < Game.getCurrentTime()) {
+				throw new Meteor.Error('Опрос уже завершен');
+			}
 
-		if (userAnswer && userAnswer.answers &&  userAnswer.answers[questionNum]) {
-			throw new Meteor.Error('Вы уже голосовали');
-		}
+			userAnswer = Game.Quiz.Answer.Collection.findOne({
+				user_id: Meteor.userId(), 
+				quiz_id: id
+			});
 
-		var votePower = Game.User.getVotePower();
-		if (!userAnswer) {
-			var answers = [];
-			answers[questionNum] = answer;
-			var dates = [];
-			dates[questionNum] = Game.getCurrentTime();
+			if (userAnswer && userAnswer.answers &&  userAnswer.answers[questionNum]) {
+				throw new Meteor.Error('Вы уже голосовали');
+			}
+
+			votePower = Game.User.getVotePower();
+			if (!userAnswer) {
+				var answers = [];
+				answers[questionNum] = answer;
+				var dates = [];
+				dates[questionNum] = Game.getCurrentTime();
+				Game.Quiz.Answer.Collection.insert({
+					user_id: Meteor.userId(), 
+					quiz_id: id,
+					answers: answers,
+					power: votePower,
+					dates: dates
+				});
+			} else {
+				var set = {};
+				set['answers.' + questionNum] = answer;
+				set['dates.' + questionNum] = Game.getCurrentTime();
+				Game.Quiz.Answer.Collection.update({_id: userAnswer._id}, {
+					$set: set
+				});
+			}
+
+			inc = {};
+			inc['questions.' + questionNum + '.result.' + answer] = votePower;
+			inc['questions.' + questionNum + '.totalVotes'] = votePower;
+
+			Game.Quiz.Collection.update({_id: id}, {
+				$inc: inc
+			});
+
+			return Meteor.call('getQuiz', id);
+
+		} else {
+
+			if (!quiz.options.hasOwnProperty(answer)) {
+				throw new Meteor.Error('Такого ответа не существует');
+			}
+
+			if (quiz.endDate < Game.getCurrentTime()) {
+				throw new Meteor.Error('Опрос уже завершен');
+			}
+
+			userAnswer = Game.Quiz.Answer.Collection.findOne({
+				user_id: Meteor.userId(), 
+				quiz_id: id
+			});
+
+			if (userAnswer) {
+				throw new Meteor.Error('Вы уже голосовали');
+			}
+
+			votePower = Game.User.getVotePower();
+
 			Game.Quiz.Answer.Collection.insert({
 				user_id: Meteor.userId(), 
 				quiz_id: id,
-				answers: answers,
+				answer: answer,
 				power: votePower,
-				dates: dates
+				date: Game.getCurrentTime()
 			});
-		} else {
-			var set = {};
-			set['answers.' + questionNum] = answer;
-			set['dates.' + questionNum] = Game.getCurrentTime();
-			Game.Quiz.Answer.Collection.update({_id: userAnswer._id}, {
-				$set: set
+
+			inc = {};
+			inc['result.' + answer] = votePower;
+			inc.totalVotes = votePower;
+
+			Game.Quiz.Collection.update({_id: id}, {
+				$inc: inc
 			});
+
+			return Meteor.call('getQuiz', id);
 		}
-
-		var inc = {};
-		inc['questions.' + questionNum + '.result.' + answer] = votePower;
-		inc['questions.' + questionNum + '.totalVotes'] = votePower;
-
-		Game.Quiz.Collection.update({_id: id}, {
-			$inc: inc
-		});
-
-		return Meteor.call('getQuiz', id);
 	},
 
 	createQuiz: function(options) {
@@ -203,24 +248,42 @@ Meteor.methods({
 			throw new Meteor.Error('Ты не Zav!');
 		}
 
-		if (!_.isArray(options.questions)) {
-			options.questions = [options.questions];
-		}
-
 		check(options.startDate, Match.Integer);
 		check(options.endDate, Match.Integer);
 		check(options.name, String);
 
-		for (var i = 0; i < options.questions.length; i++) {
-			check(options.questions[i].who, String);
-			check(options.questions[i].title, String);
-			check(options.questions[i].text, String);
-			check(options.questions[i].options, Object);
+		if (options.questions) {
+			if (!_.isArray(options.questions)) {
+				options.questions = [options.questions];
+			}
 
-			options.questions[i].result = _.mapObject(options.questions[i].options,function(){return 0;});
-			options.questions[i].totalVotes = 0;
+			for (var i = 0; i < options.questions.length; i++) {
+				check(options.questions[i].who, String);
+				check(options.questions[i].name, String);
+				check(options.questions[i].text, String);
+				check(options.questions[i].options, Object);
+
+				options.questions[i].result = _.mapObject(
+					options.questions[i].options,
+					function(){return 0;}
+				);
+				options.questions[i].totalVotes = 0;
+			}
+			return Game.Quiz.Collection.insert(options);
+		} else {
+			check(options.who, String);
+			check(options.name, String);
+			check(options.text, String);
+			check(options.options, Object);
+
+			options.result = _.mapObject(
+				options.options,
+				function(){return 0;}
+			);
+			options.totalVotes = 0;
+			return Game.Quiz.Collection.insert(options);
 		}
-		return Game.Quiz.Collection.insert(options);
+		
 	},
 
 	sendQuiz: function(id) {

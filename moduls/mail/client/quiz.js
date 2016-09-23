@@ -15,12 +15,16 @@ Template.quiz.events({
 	'click a:not([target="_blank"])': function(e, t) {
 		var questionNum = t.data.questionNum;
 		var userAnswer = e.target.dataset.option;
-		Meteor.call('quizAnswer', t.data.quiz._id, questionNum, userAnswer, function(err, result) {
+		Meteor.call('quizAnswer', t.data.quiz._id, userAnswer, questionNum, function(err, result) {
 			if (err) {
 				Notifications.error('Голосование не удалось', err.error);
 			} else {
-				//Notifications.success('Вы проголосовали за «' + result.options[e.target.dataset.option] + '»');
-				result.questions[questionNum].userAnswer = userAnswer;
+				Notifications.success('Вы проголосовали за «' + (
+					result.questions
+					 ? result.questions[questionNum].options[userAnswer]
+					 : result.options[userAnswer]
+					) + '»'
+				);
 				Blaze.remove(t.view);
 				Blaze.renderWithData(
 					Template.quiz, 

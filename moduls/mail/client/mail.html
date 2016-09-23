@@ -216,53 +216,65 @@
 <template name="quiz">
 	<div class="smoke"></div>
 	<div class="modal quiz">
-		{{#let 
-			question=(lookup quiz.questions questionNum) 
-			answer=(lookup quiz.userAnswers questionNum)
-		}}
-			<img src="/img/game/{{question.who}}.jpg" alt="">
-			<div class="title">{{question.title}}</div>
-			<div class="text">
-				{{{question.text}}}
-			</div>
-
-			<div class="vote_power">
-				Сила голоса: {{Game.User.getVotePower}}
-			</div>
-			{{!-- или если голосование уже завершено --}}
-			{{#if (answer)}}
-				{{#each (keys question.options)}}
-					<progress 
-						data-option="{{lookup question.options this}}" 
-						data-percent="
-							{{#with multiply (lookup question.result this) 100}}
-								{{div this question.totalVotes}}
-							{{/with}}
-						" 
-						value="{{lookup question.result this}}" 
-						max="{{question.totalVotes}}"
-					>
-					</progress>
-				{{/each}}
-			{{else}}
-				{{#each (keys question.options)}}
-					<a data-option="{{this}}" class="neutral {{this.mood}}" href="#">
-						{{lookup question.options this}}
-					</a>
-				{{/each}}
+		{{#if quiz.questions}}
+			{{> quizQuestion 
+				question=(lookup quiz.questions questionNum) 
+				answer=(lookup quiz.userAnswer.answers questionNum)
+				endDate=quiz.endDate
+			}}
+			{{#if (gt quiz.questions.length 0)}}
+				{{sum questionNum 1}} вопрос из {{quiz.questions.length}}	
 			{{/if}}
-		{{/let}}
-		{{#if (gt quiz.questions.length 0)}}
-			{{sum questionNum 1}} вопрос из {{quiz.questions.length}}	
-		{{/if}}
-		{{#if (gt questionNum 0)}}
-			<button class="previous_question"></button>
-		{{/if}}
-		{{#if (gt quiz.questions.length (sum questionNum 1))}}
-			<button class="next_question"></button>
+			{{#if (gt questionNum 0)}}
+				<button class="previous_question"></button>
+			{{/if}}
+			{{#if (gt quiz.questions.length (sum questionNum 1))}}
+				<button class="next_question"></button>
+			{{/if}}
+		{{else}}
+			{{> quizQuestion 
+				question=quiz
+				answer=quiz.userAnswer
+				endDate=quiz.endDate
+			}}
 		{{/if}}
 		<div class="close"></div>
 	</div>
+</template>
+
+<template name="quizQuestion">
+	<img src="/img/game/{{question.who}}.jpg" alt="{{question.who}}">
+	<div class="title">{{question.name}}</div>
+	<div class="text">
+		{{{question.text}}}
+	</div>
+
+	<div class="vote_power">
+		Сила голоса: {{Game.User.getVotePower}}
+	</div>
+	{{#if (or answer (gt Game.getCurrentTime endDate))}}
+		{{#each (keys question.options)}}
+			<progress 
+				data-option="{{lookup ../question.options this}}" 
+				data-percent="
+					{{#with multiply (lookup ../question.result this) 100}}
+						{{log this}}
+						{{log ../question.totalVotes}}
+						{{div this ../../question.totalVotes}}
+					{{/with}}
+				" 
+				value="{{lookup ../question.result this}}" 
+				max="{{../question.totalVotes}}"
+			>
+			</progress>
+		{{/each}}
+	{{else}}
+		{{#each (keys question.options)}}
+			<a data-option="{{this}}" class="neutral" href="#">
+				{{lookup ../question.options this}}
+			</a>
+		{{/each}}
+	{{/if}}
 </template>
 
 <template name="mailAdmin">

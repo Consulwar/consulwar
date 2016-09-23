@@ -326,10 +326,29 @@
 	.vote_power
 		font-size 12px
 
-	.navigation
-		a	
-			color rgb(0, 109, 149)
-			text-decoration none
-			font-size 18px
-			font-weight bold
-			cursor pointer
+	.previous_question, .next_question
+		position absolute
+		top 50%
+		margin-top -23px
+		background-repeat no-repeat
+		background-position center
+		cursor pointer
+		display block
+		width 46px
+		height 46px
+		-webkit-filter grayscale(1)
+		filter grayscale(1)
+
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+
+	.previous_question
+		left 0
+		margin-left -23px
+		background-image url(/img/game/left-arrow.png)
+
+	.next_question
+		right 0
+		margin-right -23px
+		background-image url(/img/game/right-arrow.png)

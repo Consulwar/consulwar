@@ -216,7 +216,10 @@
 <template name="quiz">
 	<div class="smoke"></div>
 	<div class="modal quiz">
-		{{#let question=(lookup quiz.questions questionNum)}}
+		{{#let 
+			question=(lookup quiz.questions questionNum) 
+			answer=(lookup quiz.userAnswers questionNum)
+		}}
 			<img src="/img/game/{{question.who}}.jpg" alt="">
 			<div class="title">{{question.title}}</div>
 			<div class="text">
@@ -228,7 +231,8 @@
 			</div>
 			
 			<br class="nahyi eto ybrat">
-			{{#if question.userAnswer}}
+			{{!-- или если голосование уже завершено --}}
+			{{#if answer}}
 				{{#each (keys question.options)}}
 					<progress 
 						data-option="{{this.text}}" 
@@ -251,15 +255,13 @@
 			{{/if}}
 		{{/let}}
 		{{#if (gt quiz.questions.length 0)}}
-			<div class="navigation">
-				{{sum questionNum 1}} вопрос из {{quiz.questions.length}}	
-			</div>
+			{{sum questionNum 1}} вопрос из {{quiz.questions.length}}	
 		{{/if}}
 		{{#if (gt questionNum 0)}}
-			<button class="previous_question">&#60;</button>
+			<button class="previous_question"></button>
 		{{/if}}
 		{{#if (gt quiz.questions.length (sum questionNum 1))}}
-			<button class="next_question">&#62;</button>
+			<button class="next_question"></button>
 		{{/if}}
 		<div class="close"></div>
 	</div>

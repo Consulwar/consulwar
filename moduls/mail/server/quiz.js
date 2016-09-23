@@ -101,7 +101,7 @@ Meteor.methods({
 		var quiz = Game.Quiz.getValue(id);
 
 		if (userAnswer) {
-			quiz.userAnswer = userAnswer;
+			quiz.userAnswers = userAnswer.answers;
 		}
 
 		//console.log(quiz);
@@ -149,19 +149,31 @@ Meteor.methods({
 			quiz_id: id
 		});
 
-		if (userAnswer) {
-			//throw new Meteor.Error('Вы уже голосовали');
+		if (userAnswer && userAnswer.answers &&  userAnswer.answers[questionNum]) {
+			throw new Meteor.Error('Вы уже голосовали');
 		}
 
 		var votePower = Game.User.getVotePower();
-		//нужно добавить questionNum
-		Game.Quiz.Answer.Collection.insert({
-			user_id: Meteor.userId(), 
-			quiz_id: id,
-			answer: answer,
-			power: votePower,
-			date: Game.getCurrentTime()
-		});
+		if (!userAnswer) {
+			var answers = [];
+			answers[questionNum] = answer;
+			var dates = [];
+			dates[questionNum] = Game.getCurrentTime();
+			Game.Quiz.Answer.Collection.insert({
+				user_id: Meteor.userId(), 
+				quiz_id: id,
+				answers: answers,
+				power: votePower,
+				dates: dates
+			});
+		} else {
+			var set = {};
+			set['answers.' + questionNum] = answer;
+			set['dates.' + questionNum] = Game.getCurrentTime();
+			Game.Quiz.Answer.Collection.update({_id: userAnswer._id}, {
+				$set: set
+			});
+		}
 
 		var inc = {};
 		inc['questions.' + questionNum + '.result.' + answer] = votePower;
@@ -208,7 +220,7 @@ Meteor.methods({
 			options.questions[i].result = _.mapObject(options.questions[i].options,function(){return 0;});
 			options.questions[i].totalVotes = 0;
 		}
-
+		console.log(111);
 		return Game.Quiz.Collection.insert(options);
 	},
 

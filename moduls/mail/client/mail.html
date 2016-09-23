@@ -229,13 +229,11 @@
 			<div class="vote_power">
 				Сила голоса: {{Game.User.getVotePower}}
 			</div>
-			
-			<br class="nahyi eto ybrat">
 			{{!-- или если голосование уже завершено --}}
-			{{#if answer}}
+			{{#if (answer)}}
 				{{#each (keys question.options)}}
 					<progress 
-						data-option="{{this.text}}" 
+						data-option="{{lookup question.options this}}" 
 						data-percent="
 							{{#with multiply (lookup question.result this) 100}}
 								{{div this question.totalVotes}}

@@ -220,7 +220,6 @@ Meteor.methods({
 			options.questions[i].result = _.mapObject(options.questions[i].options,function(){return 0;});
 			options.questions[i].totalVotes = 0;
 		}
-		console.log(111);
 		return Game.Quiz.Collection.insert(options);
 	},
 

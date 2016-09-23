@@ -31,13 +31,7 @@ Meteor.call('createQuiz', {
 		more: 'Ещё!!!'
 	},
 	startDate: Game.getCurrentTime(),
-	endDate: Game.getCurrentTime() + (60*60*24),
-	result: {
-		no: 0,
-		yes: 0,
-		more: 0
-	},
-	totalVotes: 0
+	endDate: Game.getCurrentTime() + (60*60*24)
 }, function(err, res) {
 	console.log(err, res);
 })
@@ -130,6 +124,7 @@ Meteor.methods({
 		if (!quiz) {
 			throw new Meteor.Error('Такого опроса не существует');
 		}
+
 		var userAnswer;
 		var votePower;
 		var inc;
@@ -187,9 +182,6 @@ Meteor.methods({
 			Game.Quiz.Collection.update({_id: id}, {
 				$inc: inc
 			});
-
-			return Meteor.call('getQuiz', id);
-
 		} else {
 
 			if (!quiz.options.hasOwnProperty(answer)) {
@@ -226,9 +218,9 @@ Meteor.methods({
 			Game.Quiz.Collection.update({_id: id}, {
 				$inc: inc
 			});
-
-			return Meteor.call('getQuiz', id);
 		}
+
+		return Meteor.call('getQuiz', id);
 	},
 
 	createQuiz: function(options) {
@@ -244,7 +236,7 @@ Meteor.methods({
 
 		console.log('createQuiz: ', new Date(), user.username);
 
-		if (user.username != 'dreamniker') {
+		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 
@@ -299,7 +291,7 @@ Meteor.methods({
 
 		console.log('sendQuiz: ', new Date(), user.username);
 
-		if (user.username != 'dreamniker') {
+		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
 		}
 		check(id, String);

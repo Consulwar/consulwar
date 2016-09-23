@@ -1,9 +1,5 @@
 Meteor.startup(function() {
 
-UI.registerHelper('log', function(a) {
-	console.log(a);
-});	
-
 UI.registerHelper('user', function() {
 	return Meteor.user();
 });

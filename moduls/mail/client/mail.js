@@ -105,6 +105,7 @@ var readLetter = function(id, t) {
 	t.data.isLoading.set(true);
 	Meteor.call('mail.getLetter', id, function(err, letter) {
 		t.data.isLoading.set(false);
+		
 		if (err) {
 			Notifications.error('Не удалось загрузить письмо', err.error);
 			return;

@@ -108,9 +108,7 @@ var addMessagesDown = function() {
 
 		if (lastMessage && startCacheMessagesLength == cacheMessages.length) {
 			groupedMessages[0].haveAllowedPreviousMessages = true;
-		}
-
-		if (lastMessage && groupedMessages[0].username == lastMessage.username) {
+		} else if (lastMessage && groupedMessages[0].username == lastMessage.username) {
 			groupedMessages[0].parts = lastMessage.parts.concat(groupedMessages[0].parts);
 			messagesCollection.remove(lastMessage._id);
 		}

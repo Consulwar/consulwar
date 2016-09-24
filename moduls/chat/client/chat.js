@@ -14,12 +14,28 @@ var chatSubscription = null;
 var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
+var tmessages = new ReactiveArray();
 var messagesCount = 0;
 var cacheMessages = [];
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
+
+
+var messagesCollection = new Meteor.Collection(null);
+var lastUser = null;
+
+
+var testCollection = new Meteor.Collection(null);
+for(var testI = 0; testI < 1000; testI++) {
+	testCollection.insert({
+		timestamp: testI, 
+		parts: [{timestamp: testI, message: testI + "йцу"}], 
+		username: "blabla",
+		role: "Высший"
+	});
+};
 
 var cacheMessage = function(message) {
 	var i = _.sortedIndex(cacheMessages, message, function(message){
@@ -31,6 +47,16 @@ var cacheMessage = function(message) {
 };
 
 var addMessage = function(message){
+	testI++;
+	var time = new Date();
+	testCollection.insert({
+		timestamp: testI, 
+		parts: [{timestamp: testI, message: testI + "йцу"}], 
+		username: "blabla",
+		role: "Высший"
+	});
+	console.log(new Date() - time);
+	return;
 	var lastMessage = messages[messages.length-1];
 	var part = {
 		_id: message._id,
@@ -189,7 +215,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 		}
 
 		// scroll to bottom
-		Meteor.setTimeout(scrollChatToBottom);
+		Meteor.setTimeout(scrollChatToBottom,500);
 	}
 });
 
@@ -707,7 +733,7 @@ Template.chat.helpers({
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
 	messages: function() {
-		return messages.list();
+		return testCollection.find({},{sort:{timestamp:1}});
 	},
 
 	getUserRole: function() {
@@ -830,21 +856,24 @@ Template.chat.events({
 		if (isSending.get()) {
 			return false;
 		}
-
+		addMessage(123);
+		Meteor.setTimeout(scrollChatToBottom,100);
+		return;
 		var roomName = Router.current().params.room;
-		var text = t.find('#message textarea[name="text"]').value;
+		//var text = t.find('#message textarea[name="text"]').value;
+		var text = "qwe";
 
 		if (execClientCommand(text)) {
-			t.find('#message').reset();
+		//	t.find('#message').reset();
 			return false;
 		}
 
 		isSending.set(true);
-		t.$('input[type="submit"]').attr('disabled', true);
+		//t.$('input[type="submit"]').attr('disabled', true);
 
 		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
 			isSending.set(false);
-			t.$('input[type="submit"]').attr('disabled', false);
+			//t.$('input[type="submit"]').attr('disabled', false);
 			if (err) {
 				var errorMessage = err.error;
 				if (_.isNumber(err.reason)) {
@@ -856,7 +885,7 @@ Template.chat.events({
 					Notifications.error('Не получилось отправить сообщение', errorMessage);
 				}
 			} else {
-				t.find('#message').reset();
+				//t.find('#message').reset();
 
 				// play sound 'you are not prepared!'
 				if (text.indexOf('/яготов') === 0) {

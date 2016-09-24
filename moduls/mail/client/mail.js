@@ -105,7 +105,7 @@ var readLetter = function(id, t) {
 	t.data.isLoading.set(true);
 	Meteor.call('mail.getLetter', id, function(err, letter) {
 		t.data.isLoading.set(false);
-
+		
 		if (err) {
 			Notifications.error('Не удалось загрузить письмо', err.error);
 			return;
@@ -140,23 +140,8 @@ var readLetter = function(id, t) {
 					Blaze.renderWithData(
 						Template.quiz, 
 						{
-							id: result._id,
-							userAnswer: result.userAnswer,
-							who: result.who || 'psm',
-							type: 'quiz',
-							title: result.name, 
-							text: result.text, 
-							options: $.map(result.options, function(value, name) {
-								return {
-									name: name,
-									text: value,
-									value: result.result[name] || 0,
-									totalVotes: result.totalVotes,
-								};
-							}),
-							totalVotes: result.totalVotes,
-							votePower: Game.User.getVotePower(),
-							canVote: !result.userAnswer // || !Game.User.getVotePower() ? false : true
+							quiz: result,
+							questionNum: 0
 						}, 
 						$('.over')[0]
 					);

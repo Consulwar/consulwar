@@ -45,6 +45,7 @@ Template.quiz.events({
 	},
 	'click .close': function(e, t) {
 		Blaze.remove(t.view);
+		window.history.back();
 	}
 });
 

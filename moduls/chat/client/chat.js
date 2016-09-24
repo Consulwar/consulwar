@@ -78,21 +78,65 @@ var uniqMessages = function(messages) {
 	);
 };
 
-var addMessagesDown = function(cacheMessages) {
-	var groupedMessages = groupMessagesList(cacheMessages);
-	lastMessage = groupedMessages[groupedMessages.length - 1];
-	
-	if (!firstMessage) {
-		firstMessage = groupedMessages[0];
+var cutMessagesArray = function(options) {
+	var start = 0;
+	var end = options.messages.length;
+	var n = options.messages.length;
+	while (n-- > 0) {
+		if (options.messages[n]._id == options.firstId) {
+			start = n + 1;
+		}
+		if (options.messages[n]._id == options.lastId) {
+			end = n;
+		}
 	}
-
-	for (var i = 0; i<groupedMessages.length;i++) {
-		messagesCollection.insert(groupedMessages[i]);
-	}
-	cacheMessages.length = 0;
+	console.log(start, end);
+	return options.messages.slice(start, end);
 };
 
-var addMessagesUp = function(cacheMessages) {
+var addMessagesDown = function() {
+	var startCacheMessagesLength = cacheMessages.length;
+	if (lastMessage) {
+		cacheMessages = cutMessagesArray({
+			messages: cacheMessages,
+			firstId: lastMessage.parts[lastMessage.parts.length - 1]._id
+		});
+	}
+
+	if (cacheMessages.length > 0) {
+		var groupedMessages = groupMessagesList(cacheMessages);
+
+		if (lastMessage && startCacheMessagesLength == cacheMessages.length) {
+			groupedMessages[0].haveAllowedPreviousMessages = true;
+		}
+
+		if (lastMessage && groupedMessages[0].username == lastMessage.username) {
+			groupedMessages[0].parts = lastMessage.parts.concat(groupedMessages[0].parts);
+			messagesCollection.remove(lastMessage._id);
+		}
+
+		lastMessage = groupedMessages[groupedMessages.length - 1];
+
+		for (var i = 0; i < groupedMessages.length; i++) {
+			messagesCollection.insert(groupedMessages[i]);
+		}
+
+		cacheMessages.length = 0;
+
+		if (!firstMessage || firstMessage == lastMessage) {
+			firstMessage = groupedMessages[0];
+		}
+	}
+};
+
+var addMessagesUp = function() {
+	if (firstMessage) {
+		cacheMessages = cutMessagesArray({
+			messages: cacheMessages,
+			lastId: firstMessage._id
+		});
+	}
+
 	var groupedMessages = groupMessagesList(cacheMessages);
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 
@@ -100,7 +144,9 @@ var addMessagesUp = function(cacheMessages) {
 		lastMessageInGroup.parts = lastMessageInGroup.parts.concat(firstMessage.parts);
 		messagesCollection.remove(firstMessage._id);
 	}
-
+	if (firstMessage == lastMessage) {
+		lastMessage = groupedMessages[0];
+	}
 	firstMessage = groupedMessages[0];
 	for (var i = 0; i<groupedMessages.length;i++) {
 		messagesCollection.insert(groupedMessages[i]);
@@ -218,7 +264,8 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
 		messagesCount++;
-		if (chatSubscription.ready() && cacheMessages.length == 0) {	
+		console.log(chatSubscription.ready(), cacheMessages.length);
+		if (chatSubscription.ready() && cacheMessages.length === 0) {	
 			addMessage(message);
 		} else {
 			cacheMessage(message);

@@ -216,34 +216,63 @@
 <template name="quiz">
 	<div class="smoke"></div>
 	<div class="modal quiz">
-		<img src="/img/game/{{who}}.jpg" alt="">
-		<div class="title">{{title}}</div>
-		<div class="text">
-			{{{text}}}
-		</div>
-
-		<div class="vote_power">
-			Сила голоса: {{votePower}}
-		</div>
-		
-		<br/>
-		{{#if canVote}}
-			{{#each options}}
-				<a data-option="{{this.name}}" class="neutral {{this.mood}}" href="#">{{this.text}}</a>
-			{{/each}}
+		{{#if quiz.questions}}
+			{{> quizQuestion 
+				question=(lookup quiz.questions questionNum) 
+				answer=(lookup quiz.userAnswer.answers questionNum)
+				endDate=quiz.endDate
+			}}
+			{{#if (gt quiz.questions.length 0)}}
+				{{sum questionNum 1}} вопрос из {{quiz.questions.length}}	
+			{{/if}}
+			{{#if (gt questionNum 0)}}
+				<button class="previous_question"></button>
+			{{/if}}
+			{{#if (gt quiz.questions.length (sum questionNum 1))}}
+				<button class="next_question"></button>
+			{{/if}}
 		{{else}}
-			{{#each options}}
-				<progress 
-					data-option="{{this.text}}" 
-					data-percent="{{#with multiply this.value 100}}{{div this ../totalVotes}}{{/with}}" 
-					value="{{this.value}}" 
-					max="{{totalVotes}}"
-				>
-				</progress>
-			{{/each}}
+			{{> quizQuestion 
+				question=quiz
+				answer=quiz.userAnswer
+				endDate=quiz.endDate
+			}}
 		{{/if}}
 		<div class="close"></div>
 	</div>
+</template>
+
+<template name="quizQuestion">
+	<img src="/img/game/{{question.who}}.jpg" alt="{{question.who}}">
+	<div class="title">{{question.name}}</div>
+	<div class="text">
+		{{{question.text}}}
+	</div>
+
+	<div class="vote_power">
+		Сила голоса: {{Game.User.getVotePower}}
+	</div>
+	{{#if (or answer (gt Game.getCurrentTime endDate))}}
+		{{#each options}}
+			<progress 
+				data-option="{{this.text}}" 
+				data-percent="
+					{{#with multiply (this.value) 100}}
+						{{div this ../totalVotes}}
+					{{/with}}
+				" 
+				value="{{this.value}}" 
+				max="{{this.totalVotes}}"
+			>
+			</progress>
+		{{/each}}
+	{{else}}
+		{{#each options}}
+			<a data-option="{{this.name}}" class="neutral" href="#">
+				{{this.text}}
+			</a>
+		{{/each}}
+	{{/if}}
 </template>
 
 <template name="mailAdmin">

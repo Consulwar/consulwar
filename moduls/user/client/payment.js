@@ -324,7 +324,7 @@ Template.promocodeReward.helpers({
 		var result = [];
 
 		for (var name in containers) {
-			var item = Game.Containers.items[name];
+			var item = Game.Building.special.Container.items[name];
 			if (item) {
 				result.push({
 					engName: name,
@@ -678,7 +678,7 @@ var formatProfit = function(profit) {
 				break;
 			case 'containers':
 				for (var containerId in profit[type]) {
-					var container = Game.Containers.items[containerId];
+					var container = Game.Building.special.Container.items[containerId];
 					if (container) {
 						result += 'Бесплатный контейнер: ';
 						result += parseInt(profit[type][containerId], 10) + ' ';

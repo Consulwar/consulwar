@@ -46,7 +46,9 @@ Game.Building = {
 	items: {
 		residential: {},
 		military: {}
-	}
+	},
+
+	special: {}
 };
 
 initBuildingContent();

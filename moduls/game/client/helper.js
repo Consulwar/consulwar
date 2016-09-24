@@ -72,10 +72,6 @@ UI.registerHelper('toArray', function(obj) {
 	return _.toArray(obj);
 });
 
-UI.registerHelper('keys', function(obj) {
-	return _.keys(obj);
-});
-
 UI.registerHelper('makeArray', function() {
 	return _.toArray(arguments).slice(0, -1);
 });

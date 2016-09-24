@@ -104,9 +104,15 @@ var addMessagesDown = function() {
 	}
 
 	if (cacheMessages.length > 0) {
+		if (lastMessage && startCacheMessagesLength == cacheMessages.length) {
+			cacheMessages.shift();
+			startCacheMessagesLength--;
+		}
+
 		var groupedMessages = groupMessagesList(cacheMessages);
 
 		if (lastMessage && startCacheMessagesLength == cacheMessages.length) {
+			groupedMessages[0].previousMessage = lastMessage;
 			groupedMessages[0].haveAllowedPreviousMessages = true;
 		} else if (lastMessage && groupedMessages[0].username == lastMessage.username) {
 			groupedMessages[0].parts = lastMessage.parts.concat(groupedMessages[0].parts);
@@ -146,6 +152,46 @@ var addMessagesUp = function() {
 		lastMessage = groupedMessages[0];
 	}
 	firstMessage = groupedMessages[0];
+	for (var i = 0; i<groupedMessages.length;i++) {
+		messagesCollection.insert(groupedMessages[i]);
+	}
+	cacheMessages.length = 0;
+};
+
+var addMessagesBefore = function(afterMessage) {
+	var previousMessage = afterMessage.previousMessage;
+	var firstCacheMessage = cacheMessages[0];
+	cacheMessages = cutMessagesArray({
+		messages: cacheMessages,
+		lastId: afterMessage._id,
+		firstId: previousMessage.parts[previousMessage.parts.length - 1]._id
+	});
+	var groupedMessages = groupMessagesList(cacheMessages);
+	//***********************************
+	//склеиваем с after
+	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
+	if (afterMessage.username == lastMessageInGroup.username) {
+		afterMessage.haveAllowedPreviousMessages = false;
+		lastMessageInGroup.parts = lastMessageInGroup.parts.concat(afterMessage.parts);
+		messagesCollection.remove(afterMessage._id);
+	} else {
+		messagesCollection.update(afterMessage._id, {
+			$set: {haveAllowedPreviousMessages: false}
+		});
+	}
+
+	//*****************
+	//склеиваем с previous
+	if (previousMessage.username == groupedMessages[0].username && firstCacheMessage != cacheMessages[0]) {
+		groupedMessages[0].parts = previousMessage.parts.concat(groupedMessages[0].parts);
+		messagesCollection.remove(previousMessage._id);
+	}
+	if (firstCacheMessage == cacheMessages[0]){
+		groupedMessages[0].haveAllowedPreviousMessages = true;
+		groupedMessages[0].previousMessage = previousMessage;
+	}
+	//*********************
+
 	for (var i = 0; i<groupedMessages.length;i++) {
 		messagesCollection.insert(groupedMessages[i]);
 	}
@@ -996,7 +1042,7 @@ Template.chat.events({
 	},
 
 	// load previous messages
-	'click .chat .more, click .chat .missed': function(e, t) {
+	'click .chat .more': function(e, t) {
 		if (isLoading.get()) {
 			return;
 		}
@@ -1010,7 +1056,7 @@ Template.chat.events({
 
 		var options = {
 			roomName: roomName,
-			timestamp: parseInt(e.currentTarget.dataset.timestamp, 10) || firstMessage.timestamp,
+			timestamp: firstMessage.timestamp,
 			isPrevious: true
 		};
 		
@@ -1032,6 +1078,60 @@ Template.chat.events({
 					cacheMessage(data[i]);
 				}
 				addMessagesUp(cacheMessages);
+
+				if (messagesCount >= Game.Chat.Messages.LIMIT) {
+					gotLimit.set(true);
+				}
+
+				if (messagesCount >= Game.Chat.Messages.LIMIT
+				 || data.length < Game.Chat.Messages.LOAD_COUNT
+				) {
+					hasMore.set(false);
+				}
+			}
+		});
+	},
+
+	'click .chat .missed': function(e, t) {
+		if (isLoading.get()) {
+			return;
+		}
+
+		var roomName = Router.current().params.room;
+		if (!roomName || !messagesCollection || !firstMessage) {
+			return;
+		}
+
+		isLoading.set(true);
+
+		var afterMessageId = e.currentTarget.dataset.messageid;
+
+		var options = {
+			roomName: roomName,
+			timestamp: parseInt(e.currentTarget.dataset.timestamp, 10),
+			isPrevious: true
+		};
+		
+		Meteor.call('chat.loadMore', options, function(err, data) {
+			isLoading.set(false);
+
+			if (err) {
+				Notifications.error('Не удалось загрузить сообщения', err.error);
+				return;
+			}
+
+			if (data) {
+				cacheMessages = [];
+				for (var i = 0; i < data.length; i++) {
+					if (messagesCount >= Game.Chat.Messages.LIMIT) {
+						break;
+					}
+					messagesCount++;
+					cacheMessage(data[i]);
+				}
+
+				var afterMessage = messagesCollection.findOne(afterMessageId);
+				addMessagesBefore(afterMessage);
 
 				if (messagesCount >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);

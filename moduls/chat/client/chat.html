@@ -88,7 +88,11 @@
 					</li>
 				{{else}}
 					{{#if this.haveAllowedPreviousMessages}}
-						<li class="missed" data-timestamp="{{this.timestamp}}">
+						<li 
+							class="missed"
+							data-timestamp="{{this.timestamp}}"
+							data-messageid="{{this._id}}"
+						>
 							<span>показать пропущенные сообщения</span>
 						</li>
 					{{/if}}

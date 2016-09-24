@@ -19,12 +19,10 @@ Template.quiz.events({
 			if (err) {
 				Notifications.error('Голосование не удалось', err.error);
 			} else {
-				Notifications.success('Вы проголосовали за «' + (
-					result.questions
-					 ? result.questions[questionNum].options[userAnswer]
-					 : result.options[userAnswer]
-					) + '»'
-				);
+				Notifications.success('Вы проголосовали за «' + (result.questions
+					? result.questions[questionNum].options[userAnswer]
+					: result.options[userAnswer]
+				) + '»');
 				Blaze.remove(t.view);
 				Blaze.renderWithData(
 					Template.quiz, 
@@ -49,5 +47,20 @@ Template.quiz.events({
 		Blaze.remove(t.view);
 	}
 });
+
+Template.quizQuestion.helpers({
+	options: function() {
+		var self = this;
+		return $.map(this.question.options, function(value, name) {
+			return {
+				name: name,
+				text: value,
+				value: self.question.result[name] || 0,
+				totalVotes: self.question.totalVotes
+			};
+		});
+	}
+});
+
 
 };

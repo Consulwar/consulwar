@@ -253,25 +253,23 @@
 		Сила голоса: {{Game.User.getVotePower}}
 	</div>
 	{{#if (or answer (gt Game.getCurrentTime endDate))}}
-		{{#each (keys question.options)}}
+		{{#each options}}
 			<progress 
-				data-option="{{lookup ../question.options this}}" 
+				data-option="{{this.text}}" 
 				data-percent="
-					{{#with multiply (lookup ../question.result this) 100}}
-						{{log this}}
-						{{log ../question.totalVotes}}
-						{{div this ../../question.totalVotes}}
+					{{#with multiply (this.value) 100}}
+						{{div this ../totalVotes}}
 					{{/with}}
 				" 
-				value="{{lookup ../question.result this}}" 
-				max="{{../question.totalVotes}}"
+				value="{{this.value}}" 
+				max="{{this.totalVotes}}"
 			>
 			</progress>
 		{{/each}}
 	{{else}}
-		{{#each (keys question.options)}}
-			<a data-option="{{this}}" class="neutral" href="#">
-				{{lookup ../question.options this}}
+		{{#each options}}
+			<a data-option="{{this.name}}" class="neutral" href="#">
+				{{this.text}}
 			</a>
 		{{/each}}
 	{{/if}}

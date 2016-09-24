@@ -1,6 +1,6 @@
-initPulsecatcherLib = function() {
+initBuildingSpecialPulsecatcherLib = function() {
 
-Game.Pulsecatcher = {
+Game.Building.special.Pulsecatcher = {
 	getActiveQuiz: function() {
 		return Game.Quiz.Collection.findOne({
 			type: 'pulsecatcher'
@@ -46,6 +46,6 @@ Game.Pulsecatcher = {
 	}
 };
 
-initPulsecatcherConfigLib();
+initBuildingSpecialPulsecatcherConfigLib();
 
 };

@@ -98,5 +98,9 @@ Meteor.publish('buildings', function () {
 });
 
 initBuildingServerMethods();
+initBuildingSpecialMarketServer();
+initBuildingSpecialColosseumServer();
+initBuildingSpecialContainerServer();
+initBuildingSpecialPulsecatcherServer();
 
 };

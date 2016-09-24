@@ -1,6 +1,6 @@
-initMarketServer = function() {
+initBuildingSpecialMarketServer = function() {
 
-initMarketLib();
+initBuildingSpecialMarketLib();
 
 Meteor.methods({
 	'market.exchange': function(resourceFrom, resourceTo, amount) {
@@ -25,7 +25,7 @@ Meteor.methods({
 			throw new Meteor.Error('Недостаточно ресурсов');
 		}
 
-		var result = Game.Market.getExchangeAmount(resourceFrom, resourceTo, amount);
+		var result = Game.Building.special.Market.getExchangeAmount(resourceFrom, resourceTo, amount);
 
 		if (result <= 0) {
 			throw new Meteor.Error('Невозможно совершить обмен');

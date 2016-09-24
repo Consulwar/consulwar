@@ -1,10 +1,10 @@
-initContainersClient = function() {
+initBuildingSpecialContainerClient = function() {
 
-initContainersLib();
+initBuildingSpecialContainerLib();
 
 Meteor.subscribe('containers');
 
-Game.Containers.showWindow = function() {
+Game.Building.special.Container.showWindow = function() {
 	Blaze.render( Template.containers, $('.over')[0] );
 };
 
@@ -54,11 +54,11 @@ Template.containers.helpers({
 	},
 
 	credits: function() {
-		return Game.Containers.items.defaultContainer.getPrice().credits;
+		return Game.Building.special.Container.items.defaultContainer.getPrice().credits;
 	},
 
 	amount: function() {
-		return Game.Containers.items.defaultContainer.amount();
+		return Game.Building.special.Container.items.defaultContainer.amount();
 	}
 });
 
@@ -80,7 +80,7 @@ Template.containers.events({
 			return;
 		}
 
-		var item = Game.Containers.items.defaultContainer;
+		var item = Game.Building.special.Container.items.defaultContainer;
 
 		if (item.amount() <= 0 && !item.checkPrice()) {
 			Notifications.error('Недостаточно средств');

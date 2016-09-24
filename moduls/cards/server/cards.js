@@ -221,7 +221,7 @@ SyncedCron.add({
 		for (var i = 0; i < users.length; i++) {
 			console.log('Give to ', users[i].user_id);
 
-			Game.Containers.Collection.upsert({
+			Game.Building.special.Container.Collection.upsert({
 				user_id: users[i].user_id
 			}, {
 				$inc: {

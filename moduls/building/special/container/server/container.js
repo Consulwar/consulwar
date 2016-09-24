@@ -1,27 +1,27 @@
-initContainersServer = function() {
+initBuildingSpecialContainerServer = function() {
 
-initContainersLib();
-initContainersContentServer();
+initBuildingSpecialContainerLib();
+initBuildingSpecialContainerContentServer();
 
-Game.Containers.Collection._ensureIndex({
+Game.Building.special.Container.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Containers.initialize = function(user) {
+Game.Building.special.Container.initialize = function(user) {
 	user = user || Meteor.user();
-	var currentValue = Game.Containers.getValue(user._id);
+	var currentValue = Game.Building.special.Container.getValue(user._id);
 
 	if (currentValue === undefined) {
-		Game.Containers.Collection.insert({
+		Game.Building.special.Container.Collection.insert({
 			user_id: user._id
 		});
 	}
 };
 
-Game.Containers.increment = function(containers, invertSign) {
+Game.Building.special.Container.increment = function(containers, invertSign) {
 	invertSign = invertSign === true ? -1 : 1;
 
-	Game.Containers.initialize();
+	Game.Building.special.Container.initialize();
 
 	var inc = null;
 	for (var key in containers) {
@@ -32,7 +32,7 @@ Game.Containers.increment = function(containers, invertSign) {
 	}
 
 	if (inc) {
-		Game.Containers.Collection.update({
+		Game.Building.special.Container.Collection.update({
 			user_id: Meteor.userId()
 		}, {
 			$inc: inc
@@ -40,12 +40,12 @@ Game.Containers.increment = function(containers, invertSign) {
 	}
 };
 
-Game.Containers.add = function(containers) {
-	return Game.Containers.increment(containers, false);
+Game.Building.special.Container.add = function(containers) {
+	return Game.Building.special.Container.increment(containers, false);
 };
 
-Game.Containers.spend = function(containers) {
-	return Game.Containers.increment(containers, true);
+Game.Building.special.Container.spend = function(containers) {
+	return Game.Building.special.Container.increment(containers, true);
 };
 
 Meteor.methods({
@@ -66,7 +66,7 @@ Meteor.methods({
 
 		console.log('containers.open: ', new Date(), user.username);
 
-		var container = Game.Containers.items[id];
+		var container = Game.Building.special.Container.items[id];
 
 		if (!container) {
 			throw new Meteor.Error('Нет такого контейнера');
@@ -80,7 +80,7 @@ Meteor.methods({
 			// spend container
 			var containers = {};
 			containers[id] = 1;
-			Game.Containers.spend(containers);
+			Game.Building.special.Container.spend(containers);
 
 		} else {
 
@@ -116,7 +116,7 @@ Meteor.methods({
 
 Meteor.publish('containers', function () {
 	if (this.userId) {
-		return Game.Containers.Collection.find({
+		return Game.Building.special.Container.Collection.find({
 			user_id: this.userId
 		});
 	}

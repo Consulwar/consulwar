@@ -1,6 +1,6 @@
-initPulsecatcherClient = function() {
+initBuildingSpecialPulsecatcherClient = function() {
 
-initPulsecatcherLib();
+initBuildingSpecialPulsecatcherLib();
 
 Meteor.subscribe('pulsecatcherQuiz');
 var quizAnswerSubscription = Meteor.subscribe('pulsecatcherQuizAnswer');
@@ -11,7 +11,7 @@ Template.pulsecatcher.helpers({
 	isLoading: function() { return isLoading.get(); },
 
 	quizBonusList: function() {
-		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz) {
 			return null;
 		}
@@ -26,7 +26,7 @@ Template.pulsecatcher.helpers({
 	},
 
 	userVote: function() {
-		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz) {
 			return false;
 		}
@@ -40,7 +40,7 @@ Template.pulsecatcher.helpers({
 	},
 
 	calcVoteValue: function(answer) {
-		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
 		if (!activeQuiz || activeQuiz.totalVotes === 0) {
 			return 0;
 		}
@@ -48,9 +48,9 @@ Template.pulsecatcher.helpers({
 	},
 
 	choosenBonusList: function() {
-		var previousQuiz = Game.Pulsecatcher.getPreviousQuiz();
-		var choosen = Game.Pulsecatcher.getChoosenBonus(previousQuiz);
-		var activeList = Game.Pulsecatcher.getActiveBonusList();
+		var previousQuiz = Game.Building.special.Pulsecatcher.getPreviousQuiz();
+		var choosen = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
+		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
 
 		var result = [];
 		var canActivateChoosen = true;
@@ -94,7 +94,7 @@ Template.pulsecatcher.helpers({
 Template.pulsecatcher.events({
 	'click .vote': function(e, t) {
 		var answer = e.currentTarget.dataset.id;
-		var activeQuiz = Game.Pulsecatcher.getActiveQuiz();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
 		if (answer && activeQuiz && !isLoading.get()) {
 			isLoading.set(true);
 			Meteor.call('pulsecatcher.voteBonus', answer, function(err, result) {

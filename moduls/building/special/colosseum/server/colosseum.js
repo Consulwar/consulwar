@@ -1,7 +1,7 @@
-initColosseumServer = function() {
+initBuildingSpecialColosseumServer = function() {
 
-initColosseumLib();
-initColosseumContentServer();
+initBuildingSpecialColosseumLib();
+initBuildingSpecialColosseumContentServer();
 
 Meteor.methods({
 	'colosseum.startTournament': function(id) {
@@ -17,7 +17,7 @@ Meteor.methods({
 
 		console.log('colosseum.startTournament: ', new Date(), user.username);
 
-		var tournament = Game.Colosseum.tournaments[id];
+		var tournament = Game.Building.special.Colosseum.tournaments[id];
 
 		if (!tournament) {
 			throw new Meteor.Error('Нет такого турнира');
@@ -25,7 +25,7 @@ Meteor.methods({
 
 		Meteor.call('actualizeGameInfo');
 
-		if (!Game.Colosseum.checkCanStart()
+		if (!Game.Building.special.Colosseum.checkCanStart()
 		 || !tournament.checkLevel()
 		 || !tournament.checkPrice()
 		) {

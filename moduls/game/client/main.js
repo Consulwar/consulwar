@@ -17,10 +17,6 @@ initQuestClient();
 initRouterClient();
 initMenuClient();
 initCheatsClient();
-initMarketClient();
-initColosseumClient();
-initContainersClient();
-initPulsecatcherClient();
 
 
 /*

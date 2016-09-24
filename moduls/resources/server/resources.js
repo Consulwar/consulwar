@@ -184,7 +184,7 @@ Game.Resources.addProfit = function(profit, uid) {
 	}
 
 	if (profit.containers) {
-		Game.Containers.add(profit.containers);
+		Game.Building.special.Container.add(profit.containers);
 	}
 
 	if (profit.houseItems) {

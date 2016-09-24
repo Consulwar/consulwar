@@ -1,10 +1,10 @@
-initColosseumClient = function() {
+initBuildingSpecialColosseumClient = function() {
 
-initColosseumLib();
+initBuildingSpecialColosseumLib();
 
 Template.colosseum.helpers({
 	tournaments: function() {
-		return _.map(Game.Colosseum.tournaments, function(item) {
+		return _.map(Game.Building.special.Colosseum.tournaments, function(item) {
 			return item;
 		});
 	},
@@ -12,14 +12,14 @@ Template.colosseum.helpers({
 	timeCooldown: function() {
 		var user = Meteor.user();
 		var level = Game.Building.items.residential.colosseum.currentLevel();
-		var timeLeft = user.timeLastTournament - Session.get('serverTime') + Game.Colosseum.getCooldownPeriod(level);
+		var timeLeft = user.timeLastTournament - Session.get('serverTime') + Game.Building.special.Colosseum.getCooldownPeriod(level);
 		return timeLeft > 0 ? timeLeft : null;
 	}
 });
 
 Template.colosseum.events({
 	'click .start': function(e, t) {
-		var item = Game.Colosseum.tournaments[ e.currentTarget.dataset.id ];
+		var item = Game.Building.special.Colosseum.tournaments[ e.currentTarget.dataset.id ];
 
 		if (!item || !item.checkLevel()) {
 			Notifications.error('Недостаточный уровень Колизея');
@@ -31,7 +31,7 @@ Template.colosseum.events({
 			return;
 		}
 
-		if (!Game.Colosseum.checkCanStart()) {
+		if (!Game.Building.special.Colosseum.checkCanStart()) {
 			Notifications.error('Турнир уже проводился сегодня');
 			return;
 		}

@@ -1,6 +1,14 @@
 initChatClient = function() {
 
 
+/*
+	!КЕШИРОВАТЬ КНОПКИ И ФОРМЫ ОТПРАВКИ СООБЩЕНИЯ
+	если появляется новое сообщение по подписке - смотрим предыдущее и обновляем/добавляем
+
+	сохранять точки разрыва
+*/
+
+
 initChatLib();
 
 Meteor.subscribe('chatIconsUser');
@@ -14,7 +22,6 @@ var chatSubscription = null;
 var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
-var tmessages = new ReactiveArray();
 var messagesCount = 0;
 var cacheMessages = [];
 var hasMore = new ReactiveVar(true);
@@ -24,18 +31,8 @@ var gotLimit = new ReactiveVar(false);
 
 
 var messagesCollection = new Meteor.Collection(null);
-var lastUser = null;
-
-
-var testCollection = new Meteor.Collection(null);
-for(var testI = 0; testI < 1000; testI++) {
-	testCollection.insert({
-		timestamp: testI, 
-		parts: [{timestamp: testI, message: testI + "йцу"}], 
-		username: "blabla",
-		role: "Высший"
-	});
-};
+var lastMessage = null;
+var firstMessage = null;
 
 var cacheMessage = function(message) {
 	var i = _.sortedIndex(cacheMessages, message, function(message){
@@ -47,17 +44,6 @@ var cacheMessage = function(message) {
 };
 
 var addMessage = function(message){
-	testI++;
-	var time = new Date();
-	testCollection.insert({
-		timestamp: testI, 
-		parts: [{timestamp: testI, message: testI + "йцу"}], 
-		username: "blabla",
-		role: "Высший"
-	});
-	console.log(new Date() - time);
-	return;
-	var lastMessage = messages[messages.length-1];
 	var part = {
 		_id: message._id,
 		message: message.message,
@@ -70,11 +56,14 @@ var addMessage = function(message){
 		lastMessage.iconPath != message.iconPath)
 	{
 		message.parts = [part];
-		messages.push(message);
+		lastMessage = message;
+		messagesCollection.insert(message);
 	} else {
-		lastMessage.parts.push(part);
-		messages.pop();
-		messages.push(lastMessage);
+		messagesCollection.update(lastMessage._id, { 
+			$push: { 
+				'parts':part
+			}
+		});
 	}
 	
 };
@@ -89,11 +78,40 @@ var uniqMessages = function(messages) {
 	);
 };
 
+var addMessagesDown = function(cacheMessages) {
+	var groupedMessages = groupMessagesList(cacheMessages);
+	lastMessage = groupedMessages[groupedMessages.length - 1];
+	
+	if (!firstMessage) {
+		firstMessage = groupedMessages[0];
+	}
+
+	for (var i = 0; i<groupedMessages.length;i++) {
+		messagesCollection.insert(groupedMessages[i]);
+	}
+	cacheMessages.length = 0;
+};
+
+var addMessagesUp = function(cacheMessages) {
+	var groupedMessages = groupMessagesList(cacheMessages);
+	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
+
+	if (lastMessageInGroup.username == firstMessage.username) {
+		lastMessageInGroup.parts = lastMessageInGroup.parts.concat(firstMessage.parts);
+		messagesCollection.remove(firstMessage._id);
+	}
+
+	firstMessage = groupedMessages[0];
+	for (var i = 0; i<groupedMessages.length;i++) {
+		messagesCollection.insert(groupedMessages[i]);
+	}
+	cacheMessages.length = 0;
+};
+
 var addMessages = function(cacheMessages) {
 	var groupedMessages = groupMessagesList(cacheMessages);
 	var startTimeStamp = groupedMessages[0].parts[groupedMessages[0].parts.length - 1].timestamp;
 	var endTimeStamp = cacheMessages[cacheMessages.length - 1].timestamp;
-
 	var start = 0;
 	var end = 0;
 
@@ -215,7 +233,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 		}
 
 		// scroll to bottom
-		Meteor.setTimeout(scrollChatToBottom,500);
+		Meteor.setTimeout(scrollChatToBottom);
 	}
 });
 
@@ -334,7 +352,7 @@ Template.chat.onRendered(function() {
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
 				removeMotd();
-				addMessages(cacheMessages);
+				addMessagesDown(cacheMessages);
 				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
 				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 			});
@@ -733,7 +751,8 @@ Template.chat.helpers({
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
 	messages: function() {
-		return testCollection.find({},{sort:{timestamp:1}});
+		//return messages.list();
+		return messagesCollection.find({},{sort:{timestamp:1}});
 	},
 
 	getUserRole: function() {
@@ -856,24 +875,21 @@ Template.chat.events({
 		if (isSending.get()) {
 			return false;
 		}
-		addMessage(123);
-		Meteor.setTimeout(scrollChatToBottom,100);
-		return;
+
 		var roomName = Router.current().params.room;
-		//var text = t.find('#message textarea[name="text"]').value;
-		var text = "qwe";
+		var text = t.find('#message textarea[name="text"]').value;
 
 		if (execClientCommand(text)) {
-		//	t.find('#message').reset();
+			t.find('#message').reset();
 			return false;
 		}
 
 		isSending.set(true);
-		//t.$('input[type="submit"]').attr('disabled', true);
+		t.$('input[type="submit"]').attr('disabled', true);
 
 		Meteor.call('chat.sendMessage', text, roomName, function(err, result) {
 			isSending.set(false);
-			//t.$('input[type="submit"]').attr('disabled', false);
+			t.$('input[type="submit"]').attr('disabled', false);
 			if (err) {
 				var errorMessage = err.error;
 				if (_.isNumber(err.reason)) {
@@ -885,7 +901,7 @@ Template.chat.events({
 					Notifications.error('Не получилось отправить сообщение', errorMessage);
 				}
 			} else {
-				//t.find('#message').reset();
+				t.find('#message').reset();
 
 				// play sound 'you are not prepared!'
 				if (text.indexOf('/яготов') === 0) {
@@ -941,7 +957,7 @@ Template.chat.events({
 		}
 
 		var roomName = Router.current().params.room;
-		if (!roomName || !messages || messages.length === 0) {
+		if (!roomName || !messagesCollection || !firstMessage) {
 			return;
 		}
 
@@ -949,7 +965,7 @@ Template.chat.events({
 
 		var options = {
 			roomName: roomName,
-			timestamp: parseInt(e.currentTarget.dataset.timestamp, 10) || messages[0].timestamp,
+			timestamp: parseInt(e.currentTarget.dataset.timestamp, 10) || firstMessage.timestamp,
 			isPrevious: true
 		};
 		
@@ -970,7 +986,7 @@ Template.chat.events({
 					messagesCount++;
 					cacheMessage(data[i]);
 				}
-				addMessages(cacheMessages);
+				addMessagesUp(cacheMessages);
 
 				if (messagesCount >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);

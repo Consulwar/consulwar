@@ -13,6 +13,7 @@ initHouseClient();
 initMutualClient();
 initMailClient();
 initChatClient();
+initSettingsClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();

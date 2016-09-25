@@ -1,0 +1,9 @@
+initSettingsLib = function() {
+
+
+Game.Settings = {
+
+};
+
+
+};

@@ -35,10 +35,14 @@ var lastMessage = null;
 var firstMessage = null;
 
 var cacheMessage = function(message) {
-	var i = _.sortedIndex(cacheMessages, message, function(message){
-		return message.timestamp;
-	});
-
+	var n = cacheMessages.length;
+	var i = 0;
+	while (n-- > 0) {
+		if (cacheMessages[n].timestamp <= message.timestamp) {
+			i = n + 1;
+			break;
+		}
+	}
 	message.parts = [message];
 	cacheMessages.splice(i, 0, message);
 };
@@ -308,7 +312,6 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
 		messagesCount++;
-		console.log(chatSubscription.ready(), cacheMessages.length);
 		if (chatSubscription.ready() && cacheMessages.length === 0) {	
 			addMessage(message);
 		} else {

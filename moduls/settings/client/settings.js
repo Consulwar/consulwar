@@ -11,8 +11,30 @@ Game.Settings.showPage = function() {
 Template.settings.events({
 	'change [name="vacationMode"]': function(e, t) {
 		if (e.target.checked) {
-			alert("В отпуск!");
+			Meteor.call('settings.enableVacationMode', function(err) {
+				if (err) {
+					e.target.checked = false;
+					return Notifications.error(err.message);
+				}
+				Notifications.success('Хорошего отпуска, Консул!');
+			});
+		} else {
+			Meteor.call('settings.disableVacationMode', function(err) {
+				if (err) {
+					e.target.checked = true;
+					return Notifications.error(err.message);
+				}
+				Notifications.success('С возвращением на службу, Консул!');
+			});
 		}
+	},
+	'click .verify': function() {
+		Meteor.call('settings.sendVerifyEmail', function(err) {
+			if (err) {
+				return Notifications.error(err.message);
+			}
+			Notifications.success('Сообщение отправлено');
+		});
 	}
 });
 
@@ -37,8 +59,8 @@ Template.changePassword.events({
 				return Notifications.error(err.message);
 			}
 
-			Notifications.success("Пароль успешно изменен");
-			t.$("form")[0].reset();
+			Notifications.success('Пароль успешно изменен');
+			t.$('form')[0].reset();
 		});
 	}
 });

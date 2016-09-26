@@ -5,8 +5,19 @@
 
 		{{> emailSettings}}
 		
-
-		Режим отпуска <input type="checkbox" name="vacationMode">
+		<div>
+			{{#if user.emails.[0].verified}}
+				{{user.emails.[0].address}}
+				<span class="check" data-tooltip="email подтвержден"></span>
+			{{else}}
+				<input type="text" name="email" value="{{user.emails.[0].address}}">
+				<span class="cross" data-tooltip="email не подтвержден"></span>
+				<span class="verify" data-tooltip="Отправить письмо потверждения"></span>
+			{{/if}}
+		</div>
+		<div>
+			Режим отпуска <input type="checkbox" name="vacationMode">
+		</div>
 	</div>
 </template>
 
@@ -14,15 +25,15 @@
 	<form class="changePassword">
 		<label>
 			<div class="title">Старый пароль:</div>
-			<input class="{{#if err_password}}err{{/if}}" name="oldPassword" type="password" placeholder="Ваш старый пароль">
+			<input name="oldPassword" type="password" placeholder="Ваш старый пароль">
 		</label>
 		<label>
 			<div class="title">Новый пароль:</div>
-			<input class="{{#if err_password}}err{{/if}}" name="newPassword" type="password" placeholder="Ваш новый пароль">
+			<input name="newPassword" type="password" placeholder="Ваш новый пароль">
 		</label>
 		<label>
 			<div class="title">Повторите пароль:</div>
-			<input class="{{#if err_passwordr}}err{{/if}}" name="newPasswordRepeat" type="password" placeholder="Повторите пароль">
+			<input name="newPasswordRepeat" type="password" placeholder="Повторите пароль">
 		</label>
 
 		<button name="change">Изменить пароль</button>

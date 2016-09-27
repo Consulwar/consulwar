@@ -42,6 +42,24 @@ Template.settings.events({
 	}
 });
 
+Template.emailSettings.events({
+	'click button[name="changeEmail"]': function() {
+		var oldEmail = Meteor.user().emails[0].address;
+		Game.showInputWindow('Введите новый email', oldEmail, function(email) {
+			email = email.trim();
+			if (email == oldEmail) {
+				return;
+			}
+			Meteor.call('settings.changeEmail', oldEmail, email, function(err, result) {
+				if (err) {
+					return Notifications.error('Не получилось изменить email', err.error);
+				}
+				Notifications.success('Email успешно изменен');
+			});
+		});
+	}
+});
+
 Template.changePassword.events({
 	'submit form': function(e, t) {
 		e.preventDefault();

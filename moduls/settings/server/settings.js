@@ -63,8 +63,13 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
-		
+
 		Accounts.sendVerificationEmail(user._id, user.emails[0].address);
+	},
+
+	'settings.changeEmail': function(oldEmail, newEmail) {
+		//Accounts.removeEmail(userId, email);
+		//Accounts.addEmail(userId, newEmail, [verified])
 	}
 });
 

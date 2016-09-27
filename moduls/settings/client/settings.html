@@ -1,28 +1,24 @@
 <template name="settings">
 	<div class="settings">
-		Настройки
 		{{> changePassword}}
 
 		{{> emailSettings}}
+
+		{{> notificationsSettings}}
 		
-		<div>
-			{{#if user.emails.[0].verified}}
-				{{user.emails.[0].address}}
-				<span class="check" data-tooltip="email подтвержден"></span>
-			{{else}}
-				<input type="text" name="email" value="{{user.emails.[0].address}}">
-				<span class="cross" data-tooltip="email не подтвержден"></span>
-				<span class="verify" data-tooltip="Отправить письмо потверждения"></span>
-			{{/if}}
-		</div>
-		<div>
-			Режим отпуска <input type="checkbox" name="vacationMode">
+		<div class="vacationMode">
+			<h2>Режим отпуска</h2>
+			<div class="checkBlock">
+				<input type="checkbox" name="vacationMode">
+				<span class="checkboxTitle">активирован</span>
+			</div>
 		</div>
 	</div>
 </template>
 
 <template name="changePassword">
 	<form class="changePassword">
+		<h2>Смена пароля</h2>
 		<label>
 			<div class="title">Старый пароль:</div>
 			<input name="oldPassword" type="password" placeholder="Ваш старый пароль">
@@ -40,15 +36,46 @@
 	</form>
 </template>
 
-<template name="frequencyOfEmails">
-	<div class="frequencyOfEmails">
-		Частота писем
+<template name="emailSettings">
+	<div class="emailSettings">
+		<h2>Настройка email</h2>
+		<div class="emailBlock">
+			{{#if user.emails.[0].verified}}
+				<span class="check" data-tooltip="email подтвержден"></span>
+				<span class="email">{{user.emails.[0].address}}</span>
+			{{else}}
+				<span class="cross" data-tooltip="email не подтвержден"></span>
+				<span class="email">{{user.emails.[0].address}}</span>
+				<button name="changeEmail" data-tooltip="изменить email"></button>
+				<button name="verify" data-tooltip="Отправить письмо потверждения"></button>
+			{{/if}}
+		</div>
+		<div class="frequencyOfLetters">
+			<span class="title">Частота писем:</span>
+			<button>1 день</button>
+			<button>3 дня</button>
+			<button>7 дней</button>
+			<button>1 месяц</button>
+			<button>только акции</button>
+			<button>только рестарт игры</button>
+		</div>
+		<div class="checkBlock">
+			<input type="checkbox">
+			<span class="checkboxTitle"> Подписан на рассылку</span>
+		</div>
 	</div>
 </template>
 
-<template name="emailSettings">
-	<div class="frequencyOfLetters">
-		Частота писем
+<template name="notificationsSettings">
+	<div class="notificationsSettings">
+		<h2>Настройка уведомлений</h2>
+		<div class="checkBlock">
+			<input type="checkbox">
+			<span class="checkboxTitle">Показывать уведомления на рабочем столе</span>
+		</div>
+		<div class="checkBlock">
+			<input type="checkbox">
+			<span class="checkboxTitle">Не отображать Задания / Квэсты во время их активации</span>
+		</div>
 	</div>
-	Подписан на рассылку <input type="checkbox">
 </template>

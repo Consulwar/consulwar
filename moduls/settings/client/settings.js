@@ -11,12 +11,16 @@ Game.Settings.showPage = function() {
 Template.settings.events({
 	'change [name="vacationMode"]': function(e, t) {
 		if (e.target.checked) {
-			Meteor.call('settings.enableVacationMode', function(err) {
-				if (err) {
-					e.target.checked = false;
-					return Notifications.error(err.message);
-				}
-				Notifications.success('Хорошего отпуска, Консул!');
+			var message = 'Вы уверены что хотите активировать Режим Отпуска? Вы не сможете снять его минимум 1 день, после чего Режим Отпуска будет заблокирован на 2 дня, максимальное время действия Режима Отпуска 30 дней. Во время Режима Отпуска ваши ресурсы не добываются, а на вас никто не может нападать. Активация этого режима не отменяет уже идущие на вас атаки.';
+
+			Game.showAcceptWindow(message, function() {
+				Meteor.call('settings.enableVacationMode', function(err) {
+					if (err) {
+						e.target.checked = false;
+						return Notifications.error(err.message);
+					}
+					Notifications.success('Хорошего отпуска, Консул!');
+				});	
 			});
 		} else {
 			Meteor.call('settings.disableVacationMode', function(err) {

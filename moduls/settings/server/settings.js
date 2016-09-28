@@ -139,9 +139,8 @@ Meteor.methods({
 		throw new Meteor.Error('Email ' + email + ' не найден.');
 	},
 
-	'settings.setLettersFrequency': function (email, lettersFrequency) {
-		check(email, String);
-		check(lettersFrequency, String);
+	'settings.setEmailLettersFrequency': function (emailLettersFrequency) {
+		check(emailLettersFrequency, String);
 		
 		var user = Meteor.user();
 
@@ -153,20 +152,44 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		for (var i = 0; i < user.emails.length; i++) {
-			if (user.emails[i].address == email) {
-				var set = {};
-				set['emails.' + i.toString() + '.lettersFrequency'] = lettersFrequency;
-				Meteor.users.update({
-					_id: user._id
-				}, {
-					$set: set
-				});
-				return true;
-			}
+		if (!Game.Settings.emailLettersFrequency.hasOwnProperty(emailLettersFrequency)) {
+			throw new Meteor.Error('Неправильная частота писем');
 		}
 
-		throw new Meteor.Error('Email ' + email + ' не найден.');
+		var set = {};
+		set['settings.email.lettersFrequency'] = emailLettersFrequency;
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$set: set
+		});
+	},
+
+	'settings.changeNotifications': function (field, value) {
+		check(field, String);
+		check(value, Boolean);
+		
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (Game.Settings.notificationFields.indexOf(field) == -1) {
+			throw new Meteor.Error('Несуществующее поле настроек');
+		}
+
+		var set = {};
+		set['settings.notifications.' + field] = value;
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$set: set
+		});
 	}
 });
 

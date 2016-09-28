@@ -56,13 +56,16 @@
 				</button>
 			{{/if}}
 		</div>
-		<div class="lettersFrequency">
+		<div class="emailLettersFrequency">
 			<span class="title">Частота писем:</span>
-			{{#each Game.Settings.emailLettersFrequency}}
+			{{#each (toArray Game.Settings.emailLettersFrequency)}}
 				<button 
 					data-frequency="{{engName}}"
-					data-email="{{user.emails.[0].address}}"
-					class="{{#if (eq engName (or user.emails.[0].lettersFrequency 'everyDay'))}}active{{/if}}"
+					class="
+						{{#if (eq engName (or user.settings.email.lettersFrequency 'everyDay'))}}
+							active
+						{{/if}}
+					"
 				>
 					{{title}}
 				</button>
@@ -84,12 +87,20 @@
 	<div class="notificationsSettings">
 		<h2>Настройка уведомлений</h2>
 		<div class="checkBlock">
-			<input type="checkbox">
+			<input 
+				type="checkbox"
+				data-settings_field="showDesctopNotifications"
+				checked="{{user.settings.notifications.showDesctopNotifications}}" 
+			>
 			<span class="checkboxTitle">Показывать уведомления на рабочем столе</span>
 		</div>
 		<div class="checkBlock">
-			<input type="checkbox">
-			<span class="checkboxTitle">Не отображать Задания / Квэсты во время их активации</span>
+			<input
+				type="checkbox"
+				data-settings_field="showQuestsDuringActivation"
+				checked="{{user.settings.notifications.showQuestsDuringActivation}}" 
+			>
+			<span class="checkboxTitle">Отображать Задания во время их активации</span>
 		</div>
 	</div>
 </template>

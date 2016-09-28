@@ -31,14 +31,6 @@ Template.settings.events({
 				Notifications.success('С возвращением на службу, Консул!');
 			});
 		}
-	},
-	'click .verify': function() {
-		Meteor.call('settings.sendVerifyEmail', function(err) {
-			if (err) {
-				return Notifications.error(err.message);
-			}
-			Notifications.success('Сообщение отправлено');
-		});
 	}
 });
 
@@ -50,12 +42,38 @@ Template.emailSettings.events({
 			if (email == oldEmail) {
 				return;
 			}
-			Meteor.call('settings.changeEmail', email, function(err) {
+			Meteor.call('settings.changeEmail', oldEmail, email, function(err) {
 				if (err) {
 					return Notifications.error('Не получилось изменить email', err.message);
 				}
 				Notifications.success('Email успешно изменен');
 			});
+		});
+	},
+
+	'change input[name="subscribed"]': function(e, t) {
+		var subscribed = e.target.checked;
+		Meteor.call('settings.setSubscribed', e.target.dataset.email, subscribed, function(err) {
+			if (err) {
+				e.target.checked = !subscribed;
+				return Notifications.error('Не удалось ' + (subscribed
+					? 'подписаться на рассылку'
+					: 'отписаться от рассылки'
+				), err.message);
+			}
+			Notifications.success('Вы успешно ' + (subscribed
+				? 'подписались на рассылку'
+				: 'отписались от рассылки'
+			));
+		});
+	},
+
+	'click button[name="verify"]': function(e, t) {
+		Meteor.call('settings.sendVerifyEmail', e.target.dataset.email, function(err) {
+			if (err) {
+				return Notifications.error('Не удалось отправить письмо верифицации.', err.message);
+			}
+			Notifications.success('Сообщение отправлено');
 		});
 	}
 });

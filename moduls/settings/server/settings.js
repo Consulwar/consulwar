@@ -67,9 +67,25 @@ Meteor.methods({
 		Accounts.sendVerificationEmail(user._id, user.emails[0].address);
 	},
 
-	'settings.changeEmail': function(oldEmail, newEmail) {
-		//Accounts.removeEmail(userId, email);
-		//Accounts.addEmail(userId, newEmail, [verified])
+	'settings.changeEmail': function(newEmail) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		var oldEmail = user.emails[0];
+
+		if (oldEmail.verified) {
+			throw new Meteor.Error('Нельзя изменить верифицированный email.');
+		}
+
+		Accounts.addEmail(user._id, newEmail);
+		Accounts.removeEmail(user._id, oldEmail.address);
 	}
 });
 

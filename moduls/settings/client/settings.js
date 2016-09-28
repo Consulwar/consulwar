@@ -50,9 +50,9 @@ Template.emailSettings.events({
 			if (email == oldEmail) {
 				return;
 			}
-			Meteor.call('settings.changeEmail', oldEmail, email, function(err, result) {
+			Meteor.call('settings.changeEmail', email, function(err) {
 				if (err) {
-					return Notifications.error('Не получилось изменить email', err.error);
+					return Notifications.error('Не получилось изменить email', err.message);
 				}
 				Notifications.success('Email успешно изменен');
 			});

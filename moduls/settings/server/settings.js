@@ -137,6 +137,36 @@ Meteor.methods({
 		}
 
 		throw new Meteor.Error('Email ' + email + ' не найден.');
+	},
+
+	'settings.setLettersFrequency': function (email, lettersFrequency) {
+		check(email, String);
+		check(lettersFrequency, String);
+		
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		for (var i = 0; i < user.emails.length; i++) {
+			if (user.emails[i].address == email) {
+				var set = {};
+				set['emails.' + i.toString() + '.lettersFrequency'] = lettersFrequency;
+				Meteor.users.update({
+					_id: user._id
+				}, {
+					$set: set
+				});
+				return true;
+			}
+		}
+
+		throw new Meteor.Error('Email ' + email + ' не найден.');
 	}
 });
 

@@ -9,8 +9,9 @@
 		<div class="vacationMode">
 			<h2>Режим отпуска</h2>
 			<div class="checkBlock">
-				<input type="checkbox" name="vacationMode">
+				<input type="checkbox" name="vacationMode" disabled>
 				<span class="checkboxTitle">активирован</span>
+				<span class="notImplemented">В разработке!</span>
 			</div>
 		</div>
 	</div>
@@ -47,20 +48,33 @@
 				<span class="cross" data-tooltip="email не подтвержден"></span>
 				<span class="email">{{user.emails.[0].address}}</span>
 				<button name="changeEmail" data-tooltip="изменить email"></button>
-				<button name="verify" data-tooltip="Отправить письмо потверждения"></button>
+				<button 
+					name="verify" 
+					data-tooltip="Отправить письмо потверждения"
+					data-email="{{user.emails.[0].address}}"
+				>
+				</button>
 			{{/if}}
 		</div>
-		<div class="frequencyOfLetters">
+		<div class="lettersFrequency">
 			<span class="title">Частота писем:</span>
-			<button>1 день</button>
-			<button>3 дня</button>
-			<button>7 дней</button>
-			<button>1 месяц</button>
-			<button>только акции</button>
-			<button>только рестарт игры</button>
+			{{#each Game.Settings.emailLettersFrequency}}
+				<button 
+					data-frequency="{{engName}}"
+					data-email="{{user.emails.[0].address}}"
+					class="{{#if (eq engName (or user.emails.[0].lettersFrequency 'everyDay'))}}active{{/if}}"
+				>
+					{{title}}
+				</button>
+			{{/each}}
 		</div>
 		<div class="checkBlock">
-			<input type="checkbox">
+			<input 
+				type="checkbox"
+				name="subscribed"
+				checked="{{not user.emails.[0].unsubscribed}}"
+				data-email="{{user.emails.[0].address}}"
+			>
 			<span class="checkboxTitle"> Подписан на рассылку</span>
 		</div>
 	</div>

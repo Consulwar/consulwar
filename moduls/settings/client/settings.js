@@ -9,6 +9,40 @@ Game.Settings.showPage = function() {
 };
 
 Template.settings.events({
+	'change input[name="subscribed"]': function(e, t) {
+		var subscribed = e.target.checked;
+		Meteor.call('settings.setSubscribed', e.target.dataset.email, subscribed, function(err) {
+			if (err) {
+				e.target.checked = !subscribed;
+				return Notifications.error('Не удалось ' + (subscribed
+					? 'подписаться на рассылку'
+					: 'отписаться от рассылки'
+				), err.message);
+			}
+			Notifications.success('Вы успешно ' + (subscribed
+				? 'подписались на рассылку'
+				: 'отписались от рассылки'
+			));
+		});
+	},
+
+	'change input[name="subscribed"]': function(e, t) {
+		var subscribed = e.target.checked;
+		Meteor.call('settings.setSubscribed', e.target.dataset.email, subscribed, function(err) {
+			if (err) {
+				e.target.checked = !subscribed;
+				return Notifications.error('Не удалось ' + (subscribed
+					? 'подписаться на рассылку'
+					: 'отписаться от рассылки'
+				), err.message);
+			}
+			Notifications.success('Вы успешно ' + (subscribed
+				? 'подписались на рассылку'
+				: 'отписались от рассылки'
+			));
+		});
+	},
+	
 	'change [name="vacationMode"]': function(e, t) {
 		if (e.target.checked) {
 			var message = 'Вы уверены что хотите активировать Режим Отпуска? Вы не сможете снять его минимум 1 день, после чего Режим Отпуска будет заблокирован на 2 дня, максимальное время действия Режима Отпуска 30 дней. Во время Режима Отпуска ваши ресурсы не добываются, а на вас никто не может нападать. Активация этого режима не отменяет уже идущие на вас атаки.';
@@ -75,6 +109,19 @@ Template.emailSettings.events({
 			}
 			Notifications.success('Сообщение отправлено');
 		});
+	},
+
+	'click .lettersFrequency button': function (e, t) {
+		Meteor.call(
+			'settings.setLettersFrequency',
+			e.target.dataset.email,
+			e.target.dataset.frequency,
+			function(err) {
+				if (err) {
+					return Notifications.error('Не удалось изменить частоту писем.', err.message);
+				}
+			}
+		);
 	}
 });
 

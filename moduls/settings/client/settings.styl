@@ -98,6 +98,14 @@
 			button
 				display inline-block
 				margin 10px
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+				color #000
+
+				&.active
+					-webkit-filter brightness(1)
+					filter brightness(1)
+					color #fff
 
 			button[name="changeEmail"]
 				background-image url(/img/game/edit.png)

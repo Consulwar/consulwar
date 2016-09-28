@@ -1172,6 +1172,10 @@ Meteor.methods({
 
 		console.log('spaceEvents.attackReptFleet: ', new Date(), user.username);
 
+		if (!Game.User.haveVerifiedEmail()) {
+			throw new Meteor.Error('Сперва нужно верифицировать Email');
+		}
+
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}

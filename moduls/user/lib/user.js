@@ -48,6 +48,22 @@ Game.User = {
 
 	getLevelName: function(rating) {
 		return this.levels[this.getLevel(rating)].name;
+	},
+
+	haveVerifiedEmail: function() {
+		var user = Meteor.user();
+
+		if (!user || !user.emails) {
+			return false;
+		}
+
+		for (var i = 0; i < user.emails.length; i++) {
+			if (user.emails[i].verified) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 };
 

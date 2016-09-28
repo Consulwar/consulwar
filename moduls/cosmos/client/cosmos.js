@@ -472,9 +472,12 @@ Template.cosmosPlanetInfo.helpers({
 
 Template.cosmosPlanetInfo.events({
 	'click .open': function(e, t) {
+		if (!Game.User.haveVerifiedEmail()) {
+			return Notifications.info('Сперва нужно верифицировать Email');
+		}
+
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
-			Notifications.info('Слишком много флотов уже отправлено');
-			return;
+			return Notifications.info('Слишком много флотов уже отправлено');
 		}
 
 		var id = $(e.currentTarget).attr("data-id");

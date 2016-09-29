@@ -56,8 +56,11 @@
 				</button>
 			{{/if}}
 		</div>
+		{{#unless user.emails.[0].verified}}
+			<span class="hint">Письмо можно отправить не больше 2 раз в сутки</span>
+		{{/unless}}
 		<div class="emailLettersFrequency">
-			<span class="title">Частота писем:</span>
+			<span class="title">Получать письма не чаще чем раз в:</span>
 			{{#each (toArray Game.Settings.emailLettersFrequency)}}
 				<button 
 					data-frequency="{{engName}}"

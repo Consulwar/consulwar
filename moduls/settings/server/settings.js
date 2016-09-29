@@ -66,6 +66,14 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		if (user.services && user.services.email && user.services.email.verificationTokens) {
+			var tokens = user.services.email.verificationTokens;
+			
+			if (new Date() - new Date(tokens[tokens.length - 1].when) < (1000 * 60 * 60 * 24)) {
+				throw new Meteor.Error('Письмо верификации можно отправить не чаще 2 раз в сутки.');
+			}
+		}
+
 		for (var i = 0; i < user.emails.length; i++) {
 			if (user.emails[i].address == email) {
 				if (user.emails[i].verified) {

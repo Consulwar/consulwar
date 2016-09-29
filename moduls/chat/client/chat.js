@@ -4,8 +4,6 @@ initChatClient = function() {
 /*
 	!КЕШИРОВАТЬ КНОПКИ И ФОРМЫ ОТПРАВКИ СООБЩЕНИЯ
 	если появляется новое сообщение по подписке - смотрим предыдущее и обновляем/добавляем
-
-	сохранять точки разрыва
 */
 
 
@@ -23,7 +21,6 @@ var chatRoomSubscription = null;
 
 var messages = new ReactiveArray();
 var messagesCount = 0;
-var cacheMessages = [];
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
@@ -34,17 +31,10 @@ var messagesCollection = new Meteor.Collection(null);
 var lastMessage = null;
 var firstMessage = null;
 
-var cacheMessage = function(message) {
-	var n = cacheMessages.length;
-	var i = 0;
-	while (n-- > 0) {
-		if (cacheMessages[n].timestamp <= message.timestamp) {
-			i = n + 1;
-			break;
-		}
-	}
-	message.parts = [message];
-	cacheMessages.splice(i, 0, message);
+var sortMessages = function(messages) {
+	return messages.sort(function(a, b){
+		return a.timestamp > b.timestamp;
+	});
 };
 
 var addMessage = function(message){
@@ -72,9 +62,9 @@ var addMessage = function(message){
 	
 };
 
-var uniqMessages = function(messages) {
+var uniqMessages = function() {
 	return _.uniq(
-		messages,
+		[].concat.apply([],arguments),
 		false,
 		function(message) {
 			return message._id;
@@ -98,7 +88,8 @@ var cutMessagesArray = function(options) {
 	return options.messages.slice(start, end);
 };
 
-var addMessagesDown = function() {
+var addMessagesDown = function(cacheMessages) {
+	cacheMessages = sortMessages(cacheMessages);
 	var startCacheMessagesLength = cacheMessages.length;
 	if (lastMessage) {
 		cacheMessages = cutMessagesArray({
@@ -137,19 +128,15 @@ var addMessagesDown = function() {
 	}
 };
 
-var addMessagesUp = function() {
-	if (firstMessage) {
-		cacheMessages = cutMessagesArray({
-			messages: cacheMessages,
-			lastId: firstMessage._id
-		});
-	}
+var addMessagesUp = function(cacheMessages) {
+	cacheMessages = sortMessages(cacheMessages);
 
 	var groupedMessages = groupMessagesList(cacheMessages);
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 
 	if (lastMessageInGroup.username == firstMessage.username) {
 		lastMessageInGroup.parts = lastMessageInGroup.parts.concat(firstMessage.parts);
+		lastMessageInGroup.parts = uniqMessages(lastMessageInGroup.parts);
 		messagesCollection.remove(firstMessage._id);
 	}
 	if (firstMessage == lastMessage) {
@@ -159,10 +146,10 @@ var addMessagesUp = function() {
 	for (var i = 0; i<groupedMessages.length;i++) {
 		messagesCollection.insert(groupedMessages[i]);
 	}
-	cacheMessages.length = 0;
 };
 
-var addMessagesBefore = function(afterMessage) {
+var addMessagesBefore = function(afterMessage, cacheMessages) {
+	cacheMessages = sortMessages(cacheMessages);
 	var previousMessage = afterMessage.previousMessage;
 	var firstCacheMessage = cacheMessages[0];
 	cacheMessages = cutMessagesArray({
@@ -199,7 +186,6 @@ var addMessagesBefore = function(afterMessage) {
 	for (var i = 0; i<groupedMessages.length;i++) {
 		messagesCollection.insert(groupedMessages[i]);
 	}
-	cacheMessages.length = 0;
 };
 
 var addMessages = function(cacheMessages) {
@@ -262,7 +248,6 @@ var addMessages = function(cacheMessages) {
 		groupedMessages[0].haveAllowedPreviousMessages = true;
 	}
 
-	cacheMessages.length = 0;
 	groupedMessages.unshift(start, deleted);
 	messages.splice.apply(messages, groupedMessages);
 };
@@ -312,10 +297,8 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
 		messagesCount++;
-		if (chatSubscription.ready() && cacheMessages.length === 0) {	
+		if (chatSubscription.ready()) {	
 			addMessage(message);
-		} else {
-			cacheMessage(message);
 		}
 
 		// limit max count
@@ -446,7 +429,7 @@ Template.chat.onRendered(function() {
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
 				removeMotd();
-				addMessagesDown(cacheMessages);
+				addMessagesDown(Game.Chat.Messages.Collection.find({}).fetch());
 				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
 				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 			});
@@ -1071,15 +1054,12 @@ Template.chat.events({
 			}
 
 			if (data) {
-				cacheMessages = [];
-				for (var i = 0; i < data.length; i++) {
-					if (messagesCount >= Game.Chat.Messages.LIMIT) {
-						break;
-					}
-					messagesCount++;
-					cacheMessage(data[i]);
+				if (messagesCount + data.length > Game.Chat.Messages.LIMIT) {
+					data = data.slice(messagesCount + data.length - Game.Chat.Messages.LIMIT);
 				}
-				addMessagesUp(cacheMessages);
+
+				messagesCount += data.length;
+				addMessagesUp(data);
 
 				if (messagesCount >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);
@@ -1123,17 +1103,14 @@ Template.chat.events({
 			}
 
 			if (data) {
-				cacheMessages = [];
-				for (var i = 0; i < data.length; i++) {
-					if (messagesCount >= Game.Chat.Messages.LIMIT) {
-						break;
-					}
-					messagesCount++;
-					cacheMessage(data[i]);
+				if (messagesCount + data.length > Game.Chat.Messages.LIMIT) {
+					data = data.slice(messagesCount + data.length - Game.Chat.Messages.LIMIT);
 				}
 
+				messagesCount += data.length;
+
 				var afterMessage = messagesCollection.findOne(afterMessageId);
-				addMessagesBefore(afterMessage);
+				addMessagesBefore(afterMessage, data);
 
 				if (messagesCount >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);

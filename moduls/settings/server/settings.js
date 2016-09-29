@@ -62,8 +62,8 @@ Meteor.methods({
 		throw new Meteor.Error('Email ' + email + ' не найден.');
 	},
 
-	'settings.changeEmail': function(oldEmail, newEmail) {
-		check(oldEmail, String);
+	'settings.changeEmail': function(currentEmail, newEmail) {
+		check(currentEmail, String);
 		check(newEmail, String);
 
 		var user = Meteor.user();
@@ -77,19 +77,19 @@ Meteor.methods({
 		}
 
 		for (var i = 0; i < user.emails.length; i++) {
-			if (user.emails[i].address == oldEmail) {
+			if (user.emails[i].address == currentEmail) {
 				if (user.emails[i].verified) {
 					throw new Meteor.Error('Нельзя изменить верифицированный email.');
 				}
 
 				Accounts.addEmail(user._id, newEmail);
-				Accounts.removeEmail(user._id, oldEmail);
+				Accounts.removeEmail(user._id, currentEmail);
 
 				return true;
 			}
 		}
 
-		throw new Meteor.Error('Email ' + oldEmail + ' не найден.');
+		throw new Meteor.Error('Email ' + currentEmail + ' не найден.');
 	},
 
 	'settings.setSubscribed': function(email, subscribed) {

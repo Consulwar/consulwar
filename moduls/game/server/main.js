@@ -158,8 +158,7 @@ Meteor.publish('game', function () {
 				isChatFree: 1,
 				timeLastTournament: 1,
 				achievements: 1,
-				settings: 1,
-				onVacation: 1
+				settings: 1
 			}
 		});
 	}

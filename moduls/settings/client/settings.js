@@ -45,13 +45,13 @@ Template.settings.events({
 
 Template.emailSettings.events({
 	'click button[name="changeEmail"]': function(e, t) {
-		var oldEmail = Meteor.user().emails[0].address;
-		Game.showInputWindow('Введите новый email', oldEmail, function(email) {
+		var currentEmail = Meteor.user().emails[0].address;
+		Game.showInputWindow('Введите новый email', currentEmail, function(email) {
 			email = email.trim();
-			if (email == oldEmail) {
+			if (email == currentEmail) {
 				return;
 			}
-			Meteor.call('settings.changeEmail', oldEmail, email, function(err) {
+			Meteor.call('settings.changeEmail', currentEmail, email, function(err) {
 				if (err) {
 					return Notifications.error('Не получилось изменить email', err.message);
 				}
@@ -104,7 +104,7 @@ Template.changePassword.events({
 	'submit form': function(e, t) {
 		e.preventDefault();
 
-		var oldPassword = t.find('input[name="oldPassword"]').value;
+		var currentPassword = t.find('input[name="currentPassword"]').value;
 		var newPassword = t.find('input[name="newPassword"]').value;
 		var newPasswordRepeat = t.find('input[name="newPasswordRepeat"]').value;
 
@@ -116,7 +116,7 @@ Template.changePassword.events({
 			return Notifications.error('Пароли не совпадают');
 		}
 
-		Accounts.changePassword(oldPassword, newPassword, function(err){
+		Accounts.changePassword(currentPassword, newPassword, function(err){
 			if (err) {
 				return Notifications.error(err.message);
 			}

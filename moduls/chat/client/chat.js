@@ -33,7 +33,7 @@ var firstMessage = null;
 
 var sortMessages = function(messages) {
 	return messages.sort(function(a, b){
-		return a.timestamp > b.timestamp;
+		return a.timestamp > b.timestamp ? 1 : -1;
 	});
 };
 
@@ -273,10 +273,12 @@ var groupMessagesList = function(msgs) {
 			(msgs[i].isMotd || msgs[i - 1].isMotd ||
 			msgs[i - 1].username != msgs[i].username ||
 			msgs[i - 1].role != msgs[i].role ||
-			msgs[i - 1].iconPath != msgs[i].iconPath)) {
+			msgs[i - 1].iconPath != msgs[i].iconPath))
+		{
+			console.log(msgs[i - 1].username, msgs[i].username);
+			console.log(msgs[i - 1].message, msgs[i].message);
 			group++;
 		}
-
 		part = {
 			_id: msgs[i]._id,
 			message: msgs[i].message,
@@ -829,7 +831,7 @@ Template.chat.helpers({
 	hasMore: function() { return hasMore.get(); },
 	messages: function() {
 		//return messages.list();
-		return messagesCollection.find({},{sort:{timestamp:1}});
+		return messagesCollection.find({}/*,{sort:{timestamp:1}}*/);
 	},
 
 	getUserRole: function() {

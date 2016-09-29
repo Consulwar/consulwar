@@ -9,6 +9,7 @@ Meteor.subscribe('spaceEvents');
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
 var bounds = new ReactiveVar(null);
+var isFleetSended = new ReactiveVar(false);
 
 var mapView = null;
 var pathViews = {};
@@ -822,6 +823,10 @@ Game.Cosmos.hideAttackMenu = function() {
 };
 
 Template.cosmosAttackMenu.helpers({
+	isFleetSended: function() {
+		return isFleetSended.get();
+	},
+
 	ship: function() {
 		var id = this.id;
 		var spaceEvent = Game.SpaceEvents.getOne(id);
@@ -1018,11 +1023,7 @@ Template.cosmosAttackMenu.events({
 		t.data.updated.set(Session.get('serverTime'));
 	},
 
-	'click .btn-attack.disabled': function(e, t) {
-		Notifications.info('Нельзя захватить планету, так как уже слишком много колоний');
-	},
-
-	'click .btn-attack:not(.disabled)': function(e, t) {
+	'click .btn-attack': function(e, t) {
 		var isOneway = $(e.currentTarget).hasClass('defend');
 
 		var baseId = t.data.activeColonyId.get();
@@ -1065,6 +1066,7 @@ Template.cosmosAttackMenu.events({
 
 		if (planet) {
 			// Send to planet
+			isFleetSended.set(true);
 			Meteor.call(
 				'planet.sendFleet',
 				basePlanet._id,
@@ -1072,6 +1074,8 @@ Template.cosmosAttackMenu.events({
 				units,
 				isOneway,
 				function(err) {
+					isFleetSended.set(false);
+
 					if (err) {
 						Notifications.error('Не удалось отправить флот', err.error);
 					} else {
@@ -1100,7 +1104,7 @@ Template.cosmosAttackMenu.events({
 			}
 
 			var attackPoint = pathView.getPointAlongDistanceByCoef(attack.k);
-
+			isFleetSended.set(true);
 			Meteor.call(
 				'spaceEvents.attackReptFleet',
 				basePlanet._id,
@@ -1109,6 +1113,8 @@ Template.cosmosAttackMenu.events({
 				attackPoint.x, 
 				attackPoint.y,
 				function(err) {
+					isFleetSended.set(false);
+					
 					if (err) {
 						Notifications.error('Не удалось отправить флот', err.error);
 					} else {

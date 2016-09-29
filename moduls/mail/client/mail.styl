@@ -285,12 +285,24 @@
 					
 
 .quiz
-	progress
+	
+	&.modal > .title
+		margin-bottom 0
+		font-size 16px
+		
+	&.modal > a
+		font-size 14px
+		padding 10px 15px
+		width 430px
+		margin 10px 0
+
+	&.modal > progress
 		position relative
 		width 450px
 		height 25px
-		margin-top 70px
+		margin-top 40px
 		background-color #000
+		font-size 14px
 			
 		&[role][aria-valuenow]
 			background-color #000
@@ -325,3 +337,30 @@
 	
 	.vote_power
 		font-size 12px
+
+	.previous_question, .next_question
+		position absolute
+		top 50%
+		margin-top -23px
+		background-repeat no-repeat
+		background-position center
+		cursor pointer
+		display block
+		width 46px
+		height 46px
+		-webkit-filter grayscale(1)
+		filter grayscale(1)
+
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+
+	.previous_question
+		left 0
+		margin-left -23px
+		background-image url(/img/game/left-arrow.png)
+
+	.next_question
+		right 0
+		margin-right -23px
+		background-image url(/img/game/right-arrow.png)

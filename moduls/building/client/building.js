@@ -48,12 +48,18 @@ Template.item_building.events({
 	},
 
 	'click button.market': function(e, t) {
-		Game.Market.showWindow();
+		Game.Building.special.Market.showWindow();
 	},
 
 	'click button.containers': function(e, t) {
-		Game.Containers.showWindow();
+		Game.Building.special.Container.showWindow();
 	}
 });
+
+
+initBuildingSpecialMarketClient();
+initBuildingSpecialColosseumClient();
+initBuildingSpecialContainerClient();
+initBuildingSpecialPulsecatcherClient();
 
 };

@@ -32,8 +32,14 @@ var lastMessage = null;
 var firstMessage = null;
 
 var sortMessages = function(messages) {
-	return messages.sort(function(a, b){
-		return a.timestamp > b.timestamp ? 1 : -1;
+	//Нужно для устойчивой сортировки
+	for (var i = 0; i < messages.length; i++) {
+		messages[i].index = i;
+	}
+
+	return messages.sort(function(a, b) {
+		var res = a.timestamp - b.timestamp;
+  		return (res === 0 ? a.index - b.index : res);
 	});
 };
 

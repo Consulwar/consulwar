@@ -99,51 +99,6 @@ Game.Cards.activate = function(item, user) {
 	return Game.Queue.add(task);
 };
 
-Game.Cards.deactivate = function(item, user) {
-	console.log("bka1");
-	// check input
-	if (!item || !user) {
-		return false;
-	}
-	console.log("bka2");
-	// try to find active card with same name
-	var currentCard = Game.Queue.Collection.findOne({
-		user_id: user._id,
-		engName: item.engName,
-		status: Game.Queue.status.INCOMPLETE,
-		finishTime: { $gt: Game.getCurrentTime() }
-	});
-console.log("bka3");
-	if (currentCard) {
-		console.log("bka4");
-		// stop current
-		Game.Queue.Collection.update({
-			_id: currentCard._id
-		}, {
-			$set: {
-				status: Game.Queue.status.DONE,
-				finishTime: Game.getCurrentTime() - 1
-			}
-		});
-		console.log("bka");
-		if (item.reloadTime) {
-
-		console.log("bka5");
-			// set next reload time
-			var set = {};
-			set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.reloadTime;
-
-			console.log(Game.Cards.Collection.upsert({
-				user_id: user._id
-			}, {
-				$set: set
-			}));
-		}
-	}
-
-	return true;
-};
-
 Meteor.methods({
 	'cards.buyAndActivate': function (id) {
 		Meteor.call('cards.buy', id);

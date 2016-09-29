@@ -45,7 +45,11 @@ Template.settings.events({
 				Notifications.success('С возвращением на службу, Консул!');
 			});
 		}
-	}
+	},
+
+	'click .changeAvatar': function(e, t) {
+		Game.Chat.showIconsWindow();
+	},
 });
 
 Template.emailSettings.events({

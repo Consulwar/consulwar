@@ -1,12 +1,10 @@
 <template name="settings">
 	<div class="settings">
-		{{> changePassword}}
-
-		{{> emailSettings}}
-
-		{{> notificationsSettings}}
-		
 		<div class="vacationMode">
+			<div class="user">
+				<img src="/img/game/chat/icons/{{Game.User.iconPath user}}.png" alt="Иконка консула"/>
+				<button class="changeAvatar"></button>
+			</div>
 			<h2>Режим отпуска</h2>
 			<div class="checkBlock">
 				<input type="checkbox" name="vacationMode" disabled>
@@ -14,6 +12,13 @@
 				<span class="notImplemented">В разработке!</span>
 			</div>
 		</div>
+
+		{{> changePassword}}
+
+		{{> emailSettings}}
+
+		{{> notificationsSettings}}
+		
 	</div>
 </template>
 
@@ -54,13 +59,11 @@
 					data-email="{{user.emails.[0].address}}"
 				>
 				</button>
+				<span class="hint">Письмо можно отправить не больше 2 раз в сутки</span>
 			{{/if}}
 		</div>
-		{{#unless user.emails.[0].verified}}
-			<span class="hint">Письмо можно отправить не больше 2 раз в сутки</span>
-		{{/unless}}
+		<span class="title">Получать письма не чаще чем раз в:</span>
 		<div class="emailLettersFrequency">
-			<span class="title">Получать письма не чаще чем раз в:</span>
 			{{#each (toArray Game.Settings.emailLettersFrequency)}}
 				<button 
 					data-frequency="{{engName}}"

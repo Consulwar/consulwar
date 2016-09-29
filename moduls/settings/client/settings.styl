@@ -7,6 +7,12 @@
 		background-color #101217
 		display flex
 
+		.notImplemented
+			color #ffb74a
+
+		input[type="checkbox"]
+			margin-right 3px
+
 		button
 			cursor pointer
 			display block
@@ -38,6 +44,14 @@
 
 		.checkBlock
 			margin-top 20px
+			display flex
+			align-items center
+
+			.checkboxTitle
+				color #56baf2
+				font-weight bold
+				font-size 14px
+
 
 		.hint
 			margin-bottom 20px
@@ -46,12 +60,6 @@
 
 		.title
 			display block
-			color #56baf2
-			font-weight bold
-			font-size 14px
-			margin-bottom 10px
-
-		.checkboxTitle
 			color #56baf2
 			font-weight bold
 			font-size 14px
@@ -89,18 +97,31 @@
 			button[name="change"]
 				margin-top 20px
 
+		.user
+			display flex
+			align-items center
+			margin-bottom 20px
+
+			.changeAvatar
+				cursor pointer
+				display inline-block
+				width 65px
+				height 66px
+				background-repeat no-repeat
+				background-image url(/img/game/chat/dollar-disabled.png)
+				border-radius 0px
+				margin-left 20px
+
+				&:hover
+					background-image url(/img/game/chat/dollar.png)
+
 		.emailSettings
 			width 400px
 			background-color #232832
 			display inline-block
 			padding 20px
 
-			.emailBlock
-				display flex
-				align-items center
-
 			button
-				display inline-block
 				margin 10px
 				-webkit-filter grayscale(1)
 				filter grayscale(1)
@@ -111,14 +132,27 @@
 					filter brightness(1)
 					color #fff
 
+			.emailBlock
+				display flex
+				flex-wrap wrap
+				align-items center
+
+			.emailLettersFrequency
+				display flex
+				flex-wrap wrap
+				align-items stretch
+				justify-content space-around
+
+				button
+					flex-grow 1
+
 			button[name="changeEmail"]
 				background-image url(/img/game/edit.png)
 				height 21px
 				width 21px
-				width 22px
 				padding 0px
 
-			[name="verify"]
+			button[name="verify"]
 				background-image url(/img/game/message.png)
 				height 22px
 

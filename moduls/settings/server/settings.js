@@ -18,13 +18,13 @@ Meteor.methods({
 
 		throw new Meteor.Error('Режим отпуска в разработке');
 
-		Meteor.users.update({
+		/*Meteor.users.update({
 			_id: user._id
 		}, {
 			$set: {
 				onVacation: onVacation
 			}
-		});
+		});*/
 	},
 
 

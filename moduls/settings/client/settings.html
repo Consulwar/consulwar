@@ -1,16 +1,17 @@
 <template name="settings">
 	<div class="settings">
-		<div class="vacationMode">
+		<div>
+			<h2>Аватар консула</h2>
 			<div class="user">
-				<img src="/img/game/chat/icons/{{Game.User.iconPath user}}.png" alt="Иконка консула"/>
+				<img src="/img/game/chat/icons/{{Game.User.iconPath user}}.png" alt="Аватар"/>
 				<button class="changeAvatar"></button>
 			</div>
 			<h2>Режим отпуска</h2>
-			<div class="checkBlock">
+			<label class="checkBlock">
 				<input type="checkbox" name="vacationMode" disabled>
 				<span class="checkboxTitle">активирован</span>
 				<span class="notImplemented">В разработке!</span>
-			</div>
+			</label>
 		</div>
 
 		{{> changePassword}}
@@ -80,36 +81,36 @@
 				</button>
 			{{/each}}
 		</div>
-		<div class="checkBlock">
+		<label class="checkBlock">
 			<input 
 				type="checkbox"
 				name="subscribed"
 				checked="{{not user.emails.[0].unsubscribed}}"
 				data-email="{{user.emails.[0].address}}"
 			>
-			<span class="checkboxTitle"> Подписан на рассылку</span>
-		</div>
+			<span class="checkboxTitle">Подписан на рассылку</span>
+		</label>
 	</div>
 </template>
 
 <template name="notificationsSettings">
 	<div class="notificationsSettings">
 		<h2>Настройка уведомлений</h2>
-		<div class="checkBlock">
+		<label class="checkBlock">
 			<input 
 				type="checkbox"
 				data-settings_field="showDesctopNotifications"
 				checked="{{user.settings.notifications.showDesctopNotifications}}" 
 			>
 			<span class="checkboxTitle">Показывать уведомления на рабочем столе</span>
-		</div>
-		<div class="checkBlock">
+		</label>
+		<label class="checkBlock">
 			<input
 				type="checkbox"
 				data-settings_field="showQuestsDuringActivation"
 				checked="{{user.settings.notifications.showQuestsDuringActivation}}" 
 			>
 			<span class="checkboxTitle">Отображать Задания во время их активации</span>
-		</div>
+		</label>
 	</div>
 </template>

@@ -4,18 +4,22 @@ initSettingsLib();
 
 
 Game.Settings.showPage = function() {
-	this.render('settings', { 
-		to: 'content'
-	});
+	this.render('settings', { to: 'content' });
 };
 
 Template.settings.events({
 	'change [name="vacationMode"]': function(e, t) {
 		if (e.target.checked) {
-			var message = 'Вы уверены что хотите активировать Режим Отпуска? Вы не сможете снять его минимум 1 день, после чего Режим Отпуска будет заблокирован на 2 дня, максимальное время действия Режима Отпуска 30 дней. Во время Режима Отпуска ваши ресурсы не добываются, а на вас никто не может нападать. Активация этого режима не отменяет уже идущие на вас атаки.';
+			var message = 'Вы уверены что хотите активировать Режим Отпуска? '
+				+ 'Вы не сможете снять его минимум 1 день, '
+				+ 'после чего Режим Отпуска будет заблокирован на 2 дня, '
+				+ 'максимальное время действия Режима Отпуска 30 дней. '
+				+ 'Во время Режима Отпуска ваши ресурсы не добываются, '
+				+ 'а на вас никто не может нападать. '
+				+ 'Активация этого режима не отменяет уже идущие на вас атаки.';
 
 			Game.showAcceptWindow(message, function() {
-				Meteor.call('settings.enableVacationMode', function(err) {
+				Meteor.call('settings.switchVacationMode', true, function(err) {
 					if (err) {
 						e.target.checked = false;
 						return Notifications.error(err.message);
@@ -24,7 +28,7 @@ Template.settings.events({
 				});	
 			});
 		} else {
-			Meteor.call('settings.disableVacationMode', function(err) {
+			Meteor.call('settings.switchVacationMode', false, function(err) {
 				if (err) {
 					e.target.checked = true;
 					return Notifications.error(err.message);
@@ -40,7 +44,7 @@ Template.settings.events({
 });
 
 Template.emailSettings.events({
-	'click button[name="changeEmail"]': function() {
+	'click button[name="changeEmail"]': function(e, t) {
 		var oldEmail = Meteor.user().emails[0].address;
 		Game.showInputWindow('Введите новый email', oldEmail, function(email) {
 			email = email.trim();
@@ -125,7 +129,7 @@ Template.changePassword.events({
 
 Template.notificationsSettings.events({
 	'change input[type="checkbox"]': function(e, t) {
-		Meteor.call('settings.changeNotifications', e.target.dataset.settings_field, e.target.checked, function(err) {
+		Meteor.call('settings.changeNotificationsSettings', e.target.dataset.settings_field, e.target.checked, function(err) {
 			if (err) {
 				e.target.checked = !e.target.checked;
 				return Notifications.error('Не удалось изменить настройки.', err.message);

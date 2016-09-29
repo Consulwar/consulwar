@@ -1,10 +1,8 @@
 .content
 	.settings:not(.overlay)
 		position relative
-		padding 0px
 		z-index 2
 		height 100%
-		background-color #101217
 		display flex
 
 		.notImplemented
@@ -38,11 +36,6 @@
 				-webkit-filter grayscale(1)
 				filter grayscale(1)
 
-
-		label
-			display block
-
-
 		.checkBlock
 			margin-top 20px
 			display flex
@@ -71,7 +64,7 @@
 			color #e9a844
 			margin-bottom 10px
 
-		input[type="text"], input[type="password"] 
+		input[type="password"] 
 			padding 10px 7px
 			border 2px solid #006382
 			background-color #C0C0C0
@@ -82,45 +75,36 @@
 			font-size 14px
 			margin-bottom 10px
 
-		.cross, .check
-			width 30px
-			height 30px
+		>div, >form
+			min-width 300px
+			background-color #232832
 			display inline-block
-			background-repeat no-repeat
-			background-position center
+			padding 20px
+
+			.user
+				display flex
+				align-items center
+				margin-bottom 20px
+
+				.changeAvatar
+					cursor pointer
+					width 65px
+					height 66px
+					background-image url(/img/game/chat/dollar-disabled.png)
+					border-radius 0px
+					margin-left 20px
+
+					&:hover
+						background-image url(/img/game/chat/dollar.png)
 
 		.changePassword
-			width 300px
-			display inline-block
 			background-color #13161b
-			padding 20px
 
 			button[name="change"]
 				margin-top 20px
 
-		.user
-			display flex
-			align-items center
-			margin-bottom 20px
-
-			.changeAvatar
-				cursor pointer
-				display inline-block
-				width 65px
-				height 66px
-				background-repeat no-repeat
-				background-image url(/img/game/chat/dollar-disabled.png)
-				border-radius 0px
-				margin-left 20px
-
-				&:hover
-					background-image url(/img/game/chat/dollar.png)
-
 		.emailSettings
-			width 400px
-			background-color #232832
-			display inline-block
-			padding 20px
+			min-width 400px
 
 			button
 				margin 10px
@@ -141,7 +125,6 @@
 			.emailLettersFrequency
 				display flex
 				flex-wrap wrap
-				align-items stretch
 				justify-content space-around
 
 				button
@@ -157,6 +140,13 @@
 				background-image url(/img/game/message.png)
 				height 22px
 
+			.cross, .check
+				width 30px
+				height 30px
+				display inline-block
+				background-repeat no-repeat
+				background-position center
+
 			.cross
 				background-image url(/img/game/cross.png)
 
@@ -165,13 +155,4 @@
 
 
 		.notificationsSettings
-			width 300px
 			background-color #13161b
-			display inline-block
-			padding 20px
-
-		.vacationMode
-			width 300px
-			background-color #232832
-			display inline-block
-			padding 20px

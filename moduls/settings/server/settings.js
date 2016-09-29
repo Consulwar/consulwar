@@ -3,7 +3,9 @@ initSettingsServer = function() {
 initSettingsLib();
 
 Meteor.methods({
-	'settings.enableVacationMode': function() {
+	'settings.switchVacationMode': function(onVacation) {
+		check(onVacation, Boolean);
+
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -14,44 +16,17 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-
-		if (!Game.Cards.activate(Game.Cards.items.penalty.vacation, user)) {
-			throw new Meteor.Error('Иди работай!');
-		}
-
+		throw new Meteor.Error('Режим отпуска в разработке');
 
 		Meteor.users.update({
 			_id: user._id
 		}, {
 			$set: {
-				onVacation: true
+				onVacation: onVacation
 			}
 		});
 	},
 
-	'settings.disableVacationMode': function() {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		if (!Game.Cards.deactivate(Game.Cards.items.penalty.vacation, user)) {
-			throw new Meteor.Error('Отдохни еще немного!');
-		}
-
-		Meteor.users.update({
-			_id: user._id
-		}, {
-			$set: {
-				onVacation: false
-			}
-		});
-	},
 
 	'settings.sendVerifyEmail': function(email) {
 		check(email, String);
@@ -173,7 +148,7 @@ Meteor.methods({
 		});
 	},
 
-	'settings.changeNotifications': function (field, value) {
+	'settings.changeNotificationsSettings': function (field, value) {
 		check(field, String);
 		check(value, Boolean);
 		

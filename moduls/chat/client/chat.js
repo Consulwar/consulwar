@@ -33,6 +33,8 @@ var firstMessage = null;
 
 var sortMessages = function(messages) {
 	//Нужно для устойчивой сортировки
+	//так как сообщения приходят в обратном порядке
+	//а сообщения с одинаковым timestamp в правильном порядке
 	for (var i = 0; i < messages.length; i++) {
 		messages[i].index = i;
 	}
@@ -78,31 +80,8 @@ var uniqMessages = function() {
 	);
 };
 
-var cutMessagesArray = function(options) {
-	var start = 0;
-	var end = options.messages.length;
-	var n = options.messages.length;
-	while (n-- > 0) {
-		if (options.messages[n]._id == options.firstId) {
-			start = n + 1;
-		}
-		if (options.messages[n]._id == options.lastId) {
-			end = n;
-		}
-	}
-	console.log(start, end);
-	return options.messages.slice(start, end);
-};
-
 var addMessagesDown = function(cacheMessages) {
 	cacheMessages = sortMessages(cacheMessages);
-	var startCacheMessagesLength = cacheMessages.length;
-	if (lastMessage) {
-		cacheMessages = cutMessagesArray({
-			messages: cacheMessages,
-			firstId: lastMessage.parts[lastMessage.parts.length - 1]._id
-		});
-	}
 
 	if (cacheMessages.length > 0) {
 		if (lastMessage && startCacheMessagesLength == cacheMessages.length) {
@@ -112,12 +91,12 @@ var addMessagesDown = function(cacheMessages) {
 
 		var groupedMessages = groupMessagesList(cacheMessages);
 
-		if (lastMessage && startCacheMessagesLength == cacheMessages.length) {
+		if (lastMessage && groupedMessages[0].username == lastMessage.username) {
+			groupedMessages[0].parts = uniqMessages(lastMessage.parts, groupedMessages[0].parts);
+			messagesCollection.remove(lastMessage._id);
+		} else if (lastMessage) {
 			groupedMessages[0].previousMessage = lastMessage;
 			groupedMessages[0].haveAllowedPreviousMessages = true;
-		} else if (lastMessage && groupedMessages[0].username == lastMessage.username) {
-			groupedMessages[0].parts = lastMessage.parts.concat(groupedMessages[0].parts);
-			messagesCollection.remove(lastMessage._id);
 		}
 
 		lastMessage = groupedMessages[groupedMessages.length - 1];
@@ -141,8 +120,7 @@ var addMessagesUp = function(cacheMessages) {
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 
 	if (lastMessageInGroup.username == firstMessage.username) {
-		lastMessageInGroup.parts = lastMessageInGroup.parts.concat(firstMessage.parts);
-		lastMessageInGroup.parts = uniqMessages(lastMessageInGroup.parts);
+		lastMessageInGroup.parts = uniqMessages(lastMessageInGroup.parts, firstMessage.parts);
 		messagesCollection.remove(firstMessage._id);
 	}
 	if (firstMessage == lastMessage) {
@@ -158,18 +136,13 @@ var addMessagesBefore = function(afterMessage, cacheMessages) {
 	cacheMessages = sortMessages(cacheMessages);
 	var previousMessage = afterMessage.previousMessage;
 	var firstCacheMessage = cacheMessages[0];
-	cacheMessages = cutMessagesArray({
-		messages: cacheMessages,
-		lastId: afterMessage._id,
-		firstId: previousMessage.parts[previousMessage.parts.length - 1]._id
-	});
 	var groupedMessages = groupMessagesList(cacheMessages);
 	//***********************************
 	//склеиваем с after
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 	if (afterMessage.username == lastMessageInGroup.username) {
 		afterMessage.haveAllowedPreviousMessages = false;
-		lastMessageInGroup.parts = lastMessageInGroup.parts.concat(afterMessage.parts);
+		lastMessageInGroup.parts = uniqMessages(lastMessageInGroup.parts, afterMessage.parts);
 		messagesCollection.remove(afterMessage._id);
 	} else {
 		messagesCollection.update(afterMessage._id, {
@@ -180,16 +153,22 @@ var addMessagesBefore = function(afterMessage, cacheMessages) {
 	//*****************
 	//склеиваем с previous
 	if (previousMessage.username == groupedMessages[0].username && firstCacheMessage != cacheMessages[0]) {
-		groupedMessages[0].parts = previousMessage.parts.concat(groupedMessages[0].parts);
-		messagesCollection.remove(previousMessage._id);
-	}
-	if (firstCacheMessage == cacheMessages[0]){
+		var uniqParts = uniqMessages(previousMessage.parts, groupedMessages[0].parts);
+		if (uniqParts.length < previousMessage.parts.length + groupedMessages[0].parts.length) {
+			groupedMessages[0].parts = uniqParts;
+			messagesCollection.remove(previousMessage._id);
+		} else {
+			groupedMessages[0].haveAllowedPreviousMessages = true;
+			groupedMessages[0].previousMessage = previousMessage;
+		}
+		
+	} else {
 		groupedMessages[0].haveAllowedPreviousMessages = true;
 		groupedMessages[0].previousMessage = previousMessage;
 	}
 	//*********************
 
-	for (var i = 0; i<groupedMessages.length;i++) {
+	for (var i = 0; i < groupedMessages.length; i++) {
 		messagesCollection.insert(groupedMessages[i]);
 	}
 };
@@ -836,8 +815,7 @@ Template.chat.helpers({
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
 	messages: function() {
-		//return messages.list();
-		return messagesCollection.find({}/*,{sort:{timestamp:1}}*/);
+		return messagesCollection.find({},{sort:{timestamp:1}});
 	},
 
 	getUserRole: function() {

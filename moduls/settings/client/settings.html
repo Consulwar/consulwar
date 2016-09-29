@@ -68,7 +68,10 @@
 				<button 
 					data-frequency="{{engName}}"
 					class="
-						{{#if (eq engName (or user.settings.email.lettersFrequency 'everyDay'))}}
+						{{#if (and
+							(eq engName (or user.settings.email.lettersFrequency 'everyDay'))
+							(not user.emails.[0].unsubscribed)
+						)}}
 							active
 						{{/if}}
 					"

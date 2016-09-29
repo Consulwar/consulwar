@@ -68,7 +68,7 @@ Meteor.methods({
 
 		if (user.services && user.services.email && user.services.email.verificationTokens) {
 			var tokens = user.services.email.verificationTokens;
-			
+
 			if (new Date() - new Date(tokens[tokens.length - 1].when) < (1000 * 60 * 60 * 24)) {
 				throw new Meteor.Error('Письмо верификации можно отправить не чаще 2 раз в сутки.');
 			}
@@ -202,55 +202,3 @@ Meteor.methods({
 });
 
 };
-
-/*
-db.users.findOne({})
-{
-        "_id" : "NxqpmGyP82kqdmxbv",
-        "createdAt" : ISODate("2016-08-02T20:52:11.055Z"),
-        "services" : {
-                "password" : {
-                        "bcrypt" : "$2a$10$pxFk58nivoZdS3FQ2EqGi.BCqQSQ1fyboWZETOiwPn3qCggTEvaUO"
-                },
-                "resume" : {
-                        "loginTokens" : [
-                                {
-                                        "when" : ISODate("2016-08-02T20:52:11.110Z"),
-                                        "hashedToken" : "qgszKvF7Yp32BseHCKCTkpuTP7N5pRfTrSUMHucsNT8="
-                                }
-                        ]
-                },
-                "email" : {
-                        "verificationTokens" : [
-                                {
-                                        "token" : "5mhSRXgIiMx_mLwkIFZ_dhu3cpjoVg8pSPxuj-3Lbxy",
-                                        "address" : "dream@gmail.com",
-                                        "when" : ISODate("2016-08-02T20:52:13.108Z")
-                                }
-                        ]
-                }
-        },
-        "username" : "dream",
-        "emails" : [
-                {
-                        "address" : "dream@gmail.com",
-                        "verified" : false
-                }
-        ],
-        "inviteCode" : "1234",
-        "plain_username" : "dream",
-        "planetName" : "TOR-2QE",
-        "game" : {
-                "updated" : 1470171131
-        },
-        "status" : {
-                "online" : false,
-                "lastLogin" : {
-                        "date" : ISODate("2016-08-02T20:52:11.379Z"),
-                        "ipAddr" : "192.168.56.1",
-                        "userAgent" : "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36"
-                }
-        },
-        "rating" : 215
-}
-*/

@@ -1,13 +1,6 @@
 initChatClient = function() {
 
 
-/*
-	!КЕШИРОВАТЬ КНОПКИ И ФОРМЫ ОТПРАВКИ СООБЩЕНИЯ
-
-
-*/
-
-
 initChatLib();
 
 Meteor.subscribe('chatIconsUser');
@@ -20,16 +13,13 @@ var lostConnectionTime = null;
 var chatSubscription = null;
 var chatRoomSubscription = null;
 
-var messages = new ReactiveArray();
-var messagesCount = 0;
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
 
-
-var messagesCollection = new Meteor.Collection(null);
-window.messagesCollection = messagesCollection;
+var messagesCount = 0;
+var messages = new Meteor.Collection(null);
 var lastMessage = null;
 var firstMessage = null;
 
@@ -61,20 +51,23 @@ var addMessage = function(message){
 	{
 		message.parts = [part];
 		lastMessage = message;
-		messagesCollection.insert(message);
+		messages.insert(message);
 	} else {
-		messagesCollection.update(lastMessage._id, { 
-			$push: { 
-				'parts':part
-			}
-		});
+		lastMessage.parts.push(part);
+		messages.update(lastMessage._id, lastMessage);
 	}
 	
 };
 
-var uniqMessages = function() {
+var insertMessages = function(newMessages) {
+	for (var i = 0; i < newMessages.length; i++) {
+		messages.insert(newMessages[i]);
+	}
+};
+
+var concatAndUniq = function() {
 	return _.uniq(
-		[].concat.apply([],arguments),
+		[].concat.apply([], arguments),
 		false,
 		function(message) {
 			return message._id;
@@ -82,144 +75,99 @@ var uniqMessages = function() {
 	);
 };
 
-var without = function(a, b) {
-	var messages = [];
-	for (var i = 0; i < a.length; i++) {
-		var duplicated = false;
-		for (var j = 0; j < b.length; j++) {
-			if (a[i]._id == b[i]._id) {
-				duplicated = true;
-			}
-		}
-		if (!duplicated) {
-			messages.push(a[i]);
-		}
+var removeDuplicates = function(messages, oldestMessage) {
+	while (oldestMessage.timestamp > messages[0].timestamp) {
+		messages.shift();
 	}
+
+	if (oldestMessage.timestamp != messages[0].timestamp) {
+		messages.shift();
+	}
+	return messages;
 };
 
-var appendMessages = function(cacheMessages) {
-	cacheMessages = sortMessages(cacheMessages);
+var appendMessages = function(newMessages) {
+	newMessages = sortMessages(newMessages);
 
-	if (cacheMessages.length > 0) {
-		var duplicated = false;
-		if (lastMessage) {
-			var lastMessagePart = lastMessage.parts[lastMessage.parts.length - 1];
-			while (cacheMessages && lastMessagePart.timestamp > cacheMessages[0].timestamp) {
-				cacheMessages.shift();
-				duplicated = true;
-			}
-		}
-
-		if (!duplicated && lastMessage) {
-			cacheMessages.shift();
-		}
-		var groupedMessages = groupMessagesList(cacheMessages);
-
-
-		if (lastMessage && !duplicated) {
-			groupedMessages[0].previousMessage = lastMessage;
-			groupedMessages[0].haveAllowedPreviousMessages = true;
-		} else if (lastMessage && groupedMessages[0].username == lastMessage.username) {
-			groupedMessages[0].parts = uniqMessages(lastMessage.parts, groupedMessages[0].parts);
-			messagesCollection.remove(lastMessage._id);
-		}
-
-		lastMessage = groupedMessages[groupedMessages.length - 1];
-
-		for (var i = 0; i < groupedMessages.length; i++) {
-			messagesCollection.insert(groupedMessages[i]);
-		}
-
-		if (!firstMessage || firstMessage == lastMessage) {
-			firstMessage = groupedMessages[0];
-		}
+	var hasAllowedMessages = false;
+	if (lastMessage) {
+		var lastMessagePart = lastMessage.parts[lastMessage.parts.length - 1];
+		hasAllowedMessages = (newMessages[0].timestamp > lastMessagePart.timestamp);
+		newMessages = removeDuplicates(newMessages, lastMessagePart);
 	}
+
+	var groupedMessages = groupMessages(newMessages);
+
+	if (hasAllowedMessages) {
+		groupedMessages[0].previousMessage = lastMessage;
+		groupedMessages[0].haveAllowedPreviousMessages = true;
+	} else if (lastMessage && groupedMessages[0].username == lastMessage.username) {
+		groupedMessages[0].parts = concatAndUniq(lastMessage.parts, groupedMessages[0].parts);
+		messages.remove(lastMessage._id);
+	}
+
+	lastMessage = groupedMessages[groupedMessages.length - 1];
+
+	if (!firstMessage || firstMessage == lastMessage) {
+		firstMessage = groupedMessages[0];
+	}
+
+	insertMessages(groupedMessages);
 };
 
-var prependMessages = function(cacheMessages) {
-	cacheMessages = sortMessages(cacheMessages);
+var prependMessages = function(newMessages) {
+	newMessages = sortMessages(newMessages);
 
-	var groupedMessages = groupMessagesList(cacheMessages);
+	var groupedMessages = groupMessages(newMessages);
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 
 	if (lastMessageInGroup.username == firstMessage.username) {
-		lastMessageInGroup.parts = uniqMessages(lastMessageInGroup.parts, firstMessage.parts);
-		messagesCollection.remove(firstMessage._id);
-	}
-	if (firstMessage == lastMessage) {
-		lastMessage = groupedMessages[0];
-	}
-	firstMessage = groupedMessages[0];
-	for (var i = 0; i<groupedMessages.length;i++) {
-		messagesCollection.insert(groupedMessages[i]);
-	}
-};
-
-var addMessagesBefore = function(afterMessage, cacheMessages) {
-	cacheMessages = sortMessages(cacheMessages);
-	var previousMessage = afterMessage.previousMessage;
-
-	var duplicated = false;
-	if (previousMessage) {
-		var previousMessagePart = previousMessage.parts[previousMessage.parts.length - 1];
-		while (previousMessagePart.timestamp > cacheMessages[0].timestamp) {
-			cacheMessages.shift();
-			duplicated = true;
+		lastMessageInGroup.parts = concatAndUniq(lastMessageInGroup.parts, firstMessage.parts);
+		messages.remove(firstMessage._id);
+	
+		if (firstMessage == lastMessage) {
+			lastMessage = lastMessageInGroup;
 		}
 	}
 
-	if (!duplicated && previousMessage) {
-		cacheMessages.shift();
-	}
+	firstMessage = groupedMessages[0];
 
-	var groupedMessages = groupMessagesList(cacheMessages);
-	//***********************************
+	insertMessages(groupedMessages);
+};
+
+var addMessagesBefore = function(newMessages, message) {
+	newMessages = sortMessages(newMessages);
+	var previousMessage = message.previousMessage;
+	var previousMessagePart = previousMessage.parts[previousMessage.parts.length - 1];
+	var hasAllowedMessages = (newMessages[0].timestamp > previousMessagePart.timestamp);
+	newMessages = removeDuplicates(newMessages, previousMessagePart);
+
+	var groupedMessages = groupMessages(newMessages);
+
 	//склеиваем с after
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
-	if (afterMessage.username == lastMessageInGroup.username) {
-		afterMessage.haveAllowedPreviousMessages = false;
-		lastMessageInGroup.parts = uniqMessages(lastMessageInGroup.parts, afterMessage.parts);
-		messagesCollection.remove(afterMessage._id);
-	} else {
-		messagesCollection.update(afterMessage._id, {
-			$set: {haveAllowedPreviousMessages: false}
-		});
+	if (message.username == lastMessageInGroup.username) {
+		message.haveAllowedPreviousMessages = false;
+		lastMessageInGroup.parts = concatAndUniq(lastMessageInGroup.parts, message.parts);
+		messages.remove(message._id);
+		if (message._id == lastMessage._id) {
+			lastMessage = lastMessageInGroup;
+		}
 	}
 
-	//*****************
 	//склеиваем с previous
-	if (previousMessage && previousMessage.username == groupedMessages[0].username) {
-		var uniqParts = uniqMessages(previousMessage.parts, groupedMessages[0].parts);
-		if (uniqParts.length < previousMessage.parts.length + groupedMessages[0].parts.length) {
-			groupedMessages[0].parts = uniqParts;
-			messagesCollection.remove(previousMessage._id);
-		} else {
-			groupedMessages[0].haveAllowedPreviousMessages = true;
-			groupedMessages[0].previousMessage = previousMessage;
-		}
-		
-	} else if (previousMessage && !duplicated) {
+	if (hasAllowedMessages) {
 		groupedMessages[0].haveAllowedPreviousMessages = true;
 		groupedMessages[0].previousMessage = previousMessage;
+	} else if (previousMessage.username == groupedMessages[0].username) {
+		groupedMessages[0].parts = concatAndUniq(previousMessage.parts, groupedMessages[0].parts);
+		messages.remove(previousMessage._id);
 	}
-	//*********************
 
-	for (var i = 0; i < groupedMessages.length; i++) {
-		messagesCollection.insert(groupedMessages[i]);
-	}
+	insertMessages(groupedMessages);
 };
 
-var joinMessages = function(start) {
-	if(messages[start]
-	 && messages[start + 1]
-	 && messages[start].username == messages[start + 1].username
-	) {
-		messages[start].parts = messages[start].parts.concat(messages[start + 1].parts);
-		messages.splice(start + 1, 1);
-	}
-};
-
-var groupMessagesList = function(msgs) {
+var groupMessages = function(msgs) {
 	if (!msgs.length) return [];
 
 	var groupedMessages = [];
@@ -256,16 +204,15 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 		messagesCount++;
 		if (chatSubscription.ready()) {	
 			addMessage(message);
+			Meteor.setTimeout(scrollChatToBottom);
 		}
 
 		// limit max count
 		if (messagesCount > Game.Chat.Messages.LIMIT) {
 			messagesCount -= firstMessage.parts.length;
-			messagesCollection.remove(firstMessage._id);
-			firstMessage = messagesCollection.findOne({},{sort:{timestamp:1}});
+			messages.remove(firstMessage._id);
+			firstMessage = messages.findOne({},{sort:{timestamp:1}});
 		}
-
-		Meteor.setTimeout(scrollChatToBottom);
 	}
 });
 
@@ -273,7 +220,7 @@ var addMotd = function(message) {
 	message.isMotd = true;
 	message.timestamp = Session.get('serverTime');
 
-	messagesCollection.upsert({isMotd: true}, message);
+	messages.upsert({isMotd: true}, message);
 	lastMessage = message;
 	Meteor.setTimeout(scrollChatToBottom);
 };
@@ -293,7 +240,11 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 });
 
 Game.Chat.showPage = function() {
-	this.render('chat', { to: 'content' });
+	this.render('empty', { to: 'content' });
+	$('.permanent_chat').show();
+	if (!currentRoomName) {
+		this.render('chat', { to: 'permanent_chat' });	
+	}
 };
 
 Template.chat.onRendered(function() {
@@ -339,7 +290,7 @@ Template.chat.onRendered(function() {
 			 || noConnectionPeriod >= 1800  // or lost connection more than 30 min
 			) {
 				// reset current room
-				messagesCollection.remove({});
+				messages.remove({});
 				hasMore.set(true);
 				isSending.set(false);
 				gotLimit.set(false);	
@@ -753,7 +704,7 @@ Template.chat.helpers({
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
 	messages: function() {
-		return messagesCollection.find({},{sort:{timestamp:1}});
+		return messages.find({},{sort:{timestamp:1}});
 	},
 
 	getUserRole: function() {
@@ -802,31 +753,27 @@ Template.chat.helpers({
 			}
 
 		} else {
-
 			// public room -> find from last messages
-			messages.depend();
 
 			var names = [ Meteor.user().username ];
 			users.push({
 				name: Meteor.user().username,
 				role: getUserRole(Meteor.userId(), Meteor.user().username, Meteor.user().role).id
 			});
+			var time = 0;
+			Tracker.nonreactive(function() {
+				time = Session.get('serverTime') - 1800;
+			});
 
-			var time = Session.get('serverTime') - 1800;
-			var n = messages.length;
-			while (n-- > 0) {
-				if (messages[n].timestamp < time) {
-					break;
-				}
-				if (names.indexOf(messages[n].username) == -1) {
-					names.push(messages[n].username);
+			messages.find({timestamp:{$gt:time}}).forEach(function(message){
+				if (names.indexOf(message.username) == -1) {
+					names.push(message.username);
 					users.push({
-						name: messages[n].username,
-						role: getUserRole(messages[n].user_id, messages[n].username, messages[n].role).id
+						name: message.username,
+						role: getUserRole(message.user_id, message.username, message.role).id
 					});
 				}
-			}
-
+			});
 		}
 
 		if (users.length > 0) {
@@ -957,7 +904,7 @@ Template.chat.events({
 		}
 
 		var roomName = Router.current().params.room;
-		if (!roomName || !messagesCollection || !firstMessage) {
+		if (!roomName || !messages || !firstMessage) {
 			return;
 		}
 
@@ -987,8 +934,8 @@ Template.chat.events({
 				messagesCount += data.length;
 
 				if (afterMessageId) {
-					var afterMessage = messagesCollection.findOne(afterMessageId);
-					addMessagesBefore(afterMessage, data);
+					var afterMessage = messages.findOne(afterMessageId);
+					addMessagesBefore(data, afterMessage);
 				} else {
 					prependMessages(data);
 				}

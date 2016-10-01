@@ -65,14 +65,15 @@ var insertMessages = function(newMessages) {
 	}
 };
 
-var concatAndUniq = function() {
-	return _.uniq(
-		[].concat.apply([], arguments),
+var concatAndUniq = function(a, b) {
+	a.parts = _.uniq(
+		a.parts.concat(b.parts),
 		false,
 		function(message) {
 			return message._id;
 		}
 	);
+	return a;
 };
 
 var removeDuplicates = function(messages, oldestMessage) {
@@ -122,7 +123,7 @@ var prependMessages = function(newMessages) {
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 
 	if (lastMessageInGroup.username == firstMessage.username) {
-		lastMessageInGroup.parts = concatAndUniq(lastMessageInGroup.parts, firstMessage.parts);
+		lastMessageInGroup = concatAndUniq(lastMessageInGroup, firstMessage);
 		messages.remove(firstMessage._id);
 	
 		if (firstMessage == lastMessage) {
@@ -148,7 +149,7 @@ var addMessagesBefore = function(newMessages, message) {
 	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
 	if (message.username == lastMessageInGroup.username) {
 		message.haveAllowedPreviousMessages = false;
-		lastMessageInGroup.parts = concatAndUniq(lastMessageInGroup.parts, message.parts);
+		lastMessageInGroup = concatAndUniq(lastMessageInGroup, message);
 		messages.remove(message._id);
 		if (message._id == lastMessage._id) {
 			lastMessage = lastMessageInGroup;
@@ -160,7 +161,7 @@ var addMessagesBefore = function(newMessages, message) {
 		groupedMessages[0].haveAllowedPreviousMessages = true;
 		groupedMessages[0].previousMessage = previousMessage;
 	} else if (previousMessage.username == groupedMessages[0].username) {
-		groupedMessages[0].parts = concatAndUniq(previousMessage.parts, groupedMessages[0].parts);
+		groupedMessages[0] = concatAndUniq(previousMessage, groupedMessages[0]);
 		messages.remove(previousMessage._id);
 	}
 

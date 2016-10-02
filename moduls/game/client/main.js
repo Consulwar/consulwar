@@ -516,6 +516,37 @@ Game.showInputWindow = function(message, value, onAccept, onCancel) {
 	}
 };
 
+Game.showDesctopNotification = function(options) {
+	var user = Meteor.user();
+	if (!user || !Notification || !Notification.permission) {
+		return;
+	}
+
+	if (!_.isObject(options)) {
+		options = { body: options };
+	}
+
+	var who = options.who || "Тамили";
+	options.icon = options.icon || "/img/game/tamily.jpg";
+
+	if (!user.settings
+	 || !user.settings.notifications
+	 || user.settings.notifications.showDesctopNotifications === undefined
+	 || user.settings.notifications.showDesctopNotifications === true
+	) {
+		Notification.requestPermission(function(permission) {
+			if ( permission == "granted" ) {
+				//user.settings.notifications.showDesctopNotifications = true;
+				new Notification(who , options);
+			} else if (permission == "denied") {
+				//user.settings.notifications.showDesctopNotifications = false;
+			}
+		});
+	} else {
+		//ничего не делаем
+	}
+};
+
 var closeInputWindow = function(callback, value) {
 	if (inputWindowView) {
 		Blaze.remove(inputWindowView);

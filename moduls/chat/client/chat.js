@@ -1,6 +1,5 @@
 initChatClient = function() {
 
-
 initChatLib();
 
 Meteor.subscribe('chatIconsUser');
@@ -32,8 +31,8 @@ var sortMessages = function(messages) {
 	}
 
 	return messages.sort(function(a, b) {
-		var res = a.timestamp - b.timestamp;
-  		return (res === 0 ? a.index - b.index : res);
+		var delta = a.timestamp - b.timestamp;
+  		return (delta === 0 ? a.index - b.index : delta);
 	});
 };
 
@@ -103,7 +102,7 @@ var appendMessages = function(newMessages) {
 		groupedMessages[0].previousMessage = lastMessage;
 		groupedMessages[0].haveAllowedPreviousMessages = true;
 	} else if (lastMessage && groupedMessages[0].username == lastMessage.username) {
-		groupedMessages[0].parts = concatAndUniq(lastMessage.parts, groupedMessages[0].parts);
+		groupedMessages[0] = concatAndUniq(lastMessage, groupedMessages[0]);
 		messages.remove(lastMessage._id);
 	}
 

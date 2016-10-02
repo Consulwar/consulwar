@@ -98,7 +98,6 @@
 					{{/if}}
 					{{> chatMessage this}}
 				{{/if}}
-
 			{{/each}}
 		</ul>
 
@@ -111,11 +110,14 @@
 
 <template name="chatMessage">
 	<li>
-		<div 
-			class="profile"
-			data-username="{{this.username}}"
-		>
-			<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
+		<div class="profile" data-username="{{this.username}}">
+			<img src="/img/game/chat/icons/
+				{{#if this.iconPath}}
+					{{this.iconPath}}
+				{{else}}
+					common/1
+				{{/if}}
+			sm.png"/>
 			{{#let messageRole=(getUserRoleByMessage this)}}
 				<div 
 					class="

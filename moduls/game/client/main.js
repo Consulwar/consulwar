@@ -498,6 +498,39 @@ Template.acceptWindow.events({
 });
 
 // ----------------------------------------------------------------------------
+// Alert window
+// ----------------------------------------------------------------------------
+
+var alertWindowView = null;
+
+Game.showAlertWindow = function(message, onAccept) {
+	if (!alertWindowView) {
+		alertWindowView = Blaze.renderWithData(
+			Template.alertWindow, {
+				message: message,
+				onAccept: onAccept
+			}, $('.over')[0]
+		);
+	}
+};
+
+var closeAlertWindow = function(callback) {
+	if (alertWindowView) {
+		Blaze.remove(alertWindowView);
+		alertWindowView = null;
+	}
+	if (_.isFunction(callback)) {
+		callback.call();
+	}
+};
+
+Template.alertWindow.events({
+	'click .close, click .accept': function(e, t) {
+		closeAlertWindow(t.data.onCancel);
+	}
+});
+
+// ----------------------------------------------------------------------------
 // Input window
 // ----------------------------------------------------------------------------
 
@@ -531,15 +564,30 @@ Game.showDesctopNotification = function(options) {
 
 	if (!user.settings
 	 || !user.settings.notifications
-	 || user.settings.notifications.showDesctopNotifications === undefined
-	 || user.settings.notifications.showDesctopNotifications === true
+	 || user.settings.notifications.showDesctopNotifications !== false
 	) {
+		if (Notification.permission == "denied") {
+			Game.showAcceptWindow(
+				'Консул, мы пытаемся отправить вом уведомление, но '
+				+ 'уведомления в браузере заблокированы. '
+				+ 'Вы можете включить их в настройках браузера или отключить в игре. Отключить?', 
+				function() {
+				//user.settings.notifications.showDesctopNotifications = false;
+				}
+			);
+			//Game.showAlertWindow("Уведомления в браузер отключены. Включите их в настройках браузера");
+			return;
+		}
 		Notification.requestPermission(function(permission) {
+			//если юзер заблокировал то окно с прозьбой разрешить не появится
+			console.log(permission);
 			if ( permission == "granted" ) {
 				//user.settings.notifications.showDesctopNotifications = true;
 				new Notification(who , options);
 			} else if (permission == "denied") {
 				//user.settings.notifications.showDesctopNotifications = false;
+				//показать alert с информацией о том, что уведомления можно включить в настройках
+				//(если это вообще возможно)
 			}
 		});
 	} else {

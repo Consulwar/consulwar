@@ -2,6 +2,20 @@ initSettingsClient = function() {
 
 initSettingsLib();
 
+if (Notification && Notification.permission == 'default') {
+	Notification.requestPermission(function(permission) {
+		Meteor.call(
+			'settings.changeNotificationsSettings',
+			'showDesktopNotifications',
+			(permission == "granted"),
+			function(err) {
+				if (err) {
+					return Notifications.error('Не удалось изменить настройки.', err.message);
+				}
+			}
+		);
+	});
+}
 
 Game.Settings.showPage = function() {
 	this.render('settings', { to: 'content' });
@@ -129,7 +143,24 @@ Template.changePassword.events({
 
 Template.notificationsSettings.events({
 	'change input[type="checkbox"]': function(e, t) {
-		Meteor.call('settings.changeNotificationsSettings', e.target.dataset.settings_field, e.target.checked, function(err) {
+		var field = e.target.dataset.settings_field;
+
+		if (field == 'showDesktopNotifications') {
+			if (!Notification) {
+				e.target.checked = false;
+				Notifications.error('Уведомления на рабочий стол не поддерживаются вашим браузером');
+				return;
+			}
+
+			if (Notification.permission != 'granted') {
+				e.target.checked = false;
+				Notifications.error('Сначала разрешите уведомления в настройках браузера');
+				return;
+			}
+
+		}
+
+		Meteor.call('settings.changeNotificationsSettings', field, e.target.checked, function(err) {
 			if (err) {
 				e.target.checked = !e.target.checked;
 				return Notifications.error('Не удалось изменить настройки.', err.message);

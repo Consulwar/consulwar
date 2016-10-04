@@ -549,7 +549,7 @@ Game.showInputWindow = function(message, value, onAccept, onCancel) {
 	}
 };
 
-Game.showDesctopNotification = function(text, options) {
+Game.showDesktopNotification = function(text, options) {
 	var user = Meteor.user();
 
 	if (!user || !Notification || Notification.permission != "granted") {
@@ -566,7 +566,7 @@ Game.showDesctopNotification = function(text, options) {
 
 	if (user.settings
 	 && user.settings.notifications
-	 && user.settings.notifications.showDesctopNotifications === false
+	 && user.settings.notifications.showDesktopNotifications === true
 	) {
 		new Notification(who , options);
 	}

@@ -549,49 +549,26 @@ Game.showInputWindow = function(message, value, onAccept, onCancel) {
 	}
 };
 
-Game.showDesctopNotification = function(options) {
+Game.showDesctopNotification = function(text, options) {
 	var user = Meteor.user();
-	if (!user || !Notification || !Notification.permission) {
+
+	if (!user || !Notification || Notification.permission != "granted") {
 		return;
 	}
 
 	if (!_.isObject(options)) {
-		options = { body: options };
+		options = {};
 	}
 
 	var who = options.who || "Тамили";
 	options.icon = options.icon || "/img/game/tamily.jpg";
+	options.body = text;
 
-	if (!user.settings
-	 || !user.settings.notifications
-	 || user.settings.notifications.showDesctopNotifications !== false
+	if (user.settings
+	 && user.settings.notifications
+	 && user.settings.notifications.showDesctopNotifications === false
 	) {
-		if (Notification.permission == "denied") {
-			Game.showAcceptWindow(
-				'Консул, мы пытаемся отправить вом уведомление, но '
-				+ 'уведомления в браузере заблокированы. '
-				+ 'Вы можете включить их в настройках браузера или отключить в игре. Отключить?', 
-				function() {
-				//user.settings.notifications.showDesctopNotifications = false;
-				}
-			);
-			//Game.showAlertWindow("Уведомления в браузер отключены. Включите их в настройках браузера");
-			return;
-		}
-		Notification.requestPermission(function(permission) {
-			//если юзер заблокировал то окно с прозьбой разрешить не появится
-			console.log(permission);
-			if ( permission == "granted" ) {
-				//user.settings.notifications.showDesctopNotifications = true;
-				new Notification(who , options);
-			} else if (permission == "denied") {
-				//user.settings.notifications.showDesctopNotifications = false;
-				//показать alert с информацией о том, что уведомления можно включить в настройках
-				//(если это вообще возможно)
-			}
-		});
-	} else {
-		//ничего не делаем
+		new Notification(who , options);
 	}
 };
 

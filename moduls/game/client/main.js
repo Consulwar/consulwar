@@ -159,6 +159,7 @@ Game.syncServerTime = function() {
 			var queue = Game.Queue.getAll();
 			for (var i = 0; i < queue.length; i++) {
 				if (queue[i].finishTime <= serverTime) {
+					Game.showNotificationFromTask(queue[i]);
 					Game.actualizeGameInfo();
 					break;
 				}
@@ -549,10 +550,103 @@ Game.showInputWindow = function(message, value, onAccept, onCancel) {
 	}
 };
 
+var taskEndMessages = {
+	research: 'Исследование завершено',
+	building: 'Здание построено, мой консул',
+	spaceEvent: 'Флот прилетел'
+};
+
+var SpaceEventMessages = {
+	tradefleet: 'Появился новый караван!',
+	spaceEvent: 'Флот прилетел'
+};
+
+Game.showNotificationFromSpaceEvent = function(event) {
+	if (event
+	 && event.info
+	 && event.info.isHumans
+	 && event.status === Game.SpaceEvents.status.FINISHED
+	) {
+		Game.showDesktopNotification('Флот долетел, мой консул!', {
+			onclick: function() {
+				//открыть страницу космоса
+				if (event.info.targetPlanet) {
+					Game.Cosmos.scrollMapToPlanet(event.info.targetPlanet);
+				} else if (event.info.targetPosition) {
+					Game.Cosmos.scrollMapToCords(event.info.targetPosition);
+				}
+			}
+		});
+		if (event.info.targetType == Game.SpaceEvents.target.PLANET
+		 && event.type == Game.SpaceEvents.type.SHIP
+		) {
+			
+		}
+	}
+	if (event
+	 && event.info
+	 && event.info.mission
+	) {
+		if (event.status === Game.SpaceEvents.status.STARTED) {
+			switch (event.info.mission.type) {
+				case 'tradefleet':
+					Game.showDesktopNotification('Консул, смотрите, караван!');
+					break;
+
+				case 'battlefleet':
+					Game.showDesktopNotification('Консул, вашу колонию атакуют!');
+					break;
+			}
+		} else if (event.status === Game.SpaceEvents.status.FINISHED) {
+			//Game.showDesktopNotification('return!');
+			return;
+			switch (event.info.mission.type) {
+				case 'tradefleet':
+					Game.showDesktopNotification('Консул, смотрите, караван!');
+					break;
+
+				case 'battlefleet':
+					Game.showDesktopNotification('Консул, вашу колонию атакуют!');
+					break;
+				default:
+					break;
+			}
+		}
+		
+	}
+};
+
+Game.showNotificationFromTask = function(task) {
+	if (task.type == 'spaceEvent') {
+		var spaceEvent = Game.SpaceEvents.Collection.findOne(task.eventId)
+		spaceEvent.status = Game.SpaceEvents.status.FINISHED;
+		Game.showNotificationFromSpaceEvent(spaceEvent);
+	} else {
+		if (true) {
+			Game.showDesktopNotification('Здание построено!');
+		} else if (false) {
+			Game.showDesktopNotification('Исследование завершено!');
+		} else if (false) {
+			Game.showDesktopNotification('Новое сообщение!');
+		} else if (false) {
+			Game.showDesktopNotification('Консул, вас упомянули в чате!');
+		} else if (false) {
+			Game.showDesktopNotification('');
+		}
+		//console.log(222, Game.SpaceEvents.Collection.find({}).fetch());
+		//if (taskEndMessages.hasOwnProperty(task.type)) {
+			Game.showDesktopNotification(task.type + " " + task.group + " " + task.engName);
+		//}
+	}
+};
+
 Game.showDesktopNotification = function(text, options) {
+	if (Meteor.status().status != 'connected') {
+		return;
+	}
 	var user = Meteor.user();
 
-	if (!user || !Notification || Notification.permission != "granted") {
+	if (!user || !Notification || Notification.permission != 'granted') {
 		return;
 	}
 
@@ -560,15 +654,18 @@ Game.showDesktopNotification = function(text, options) {
 		options = {};
 	}
 
-	var who = options.who || "Тамили";
-	options.icon = options.icon || "/img/game/tamily.jpg";
+	var who = options.who || 'Тамили';
+	options.icon = options.icon || '/img/game/tamily.jpg';
 	options.body = text;
 
 	if (user.settings
 	 && user.settings.notifications
 	 && user.settings.notifications.showDesktopNotifications === true
 	) {
-		new Notification(who , options);
+		var notification = new Notification(who , options);
+		if (options.onclick) {
+			notification.onclick = options.onclick;
+		}
 	}
 };
 

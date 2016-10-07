@@ -4,7 +4,7 @@ initCosmosLib();
 initCosmosPathView();
 
 Meteor.subscribe('planets');
-Meteor.subscribe('spaceEvents');
+var spaceEventsSubscription = Meteor.subscribe('spaceEvents');
 
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
@@ -248,6 +248,12 @@ var scrollMapToPlanet = function(id) {
 	if (planet) {
 		mapView.setView([planet.x, planet.y], 7);
 	}
+};
+
+Game.Cosmos.scrollMapToPlanet = scrollMapToPlanet;
+
+Game.Cosmos.scrollMapToCords = function(cords) {
+	mapView.setView([cords.x, cords.y], 8);
 };
 
 var scrollMapToFleet = function(id) {
@@ -1319,6 +1325,9 @@ Template.cosmos.onRendered(function() {
 
 	observerSpaceEvents = Game.SpaceEvents.getAll().observeChanges({
 		added: function(id, event) {
+			if (spaceEventsSubscription.ready()) {
+				Game.showNotificationFromSpaceEvent(event);
+			}
 			if (event.type == Game.SpaceEvents.type.SHIP) {
 				createPath(id, event);
 			}

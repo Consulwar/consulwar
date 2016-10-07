@@ -95,19 +95,27 @@ Game.SpaceEvents.complete = function(task) {
 
 	switch (event.type) {
 		case Game.SpaceEvents.type.SHIP:
+		console.log('SHIP');
 			newTask = Game.SpaceEvents.completeShip(event);
 			break;
 		case Game.SpaceEvents.type.REINFORCEMENT:
+		console.log('REINFORCEMENT');
 			newTask = Game.SpaceEvents.completeReinforcement(event);
 			break;
 		case Game.SpaceEvents.type.TRIGGER_ATTACK:
+		console.log('TRIGGER_ATTACK');
 			newTask = Game.SpaceEvents.completeTriggerAttack(event);
 			break;
 	}
 	
 	event.status = Game.SpaceEvents.status.FINISHED;
 	Game.SpaceEvents.Collection.update({ _id: event._id }, event);
-
+	game.Mail.addSystemMessage(
+		'profitOnce', 
+		'Космические баталии', 
+		'какая то хрень в космосе завершилась',
+		event.timeEnd
+	);
 	return newTask;
 };
 
@@ -817,6 +825,7 @@ var completeHumansArrival = function(event, planet) {
 };
 
 var completeReptilesArrival = function(event, planet) {
+	console.log(123123123);
 	if (!event.info.mission) {
 		return null; // empty reptiles ship!
 	}
@@ -1003,6 +1012,7 @@ var completeReptilesArrival = function(event, planet) {
 };
 
 var completeShipFight = function(event) {
+	console.log('FIGHTHHH!!!!');
 	var targetShip = Game.SpaceEvents.getOne(event.info.targetId);
 	if (!targetShip) {
 		throw new Meteor.Error('Корабль не найден ' + event.info.targetId);

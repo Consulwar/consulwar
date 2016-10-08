@@ -299,7 +299,9 @@ Template.mail.events({
 
 	// Compose letter
 	'click .new_message': function(e, t) {
-		Router.go('mail', { page: t.data.page }, { hash: 'compose' });
+		if (Meteor.user().rating >= 25000) {
+			Router.go('mail', { page: t.data.page }, { hash: 'compose' });
+		}
 	},
 
 	// Reply to letter

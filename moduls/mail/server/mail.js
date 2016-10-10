@@ -74,6 +74,10 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		if (user.rating < 25000) {
+			throw new Meteor.Error('Только Консул может пользоваться почтой!');
+		}
 		
 		console.log('mail.sendLetter: ', new Date(), user.username);
 

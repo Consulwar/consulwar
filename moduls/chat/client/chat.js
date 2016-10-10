@@ -402,6 +402,30 @@ var removeModerator = function(roomName, username) {
 	});
 };
 
+var changeMinRating = function(roomName, minRating) {
+	minRating = parseInt(minRating, 10);
+	
+	if (!roomName || roomName.length <= 0) {
+		return Notifications.error('Укажите имя комнаты');
+	}
+
+	if (!Match.test(minRating, Match.Integer)) {
+		return Notifications.error('Укажите минимальный рейтинг');
+	}
+
+	if (minRating < 0) {
+		return Notifications.error('Рейтинг не может быть меньше 0');
+	}
+
+	Meteor.call('chat.changeMinRating', roomName, minRating, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Минимальный рейтинг изменен');
+		}
+	});
+};
+
 var changeDiceModifierForRoom = function(roomName, modifier) {
 	if (!roomName || roomName.length <= 0) {
 		Notifications.error('Укажите имя комнаты');
@@ -1317,6 +1341,12 @@ Template.chatControl.helpers({
 	canControlBlock: function() { return canControlBlock(); },
 	credits: function() { return createPriceCredits.get(); },
 
+	room: function() {
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room
+		});
+	},
+
 	isGlobalControl: function() {
 		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
 			return true;
@@ -1385,6 +1415,10 @@ Template.chatControl.events({
 
 	'click .removeModerator:not(.disabled)': function(e, t) {
 		removeModerator(Router.current().params.room, t.find('input[name="moderatorname"]').value);
+	},
+
+	'click .changeMinRating:not(.disabled)': function(e, t) {
+		changeMinRating(Router.current().params.room, t.find('input[name="minRating"]').value);
 	}
 });
 

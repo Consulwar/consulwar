@@ -223,6 +223,7 @@
 			.remove
 			.removeModerator
 			.block
+			.changeMinRating
 				color red
 
 			.lovereptiles
@@ -259,7 +260,7 @@
 		top 516px
 		height 58px
 		
-		textarea
+		textarea, .whyCanNotWrite
 			width 800px
 			height 52px
 			padding 2px
@@ -270,6 +271,10 @@
 			vertical-align top
 			font-size 17px
 			overflow hidden
+			float left
+
+		.whyCanNotWrite
+			color red
 			
 		input
 			width 200px
@@ -290,6 +295,9 @@
 			background-image url(/img/game/chat/send-disabled.png)
 			vertical-align top
 			cursor pointer
+			overflow hidden
+			text-indent -999px
+			line-height 0px
 			
 			&:hover
 				background-image url(/img/game/chat/send.png)

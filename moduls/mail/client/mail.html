@@ -57,7 +57,16 @@
 		</div>
 
 		<span class="delete_selected disabled">Удалить выделенное</span>
-		<span class="new_message">Написать сообщение</span>
+		{{#if (lt user.rating 25000)}}
+			<span 
+				class="new_message disabled"
+				data-tooltip="Сначала наберите 25 000 рейтинга и станьте Консулом!"
+			>
+				Написать сообщение
+			</span>
+		{{else}}
+			<span class="new_message">Написать сообщение</span>
+		{{/if}}
 
 		{{#if isAdmin}}
 			<span class="admin_page">Жалобы</span>

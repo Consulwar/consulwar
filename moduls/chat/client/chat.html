@@ -189,6 +189,9 @@
 								}}
 							{{/if}}
 						{{/if}}
+										{{#if eq this.data.type 'changeMinRating'}}
+											установил минимальный рейтинг для комнаты равный {{formatNumber this.data.minRating}}
+										{{/if}}
 						{{#if eq this.data.type 'status'}}
 							{{{highlightUser this.message}}}
 						{{/if}}
@@ -236,6 +239,22 @@
 			{{/each}}
 		</div>
 	</li>
+				{{/if}}
+			{{/each}}
+		</ul>
+
+		<form id="message">
+			{{#if (and (not isChatFree) (lt user.rating room.minRating))}}
+				<div class="whyCanNotWrite">
+					в этот чат могут писать только игроки с рейтингом выше {{formatNumber room.minRating}}
+				</div>
+				<input type="submit" value="" disabled="true"/>
+			{{else}}
+				<textarea name="text" maxlength="175"></textarea>
+				<input type="submit" value=""/>
+			{{/if}}
+		</form>
+	</div>
 </template>
 
 <template name="coloredNumber">
@@ -482,6 +501,20 @@
 				</div>
 				<div class="button cancel removeUser {{#if not canControlUsers}}disabled{{/if}}">
 					Удалить из чата
+				</div>
+			</div>
+			<div class="controlBlock">
+				<label>
+					<span class="title">Минимальный рейтинг для отправки сообщений:</span>
+					<input 
+						type="text" 
+						name="minRating" 
+						disabled="{{#if not canControlRoom}}disabled{{/if}}"
+						value="{{room.minRating}}"
+					/>
+				</label>
+				<div class="button accept changeMinRating {{#if not canControlRoom}}disabled{{/if}}">
+					Сохранить
 				</div>
 			</div>
 			<div class="controlBlock">

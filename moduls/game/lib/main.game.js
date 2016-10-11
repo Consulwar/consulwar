@@ -473,11 +473,7 @@ Game = {
 
 	getCurrentServerTime: function() {
 		 if (Meteor.isClient) {
-			var serverTime;
-			Tracker.nonreactive(function() {
-				serverTime = Session.get('serverTime');
-			});
-			return serverTime;
+			return Session.get('serverTime');
 		} else {
 			return Math.floor(new Date().valueOf() / 1000);
 		}

@@ -3,31 +3,6 @@ initSettingsServer = function() {
 initSettingsLib();
 
 Meteor.methods({
-	'settings.switchVacationMode': function(onVacation) {
-		check(onVacation, Boolean);
-
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		throw new Meteor.Error('Режим отпуска в разработке');
-
-		/*Meteor.users.update({
-			_id: user._id
-		}, {
-			$set: {
-				onVacation: onVacation
-			}
-		});*/
-	},
-
-
 	'settings.sendVerifyEmail': function(email) {
 		check(email, String);
 
@@ -135,7 +110,14 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		if (!Game.Settings.emailLettersFrequency.hasOwnProperty(emailLettersFrequency)) {
+		var isValidFrequency = false;
+		for (var i = 0; i < Game.Settings.emailLettersFrequency.length; i++) {
+			if (Game.Settings.emailLettersFrequency[i].engName == emailLettersFrequency) {
+				isValidFrequency = true;
+			}
+		}
+		
+		if (!isValidFrequency) {
 			throw new Meteor.Error('Неправильная частота писем');
 		}
 

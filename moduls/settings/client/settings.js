@@ -2,56 +2,11 @@ initSettingsClient = function() {
 
 initSettingsLib();
 
-if (Notification && Notification.permission == 'default') {
-	Notification.requestPermission(function(permission) {
-		Meteor.call(
-			'settings.changeNotificationsSettings',
-			'showDesktopNotifications',
-			(permission == "granted"),
-			function(err) {
-				if (err) {
-					return Notifications.error('Не удалось изменить настройки.', err.message);
-				}
-			}
-		);
-	});
-}
-
 Game.Settings.showPage = function() {
 	this.render('settings', { to: 'content' });
 };
 
 Template.settings.events({
-	'change [name="vacationMode"]': function(e, t) {
-		if (e.target.checked) {
-			var message = 'Вы уверены что хотите активировать Режим Отпуска? '
-				+ 'Вы не сможете снять его минимум 1 день, '
-				+ 'после чего Режим Отпуска будет заблокирован на 2 дня, '
-				+ 'максимальное время действия Режима Отпуска 30 дней. '
-				+ 'Во время Режима Отпуска ваши ресурсы не добываются, '
-				+ 'а на вас никто не может нападать. '
-				+ 'Активация этого режима не отменяет уже идущие на вас атаки.';
-
-			Game.showAcceptWindow(message, function() {
-				Meteor.call('settings.switchVacationMode', true, function(err) {
-					if (err) {
-						e.target.checked = false;
-						return Notifications.error(err.message);
-					}
-					Notifications.success('Хорошего отпуска, Консул!');
-				});	
-			});
-		} else {
-			Meteor.call('settings.switchVacationMode', false, function(err) {
-				if (err) {
-					e.target.checked = true;
-					return Notifications.error(err.message);
-				}
-				Notifications.success('С возвращением на службу, Консул!');
-			});
-		}
-	},
-
 	'click .changeAvatar': function(e, t) {
 		Game.Chat.showIconsWindow();
 	},
@@ -80,15 +35,15 @@ Template.emailSettings.events({
 		Meteor.call('settings.setSubscribed', e.target.dataset.email, subscribed, function(err) {
 			if (err) {
 				e.target.checked = !subscribed;
-				return Notifications.error('Не удалось ' + (subscribed
-					? 'подписаться на рассылку'
-					: 'отписаться от рассылки'
-				), err.message);
+				return Notifications.error(
+					'Не удалось ' + (subscribed ? 'подписаться на рассылку' : 'отписаться от рассылки'),
+					err.message
+				);
 			}
-			Notifications.success('Вы успешно ' + (subscribed
-				? 'подписались на рассылку'
-				: 'отписались от рассылки'
-			));
+			Notifications.success(
+			 'Вы успешно ' + 
+			 (subscribed ? 'подписались на рассылку' : 'отписались от рассылки')
+			);
 		});
 	},
 
@@ -102,15 +57,12 @@ Template.emailSettings.events({
 	},
 
 	'click .emailLettersFrequency button': function (e, t) {
-		Meteor.call(
-			'settings.setEmailLettersFrequency',
-			e.target.dataset.frequency,
-			function(err) {
-				if (err) {
-					return Notifications.error('Не удалось изменить частоту писем.', err.message);
-				}
+		Meteor.call('settings.setEmailLettersFrequency', e.target.dataset.frequency, function(err) {
+			if (err) {
+				return Notifications.error('Не удалось изменить частоту писем.', err.message);
 			}
-		);
+			Notifications.success('Частота писем успешно изменена.');
+		});
 	}
 });
 
@@ -142,25 +94,44 @@ Template.changePassword.events({
 });
 
 Template.notificationsSettings.events({
-	'change input[type="checkbox"]': function(e, t) {
+	'change input[data-settings_field="showDesktopNotifications"]': function(e, t) {
 		var field = e.target.dataset.settings_field;
 
-		if (field == 'showDesktopNotifications') {
-			if (!Notification) {
-				e.target.checked = false;
-				Notifications.error('Уведомления на рабочий стол не поддерживаются вашим браузером');
-				return;
-			}
-
-			if (Notification.permission != 'granted') {
-				e.target.checked = false;
-				Notifications.error('Сначала разрешите уведомления в настройках браузера');
-				return;
-			}
-
+		if (!Notification) {
+			e.target.checked = false;
+			Notifications.error('Уведомления на рабочий стол не поддерживаются вашим браузером');
+		} else if (Notification.permission == 'granted') {
+			Meteor.call('settings.changeNotificationsSettings', field, e.target.checked, function(err) {
+				if (err) {
+					e.target.checked = !e.target.checked;
+					return Notifications.error('Не удалось изменить настройки.', err.message);
+				}
+				Notifications.success('Настройки успешно изменены.');
+			});
+		} else if (Notification.permission == 'denied') {
+			e.target.checked = false;
+			Notifications.error('Сначала разрешите уведомления в настройках браузера.');
+		} else if (Notification.permission == 'default') {
+			Notification.requestPermission(function(permission) {
+				if (permission != 'granted') {
+					e.target.checked = false;
+					Notifications.error('Сначала разрешите уведомления в настройках браузера');
+					return;
+				}
+				Meteor.call('settings.changeNotificationsSettings', field, true, function(err) {
+					if (err) {
+						Notifications.error('Не удалось изменить настройки.', err.message);
+						return;
+					}
+					Notifications.success('Настройки успешно изменены.');
+				});
+			});
 		}
+	},
 
-		Meteor.call('settings.changeNotificationsSettings', field, e.target.checked, function(err) {
+	'change input[data-settings_field="showQuestsDuringActivation"]': function(e, t) {
+		var field = 'notShowQuestsDuringActivation';
+		Meteor.call('settings.changeNotificationsSettings', field, !e.target.checked, function(err) {
 			if (err) {
 				e.target.checked = !e.target.checked;
 				return Notifications.error('Не удалось изменить настройки.', err.message);

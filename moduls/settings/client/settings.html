@@ -65,7 +65,7 @@
 		</div>
 		<span class="title">Получать письма не чаще чем раз в:</span>
 		<div class="emailLettersFrequency">
-			{{#each (toArray Game.Settings.emailLettersFrequency)}}
+			{{#each Game.Settings.emailLettersFrequency}}
 				<button 
 					data-frequency="{{engName}}"
 					class="
@@ -108,7 +108,7 @@
 			<input
 				type="checkbox"
 				data-settings_field="showQuestsDuringActivation"
-				checked="{{user.settings.notifications.showQuestsDuringActivation}}" 
+				checked="{{not user.settings.notifications.notShowQuestsDuringActivation}}" 
 			>
 			<span class="checkboxTitle">Отображать Задания во время их активации</span>
 		</label>

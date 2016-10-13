@@ -12,9 +12,10 @@
 	.profile
 		cursor pointer
 		position relative
-		display inline-block
 		width 195px
 		vertical-align top
+		float left
+		clear both
 	
 	.username
 		color #c4aba1
@@ -135,6 +136,7 @@
 
 	.messages
 		position absolute
+		background-color #13161b
 		left 198px
 		top 46px
 		height 470px
@@ -172,13 +174,16 @@
 				left 50px
 				width 150px
 				
-			.message
+			&.message
 				position relative
 				display inline-block
 				vertical-align top
 				max-width 840px
+				width 100%
 				line-height 19px
 				color #dcdcdc
+				float right
+				padding 0px
 
 			span
 				color #C4ABA1
@@ -199,11 +204,14 @@
 			
 			&.motd
 				text-align center
+				clear both
 
 			&.more
+			&.missed
 				cursor pointer
 				text-align center
 				background-color #0f1116
+				clear both
 				
 				span
 					color #dfdfdf

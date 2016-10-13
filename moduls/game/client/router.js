@@ -25,6 +25,7 @@ GameRouteController = RouteController.extend({
 			this.render('game');
 			Tooltips.hide(); // hide all tooltips
 			$('.permanent').hide(); // hide cosmos map!
+			$('.permanent_chat').hide();
 			this.next();
 		} else {
 			this.render('loading', {layout: 'loading_layout'});

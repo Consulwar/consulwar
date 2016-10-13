@@ -1402,7 +1402,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой комнаты');
 		}
 
-		var timeCondition = { $gt: Game.getCurrentTime() - (Game.getCurrentTime() % 86400) - (86400 * 6) };
+		var timeCondition = {};
 
 		if (options.isPrevious) {
 			timeCondition.$lte = options.timestamp;
@@ -1694,8 +1694,7 @@ Meteor.publish('chat', function (roomName) {
 
 		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
 			return Game.Chat.Messages.Collection.find({
-				room_id: room._id,
-				timestamp: { $gt: Game.getCurrentTime() - (Game.getCurrentTime() % 86400) - (86400 * 6) }
+				room_id: room._id
 			}, {
 				fields: {
 					_id: 1,

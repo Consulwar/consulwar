@@ -36,12 +36,12 @@ var sortMessages = function(messages) {
 };
 
 var addMessage = function(message, previousMessage) {
-	if (!previousMessage ||
-		previousMessage.isMotd ||
-		message.isMotd ||
-		message.username != previousMessage.username ||
-		message.role != previousMessage.role ||
-		message.iconPath != previousMessage.iconPath
+	if (!previousMessage
+	 || previousMessage.isMotd
+	 || message.isMotd
+	 || message.username != previousMessage.username
+	 || message.role != previousMessage.role
+	 || message.iconPath != previousMessage.iconPath
 	) {
 		message.showProfile = true;
 	}

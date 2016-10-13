@@ -2,6 +2,9 @@ initChatClient = function() {
 
 initChatLib();
 
+//записывать id предыдущего сообщения
+
+
 Meteor.subscribe('chatIconsUser');
 Meteor.subscribe('chatIconsUnique');
 
@@ -52,8 +55,9 @@ var addMessage = function(message){
 		lastMessage = message;
 		messages.insert(message);
 	} else {
-		lastMessage.parts.push(part);
-		messages.update(lastMessage._id, lastMessage);
+		message.username = null;
+		message.parts = [part];
+		messages.insert(message);
 	}
 	
 };
@@ -61,6 +65,13 @@ var addMessage = function(message){
 var insertMessages = function(newMessages) {
 	for (var i = 0; i < newMessages.length; i++) {
 		messages.insert(newMessages[i]);
+	}
+};
+
+
+var addMessages = function(newMessages) {
+	for (var i = 0; i < newMessages.length; i++) {
+		addMessage(newMessages[i]);
 	}
 };
 
@@ -88,7 +99,14 @@ var removeDuplicates = function(messages, oldestMessage) {
 
 var appendMessages = function(newMessages) {
 	newMessages = sortMessages(newMessages);
+	addMessages(newMessages);
 
+
+	if (!firstMessage || firstMessage == lastMessage) {
+		firstMessage = newMessages[0];
+	}
+	return;
+	/*
 	var hasAllowedMessages = false;
 	if (lastMessage) {
 		var lastMessagePart = lastMessage.parts[lastMessage.parts.length - 1];
@@ -107,32 +125,22 @@ var appendMessages = function(newMessages) {
 	}
 
 	lastMessage = groupedMessages[groupedMessages.length - 1];
-
-	if (!firstMessage || firstMessage == lastMessage) {
-		firstMessage = groupedMessages[0];
-	}
-
-	insertMessages(groupedMessages);
+	*/
 };
 
 var prependMessages = function(newMessages) {
 	newMessages = sortMessages(newMessages);
 
-	var groupedMessages = groupMessages(newMessages);
-	var lastMessageInGroup = groupedMessages[groupedMessages.length - 1];
-
-	if (lastMessageInGroup.username == firstMessage.username) {
-		lastMessageInGroup = concatAndUniq(lastMessageInGroup, firstMessage);
-		messages.remove(firstMessage._id);
-	
-		if (firstMessage == lastMessage) {
-			lastMessage = lastMessageInGroup;
-		}
+	if (firstMessage && firstMessage.username == newMessages[newMessages.length - 1].username) {
+		firstMessage.username = null;
+		messages.update(firstMessage._id, firstMessage);
+	}
+	firstMessage = newMessages[0];
+	if (firstMessage == lastMessage) {
+		lastMessage = newMessages[newMessages.length - 1];
 	}
 
-	firstMessage = groupedMessages[0];
-
-	insertMessages(groupedMessages);
+	addMessages(newMessages);
 };
 
 var addMessagesBefore = function(newMessages, message) {
@@ -175,7 +183,7 @@ var groupMessages = function(msgs) {
 	var part = {};
 	for (var i = 0; i < msgs.length; i++) {
 		if (i > 0 &&
-			(msgs[i].isMotd || msgs[i - 1].isMotd ||
+			(true || msgs[i].isMotd || msgs[i - 1].isMotd ||
 			msgs[i - 1].username != msgs[i].username ||
 			msgs[i - 1].role != msgs[i].role ||
 			msgs[i - 1].iconPath != msgs[i].iconPath))
@@ -706,11 +714,13 @@ var getUserRole = function(userId, username, role, rating) {
 	};
 };
 
-Template.chatMessage.helpers({
+Template.chatMessageProfile.helpers({
 	getUserRoleByMessage: function(message) {
 		return getUserRole(message.user_id, message.username, message.role, message.rating);
-	},
+	}
+});
 
+Template.chatMessage.helpers({
 	highlightUser: function(text) {
 		if (text.indexOf('/me') === 0) {
 			text = text.substr(3);

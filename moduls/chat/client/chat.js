@@ -61,11 +61,13 @@ var appendMessages = function(newMessages) {
 	if (lastMessage && newMessages[0].timestamp > lastMessage.timestamp) {
 		newMessages[0].hasAllowedMessages = true;
 		newMessages[0].previousMessage = lastMessage;
+		addMessagesAfter(newMessages, null);
+	} else {
+		addMessagesAfter(newMessages, lastMessage);
 	}
-	addMessagesAfter(newMessages, lastMessage);
 	lastMessage = newMessages[newMessages.length - 1];
 
-	if (!firstMessage || firstMessage == lastMessage) {
+	if (!firstMessage) {
 		firstMessage = newMessages[0];
 	}
 };
@@ -74,9 +76,6 @@ var prependMessages = function(newMessages) {
 	newMessages = sortMessages(newMessages);
 
 	firstMessage = newMessages[0];
-	if (firstMessage == lastMessage) {
-		lastMessage = newMessages[newMessages.length - 1];
-	}
 
 	addMessagesAfter(newMessages, null);
 };
@@ -90,10 +89,10 @@ var addMessagesBefore = function(newMessages, message) {
 		newMessages[0].previousMessage = message.previousMessage;
 		addMessagesAfter(newMessages, null);
 	} else {
-		while (newMessages[0].timestamp < message.previousMessage.timestamp) {
+		while (newMessages[0].timestamp <= message.previousMessage.timestamp) {
 			newMessages.shift();
 		}
-		addMessages(newMessages, message.previousMessage);
+		addMessagesAfter(newMessages, message.previousMessage);
 	}
 };
 

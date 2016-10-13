@@ -1,0 +1,116 @@
+<template name="settings">
+	<div class="settings">
+		<div>
+			<h2>Аватар консула</h2>
+			<div class="user">
+				<img src="/img/game/chat/icons/{{Game.User.iconPath user}}.png" alt="Аватар"/>
+				<button class="changeAvatar"></button>
+			</div>
+			<h2>Режим отпуска</h2>
+			<label class="checkBlock">
+				<input type="checkbox" name="vacationMode" disabled>
+				<span class="checkboxTitle">активирован</span>
+				<span class="notImplemented">В разработке!</span>
+			</label>
+		</div>
+
+		{{> changePassword}}
+
+		{{> emailSettings}}
+
+		{{> notificationsSettings}}
+		
+	</div>
+</template>
+
+<template name="changePassword">
+	<form class="changePassword">
+		<h2>Смена пароля</h2>
+		<label>
+			<div class="title">Старый пароль:</div>
+			<input name="currentPassword" type="password" placeholder="Ваш старый пароль">
+		</label>
+		<label>
+			<div class="title">Новый пароль:</div>
+			<input name="newPassword" type="password" placeholder="Ваш новый пароль">
+		</label>
+		<label>
+			<div class="title">Повторите пароль:</div>
+			<input name="newPasswordRepeat" type="password" placeholder="Повторите пароль">
+		</label>
+
+		<button name="change">Изменить пароль</button>
+	</form>
+</template>
+
+<template name="emailSettings">
+	<div class="emailSettings">
+		<h2>Настройка email</h2>
+		<div class="emailBlock">
+			{{#if user.emails.[0].verified}}
+				<span class="check" data-tooltip="email подтвержден"></span>
+				<span class="email">{{user.emails.[0].address}}</span>
+			{{else}}
+				<span class="cross" data-tooltip="email не подтвержден"></span>
+				<span class="email">{{user.emails.[0].address}}</span>
+				<button name="changeEmail" data-tooltip="изменить email"></button>
+				<button 
+					name="verify" 
+					data-tooltip="Отправить письмо потверждения"
+					data-email="{{user.emails.[0].address}}"
+				>
+				</button>
+				<span class="hint">Письмо можно отправить не больше 2 раз в сутки</span>
+			{{/if}}
+		</div>
+		<span class="title">Получать письма не чаще чем раз в:</span>
+		<div class="emailLettersFrequency">
+			{{#each Game.Settings.emailLettersFrequency}}
+				<button 
+					data-frequency="{{engName}}"
+					class="
+						{{#if (and
+							(eq engName (or user.settings.email.lettersFrequency 'everyDay'))
+							(not user.emails.[0].unsubscribed)
+						)}}
+							active
+						{{/if}}
+					"
+				>
+					{{title}}
+				</button>
+			{{/each}}
+		</div>
+		<label class="checkBlock">
+			<input 
+				type="checkbox"
+				name="subscribed"
+				checked="{{not user.emails.[0].unsubscribed}}"
+				data-email="{{user.emails.[0].address}}"
+			>
+			<span class="checkboxTitle">Подписан на рассылку</span>
+		</label>
+	</div>
+</template>
+
+<template name="notificationsSettings">
+	<div class="notificationsSettings">
+		<h2>Настройка уведомлений</h2>
+		<label class="checkBlock">
+			<input 
+				type="checkbox"
+				data-settings_field="showDesktopNotifications"
+				checked="{{user.settings.notifications.showDesktopNotifications}}" 
+			>
+			<span class="checkboxTitle">Показывать уведомления на рабочем столе</span>
+		</label>
+		<label class="checkBlock">
+			<input
+				type="checkbox"
+				data-settings_field="showQuestsDuringActivation"
+				checked="{{not user.settings.notifications.notShowQuestsDuringActivation}}" 
+			>
+			<span class="checkboxTitle">Отображать Задания во время их активации</span>
+		</label>
+	</div>
+</template>

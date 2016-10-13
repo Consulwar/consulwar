@@ -796,11 +796,11 @@ Template.chat.events({
 		if (document.getSelection && document.getSelection().toString()) {
 			return;
 		}
-		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).parent().find('.profile').data('username') + ', ';
+		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).data('username') + ', ';
 		t.find('#message textarea[name="text"]').focus();
 	},
 
-	'click .messages li .profile, click .participants .online': function(e, t) {
+	'click .messages li.profile, click .participants .online': function(e, t) {
 		e.stopPropagation();
 
 		var username = e.currentTarget.dataset.username;

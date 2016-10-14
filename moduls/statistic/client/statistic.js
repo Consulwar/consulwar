@@ -105,7 +105,7 @@ Game.Rating.showPage = function() {
 
 	if (!pageNumber || !statisticGroup) {
 		Game.Statistic.redirectToUser({
-			userName: selectedUserName || user.username, 
+			userName: (hash && hash[0]) || selectedUserName || user.username, 
 			detailStatisticTab: detailStatisticTab, 
 			statisticGroup: statisticGroup || "general",
 			lastPageNumber: lastPageNumber,

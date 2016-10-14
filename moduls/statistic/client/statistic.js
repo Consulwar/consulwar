@@ -25,11 +25,10 @@ Game.Rating.showPage = function() {
 	var pageNumber = parseInt( this.params.page, 10 );
 	var statisticGroup = this.params.group;
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
-	var newSelectedUserName = hash[0];
 	var detailStatisticTab;
 
-	if (hash && (newSelectedUserName != selectedUserName || statisticGroup != laststatisticGroup) && pageNumber) {
-		selectedUserName = newSelectedUserName;
+	if (hash && (hash[0] != selectedUserName || statisticGroup != laststatisticGroup) && pageNumber) {
+		selectedUserName = hash[0];
 		renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
 	}
 
@@ -106,7 +105,7 @@ Game.Rating.showPage = function() {
 
 	if (!pageNumber || !statisticGroup) {
 		Game.Statistic.redirectToUser({
-			userName: newSelectedUserName || selectedUserName || user.username, 
+			userName: (hash && hash[0]) || selectedUserName || user.username, 
 			detailStatisticTab: detailStatisticTab, 
 			statisticGroup: statisticGroup || "general",
 			lastPageNumber: lastPageNumber,

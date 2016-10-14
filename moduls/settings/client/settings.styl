@@ -1,0 +1,158 @@
+.content
+	.settings:not(.overlay)
+		position relative
+		z-index 2
+		height 100%
+		display flex
+
+		.notImplemented
+			color #ffb74a
+			margin-left 5px
+
+		input[type="checkbox"]
+			margin-right 3px
+
+		button
+			cursor pointer
+			display block
+			font-weight bold
+			text-align center
+			text-transform uppercase
+			font-size 14px
+			padding 0 15px
+			height 38px
+			color #ffffff
+			background-image url(/img/game/settings/accept.png)
+			background-size 100% 100%
+			border 0px solid transparent
+			border-radius 5px
+			background-repeat no-repeat
+
+			&:hover:not(.disabled)
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+			&.disabled
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+
+		.checkBlock
+			margin-top 20px
+			display flex
+			align-items center
+
+			.checkboxTitle
+				color #56baf2
+				font-weight bold
+				font-size 14px
+
+
+		.hint
+			margin-bottom 20px
+			color #88a23f
+			display block
+
+		.title
+			display block
+			color #56baf2
+			font-weight bold
+			font-size 14px
+			margin-bottom 10px
+
+		h2
+			font-size 14px
+			color #e9a844
+			margin-bottom 10px
+
+		input[type="password"] 
+			padding 10px 7px
+			border 2px solid #006382
+			background-color #C0C0C0
+			border-radius 5px
+			box-shadow inset 2px 2px 2px #000
+			color #000000
+			font-weight bold
+			font-size 14px
+			margin-bottom 10px
+
+		>div, >form
+			min-width 300px
+			background-color #232832
+			display inline-block
+			padding 20px
+
+			.user
+				display flex
+				align-items center
+				margin-bottom 20px
+
+				.changeAvatar
+					cursor pointer
+					width 65px
+					height 66px
+					background-image url(/img/game/chat/dollar-disabled.png)
+					border-radius 0px
+					margin-left 20px
+
+					&:hover
+						background-image url(/img/game/chat/dollar.png)
+
+		.changePassword
+			background-color #13161b
+
+			button[name="change"]
+				margin-top 20px
+
+		.emailSettings
+			min-width 400px
+
+			button
+				margin 10px
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+				color #000
+
+				&.active
+					-webkit-filter brightness(1)
+					filter brightness(1)
+					color #fff
+
+			.emailBlock
+				display flex
+				flex-wrap wrap
+				align-items center
+
+			.emailLettersFrequency
+				display flex
+				flex-wrap wrap
+				justify-content space-around
+
+				button
+					flex-grow 1
+
+			button[name="changeEmail"]
+				background-image url(/img/game/edit.png)
+				height 21px
+				width 21px
+				padding 0px
+
+			button[name="verify"]
+				background-image url(/img/game/message.png)
+				height 22px
+
+			.cross, .check
+				width 30px
+				height 30px
+				display inline-block
+				background-repeat no-repeat
+				background-position center
+
+			.cross
+				background-image url(/img/game/cross.png)
+
+			.check
+				background-image url(/img/game/check.png)
+
+
+		.notificationsSettings
+			background-color #13161b

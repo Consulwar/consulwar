@@ -87,139 +87,168 @@
 						</div>
 					</li>
 				{{else}}
-					<li>
-						<div 
-							class="profile"
-							data-username="{{this.username}}"
+					{{#if this.hasAllowedMessages}}
+						<li 
+							class="missed"
+							data-timestamp="{{this.timestamp}}"
+							data-messageid="{{this._id}}"
 						>
-							<img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
-							{{#let messageRole=(getUserRoleByMessage this)}}
-								<div 
-									class="
-										username 
-										{{messageRole.id}} 
-										{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-										{{#if eq this.username user.username}}me{{/if}}"
-								>
-									{{this.username}}
-								</div>
-								<div class="role {{messageRole.id}}">
-									{{messageRole.name}}
-								</div>
-							{{/let}}
-						</div>
-						<div class="message">
-							{{#each this.parts}}
-								<p
-									data-tooltip="{{formatDate this.timestamp -180}}"
-									data-tooltip-direction="w" 
-									class="{{#if this.data}}status{{/if}} {{this.data.type}}"
-								>
-									{{#if this.data}}
-										{{#if eq this.data.type 'dice'}}
-											бросил {{this.data.dice.dices.amount}} 
-											{{declension this.data.dice.dices.amount "кубик" "" "а" "ов"}} с 
-											{{this.data.dice.edges}} 
-											{{declension this.data.dice.edges "гран" "ью" "ями" "ями"}}: 
-											{{#each this.data.dice.dices.values}}
-												<span class="dice">{{this}}</span> 
-											{{/each}}
-											{{#if (or this.data.dice.modifier this.data.dice.roomModifier)}}
-												(
-												{{> coloredNumber number=this.data.dice.modifier}} 
-												{{#if (and this.data.dice.modifier this.data.dice.roomModifier)}}
-													 / 
-												{{/if}}
-												{{> coloredNumber 
-													number=this.data.dice.roomModifier
-													class="roomModifier"
-												}}
-												)
-											{{/if}}
-										{{/if}}
-										{{#if eq this.data.type 'medice'}}
-											{{this.data.medice.preText}}
-												{{#each this.data.medice.variables}}
-													<span 
-														class="
-															medice
-															{{#if eq @index ../data.medice.selected}}
-																selected
-															{{/if}}
-															"
-													>
-														{{this}}
-													</span>
-												{{/each}}
-											{{this.data.medice.afterText}}
-										{{/if}}
-										{{#if eq this.data.type 'changeDiceModifier'}}
-											{{#if eq this.data.modifier 0}}
-												удалил модификатор для игральных костей
-											{{else}}
-												установил модификатор для игральных костей: 
-												{{> coloredNumber 
-													number=this.data.modifier
-													class="roomModifier"
-												}}
-											{{/if}}
-										{{/if}}
-										{{#if eq this.data.type 'status'}}
-											{{{highlightUser this.message}}}
-										{{/if}}
-										{{#if eq this.data.type 'notprepared'}}
-											{{{highlightUser this.message}}}
-										{{/if}}
-										{{#if eq this.data.type 'lovereptiles'}}
-											{{{highlightUser this.message}}}
-										{{/if}}
-										{{#if eq this.data.type 'sepukku'}}
-											совершил кровавое сепукку.
-										{{/if}}
-										{{#if eq this.data.type 'unblock'}}
-											разблокировал
-											{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-											для {{this.message}}
-										{{/if}}
-										{{#if eq this.data.type 'block'}}
-											заблокировал
-											{{#if data.global}} все чаты {{else}} этот чат {{/if}}
-											для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
-										{{/if}}
-										{{#if eq this.data.type 'add'}}
-											добавил в чат {{this.message}}
-										{{/if}}
-										{{#if eq this.data.type 'remove'}}
-											удалил из чата {{this.message}}
-										{{/if}}
-										{{#if eq this.data.type 'addModerator'}}
-											назначил модератора {{this.message}}
-										{{/if}}
-										{{#if eq this.data.type 'removeModerator'}}
-											разжаловал модератора {{this.message}}
-										{{/if}}
-										{{#if eq this.data.type 'addfunds'}}
-											пополнил баланс чата на {{this.data.amount}} ГГК
-										{{/if}}
-										{{#if eq this.data.type 'coub'}}
-											<iframe src="//coub.com/embed/{{this.data.id}}?muted=false&autostart=false&originalSize=false&startWithHD=false" allowfullscreen="true" frameborder="0" width="800" height="240"></iframe>
-										{{/if}}
-									{{else}}
-										{{{highlightUser this.message}}}
-									{{/if}}
-								</p>
-							{{/each}}
-						</div>
+							<span>показать пропущенные сообщения</span>
+						</li>
+					{{/if}}
+
+					{{#if this.showProfile}}
+						<li class="profile" data-username="{{this.username}}">
+							{{> chatMessageProfile this}}
+						</li>
+					{{/if}}
+					<li class="message" data-username="{{this.username}}">
+						{{> chatMessage this}}
 					</li>
 				{{/if}}
 			{{/each}}
 		</ul>
 
 		<form id="message">
-			<textarea name="text" maxlength="175"></textarea>
-			<input type="submit" value=""/>
+			{{#if (and (not isChatFree) (lt user.rating room.minRating))}}
+				<div class="whyCanNotWrite">
+					в этот чат могут писать только игроки с рейтингом выше {{formatNumber room.minRating}}
+				</div>
+				<input type="submit" value="" disabled="true"/>
+			{{else}}
+				<textarea name="text" maxlength="175"></textarea>
+				<input type="submit" value=""/>
+			{{/if}}
 		</form>
 	</div>
+</template>
+
+<template name="chatMessageProfile">
+	<img src="/img/game/chat/icons/
+		{{#if this.iconPath}}
+			{{this.iconPath}}
+		{{else}}
+			common/1
+		{{/if}}
+	sm.png"/>
+	{{#let messageRole=(getUserRoleByMessage this)}}
+		<div 
+			class="
+				username 
+				{{messageRole.id}} 
+				{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+				{{#if eq this.username user.username}}me{{/if}}"
+		>
+			{{this.username}}
+		</div>
+		<div class="role {{messageRole.id}}">
+			{{messageRole.name}}
+		</div>
+	{{/let}}
+</template>
+
+<template name="chatMessage">
+	<p
+		data-tooltip="{{formatDate this.timestamp -180}}"
+		data-tooltip-direction="w" 
+		class="{{#if this.data}}status{{/if}} {{this.data.type}}"
+	>
+		{{#if this.data}}
+			{{#if eq this.data.type 'dice'}}
+				бросил {{this.data.dice.dices.amount}} 
+				{{declension this.data.dice.dices.amount "кубик" "" "а" "ов"}} с 
+				{{this.data.dice.edges}} 
+				{{declension this.data.dice.edges "гран" "ью" "ями" "ями"}}: 
+				{{#each this.data.dice.dices.values}}
+					<span class="dice">{{this}}</span> 
+				{{/each}}
+				{{#if (or this.data.dice.modifier this.data.dice.roomModifier)}}
+					(
+					{{> coloredNumber number=this.data.dice.modifier}} 
+					{{#if (and this.data.dice.modifier this.data.dice.roomModifier)}}
+						 / 
+					{{/if}}
+					{{> coloredNumber 
+						number=this.data.dice.roomModifier
+						class="roomModifier"
+					}}
+					)
+				{{/if}}
+			{{/if}}
+			{{#if eq this.data.type 'medice'}}
+				{{this.data.medice.preText}}
+					{{#each this.data.medice.variables}}
+						<span 
+							class="
+								medice
+								{{#if eq @index ../data.medice.selected}}
+									selected
+								{{/if}}
+								"
+						>
+							{{this}}
+						</span>
+					{{/each}}
+				{{this.data.medice.afterText}}
+			{{/if}}
+			{{#if eq this.data.type 'changeDiceModifier'}}
+				{{#if eq this.data.modifier 0}}
+					удалил модификатор для игральных костей
+				{{else}}
+					установил модификатор для игральных костей: 
+					{{> coloredNumber 
+						number=this.data.modifier
+						class="roomModifier"
+					}}
+				{{/if}}
+			{{/if}}
+							{{#if eq this.data.type 'changeMinRating'}}
+								установил минимальный рейтинг для комнаты равный {{formatNumber this.data.minRating}}
+							{{/if}}
+			{{#if eq this.data.type 'status'}}
+				{{{highlightUser this.message}}}
+			{{/if}}
+			{{#if eq this.data.type 'notprepared'}}
+				{{{highlightUser this.message}}}
+			{{/if}}
+			{{#if eq this.data.type 'lovereptiles'}}
+				{{{highlightUser this.message}}}
+			{{/if}}
+			{{#if eq this.data.type 'sepukku'}}
+				совершил кровавое сепукку.
+			{{/if}}
+			{{#if eq this.data.type 'unblock'}}
+				разблокировал
+				{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+				для {{this.message}}
+			{{/if}}
+			{{#if eq this.data.type 'block'}}
+				заблокировал
+				{{#if data.global}} все чаты {{else}} этот чат {{/if}}
+				для {{this.message}} до {{formatDate (sum data.timestamp data.period) -180}}
+			{{/if}}
+			{{#if eq this.data.type 'add'}}
+				добавил в чат {{this.message}}
+			{{/if}}
+			{{#if eq this.data.type 'remove'}}
+				удалил из чата {{this.message}}
+			{{/if}}
+			{{#if eq this.data.type 'addModerator'}}
+				назначил модератора {{this.message}}
+			{{/if}}
+			{{#if eq this.data.type 'removeModerator'}}
+				разжаловал модератора {{this.message}}
+			{{/if}}
+			{{#if eq this.data.type 'addfunds'}}
+				пополнил баланс чата на {{this.data.amount}} ГГК
+			{{/if}}
+			{{#if eq this.data.type 'coub'}}
+				<iframe src="//coub.com/embed/{{this.data.id}}?muted=false&autostart=false&originalSize=false&startWithHD=false" allowfullscreen="true" frameborder="0" width="800" height="240"></iframe>
+			{{/if}}
+		{{else}}
+			{{{highlightUser this.message}}}
+		{{/if}}
+	</p>
 </template>
 
 <template name="coloredNumber">
@@ -466,6 +495,20 @@
 				</div>
 				<div class="button cancel removeUser {{#if not canControlUsers}}disabled{{/if}}">
 					Удалить из чата
+				</div>
+			</div>
+			<div class="controlBlock">
+				<label>
+					<span class="title">Минимальный рейтинг для отправки сообщений:</span>
+					<input 
+						type="text" 
+						name="minRating" 
+						disabled="{{#if not canControlRoom}}disabled{{/if}}"
+						value="{{room.minRating}}"
+					/>
+				</label>
+				<div class="button accept changeMinRating {{#if not canControlRoom}}disabled{{/if}}">
+					Сохранить
 				</div>
 			</div>
 			<div class="controlBlock">

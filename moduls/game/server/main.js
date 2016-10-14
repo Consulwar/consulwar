@@ -58,6 +58,7 @@ Meteor.startup(function () {
 	initMutualServer();
 	initMailServer();
 	initChatServer();
+	initSettingsServer();
 	initQuestServer();
 	initCheatsServer();
 	initDDPLimiter();

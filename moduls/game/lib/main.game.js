@@ -471,6 +471,14 @@ Game = {
 		return Math.floor(new Date().valueOf() / 1000);
 	},
 
+	getCurrentServerTime: function() {
+		 if (Meteor.isClient) {
+			return Session.get('serverTime');
+		} else {
+			return Math.floor(new Date().valueOf() / 1000);
+		}
+	},
+
 	getObjectByType: function(type) {
 		switch(type) {
 			case 'building':

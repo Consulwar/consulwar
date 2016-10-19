@@ -27,7 +27,7 @@ Game.Rating.showPage = function() {
 	var hash = this.getParams().hash && this.getParams().hash.split('/');
 	var detailStatisticTab;
 
-	if (hash && (hash[0] != selectedUserName || statisticGroup != laststatisticGroup)) {
+	if (hash && (hash[0] != selectedUserName || statisticGroup != laststatisticGroup) && pageNumber) {
 		selectedUserName = hash[0];
 		renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
 	}
@@ -105,7 +105,7 @@ Game.Rating.showPage = function() {
 
 	if (!pageNumber || !statisticGroup) {
 		Game.Statistic.redirectToUser({
-			userName: selectedUserName || user.username, 
+			userName: (hash && hash[0]) || selectedUserName || user.username, 
 			detailStatisticTab: detailStatisticTab, 
 			statisticGroup: statisticGroup || "general",
 			lastPageNumber: lastPageNumber,

@@ -42,7 +42,7 @@ Game.Building.special.Colosseum = {
 
 		if (user
 		 && user.timeLastTournament
-		 && user.timeLastTournament > Game.getCurrentTime() - Game.Building.special.Colosseum.getCooldownPeriod(level)
+		 && user.timeLastTournament > Game.getCurrentServerTime() - Game.Building.special.Colosseum.getCooldownPeriod(level)
 		) {
 			return false;
 		}

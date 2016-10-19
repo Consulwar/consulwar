@@ -13,6 +13,7 @@ initHouseClient();
 initMutualClient();
 initMailClient();
 initChatClient();
+initSettingsClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();
@@ -372,6 +373,19 @@ Template.game.helpers(helpers);
 Template.item.helpers(helpers);
 
 Template.game.onRendered(function(){
+	showTutorialDuringActivation();
+});
+
+var showTutorialDuringActivation = function() {
+	var user = Meteor.user();
+	if (user
+	 && user.settings
+	 && user.settings.notifications
+	 && user.settings.notifications.notShowQuestsDuringActivation
+	) {
+		return;
+	}
+
 	var currentQuest = Game.Quest.getOneByHero('tamily');
 	if (currentQuest
 	 && currentQuest.engName == 'tutorial'
@@ -379,7 +393,7 @@ Template.game.onRendered(function(){
 	) {
 		Game.Quest.showQuest('tutorial');
 	}
-});
+};
 
 Template.game.events({
 	'click header .username .edit': function() {

@@ -28,13 +28,16 @@ Game.User = {
 	],
 
 	getLevel: function(rating) {
-		rating = _.isNumber(rating) ? rating : Meteor.user().rating || 0;
+		rating = arguments.length === 0 ? Meteor.user().rating : rating;
+		rating = (rating && _.isNumber(rating)) ? rating : 0;
 
-		for (var level = 0; level < this.levels.length; level++) {
+		for (var level = 0; level < this.levels.length - 1; level++) {
 			if (rating < this.levels[level + 1].rating) {
 				return level;
 			}
 		}
+
+		return this.levels.length - 1;
 	},
 
 	getRatingForLevel: function(level) {
@@ -47,7 +50,24 @@ Game.User = {
 	},
 
 	getLevelName: function(rating) {
+		rating = arguments.length === 0 ? Meteor.user().rating : rating;
 		return this.levels[this.getLevel(rating)].name;
+	},
+
+	haveVerifiedEmail: function() {
+		var user = Meteor.user();
+
+		if (!user || !user.emails) {
+			return false;
+		}
+
+		for (var i = 0; i < user.emails.length; i++) {
+			if (user.emails[i].verified) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 };
 

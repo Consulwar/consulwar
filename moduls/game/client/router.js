@@ -25,6 +25,7 @@ GameRouteController = RouteController.extend({
 			this.render('game');
 			Tooltips.hide(); // hide all tooltips
 			$('.permanent').hide(); // hide cosmos map!
+			$('.permanent_chat').hide();
 			this.next();
 		} else {
 			this.render('loading', {layout: 'loading_layout'});
@@ -88,6 +89,10 @@ var gameRoutes = {
 	cosmos: {
 		cosmos: 'cosmos',
 		cosmosHistory: 'cosmos/history/:page'
+	},
+
+	settings: {
+		settings: 'settings'
 	}
 };
 
@@ -115,7 +120,9 @@ var gameActions = {
 	statistics: Game.Rating.showPage,
 
 	cosmos: Game.Cosmos.showPage,
-	cosmosHistory: Game.Cosmos.showHistory
+	cosmosHistory: Game.Cosmos.showHistory,
+
+	settings: Game.Settings.showPage
 };
 
 var registerRoute = function(group, name, path, action) {

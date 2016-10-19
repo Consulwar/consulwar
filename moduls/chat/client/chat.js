@@ -12,50 +12,105 @@ var lostConnectionTime = null;
 var chatSubscription = null;
 var chatRoomSubscription = null;
 
-var messages = new ReactiveArray();
 var hasMore = new ReactiveVar(true);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
 
-var addMessage = function(message) {
-	var i = 0;
-	var n = messages.length;
-	var isDuplicated = false;
+var messages = new Meteor.Collection(null);
+var lastMessage = null;
+var firstMessage = null;
 
-	while (n-- > 0) {
-		// check if duplicated
-		if (messages[n]._id == message._id) {
-			isDuplicated = true;
-			break;
-		}
-		// find position
-		if (i === 0 && messages[n].timestamp <= message.timestamp) {
-			i = n + 1;
-		}
-		// break check
-		if (messages[n].timestamp < message.timestamp) {
-			break;
-		}
+var sortMessages = function(messages) {
+	//Нужно для устойчивой сортировки
+	//так как сообщения приходят в обратном порядке
+	//а сообщения с одинаковым timestamp в правильном порядке
+	for (var i = 0; i < messages.length; i++) {
+		messages[i].index = i;
 	}
 
-	if (!isDuplicated) {
-		messages.splice(i, 0, message);
+	return messages.sort(function(a, b) {
+		var delta = a.timestamp - b.timestamp;
+  		return (delta === 0 ? a.index - b.index : delta);
+	});
+};
+
+var addMessage = function(message, previousMessage) {
+	if (!previousMessage
+	 || previousMessage.isMotd
+	 || message.isMotd
+	 || message.username != previousMessage.username
+	 || message.role != previousMessage.role
+	 || message.iconPath != previousMessage.iconPath
+	) {
+		message.showProfile = true;
+	}
+	messages.upsert(message._id, message);
+};
+
+var addMessagesAfter = function(newMessages, message) {
+	addMessage(newMessages[0], message);
+	for (var i = 1; i < newMessages.length; i++) {
+		addMessage(newMessages[i], newMessages[i - 1]);
 	}
 };
+
+var appendMessages = function(newMessages) {
+	newMessages = sortMessages(newMessages);
+
+	if (lastMessage && newMessages[0].timestamp > lastMessage.timestamp) {
+		newMessages[0].hasAllowedMessages = true;
+		newMessages[0].previousMessage = lastMessage;
+		addMessagesAfter(newMessages, null);
+	} else {
+		addMessagesAfter(newMessages, lastMessage);
+	}
+	lastMessage = newMessages[newMessages.length - 1];
+
+	if (!firstMessage) {
+		firstMessage = newMessages[0];
+	}
+};
+
+var prependMessages = function(newMessages) {
+	newMessages = sortMessages(newMessages);
+
+	firstMessage = newMessages[0];
+
+	addMessagesAfter(newMessages, null);
+};
+
+var addMessagesBefore = function(newMessages, message) {
+	newMessages = sortMessages(newMessages);
+
+	if (newMessages[0].timestamp > message.previousMessage.timestamp) {
+		newMessages.shift();
+		newMessages[0].hasAllowedMessages = true;
+		newMessages[0].previousMessage = message.previousMessage;
+		addMessagesAfter(newMessages, null);
+	} else {
+		while (newMessages[0].timestamp <= message.previousMessage.timestamp) {
+			newMessages.shift();
+		}
+		addMessagesAfter(newMessages, message.previousMessage);
+	}
+};
+
 
 Game.Chat.Messages.Collection.find({}).observeChanges({
 	added: function(id, message) {
 		message._id = id;
-		addMessage(message);
-
-		// limit max count
-		while (messages.length > Game.Chat.Messages.LIMIT) {
-			messages.shift();
+		if (chatSubscription.ready()) {	
+			addMessage(message, lastMessage);
+			lastMessage = message;
+			Meteor.setTimeout(scrollChatToBottom);
 		}
 
-		// scroll to bottom
-		Meteor.setTimeout(scrollChatToBottom);
+		// limit max count
+		if (messages.find().count() > Game.Chat.Messages.LIMIT) {
+			messages.remove({$gte: {timestamp: firstMessage.timestamp - 60 * 10}});
+			firstMessage = messages.findOne({}, {sort: {timestamp: 1}});
+		}
 	}
 });
 
@@ -63,27 +118,9 @@ var addMotd = function(message) {
 	message.isMotd = true;
 	message.timestamp = Session.get('serverTime');
 
-	var hasSame = false;
-	var n = messages.length;
-
-	while (n-- > 0) {
-		if (messages[n].isMotd) {
-			if (messages[n].message == message.message) {
-				// found same motd, no need to push current
-				hasSame = true;
-			} else {
-				// found different motd, remove it
-				messages[n].splice(n, 1);
-			}
-			break;
-		}
-	}
-
-	if (!hasSame) {
-		// no such motd, add current
-		messages.push(message);
-		Meteor.setTimeout(scrollChatToBottom);
-	}
+	messages.upsert({isMotd: true}, message);
+	lastMessage = message;
+	Meteor.setTimeout(scrollChatToBottom);
 };
 
 Game.Chat.Room.Collection.find({}).observeChanges({
@@ -101,7 +138,11 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 });
 
 Game.Chat.showPage = function() {
-	this.render('chat', { to: 'content' });
+	this.render('empty', { to: 'content' });
+	$('.permanent_chat').show();
+	if (!currentRoomName) {
+		this.render('chat', { to: 'permanent_chat' });	
+	}
 };
 
 Template.chat.onRendered(function() {
@@ -140,53 +181,32 @@ Template.chat.onRendered(function() {
 		
 		// get route room name
 		var roomName = Router.current().getParams().room;
-
+		isLoading.set(true);
 		if (roomName) {
 			if (roomName != currentRoomName // new room
 			 || messages.length === 0       // or don't have any messages
 			 || noConnectionPeriod >= 1800  // or lost connection more than 30 min
 			) {
 				// reset current room
-				messages.clear();
+				messages.remove({});
 				hasMore.set(true);
-				isLoading.set(false);
 				isSending.set(false);
-				gotLimit.set(false);
-				
-				// subscribe
-				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
-				chatSubscription = Meteor.subscribe('chat', roomName);
+				gotLimit.set(false);	
+				firstMessage = null;
+				lastMessage = null;
+
 
 				// set as last active chat room
 				Session.set('chatRoom', roomName);
 				currentRoomName = roomName;
-				Meteor.setTimeout(scrollChatToBottom.bind(template, true), 500);
-			} else {
-				// load after last message timestamp
-				isLoading.set(true);
-
-				var options = {
-					roomName: roomName,
-					timestamp: messages[ messages.length - 1 ].timestamp
-				};
-
-				Meteor.call('chat.loadMore', options, function(err, data) {
-					isLoading.set(false);
-					// insert loaded messages
-					if (!err && data) {
-						for (var i = 0; i < data.length; i++) {
-							addMessage(data[i]);
-						}
-						while (messages.length > Game.Chat.Messages.LIMIT) {
-							messages.shift();
-						}
-					}
-					// subscribe after loading
-					chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
-					chatSubscription = Meteor.subscribe('chat', roomName);
-					Meteor.setTimeout(scrollChatToBottom.bind(template, true), 500);
-				});
 			}
+			// subscribe
+			chatSubscription = Meteor.subscribe('chat', roomName, function() {
+				isLoading.set(false);
+				appendMessages(Game.Chat.Messages.Collection.find({}).fetch());
+				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
+				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
+			});
 		}
 	});
 });
@@ -402,6 +422,30 @@ var removeModerator = function(roomName, username) {
 	});
 };
 
+var changeMinRating = function(roomName, minRating) {
+	minRating = parseInt(minRating, 10);
+	
+	if (!roomName || roomName.length <= 0) {
+		return Notifications.error('Укажите имя комнаты');
+	}
+
+	if (!Match.test(minRating, Match.Integer)) {
+		return Notifications.error('Укажите минимальный рейтинг');
+	}
+
+	if (minRating < 0) {
+		return Notifications.error('Рейтинг не может быть меньше 0');
+	}
+
+	Meteor.call('chat.changeMinRating', roomName, minRating, function(err, data) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			Notifications.success('Минимальный рейтинг изменен');
+		}
+	});
+};
+
 var changeDiceModifierForRoom = function(roomName, modifier) {
 	if (!roomName || roomName.length <= 0) {
 		Notifications.error('Укажите имя комнаты');
@@ -560,6 +604,22 @@ var getUserRole = function(userId, username, role, rating) {
 	};
 };
 
+Template.chatMessageProfile.helpers({
+	getUserRoleByMessage: function(message) {
+		return getUserRole(message.user_id, message.username, message.role, message.rating);
+	}
+});
+
+Template.chatMessage.helpers({
+	highlightUser: function(text) {
+		if (text.indexOf('/me') === 0) {
+			text = text.substr(3);
+		}
+
+		return text.replace('@' + Meteor.user().username, '<span class="me">@' + Meteor.user().username + '</span>');
+	}
+});
+
 Template.chat.helpers({
 	freeChatPrice: function() { return Game.Chat.Messages.FREE_CHAT_PRICE; },
 	isChatFree: function() { return Meteor.user().isChatFree; },
@@ -567,37 +627,8 @@ Template.chat.helpers({
 	isLoading: function() { return isLoading.get(); },
 	gotLimit: function() { return gotLimit.get(); },
 	hasMore: function() { return hasMore.get(); },
-	messages: function() { 
-		var msgs = messages.list();
-		if (!msgs.length) return [];
-
-		var groupedMessages = [];
-		var group = 0;
-		var part = {};
-		for (var i = 0; i < msgs.length; i++) {
-			if (i > 0 &&
-				(msgs[i].isMotd || msgs[i - 1].isMotd ||
-				msgs[i - 1].username != msgs[i].username ||
-				msgs[i - 1].role != msgs[i].role ||
-				msgs[i - 1].iconPath != msgs[i].iconPath)) {
-				group++;
-			}
-
-			part = {
-				_id: msgs[i]._id,
-				message: msgs[i].message,
-				data: msgs[i].data,
-				timestamp: msgs[i].timestamp,
-			};
-
-			if (!groupedMessages[group]) {
-				groupedMessages[group] = msgs[i];
-				groupedMessages[group].parts = [];
-			}
-			groupedMessages[group].parts.push(part);
-		}
-
-		return groupedMessages;
+	messages: function() {
+		return messages.find({},{sort:{timestamp:1}});
 	},
 
 	getUserRole: function() {
@@ -646,31 +677,27 @@ Template.chat.helpers({
 			}
 
 		} else {
-
 			// public room -> find from last messages
-			messages.depend();
 
 			var names = [ Meteor.user().username ];
 			users.push({
 				name: Meteor.user().username,
 				role: getUserRole(Meteor.userId(), Meteor.user().username, Meteor.user().role).id
 			});
+			var time = 0;
+			Tracker.nonreactive(function() {
+				time = Session.get('serverTime') - 1800;
+			});
 
-			var time = Session.get('serverTime') - 1800;
-			var n = messages.length;
-			while (n-- > 0) {
-				if (messages[n].timestamp < time) {
-					break;
-				}
-				if (names.indexOf(messages[n].username) == -1) {
-					names.push(messages[n].username);
+			messages.find({timestamp:{$gt:time}}).forEach(function(message){
+				if (names.indexOf(message.username) == -1) {
+					names.push(message.username);
 					users.push({
-						name: messages[n].username,
-						role: getUserRole(messages[n].user_id, messages[n].username, messages[n].role).id
+						name: message.username,
+						role: getUserRole(message.user_id, message.username, message.role).id
 					});
 				}
-			}
-
+			});
 		}
 
 		if (users.length > 0) {
@@ -769,11 +796,11 @@ Template.chat.events({
 		if (document.getSelection && document.getSelection().toString()) {
 			return;
 		}
-		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).parent().find('.profile').data('username') + ', ';
+		t.find('#message textarea[name="text"]').value += '@' + $(e.currentTarget).data('username') + ', ';
 		t.find('#message textarea[name="text"]').focus();
 	},
 
-	'click .messages li .profile, click .participants .online': function(e, t) {
+	'click .messages li.profile, click .participants .online': function(e, t) {
 		e.stopPropagation();
 
 		var username = e.currentTarget.dataset.username;
@@ -795,21 +822,23 @@ Template.chat.events({
 	},
 
 	// load previous messages
-	'click .chat .more': function(e, t) {
+	'click .chat .more, click .chat .missed': function(e, t) {
 		if (isLoading.get()) {
 			return;
 		}
 
 		var roomName = Router.current().params.room;
-		if (!roomName || !messages || messages.length === 0) {
+		if (!roomName || !messages || !firstMessage) {
 			return;
 		}
 
 		isLoading.set(true);
 
+		var afterMessageId = e.currentTarget.dataset.messageid;
+
 		var options = {
 			roomName: roomName,
-			timestamp: messages[0].timestamp,
+			timestamp: parseInt(e.currentTarget.dataset.timestamp, 10) || firstMessage.timestamp,
 			isPrevious: true
 		};
 		
@@ -822,19 +851,19 @@ Template.chat.events({
 			}
 
 			if (data) {
-				for (var i = 0; i < data.length; i++) {
-					if (messages.length >= Game.Chat.Messages.LIMIT) {
-						break;
-					}
-					addMessage(data[i]);
+				if (afterMessageId) {
+					var afterMessage = messages.findOne(afterMessageId);
+					addMessagesBefore(data, afterMessage);
+				} else {
+					prependMessages(data);
 				}
 
-				if (messages.length >= Game.Chat.Messages.LIMIT) {
+				if (messages.find().count() >= Game.Chat.Messages.LIMIT) {
 					gotLimit.set(true);
 				}
 
-				if (messages.length >= Game.Chat.Messages.LIMIT
-				 || data.length < Game.Chat.Messages.LOAD_COUNT
+				if (messages.find().count() >= Game.Chat.Messages.LIMIT
+				 || (data.length < Game.Chat.Messages.LOAD_COUNT && !afterMessageId)
 				) {
 					hasMore.set(false);
 				}
@@ -1317,6 +1346,12 @@ Template.chatControl.helpers({
 	canControlBlock: function() { return canControlBlock(); },
 	credits: function() { return createPriceCredits.get(); },
 
+	room: function() {
+		return Game.Chat.Room.Collection.findOne({
+			name: Router.current().params.room
+		});
+	},
+
 	isGlobalControl: function() {
 		if (['admin', 'helper'].indexOf(Meteor.user().role) != -1) {
 			return true;
@@ -1385,6 +1420,10 @@ Template.chatControl.events({
 
 	'click .removeModerator:not(.disabled)': function(e, t) {
 		removeModerator(Router.current().params.room, t.find('input[name="moderatorname"]').value);
+	},
+
+	'click .changeMinRating:not(.disabled)': function(e, t) {
+		changeMinRating(Router.current().params.room, t.find('input[name="minRating"]').value);
 	}
 });
 

@@ -158,6 +158,14 @@ Meteor.methods({
 			}
 		}
 
+		if (price
+		 && (price.crystals || price.credits)
+		 && room.minRating
+		 && user.rating < room.minRating
+		) {
+			throw new Meteor.Error('Ваш рейтинг слишком мал, подрастите.');
+		}
+
 		// send message
 		var set = {
 			room_id: room._id,
@@ -963,6 +971,78 @@ Meteor.methods({
 		Game.Chat.Messages.Collection.insert(message);
 	},
 
+	'chat.changeMinRating': function(roomName, minRating) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		checkHasGlobalBan(user._id);
+
+		console.log('chat.changeMinRating: ', new Date(), user.username);
+
+		check(roomName, String);
+		check(minRating, Match.Integer);
+
+		if (minRating < 0) {
+			throw new Meteor.Error('Рейтинг не может быть меньше 0');
+		}
+
+		var room = Game.Chat.Room.Collection.findOne({
+			name: roomName,
+			deleted: { $ne: true }
+		});
+
+		if (!room) {
+			throw new Meteor.Error('Комната с именем ' + roomName + ' не существует');
+		}
+
+		checkHasRoomBan(user._id, room._id, room.name);
+
+		if (user.role != 'admin'
+		 && room.owner != user._id
+		 && (!room.moderators || room.moderators.indexOf(user.username) == -1)
+		) {
+			throw new Meteor.Error('Вы не можете изменять минимальный рейтинг в этой комнате');
+		}
+
+		Game.Chat.Room.Collection.update({
+			_id: room._id
+		}, {
+			$set: {
+				minRating: minRating
+			}
+		});
+
+		var message = {
+			room_id: room._id,
+			user_id: user._id,
+			username: user.username,
+			alliance: user.alliance,
+			rating: user.rating,
+			data: {
+				type: 'changeMinRating',
+				minRating: minRating
+			},
+			timestamp: Game.getCurrentTime()
+		};
+
+		if (user.role) {
+			message.role = user.role;
+		}
+
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			message.iconPath = user.settings.chat.icon;
+		}
+
+		Game.Chat.Messages.Collection.insert(message);
+	},
+
 	'chat.addModeratorToRoom': function(roomName, username) {
 		var user = Meteor.user();
 
@@ -1322,7 +1402,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нет такой комнаты');
 		}
 
-		var timeCondition = { $gt: Game.getCurrentTime() - (Game.getCurrentTime() % 86400) - (86400 * 6) };
+		var timeCondition = {};
 
 		if (options.isPrevious) {
 			timeCondition.$lte = options.timestamp;
@@ -1614,8 +1694,7 @@ Meteor.publish('chat', function (roomName) {
 
 		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
 			return Game.Chat.Messages.Collection.find({
-				room_id: room._id,
-				timestamp: { $gt: Game.getCurrentTime() - (Game.getCurrentTime() % 86400) - (86400 * 6) }
+				room_id: room._id
 			}, {
 				fields: {
 					_id: 1,

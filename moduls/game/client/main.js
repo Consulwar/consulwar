@@ -98,6 +98,14 @@ Meteor.subscribe('game');
 Meteor.subscribe('queue');
 
 
+Game.Queue.Collection.find({}).observe({
+	removed: function(oldDocument) {
+		Game.showNotificationFromTask(oldDocument);
+		console.log(oldDocument);
+	}
+});
+
+
 test = Router.route('/test', function() {
 	console.log('yes');
 });
@@ -159,7 +167,6 @@ Game.syncServerTime = function() {
 			var queue = Game.Queue.getAll();
 			for (var i = 0; i < queue.length; i++) {
 				if (queue[i].finishTime <= serverTime) {
-					Game.showNotificationFromTask(queue[i]);
 					Game.actualizeGameInfo();
 					break;
 				}
@@ -617,15 +624,23 @@ Game.showNotificationFromSpaceEvent = function(event) {
 };
 
 Game.showNotificationFromTask = function(task) {
-	if (task.type == 'spaceEvent') {
-		var spaceEvent = Game.SpaceEvents.Collection.findOne(task.eventId)
+	console.log(task);
+	if (task.type == 'building') {
+		Game.showDesktopNotification(
+			'Здание «' + Game.Building.items[task.group][task.engName].name + '» построено!'
+		);
+	} else if (task.type == 'research') {
+		Game.showDesktopNotification(
+			'Исследование «' + Game.Research.items[task.group][task.engName].name + '» завершено!'
+		);
+	} else if (task.type == 'spaceEvent') {
+		var spaceEvent = Game.SpaceEvents.Collection.findOne(task.eventId);
 		spaceEvent.status = Game.SpaceEvents.status.FINISHED;
 		Game.showNotificationFromSpaceEvent(spaceEvent);
 	} else {
 		if (true) {
-			Game.showDesktopNotification('Здание построено!');
+			
 		} else if (false) {
-			Game.showDesktopNotification('Исследование завершено!');
 		} else if (false) {
 			Game.showDesktopNotification('Новое сообщение!');
 		} else if (false) {
@@ -635,7 +650,7 @@ Game.showNotificationFromTask = function(task) {
 		}
 		//console.log(222, Game.SpaceEvents.Collection.find({}).fetch());
 		//if (taskEndMessages.hasOwnProperty(task.type)) {
-			Game.showDesktopNotification(task.type + " " + task.group + " " + task.engName);
+			//Game.showDesktopNotification(task.type + " " + task.group + " " + task.engName);
 		//}
 	}
 };
@@ -654,7 +669,7 @@ Game.showDesktopNotification = function(text, options) {
 		options = {};
 	}
 
-	var who = options.who || 'Тамили';
+	var who = options.who || 'Советник Тамили';
 	options.icon = options.icon || '/img/game/tamily.jpg';
 	options.body = text;
 

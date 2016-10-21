@@ -4,11 +4,25 @@ initMailLib();
 
 // Subscription returns one record
 // Used at Game.Mail.hasUnread() method
-Meteor.subscribe('privateMailUnread');
+var subscription = Meteor.subscribe('privateMailUnread');
 
-var observer = null;
 var isLoading = new ReactiveVar(false);
 var mailPrivate = new ReactiveVar(null);
+var template = null;
+
+// refresh on new unread message
+Game.Mail.Collection.find({}).observeChanges({
+	added: function(id, fields) {
+		if (subscription.ready()) {
+			Game.showDesktopNotification('Консул, вам письмо!', {
+				path: Router.path('mail', {group: 'communication', page: 1})
+			});
+		}
+		if (template && template.data.page == 1) {
+			reloadPageData(template);
+		}
+	}
+});
 
 Game.Mail.showPage = function() {
 	var hash = this.params.hash;
@@ -40,16 +54,7 @@ Game.Mail.showPage = function() {
 
 Template.mail.onRendered(function() {
 	// save template instance
-	var template = this;
-
-	// refresh on new unread message
-	observer = Game.Mail.Collection.find({}).observeChanges({
-		added: function(id, fields) {
-			if (template.data.page == 1) {
-				reloadPageData(template);
-			}
-		}
-	});
+	template = this;
 
 	// run this function each time hash changes
 	this.autorun(function() {
@@ -76,10 +81,7 @@ Template.mail.onRendered(function() {
 });
 
 Template.mail.onDestroyed(function() {
-	if (observer) {
-		observer.stop();
-		observer = null;
-	}
+	template = null;
 });
 
 var reloadPageData = function(t) {

@@ -19,6 +19,93 @@ var cosmosPopupView = null;
 var selectedPlanets = new ReactiveArray();
 var isPopupLocked = false;
 
+// Paths
+var createPath = function(id, event) {
+	if (!mapView || pathViews[id]) {
+		return;
+	}
+
+	// draw path
+	pathViews[id] = new game.PathView(
+		mapView,
+		event.info.startPosition,
+		event.info.targetPosition,
+		0,
+		0,
+		(event.info.isHumans ? '#56BAF2' : '#DC6257')
+	);
+};
+
+var removePath = function(id) {
+	if (mapView && pathViews[id]) {
+		pathViews[id].remove();
+		pathViews[id] = null;
+	}
+};
+
+observerSpaceEvents = Game.SpaceEvents.getAll().observe({
+	added: function(event) {
+		if (spaceEventsSubscription.ready()) {
+			showNotificationFromSpaceEvent(event);
+		}
+		if (mapView && event.type == Game.SpaceEvents.type.SHIP) {
+			createPath(event._id, event);
+		}
+	},
+
+	removed: function(event) {
+		removePath(event._id);
+		event.status = Game.SpaceEvents.status.FINISHED;
+		showNotificationFromSpaceEvent(event);
+	}
+});
+
+var showNotificationFromSpaceEvent = function(event) {
+	if (event
+	 && event.info
+	 && event.info.isHumans
+	 && event.status === Game.SpaceEvents.status.FINISHED
+	) {
+		Game.showDesktopNotification('Флот долетел, мой консул!', {
+			onclick: function() {
+				//открыть страницу космоса
+				if (event.info.targetPlanet) {
+					Game.Cosmos.scrollMapToPlanet(event.info.targetPlanet);
+				} else if (event.info.targetPosition) {
+					Game.Cosmos.scrollMapToCords(event.info.targetPosition);
+				}
+			}
+		});
+		if (event.info.targetType == Game.SpaceEvents.target.PLANET
+		 && event.type == Game.SpaceEvents.type.SHIP
+		) {
+			
+		}
+	}
+	if (event
+	 && event.info
+	 && event.info.mission
+	) {
+		if (event.status === Game.SpaceEvents.status.STARTED) {
+			var options = {
+				path: Router.path('cosmos', {group: 'cosmos'}, {hash: event._id})
+			};
+			switch (event.info.mission.type) {
+				case 'tradefleet':
+					Game.showDesktopNotification('Консул, смотрите, караван!', options);
+					break;
+
+				case 'battlefleet':
+					Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
+					break;
+			}
+		} else if (event.status === Game.SpaceEvents.status.FINISHED) {
+			//alert(1);
+		}
+		
+	}
+};
+
 Game.Cosmos.showPage = function() {
 	// clear content
 	this.render('empty', { to: 'content' });
@@ -1302,42 +1389,9 @@ Template.cosmos.onRendered(function() {
 		alignMapToBasePlanet();
 	}
 
-	// Paths
-	var createPath = function(id, event) {
-		if (!mapView || pathViews[id]) {
-			return;
-		}
-
-		// draw path
-		pathViews[id] = new game.PathView(
-			mapView,
-			event.info.startPosition,
-			event.info.targetPosition,
-			0,
-			0,
-			(event.info.isHumans ? '#56BAF2' : '#DC6257')
-		);
-	};
-
-	var removePath = function(id) {
-		if (mapView && pathViews[id]) {
-			pathViews[id].remove();
-			pathViews[id] = null;
-		}
-	};
-
-	observerSpaceEvents = Game.SpaceEvents.getAll().observeChanges({
-		added: function(id, event) {
-			if (spaceEventsSubscription.ready()) {
-				Game.showNotificationFromSpaceEvent(event);
-			}
-			if (event.type == Game.SpaceEvents.type.SHIP) {
-				createPath(id, event);
-			}
-		},
-
-		removed: function(id) {
-			removePath(id);
+	Game.SpaceEvents.getAll().forEach(function(event) {
+		if (event.type == Game.SpaceEvents.type.SHIP) {
+			createPath(event._id, event);
 		}
 	});
 

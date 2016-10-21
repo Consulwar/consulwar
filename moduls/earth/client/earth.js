@@ -3,7 +3,7 @@ initEarthClient = function() {
 initEarthLib();
 
 Meteor.subscribe('zones');
-Meteor.subscribe('turns');
+var turnsSubscription = Meteor.subscribe('turns');
 
 Game.Earth.showMap = function() {
 	this.render('earth', {
@@ -11,6 +11,16 @@ Game.Earth.showMap = function() {
 		data: {}
 	});
 };
+
+Game.EarthTurns.Collection.find({}).observeChanges({
+	added: function() {
+		if (turnsSubscription.ready()) {
+			Game.showDesktopNotification('Не пропустите новое голосование на земле, Консул!', {
+				path: Router.path('earth', {group: 'earth'})
+			});
+		}
+	}
+});
 
 // ----------------------------------------------------------------------------
 // Earth battle history

@@ -99,12 +99,35 @@ Meteor.subscribe('game');
 Meteor.subscribe('queue');
 
 
-Game.Queue.Collection.find({}).observe({
-	removed: function(oldDocument) {
-		Game.showNotificationFromTask(oldDocument);
-		console.log(oldDocument);
+Game.Queue.Collection.find({}).observe({ 
+	removed: function(task) {
+		showNotificationFromTask(task);
 	}
 });
+
+
+var showNotificationFromTask = function(task) {
+	var options = {};
+	if (['building', 'research', 'unit'].indexOf(task.type) != -1) {
+		options.path = Router.routes[task.type].path({group: task.group, item: task.engName});
+	}
+	if (task.type == 'building') {
+		Game.showDesktopNotification(
+			'Здание «' + Game.Building.items[task.group][task.engName].name + '» построено!', 
+			options
+		);
+	} else if (task.type == 'research') {
+		Game.showDesktopNotification(
+			'Исследование «' + Game.Research.items[task.group][task.engName].name + '» завершено!', 
+			options
+		);
+	} else if (task.type == 'unit') {
+		Game.showDesktopNotification(
+			'Строительство юнита «' + Game.Unit.items.army[task.group][task.engName].name + '» завершено!', 
+			options
+		);
+	}
+};
 
 
 test = Router.route('/test', function() {
@@ -520,39 +543,6 @@ Template.acceptWindow.events({
 });
 
 // ----------------------------------------------------------------------------
-// Alert window
-// ----------------------------------------------------------------------------
-
-var alertWindowView = null;
-
-Game.showAlertWindow = function(message, onAccept) {
-	if (!alertWindowView) {
-		alertWindowView = Blaze.renderWithData(
-			Template.alertWindow, {
-				message: message,
-				onAccept: onAccept
-			}, $('.over')[0]
-		);
-	}
-};
-
-var closeAlertWindow = function(callback) {
-	if (alertWindowView) {
-		Blaze.remove(alertWindowView);
-		alertWindowView = null;
-	}
-	if (_.isFunction(callback)) {
-		callback.call();
-	}
-};
-
-Template.alertWindow.events({
-	'click .close, click .accept': function(e, t) {
-		closeAlertWindow(t.data.onCancel);
-	}
-});
-
-// ----------------------------------------------------------------------------
 // Input window
 // ----------------------------------------------------------------------------
 
@@ -571,103 +561,6 @@ Game.showInputWindow = function(message, value, onAccept, onCancel) {
 	}
 };
 
-var taskEndMessages = {
-	research: 'Исследование завершено',
-	building: 'Здание построено, мой консул',
-	spaceEvent: 'Флот прилетел'
-};
-
-var SpaceEventMessages = {
-	tradefleet: 'Появился новый караван!',
-	spaceEvent: 'Флот прилетел'
-};
-
-Game.showNotificationFromSpaceEvent = function(event) {
-	if (event
-	 && event.info
-	 && event.info.isHumans
-	 && event.status === Game.SpaceEvents.status.FINISHED
-	) {
-		Game.showDesktopNotification('Флот долетел, мой консул!', {
-			onclick: function() {
-				//открыть страницу космоса
-				if (event.info.targetPlanet) {
-					Game.Cosmos.scrollMapToPlanet(event.info.targetPlanet);
-				} else if (event.info.targetPosition) {
-					Game.Cosmos.scrollMapToCords(event.info.targetPosition);
-				}
-			}
-		});
-		if (event.info.targetType == Game.SpaceEvents.target.PLANET
-		 && event.type == Game.SpaceEvents.type.SHIP
-		) {
-			
-		}
-	}
-	if (event
-	 && event.info
-	 && event.info.mission
-	) {
-		if (event.status === Game.SpaceEvents.status.STARTED) {
-			switch (event.info.mission.type) {
-				case 'tradefleet':
-					Game.showDesktopNotification('Консул, смотрите, караван!');
-					break;
-
-				case 'battlefleet':
-					Game.showDesktopNotification('Консул, вашу колонию атакуют!');
-					break;
-			}
-		} else if (event.status === Game.SpaceEvents.status.FINISHED) {
-			//Game.showDesktopNotification('return!');
-			return;
-			switch (event.info.mission.type) {
-				case 'tradefleet':
-					Game.showDesktopNotification('Консул, смотрите, караван!');
-					break;
-
-				case 'battlefleet':
-					Game.showDesktopNotification('Консул, вашу колонию атакуют!');
-					break;
-				default:
-					break;
-			}
-		}
-		
-	}
-};
-
-Game.showNotificationFromTask = function(task) {
-	console.log(task);
-	if (task.type == 'building') {
-		Game.showDesktopNotification(
-			'Здание «' + Game.Building.items[task.group][task.engName].name + '» построено!'
-		);
-	} else if (task.type == 'research') {
-		Game.showDesktopNotification(
-			'Исследование «' + Game.Research.items[task.group][task.engName].name + '» завершено!'
-		);
-	} else if (task.type == 'spaceEvent') {
-		var spaceEvent = Game.SpaceEvents.Collection.findOne(task.eventId);
-		spaceEvent.status = Game.SpaceEvents.status.FINISHED;
-		Game.showNotificationFromSpaceEvent(spaceEvent);
-	} else {
-		if (true) {
-			
-		} else if (false) {
-		} else if (false) {
-			Game.showDesktopNotification('Новое сообщение!');
-		} else if (false) {
-			Game.showDesktopNotification('Консул, вас упомянули в чате!');
-		} else if (false) {
-			Game.showDesktopNotification('');
-		}
-		//console.log(222, Game.SpaceEvents.Collection.find({}).fetch());
-		//if (taskEndMessages.hasOwnProperty(task.type)) {
-			//Game.showDesktopNotification(task.type + " " + task.group + " " + task.engName);
-		//}
-	}
-};
 
 Game.showDesktopNotification = function(text, options) {
 	if (Meteor.status().status != 'connected') {
@@ -692,9 +585,13 @@ Game.showDesktopNotification = function(text, options) {
 	 && user.settings.notifications.showDesktopNotifications === true
 	) {
 		var notification = new Notification(who , options);
-		if (options.onclick) {
-			notification.onclick = options.onclick;
-		}
+		notification.onclick = function() {
+			window.focus();
+			if (options.path) {
+				Router.go(options.path);
+			}
+		};
+	
 	}
 };
 

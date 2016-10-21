@@ -55,54 +55,27 @@ observerSpaceEvents = Game.SpaceEvents.getAll().observe({
 
 	removed: function(event) {
 		removePath(event._id);
-		event.status = Game.SpaceEvents.status.FINISHED;
-		showNotificationFromSpaceEvent(event);
 	}
 });
 
 var showNotificationFromSpaceEvent = function(event) {
 	if (event
 	 && event.info
-	 && event.info.isHumans
-	 && event.status === Game.SpaceEvents.status.FINISHED
-	) {
-		Game.showDesktopNotification('Флот долетел, мой консул!', {
-			onclick: function() {
-				//открыть страницу космоса
-				if (event.info.targetPlanet) {
-					Game.Cosmos.scrollMapToPlanet(event.info.targetPlanet);
-				} else if (event.info.targetPosition) {
-					Game.Cosmos.scrollMapToCords(event.info.targetPosition);
-				}
-			}
-		});
-		if (event.info.targetType == Game.SpaceEvents.target.PLANET
-		 && event.type == Game.SpaceEvents.type.SHIP
-		) {
-			
-		}
-	}
-	if (event
-	 && event.info
 	 && event.info.mission
+	 && event.status === Game.SpaceEvents.status.STARTED
 	) {
-		if (event.status === Game.SpaceEvents.status.STARTED) {
-			var options = {
-				path: Router.path('cosmos', {group: 'cosmos'}, {hash: event._id})
-			};
-			switch (event.info.mission.type) {
-				case 'tradefleet':
-					Game.showDesktopNotification('Консул, смотрите, караван!', options);
-					break;
+		var options = {
+			path: Router.path('cosmos', {group: 'cosmos'}, {hash: event._id})
+		};
+		switch (event.info.mission.type) {
+			case 'tradefleet':
+				Game.showDesktopNotification('Консул, смотрите, караван!', options);
+				break;
 
-				case 'battlefleet':
-					Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
-					break;
-			}
-		} else if (event.status === Game.SpaceEvents.status.FINISHED) {
-			//alert(1);
+			case 'battlefleet':
+				Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
+				break;
 		}
-		
 	}
 };
 

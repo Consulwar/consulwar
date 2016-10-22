@@ -19,42 +19,15 @@ var cosmosPopupView = null;
 var selectedPlanets = new ReactiveArray();
 var isPopupLocked = false;
 
-// Paths
-var createPath = function(id, event) {
-	if (!mapView || pathViews[id]) {
-		return;
-	}
 
-	// draw path
-	pathViews[id] = new game.PathView(
-		mapView,
-		event.info.startPosition,
-		event.info.targetPosition,
-		0,
-		0,
-		(event.info.isHumans ? '#56BAF2' : '#DC6257')
-	);
-};
-
-var removePath = function(id) {
-	if (mapView && pathViews[id]) {
-		pathViews[id].remove();
-		pathViews[id] = null;
-	}
-};
-
-observerSpaceEvents = Game.SpaceEvents.getAll().observe({
+Game.SpaceEvents.getAll().observe({
 	added: function(event) {
 		if (spaceEventsSubscription.ready()) {
 			showNotificationFromSpaceEvent(event);
 		}
-		if (mapView && event.type == Game.SpaceEvents.type.SHIP) {
-			createPath(event._id, event);
-		}
 	},
 
 	removed: function(event) {
-		removePath(event._id);
 		event.status = Game.SpaceEvents.status.FINISHED;
 		showNotificationFromSpaceEvent(event);
 	}
@@ -319,12 +292,6 @@ var scrollMapToPlanet = function(id) {
 	if (planet) {
 		mapView.setView([planet.x, planet.y], 7);
 	}
-};
-
-Game.Cosmos.scrollMapToPlanet = scrollMapToPlanet;
-
-Game.Cosmos.scrollMapToCords = function(cords) {
-	mapView.setView([cords.x, cords.y], 8);
 };
 
 var scrollMapToFleet = function(id) {
@@ -1373,9 +1340,39 @@ Template.cosmos.onRendered(function() {
 		alignMapToBasePlanet();
 	}
 
-	Game.SpaceEvents.getAll().forEach(function(event) {
-		if (event.type == Game.SpaceEvents.type.SHIP) {
-			createPath(event._id, event);
+	// Paths
+	var createPath = function(id, event) {
+		if (!mapView || pathViews[id]) {
+			return;
+		}
+
+		// draw path
+		pathViews[id] = new game.PathView(
+			mapView,
+			event.info.startPosition,
+			event.info.targetPosition,
+			0,
+			0,
+			(event.info.isHumans ? '#56BAF2' : '#DC6257')
+		);
+	};
+
+	var removePath = function(id) {
+		if (mapView && pathViews[id]) {
+			pathViews[id].remove();
+			pathViews[id] = null;
+		}
+	};
+
+	observerSpaceEvents = Game.SpaceEvents.getAll().observeChanges({
+		added: function(event) {
+			if (event.type == Game.SpaceEvents.type.SHIP) {
+				createPath(event._id, event);
+			}
+		},
+
+		removed: function(id) {
+			removePath(id);
 		}
 	});
 

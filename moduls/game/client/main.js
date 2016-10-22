@@ -590,6 +590,7 @@ Game.showDesktopNotification = function(text, options) {
 			if (options.path) {
 				Router.go(options.path);
 			}
+			this.close();
 		};
 	
 	}

@@ -15,6 +15,10 @@ initEarthLib();
 initEarthConfigServer();
 initEarthServerImport();
 
+Game.EarthTurns.Collection._ensureIndex({
+	timeStart: -1
+});
+
 // Auto import on server start
 // If db.zones is empty
 if (Game.EarthZones.Collection.find().count() === 0) {
@@ -742,7 +746,10 @@ Meteor.publish('zones', function () {
 });
 
 Meteor.publish('turns', function() {
-	return Game.EarthTurns.Collection.find();
+	return Game.EarthTurns.Collection.find({}, {
+		sort: { timeStart: -1 },
+		limit: 1
+	});
 });
 
 initEarthServerMethods();

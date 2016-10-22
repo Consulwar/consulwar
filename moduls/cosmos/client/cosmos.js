@@ -1365,9 +1365,9 @@ Template.cosmos.onRendered(function() {
 	};
 
 	observerSpaceEvents = Game.SpaceEvents.getAll().observeChanges({
-		added: function(event) {
+		added: function(id, event) {
 			if (event.type == Game.SpaceEvents.type.SHIP) {
-				createPath(event._id, event);
+				createPath(id, event);
 			}
 		},
 

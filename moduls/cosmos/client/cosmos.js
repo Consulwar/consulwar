@@ -62,19 +62,20 @@ var showNotificationFromSpaceEvent = function(event) {
 	if (event
 	 && event.info
 	 && event.info.mission
+	 && event.info.targetId
 	 && event.status === Game.SpaceEvents.status.STARTED
 	) {
 		var options = {
 			path: Router.path('cosmos', {group: 'cosmos'}, {hash: event._id})
 		};
-		switch (event.info.mission.type) {
-			case 'tradefleet':
-				Game.showDesktopNotification('Консул, смотрите, караван!', options);
-				break;
 
-			case 'battlefleet':
+		if (event.info.mission.type == 'tradefleet') {
+			Game.showDesktopNotification('Консул, смотрите, караван!', options);
+		} else {
+			var targetPlanet = Game.Planets.Collection.findOne(event.info.targetId);
+			if (!targetPlanet.mission) {
 				Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
-				break;
+			}
 		}
 	}
 };

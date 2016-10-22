@@ -117,7 +117,9 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
 
 var showDesctopNotofocationFromMessage = function(message) {
 	if (message.message && message.message.indexOf('@' + Meteor.user().username) != -1) {
-		Game.showDesktopNotification('Консул, ' + message.username + ' что то хочет от вас в чате!', {
+		Game.showDesktopNotification(message.message, {
+			who: message.username,
+			icon: '/img/game/chat/icons/' + message.iconPath + '.png',
 			path: Router.path('chat', {group: 'communication', room: currentRoomName})
 		});
 	}

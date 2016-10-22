@@ -55,28 +55,38 @@ observerSpaceEvents = Game.SpaceEvents.getAll().observe({
 
 	removed: function(event) {
 		removePath(event._id);
+		event.status = Game.SpaceEvents.status.FINISHED;
+		showNotificationFromSpaceEvent(event);
 	}
 });
 
 var showNotificationFromSpaceEvent = function(event) {
-	if (event
-	 && event.info
-	 && event.info.mission
-	 && event.info.targetId
-	 && event.status === Game.SpaceEvents.status.STARTED
-	) {
-		var options = {
-			path: Router.path('cosmos', {group: 'cosmos'}, {hash: event._id})
-		};
+	if (!event || !event.info) {
+		return;
+	}
+	var options = {};
+	var targetPlanet = Game.Planets.Collection.findOne(event.info.targetId);
+
+	if (event.info.mission && targetPlanet && event.status === Game.SpaceEvents.status.STARTED) {
+		options.path = Router.path('cosmos', {group: 'cosmos'}, {hash: event._id});
 
 		if (event.info.mission.type == 'tradefleet') {
 			Game.showDesktopNotification('Консул, смотрите, караван!', options);
 		} else {
-			var targetPlanet = Game.Planets.Collection.findOne(event.info.targetId);
 			if (!targetPlanet.mission) {
 				Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
 			}
 		}
+	}
+	
+	if (!event.info.mission && event.status === Game.SpaceEvents.status.FINISHED) {
+		options.path = Router.path(
+			'cosmos', 
+			{group: 'cosmos'}, 
+			{hash: (targetPlanet._id || event._id)}
+		);
+
+		Game.showDesktopNotification('Консул, ваш флот долетел!', options);
 	}
 };
 

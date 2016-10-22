@@ -4,11 +4,21 @@ initMailLib();
 
 // Subscription returns one record
 // Used at Game.Mail.hasUnread() method
-Meteor.subscribe('privateMailUnread');
+var subscription = Meteor.subscribe('privateMailUnread');
 
 var observer = null;
 var isLoading = new ReactiveVar(false);
 var mailPrivate = new ReactiveVar(null);
+
+Game.Mail.Collection.find({}).observeChanges({
+	added: function(id, fields) {
+		if (subscription.ready()) {
+			Game.showDesktopNotification('Консул, вам письмо!', {
+				path: Router.path('mail', {group: 'communication', page: 1})
+			});
+		}
+	}
+});
 
 Game.Mail.showPage = function() {
 	var hash = this.params.hash;

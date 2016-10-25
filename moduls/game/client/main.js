@@ -577,7 +577,7 @@ Game.showDesktopNotification = function(text, options) {
 	}
 
 	var who = options.who || 'Советник Тамили';
-	options.icon = options.icon || '/img/game/tamily.jpg';
+	options.icon = options.icon || '/img/game/tamily-notification.jpg';
 	options.body = text;
 
 	if (user.settings

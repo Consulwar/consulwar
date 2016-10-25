@@ -99,6 +99,37 @@ Meteor.subscribe('game');
 Meteor.subscribe('queue');
 
 
+Game.Queue.Collection.find({}).observe({ 
+	removed: function(task) {
+		showNotificationFromTask(task);
+	}
+});
+
+
+var showNotificationFromTask = function(task) {
+	var options = {};
+	if (['building', 'research', 'unit'].indexOf(task.type) != -1) {
+		options.path = Router.routes[task.type].path({group: task.group, item: task.engName});
+	}
+	if (task.type == 'building') {
+		Game.showDesktopNotification(
+			'Здание «' + Game.Building.items[task.group][task.engName].name + '» построено!', 
+			options
+		);
+	} else if (task.type == 'research') {
+		Game.showDesktopNotification(
+			'Исследование «' + Game.Research.items[task.group][task.engName].name + '» завершено!', 
+			options
+		);
+	} else if (task.type == 'unit') {
+		Game.showDesktopNotification(
+			'Строительство юнита «' + Game.Unit.items.army[task.group][task.engName].name + '» завершено!', 
+			options
+		);
+	}
+};
+
+
 test = Router.route('/test', function() {
 	console.log('yes');
 });
@@ -527,6 +558,41 @@ Game.showInputWindow = function(message, value, onAccept, onCancel) {
 				onCancel: onCancel
 			}, $('.over')[0]
 		);
+	}
+};
+
+
+Game.showDesktopNotification = function(text, options) {
+	if (Meteor.status().status != 'connected') {
+		return;
+	}
+	var user = Meteor.user();
+
+	if (!user || !Notification || Notification.permission != 'granted') {
+		return;
+	}
+
+	if (!_.isObject(options)) {
+		options = {};
+	}
+
+	var who = options.who || 'Советник Тамили';
+	options.icon = options.icon || '/img/game/tamily-notification.jpg';
+	options.body = text;
+
+	if (user.settings
+	 && user.settings.notifications
+	 && user.settings.notifications.showDesktopNotifications === true
+	) {
+		var notification = new Notification(who , options);
+		notification.onclick = function() {
+			window.focus();
+			if (options.path) {
+				Router.go(options.path);
+			}
+			this.close();
+		};
+	
 	}
 };
 

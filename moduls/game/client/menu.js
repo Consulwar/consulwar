@@ -13,7 +13,7 @@ var firstItemUrl = function(items) {
 var menu = {
 	planet: {
 		name: 'Планета',
-		routeName: ['building', 'house', 'walletHistory'],
+		routeName: ['building'],
 		url: firstItemGroupURL(Game.Building.items.residential),
 		items: {
 			residential: {
@@ -21,60 +21,6 @@ var menu = {
 				additionalArea: 'tamily',
 				url: firstItemGroupURL(Game.Building.items.residential),
 				items: Game.Building.items.residential
-			},
-			house: {
-				name: 'Палата консула',
-				url: Router.routes.house.path({ group: 'house' }),
-				items: {
-					donate: {
-						name: 'Донат',
-						engName: 'donate',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.Cards.items.donate),
-						items: Game.Cards.items.donate
-					},
-					/* cards: {
-						name: 'Карточки',
-						engName: 'cards',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.Cards.items.general),
-						items: Game.Cards.items.general
-					}, */
-					room: {
-						name: 'Палата',
-						engName: 'room',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.House.items.room),
-						items: Game.House.items.room
-					},
-					tron: {
-						name: 'Трон',
-						engName: 'tron',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.House.items.tron),
-						items: Game.House.items.tron
-					},
-					avatar: {
-						name: 'Аватар',
-						engName: 'avatar',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.House.items.avatar),
-						items: Game.House.items.avatar
-					},
-					artefacts: {
-						name: 'Артефакты',
-						engName: 'artefacts',
-						meetRequirements: true,
-						isEnoughResources: true,
-						url: firstItemUrl(Game.Artefacts.items),
-						items: Game.Artefacts.items
-					}
-				}
 			},
 			military: {
 				name: 'Военный район',
@@ -102,7 +48,7 @@ var menu = {
 				items: Game.Research.items.fleetups
 			}
 		}
-	}, 
+	},
 	army: {
 		name: 'Войска',
 		routeName: ['unit'],
@@ -127,16 +73,72 @@ var menu = {
 				items: Game.Unit.items.army.ground
 			}
 		}
-	}, 
-	cosmos: {
+	},
+	galaxy: {
 		name: 'Космос',
 		routeName: ['cosmos', 'cosmosHistory'],
 		url: Router.routes.cosmos.path()
 	},
-	communication: {
+	earth: {
+		name: 'Общее',
+		routeName: ['mutual', 'earth', 'earthHistory'],
+		url: Router.routes.earth.path({ group: 'earth' }),
+		items: {
+			earth: {
+				name: 'Земля',
+				url: Router.routes.earth.path({ group: 'earth' })
+			},
+			research: {
+				name: 'Исследования',
+				additionalArea: 'calibrator',
+				url: firstItemGroupURL(Game.Mutual.items.research),
+				items: Game.Mutual.items.research
+			}
+		}
+	},
+	house: {
+		name: 'Палата консула',
+		url: Router.routes.house.path({ group: 'house' }),
+		routeName: ['house', 'walletHistory'],
+		items: {
+			donate: {
+				name: 'Донат',
+				engName: 'donate',
+				meetRequirements: true,
+				isEnoughResources: true,
+				url: firstItemUrl(Game.Cards.items.donate),
+				items: Game.Cards.items.donate
+			},
+			room: {
+				name: 'Палата',
+				engName: 'room',
+				meetRequirements: true,
+				isEnoughResources: true,
+				url: firstItemUrl(Game.House.items.room),
+				items: Game.House.items.room
+			},
+			tron: {
+				name: 'Трон',
+				engName: 'tron',
+				meetRequirements: true,
+				isEnoughResources: true,
+				url: firstItemUrl(Game.House.items.tron),
+				items: Game.House.items.tron
+			},
+			avatar: {
+				name: 'Аватар',
+				engName: 'avatar',
+				meetRequirements: true,
+				isEnoughResources: true,
+				url: firstItemUrl(Game.House.items.avatar),
+				items: Game.House.items.avatar
+			}
+		}
+	},
+	chat: {
 		name: 'Связь',
 		routeName: ['mail', 'chat'],
-		url: Router.routes.mail.path({ page: 1 }),
+		url: Router.routes.chat.path({ room: 'general' }),
 		additionalClass: function() {
 			if (Game.Quest.hasNewDaily() || Game.Mail.hasUnread()) {
 				return 'has_new_mail';
@@ -144,11 +146,7 @@ var menu = {
 				return '';
 			}
 		},
-		items: {
-			mail: {
-				name: 'Почта',
-				url: Router.routes.mail.path({ page: 1 })
-			}, 
+		items: { 
 			chat: {
 				name: 'Чат',
 				url: Router.routes.chat.path({ room: 'general' }),
@@ -158,6 +156,10 @@ var menu = {
 						room: activeRoom ? activeRoom : 'general'
 					});
 				}
+			},
+			mail: {
+				name: 'Почта',
+				url: Router.routes.mail.path({ page: 1 })
 			}
 		}
 	},
@@ -189,28 +191,7 @@ var menu = {
 			}
 		}
 	},
-	mutual: {
-		name: 'Общее',
-		routeName: ['mutual', 'earth', 'earthHistory', 'statistics'],
-		url: Router.routes.earth.path({ group: 'earth' }),
-		items: {
-			earth: {
-				name: 'Земля',
-				url: Router.routes.earth.path({ group: 'earth' })
-			},
-			research: {
-				name: 'Исследования',
-				additionalArea: 'calibrator',
-				url: firstItemGroupURL(Game.Mutual.items.research),
-				items: Game.Mutual.items.research
-			},
-			statistics: {
-				name: 'Статистика',
-				url: Router.routes.statistics.path({ group: 'general' })
-			}
-		}
-	},
-	reptiles: {
+	info: {
 		name: 'Рептилии',
 		routeName: ['reptileUnit', 'reptileHero'],
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
@@ -258,7 +239,7 @@ Template.top_menu.helpers({
 	}
 });
 
-Template.game_menu.helpers({
+Template.main_menu.helpers({
 	menu: function() {
 		return getMenu(menu, function(item) {
 			return item.routeName.indexOf(Router.current().route.getName()) != -1;
@@ -269,15 +250,18 @@ Template.game_menu.helpers({
 });
 
 Template.side_menu.helpers({
-	sides: function() {
+	sides: function(showHidden) {
 		var group = Router.current().group;
 
-		if (!menu[group]) {
+		if (!menu[group] || (!showHidden && menu[group].doNotShowInGameMenu)) {
 			return null;
 		}
 
 		return getMenu(menu[group].items, function(item, key) {
-			return Router.current().url.indexOf(key) == item.url.indexOf(key);
+			return (
+				   Router.current().url.indexOf(key) == item.url.indexOf(key)
+				|| (Router.current().url.indexOf(key) - 32) == item.url.indexOf(key)
+			);
 		});
 	},
 
@@ -376,7 +360,11 @@ Template.additional_area.helpers({
 
 var helpers = {
 	items: function() {
-		if (Router.current().params.group) {
+		if (Router.current().params.group 
+			&& menu[Router.current().group]
+			&& menu[Router.current().group].items
+			&& menu[Router.current().group].items[Router.current().params.group]
+			&& menu[Router.current().group].items[Router.current().params.group].items) {
 			return _.toArray(menu[Router.current().group].items[Router.current().params.group].items);
 		} else {
 			return [];
@@ -401,11 +389,15 @@ var helpers = {
 	percentRound10: function(progress) {
 		return Math.floor((progress.finishTime - Session.get('serverTime')) * 10 / (progress.finishTime - progress.startTime)) * 10;
 	},
-	menuGroup: function() {
-		return Router.current().group;
-	},
-	itemGroup: function() {
-		return Router.current().params.group;
+	item: function() {
+		var route = Router.current();
+		return (
+			   menu[route.group]
+			&& menu[route.group].items
+			&& menu[route.group].items[route.params.group]
+			&& menu[route.group].items[route.params.group].items
+			&& menu[route.group].items[route.params.group].items[route.params.item]
+		);
 	},
 	resources: function() {
 		return Game.Resources.currentValue.get();

@@ -1,7 +1,18 @@
 Meteor.startup(function() {
 
+UI.registerHelper('isNewLayout', function() {
+	var newLayoutGroups = ['military'];
+
+	return newLayoutGroups.indexOf(Router.current().params.group) != -1;
+});
+
 UI.registerHelper('user', function() {
 	return Meteor.user();
+});
+
+UI.registerHelper('options', function() {
+	var user = Meteor.user();
+	return user.settings && user.settings.options;
 });
 
 UI.registerHelper('Game', function() {
@@ -10,6 +21,24 @@ UI.registerHelper('Game', function() {
 
 UI.registerHelper('serverTime', function() {
 	return Session.get('serverTime');
+});
+
+UI.registerHelper('backToGroupLink', function() {
+	return Router.current().route.path({
+		group: Router.current().params.group
+	});
+});
+
+UI.registerHelper('menuGroup', function() {
+	return Router.current().group;
+});
+
+UI.registerHelper('itemGroup', function() {
+	return Router.current().params.group;
+});
+
+UI.registerHelper('currentRouteName', function() {
+	return Router.current().route.name;
 });
 
 UI.registerHelper('eq', function(a, b) {
@@ -117,6 +146,7 @@ UI.registerHelper('formatYearMonthDay', function(dateString) {
 }); 
 
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
+UI.registerHelper('formatHours', Game.Helpers.formatHours);
 UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);
 UI.registerHelper('formatTime', Game.Helpers.formatTime);
 UI.registerHelper('getNumeralEnding', Game.Helpers.getNumeralEnding);

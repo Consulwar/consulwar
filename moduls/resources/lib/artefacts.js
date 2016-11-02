@@ -19,11 +19,9 @@ game.Artefact = function(options) {
 
 	this.url = function(options) {
 		options = options || {
-			group: 'house',
-			subgroup: 'artefacts',
 			item: this.engName
 		};
-		return Router.routes.house.path(options);
+		return Router.routes.artefacts.path(options);
 	};
 
 	Game.Artefacts.items[options.engName] = this;

@@ -39,6 +39,7 @@ email@1.0.16
 fastclick@1.0.12
 geojson-utils@1.0.9
 gfk:notifications@1.1.4
+gromo:jquery.scrollbar@0.0.1
 handlebars@1.0.7
 hot-code-push@1.0.4
 html-tools@1.0.10

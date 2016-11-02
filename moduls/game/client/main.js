@@ -33,6 +33,7 @@ preloadImages([
 ]);
 */
 
+Blaze._allowJavascriptUrls();
 
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",
@@ -335,6 +336,8 @@ var helpers = {
 		var reptileTime = Number.MAX_VALUE;
 		var reptileId = null;
 		var isWaitingAttack = false;
+		var attackId = null;
+		var attackTime = null;
 
 		for (var i = 0; i < fleets.length; i++) {
 			if (fleets[i].info.isHumans) {
@@ -360,8 +363,10 @@ var helpers = {
 					} else if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET) {
 						// check planet
 						var planet = Game.Planets.getOne(fleets[i].info.targetId);
-						if (planet && (planet.isHome || planet.armyId)) {
+						if (planet && (planet.isHome || planet.armyId) && fleets[i].timeEnd > attackTime) {
 							isWaitingAttack = true;
+							attackId = fleets[i]._id;
+							attackTime = fleets[i].timeEnd;
 						}
 					}
 				}
@@ -378,18 +383,28 @@ var helpers = {
 			reptile: reptile,
 			reptileTime: reptileTime,
 			reptileId: reptileId,
-			isWaitingAttack: isWaitingAttack
+			isWaitingAttack: isWaitingAttack,
+			attackId: attackId,
+			attackTime: attackTime
 		};
 	},
 
 	fleetTime: function(time) {
 		var timeLeft = time - Session.get('serverTime');
 		return (timeLeft > 0) ? timeLeft : 0;
+	},
+
+	userIcon: function() {
+		var user = Meteor.user();
+		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+			return user.settings.chat.icon;
+		}
+		return 'common/1';
 	}
 };
 
 
-Template.game.helpers(helpers);
+Template.newgame.helpers(helpers);
 Template.item.helpers(helpers);
 
 Template.connection.helpers({
@@ -397,8 +412,9 @@ Template.connection.helpers({
 	reconnectTime: function() { return Session.get('reconnectTime'); },
 });
 
-Template.game.onRendered(function(){
+Template.newgame.onRendered(function(){
 	showTutorialDuringActivation();
+	$('.page').scrollbar();
 });
 
 var showTutorialDuringActivation = function() {
@@ -420,7 +436,7 @@ var showTutorialDuringActivation = function() {
 	}
 };
 
-Template.game.events({
+Template.newgame.events({
 	'click header .username .edit': function() {
 		Game.showInputWindow('Как назвать планету?', Meteor.user().planetName, function(planetName) {
 			planetName = planetName.trim();
@@ -433,26 +449,6 @@ Template.game.events({
 					Notifications.error('Невозможно сменить название планеты', err.error);
 				}
 			});
-		});
-	},
-
-	'click progress.metals': function(e, t) {
-		Meteor.call('getBonusResources', 'metals', function(error, result) {
-			if (error) {
-				Notifications.error('Нельзя получить бонусный металл', error.error);
-			} else {
-				Notifications.success('Бонусный металл получен', '+' + result);
-			}
-		});
-	},
-
-	'click progress.crystals': function(e, t) {
-		Meteor.call('getBonusResources', 'crystals', function(error, result) {
-			if (error) {
-				Notifications.error('Нельзя получить бонусный кристалл', error.error);
-			} else {
-				Notifications.success('Бонусный кристалл получен', '+' + result);
-			}
 		});
 	}
 });

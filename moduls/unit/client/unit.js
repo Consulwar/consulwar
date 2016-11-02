@@ -20,6 +20,22 @@ Game.Unit.showPage = function() {
 	}
 };
 
+Game.Unit.showReptilePage = function() {
+	var item = Game.Unit.items.reptiles[this.params.group][this.params.item];
+	
+	if (item) {
+		this.render('unit', {
+			to: 'content', 
+			data: {
+				unit: item,
+				count: new ReactiveVar(1)
+			}
+		});
+	} else {
+		this.render('empty', {to: 'content'});
+	}
+};
+
 Template.unit.helpers({
 	count: function() {
 		return this.count.get();

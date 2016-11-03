@@ -679,10 +679,10 @@ Meteor.methods({
 		}
 
 		var room = Game.Chat.Room.Collection.findOne({
-			$or: {
-				name: url,
-				title: title
-			},
+			$or: [
+				{name: url},
+				{title: title}
+			],
 			deleted: { $ne: true }
 		});
 

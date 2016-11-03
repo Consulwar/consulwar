@@ -320,9 +320,6 @@ var helpers = {
 		return (Game.Quest.hasNewDaily() || Game.Mail.hasUnread());
 	},
 
-	connection: function() { return Meteor.status(); },
-	reconnectTime: function() { return Session.get('reconnectTime'); },
-
 	fleetInfo: function() {
 		var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
 		var fleets = Game.SpaceEvents.getFleets().fetch();
@@ -394,6 +391,11 @@ var helpers = {
 
 Template.game.helpers(helpers);
 Template.item.helpers(helpers);
+
+Template.connection.helpers({
+	connection: function() { return Meteor.status(); },
+	reconnectTime: function() { return Session.get('reconnectTime'); },
+});
 
 Template.game.onRendered(function(){
 	showTutorialDuringActivation();

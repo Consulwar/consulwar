@@ -395,7 +395,7 @@ Template.item.helpers(helpers);
 Template.connection.helpers({
 	connection: function() { return Meteor.status(); },
 	reconnectTime: function() { return Session.get('reconnectTime'); },
-})
+});
 
 Template.game.onRendered(function(){
 	showTutorialDuringActivation();

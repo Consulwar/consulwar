@@ -9,42 +9,38 @@
 	</ul>
 </template>
 
-<template name="game_menu">
-	<ul class="game_menu">
-		{{#each menu}}
-			<li 
-				class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}} 
-				{{this.additionalClass}}"
-				data-tooltip="{{this.name}}"
-				data-tooltip-direction="s"
-			>
-				<a href="{{this.url}}"></a>
-			</li>
-		{{/each}}
-	</ul>
+<template name="main_menu">
+	<div class="menu">
+		<ul class="main_menu">
+			{{#each menu}}
+				<li 
+					class="{{this.additionalClass}}{{#if this.isActive}} active{{/if}} {{this.engName}}"
+					data-tooltip="{{this.name}}"
+					data-tooltip-direction="s"
+				>
+					<a href="{{this.url}}">
+						<img alt="{{this.name}}" src="/img/game/menu/{{this.engName}}.png"/>
+					</a>
+				</li>
+			{{/each}}
+		</ul>
+		{{> side_menu}}
+	</div>
 </template>
 
 <template name="side_menu">
-	<ul class="side_menu">
-		{{#each sides}}
-			<li 
-				class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}"
-				data-tooltip="{{this.tooltip}}"
-			>
-				<a href="{{getUrl this}}">{{this.name}}</a>
-			</li>
-		{{/each}}
-		{{#if eq sides.length 2}}
-			<!--<li class="helpusplease">
-				<a href="https://boomstarter.ru/projects/zav/consul_war">Поддержите</a> нас:<br/>
-				1. <a href="http://vk.com/zelenin39?w=wall1466715_672" target="_blank">Репост ВК</a><br/>
-				2. <a href="http://vk.com/consulwar" target="_blank">Группа ВК</a><br/>
-				3. <a href="https://twitter.com/ZAV39/status/629592939400982528" target="_blank">Ретвит</a><br/>
-				4. <a href="mailto: consulwar@gmail.com">Ошибки и предложения</a><br/>
-				5. <a href="http://ru.consulwar.wikia.com" target="_blank">Наполните вики</a>
-			</li>-->
-		{{/if}}
-	</ul>
+	{{#if (sides showHidden)}}
+		<ul class="second_menu">
+			{{#each (sides showHidden)}}
+				<li 
+					class="{{this.engName}}-icon{{#if this.isActive}} active{{/if}}{{#if this.progress}} progress{{/if}}"
+					data-tooltip="{{this.tooltip}}"
+				>
+					<a href="{{getUrl this}}">{{this.name}}</a>
+				</li>
+			{{/each}}
+		</ul>
+	{{/if}}
 </template>
 
 <template name="additional_area">
@@ -111,50 +107,60 @@
 </template>
 
 <template name="overlay_menu">
-	<div class="overlay {{menuGroup}} {{itemGroup}}">
-		{{#each items}}
-			{{#if this.overlay}}
-				{{#let overlay=this.getOverlay}}
-					{{#if and (overlay (or overlay.img overlay.progress))}}
-						<a 
-							href="{{this.url}}"
-							title="{{this.name}}"
-							style="
-								top: {{overlay.y}}px;
-								left: {{overlay.x}}px;
-								z-index: {{overlay.z}};
-							"
-							>
+	{{#if and isNewLayout item}}
+		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.engName}}">
+			<div 
+				class="item" 
+				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{item.overlay.own}}.png)"></div>
+		</div>
 
-							{{#if overlay.img}}
-								<img src="/img/game/{{overlay.img}}" alt=""/>
-							{{/if}}
+								<!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->
+	{{else}}
+		<div class="overlay {{menuGroup}} {{itemGroup}} {{item.engName}}">
+			{{#each items}}
+				{{#if this.overlay}}
+					{{#let overlay=this.getOverlay}}
+						{{#if and (overlay (or overlay.img overlay.progress))}}
+							<a 
+								href="{{this.url}}"
+								title="{{this.name}}"
+								style="
+									top: {{overlay.y}}px;
+									left: {{overlay.x}}px;
+									z-index: {{overlay.z}};
+								" 
+								>
 
-							{{#if and overlay.progress (not (eq overlay.img overlay.progress.img))}}
-								<img 
-									src="/img/game/{{overlay.progress.img}}" 
-									progress="{{percentRound10 overlay.progress}}" 
-									alt=""/>
-							{{/if}}
-						</a>
+								{{#if overlay.img}}
+									<img src="/img/game/{{overlay.img}}" alt=""/>
+								{{/if}}
+
+								{{#if and overlay.progress (not (eq overlay.img overlay.progress.img))}}
+									<img 
+										src="/img/game/{{overlay.progress.img}}" 
+										progress="{{percentRound10 overlay.progress}}" 
+										alt=""/>
+								{{/if}}
+							</a>
+						{{/if}}
+					{{/let}}
+				{{else}}
+					{{#if gt this.currentLevel 0}}
+						<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
 					{{/if}}
-				{{/let}}
-			{{else}}
-				{{#if gt this.currentLevel 0}}
-					<a href="{{this.url}}" class="{{this.engName}}-icon" title="{{this.name}}"></a>
+					
+					{{#let progress=this.progress}}
+						{{#if and progress (eq progress.level 1)}}
+							<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
+						{{/if}}
+					{{/let}}
 				{{/if}}
-				
-				{{#let progress=this.progress}}
-					{{#if and progress (eq progress.level 1)}}
-						<a class="{{progress.engName}}-icon" title="{{progress.name}}" progress="{{percentRound10 progress}}"></a>
-					{{/if}}
-				{{/let}}
+			{{/each}}
+			
+			{{#if eq currentUrl (pathFor route='building' group='residential')}}
+				<progress class="metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
+				<progress class="crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
 			{{/if}}
-		{{/each}}
-		
-		{{#if eq currentUrl (pathFor route='building' group='residential')}}
-			<progress class="metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
-			<progress class="crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
-		{{/if}}
-	</div>
+		</div>
+	{{/if}}
 </template>

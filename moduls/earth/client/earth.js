@@ -639,6 +639,7 @@ var ZoneView = function(mapView, zoneData) {
 	};
 
 	this.showPopup = function(e) {
+		L.DomEvent.stopPropagation(e);
 		if (e && e.latlng) {
 			Game.Earth.showZonePopup(zone.name, e.latlng);
 		}

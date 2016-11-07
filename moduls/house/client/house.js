@@ -44,6 +44,18 @@ Game.House.showPage = function() {
 	}
 };
 
+Game.House.showArtefactsPage = function() {
+	var item = this.params.item;
+
+	this.render('consulHouseArtefacts', {
+		to: 'content',
+		data: {
+			subgroup: 'artefacts',
+			item: Game.Artefacts.items[item]
+		}
+	});
+};
+
 // ----------------------------------------------------------------------------
 // Consul house overview
 // ----------------------------------------------------------------------------

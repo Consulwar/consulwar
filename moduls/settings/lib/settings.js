@@ -11,7 +11,11 @@ Game.Settings = {
 		{title:'только рестарт игры', engName: 'onlyRestart'}
 	],
 
-	notificationFields: ['showDesktopNotifications', 'notShowQuestsDuringActivation']
+	notificationFields: ['showDesktopNotifications', 'notShowQuestsDuringActivation'],
+
+	options: {
+		hideDescription: [true, false]
+	}
 };
 
 

@@ -1004,6 +1004,20 @@ Game.functions = {};
 initFunctionsContent();
 
 Game.Helpers = {
+	formatHours: function(timestamp, offset) {
+		// offset in minutes
+		if (offset === undefined || !_.isNumber(offset)) {
+			// if not defined, then use local offset
+			offset = new Date().getTimezoneOffset();
+		}
+
+		var date = new Date((timestamp - (offset * 60)) * 1000);
+		return (
+			  ('0' + date.getUTCHours()).slice(-2) + ':'
+			+ ('0' + date.getUTCMinutes()).slice(-2)
+		);
+	},
+
 	formatDate: function(timestamp, offset) {
 		// offset in minutes
 		if (offset === undefined || !_.isNumber(offset)) {

@@ -22,7 +22,8 @@ GameRouteController = RouteController.extend({
 		this.wait(Meteor.subscribe('researches'));
 
 		if (this.ready()) {
-			this.render('game');
+			$('body').addClass('game');
+			this.render('newgame');
 			Tooltips.hide(); // hide all tooltips
 			$('.permanent').hide(); // hide cosmos map!
 			$('.permanent_chat').hide();
@@ -43,8 +44,15 @@ GameRouteController = RouteController.extend({
 
 var gameRoutes = {
 	planet: {
-		building: 'planet/:group(residential|military)/:item?/:menu?',
-		house: 'planet/:group(house)/:subgroup?/:item?'
+		building: 'planet/:group(residential|military)/:item?/:menu?'
+	},
+
+	house: {
+		house: 'house/:subgroup?/:item?'
+	},
+
+	artefacts: {
+		artefacts: 'resources/artefacts/:item'
 	},
 
 	wallet: {
@@ -59,31 +67,32 @@ var gameRoutes = {
 		unit: 'army/:group(fleet|defense|ground)/:item?',
 	},
 
-	reptiles: {
-		reptileUnit: 'reptiles/:group(fleet|ground)/:item?',
-		reptileHero: 'reptiles/:group(heroes)/:item?'
+	info: {
+		reptileUnit: 'info/reptiles/:group(fleet|ground)/:item?',
+		reptileHero: 'info/reptiles/:group(heroes)/:item?'
 	},
 
 	research: {
 		research: 'research/:group(evolution|fleetups)/:item?'
 	},
-	
-	statistics: {
-		statistics: 'statistics/:group(general|science|cosmos|battle|communication)?/:page?'
-	},
 
-	mutual: {
+	earth: {
 		mutual: 'mutual/:group(research)/:item?',
 		earth: 'mutual/:group(earth)',
 		earthReserve: 'mutual/:group(earth)/reserve',
 		earthZone: 'mutual/:group(earth)/zone/:name?',
-		earthHistory: 'mutual/:group(earth)/history/:page'
+		earthHistory: 'mutual/:group(earth)/history/:page',
+	},
+
+
+	statistics: {
+		statistics: 'statistics/:group(general|science|cosmos|battle|communication)?/:page?'
 	},
 	
-	communication: {
-		chat: 'communication/chat/:room',
-		mail: 'communication/mail/:page',
-		mailAdmin: 'communication/mailadmin/:page'
+	chat: {
+		chat: 'chat/:room',
+		mail: 'mail/:page',
+		mailAdmin: 'mailadmin/:page'
 	},
 
 	cosmos: {
@@ -100,6 +109,7 @@ var gameActions = {
 	building: Game.Building.showPage,
 	research: Game.Research.showPage,
 	house: Game.House.showPage,
+	artefacts: Game.House.showArtefactsPage,
 	
 	walletHistory: Game.Payment.showHistory,
 	promocodeHistory: Game.Payment.showPromocodeHistory,
@@ -109,8 +119,8 @@ var gameActions = {
 	mailAdmin: Game.Mail.showAdminPage,
 
 	unit: Game.Unit.showPage,
-	reptileUnit: Game.Unit.showPage,
-	reptileHero: Game.Unit.showPage,
+	reptileUnit: Game.Unit.showReptilePage,
+	reptileHero: Game.Unit.showReptilePage,
 
 	mutual: Game.Mutual.showPage,
 	earth: Game.Earth.showMap,

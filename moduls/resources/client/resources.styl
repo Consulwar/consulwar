@@ -1,19 +1,24 @@
 .resources
 	li
-		display inline-block
-		width 70px
-		height 16px
-		padding-top 48px
+		width 50px
+		margin-left 15px
+		height 12px
+		padding-top 38px
 		background-repeat no-repeat
 		background-position top center
+		background-size 35px 35px
 		text-align center
 		vertical-align top
-		color #aaa
+		font-size 12px
 		font-weight bold
+		
+		a
+			display block
+			width 100%
+			height 100%
 	
 		&.artefact
 			background-size 65%
-			cursor pointer
 			&:hover
 				-webkit-filter brightness(1.4)
 				filter brightness(1.4)
@@ -28,25 +33,39 @@
 		background-image url(/img/game/crystals.png)
 		color #D36FFF
 	.credits
-		cursor pointer
 		background-image url(/img/game/credits.png)
 		color #C6E84C
 		&:hover
 			-webkit-filter brightness(1.4)
 			filter brightness(1.4)
+	
+	.artefacts
+		width 47px
+		height 47px
+		padding 0
+		cursor pointer
+		background-size 47px 47px
+		background-image url(/img/game/artefacts.png)
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+
 	.honor
 		background-image url(/img/game/honor.png)
 		color #FF7566
 	.time
-		display block
-		height 25px
-		padding 0 0 10px 20px
+		width 100%
+		height 20px
+		padding 0
+		margin 0
 		color #aaa
 		text-align left
-		width auto
 		
 		time
 			color #fff
+			
+		+ li
+			margin-left 0
 	
 	.button
 		width 160px
@@ -105,7 +124,7 @@
 		
 		&.metals
 			top 410px
-			left 785px
+			right 15px
 			color #5697D7
 		
 			&::-moz-progress-bar 

@@ -25,6 +25,33 @@ Game.Building.showPage = function() {
 	}
 };
 
+Template.item_building.onRendered(function() {
+	$('.scrollbar-inner').scrollbar();
+});
+
+
+Template.overlay_menu.events({
+	'click progress.metals': function(e, t) {
+		Meteor.call('getBonusResources', 'metals', function(error, result) {
+			if (error) {
+				Notifications.error('Нельзя получить бонусный металл', error.error);
+			} else {
+				Notifications.success('Бонусный металл получен', '+' + result);
+			}
+		});
+	},
+
+	'click progress.crystals': function(e, t) {
+		Meteor.call('getBonusResources', 'crystals', function(error, result) {
+			if (error) {
+				Notifications.error('Нельзя получить бонусный кристалл', error.error);
+			} else {
+				Notifications.success('Бонусный кристалл получен', '+' + result);
+			}
+		});
+	}
+});
+
 Template.item_building.events({
 	'click button.build': function(e, t) {
 		var item = t.data.building;
@@ -53,6 +80,13 @@ Template.item_building.events({
 
 	'click button.containers': function(e, t) {
 		Game.Building.special.Container.showWindow();
+	},
+
+	'click .toggle_description': function(e, t) {
+		$(t.find('.description')).slideToggle(function() {
+			var options = Meteor.user().settings && Meteor.user().settings.options;
+			Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
+		});
 	}
 });
 

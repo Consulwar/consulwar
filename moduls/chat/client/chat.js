@@ -159,6 +159,8 @@ Game.Chat.showPage = function() {
 Template.chat.onRendered(function() {
 	var template = this;
 
+	$('.messages').scrollbar();
+
 	// run this function each time as: 
 	// - room changes
 	// - connection status changes
@@ -232,7 +234,7 @@ Template.chat.onDestroyed(function() {
 var scrollChatToBottom = function(force) {
 	var container = $('ul.messages');
 
-	if (container && container[0] && (force || (container.height() + container[0].scrollTop + 300) > container[0].scrollHeight)) {
+	if (container && container[0] && (force || (container.height() * 1.5 + container[0].scrollTop) > container[0].scrollHeight)) {
 		container[0].scrollTop = container[0].scrollHeight;
 	}
 };
@@ -657,14 +659,6 @@ Template.chat.helpers({
 		});
 	},
 
-	iconPath: function() {
-		var user = Meteor.user();
-		if (user.settings && user.settings.chat && user.settings.chat.icon) {
-			return user.settings.chat.icon;
-		}
-		return 'common/1';
-	},
-
 	users: function() {
 		var roomName = Router.current().params.room;
 		var room = Game.Chat.Room.Collection.findOne({
@@ -939,7 +933,7 @@ Game.Chat.showUserPopup = function(x, y, username) {
 				x: x,
 				y: y,
 				username: username
-			}, $('.content .chat')[0]
+			}, $('.content .permanent_chat .chat')[0]
 		);
 
 		$('.profile').each(function(index, element) {

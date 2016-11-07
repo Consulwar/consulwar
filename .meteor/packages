@@ -43,7 +43,7 @@ check
 
 npm-container
 reactive-var
-bevanhunt:leaflet
+bevanhunt:leaflet@3.0.1
 manuel:reactivearray
 ddp-rate-limiter
 lookback:tooltips
@@ -52,3 +52,4 @@ jparker:crypto-hmac
 standard-minifier-css
 standard-minifier-js
 altapp:recaptcha
+gromo:jquery.scrollbar

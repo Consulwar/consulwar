@@ -3,14 +3,7 @@
 		{{> chatRoomsList}}
 			
 		<div class="control">
-			{{#let currentRole=getUserRole}}
-				<div class="user">
-					<img src="/img/game/chat/icons/{{iconPath}}.png"/>
-					<span class="role {{currentRole.id}}">{{currentRole.name}}</span>
-				</div>
-			{{/let}}
 
-			<div class="title">настройки и помощь</div>
 			<div class="settings"></div>
 			<div class="info"></div>
 			<div class="dollar"></div>
@@ -69,45 +62,46 @@
 				</ul>
 			</div>
 		{{/if}}
-
-		<ul class="messages">
-			{{#if hasMore}}
-				<li class="more">
-					<span>показать предыдущие сообщения</span>
-				</li>
-			{{/if}}
-			{{#if gotLimit}}
-				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
-			{{/if}}
-			{{#each messages}}
-				{{#if this.isMotd}}
-					<li class="motd">
-						<div>
-							{{{this.message}}}
-						</div>
-					</li>
-				{{else}}
-					{{#if this.hasAllowedMessages}}
-						<li 
-							class="missed"
-							data-timestamp="{{this.timestamp}}"
-							data-messageid="{{this._id}}"
-						>
-							<span>показать пропущенные сообщения</span>
-						</li>
-					{{/if}}
-
-					{{#if this.showProfile}}
-						<li class="profile" data-username="{{this.username}}">
-							{{> chatMessageProfile this}}
-						</li>
-					{{/if}}
-					<li class="message" data-username="{{this.username}}">
-						{{> chatMessage this}}
+		<div class="messagesWrapper">
+			<ul class="messages scrollbar-inner">
+				{{#if hasMore}}
+					<li class="more">
+						<span>показать предыдущие сообщения</span>
 					</li>
 				{{/if}}
-			{{/each}}
-		</ul>
+				{{#if gotLimit}}
+					<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
+				{{/if}}
+				{{#each messages}}
+					{{#if this.isMotd}}
+						<li class="motd">
+							<div>
+								{{{this.message}}}
+							</div>
+						</li>
+					{{else}}
+						{{#if this.hasAllowedMessages}}
+							<li 
+								class="missed"
+								data-timestamp="{{this.timestamp}}"
+								data-messageid="{{this._id}}"
+							>
+								<span>показать пропущенные сообщения</span>
+							</li>
+						{{/if}}
+
+						{{#if this.showProfile}}
+							<li class="profile" data-username="{{this.username}}">
+								{{> chatMessageProfile this}}
+							</li>
+						{{/if}}
+						<li class="message" data-username="{{this.username}}">
+							{{> chatMessage this}}
+						</li>
+					{{/if}}
+				{{/each}}
+			</ul>
+		</div>
 
 		<form id="message">
 			{{#if (and (not isChatFree) (lt user.rating room.minRating))}}

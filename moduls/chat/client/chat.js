@@ -1120,7 +1120,7 @@ var roomsPopupView = null;
 Game.Chat.showRoomsPopup = function() {
 	if (!roomsPopupView) {
 		hidePopups();
-		roomsPopupView = Blaze.render(Template.chatRoomsPopup, $('.chat')[0]);
+		roomsPopupView = Blaze.render(Template.chatRoomsPopup, $('.permanent_chat .chat')[0]);
 	}
 };
 

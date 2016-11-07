@@ -14,7 +14,8 @@ Game.Settings = {
 	notificationFields: ['showDesktopNotifications', 'notShowQuestsDuringActivation'],
 
 	options: {
-		hideDescription: [true, false]
+		hideDescription: [true, false],
+		hideFleetInfo: [true, false]
 	}
 };
 

@@ -414,7 +414,7 @@ Template.connection.helpers({
 
 Template.newgame.onRendered(function(){
 	showTutorialDuringActivation();
-	$('.page').scrollbar();
+	//$('.page').scrollbar();
 });
 
 var showTutorialDuringActivation = function() {
@@ -437,19 +437,9 @@ var showTutorialDuringActivation = function() {
 };
 
 Template.newgame.events({
-	'click header .username .edit': function() {
-		Game.showInputWindow('Как назвать планету?', Meteor.user().planetName, function(planetName) {
-			planetName = planetName.trim();
-			if (planetName == Meteor.user().planetName) {
-				return;
-			}
-
-			Meteor.call('user.changePlanetName', planetName, function(err, result) {
-				if (err) {
-					Notifications.error('Невозможно сменить название планеты', err.error);
-				}
-			});
-		});
+	'click .fleet_info .toggle': function() {
+		var options = Meteor.user().settings && Meteor.user().settings.options;
+		Meteor.call('settings.setOption', 'hideFleetInfo', !(options && options.hideFleetInfo));
 	}
 });
 

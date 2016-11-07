@@ -52,3 +52,4 @@ jparker:crypto-hmac
 standard-minifier-css
 standard-minifier-js
 altapp:recaptcha
+gromo:jquery.scrollbar

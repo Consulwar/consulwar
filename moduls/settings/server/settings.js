@@ -155,6 +155,33 @@ Meteor.methods({
 		}, {
 			$set: set
 		});
+	},
+
+	'settings.setOption': function (option, value) {
+		check(option, String);
+		check(value, Boolean);
+		
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		if (!Game.Settings.options.hasOwnProperty(option)) {
+			throw new Meteor.Error('Несуществующее поле настроек');
+		}
+
+		var set = {};
+		set['settings.options.' + option] = value;
+		Meteor.users.update({
+			_id: user._id
+		}, {
+			$set: set
+		});
 	}
 });
 

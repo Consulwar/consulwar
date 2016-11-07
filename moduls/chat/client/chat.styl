@@ -1,560 +1,582 @@
-.side_menu
-	//side-icon('alliance')
-	side-icon('chat')
+.content.chat:not(.mail)
+	display none
+	
+	& + .permanent_chat
+		display block
 
-.chat
+.content.chat
+	.overlay
+		display none
+
+.permanent_chat
+	display none
 	position relative
-	padding 0px
-	z-index 2
-	height 574px
-	background-color #101217
-	
-	.profile
-		cursor pointer
+	width 100%
+	height 100px
+	flex-grow 1
+	z-index 3
+	max-width 1464px
+	align-self center
+
+	.chat
 		position relative
-		width 195px
-		vertical-align top
-		float left
-		clear both
-	
-	.username
-		color #c4aba1
-	.role
-		color #acdaf9
-	
-	.admin
-		color #d65f52
-	.helper
-		color #a57fce
-	.owner
-		color #e9a844
-	.moderator
-		color #56baf2
-
-	.control
-		position absolute
-		top 0px
-		left 0px
-		width 198px
+		padding 0
+		z-index 2
+		height 100%
+		background-color #101217
 		
-		.user
-			img
-				vertical-align middle
-
-		.title
-			padding 10px 0px
-			text-align center
-			color #e0e0e0
-
-		.settings
-		.info
-		.dollar
-			float left
+		.profile
 			cursor pointer
-			display inline-block
-			width 65px
-			height 66px
-			background-repeat no-repeat
-		.settings
-			background-image url(/img/game/chat/settings-disabled.png)
-			&:hover
-				background-image url(/img/game/chat/settings.png)
-		.info
-			background-image url(/img/game/chat/info-disabled.png)
-			&:hover
-				background-image url(/img/game/chat/info.png)
-		.dollar
-			background-image url(/img/game/chat/dollar-disabled.png)
-			&:hover
-				background-image url(/img/game/chat/dollar.png)
-
-		.price
-			display block
-			position absolute
-			top 410px
-			width 185px
-			height 65px
-			padding 5px
-			text-align center
-			
-			span
-				display block
-				position absolute
-				width 120px
-				color #e9a844
-			
-			ul
-				display block
-				position absolute
-				right 0
-				
-		.addCredits
-			display block
-			position absolute
-			top 330px
-			width 185px
-			height 65px
-			padding 5px
-			text-align center
-			
-			span
-				display block
-				position absolute
-				margin-top 10px
-				width 120px
-				color #e8e8e8
-				
-			ul
-				display block
-				position absolute
-				right 0
-				
-		.buyFreeChat
-			cursor pointer
-			display block
-			position absolute
-			top 495px
-			width 185px
-			height 65px
-			padding 5px
-			color #b5d054
-			border 2px solid #b5d054
-			background-color #090E14
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			
-			ul
-				margin-top 3px
-
-			span
-				display block
-				position absolute
-				margin-top 9px
-				margin-left 70px
-
-	.messages
-		position absolute
-		background-color #13161b
-		left 198px
-		top 46px
-		height 470px
-		width 1080px
-		overflow-y auto
-		overflow-x hidden
-		
-		li
 			position relative
-			display block
-			padding 2.5px
-			background-color #13161b
-			
-			p
-				cursor pointer
-
-			.profile:hover
-			.profile.selected
-			p:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-
-			.username
-				position absolute
-				top 3px
-				left 50px
-				width 150px
-				
-				&.me
-					color #ABC851
-				
-			.role
-				position absolute
-				top 22px
-				left 50px
-				width 150px
-				
-			&.message
-				position relative
-				display inline-block
-				vertical-align top
-				max-width 840px
-				width 100%
-				line-height 19px
-				color #dcdcdc
-				float right
-				padding 0px
-
-			span
-				color #C4ABA1
-				
-				&:not(.dice)
-					cursor pointer
-					
-				&.dice
-					color #3eb5f1
-
-				&.medice
-					color #F0F8FF
-					opacity .5
-
-					&.selected
-						color #8eb021
-						opacity 1
-			
-			&.motd
-				text-align center
-				clear both
-
-			&.more
-			&.missed
-				cursor pointer
-				text-align center
-				background-color #0f1116
-				clear both
-				
-				span
-					color #dfdfdf
-				
-					&:before
-					&:after
-						margin 0 20px
-						vertical-align middle
-						display inline-block
-						content url(/img/game/chat/more.png)
-			
-			&.limit
-				text-align center
-				color #A15755
-
-			.remove
-			.removeModerator
-			.block
-			.changeMinRating
-				color red
-
-			.lovereptiles
-			.notprepared
-				font-style italic
-				color red
-			
-			.add
-			.addfunds
-			.addModerator
-			.unblock
-				color green
-				
-			.sepukku
-				color #ff5441
-				
-			.status
-				font-style italic
-
-			.positive_number
-				color #009900
-
-				&.roomModifier
-					color #008000
-
-			.negative_number
-				color #dc6257
-
-				&.roomModifier
-					color red
-	form
-		position absolute
-		left 198px
-		top 516px
-		height 58px
-		
-		textarea, .whyCanNotWrite
-			width 800px
-			height 52px
-			padding 2px
-			border 1px solid #151515
-			background-color #0b0b0b
-			color #fff
-			resize none
+			width 195px
 			vertical-align top
-			font-size 17px
-			overflow hidden
 			float left
-
-		.whyCanNotWrite
-			color red
-			
-		input
-			width 200px
-			height 62px
-			padding 2px
-			border 1px solid #1D2D3C
-			background-color #090E14
-			color #fff
-			resize none
-			vertical-align top
-			font-size 17px
-			overflow hidden
-
-		[type="submit"]
-			width 58px
-			height 58px
-			background-repeat no-repeat
-			background-image url(/img/game/chat/send-disabled.png)
-			vertical-align top
-			cursor pointer
-			overflow hidden
-			text-indent -999px
-			line-height 0px
-			
-			&:hover
-				background-image url(/img/game/chat/send.png)
+			clear both
 		
-	.participants
-		position absolute
-		top 0px
-		right 0px
-		width 180px
+		.username
+			color #c4aba1
+		.role
+			color #acdaf9
+		
+		.admin
+			color #d65f52
+		.helper
+			color #a57fce
+		.owner
+			color #e9a844
+		.moderator
+			color #56baf2
 
-		ul
-			margin-top 46px
-			overflow-y auto
-			overflow-x hidden
-			max-height 448px
-			padding 11px
-			text-align left
-			list-style-type none
+		.control
+			position absolute
+			top 0px
+			left 0px
+			width 198px
 			
-			li
-				color #777777
-			
-				span
-					cursor pointer
-				
-				&.online
-					color #FFFFFF
-				
+			.user
+				img
+					vertical-align middle
+
+			.title
+				padding 10px 0px
+				text-align center
+				color #e0e0e0
+
+			.settings
+			.info
+			.dollar
+				float left
+				cursor pointer
+				display inline-block
+				width 65px
+				height 66px
+				background-repeat no-repeat
+			.settings
+				background-image url(/img/game/chat/settings-disabled.png)
 				&:hover
-					background-color rgba(255, 255, 255, 0.02)
+					background-image url(/img/game/chat/settings.png)
+			.info
+				background-image url(/img/game/chat/info-disabled.png)
+				&:hover
+					background-image url(/img/game/chat/info.png)
+			.dollar
+				background-image url(/img/game/chat/dollar-disabled.png)
+				&:hover
+					background-image url(/img/game/chat/dollar.png)
 
-	.roomsList
-		position absolute
-		top 0px
-		left 195px
-		width 1084px
-		height 46px
-
-		.general
-		.help
-		.arrow-left
-		.arrow-right
-		.arrow-down
-			float left
-			cursor pointer
-			display inline-block
-			width 46px
-			height 46px
-			background-repeat no-repeat
-			background-size 100% 100%
-		
-		.general
-		.help
-		.arrow-down
-		.arrow-right.active
-		.arrow-left.active
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-
-		.general
-			background-image url(/img/game/chat/general-disabled.png)
-			&.active
-				background-image url(/img/game/chat/general.png)
-				
-		.help
-			background-image url(/img/game/chat/help-disabled.png)
-			&.active
-				background-image url(/img/game/chat/help.png)
-				
-		.arrow-left
-			background-image url(/img/game/chat/left-arrow-disabled.png)
-			&.active
-				background-image url(/img/game/chat/left-arrow.png)
-				
-		.arrow-right
-			background-image url(/img/game/chat/right-arrow-disabled.png)
-			&.active
-				background-image url(/img/game/chat/right-arrow.png)
-				
-		.arrow-down
-			background-image url(/img/game/chat/arrow-down.png)
-
-		.listContainer
-			display inline-block
-			float left
-			width 853px
-			height 46px
-			overflow hidden
-			background-color #090a0d
-
-		ul
-			position relative
-			white-space nowrap
-			vertical-align top
-			
-			li
-				display inline-block
-				float none
-				background-color #090a0d
-				height 38px
-				padding 8px
-
-				&.active
-					background-color #13161b
-
-				a
-					vertical-align middle
-					display inline-block
-					text-decoration none
-					font-weight bold
-					color #dfdfdf
-					
-					&:before
-						vertical-align middle
-						display inline-block
-						content ""
-						width 10px
-						height 10px
-						margin-right 8px
-						border-radius 50%
-						border 4px solid #bd32fb
-						background-color #532167
-						
-					&.credits:before
-						border 4px solid #bff632
-						background-color #555e33
-					
-					&.public:before
-						background none
-					
-				.hide
-					vertical-align middle
-					cursor pointer
-					display inline-block
-					margin-left 10px
-					width 30px
-					height 30px
-					background-image url(/img/game/cosmomap/button_close.png)
-					background-repeat no-repeat
-				
-					&:hover
-						background-image url(/img/game/cosmomap/button_close_active.png)
-
-	.roomsPopup
-		position absolute
-		z-index 2
-		top 46px
-		right 185px
-		background-color #0b0b0b
-		width 200px
-		
-		ul
-			display block
-			max-height 500px
-			overflow-x hidden
-			overflow-y auto
-			
-			li
+			.price
 				display block
-				padding 10px
-				font-weight bold
-				color #56baf2
+				position absolute
+				top 410px
+				width 185px
+				height 65px
+				padding 5px
+				text-align center
 				
-				input
-					vertical-align middle
-					margin-right 10px
-			
+				span
+					display block
+					position absolute
+					width 120px
+					color #e9a844
 				
-		.save
-			display inline-block
-			cursor pointer
-			background-repeat no-repeat
-			background-size 100% 100%
-			background-image url(/img/game/chat/accept.png)
-			font-size 24px
-			font-weight bold
-			text-align center
-			color #FFFFFF
-			width 150px
-			height 35px
-			padding-top 5px
-			margin-top 10px
-			margin-bottom 10px
-			margin-left 25px
-		
-			&:hover:not(.disabled)
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-
-	.userPopup
-		position absolute
-		z-index 2
-		
-		.response
-		.add
-		.block
-		.userStatistic
-			float left
-			display inline-block
-			width 48px
-			height 48px
-			background-repeat no-repeat
-			background-size 100% 100%
-			
-		.userStatistic
-			background-image url(/img/game/chat/statistics.png)
-			background-color #2e394d
-
-		.response
-			background-image url(/img/game/chat/arrow-down.png)
-		
-		.add
-			background-image url(/img/game/chat/add-disabled.png)
-			&.active
-				background-image url(/img/game/chat/add.png)
+				ul
+					display block
+					position absolute
+					right 0
+					
+			.addCredits
+				display block
+				position absolute
+				top 330px
+				width 185px
+				height 65px
+				padding 5px
+				text-align center
 				
-		.block
-			background-image url(/img/game/chat/ban-disabled.png)
-			&.active
-				background-image url(/img/game/chat/ban.png)
-			
-		.active
-			cursor pointer
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			
-		.rooms
-			display none
-			position absolute
-			top 48px
-			left 48px
-			background-color #000000
-			width 200px
-			max-height 300px
-			overflow-x hidden
-			overflow-y auto
-			
-			
-			li
+				span
+					display block
+					position absolute
+					margin-top 10px
+					width 120px
+					color #e8e8e8
+					
+				ul
+					display block
+					position absolute
+					right 0
+					
+			.buyFreeChat
 				cursor pointer
 				display block
-				padding 10px
-				font-weight bold
-				color #56baf2
+				position absolute
+				top 495px
+				width 185px
+				height 65px
+				padding 5px
+				color #b5d054
+				border 2px solid #b5d054
+				background-color #090E14
 				
 				&:hover
 					-webkit-filter brightness(1.4)
 					filter brightness(1.4)
+				
+				ul
+					margin-top 3px
+
+				span
+					display block
+					position absolute
+					margin-top 9px
+					margin-left 70px
+
+		.messagesWrapper
+			position absolute
+			left 198px
+			top 0
+			height 100%
+			padding 46px 0 58px 0
+			box-sizing border-box
+
+		.messages
+			position relative
+			background-color #13161b
+			height 100%
+			width 1080px
+			overflow-y auto
+			overflow-x hidden
+			
+			li
+				position relative
+				display block
+				padding 2.5px
+				background-color #13161b
+				
+				p
+					cursor pointer
+
+				.profile:hover
+				.profile.selected
+				p:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+				.username
+					position absolute
+					top 3px
+					left 50px
+					width 150px
+					
+					&.me
+						color #ABC851
+					
+				.role
+					position absolute
+					top 22px
+					left 50px
+					width 150px
+					
+				&.message
+					position relative
+					display inline-block
+					vertical-align top
+					max-width 840px
+					width 100%
+					line-height 19px
+					color #dcdcdc
+					float right
+					padding 0px
+
+				span
+					color #C4ABA1
+					
+					&:not(.dice)
+						cursor pointer
+						
+					&.dice
+						color #3eb5f1
+
+					&.medice
+						color #F0F8FF
+						opacity .5
+
+						&.selected
+							color #8eb021
+							opacity 1
+				
+				&.motd
+					text-align center
+					clear both
+
+				&.more
+				&.missed
+					cursor pointer
+					text-align center
+					background-color #0f1116
+					clear both
+					
+					span
+						color #dfdfdf
+					
+						&:before
+						&:after
+							margin 0 20px
+							vertical-align middle
+							display inline-block
+							content url(/img/game/chat/more.png)
+				
+				&.limit
+					text-align center
+					color #A15755
+
+				.remove
+				.removeModerator
+				.block
+				.changeMinRating
+					color red
+
+				.lovereptiles
+				.notprepared
+					font-style italic
+					color red
+				
+				.add
+				.addfunds
+				.addModerator
+				.unblock
+					color green
+					
+				.sepukku
+					color #ff5441
+					
+				.status
+					font-style italic
+
+				.positive_number
+					color #009900
+
+					&.roomModifier
+						color #008000
+
+				.negative_number
+					color #dc6257
+
+					&.roomModifier
+						color red
+		form
+			position absolute
+			left 198px
+			bottom 0
+			height 58px
+			
+			textarea, .whyCanNotWrite
+				width 800px
+				height 52px
+				padding 2px
+				border 1px solid #151515
+				background-color #0b0b0b
+				color #fff
+				resize none
+				vertical-align top
+				font-size 17px
+				overflow hidden
+				float left
+
+			.whyCanNotWrite
+				color red
+				
+			input
+				width 200px
+				height 62px
+				padding 2px
+				border 1px solid #1D2D3C
+				background-color #090E14
+				color #fff
+				resize none
+				vertical-align top
+				font-size 17px
+				overflow hidden
+
+			[type="submit"]
+				width 58px
+				height 58px
+				background-repeat no-repeat
+				background-image url(/img/game/chat/send-disabled.png)
+				vertical-align top
+				cursor pointer
+				overflow hidden
+				text-indent -999px
+				line-height 0px
+				
+				&:hover
+					background-image url(/img/game/chat/send.png)
+			
+		.participants
+			position absolute
+			top 0px
+			right 0px
+			width 180px
+
+			ul
+				margin-top 46px
+				overflow-y auto
+				overflow-x hidden
+				max-height 448px
+				padding 11px
+				text-align left
+				list-style-type none
+				
+				li
+					color #777777
+				
+					span
+						cursor pointer
+					
+					&.online
+						color #FFFFFF
+					
+					&:hover
+						background-color rgba(255, 255, 255, 0.02)
+
+		.roomsList
+			position absolute
+			top 0px
+			left 195px
+			width 1084px
+			height 46px
+
+			.general
+			.help
+			.arrow-left
+			.arrow-right
+			.arrow-down
+				float left
+				cursor pointer
+				display inline-block
+				width 46px
+				height 46px
+				background-repeat no-repeat
+				background-size 100% 100%
+			
+			.general
+			.help
+			.arrow-down
+			.arrow-right.active
+			.arrow-left.active
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+			.general
+				background-image url(/img/game/chat/general-disabled.png)
+				&.active
+					background-image url(/img/game/chat/general.png)
+					
+			.help
+				background-image url(/img/game/chat/help-disabled.png)
+				&.active
+					background-image url(/img/game/chat/help.png)
+					
+			.arrow-left
+				background-image url(/img/game/chat/left-arrow-disabled.png)
+				&.active
+					background-image url(/img/game/chat/left-arrow.png)
+					
+			.arrow-right
+				background-image url(/img/game/chat/right-arrow-disabled.png)
+				&.active
+					background-image url(/img/game/chat/right-arrow.png)
+					
+			.arrow-down
+				background-image url(/img/game/chat/arrow-down.png)
+
+			.listContainer
+				display inline-block
+				float left
+				width 853px
+				height 46px
+				overflow hidden
+				background-color #090a0d
+
+			ul
+				position relative
+				white-space nowrap
+				vertical-align top
+				
+				li
+					display inline-block
+					float none
+					background-color #090a0d
+					height 38px
+					padding 8px
+
+					&.active
+						background-color #13161b
+
+					a
+						vertical-align middle
+						display inline-block
+						text-decoration none
+						font-weight bold
+						color #dfdfdf
+						
+						&:before
+							vertical-align middle
+							display inline-block
+							content ""
+							width 10px
+							height 10px
+							margin-right 8px
+							border-radius 50%
+							border 4px solid #bd32fb
+							background-color #532167
+							
+						&.credits:before
+							border 4px solid #bff632
+							background-color #555e33
+						
+						&.public:before
+							background none
+						
+					.hide
+						vertical-align middle
+						cursor pointer
+						display inline-block
+						margin-left 10px
+						width 30px
+						height 30px
+						background-image url(/img/game/cosmomap/button_close.png)
+						background-repeat no-repeat
+					
+						&:hover
+							background-image url(/img/game/cosmomap/button_close_active.png)
+
+		.roomsPopup
+			position absolute
+			z-index 2
+			top 46px
+			right 185px
+			background-color #0b0b0b
+			width 200px
+			
+			ul
+				display block
+				max-height 500px
+				overflow-x hidden
+				overflow-y auto
+				
+				li
+					display block
+					padding 10px
+					font-weight bold
+					color #56baf2
+					
+					input
+						vertical-align middle
+						margin-right 10px
+				
+					
+			.save
+				display inline-block
+				cursor pointer
+				background-repeat no-repeat
+				background-size 100% 100%
+				background-image url(/img/game/chat/accept.png)
+				font-size 24px
+				font-weight bold
+				text-align center
+				color #FFFFFF
+				width 150px
+				height 35px
+				padding-top 5px
+				margin-top 10px
+				margin-bottom 10px
+				margin-left 25px
+			
+				&:hover:not(.disabled)
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+		.userPopup
+			position absolute
+			z-index 2
+			
+			.response
+			.add
+			.block
+			.userStatistic
+				float left
+				display inline-block
+				width 48px
+				height 48px
+				background-repeat no-repeat
+				background-size 100% 100%
+				
+			.userStatistic
+				background-image url(/img/game/chat/statistics.png)
+				background-color #2e394d
+
+			.response
+				background-image url(/img/game/chat/arrow-down.png)
+			
+			.add
+				background-image url(/img/game/chat/add-disabled.png)
+				&.active
+					background-image url(/img/game/chat/add.png)
+					
+			.block
+				background-image url(/img/game/chat/ban-disabled.png)
+				&.active
+					background-image url(/img/game/chat/ban.png)
+				
+			.active
+				cursor pointer
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+				
+			.rooms
+				display none
+				position absolute
+				top 48px
+				left 48px
+				background-color #000000
+				width 200px
+				max-height 300px
+				overflow-x hidden
+				overflow-y auto
+				
+				
+				li
+					cursor pointer
+					display block
+					padding 10px
+					font-weight bold
+					color #56baf2
+					
+					&:hover
+						-webkit-filter brightness(1.4)
+						filter brightness(1.4)
 
 .chatHelp
 .chatBalance

@@ -1,0 +1,822 @@
+$color-human = #ffb74a
+$color-metal = #66cce2
+$color-ctystal = #d36fff
+$color-honor = #ff7566
+$color-ggk = #c6e84c
+
+$color-science = #4b78bb
+$color-description = #bbc9db
+
+$color-black = #000
+$color-white = #fff
+
+//@import 'nib'
+
+menu-icon(name)
+	.{name}-icon:not([disabled])
+		background-image url("/img/game/menu/" name ".png")
+		&:hover,
+		&.active
+			background-image url("/img/game/menu/" name "_a.png")
+	
+	.{name}-icon[disabled]
+		background-image url("/img/game/menu/" name "_d.png")
+
+side-icon(name)
+	.{name}-icon
+		background-image url("/img/game/side/" name ".png")
+		&:hover,
+		&.active
+			background-image url("/img/game/side/" name "_a.png")
+
+bottom-icon(type, group, name)
+	.{name}-icon
+		background-image url("/img/game/" type "/" group "/i/" name ".png")
+		
+bottom-icon-notimplemented(type, group, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_icon.png")
+
+bottom-side-icon(type, side, group, name)
+	.{name}-icon
+		background-image url("/img/game/" type "/" side "/" group "/i/" name ".png")
+		
+bottom-side-icon-notimplemented(type, side, group, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_icon.png")
+
+overlay-image(menu, sub, name, x, y, z)
+	.{name}-icon:before
+		content url("/img/game/" menu "/" sub "/" name ".png")
+		left x px
+		top y px
+		z-index z
+
+overlay-item(name, x, y, z)
+	.{name}-icon
+		left x px
+		top y px
+		z-index z
+		
+requirements-icon(menu, sub, name)
+	.{name}-icon
+		background-image url("/img/game/" menu "/" sub "/r/" name ".jpg")
+		
+requirements-icon-notimplemented(menu, sub, name)
+	.{name}-icon
+		background-image url("/img/game/notimplemented_req.jpg")
+
+html, body
+	zoom 1 !important
+	position relative
+
+body.game
+	max-width 1920px
+	max-height 1080px
+	margin 0 auto
+	overflow hidden
+
+	> .overlay
+		position absolute
+		z-index 0
+		left 50%
+		top 50%
+		margin-left -960px
+		margin-top -540px
+		display block
+		width 1920px
+		height 1080px
+		background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
+		background-repeat repeat, no-repeat, no-repeat
+		background-blend-mode: normal, exclusion, normal
+		
+		&.item
+			background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg) !important
+
+		.item
+			position absolute
+			top 0
+			left 0
+			width 60%
+			height 100%
+			background-repeat no-repeat
+			background-position center center
+
+.page
+	position relative
+	width 100vw
+	height 100vh
+	overflow auto
+	pointer-events none !important
+	
+	& > *
+		pointer-events auto
+
+.newgame
+	position relative
+	display flex
+	flex-shrink 0
+	justify-content space-between
+	flex-direction column
+	width 100%
+	min-width 870px
+	max-width 1920px
+	height 100%
+	max-height 1080px
+	pointer-events none !important
+	align-items stretch
+	
+	.notImplemented
+		color $color-human
+	
+	& > *
+		pointer-events auto
+	
+	button, a
+		outline none
+	
+	&.new
+		.content
+			width 650px
+			height auto
+			
+			margin auto 10% auto auto
+			padding 0
+			
+			background-color rgba($color-black, 0.7)
+			
+			display flex
+			flex-shrink 0
+			flex-wrap wrap
+			justify-content space-between
+			align-items stretch
+
+			.header
+				display flex
+				flex-shrink 0
+				width 100%
+				height 36px
+				text-align center
+				justify-content space-between
+				align-items center
+				background-color $color-black
+				font-size 16px
+				
+				.level
+					width 180px
+					color $color-description
+					
+					span
+						font-weight bold
+						color $color-metal
+				
+				.name
+					margin auto
+					color $color-white
+					
+				.toggle_description
+					display block
+					margin 0
+					padding 0
+					width 21px
+					height 26px
+					background-image url(/img/game/description.png)
+					border 0
+					background-color transparent
+					cursor pointer
+					margin auto 10px auto auto
+					-webkit-filter grayscale(1)
+					filter grayscale(1)
+					
+					&.active
+						-webkit-filter grayscale(0)
+						filter grayscale(0)
+							
+						&:hover
+							-webkit-filter grayscale(0) brightness(1.4)
+							filter grayscale(0) brightness(1.4)
+					
+					&:hover
+						-webkit-filter grayscale(1) brightness(1.4)
+						filter grayscale(1) brightness(1.4)
+						
+					
+				.close
+					display block
+					width 22px
+					height 22px
+					background-image url(/img/game/close_new.png)
+					background-repeat no-repeat
+					background-position center center
+					padding 7px
+					-webkit-filter grayscale(0.5)
+					filter grayscale(0.5)
+					
+					&:hover
+						-webkit-filter grayscale(0)
+						filter grayscale(0)
+			
+			.description
+				position relative
+				height 106px
+				padding 15px
+				font-size 14px
+				color $color-description
+				background-color rgba($color-black, 0.4)
+				
+				.scrollbar-inner
+					height 100%
+					overflow-y auto
+					
+			.info
+				width 360px
+				padding 5px 15px
+				display flex
+				flex-shrink 0
+				flex-direction column
+				justify-content space-between
+
+				.effects
+					.title
+						color $color-white
+							
+					.currentLevel
+						margin-bottom 20px
+						.effect
+							color $color-metal
+						
+					.nextLevel
+						margin 20px 0
+						.effect
+							color $color-ggk
+				
+				.actions
+					display flex
+					flex-shrink 0
+					justify-content flex-end
+					padding 25px 0 10px
+					
+					.build
+						background linear-gradient(left, #f1c54c, #e28e49);
+						text-transform uppercase
+						color $color-black
+						border 0
+						padding 18px 19px
+						font-size 18px
+						cursor pointer
+						outline 2px solid black
+						outline-offset -7px
+						
+						&[disabled="true"]
+							-webkit-filter grayscale(1) brightness(0.3) !important
+							filter grayscale(1) brightness(0.3) !important
+
+						&:hover
+							-webkit-filter brightness(1.2)
+							filter brightness(1.2)
+
+			.requirements
+				width 230px
+				min-height 302px
+				padding 5px 15px
+				background-color rgba($color-black, 0.7)
+				
+				.title
+					font-size 16px
+					color $color-science
+				
+				>a
+					display block
+					width 171px
+					height 32px
+					padding 8px 0 12px 74px
+					background-repeat no-repeat
+					background-position 2px center
+					margin-top 12px
+					text-decoration none
+		.additional_area
+			position absolute
+			right 0
+			top 196px
+			z-index 0
+
+	.content
+		position relative
+		display flex
+		align-items flex-start
+		flex-shrink 0
+		z-index 2
+		
+		width 100%
+		height 428px
+			
+		&:has(#map-content)
+			top 0
+			left 0
+			width 100%
+			height 100%
+		
+		.information
+			display flex
+			margin 0 auto
+			max-width 1400px
+			flex-shrink 1
+			
+			.description
+				width auto
+				min-width 600px
+				margin-right 5px
+			
+			& + .overlay
+				display none
+				
+				& + .additional_area
+					min-width 0
+					flex-shrink 10000
+		.overlay
+			position relative
+			flex-shrink 1
+			left auto
+			margin 0 auto
+			//left 50%
+			//margin-left -640px
+			
+	.permanent
+		position absolute
+		left 0
+		top 0
+		width 100%
+		height 100%
+		z-index 3
+	
+	.resources
+		display flex
+		flex-shrink 0
+		justify-content flex-start
+		list-style-type none
+		white-space nowrap
+		flex-wrap wrap
+		
+		.white
+			color $color-white
+		.green
+			color $color-ggk
+		.blue
+			color $color-metal
+		.purple
+			color $color-crystal
+		.orange
+			color $color-human
+		.red
+			color $color-honor
+
+	header
+		position relative
+		margin-top 10px
+		display flex
+		flex-shrink 0
+		align-items flex-start
+		width 100%
+		height 90px
+		z-index 5
+		
+		.resources
+			padding 9px 9px 8px 0
+			background-color rgba(0, 0, 0, 0.8)
+			border 2px solid rgba(100, 100, 100, 0.8)
+			border-left 0
+			border-radius 0 50px 50px 0
+
+		> .menu
+			position relative
+			display flex
+			flex-shrink 0
+			height 90px
+			flex-direction column
+			margin 0 auto
+
+			.main_menu
+				display flex
+				flex-shrink 0
+				justify-content center
+				list-style-type none
+				margin 0 auto
+				
+				li
+					position relative
+					display block
+					width 53px
+					height 53px
+					overflow hidden
+					background-color $color-black
+
+					img
+						position absolute
+						left 0
+						top -(@height)
+					
+					&:hover,
+					&.active
+						border-bottom 4px solid transparent
+						&.planet
+							border-color #e8e8e8
+						
+						&.research
+							border-color #689dd2
+						
+						&.army
+							border-color #b56d37
+						
+						&.galaxy
+							border-color #8ed5fb
+						
+						&.earth
+							border-color #d0574a
+						
+						&.house
+							border-color #fefea8
+						
+						&.alliance
+							border-color #6468cb
+						
+						&.chat
+							border-color #fcb50d
+						
+						&.info
+							border-color #7fb1bd
+
+					&.active
+						img
+							top 0
+					
+			
+			.second_menu
+				display flex
+				flex-shrink 0
+				position absolute
+				top 57px
+				left 0
+				list-style-type none
+				padding 8px
+				background-color $color-black
+
+				li
+					a
+						text-decoration none
+						color $color-description
+					
+					&.active
+						a
+							color $color-metal
+				
+				li + li
+					&:before
+						content '/'
+						color $color-white
+						margin 0 0 0 4px
+				
+
+		.menu_soc
+			width 100px
+			height 25px
+			margin-right 15px
+			text-align right
+			
+			a
+				display inline-block
+				height 25px
+				width 25px
+				text-decoration none
+				margin-left 5px
+				opacity 0.8
+				
+				&:hover
+					opacity 1
+
+	.bottom_menu
+		position relative
+		display block
+		width 100%
+		height 6.6vw
+		max-height 105px
+		min-height 70px
+		text-align center
+		white-space nowrap
+
+		li
+			display inline-block
+			max-width 105px
+			max-height 105px
+			margin 0 0.1vw
+			height 100%
+			width 6.9vw
+			min-width 66px
+			min-height 66px
+			box-sizing border-box
+		
+
+	.fleet_info
+		position absolute
+		z-index 8
+		left 0
+		top 100px
+		width 215px
+		height 61px
+		background-color grey
+		display flex
+		flex-shrink 0
+		flex-direction column
+		justify-content center
+		padding 5px 80px 5px 15px
+		background-color rgba($color-black, 0.5)
+		font-weight bold
+		background-image url(/img/game/attack.png)
+		background-repeat no-repeat
+		background-position right top
+		
+		.attack
+			position absolute
+			right 0
+			top 0
+			width 71px
+			height 17px
+			padding-top 54px
+			background-image url(/img/game/attack.png)
+			background-position right bottom
+			text-align center
+		
+		a
+			text-decoration none
+		
+		.fleets,
+		.reinforcements
+			color $color-ggk
+		
+		.reptiles
+			color $color-honor
+		
+		
+	> .user
+		position absolute
+		z-index 15
+		top 100px
+		right 15px
+		width 70px
+		height 95px
+		background-color $color-black
+		
+		.servertime
+			display block
+			height 20px
+			padding-top 5px
+			text-align center
+			color $color-metal
+		
+		.mini_menu
+			display flex
+			flex-shrink 0
+			flex-direction column
+			justify-content flex-end
+			width 23px
+			height h = 69px
+			position absolute
+			left -(@width)
+			bottom 0
+			background-color $color-black
+			
+			a
+				display block
+				width 100%
+				height (h / 3)
+				text-decoration none
+				background-repeat no-repeat
+				background-position bottom center
+
+				&.active,
+				&:hover
+					background-position top center
+
+				&.statistics
+					background-image url(/img/game/statistics.png)
+				
+				&.settings
+					background-image url(/img/game/settings.png)
+		
+		&:hover
+			.menu
+				display flex
+				flex-shrink 0
+
+		.menu
+			position absolute
+			display none
+			width 108px
+			height 155px
+			padding 15px 5px
+			right 0
+			bottom -(@height + 30px)
+			background-color $color-black
+			flex-direction column
+			text-align center
+			
+			a
+				text-decoration none
+				color $color-description
+
+				&:hover
+					color $color-metal
+
+
+			.support
+				margin 20px 0
+				display inherit
+				flex-direction inherit
+	
+	/*.quest
+		position absolute
+		z-index 10
+		bottom 100px
+		right 0
+		width 300px
+		height 90px
+		background-color beige
+		border-radius 50px 0 0 50px*/
+	
+	.quest
+		padding 0
+
+	.additional_area
+		position relative
+		margin auto 0 auto auto
+		min-width 100px
+		width 267px
+		height 428px
+		background-size initial !important
+		background-repeat no-repeat
+		background-position top center
+		flex-shrink 3
+		opacity 0.5
+		z-index 1
+		
+		.title
+			position absolute
+			bottom 0
+			left 0
+			margin 0
+			width 100%
+			height 35px
+			padding-top 10px
+			font-size 22px
+			color #FFFFFF
+			font-weight bold
+			white-space nowrap
+			text-align center
+			background-color rgba(0, 0, 0, 0.5)
+			overflow hidden
+
+		.quests-switch
+			display block
+			position absolute
+			right 25px
+			bottom 50px
+			width 36px
+			height 36px
+			background-position center center
+			background-repeat no-repeat
+
+			&:hover
+				-webkit-filter brightness(1.5)
+				filter brightness(1.5)
+
+			&.open
+				background-image url(/img/game/arrow_open.png)
+				
+			&.close
+				background-image url(/img/game/arrow_close.png)
+
+		.quests
+			position absolute
+			display block
+			right 0px
+			bottom 90px
+			z-index 5
+			
+			li
+				cursor pointer
+				display inline-block
+				padding 10px
+				width 250px
+				border-radius 10px
+				font-weight bold
+				font-size 16px
+				overflow hidden
+				text-overflow ellipsis
+				text-align left
+				white-space nowrap
+				background rgb(0, 0, 0)
+				background rgba(0, 0, 0, 0.8)
+			
+				&:hover
+					-webkit-filter brightness(1.4)
+					filter brightness(1.4)
+
+			.prompt
+				border-color #ffffff
+				color #ffffff
+			
+			.inprogress
+				border-color #56baf2
+				color #56baf2
+				
+			.finished
+				border-color #e9a844
+				color #e9a844
+
+		&.quest
+			cursor pointer
+
+			&.prompt:after,
+			&.finished:after
+				position absolute
+				top 10px
+				right 33px
+			
+			&.prompt:after
+				content url(/img/game/quests/hasquest.png)
+				
+			&.finished:after
+				content url(/img/game/quests/hasreward.png)
+		
+		&.bolz
+			background-size 88%
+			background-image url(/img/game/bolz.jpg)
+
+		&.tamily
+			background-size 88%
+			background-image url(/img/game/tamily.jpg)
+		
+		&.portal
+			background-image url(/img/game/portal.jpg)
+	
+		&.thirdenginery
+			background-size 88%
+			background-image url(/img/game/thirdenginery.jpg)
+	
+		&.vaha
+			background-size 88%
+			background-image url(/img/game/vaha.jpg)
+	
+		&.psm
+			background-size 88%
+			background-image url(/img/game/psm.jpg)
+	
+		&.tilps
+			background-size 88%
+			background-image url(/img/game/tilps.jpg)
+	
+		&.nataly
+			background-size 88%
+			background-image url(/img/game/nataly.jpg)
+	
+		&.mechanic
+			background-size 88%
+			background-image url(/img/game/mechanic.jpg)
+	
+		&.calibrator
+			background-size 88%
+			background-image url(/img/game/calibrator.jpg)
+	
+		&.bolz
+			background-size 88%
+			background-image url(/img/game/bolz.jpg)
+	
+		&.renexis
+			background-size 88%
+			background-image url(/img/game/renexis.jpg)
+		
+		&.general
+			background-size 88%
+			background-image url(/img/game/unit/reptiles/heroes/general.jpg)
+
+	@import '{}/moduls/building/client/building.styl'
+	@import '{}/moduls/research/client/research.styl'
+	@import '{}/moduls/mutual/client/mutual.styl'
+	@import '{}/moduls/mail/client/mail.styl'
+	@import '{}/moduls/chat/client/chat.styl'
+	@import '{}/moduls/game/client/css/item.styl'
+
+.content.wallet,
+.content.admin
+	.overlay
+		display none
+	
+	> *
+		margin auto !important
+
+.scroll-bar
+	background-color $color-metal !important
+	opacity 1 !important
+	border-radius 0 !important
+
+.scroll-element_track
+	display none !important

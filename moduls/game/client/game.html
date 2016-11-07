@@ -24,7 +24,7 @@
 			</div>
 		</header>
 
-		<div class="fleet_info">
+		<div class="fleet_info {{#if not options.hideFleetInfo}}active{{/if}}">
 			{{#if fleetInfo}}
 				{{#with fleetInfo}}
 					{{#if reinforcements}}
@@ -57,6 +57,7 @@
 			{{else}}
 				<span>Нет передвижений флота</span>
 			{{/if}}
+			<button class="toggle"></button>
 		</div>
 
 		<div class="user">

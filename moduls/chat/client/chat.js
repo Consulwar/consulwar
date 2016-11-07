@@ -813,13 +813,13 @@ Template.chat.events({
 			return;
 		}
 
-		var chatOffset = $('.content .chat').offset();
+		var chatOffset = $('.permanent_chat .chat').offset();
 		var zoom = getComputedStyle(document.body).zoom;
 		var userPopupWidth = 48 * 4;
 		Game.Chat.showUserPopup(
 			Math.min(
 				e.pageX / zoom - chatOffset.left + 5, 
-				$('.content .chat').width() - userPopupWidth
+				$('.permanent_chat .chat').width() - userPopupWidth
 			),
 			e.pageY / zoom - chatOffset.top + 5,
 			username
@@ -933,7 +933,7 @@ Game.Chat.showUserPopup = function(x, y, username) {
 				x: x,
 				y: y,
 				username: username
-			}, $('.content .permanent_chat .chat')[0]
+			}, $('.permanent_chat .chat')[0]
 		);
 
 		$('.profile').each(function(index, element) {

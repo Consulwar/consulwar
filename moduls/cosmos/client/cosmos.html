@@ -424,15 +424,13 @@
 				{{#if eq battle.result 2}}Полное поражение{{/if}}
 			</div>
 			{{#if battle.reward}}
-				<div class="resources big">
-					<ul>
-						{{#each battle.reward}}
-							<li class="{{this.engName}}">
-								{{formatNumberWithISO this.amount}}
-							</li>
-						{{/each}}
-					</ul>
-				</div>
+				<ul class="resources big">
+					{{#each battle.reward}}
+						<li class="{{this.engName}}">
+							{{formatNumberWithISO this.amount}}
+						</li>
+					{{/each}}
+				</ul>
 			{{/if}}
 			{{#if battle.artefacts}}
 				<div class="artefacts">

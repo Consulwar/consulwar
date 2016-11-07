@@ -43,7 +43,7 @@ check
 
 npm-container
 reactive-var
-bevanhunt:leaflet
+bevanhunt:leaflet@3.0.1
 manuel:reactivearray
 ddp-rate-limiter
 lookback:tooltips

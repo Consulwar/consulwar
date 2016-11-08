@@ -4,7 +4,7 @@
 	{{#if isNewLayout}}
 		{{> overlay_menu}}
 	{{else}}
-		<div class="overlay"></div>
+		<div class="overlay {{#if options.hideNet}}hideNet{{/if}}"></div>
 	{{/if}}
 
 	<div class="page scrollbar-inner">

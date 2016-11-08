@@ -108,7 +108,7 @@
 
 <template name="overlay_menu">
 	{{#if and isNewLayout item}}
-		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.engName}}">
+		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
 			<div 
 				class="item" 
 				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{item.overlay.own}}.png)"></div>
@@ -116,7 +116,7 @@
 
 								<!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->
 	{{else}}
-		<div class="overlay {{menuGroup}} {{itemGroup}} {{item.engName}}">
+		<div class="overlay {{menuGroup}} {{itemGroup}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
 			{{#each items}}
 				{{#if this.overlay}}
 					{{#let overlay=this.getOverlay}}

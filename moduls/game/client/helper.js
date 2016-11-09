@@ -1,11 +1,21 @@
 Meteor.startup(function() {
 
 UI.registerHelper('isNewLayout', function() {
-	var newLayoutGroups = ['military', 'cosmos'];
+	var newLayoutGroups = {
+		planet: {
+			military: true
+		},
+		cosmos: true,
+		army: {
+			fleet: true
+		}
+	}
 
 	return (
-		   newLayoutGroups.indexOf(Router.current().params.group) != -1
-		|| newLayoutGroups.indexOf(Router.current().group) != -1
+		   newLayoutGroups[Router.current().group] === true
+		|| (   newLayoutGroups[Router.current().group] 
+			&& newLayoutGroups[Router.current().group][Router.current().params.group] === true
+			)
 	);
 });
 
@@ -42,6 +52,10 @@ UI.registerHelper('itemGroup', function() {
 
 UI.registerHelper('currentRouteName', function() {
 	return Router.current().route.name;
+});
+
+UI.registerHelper('hasPremium', function() {
+	return !!Game.Cards.getItem('Crazy');
 });
 
 UI.registerHelper('eq', function(a, b) {

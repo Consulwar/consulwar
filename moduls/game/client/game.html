@@ -127,8 +127,16 @@
 			{{>yield region="permanent_chat"}}
 		</div>
 
+		{{#if (or Game.Quest.hasNewDaily Game.Mail.hasUnread)}}
+			<a href="{{pathFor 'mail' page=1}}" class="newMessage">
+				Новое сообщение
+			</a>
+		{{/if}}
+
+
+
 		{{> items_menu}}
-		
+
 		{{> tooltips }}
 	</div>
 	</div>

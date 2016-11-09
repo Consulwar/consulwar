@@ -137,6 +137,31 @@ body.game
 	
 	.notImplemented
 		color $color-human
+		
+	.newMessage
+		position absolute
+		bottom 250px
+		right 15px
+		display block
+		padding 18px 16px
+		background-color $color-black
+		color $color-metal
+		z-index 4
+		font-size 16px
+		text-decoration none
+		font-weight bold
+		
+		&:before
+			content url(/img/game/message.png)
+			vertical-align middle
+			width 34px
+			height 23px
+			display inline-block
+			margin-right 20px
+						
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
 	
 	& > *
 		pointer-events auto
@@ -313,7 +338,7 @@ body.game
 			width 650px
 			height auto
 			
-			margin auto 10% auto auto
+			margin auto 15% auto auto
 			padding 0
 			
 			background-color rgba($color-black, 0.7)

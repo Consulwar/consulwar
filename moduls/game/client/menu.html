@@ -111,7 +111,7 @@
 		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
 			<div 
 				class="item" 
-				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{item.overlay.own}}.png)"></div>
+				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{or item.overlay.own 'item'}}.png)"></div>
 		</div>
 
 								<!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->

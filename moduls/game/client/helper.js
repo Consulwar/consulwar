@@ -1,9 +1,12 @@
 Meteor.startup(function() {
 
 UI.registerHelper('isNewLayout', function() {
-	var newLayoutGroups = ['military'];
+	var newLayoutGroups = ['military', 'cosmos'];
 
-	return newLayoutGroups.indexOf(Router.current().params.group) != -1;
+	return (
+		   newLayoutGroups.indexOf(Router.current().params.group) != -1
+		|| newLayoutGroups.indexOf(Router.current().group) != -1
+	);
 });
 
 UI.registerHelper('user', function() {

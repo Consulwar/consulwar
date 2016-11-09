@@ -52,12 +52,12 @@ var menu = {
 	army: {
 		name: 'Войска',
 		routeName: ['unit'],
-		url: firstItemGroupURL(Game.Unit.items.army.fleet),
+		url: firstItemUrl(Game.Unit.items.army.fleet),
 		items: {
 			fleet: {
 				name: 'Комический флот',
 				additionalArea: 'bolz',
-				url: firstItemGroupURL(Game.Unit.items.army.fleet),
+				url: firstItemUrl(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet
 			}, 
 			defense: {

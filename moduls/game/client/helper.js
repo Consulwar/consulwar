@@ -54,6 +54,13 @@ UI.registerHelper('currentRouteName', function() {
 	return Router.current().route.name;
 });
 
+UI.registerHelper('premiumTitle', function() {
+	return (!!Game.Cards.getItem('Crazy') 
+		? {title: 'Только для премиум аккаунтов'}
+		: ''
+	);
+});
+
 UI.registerHelper('hasPremium', function() {
 	return !!Game.Cards.getItem('Crazy');
 });

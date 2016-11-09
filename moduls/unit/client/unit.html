@@ -38,12 +38,12 @@
 
 				<div class="actions">
 					<div class="action">
-					<!--disabled="{{#if hasPremium}}false{{else}}true{{/if}}" -->
 						<button 
 							class="max" 
-							
+							disabled="{{#if hasPremium}}false{{else}}true{{/if}}"
 							data-tooltip="Ввести максимум"
-							data-tooltip-direction="s"></button>
+							data-tooltip-direction="s"
+							{{premiumTitle}}></button>
 						<input class="count" type="number" placeholder="Количество" value="{{count}}"/>
 						<button class="build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
 					</div>

@@ -140,9 +140,11 @@ Template.notificationsSettings.events({
 		});
 	},
 
-	'change input[data-settings_field="hideNet"]': function(e, t) {
+	'change .customization input': function(e, t) {
+		var field = $(e.target).data('settings_field');
+
 		var options = Meteor.user().settings && Meteor.user().settings.options;
-		Meteor.call('settings.setOption', 'hideNet', !(options && options.hideNet), function(err) {
+		Meteor.call('settings.setOption', field, !(options && options[field]), function(err) {
 			if (err) {
 				Notifications.error('Не удалось изменить настройки.', err.message);
 			} else {

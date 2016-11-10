@@ -113,14 +113,24 @@
 			<span class="checkboxTitle">Отображать Задания во время их активации</span>
 		</label>
 
-		<h2>Настройка экрана</h2>
-		<label class="checkBlock">
-			<input 
-				type="checkbox"
-				data-settings_field="hideNet"
-				checked="{{options.hideNet}}" 
-			>
-			<span class="checkboxTitle">Отключить сетку</span>
-		</label>
+		<div class="customization">
+			<h2>Настройка экрана</h2>
+			<label class="checkBlock">
+				<input 
+					type="checkbox"
+					data-settings_field="hideNet"
+					checked="{{options.hideNet}}" 
+				>
+				<span class="checkboxTitle">Отключить сетку</span>
+			</label>
+			<label class="checkBlock">
+				<input 
+					type="checkbox"
+					data-settings_field="compactFleetInfo"
+					checked="{{options.compactFleetInfo}}" 
+				>
+				<span class="checkboxTitle">Компактный информер флотов</span>
+			</label>
+		</div>
 	</div>
 </template>

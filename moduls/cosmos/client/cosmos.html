@@ -143,67 +143,95 @@
 	</div>
 </template>
 
+<template name="cosmos_planet_item">
+	<div class="name">{{planet.name}}</div>
+	<div 
+		data-id="{{planet._id}}" 
+		class="
+			map-planet-marker
+			{{planet.type}} 
+			{{#if or planet.isHome planet.armyId}}
+				map-planet-border-human
+			{{else}}{{#if planet.mission}}
+				map-planet-border-reptile
+			{{else}}
+				map-planet-border-empty
+			{{/if}}{{/if}}
+			map-planet-marker-animated
+			{{planet.owner}}
+			" 
+		style="
+			width: {{multiply (sum planet.size 3) 4}}px;
+			height: {{multiply (sum planet.size 3) 4}}px;
+			position: relative;"
+		data-tooltip="
+			{{#if planet.isHome}}
+				Домашняя планета
+			{{else}}
+				{{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet)}}
+			{{/if}}"
+		data-tooltip-direction="e"
+	>
+		<div class="texture"></div>
+	</div>
+	<div class="location">
+		{{#if eq planet.segment 0}}
+			Центр
+		{{else}}
+			Р{{planet.hand}} 
+			С{{planet.segment}}
+		{{/if}}
+	</div>
+</template>
+
 <template name="cosmosFleetsInfo_table">
-	<table>
-		<tr>
-			<th>РО</th>
-			<th>СО</th>
-			<th>ПО</th>
-			<th>РН</th>
-			<th>СН</th>
-			<th>ПН</th>
-			<th>ВП</th>
-		</tr>
+	<ul class="planets">
 		{{#each fleets}}
-			<tr data-id="{{this.id}}">
-				{{#if this.start}}
-					{{#if eq this.start.segment 0}}
-						<td colspan="2">Центр</td>
+			<li data-id="{{this._id}}"
+				class="
+					{{#if eq this._id activeColonyId}}
+						active
 					{{else}}
-						<td>{{this.start.hand}}</td>
-						<td>{{this.start.segment}}</td>
-					{{/if}}
-					<td class="{{this.start.owner}}">{{this.start.name}}</td>
-				{{else}}
-					<td colspan="3">Перехват</td>
-				{{/if}}
-
-				{{#if this.finish}}
-					{{#if eq this.finish.segment 0}}
-						<td colspan="2">Центр</td>
-					{{else}}
-						<td>{{this.finish.hand}}</td>
-						<td>{{this.finish.segment}}</td>
-					{{/if}}
-					<td class="{{this.finish.owner}}">{{this.finish.name}}</td>
-				{{else}}
-					<td colspan="3">
-						{{#if this.isReinforcement}}
-							Земля
-						{{else}}
-							Перехват
+						{{#if this.isHome}}
+							home
 						{{/if}}
-					</td>
-				{{/if}}
+					{{/if}}
+					{{#if this.isBack}}back{{/if}}
+					"
+			>
+				<h2>{{this.name}}</h2>
 
-				<td>{{formatSeconds (getTimeLeft this.timeEnd)}}</td>
-			</tr>
+				<a href="{{pathFor 'cosmos' hash=this.start._id}}" class="start {{this.start.owner}}">
+					{{> cosmos_planet_item planet=this.start}}
+				</a>
+
+				<a href="{{pathFor 'cosmos' hash=this.id}}" class="way {{../owner}}">
+					<time>{{formatSeconds (getTimeLeft this.timeEnd)}}</time>
+					<div class="fleet_marker" style="
+						{{#if this.isBack}}right{{else}}left{{/if}}: {{percentOfWay this.timeStart this.timeEnd}}%;"
+					>
+						&gt;
+					</div>
+				</a>
+
+				<a href="{{pathFor 'cosmos' hash=this.finish._id}}" class="end {{this.finish.owner}}">
+					{{#if this.finish}}
+						{{> cosmos_planet_item planet=this.finish}}
+					{{else}}
+						<div class="map-fleet-rept"></div>
+					{{/if}}
+				</a>
+			</li>
 		{{/each}}
-	</table>
+	</ul>
 </template>
 
 <template name="cosmosFleetsInfo">
 	{{#if userFleets}}
-		<div class="header-humans">
-			<p class="center">Флот консула</p>
-		</div>
-		{{> cosmosFleetsInfo_table fleets=userFleets}}
+		{{> cosmosFleetsInfo_table fleets=userFleets owner='humans'}}
 	{{/if}}
 	{{#if reptileFleets}}
-		<div class="header-reptiles">
-			<p class="center">Флот рептилий</p>
-		</div>
-		{{> cosmosFleetsInfo_table fleets=reptileFleets}}
+		{{> cosmosFleetsInfo_table fleets=reptileFleets owner='reptiles'}}
 	{{/if}}
 	{{#if and (not userFleets) (not reptileFleets)}}
 		<h2>Нет передвижений флота</h2>

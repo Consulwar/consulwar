@@ -60,6 +60,10 @@
 			<button class="toggle"></button>
 		</div>
 
+		<div class="fleet_info_full {{#if options.compactFleetInfo}}compact{{/if}}">
+			{{> cosmosFleetsInfo}}
+		</div>
+
 		<div class="user">
 			<span class="servertime" data-tooltip="Время сервера" data-tooltip-direction="s">
 				{{formatHours serverTime -180}}

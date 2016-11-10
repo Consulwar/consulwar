@@ -282,9 +282,9 @@ var getBattleInfo = function(item) {
 
 Game.Cosmos.showFleetsInfo = function() {
 	Game.Cosmos.hidePlanetPopup();
-	Router.current().render('cosmosFleetsInfo', {
+	/*Router.current().render('cosmosFleetsInfo', {
 		to: 'cosmosSideInfo'
-	});
+	});*/
 };
 
 var scrollMapToPlanet = function(id) {
@@ -322,6 +322,13 @@ Template.cosmosFleetsInfo_table.helpers({
 	getTimeLeft: function(timeEnd) {
 		var timeLeft = timeEnd - Session.get('serverTime');
 		return timeLeft > 0 ? timeLeft : 0;
+	},
+
+	percentOfWay: function(timeStart, timeEnd) {
+		var total = timeEnd - timeStart;
+		var timeLeft = Session.get('serverTime') - timeStart;
+
+		return Math.floor((timeLeft / total) * 100);
 	}
 });
 
@@ -341,7 +348,9 @@ Template.cosmosFleetsInfo.helpers({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
-				timeEnd: fleets[i].timeEnd
+				timeStart: fleets[i].timeStart,
+				timeEnd: fleets[i].timeEnd,
+				isBack: fleets[i].info.isBack
 			};
 			if (data.start) {
 				data.start.owner = data.start.mission 
@@ -357,6 +366,26 @@ Template.cosmosFleetsInfo.helpers({
 					: data.finish.armyId || data.finish.isHome 
 						? 'humans' 
 						: null;
+
+				if (fleets[i].info.isOneway) {
+					data.name = data.finish.mission ? 'Захватить' : 'Перелёт';
+				} else {
+					data.name = data.finish.mission ? 'Уничтожить' : 'Исследовать';
+				}
+
+				if (data.finish.mission) {
+					data.name += (
+						' ' + Game.Battle.items[data.finish.mission.type].name 
+						+ ' ' + data.finish.mission.level
+					);
+				}
+			} else {
+				data.name = 'Перехват';
+				var target = Game.SpaceEvents.getOne(fleets[i].info.targetId);
+				data.name += (
+					' ' + Game.Battle.items[target.info.mission.type].name 
+					+ ' ' + target.info.mission.level
+				);
 			}
 
 			result.push(data);
@@ -371,6 +400,7 @@ Template.cosmosFleetsInfo.helpers({
 				timeEnd: reinforcements[i].timeEnd,
 			};
 			data.start.owner = 'humans';
+			data.name = 'Подкрепление';
 			result.push(data);
 		}
 
@@ -388,7 +418,9 @@ Template.cosmosFleetsInfo.helpers({
 				id: fleets[i]._id,
 				start: Game.Planets.getOne( fleets[i].info.startPlanetId ),
 				finish: Game.Planets.getOne( fleets[i].info.targetId ),
-				timeEnd: fleets[i].timeEnd
+				timeStart: fleets[i].timeStart,
+				timeEnd: fleets[i].timeEnd,
+				isBack: fleets[i].info.isBack
 			};
 			
 			if (data.start) {
@@ -406,6 +438,8 @@ Template.cosmosFleetsInfo.helpers({
 						? 'humans' 
 						: null;
 			}
+
+			data.name = Game.Battle.items[fleets[i].info.mission.type].name + ' ' + fleets[i].info.mission.level;
 
 			result.push(data);
 		}

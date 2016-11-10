@@ -141,7 +141,7 @@ body.game
 	.newMessage
 		position absolute
 		bottom 250px
-		right 15px
+		right 0
 		display block
 		padding 18px 16px
 		background-color $color-black
@@ -169,6 +169,14 @@ body.game
 	button, a
 		outline none
 	
+	.tooltip
+		.inner
+			> .map-planet-popup
+				position relative
+				border 0
+				background transparent
+				padding 0
+
 	&.new
 		
 		.tooltip
@@ -743,7 +751,129 @@ body.game
 		
 		.reptiles
 			color $color-honor
+	
+	.fleet_info_full
+		overflow-y auto
+		left 0
+		top 171px
+		bottom 105px
+		z-index 7
+		position absolute
+		width 320px
+		background-color rgba($color-black, 0.8)
+		text-align center
+		box-sizing border-box
+		font-weight bold
 		
+		a
+			text-decoration none
+				
+		&.compact
+			li
+				height 30px
+				border-bottom 1px dashed rgba($color-white, 0.2)
+				
+				h2
+					font-size 12px
+					position absolute
+					width 100%
+
+				.start,
+				.end
+					top 0
+				
+				.map-planet-marker
+					display none
+					
+				.way
+					height 2px
+					
+					time
+						margin-top 2px
+					
+					.fleet_marker
+						top -10px
+		
+		li
+			position relative
+			display flex
+			flex-direction column
+			height 120px
+			border-bottom 1px dashed rgba($color-white, 0.1)
+			
+			h2
+				height 20px
+				font-size 18px
+					
+			
+			.start,
+			.end
+				position absolute
+				top 20px
+				bottom 0
+				display inline-flex
+				vertical-align middle
+				width 80px
+				flex-direction column
+				align-items center
+				justify-content space-around
+				
+			.start
+				left 0
+			
+			.end
+				right 0
+				
+			&.back
+				.start 
+					left initial
+					right 0
+				
+				.fleet_marker
+					transform scaleX(-1)
+				
+				.end
+					left 0
+					right initial
+			
+			.map-planet-marker
+				flex-shrink 0
+			
+			.map-fleet-rept
+				position relative
+				margin auto
+				flex-shrink 0
+
+			&.humans
+				color $color-ggk
+				
+			&.reptiles
+				color $color-honor
+
+			.way
+				position relative
+				display inline-block
+				vertical-align middle
+				margin auto 40px
+				height 4px
+				
+				&.humans
+					background-color $color-ggk
+				
+				&.reptiles
+					background-color $color-honor
+				
+				time
+					display block
+					width 100%
+					text-align center
+					margin-top 8px
+				
+				.fleet_marker
+					position absolute
+					font-size 20px
+					top -20px
+					z-index 2
 		
 	> .user
 		position absolute

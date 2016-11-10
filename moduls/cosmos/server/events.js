@@ -414,6 +414,7 @@ Game.SpaceEvents.sendShip = function(options) {
 		info: {
 			isHumans: options.isHumans,
 			isOneway: options.isOneway,
+			isBack: !!options.isBack,
 			engineLevel: options.engineLevel,
 			startPosition: options.startPosition,
 			startPlanetId: options.startPlanetId,
@@ -799,6 +800,7 @@ var completeHumansArrival = function(event, planet) {
 			flyTime:        event.timeEnd - event.timeStart,
 			isHumans:       true,
 			isOneway:       true,
+			isBack:			true,
 			engineLevel:    event.info.engineLevel,
 			mission:        null,
 			armyId:         event.info.armyId
@@ -978,6 +980,7 @@ var completeReptilesArrival = function(event, planet) {
 				flyTime:        event.timeEnd - event.timeStart,
 				isHumans:       false,
 				isOneway:       true,
+				isBack:			true,
 				engineLevel:    event.info.engineLevel,
 				mission:        event.info.mission,
 				armyId:         null
@@ -1118,6 +1121,7 @@ var completeShipFight = function(event) {
 			targetType:     Game.SpaceEvents.target.PLANET,
 			targetId:       event.info.startPlanetId,
 			startTime:      event.timeEnd,
+			isBack:			true,
 			flyTime:        event.timeEnd - event.timeStart,
 			isHumans:       event.info.isHumans,
 			engineLevel:    event.info.engineLevel,

@@ -55,7 +55,7 @@ var menu = {
 		url: firstItemUrl(Game.Unit.items.army.fleet),
 		items: {
 			fleet: {
-				name: 'Комический флот',
+				name: 'Космический флот',
 				additionalArea: 'bolz',
 				url: firstItemUrl(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet

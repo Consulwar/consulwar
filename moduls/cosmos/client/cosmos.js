@@ -332,6 +332,17 @@ Template.cosmosFleetsInfo_table.helpers({
 	}
 });
 
+Template.cosmos_planet_item.helpers({
+	owner: function() {
+		return (this.planet.mission 
+			? 'reptiles' 
+			: this.planet.armyId || this.planet.isHome 
+				? 'humans' 
+				: null
+		);
+	}
+});
+
 Template.cosmosFleetsInfo.helpers({
 	userFleets: function () {
 		var result = [];
@@ -447,8 +458,8 @@ Template.cosmosFleetsInfo.helpers({
 	}
 });
 
-Template.cosmosFleetsInfo_table.events({
-	'click table tr[data-id]': function (e, t) {
+Template.cosmos_planet_item.events({
+	'click .planet[data-id]': function (e, t) {
 		var id = $(e.currentTarget).data('id');
 		Game.Cosmos.showShipInfo(id);
 		scrollMapToFleet(id);
@@ -461,12 +472,6 @@ Template.cosmosFleetsInfo_table.events({
 
 Game.Cosmos.showPlanetInfo = function(id) {
 	Game.Cosmos.showPlanetPopup(id, true);
-	Router.current().render('cosmosPlanetInfo', {
-		to: 'cosmosSideInfo',
-		data: {
-			id: id
-		}
-	});
 };
 
 Game.Cosmos.getPlanetInfo = function(planet) {
@@ -526,7 +531,8 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 					name: Game.Unit.items[side][group][key].name,
 					count: _.isString( units[group][key] )
 						? game.Battle.count[ units[group][key] ]
-						: units[group][key]
+						: units[group][key],
+					countId: units[group][key]
 				});
 			}
 		}
@@ -535,20 +541,14 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 	return info;
 };
 
-Template.cosmosPlanetInfo.helpers({
-	planet: function() {
-		var id = this.id;
-		var planet = Game.Planets.getOne(id);
-		return Game.Cosmos.getPlanetInfo(planet);
-	},
-
+Template.cosmosPlanetPopup.helpers({
 	getTimeNextDrop: function(timeCollected) {
 		var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
 		return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
 	}
 });
 
-Template.cosmosPlanetInfo.events({
+Template.cosmosPlanetPopup.events({
 	'click .open': function(e, t) {
 		if (!Game.User.haveVerifiedEmail()) {
 			return Notifications.info('Сперва нужно верифицировать Email');
@@ -609,7 +609,7 @@ Template.cosmosPlanetInfo.events({
 // ----------------------------------------------------------------------------
 
 Game.Cosmos.getPlanetPopupInfo = function(planet) {
-	if (!planet || !planet.artefacts) {
+	if (!planet) {
 		return null;
 	}
 
@@ -618,7 +618,8 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
 		items.push({
 			id: key,
 			name: Game.Artefacts.items[key].name,
-			chance: planet.artefacts[key]
+			chance: planet.artefacts[key],
+			url: Game.Artefacts.items[key].url()
 		});
 	}
 
@@ -664,7 +665,9 @@ Game.Cosmos.showPlanetPopup = function(id, isLock) {
 
 	cosmosPopupView = Blaze.renderWithData(
 		Template.cosmosPlanetPopup, {
+			planet: planet,
 			drop: dropInfo,
+			allowActions: isLock,
 			position: function() {
 				var k = Math.pow(2, (zoom.get() - 7));
 				var iconSize = (planet.size + 3) * 4;
@@ -1253,6 +1256,15 @@ Template.cosmosObjects.helpers({
 		return zoom.get();
 	},
 
+	owner: function() {
+		return (this.planet.mission 
+			? 'reptiles' 
+			: this.planet.armyId || this.planet.isHome 
+				? 'humans' 
+				: null
+		);
+	},
+
 	getPlanetPosition: function(x, y, iconSize) {
 		var k = Math.pow(2, (zoom.get() - 7));
 		var coords = mapView.latLngToLayerPoint(new L.latLng(x, y));
@@ -1387,7 +1399,7 @@ Template.cosmos.onRendered(function() {
 			event.info.targetPosition,
 			0,
 			0,
-			(event.info.isHumans ? '#56BAF2' : '#DC6257')
+			(event.info.isHumans ? '#c6e84c' : '#ff7566')
 		);
 	};
 
@@ -1424,6 +1436,7 @@ Template.cosmos.onRendered(function() {
 	this.autorun(function() {
 		var hash = Router.current().getParams().hash;
 		if (hash) {
+			zoom.dep.changed();
 			Tracker.nonreactive(function() {
 				// highlight planets by artefact
 				if (Game.Artefacts.items[hash]) {

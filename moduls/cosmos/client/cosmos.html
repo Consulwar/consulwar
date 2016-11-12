@@ -24,17 +24,60 @@
 		class="map-planet-popup" 
 		style="left: {{position.x}}px; top: {{position.y}}px;"
 	>
-		<h2>{{drop.name}} ({{drop.type}})</h2>
-		<ul class="map-planet-popup-items">
+		<h2>
+			{{#if allowActions}}
+				<span class="edit" data-id="{{planet.id}}"></span> 
+			{{/if}}
+			{{planet.name}} 
+			({{planet.type}})
+		</h2>
+		<div class="map-planet-popup-items">
 			{{#each drop.items}}
-				<li class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</li>
+				<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
 			{{/each}}
-		</ul>
+		</div>
+		{{#if planet.timeArtefacts}}
+			<p>Сбор через: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
+		{{/if}}
+
 		{{#if drop.cards}}
 			{{#each drop.cards}}
 				{{this.name}} {{this.chance}}%<br/>
 			{{/each}}
 		{{/if}}
+
+		{{#let planet=(Game.Cosmos.getPlanetInfo planet)}}
+			
+			{{#if planet.isHumans}}
+				<h2 class="humans">{{planet.status}}</h2>
+			{{else}}{{#if planet.mission}}
+				<h2 class="reptiles">
+					{{planet.mission.name}}
+					{{planet.mission.level}}
+					уровня
+				</h2>
+			{{else}}
+				<h2>Свободная планета</h2>
+			{{/if}}{{/if}}
+
+			{{#if planet.units}}
+				<ul class="army {{#if planet.mission}}reptiles{{else}}humans{{/if}}">
+					{{#each planet.units}}
+						<li>
+							{{this.name}} 
+							<span 
+								data-tooltip="{{battleCountNumber this.countId}}"
+								data-tooltip-direction="e">
+								{{formatNumberWithISO this.count}}
+							</span>
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+			{{#if and allowActions planet.canSend}}
+				<button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
+			{{/if}}
+		{{/let}}
 	</div>
 </template>
 
@@ -144,44 +187,53 @@
 </template>
 
 <template name="cosmos_planet_item">
-	<div class="name">{{planet.name}}</div>
-	<div 
-		data-id="{{planet._id}}" 
-		class="
-			map-planet-marker
-			{{planet.type}} 
-			{{#if or planet.isHome planet.armyId}}
-				map-planet-border-human
-			{{else}}{{#if planet.mission}}
-				map-planet-border-reptile
-			{{else}}
-				map-planet-border-empty
-			{{/if}}{{/if}}
-			map-planet-marker-animated
-			{{planet.owner}}
-			" 
-		style="
-			width: {{multiply (sum planet.size 3) 4}}px;
-			height: {{multiply (sum planet.size 3) 4}}px;
-			position: relative;"
+	<a 
+		class="planet {{owner}}" 
+		data-id="{{planet._id}}"
+		href="{{pathFor 'cosmos' hash=planet._id}}" 
 		data-tooltip="
 			{{#if planet.isHome}}
 				Домашняя планета
 			{{else}}
-				{{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet)}}
+				{{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet}}
 			{{/if}}"
 		data-tooltip-direction="e"
 	>
-		<div class="texture"></div>
-	</div>
-	<div class="location">
-		{{#if eq planet.segment 0}}
-			Центр
-		{{else}}
-			Р{{planet.hand}} 
-			С{{planet.segment}}
-		{{/if}}
-	</div>
+		<div class="name">{{#if name}}{{name}}{{else}}{{planet.name}}{{/if}}</div>
+		<div 
+			class="
+				map-planet-marker
+				{{planet.type}} 
+				{{#if or planet.isHome planet.armyId}}
+					map-planet-border-human
+				{{else}}{{#if planet.mission}}
+					map-planet-border-reptile
+				{{else}}
+					map-planet-border-empty
+				{{/if}}{{/if}}
+				map-planet-marker-animated
+				{{owner}}
+				" 
+			style="
+				width: {{multiply (sum planet.size 3) 4}}px;
+				height: {{multiply (sum planet.size 3) 4}}px;
+				position: relative;"
+		>
+			<div class="texture"></div>
+		</div>
+		<div class="location">
+			{{#if location}}
+				{{location}}
+			{{else}}
+				{{#if eq planet.segment 0}}
+					Центр
+				{{else}}
+					Р{{planet.hand}} 
+					С{{planet.segment}}
+				{{/if}}
+			{{/if}}
+		</div>
+	</a>
 </template>
 
 <template name="cosmosFleetsInfo_table">
@@ -201,11 +253,11 @@
 			>
 				<h2>{{this.name}}</h2>
 
-				<a href="{{pathFor 'cosmos' hash=this.start._id}}" class="start {{this.start.owner}}">
+				<div class="start">
 					{{> cosmos_planet_item planet=this.start}}
-				</a>
+				</div>
 
-				<a href="{{pathFor 'cosmos' hash=this.id}}" class="way {{../owner}}">
+				<a href="{{pathFor 'cosmos' hash=this.id}}"  class="way {{../owner}}">
 					<time>{{formatSeconds (getTimeLeft this.timeEnd)}}</time>
 					<div class="fleet_marker" style="
 						{{#if this.isBack}}right{{else}}left{{/if}}: {{percentOfWay this.timeStart this.timeEnd}}%;"
@@ -214,13 +266,13 @@
 					</div>
 				</a>
 
-				<a href="{{pathFor 'cosmos' hash=this.finish._id}}" class="end {{this.finish.owner}}">
+				<div class="end">
 					{{#if this.finish}}
 						{{> cosmos_planet_item planet=this.finish}}
 					{{else}}
 						<div class="map-fleet-rept"></div>
 					{{/if}}
-				</a>
+				</div>
 			</li>
 		{{/each}}
 	</ul>
@@ -235,39 +287,6 @@
 	{{/if}}
 	{{#if and (not userFleets) (not reptileFleets)}}
 		<h2>Нет передвижений флота</h2>
-	{{/if}}
-</template>
-
-<template name="cosmosPlanetInfo">
-	{{#if planet}}
-		{{#if planet.name}}
-			<h2><span class="edit" data-id="{{planet.id}}"></span> {{planet.name}} ({{planet.type}})</h2>
-		{{/if}}
-		{{#if planet.isHumans}}
-			<div class="header-humans">
-				<p class="center">{{planet.status}}</p>
-			</div>
-		{{/if}}
-		{{#if planet.mission}}
-			<div class="header-reptiles">
-				<p>Рептилоиды</p>
-				<p><span>Уровень опасности: </span>{{planet.mission.level}}</p>
-				<p><span>Статус: </span>{{planet.mission.name}}</p>
-			</div>
-		{{/if}}
-		{{#if planet.units}}
-			<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
-				{{#each planet.units}}
-					<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
-				{{/each}}
-			</ul>
-		{{/if}}
-		{{#if planet.timeArtefacts}}
-			<p>Сбор артефактов: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
-		{{/if}}
-		{{#if planet.canSend}}
-			<button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
-		{{/if}}
 	{{/if}}
 </template>
 
@@ -324,7 +343,8 @@
 				{{#if lt zoom 9}}zoom-lt-9{{/if}}
 				{{#if lt zoom 7}}zoom-lt-7{{/if}}
 				{{#if lt zoom 5}}zoom-lt-5{{/if}}
-				{{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}" 
+				{{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}
+				{{owner}}" 
 			tabindex="0" 
 			style="
 				margin-left: {{position.marginLeft}}px;

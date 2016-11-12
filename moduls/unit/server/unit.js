@@ -198,38 +198,13 @@ Game.Unit.rollCount = function(name) {
 		return name;
 	}
 
-	switch (name) {
-		case 'few':
-			return Game.Random.interval(1, 4);
-		case 'several':
-			return Game.Random.interval(5, 9);
-		case 'pack':
-			return Game.Random.interval(10, 19);
-		case 'lots':
-			return Game.Random.interval(20, 49);
-		case 'horde':
-			return Game.Random.interval(50, 99);
-		case 'throng':
-			return Game.Random.interval(100, 249);
-		case 'swarm':
-			return Game.Random.interval(250, 499);
-		case 'zounds':
-			return Game.Random.interval(500, 999);
-		case 'legion':
-			return Game.Random.interval(1000, 4999);
-		case 'division':
-			return Game.Random.interval(5000, 9999);
-		case 'corps':
-			return Game.Random.interval(10000, 19999);
-		case 'army':
-			return Game.Random.interval(20000, 49999);
-		case 'group':
-			return Game.Random.interval(50000, 99999);
-		case 'front':
-			return Game.Random.interval(100000, 249999);
-	}
+	var count = game.Battle.countNumber[name];
 
-	return 0;
+	if (count) {
+		return Game.Random.interval(count.min, count.max);
+	} else {
+		return 0;
+	}
 };
 
 Game.Unit.calculateArmyCost = function(army) {

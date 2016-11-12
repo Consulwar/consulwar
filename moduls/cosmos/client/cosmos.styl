@@ -98,10 +98,10 @@
 		background-color #DC6257
 	
 .map-planet-border-human
-	border 3px solid #56BAF2
+	border 3px solid $color-ggk
 	border-radius 50%
 	&.zoom-lt-5
-		background-color #56BAF2
+		background-color $color-ggk
 	
 .map-planet-border-empty
 	border 3px solid #ffffff
@@ -255,15 +255,16 @@
 
 
 .reptiles
-	color #DC6257
+	color $color-honor
 	
 .humans
-	color #56BAF2
+	color $color-ggk
 	
 .attack-menu .fleet
 	cursor pointer
 
 .map-planet-info
+	display none
 	overflow-y auto
 	right 0
 	bottom 0
@@ -309,18 +310,6 @@
 		li
 			position relative
 			display block
-
-	.edit
-		cursor pointer
-		display inline-block
-		width 21px
-		height 21px
-		vertical-align middle
-		background-image url(/img/game/edit.png)
-		background-repeat no-repeat
-		
-		&:hover
-			background-image url(/img/game/edit_a.png)
 	
 	.center
 		padding-top 20px
@@ -344,7 +333,7 @@
 		margin-top 15px
 		width 100%
 		text-align left
-		color #56BAF2
+		color $color-ggk
 		font-size 18px
 		background-repeat no-repeat
 		background-image url(/img/game/cosmomap/ico_humans.png)
@@ -352,27 +341,6 @@
 		
 		p
 			padding-left 65px
-
-	.button-attack
-		cursor pointer
-		display block
-		font-weight bold
-		font-size 18px
-		text-align center
-		text-transform uppercase
-		margin-left 82px
-		margin-top 15px
-		width 177px
-		height 46px
-		color #ffffff
-		background-image url(/img/game/cosmomap/button_attack.png)
-		background-repeat no-repeat
-		border 0px solid transparent
-		border-radius 9px
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
 
 .map-planet-popup
 	display block
@@ -385,6 +353,49 @@
 	border-radius 8px
 	text-align center
 
+	.edit
+		cursor pointer
+		display inline-block
+		width 21px
+		height 21px
+		vertical-align middle
+		background-image url(/img/game/edit.png)
+		background-repeat no-repeat
+		
+		&:hover
+			background-image url(/img/game/edit_a.png)
+
+	.button-attack
+		cursor pointer
+		display block
+		font-weight bold
+		font-size 18px
+		text-align center
+		text-transform uppercase
+		margin 15px auto 0
+		width 177px
+		height 46px
+		color #ffffff
+		background-image url(/img/game/cosmomap/button_attack.png)
+		background-repeat no-repeat
+		border 0px solid transparent
+		border-radius 9px
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+	
+	.army
+		font-size 18px
+		text-align left
+		padding 10px
+		
+		li
+			display block
+			
+			span
+				color $color-white
+
 	.map-planet-popup-items
 		position relative
 		display block
@@ -392,13 +403,14 @@
 		padding 0px 0px 0px 0px
 		width 100%
 		
-		li
+		a
 			position relative
 			display inline-block
 			padding 70px 0px 0px 0px
 			width 90px
 			height 20px
 			text-align center
+			text-decoration none
 			background-position center top
 			background-repeat no-repeat
 			
@@ -498,7 +510,7 @@
 			padding-top 5px
 			
 		.home
-			color #56baf2
+			color $color-ggk
 			
 		.locked
 			color #4a4a4a

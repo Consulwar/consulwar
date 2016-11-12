@@ -60,7 +60,11 @@
 			<button class="toggle"></button>
 		</div>
 
-		<div class="fleet_info_full {{#if options.compactFleetInfo}}compact{{/if}}">
+		<div class="
+			fleet_info_full
+			{{#if options.compactFleetInfo}}compact{{/if}}
+			 {{#if not options.hideFleetInfo}}active{{/if}}
+			">
 			{{> cosmosFleetsInfo}}
 		</div>
 

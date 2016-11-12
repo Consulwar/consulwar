@@ -109,7 +109,7 @@ var gameActions = {
 	building: Game.Building.showPage,
 	research: Game.Research.showPage,
 	house: Game.House.showPage,
-	artefacts: Game.House.showArtefactsPage,
+	artefacts: Game.Resources.showArtefactsPage,
 	
 	walletHistory: Game.Payment.showHistory,
 	promocodeHistory: Game.Payment.showPromocodeHistory,

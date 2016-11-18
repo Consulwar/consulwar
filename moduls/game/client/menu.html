@@ -81,37 +81,62 @@
 </template>
 
 <template name="items_menu">
-	<ul class="bottom_menu items">
-		{{#each items}}
-			{{#let progress=this.progress}}
-				<li 
-					class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if and this.star (not isNewLayout)}}star{{this.star}}{{/if}}" 
-					data-tooltip="{{this.name}}"
-					data-tooltip-direction="n"
-				>
-					<a 
-						class="{{this.engName}}-icon" 
-						href="{{this.url}}"
-						data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
+	<ul class="bottom_menu items {{#if isArtefactsPage}} artefacts{{/if}}">
+		{{#if not isArtefactsPage}}
+			{{#each items}}
+				{{#let progress=this.progress}}
+					<li 
+						class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if and this.star (not isNewLayout)}}star{{this.star}}{{/if}}" 
+						data-tooltip="{{this.name}}"
+						data-tooltip-direction="n"
 					>
-						{{#if this.currentLevel}}
-							<span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
-								{{formatNumberWithISO this.currentLevel 3}}
-							</span>
-						{{/if}}
-					</a>
+						<a 
+							class="{{this.engName}}-icon" 
+							href="{{this.url}}"
+							data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
+						>
+							{{#if this.currentLevel}}
+								<span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
+									{{formatNumberWithISO this.currentLevel 3}}
+								</span>
+							{{/if}}
+						</a>
+					</li>
+				{{/let}}
+			{{/each}}
+		{{else}}
+			{{#each (groupedItems items 'group')}}
+				<li class="group">
+					<ul>
+						{{#each this}}
+						<li 
+								class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}} enough_resources {{this.type}} " 
+								data-tooltip="{{this.name}}"
+								data-tooltip-direction="n"
+							>
+								<a 
+									class="{{this.engName}}-icon" 
+									href="{{this.url}}"
+								>
+									<span class="count">
+										{{formatNumberWithISO this.amount 3}}
+									</span>
+								</a>
+							</li>
+						{{/each}}
+					</ul>
 				</li>
-			{{/let}}
-		{{/each}}
+			{{/each}}
+		{{/if}}
 	</ul>
 </template>
 
 <template name="overlay_menu">
 	{{#if and isNewLayout item}}
-		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
+		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.group}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
 			<div 
 				class="item" 
-				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{or item.overlay.own 'item'}}.png)"></div>
+				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{or item.overlay.own 'item'}}.{{#if not isArtefactsPage}}png{{else}}jpg{{/if}})"></div>
 		</div>
 
 								<!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->

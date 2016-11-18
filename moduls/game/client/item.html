@@ -1,6 +1,6 @@
 <template name="item_requirements">
 	{{#if requirements}}
-	<div class="requirements">
+	<div class="additional_info requirements">
 		<span class="title">Необходимые технологии:</span>
 		{{#each requirements}}
 		<a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">

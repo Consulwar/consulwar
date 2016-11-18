@@ -340,6 +340,11 @@ Template.cosmos_planet_item.helpers({
 				? 'humans' 
 				: null
 		);
+	},
+
+	getTimeNextDrop: function(timeCollected) {
+		var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+		return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
 	}
 });
 

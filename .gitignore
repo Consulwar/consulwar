@@ -2,3 +2,4 @@ settings.json
 settings-*.json
 mupc.json
 mupc-*.json
+*.db

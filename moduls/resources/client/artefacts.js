@@ -14,6 +14,18 @@ Game.Resources.showArtefactsPage = function() {
 	});
 };
 
+var getPlanetsByArtefact = function(artefactId) {
+	var basePlanet = Game.Planets.getBase();
+	var planets = Game.Planets.getByArtefact(artefactId);
+
+	for (let i = 0; i < planets.length; i++) {
+		planets[i].distance = Game.Planets.calcDistance(planets[i], basePlanet);
+		planets[i].chance = planets[i].artefacts[artefactId];
+	}
+
+	return planets;
+}
+
 Template.item_artefact.helpers({
 	subgroupItems: function() {
 		return _.map(Game.Artefacts.items, function(item) {
@@ -21,64 +33,55 @@ Template.item_artefact.helpers({
 		});
 	},
 
-	planets: function() {
-		var artefactId = this.item.engName;
+	topPlanets: function(limit = 4) {
+		return _.sortBy(getPlanetsByArtefact(this.item.engName), function(planet) {
+			return planet.chance;
+		}).reverse().splice(0, limit);
+	},
 
-		var basePlanet = Game.Planets.getBase();
-		var planets = Game.Planets.getByArtefact(artefactId);
-		var nearest = [];
-		var top = [];
+	nearestPlanets: function(limit = 4) {
+		return _.sortBy(getPlanetsByArtefact(this.item.engName), function(planet) {
+			return planet.distance;
+		}).splice(0, limit);
+	},
 
-		var i = 0;
-		var n = 0;
+	userPlanets: function() {
+		var planets = _.filter(getPlanetsByArtefact(this.item.engName), function(planet) {
+			return planet.armyId;
+		});
 
-		for (i = 0; i < planets.length; i++) {
-			// insert additional info
-			planets[i].chance = planets[i].artefacts[artefactId];
+		return planets.length && {
+			planets: planets.length,
+			chance: {
+				min: _.min(planets, function(planet) {
+					return planet.chance;
+				}).chance,
+				max: _.max(planets, function(planet) {
+					return planet.chance;
+				}).chance,
+				total: _.reduce(planets, function(memo, planet) { 
+					return memo + planet.chance; 
+				}, 0) * (86400 / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD) / 100
+			},
+			collection: _.min(planets, function(planet) {
+				return planet.timeArtefacts;
+			}).timeArtefacts
+		} 
+	},
 
-			// insert nearest
-			n = nearest.length;
-			while (n-- > 0) {
-				var toNearest = Game.Planets.calcDistance(nearest[n], basePlanet);
-				var toCurrent = Game.Planets.calcDistance(planets[i], basePlanet);
-				if (toNearest <= toCurrent) {
-					break;
-				}
-			}
-			nearest.splice(n + 1, 0, planets[i]);
-
-			// insert top
-			n = top.length;
-			while (n-- > 0) {
-				var topValue = top[n].artefacts[artefactId];
-				var curValue = planets[i].artefacts[artefactId];
-				if (curValue <= topValue) {
-					break;
-				}
-			}
-			top.splice(n + 1, 0, planets[i]);
-		}
-
-		// aggregate results
-		var result = nearest.splice(0, 3);
-		n = 0;
-		while (result.length < 6 && top.length > 0) {
-			var planet = top.shift();
-			var isDuplicated = false;
-			for (i = 0; i < result.length; i++) {
-				if (planet._id == result[i]._id) {
-					isDuplicated = true;
-					break;
-				}
-			}
-			if (!isDuplicated) {
-				result.splice(result.length - n, 0, planet);
-				n++;
-			}
-		}
-
-		return result.length > 0 ? result : null;
+	getTimeNextDrop: function(timeCollected) {
+		var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+		return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
 	}
 });
+
+Template.item_artefact.events({
+	'click .toggle_description': function(e, t) {
+		$(t.find('.description')).slideToggle(function() {
+			var options = Meteor.user().settings && Meteor.user().settings.options;
+			Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
+		});
+	}
+})
 
 };

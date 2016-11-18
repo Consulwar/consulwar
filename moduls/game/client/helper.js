@@ -8,7 +8,8 @@ UI.registerHelper('isNewLayout', function() {
 		cosmos: true,
 		army: {
 			fleet: true
-		}
+		},
+		artefacts: true
 	}
 
 	return (
@@ -63,6 +64,23 @@ UI.registerHelper('premiumTitle', function() {
 
 UI.registerHelper('hasPremium', function() {
 	return !!Game.Cards.getItem('Crazy');
+});
+
+UI.registerHelper('notPremiumDisabled', function() {
+	return (!!Game.Cards.getItem('Crazy')
+		? ''
+		: 'disabled="true"'
+	);
+});
+
+UI.registerHelper('battleCountNumber', function(name) {
+	var count = game.Battle.countNumber[name];
+
+	if (count) {
+		return count.min + ' - ' + count.max;
+	} else {
+		return '';
+	}
 });
 
 UI.registerHelper('eq', function(a, b) {

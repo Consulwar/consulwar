@@ -1,6 +1,10 @@
 artefacts-icon(group, name, color)
 	.{name}
-		background-image url("/img/artefacts/" group "/i/" name ".png")
+		background-image url("/img/game/artefact/" group "/i/" name ".png")
+		color color
+	
+	.{name}-icon
+		background-image url("/img/game/artefact/" group "/" name "/item.jpg")
 		color color
 
 artefacts-icon('green', 'secret_technology', #2cc24f)

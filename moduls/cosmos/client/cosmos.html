@@ -224,6 +224,8 @@
 		<div class="location">
 			{{#if location}}
 				{{location}}
+			{{else}}{{#if showTimeLeft}}
+				{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}
 			{{else}}
 				{{#if eq planet.segment 0}}
 					Центр
@@ -231,7 +233,7 @@
 					Р{{planet.hand}} 
 					С{{planet.segment}}
 				{{/if}}
-			{{/if}}
+			{{/if}}{{/if}}
 		</div>
 	</a>
 </template>

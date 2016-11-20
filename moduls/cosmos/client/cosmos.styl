@@ -121,9 +121,9 @@
 	cursor pointer
 
 	&.highlighted
-		border-color #c6e84c
+		border-color $color-metal
 		&.zoom-lt-5
-			background-color #c6e84c
+			background-color $color-metal
 
 	&.zoom-lt-7
 		border-width 2px
@@ -134,6 +134,18 @@
 			display none
 		.texture:after
 			display none
+	
+	.chance
+		position absolute
+		z-index 2
+		top 50%
+		left 50%
+		margin -11px 0 0 -30px
+		width 60px
+		height 22px
+		background-color rgba(0, 0, 0, 0.3)
+		text-align center
+		font-size 16px
 
 	.texture
 		position absolute
@@ -262,85 +274,6 @@
 	
 .attack-menu .fleet
 	cursor pointer
-
-.map-planet-info
-	display none
-	overflow-y auto
-	right 0
-	bottom 0
-	z-index 6
-	position absolute
-	width 340px
-	height 100%
-	//background-color #020609
-	background-color rgba(0, 0, 0, 0.3)
-	text-align center
-	box-sizing border-box
-	padding-top 200px
-	
-	table
-		td, th
-			padding 4px
-			white-space nowrap
-		
-		tr[data-id]
-			cursor pointer
-	
-	h2
-		margin-top 15px
-		margin-bottom 15px
-		
-	p
-		margin-top 5px
-		margin-left 15px
-		font-size: 18px
-		text-align left
-	
-	span
-		color #ffffff
-		
-	ul
-		position relative
-		margin-top 5px
-		margin-left 15px
-		text-align left
-		font-weight bold
-		font-size 18px
-		
-		li
-			position relative
-			display block
-	
-	.center
-		padding-top 20px
-
-	.header-reptiles
-		min-height 70px
-		margin-top 15px
-		width 100%
-		text-align left
-		color #DC6257
-		font-size 18px
-		background-repeat no-repeat
-		background-image url(/img/game/cosmomap/ico_rept.png)
-		background-position 15px 10px
-		
-		p
-			padding-left 65px
-
-	.header-humans
-		min-height 70px
-		margin-top 15px
-		width 100%
-		text-align left
-		color $color-ggk
-		font-size 18px
-		background-repeat no-repeat
-		background-image url(/img/game/cosmomap/ico_humans.png)
-		background-position 15px 10px
-		
-		p
-			padding-left 65px
 
 .map-planet-popup
 	display block

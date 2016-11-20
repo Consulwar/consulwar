@@ -253,7 +253,11 @@
 				<h2>{{this.name}}</h2>
 
 				<div class="start">
-					{{> cosmos_planet_item planet=this.start}}
+					{{#if this.start}}
+						{{> cosmos_planet_item planet=this.start}}
+					{{else}}
+						<a class="map-fleet-rept"></a>
+					{{/if}}
 				</div>
 
 				<a href="{{pathFor 'cosmos' hash=this.id}}"  class="way {{../owner}}">

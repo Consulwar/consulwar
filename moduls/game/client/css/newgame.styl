@@ -760,6 +760,7 @@ body.game
 		text-align center
 		flex-wrap nowrap
 		justify-content center
+		margin-bottom 20px
 		
 		&.artefacts
 			flex-wrap wrap
@@ -837,21 +838,45 @@ body.game
 		background-repeat no-repeat
 		background-position right top
 		
+		&.attack
+			min-width 71px
+		
 		&.active
 			width 215px
 			height 61px
 			padding 5px 80px 5px 15px
 			
+			button:before
+				transform scaleX(1)
+			
 		
 		button
 			position absolute
 			top 0
-			right -10px
-			width 10px
+			right -20px
+			display flex
+			justify-content center
+			align-items center
+			width 20px
 			height 100%
 			background-color rgba($color-black, 0.4)
 			border 0
 			cursor pointer
+			
+			&:before
+				content url(/img/game/arrow.png)
+				position absolute
+				transform scaleX(-1)
+				-webkit-filter grayscale(1) brightness(0.5)
+				filter grayscale(1) brightness(0.5)
+
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+					
+				&:before
+					-webkit-filter grayscale(0)
+					filter grayscale(0)
 		
 		.attack
 			position absolute
@@ -864,7 +889,7 @@ body.game
 			background-position right bottom
 			text-align center
 		
-		&:not(.active) a
+		&:not(.active) a:not(.attack)
 			display none
 
 		a
@@ -906,22 +931,58 @@ body.game
 			color $color-honor
 	
 	.fleet_info_full
-		display none
 		overflow-y auto
 		left 0
 		top 171px
-		bottom 105px
+		bottom 125px
 		z-index 7
 		position absolute
-		width 320px
+		width 330px
 		background-color rgba($color-black, 0.8)
 		text-align center
 		box-sizing border-box
 		font-weight bold
 		
+		&:not(.active)
+			height 20px
+			
+			ul
+				display none
+		
+		button
+			display flex
+			justify-content center
+			align-items center
+			width 100%
+			height 20px
+			background-color rgba($color-black, 0.4)
+			border 0
+			cursor pointer
+			
+			&:before
+				content url(/img/game/arrow.png)
+				position absolute
+				transform rotate(90deg) scaleX(-1)
+				-webkit-filter grayscale(1) brightness(0.5)
+				filter grayscale(1) brightness(0.5)
+
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+					
+				&:before
+					-webkit-filter grayscale(0)
+					filter grayscale(0)
+		
 		&.active
 			display block
+			
+			button:before
+				transform rotate(90deg) scaleX(1)
 		
+		&.hide
+			display none
+
 		a
 			text-decoration none
 				

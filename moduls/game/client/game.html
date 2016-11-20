@@ -24,7 +24,7 @@
 			</div>
 		</header>
 
-		<div class="fleet_info {{#if not options.hideFleetInfo}}active{{/if}}">
+		<div class="fleet_info {{#if not options.hideFleetInfo}}active{{/if}} {{#if fleetInfo.isWaitingAttack}}attack{{/if}}">
 			{{#if fleetInfo}}
 				{{#with fleetInfo}}
 					{{#if reinforcements}}
@@ -55,7 +55,7 @@
 					{{/if}}
 				{{/with}}
 			{{else}}
-				<span>Нет передвижений флота</span>
+				<a>Нет передвижений флота</a>
 			{{/if}}
 			<button class="toggle"></button>
 		</div>
@@ -63,8 +63,10 @@
 		<div class="
 			fleet_info_full
 			{{#if options.compactFleetInfo}}compact{{/if}}
-			 {{#if not options.hideFleetInfo}}active{{/if}}
+			{{#if options.hideFleetInfo}}hide{{/if}}
+			{{#if options.showFleetInfoFull}}active{{/if}}
 			">
+			<button class="toggle"></button>
 			{{> cosmosFleetsInfo}}
 		</div>
 

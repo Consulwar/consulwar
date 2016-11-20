@@ -440,6 +440,10 @@ Template.newgame.events({
 	'click .fleet_info .toggle': function() {
 		var options = Meteor.user().settings && Meteor.user().settings.options;
 		Meteor.call('settings.setOption', 'hideFleetInfo', !(options && options.hideFleetInfo));
+	},
+	'click .fleet_info_full .toggle': function() {
+		var options = Meteor.user().settings && Meteor.user().settings.options;
+		Meteor.call('settings.setOption', 'showFleetInfoFull', !(options && options.showFleetInfoFull));
 	}
 });
 

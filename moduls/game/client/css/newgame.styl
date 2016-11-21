@@ -98,81 +98,90 @@ body.game
 	width 100%
 	height 100%
 	overflow hidden
-
-	> .overlay
-		position absolute
-		z-index 0
-		left 50%
-		top 50%
-		margin-left -960px
-		margin-top -540px
-		display block
-		width 1920px
-		height 1080px
-		background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
-		background-repeat repeat, no-repeat, no-repeat
-		background-blend-mode normal, exclusion, normal
-		
-		&.hideNet
-			background-repeat no-repeat, no-repeat, no-repeat
-		
-		&.item
-			background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
-			
-		&.fleet
-			background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
-			
-		&.cosmos
-			background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
-
-		&.artefacts
-			background-repeat no-repeat, no-repeat
-			background-blend-mode exclusion, normal
-			
-			.item
-				height 90%
-				&:before
-					content ''
-					position absolute
-					top 0
-					left 0
-					width 100%
-					height 100%
-					background-position center
-
-			&.white
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/white/bg.png)
-			&.green
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/green/bg.png)
-			&.blue
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/blue/bg.png)
-			&.purple
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/purple/bg.png)
-			&.orange
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/orange/bg.png)
-			&.red
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/red/bg.png)
-
-		.item
+	
+	.page 
+		.overlay_wrap
 			position absolute
 			top 0
 			left 0
-			width 60%
+			width 100%
 			height 100%
-			background-repeat no-repeat
-			background-position center center
+			overflow hidden
+
+			> .overlay
+				position absolute
+				z-index 0
+				left 50%
+				top 50%
+				margin-left -960px
+				margin-top -540px
+				display block
+				width 1920px
+				height 1080px
+				background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
+				background-repeat repeat, no-repeat, no-repeat
+				background-blend-mode normal, exclusion, normal
+				
+				&.hideNet
+					background-repeat no-repeat, no-repeat, no-repeat
+				
+				&.item
+					background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
+					
+				&.fleet
+					background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
+					
+				&.cosmos
+					background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
+
+				&.artefacts
+					background-repeat no-repeat, no-repeat
+					background-blend-mode exclusion, normal
+					
+					.item
+						height 90%
+						&:before
+							content ''
+							position absolute
+							top 0
+							left 0
+							width 100%
+							height 100%
+							background-position center
+
+					&.white
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/white/bg.png)
+					&.green
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/green/bg.png)
+					&.blue
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/blue/bg.png)
+					&.purple
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/purple/bg.png)
+					&.orange
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/orange/bg.png)
+					&.red
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/red/bg.png)
+
+				.item
+					position absolute
+					top 0
+					left 0
+					width 60%
+					height 100%
+					background-repeat no-repeat
+					background-position center center
 
 
 	

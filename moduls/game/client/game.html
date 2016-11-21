@@ -2,13 +2,16 @@
 	{{> connection}}
 
 	<div class="wrap"> 
-		{{#if isNewLayout}}
-			{{> overlay_menu}}
-		{{else}}
-			<div class="overlay {{#if options.hideNet}}hideNet{{/if}}"></div>
-		{{/if}}
 		<div class="page">
 			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}}">
+				<div class="overlay_wrap">
+					{{#if isNewLayout}}
+						{{> overlay_menu}}
+					{{else}}
+						<div class="overlay {{#if options.hideNet}}hideNet{{/if}}"></div>
+					{{/if}}
+				</div>
+				
 				<header>
 					{{> current_resources}}
 

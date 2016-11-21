@@ -659,11 +659,6 @@ body.game
 					background-position 2px center
 					margin-top 12px
 					text-decoration none
-		.additional_area
-			position absolute
-			right 0
-			top 196px
-			z-index 0
 
 	.content
 		position relative
@@ -1283,47 +1278,50 @@ body.game
 				display inherit
 				flex-direction inherit
 	
-	/*.quest
+	.quest
 		position absolute
 		z-index 10
-		bottom 100px
+		bottom 140px
 		right 0
-		width 300px
-		height 90px
-		background-color beige
-		border-radius 50px 0 0 50px*/
+		width 215px
+		height 70px
+		
+		padding 9px 9px 8px 85px
+		background-color rgba(0, 0, 0, 0.8)
+		background-position 10px center
+		border 2px solid rgba(100, 100, 100, 0.8)
+		border-right 0
+		border-radius 50px 0 0 50px
 	
-	.quest
-		padding 0
 
 	.additional_area
-		position relative
-		margin auto 0 auto auto
-		min-width 100px
-		width 267px
-		height 428px
-		background-size initial !important
 		background-repeat no-repeat
-		background-position top center
 		flex-shrink 3
-		opacity 0.5
+		opacity 0.8
 		z-index 1
 		
 		.title
-			position absolute
-			bottom 0
-			left 0
-			margin 0
+			display flex
+			flex-direction column
+			justify-content space-around
+			position relative
+			margin auto
 			width 100%
-			height 35px
-			padding-top 10px
-			font-size 22px
-			color #FFFFFF
+			height 100%
+			color $color-white
 			font-weight bold
 			white-space nowrap
 			text-align center
-			background-color rgba(0, 0, 0, 0.5)
-			overflow hidden
+			
+			h2
+				text-overflow ellipsis
+				overflow hidden
+			
+			.prompt
+				color $color-metal
+				
+			.finished
+				color $color-ggk
 
 		.quests-switch
 			display block
@@ -1399,54 +1397,50 @@ body.game
 				content url(/img/game/quests/hasreward.png)
 		
 		&.bolz
-			background-size 88%
-			background-image url(/img/game/bolz.jpg)
+			background-image url(/img/game/quests/bolz.png)
 
 		&.tamily
-			background-size 88%
-			background-image url(/img/game/tamily.jpg)
+			background-image url(/img/game/quests/tamily.png)
 		
 		&.portal
+			margin auto 0 auto auto
+			min-width 100px
+			width 267px
+			height 428px
 			background-image url(/img/game/portal.jpg)
 	
 		&.thirdenginery
-			background-size 88%
-			background-image url(/img/game/thirdenginery.jpg)
+			background-image url(/img/game/quests/thirdenginery.png)
 	
 		&.vaha
-			background-size 88%
-			background-image url(/img/game/vaha.jpg)
+			background-image url(/img/game/quests/vaha.png)
 	
 		&.psm
-			background-size 88%
-			background-image url(/img/game/psm.jpg)
+			background-image url(/img/game/quests/psm.png)
 	
 		&.tilps
-			background-size 88%
-			background-image url(/img/game/tilps.jpg)
+			background-image url(/img/game/quests/tilps.png)
 	
 		&.nataly
-			background-size 88%
-			background-image url(/img/game/nataly.jpg)
+			background-image url(/img/game/quests/nataly.png)
 	
 		&.mechanic
-			background-size 88%
-			background-image url(/img/game/mechanic.jpg)
+			background-image url(/img/game/quests/mechanic.png)
 	
 		&.calibrator
-			background-size 88%
-			background-image url(/img/game/calibrator.jpg)
+			background-image url(/img/game/quests/calibrator.png)
 	
 		&.bolz
-			background-size 88%
-			background-image url(/img/game/bolz.jpg)
+			background-image url(/img/game/quests/bolz.png)
 	
 		&.renexis
-			background-size 88%
-			background-image url(/img/game/renexis.jpg)
+			background-image url(/img/game/quests/renexis.png)
 		
 		&.general
-			background-size 88%
+			margin auto 0 auto auto
+			min-width 100px
+			width 267px
+			height 428px
 			background-image url(/img/game/unit/reptiles/heroes/general.jpg)
 
 	@import '{}/moduls/building/client/building.styl'

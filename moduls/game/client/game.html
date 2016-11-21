@@ -127,14 +127,8 @@
 					{{#unless isNewLayout}}
 						{{> overlay_menu}}
 					{{/unless}}
-
-					{{#unless isNewLayout}}
-						{{> additional_area}}
-					{{/unless}}
 				</div>
-				{{#if isNewLayout}}
-					{{> additional_area}}
-				{{/if}}
+				{{> additional_area}}
 
 				{{>yield region="permanent_content"}}
 
@@ -163,86 +157,6 @@
 	{{> notifications}}
 </template>
 
-<template name="game">
-	{{> connection}}
-
-	<div class="game">
-		<header>
-			<div class="username">
-				<span>Консул</span> {{username}}
-				<span class="planet_name">Планета:</span> {{planetName}} <a class="edit" href="#"></a>
-			</div>
-
-			{{> top_menu}}
-			<span class="servername" data-tooltip="Время сервера" data-tooltip-direction="s">
-				{{formatDate serverTime -180}}
-			</span>
-		</header>
-
-		<div class="menu">
-			{{> current_resources}}
-
-			{{> main_menu}}
-
-			<div class="fleet_info {{#if and fleetInfo fleetInfo.isWaitingAttack}}attack{{/if}}">
-				{{#if fleetInfo}}
-					{{#with fleetInfo}}
-						{{#if reinforcements}}
-							<a class="humans" href="{{pathFor 'cosmos' hash=reinforcementsId}}">
-								Подкрепление 
-								{{#if gt reinforcements 1}}({{reinforcements}}) {{/if}}
-								{{formatSeconds (fleetTime reinforcementsTime)}}
-							</a><br/>
-						{{/if}}
-						{{#if consul}}
-							<a class="humans" href="{{pathFor 'cosmos' hash=consulId}}">
-								Флот консула 
-								{{#if gt consul 1}}({{consul}}) {{/if}}
-								{{formatSeconds (fleetTime consulTime)}}
-							</a><br/>
-						{{/if}}
-						{{#if reptile}}
-							<a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
-								Флот рептилий 
-								{{#if gt reptile 1}}({{reptile}}) {{/if}}
-								{{formatSeconds (fleetTime reptileTime)}}
-							</a><br/>
-						{{/if}}
-					{{/with}}
-				{{else}}
-					<br/>
-					Нет передвижений флота
-				{{/if}}
-			</div>
-		</div>
-
-		<div class="content {{currentRouteName}}">
-			{{> side_menu}}
-
-			{{> overlay_menu}}
-
-			{{>yield region="content"}}
-
-			{{> additional_area}}
-
-			<div class="permanent">
-				{{>yield region="permanent_content"}}
-			</div>
-
-			<div class="permanent_chat">
-				{{>yield region="permanent_chat"}}
-			</div>
-		</div>
-
-		{{> items_menu}}
-	</div>
-	<div class="over">
-
-	</div>
-	{{> notifications}}
-	{{> tooltips }}
-</template>
-
 <template name="item">
 	{{#if active_item}}
 	<div class="information {{active_item.type}}">
@@ -252,123 +166,6 @@
 		</div>
 		
 		{{> Template.dynamic template=additionalArea}}
-	</div>
-	{{/if}}
-</template>
-
-<template name="temp_build">
-	{{#if active_item}}
-	<div class="information {{active_item.type}}">
-		<img src="/img/game/{{active_menu}}/{{active_side}}/{{active_item.engName}}.jpg">
-		<div class="description">
-			<div class="requirements">
-				{{#if requirements}}
-				<span class="title">Необходимые технологии:</span>
-				{{#each requirements}}
-				<a class="{{this.engName}}" href="{{pathFor 'game' menu=this.category side=this.subcategory item=this.engName}}">
-					{{#unless eq this.level 1}}{{this.level}} уровень{{/unless}}
-					<div class="{{this.type}}">{{this.name}}</div>
-				</a>
-				{{/each}}
-				{{/if}}
-			</div>
-			<p>{{active_item.description}}</p>
-			
-			{{#unless active_item.characteristics}}
-			{{#if effect}}
-				<div class="currentLevel">
-					Текущий уровень: {{level}}{{#if currentConstruction}}{{#if eq active_item.name currentConstruction.name}} -> {{currentConstruction.level}}{{/if}}{{/if}}<br/>
-					{{effect.name}}{{effect.pretext}}{{#unless eq effect.result undefined}}{{effect.result}}{{/unless}}{{effect.aftertext}} {{effect.unit}}
-				</div>
-
-				{{#if gt active_item.maxLevel level}}
-				<div class="nextLevel">
-					Следующий уровень: {{effect.nextLevel}} {{#if eq active_item.maxLevel effect.nextLevel}}(Максимальный){{/if}}<br/>
-					{{effect.nextName}}{{effect.pretext}}{{#unless eq effect.nextResult undefined}} {{effect.nextResult}}{{/unless}}{{effect.aftertext}} {{effect.unit}}
-				</div>
-				{{/if}}
-			{{/if}}
-			{{/unless}}
-		</div>
-
-		{{#if active_item.characteristics}}
-			<div class="characteristics">
-				{{#if active_item.targets}}
-				Приоритеты атаки:
-				<ul class="targets">
-					{{#each active_item.targetsNames}}
-					<li>{{this}}</li>
-					{{/each}}
-				</ul>
-				{{/if}}
-				{{#each item.triggers.battle}}
-				{{this.name}}
-				{{/each}}
-
-				{{#if eq active_item.characteristics.special 'air'}}
-				*Воздушная единица<br/>
-				{{/if}}
-
-				{{#each active_item.characteristics.notAttack}}
-				{{#if eq this 'air'}}
-				*Не атакует воздушные цели
-				{{/if}}
-				{{/each}}
-				
-				<span class="damage" {{militaryTooltip active_item.characteristics.effects 'damage'}}>
-					{{#if active_item.characteristics.damage}}
-					{{formatNumberWithISO active_item.characteristics.damage.min}} —
-					{{formatNumberWithISO active_item.characteristics.damage.max}}
-					{{/if}}
-				</span>
-				<span class="life" {{militaryTooltip active_item.characteristics.effects 'life'}}>{{formatNumberWithISO active_item.characteristics.life}}</span>
-			</div>
-		{{/if}}
-
-		{{#unless eq active_menu 'reptiles'}}
-
-		<ul class="resources">
-			{{#with price}}
-			{{#unless eq active_item.type 'mutual'}}
-			<li class="time" {{priceTooltip priceEffects 'time'}}>Время строительства: <time>{{#if currentConstruction}}{{#if eq active_item.engName currentConstruction.engName}}{{formatSeconds constructionRemaningTime}}{{else}}{{formatSeconds time}}{{/if}}{{else}}{{formatSeconds time}}{{/if}}</time></li>
-			{{/unless}}
-			{{#if humans}}<li class="humans" {{priceTooltip priceEffects 'humans'}}>{{formatNumberWithISO humans}}</li>{{/if}}
-			{{#if honor}}<li class="honor" {{priceTooltip priceEffects 'honor'}}>{{formatNumberWithISO honor}}</li>{{/if}}
-			{{#if metals}}<li class="metals" {{priceTooltip priceEffects 'metals'}}>{{formatNumberWithISO metals}}</li>{{/if}}
-			{{#if crystals}}<li class="crystals" {{priceTooltip priceEffects 'crystals'}}>{{formatNumberWithISO crystals}}</li>{{/if}}
-			{{#if eq active_item.type 'mutual'}}<li class="button"><button class="build" data-action="invest" data-currency="resources" disabled="{{not enoughResources}}">Вложить ресурсы</button></li>{{/if}}
-			{{#if credits}}
-			{{#if eq active_item.type 'mutual'}}<li></li>{{/if}}
-			<li class="credits" {{priceTooltip priceEffects 'credits'}}>{{formatNumberWithISO credits}}</li>
-			{{#if eq active_item.type 'mutual'}}<li class="button">или<button class="build" data-action="invest" data-currency="credits" disabled="{{not enoughCredits}}">Вложить кредиты</button></li>{{/if}}
-			{{/if}}
-			{{/with}}
-		</ul>
-
-		{{#unless eq active_item.type 'mutual'}}
-		<button class="build" disabled="{{disableBuild}}">Отдать приказ</button>
-		{{else}}
-		<progress max="{{active_item.investments}}" value="{{investments}}"></progress>
-		{{/unless}}
-
-		{{#if eq active_item.type 'unit'}}
-		<input class="count" type="number" placeholder="Количество" value="1"/>
-		{{/if}}
-
-		{{#if eq active_item.type 'mutual'}}
-		<input class="count" type="number" placeholder="Количество" value="1"/>
-		{{/if}}
-	
-		{{/unless}}
-		
-		{{> Template.dynamic template=additionalArea}}
-	</div>
-	{{/if}}
-
-	{{#if currentConstruction}}
-	<div class="currentConstruction">
-		{{currentConstruction.name}}
-		{{constructionRemaningTime}}
 	</div>
 	{{/if}}
 </template>

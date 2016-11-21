@@ -305,6 +305,15 @@ Template.additional_area.events({
 
 	'click .quest': function(e, t) {
 		var who = getSideHeroByRoute( Router.current() );
+		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
+		if (quests) {
+			Session.set('sideQuestsOpened', !Session.get('sideQuestsOpened'));
+		} else {
+			Game.Quest.showGreeteing(who);
+		}
+
+		
+		/*
 		if (!who) {
 			return;
 		}
@@ -318,7 +327,7 @@ Template.additional_area.events({
 			Game.Quest.showQuest(currentQuest.engName);
 		} else {
 			Game.Quest.showGreeteing(who);
-		}
+		}*/
 	},
 
 	'click .quests li': function(e, t) {

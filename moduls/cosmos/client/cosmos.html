@@ -33,17 +33,17 @@
 				<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
 			{{/each}}
 		</div>
-		{{#if and planet.isHumans planet.timeArtefacts}}
-			<p>Сбор через: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
-		{{/if}}
-
-		{{#if drop.cards}}
-			{{#each drop.cards}}
-				{{this.name}} {{this.chance}}%<br/>
-			{{/each}}
-		{{/if}}
 
 		{{#let planet=(Game.Cosmos.getPlanetInfo planet)}}
+			{{#if and planet.isHumans planet.timeArtefacts}}
+				<p>Сбор через: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
+			{{/if}}
+
+			{{#if drop.cards}}
+				{{#each drop.cards}}
+					{{this.name}} {{this.chance}}%<br/>
+				{{/each}}
+			{{/if}}
 			
 			{{#if planet.isHumans}}
 				<h2 class="humans">{{planet.status}}</h2>

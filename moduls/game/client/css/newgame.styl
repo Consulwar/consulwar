@@ -10,6 +10,10 @@ $color-description = #bbc9db
 $color-black = #000
 $color-white = #fff
 
+$color-row1 =  #0B121A
+$color-row2 = #0E1821
+$color-row-hover =  #2a3a4a
+
 @import 'nib'
 
 menu-icon(name)
@@ -497,10 +501,10 @@ body.game
 							cursor pointer
 							
 							&:nth-child(odd):not(.header)
-								background-color #0B121A
+								background-color $color-row1
 							
 							&:nth-child(even)
-								background-color #0E1821
+								background-color $color-row2
 							
 							&:hover
 								-webkit-filter brightness(1.2)
@@ -542,6 +546,7 @@ body.game
 
 						th
 							padding 10px
+							color $color-metal
 							&:last-child
 								padding-right 20px
 						

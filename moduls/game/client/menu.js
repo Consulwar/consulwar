@@ -197,7 +197,7 @@ var menu = {
 		url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 		items: {
 			fleet: {
-				name: 'Комический флот',
+				name: 'Космический флот',
 				additionalArea: 'general',
 				url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
 				items: Game.Unit.items.reptiles.fleet

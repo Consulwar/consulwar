@@ -60,11 +60,11 @@ var hasPremium = function() {
 
 	for (let i = 0; i < activeCards.length; i++) {
 		if (activeCards[i].cardGroup == "generalDonate") {
-			return true
+			return true;
 		}
 	}
 	return false;
-}
+};
 
 UI.registerHelper('premiumTitle', function() {
 	return (hasPremium()

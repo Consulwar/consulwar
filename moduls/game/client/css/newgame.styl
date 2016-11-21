@@ -1345,16 +1345,20 @@ body.game
 
 		.quests
 			position absolute
-			display block
+			display flex
+			flex-direction column
 			right 0px
 			bottom 90px
 			z-index 5
+			width 300px
 			
 			li
 				cursor pointer
 				display inline-block
 				padding 10px
-				width 250px
+				margin-top 5px
+				width 100%
+				box-sizing border-box
 				border-radius 10px
 				font-weight bold
 				font-size 16px

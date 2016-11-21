@@ -24,7 +24,7 @@ var getPlanetsByArtefact = function(artefactId) {
 	}
 
 	return planets;
-}
+};
 
 Template.item_artefact.onRendered(function() {
 	$('.content .scrollbar-inner').scrollbar();
@@ -70,7 +70,7 @@ Template.item_artefact.helpers({
 			collection: _.min(planets, function(planet) {
 				return planet.timeArtefacts;
 			}).timeArtefacts
-		} 
+		};
 	},
 
 	getTimeNextDrop: function(timeCollected) {
@@ -86,6 +86,6 @@ Template.item_artefact.events({
 			Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
 		});
 	}
-})
+});
 
 };

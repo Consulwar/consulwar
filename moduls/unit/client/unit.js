@@ -75,7 +75,7 @@ var getMax = function(item, accumulator) {
 	} else {
 		return getMax(item, minAmount);
 	}
-}
+};
 
 Template.unit.events({
 	'keyup .count, change .count': function(e, t) {

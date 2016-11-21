@@ -416,7 +416,7 @@ Template.newgame.onRendered(function(){
 	showTutorialDuringActivation();
 	Meteor.setTimeout(function() {
 		$('.fleet_info_full .scrollbar-inner').scrollbar();
-	})
+	});
 });
 
 var showTutorialDuringActivation = function() {

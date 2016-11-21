@@ -10,7 +10,7 @@ UI.registerHelper('isNewLayout', function() {
 			fleet: true
 		},
 		artefacts: true
-	}
+	};
 
 	return (
 		   newLayoutGroups[Router.current().group] === true

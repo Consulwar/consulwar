@@ -269,7 +269,7 @@ var getBattleInfo = function(item) {
 			humans: 0,
 			metals: 0,
 			crystals: 0
-		}
+		};
 
 		item.lostUnitsCount = 0;
 
@@ -291,7 +291,7 @@ var getBattleInfo = function(item) {
 			[item.lostUnitsPrice.humans   ? 'humans'   : 'empty'] : item.lostUnitsPrice.humans   || ' ',
 			[item.lostUnitsPrice.metals   ? 'metals'   : 'empty'] : item.lostUnitsPrice.metals   || ' ',
 			[item.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : item.lostUnitsPrice.crystals || ' ',
-		}
+		};
 	}
 
 	return item;
@@ -1322,7 +1322,7 @@ var getFleetAnimation = function(fleet) {
 		y: coords.y,
 		angle: angleDeg
 	};
-}
+};
 
 Template.cosmosObjects.helpers({
 	zoom: function() {

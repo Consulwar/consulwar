@@ -55,7 +55,7 @@ game.Battle.countNumber = {
 	army: {min: 20000, max: 49999},
 	group: {min: 50000, max: 99999},
 	front: {min: 100000, max: 249999}
-}
+};
 
 Game.Battle = {
 	items: {}

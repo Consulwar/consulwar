@@ -10,6 +10,10 @@ $color-description = #bbc9db
 $color-black = #000
 $color-white = #fff
 
+$color-row1 =  #0B121A
+$color-row2 = #0E1821
+$color-row-hover =  #2a3a4a
+
 @import 'nib'
 
 menu-icon(name)
@@ -85,6 +89,14 @@ body.game
 	max-height 1080px
 	margin 0 auto
 
+	@import '{}/moduls/building/client/building.styl'
+	@import '{}/moduls/research/client/research.styl'
+	@import '{}/moduls/mutual/client/mutual.styl'
+	@import '{}/moduls/mail/client/mail.styl'
+	@import '{}/moduls/chat/client/chat.styl'
+	@import '{}/moduls/game/client/css/item.styl'
+	@import '{}/moduls/cosmos/client/cosmos.styl'
+
 .page
 	position relative
 	//width 100vw
@@ -98,81 +110,90 @@ body.game
 	width 100%
 	height 100%
 	overflow hidden
-
-	> .overlay
-		position absolute
-		z-index 0
-		left 50%
-		top 50%
-		margin-left -960px
-		margin-top -540px
-		display block
-		width 1920px
-		height 1080px
-		background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
-		background-repeat repeat, no-repeat, no-repeat
-		background-blend-mode normal, exclusion, normal
-		
-		&.hideNet
-			background-repeat no-repeat, no-repeat, no-repeat
-		
-		&.item
-			background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
-			
-		&.fleet
-			background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
-			
-		&.cosmos
-			background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
-
-		&.artefacts
-			background-repeat no-repeat, no-repeat
-			background-blend-mode exclusion, normal
-			
-			.item
-				height 90%
-				&:before
-					content ''
-					position absolute
-					top 0
-					left 0
-					width 100%
-					height 100%
-					background-position center
-
-			&.white
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/white/bg.png)
-			&.green
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/green/bg.png)
-			&.blue
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/blue/bg.png)
-			&.purple
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/purple/bg.png)
-			&.orange
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/orange/bg.png)
-			&.red
-				background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-				.item:before
-					background-image url(/img/game/artefact/red/bg.png)
-
-		.item
+	
+	.page 
+		.overlay_wrap
 			position absolute
 			top 0
 			left 0
-			width 60%
+			width 100%
 			height 100%
-			background-repeat no-repeat
-			background-position center center
+			overflow hidden
+
+			> .overlay
+				position absolute
+				z-index 0
+				left 50%
+				top 50%
+				margin-left -960px
+				margin-top -540px
+				display block
+				width 1920px
+				height 1080px
+				background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
+				background-repeat repeat, no-repeat, no-repeat
+				background-blend-mode normal, exclusion, normal
+				
+				&.hideNet
+					background-repeat no-repeat, no-repeat, no-repeat
+				
+				&.item
+					background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
+					
+				&.fleet
+					background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
+					
+				&.cosmos
+					background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
+
+				&.artefacts
+					background-repeat no-repeat, no-repeat
+					background-blend-mode exclusion, normal
+					
+					.item
+						height 90%
+						&:before
+							content ''
+							position absolute
+							top 0
+							left 0
+							width 100%
+							height 100%
+							background-position center
+
+					&.white
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/white/bg.png)
+					&.green
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/green/bg.png)
+					&.blue
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/blue/bg.png)
+					&.purple
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/purple/bg.png)
+					&.orange
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/orange/bg.png)
+					&.red
+						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+						.item:before
+							background-image url(/img/game/artefact/red/bg.png)
+
+				.item
+					position absolute
+					top 0
+					left 0
+					width 60%
+					height 100%
+					background-repeat no-repeat
+					background-position center center
 
 
 	
@@ -183,6 +204,86 @@ body.game
 			border 0
 			background transparent
 			padding 0
+			
+		> .unit
+			width 390px
+
+.unit
+	.effects
+		font-weight bold
+		.currentLevel
+			color $color-metal
+			margin 0
+		.limit
+			color $color-human
+		
+	.title
+		text-align center
+		font-size 16px
+		font-weight bold
+		margin-bottom 10px
+
+.characteristics
+	display flex
+	justify-content space-around
+	font-size 15px
+	margin 10px 0
+	
+	.weapon
+		color $color-honor
+		
+	.life
+		color $color-white
+		
+	.weapon,
+	.life
+		display flex
+		align-items baseline
+		
+		div:before
+			display inline-block
+			vertical-align middle
+			margin-right 3px
+
+	.damage:before
+		content url(/img/game/unit/damage.png)
+		
+	.damage_signature
+		visibility hidden
+		&:before
+			content url(/img/game/unit/damage_signature.png)
+		
+	.armor:before
+		content url(/img/game/unit/armor.png)
+		
+	.armor_signature
+		visibility hidden
+		&:before
+			content url(/img/game/unit/armor_signature.png)
+	
+	div
+		width 50%
+
+.targets_title
+	color $color-human
+	font-weight bold
+	margin 5px 0				
+
+.targets
+	display flex
+	list-style-type none
+	justify-content space-around
+	margin 10px 0
+	
+	li
+		width 64px
+		height 64px
+		
+		a
+			display block
+			width 100%
+			height 100%
+			background-size 100%
 
 .newgame
 	position relative
@@ -239,92 +340,7 @@ body.game
 	button, a
 		outline none
 
-	&.new
-		
-		.tooltip
-			.inner
-				> .unit
-					width 390px
-
-		.unit
-			.effects
-				font-weight bold
-				.currentLevel
-					color $color-metal
-					margin 0
-				.limit
-					color $color-human
-				
-			.title
-				text-align center
-				font-size 16px
-				font-weight bold
-				margin-bottom 10px
-
-		.characteristics
-			display flex
-			justify-content space-around
-			font-size 15px
-			margin 10px 0
-			
-			.weapon
-				color $color-honor
-				
-			.life
-				color $color-white
-				
-			.weapon,
-			.life
-				display flex
-				align-items baseline
-				
-				div:before
-					display inline-block
-					vertical-align middle
-					margin-right 3px
-
-			.damage:before
-				content url(/img/game/unit/damage.png)
-				
-			.damage_signature
-				visibility hidden
-				&:before
-					content url(/img/game/unit/damage_signature.png)
-				
-			.armor:before
-				content url(/img/game/unit/armor.png)
-				
-			.armor_signature
-				visibility hidden
-				&:before
-					content url(/img/game/unit/armor_signature.png)
-			
-			div
-				width 50%
-		
-		.targets_title
-			color $color-human
-			font-weight bold
-			margin 5px 0				
-
-		.targets
-			display flex
-			list-style-type none
-			justify-content space-around
-			margin 10px 0
-			
-			li
-				width 64px
-				height 64px
-				
-				a
-					display block
-					width 100%
-					height 100%
-					background-size 100%
-
-
-					
+	&.new	
 		.item_info
 			width 360px
 			padding 5px 15px
@@ -485,10 +501,10 @@ body.game
 							cursor pointer
 							
 							&:nth-child(odd):not(.header)
-								background-color #0B121A
+								background-color $color-row1
 							
 							&:nth-child(even)
-								background-color #0E1821
+								background-color $color-row2
 							
 							&:hover
 								-webkit-filter brightness(1.2)
@@ -530,6 +546,7 @@ body.game
 
 						th
 							padding 10px
+							color $color-metal
 							&:last-child
 								padding-right 20px
 						
@@ -1452,14 +1469,6 @@ body.game
 			width 267px
 			height 428px
 			background-image url(/img/game/unit/reptiles/heroes/general.jpg)
-
-	@import '{}/moduls/building/client/building.styl'
-	@import '{}/moduls/research/client/research.styl'
-	@import '{}/moduls/mutual/client/mutual.styl'
-	@import '{}/moduls/mail/client/mail.styl'
-	@import '{}/moduls/chat/client/chat.styl'
-	@import '{}/moduls/game/client/css/item.styl'
-	@import '{}/moduls/cosmos/client/cosmos.styl'
 
 .content.wallet,
 .content.admin

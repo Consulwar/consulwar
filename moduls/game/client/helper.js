@@ -258,10 +258,10 @@ var formatNumber = function (num, delimeter) {
 
 	return _.map(num, function(value) {
 		if (_.isNumber(value)) {
-			if (value.toFixed(2).substr(-1) !== '0') {
-				value = value.toFixed(2);
-			} else if (value.toFixed(1).substr(-1) !== '0') {
-				value = value.toFixed(1);
+			if (value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0].substr(-1) !== '0') {
+				value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+			} else if (value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0].substr(-1) !== '0') {
+				value = value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0];
 			}
 		}
 		value = value.toString();

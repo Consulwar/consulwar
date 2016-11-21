@@ -284,14 +284,18 @@ body.game
 			.damage:before
 				content url(/img/game/unit/damage.png)
 				
-			.damage_signature:before
-				content url(/img/game/unit/damage_signature.png)
+			.damage_signature
+				visibility hidden
+				&:before
+					content url(/img/game/unit/damage_signature.png)
 				
 			.armor:before
 				content url(/img/game/unit/armor.png)
 				
-			.armor_signature:before
-				content url(/img/game/unit/armor_signature.png)
+			.armor_signature
+				visibility hidden
+				&:before
+					content url(/img/game/unit/armor_signature.png)
 			
 			div
 				width 50%

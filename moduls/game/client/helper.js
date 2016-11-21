@@ -55,21 +55,30 @@ UI.registerHelper('currentRouteName', function() {
 	return Router.current().route.name;
 });
 
+var hasPremium = function() {
+	var activeCards = Game.Cards.getActive();
+
+	for (let i = 0; i < activeCards.length; i++) {
+		if (activeCards[i].cardGroup == "generalDonate") {
+			return true
+		}
+	}
+	return false;
+}
+
 UI.registerHelper('premiumTitle', function() {
-	return (!!Game.Cards.getItem('Crazy') 
+	return (hasPremium()
 		? {title: 'Только для премиум аккаунтов'}
 		: ''
 	);
 });
 
-UI.registerHelper('hasPremium', function() {
-	return !!Game.Cards.getItem('Crazy');
-});
+UI.registerHelper('hasPremium', hasPremium);
 
 UI.registerHelper('notPremiumDisabled', function() {
-	return (!!Game.Cards.getItem('Crazy')
+	return (hasPremium()
 		? ''
-		: 'disabled="true"'
+		: {disabled: true}
 	);
 });
 

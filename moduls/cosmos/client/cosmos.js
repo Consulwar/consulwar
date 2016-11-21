@@ -482,8 +482,8 @@ Template.cosmosFleetsInfo.helpers({
 Template.cosmos_planet_item.events({
 	'click .planet[data-id]': function (e, t) {
 		var id = $(e.currentTarget).data('id');
-		Game.Cosmos.showShipInfo(id);
-		scrollMapToFleet(id);
+		Game.Cosmos.showPlanetInfo(id);
+		scrollMapToPlanet(id);
 	}
 });
 

@@ -284,14 +284,18 @@ body.game
 			.damage:before
 				content url(/img/game/unit/damage.png)
 				
-			.damage_signature:before
-				content url(/img/game/unit/damage_signature.png)
+			.damage_signature
+				visibility hidden
+				&:before
+					content url(/img/game/unit/damage_signature.png)
 				
 			.armor:before
 				content url(/img/game/unit/armor.png)
 				
-			.armor_signature:before
-				content url(/img/game/unit/armor_signature.png)
+			.armor_signature
+				visibility hidden
+				&:before
+					content url(/img/game/unit/armor_signature.png)
 			
 			div
 				width 50%
@@ -1345,16 +1349,20 @@ body.game
 
 		.quests
 			position absolute
-			display block
+			display flex
+			flex-direction column
 			right 0px
 			bottom 90px
 			z-index 5
+			width 300px
 			
 			li
 				cursor pointer
 				display inline-block
 				padding 10px
-				width 250px
+				margin-top 5px
+				width 100%
+				box-sizing border-box
 				border-radius 10px
 				font-weight bold
 				font-size 16px

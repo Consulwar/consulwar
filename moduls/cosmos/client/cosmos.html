@@ -33,7 +33,7 @@
 				<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
 			{{/each}}
 		</div>
-		{{#if planet.timeArtefacts}}
+		{{#if and planet.isHumans planet.timeArtefacts}}
 			<p>Сбор через: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
 		{{/if}}
 

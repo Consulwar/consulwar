@@ -16,7 +16,10 @@ Game.Settings = {
 	options: {
 		hideDescription: [true, false],
 		hideFleetInfo: [true, false],
-		hideNet: [true, false]
+		showFleetInfoFull: [true, false],
+		hideFleetsOnZoomOut: [true, false],
+		hideNet: [true, false],
+		compactFleetInfo: [true, false]
 	}
 };
 

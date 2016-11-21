@@ -52,12 +52,12 @@ var menu = {
 	army: {
 		name: 'Войска',
 		routeName: ['unit'],
-		url: firstItemGroupURL(Game.Unit.items.army.fleet),
+		url: firstItemUrl(Game.Unit.items.army.fleet),
 		items: {
 			fleet: {
-				name: 'Комический флот',
+				name: 'Космический флот',
 				additionalArea: 'bolz',
-				url: firstItemGroupURL(Game.Unit.items.army.fleet),
+				url: firstItemUrl(Game.Unit.items.army.fleet),
 				items: Game.Unit.items.army.fleet
 			}, 
 			defense: {
@@ -215,6 +215,14 @@ var menu = {
 				items: Game.Unit.items.reptiles.ground
 			}
 		}
+	},
+	artefacts: {
+		name: 'Артефакты',
+		routeName: ['artefacts'],
+		url: firstItemGroupURL(Game.Artefacts.items),
+		doNotShowInGameMenu: true,
+		directItems: true,
+		items: Game.Artefacts.items
 	}
 };
 
@@ -297,6 +305,15 @@ Template.additional_area.events({
 
 	'click .quest': function(e, t) {
 		var who = getSideHeroByRoute( Router.current() );
+		var quests = (who) ? Game.Quest.getAllByHero(who) : null;
+		if (quests) {
+			Session.set('sideQuestsOpened', !Session.get('sideQuestsOpened'));
+		} else {
+			Game.Quest.showGreeteing(who);
+		}
+
+		
+		/*
 		if (!who) {
 			return;
 		}
@@ -310,7 +327,7 @@ Template.additional_area.events({
 			Game.Quest.showQuest(currentQuest.engName);
 		} else {
 			Game.Quest.showGreeteing(who);
-		}
+		}*/
 	},
 
 	'click .quests li': function(e, t) {
@@ -359,17 +376,35 @@ Template.additional_area.helpers({
 });
 
 var helpers = {
+	isArtefactsPage: function() {
+		return Router.current().group == 'artefacts';
+	},
+
 	items: function() {
-		if (Router.current().params.group 
-			&& menu[Router.current().group]
+		if (   menu[Router.current().group]
 			&& menu[Router.current().group].items
-			&& menu[Router.current().group].items[Router.current().params.group]
-			&& menu[Router.current().group].items[Router.current().params.group].items) {
-			return _.toArray(menu[Router.current().group].items[Router.current().params.group].items);
+			&& (menu[Router.current().group].directItems
+				|| (  Router.current().params.group 
+				   && menu[Router.current().group].items[Router.current().params.group]
+				   && menu[Router.current().group].items[Router.current().params.group].items
+				   )
+				)
+			) {
+			return (menu[Router.current().group].directItems
+				? _.toArray(menu[Router.current().group].items)
+				: _.toArray(menu[Router.current().group].items[Router.current().params.group].items)
+			);
 		} else {
 			return [];
 		}
 	},
+
+	groupedItems: function(items, name) {
+		return _.toArray(_.groupBy(items, function(item) {
+			return item[name];
+		}));
+	},
+
 	currentUrl: function() {
 		// Iron router при первом открытии возвращет полный пусть. Обрезаем.
 		var currentUrl = Router.current().url;
@@ -391,12 +426,16 @@ var helpers = {
 	},
 	item: function() {
 		var route = Router.current();
-		return (
+		return (   
 			   menu[route.group]
 			&& menu[route.group].items
-			&& menu[route.group].items[route.params.group]
-			&& menu[route.group].items[route.params.group].items
-			&& menu[route.group].items[route.params.group].items[route.params.item]
+			&& (   ( menu[route.group].directItems && menu[route.group].items[route.params.item])
+				|| (  route.params.group 
+				   && menu[route.group].items[route.params.group]
+				   && menu[route.group].items[route.params.group].items
+				   && menu[route.group].items[route.params.group].items[route.params.item]
+				)
+			)
 		);
 	},
 	resources: function() {

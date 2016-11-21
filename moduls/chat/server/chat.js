@@ -161,7 +161,7 @@ Meteor.methods({
 		if (price
 		 && (price.crystals || price.credits)
 		 && room.minRating
-		 && user.rating < room.minRating
+		 && (!user.rating || user.rating < room.minRating)
 		) {
 			throw new Meteor.Error('Ваш рейтинг слишком мал, подрастите.');
 		}

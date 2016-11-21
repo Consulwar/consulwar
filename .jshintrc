@@ -1,5 +1,6 @@
 {
 	"laxbreak": true,
 	"laxcomma": true,
-	"loopfunc": true
+	"loopfunc": true,
+	"esversion": 6
 }

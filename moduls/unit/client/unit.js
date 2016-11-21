@@ -42,6 +42,41 @@ Template.unit.helpers({
 	}
 });
 
+Template.unit.onRendered(function() {
+	$('.content .scrollbar-inner').scrollbar();
+});
+
+// Из-за разницы в цене единицы и большого количества (из-за скидок) возникает погрешность
+// и необходимость пересчитать дополнительно
+var getMax = function(item, accumulator) {
+	accumulator = accumulator || 0;
+	var price = item.price();
+	var alreadySpended = accumulator ? item.price(accumulator) : null;
+	var avalialbeResources = Game.Resources.currentValue.get();
+
+	var minAmount = Infinity;
+	for (var res in price) {
+		if (res == 'time') {
+			continue;
+		}
+		let max = (avalialbeResources[res] 
+			? Math.floor(
+				(avalialbeResources[res].amount - (accumulator ? alreadySpended[res] : 0)) / price[res]
+				)
+			: 0
+		) + accumulator;
+		if (max < minAmount) {
+			minAmount = max;
+		}
+	}
+
+	if (minAmount == accumulator) {
+		return accumulator;
+	} else {
+		return getMax(item, minAmount);
+	}
+};
+
 Template.unit.events({
 	'keyup .count, change .count': function(e, t) {
 		var value = parseInt(e.target.value.replace(/\D/g,''), 10);
@@ -50,6 +85,12 @@ Template.unit.events({
 			e.target.value = value;
 		}
 		this.count.set(value);
+	},
+
+	'click button.max': function(e, t) {
+		var item = t.data.unit;
+
+		this.count.set(getMax(item));
 	},
 
 	'click button.build': function(e, t) {
@@ -68,6 +109,13 @@ Template.unit.events({
 				}
 			}
 		);
+	},
+	
+	'click .toggle_description': function(e, t) {
+		$(t.find('.description')).slideToggle(function() {
+			var options = Meteor.user().settings && Meteor.user().settings.options;
+			Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
+		});
 	}
 });
 

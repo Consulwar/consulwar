@@ -98,10 +98,10 @@
 		background-color #DC6257
 	
 .map-planet-border-human
-	border 3px solid #56BAF2
+	border 3px solid $color-ggk
 	border-radius 50%
 	&.zoom-lt-5
-		background-color #56BAF2
+		background-color $color-ggk
 	
 .map-planet-border-empty
 	border 3px solid #ffffff
@@ -121,9 +121,9 @@
 	cursor pointer
 
 	&.highlighted
-		border-color #c6e84c
+		border-color $color-metal
 		&.zoom-lt-5
-			background-color #c6e84c
+			background-color $color-metal
 
 	&.zoom-lt-7
 		border-width 2px
@@ -134,6 +134,18 @@
 			display none
 		.texture:after
 			display none
+	
+	.chance
+		position absolute
+		z-index 2
+		top 50%
+		left 50%
+		margin -11px 0 0 -30px
+		width 60px
+		height 22px
+		background-color rgba(0, 0, 0, 0.3)
+		text-align center
+		font-size 16px
 
 	.texture
 		position absolute
@@ -255,124 +267,13 @@
 
 
 .reptiles
-	color #DC6257
+	color $color-honor
 	
 .humans
-	color #56BAF2
+	color $color-ggk
 	
-.fleet
+.attack-menu .fleet
 	cursor pointer
-
-.map-planet-info
-	overflow-y auto
-	right 0
-	bottom 0
-	z-index 6
-	position absolute
-	width 340px
-	height 100%
-	//background-color #020609
-	background-color rgba(0, 0, 0, 0.3)
-	text-align center
-	box-sizing border-box
-	padding-top 200px
-	
-	table
-		td, th
-			padding 4px
-			white-space nowrap
-		
-		tr[data-id]
-			cursor pointer
-	
-	h2
-		margin-top 15px
-		margin-bottom 15px
-		
-	p
-		margin-top 5px
-		margin-left 15px
-		font-size: 18px
-		text-align left
-	
-	span
-		color #ffffff
-		
-	ul
-		position relative
-		margin-top 5px
-		margin-left 15px
-		text-align left
-		font-weight bold
-		font-size 18px
-		
-		li
-			position relative
-			display block
-
-	.edit
-		cursor pointer
-		display inline-block
-		width 21px
-		height 21px
-		vertical-align middle
-		background-image url(/img/game/edit.png)
-		background-repeat no-repeat
-		
-		&:hover
-			background-image url(/img/game/edit_a.png)
-	
-	.center
-		padding-top 20px
-
-	.header-reptiles
-		min-height 70px
-		margin-top 15px
-		width 100%
-		text-align left
-		color #DC6257
-		font-size 18px
-		background-repeat no-repeat
-		background-image url(/img/game/cosmomap/ico_rept.png)
-		background-position 15px 10px
-		
-		p
-			padding-left 65px
-
-	.header-humans
-		min-height 70px
-		margin-top 15px
-		width 100%
-		text-align left
-		color #56BAF2
-		font-size 18px
-		background-repeat no-repeat
-		background-image url(/img/game/cosmomap/ico_humans.png)
-		background-position 15px 10px
-		
-		p
-			padding-left 65px
-
-	.button-attack
-		cursor pointer
-		display block
-		font-weight bold
-		font-size 18px
-		text-align center
-		text-transform uppercase
-		margin-left 82px
-		margin-top 15px
-		width 177px
-		height 46px
-		color #ffffff
-		background-image url(/img/game/cosmomap/button_attack.png)
-		background-repeat no-repeat
-		border 0px solid transparent
-		border-radius 9px
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
 
 .map-planet-popup
 	display block
@@ -385,6 +286,49 @@
 	border-radius 8px
 	text-align center
 
+	.edit
+		cursor pointer
+		display inline-block
+		width 21px
+		height 21px
+		vertical-align middle
+		background-image url(/img/game/edit.png)
+		background-repeat no-repeat
+		
+		&:hover
+			background-image url(/img/game/edit_a.png)
+
+	.button-attack
+		cursor pointer
+		display block
+		font-weight bold
+		font-size 18px
+		text-align center
+		text-transform uppercase
+		margin 15px auto 0
+		width 177px
+		height 46px
+		color #ffffff
+		background-image url(/img/game/cosmomap/button_attack.png)
+		background-repeat no-repeat
+		border 0px solid transparent
+		border-radius 9px
+		
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+	
+	.army
+		font-size 18px
+		text-align left
+		padding 10px
+		
+		li
+			display block
+			
+			span
+				color $color-white
+
 	.map-planet-popup-items
 		position relative
 		display block
@@ -392,13 +336,14 @@
 		padding 0px 0px 0px 0px
 		width 100%
 		
-		li
+		a
 			position relative
 			display inline-block
 			padding 70px 0px 0px 0px
 			width 90px
 			height 20px
 			text-align center
+			text-decoration none
 			background-position center top
 			background-repeat no-repeat
 			
@@ -498,7 +443,7 @@
 			padding-top 5px
 			
 		.home
-			color #56baf2
+			color $color-ggk
 			
 		.locked
 			color #4a4a4a
@@ -629,53 +574,6 @@
 	
 	&:hover
 		background-image url(/img/game/cosmomap/button_close_active.png)
-
-
-.history
-	position absolute
-	z-index 2
-	width 100%
-	height 435px
-	margin-left 0px
-	background-color #04080B
-	
-	h2
-		margin-top 20px
-		width 100%
-		text-align center
-		
-	.data
-		display block
-		height 355px
-		overflow-y auto
-
-	table
-		width 100%
-		border-collapse collapse
-		
-		tr
-			height 40px
-			cursor pointer
-			
-			&:nth-child(odd):not(.header)
-				background-color #0B121A
-			
-			&:nth-child(even)
-				background-color #0E1821
-			
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
-			
-		td, th
-			text-align left
-				
-			&:nth-child(1)
-				width 800px
-				padding-left 20px
-
-			&:nth-child(2)
-				width 300px
 
 .history-item
 	display flex

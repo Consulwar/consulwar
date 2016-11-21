@@ -40,6 +40,23 @@ game.Battle.count = {
 	front: 'фронт'
 };
 
+game.Battle.countNumber = {
+	few: {min: 1, max: 4},
+	several: {min: 5, max: 9},
+	pack: {min: 10, max: 19},
+	lots: {min: 20, max: 49},
+	horde: {min: 50, max: 99},
+	throng: {min: 100, max: 249},
+	swarm: {min: 250, max: 499},
+	zounds: {min: 500, max: 999},
+	legion: {min: 1000, max: 4999},
+	division: {min: 5000, max: 9999},
+	corps: {min: 10000, max: 19999},
+	army: {min: 20000, max: 49999},
+	group: {min: 50000, max: 99999},
+	front: {min: 100000, max: 249999}
+};
+
 Game.Battle = {
 	items: {}
 };

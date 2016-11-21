@@ -27,7 +27,7 @@
 			<div class="scrollbar-inner">{{building.description}}</div>
 		</div>
 
-		<div class="info">
+		<div class="item_info">
 			<div class="effects">
 				{{> item_effect item=building}}
 			</div>
@@ -71,7 +71,7 @@
 	-->
 				<div class="actions">
 					{{#if gt building.maxLevel building.currentLevel}}
-						<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>
+						<button class="main_action build" disabled="{{not building.canBuild}}">Отдать приказ</button>
 					{{/if}}
 				</div>
 			</div> 

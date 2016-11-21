@@ -1,9 +1,23 @@
 Meteor.startup(function() {
 
 UI.registerHelper('isNewLayout', function() {
-	var newLayoutGroups = ['military'];
+	var newLayoutGroups = {
+		planet: {
+			military: true
+		},
+		cosmos: true,
+		army: {
+			fleet: true
+		},
+		artefacts: true
+	};
 
-	return newLayoutGroups.indexOf(Router.current().params.group) != -1;
+	return (
+		   newLayoutGroups[Router.current().group] === true
+		|| (   newLayoutGroups[Router.current().group] 
+			&& newLayoutGroups[Router.current().group][Router.current().params.group] === true
+			)
+	);
 });
 
 UI.registerHelper('user', function() {
@@ -39,6 +53,34 @@ UI.registerHelper('itemGroup', function() {
 
 UI.registerHelper('currentRouteName', function() {
 	return Router.current().route.name;
+});
+
+UI.registerHelper('premiumTitle', function() {
+	return (!!Game.Cards.getItem('Crazy') 
+		? {title: 'Только для премиум аккаунтов'}
+		: ''
+	);
+});
+
+UI.registerHelper('hasPremium', function() {
+	return !!Game.Cards.getItem('Crazy');
+});
+
+UI.registerHelper('notPremiumDisabled', function() {
+	return (!!Game.Cards.getItem('Crazy')
+		? ''
+		: 'disabled="true"'
+	);
+});
+
+UI.registerHelper('battleCountNumber', function(name) {
+	var count = game.Battle.countNumber[name];
+
+	if (count) {
+		return count.min + ' - ' + count.max;
+	} else {
+		return '';
+	}
 });
 
 UI.registerHelper('eq', function(a, b) {
@@ -144,6 +186,12 @@ UI.registerHelper('formatYearMonthDay', function(dateString) {
 	month = (month < 10) ? '0' + month : month;
 	return day + "." + month + "." + date.getFullYear();
 }); 
+
+UI.registerHelper('isToday', function(timestamp) {
+	var inputDate = new Date(timestamp * 1000);
+	var todaysDate = new Date(Game.getCurrentServerTime() * 1000);
+	return inputDate.setHours(0, 0, 0, 0) == todaysDate.setHours(0, 0, 0, 0);
+});
 
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
 UI.registerHelper('formatHours', Game.Helpers.formatHours);

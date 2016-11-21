@@ -49,69 +49,101 @@
 			class="
 				additional_area 
 				quest
-				{{sideHero}} 
-				{{#if gt status -1}}
-					{{#if eq status 0}}prompt{{/if}}
-					{{#if eq status 3}}finished{{/if}}
-				{{/if}}"
+				{{sideHero}} "
 		>
 			{{#if sideHeroName}}
-				<span class="title">{{sideHeroName}}</span>
-			{{/if}}
-			{{#if quests}}
-				{{#if isOpened}}
-					<ul class="quests">
-						{{#each quests}}
-							<li 
-								data-id="{{this.engName}}"
-								class="
-									{{#if eq this.status 0}}prompt{{/if}}
-									{{#if eq this.status 1}}inprogress{{/if}}
-									{{#if eq this.status 3}}finished{{/if}}"
-							>
-								{{this.name}}
-							</li>
-						{{/each}}
-					</ul>
-				{{/if}}
-				<a class="quests-switch {{#if isOpened}}close{{else}}open{{/if}}"></a>
+				<div class="title">
+					<h2>{{sideHeroName}}</h2>
+					{{#if or (eq status 0) (eq status 3)}}
+						<h2 class="
+							{{#if eq status 0}}prompt{{/if}}
+							{{#if eq status 3}}finished{{/if}}
+						">
+							{{#if eq status 0}}Есть задание{{/if}}
+							{{#if eq status 3}}Задание выполнено{{/if}}
+						</h2>
+					{{/if}}
+
+					{{#if quests}}
+						{{#if isOpened}}
+							<ul class="quests">
+								{{#each quests}}
+									<li 
+										data-id="{{this.engName}}"
+										class="
+											{{#if eq this.status 0}}prompt{{/if}}
+											{{#if eq this.status 1}}inprogress{{/if}}
+											{{#if eq this.status 3}}finished{{/if}}"
+									>
+										{{this.name}}
+									</li>
+								{{/each}}
+							</ul>
+						{{/if}}
+					{{/if}}
+				</div>
 			{{/if}}
 		</div>
 	{{/if}}
 </template>
 
 <template name="items_menu">
-	<ul class="bottom_menu items">
-		{{#each items}}
-			{{#let progress=this.progress}}
-				<li 
-					class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if this.star}}star{{this.star}}{{/if}}" 
-					data-tooltip="{{this.name}}"
-					data-tooltip-direction="n"
-				>
-					<a 
-						class="{{this.engName}}-icon" 
-						href="{{this.url}}"
-						data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
+	<ul class="bottom_menu items {{#if isArtefactsPage}} artefacts{{/if}}">
+		{{#if not isArtefactsPage}}
+			{{#each items}}
+				{{#let progress=this.progress}}
+					<li 
+						class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if and this.star (not isNewLayout)}}star{{this.star}}{{/if}}" 
+						data-tooltip="{{this.name}}"
+						data-tooltip-direction="n"
 					>
-						{{#if this.currentLevel}}
-							<span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
-								{{formatNumberWithISO this.currentLevel 3}}
-							</span>
-						{{/if}}
-					</a>
+						<a 
+							class="{{this.engName}}-icon" 
+							href="{{this.url}}"
+							data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
+						>
+							{{#if this.currentLevel}}
+								<span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
+									{{formatNumberWithISO this.currentLevel 3}}
+								</span>
+							{{/if}}
+						</a>
+					</li>
+				{{/let}}
+			{{/each}}
+		{{else}}
+			{{#each (groupedItems items 'group')}}
+				<li class="group">
+					<ul>
+						{{#each this}}
+						<li 
+								class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}} enough_resources {{this.type}} " 
+								data-tooltip="{{this.name}}"
+								data-tooltip-direction="n"
+							>
+								<a 
+									class="{{this.engName}}-icon" 
+									href="{{this.url}}"
+								>
+									<span class="count">
+										{{formatNumberWithISO this.amount 3}}
+									</span>
+								</a>
+							</li>
+						{{/each}}
+					</ul>
 				</li>
-			{{/let}}
-		{{/each}}
+			{{/each}}
+		{{/if}}
 	</ul>
 </template>
 
 <template name="overlay_menu">
 	{{#if and isNewLayout item}}
-		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
+		<div class="overlay {{menuGroup}} {{itemGroup}} item {{item.group}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
 			<div 
 				class="item" 
-				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{item.overlay.own}}.png)"></div>
+				style="background-image: url(/img/game/{{item.type}}/{{item.group}}/{{item.engName}}/{{or item.overlay.own 'item'}}.{{#if not isArtefactsPage}}png{{else}}jpg{{/if}})"></div>
 		</div>
 
 								<!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->

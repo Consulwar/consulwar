@@ -85,6 +85,14 @@ body.game
 	max-height 1080px
 	margin 0 auto
 
+	@import '{}/moduls/building/client/building.styl'
+	@import '{}/moduls/research/client/research.styl'
+	@import '{}/moduls/mutual/client/mutual.styl'
+	@import '{}/moduls/mail/client/mail.styl'
+	@import '{}/moduls/chat/client/chat.styl'
+	@import '{}/moduls/game/client/css/item.styl'
+	@import '{}/moduls/cosmos/client/cosmos.styl'
+
 .page
 	position relative
 	//width 100vw
@@ -192,6 +200,86 @@ body.game
 			border 0
 			background transparent
 			padding 0
+			
+		> .unit
+			width 390px
+
+.unit
+	.effects
+		font-weight bold
+		.currentLevel
+			color $color-metal
+			margin 0
+		.limit
+			color $color-human
+		
+	.title
+		text-align center
+		font-size 16px
+		font-weight bold
+		margin-bottom 10px
+
+.characteristics
+	display flex
+	justify-content space-around
+	font-size 15px
+	margin 10px 0
+	
+	.weapon
+		color $color-honor
+		
+	.life
+		color $color-white
+		
+	.weapon,
+	.life
+		display flex
+		align-items baseline
+		
+		div:before
+			display inline-block
+			vertical-align middle
+			margin-right 3px
+
+	.damage:before
+		content url(/img/game/unit/damage.png)
+		
+	.damage_signature
+		visibility hidden
+		&:before
+			content url(/img/game/unit/damage_signature.png)
+		
+	.armor:before
+		content url(/img/game/unit/armor.png)
+		
+	.armor_signature
+		visibility hidden
+		&:before
+			content url(/img/game/unit/armor_signature.png)
+	
+	div
+		width 50%
+
+.targets_title
+	color $color-human
+	font-weight bold
+	margin 5px 0				
+
+.targets
+	display flex
+	list-style-type none
+	justify-content space-around
+	margin 10px 0
+	
+	li
+		width 64px
+		height 64px
+		
+		a
+			display block
+			width 100%
+			height 100%
+			background-size 100%
 
 .newgame
 	position relative
@@ -248,92 +336,7 @@ body.game
 	button, a
 		outline none
 
-	&.new
-		
-		.tooltip
-			.inner
-				> .unit
-					width 390px
-
-		.unit
-			.effects
-				font-weight bold
-				.currentLevel
-					color $color-metal
-					margin 0
-				.limit
-					color $color-human
-				
-			.title
-				text-align center
-				font-size 16px
-				font-weight bold
-				margin-bottom 10px
-
-		.characteristics
-			display flex
-			justify-content space-around
-			font-size 15px
-			margin 10px 0
-			
-			.weapon
-				color $color-honor
-				
-			.life
-				color $color-white
-				
-			.weapon,
-			.life
-				display flex
-				align-items baseline
-				
-				div:before
-					display inline-block
-					vertical-align middle
-					margin-right 3px
-
-			.damage:before
-				content url(/img/game/unit/damage.png)
-				
-			.damage_signature
-				visibility hidden
-				&:before
-					content url(/img/game/unit/damage_signature.png)
-				
-			.armor:before
-				content url(/img/game/unit/armor.png)
-				
-			.armor_signature
-				visibility hidden
-				&:before
-					content url(/img/game/unit/armor_signature.png)
-			
-			div
-				width 50%
-		
-		.targets_title
-			color $color-human
-			font-weight bold
-			margin 5px 0				
-
-		.targets
-			display flex
-			list-style-type none
-			justify-content space-around
-			margin 10px 0
-			
-			li
-				width 64px
-				height 64px
-				
-				a
-					display block
-					width 100%
-					height 100%
-					background-size 100%
-
-
-					
+	&.new	
 		.item_info
 			width 360px
 			padding 5px 15px
@@ -1461,14 +1464,6 @@ body.game
 			width 267px
 			height 428px
 			background-image url(/img/game/unit/reptiles/heroes/general.jpg)
-
-	@import '{}/moduls/building/client/building.styl'
-	@import '{}/moduls/research/client/research.styl'
-	@import '{}/moduls/mutual/client/mutual.styl'
-	@import '{}/moduls/mail/client/mail.styl'
-	@import '{}/moduls/chat/client/chat.styl'
-	@import '{}/moduls/game/client/css/item.styl'
-	@import '{}/moduls/cosmos/client/cosmos.styl'
 
 .content.wallet,
 .content.admin

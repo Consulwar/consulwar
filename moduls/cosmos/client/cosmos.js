@@ -274,16 +274,19 @@ var getBattleInfo = function(item) {
 		item.lostUnitsCount = 0;
 
 		for (let unit in item.userUnits) {
-			item.lostUnitsCount += item.userUnits[unit].start - item.userUnits[unit].end;
+			let lostCount = item.userUnits[unit].start - item.userUnits[unit].end;
+			item.lostUnitsCount += lostCount;
 
-			if (item.userUnits[unit].resourcesLost.metals) {
-				item.lostUnitsPrice.metals += item.userUnits[unit].resourcesLost.metals;
-			}
-			if (item.userUnits[unit].resourcesLost.crystals) {
-				item.lostUnitsPrice.crystals += item.userUnits[unit].resourcesLost.crystals;
-			}
-			if (item.userUnits[unit].resourcesLost.humans) {
-				item.lostUnitsPrice.humans += item.userUnits[unit].resourcesLost.humans;
+			if (lostCount) {
+				if (item.userUnits[unit].resourcesLost.metals) {
+					item.lostUnitsPrice.metals += item.userUnits[unit].resourcesLost.metals;
+				}
+				if (item.userUnits[unit].resourcesLost.crystals) {
+					item.lostUnitsPrice.crystals += item.userUnits[unit].resourcesLost.crystals;
+				}
+				if (item.userUnits[unit].resourcesLost.humans) {
+					item.lostUnitsPrice.humans += item.userUnits[unit].resourcesLost.humans;
+				}
 			}
 		}
 

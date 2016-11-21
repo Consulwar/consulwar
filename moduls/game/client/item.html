@@ -93,7 +93,7 @@
 </template>
 
 <template name="item_price">
-	<ul class="resources">
+	<ul class="resources {{class}}">
 		{{#each (getResources price)}}
 			{{#if eq this.engName 'time'}}
 				<li class="time" {{priceTooltip price 'time'}}>
@@ -102,7 +102,7 @@
 				</li>
 			{{else}}
 				<li class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact {{this.group}}{{/if}}" {{priceTooltip price this.engName}} data-id="{{this.engName}}">
-					{{formatNumberWithISO this.amount 6}}
+					{{formatNumberWithISO this.amount 5}}
 				</li>
 			{{/if}}
 		{{/each}}

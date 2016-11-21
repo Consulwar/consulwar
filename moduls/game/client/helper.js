@@ -187,6 +187,12 @@ UI.registerHelper('formatYearMonthDay', function(dateString) {
 	return day + "." + month + "." + date.getFullYear();
 }); 
 
+UI.registerHelper('isToday', function(timestamp) {
+	var inputDate = new Date(timestamp * 1000);
+	var todaysDate = new Date(Game.getCurrentServerTime() * 1000);
+	return inputDate.setHours(0, 0, 0, 0) == todaysDate.setHours(0, 0, 0, 0);
+});
+
 UI.registerHelper('formatDate', Game.Helpers.formatDate);
 UI.registerHelper('formatHours', Game.Helpers.formatHours);
 UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);

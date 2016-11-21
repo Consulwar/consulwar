@@ -26,6 +26,10 @@ var getPlanetsByArtefact = function(artefactId) {
 	return planets;
 }
 
+Template.item_artefact.onRendered(function() {
+	$('.content .scrollbar-inner').scrollbar();
+});
+
 Template.item_artefact.helpers({
 	subgroupItems: function() {
 		return _.map(Game.Artefacts.items, function(item) {

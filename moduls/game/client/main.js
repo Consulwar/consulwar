@@ -414,7 +414,9 @@ Template.connection.helpers({
 
 Template.newgame.onRendered(function(){
 	showTutorialDuringActivation();
-	//$('.page').scrollbar();
+	Meteor.setTimeout(function() {
+		$('.fleet_info_full .scrollbar-inner').scrollbar();
+	})
 });
 
 var showTutorialDuringActivation = function() {
@@ -461,9 +463,7 @@ Template.item_price.events({
 	},
 
 	'click .resources .artefact': function(e, t) {
-		Router.go('house', {
-			group: 'house',
-			subgroup: 'artefacts',
+		Router.go('artefacts', {
 			item: e.currentTarget.dataset.id
 		});
 	}
@@ -478,10 +478,12 @@ Template.item_price.helpers({
 				amount: price[name],
 				price: price
 			};
-			if (name == 'time') {
-				result.unshift(item);
-			} else {
-				result.push(item);
+			if (price[name]) {
+				if (name == 'time') {
+					result.unshift(item);
+				} else {
+					result.push(item);
+				}
 			}
 		}
 		return result;

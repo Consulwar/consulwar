@@ -194,6 +194,13 @@ body.game
 	.notImplemented
 		color $color-human
 		
+	.tie
+		color $color-crystal
+	.victory
+		color $color-ggk
+	.defeat
+		color $color-honor
+		
 	.newMessage
 		position absolute
 		bottom 250px
@@ -435,8 +442,97 @@ body.game
 			flex-wrap wrap
 			justify-content space-between
 			align-items stretch
+			
+			&.cosmos.cosmosHistory
+				width 960px
+				min-height 400px
+				margin auto
+				flex-shrink 1
+				
+				.history
+					display flex
+					flex-direction column
+					width 100%
+					background-color #04080B
+					
+					h2
+						width 100%
+						text-align center
+						
+					.data
+						display block
+						overflow-y auto
 
-			.header
+					.result
+						font-size 16px
+						margin -5px auto 6px
+
+					table
+						width 100%
+						border-collapse collapse
+						
+						a.planet
+							height 76px
+						
+						tr:not(.header)
+							text-align left
+							cursor pointer
+							
+							&:nth-child(odd):not(.header)
+								background-color #0B121A
+							
+							&:nth-child(even)
+								background-color #0E1821
+							
+							&:hover
+								-webkit-filter brightness(1.2)
+								filter brightness(1.2)
+									
+							&.expanded
+								td:not(:last-child)
+									vertical-align top
+								table
+									display table
+									width 250px
+									
+									tr
+										height auto
+										
+										td
+											height auto
+											width auto
+											padding 0
+								
+							table
+								display none
+									
+						td, th
+							position relative
+							text-align center
+							vertical-align middle
+							padding 5px
+							&:nth-child(1)
+								width 100px
+
+							&:nth-child(2)
+								width 250px
+
+							&:nth-child(3)
+								width 420px
+						td
+							height 76px
+
+						th
+							padding 10px
+							&:last-child
+								padding-right 20px
+						
+						.defense, .attack
+							position absolute
+							left 10px
+							top 32.5px
+						
+			div.header
 				display flex
 				flex-shrink 0
 				width 100%
@@ -953,6 +1049,15 @@ body.game
 		box-sizing border-box
 		font-weight bold
 		
+		.fleets
+			box-sizing border-box
+			height 100%
+			border-top 20px solid transparent
+			
+			.scrollbar-inner
+				height 100%
+				overflow auto
+		
 		&:not(.active)
 			height 20px
 			
@@ -960,6 +1065,9 @@ body.game
 				display none
 		
 		button
+			position absolute
+			top 0
+			left 0
 			display flex
 			justify-content center
 			align-items center

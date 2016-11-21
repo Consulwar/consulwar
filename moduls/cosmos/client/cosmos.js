@@ -152,6 +152,9 @@ Template.cosmosHistory.onRendered(function() {
 					if (itemId) {
 						loadHistoryBattle(itemId);
 					}
+					setTimeout(function() {
+						//$('.content .history .scrollbar-inner').scrollbar();
+					});
 				}
 			});
 		} else if (itemId) {
@@ -173,19 +176,9 @@ Template.cosmosHistory.helpers({
 	battles: function() { return historyBattles.list(); }
 });
 
-Template.cosmosHistoryItem.helpers({
-	currentPage: function() {
-		return Router.current().params.page;
-	}
-});
-
 Template.cosmosHistory.events({
 	'click tr:not(.header)': function(e, t) {
-		var page = Router.current().params.page;
-		var id = $(e.currentTarget).attr('data-id');
-		if (id) {
-			Router.go('cosmosHistory', { page: page }, { hash: id });
-		}
+		$(e.currentTarget).toggleClass('expanded');
 	}
 });
 
@@ -218,7 +211,11 @@ var getArmyInfo = function(units, rest) {
 					name: Game.Unit.items[side][group][name].name,
 					order: Game.Unit.items[side][group][name].order,
 					start: countStart,
-					end: countAfter
+					end: countAfter,
+					resourcesLost: (countStart - countAfter > 0
+						? Game.Unit.items[side][group][name].price(countStart - countAfter)
+						: null
+					)
 				});
 			}
 		}
@@ -230,29 +227,23 @@ var getArmyInfo = function(units, rest) {
 };
 
 var getBattleInfo = function(item) {
-	item.locationName = null;
+	item.planet = null;
 	if (_.isString(item.location)) {
 		var planet = Game.Planets.getOne(item.location);
 		if (planet) {
-			item.locationName = planet.name;
+			item.planet = planet;
 		}
 	}
 
-	item.reward = _.map(item.reward, function(value, key) {
-		return {
-			engName: key,
-			amount: value
-		};
-	});
+	for (let res in item.lostResources) {
+		item.lostResources[res] *= -1;
+	}
 
-	var lostResources = _.map(item.lostResources, function(value, key) {
-		return {
-			engName: key,
-			amount: value * -1
-		};
-	});
+	item.reward = (!_.isEmpty(item.reward) ? item.reward : item.lostResources);
 
-	item.reward = item.reward.concat(lostResources);
+	for (let art in item.artefacts) {
+		item.reward[art] = item.artefacts[art];
+	}
 
 	item.artefacts = _.map(item.artefacts, function(value, key) {
 		return {
@@ -272,6 +263,36 @@ var getBattleInfo = function(item) {
 
 	item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
 	item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
+
+	if (item.userUnits) {
+		item.lostUnitsPrice = {
+			humans: 0,
+			metals: 0,
+			crystals: 0
+		}
+
+		item.lostUnitsCount = 0;
+
+		for (let unit in item.userUnits) {
+			item.lostUnitsCount += item.userUnits[unit].start - item.userUnits[unit].end;
+
+			if (item.userUnits[unit].resourcesLost.metals) {
+				item.lostUnitsPrice.metals += item.userUnits[unit].resourcesLost.metals;
+			}
+			if (item.userUnits[unit].resourcesLost.crystals) {
+				item.lostUnitsPrice.crystals += item.userUnits[unit].resourcesLost.crystals;
+			}
+			if (item.userUnits[unit].resourcesLost.humans) {
+				item.lostUnitsPrice.humans += item.userUnits[unit].resourcesLost.humans;
+			}
+		}
+
+		item.lostUnitsPrice = {
+			[item.lostUnitsPrice.humans   ? 'humans'   : 'empty'] : item.lostUnitsPrice.humans   || ' ',
+			[item.lostUnitsPrice.metals   ? 'metals'   : 'empty'] : item.lostUnitsPrice.metals   || ' ',
+			[item.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : item.lostUnitsPrice.crystals || ' ',
+		}
+	}
 
 	return item;
 };

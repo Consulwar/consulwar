@@ -65,9 +65,14 @@
 					{{#if options.compactFleetInfo}}compact{{/if}}
 					{{#if options.hideFleetInfo}}hide{{/if}}
 					{{#if options.showFleetInfoFull}}active{{/if}}
-					">
+					"
+				>
 					<button class="toggle"></button>
-					{{> cosmosFleetsInfo}}
+					<div class="fleets">
+						<div class="scrollbar-inner">
+							{{> cosmosFleetsInfo}}
+						</div>
+					</div>
 				</div>
 
 				<div class="user">

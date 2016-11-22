@@ -208,7 +208,7 @@
 				{{else}}
 					map-planet-border-empty
 				{{/if}}{{/if}}
-				map-planet-marker-animated
+				{{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
 				{{owner}}
 				" 
 			style="
@@ -365,7 +365,7 @@
 				{{else}}
 					map-planet-border-empty
 				{{/if}}{{/if}}
-				{{#if gt zoom 5}}map-planet-marker-animated{{/if}}
+				{{#if and (gt zoom 5) (options.rotatePlanets)}}map-planet-marker-animated{{/if}}
 				{{#if lt zoom 9}}zoom-lt-9{{/if}}
 				{{#if lt zoom 7}}zoom-lt-7{{/if}}
 				{{#if lt zoom 5}}zoom-lt-5{{/if}}

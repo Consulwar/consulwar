@@ -19,7 +19,9 @@ Game.Settings = {
 		showFleetInfoFull: [true, false],
 		hideFleetsOnZoomOut: [true, false],
 		hideNet: [true, false],
-		compactFleetInfo: [true, false]
+		compactFleetInfo: [true, false],
+		rotatePlanets: [true, false],
+		rareScreenUpdates: [true, false]
 	}
 };
 

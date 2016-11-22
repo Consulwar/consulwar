@@ -274,18 +274,7 @@ game.Item = function(options) {
 			}
 
 			if (!curPrice.time) {
-				if (this.type == 'research') {
-					var modifier = 1;
-					if (level > 39) {
-						modifier = 150;
-					} else if (level > 19) {
-						modifier = 50;
-					}
-					// После 20 уровня исследования в 50 раз медленее, а после 40 в 150, но не более 3 дней
-					curPrice.time = Math.max( Math.min(Math.floor(sum / 12) * modifier, 259200), 30 );
-				} else {
-					curPrice.time = Math.max( Math.floor(sum / 12), 30 );
-				}
+				curPrice.time = Math.max( Math.floor(sum / 12), 30 );
 			}
 		} else {
 			level = level ? level : 1;

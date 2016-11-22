@@ -184,6 +184,9 @@ Game.syncServerTime = function() {
 		var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
 		Session.set('serverTime', serverTime);
 
+		var user = Meteor.user();
+		var options = user.settings && user.settings.options;
+
 		// refresh time each second
 		refreshQueueFunctionId = Meteor.setInterval(function() {
 			var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
@@ -196,7 +199,7 @@ Game.syncServerTime = function() {
 					break;
 				}
 			}
-		}, 1000);
+		}, (options.rareScreenUpdates ? 20000 : 1000));
 	});
 };
 Game.syncServerTime();

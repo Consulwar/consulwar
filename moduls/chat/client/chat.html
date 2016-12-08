@@ -1,5 +1,112 @@
 <template name="chat">
+	<div class="channels">
+		{{> chatRoomsList}}
+
+		<nav class="participants scrollbar-inner">
+			<h2>Участники: </h2>
+			<ul>
+				{{#each users}}
+					<li class="online" data-username="{{this.name}}">
+						<span class="{{this.role}}">{{this.name}}</span>
+					</li>
+				{{/each}}
+			</ul>
+		</nav>
+
+		<div class="additionals">
+			{{#if room}}
+				{{#if room.isOwnerPays}}
+					<div class="addCredits" data-tooltip="Пополнить баланс комнаты">
+						<div>Сообщения оплачиваются из общего баланса комнаты.</div>
+						<span>В этом чате сейчас есть:</span>
+						<ul class="resources">
+							<li class="credits">{{room.credits}}</li>
+						</ul>
+					</div>
+				{{/if}}
+			{{/if}}
+
+			{{#if price}}
+				{{#unless isChatFree}}
+					<div class="buyFreeChat">
+						<span>Больше никогда не платить за ссаный чат</span>
+						<ul class="resources">
+							<li class="credits">{{formatNumberWithISO freeChatPrice}}</li>
+						</ul>
+					</div>
+				{{/unless}}
+			{{/if}}
+
+			<div class="control">
+				<div class="settings"></div>
+				<div class="info"></div>
+			</div>
+		</div>
+	</div>
+
 	<div class="chat">
+		{{> channelCreate}}
+		{{> channelList}}
+
+		<ul class="messages scrollbar-inner">
+			{{#if hasMore}}
+				<li class="more">
+					<span>показать предыдущие сообщения</span>
+				</li>
+			{{/if}}
+			{{#if gotLimit}}
+				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
+			{{/if}}
+			{{#each messages}}
+				{{#if this.isMotd}}
+					<li class="motd">
+						<div>
+							{{{this.message}}}
+						</div>
+					</li>
+				{{else}}
+					{{#if this.hasAllowedMessages}}
+						<li 
+							class="missed"
+							data-timestamp="{{this.timestamp}}"
+							data-messageid="{{this._id}}"
+						>
+							<span>показать пропущенные сообщения</span>
+						</li>
+					{{/if}}
+
+					{{#if this.showProfile}}
+						<li class="profile" data-username="{{this.username}}">
+							{{> chatMessageProfile this}}
+						</li>
+					{{/if}}
+					<li class="message" data-username="{{this.username}}">
+						{{> chatMessage this}}
+					</li>
+				{{/if}}
+			{{/each}}
+		</ul>
+
+		<form id="message">
+			{{#if (and (not isChatFree) (lt user.rating room.minRating))}}
+				<div class="whyCanNotWrite">
+					в этот чат могут писать только игроки с рейтингом выше {{formatNumber room.minRating}}
+				</div>
+				<input type="submit" value="" disabled="true"/>
+			{{else}}
+				<textarea name="text" maxlength="175"></textarea>
+
+				{{#if price.crystals}}
+					<ul class="resources" data-tooltip="Стоимость сообщения">
+						<li class="crystals">{{price.crystals}}</li>
+					</ul>
+				{{/if}}
+				<input type="submit" value=""/>
+			{{/if}}
+		</form>
+	</div>
+
+		<!--
 		{{> chatRoomsList}}
 			
 		<div class="control">
@@ -114,7 +221,7 @@
 				<input type="submit" value=""/>
 			{{/if}}
 		</form>
-	</div>
+	-->
 </template>
 
 <template name="chatMessageProfile">
@@ -279,35 +386,35 @@
 </template>
 
 <template name="chatRoomsList">
-	<div class="roomsList">
-		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}"></a>
-		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}"></a>
-		{{#if rooms}}
-			<span class="arrow-left {{#if isArrowLeft}}active{{/if}}"></span>
-			<div class="listContainer">
-				<ul>
-					{{#each rooms}}
-						{{#if isVisible this.name}}
-							<li class="{{#if isActive this.name}}active{{/if}}">
-								<a 
-									href="{{pathFor 'chat' room=this.name}}" 
-									class="
-										{{#if this.isPublic}}public{{/if}} 
-										{{#if this.isOwnerPays}}credits{{/if}}
-									"
-								>
-									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
-								</a>
-								<span class="hide" data-roomname="{{this.name}}"></span>
-							</li>
-						{{/if}}
-					{{/each}}
-				</ul>
-			</div>
-			<span class="arrow-right {{#if isArrowRight}}active{{/if}}"></span>
-		{{/if}}
-		<span class="arrow-down"></span>
-	</div>
+	<nav class="roomsList">
+		<h2>
+			<a href="#">Каналы</a>: 
+			<button class="addChannel"></button>
+		</h2>
+		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}">
+			Основной
+		</a>
+		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}">
+			Помощь
+		</a>
+
+		{{#each rooms}}
+			{{#if isVisible this.name}}
+				<a 
+					href="{{pathFor 'chat' room=this.name}}" 
+					class="
+						{{#if isActive this.name}}active{{/if}}
+						{{#if this.isPublic}}public{{/if}} 
+						{{#if this.isOwnerPays}}credits{{/if}}
+					"
+				>
+					{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
+
+					<button class="hide" data-roomname="{{this.name}}"></button>
+				</a>
+			{{/if}}
+		{{/each}}
+	</nav>
 </template>
 
 <template name="chatRoomsPopup">
@@ -408,6 +515,80 @@
 		<span class="title">{{spanText}}:</span>
 		<input type="text" placeholder="{{placeholder}}" name="{{name}}">
 	</label>
+</template>
+
+<template name="channelCreate">
+	<div class="channelCreate hide">
+		<div class="close"></div>
+
+		<h1>Создать канал</h1>
+
+		{{> inputWithCounter
+			spanText="Название"
+			placeholder="Примерная комната"
+			name="roomTitle"
+			max="32"
+		}}
+
+		{{> inputWithCounter
+			spanText="URL"
+			placeholder="example"
+			name="roomUrl"
+			max="32"
+		}}
+
+		<div class="radioBlock">
+			<span class="title">Тип комнаты:</span>
+			<label>
+				<input type="radio" name="roomType" value="public"/> публичная
+			</label>
+			<label>
+				<input type="radio" name="roomType" value="private" checked="checked"/> приватная
+			</label>
+		</div>
+		<div class="radioBlock">
+			<span class="title">Оплата за сообщения:</span>
+			<label>
+				<input type="radio" name="roomPayment" value="crystals"/> кристаллы
+			</label>
+			<label>
+				<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
+			</label>
+		</div>
+		<div class="creditsBlock">
+			<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
+			<div class="amount">{{credits}}</div>
+		</div>
+		<div class="button accept create">Создать комнату</div>
+	</div>
+</template>
+
+<template name="channelList">
+	<div class="channelList scrollbar-inner hide">
+		<div class="close"></div>
+		<h1>Доступные комнаты</h1>
+		{{#if rooms}}
+			<ul>
+				{{#each rooms}}
+					<li data-roomname="{{this.name}}">
+						<label>
+							<input type="checkbox" checked="{{isVisible this.name}}"/>
+							
+							<a 
+								class="
+									{{#if this.isPublic}}public{{/if}} 
+									{{#if this.isOwnerPays}}credits{{/if}}
+								"
+							>
+								{{this.title}} 
+								{{#if not (eq this.title this.name)}}({{this.name}}){{/if}}
+							</a>
+						</label>
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+	</div>
 </template>
 
 <template name="chatControl">

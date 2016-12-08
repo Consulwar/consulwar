@@ -3,7 +3,7 @@
 
 	<div class="wrap"> 
 		<div class="page">
-			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}}">
+			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}} {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
 				<div class="overlay_wrap">
 					{{#if isNewLayout}}
 						{{> overlay_menu}}
@@ -74,10 +74,8 @@
 					"
 				>
 					<button class="toggle"></button>
-					<div class="fleets">
-						<div class="scrollbar-inner">
-							{{> cosmosFleetsInfo}}
-						</div>
+					<div class="fleets scrollbar-inner">
+						{{> cosmosFleetsInfo}}
 					</div>
 				</div>
 
@@ -133,14 +131,14 @@
 					{{#unless isNewLayout}}
 						{{> overlay_menu}}
 					{{/unless}}
+
+					<div class="permanent_chat {{#if options.wideChat}}wide{{/if}}">
+						{{>yield region="permanent_chat"}}
+					</div>
 				</div>
 				{{> additional_area}}
 
 				{{>yield region="permanent_content"}}
-
-				<div class="permanent_chat">
-					{{>yield region="permanent_chat"}}
-				</div>
 
 				{{#if (or Game.Quest.hasNewDaily Game.Mail.hasUnread)}}
 					<a href="{{pathFor 'mail' page=1}}" class="newMessage">

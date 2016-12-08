@@ -43,7 +43,7 @@ Template.unit.helpers({
 });
 
 Template.unit.onRendered(function() {
-	$('.content .scrollbar-inner').scrollbar();
+	$('.content .scrollbar-inner').perfectScrollbar();
 });
 
 // Из-за разницы в цене единицы и большого количества (из-за скидок) возникает погрешность

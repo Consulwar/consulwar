@@ -26,7 +26,6 @@ Game.Building.showPage = function() {
 };
 
 Template.item_building.onRendered(function() {
-	$('.content .scrollbar-inner').scrollbar();
 });
 
 

@@ -26,7 +26,6 @@ GameRouteController = RouteController.extend({
 			this.render('newgame');
 			Tooltips.hide(); // hide all tooltips
 			$('.permanent').hide(); // hide cosmos map!
-			$('.permanent_chat').hide();
 			this.next();
 		} else {
 			this.render('loading', {layout: 'loading_layout'});
@@ -34,6 +33,11 @@ GameRouteController = RouteController.extend({
 	},
 
 	after: function() {
+		Meteor.setTimeout(function() {
+			$('.scrollbar-inner').perfectScrollbar();
+			$('.scrollbar-inner').perfectScrollbar('update');
+		});
+
 		if (window.Metrica !== undefined) {
 			Metrica.hit(window.location.href, 'Game', document.referrer);
 		}

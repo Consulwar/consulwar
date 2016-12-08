@@ -27,7 +27,7 @@ var getPlanetsByArtefact = function(artefactId) {
 };
 
 Template.item_artefact.onRendered(function() {
-	$('.content .scrollbar-inner').scrollbar();
+	$('.content .scrollbar-inner').perfectScrollbar();
 });
 
 Template.item_artefact.helpers({

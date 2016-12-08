@@ -153,7 +153,7 @@ Template.cosmosHistory.onRendered(function() {
 						loadHistoryBattle(itemId);
 					}
 					setTimeout(function() {
-						//$('.content .history .scrollbar-inner').scrollbar();
+						$('.content .history .scrollbar-inner').perfectScrollbar();
 					});
 				}
 			});

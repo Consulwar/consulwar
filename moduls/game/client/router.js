@@ -34,8 +34,10 @@ GameRouteController = RouteController.extend({
 
 	after: function() {
 		Meteor.setTimeout(function() {
-			$('.scrollbar-inner').perfectScrollbar();
-			$('.scrollbar-inner').perfectScrollbar('update');
+			if ($('body').width() > 960) {
+				$('.scrollbar-inner').perfectScrollbar();
+				$('.scrollbar-inner').perfectScrollbar('update');
+			}
 		});
 
 		if (window.Metrica !== undefined) {

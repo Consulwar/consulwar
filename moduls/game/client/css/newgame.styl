@@ -106,6 +106,7 @@ body.game
 	@import '{}/moduls/game/client/css/item.styl'
 	@import '{}/moduls/cosmos/client/cosmos.styl'
 	@import '{}/moduls/resources/client/resources.styl'
+		
 
 .page
 	position relative
@@ -204,7 +205,8 @@ body.game
 					height 100%
 					background-repeat no-repeat
 					background-position center center
-
+		
+		@import '{}/moduls/game/client/css/mobile.styl'
 
 	
 .tooltip
@@ -1224,10 +1226,11 @@ body.game
 					color $color-metal
 
 
-			.support
-				margin 20px 0
-				display inherit
-				flex-direction inherit
+			.support:first-child
+				margin-top 20px
+				
+			.support:last-child
+				margin-bottom 20px
 	
 	.quest
 		position absolute

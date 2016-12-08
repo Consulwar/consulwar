@@ -63,25 +63,24 @@
 							{{#if eq status 3}}Задание выполнено{{/if}}
 						</h2>
 					{{/if}}
-
-					{{#if quests}}
-						{{#if isOpened}}
-							<ul class="quests">
-								{{#each quests}}
-									<li 
-										data-id="{{this.engName}}"
-										class="
-											{{#if eq this.status 0}}prompt{{/if}}
-											{{#if eq this.status 1}}inprogress{{/if}}
-											{{#if eq this.status 3}}finished{{/if}}"
-									>
-										{{this.name}}
-									</li>
-								{{/each}}
-							</ul>
-						{{/if}}
-					{{/if}}
 				</div>
+				{{#if quests}}
+					{{#if isOpened}}
+						<ul class="quests">
+							{{#each quests}}
+								<li 
+									data-id="{{this.engName}}"
+									class="
+										{{#if eq this.status 0}}prompt{{/if}}
+										{{#if eq this.status 1}}inprogress{{/if}}
+										{{#if eq this.status 3}}finished{{/if}}"
+								>
+									{{this.name}}
+								</li>
+							{{/each}}
+						</ul>
+					{{/if}}
+				{{/if}}
 			{{/if}}
 		</div>
 	{{/if}}

@@ -88,6 +88,15 @@ body.game
 	max-width 1920px
 	max-height 1080px
 	margin 0 auto
+	
+	button
+		background-color transparent
+		border 0
+		cursor pointer
+						
+		&:hover
+			-webkit-filter brightness(1.2)
+			filter brightness(1.2)
 
 	@import '{}/moduls/building/client/building.styl'
 	@import '{}/moduls/research/client/research.styl'
@@ -471,90 +480,6 @@ body.game
 				min-height 400px
 				margin auto
 				flex-shrink 1
-				
-				.history
-					display flex
-					flex-direction column
-					width 100%
-					background-color #04080B
-					
-					h2
-						width 100%
-						text-align center
-						
-					.data
-						display block
-						overflow-y auto
-
-					.result
-						font-size 16px
-						margin -5px auto 6px
-
-					table
-						width 100%
-						border-collapse collapse
-						
-						a.planet
-							height 76px
-						
-						tr:not(.header)
-							text-align left
-							cursor pointer
-							
-							&:nth-child(odd):not(.header)
-								background-color $color-row1
-							
-							&:nth-child(even)
-								background-color $color-row2
-							
-							&:hover
-								-webkit-filter brightness(1.2)
-								filter brightness(1.2)
-									
-							&.expanded
-								td:not(:last-child)
-									vertical-align top
-								table
-									display table
-									width 250px
-									
-									tr
-										height auto
-										
-										td
-											height auto
-											width auto
-											padding 0
-								
-							table
-								display none
-									
-						td, th
-							position relative
-							text-align center
-							vertical-align middle
-							padding 5px
-							&:nth-child(1)
-								width 100px
-
-							&:nth-child(2)
-								width 250px
-
-							&:nth-child(3)
-								width 420px
-						td
-							height 76px
-
-						th
-							padding 10px
-							color $color-metal
-							&:last-child
-								padding-right 20px
-						
-						.defense, .attack
-							position absolute
-							left 10px
-							top 32.5px
 						
 			div.header
 				display flex
@@ -1069,6 +994,7 @@ body.game
 		font-weight bold
 		
 		.fleets
+			position relative
 			box-sizing border-box
 			height 100%
 			border-top 20px solid transparent
@@ -1095,6 +1021,7 @@ body.game
 			background-color rgba($color-black, 0.4)
 			border 0
 			cursor pointer
+			z-index 1
 			
 			&:before
 				content url(/img/game/arrow.png)
@@ -1479,10 +1406,17 @@ body.game
 	> *
 		margin auto !important
 
-.scroll-bar
+.scrollbar-inner
+	position relative
+
+.ps-scrollbar-y
 	background-color $color-metal !important
 	opacity 1 !important
 	border-radius 0 !important
-
-.scroll-element_track
+	
+.ps-scrollbar-y-rail
+	opacity 1 !important
+	background-color transparent !important
+	
+.ps-scrollbar-x-rail
 	display none !important

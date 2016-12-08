@@ -7,6 +7,94 @@
 	}
 }
 
+.cosmosHistory
+	~ .bottom_menu
+		display none
+
+	.history
+		display flex
+		flex-direction column
+		width 100%
+		background-color #04080B
+		
+		h2
+			width 100%
+			text-align center
+			
+		.data
+			display block
+			overflow-y auto
+
+		.result
+			font-size 16px
+			margin -5px auto 6px
+
+		table
+			width 100%
+			border-collapse collapse
+			
+			a.planet
+				height 76px
+			
+			tr:not(.header)
+				text-align left
+				cursor pointer
+				
+				&:nth-child(odd):not(.header)
+					background-color $color-row1
+				
+				&:nth-child(even)
+					background-color $color-row2
+				
+				&:hover
+					-webkit-filter brightness(1.2)
+					filter brightness(1.2)
+						
+				&.expanded
+					td:not(:last-child)
+						vertical-align top
+					table
+						display table
+						width 250px
+						
+						tr
+							height auto
+							
+							td
+								height auto
+								width auto
+								padding 0
+					
+				table
+					display none
+						
+			td, th
+				position relative
+				text-align center
+				vertical-align middle
+				padding 5px
+				&:nth-child(1)
+					width 100px
+
+				&:nth-child(2)
+					width 250px
+
+				&:nth-child(3)
+					width 420px
+			td
+				height 76px
+
+			th
+				padding 10px
+				color $color-metal
+				&:last-child
+					padding-right 20px
+			
+			.defense, .attack
+				position absolute
+				left 10px
+				top 32.5px
+
 #map-battle-container
 	position absolute
 	overflow hidden

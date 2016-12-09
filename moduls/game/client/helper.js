@@ -3,6 +3,7 @@ Meteor.startup(function() {
 UI.registerHelper('isNewLayout', function() {
 	var newLayoutGroups = {
 		planet: {
+			residential: true,
 			military: true
 		},
 		cosmos: true,

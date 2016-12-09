@@ -28,9 +28,8 @@ Game.Building.showPage = function() {
 Template.item_building.onRendered(function() {
 });
 
-
-Template.overlay_menu.events({
-	'click progress.metals': function(e, t) {
+var bonusEvents = {
+	'click .bonus.metals, click button.metal': function(e, t) {
 		Meteor.call('getBonusResources', 'metals', function(error, result) {
 			if (error) {
 				Notifications.error('Нельзя получить бонусный металл', error.error);
@@ -40,7 +39,7 @@ Template.overlay_menu.events({
 		});
 	},
 
-	'click progress.crystals': function(e, t) {
+	'click .bonus.crystals, click button.crystal': function(e, t) {
 		Meteor.call('getBonusResources', 'crystals', function(error, result) {
 			if (error) {
 				Notifications.error('Нельзя получить бонусный кристалл', error.error);
@@ -48,6 +47,21 @@ Template.overlay_menu.events({
 				Notifications.success('Бонусный кристалл получен', '+' + result);
 			}
 		});
+	}
+};
+
+Template.overlay_menu.events(bonusEvents);
+Template.item_building.events(bonusEvents);
+
+Template.item_building.helpers({
+	resources: function() {
+		return Game.Resources.currentValue.get();
+	},
+	income: function() {
+		return Game.Resources.getIncome();
+	},
+	bonusStorage: function() { 
+		return Game.Resources.bonusStorage;
 	}
 });
 

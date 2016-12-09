@@ -42,34 +42,48 @@
 				{{/if}}
 
 
-	<!--
-				{{#if eq building.engName 'tradingport'}}
-					<button class="market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
-				{{/if}}
 
-				{{#if eq building.engName 'spaceport'}}
-					<button class="containers" disabled="{{lt building.currentLevel 1}}">Открыть контейнер</button>
-				{{/if}}
-
-				{{#if eq building.engName 'colosseum'}}
-					<a
-						class="tournament {{#if lt building.currentLevel 1}}disabled{{/if}}"
-						href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
-					>
-						Устроить турнир
-					</a>
-				{{/if}}
-
-				{{#if eq building.engName 'pulsecatcher'}}
-					<a
-						class="pulsecatcher {{#if lt building.currentLevel 1}}disabled{{/if}}"
-						href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
-					>
-						Получить бонус
-					</a>
-				{{/if}}
-	-->
 				<div class="actions">
+					{{#if eq building.engName 'metal'}}
+						<div>
+							<progress class="bonus metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
+							<button class="additional_action metal" disabled="{{lt building.currentLevel 1}}">Собрать</button>
+						</div>
+					{{/if}}
+
+					{{#if eq building.engName 'crystal'}}
+						<div>
+							<progress class="bonus crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
+							<button class="additional_action crystal" disabled="{{lt building.currentLevel 1}}">Собрать</button>
+						</div>
+					{{/if}}
+
+					{{#if eq building.engName 'tradingport'}}
+						<button class="additional_action market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
+					{{/if}}
+
+					{{#if eq building.engName 'spaceport'}}
+						<button class="additional_action containers" disabled="{{lt building.currentLevel 1}}">Контейнер</button>
+					{{/if}}
+
+					{{#if eq building.engName 'colosseum'}}
+						<a
+							class="additional_action tournament {{#if lt building.currentLevel 1}}disabled{{/if}}"
+							href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
+						>
+							Турнир
+						</a>
+					{{/if}}
+
+					{{#if eq building.engName 'pulsecatcher'}}
+						<a
+							class="additional_action pulsecatcher {{#if lt building.currentLevel 1}}disabled{{/if}}"
+							href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
+						>
+							Бонус
+						</a>
+					{{/if}}
+
 					{{#if gt building.maxLevel building.currentLevel}}
 						<button class="main_action build" disabled="{{not building.canBuild}}">Отдать приказ</button>
 					{{/if}}

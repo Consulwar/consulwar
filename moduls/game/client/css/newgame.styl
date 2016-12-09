@@ -444,6 +444,7 @@ body.game
 					outline 2px solid black
 					outline-offset -7px
 					text-decoration none
+					text-align center
 					
 					&[disabled="true"]
 						-webkit-filter grayscale(1) brightness(0.3) !important
@@ -454,10 +455,34 @@ body.game
 						filter brightness(1.2)
 							
 				.main_action
+					flex-shrink 0
 					background linear-gradient(left, #f1c54c, #e28e49);
 					
 				.additional_action
+					margin 0 auto 0 0
 					background linear-gradient(left, #449bd8, #43c0d1);
+					
+					&.metal,
+					&.crystal
+						width 100%
+
+				div
+					width 100%
+					-webkit-flex-shrink 1
+					flex-shrink 1
+					display flex
+					flex-direction column
+					overflow hidden
+					
+					.additional_action
+						padding 8px
+						height 100%
+
+				progress
+					border 0
+					margin-bottom -1px
+					max-width 100%
+					
 		.content.artefacts
 			.description
 				height 80px			

@@ -624,12 +624,6 @@ var getUserRole = function(userId, username, role, rating) {
 	};
 };
 
-Template.chatMessageProfile.helpers({
-	getUserRoleByMessage: function(message) {
-		return getUserRole(message.user_id, message.username, message.role, message.rating);
-	}
-});
-
 Template.chatMessage.helpers({
 	highlightUser: function(text) {
 		if (text.indexOf('/me') === 0) {
@@ -745,12 +739,20 @@ Template.chat.helpers({
 
 	startWith: function(text, value) {
 		return (text.substr(0, value.length) == value);
+	},
+
+	hideChannels: function() {
+		return Session.get('hideChannels', false);
 	}
 });
 
 Template.chat.events({
 	'click': function(e, t) {
 		hidePopups();
+	},
+
+	'click .toggle': function() {
+		Session.set('hideChannels', !Session.get('hideChannels', false));
 	},
 
 	'submit #message': function(e, t) {

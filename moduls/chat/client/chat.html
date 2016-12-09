@@ -1,5 +1,5 @@
 <template name="chat">
-	<div class="channels">
+	<div class="channels {{#if hideChannels}}hide{{/if}}">
 		{{> chatRoomsList}}
 
 		<nav class="participants scrollbar-inner">
@@ -42,6 +42,8 @@
 				<div class="info"></div>
 			</div>
 		</div>
+
+		<button class="toggle"></button>
 	</div>
 
 	<div class="chat">
@@ -51,7 +53,7 @@
 		<ul class="messages scrollbar-inner">
 			{{#if hasMore}}
 				<li class="more">
-					<span>показать предыдущие сообщения</span>
+					<span>предыдущие сообщения</span>
 				</li>
 			{{/if}}
 			{{#if gotLimit}}
@@ -71,18 +73,47 @@
 							data-timestamp="{{this.timestamp}}"
 							data-messageid="{{this._id}}"
 						>
-							<span>показать пропущенные сообщения</span>
+							<span>пропущенные сообщения</span>
 						</li>
 					{{/if}}
 
-					{{#if this.showProfile}}
-						<li class="profile" data-username="{{this.username}}">
-							{{> chatMessageProfile this}}
+					{{#let messageRole=(getUserRoleByMessage this)}}
+						{{#if this.showProfile}}
+							<li 
+								data-username="{{this.username}}"
+								class="
+									profile 
+									{{messageRole.id}} 
+									{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+									{{#if eq this.username user.username}}me{{/if}}
+								">
+								<img src="/img/game/chat/icons/
+									{{#if this.iconPath}}
+										{{this.iconPath}}
+									{{else}}
+										common/1
+									{{/if}}
+								sm.png"/>
+								<div class="username">
+									{{this.username}}
+								</div>
+								<div class="role {{messageRole.id}}">
+									{{messageRole.name}}
+								</div>
+							</li>
+						{{/if}}
+						<li
+							data-username="{{this.username}}"
+							class="
+								message
+								{{messageRole.id}} 
+								{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+								{{#if eq this.username user.username}}me{{/if}}
+							"
+						>
+							{{> chatMessage this}}
 						</li>
-					{{/if}}
-					<li class="message" data-username="{{this.username}}">
-						{{> chatMessage this}}
-					</li>
+					{{/let}}
 				{{/if}}
 			{{/each}}
 		</ul>
@@ -222,30 +253,6 @@
 			{{/if}}
 		</form>
 	-->
-</template>
-
-<template name="chatMessageProfile">
-	<img src="/img/game/chat/icons/
-		{{#if this.iconPath}}
-			{{this.iconPath}}
-		{{else}}
-			common/1
-		{{/if}}
-	sm.png"/>
-	{{#let messageRole=(getUserRoleByMessage this)}}
-		<div 
-			class="
-				username 
-				{{messageRole.id}} 
-				{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-				{{#if eq this.username user.username}}me{{/if}}"
-		>
-			{{this.username}}
-		</div>
-		<div class="role {{messageRole.id}}">
-			{{messageRole.name}}
-		</div>
-	{{/let}}
 </template>
 
 <template name="chatMessage">

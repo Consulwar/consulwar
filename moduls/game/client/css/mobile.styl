@@ -144,6 +144,47 @@
 			order 4
 			width 100%
 			
+			&.chat
+				flex-shrink 0 !important
+				height 90% !important
+				
+				.messages
+					.profile
+						display none
+					
+					li
+						max-width 100%
+						&.more
+						&.missed
+							span
+								&:before
+								&:after
+									margin 0 3px
+						
+						&[data-username]:before
+							content attr(data-username) ': '
+							display inline
+							color #c4aba1
+						
+						p
+							display inline
+							
+						&.admin
+							&:before
+								color #d65f52
+						&.helper
+							&:before
+								color #a57fce
+						&.owner
+							&:before
+								color #e9a844
+						&.moderator
+							&:before
+								color #56baf2
+						&.me
+							&:before
+								color #ABC851
+			
 			.header
 				.level
 					width 95px

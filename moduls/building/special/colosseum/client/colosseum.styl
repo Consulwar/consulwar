@@ -9,12 +9,11 @@ tournament-icon('fire_dragon')
 tournament-icon('extermination')
 tournament-icon('bloody_mess')
 
-
-.colosseum-menu
+.content.building.planet.residential .colosseum-menu
 	position absolute
 	z-index 4
-	top 0px
-	left 124px
+	top -214px
+	right 0
 	width 1333px
 	height 428px
 	padding 3.5px
@@ -47,10 +46,10 @@ tournament-icon('bloody_mess')
 		&:hover
 			background-position 0px -34px
 			
-	ul
+	> ul
 		display block
 		
-		li
+		> li
 			display inline-block
 			width 218px
 			height 380px
@@ -71,7 +70,9 @@ tournament-icon('bloody_mess')
 		margin-top 245px
 		margin-left 80px
 		width 140px
+		height initial
 		font-weight normal
+		padding 0
 
 	.start
 		display block

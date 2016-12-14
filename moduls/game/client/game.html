@@ -130,6 +130,8 @@
 					{{#unless isNewLayout}}
 						{{> overlay_menu}}
 					{{/unless}}
+					
+					{{> yield "cosmosAttackMenu"}}
 
 					<div class="permanent_chat {{#if options.wideChat}}wide{{/if}}">
 						{{>yield region="permanent_chat"}}

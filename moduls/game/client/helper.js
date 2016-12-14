@@ -153,6 +153,15 @@ UI.registerHelper('toArray', function(obj) {
 	return _.toArray(obj);
 });
 
+UI.registerHelper('arrayify',function(obj){
+	return _.map(obj, function(value, key) {
+		return {
+			key,
+			value
+		}
+	});
+});
+
 UI.registerHelper('makeArray', function() {
 	return _.toArray(arguments).slice(0, -1);
 });

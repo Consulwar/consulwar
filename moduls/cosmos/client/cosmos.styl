@@ -368,11 +368,14 @@
 	position absolute
 	z-index 100
 	padding 15px
-	width 300px
+	width 320px
 	background-color #020609
 	border 4px solid #21273D
 	border-radius 8px
 	text-align center
+	
+	h2
+		font-size 16px
 
 	.edit
 		cursor pointer
@@ -407,60 +410,76 @@
 			filter brightness(1.4)
 	
 	.army
-		font-size 18px
+		display flex
+		flex-wrap wrap
+		font-size 11px
 		text-align left
-		padding 10px
+		text-align center
 		
-		li
+		a
 			display block
+			width 52px
+			padding-top 52px
+			margin 10px 14px 0
+			background-size 100%
+			background-repeat no-repeat
+			text-decoration none
 			
-			span
+			&.disabled
+				-webkit-filter grayscale(1) brightness(0.8)
+				filter grayscale(1) brightness(0.8)
+			
+			div
+				height 12px
 				color $color-white
 
 	.map-planet-popup-items
-		position relative
-		display block
-		margin-top 15px
-		padding 0px 0px 0px 0px
+		display flex
+		flex-wrap wrap
+		justify-content space-around
+		margin-top 6px
+		padding 0
 		width 100%
 		
 		a
 			position relative
 			display inline-block
-			padding 70px 0px 0px 0px
-			width 90px
-			height 20px
+			padding 62px 0px 0px 0px
+			width 58px
+			height 16px
 			text-align center
 			text-decoration none
 			background-position center top
 			background-repeat no-repeat
+			background-size 100%
+			font-size 12px
 			
 
 .attack-menu
-	position absolute
-	left 0
-	top 200px
-	z-index 6
+	display none
+	position relative
 	width 1420px
-	height 400px
 	background-color #090e14
 	font-size 16px
 	font-weight bold
+	flex-wrap wrap
 
 	.btn-attack
 		cursor pointer
 		display block
 		font-weight bold
-		font-size 18px
+		font-size 16px
 		text-align center
 		text-transform uppercase
-		width 177px
-		height 46px
+		width 135px
+		height 32px
+		padding-top 2px
 		color #ffffff
 		background-image url(/img/game/cosmomap/button_attack.png)
 		background-repeat no-repeat
 		border 0px solid transparent
 		border-radius 9px
+		margin auto 0 0 0
 		
 		&:hover
 			-webkit-filter brightness(1.4)
@@ -470,21 +489,9 @@
 			-webkit-filter grayscale(0.5) brightness(0.75)
 			filter grayscale(0.5) brightness(0.75)
 			
-	.defend
-		position absolute
-		bottom 20px
-		right 250px
-	
-	.return
-		position absolute
-		bottom 20px
-		right 50px
 			
 	.btn-all
 		cursor pointer
-		position absolute
-		bottom 20px
-		left 582px
 		font-size 16px
 		text-align center
 		padding-top 14px
@@ -493,12 +500,6 @@
 		background-color #000000
 		border 2px solid #80BAEC
 		color #80BAEC
-		
-	.resources
-		position absolute
-		display block
-		bottom 10px
-		left 10px
 
 	.btn-add
 		cursor pointer
@@ -515,20 +516,54 @@
 		color #91b935
 
 	.planets
-		position absolute
-		display block
-		left 0px
-		top 20px
-		width 350px
+		display flex
+		flex-wrap wrap
+		width 100%
 		color #e8e8e8
+		font-size 12px
 		
-		li
-			cursor pointer
-			position relative
-			display inline-block
-			width 160px
-			margin-left 10px
-			padding-top 5px
+		a.planet
+			width 60px
+			height 70px
+			margin 9px auto
+			
+			&.empty
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+					
+			&.notAvaliable
+				-webkit-filter grayscale(1) brightness(0.5)
+				filter grayscale(1) brightness(0.5)
+					
+			&.topTime
+				color $color-science
+					
+			.name,
+			.location
+				min-height 14px
+			
+			&.notAvaliable
+				.name,
+				.location
+					visibility hidden
+
+				&:hover
+					-webkit-filter none
+					filter none
+					color $color-ggk
+					
+					.name,
+					.location
+						visibility visible
+			
+			&.disabled
+				-webkit-filter grayscale(0.5) brightness(0.3)
+				filter grayscale(0.5) brightness(0.3)
+				
+			&.selected
+				color $color-metal
+				.map-planet-border-human
+					border-color $color-metal
 			
 		.home
 			color $color-ggk
@@ -539,39 +574,46 @@
 		.active
 			color #e9a844
 			
+	.departure
+		width 640px
+		max-width 100%
+			
 	.fleet
-		position absolute
-		display block
-		left 350px
-		top 0px
-		width 750px
-		
+		display flex
+		width 640px
+		flex-wrap wrap
+		justify-content space-around
+		padding-top 25px
+
 		li
+			width 85px
+			height 85px
 			position relative
 			display inline-block
 			overflow visible
-			margin-top 20px
+			margin 0 7px 30px
 			
 			&:last-child
-				margin-top 20px
+				margin 0 7px 30px
 			
 		a
 			background-repeat no-repeat
 
 		.max
 			position absolute
-			top 80px
+			top 60px
 			height 18px
 			width 100%
 			text-align center
 			background-color rgba(0,0,0,0.5)
 			padding-top 2px
+			font-size 14px
 			
 		.count
 			position relative
 			margin-top 5px
 			width 100%
-			height 20px
+			height 16px
 			border-radius 5px
 			padding-top 2px
 			-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
@@ -582,11 +624,18 @@
 			text-align center
 			
 	.target
-		position absolute
-		display block
-		left 1100px
-		top 20px
-		width 300px
+		display flex
+		flex-wrap wrap
+		justify-content space-around
+		width 320px
+		padding 12px 0
+		
+		.map-planet-popup
+			position relative
+			background transparent
+			padding 0
+			border 0
+			z-index 0
 		
 		ul
 			position relative
@@ -601,10 +650,13 @@
 			
 		p 
 			font-weight normal
-			color #b6c5d3
+			color $color-metal
+			text-align center
+			padding 10px
+			width 100%
 			
 		span
-			color #ffffff
+			color $color-white
 		
 
 .btn-history

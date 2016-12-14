@@ -22,7 +22,8 @@ Game.Settings = {
 		compactFleetInfo: [true, false],
 		rotatePlanets: [true, false],
 		rareScreenUpdates: [true, false],
-		wideChat: [true, false]
+		wideChat: [true, false],
+		showDistanceFromPlanets: [true, false]
 	}
 };
 

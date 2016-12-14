@@ -502,11 +502,17 @@ body.game
 			justify-content space-between
 			align-items stretch
 			
-			&.cosmos.cosmosHistory
+			&.cosmos
 				width 960px
-				min-height 400px
 				margin auto
 				flex-shrink 1
+				&.cosmosHistory
+					min-height 400px
+					.attack-menu
+						display none
+					
+				.attack-menu
+					display flex
 						
 			div.header
 				display flex
@@ -641,7 +647,7 @@ body.game
 		display flex
 		align-items flex-start
 		flex-shrink 0
-		z-index 2
+		z-index 4
 		
 		width 100%
 		height 428px

@@ -560,10 +560,29 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 	return info;
 };
 
+
+var reptilesFleetPower = function(units) {
+	return Game.Unit.calculateUnitsPower(_.reduce(units, function(units, unit) {
+		let count = (_.isString( unit.count )
+			? game.Battle.countNumber[unit.countId].max
+			: unit.count
+		);
+
+		if (count > 0) {
+			units.reptiles.fleet[unit.engName] = count;
+		}
+		
+		return units;
+	}, {reptiles: {fleet: {}}}));
+}
+
 Template.cosmosPlanetPopup.helpers({
 	getTimeNextDrop: function(timeCollected) {
 		var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
 		return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
+	},
+	reptilesFleetPower: function() {
+		return reptilesFleetPower(Game.Cosmos.getPlanetInfo(this.planet).units);
 	}
 });
 
@@ -838,6 +857,9 @@ Template.cosmosShipInfo.onRendered(function() {
 Template.cosmosShipInfo.helpers({
 	timeLeft: function() {
 		return (!this.spaceEvent) ? 0 : this.spaceEvent.timeEnd - Session.get('serverTime');
+	},
+	reptilesFleetPower: function() {
+		return reptilesFleetPower(this.ship.units);
 	}
 });
 
@@ -980,6 +1002,20 @@ Template.cosmosAttackMenu.helpers({
 		}
 
 		return units;
+	},
+
+	selectedFleetPower: function() {
+		var updated = this.updated.get();
+
+		return Game.Unit.calculateUnitsPower(_.reduce($('.fleet li'), function(units, element) {
+			let count = parseInt($(element).find('.count').val(), 10);
+			if (count > 0) {
+				let unitName = $(element).data('id');
+				units.army.fleet[unitName] = count;
+			}
+			
+			return units;
+		}, {army: {fleet: {}}}));
 	},
 
 	canHaveMoreColonies: function() {

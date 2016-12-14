@@ -55,6 +55,10 @@ game.Unit = function(options) {
 		return result;
 	};
 
+	if (options.power != undefined) {
+		this.power = options.power;
+	}
+
 	this.type = 'unit';
 	this.side = 'army';
 	this.battleEffects = options.battleEffects;
@@ -91,6 +95,10 @@ game.ReptileUnit = function(options) {
 	this.isEnoughResources = function() {
 		return true;
 	};
+
+	if (options.power) {
+		this.power = options.power;
+	}
 
 	this.type = 'reptileUnit';
 	this.side = 'reptiles';
@@ -185,6 +193,31 @@ Game.Unit = {
 	has: function(group, name, count) {
 		count = count || 1;
 		return Game.Unit.get(group, name) >= count;
+	},
+
+	calculateUnitsPower: function(units) {
+		var power = 0;
+		var totalDamage = 0;
+		var totalLife = 0;
+
+		for (let side in units) {
+			for (let group in units[side]) {
+				for (let name in units[side][group]) {
+					let unit = Game.Unit.items[side][group][name];
+					let count = units[side][group][name];
+					if (_.isNumber(unit.power)) {
+						power += unit.power * count;
+					} else {
+						totalDamage += unit.characteristics.damage.max * count;
+						totalLife += unit.characteristics.life * count;
+					}
+				}
+			}
+		}
+
+		power += Math.floor((totalDamage / 1000) + (totalLife / 2000));
+
+		return power;
 	},
 
 	calcUnitsHealth: function(units) {

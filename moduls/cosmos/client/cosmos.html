@@ -59,6 +59,7 @@
 					{{planet.mission.name}}
 					{{planet.mission.level}}
 					уровня
+					<span class="unitsPower">{{formatNumberWithISO reptilesFleetPower}}</span>
 				</h2>
 			{{else}}
 				<h2>Свободная планета</h2>
@@ -140,6 +141,7 @@
 			</div>
 
 			<div class="squad">
+				<span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
 				<button class="btn-all">
 					{{#if isAllSelected}}
 						Отменить выбор
@@ -361,6 +363,7 @@
 					{{ship.mission.name}}
 					{{ship.mission.level}}
 					уровня
+					<span class="unitsPower">{{formatNumberWithISO reptilesFleetPower}}</span>
 				</h2>
 			{{/if}}
 			<div class="map-planet-popup-items">

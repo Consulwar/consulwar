@@ -1,0 +1,3 @@
+initSquadLib = function() {
+
+};

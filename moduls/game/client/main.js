@@ -17,6 +17,8 @@ initSettingsClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();
+initItemLib();
+initItemClient();
 initCheatsClient();
 
 

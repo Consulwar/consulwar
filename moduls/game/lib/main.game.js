@@ -505,6 +505,10 @@ Game = {
 			default:
 				throw new Meteor.Error('Такого объекта нет');
 		}
+	},
+
+	hasPremium: function() {
+		return Game.Cards.hasTypeActive('donate');
 	}
 };
 

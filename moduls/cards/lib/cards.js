@@ -97,14 +97,13 @@ Game.Cards = {
 	getActive: function() {
 		var tasks = Game.Queue.Collection.find({
 			user_id: Meteor.userId(),
-			status: Game.Queue.status.INCOMPLETE
+			status: Game.Queue.status.INCOMPLETE,
+			type: 'card'
 		}).fetch();
 
 		var active = {};
 		for (var i = 0; i < tasks.length; i++) {
-			if (tasks[i].type == 'card') {
-				active[tasks[i].engName] = true;
-			}
+			active[tasks[i].engName] = true;
 		}
 
 		var result = [];
@@ -113,6 +112,28 @@ Game.Cards = {
 				if (active[name]) {
 					result.push(Game.Cards.items[type][name]);
 				}
+			}
+		}
+		
+		return result;
+	},
+
+	hasTypeActive: function(type) {
+		var tasks = Game.Queue.Collection.find({
+			user_id: Meteor.userId(),
+			status: Game.Queue.status.INCOMPLETE,
+			type: 'card'
+		}).fetch();
+
+		var active = {};
+		for (var i = 0; i < tasks.length; i++) {
+			active[tasks[i].engName] = true;
+		}
+
+		var result = [];
+		for (var name in Game.Cards.items[type]) {
+			if (active[name]) {
+				result.push(Game.Cards.items[type][name]);
 			}
 		}
 		

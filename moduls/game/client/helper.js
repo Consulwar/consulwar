@@ -56,28 +56,17 @@ UI.registerHelper('currentRouteName', function() {
 	return Router.current().route.name;
 });
 
-var hasPremium = function() {
-	var activeCards = Game.Cards.getActive();
-
-	for (let i = 0; i < activeCards.length; i++) {
-		if (activeCards[i].cardGroup == "generalDonate") {
-			return true;
-		}
-	}
-	return false;
-};
-
 UI.registerHelper('premiumTitle', function() {
-	return (hasPremium()
+	return (Game.hasPremium()
 		? {title: 'Только для премиум аккаунтов'}
 		: ''
 	);
 });
 
-UI.registerHelper('hasPremium', hasPremium);
+UI.registerHelper('hasPremium', Game.hasPremium);
 
 UI.registerHelper('notPremiumDisabled', function() {
-	return (hasPremium()
+	return (Game.hasPremium()
 		? ''
 		: {disabled: true}
 	);
@@ -117,8 +106,16 @@ UI.registerHelper('gt', function(a, b) {
 	return a > b;
 });
 
+UI.registerHelper('gte', function(a, b) {
+	return a >= b;
+});
+
 UI.registerHelper('lt', function(a, b) {
 	return a < b;
+});
+
+UI.registerHelper('lte', function(a, b) {
+	return a <= b;
 });
 
 UI.registerHelper('multiply', function(a, b) {

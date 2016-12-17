@@ -2,6 +2,7 @@ initUnitServer = function() {
 
 initUnitLib();
 initUnitServerMethods();
+initUnitServerSquad();
 
 Game.Unit.Collection._ensureIndex({
 	user_id: 1

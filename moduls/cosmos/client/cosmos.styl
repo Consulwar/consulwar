@@ -499,18 +499,25 @@
 		&.disabled
 			-webkit-filter grayscale(0.5) brightness(0.75)
 			filter grayscale(0.5) brightness(0.75)
+	
+	.unitsAdditionalControl
+		width 150px
+		margin 10px auto
+		display flex
+		flex-direction column
+		align-items center
+		justify-content space-around
 			
-			
-	.btn-all
-		cursor pointer
-		font-size 16px
-		text-align center
-		padding-top 14px
-		padding-bottom 14px
-		width 250px
-		background-color #000000
-		border 2px solid #80BAEC
-		color #80BAEC
+		.btn-all
+			cursor pointer
+			font-size 16px
+			text-align center
+			padding-top 14px
+			padding-bottom 14px
+			width 100%
+			background-color #000000
+			border 2px solid #80BAEC
+			color #80BAEC
 
 	.btn-add
 		cursor pointer
@@ -586,6 +593,8 @@
 			color #e9a844
 			
 	.departure
+		display flex
+		flex-wrap wrap
 		width 640px
 		max-width 100%
 			
@@ -616,24 +625,137 @@
 			height 18px
 			width 100%
 			text-align center
-			background-color rgba(0,0,0,0.5)
+			background-color rgba(0, 0, 0, 0.5)
 			padding-top 2px
 			font-size 14px
-			
+		
+		.disabled
+			.count
+				-webkit-filter brightness(0.5)
+				filter brightness(0.5)
+
 		.count
 			position relative
+			display flex
+			
 			margin-top 5px
 			width 100%
-			height 16px
-			border-radius 5px
-			padding-top 2px
+			height 22px
 			-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 			-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 			box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 			border 2px solid #335168
 			background-color #adadad
-			text-align center
+			border-radius 5px
+			box-sizing border-box
 			
+			&:before
+				display none
+			
+			input
+				flex-shrink 1
+				width 100%
+				min-width 50%
+				height 100%
+				padding-top 2px
+				border 0
+				background transparent
+				text-align center
+				box-sizing border-box
+				
+			span
+				flex-shrink 1
+				background-color rgba(0, 0, 0, 0.5)
+				color $color-honor
+				padding 3px 5px
+				box-sizing border-box
+				white-space nowrap
+	
+	.squads
+		display flex
+		width 430px
+		height 100px
+		flex-direction column
+		flex-wrap wrap
+		justify-content space-between
+		margin 10px 7px
+		
+		.squad
+			display flex
+			width 118px
+			height 26px
+			font-size 11px
+			align-items center
+			justify-content space-between
+			cursor pointer
+			color $color-metal
+			margin auto 7px
+			
+			&.active
+				outline 2px solid $color-metal
+				
+			&.noPremium
+				-webkit-filter grayscale(1) brightness(0.6)
+				filter grayscale(1) brightness(0.6)
+			
+			img
+				width 26px
+				height 26px
+				
+			span
+				position relative
+				display flex
+				width 89px
+				height 26px
+				padding 3px
+				box-sizing border-box
+				flex-wrap nowrap
+				white-space nowrap
+				align-items center
+				overflow hidden
+				background-color #232323
+				
+			.edit
+				position absolute
+				right 3px
+				top 2.5px
+				display inline-block
+				width 21px
+				height 21px
+				vertical-align middle
+				background-image url(/img/game/edit.png)
+				background-repeat no-repeat
+				
+				&:hover
+					background-image url(/img/game/edit_a.png)
+		
+		.control
+			display flex
+			flex-direction column
+			justify-content space-around
+			width 26px
+			height 100px
+			margin 0 8px
+			-webkit-filter grayscale(1) brightness(0.6)
+			filter grayscale(1) brightness(0.6)
+			
+			&.active
+				-webkit-filter none
+				filter none
+			
+			
+			button
+				width 26px
+				height 26px
+				background-repeat no-repeat
+
+			.save
+				background-image url(/img/game/cosmomap/save.png)
+			.link
+				background-image url(/img/game/cosmomap/link.png)
+			.remove
+				background-image url(/img/game/cosmomap/remove.png)
+
 	.target
 		display flex
 		flex-wrap wrap
@@ -664,6 +786,7 @@
 			color $color-metal
 			text-align center
 			padding 10px
+			margin auto
 			width 100%
 			
 		span

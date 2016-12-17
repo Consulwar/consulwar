@@ -1,8 +1,10 @@
 initUnitClient = function() {
 
 initUnitLib();
+initSquadLib();
 
 Meteor.subscribe('units');
+Meteor.subscribe('squad');
 
 Game.Unit.showPage = function() {
 	var item = Game.Unit.items[this.group][this.params.group][this.params.item];

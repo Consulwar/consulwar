@@ -20,6 +20,8 @@ var cosmosPopupView = null;
 var selectedArtefact = new ReactiveVar(null);
 var isPopupLocked = false;
 
+var activeSquad = new ReactiveVar(null);
+
 
 Game.SpaceEvents.getAll().observe({
 	added: function(event) {
@@ -889,9 +891,10 @@ Game.Cosmos.showAttackMenu = function(id) {
 	Router.current().render('cosmosAttackMenu', {
 		to: 'cosmosAttackMenu',
 		data: {
-			id: id,
-			activeColonyId: activeColonyId,
-			updated: updated
+			id,
+			activeColonyId,
+			updated,
+			activeSquad
 		}
 	});
 };
@@ -906,7 +909,7 @@ var isAllSelected = function() {
 	var units = $('.fleet li');
 	if (units.length) {
 		for (let i = 0; i < units.length; i++) {
-			if ($(units[i]).find('.count').val() != $(units[i]).attr('data-max')) {
+			if ($(units[i]).find('input').val() != $(units[i]).attr('data-max')) {
 				return false;
 			}
 		}
@@ -974,6 +977,10 @@ Template.cosmosAttackMenu.helpers({
 		return Template.instance().data.activeColonyId.get();
 	},
 
+	activeSquad: function() {
+		return Template.instance().data.activeSquad.get();
+	},
+
 	availableFleet: function() {
 		var colonyId = this.activeColonyId.get();
 		if (!colonyId) {
@@ -1008,7 +1015,7 @@ Template.cosmosAttackMenu.helpers({
 		var updated = this.updated.get();
 
 		return Game.Unit.calculateUnitsPower(_.reduce($('.fleet li'), function(units, element) {
-			let count = parseInt($(element).find('.count').val(), 10);
+			let count = parseInt($(element).find('input').val(), 10);
 			if (count > 0) {
 				let unitName = $(element).data('id');
 				units.army.fleet[unitName] = count;
@@ -1039,7 +1046,7 @@ Template.cosmosAttackMenu.helpers({
 			var elements = $('.fleet li');
 			for (var i = 0; i < elements.length; i++) {
 				var max = parseInt( $(elements[i]).attr('data-max'), 10 );
-				var count = parseInt( $(elements[i]).find('.count').val(), 10 );
+				var count = parseInt( $(elements[i]).find('input').val(), 10 );
 				if (max != count) {
 					// not all selected, so we don't leaving base
 					isLeavingBase = false;
@@ -1168,6 +1175,31 @@ Template.cosmosAttackMenu.helpers({
 		}
 
 		return result;
+	},
+
+	squads: function() {
+		var hasPremium = Game.hasPremium();
+
+		var squads = Game.Squad.getAll().fetch();
+
+		while(squads.length < Game.Squad.config.slots.total) {
+			let squad = {
+				slot: squads.length + 1
+			}
+			if (squad.slot <= Game.Squad.config.slots.free) {
+				squad.name = 'Отряд ' + (squads.length + 1);
+			}
+			squads.push(squad);
+		}
+
+		return _.map(squads, function(squad) {
+			if (squad.slot > Game.Squad.config.slots.free) {
+				squad.noPremium = true;
+				squad.units = null;
+			}
+
+			return squad;
+		});
 	}
 });
 
@@ -1204,7 +1236,7 @@ Template.cosmosAttackMenu.events({
 		if (id && $(e.currentTarget).hasClass('humans') && !$(e.currentTarget).hasClass('disabled')) {
 			// reset fleet values
 			$('.fleet li').each(function(index, element) {
-				$(element).find('.count').val( 0 );
+				$(element).find('input').val( 0 );
 			});
 
 			// set new colony id
@@ -1217,7 +1249,7 @@ Template.cosmosAttackMenu.events({
 
 		$('.fleet li').each(function(index, element) {
 			var max = parseInt( $(element).attr('data-max'), 10 );
-			$(element).find('.count').val( isSelected ? 0 : max );
+			$(element).find('input').val( isSelected ? 0 : max );
 		});
 
 		t.data.updated.set((new Date()).valueOf());
@@ -1266,14 +1298,14 @@ Template.cosmosAttackMenu.events({
 		$('.fleet li').each(function(index, element) {
 			var id = $(element).attr('data-id');
 			var max = parseInt( $(element).attr('data-max'), 10 );
-			var count = parseInt( $(element).find('.count').val(), 10 );
+			var count = parseInt( $(element).find('input').val(), 10 );
 
 			if (max > 0 && count > 0) {
 				units[ id ] = Math.min(max, count);
 				total += units[ id ];
 			}
 
-			$(element).find('.count').val(0);
+			$(element).find('input').val(0);
 		});
 
 		if (total <= 0) {
@@ -1350,6 +1382,110 @@ Template.cosmosAttackMenu.events({
 					}
 				}
 			);
+		}
+	},
+
+	'click .squad:not(.noPremium)': function(e, t) {
+		var slot = parseInt(e.currentTarget.dataset.id, 10);
+		var squad = activeSquad.get();
+
+		$('.fleet li input').val('');
+
+		if (squad && squad.slot == slot) {
+			activeSquad.set(null);
+		} else {
+			activeSquad.set(Game.Squad.getOne(slot) || {
+				slot,
+				name: 'Отряд ' + slot
+			});
+		}
+
+		Meteor.setTimeout(function() {
+			t.data.updated.set((new Date()).valueOf());
+		});
+	},
+
+	'click .squad:not(.noPremium) img': function(e, t) {
+		var slot = parseInt(e.currentTarget.parentElement.dataset.id, 10);
+
+		Game.Icons.showSelectWindow(function(group, name) {
+			var squad = Game.Squad.getOne(slot);
+			var message = 'Сменить иконку отряда «' + squad.name + '»';
+
+			Game.showAcceptWindow(message, function() {
+				Meteor.call('squad.setIcon', {slot, group, name}, function(err, result) {
+					if (err) {
+						Notifications.error('Не удалось выбрать иконку', err.error);
+					} else {
+						Notifications.success('Вы поменяли иконку');
+					}
+				});
+			});
+		}, function(group, id) {
+			if (Game.Squad.getOne(slot).icon == group + '/' + id) {
+				return true;
+			}
+			return false;
+		});
+	},
+
+	'click .squad:not(.noPremium) .edit': function(e, t) {
+		var slot = parseInt(e.currentTarget.parentElement.parentElement.dataset.id, 10);
+		var squad = Game.Squad.getOne(slot);
+
+		Game.showInputWindow('Как назвать отряд?', squad.name, function(name) {
+			Meteor.call('squad.setName', {slot, name}, function(err, result) {
+				if (err) {
+					Notifications.error('Не удалось изменить имя отряда', err.error);
+				} else {
+					Notifications.success('Вы изменили имя отряда');
+				}
+			});
+		});
+	},
+
+	'click .squads .control .save': function(e, t) {
+		var squad = activeSquad.get();
+		if (squad) {
+			Game.showAcceptWindow('Сохранить отряд «' + squad.name + '»?', function() {
+				var units = {};
+				$('.fleet li').each(function(index, element) {
+					var id = $(element).attr('data-id');
+					var count = parseInt( $(element).find('input').val(), 10 );
+
+					if (count > 0) {
+						units[ id ] = count;
+					}
+				});
+
+				Meteor.call('squad.setUnits', {slot: squad.slot, units}, function(err, result) {
+					if (err) {
+						Notifications.error('Не удалось изменить состав отряда', err.error);
+					} else {
+						Notifications.success('Вы изменили состав отряда');
+					}
+				});
+			});
+		}
+	},
+
+	'click .squads .control .link': function(e, t) {
+
+	},
+
+	'click .squads .control .remove': function(e, t) {
+		var squad = activeSquad.get();
+
+		if (squad) {
+			Game.showAcceptWindow('Удалить отряд «' + squad.name + '»?', function() {
+				Meteor.call('squad.remove', {slot: squad.slot}, function(err, result) {
+					if (err) {
+						Notifications.error('Не удалось удалить отряда', err.error);
+					} else {
+						Notifications.success('Вы удалили отряд');
+					}
+				});
+			});
 		}
 	}
 });

@@ -107,7 +107,21 @@
 					>
 						<a class="{{this.engName}}-icon"></a>
 						<div class="max">{{formatNumberWithISO this.max}}</div>
-						<input class="count" type="number" placeholder="Количество"  value="0">
+
+						<div class="count">
+							{{#let unitSquadCount=(lookup activeSquad.units this.engName)}}
+								{{#if unitSquadCount}}
+									{{#if lte unitSquadCount this.max}}
+										<input type="number" placeholder="" value="{{unitSquadCount}}">
+									{{else}}
+										<input type="number" placeholder="" value="{{this.max}}">
+										<span>{{formatNumberWithISO (substract unitSquadCount this.max) 5}}</span>
+									{{/if}}
+								{{else}}
+									<input type="number" placeholder="" value="">
+								{{/if}}
+							{{/let}}
+						</div>
 					</li>
 				{{/each}}
 			</ul>
@@ -140,7 +154,46 @@
 				{{/each}}
 			</div>
 
-			<div class="squad">
+			<div class="squads">
+				{{#each squads}}
+					<div 
+						class="
+							squad 
+							{{#if noPremium}}noPremium{{/if}} 
+							{{#if noAdmiral}}noAdmiral{{/if}}
+							{{#if eq activeSquad.slot this.slot}}active{{/if}}
+						" 
+						data-id="{{this.slot}}
+					">
+						{{#if this.icon}}
+							<img src="/img/game/chat/icons/{{this.icon}}sm.png"/>
+						{{else}}
+							<img src="/img/game/cosmomap/add.png"/>
+						{{/if}}
+						<span>
+							{{#if this.name}}
+								{{this.name}}
+							{{else}}{{#if noPremium}}
+								Нужен премиум
+							{{else}}{{#if noAdmiral}}
+								Отсутствует адмирал
+							{{/if}}{{/if}}{{/if}}
+
+							{{#if not (or noPremium noAdmiral)}}
+								<button class="edit" data-id=""></button>
+							{{/if}}
+						</span>
+					</div>
+				{{/each}}
+
+				<div class="control {{#if activeSquad}}active{{/if}}">
+					<button class="save"></button>
+					<button class="link"></button>
+					<button class="remove"></button>
+				</div>
+			</div>
+
+			<div class="unitsAdditionalControl">
 				<span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
 				<button class="btn-all">
 					{{#if isAllSelected}}
@@ -150,7 +203,6 @@
 					{{/if}}
 				</button>
 			</div>
-
 		</div>
 
 

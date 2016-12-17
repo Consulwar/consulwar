@@ -144,7 +144,7 @@ Template.icons.events({
 		}
 
 		if (!icon.meetRequirements()) {
-			return Notifications.Error('Вы не удовлетворяете требованиям иконки');
+			return Notifications.error('Вы не удовлетворяете требованиям иконки');
 		}
 
 		t.data.selectAction(group, id);

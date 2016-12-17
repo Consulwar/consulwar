@@ -6,6 +6,27 @@ Game.Icons.Collection._ensureIndex({
 	user_id: 1
 });
 
+Game.Icons.canUseIcon = function(group, engName) {
+	var icon = Game.Icons.getIcon(group, engName);
+	if (!icon) {
+		throw new Meteor.Error('Нет такой иконки');
+	}
+
+	if (!icon.meetRequirements()) {
+		throw new Meteor.Error('Вы не удовлетворяете требованиям иконки');
+	}
+
+	if (!icon.checkHas()) {
+		throw new Meteor.Error('Иконку сначала нужно купить');
+	}
+
+	if (!icon.checkHas()) {
+		throw new Meteor.Error('Иконку сначала нужно купить');
+	}
+
+	return true;
+}
+
 Meteor.methods({
 	'icon.buy': function(group, engName) {
 		var user = Meteor.user();
@@ -72,30 +93,15 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		var icon = Game.Icons.getIcon(group, engName);
-		if (!icon) {
-			throw new Meteor.Error('Нет такой иконки');
-		}
-
-		if (!icon.meetRequirements()) {
-			throw new Meteor.Error('Вы не удовлетворяете требованиям иконки');
-		}
-
-		if (!icon.checkHas()) {
-			throw new Meteor.Error('Иконку сначала нужно купить');
-		}
-
-		if (!icon.checkHas()) {
-			throw new Meteor.Error('Иконку сначала нужно купить');
-		}
-
-		Meteor.users.update({
-			_id: user._id
-		}, {
-			$set: {
-				'settings.chat.icon': group + '/' + engName
-			}
-		});
+		if (Game.Icons.canUseIcon(group, engName)) {
+			Meteor.users.update({
+				_id: user._id
+			}, {
+				$set: {
+					'settings.chat.icon': group + '/' + engName
+				}
+			});
+		}	
 	},
 
 	'chat.setUserIcon': function(username, iconPath) {

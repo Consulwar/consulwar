@@ -1180,20 +1180,26 @@ Template.cosmosAttackMenu.helpers({
 	squads: function() {
 		var hasPremium = Game.hasPremium();
 
-		var squads = Game.Squad.getAll().fetch();
+		var squads = [];
 
 		while(squads.length < Game.Squad.config.slots.total) {
-			let squad = {
-				slot: squads.length + 1
+			let slot = squads.length + 1;
+			let squad = Game.Squad.getOne(slot);
+			if (squad) {
+				squads.push(squad);
+			} else {
+				let squad = {
+					slot
+				}
+				if (squad.slot <= Game.Squad.config.slots.free || Game.hasPremium()) {
+					squad.name = 'Отряд ' + slot;
+				}
+				squads.push(squad);
 			}
-			if (squad.slot <= Game.Squad.config.slots.free) {
-				squad.name = 'Отряд ' + (squads.length + 1);
-			}
-			squads.push(squad);
 		}
 
 		return _.map(squads, function(squad) {
-			if (squad.slot > Game.Squad.config.slots.free) {
+			if (squad.slot > Game.Squad.config.slots.free && !Game.hasPremium()) {
 				squad.noPremium = true;
 				squad.units = null;
 			}
@@ -1409,7 +1415,7 @@ Template.cosmosAttackMenu.events({
 		var slot = parseInt(e.currentTarget.parentElement.dataset.id, 10);
 
 		Game.Icons.showSelectWindow(function(group, name) {
-			var squad = Game.Squad.getOne(slot);
+			var squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
 			var message = 'Сменить иконку отряда «' + squad.name + '»';
 
 			Game.showAcceptWindow(message, function() {
@@ -1431,7 +1437,7 @@ Template.cosmosAttackMenu.events({
 
 	'click .squad:not(.noPremium) .edit': function(e, t) {
 		var slot = parseInt(e.currentTarget.parentElement.parentElement.dataset.id, 10);
-		var squad = Game.Squad.getOne(slot);
+		var squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
 
 		Game.showInputWindow('Как назвать отряд?', squad.name, function(name) {
 			Meteor.call('squad.setName', {slot, name}, function(err, result) {

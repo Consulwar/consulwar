@@ -130,14 +130,13 @@ Game.Cards = {
 			active[tasks[i].engName] = true;
 		}
 
-		var result = [];
-		for (var name in Game.Cards.items[type]) {
-			if (active[name]) {
-				result.push(Game.Cards.items[type][name]);
+		for (let name in active) {
+			if (Game.Cards.items[type][name]) {
+				return true;
 			}
 		}
 		
-		return result;
+		return false;
 	},
 
 	getItem: function (id) { 

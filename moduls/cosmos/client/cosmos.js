@@ -1395,16 +1395,20 @@ Template.cosmosAttackMenu.events({
 		var slot = parseInt(e.currentTarget.dataset.id, 10);
 		var squad = activeSquad.get();
 
-		$('.fleet li input').val('');
-
-		if (squad && squad.slot == slot) {
+		Meteor.setTimeout(function() {
 			activeSquad.set(null);
-		} else {
-			activeSquad.set(Game.Squad.getOne(slot) || {
-				slot,
-				name: 'Отряд ' + slot
-			});
-		}
+		});
+
+		Meteor.setTimeout(function() {
+			if (squad && squad.slot == slot) {
+				activeSquad.set(null);
+			} else {
+				activeSquad.set(Game.Squad.getOne(slot) || {
+					slot,
+					name: 'Отряд ' + slot
+				});
+			}
+		});
 
 		Meteor.setTimeout(function() {
 			t.data.updated.set((new Date()).valueOf());

@@ -409,7 +409,14 @@ body.game
 					flex-wrap wrap
 					justify-content space-between
 					align-items flex-end
+					padding 0 7.5px
 					width 50%
+					
+					.notImplemented
+						margin 0 0 8px 0
+						justify-content space-between
+						-webkit-filter grayscale(1) brightness(0.6)
+						filter grayscale(1) brightness(0.6)
 					
 					.transition
 						width 100%
@@ -436,6 +443,7 @@ body.game
 						box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 						border 2px solid #335168
 						background-color #adadad
+						align-self center
 						
 						& + .build
 							margin-top 8px
@@ -450,7 +458,7 @@ body.game
 					color $color-black
 					border 0
 					padding 15px 15px
-					font-size 18px
+					font-size 16px
 					cursor pointer
 					outline 2px solid black
 					outline-offset -7px
@@ -482,16 +490,12 @@ body.game
 					-webkit-flex-shrink 1
 					flex-shrink 1
 					display flex
-					flex-direction column
+					flex-direction row
+					flex-wrap wrap
 					overflow hidden
-					
-					.additional_action
-						padding 8px
-						height 100%
 
 				progress
-					border 0
-					margin-bottom -1px
+					align-self flex-start
 					max-width 100%
 					
 		.content.artefacts

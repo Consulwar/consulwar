@@ -134,8 +134,8 @@
 .bonus
 	position relative
 	width 200px
+	height 24px
 	font-weight bold
-	border 1px solid #3e4059
 	background-color #000
 	z-index 20
 	cursor pointer
@@ -149,13 +149,18 @@
 	&:before
 		content attr(value) ' / ' attr(max)
 		position absolute
-		display block
+		top 0
+		left 0
+		display flex
 		width 100%
-		top -2px
+		height 100%
+		align-items center
+		justify-content center
 		text-align center
 		color $color-white
 	
 	&.metals
+		border 1px solid $color-metal
 		&::-moz-progress-bar 
 			background-color #5697D7
 
@@ -166,6 +171,7 @@
 			background-color #5697D7
 		
 	&.crystals
+		border 1px solid $color-crystal
 		&::-moz-progress-bar 
 			background-color #D7559B
 

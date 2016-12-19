@@ -11,10 +11,6 @@ Game.Chat.Room.Collection._ensureIndex({
 	name: 1
 });
 
-Game.Chat.Icons.Collection._ensureIndex({
-	user_id: 1
-});
-
 Game.Chat.BalanceHistory = {
 	Collection: new Meteor.Collection('chatBalanceHistory')
 };
@@ -1545,120 +1541,6 @@ Meteor.methods({
 			data: result.fetch(),
 			count: result.count()
 		};
-	},
-
-	'chat.buyIcon': function(group, engName) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		var icon = Game.Chat.Icons.getIcon(group, engName);
-		if (!icon) {
-			throw new Meteor.Error('Нет такой иконки');
-		}
-
-		if (!icon.meetRequirements()) {
-			throw new Meteor.Error('Вы не удовлетворяете требованиям иконки');
-		}
-
-		if (!icon.canBuy()) {
-			throw new Meteor.Error('Вы не можете купить эту иконку');
-		}
-
-		Game.Resources.spend(icon.price);
-
-		if (icon.price.credits) {
-			Game.Payment.Expense.log(icon.price.credits, 'chatIcon', {
-				group: group,
-				engName: engName
-			});
-		}
-		
-		var update = { $addToSet: {} };
-		update.$addToSet[group] = engName;
-
-		Game.Chat.Icons.Collection.upsert({ user_id: user._id }, update);
-
-		if (icon.isUnique) {
-			update = { $set: {} };
-			update.$set[group + '.' + engName] = {
-				user_id: user._id,
-				username: user.username,
-				timestamp: Game.getCurrentTime()
-			};
-
-			Game.Chat.Icons.Collection.upsert({ user_id: 'unique' }, update);
-		}
-	},
-
-	'chat.selectIcon': function(group, engName) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		var icon = Game.Chat.Icons.getIcon(group, engName);
-		if (!icon) {
-			throw new Meteor.Error('Нет такой иконки');
-		}
-
-		if (!icon.meetRequirements()) {
-			throw new Meteor.Error('Вы не удовлетворяете требованиям иконки');
-		}
-
-		if (!icon.checkHas()) {
-			throw new Meteor.Error('Иконку сначала нужно купить');
-		}
-
-		if (!icon.checkHas()) {
-			throw new Meteor.Error('Иконку сначала нужно купить');
-		}
-
-		Meteor.users.update({
-			_id: user._id
-		}, {
-			$set: {
-				'settings.chat.icon': group + '/' + engName
-			}
-		});
-	},
-
-	'chat.setUserIcon': function(username, iconPath) {
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован.');
-		}
-
-		if (['admin'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
-		}
-
-		check(username, String);
-		check(iconPath, String);
-
-		Meteor.users.update({
-			username: username
-		}, {
-			$set: {
-				'settings.chat.icon': iconPath
-			}
-		});
 	}
 });
 
@@ -1719,26 +1601,6 @@ Meteor.publish('chat', function (roomName) {
 		} else {
 			return null;
 		}
-	} else {
-		this.ready();
-	}
-});
-
-Meteor.publish('chatIconsUser', function() {
-	if (this.userId) {
-		return Game.Chat.Icons.Collection.find({
-			user_id: this.userId
-		});
-	} else {
-		this.ready();
-	}
-});
-
-Meteor.publish('chatIconsUnique', function() {
-	if (this.userId) {
-		return Game.Chat.Icons.Collection.find({
-			user_id: 'unique'
-		});
 	} else {
 		this.ready();
 	}

@@ -126,6 +126,14 @@
 			<label class="checkBlock">
 				<input 
 					type="checkbox"
+					data-settings_field="mobileVersion"
+					checked="{{options.mobileVersion}}" 
+				>
+				<span class="checkboxTitle">Эксперементальная мобильная версия</span>
+			</label>
+			<label class="checkBlock">
+				<input 
+					type="checkbox"
 					data-settings_field="compactFleetInfo"
 					checked="{{options.compactFleetInfo}}" 
 				>
@@ -154,6 +162,30 @@
 					checked="{{options.rareScreenUpdates}}" 
 				>
 				<span class="checkboxTitle">Обновлять экран раз в 20 секунд. Требуется перезапуск игры.</span>
+			</label>
+			<label class="checkBlock">
+				<input 
+					type="checkbox"
+					data-settings_field="wideChat"
+					checked="{{options.wideChat}}" 
+				>
+				<span class="checkboxTitle">Чат 100% ширины экрана</span>
+			</label>
+			<label class="checkBlock">
+				<input 
+					type="checkbox"
+					data-settings_field="showDistanceFromPlanets"
+					checked="{{options.showDistanceFromPlanets}}" 
+				>
+				<span class="checkboxTitle">Показывать расстояние при отправке флота</span>
+			</label>
+			<label class="checkBlock">
+				<input 
+					type="checkbox"
+					data-settings_field="textUnits"
+					checked="{{options.textUnits}}" 
+				>
+				<span class="checkboxTitle">Отображать юниты на карте текстом</span>
 			</label>
 		</div>
 	</div>

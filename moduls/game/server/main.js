@@ -58,6 +58,7 @@ Meteor.startup(function () {
 	initMutualServer();
 	initMailServer();
 	initChatServer();
+	initItemsServer();
 	initSettingsServer();
 	initQuestServer();
 	initCheatsServer();
@@ -158,7 +159,8 @@ Meteor.publish('game', function () {
 				isChatFree: 1,
 				timeLastTournament: 1,
 				achievements: 1,
-				settings: 1
+				settings: 1,
+				music: 1
 			}
 		});
 	}

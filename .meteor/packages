@@ -51,7 +51,7 @@ jparker:crypto-hmac
 standard-minifier-css
 standard-minifier-js
 altapp:recaptcha
-gromo:jquery.scrollbar
 ecmascript
 yauh:turfjs-client
 es5-shim
+keepnox:perfect-scrollbar

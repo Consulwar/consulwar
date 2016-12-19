@@ -1,9 +1,9 @@
 <template name="newgame">
 	{{> connection}}
 
-	<div class="wrap"> 
+	<div class="wrap {{#if options.mobileVersion}}mobileVersion{{/if}}"> 
 		<div class="page">
-			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}}">
+			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}} {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
 				<div class="overlay_wrap">
 					{{#if isNewLayout}}
 						{{> overlay_menu}}
@@ -16,6 +16,8 @@
 					{{> current_resources}}
 
 					{{> main_menu}}
+
+					{{> player}}
 
 					<div class="menu_soc">
 						<a data-tooltip="ConsulTimes" target="_blank" data-tooltip-direction="s" href="http://times.consulwar.ru/">
@@ -74,10 +76,8 @@
 					"
 				>
 					<button class="toggle"></button>
-					<div class="fleets">
-						<div class="scrollbar-inner">
-							{{> cosmosFleetsInfo}}
-						</div>
+					<div class="fleets scrollbar-inner">
+						{{> cosmosFleetsInfo}}
 					</div>
 				</div>
 
@@ -113,11 +113,10 @@
 						<a href="{{pathFor 'statistics' group='general'}}">Статистика</a>
 						<a href="{{pathFor 'settings'}}">Настройки</a>
 
-						<div class="support">
-							<a href="javascript: ChdFeedbackWidget.show();">Вопрос</a>
-							<a href="javascript: ChdFeedbackWidget.show();">Ошибка</a>
-							<a href="javascript: ChdFeedbackWidget.show();">Идея</a>
-						</div>
+						<a class="support" href="javascript: ChdFeedbackWidget.show();">Вопрос</a>
+						<a class="support" href="javascript: ChdFeedbackWidget.show();">Ошибка</a>
+						<a class="support" href="javascript: ChdFeedbackWidget.show();">Идея</a>
+						<a class="support" target="_blank" href="http://consulwar.helprace.com/">Тех. поддержка</a>
 
 						<a href="{{pathFor 'logout'}}">Выход</a>
 					</div>
@@ -133,14 +132,16 @@
 					{{#unless isNewLayout}}
 						{{> overlay_menu}}
 					{{/unless}}
+					
+					{{> yield "cosmosAttackMenu"}}
+
+					<div class="permanent_chat {{#if options.wideChat}}wide{{/if}}">
+						{{>yield region="permanent_chat"}}
+					</div>
 				</div>
 				{{> additional_area}}
 
 				{{>yield region="permanent_content"}}
-
-				<div class="permanent_chat">
-					{{>yield region="permanent_chat"}}
-				</div>
 
 				{{#if (or Game.Quest.hasNewDaily Game.Mail.hasUnread)}}
 					<a href="{{pathFor 'mail' page=1}}" class="newMessage">

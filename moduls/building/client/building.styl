@@ -1,10 +1,9 @@
-.content
-	.overlay.planet
-		&.residential
-			background-image url(/img/game/building/residential/back.jpg)
+.overlay_wrap 
+	> .overlay.residential
+		background-image url(/img/game/building/residential/back.jpg)
 		
-.overlay_wrap > .overlay.military
-	background-image url(/img/game/building/military/back.jpg)
+	> .overlay.military
+		background-image url(/img/game/building/military/back.jpg)
 
 .requirements
 	.building
@@ -62,3 +61,8 @@
 	bottom-icon('building', 'military', 'void')
 	bottom-icon('building', 'military', 'complex')
 	bottom-icon('building', 'military', 'oscd')
+
+@import '{}/moduls/building/special/colosseum/client/colosseum.styl'
+@import '{}/moduls/building/special/container/client/container.styl'
+@import '{}/moduls/building/special/market/client/market.styl'
+@import '{}/moduls/building/special/pulsecatcher/client/pulsecatcher.styl'

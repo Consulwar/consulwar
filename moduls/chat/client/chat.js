@@ -2,9 +2,6 @@ initChatClient = function() {
 
 initChatLib();
 
-Meteor.subscribe('chatIconsUser');
-Meteor.subscribe('chatIconsUnique');
-
 var soundNotprepared = new buzz.sound('/sound/notprepared.mp3');
 
 var currentRoomName = null;
@@ -46,6 +43,9 @@ var addMessage = function(message, previousMessage) {
 		message.showProfile = true;
 	}
 	messages.upsert(message._id, message);
+	Meteor.setTimeout(function() {
+		$('.scrollbar-inner').perfectScrollbar('update');
+	});
 };
 
 var addMessagesAfter = function(newMessages, message) {
@@ -150,7 +150,6 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 
 Game.Chat.showPage = function() {
 	this.render('empty', { to: 'content' });
-	$('.permanent_chat').show();
 	if (!currentRoomName) {
 		this.render('chat', { to: 'permanent_chat' });	
 	}
@@ -159,7 +158,9 @@ Game.Chat.showPage = function() {
 Template.chat.onRendered(function() {
 	var template = this;
 
-	$('.messages').scrollbar();
+	$(this.find('.messages')).perfectScrollbar();
+	$(this.find('.participants')).perfectScrollbar();
+	$(this.find('.roomsList')).perfectScrollbar();
 
 	// run this function each time as: 
 	// - room changes
@@ -216,7 +217,10 @@ Template.chat.onRendered(function() {
 			// subscribe
 			chatSubscription = Meteor.subscribe('chat', roomName, function() {
 				isLoading.set(false);
-				appendMessages(Game.Chat.Messages.Collection.find({}).fetch());
+				var messages = Game.Chat.Messages.Collection.find({}).fetch();
+				if (messages.length) {
+					appendMessages(messages);
+				}
 				Meteor.setTimeout(scrollChatToBottom.bind(template, true));
 				chatRoomSubscription = Meteor.subscribe('chatRoom', roomName);
 			});
@@ -617,12 +621,6 @@ var getUserRole = function(userId, username, role, rating) {
 	};
 };
 
-Template.chatMessageProfile.helpers({
-	getUserRoleByMessage: function(message) {
-		return getUserRole(message.user_id, message.username, message.role, message.rating);
-	}
-});
-
 Template.chatMessage.helpers({
 	highlightUser: function(text) {
 		if (text.indexOf('/me') === 0) {
@@ -738,15 +736,23 @@ Template.chat.helpers({
 
 	startWith: function(text, value) {
 		return (text.substr(0, value.length) == value);
+	},
+
+	hideChannels: function() {
+		return Session.get('hideChannels', false);
 	}
 });
 
 Template.chat.events({
-	'click .chat': function(e, t) {
+	'click': function(e, t) {
 		hidePopups();
 	},
 
-	'submit .chat #message': function(e, t) {
+	'click .toggle': function() {
+		Session.set('hideChannels', !Session.get('hideChannels', false));
+	},
+
+	'submit #message': function(e, t) {
 		e.preventDefault();
 
 		if (isSending.get()) {
@@ -813,13 +819,13 @@ Template.chat.events({
 			return;
 		}
 
-		var chatOffset = $('.permanent_chat .chat').offset();
-		var zoom = getComputedStyle(document.body).zoom;
+		var chatOffset = $('.permanent_chat').offset();
+		var zoom = getComputedStyle(document.body).zoom || 1;
 		var userPopupWidth = 48 * 4;
 		Game.Chat.showUserPopup(
 			Math.min(
 				e.pageX / zoom - chatOffset.left + 5, 
-				$('.permanent_chat .chat').width() - userPopupWidth
+				$('.permanent_chat').width() - userPopupWidth
 			),
 			e.pageY / zoom - chatOffset.top + 5,
 			username
@@ -877,7 +883,7 @@ Template.chat.events({
 	},
 
 	// other chat commands
-	'click .chat .buyFreeChat': function(e, t) {
+	'click .buyFreeChat': function(e, t) {
 		e.preventDefault();
 
 		Game.showAcceptWindow('Вы точно хотите больше никогда не платить за ссаный чат?', function() {
@@ -897,7 +903,7 @@ Template.chat.events({
 		});
 	},
 
-	'click .chat .addCredits': function(e, t) {
+	'click .addCredits': function(e, t) {
 		Game.Chat.showBalanceWindow(Router.current().params.room, 1000);
 	},
 
@@ -916,7 +922,6 @@ Template.chat.events({
 
 var hidePopups = function() {
 	hideUserPopup();
-	hideRoomsPopup();
 };
 
 // ----------------------------------------------------------------------------
@@ -1079,29 +1084,14 @@ Template.chatRoomsList.helpers({
 });
 
 Template.chatRoomsList.events({
-	'click .arrow-left': function(e, t) {
-		if (!isAnimation && canAnimateLeft(t)) {
-			isAnimation = true;
-			t.$('ul').animate({ left: '+=300px' }, function() {
-				isAnimation = false;
-				refreshArrows(t);
-			});
-		}
-	},
-
-	'click .arrow-right': function(e, t) {
-		if (!isAnimation && canAnimateRight(t)) {
-			isAnimation = true;
-			t.$('ul').animate({ left: '-=300px' }, function() {
-				isAnimation = false;
-				refreshArrows(t);
-			});
-		}
-	},
-
-	'click .arrow-down': function(e, t) {
+	'click h2 a': function(e, t) {
 		e.stopPropagation();
-		Game.Chat.showRoomsPopup();
+		$(t.view.parentView.templateInstance().find('.channelList')).toggleClass('hide');
+	},
+
+	'click .addChannel': function(e, t) {
+		e.stopPropagation();
+		$(t.view.parentView.templateInstance().find('.channelCreate')).toggleClass('hide');
 	},
 
 	'click .hide': function(e, t) {
@@ -1117,31 +1107,31 @@ Template.chatRoomsList.events({
 
 var roomsPopupView = null;
 
-Game.Chat.showRoomsPopup = function() {
-	if (!roomsPopupView) {
-		hidePopups();
-		roomsPopupView = Blaze.render(Template.chatRoomsPopup, $('.permanent_chat .chat')[0]);
-	}
-};
+Template.channelList.onRendered(function() {
+	$(this.find('.channelList')).perfectScrollbar();
+});
 
-var hideRoomsPopup = function() {
-	if (roomsPopupView) {
-		Blaze.remove(roomsPopupView);
-		roomsPopupView = null;
-	}
-};
-
-Template.chatRoomsPopup.helpers({
+Template.channelList.helpers({
 	rooms: function() { return roomsList.get(); },
 	isVisible: function(roomName) { return checkIsRoomVisible(roomName); }
 });
 
-Template.chatRoomsPopup.events({
-	'click li': function(e, t) {
+Template.channelList.events({
+	'click .close': function(e, t) {
+		$(t.find('.channelList')).toggleClass('hide');
+	},
+
+	'click label': function(e, t) {
 		e.stopPropagation();
 	},
 
-	'click .save': function(e, t) {
+	'click li': function(e, t) {
+		e.stopPropagation();
+
+		$(e.currentTarget).find('input').click();
+	},
+
+	'change input': function(e, t) {
 		var rooms = {};
 
 		t.$('li').each(function(index, element) {
@@ -1153,6 +1143,10 @@ Template.chatRoomsPopup.events({
 				if (err) {
 					Notifications.error(err.error);
 				}
+
+				Meteor.setTimeout(function() {
+					$('.scrollbar-inner').perfectScrollbar('update');
+				});
 			});
 		}
 	}
@@ -1341,15 +1335,37 @@ Template.inputWithCounter.events({
 	}
 });
 
-Template.chatControl.onRendered(function() {
+Template.channelCreate.onRendered(function() {
 	calculateCreatePriceCredits(this);
+});
+
+Template.channelCreate.helpers({
+	credits: function() { return createPriceCredits.get(); }
+});
+
+Template.channelCreate.events({
+	'click .close': function(e, t) {
+		$(t.find('.channelCreate')).toggleClass('hide');
+	},
+
+	'click input[name="roomType"], click input[name="roomPayment"]': function(e, t) {
+		calculateCreatePriceCredits(t);
+	},
+
+	'click .create': function(e, t) {
+		createRoom(
+			t.find('input[name="roomTitle"]').value,
+			t.find('input[name="roomUrl"]').value,
+			t.find('input[name="roomType"]:checked').value == 'public',
+			t.find('input[name="roomPayment"]:checked').value == 'credits'
+		);
+	}
 });
 
 Template.chatControl.helpers({
 	canControlRoom: function() { return canControlRoom(); },
 	canControlUsers: function() { return canControlUsers(); },
 	canControlBlock: function() { return canControlBlock(); },
-	credits: function() { return createPriceCredits.get(); },
 
 	room: function() {
 		return Game.Chat.Room.Collection.findOne({
@@ -1368,19 +1384,6 @@ Template.chatControl.helpers({
 Template.chatControl.events({
 	'click .close': function(e, t) {
 		closeControlWindow();
-	},
-
-	'click input[name="roomType"], click input[name="roomPayment"]': function(e, t) {
-		calculateCreatePriceCredits(t);
-	},
-
-	'click .create': function(e, t) {
-		createRoom(
-			t.find('input[name="roomTitle"]').value,
-			t.find('input[name="roomUrl"]').value,
-			t.find('input[name="roomType"]:checked').value == 'public',
-			t.find('input[name="roomPayment"]:checked').value == 'credits'
-		);
 	},
 
 	'click .removeRoom:not(.disabled)': function(e, t) {
@@ -1429,135 +1432,6 @@ Template.chatControl.events({
 
 	'click .changeMinRating:not(.disabled)': function(e, t) {
 		changeMinRating(Router.current().params.room, t.find('input[name="minRating"]').value);
-	}
-});
-
-// ----------------------------------------------------------------------------
-// Icons window
-// ----------------------------------------------------------------------------
-
-var iconsWindowView = null;
-var iconsWindowTab = new ReactiveVar(null);
-
-Game.Chat.showIconsWindow = function() {
-	if (!iconsWindowView) {
-		iconsWindowView = Blaze.renderWithData(Template.chatIcons, { }, $('.over')[0]);
-	}
-};
-
-Template.chatIcons.onRendered(function() {
-	iconsWindowTab.set('items');
-	this.$('.tabItems').addClass('active');
-	this.$('.tabShop').removeClass('active');
-});
-
-Template.chatIcons.helpers({
-	currentTab: function() { return iconsWindowTab.get(); },
-
-	iconGroups: function() {
-		var currentTab = iconsWindowTab.get();
-		var result = [];
-
-		for (var key in Game.Chat.Icons.items) {
-			if (currentTab == 'shop' && Game.Chat.Icons.items[key].isDefault) {
-				continue;
-			}
-
-			var group = {
-				engName: Game.Chat.Icons.items[key].engName,
-				name: Game.Chat.Icons.items[key].name
-			};
-
-			var icons = [];
-			for (var iconKey in Game.Chat.Icons.items[key].icons) {
-				var icon = Game.Chat.Icons.items[key].icons[iconKey];
-				if (currentTab == 'shop' || icon.checkHas()) {
-					icons.push(icon);
-				}
-			}
-
-			if (icons.length > 0) {
-				group.items = icons;
-			}
-
-			result.push(group);
-		}
-
-		return result;
-	}
-});
-
-Template.chatIcons.events({
-	'click .close': function(e, t) {
-		if (iconsWindowView) {
-			Blaze.remove(iconsWindowView);
-			iconsWindowView = null;
-		}
-	},
-
-	'click .tabItems': function(e, t) {
-		iconsWindowTab.set('items');
-		t.$('.tabItems').addClass('active');
-		t.$('.tabShop').removeClass('active');
-	},
-
-	'click .tabShop': function(e, t) {
-		iconsWindowTab.set('shop');
-		t.$('.tabItems').removeClass('active');
-		t.$('.tabShop').addClass('active');
-	},
-
-	'click .buy': function(e, t) {
-		var group = e.currentTarget.dataset.group;
-		var id = e.currentTarget.dataset.id;
-
-		var icon = Game.Chat.Icons.getIcon(group, id);
-		if (!icon || !icon.canBuy()) {
-			Notifications.error('Вы не можете купить эту иконку');
-			return;
-		}
-
-		if (!icon.meetRequirements()) {
-			return Notifications.Error('Вы не удовлетворяете требованиям иконки');
-		}
-
-		var message = 'Купить иконку за ' + icon.price.credits + ' ГГК';
-
-		Game.showAcceptWindow(message, function() {
-			Meteor.call('chat.buyIcon', group, id, function(err, result) {
-				if (err) {
-					Notifications.error('Не удалось купить иконку', err.error);
-				} else {
-					Notifications.success('Вы купили иконку');
-				}
-			});
-		});
-	},
-
-	'click .select': function(e, t) {
-		var group = e.currentTarget.dataset.group;
-		var id = e.currentTarget.dataset.id;
-
-		var icon = Game.Chat.Icons.getIcon(group, id);
-		if (!icon || !icon.checkHas()) {
-			return Notifications.error('Вы не можете выбрать эту иконку');
-		}
-
-		if (!icon.meetRequirements()) {
-			return Notifications.Error('Вы не удовлетворяете требованиям иконки');
-		}
-
-		var message = 'Сменить иконку';
-
-		Game.showAcceptWindow(message, function() {
-			Meteor.call('chat.selectIcon', group, id, function(err, result) {
-				if (err) {
-					Notifications.error('Не удалось выбрать иконку', err.error);
-				} else {
-					Notifications.success('Вы поменяли иконку');
-				}
-			});
-		});
 	}
 });
 

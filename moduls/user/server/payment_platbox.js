@@ -274,7 +274,21 @@ Router.route('/paymentGateway', function () {
 		if (payResult == 1) {
 			// add profit
 			console.log('Got profit');
-			Game.Resources.addProfit(data.order.item_list[0].profit, data.account.id);
+			if (data.order.item_list[0].profit.resources !== undefined) {
+				Game.Resources.addProfit(data.order.item_list[0].profit, data.account.id);
+			} else {
+				// Обработка музыки
+				if (data.order.item_list[0].profit.music) {
+					Meteor.users.update({
+						_id: data.account.id
+					}, {
+						$set: {
+							music: true
+						}
+					});
+				}
+			}
+			
 			Game.Payment.Income.log(data.order.item_list[0].profit, {
 				type: 'payment',
 				item: paymentItem.id,

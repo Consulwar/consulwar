@@ -21,7 +21,11 @@ Game.Settings = {
 		hideNet: [true, false],
 		compactFleetInfo: [true, false],
 		rotatePlanets: [true, false],
-		rareScreenUpdates: [true, false]
+		rareScreenUpdates: [true, false],
+		wideChat: [true, false],
+		showDistanceFromPlanets: [true, false],
+		mobileVersion: [true, false],
+		textUnits: [true, false]
 	}
 };
 

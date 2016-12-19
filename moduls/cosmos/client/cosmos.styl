@@ -7,6 +7,94 @@
 	}
 }
 
+.cosmosHistory
+	~ .bottom_menu
+		display none
+
+	.history
+		display flex
+		flex-direction column
+		width 100%
+		background-color #04080B
+		
+		h2
+			width 100%
+			text-align center
+			
+		.data
+			display block
+			overflow-y auto
+
+		.result
+			font-size 16px
+			margin -5px auto 6px
+
+		table
+			width 100%
+			border-collapse collapse
+			
+			a.planet
+				height 76px
+			
+			tr:not(.header)
+				text-align left
+				cursor pointer
+				
+				&:nth-child(odd):not(.header)
+					background-color $color-row1
+				
+				&:nth-child(even)
+					background-color $color-row2
+				
+				&:hover
+					-webkit-filter brightness(1.2)
+					filter brightness(1.2)
+						
+				&.expanded
+					td:not(:last-child)
+						vertical-align top
+					table
+						display table
+						width 250px
+						
+						tr
+							height auto
+							
+							td
+								height auto
+								width auto
+								padding 0
+					
+				table
+					display none
+						
+			td, th
+				position relative
+				text-align center
+				vertical-align middle
+				padding 5px
+				&:nth-child(1)
+					width 100px
+
+				&:nth-child(2)
+					width 250px
+
+				&:nth-child(3)
+					width 420px
+			td
+				height 76px
+
+			th
+				padding 10px
+				color $color-metal
+				&:last-child
+					padding-right 20px
+			
+			.defense, .attack
+				position absolute
+				left 10px
+				top 32.5px
+
 #map-battle-container
 	position absolute
 	overflow hidden
@@ -280,11 +368,14 @@
 	position absolute
 	z-index 100
 	padding 15px
-	width 300px
+	width 320px
 	background-color #020609
 	border 4px solid #21273D
 	border-radius 8px
 	text-align center
+	
+	h2
+		font-size 16px
 
 	.edit
 		cursor pointer
@@ -318,7 +409,7 @@
 			-webkit-filter brightness(1.4)
 			filter brightness(1.4)
 	
-	.army
+	.armyText
 		font-size 18px
 		text-align left
 		padding 10px
@@ -329,50 +420,88 @@
 			span
 				color $color-white
 
+	.army
+		display flex
+		flex-wrap wrap
+		font-size 11px
+		text-align left
+		text-align center
+		
+		a
+			display block
+			width 52px
+			padding-top 52px
+			margin 10px 14px 0
+			background-size 100%
+			background-repeat no-repeat
+			text-decoration none
+			
+			&.disabled
+				-webkit-filter grayscale(1) brightness(0.8)
+				filter grayscale(1) brightness(0.8)
+			
+			div
+				height 12px
+				color $color-white
+
 	.map-planet-popup-items
-		position relative
-		display block
-		margin-top 15px
-		padding 0px 0px 0px 0px
+		display flex
+		flex-wrap wrap
+		justify-content space-around
+		margin-top 6px
+		padding 0
 		width 100%
 		
 		a
 			position relative
 			display inline-block
-			padding 70px 0px 0px 0px
-			width 90px
-			height 20px
+			padding 62px 0px 0px 0px
+			width 58px
+			height 16px
 			text-align center
 			text-decoration none
 			background-position center top
 			background-repeat no-repeat
-			
+			background-size 100%
+			font-size 12px
+
+.unitsPower
+	display inline-flex
+	vertical-align middle
+	align-items center
+	margin 0 15px
+	
+	&:before
+		content url(/img/game/power.png)
+		width 24px
+		height 24px
+		margin-right 10px
 
 .attack-menu
-	position absolute
-	left 0
-	top 200px
-	z-index 6
+	display none
+	position relative
 	width 1420px
-	height 400px
 	background-color #090e14
 	font-size 16px
 	font-weight bold
+	flex-wrap wrap
 
 	.btn-attack
 		cursor pointer
 		display block
 		font-weight bold
-		font-size 18px
+		font-size 16px
 		text-align center
 		text-transform uppercase
-		width 177px
-		height 46px
+		width 135px
+		height 32px
+		padding-top 2px
 		color #ffffff
 		background-image url(/img/game/cosmomap/button_attack.png)
 		background-repeat no-repeat
 		border 0px solid transparent
 		border-radius 9px
+		margin auto 0 0 0
 		
 		&:hover
 			-webkit-filter brightness(1.4)
@@ -381,36 +510,25 @@
 		&.disabled
 			-webkit-filter grayscale(0.5) brightness(0.75)
 			filter grayscale(0.5) brightness(0.75)
-			
-	.defend
-		position absolute
-		bottom 20px
-		right 250px
 	
-	.return
-		position absolute
-		bottom 20px
-		right 50px
+	.unitsAdditionalControl
+		width 150px
+		margin 10px auto
+		display flex
+		flex-direction column
+		align-items center
+		justify-content space-around
 			
-	.btn-all
-		cursor pointer
-		position absolute
-		bottom 20px
-		left 582px
-		font-size 16px
-		text-align center
-		padding-top 14px
-		padding-bottom 14px
-		width 250px
-		background-color #000000
-		border 2px solid #80BAEC
-		color #80BAEC
-		
-	.resources
-		position absolute
-		display block
-		bottom 10px
-		left 10px
+		.btn-all
+			cursor pointer
+			font-size 16px
+			text-align center
+			padding-top 14px
+			padding-bottom 14px
+			width 100%
+			background-color #000000
+			border 2px solid #80BAEC
+			color #80BAEC
 
 	.btn-add
 		cursor pointer
@@ -427,20 +545,54 @@
 		color #91b935
 
 	.planets
-		position absolute
-		display block
-		left 0px
-		top 20px
-		width 350px
+		display flex
+		flex-wrap wrap
+		width 100%
 		color #e8e8e8
+		font-size 12px
 		
-		li
-			cursor pointer
-			position relative
-			display inline-block
-			width 160px
-			margin-left 10px
-			padding-top 5px
+		a.planet
+			width 60px
+			height 70px
+			margin 9px auto
+			
+			&.empty
+				-webkit-filter grayscale(1)
+				filter grayscale(1)
+					
+			&.notAvaliable
+				-webkit-filter grayscale(1) brightness(0.5)
+				filter grayscale(1) brightness(0.5)
+					
+			&.topTime
+				color $color-science
+					
+			.name,
+			.location
+				min-height 14px
+			
+			&.notAvaliable
+				.name,
+				.location
+					visibility hidden
+
+				&:hover
+					-webkit-filter none
+					filter none
+					color $color-ggk
+					
+					.name,
+					.location
+						visibility visible
+			
+			&.disabled
+				-webkit-filter grayscale(0.5) brightness(0.3)
+				filter grayscale(0.5) brightness(0.3)
+				
+			&.selected
+				color $color-metal
+				.map-planet-border-human
+					border-color $color-metal
 			
 		.home
 			color $color-ggk
@@ -451,54 +603,187 @@
 		.active
 			color #e9a844
 			
+	.departure
+		display flex
+		flex-wrap wrap
+		width 640px
+		max-width 100%
+			
 	.fleet
-		position absolute
-		display block
-		left 350px
-		top 0px
-		width 750px
-		
+		display flex
+		width 640px
+		flex-wrap wrap
+		justify-content space-around
+		padding-top 25px
+
 		li
+			width 85px
+			height 85px
 			position relative
 			display inline-block
 			overflow visible
-			margin-top 20px
+			margin 0 7px 30px
 			
 			&:last-child
-				margin-top 20px
+				margin 0 7px 30px
 			
 		a
 			background-repeat no-repeat
 
 		.max
 			position absolute
-			top 80px
+			top 60px
 			height 18px
 			width 100%
 			text-align center
-			background-color rgba(0,0,0,0.5)
+			background-color rgba(0, 0, 0, 0.5)
 			padding-top 2px
-			
+			font-size 14px
+		
+		.disabled
+			.count
+				-webkit-filter brightness(0.5)
+				filter brightness(0.5)
+
 		.count
 			position relative
+			display flex
+			
 			margin-top 5px
 			width 100%
-			height 20px
-			border-radius 5px
-			padding-top 2px
+			height 22px
 			-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 			-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 			box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
 			border 2px solid #335168
 			background-color #adadad
-			text-align center
+			border-radius 5px
+			box-sizing border-box
 			
+			&:before
+				display none
+			
+			input
+				flex-shrink 1
+				width 100%
+				min-width 50%
+				height 100%
+				padding-top 2px
+				border 0
+				background transparent
+				text-align center
+				box-sizing border-box
+				
+			span
+				flex-shrink 1
+				background-color rgba(0, 0, 0, 0.5)
+				color $color-honor
+				padding 3px 5px
+				box-sizing border-box
+				white-space nowrap
+	
+	.squads
+		display flex
+		width 430px
+		height 100px
+		flex-direction column
+		flex-wrap wrap
+		justify-content space-between
+		margin 10px 7px
+		
+		.squad
+			display flex
+			width 118px
+			height 26px
+			font-size 11px
+			align-items center
+			justify-content space-between
+			cursor pointer
+			color $color-metal
+			margin auto 7px
+			
+			&.active
+				outline 2px solid $color-metal
+				
+			&.noPremium
+				-webkit-filter grayscale(1) brightness(0.6)
+				filter grayscale(1) brightness(0.6)
+			
+			img
+				width 26px
+				height 26px
+				
+			span
+				position relative
+				display flex
+				width 89px
+				height 26px
+				padding 3px
+				box-sizing border-box
+				flex-wrap nowrap
+				white-space nowrap
+				align-items center
+				overflow hidden
+				background-color #232323
+				
+			.edit
+				position absolute
+				right 3px
+				top 2.5px
+				display inline-block
+				width 21px
+				height 21px
+				vertical-align middle
+				background-image url(/img/game/edit.png)
+				background-repeat no-repeat
+				
+				&:hover
+					background-image url(/img/game/edit_a.png)
+		
+		.control
+			display flex
+			flex-direction column
+			justify-content space-around
+			width 26px
+			height 100px
+			margin 0 8px
+			-webkit-filter grayscale(1) brightness(0.6)
+			filter grayscale(1) brightness(0.6)
+			
+			&.active
+				-webkit-filter none
+				filter none
+			
+			
+			button
+				width 26px
+				height 26px
+				background-repeat no-repeat
+
+			.save
+				background-image url(/img/game/cosmomap/save.png)
+				
+			.link
+				-webkit-filter grayscale(1) brightness(0.6)
+				filter grayscale(1) brightness(0.6)
+				background-image url(/img/game/cosmomap/link.png)
+				
+			.remove
+				background-image url(/img/game/cosmomap/remove.png)
+
 	.target
-		position absolute
-		display block
-		left 1100px
-		top 20px
-		width 300px
+		display flex
+		flex-wrap wrap
+		justify-content space-around
+		width 320px
+		padding 12px 0
+		
+		.map-planet-popup
+			position relative
+			background transparent
+			padding 0
+			border 0
+			z-index 0
 		
 		ul
 			position relative
@@ -513,10 +798,14 @@
 			
 		p 
 			font-weight normal
-			color #b6c5d3
+			color $color-metal
+			text-align center
+			padding 10px
+			margin auto
+			width 100%
 			
 		span
-			color #ffffff
+			color $color-white
 		
 
 .btn-history

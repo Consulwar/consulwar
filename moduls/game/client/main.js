@@ -17,7 +17,11 @@ initSettingsClient();
 initQuestClient();
 initRouterClient();
 initMenuClient();
+initItemLib();
+initItemClient();
 initCheatsClient();
+
+initPleerClient();
 
 
 /*
@@ -418,7 +422,7 @@ Template.connection.helpers({
 Template.newgame.onRendered(function(){
 	showTutorialDuringActivation();
 	Meteor.setTimeout(function() {
-		$('.fleet_info_full .scrollbar-inner').scrollbar();
+		$('.fleet_info_full .scrollbar-inner').perfectScrollbar('update');
 	});
 });
 

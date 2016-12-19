@@ -175,7 +175,15 @@
 		&:hover
 			-webkit-filter brightness(1.2)
 			filter brightness(1.2)
-				
+	
+	div
+		width 100%
+		flex-shrink 1
+
+	progress
+		border 0
+		margin-bottom -1px
+
 	.market,
 	.tournament,
 	.containers,
@@ -367,3 +375,118 @@
 		&:last-child
 			color #dfdfdf
 			text-align left
+
+.select-icon-block
+	display inline-block
+	position fixed
+	z-index 100
+	top 50%
+	left 50%
+	transform translate(-50%, -50%)
+	background-image none
+	background-color #13161b
+	width 880px
+	font-weight bold
+	font-size 14px
+
+	.close
+		cursor pointer
+		display block
+		position absolute
+		z-index 4
+		right 5px
+		top 5px
+		width 30px
+		height 30px
+		background-image url(/img/game/cosmomap/button_close.png)
+		background-repeat no-repeat
+	
+		&:hover
+			background-image url(/img/game/cosmomap/button_close_active.png)
+	
+	h2
+		font-size 14px
+		
+	.info
+		margin-top 10px
+		margin-bottom 20px
+		color #888888
+
+	.tabItems
+	.tabShop
+		cursor pointer
+		display inline-block
+		padding-left 50px
+		padding-top 10px
+		height 30px
+		width 180px
+		background-repeat no-repeat
+		background-color #030405
+		
+		&.active
+			background-color #13161b
+
+		&:hover
+			-webkit-filter brightness(1.4)
+			filter brightness(1.4)
+			
+	.tabItems
+		color #56baf2
+		background-position 10px 10px
+		background-image url(/img/game/chat/icons-list.png)
+	.tabShop
+		color #e9a844
+		background-position 10px 7px
+		background-image url(/img/game/chat/icons-shop.png)
+
+	.common
+		color #FFFFFF
+	.extra
+		color #56baf2
+	.rare
+		color #954eff
+	.exclusive
+		color #e9a844
+	
+	.icons
+		margin-top 10px
+		margin-bottom 10px
+		padding 5px
+		height 500px
+		overflow hidden
+		overflow-y auto
+	
+	ul
+		display block
+		vertical-align top
+		margin 10px 0px
+		
+		li
+			cursor pointer
+			display inline-block
+			vertical-align top
+			padding 5px
+			
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+			
+			&.selected
+				outline 4px solid #56baf2
+
+			.has
+				display block
+				height 17px
+				padding-top 3px
+				text-align center
+				color #888888
+
+			.credits
+				display block
+				height 17px
+				padding-top 3px
+				padding-left 22px
+				background-image url(/img/game/credits.png)
+				background-repeat no-repeat
+				background-size 20px 20px
+				color #C6E84C

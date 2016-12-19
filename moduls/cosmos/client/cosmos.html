@@ -8,7 +8,6 @@
 		{{#if isSelection}}
 			<a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
 		{{/if}}
-		{{> yield "cosmosAttackMenu"}}
 		
 		{{#if isLoading}}
 			{{> loading}}
@@ -21,20 +20,28 @@
 		class="map-planet-popup" 
 		style="left: {{position.x}}px; top: {{position.y}}px;"
 	>
-		<h2>
-			{{#if allowActions}}
-				<span class="edit" data-id="{{planet._id}}"></span> 
-			{{/if}}
-			{{planet.name}} 
-			({{planet.type}})
-		</h2>
-		<div class="map-planet-popup-items">
-			{{#each drop.items}}
-				<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
-			{{/each}}
-		</div>
 
 		{{#let planet=(Game.Cosmos.getPlanetInfo planet)}}
+			<h2>
+				{{#if allowActions}}
+					<span class="edit" data-id="{{planet.id}}"></span> 
+				{{/if}}
+				{{planet.name}} 
+				({{planet.type}})
+			</h2>
+			<div class="map-planet-popup-items">
+				{{#each drop.items}}
+					<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
+				{{/each}}
+				{{#if planet.mission.reward}}
+					<ul class="resources cost">
+						{{#each (arrayify planet.mission.reward)}}
+							<li class="{{this.key}}">{{formatNumberWithISO this.value}}</li>
+						{{/each}}
+					</ul>
+				{{/if}}
+			</div>
+
 			{{#if and planet.isHumans planet.timeArtefacts}}
 				<p>Сбор через: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
 			{{/if}}
@@ -52,60 +59,62 @@
 					{{planet.mission.name}}
 					{{planet.mission.level}}
 					уровня
+					<span class="unitsPower">{{formatNumberWithISO reptilesFleetPower}}</span>
 				</h2>
 			{{else}}
 				<h2>Свободная планета</h2>
 			{{/if}}{{/if}}
 
-			{{#if planet.units}}
-				<ul class="army {{#if planet.mission}}reptiles{{else}}humans{{/if}}">
-					{{#each planet.units}}
-						<li>
-							{{this.name}} 
-							<span 
-								data-tooltip="{{battleCountNumber this.countId}}"
-								data-tooltip-direction="e">
-								{{formatNumberWithISO this.count}}
-							</span>
-						</li>
-					{{/each}}
-				</ul>
-			{{/if}}
-			{{#if and allowActions planet.canSend}}
+			{{> cosmosUnitsBlock units=planet.units isReptiles=planet.mission}}
+
+			{{#if and (and allowActions planet.canSend) (not disableSend)}}
 				<button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
 			{{/if}}
 		{{/let}}
 	</div>
 </template>
 
+<template name="cosmosUnitsBlock">
+	{{#if units}}
+		{{#if options.textUnits}}
+			<ul class="armyText {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
+				{{#each units}}
+					{{#if this.count}}
+						<li>
+							{{this.unit.name}} 
+							<span 
+								data-tooltip="{{battleCountNumber this.countId}}"
+								data-tooltip-direction="e">
+								{{formatNumberWithISO this.count}}
+							</span>
+						</li>
+					{{/if}}
+				{{/each}}
+			</ul>
+		{{else}}
+			<div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
+				{{#each units}}
+					<a 
+						class="{{this.unit.engName}}-icon {{#unless this.count}}disabled{{/unless}}" 
+						href="{{this.unit.url}}"
+					>
+						<div
+							class="count"
+							data-tooltip="{{battleCountNumber this.countId}}"
+							data-tooltip-direction="e"
+						>
+							{{#if this.count}}{{formatNumberWithISO this.count}}{{/if}}
+						</div>
+					</a>
+				{{/each}}
+			</div>
+		{{/if}}
+	{{/if}}
+</template>
+
 <template name="cosmosAttackMenu">
 	<div class="attack-menu">
-		<!-- left block -->
-		<ul class="planets">
-			{{#each colonies}}
-				{{#if this.isEmpty}}
-					<li class="locked">
-						{{#if this.isSent}}Флот отправлен{{else}}Свободно{{/if}}
-					</li>
-				{{else}}
-					<li data-id="{{this._id}}"
-						class="
-							{{#if eq this._id activeColonyId}}
-								active
-							{{else}}
-								{{#if this.isHome}}
-									home
-								{{/if}}
-							{{/if}}"
-					>
-						{{#if this.isHome}}Планета консула{{else}}{{this.name}}{{/if}}
-					</li>
-				{{/if}}
-			{{/each}}
-		</ul>
-
-		<!-- center block -->
-		{{#if availableFleet}}
+		<div class="departure">
 			<ul class="items fleet">
 				{{#each availableFleet}}
 					<li 
@@ -115,88 +124,189 @@
 					>
 						<a class="{{this.engName}}-icon"></a>
 						<div class="max">{{formatNumberWithISO this.max}}</div>
-						<input class="count" type="number" placeholder="Количество"  value="0">
+
+						<div class="count">
+							{{#let unitSquadCount=(lookup activeSquad.units this.engName)}}
+								{{#if unitSquadCount}}
+									{{#if lte unitSquadCount this.max}}
+										<input type="number" placeholder="" value="{{unitSquadCount}}">
+									{{else}}
+										<input type="number" placeholder="" value="{{this.max}}">
+										<span>{{formatNumberWithISO (substract unitSquadCount this.max) 5}}</span>
+									{{/if}}
+								{{else}}
+									<input type="number" placeholder="" value="">
+								{{/if}}
+							{{/let}}
+						</div>
 					</li>
 				{{/each}}
 			</ul>
-		{{/if}}
+			
+			<div class="planets">
+				{{#each colonies}}
+					{{#if this.canBuy}}
+						{{> cosmos_planet_item planet=this}}
+					{{else}}
+						{{> cosmos_planet_item 
+						    planet=this 
+						    location=(or 
+						    	(and 
+						    		(and 
+						    			options.showDistanceFromPlanets 
+						    			(not (or this.isEmpty this.notAvaliable))
+						    		)
+						    		(or 
+						    			(and this.timeAttack (formatSeconds this.timeAttack))
+						    			'–'
+						    		)
+						    	) 
+						    	' '
+						    ) 
+						    isSelected=(eqandtrue activeColonyId this._id)
+						    isDisabled=(eqandtrue ../id this._id)
+						    isTopTime=this.isTopTime
+						}}
+					{{/if}}
+				{{/each}}
+			</div>
 
-		<!-- right block -->
+			<div class="squads">
+				{{#each squads}}
+					<div 
+						class="
+							squad 
+							{{#if noPremium}}noPremium{{/if}} 
+							{{#if noAdmiral}}noAdmiral{{/if}}
+							{{#if eq activeSquad.slot this.slot}}active{{/if}}
+						" 
+						data-id="{{this.slot}}
+					">
+						{{#if this.icon}}
+							<img src="/img/game/chat/icons/{{this.icon}}sm.png"/>
+						{{else}}
+							<img src="/img/game/cosmomap/add.png"/>
+						{{/if}}
+						<span>
+							{{#if this.name}}
+								{{this.name}}
+							{{else}}{{#if noPremium}}
+								Нужен премиум
+							{{else}}{{#if noAdmiral}}
+								Отсутствует адмирал
+							{{/if}}{{/if}}{{/if}}
+
+							{{#if not (or noPremium noAdmiral)}}
+								<button class="edit" data-id=""></button>
+							{{/if}}
+						</span>
+					</div>
+				{{/each}}
+
+				<div class="control {{#if activeSquad}}active{{/if}}">
+					<button class="save"></button>
+					<button class="link"></button>
+					<button class="remove"></button>
+				</div>
+			</div>
+
+			<div class="unitsAdditionalControl">
+				<span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
+				<button class="btn-all">
+					{{#if isAllSelected}}
+						Отменить выбор
+					{{else}}
+						Выбрать всех
+					{{/if}}
+				</button>
+			</div>
+		</div>
+
+
 		<div class="target">
 			{{#if planet}}
-				<h2>{{planet.name}}{{#if planet.type}} ({{planet.type}}){{/if}}</h2>
-				{{#if planet.units}}
-					<ul class="{{#if planet.mission}}reptiles{{else}}humans{{/if}}">
-						{{#each planet.units}}
-							<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
-						{{/each}}
-					</ul>
-				{{/if}}
+				{{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet allowActions=true disableSend=true}}
+
 				{{#if timeAttack}}
 					<p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
 				{{/if}}
-			{{/if}}
 
-			{{#if ship}}
-				<h2>{{ship.status}}</h2>
-				{{#if ship.units}}
-					<ul class="{{#if ship.mission}}reptiles{{else}}humans{{/if}}">
-						{{#each ship.units}}
-							<li>{{this.name}} <span>{{formatNumberWithISO this.count}}</span></li>
-						{{/each}}
-					</ul>	
+				{{#if planet.isHome}}
+					<button class="btn-attack defend" disabled={{isFleetSended}}>Отправить</button>
+				{{else}}
+					<button class="btn-attack defend" disabled={{or (not canHaveMoreColonies) isFleetSended}}>
+						Захватить
+					</button>
+					<button class="btn-attack return" disabled={{isFleetSended}}>
+						{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
+					</button>
 				{{/if}}
+			{{else}}
+				{{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo ship) spaceEvent=ship}}
+
 				{{#if timeAttack}}
 					<p>Время перехвата: <span>{{formatSeconds timeAttack}}</span></p>
 				{{else}}
 					<p>Не успеем перехватить</p>
 				{{/if}}
-				{{#if timeLeft}}
-					<p>Осталось времени: <span>{{formatSeconds timeLeft}}</span></p>
-				{{/if}}
+
+				<button class="btn-attack return" disabled={{isFleetSended}}>Перехватить</button>
 			{{/if}}
 		</div>
 
-		<!-- control buttons -->
-		{{#if canHaveMoreExtraColonies}}
-			<ul class="resources cost">
-				<li class="credits">{{extraColonyPrice}}</li>
-			</ul>
-			<button class="btn-add">Дополнительная колония</button>
-		{{/if}}
-		<button class="btn-all">Выбрать всех</button>
-		{{#if planet}}
-			{{#if planet.isHome}}
-				<button class="btn-attack defend" disabled={{isFleetSended}}>Отправить</button>
-			{{else}}
-				<button class="btn-attack defend" disabled={{or (not canHaveMoreColonies) isFleetSended}}>
-					Захватить
-				</button>
-				<button class="btn-attack return" disabled={{isFleetSended}}>
-					{{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
-				</button>
-			{{/if}}
-		{{else}}
-			<button class="btn-attack return" disabled={{isFleetSended}}>Перехватить</button>
-		{{/if}}
 		<button class="btn-close"></button>
 	</div>
 </template>
 
 <template name="cosmos_planet_item">
 	<a 
-		class="planet {{owner}}" 
+		class="
+			planet 
+			{{owner}} 
+			{{#if planet.isEmpty}}empty{{/if}}
+			{{#if planet.notAvaliable}}notAvaliable{{/if}}
+			{{#if planet.canBuy}}canBuy{{/if}}
+			{{#if isDisabled}}disabled{{/if}}
+			{{#if isSelected}}selected{{/if}}
+			{{#if isTopTime}}topTime{{/if}}
+		" 
 		data-id="{{planet._id}}"
 		href="{{pathFor 'cosmos' hash=planet._id}}" 
 		data-tooltip="
-			{{#if planet.isHome}}
-				Домашняя планета
+			{{#if isDisabled}}
+				Недоступна для выбора
+			{{else}}{{#if planet.isEmpty}}
+				{{#if isSent}}
+					Флот в полёте
+				{{else}}
+					Свободная колония
+				{{/if}}
+			{{else}}{{#if planet.notAvaliable}}
+				{{#if planet.canBuy}}
+					Можно купить
+				{{else}}
+					Доступна с повышением ранга
+				{{/if}}
 			{{else}}
 				{{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet}}
-			{{/if}}"
+			{{/if}}{{/if}}{{/if}}"
 		data-tooltip-direction="e"
 	>
-		<div class="name">{{#if name}}{{name}}{{else}}{{planet.name}}{{/if}}</div>
+		<div class="name">
+			{{#if planet.notAvaliable}}
+				{{#if planet.canBuy}}
+					Купить
+				{{else}}
+					{{planet.requiredRank}} уровень
+				{{/if}}
+			{{else}}
+				{{#if name}}
+					{{name}}
+				{{else}}
+					{{planet.name}}
+				{{/if}}
+			{{/if}}
+		</div>
 		<div 
 			class="
 				map-planet-marker
@@ -223,6 +333,8 @@
 				{{location}}
 			{{else}}{{#if showTimeLeft}}
 				{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}
+			{{else}}{{#if planet.canBuy}}
+				{{formatNumber planet.price}}
 			{{else}}
 				{{#if eq planet.segment 0}}
 					Центр
@@ -230,7 +342,7 @@
 					Р{{planet.hand}} 
 					С{{planet.segment}}
 				{{/if}}
-			{{/if}}{{/if}}
+			{{/if}}{{/if}}{{/if}}
 		</div>
 	</a>
 </template>
@@ -320,22 +432,24 @@
 					{{ship.mission.name}}
 					{{ship.mission.level}}
 					уровня
+					<span class="unitsPower">{{formatNumberWithISO reptilesFleetPower}}</span>
 				</h2>
 			{{/if}}
-			{{#if ship.units}}
-				<ul class="army {{#if ship.mission}}reptiles{{else}}humans{{/if}}">
-					{{#each ship.units}}
-						<li>
-							{{this.name}} 
-							<span 
-								data-tooltip="{{battleCountNumber this.countId}}"
-								data-tooltip-direction="e">
-								{{formatNumberWithISO this.count}}
-							</span>
-						</li>
-					{{/each}}
-				</ul>
-			{{/if}}
+			<div class="map-planet-popup-items">
+				{{#each drop.items}}
+					<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
+				{{/each}}
+				{{#if ship.mission.reward}}
+					<ul class="resources cost">
+						{{#each (arrayify ship.mission.reward)}}
+							<li class="{{this.key}}">{{formatNumberWithISO this.value}}</li>
+						{{/each}}
+					</ul>
+				{{/if}}
+			</div>
+
+			{{> cosmosUnitsBlock units=ship.units isReptiles=ship.mission}}
+
 			{{#if timeLeft}}
 				<p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
 			{{/if}}

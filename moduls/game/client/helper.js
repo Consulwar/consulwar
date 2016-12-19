@@ -3,6 +3,7 @@ Meteor.startup(function() {
 UI.registerHelper('isNewLayout', function() {
 	var newLayoutGroups = {
 		planet: {
+			residential: true,
 			military: true
 		},
 		cosmos: true,
@@ -55,28 +56,17 @@ UI.registerHelper('currentRouteName', function() {
 	return Router.current().route.name;
 });
 
-var hasPremium = function() {
-	var activeCards = Game.Cards.getActive();
-
-	for (let i = 0; i < activeCards.length; i++) {
-		if (activeCards[i].cardGroup == "generalDonate") {
-			return true;
-		}
-	}
-	return false;
-};
-
 UI.registerHelper('premiumTitle', function() {
-	return (hasPremium()
+	return (Game.hasPremium()
 		? {title: 'Только для премиум аккаунтов'}
 		: ''
 	);
 });
 
-UI.registerHelper('hasPremium', hasPremium);
+UI.registerHelper('hasPremium', Game.hasPremium);
 
 UI.registerHelper('notPremiumDisabled', function() {
-	return (hasPremium()
+	return (Game.hasPremium()
 		? ''
 		: {disabled: true}
 	);
@@ -116,8 +106,16 @@ UI.registerHelper('gt', function(a, b) {
 	return a > b;
 });
 
+UI.registerHelper('gte', function(a, b) {
+	return a >= b;
+});
+
 UI.registerHelper('lt', function(a, b) {
 	return a < b;
+});
+
+UI.registerHelper('lte', function(a, b) {
+	return a <= b;
 });
 
 UI.registerHelper('multiply', function(a, b) {
@@ -150,6 +148,15 @@ UI.registerHelper('not', function(value) {
 
 UI.registerHelper('toArray', function(obj) {
 	return _.toArray(obj);
+});
+
+UI.registerHelper('arrayify',function(obj){
+	return _.map(obj, function(value, key) {
+		return {
+			key,
+			value
+		};
+	});
 });
 
 UI.registerHelper('makeArray', function() {
@@ -267,6 +274,7 @@ var formatNumber = function (num, delimeter) {
 
 	return _.map(num, function(value) {
 		if (_.isNumber(value)) {
+			value = parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0], 10);
 			if (value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0].substr(-1) !== '0') {
 				value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
 			} else if (value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0].substr(-1) !== '0') {

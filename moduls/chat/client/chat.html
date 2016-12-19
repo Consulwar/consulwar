@@ -1,42 +1,29 @@
 <template name="chat">
-	<div class="chat">
+	<div class="channels {{#if hideChannels}}hide{{/if}}">
 		{{> chatRoomsList}}
-			
-		<div class="control">
 
-			<div class="settings"></div>
-			<div class="info"></div>
-			<div class="dollar"></div>
+		<nav class="participants scrollbar-inner">
+			<h2>Участники: </h2>
+			<ul>
+				{{#each users}}
+					<li class="online" data-username="{{this.name}}">
+						<span class="{{this.role}}">{{this.name}}</span>
+					</li>
+				{{/each}}
+			</ul>
+		</nav>
 
+		<div class="additionals">
 			{{#if room}}
 				{{#if room.isOwnerPays}}
 					<div class="addCredits" data-tooltip="Пополнить баланс комнаты">
+						<div>Сообщения оплачиваются из общего баланса комнаты.</div>
 						<span>В этом чате сейчас есть:</span>
 						<ul class="resources">
 							<li class="credits">{{room.credits}}</li>
 						</ul>
 					</div>
 				{{/if}}
-			{{/if}}
-
-			{{#if price}}
-				<div class="price">
-					<span>
-						{{#if price.credits}}
-							Сообщения оплачиваются из общего баланса комнаты:
-						{{else}}
-							Внимание! Каждое сообщение будет стоить вам:
-						{{/if}}
-					</span>
-					<ul class="resources" data-tooltip="Стоимость сообщения">
-						{{#if price.crystals}}
-							<li class="crystals">{{price.crystals}}</li>
-						{{/if}}
-						{{#if price.credits}}
-							<li class="credits">{{price.credits}}</li>
-						{{/if}}
-					</ul>
-				</div>
 			{{/if}}
 
 			{{#if price}}
@@ -49,59 +36,87 @@
 					</div>
 				{{/unless}}
 			{{/if}}
+
+			<div class="control">
+				<div class="settings"></div>
+				<div class="info"></div>
+			</div>
 		</div>
 
-		{{#if users}}
-			<div class="participants">
-				<ul>
-					{{#each users}}
-						<li class="online" data-username="{{this.name}}">
-							<span class="{{this.role}}">{{this.name}}</span>
-						</li>
-					{{/each}}
-				</ul>
-			</div>
-		{{/if}}
-		<div class="messagesWrapper">
-			<ul class="messages scrollbar-inner">
-				{{#if hasMore}}
-					<li class="more">
-						<span>показать предыдущие сообщения</span>
-					</li>
-				{{/if}}
-				{{#if gotLimit}}
-					<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
-				{{/if}}
-				{{#each messages}}
-					{{#if this.isMotd}}
-						<li class="motd">
-							<div>
-								{{{this.message}}}
-							</div>
-						</li>
-					{{else}}
-						{{#if this.hasAllowedMessages}}
-							<li 
-								class="missed"
-								data-timestamp="{{this.timestamp}}"
-								data-messageid="{{this._id}}"
-							>
-								<span>показать пропущенные сообщения</span>
-							</li>
-						{{/if}}
+		<button class="toggle"></button>
+	</div>
 
-						{{#if this.showProfile}}
-							<li class="profile" data-username="{{this.username}}">
-								{{> chatMessageProfile this}}
-							</li>
-						{{/if}}
-						<li class="message" data-username="{{this.username}}">
-							{{> chatMessage this}}
+	<div class="chat">
+		{{> channelCreate}}
+		{{> channelList}}
+
+		<ul class="messages scrollbar-inner">
+			{{#if hasMore}}
+				<li class="more">
+					<span>предыдущие сообщения</span>
+				</li>
+			{{/if}}
+			{{#if gotLimit}}
+				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
+			{{/if}}
+			{{#each messages}}
+				{{#if this.isMotd}}
+					<li class="motd">
+						<div>
+							{{{this.message}}}
+						</div>
+					</li>
+				{{else}}
+					{{#if this.hasAllowedMessages}}
+						<li 
+							class="missed"
+							data-timestamp="{{this.timestamp}}"
+							data-messageid="{{this._id}}"
+						>
+							<span>пропущенные сообщения</span>
 						</li>
 					{{/if}}
-				{{/each}}
-			</ul>
-		</div>
+
+					{{#let messageRole=(getUserRoleByMessage this)}}
+						{{#if this.showProfile}}
+							<li 
+								data-username="{{this.username}}"
+								class="
+									profile 
+									{{messageRole.id}} 
+									{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+									{{#if eq this.username user.username}}me{{/if}}
+								">
+								<img src="/img/game/chat/icons/
+									{{#if this.iconPath}}
+										{{this.iconPath}}
+									{{else}}
+										common/1
+									{{/if}}
+								sm.png"/>
+								<div class="username">
+									{{this.username}}
+								</div>
+								<div class="role {{messageRole.id}}">
+									{{messageRole.name}}
+								</div>
+							</li>
+						{{/if}}
+						<li
+							data-username="{{this.username}}"
+							class="
+								message
+								{{messageRole.id}} 
+								{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
+								{{#if eq this.username user.username}}me{{/if}}
+							"
+						>
+							{{> chatMessage this}}
+						</li>
+					{{/let}}
+				{{/if}}
+			{{/each}}
+		</ul>
 
 		<form id="message">
 			{{#if (and (not isChatFree) (lt user.rating room.minRating))}}
@@ -111,34 +126,16 @@
 				<input type="submit" value="" disabled="true"/>
 			{{else}}
 				<textarea name="text" maxlength="175"></textarea>
+
+				{{#if price.crystals}}
+					<ul class="resources" data-tooltip="Стоимость сообщения">
+						<li class="crystals">{{price.crystals}}</li>
+					</ul>
+				{{/if}}
 				<input type="submit" value=""/>
 			{{/if}}
 		</form>
 	</div>
-</template>
-
-<template name="chatMessageProfile">
-	<img src="/img/game/chat/icons/
-		{{#if this.iconPath}}
-			{{this.iconPath}}
-		{{else}}
-			common/1
-		{{/if}}
-	sm.png"/>
-	{{#let messageRole=(getUserRoleByMessage this)}}
-		<div 
-			class="
-				username 
-				{{messageRole.id}} 
-				{{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
-				{{#if eq this.username user.username}}me{{/if}}"
-		>
-			{{this.username}}
-		</div>
-		<div class="role {{messageRole.id}}">
-			{{messageRole.name}}
-		</div>
-	{{/let}}
 </template>
 
 <template name="chatMessage">
@@ -279,35 +276,35 @@
 </template>
 
 <template name="chatRoomsList">
-	<div class="roomsList">
-		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}"></a>
-		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}"></a>
-		{{#if rooms}}
-			<span class="arrow-left {{#if isArrowLeft}}active{{/if}}"></span>
-			<div class="listContainer">
-				<ul>
-					{{#each rooms}}
-						{{#if isVisible this.name}}
-							<li class="{{#if isActive this.name}}active{{/if}}">
-								<a 
-									href="{{pathFor 'chat' room=this.name}}" 
-									class="
-										{{#if this.isPublic}}public{{/if}} 
-										{{#if this.isOwnerPays}}credits{{/if}}
-									"
-								>
-									{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
-								</a>
-								<span class="hide" data-roomname="{{this.name}}"></span>
-							</li>
-						{{/if}}
-					{{/each}}
-				</ul>
-			</div>
-			<span class="arrow-right {{#if isArrowRight}}active{{/if}}"></span>
-		{{/if}}
-		<span class="arrow-down"></span>
-	</div>
+	<nav class="roomsList">
+		<h2>
+			<a href="#">Каналы</a>: 
+			<button class="addChannel"></button>
+		</h2>
+		<a class="general {{#if isActive 'general'}}active{{/if}}" href="{{pathFor 'chat' room='general'}}">
+			Основной
+		</a>
+		<a class="help {{#if isActive 'help'}}active{{/if}}" href="{{pathFor 'chat' room='help'}}">
+			Помощь
+		</a>
+
+		{{#each rooms}}
+			{{#if isVisible this.name}}
+				<a 
+					href="{{pathFor 'chat' room=this.name}}" 
+					class="
+						{{#if isActive this.name}}active{{/if}}
+						{{#if this.isPublic}}public{{/if}} 
+						{{#if this.isOwnerPays}}credits{{/if}}
+					"
+				>
+					{{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
+
+					<button class="hide" data-roomname="{{this.name}}"></button>
+				</a>
+			{{/if}}
+		{{/each}}
+	</nav>
 </template>
 
 <template name="chatRoomsPopup">
@@ -408,6 +405,80 @@
 		<span class="title">{{spanText}}:</span>
 		<input type="text" placeholder="{{placeholder}}" name="{{name}}">
 	</label>
+</template>
+
+<template name="channelCreate">
+	<div class="channelCreate hide">
+		<div class="close"></div>
+
+		<h1>Создать канал</h1>
+
+		{{> inputWithCounter
+			spanText="Название"
+			placeholder="Примерная комната"
+			name="roomTitle"
+			max="32"
+		}}
+
+		{{> inputWithCounter
+			spanText="URL"
+			placeholder="example"
+			name="roomUrl"
+			max="32"
+		}}
+
+		<div class="radioBlock">
+			<span class="title">Тип комнаты:</span>
+			<label>
+				<input type="radio" name="roomType" value="public"/> публичная
+			</label>
+			<label>
+				<input type="radio" name="roomType" value="private" checked="checked"/> приватная
+			</label>
+		</div>
+		<div class="radioBlock">
+			<span class="title">Оплата за сообщения:</span>
+			<label>
+				<input type="radio" name="roomPayment" value="crystals"/> кристаллы
+			</label>
+			<label>
+				<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
+			</label>
+		</div>
+		<div class="creditsBlock">
+			<div class="hint">Создание комнаты платное, цена зависит от выбранных параметров.</div>
+			<div class="amount">{{credits}}</div>
+		</div>
+		<div class="button accept create">Создать комнату</div>
+	</div>
+</template>
+
+<template name="channelList">
+	<div class="channelList scrollbar-inner hide">
+		<div class="close"></div>
+		<h1>Доступные комнаты</h1>
+		{{#if rooms}}
+			<ul>
+				{{#each rooms}}
+					<li data-roomname="{{this.name}}">
+						<label>
+							<input type="checkbox" checked="{{isVisible this.name}}"/>
+							
+							<a 
+								class="
+									{{#if this.isPublic}}public{{/if}} 
+									{{#if this.isOwnerPays}}credits{{/if}}
+								"
+							>
+								{{this.title}} 
+								{{#if not (eq this.title this.name)}}({{this.name}}){{/if}}
+							</a>
+						</label>
+					</li>
+				{{/each}}
+			</ul>
+		{{/if}}
+	</div>
 </template>
 
 <template name="chatControl">
@@ -517,84 +588,6 @@
 					Разжаловать
 				</div>
 			</div>
-		</div>
-	</div>
-</template>
-
-<template name="chatIcons">
-	<div class="smoke"></div>
-	<div class="chatIcons">
-		<div class="close"></div>
-		
-		<div class="tabItems">Ваши иконки</div>
-		<div class="tabShop">Купить иконку</div>
-
-		<div class="icons">
-			{{#let tab=currentTab}}
-				{{#each iconGroups}}
-					<h2 class="{{this.engName}}">{{this.name}}</h2>
-					{{#if this.items}}
-						<ul>
-							{{#each this.items}}
-								<li 
-									class="
-										{{#if this.checkSelected}}
-											selected
-										{{else}}
-											{{#if this.checkHas}}
-												select
-											{{else}}
-												{{#if and (eq tab 'shop') (not this.checkUniqueSold)}}
-													buy
-												{{/if}}
-											{{/if}}
-										{{/if}}
-										"
-									data-group="{{this.group}}"
-									data-id="{{this.engName}}"
-									data-tooltip="
-										{{#if not this.meetRequirements}}
-											Доступна с {{this.requirements.rank}} ранга
-										{{else}}
-											{{#if this.checkSelected}}
-												Текущая
-											{{else}}
-												{{#if this.checkHas}}
-													Выбрать
-												{{else}}
-													{{#if and (eq tab 'shop')}}
-														{{#if this.checkUniqueSold}}
-															Куплена другим игроком
-														{{else}}
-															Купить
-														{{/if}}
-													{{/if}}
-												{{/if}}
-											{{/if}}
-										{{/if}}
-										"
-									disabled="{{not this.meetRequirements}}"
-								>
-									<img src="/img/game/chat/icons/{{this.group}}/{{this.engName}}.png"/>
-									{{#if and (eq tab 'shop')}}
-										{{#if this.checkHas}}
-											<span class="has">Куплена</span>
-										{{else}}
-											{{#if not this.checkUniqueSold}}
-												<span class="credits">
-													{{formatNumber this.price.credits}}
-												</span>
-											{{/if}}
-										{{/if}}
-									{{/if}}
-								</li>
-							{{/each}}
-						</ul>
-					{{else}}
-						<div class="info">У вас нет иконок такого типа</div>
-					{{/if}}
-				{{/each}}
-			{{/let}}
 		</div>
 	</div>
 </template>

@@ -1,8 +1,10 @@
 initUnitClient = function() {
 
 initUnitLib();
+initSquadLib();
 
 Meteor.subscribe('units');
+Meteor.subscribe('squad');
 
 Game.Unit.showPage = function() {
 	var item = Game.Unit.items[this.group][this.params.group][this.params.item];
@@ -43,7 +45,7 @@ Template.unit.helpers({
 });
 
 Template.unit.onRendered(function() {
-	$('.content .scrollbar-inner').scrollbar();
+	$('.content .scrollbar-inner').perfectScrollbar();
 });
 
 // Из-за разницы в цене единицы и большого количества (из-за скидок) возникает погрешность

@@ -63,25 +63,24 @@
 							{{#if eq status 3}}Задание выполнено{{/if}}
 						</h2>
 					{{/if}}
-
-					{{#if quests}}
-						{{#if isOpened}}
-							<ul class="quests">
-								{{#each quests}}
-									<li 
-										data-id="{{this.engName}}"
-										class="
-											{{#if eq this.status 0}}prompt{{/if}}
-											{{#if eq this.status 1}}inprogress{{/if}}
-											{{#if eq this.status 3}}finished{{/if}}"
-									>
-										{{this.name}}
-									</li>
-								{{/each}}
-							</ul>
-						{{/if}}
-					{{/if}}
 				</div>
+				{{#if quests}}
+					{{#if isOpened}}
+						<ul class="quests">
+							{{#each quests}}
+								<li 
+									data-id="{{this.engName}}"
+									class="
+										{{#if eq this.status 0}}prompt{{/if}}
+										{{#if eq this.status 1}}inprogress{{/if}}
+										{{#if eq this.status 3}}finished{{/if}}"
+								>
+									{{this.name}}
+								</li>
+							{{/each}}
+						</ul>
+					{{/if}}
+				{{/if}}
 			{{/if}}
 		</div>
 	{{/if}}
@@ -190,8 +189,8 @@
 			{{/each}}
 			
 			{{#if eq currentUrl (pathFor route='building' group='residential')}}
-				<progress class="metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
-				<progress class="crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
+				<div class="bonus metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}"></div>
+				<div class="bonus crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}"></div>
 			{{/if}}
 		</div>
 	{{/if}}

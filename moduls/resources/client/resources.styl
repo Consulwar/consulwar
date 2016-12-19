@@ -85,30 +85,28 @@
 		.honor
 			background-image url(/img/game/honor_big.png)
 
-.content .overlay.planet.residential
-	progress
+.overlay.planet.residential
+	.bonus
 		position absolute
-		width 200px
-		font-weight bold
-		border 1px solid #3e4059
-		background-color #000
-		z-index 20
-		cursor pointer
-			
-		&::-webkit-progress-bar
-			background-color #000
-			
-		&[role][aria-valuenow]
-			background-color #000
 		
-		&:before
-			content attr(value) ' / ' attr(max)
-			position absolute
-			display block
-			width 100%
-			top -20px
-			text-align center
+		&.metals
+			top 818px
+			right 634px
+			width 0
+			height 0
 			
+			&:before
+				display none
+			
+		&.crystals
+			top 775px
+			left 614px
+			width 0
+			height 0
+			
+			&:before
+				display none
+		
 		&.active:after
 			content ''
 			position absolute
@@ -122,43 +120,66 @@
 			border-radius 32px
 			border-width 2px
 			border-style solid
-		
-		&.metals
-			top 410px
-			right 15px
-			color #5697D7
-		
-			&::-moz-progress-bar 
-				background-color #5697D7
 
-			&::-webkit-progress-value
-				background-color #5697D7
-				
-			&[aria-valuenow]:before
-				background-color #5697D7
-			
+		&.metals
 			&.active:after
 				background-image url(/img/game/metals_bonus.png)
 				border-color #5697D7
 			
 		&.crystals
-			top 410px
-			left 14px
-			color #D7559B
-			
-		
-			&::-moz-progress-bar 
-				background-color #D7559B
-
-			&::-webkit-progress-value
-				background-color #D7559B
-				
-			&[aria-valuenow]:before
-				background-color #D7559B
-			
 			&.active:after
 				background-image url(/img/game/crystals_bonus.png)
 				border-color #D7559B
+
+.bonus
+	position relative
+	width 200px
+	height 24px
+	font-weight bold
+	background-color #000
+	z-index 20
+	cursor pointer
+		
+	&::-webkit-progress-bar
+		background-color #000
+		
+	&[role][aria-valuenow]
+		background-color #000
+	
+	&:before
+		content attr(value) ' / ' attr(max)
+		position absolute
+		top 0
+		left 0
+		display flex
+		width 100%
+		height 100%
+		align-items center
+		justify-content center
+		text-align center
+		color $color-white
+	
+	&.metals
+		border 1px solid $color-metal
+		&::-moz-progress-bar 
+			background-color #5697D7
+
+		&::-webkit-progress-value
+			background-color #5697D7
+			
+		&[aria-valuenow]:before
+			background-color #5697D7
+		
+	&.crystals
+		border 1px solid $color-crystal
+		&::-moz-progress-bar 
+			background-color #D7559B
+
+		&::-webkit-progress-value
+			background-color #D7559B
+			
+		&[aria-valuenow]:before
+			background-color #D7559B
 
 .information
 	>.resources

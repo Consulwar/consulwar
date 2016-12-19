@@ -235,6 +235,10 @@ Tracker.autorun(function () {
 	if (Meteor.user() && Meteor.user().game) {
 		var user = Meteor.user();
 
+		if (user.settings.options.mobileVersion && !$('meta[name="viewport"]').length) {
+			$('head').append('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>');
+		}
+
 		if (user && user.blocked === true) {
 			Meteor.logout();
 			Router.go('index');

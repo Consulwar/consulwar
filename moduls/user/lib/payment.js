@@ -85,4 +85,16 @@ new game.PaymentItem({
 	discount: { rub: 1250 }
 });
 
+
+new game.PaymentItem({
+	id: 'music',
+	name: 'Музыкальный альбом',
+	description: 'Клёвая музычка',
+	profit: {
+		music: true
+	},
+	cost: { rub: 150 },
+	discount: { rub: 100 }
+});
+
 };

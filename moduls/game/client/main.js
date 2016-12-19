@@ -21,6 +21,8 @@ initItemLib();
 initItemClient();
 initCheatsClient();
 
+initPleerClient();
+
 
 /*
 var preloadImages = function(images) {

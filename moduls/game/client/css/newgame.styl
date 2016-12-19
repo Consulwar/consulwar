@@ -9,6 +9,7 @@ $color-description = #bbc9db
 
 $color-black = #000
 $color-white = #fff
+$color-blue = #13161b
 
 $color-row1 =  #0B121A
 $color-row2 = #0E1821
@@ -97,7 +98,17 @@ body.game
 		&:hover
 			-webkit-filter brightness(1.2)
 			filter brightness(1.2)
+		
+		&.orangeButton
+			width 119px
+			height 33px
+			flex-shrink 0
+			background-image url(/img/game/orange_button.png)
+			background-repeat no-repeat
+			color $color-white
+			font-weight bold
 
+	@import '{}/moduls/game/client/css/player.styl'
 	@import '{}/moduls/building/client/building.styl'
 	@import '{}/moduls/research/client/research.styl'
 	@import '{}/moduls/mutual/client/mutual.styl'

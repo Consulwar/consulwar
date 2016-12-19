@@ -59,10 +59,23 @@ Game.Payment.showWindow = function() {
 	showPaymentWindow();
 };
 
+Game.Payment.buyItem = function(item) {
+	Meteor.call('platbox.getPaymentUrl', item, function(err, url) {
+		if (err) {
+			Notifications.error(err.error);
+		} else {
+			hidePaymentWindow();
+			showPlatboxWindow(url);
+		}
+	});
+};
+
 Template.payment.helpers({
 	paymentItems: function() {
-		return _.map(Game.Payment.items, function(item) {
+		return _.filter(_.map(Game.Payment.items, function(item) {
 			return item;
+		}), function(item) {
+			return item.profit.resources !== undefined;
 		});
 	}
 });
@@ -73,14 +86,7 @@ Template.payment.events({
 	},
 
 	'click .paymentItems li': function(e, t) {
-		Meteor.call('platbox.getPaymentUrl', e.currentTarget.dataset.id, function(err, url) {
-			if (err) {
-				Notifications.error(err.error);
-			} else {
-				hidePaymentWindow();
-				showPlatboxWindow(url);
-			}
-		});
+		Game.Payment.buyItem(e.currentTarget.dataset.id);
 	}
 });
 

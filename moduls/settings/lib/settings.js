@@ -23,7 +23,8 @@ Game.Settings = {
 		rotatePlanets: [true, false],
 		rareScreenUpdates: [true, false],
 		wideChat: [true, false],
-		showDistanceFromPlanets: [true, false]
+		showDistanceFromPlanets: [true, false],
+		mobileVersion: [true, false]
 	}
 };
 

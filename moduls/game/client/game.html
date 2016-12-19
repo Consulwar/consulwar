@@ -1,7 +1,7 @@
 <template name="newgame">
 	{{> connection}}
 
-	<div class="wrap"> 
+	<div class="wrap {{#if options.mobileVersion}}mobileVersion{{/if}}"> 
 		<div class="page">
 			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}} {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
 				<div class="overlay_wrap">

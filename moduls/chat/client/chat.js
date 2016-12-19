@@ -45,7 +45,7 @@ var addMessage = function(message, previousMessage) {
 	messages.upsert(message._id, message);
 	Meteor.setTimeout(function() {
 		$('.scrollbar-inner').perfectScrollbar('update');
-	})
+	});
 };
 
 var addMessagesAfter = function(newMessages, message) {

@@ -25,7 +25,7 @@ Game.Icons.canUseIcon = function(group, engName) {
 	}
 
 	return true;
-}
+};
 
 Meteor.methods({
 	'icon.buy': function(group, engName) {
@@ -153,4 +153,4 @@ Meteor.publish('iconsUnique', function() {
 });
 
 
-}
+};

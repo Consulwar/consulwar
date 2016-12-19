@@ -576,7 +576,7 @@ var reptilesFleetPower = function(units) {
 		
 		return units;
 	}, {reptiles: {fleet: {}}}));
-}
+};
 
 Template.cosmosPlanetPopup.helpers({
 	getTimeNextDrop: function(timeCollected) {
@@ -884,7 +884,7 @@ Template.cosmosShipInfo.events({
 // ----------------------------------------------------------------------------
 var activeColonyId = new ReactiveVar(null);
 Game.Cosmos.showAttackMenu = function(id) {
-	if (activeColonyId.get() == null) {
+	if (activeColonyId.get() === null) {
 		activeColonyId.set(Game.Planets.getBase()._id);
 	}
 
@@ -946,7 +946,7 @@ var timeAttack = function(id) {
 	}
 
 	return null;
-}
+};
 
 Template.cosmosAttackMenu.helpers({
 	isFleetSended: function() {
@@ -1190,7 +1190,7 @@ Template.cosmosAttackMenu.helpers({
 			} else {
 				let squad = {
 					slot
-				}
+				};
 				if (squad.slot <= Game.Squad.config.slots.free || Game.hasPremium()) {
 					squad.name = 'Отряд ' + slot;
 				}

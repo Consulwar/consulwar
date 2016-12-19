@@ -18,7 +18,7 @@ var storedTracks = JSON.parse(localStorage.getItem('tracks'));
 var playlist = [];
 for (let key in tracks) {
 	key = parseInt(key, 10);
-	let track = new buzz.sound('http://times.consulwar.ru/music/' + tracks[key] + '.mp3')
+	let track = new buzz.sound('http://times.consulwar.ru/music/' + tracks[key] + '.mp3');
 	track.name = tracks[key];
 	track.id = key;
 
@@ -103,7 +103,7 @@ Game.Player = {
 				nextTrack = playlist[nextTrack];
 			}
 
-			if (nextTrack != null) {
+			if (nextTrack !== null) {
 				this.currentTrack.set(nextTrack);
 				if (forcePlay || isPlaying) {
 					this.play();
@@ -148,7 +148,7 @@ Game.Player = {
 		let selectedTrack = this.selectedTrack.get();
 		if (selectedTrack) {
 			selectedTrack = playlist.indexOf(selectedTrack);
-			this.swapTracks(selectedTrack, this.previous(selectedTrack))
+			this.swapTracks(selectedTrack, this.previous(selectedTrack));
 		}
 	},
 
@@ -156,10 +156,10 @@ Game.Player = {
 		let selectedTrack = this.selectedTrack.get();
 		if (selectedTrack) {
 			selectedTrack = playlist.indexOf(selectedTrack);
-			this.swapTracks(selectedTrack, this.next(selectedTrack))
+			this.swapTracks(selectedTrack, this.next(selectedTrack));
 		}
 	}
-}
+};
 
 Tracker.autorun(function () {
 	var updated = Game.Player.updated.get();

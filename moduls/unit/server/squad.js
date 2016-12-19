@@ -73,7 +73,7 @@ Meteor.methods({
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
-				};
+				}
 			}),
 			name: String
 		}));
@@ -107,7 +107,7 @@ Meteor.methods({
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
-				};
+				}
 			}),
 			group: String,
 			name: String
@@ -140,7 +140,7 @@ Meteor.methods({
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
-				};
+				}
 			}),
 			units: Match.Where(function(units) {
 				var possibleUnits = _.keys(Game.Unit.items.army.fleet);
@@ -179,7 +179,7 @@ Meteor.methods({
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
-				};
+				}
 			})
 		}));
 

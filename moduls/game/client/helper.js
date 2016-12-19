@@ -155,7 +155,7 @@ UI.registerHelper('arrayify',function(obj){
 		return {
 			key,
 			value
-		}
+		};
 	});
 });
 

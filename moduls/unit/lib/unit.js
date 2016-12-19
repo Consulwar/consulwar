@@ -55,7 +55,7 @@ game.Unit = function(options) {
 		return result;
 	};
 
-	if (options.power != undefined) {
+	if (options.power !== undefined) {
 		this.power = options.power;
 	}
 

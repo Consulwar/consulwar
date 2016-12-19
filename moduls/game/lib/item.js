@@ -130,4 +130,4 @@ Game.Icons = {
 
 initIconsContent();
 
-}
+};

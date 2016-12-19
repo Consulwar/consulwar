@@ -23,6 +23,6 @@ Game.Squad = {
 			slot
 		});
 	}
-}
+};
 
 };

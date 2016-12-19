@@ -76,22 +76,39 @@
 
 <template name="cosmosUnitsBlock">
 	{{#if units}}
-		<div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
-			{{#each units}}
-				<a 
-					class="{{this.unit.engName}}-icon {{#unless this.count}}disabled{{/unless}}" 
-					href="{{this.unit.url}}"
-				>
-					<div
-						class="count"
-						data-tooltip="{{battleCountNumber this.countId}}"
-						data-tooltip-direction="e"
+		{{#if options.textUnits}}
+			<ul class="armyText {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
+				{{#each units}}
+					{{#if this.count}}
+						<li>
+							{{this.unit.name}} 
+							<span 
+								data-tooltip="{{battleCountNumber this.countId}}"
+								data-tooltip-direction="e">
+								{{formatNumberWithISO this.count}}
+							</span>
+						</li>
+					{{/if}}
+				{{/each}}
+			</ul>
+		{{else}}
+			<div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
+				{{#each units}}
+					<a 
+						class="{{this.unit.engName}}-icon {{#unless this.count}}disabled{{/unless}}" 
+						href="{{this.unit.url}}"
 					>
-						{{#if this.count}}{{formatNumberWithISO this.count}}{{/if}}
-					</div>
-				</a>
-			{{/each}}
-		</div>
+						<div
+							class="count"
+							data-tooltip="{{battleCountNumber this.countId}}"
+							data-tooltip-direction="e"
+						>
+							{{#if this.count}}{{formatNumberWithISO this.count}}{{/if}}
+						</div>
+					</a>
+				{{/each}}
+			</div>
+		{{/if}}
 	{{/if}}
 </template>
 

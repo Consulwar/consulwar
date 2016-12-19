@@ -69,7 +69,7 @@ Meteor.methods({
 		check(options, Match.ObjectIncluding({
 			slot: Match.Where(function(slot) {
 				check(slot, Match.Integer);
-				if (slot > 0 && slot < Game.Squad.config.slots.total) {
+				if (slot > 0 && slot <= Game.Squad.config.slots.total) {
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
@@ -103,7 +103,7 @@ Meteor.methods({
 		check(options, Match.ObjectIncluding({
 			slot: Match.Where(function(slot) {
 				check(slot, Match.Integer);
-				if (slot > 0 && slot < Game.Squad.config.slots.total) {
+				if (slot > 0 && slot <= Game.Squad.config.slots.total) {
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
@@ -136,7 +136,7 @@ Meteor.methods({
 		check(options, Match.ObjectIncluding({
 			slot: Match.Where(function(slot) {
 				check(slot, Match.Integer);
-				if (slot > 0 && slot < Game.Squad.config.slots.total) {
+				if (slot > 0 && slot <= Game.Squad.config.slots.total) {
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');
@@ -175,7 +175,7 @@ Meteor.methods({
 		check(options, Match.ObjectIncluding({
 			slot: Match.Where(function(slot) {
 				check(slot, Match.Integer);
-				if (slot > 0 && slot < Game.Squad.config.slots.total) {
+				if (slot > 0 && slot <= Game.Squad.config.slots.total) {
 					return true;
 				} else {
 					throw new Match.Error('Какой-какой слот? Ну неее…');

@@ -274,6 +274,7 @@ var formatNumber = function (num, delimeter) {
 
 	return _.map(num, function(value) {
 		if (_.isNumber(value)) {
+			value = parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0], 10);
 			if (value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0].substr(-1) !== '0') {
 				value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
 			} else if (value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0].substr(-1) !== '0') {

@@ -618,8 +618,8 @@ Game.SpaceEvents.makeFun = function() {
 	Game.Planets.setLastFunTime( Game.getCurrentTime() );
 
 	var mission = {
-		type: 'battlefleet',
-		level: 10
+		type: 'prepearedfleet',
+		level: 508
 	};
 
 	var colonies = Game.Planets.getColonies();

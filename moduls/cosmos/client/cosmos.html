@@ -126,18 +126,16 @@
 						<div class="max">{{formatNumberWithISO this.max}}</div>
 
 						<div class="count">
-							{{#let unitSquadCount=(lookup activeSquad.units this.engName)}}
-								{{#if unitSquadCount}}
-									{{#if lte unitSquadCount this.max}}
-										<input type="number" placeholder="" value="{{unitSquadCount}}">
-									{{else}}
-										<input type="number" placeholder="" value="{{this.max}}">
-										<span>{{formatNumberWithISO (substract unitSquadCount this.max) 5}}</span>
-									{{/if}}
+							{{#if this.count}}
+								{{#if lte this.count this.max}}
+									<input type="number" placeholder="" value="{{this.count}}">
 								{{else}}
-									<input type="number" placeholder="" value="">
+									<input type="number" placeholder="" value="{{this.max}}">
+									<span>{{formatNumberWithISO (substract this.count this.max) 5}}</span>
 								{{/if}}
-							{{/let}}
+							{{else}}
+								<input type="number" placeholder="" value="">
+							{{/if}}
 						</div>
 					</li>
 				{{/each}}

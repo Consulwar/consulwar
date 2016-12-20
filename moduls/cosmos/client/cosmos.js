@@ -21,6 +21,7 @@ var selectedArtefact = new ReactiveVar(null);
 var isPopupLocked = false;
 
 var activeSquad = new ReactiveVar(null);
+var selectedUnits = new ReactiveVar(null);
 
 
 Game.SpaceEvents.getAll().observe({
@@ -894,7 +895,8 @@ Game.Cosmos.showAttackMenu = function(id) {
 			id,
 			activeColonyId,
 			updated,
-			activeSquad
+			activeSquad,
+			selectedUnits
 		}
 	});
 };
@@ -906,10 +908,11 @@ Game.Cosmos.hideAttackMenu = function() {
 };
 
 var isAllSelected = function() {
-	var units = $('.fleet li');
-	if (units.length) {
-		for (let i = 0; i < units.length; i++) {
-			if ($(units[i]).find('input').val() != $(units[i]).attr('data-max')) {
+	var units = selectedUnits.get();
+	if (units) {
+		var army = Game.Planets.getFleetUnits(activeColonyId.get());
+		for (let unitName in units) {
+			if (units[unitName] != army[unitName]) {
 				return false;
 			}
 		}
@@ -917,6 +920,29 @@ var isAllSelected = function() {
 	} else {
 		return false;
 	}
+};
+
+var resetSelectedUnits = function() {
+	var units = {};
+	var squad = activeSquad.get();
+	for(let engName in Game.Unit.items.army.fleet) {
+		if (squad && squad.units && squad.units[engName]) {
+			units[engName] = squad.units[engName];
+		} else {
+			units[engName] = 0;
+		}
+	}
+	selectedUnits.set(units);
+};
+resetSelectedUnits();
+
+var selectAllAvaliableUnits = function() {
+	var army = Game.Planets.getFleetUnits(activeColonyId.get());
+	var units = {};
+	for(let engName in Game.Unit.items.army.fleet) {
+		units[engName] = army[unitName] || 0;
+	}
+	selectedUnits.set(units);
 };
 
 var timeAttack = function(id) {
@@ -992,6 +1018,8 @@ Template.cosmosAttackMenu.helpers({
 			return null;
 		}
 
+		var selected = selectedUnits.get();
+
 		var units = [];
 
 		for (var key in Game.Unit.items.army.fleet) {
@@ -1004,7 +1032,7 @@ Template.cosmosAttackMenu.helpers({
 				engName: key,
 				name: Game.Unit.items.army.fleet[key].name,
 				max: max,
-				count: 0
+				count: (selected && selected[key]) || 0
 			});
 		}
 
@@ -1012,16 +1040,15 @@ Template.cosmosAttackMenu.helpers({
 	},
 
 	selectedFleetPower: function() {
-		var updated = this.updated.get();
+		var units = selectedUnits.get();
 
-		return Game.Unit.calculateUnitsPower(_.reduce($('.fleet li'), function(units, element) {
-			let count = parseInt($(element).find('input').val(), 10);
+		return Game.Unit.calculateUnitsPower(_.reduce(_.keys(units), function(resultUnits, unitName) {
+			let count = units[unitName];
 			if (count > 0) {
-				let unitName = $(element).data('id');
-				units.army.fleet[unitName] = count;
+				resultUnits.army.fleet[unitName] = count;
 			}
 			
-			return units;
+			return resultUnits;
 		}, {army: {fleet: {}}}));
 	},
 
@@ -1042,16 +1069,8 @@ Template.cosmosAttackMenu.helpers({
 			// base planet is not home, so we can leave it
 			isLeavingBase = true;
 			// test selected units vs available units
-			var availableFleet = Game.Planets.getFleetUnits(baseId);
-			var elements = $('.fleet li');
-			for (var i = 0; i < elements.length; i++) {
-				var max = parseInt( $(elements[i]).attr('data-max'), 10 );
-				var count = parseInt( $(elements[i]).find('input').val(), 10 );
-				if (max != count) {
-					// not all selected, so we don't leaving base
-					isLeavingBase = false;
-					break;
-				}
+			if (!isAllSelected()) {
+				isLeavingBase = false;
 			}
 		}
 
@@ -1066,10 +1085,7 @@ Template.cosmosAttackMenu.helpers({
 		return Game.Planets.getExtraColoniesCount() < Game.Planets.MAX_EXTRA_COLONIES;
 	},
 
-	isAllSelected: function() {
-		var updated = this.updated.get();
-		return isAllSelected();
-	},
+	isAllSelected,
 
 	colonies: function() {
 		var maxCount = Game.Planets.getMaxColoniesCount();
@@ -1240,10 +1256,7 @@ Template.cosmosAttackMenu.events({
 		e.preventDefault();
 		var id = $(e.currentTarget).attr("data-id");
 		if (id && $(e.currentTarget).hasClass('humans') && !$(e.currentTarget).hasClass('disabled')) {
-			// reset fleet values
-			$('.fleet li').each(function(index, element) {
-				$(element).find('input').val( 0 );
-			});
+			resetSelectedUnits();
 
 			// set new colony id
 			t.data.activeColonyId.set( id );
@@ -1253,38 +1266,45 @@ Template.cosmosAttackMenu.events({
 	'click .btn-all': function(e, t) {
 		var isSelected = isAllSelected();
 
-		$('.fleet li').each(function(index, element) {
-			var max = parseInt( $(element).attr('data-max'), 10 );
-			$(element).find('input').val( isSelected ? 0 : max );
-		});
-
-		t.data.updated.set((new Date()).valueOf());
+		if (isAllSelected()) {
+			resetSelectedUnits();
+		} else {
+			selectAllAvaliableUnits();
+		}
 	},
 
 	'click .fleet a, click .fleet .max': function(e, t) {
+		var id = $(e.currentTarget.parentElement).attr('data-id');
 		var max = $(e.currentTarget.parentElement).attr('data-max');
 		var input = $(e.currentTarget.parentElement).find('input');
 
+		var selected = selectedUnits.get();
+
 		if (max == input.val()) {
-			input.val(0);
+			selected[id] = 0;
 		} else {
-			input.val(max);
+			selected[id] = max;
 		}
 
-		t.data.updated.set((new Date()).valueOf());
+		selectedUnits.set(selected);
 	},
 
 	'change .fleet input': function (e, t) {
 		var value = parseInt( e.currentTarget.value, 10 );
-		var max = parseInt( $(e.currentTarget.parentElement).attr('data-max'), 10 );
+		var id = $(e.currentTarget.parentElement.parentElement).attr('data-id');
+		var max = parseInt( $(e.currentTarget.parentElement.parentElement).attr('data-max'), 10 );
+
+		var selected = selectedUnits.get();
 
 		if (value < 0) {
-			e.currentTarget.value = 0;
+			selected[id] = 0;
 		} else if (value > max) {
-			e.currentTarget.value = max;
+			selected[id] = max;
+		} else {
+			selected[id] = value;
 		}
 
-		t.data.updated.set((new Date()).valueOf());
+		selectedUnits.set(selected);
 	},
 
 	'click .btn-attack': function(e, t) {
@@ -1299,20 +1319,15 @@ Template.cosmosAttackMenu.events({
 		}
 
 		var total = 0;
+		var selected = selectedUnits.get();
 		var units = {};
 
-		$('.fleet li').each(function(index, element) {
-			var id = $(element).attr('data-id');
-			var max = parseInt( $(element).attr('data-max'), 10 );
-			var count = parseInt( $(element).find('input').val(), 10 );
-
-			if (max > 0 && count > 0) {
-				units[ id ] = Math.min(max, count);
-				total += units[ id ];
+		for (let engName in selected) {
+			if (selected[engName] > 0) {
+				units[engName] = selected[engName];
+				total += selected[engName];
 			}
-
-			$(element).find('input').val(0);
-		});
+		}
 
 		if (total <= 0) {
 			Notifications.info('Выберите корабли для отправки');
@@ -1395,24 +1410,15 @@ Template.cosmosAttackMenu.events({
 		var slot = parseInt(e.currentTarget.dataset.id, 10);
 		var squad = activeSquad.get();
 
-		Meteor.setTimeout(function() {
+		if (squad && squad.slot == slot) {
 			activeSquad.set(null);
-		});
-
-		Meteor.setTimeout(function() {
-			if (squad && squad.slot == slot) {
-				activeSquad.set(null);
-			} else {
-				activeSquad.set(Game.Squad.getOne(slot) || {
-					slot,
-					name: 'Отряд ' + slot
-				});
-			}
-		});
-
-		Meteor.setTimeout(function() {
-			t.data.updated.set((new Date()).valueOf());
-		});
+		} else {
+			activeSquad.set(Game.Squad.getOne(slot) || {
+				slot,
+				name: 'Отряд ' + slot
+			});
+		}
+		resetSelectedUnits();
 	},
 
 	'click .squad:not(.noPremium) img': function(e, t) {
@@ -1458,15 +1464,7 @@ Template.cosmosAttackMenu.events({
 		var squad = activeSquad.get();
 		if (squad) {
 			Game.showAcceptWindow('Сохранить отряд «' + squad.name + '»?', function() {
-				var units = {};
-				$('.fleet li').each(function(index, element) {
-					var id = $(element).attr('data-id');
-					var count = parseInt( $(element).find('input').val(), 10 );
-
-					if (count > 0) {
-						units[ id ] = count;
-					}
-				});
+				var units = selectedUnits.get();
 
 				Meteor.call('squad.setUnits', {slot: squad.slot, units}, function(err, result) {
 					if (err) {

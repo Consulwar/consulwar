@@ -911,7 +911,7 @@ var isAllSelected = function() {
 	var units = selectedUnits.get();
 	if (units) {
 		var army = Game.Planets.getFleetUnits(activeColonyId.get());
-		for (let unitName in units) {
+		for (let unitName in army) {
 			if (units[unitName] != army[unitName]) {
 				return false;
 			}
@@ -940,7 +940,7 @@ var selectAllAvaliableUnits = function() {
 	var army = Game.Planets.getFleetUnits(activeColonyId.get());
 	var units = {};
 	for(let engName in Game.Unit.items.army.fleet) {
-		units[engName] = army[unitName] || 0;
+		units[engName] = army[engName] || 0;
 	}
 	selectedUnits.set(units);
 };
@@ -1264,8 +1264,6 @@ Template.cosmosAttackMenu.events({
 	},
 
 	'click .btn-all': function(e, t) {
-		var isSelected = isAllSelected();
-
 		if (isAllSelected()) {
 			resetSelectedUnits();
 		} else {

@@ -541,22 +541,23 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 	}
 
 	if (planet.isHome || planet.armyId || planet.mission) {
-		var units = Game.Planets.getFleetUnits(planet._id);
+		var units = Game.Planets.getFleetUnits(planet._id) ;
+		if (units) {
+			var side = (planet.mission) ? 'reptiles' : 'army';
+			info.units = [];
 
-		var side = (planet.mission) ? 'reptiles' : 'army';
-		info.units = [];
+			for (let engName in Game.Unit.items[side].fleet) {
+				let unit = Game.Unit.items[side].fleet[engName];
 
-		for (let engName in Game.Unit.items[side].fleet) {
-			let unit = Game.Unit.items[side].fleet[engName];
-
-			info.units.push({
-				engName: engName,
-				unit: unit,
-				count: _.isString( units[engName] )
-					? game.Battle.count[ units[engName] ]
-					: units[engName] || 0,
-				countId: units[engName]
-			});
+				info.units.push({
+					engName: engName,
+					unit: unit,
+					count: _.isString( units[engName] )
+						? game.Battle.count[ units[engName] ]
+						: units[engName] || 0,
+					countId: units[engName]
+				});
+			}
 		}
 	}
 
@@ -911,6 +912,9 @@ var isAllSelected = function() {
 	var units = selectedUnits.get();
 	if (units) {
 		var army = Game.Planets.getFleetUnits(activeColonyId.get());
+		if (!army) {
+			return true;
+		}
 		for (let unitName in army) {
 			if (units[unitName] != army[unitName]) {
 				return false;
@@ -940,7 +944,7 @@ var selectAllAvaliableUnits = function() {
 	var army = Game.Planets.getFleetUnits(activeColonyId.get());
 	var units = {};
 	for(let engName in Game.Unit.items.army.fleet) {
-		units[engName] = army[engName] || 0;
+		units[engName] = (army && army[engName]) || 0;
 	}
 	selectedUnits.set(units);
 };

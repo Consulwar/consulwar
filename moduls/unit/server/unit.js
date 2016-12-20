@@ -104,9 +104,24 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 	var totalCount = 0;
 	var restCount = 0;
 
-	for (var side in sourceUnits) {
-		for (var group in sourceUnits[side]) {
-			for (var name in sourceUnits[side][group]) {
+	for (let side in destUnits) {
+		for (let group in destUnits[side]) {
+			for (let name in destUnits[side][group]) {
+				if (!(
+					   sourceUnits[side]
+					&& sourceUnits[side][group]
+					&& sourceUnits[side][group][name]
+					)
+				) {
+					throw new Meteor.Error('Неправильные входные данные');
+				}
+			}
+		}
+	}
+
+	for (let side in sourceUnits) {
+		for (let group in sourceUnits[side]) {
+			for (let name in sourceUnits[side][group]) {
 				// subtract destination units 
 				if (destUnits[side]
 				 && destUnits[side][group]

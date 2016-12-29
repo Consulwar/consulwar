@@ -919,6 +919,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 				if (mission.level[ options.missionLevel ].reward) {
 					reward.metals = mission.level[ options.missionLevel ].reward.metals;
 					reward.crystals = mission.level[ options.missionLevel ].reward.crystals;
+
+					// New year bonus!
+					if (options.missionType == 'tradefleet') {
+						reward.credits = Game.Random.interval(5, 15);
+					}
 				} else {
 					reward.metals = Math.floor( killedCost.metals * 0.1 );
 					reward.crystals = Math.floor( killedCost.crystals * 0.1 );

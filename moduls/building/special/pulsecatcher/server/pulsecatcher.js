@@ -4,7 +4,7 @@ initBuildingSpecialPulsecatcherLib();
 
 Game.Building.special.Pulsecatcher.startNextQuiz = function() {
 	// finish active quiz
-	var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
+	var activeQuiz = Game.Building.special.Pulsecatcher.getQuiz();
 	if (activeQuiz) {
 		Game.Quiz.Collection.update({
 			_id: activeQuiz._id
@@ -19,7 +19,12 @@ Game.Building.special.Pulsecatcher.startNextQuiz = function() {
 	var options = {};
 	var result = {};
 
-	for (var key in Game.Cards.items.pulsecatcher) {
+	var shuffledCards = _.sample(
+		_.keys(Game.Cards.items.pulsecatcher), 
+	3);
+
+	for (let i = 0; i < shuffledCards.length; i++) {
+		let key = shuffledCards[i];
 		options[key] = Game.Cards.items.pulsecatcher[key].name;
 		result[key] = 0;
 	}
@@ -62,7 +67,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
 		}
 
-		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getQuiz();
 		if (!activeQuiz) {
 			throw new Meteor.Error('Голосование пока не доступно');
 		}
@@ -87,7 +92,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
 		}
 
-		var previousQuiz = Game.Building.special.Pulsecatcher.getPreviousQuiz();
+		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1);
 		var choosen = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
 
 		if (!choosen) {
@@ -124,14 +129,14 @@ Meteor.publish('pulsecatcherQuiz', function() {
 			type: 'pulsecatcher'
 		}, {
 			sort: { endDate: -1 },
-			limit: 2
+			limit: 3
 		});
 	} else {
 		this.ready();
 	}
 });
 
-Meteor.publish('pulsecatcherQuizAnswer', function() {
+Meteor.publish('pulsecatcherQuizAnswer', function(id) {
 	if (this.userId) {
 		var activeQuiz = Game.Quiz.Collection.findOne({
 			type: 'pulsecatcher'

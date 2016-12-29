@@ -1,20 +1,12 @@
 initBuildingSpecialPulsecatcherLib = function() {
 
 Game.Building.special.Pulsecatcher = {
-	getActiveQuiz: function() {
-		return Game.Quiz.Collection.findOne({
-			type: 'pulsecatcher'
-		}, {
-			sort: { endDate: -1 }
-		});
-	},
-
-	getPreviousQuiz: function() {
+	getQuiz: function(skip = 0) {
 		return Game.Quiz.Collection.findOne({
 			type: 'pulsecatcher'
 		}, {
 			sort: { endDate: -1 },
-			skip: 1
+			skip: skip
 		});
 	},
 

@@ -1,5 +1,6 @@
 Meteor.startup(function () {
 
+initUserClient();
 initPaymentClient();
 initResourcesClient();
 initCardsClient();

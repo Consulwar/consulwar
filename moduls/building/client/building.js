@@ -9,12 +9,15 @@ Game.Building.showPage = function() {
 	var menu = this.params.menu;
 	
 	if (item) {
+		this.render('item_building', {to: 'content', data: { building: item, submenu: menu } });
+		this.render('empty', {to: 'item_submenu'});
+
 		switch (menu) {
 			case 'tournaments':
 				this.render('colosseum', { to: 'content' });
 				break;
 			case 'bonus':
-				this.render('pulsecatcher', { to: 'content' });
+				this.render('pulsecatcher', {to: 'item_submenu'});
 				break;
 			default:
 				this.render('item_building', {to: 'content', data: { building: item } });

@@ -70,6 +70,10 @@ Game.Payment.buyItem = function(item) {
 	});
 };
 
+Template.payment.onRendered(function() {
+	$('.payment.scrollbar-inner').perfectScrollbar();
+});
+
 Template.payment.helpers({
 	paymentItems: function() {
 		return _.filter(_.map(Game.Payment.items, function(item) {
@@ -85,7 +89,7 @@ Template.payment.events({
 		hidePaymentWindow();
 	},
 
-	'click .paymentItems li': function(e, t) {
+	'click .paymentItems .greenButton': function(e, t) {
 		Game.Payment.buyItem(e.currentTarget.dataset.id);
 	}
 });

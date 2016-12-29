@@ -1,25 +1,28 @@
 <template name="item_building">
-	{{#if isNewLayout}}
-		<div class="header">
-			<div class="level">
-				{{#if building.currentLevel}}
-					<span>{{building.currentLevel}}</span> уровень 
-				{{else}}
-					Не построено
-				{{/if}}
-			</div>
-			<div class="name">
-				{{building.name}}
-			</div>
-			<!-- quest link here -->
-			<button 
-				class="
-					toggle_description 
-					{{#if not options.hideDescription}}active{{/if}}
-				"
-			></button>
-			<a href="{{backToGroupLink}}" class="close"></a>
+	<div class="header">
+		<div class="level">
+			{{#if building.currentLevel}}
+				<span>{{building.currentLevel}}</span> уровень 
+			{{else}}
+				Не построено
+			{{/if}}
 		</div>
+		<div class="name">
+			{{building.name}}
+		</div>
+		<!-- quest link here -->
+		<button 
+			class="
+				toggle_description 
+				{{#if not options.hideDescription}}active{{/if}}
+			"
+		></button>
+		<a href="{{backToGroupLink}}" class="close"></a>
+	</div>
+
+	{{#if submenu}}
+		{{>yield region="item_submenu"}}
+	{{else}}
 
 		<div 
 			class="description" 
@@ -40,8 +43,6 @@
 						{{> item_price price=building.price}}
 					{{/if}}
 				{{/if}}
-
-
 
 				<div class="actions">
 					<div class="action">
@@ -104,73 +105,5 @@
 			</div> 
 		</div>
 		{{> item_requirements requirements=building.requirements}}
-	{{else}}
-
-		<div class="information {{building.type}}">
-			<div class="image">
-				<img 
-					alt="{{building.name}}" 
-					src="
-					{{#unless building.notImplemented}}
-						/img/game/building/{{building.group}}/{{building.engName}}.jpg
-					{{else}}
-						/img/game/notimplemented.jpg
-					{{/unless}}
-					"
-				>
-				<span class="title">{{building.name}}</span>
-				{{#if building.currentLevel}}
-					<span class="level" title="{{formatNumber building.currentLevel}}">{{formatNumberWithISO building.currentLevel}} уровень</span>
-				{{/if}}
-			</div>
-			<div class="description">
-				{{> item_requirements requirements=building.requirements}}
-
-				<p>{{building.description}}</p>
-				
-				{{> item_effect item=building}}
-			</div>
-
-			{{#if gt building.maxLevel building.currentLevel}}
-				{{#if building.progress}}
-					{{> item_price price=building.next.price}}
-				{{else}}
-					{{> item_price price=building.price}}
-				{{/if}}
-			{{/if}}
-
-			{{#if eq building.engName 'tradingport'}}
-				<button class="market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
-			{{/if}}
-
-			{{#if eq building.engName 'spaceport'}}
-				<button class="containers" disabled="{{lt building.currentLevel 1}}">Открыть контейнер</button>
-			{{/if}}
-
-			{{#if eq building.engName 'colosseum'}}
-				<a
-					class="tournament {{#if lt building.currentLevel 1}}disabled{{/if}}"
-					href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
-				>
-					Устроить турнир
-				</a>
-			{{/if}}
-
-			{{#if eq building.engName 'pulsecatcher'}}
-				<a
-					class="pulsecatcher {{#if lt building.currentLevel 1}}disabled{{/if}}"
-					href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
-				>
-					Получить бонус
-				</a>
-			{{/if}}
-
-			{{#if gt building.maxLevel building.currentLevel}}
-				<button class="build" disabled="{{not building.canBuild}}">Отдать приказ</button>
-			{{/if}}
-			
-			{{> Template.dynamic template=additionalArea}}
-		</div>
-
 	{{/if}}
 </template>

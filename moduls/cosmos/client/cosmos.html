@@ -533,7 +533,11 @@
 					{{#if this.spaceEvent.info.isHumans}}
 						map-fleet-humans
 					{{else}}
-						map-fleet-rept
+						{{#if eq this.spaceEvent.info.mission.type 'tradefleet'}}
+							map-fleet-rept-tradefleet
+						{{else}}
+							map-fleet-rept
+						{{/if}}
 					{{/if}}
 				"
 				style="transform: rotate({{animation.angle}}deg);"

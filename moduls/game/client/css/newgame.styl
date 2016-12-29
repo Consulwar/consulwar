@@ -1,6 +1,6 @@
 $color-human = #ffb74a
 $color-metal = #66cce2
-$color-ctystal = #d36fff
+$color-crystal = #d36fff
 $color-honor = #ff7566
 $color-ggk = #c6e84c
 
@@ -99,14 +99,23 @@ body.game
 			-webkit-filter brightness(1.2)
 			filter brightness(1.2)
 		
-		&.orangeButton
-			width 119px
-			height 33px
+		&.orangeButton,
+		&.greenButton
 			flex-shrink 0
-			background-image url(/img/game/orange_button.png)
 			background-repeat no-repeat
 			color $color-white
 			font-weight bold
+			
+		&.orangeButton
+			width 119px
+			height 33px
+			background-image url(/img/game/orange_button.png)
+		
+		&.greenButton
+			width 181px
+			height 50px
+			background-image url(/img/game/green_button.png)
+			font-size 20px
 
 	@import '{}/moduls/game/client/css/player.styl'
 	@import '{}/moduls/building/client/building.styl'
@@ -117,6 +126,8 @@ body.game
 	@import '{}/moduls/game/client/css/item.styl'
 	@import '{}/moduls/cosmos/client/cosmos.styl'
 	@import '{}/moduls/resources/client/resources.styl'
+	@import '{}/moduls/user/client/user.styl'
+	@import '{}/moduls/user/client/payment.styl'
 		
 
 .page
@@ -308,6 +319,27 @@ body.game
 			height 100%
 			background-size 100%
 
+.close
+	display block
+	width 22px
+	height 22px
+	background-image url(/img/game/close_new.png)
+	background-repeat no-repeat
+	background-position center center
+	padding 7px
+	-webkit-filter grayscale(0.5)
+	filter grayscale(0.5)
+	cursor pointer
+	
+	&:hover
+		-webkit-filter grayscale(0)
+		filter grayscale(0)
+
+.over .close
+	position absolute
+	top 0
+	right 0
+
 .newgame
 	position relative
 	display flex
@@ -324,6 +356,12 @@ body.game
 	// Возврат оригинального цвета
 	.leaflet-container a
 		color inherit
+		
+	.spinner-container
+		position absolute
+		top 0
+		left 0
+		background-color rgba(0,0,0,0.5)
 	
 	.notImplemented
 		color $color-human
@@ -452,39 +490,6 @@ body.game
 					.build
 						width 100%
 						box-sizing border-box
-				
-				.main_action,
-				.additional_action
-					text-transform uppercase
-					color $color-black
-					border 0
-					padding 15px 15px
-					font-size 16px
-					cursor pointer
-					outline 2px solid black
-					outline-offset -7px
-					text-decoration none
-					text-align center
-					
-					&[disabled="true"]
-						-webkit-filter grayscale(1) brightness(0.3) !important
-						filter grayscale(1) brightness(0.3) !important
-
-					&:hover
-						-webkit-filter brightness(1.2)
-						filter brightness(1.2)
-							
-				.main_action
-					flex-shrink 0
-					background linear-gradient(left, #f1c54c, #e28e49);
-					
-				.additional_action
-					margin 0 auto 0 0
-					background linear-gradient(left, #449bd8, #43c0d1);
-					
-					&.metal,
-					&.crystal
-						width 100%
 
 				div
 					width 100%
@@ -498,13 +503,52 @@ body.game
 				progress
 					align-self flex-start
 					max-width 100%
+				
+		.main_action,
+		.additional_action,
+		.back_action
+			text-transform uppercase
+			color $color-black
+			border 0
+			padding 15px 15px
+			font-size 16px
+			cursor pointer
+			outline 2px solid black
+			outline-offset -7px
+			text-decoration none
+			text-align center
+			
+			&[disabled="true"],
+			&[disabled="disabled"],
+			&.disabled
+				-webkit-filter grayscale(1) brightness(0.3) !important
+				filter grayscale(1) brightness(0.3) !important
+
+			&:hover
+				-webkit-filter brightness(1.2)
+				filter brightness(1.2)
+					
+		.main_action
+			flex-shrink 0
+			background linear-gradient(left, #f1c54c, #e28e49);
+			
+		.additional_action
+			margin 0 auto 0 0
+			background linear-gradient(left, #449bd8, #43c0d1);
+			
+			&.metal,
+			&.crystal
+				width 100%
+		
+		.back_action
+			background linear-gradient(left, #999999, #959595);
 					
 		.content.artefacts
 			.description
 				height 80px			
 
 		.content
-			width 650px
+			width 720px
 			height auto
 			
 			margin auto 15% auto auto
@@ -597,22 +641,6 @@ body.game
 					&:hover
 						-webkit-filter grayscale(1) brightness(1.4)
 						filter grayscale(1) brightness(1.4)
-						
-					
-				.close
-					display block
-					width 22px
-					height 22px
-					background-image url(/img/game/close_new.png)
-					background-repeat no-repeat
-					background-position center center
-					padding 7px
-					-webkit-filter grayscale(0.5)
-					filter grayscale(0.5)
-					
-					&:hover
-						-webkit-filter grayscale(0)
-						filter grayscale(0)
 			
 			.description
 				position relative

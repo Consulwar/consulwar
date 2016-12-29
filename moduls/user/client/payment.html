@@ -1,25 +1,58 @@
 <template name="payment">
 	<div class="smoke"></div>
-	<div class="payment">
-		<div class="close"></div>
-		<ul class="paymentItems">
-			{{#each paymentItems}}
-				<li class="{{this.id}}-icon" data-id="{{this.id}}">
-					{{this.cost.rub}} руб
-					{{#if and this.discount this.discount.rub}}
-						<span>- {{this.discount.rub}} руб</span>
-					{{/if}}
-				</li>
-			{{/each}}
-		</ul>
+	<div class="payment_wrapper">
+		<div class="payment scrollbar-inner">
+			<span>
+				<span class="alert">Помните Консулы:</span> 
+				покупая 
+				<span class="ggk">Грязные Галактические Кредиты</span> 
+				— вы поддерживаете 
+				<span class="alert">Борьбу за освобождение Земли от Рептилоидов</span>
+			</span>
+			<div class="close"></div>
+			<div class="paymentItems">
+				{{#each paymentItems}}
+					<div class="{{this.id}}-icon">
+						<div class="description">
+							Кредиты: <span>{{formatNumber this.result.base}}</span>
+							{{#if this.result.bonus}}
+								+ 
+								<span>{{formatNumber this.result.bonus}}</span>
+							{{/if}}
+							{{#if this.result.extra}}
+								+ 
+								<span>{{formatNumber this.result.extra}}</span>
+							{{/if}}
+						</div>
+						<div class="profit">
+							{{formatNumber this.profit.resources.credits}}
+							{{#if this.result.extra}}
+								<span class="previous">
+									{{formatNumber (sum this.result.base (or this.result.bonus 0))}}
+								</span>
+							{{/if}}
+						</div>
+						<div class="price">
+							{{formatNumber this.cost.rub}}
+						</div>
+						
+						<button class="greenButton" data-id="{{this.id}}">
+							Приобрести
+						</button>
+					</div>
+				{{/each}}
+			</div>
+		</div>
 	</div>
 </template>
 
 <template name="paymentPlatbox">
 	<div class="smoke"></div>
-	<div class="payment platbox">
-		<div class="close"></div>
-		<iframe src="{{url}}"></iframe>
+	<div class="payment_wrapper">
+		<div class="payment platbox">
+			<div class="close"></div>
+			<iframe src="{{url}}"></iframe>
+		</div>
 	</div>
 </template>
 

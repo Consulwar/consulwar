@@ -1,9 +1,6 @@
 payment-icon(name)
 	.{name}-icon
 		background-image url("/img/game/payment/" name ".png")
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
 
 
 payment-icon('paymentCredits1000')
@@ -139,28 +136,41 @@ payment-icon('paymentCredits50000')
 	&.reward
 		z-index 199
 
-.payment
+.payment_wrapper
 	position fixed
+	top 0
+	left 0
+	width 100%
+	height 100%
+	display flex
+	align-items center
+	justify-content center
 	z-index 100
-	top 50%
-	left 50%
-	margin -270px 0 0 -450px
-	width 835px
-	height 500px
-	border 1px solid #E9A844
-	border-radius 5px
-	background-color #040506
-	font-size 16px
-	color #ABAFB2
+
+.payment
+	position relative
+	width 960px
+	height 540px
+	padding 10px
+	box-sizing border-box
+	background-color $color-black
+	font-size 14px
+	color $color-ggk
+	overflow auto
+	
+	> span
+		color $color-white
+		
+		.alert
+			color $color-honor
+
+		.ggk
+			color $color-ggk
 
 	&.platbox
 		width 1030px
 		height 95%
 		max-height 730px
-		top 2.5%
-		left 50%
-		margin-left -515px
-		margin-top 0
 		padding 10px
 		
 		iframe
@@ -176,10 +186,6 @@ payment-icon('paymentCredits50000')
 		border none
 		background-image url(img/game/payment/reward-back.jpg)
 		background-repeat no-repeat
-		
-		.close
-			top -10px
-			right 4px
 			
 		img
 			margin-top 50px
@@ -216,41 +222,66 @@ payment-icon('paymentCredits50000')
 				filter brightness(1.4)
 
 	.paymentItems
-		display block
+		display flex
+		flex-wrap wrap
+		flex-direction row
+		justify-content space-between
 		width 100%
-		margin 17px
+		margin 10px 0
 		
-		li
-			cursor pointer
-			display inline-block
-			width 260px
-			height 50px
-			padding-top 170px
+		> div
+			display block
+			width 303px
+			height 229px
 			background-repeat no-repeat
 			background-position center top
-			color #FFFFFF
-			text-align center
-			font-size 24px
+			color $color-ggk
+			margin 5px 0
 			
-			span
-				color #B5D054
-				font-size 18px
+			.description
+				color $color-human
+				font-size 15px
+				font-weight bold
+				margin 12px 20px
+				span
+					color $color-ggk
+					margin 0 3px
+			
+			.profit,
+			.price
+				display flex
+				align-items center
+				width 230px
+				height 46px
+				padding-left 64px
+				box-sizing border-box
+				background-repeat no-repeat
+				background-position left center
+				font-size 20px
+				margin 12px 0
+			
+			.profit
+				color $color-ggk
+				background-image url(/img/game/credits.png)
+				
+				.previous
+					-webkit-filter grayscale(1) brightness(0.6)
+					filter grayscale(1) brightness(0.6)
+					font-size 15px
+					text-decoration line-through
+					margin-left 8px
 
-	.close
-		position absolute
-		top -22px
-		right -22px
-		height 44px
-		width 44px
-		padding 0
-		margin 0
-		background-image url(/img/game/payment/close.png)
-		background-repeat no-repeat
-		cursor pointer
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
+			.price
+				color $color-white
+				background-image url(/img/game/payment/rub.png)
+
+			.profit,
+			.price,
+			.greenButton
+				margin-left 61px
+				
+			.greenButton
+				margin-top 6px
 		
 
 .content
@@ -430,22 +461,6 @@ payment-icon('paymentCredits50000')
 		font-size 24px
 		font-weight bold
 		background-image url(/img/game/quests/btn_take.png)
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-
-	.close
-		position absolute
-		top -22px
-		right -22px
-		height 44px
-		width 44px
-		padding 0
-		margin 0
-		background-image url(/img/game/payment/close.png)
-		background-repeat no-repeat
-		cursor pointer
 		
 		&:hover
 			-webkit-filter brightness(1.4)

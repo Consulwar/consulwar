@@ -3,15 +3,10 @@ initBuildingSpecialPulsecatcherClient = function() {
 initBuildingSpecialPulsecatcherLib();
 
 Meteor.subscribe('pulsecatcherQuiz');
-var quizAnswerSubscription = Meteor.subscribe('pulsecatcherQuizAnswer');
-
-var isLoading = new ReactiveVar(false);
 
 Template.pulsecatcher.helpers({
-	isLoading: function() { return isLoading.get(); },
-
-	quizBonusList: function() {
-		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
+	bonusList: function() {
+		var activeQuiz = Game.Building.special.Pulsecatcher.getQuiz();
 		if (!activeQuiz) {
 			return null;
 		}
@@ -25,99 +20,51 @@ Template.pulsecatcher.helpers({
 		return list;
 	},
 
-	userVote: function() {
-		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
-		if (!activeQuiz) {
-			return false;
-		}
-
-		var userAnswer = Game.Quiz.Answer.Collection.findOne({
-			user_id: Meteor.userId(), 
-			quiz_id: activeQuiz._id
-		});
-
-		return userAnswer;
-	},
-
-	calcVoteValue: function(answer) {
-		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
-		if (!activeQuiz || activeQuiz.totalVotes === 0) {
-			return 0;
-		}
-		return Math.round( activeQuiz.result[answer] / activeQuiz.totalVotes * 100 );
-	},
-
-	choosenBonusList: function() {
-		var previousQuiz = Game.Building.special.Pulsecatcher.getPreviousQuiz();
-		var choosen = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
+	choosenBonus: function() {
+		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1);
+		var card = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
 		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
 
-		var result = [];
-		var canActivateChoosen = true;
+		var canActivate = (
+			   activeList 
+			&& card 
+			&& (!activeList[card.engName]
+				|| (
+					   activeList[card.engName] 
+					&& activeList[card.engName].getActiveTask().startTime < previousQuiz.endDate
+				)
+			)
+		);
 
-		for (var key in activeList) {
-			result.push({
-				canActivate: false,
-				card: activeList[key]
-			});
-			// check if choosen already activated
-			if (choosen && choosen.engName == key) {
-				var task = activeList[key].getActiveTask();
-				if (task.startTime >= previousQuiz.endDate) {
-					canActivateChoosen = false;
-				}
-			}
-		}
-
-		result.sort(function(a, b) {
-			return b.card.getActiveTask().startTime - a.card.getActiveTask().startTime;
-		});
-
-		if (choosen && canActivateChoosen && result.length < 2) {
-			result.unshift({
-				canActivate: true,
-				card: choosen
-			});
-		}
-
-		return result.length > 0 ? result : null;
+		return {
+			card,
+			canActivate
+		};
 	},
 
-	getTimeLeft: function(card) {
-		var task = card.getActiveTask();
-		var finishTime = (task) ? task.finishTime : 0;
-		var timeLeft = finishTime - Session.get('serverTime');
-		return (timeLeft > 0) ? timeLeft : 0;
+	previousBonusCard: function() {
+		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(2);
+		var card = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
+		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
+
+		return card;
+	},
+
+	building: function() {
+		return Game.Building.items.residential.pulsecatcher;
 	}
 });
 
-Template.pulsecatcher.events({
-	'click .vote': function(e, t) {
-		var answer = e.currentTarget.dataset.id;
-		var activeQuiz = Game.Building.special.Pulsecatcher.getActiveQuiz();
-		if (answer && activeQuiz && !isLoading.get()) {
-			isLoading.set(true);
-			Meteor.call('pulsecatcher.voteBonus', answer, function(err, result) {
-				isLoading.set(false);
-				if (err) {
-					Notifications.error('Не удалось проголосовать', err.error);
-				} else {
-					Notifications.success('Вы успешно проголосовали');
-					// refresh answer subscription
-					if (quizAnswerSubscription) {
-						quizAnswerSubscription.stop();
-					}
-					quizAnswerSubscription = Meteor.subscribe('pulsecatcherQuizAnswer');
-				}
-			});
-		}
-	},
 
+
+var pulsecatcherGetBonusIsLoading = new ReactiveVar(false);
+
+Template.pulsecatcherGetBonus.events({
 	'click .activate': function(e, t) {
-		if (!isLoading.get()) {
-			isLoading.set(true);
+		if (!pulsecatcherGetBonusIsLoading.get()) {
+			pulsecatcherGetBonusIsLoading.set(true);
 			Meteor.call('pulsecatcher.activateBonus', function(err, result) {
-				isLoading.set(false);
+				pulsecatcherGetBonusIsLoading.set(false);
 				if (err) {
 					Notifications.error('Не удалось активировать бонус', err.error);
 				} else {
@@ -126,6 +73,130 @@ Template.pulsecatcher.events({
 			});
 		}
 	}
+});
+
+Template.pulsecatcherGetBonus.helpers({
+	isLoading: function() { return pulsecatcherGetBonusIsLoading.get(); }
+});
+
+
+
+var pulsecatcherVoteIsLoading = new ReactiveVar(false);
+var pulsecatcherVoteActiveOption = new ReactiveVar(null);
+
+var userVote = function() {
+	var activeQuiz = Game.Building.special.Pulsecatcher.getQuiz();
+	if (!activeQuiz) {
+		return false;
+	}
+
+	var userAnswer = Game.Quiz.Answer.Collection.findOne({
+		user_id: Meteor.userId(), 
+		quiz_id: activeQuiz._id
+	});
+
+	return userAnswer;
+};
+
+var calcVoteValue = function(answer) {
+	var activeQuiz = Game.Building.special.Pulsecatcher.getQuiz();
+	if (!activeQuiz || activeQuiz.totalVotes === 0) {
+		return 0;
+	}
+	return Math.round( activeQuiz.result[answer] / activeQuiz.totalVotes * 100 );
+};
+
+var _updateCharts = _.debounce(function(selector) {
+	if ($(selector).data('easyPieChart')) {
+		$(selector).each(function(key, element) {
+			$(element).data('easyPieChart').update(calcVoteValue(element.dataset.id)) 
+		});
+	} else {
+		$(selector).each(function(key, element) {
+			$(element).easyPieChart({
+				size: 80, 
+				lineWidth: 8, 
+				barColor: (userVote().answer == element.dataset.id ? '#c6e84c' : '#66cce2'),
+				trackColor: false, 
+				scaleColor: false,
+				onStep: function(from, to, percent) {
+					this.el.children[0].innerHTML = Math.round(percent) + '%';
+				}
+			})
+		});
+	}
+}, 10);
+
+var updateCharts = function() {
+	Meteor.setTimeout(function() {
+		_updateCharts('.result');
+	});
+};
+
+Template.pulsecatcherVote.onRendered(function() {
+	Tracker.autorun(function() {
+		var quiz = Game.Quiz.Collection.find({
+			type: 'pulsecatcher'
+		}, {
+			sort: { endDate: -1 }
+		});
+
+		quiz.observeChanges({
+			added: function(id) {
+				Meteor.subscribe('pulsecatcherQuizAnswer', id);
+				updateCharts('.result');
+			},
+			changed: updateCharts
+		});
+
+		if (quiz.fetch().length) {
+			Game.Quiz.Answer.Collection.find({
+				user_id: Meteor.user()._id,
+				quiz_id: quiz.fetch()[0]._id
+			}).observeChanges({
+				added: updateCharts,
+				changed: updateCharts
+			});
+		}
+	});	
+});
+
+Template.pulsecatcherVote.events({
+	'click .option': function(e, t) {
+		if (!userVote()) {
+			pulsecatcherVoteActiveOption.set(e.currentTarget.dataset.id);
+		}
+	},
+
+	'click .vote': function(e, t) {
+		var answer = pulsecatcherVoteActiveOption.get();
+		var activeQuiz = Game.Building.special.Pulsecatcher.getQuiz();
+		if (answer && activeQuiz && !pulsecatcherVoteIsLoading.get()) {
+			pulsecatcherVoteIsLoading.set(true);
+			Meteor.call('pulsecatcher.voteBonus', answer, function(err, result) {
+				pulsecatcherVoteIsLoading.set(false);
+				if (err) {
+					Notifications.error('Не удалось проголосовать', err.error);
+				} else {
+					Notifications.success('Вы успешно проголосовали');
+
+					pulsecatcherVoteActiveOption.set(null);
+				}
+			});
+		}
+	}
+});
+
+Template.pulsecatcherVote.helpers({
+	isLoading: function() { return pulsecatcherVoteIsLoading.get(); },
+
+	'activeOption': function() {
+		return pulsecatcherVoteActiveOption.get();
+	},
+
+	userVote,
+
+	calcVoteValue
 });
 
 };

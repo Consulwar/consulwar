@@ -885,10 +885,15 @@ Template.cosmosShipInfo.events({
 // Attack menu
 // ----------------------------------------------------------------------------
 var activeColonyId = new ReactiveVar(null);
-Game.Cosmos.showAttackMenu = function(id) {
-	if (activeColonyId.get() === null) {
+
+var resetColonyId = function() {
+	if(!Game.Planets.getFleetUnits(activeColonyId.get())) {
 		activeColonyId.set(Game.Planets.getBase()._id);
 	}
+}
+
+Game.Cosmos.showAttackMenu = function(id) {
+	resetColonyId();
 
 	Router.current().render('cosmosAttackMenu', {
 		to: 'cosmosAttackMenu',
@@ -1013,14 +1018,8 @@ Template.cosmosAttackMenu.helpers({
 
 	availableFleet: function() {
 		var colonyId = this.activeColonyId.get();
-		if (!colonyId) {
-			return null;
-		}
 
-		var army = Game.Planets.getFleetUnits(colonyId);
-		if (!army) {
-			return null;
-		}
+		var army = Game.Planets.getFleetUnits(colonyId) || {};
 
 		var selected = selectedUnits.get();
 
@@ -1361,8 +1360,8 @@ Template.cosmosAttackMenu.events({
 						Notifications.error('Не удалось отправить флот', err.error);
 					} else {
 						Notifications.success('Флот отправлен');
-						//Game.Cosmos.showFleetsInfo();
 						Game.Cosmos.hideAttackMenu();
+						resetColonyId();
 					}
 				}
 			);
@@ -1402,6 +1401,7 @@ Template.cosmosAttackMenu.events({
 						Notifications.success('Флот отправлен');
 						//Game.Cosmos.showFleetsInfo();
 						Game.Cosmos.hideAttackMenu();
+						resetColonyId();
 					}
 				}
 			);

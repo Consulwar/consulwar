@@ -21,7 +21,7 @@ initMenuClient();
 initItemLib();
 initItemClient();
 initCheatsClient();
-
+initPopupClient();
 initPleerClient();
 
 

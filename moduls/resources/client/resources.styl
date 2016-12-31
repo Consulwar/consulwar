@@ -71,7 +71,7 @@
 		time
 			color #fff
 			
-		+ li
+		+ div
 			margin-left 0
 	
 	.button
@@ -80,9 +80,10 @@
 		padding-top 0
 		
 	&.big
-		li
+		> div
 			width 120px
 			padding-top 70px
+			background-size 68px 67px
 
 		.metals
 			background-image url(/img/game/metals_big.png)
@@ -90,6 +91,20 @@
 			background-image url(/img/game/crystals_big.png)
 		.honor
 			background-image url(/img/game/honor_big.png)
+			
+	&.large
+		> div
+			width 160px
+			padding-top 106px
+			background-size 104px 103px
+			font-size 24px
+
+		.metals
+			background-image url(/img/game/quests/metals.png)
+		.crystals
+			background-image url(/img/game/quests/crystals.png)
+		.credits
+			background-image url(/img/game/quests/honor.png)
 
 .overlay.planet.residential
 	.bonus

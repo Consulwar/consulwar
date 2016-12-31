@@ -15,16 +15,12 @@ Game.Quest.showDailyQuest = function() {
 
 	if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
 		// show inprogress daily quest
-		Blaze.renderWithData(
-			Template.quest, 
-			{
-				who: dailyQuest.who || 'tamily',
-				type: 'daily',
-				title: dailyQuest.name,
-				isPrompt: true
-			}, 
-			$('.over')[0]
-		);
+		Game.Popup.showPopup('quest', {
+			who: dailyQuest.who || 'tamily',
+			type: 'daily',
+			title: dailyQuest.name,
+			isPrompt: true
+		});
 
 		// load full info
 		isLoading.set(true);
@@ -34,16 +30,12 @@ Game.Quest.showDailyQuest = function() {
 		});
 	} else {
 		// show finished daily quest
-		Blaze.renderWithData(
-			Template.quest, 
-			{
-				who: dailyQuest.who || 'tamily',
-				type: 'daily',
-				title: dailyQuest.name, 
-				text: dailyQuest.result
-			}, 
-			$('.over')[0]
-		);
+		Game.Popup.showPopup('quest', {
+			who: dailyQuest.who || 'tamily',
+			type: 'daily',
+			title: dailyQuest.name, 
+			text: dailyQuest.result
+		});
 	}
 };
 
@@ -55,28 +47,20 @@ Game.Quest.showQuest = function(id) {
 
 	if (currentQuest.status == Game.Quest.status.FINISHED) {
 		// quest finished, render reward popup
-		Blaze.renderWithData(
-			Template.reward, 
-			{
-				type: 'quest',
-				engName: currentQuest.engName,
-				who: currentQuest.who
-			}, 
-			$('.over')[0]
-		);
+		Game.Popup.showPopup('reward', {
+			type: 'quest',
+			engName: currentQuest.engName,
+			who: currentQuest.who
+		});
 	} else {
 		// quest not finished, render reqular quest window
-		Blaze.renderWithData(
-			Template.quest, 
-			{
-				type: 'quest',
-				engName: currentQuest.engName,
-				who: currentQuest.who,
-				title: currentQuest.name,
-				isPrompt: currentQuest.status == Game.Quest.status.PROMPT
-			}, 
-			$('.over')[0]
-		);
+		Game.Popup.showPopup('quest', {
+			type: 'quest',
+			engName: currentQuest.engName,
+			who: currentQuest.who,
+			title: currentQuest.name,
+			isPrompt: currentQuest.status == Game.Quest.status.PROMPT
+		});
 	}
 
 	// load full info
@@ -96,15 +80,11 @@ Game.Quest.showGreeteing = function(who) {
 	// show character greeting text
 	var text = Game.Persons[who].text;
 	if (text && text.length > 0) {
-		Blaze.renderWithData(
-			Template.quest, 
-			{
-				who: who,
-				type: 'quest',
-				text: text
-			}, 
-			$('.over')[0]
-		);
+		Game.Popup.showPopup('quest', {
+			who: who,
+			type: 'quest',
+			text: text
+		});
 	}
 };
 
@@ -158,6 +138,10 @@ Template.quest.helpers({
 	}
 });
 
+Template.quest.onRendered(function() {
+	$(this.firstNode).perfectScrollbar();
+});
+
 Template.quest.events({
 	'click a': function(e, t) {
 		if (t.data.type == 'quest') {
@@ -172,10 +156,6 @@ Template.quest.events({
 				loadedQuest.set(result);
 			});
 		}
-	},
-
-	'click .close': function(e, t) {
-		Blaze.remove(t.view);
 	}
 });
 
@@ -189,7 +169,7 @@ Template.reward.helpers({
 });
 
 Template.reward.events({
-	'click .close, click .take': function(e, t) {
+	'click .take': function(e, t) {
 		Meteor.call('quests.getReward', t.data.engName);
 		Blaze.remove(t.view);
 	}

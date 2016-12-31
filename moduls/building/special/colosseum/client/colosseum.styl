@@ -9,91 +9,74 @@ tournament-icon('fire_dragon')
 tournament-icon('extermination')
 tournament-icon('bloody_mess')
 
-.content.building.planet.residential .colosseum-menu
-	position absolute
-	z-index 4
-	top -214px
-	right 0
-	width 1333px
-	height 428px
-	padding 3.5px
-	background-color #090e14
-	
-	.cooldown
-		display block
-		position absolute
-		top 310px
-		width 100%
+.colosseum-menu
+	display flex
+	flex-direction row
+	flex-wrap wrap
+	width 100%
+	height auto
+	padding 20px 0 10px
+	justify-content space-between
+			
+	.tournament
+		width 131px // 240
+		height 160px
+		background-repeat no-repeat
+		background-position center center
+		background-size 131px 160px
 		text-align center
-		font-size 30px
-
-	.disabled
+		font-weight bold
+		margin 10px 7%
 		-webkit-filter grayscale(1)
 		filter grayscale(1)
-
-	.btn-close-horizontal
-		display block
-		position absolute
-		left 590px
-		bottom 0px
-		width 164px
-		height 34px
 		cursor pointer
-		color #ffffff
-		background-image url(/img/game/earth/btn_close.png)
-		background-repeat no-repeat
-		background-position 0px 0px
-		&:hover
-			background-position 0px -34px
-			
-	> ul
-		display block
 		
-		> li
-			display inline-block
-			width 218px
-			height 380px
-			background-repeat no-repeat
-			background-position center 20px
-			text-align center
-			font-weight bold
+		&.active
+			-webkit-filter none
+			filter none
 
-			.resources
-				position absolute
-				display block
-				margin-top 235px
-				margin-left 10px
+		&.disabled
+			cursor not-allowed
+			-webkit-filter grayscale(1) brightness(0.2)
+			filter grayscale(1) brightness(0.2)
 	
-	.description
-		display block
-		position absolute
-		margin-top 245px
-		margin-left 80px
-		width 140px
-		height initial
-		font-weight normal
-		padding 0
-
-	.start
-		display block
-		position absolute
-		cursor pointer
-		margin-top 310px
-		margin-left 20px
-		width 181px
-		height 40px
-		padding-top 10px
-		color #FFFFFF
-		font-size 20px
-		background-image url(/img/game/quests/btn_take.png)
+	.selectedTournament
+		display flex
+		flex-direction row
+		align-items center
+		width 250px
 		
-		&:hover
-			&:not([disabled])
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			&.disabled
-				-webkit-filter grayscale(1) brightness(1.4)
-				filter grayscale(1) brightness(1.4)
+		.nextTournament
+			display flex
+			flex-direction row
+			
+			div
+				font-size 14px
+				padding-top 3px
+			
+			time
+				margin-left 4px
+				font-size 18px
+				color $color-metal
+		
+		.result
+			display flex
+			flex-direction column
+			font-size 12px
+			justify-content space-around
+			
+			.name
+				color $color-white
+				
+			.description
+				color $color-metal
+	
+	.start
+		width 187px
+		margin 0 0 0 50px
+	
+	.back
+		margin 0 50px 0 0 
 
 
 .modal

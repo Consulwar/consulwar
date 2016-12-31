@@ -58,36 +58,16 @@ Template.colosseum.events({
 			}
 			// show reward window
 			if (profit && profit.resources) {
-				Blaze.renderWithData(
-					Template.colosseumReward,
-					{
-						reward: profit.resources
-					}, 
-					$('.over')[0]
-				);
+				Game.Popup.showPopup('colosseumReward', {
+					reward: profit.resources
+				});
 			}
 		});
 	}
 });
 
-Template.colosseumReward.helpers({
-	artefact: function() {
-		var key = _.keys(this.reward)[0];
-
-		if (!Game.Artefacts.items[key]) {
-			return null;
-		}
-
-		return {
-			engName: key,
-			amount: this.reward[key],
-			group: Game.Artefacts.items[key].group
-		};
-	}
-});
-
 Template.colosseumReward.events({
-	'click .close, click .take': function(e, t) {
+	'click .take': function(e, t) {
 		Blaze.remove(t.view);
 	}
 });

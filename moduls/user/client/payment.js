@@ -8,50 +8,23 @@ initPaymentLib();
 
 var canShowReward = false;
 var isPaymentSuccess = false;
-var paymentView = null;
-var platboxView = null;
-var rewardView = null;
 
 var showPaymentWindow = function() {
-	if (!paymentView) {
-		canShowReward = true;
-		paymentView = Blaze.render(Template.payment, $('.over')[0]);
-	}
-};
-
-var hidePaymentWindow = function() {
-	if (paymentView) {
-		Blaze.remove(paymentView);
-		paymentView = null;
-	}
+	Game.Popup.showPopup('payment');
+	canShowReward = true;
 };
 
 var showPlatboxWindow = function(url) {
-	if (url && !platboxView) {
+	if (url) {
 		isPaymentSuccess = false;
-		platboxView = Blaze.renderWithData(Template.paymentPlatbox, { url: url }, $('.over')[0]);
-	}
-};
-
-var hidePlatboxWindow = function() {
-	if (platboxView) {
-		Blaze.remove(platboxView);
-		platboxView = null;
+		Game.Popup.showPopup('paymentPlatbox', { url });
 	}
 };
 
 var showRewardWindow = function(itemId) {
 	var item = Game.Payment.items[itemId];
-	if (item && !rewardView) {
-		isPaymentSuccess = true;
-		rewardView = Blaze.renderWithData(Template.paymentReward, { item: item }, $('.over')[0]);
-	}
-};
-
-var hideRewardWindow = function() {
-	if (rewardView) {
-		Blaze.remove(rewardView);
-		rewardView = null;
+	if (item) {
+		Game.Popup.showPopup('paymentReward', { item });
 	}
 };
 
@@ -64,7 +37,6 @@ Game.Payment.buyItem = function(item) {
 		if (err) {
 			Notifications.error(err.error);
 		} else {
-			hidePaymentWindow();
 			showPlatboxWindow(url);
 		}
 	});
@@ -85,27 +57,14 @@ Template.payment.helpers({
 });
 
 Template.payment.events({
-	'click .close': function(e, t) {
-		hidePaymentWindow();
-	},
-
 	'click .paymentItems .greenButton': function(e, t) {
 		Game.Payment.buyItem(e.currentTarget.dataset.id);
 	}
 });
 
-Template.paymentPlatbox.events({
-	'click .close': function(e, t) {
-		hidePlatboxWindow();
-		if (!isPaymentSuccess) {
-			showPaymentWindow();
-		}
-	}
-});
-
 Template.paymentReward.events({
-	'click .close, click .take': function(e, t) {
-		hideRewardWindow();
+	'click .take': function(e, t) {
+		Blaze.remove(t.view);
 	}
 });
 

@@ -1,65 +1,55 @@
 <template name="payment">
-	<div class="smoke"></div>
-	<div class="payment_wrapper">
-		<div class="payment scrollbar-inner">
-			<span>
-				<span class="alert">Помните Консулы:</span> 
-				покупая 
-				<span class="ggk">Грязные Галактические Кредиты</span> 
-				— вы поддерживаете 
-				<span class="alert">Борьбу за освобождение Земли от Рептилоидов</span>
-			</span>
-			<div class="close"></div>
-			<div class="paymentItems">
-				{{#each paymentItems}}
-					<div class="{{this.id}}-icon">
-						<div class="description">
-							Кредиты: <span>{{formatNumber this.result.base}}</span>
-							{{#if this.result.bonus}}
-								+ 
-								<span>{{formatNumber this.result.bonus}}</span>
-							{{/if}}
-							{{#if this.result.extra}}
-								+ 
-								<span>{{formatNumber this.result.extra}}</span>
-							{{/if}}
-						</div>
-						<div class="profit">
-							{{formatNumber this.profit.resources.credits}}
-							{{#if this.result.extra}}
-								<span class="previous">
-									{{formatNumber (sum this.result.base (or this.result.bonus 0))}}
-								</span>
-							{{/if}}
-						</div>
-						<div class="price">
-							{{formatNumber this.cost.rub}}
-						</div>
-						
-						<button class="greenButton" data-id="{{this.id}}">
-							Приобрести
-						</button>
+	<div class="payment scrollbar-inner">
+		<span>
+			<span class="alert">Помните Консулы:</span> 
+			покупая 
+			<span class="ggk">Грязные Галактические Кредиты</span> 
+			— вы поддерживаете 
+			<span class="alert">Борьбу за освобождение Земли от Рептилоидов</span>
+		</span>
+		<div class="paymentItems">
+			{{#each paymentItems}}
+				<div class="{{this.id}}-icon">
+					<div class="description">
+						Кредиты: <span>{{formatNumber this.result.base}}</span>
+						{{#if this.result.bonus}}
+							+ 
+							<span>{{formatNumber this.result.bonus}}</span>
+						{{/if}}
+						{{#if this.result.extra}}
+							+ 
+							<span>{{formatNumber this.result.extra}}</span>
+						{{/if}}
 					</div>
-				{{/each}}
-			</div>
+					<div class="profit">
+						{{formatNumber this.profit.resources.credits}}
+						{{#if this.result.extra}}
+							<span class="previous">
+								{{formatNumber (sum this.result.base (or this.result.bonus 0))}}
+							</span>
+						{{/if}}
+					</div>
+					<div class="price">
+						{{formatNumber this.cost.rub}}
+					</div>
+					
+					<button class="greenButton" data-id="{{this.id}}">
+						Приобрести
+					</button>
+				</div>
+			{{/each}}
 		</div>
 	</div>
 </template>
 
 <template name="paymentPlatbox">
-	<div class="smoke"></div>
-	<div class="payment_wrapper">
-		<div class="payment platbox">
-			<div class="close"></div>
-			<iframe src="{{url}}"></iframe>
-		</div>
+	<div class="payment platbox">
+		<iframe src="{{url}}"></iframe>
 	</div>
 </template>
 
 <template name="paymentReward">
-	<div class="smoke reward"></div>
 	<div class="payment reward">
-		<div class="close"></div>
 		<img src="/img/game/quests/credits.png">
 		<div class="count">{{formatNumber item.profit.resources.credits}}</div>
 		<div class="description">{{item.description}}</div>

@@ -34,11 +34,11 @@
 					<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
 				{{/each}}
 				{{#if planet.mission.reward}}
-					<ul class="resources cost">
+					<div class="resources cost">
 						{{#each (arrayify planet.mission.reward)}}
-							<li class="{{this.key}}">{{formatNumberWithISO this.value}}</li>
+							<div class="{{this.key}}">{{formatNumberWithISO this.value}}</div>
 						{{/each}}
-					</ul>
+					</div>
 				{{/if}}
 			</div>
 
@@ -438,11 +438,11 @@
 					<a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
 				{{/each}}
 				{{#if ship.mission.reward}}
-					<ul class="resources cost">
+					<div class="resources cost">
 						{{#each (arrayify ship.mission.reward)}}
-							<li class="{{this.key}}">{{formatNumberWithISO this.value}}</li>
+							<div class="{{this.key}}">{{formatNumberWithISO this.value}}</div>
 						{{/each}}
-					</ul>
+					</div>
 				{{/if}}
 			</div>
 

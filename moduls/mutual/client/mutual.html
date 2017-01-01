@@ -15,29 +15,29 @@
 			{{> item_effect item=mutual}}
 		</div>
 
-		<ul class="resources">
+		<div class="resources">
 			{{#let price=(mutual.price count)}}
 				{{#if price.humans}}
-					<li class="humans" {{priceTooltip price 'humans'}}>
+					<div class="humans" {{priceTooltip price 'humans'}}>
 						{{formatNumberWithISO price.humans}}
-					</li>
+					</div>
 				{{/if}}
 				{{#if price.honor}}
-					<li class="honor" {{priceTooltip price 'honor'}}>
+					<div class="honor" {{priceTooltip price 'honor'}}>
 						{{formatNumberWithISO price.honor}}
-					</li>
+					</div>
 				{{/if}}
 				{{#if price.metals}}
-					<li class="metals" {{priceTooltip price 'metals'}}>
+					<div class="metals" {{priceTooltip price 'metals'}}>
 						{{formatNumberWithISO price.metals}}
-					</li>
+					</div>
 				{{/if}}
 				{{#if price.crystals}}
-					<li class="crystals" {{priceTooltip price 'crystals'}}>
+					<div class="crystals" {{priceTooltip price 'crystals'}}>
 						{{formatNumberWithISO price.crystals}}
-					</li>
+					</div>
 				{{/if}}
-				<li class="button">
+				<div class="button">
 					<button 
 						class="build" 
 						data-action="invest" 
@@ -46,14 +46,14 @@
 					>
 						Вложить ресурсы
 					</button>
-				</li>
+				</div>
 				
 				{{#if price.credits}}
-					<li></li>
-					<li class="credits" {{priceTooltip price 'credits'}}>
+					<div></div>
+					<div class="credits" {{priceTooltip price 'credits'}}>
 						{{formatNumberWithISO price.credits}}
-					</li>
-					<li class="button">
+					</div>
+					<div class="button">
 						или
 						<button 
 							class="build" 
@@ -63,10 +63,10 @@
 						>
 							Вложить кредиты
 						</button>
-					</li>
+					</div>
 				{{/if}}
 			{{/let}}
-		</ul>
+		</div>
 
 		<progress max="{{mutual.investments}}" value="{{mutual.currentInvestments}}"></progress>
 

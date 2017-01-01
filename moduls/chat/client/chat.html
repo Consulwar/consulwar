@@ -19,9 +19,9 @@
 					<div class="addCredits" data-tooltip="Пополнить баланс комнаты">
 						<div>Сообщения оплачиваются из общего баланса комнаты.</div>
 						<span>В этом чате сейчас есть:</span>
-						<ul class="resources">
-							<li class="credits">{{room.credits}}</li>
-						</ul>
+						<div class="resources">
+							<div class="credits">{{room.credits}}</div>
+						</div>
 					</div>
 				{{/if}}
 			{{/if}}
@@ -30,9 +30,9 @@
 				{{#unless isChatFree}}
 					<div class="buyFreeChat">
 						<span>Больше никогда не платить за ссаный чат</span>
-						<ul class="resources">
-							<li class="credits">{{formatNumberWithISO freeChatPrice}}</li>
-						</ul>
+						<div class="resources">
+							<div class="credits">{{formatNumberWithISO freeChatPrice}}</div>
+						</div>
 					</div>
 				{{/unless}}
 			{{/if}}
@@ -128,9 +128,9 @@
 				<textarea name="text" maxlength="175"></textarea>
 
 				{{#if price.crystals}}
-					<ul class="resources" data-tooltip="Стоимость сообщения">
-						<li class="crystals">{{price.crystals}}</li>
-					</ul>
+					<div class="resources" data-tooltip="Стоимость сообщения">
+						<div class="crystals">{{price.crystals}}</div>
+					</div>
 				{{/if}}
 				<input type="submit" value=""/>
 			{{/if}}
@@ -326,10 +326,7 @@
 </template>
 
 <template name="chatHelp">
-	<div class="smoke"></div>
 	<div class="chatHelp">
-		<div class="close"></div>
-
 		<div class="tabCommands">Команды чата</div>
 		<div class="tabRules">Правила чата</div>
 
@@ -363,10 +360,7 @@
 </template>
 
 <template name="chatBalance">
-	<div class="smoke"></div>
 	<div class="chatBalance">
-		<div class="close"></div>
-
 		<label>
 			<span class="title">Сумма пополениня в ГГК:</span>
 			<input type="text" name="credits" value="{{credits}}"/>
@@ -482,10 +476,7 @@
 </template>
 
 <template name="chatControl">
-	<div class="smoke"></div>
 	<div class="chatControl">
-		<div class="close"></div>
-		
 		<div class="roomControl">
 			<h2>Создание / Удаление комнаты</h2>
 

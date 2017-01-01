@@ -403,10 +403,10 @@ Template.promocodeCreate.helpers({
 
 		result.push({ name: '----------------------------------------' });
 
-		for (var itemName in Game.Artefacts.items) {
+		for (var artefactName in Game.Artefacts.items) {
 			result.push({
-				id: 'resources.' + itemName,
-				name: Game.Artefacts.items[itemName].name
+				id: 'resources.' + artefactName,
+				name: Game.Artefacts.items[artefactName].name
 			});
 		}
 

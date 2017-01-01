@@ -109,7 +109,7 @@ var calcVoteValue = function(answer) {
 var _updateCharts = _.debounce(function(selector) {
 	if ($(selector).data('easyPieChart')) {
 		$(selector).each(function(key, element) {
-			$(element).data('easyPieChart').update(calcVoteValue(element.dataset.id)) 
+			$(element).data('easyPieChart').update(calcVoteValue(element.dataset.id));
 		});
 	} else {
 		$(selector).each(function(key, element) {
@@ -122,7 +122,7 @@ var _updateCharts = _.debounce(function(selector) {
 				onStep: function(from, to, percent) {
 					this.el.children[0].innerHTML = Math.round(percent) + '%';
 				}
-			})
+			});
 		});
 	}
 }, 10);

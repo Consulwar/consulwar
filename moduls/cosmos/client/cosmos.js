@@ -890,7 +890,7 @@ var resetColonyId = function() {
 	if(!Game.Planets.getFleetUnits(activeColonyId.get())) {
 		activeColonyId.set(Game.Planets.getBase()._id);
 	}
-}
+};
 
 Game.Cosmos.showAttackMenu = function(id) {
 	resetColonyId();

@@ -1,38 +1,36 @@
 <template name="market">
-	<div class="smoke"></div>
 	<div class="modal market">
-
 		<h2>Торговый порт</h2>
 
 		<div class="from">
 			<h2>Ресуры консула</h2>
 			{{#if itemsFrom}}
-				<ul class="resources">
+				<div class="resources">
 					{{#each itemsFrom}}
-						<li 
+						<div 
 							data-name="{{this.name}}" 
 							class="{{this.name}} {{#if eq activeFrom this.name}}active{{/if}}"
 						>
 							{{formatNumberWithISO this.amount}}
-						</li>
+						</div>
 					{{/each}}
-				</ul>
+				</div>
 			{{/if}}
 		</div>
 
 		<div class="to">
 			<h2>Доступно для обмена</h2>
 			{{#if itemsTo}}
-				<ul class="resources">
+				<div class="resources">
 					{{#each itemsTo}}
-						<li 
+						<div 
 							data-name="{{this.name}}" 
 							class="{{this.name}} {{#if eq activeTo this.name}}active{{/if}}"
 						>
 							{{formatRate this.name this.rate}}
-						</li>
+						</div>
 					{{/each}}
-				</ul>
+				</div>
 			{{/if}}
 		</div>
 
@@ -61,7 +59,5 @@
 		{{#if isLoading}}
 			{{> loading}}
 		{{/if}}
-
-		<div class="close"></div>
 	</div>
 </template>

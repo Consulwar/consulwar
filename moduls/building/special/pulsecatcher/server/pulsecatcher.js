@@ -92,27 +92,9 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
 		}
 
-		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1);
-		var choosen = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
+		var choosen = Game.Building.special.Pulsecatcher.canActivate()
 
 		if (!choosen) {
-			throw new Meteor.Error('Нет доступных бонусов');
-		}
-
-		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
-		var canActivateChoosen = true;
-
-		for (var key in activeList) {
-			// check if choosen already activated
-			if (choosen && choosen.engName == key) {
-				var task = activeList[key].getActiveTask();
-				if (task.startTime >= previousQuiz.endDate) {
-					canActivateChoosen = false;
-				}
-			}
-		}
-
-		if (!canActivateChoosen) {
 			throw new Meteor.Error('Вы уже активировали бонус');
 		}
 

@@ -10,7 +10,7 @@ Game.Building.special.Pulsecatcher = {
 		});
 	},
 
-	getChoosenBonus: function(previousQuiz) {
+	getChoosenBonus: function(previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1)) {
 		if (!previousQuiz) {
 			return null;
 		}
@@ -23,6 +23,33 @@ Game.Building.special.Pulsecatcher = {
 		}
 
 		return Game.Cards.items.pulsecatcher[choosen] ? Game.Cards.items.pulsecatcher[choosen] : null;
+	},
+
+	canActivate: function() {
+		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1);
+		var card = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
+
+		if (!card) {
+			return false;
+		}
+
+		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
+
+		var canActivate = (
+			   activeList 
+			&& card 
+			&& (!activeList[card.engName]
+				|| (
+					   activeList[card.engName] 
+					&& activeList[card.engName].getActiveTask().startTime < previousQuiz.endDate
+				)
+			)
+		);
+
+		return (canActivate
+			? card
+			: false
+		);
 	},
 
 	getActiveBonusList: function() {

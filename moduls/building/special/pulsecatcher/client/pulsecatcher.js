@@ -21,24 +21,9 @@ Template.pulsecatcher.helpers({
 	},
 
 	choosenBonus: function() {
-		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1);
-		var card = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
-		var activeList = Game.Building.special.Pulsecatcher.getActiveBonusList();
-
-		var canActivate = (
-			   activeList 
-			&& card 
-			&& (!activeList[card.engName]
-				|| (
-					   activeList[card.engName] 
-					&& activeList[card.engName].getActiveTask().startTime < previousQuiz.endDate
-				)
-			)
-		);
-
 		return {
-			card,
-			canActivate
+			card: Game.Building.special.Pulsecatcher.getChoosenBonus(),
+			canActivate: Game.Building.special.Pulsecatcher.canActivate()
 		};
 	},
 

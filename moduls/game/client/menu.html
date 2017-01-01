@@ -189,8 +189,51 @@
 			{{/each}}
 			
 			{{#if eq currentUrl (pathFor route='building' group='residential')}}
-				<div class="bonus metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}"></div>
-				<div class="bonus crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}"></div>
+				<div 
+					class="
+						collectBonus 
+						metals 
+						{{#if bonusStorage.metals}}active{{/if}}
+					"
+				>
+					<div
+						class="currentValue"
+						style="height: {{bonusStorage.metals}}%"
+					></div>
+				</div>
+
+				<div 
+					class="
+						collectBonus 
+						crystals
+						{{#if bonusStorage.crystals}}active{{/if}}
+					"
+				>
+					<div
+						class="currentValue"
+						style="height: {{bonusStorage.crystals}}%"
+					></div>
+				</div>
+
+				<a 
+					class="
+						collectBonus 
+						colosseum
+						{{#if Game.Building.special.Colosseum.checkCanStart}}active{{/if}}
+					"
+					href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}" 
+				>
+				</a>
+
+				<a 
+					class="
+						collectBonus 
+						pulsecatcher
+						{{#if Game.Building.special.Pulsecatcher.canActivate}}active{{/if}}
+					"
+					href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}" 
+				>
+				</a>
 			{{/if}}
 		</div>
 	{{/if}}

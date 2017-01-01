@@ -29,7 +29,7 @@ Template.item_building.onRendered(function() {
 });
 
 var bonusEvents = {
-	'click .bonus.metals, click button.metal': function(e, t) {
+	'click .collectBonus.metals, click button.metal': function(e, t) {
 		Meteor.call('getBonusResources', 'metals', function(error, result) {
 			if (error) {
 				Notifications.error('Нельзя получить бонусный металл', error.error);
@@ -39,7 +39,7 @@ var bonusEvents = {
 		});
 	},
 
-	'click .bonus.crystals, click button.crystal': function(e, t) {
+	'click .collectBonus.crystals, click button.crystal': function(e, t) {
 		Meteor.call('getBonusResources', 'crystals', function(error, result) {
 			if (error) {
 				Notifications.error('Нельзя получить бонусный кристалл', error.error);

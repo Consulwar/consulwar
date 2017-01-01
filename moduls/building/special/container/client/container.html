@@ -1,7 +1,5 @@
 <template name="containers">
-	<div class="smoke"></div>
 	<div class="modal containers">
-		<div class="close"></div>
 		<div class="container">
 			{{#if unit}}
 				<img 
@@ -20,9 +18,9 @@
 		<div class="top"></div>
 		<div class="bottom"></div>
 		{{#if lt amount 1}}
-			<ul class="resources">
-				<li class="credits">{{credits}}</li>
-			</ul>
+			<div class="resources">
+				<div class="credits">{{credits}}</div>
+			</div>
 		{{else}}
 			<div class="amount">
 				Бесплатных контейнеров: {{amount}}

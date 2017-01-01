@@ -284,7 +284,6 @@ var createRoom = function(title, url, isPublic, isOwnerPays) {
 					'Комната будет доступна по ссылке:',
 					Router.path("chat", { room: url })
 				);
-				closeControlWindow();
 				loadRoomsList();
 				Router.go('chat', { room: url });
 			}
@@ -304,7 +303,6 @@ var removeRoom = function(name) {
 				Notifications.error(err.error);
 			} else {
 				Notifications.success('Вы успешно удалили комнату ' + name);
-				closeControlWindow();
 				Router.go('chat', { room: 'general' });
 			}
 		});
@@ -1156,12 +1154,8 @@ Template.channelList.events({
 // Help and rules window
 // ----------------------------------------------------------------------------
 
-var helpWindowView = null;
-
 Game.Chat.showHelpWindow = function() {
-	if (!helpWindowView) {
-		helpWindowView = Blaze.render(Template.chatHelp, $('.over')[0]);
-	}
+	Game.Popup.showPopup('chatHelp');
 };
 
 Template.chatHelp.onRendered(function() {
@@ -1172,13 +1166,6 @@ Template.chatHelp.onRendered(function() {
 });
 
 Template.chatHelp.events({
-	'click .close': function(e, t) {
-		if (helpWindowView) {
-			Blaze.remove(helpWindowView);
-			helpWindowView = null;
-		}
-	},
-
 	'click .tabCommands': function(e, t) {
 		t.$('.tabRules').removeClass('active');
 		t.$('.rules').hide();
@@ -1198,29 +1185,17 @@ Template.chatHelp.events({
 // Balance window
 // ----------------------------------------------------------------------------
 
-var balanceWindowView = null;
 var balanceHistory = new ReactiveVar(null);
 var balanceHistoryCount = new ReactiveVar(null);
 var balanceLoading = new ReactiveVar(false);
 
 Game.Chat.showBalanceWindow = function(roomName, credits) {
-	if (!balanceWindowView) {
-		balanceWindowView = Blaze.renderWithData(
-			Template.chatBalance, {
-				currentPage: 1,
-				count: 20,
-				roomName: roomName,
-				credits: credits
-			}, $('.over')[0]
-		);
-	}
-};
-
-var closeBalanceWindow = function() {
-	if (balanceWindowView) {
-		Blaze.remove(balanceWindowView);
-		balanceWindowView = null;
-	}
+	Game.Popup.showPopup('chatBalance', {
+		currentPage: 1,
+		count: 20,
+		roomName: roomName,
+		credits: credits
+	});
 };
 
 var loadBalanceHistory = function(roomName, page, count) {
@@ -1256,10 +1231,6 @@ Template.chatBalance.helpers({
 });
 
 Template.chatBalance.events({
-	'click .close': function(e, t) {
-		closeBalanceWindow();
-	},
-
 	'click .accept': function(e, t) {
 		addCredits(t.data.roomName, t.find('input[name="credits"]').value );
 	},
@@ -1280,24 +1251,12 @@ Template.chatBalance.events({
 // Settings and create window
 // ----------------------------------------------------------------------------
 
-var controlWindowView = null;
 var createPriceCredits = new ReactiveVar(null);
 
 Game.Chat.showControlWindow = function(username) {
-	if (!controlWindowView) {
-		controlWindowView = Blaze.renderWithData(
-			Template.chatControl, {
-				username: username
-			}, $('.over')[0]
-		);
-	}
-};
-
-var closeControlWindow = function() {
-	if (controlWindowView) {
-		Blaze.remove(controlWindowView);
-		controlWindowView = null;
-	}
+	Game.Popup.showPopup('chatControl', {
+		username: username
+	});
 };
 
 var calculateCreatePriceCredits = function(t) {
@@ -1382,10 +1341,6 @@ Template.chatControl.helpers({
 });
 
 Template.chatControl.events({
-	'click .close': function(e, t) {
-		closeControlWindow();
-	},
-
 	'click .removeRoom:not(.disabled)': function(e, t) {
 		removeRoom(Router.current().params.room);
 	},

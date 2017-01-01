@@ -2,6 +2,8 @@ initBuildingSpecialColosseumClient = function() {
 
 initBuildingSpecialColosseumLib();
 
+var selectedTournament = new ReactiveVar('green_ring');
+
 Template.colosseum.helpers({
 	tournaments: function() {
 		return _.map(Game.Building.special.Colosseum.tournaments, function(item) {
@@ -14,12 +16,25 @@ Template.colosseum.helpers({
 		var level = Game.Building.items.residential.colosseum.currentLevel();
 		var timeLeft = user.timeLastTournament - Session.get('serverTime') + Game.Building.special.Colosseum.getCooldownPeriod(level);
 		return timeLeft > 0 ? timeLeft : null;
+	},
+
+	building: function() {
+		return Game.Building.items.residential.colosseum;
+	},
+
+	selected: function() {
+		var selected = selectedTournament.get();
+		return selected && Game.Building.special.Colosseum.tournaments[ selectedTournament.get() ];
 	}
 });
 
 Template.colosseum.events({
+	'click .tournament:not(.disabled)': function(e, t) {
+		selectedTournament.set(e.currentTarget.dataset.id);
+	},
+
 	'click .start': function(e, t) {
-		var item = Game.Building.special.Colosseum.tournaments[ e.currentTarget.dataset.id ];
+		var item = Game.Building.special.Colosseum.tournaments[ selectedTournament.get() ];
 
 		if (!item || !item.checkLevel()) {
 			Notifications.error('Недостаточный уровень Колизея');
@@ -43,36 +58,16 @@ Template.colosseum.events({
 			}
 			// show reward window
 			if (profit && profit.resources) {
-				Blaze.renderWithData(
-					Template.colosseumReward,
-					{
-						reward: profit.resources
-					}, 
-					$('.over')[0]
-				);
+				Game.Popup.showPopup('colosseumReward', {
+					reward: profit.resources
+				});
 			}
 		});
 	}
 });
 
-Template.colosseumReward.helpers({
-	artefact: function() {
-		var key = _.keys(this.reward)[0];
-
-		if (!Game.Artefacts.items[key]) {
-			return null;
-		}
-
-		return {
-			engName: key,
-			amount: this.reward[key],
-			group: Game.Artefacts.items[key].group
-		};
-	}
-});
-
 Template.colosseumReward.events({
-	'click .close, click .take': function(e, t) {
+	'click .take': function(e, t) {
 		Blaze.remove(t.view);
 	}
 });

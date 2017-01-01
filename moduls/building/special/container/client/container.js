@@ -5,7 +5,7 @@ initBuildingSpecialContainerLib();
 Meteor.subscribe('containers');
 
 Game.Building.special.Container.showWindow = function() {
-	Blaze.render( Template.containers, $('.over')[0] );
+	Game.Popup.showPopup('containers');
 };
 
 var isLoading = new ReactiveVar(false);
@@ -17,28 +17,26 @@ var resetAnimation = function(t) {
 
 	t.$('.take').hide();
 	t.$('.title').hide();
-	t.$('.close').show();
 	t.$('.open').show();
 	t.$('.resources').show();
 	t.$('.amount').show();
 
-	t.$('.top').css('top', '100px');
-	t.$('.bottom').css('top', '180px');
+	t.$('.top').css('top', '214px');
+	t.$('.bottom').css('top', '294px');
 	t.$('.container')
-		.css('top', '180px')
+		.css('top', '294px')
 		.css('height', '0px');
 };
 
 var startAnimation = function(t) {
-	t.$('.close').hide();
 	t.$('.open').hide();
 	t.$('.resources').hide();
 	t.$('.amount').hide();
 
 	var duration = 1000;
-	t.$('.top').animate({ top: '-114px' }, duration);
-	t.$('.bottom').animate({ top: '340px' }, duration);
-	t.$('.container').animate({ top: '-40px', height: '428px'}, duration, function() {
+	t.$('.top').animate({ top: '0px' }, duration);
+	t.$('.bottom').animate({ top: '454px' }, duration);
+	t.$('.container').animate({ top: '74px', height: '428px'}, duration, function() {
 		t.$('.take').show();
 		t.$('.title').show();
 	});
@@ -67,7 +65,7 @@ Template.containers.onRendered(function() {
 });
 
 Template.containers.events({
-	'click .close, click .take': function(e, t) {
+	'click .take': function(e, t) {
 		if (isLoading.get()) {
 			return;
 		}

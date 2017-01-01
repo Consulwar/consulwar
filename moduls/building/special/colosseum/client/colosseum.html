@@ -1,66 +1,48 @@
 <template name="colosseum">
 	<div class="colosseum-menu">
-		<ul>
-			{{#each tournaments}}
-				<li class="{{this.engName}}-icon {{#if or (not this.checkLevel) (gt timeCooldown 0)}}disabled{{/if}}">
-					{{this.name}}
-					{{#if not timeCooldown}}
-						<ul class="resources">
-							<li class="honor">
-								{{formatNumber this.price.honor}}
-							</li>
-						</ul>
-						<span class="description">
-							{{this.description}}
-						</span>
-						<span class="start {{#if not this.checkPrice}}disabled{{/if}}" data-id="{{this.engName}}">
-							Начать турнир
-						</span>
-					{{/if}}
-				</li>
-			{{/each}}
-		</ul>
-		{{#if timeCooldown}}
-			<span class="cooldown">
-				Следующий турнир через {{formatSeconds timeCooldown}}
-			</span>
-		{{/if}}
-		<a class="btn-close-horizontal" href="{{pathFor 'building' group='residential' item='colosseum'}}"></a>
+		{{#each tournaments}}
+			<div 
+				class="
+					tournament 
+					{{this.engName}}-icon 
+					{{#if or (not this.checkLevel) (gt timeCooldown 0)}}disabled{{/if}}
+					{{#if eq this.engName selected.engName}}active{{/if}}
+				"
+				data-id="{{this.engName}}"
+			>
+			</div>
+		{{/each}}
+
+		<button class="start additional_action" disabled="{{#if or timeCooldown (not selected.checkPrice)}}disabled{{/if}}">
+			Провести турнир
+		</button>
+
+		
+		<div class="selectedTournament">
+			{{#if timeCooldown}}
+				<div class="nextTournament">
+					<div>Следующий турнир через: </div>
+					<time>{{formatSeconds timeCooldown}}</time>
+				</div>
+			{{else}}
+				{{> item_price price=selected.price}}
+				<div class="result">
+					<div class="name">{{selected.name}}</div>
+					<div class="description">{{selected.description}}</div>
+				</div>
+			{{/if}}
+		</div>
+
+		<a href="{{building.url}}" class="back back_action">
+			Назад
+		</a>
 	</div>
 </template>
 
 <template name="colosseumReward">
-	<div class="smoke"></div>
-	{{#if artefact}}
-		<div class="modal artefact {{artefact.group}}">
-			<h2>Удача!</h2>
-			<ul class="resources">
-				<li class="{{artefact.engName}}">
-					{{formatNumber artefact.amount}}
-				</li>
-			</ul>
-			<span class="take">Награда</span>
-		</div>
-	{{else}}
-		<div class="modal reward">
-			<div class="close"></div>
-			<ul>
-				{{#if reward.metals}}
-					<li class="metals">
-						<div class="name">Металл</div>
-						<img src="/img/game/quests/metals.png">
-						<div class="count">{{formatNumber reward.metals}}</div>
-					</li>
-				{{/if}}
-				{{#if reward.crystals}}
-					<li class="crystals">
-						<div class="name">Кристалл</div>
-						<img src="/img/game/quests/crystals.png">
-						<div class="count">{{formatNumber reward.crystals}}</div>
-					</li>
-				{{/if}}
-			</ul>
-			<span class="take">Награда</span>
-		</div>		
-	{{/if}}
+	<div class="modal {{#if artefact}}artefact{{else}}reward{{/if}}">
+		<h2>Удача!</h2>
+		{{> item_price price=reward}}
+		<span class="take">Награда</span>
+	</div>
 </template>

@@ -882,7 +882,7 @@ Game.Effect.applyTo = function(target, obj, hideEffects, isOnlyMutual) {
 				effect += effects[priority][item][i].value;
 			}
 
-			if (!obj[item]) {
+			if (obj[item] === undefined) {
 				continue;
 			}
 

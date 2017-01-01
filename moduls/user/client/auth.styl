@@ -153,15 +153,6 @@
 			filter brightness(1)
 
 .modal
-	position fixed
-	
-	z-index 100
-	
-	top 50%
-	left 50%
-	
-	margin -270px 0 0 -450px
-
 	width 835px
 	height 500px
 	
@@ -194,7 +185,8 @@
 		position relative
 		float left
 		display block
-		width 378px
+		width 350px
+		max-width 80%
 		padding 16px 42px
 		margin 15.8px 0
 		color #fff
@@ -219,7 +211,6 @@
 	
 	.g-recaptcha
 		position relative
-		zoom reset
 		
 		iframe
 			position absolute
@@ -313,11 +304,10 @@
 
 .modal
 	&.reward
-		position fixed
-		z-index 100
-		top 50%
-		left 50%
-		margin -202px 0 0 -200px
+		display flex
+		flex-direction column
+		justify-content space-between
+		align-items center
 		width 403px
 		height 297px
 		padding 0
@@ -328,47 +318,23 @@
 		background-image url(/img/game/quests/reward_back.png)
 		background-repeat no-repeat
 		background-position center center
+		
+		.resources
+			margin auto
 
 		.take
 			display block
-			position absolute
 			cursor pointer
 			width 181px
 			height 40px
 			padding-top 10px
-			bottom 20px
-			left 110px
+			margin-bottom 20px
 			color #FFFFFF
 			background-image url(/img/game/quests/btn_take.png)
 			
 			&:hover
 				-webkit-filter brightness(1.4)
 				filter brightness(1.4)
-
-		li
-			display inline-block
-			margin-top 20px
-			height 140px
-			width 160px
-			text-align center
-			background-repeat no-repeat
-			background-position center centet
-			&.metals
-				color #66CCE2
-			&.crystals
-				color #D36FFF
-				
-			img
-				display block
-				float none
-				margin-top 10px
-				margin-bottom 10px
-				margin-left auto
-				margin-right auto
-				
-			.name
-			.count
-				width 100%
 		
 .quest
 	font-size 14px

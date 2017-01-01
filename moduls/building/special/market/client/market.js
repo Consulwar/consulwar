@@ -7,7 +7,7 @@ var activeFrom = new ReactiveVar(null);
 var activeTo = new ReactiveVar(null);
 
 Game.Building.special.Market.showWindow = function() {
-	Blaze.render(Template.market, $('.over')[0]);
+	Game.Popup.showPopup('market');
 };
 
 Template.market.helpers({
@@ -72,17 +72,12 @@ var recalculateForm = function(t) {
 };
 
 Template.market.events({
-	'click .close': function(e, t) {
-		e.preventDefault();
-		Blaze.remove(t.view);
-	},
-
-	'click .from li': function(e, t) {
+	'click .from .resources > div': function(e, t) {
 		activeFrom.set(e.currentTarget.dataset.name);
 		activeTo.set(null);
 	},
 
-	'click .to li': function(e, t) {
+	'click .to .resources > div': function(e, t) {
 		activeTo.set(e.currentTarget.dataset.name);
 		resetForm(t);
 	},

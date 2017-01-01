@@ -1,6 +1,5 @@
 <template name="quest">
-	<div class="smoke"></div>
-	<div class="modal quest">
+	<div class="modal quest scrollbar-inner">
 		<img src="/img/game/{{who}}.jpg" alt="">
 		{{#if (characterName who)}}
 			<span class="name">{{characterName who}}</span>
@@ -24,7 +23,6 @@
 				<a data-option="{{this.name}}" class="{{this.mood}}" href="#">{{this.text}}</a>
 			{{/each}}
 		{{/if}}
-		<div class="close"></div>
 
 		{{#if isLoading}}
 			{{> loading}}
@@ -33,25 +31,8 @@
 </template>
 
 <template name="reward">
-	<div class="smoke"></div>
 	<div class="modal reward">
-		<div class="close"></div>
-		<ul>
-			{{#if reward.metals}}
-				<li class="metals">
-					<div class="name">Металл</div>
-					<img src="/img/game/quests/metals.png">
-					<div class="count">{{formatNumber reward.metals}}</div>
-				</li>
-			{{/if}}
-			{{#if reward.crystals}}
-				<li class="crystals">
-					<div class="name">Кристалл</div>
-					<img src="/img/game/quests/crystals.png">
-					<div class="count">{{formatNumber reward.crystals}}</div>
-				</li>
-			{{/if}}
-		</ul>
+		{{> item_price price=reward class='large'}}
 
 		<span class="take">Награда</span>
 

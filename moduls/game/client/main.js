@@ -21,7 +21,7 @@ initMenuClient();
 initItemLib();
 initItemClient();
 initCheatsClient();
-
+initPopupClient();
 initPleerClient();
 
 
@@ -468,43 +468,6 @@ ShowModalWindow = function(template, data) {
 		$('.over')[0]
 	);
 };
-
-Template.item_price.events({
-	'click .resources .credits': function(e, t) {
-		Game.Payment.showWindow();
-	},
-
-	'click .resources .artefact': function(e, t) {
-		Router.go('artefacts', {
-			item: e.currentTarget.dataset.id
-		});
-	}
-});
-
-Template.item_price.helpers({
-	getResources: function(price) {
-		var result = [];
-		for (var name in price) {
-			var item = {
-				engName: name,
-				amount: price[name],
-				price: price
-			};
-			if (price[name]) {
-				if (name == 'time') {
-					result.unshift(item);
-				} else {
-					result.push(item);
-				}
-			}
-		}
-		return result;
-	},
-
-	isArtefact: function(key) {
-		return Game.Artefacts.items[key] ? true : false;
-	}
-});
 
 // ----------------------------------------------------------------------------
 // Accept window

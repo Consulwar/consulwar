@@ -922,7 +922,23 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
 					// New year bonus!
 					if (options.missionType == 'tradefleet') {
-						reward.credits = Game.Random.interval(5, 15);
+						var addCredits = false;
+						var today = new Date();
+						var endYear = new Date(today.getFullYear(), 11, 25, 0, 0, 0);
+						var startYear = new Date(today.getFullYear(), 0, 9, 0, 0, 0);
+						// From 25 December to 8 January (included)
+						if (today > endYear || today < startYear) {
+							addCredits = true;
+						} else {
+							let chance = Game.Effect.Special.applyTo({
+								engName: 'fleetBattleAddCreditsChance'
+							}, {chance: 0}).chance;
+							addCredits = chance && chance >= Game.Random.interval(1, 100);
+						}
+
+						if (addCredits) {
+							reward.credits = Game.Random.interval(5, 15);
+						}
 					}
 				} else {
 					reward.metals = Math.floor( killedCost.metals * 0.1 );

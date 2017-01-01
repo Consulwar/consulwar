@@ -1,24 +1,45 @@
 <template name="current_resources">
-	<ul class="resources">
+	<div class="resources">
 		{{#with resources}}
-			<li class="humans" {{incomeTooltip incomeEffects 'humans'}}>
+			<div class="humans" {{incomeTooltip incomeEffects 'humans'}}>
 				{{formatNumberWithISO humans.amount 5}}
-			</li>
-			<li class="metals" {{incomeTooltip incomeEffects 'metals'}}>
+			</div>
+			<div class="metals" {{incomeTooltip incomeEffects 'metals'}}>
 				{{formatNumberWithISO metals.amount 5}}
-			</li>
-			<li class="crystals" {{incomeTooltip incomeEffects 'crystals'}}>
+			</div>
+			<div class="crystals" {{incomeTooltip incomeEffects 'crystals'}}>
 				{{formatNumberWithISO crystals.amount 5}}
-			</li>
-			<li class="honor" {{incomeTooltip incomeEffects 'honor'}}>
+			</div>
+			<div class="honor" {{incomeTooltip incomeEffects 'honor'}}>
 				{{formatNumberWithISO honor.amount 5}}
-			</li>
-			<li class="credits" {{incomeTooltip incomeEffects 'credits'}}>
+			</div>
+			<div class="credits" {{incomeTooltip incomeEffects 'credits'}}>
 				{{formatNumberWithISO credits.amount 5}}
-			</li>
+			</div>
 		{{/with}}
-		<li class="artefacts">
+		<div class="artefacts">
 			<a href="{{pathFor route='artefacts' item='silver_plasmoid'}}"></a>
-		</li>
-	</ul>
+		</div>
+	</div>
+</template>
+
+<template name="item_price">
+	<div class="resources {{class}}">
+		{{#each (getResources price)}}
+			{{#if eq this.engName 'time'}}
+				<div class="time" {{priceTooltip price 'time'}}>
+					Время строительства: 
+					<time>{{formatSeconds this.amount}}</time>
+				</div>
+			{{else}}
+				<div 
+					class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact {{this.group}}{{/if}}" 
+					{{priceTooltip price this.engName}} 
+					data-id="{{this.engName}}"
+				>
+					{{formatNumberWithISO this.amount 5}}
+				</div>
+			{{/if}}
+		{{/each}}
+	</div>
 </template>

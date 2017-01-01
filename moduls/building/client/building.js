@@ -14,13 +14,10 @@ Game.Building.showPage = function() {
 
 		switch (menu) {
 			case 'tournaments':
-				this.render('colosseum', { to: 'content' });
+				this.render('colosseum', { to: 'item_submenu' });
 				break;
 			case 'bonus':
 				this.render('pulsecatcher', {to: 'item_submenu'});
-				break;
-			default:
-				this.render('item_building', {to: 'content', data: { building: item } });
 				break;
 		}
 	} else {

@@ -185,25 +185,24 @@
 </template>
 
 <template name="promocodeReward">
-	<div class="smoke"></div>
 	<div class="promocode">
 		{{#if resources}}
-			<ul class="resources">
+			<div class="resources">
 				{{#each resources}}
-					<li class="{{this.engName}}">
+					<div class="{{this.engName}}">
 						{{formatNumber this.amount}}
-					</li>
+					</div>
 				{{/each}}
-			</ul>
+			</div>
 		{{/if}}
 		{{#if artefacts}}
-			<ul class="resources">
+			<div class="resources">
 				{{#each artefacts}}
-					<li class="{{this.engName}} artefact">
+					<div class="{{this.engName}} artefact">
 						{{formatNumber this.amount}}
-					</li>
+					</div>
 				{{/each}}
-			</ul>
+			</div>
 		{{/if}}
 		{{#if units}}
 			<ul class="units">

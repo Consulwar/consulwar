@@ -200,7 +200,9 @@ Template.paymentHistory.helpers({
 // ----------------------------------------------------------------------------
 
 Game.Payment.showPromocodeReward = function(profit) {
-	Blaze.renderWithData(Template.promocodeReward, { profit: profit }, $('.over')[0]);
+	Game.Popup.showPopup('promocodeReward', {
+		profit: profit
+	});
 };
 
 Template.promocodeReward.helpers({
@@ -397,6 +399,15 @@ Template.promocodeCreate.helpers({
 					name: Game.House.items[itemGroup][itemName].name
 				});
 			}
+		}
+
+		result.push({ name: '----------------------------------------' });
+
+		for (var itemName in Game.Artefacts.items) {
+			result.push({
+				id: 'resources.' + itemName,
+				name: Game.Artefacts.items[itemName].name
+			});
 		}
 
 		return result;

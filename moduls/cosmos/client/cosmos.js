@@ -794,7 +794,7 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 		info.status = 'Флот рептилий';
 	}
 
-	var units = Game.SpaceEvents.getFleetUnits(spaceEvent._id);
+	var units = Game.SpaceEvents.getFleetUnits(spaceEvent);
 	if (units) {
 		var side = (spaceEvent.info.isHumans) ? 'army' : 'reptiles';
 		info.units = [];

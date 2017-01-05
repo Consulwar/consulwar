@@ -648,8 +648,7 @@ Game.SpaceEvents = {
 		return false;
 	},
 
-	getFleetUnits: function(shipId) {
-		var ship = Game.SpaceEvents.getOne(shipId);
+	getFleetUnits: function(ship) {
 		if (!ship || ship.type != Game.SpaceEvents.type.SHIP) {
 			return null;
 		}

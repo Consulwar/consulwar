@@ -726,7 +726,7 @@ var completeHumansArrival = function(event, planet) {
 		var enemyFleet = Game.Planets.getFleetUnits(planet._id);
 		enemyArmy = { reptiles: { fleet: enemyFleet } };
 
-		var userFleet = Game.SpaceEvents.getFleetUnits(event._id);
+		var userFleet = Game.SpaceEvents.getFleetUnits(event);
 		userArmy = { army: { fleet: userFleet } };
 
 		battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
@@ -826,7 +826,7 @@ var completeReptilesArrival = function(event, planet) {
 	var newTask = null;
 
 	// get enemy fleet
-	var enemyFleet = Game.SpaceEvents.getFleetUnits(event._id);
+	var enemyFleet = Game.SpaceEvents.getFleetUnits(event);
 	var enemyArmy = (enemyFleet)
 		? { reptiles: { fleet: enemyFleet } }
 		: null;
@@ -1044,8 +1044,8 @@ var completeShipFight = function(event) {
 		}
 
 		// get fleet units
-		var firstFleet = Game.SpaceEvents.getFleetUnits(event._id);
-		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip._id);
+		var firstFleet = Game.SpaceEvents.getFleetUnits(event);
+		var secondFleet = Game.SpaceEvents.getFleetUnits(targetShip);
 
 		// perform battle
 		var userArmy = (event.info.isHumans)

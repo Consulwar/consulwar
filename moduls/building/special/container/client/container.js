@@ -5,7 +5,7 @@ initBuildingSpecialContainerLib();
 Meteor.subscribe('containers');
 
 Game.Building.special.Container.showWindow = function() {
-	Game.Popup.showPopup('containers');
+	Game.Popup.show('containers');
 };
 
 var isLoading = new ReactiveVar(false);

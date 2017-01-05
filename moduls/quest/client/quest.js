@@ -15,7 +15,7 @@ Game.Quest.showDailyQuest = function() {
 
 	if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
 		// show inprogress daily quest
-		Game.Popup.showPopup('quest', {
+		Game.Popup.show('quest', {
 			who: dailyQuest.who || 'tamily',
 			type: 'daily',
 			title: dailyQuest.name,
@@ -30,7 +30,7 @@ Game.Quest.showDailyQuest = function() {
 		});
 	} else {
 		// show finished daily quest
-		Game.Popup.showPopup('quest', {
+		Game.Popup.show('quest', {
 			who: dailyQuest.who || 'tamily',
 			type: 'daily',
 			title: dailyQuest.name, 
@@ -47,14 +47,14 @@ Game.Quest.showQuest = function(id) {
 
 	if (currentQuest.status == Game.Quest.status.FINISHED) {
 		// quest finished, render reward popup
-		Game.Popup.showPopup('reward', {
+		Game.Popup.show('reward', {
 			type: 'quest',
 			engName: currentQuest.engName,
 			who: currentQuest.who
 		});
 	} else {
 		// quest not finished, render reqular quest window
-		Game.Popup.showPopup('quest', {
+		Game.Popup.show('quest', {
 			type: 'quest',
 			engName: currentQuest.engName,
 			who: currentQuest.who,
@@ -80,7 +80,7 @@ Game.Quest.showGreeteing = function(who) {
 	// show character greeting text
 	var text = Game.Persons[who].text;
 	if (text && text.length > 0) {
-		Game.Popup.showPopup('quest', {
+		Game.Popup.show('quest', {
 			who: who,
 			type: 'quest',
 			text: text

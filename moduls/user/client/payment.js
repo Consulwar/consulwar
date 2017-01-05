@@ -10,21 +10,21 @@ var canShowReward = false;
 var isPaymentSuccess = false;
 
 var showPaymentWindow = function() {
-	Game.Popup.showPopup('payment');
+	Game.Popup.show('payment');
 	canShowReward = true;
 };
 
 var showPlatboxWindow = function(url) {
 	if (url) {
 		isPaymentSuccess = false;
-		Game.Popup.showPopup('paymentPlatbox', { url });
+		Game.Popup.show('paymentPlatbox', { url });
 	}
 };
 
 var showRewardWindow = function(itemId) {
 	var item = Game.Payment.items[itemId];
 	if (item) {
-		Game.Popup.showPopup('paymentReward', { item });
+		Game.Popup.show('paymentReward', { item });
 	}
 };
 
@@ -200,7 +200,7 @@ Template.paymentHistory.helpers({
 // ----------------------------------------------------------------------------
 
 Game.Payment.showPromocodeReward = function(profit) {
-	Game.Popup.showPopup('promocodeReward', {
+	Game.Popup.show('promocodeReward', {
 		profit: profit
 	});
 };

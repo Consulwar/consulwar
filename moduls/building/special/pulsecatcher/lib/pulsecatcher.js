@@ -26,6 +26,12 @@ Game.Building.special.Pulsecatcher = {
 	},
 
 	canActivate: function() {
+		var level = Game.Building.items.residential.pulsecatcher.currentLevel();
+
+		if (!level) {
+			return false;
+		}
+
 		var previousQuiz = Game.Building.special.Pulsecatcher.getQuiz(1);
 		var card = Game.Building.special.Pulsecatcher.getChoosenBonus(previousQuiz);
 

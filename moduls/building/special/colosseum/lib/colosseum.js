@@ -40,9 +40,11 @@ Game.Building.special.Colosseum = {
 		var user = Meteor.user();
 		var level = Game.Building.items.residential.colosseum.currentLevel();
 
-		if (user
-		 && user.timeLastTournament
-		 && user.timeLastTournament > Game.getCurrentServerTime() - Game.Building.special.Colosseum.getCooldownPeriod(level)
+		if (!level
+		 ||	(user
+			 && user.timeLastTournament
+			 && user.timeLastTournament > Game.getCurrentServerTime() - Game.Building.special.Colosseum.getCooldownPeriod(level)
+			)
 		) {
 			return false;
 		}

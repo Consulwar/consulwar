@@ -174,14 +174,6 @@ Router.route('/logout', function () {
 	this.redirect('index');
 });
 
-Router.route('register', {
-	path: '/register',
-	layoutTemplate: 'index',
-	yieldTemplates: {
-		'register_window': {to: 'modal'}
-	}
-});
-
 Router.route('pageNotFound', {
 	path: '/(.+)',
 	action: function() {

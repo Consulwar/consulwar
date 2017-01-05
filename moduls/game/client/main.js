@@ -98,7 +98,12 @@ Template.index.helpers({
 Template.index.events({
 	'click .fancybox': function(e, t) {
 		e.preventDefault();
-	} 
+	},
+
+	'click .start_registration': function(e, t) {
+		e.preventDefault();
+		Game.Popup.show('register_window');
+	}
 });
 
 Meteor.subscribe('game');

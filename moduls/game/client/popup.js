@@ -3,7 +3,7 @@ initPopupClient = function() {
 Game.Popup = {
 	zIndex: 100,
 
-	showPopup: function(templateName, data) {
+	show: function(templateName, data) {
 		this.zIndex++;
 
 		var popup = Blaze.renderWithData(Template.popup, {

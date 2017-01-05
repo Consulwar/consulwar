@@ -921,7 +921,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 					reward.crystals = mission.level[ options.missionLevel ].reward.crystals;
 
 					// New year bonus!
-					if (options.missionType == 'tradefleet') {
+					if (options.missionType == 'tradefleet' && reward.credits === undefined) {
 						var addCredits = false;
 						var today = new Date();
 						var endYear = new Date(today.getFullYear(), 11, 25, 0, 0, 0);

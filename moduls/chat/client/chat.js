@@ -1155,7 +1155,7 @@ Template.channelList.events({
 // ----------------------------------------------------------------------------
 
 Game.Chat.showHelpWindow = function() {
-	Game.Popup.showPopup('chatHelp');
+	Game.Popup.show('chatHelp');
 };
 
 Template.chatHelp.onRendered(function() {
@@ -1190,7 +1190,7 @@ var balanceHistoryCount = new ReactiveVar(null);
 var balanceLoading = new ReactiveVar(false);
 
 Game.Chat.showBalanceWindow = function(roomName, credits) {
-	Game.Popup.showPopup('chatBalance', {
+	Game.Popup.show('chatBalance', {
 		currentPage: 1,
 		count: 20,
 		roomName: roomName,
@@ -1254,7 +1254,7 @@ Template.chatBalance.events({
 var createPriceCredits = new ReactiveVar(null);
 
 Game.Chat.showControlWindow = function(username) {
-	Game.Popup.showPopup('chatControl', {
+	Game.Popup.show('chatControl', {
 		username: username
 	});
 };

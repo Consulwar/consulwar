@@ -167,6 +167,78 @@ body.game
 				background-repeat repeat, no-repeat, no-repeat
 				background-blend-mode normal, exclusion, normal
 				
+				&.planet.residential
+					.collectBonus
+						position absolute
+						display none
+						z-index 20
+						width 71px
+						height 71px
+						border-radius 50%
+						background-color $color-black
+						cursor pointer
+						overflow hidden
+						
+						&:hover
+							-webkit-filter brightness(1.2)
+							filter brightness(1.2)
+						
+						.currentValue
+							width 100%
+							position absolute
+							bottom 0
+							left 0
+						
+						&.active
+							display block
+							&:after
+								content ''
+								position absolute
+								top 0px
+								left 0px
+								width 71px
+								height 71px
+								box-sizing border-box
+								background-repeat no-repeat
+								background-position center center
+								border-radius 50%
+								border-width 2px
+								border-style solid
+
+						&.metals
+							top 734px
+							right 508px
+							&.active:after
+								background-image url(/img/game/metals_bonus.png)
+								border-color $color-metal
+							
+							.currentValue
+								background-color $color-metal
+							
+						&.crystals
+							top 666px
+							left 696px
+							&.active:after
+								background-image url(/img/game/crystals_bonus.png)
+								border-color $color-crystal
+							
+							.currentValue
+								background-color $color-crystal
+
+						&.colosseum
+							top 630px
+							left 388px
+							&.active:after
+								border-width 0
+								background-image url(/img/game/colosseum/collect.png)
+								
+						&.pulsecatcher
+							top 649px
+							left 1138px
+							&.active:after
+								border-width 0
+								background-image url(/img/game/pulsecatcher/collect.png)
+					
 				&.hideNet
 					background-repeat no-repeat, no-repeat, no-repeat
 				
@@ -227,6 +299,98 @@ body.game
 					height 100%
 					background-repeat no-repeat
 					background-position center center
+				
+				a
+					position absolute
+					
+					&:before
+						position absolute
+						top 0
+						left 0
+						-webkit-filter blur(0)
+						filter blur(0)
+						opacity 1
+						transition opacity .5s, filter 2s, -webkit-filter 2s
+					
+					&:hover:before
+						-webkit-filter brightness(1.1)
+						filter brightness(1.1)
+							
+					img
+						position absolute
+						z-index 1
+						
+						&:hover
+							-webkit-filter brightness(1.1)
+							filter brightness(1.1)
+						
+						&[progress]
+							z-index 2
+							
+						+ img
+							opacity 0.8
+
+						&[progress="100"]
+							-webkit-filter blur(20px)
+							filter blur(20px)
+						&[progress="90"]
+							-webkit-filter blur(18px)
+							filter blur(18px)
+						&[progress="80"]
+							-webkit-filter blur(16px)
+							filter blur(16px)
+						&[progress="70"]
+							-webkit-filter blur(12px)
+							filter blur(12px)
+						&[progress="60"]
+							-webkit-filter blur(8px)
+							filter blur(8px)
+						&[progress="50"]
+							-webkit-filter blur(6px)
+							filter blur(6px)
+						&[progress="40"]
+							-webkit-filter blur(4px)
+							filter blur(4px)
+						&[progress="30"]
+							-webkit-filter blur(3px)
+							filter blur(3px)
+						&[progress="20"]
+							-webkit-filter blur(2px)
+							filter blur(2px)
+						&[progress="10"]
+							-webkit-filter blur(1px)
+							filter blur(1px)
+					
+					&[progress="100"]:before
+						-webkit-filter blur(20px)
+						filter blur(20px)
+					&[progress="90"]:before
+						-webkit-filter blur(18px)
+						filter blur(18px)
+					&[progress="80"]:before
+						-webkit-filter blur(16px)
+						filter blur(16px)
+					&[progress="70"]:before
+						-webkit-filter blur(12px)
+						filter blur(12px)
+					&[progress="60"]:before
+						-webkit-filter blur(8px)
+						filter blur(8px)
+					&[progress="50"]:before
+						-webkit-filter blur(6px)
+						filter blur(6px)
+					&[progress="40"]:before
+						-webkit-filter blur(4px)
+						filter blur(4px)
+					&[progress="30"]:before
+						-webkit-filter blur(3px)
+						filter blur(3px)
+					&[progress="20"]:before
+						-webkit-filter blur(2px)
+						filter blur(2px)
+					&[progress="10"]:before
+						-webkit-filter blur(1px)
+						filter blur(1px)
 		
 		@import '{}/moduls/game/client/css/mobile.styl'
 

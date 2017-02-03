@@ -85,7 +85,8 @@ Game.Achievements = {
 	},
 
 	getValue: function() {
-		return Meteor.user().achievements;
+		var user = Meteor.user();
+		return user && user.achievements;
 	},
 
 	getCompleted: function() {

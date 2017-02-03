@@ -334,6 +334,10 @@ game.Item = function(options) {
 
 		var resources = Game.Resources.getValue();
 
+		if (!resources) {
+			return false;
+		}
+
 		for (var name in price) {
 			if (name == 'time') {
 				continue;

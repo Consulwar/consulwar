@@ -30,7 +30,7 @@ UI.registerHelper('user', function() {
 
 UI.registerHelper('options', function() {
 	var user = Meteor.user();
-	return user.settings && user.settings.options;
+	return user && user.settings && user.settings.options;
 });
 
 UI.registerHelper('Game', function() {

@@ -279,7 +279,8 @@ Template.player.helpers({
 	},
 
 	hasMusic: function() {
-		return Meteor.user().music;
+		var user = Meteor.user();
+		return user && user.music;
 	}
 });
 

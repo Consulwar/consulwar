@@ -195,7 +195,6 @@ Game.syncServerTime = function() {
 		Session.set('serverTime', serverTime);
 
 		var user = Meteor.user();
-		var options = user.settings && user.settings.options;
 
 		// refresh time each second
 		refreshQueueFunctionId = Meteor.setInterval(function() {
@@ -209,7 +208,7 @@ Game.syncServerTime = function() {
 					break;
 				}
 			}
-		}, (options.rareScreenUpdates ? 20000 : 1000));
+		}, (user && user.settings && user.settings.options && user.settings.options.rareScreenUpdates ? 20000 : 1000));
 	});
 };
 Game.syncServerTime();
@@ -241,7 +240,7 @@ Tracker.autorun(function () {
 	if (Meteor.user() && Meteor.user().game) {
 		var user = Meteor.user();
 
-		if (user.settings.options.mobileVersion && !$('meta[name="viewport"]').length) {
+		if (user.settings && user.settings.options && user.settings.options.mobileVersion && !$('meta[name="viewport"]').length) {
 			$('head').append('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>');
 		}
 
@@ -413,7 +412,7 @@ var helpers = {
 
 	userIcon: function() {
 		var user = Meteor.user();
-		if (user.settings && user.settings.chat && user.settings.chat.icon) {
+		if (user && user.settings && user.settings.chat && user.settings.chat.icon) {
 			return user.settings.chat.icon;
 		}
 		return 'common/1';

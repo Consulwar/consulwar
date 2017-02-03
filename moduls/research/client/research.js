@@ -34,6 +34,13 @@ Template.item_research.events({
 		if (item.currentLevel() === 0) {
 			Router.go(item.url({group: item.group}));
 		}
+	},
+
+	'click .toggle_description': function(e, t) {
+		$(t.find('.description')).slideToggle(function() {
+			var options = Meteor.user().settings && Meteor.user().settings.options;
+			Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
+		});
 	}
 });
 

@@ -6,6 +6,9 @@ UI.registerHelper('isNewLayout', function() {
 			residential: true,
 			military: true
 		},
+		research: {
+			evolution: true
+		},
 		cosmos: true,
 		army: {
 			fleet: true
@@ -27,7 +30,7 @@ UI.registerHelper('user', function() {
 
 UI.registerHelper('options', function() {
 	var user = Meteor.user();
-	return user.settings && user.settings.options;
+	return user && user.settings && user.settings.options;
 });
 
 UI.registerHelper('Game', function() {

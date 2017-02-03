@@ -11,7 +11,9 @@ var tracks = {
 	8: '8 Марш Отцов',
 	9: '9 Бгоневички в бой',
 	10: '10 Вечно далекие звезды',
-	11: '11 Бесконечная вселенная'
+	11: '11 Бесконечная вселенная',
+	12: '12 Между галактик',
+	13: '13 Потерянные'
 };
 
 var storedPlaylist = JSON.parse(localStorage.getItem('playlist'));
@@ -279,7 +281,8 @@ Template.player.helpers({
 	},
 
 	hasMusic: function() {
-		return Meteor.user().music;
+		var user = Meteor.user();
+		return user && user.music;
 	}
 });
 

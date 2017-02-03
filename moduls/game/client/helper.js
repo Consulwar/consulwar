@@ -6,6 +6,9 @@ UI.registerHelper('isNewLayout', function() {
 			residential: true,
 			military: true
 		},
+		research: {
+			evolution: true
+		},
 		cosmos: true,
 		army: {
 			fleet: true

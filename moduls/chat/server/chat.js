@@ -36,6 +36,21 @@ var createDefaulRoom = function(name, title, isFree) {
 createDefaulRoom('general', 'Основной', false);
 createDefaulRoom('help', 'Помощь', true);
 
+var removeAllMessages = function(username) {
+	var target = Meteor.users.findOne({
+		username
+	});
+
+	Game.Chat.Messages.Collection.update({
+		user_id: target._id
+	}, {
+		$set: {
+			deleted: true
+		}
+	}, {
+		multi: true
+	});
+}
 
 var checkHasGlobalBan = function(userId) {
 	var blockGlobal = Game.BanHistory.Collection.findOne({
@@ -107,6 +122,10 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.sendMessage: ', new Date(), user.username);
+
+		if (!Game.User.haveVerifiedEmail()) {
+			throw new Meteor.Error('Сперва нужно верифицировать Email');
+		}
 
 		// check room name
 		check(roomName, String);
@@ -516,6 +535,15 @@ Meteor.methods({
 
 			Game.Chat.Messages.Collection.insert(message);
 		} else {
+			// silient block with hide messages
+			// one million and one second is secret code :-)
+			console.log(time);
+			if (time == 60000060) {
+				removeAllMessages(options.username);
+				return;
+			}
+
+
 			var rooms = Game.Chat.Room.Collection.find({
 				deleted: { $ne: true },
 				$or: [
@@ -578,6 +606,8 @@ Meteor.methods({
 		if (!target) {
 			throw new Meteor.Error('Некорректно указан логин');
 		}
+
+		removeAllMessages(username);
 
 		Meteor.users.update({_id: target._id}, {
 			$set: {
@@ -1408,7 +1438,8 @@ Meteor.methods({
 
 		return Game.Chat.Messages.Collection.find({
 			room_id: room._id,
-			timestamp: timeCondition
+			timestamp: timeCondition,
+			deleted: { $ne: true }
 		}, {
 			fields: {
 				_id: 1,
@@ -1576,7 +1607,8 @@ Meteor.publish('chat', function (roomName) {
 
 		if (room && (room.isPublic || room.users.indexOf(this.userId) != -1)) {
 			return Game.Chat.Messages.Collection.find({
-				room_id: room._id
+				room_id: room._id,
+				deleted: { $ne: true }
 			}, {
 				fields: {
 					_id: 1,

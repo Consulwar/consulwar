@@ -119,7 +119,13 @@
 		</ul>
 
 		<form id="message">
-			{{#if (and (not isChatFree) (lt user.rating room.minRating))}}
+			{{#if not Game.User.haveVerifiedEmail}}
+				<div class="whyCanNotWrite">
+					Что бы писать в чат необходимо подтвердить вашу почту.
+					<a href="{{pathFor 'settings'}}">Настройки</a>
+				</div>
+				<input type="submit" value="" disabled="true"/>
+			{{else}}{{#if (and (not isChatFree) (lt user.rating room.minRating))}}
 				<div class="whyCanNotWrite">
 					в этот чат могут писать только игроки с рейтингом выше {{formatNumber room.minRating}}
 				</div>
@@ -133,7 +139,7 @@
 					</div>
 				{{/if}}
 				<input type="submit" value=""/>
-			{{/if}}
+			{{/if}}{{/if}}
 		</form>
 	</div>
 </template>

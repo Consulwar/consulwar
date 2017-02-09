@@ -69,7 +69,7 @@ var menu = {
 			ground: {
 				name: 'Армия',
 				additionalArea: 'tilps',
-				url: firstItemGroupURL(Game.Unit.items.army.ground),
+				url: firstItemUrl(Game.Unit.items.army.ground),
 				items: Game.Unit.items.army.ground
 			}
 		}

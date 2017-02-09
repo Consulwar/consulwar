@@ -152,6 +152,16 @@
 				</ol>
 			{{/if}}
 
+			{{#if eq unit.characteristics.special 'air'}}
+				<div>*Воздушная единица</div>
+			{{/if}}
+
+			{{#each unit.characteristics.notAttack}}
+				{{#if eq this 'air'}}
+					<div>*Не атакует воздушные цели</div>
+				{{/if}}
+			{{/each}}
+
 			<div class="effects">
 				{{> unitBattleEffects unit=unit}}
 

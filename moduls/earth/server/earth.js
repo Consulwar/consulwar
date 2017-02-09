@@ -27,7 +27,6 @@ if (Game.EarthZones.Collection.find().count() === 0) {
 
 var checkIsStationaryUnit = function(side, group, name) {
 	return[
-		'army.ground.relax',
 		'reptiles.ground.chipping'
 	].indexOf(side + '.' + group + '.' + name) != -1;
 };

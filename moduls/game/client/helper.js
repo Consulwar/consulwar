@@ -11,7 +11,8 @@ UI.registerHelper('isNewLayout', function() {
 		},
 		cosmos: true,
 		army: {
-			fleet: true
+			fleet: true,
+			ground: true
 		},
 		artefacts: true
 	};

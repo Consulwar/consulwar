@@ -63,7 +63,7 @@ var menu = {
 			defense: {
 				name: 'Планетарная оборона',
 				additionalArea: 'vaha',
-				url: firstItemGroupURL(Game.Unit.items.army.defense),
+				url: firstItemUrl(Game.Unit.items.army.defense),
 				items: Game.Unit.items.army.defense
 			}, 
 			ground: {

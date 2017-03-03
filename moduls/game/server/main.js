@@ -61,6 +61,7 @@ Meteor.startup(function () {
 	initItemsServer();
 	initSettingsServer();
 	initQuestServer();
+	initEntranceRewardServer();
 	initCheatsServer();
 	initDDPLimiter();
 
@@ -135,6 +136,7 @@ Meteor.methods({
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();
 		Game.Quest.actualize();
+		Game.EntranceReward.actualize();
 
 		return true;
 	},

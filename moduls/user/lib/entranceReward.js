@@ -9,7 +9,7 @@ Game.EntranceReward = {
 		});
 	},
 
-	getNextSeqNum: function () {
+	getNextDay: function () {
 		let rewards = Game.EntranceReward.getValue();
 
 		if (rewards) {

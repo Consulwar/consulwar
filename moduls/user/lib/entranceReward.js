@@ -5,7 +5,7 @@ Game.EntranceReward = {
 
 	getValue: function() {
 		return Game.EntranceReward.Collection.findOne({
-			userId: Meteor.userId()
+			user_id: Meteor.userId()
 		});
 	},
 

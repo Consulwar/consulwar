@@ -3,23 +3,23 @@ initEntranceRewardServer = function() {
 initEntranceRewardLib();
 
 Game.EntranceReward.Collection._ensureIndex({
-	userId: 1
+	user_id: 1
 });
 
 Game.EntranceReward.rewards = [];
 
 game.EntranceReward = function(options) {
-	if (options.seqNum === undefined) {
-		throw new Meteor.Error('Ошибка в контенте', 'Не указан порядковый номер награды за вход');
+	if (options.day === undefined) {
+		throw new Meteor.Error('Ошибка в контенте', 'Не указан номер дня награды за вход');
 	}
 
-	if (Game.EntranceReward.rewards[options.seqNum] !== undefined) {
-		throw new Meteor.Error('Ошибка в контенте', 'Награда за вход с порядковым номером ' + options.seqNum + ' уже существует');
+	if (Game.EntranceReward.rewards[options.day] !== undefined) {
+		throw new Meteor.Error('Ошибка в контенте', 'Награда за вход с номером дня ' + options.day + ' уже существует');
 	}
 
 	_.extend(this, options);
 
-	Game.EntranceReward.rewards[this.seqNum] = this;
+	Game.EntranceReward.rewards[this.day] = this;
 };
 
 initEntranceRewardsContent();
@@ -27,26 +27,19 @@ initEntranceRewardsContent();
 Game.EntranceReward.actualize = function() {
 	let user = Meteor.user();
 
-	if (!user || !user._id) {
-		throw new Meteor.Error('Требуется авторизация');
-	}
-
-	if (user.blocked === true) {
-		throw new Meteor.Error('Аккаунт заблокирован');
-	}
-
 	let currentDate = new Date();
 	currentDate.setHours(0, 0, 0, 0);
 
+	// recently registered users do not have lastRewardTime field
 	if (!user.lastRewardTime) {
 		let createdDate = new Date(user.createdAt);
 		createdDate.setHours(0, 0, 0, 0);
 
+		// if registered today skip checking awards
 		if (createdDate.getTime() === currentDate.getTime()) {
 			return;
 		}
-	}
-	else {
+	} else {
 		let lastRewardDate = new Date(user.lastRewardTime);
 		lastRewardDate.setHours(0, 0, 0, 0);
 
@@ -71,12 +64,17 @@ Game.EntranceReward.actualize = function() {
 
 	if (nextSeqNum === 0) {
 		Game.EntranceReward.Collection.insert({
-			userId: user._id,
+			user_id: user._id,
 			history: [record],
 		});
-	}
-	else {
-		Game.EntranceReward.Collection.update({ userId: user._id }, {$push: {history: record}});
+	} else {
+		Game.EntranceReward.Collection.update({
+			user_id: user._id
+		}, {
+			$push: {
+				history: record
+			}
+		});
 	}
 
 	Meteor.users.update({

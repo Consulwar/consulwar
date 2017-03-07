@@ -6,42 +6,6 @@ Game.EntranceReward.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.EntranceReward.rewards = [];
-Game.EntranceReward.defaultRewards = undefined;
-
-game.EntranceReward = function(options) {
-	if (options.day === undefined) {
-		throw new Meteor.Error('Ошибка в контенте', 'Не указан номер дня награды за вход');
-	}
-
-	_.extend(this, options);
-
-	let day = options.day;
-
-	// fill multiple awards if day is array
-	if (_.isArray(day)) {
-		let from = day[0];
-		let to = day[1];
-		for (let i = from; i <= to; i++) {
-			addReward(i, this);
-		}
-	} else if (_.isNumber(day)) {
-		addReward(day, this);
-	}	else {
-		Game.EntranceReward.defaultRewards = this.reward;
-	}
-};
-
-let addReward = function(day, reward) {
-	if (Game.EntranceReward.rewards[day] !== undefined) {
-		throw new Meteor.Error('Ошибка в контенте', 'Награда за вход с номером дня ' + day + ' уже существует');
-	}
-
-	Game.EntranceReward.rewards[day] = reward.reward;
-};
-
-initEntranceRewardsContent();
-
 Game.EntranceReward.actualize = function() {
 	let user = Meteor.user();
 
@@ -78,7 +42,7 @@ Game.EntranceReward.actualize = function() {
 	let now = new Date();
 	let record = {
 		date: now,
-		reward: reward
+		profit: reward.profit
 	};
 
 	if (nextDay === 0) {
@@ -104,5 +68,17 @@ Game.EntranceReward.actualize = function() {
 		}
 	});
 };
+
+Meteor.publish('entranceRewards', function() {
+	if (this.userId) {
+		return Game.EntranceReward.Collection.find({
+			user_id: this.userId
+		}, {
+			limit: 1
+		});
+	} else {
+		this.ready();
+	}
+});
 
 };

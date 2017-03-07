@@ -1,0 +1,75 @@
+.entranceReward
+	position relative
+	width 1200px
+	height 600px
+	box-sizing border-box
+	background-color $color-black
+	font-size 14px
+	color $color-ggk
+	overflow auto
+
+	.textInfo
+		padding 10px
+		color $color-white
+
+	.yourReward
+		display flex
+		align-items center
+		justify-content center
+		flex-direction column
+		background-image url(/img/game/bg/entrancereward.png)
+		width 100%
+		height 371px
+
+		> .text
+			font-size 30px
+			color $color-white
+
+		.reward
+			width 191px
+			height 234px
+			border none
+			background-image url(img/game/payment/reward-back.jpg)
+			background-repeat round
+			background-size contain
+
+		.take
+			display block
+			cursor pointer
+			width 181px
+			height 40px
+			padding-top 10px
+			color #FFFFFF
+			font-size 24px
+			font-weight bold
+			text-align center
+			background-image url(/img/game/quests/btn_take.png)
+
+			&:hover
+				-webkit-filter brightness(1.4)
+				filter brightness(1.4)
+
+	.paymentItems
+		display flex
+		flex-direction row
+		flex-wrap wrap
+		margin 0 100px
+		justify-content center
+		align-items center
+
+		.rewardItem
+			position relative
+			display inline-block
+			width 53px
+			height 53px
+			background-repeat no-repeat
+			background-size contain
+
+			&.metals
+				background-image url(/img/game/metals.png)
+
+			&.crystals
+				background-image url(/img/game/crystals.png)
+
+			&.humans
+				background-image url(/img/game/humans.png)

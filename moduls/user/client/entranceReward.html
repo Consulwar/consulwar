@@ -1,56 +1,17 @@
 <template name="entranceReward">
-	<div class="promocode">
-		{{#if resources}}
-			<div class="resources">
-				{{#each resources}}
-					<div class="{{this.engName}}">
-						{{formatNumber this.amount}}
-					</div>
-				{{/each}}
-			</div>
-		{{/if}}
-		{{#if artefacts}}
-			<div class="resources">
-				{{#each artefacts}}
-					<div class="{{this.engName}} artefact">
-						{{formatNumber this.amount}}
-					</div>
-				{{/each}}
-			</div>
-		{{/if}}
-		{{#if units}}
-			<ul class="units">
-				{{#each units}}
-					<li class="{{this.engName}}-icon">
-						{{formatNumber this.amount}}
-					</li>
-				{{/each}}
-			</ul>
-		{{/if}}
-		{{#if cards}}
-			<ul class="cards">
-				{{#each cards}}
-					<li class="{{this.group}}-{{this.engName}}-icon">
-						{{formatNumber this.amount}}
-					</li>
-				{{/each}}
-			</ul>
-		{{/if}}
-		{{#if houseItems}}
-			<ul class="houseItems">
-				{{#each houseItems}}
-					<li class="{{this.group}}-{{this.engName}}-icon"></li>
-				{{/each}}
-			</ul>
-		{{/if}}
-		{{#if containers}}
-			{{#each containers}}
-				<span class="containers">Бесплатный контейнер +{{this.amount}}</span>
+	<div class="entranceReward scrollbar-inner">
+		<div class="textInfo">
+			<span>Призов получено {{formatNumber takenCount}}    Осталось уникальных призов {{formatNumber leftCount}}</span>
+		</div>
+		<div class="yourReward">
+			<div class="text">Ваш приз</div>
+			<div class="reward"></div>
+			<div class="take">Забрать</div>
+		</div>
+		<div class="paymentItems">
+			{{#each history}}
+				<div class="rewardItem {{getType}}"></div>
 			{{/each}}
-		{{/if}}
-		{{#if profit.votePower}}
-			<span class="votepower">Сила голоса +{{profit.votePower}}</span>
-		{{/if}}
-		<span class="take">Награда</span>
+		</div>
 	</div>
 </template>

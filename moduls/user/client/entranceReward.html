@@ -10,7 +10,9 @@
 		</div>
 		<div class="paymentItems">
 			{{#each history}}
-				<div class="rewardItem {{getType}}"></div>
+				<div class="rewardItem {{getType}} state-{{state}}">
+					{{formatNumber getAmount}}
+				</div>
 			{{/each}}
 		</div>
 	</div>

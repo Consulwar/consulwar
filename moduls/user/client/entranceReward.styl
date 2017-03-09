@@ -67,9 +67,31 @@
 
 			&.metals
 				background-image url(/img/game/metals.png)
+				color $color-metal
 
 			&.crystals
 				background-image url(/img/game/crystals.png)
 
 			&.humans
 				background-image url(/img/game/humans.png)
+
+			&.rank-white
+				background-color white
+
+			&.rank-green
+				background-color green
+
+			&.state-taken
+				opacity 0.5
+				filter saturate(50%)
+				-webkit-filter saturate(50%)
+
+			&.state-current
+				opacity 1
+				filter saturate(100%)
+				-webkit-filter saturate(100%)
+
+			&.state-possible
+				opacity 0.6
+				filter saturate(0%)
+				-webkit-filter saturate(0%)

@@ -13,13 +13,11 @@ Meteor.subscribe('entranceRewards', function () {
 Game.EntranceReward.Collection.find({}).observeChanges({
 	added: function(id, fields) {
 		if (!initializing) {
-			console.log('added', id, fields);
 			showEntranceReward(fields);
 		}
 	},
 
 	changed: function(id, fields) {
-		console.log('changed', id, fields);
 		showEntranceReward(fields);
 	}
 });
@@ -34,33 +32,82 @@ let showEntranceReward = function (fields) {
 		let currentReward = history[history.length - 1];
 		currentReward.state = 'current';
 
-		for (let reward of Game.EntranceReward.rewards) {
+		for (let i = history.length; i < Game.EntranceReward.rewards.length; i++) {
+			let reward = Game.EntranceReward.rewards[i];
 			history.push({profit: reward.profit, state: 'possible'});
 		}
 
 		let info = {
+			takenCount: fields.history.length,
+			leftCount: Game.EntranceReward.rewards.length - fields.history.length,
 			history,
 			currentReward,
-			takenCount: fields.history.length,
-			leftCount: Game.EntranceReward.rewards.length - fields.history.length
+			ranks: Game.EntranceReward.rewardRanks
 		};
 		Game.Popup.show('entranceReward', info);
 
-		console.log(info);
+		console.log(info); //todo remove
 	}
 };
 
 Template.entranceReward.helpers({
-	getType: function () {
+	getType: function() {
 		let profit = this.profit;
-		if (profit.resource) {
-			return _.keys(profit.resource)[0];
-		} else if (profit.unit) {
-			return _.keys(profit.unit.ground)[0] + '-icon';
-		}	else {
-			return '';
+		let type = _.keys(profit)[0];
+		let res = profit[type];
+
+		switch (type) {
+			case 'resources':
+				return _.keys(res)[0];
+
+			case 'units':
+				let unitType = _.keys(res)[0];
+				return _.keys(res[unitType])[0] + '-icon';
+
+			case 'cards':
+				return _.keys(res)[0];
+
+			case 'houseItems':
+				let houseType = _.keys(res)[0];
+				return _.keys(res[houseType])[0];
+
+			case 'containers':
+				return _.keys(res)[0];
+
+			case 'rank':
+				return 'rank-' + profit.rank;
+
+			default:
+				return '';
 		}
+	},
+
+	getAmount: function () {
+		let profit = this.profit;
+		let type = _.keys(profit)[0];
+		let res = profit[type];
+		let secondType = _.keys(res)[0];
+		if (typeof res[secondType] === 'object') {
+			let thirdType = _.keys(res[secondType])[0];
+			return res[secondType][thirdType];
+		} else {
+			if (type === 'rank') {
+				return '';
+			} else {
+				return res[secondType];
+			}
+		}
+	},
+});
+
+Template.entranceReward.events({
+	'click .take': function(e, t) {
+		Blaze.remove(t.view);
+	},
+	'click .close': function() {
+		Notifications.success('Награда за день получена.');
 	}
 });
+
 
 };

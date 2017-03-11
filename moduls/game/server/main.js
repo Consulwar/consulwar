@@ -162,7 +162,8 @@ Meteor.publish('game', function () {
 				timeLastTournament: 1,
 				achievements: 1,
 				settings: 1,
-				music: 1
+				music: 1,
+				entranceReward: 1
 			}
 		});
 	}

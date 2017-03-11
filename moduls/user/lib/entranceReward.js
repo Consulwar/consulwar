@@ -7,12 +7,12 @@ Game.EntranceReward = {
 		return Game.EntranceReward.Collection.findOne({
 			user_id: Meteor.userId()
 		});
-	}
-};
+	},
 
-Game.EntranceReward.rewards = [];
-Game.EntranceReward.rewardRanks = [];
-Game.EntranceReward.defaultRewards = undefined;
+	rewards: [],
+	rewardRanks: {},
+	defaultRewards: undefined
+};
 
 game.EntranceRewardRank = function (options) {
 	if (Game.EntranceReward.rewardRanks[options.id] !== undefined) {
@@ -42,7 +42,7 @@ game.EntranceReward = function(options) {
 		}
 	} else if (_.isNumber(day)) {
 		addReward(day, this);
-	}	else {
+	} else {
 		Game.EntranceReward.defaultRewards = this;
 	}
 };

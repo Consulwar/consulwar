@@ -24,6 +24,8 @@ Game.Popup = {
 			.parent()
 			.find('>*:first-child')
 			.append('<button class="close"></button>');
+
+		return subtemplate;
 	}
 };
 

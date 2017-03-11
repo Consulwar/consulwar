@@ -2,51 +2,41 @@ initEntranceRewardClient = function () {
 
 initEntranceRewardLib();
 
-// let initializing = true;
-//todo replace
-let initializing = false;
-
-Meteor.subscribe('entranceRewards', function () {
-	initializing = false;
-});
-
-Game.EntranceReward.Collection.find({}).observeChanges({
-	added: function(id, fields) {
-		if (!initializing) {
-			showEntranceReward(fields);
-		}
-	},
-
-	changed: function(id, fields) {
-		showEntranceReward(fields);
+Game.EntranceReward.showPopup = function (history) {
+	let showHistory = [];
+	for (let reward of history) {
+		showHistory.push({profit: reward.profit, state: 'taken'});
 	}
-});
 
-let showEntranceReward = function (fields) {
-	if (fields && fields.history) {
-		let history = [];
-		for (let reward of fields.history) {
-			history.push({profit: reward.profit, state: 'taken'});
+	let currentReward = showHistory[showHistory.length - 1];
+	currentReward.state = 'current';
+
+	let leftUniqueCount = 0;
+
+	for (let i = showHistory.length; i < Game.EntranceReward.rewards.length; i++) {
+		let reward = Game.EntranceReward.rewards[i];
+		showHistory.push({profit: reward.profit, state: 'possible'});
+
+		if (reward.profit.rank === undefined) {
+			leftUniqueCount++;
 		}
+	}
 
-		let currentReward = history[history.length - 1];
-		currentReward.state = 'current';
+	let info = {
+		takenCount: history.length,
+		leftUniqueCount: leftUniqueCount,
+		history: showHistory,
+		currentReward,
+		ranks: Game.EntranceReward.rewardRanks
+	};
 
-		for (let i = history.length; i < Game.EntranceReward.rewards.length; i++) {
-			let reward = Game.EntranceReward.rewards[i];
-			history.push({profit: reward.profit, state: 'possible'});
-		}
+	this.subtemplate = Game.Popup.show('entranceReward', info);
+};
 
-		let info = {
-			takenCount: fields.history.length,
-			leftCount: Game.EntranceReward.rewards.length - fields.history.length,
-			history,
-			currentReward,
-			ranks: Game.EntranceReward.rewardRanks
-		};
-		Game.Popup.show('entranceReward', info);
-
-		console.log(info); //todo remove
+Game.EntranceReward.closePopup = function() {
+	if (this.subtemplate) {
+		Blaze.remove(this.subtemplate);
+		this.subtemplate = null;
 	}
 };
 
@@ -102,10 +92,13 @@ Template.entranceReward.helpers({
 
 Template.entranceReward.events({
 	'click .take': function(e, t) {
-		Blaze.remove(t.view);
+		Game.EntranceReward.closePopup();
+		Meteor.call('entranceReward.takeReward');
 	},
 	'click .close': function() {
+		this.subtemplate = null;
 		Notifications.success('Награда за день получена.');
+		Meteor.call('entranceReward.takeReward');
 	}
 });
 

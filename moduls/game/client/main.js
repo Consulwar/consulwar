@@ -258,6 +258,20 @@ Tracker.autorun(function () {
 
 		Session.set('username', user.username);
 		Session.set('planetName', user.planetName);
+
+		if (user.entranceReward && user.entranceReward.givenTime &&
+			(user.entranceReward.takenTime === undefined ||
+			user.entranceReward.givenTime.getTime() > user.entranceReward.takenTime.getTime())) {
+			Meteor.call('entranceReward.getHistory', function (err, history) {
+				if (Game.EntranceReward.subtemplate) {
+					Game.EntranceReward.closePopup();
+				}
+
+				Game.EntranceReward.showPopup(history);
+			});
+		} else if (Game.EntranceReward.subtemplate) {
+			Game.EntranceReward.closePopup();
+		}
 	}
 });
 

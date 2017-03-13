@@ -136,7 +136,6 @@ Meteor.methods({
 		Game.SpaceEvents.actualize();
 		Game.Planets.actualize();
 		Game.Quest.actualize();
-		Game.EntranceReward.actualize();
 
 		return true;
 	},
@@ -151,6 +150,7 @@ Meteor.publish('game', function () {
 	if (this.userId) {
 		return Meteor.users.find({_id: this.userId}, {
 			fields: {
+				createdAt: 1,
 				game: 1,
 				username: 1,
 				planetName: 1,

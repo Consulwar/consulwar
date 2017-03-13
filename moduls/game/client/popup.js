@@ -17,6 +17,7 @@ Game.Popup = {
 		);
 
 		subtemplate.onViewDestroyed(function() {
+			Game.Popup.zIndex--;
 			Blaze.remove(popup);
 		});
 
@@ -24,14 +25,11 @@ Game.Popup = {
 			.parent()
 			.find('>*:first-child')
 			.append('<button class="close"></button>');
-
-		return subtemplate;
 	}
 };
 
 Template.popup.events({
 	'click .close': function(e, t) {
-		Game.Popup.zIndex--;
 		Blaze.remove(t.view);
 	}
 });

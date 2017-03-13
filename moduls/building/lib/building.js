@@ -18,6 +18,14 @@ game.Building = function(options){
 		};
 		return Router.routes[this.type].path(options);
 	};
+
+	this.icon = function() {
+		return '/img/game/building/' + this.group + '/i/' + this.engName + '.png';
+	}
+
+	this.image = function() {
+		return '/img/game/building/' + this.group + '/' + this.engName + '.jpg';
+	}
 };
 game.extend(game.Building, game.Item);
 

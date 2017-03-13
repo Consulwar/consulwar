@@ -26,6 +26,14 @@ game.Card = function(options) {
 		return Router.routes.house.path(options);
 	};
 
+	this.icon = function() {
+		return '/img/game/house/donate/i/' + this.engName + '.png';
+	}
+
+	this.image = function() {
+		return '/img/game/house/donate/i/' + this.engName + '.png';
+	}
+
 	Game.Cards.items[this.cardType][this.engName] = this;
 
 	this.amount = function() {

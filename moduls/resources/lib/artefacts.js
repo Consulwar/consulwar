@@ -34,6 +34,14 @@ game.Artefact = function(options) {
 		return Router.routes.artefacts.path(options);
 	};
 
+	this.icon = function() {
+		return '/img/game/artefact/' + this.group + '/i/' + this.engName + '.png';
+	}
+
+	this.image = function() {
+		return '/img/game/artefact/' + this.group + '/' + this.engName + '/item.jpg';
+	}
+
 	Game.Artefacts.items[options.engName] = this;
 };
 

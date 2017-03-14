@@ -38,11 +38,19 @@
 			width 100%
 			margin 0 10px
 			
+			&.hasWinner
+				.reward:not(.winner)
+					opacity 0.5
+					-webkit-filter grayscale(0.4) brightness(0.6)
+					filter grayscale(0.4) brightness(0.6)
+			
 			.reward
 				width 131px
 				height 161px
 				margin auto 10px
-				transition width 0.5s, height 0.5s
+				-webkit-filter grayscale(0) brightness(1)
+				filter grayscale(0) brightness(1)
+				transition width 0.5s, height 0.5s, opacity 0.5s, filter 0.5s
 				
 				&.winner
 					width 191px

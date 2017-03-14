@@ -17,7 +17,7 @@
 				{{/if}}{{/if}}
 			</div>
 			{{#if eq selectedReward.obj.type 'rank'}}
-				<div class="rewards">
+				<div class="rewards {{#if and (eq selectedReward.state 'current') winner}}hasWinner{{/if}}">
 					{{#each selectedReward.obj.rewards}}
 						{{#let reward=(Game.getObjectByPath profit)}}
 							<div 

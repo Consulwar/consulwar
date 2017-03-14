@@ -50,7 +50,7 @@ game.EntranceReward = function(options) {
 
 Game.EntranceReward.getProfit = function() {
 	let rewards = Game.EntranceReward.getValue();
-	let nextDay = (rewards ? rewards.history.length : 0);
+	let nextDay = (rewards ? rewards.history.length : 0) + 1;
 	let reward = Game.EntranceReward.items[nextDay] || Game.EntranceReward.defaultRewards;
 
 	if (_.isString(reward.profit)) {
@@ -89,7 +89,7 @@ Meteor.methods({
 		history = (history && history.history) || [];
 
 		if (history.length < perPage) {
-			let firstElement = page * perPage + history.length;
+			let firstElement = page * perPage + history.length + 1;
 			let lastElement = firstElement + perPage - history.length;
 
 			// take care about references

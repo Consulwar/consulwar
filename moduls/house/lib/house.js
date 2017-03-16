@@ -120,4 +120,5 @@ Game.House = {
 
 initHouseContent();
 
+Game.Helpers.deepFreeze(Game.House.items);
 };

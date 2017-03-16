@@ -54,4 +54,6 @@ Game.Research = {
 
 initResearchContent();
 
+Game.Helpers.deepFreeze(Game.Research.items);
+
 };

@@ -111,5 +111,5 @@ Game.Achievements = {
 
 initAchievementsContent();
 
-
+Game.Helpers.deepFreeze(Game.Achievements.items);
 };

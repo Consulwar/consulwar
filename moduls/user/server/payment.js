@@ -1,6 +1,9 @@
 initPaymentServer = function() {
 
 initPaymentLib();
+
+Game.Helpers.deepFreeze(Game.Payment.items);
+
 initPaymentPlatboxServer();
 
 Game.Payment.Expense = {

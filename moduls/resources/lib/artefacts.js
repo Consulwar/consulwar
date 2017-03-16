@@ -43,4 +43,5 @@ Game.Artefacts = {
 
 initArtefactsContent();
 
+Game.Helpers.deepFreeze(Game.Artefacts.items);
 };

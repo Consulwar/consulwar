@@ -103,4 +103,5 @@ initBuildingSpecialColosseumServer();
 initBuildingSpecialContainerServer();
 initBuildingSpecialPulsecatcherServer();
 
+Game.Helpers.deepFreeze(Game.Building.special);
 };

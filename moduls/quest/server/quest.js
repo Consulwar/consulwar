@@ -84,6 +84,9 @@ game.DailyQuest = function(options) {
 
 initQuestContent();
 
+Game.Helpers.deepFreeze(Game.Quest.regularQuests);
+Game.Helpers.deepFreeze(Game.Quest.dailyQuests);
+
 Game.Quest.initialize = function(user, isRewrite) {
 	user = user || Meteor.user();
 	var quests = Game.Quest.getValue();

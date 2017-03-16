@@ -151,4 +151,6 @@ Game.Cards = {
 
 initCardsContent();
 
+Game.Helpers.deepFreeze(Game.Cards.items);
+
 };

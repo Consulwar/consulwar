@@ -53,4 +53,6 @@ Game.Building = {
 
 initBuildingContent();
 
+Game.Helpers.deepFreeze(Game.Building.items);
+
 };

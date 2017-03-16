@@ -118,4 +118,5 @@ Game.Investments = {
 
 initMutualContent();
 
+Game.Helpers.deepFreeze(Game.Mutual.items);
 };

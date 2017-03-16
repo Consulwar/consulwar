@@ -2,6 +2,8 @@ initPaymentClient = function() {
 	
 initPaymentLib();
 
+Game.Helpers.deepFreeze(Game.Payment.items);
+
 // ----------------------------------------------------------------------------
 // Payment modal window
 // ----------------------------------------------------------------------------

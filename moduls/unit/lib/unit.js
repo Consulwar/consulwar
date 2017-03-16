@@ -258,6 +258,8 @@ Game.Unit = {
 
 initUnitsContent();
 
+Game.Helpers.deepFreeze(Game.Unit.items);
+
 /*
 for (var category in Game.Unit.items.army) {
 	for (var name in Game.Unit.items.army[category]) {

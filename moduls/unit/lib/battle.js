@@ -69,6 +69,8 @@ Game.Battle.result = {
 
 initGalacticContentBattle();
 
+Game.Helpers.deepFreeze(Game.Battle.items);
+
 // ------------------------------------------------------
 // Debug methods
 // ------------------------------------------------------

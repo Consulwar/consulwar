@@ -130,4 +130,6 @@ Game.Icons = {
 
 initIconsContent();
 
+
+Game.Helpers.deepFreeze(Game.Icons.items);
 };

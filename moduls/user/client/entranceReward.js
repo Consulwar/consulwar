@@ -3,52 +3,68 @@ initEntranceRewardClient = function () {
 initEntranceRewardLib();
 initEntranceRewardRanksContent();
 
-Meteor.users.find().observeChanges({
-	changed: function(id, fields) {
-		let user = Meteor.user();
-		console.log('user updated!', id, fields);
-		if (user._id == id) {
-			if ((
-					   !user.entranceReward // not get any rewards yet
-					&& (Game.getMidnightDate() > user.createdAt) // play at least 1 day
-				) || (
-					   fields.hasOwnProperty('entranceReward') // has rewards history
-					&& Game.getMidnightDate() > fields.entranceReward // get last reward at least yesterday
-			)) {
-				// TODO : ask for right page
-				Meteor.call('entranceReward.getHistory', 0, function (err, history) {
-					Game.EntranceReward.showPopup(history);
+let isEntranceRewardDisplayed = false;
+
+let showEntranceReward = function() {
+	let user = Meteor.user();
+
+	let midnightDate = Game.getMidnightDate();
+
+	if (!isEntranceRewardDisplayed 
+		&& ((
+				   !user.entranceReward // not get any rewards yet
+				&& (midnightDate > user.createdAt) // play at least 1 day
+			) || (
+				   user.hasOwnProperty('entranceReward') // has rewards history
+				&& midnightDate > user.entranceReward // get last reward at least yesterday
+		))
+	) {
+		isEntranceRewardDisplayed = true;
+		// TODO : ask for right page
+		Meteor.call('entranceReward.getHistory', 0, function (err, history) {
+			if (err) {
+				isEntranceRewardDisplayed = false;
+				Notifications.error(err.error);
+			} else {
+				for (let i = 0; i < history.length; i++) {
+					history[i] = {
+						index: i,
+						obj: Game.getObjectByPath(history[i].profit),
+						profit: history[i].profit,
+						state: history[i].state || (history[i].date ? 'taken' : 'possible')
+					}
+				}
+
+				let currentRewardIndex = _.findIndex(history, function(info) {
+					return info.state === 'current';
 				});
+
+				let info = {
+					history,
+					currentRewardIndex,
+					selectedReward: new ReactiveVar(history[currentRewardIndex]),
+					winner: new ReactiveVar(
+						history[currentRewardIndex].obj.type != 'rank' ? history[currentRewardIndex].obj : null
+					)
+				};
+
+				Game.Popup.show('entranceReward', info);
 			}
-		}
+		});
 	}
+}
+
+// Try to display on any resources changed.
+// In most cases it is 1 check per minute
+Game.Resources.Collection.find().observeChanges({
+	changed: showEntranceReward
 });
 
-Game.EntranceReward.showPopup = function (history) {
-	for (let i = 0; i < history.length; i++) {
-		history[i] = {
-			index: i,
-			obj: Game.getObjectByPath(history[i].profit),
-			profit: history[i].profit,
-			state: history[i].state || (history[i].date ? 'taken' : 'possible')
-		}
-	}
+Template.entranceReward.onDestroyed(function() {
+	isEntranceRewardDisplayed = false;
+});
 
-	let currentRewardIndex = _.findIndex(history, function(info) {
-		return info.state === 'current';
-	});
-
-	let info = {
-		history,
-		currentRewardIndex,
-		selectedReward: new ReactiveVar(history[currentRewardIndex]),
-		winner: new ReactiveVar(history[currentRewardIndex].obj.type != 'rank' ? history[currentRewardIndex].obj : null)
-	};
-
-	Game.Popup.show('entranceReward', info);
-};
-
-// Close popup if there is multiple tabs opened
+// Close popup if windows was closed in any tab
 Template.entranceReward.onRendered(function() {
 	Meteor.users.find().observeChanges({
 		changed: function(id, fields) {
@@ -61,6 +77,7 @@ Template.entranceReward.onRendered(function() {
 				&& !this.data.locked
 				&& Game.getMidnightDate() < fields.entranceReward
 			) {
+				isEntranceRewardDisplayed = false;
 				Blaze.remove(this.view);
 			}
 		}.bind(this)

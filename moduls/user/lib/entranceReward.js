@@ -9,6 +9,8 @@ Game.EntranceReward = {
 		});
 	},
 
+	perPage: 60,
+
 	items: [],
 	ranks: {},
 	default: null

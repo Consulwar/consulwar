@@ -20,8 +20,12 @@ let showEntranceReward = function() {
 		))
 	) {
 		isEntranceRewardDisplayed = true;
-		// TODO : ask for right page
-		Meteor.call('entranceReward.getHistory', 0, function (err, history) {
+
+		let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
+		let currentRewardPage = Math.floor((rewardsTaken + 1) / Game.EntranceReward.perPage);
+		let selectedPage = currentRewardPage; // For future navigation
+
+		Meteor.call('entranceReward.getHistory', selectedPage, function (err, history) {
 			if (err) {
 				isEntranceRewardDisplayed = false;
 				Notifications.error(err.error);
@@ -35,11 +39,16 @@ let showEntranceReward = function() {
 					}
 				}
 
-				let currentRewardIndex = _.findIndex(history, function(info) {
-					return info.state === 'current';
-				});
+				let currentRewardIndex = 0;
+				if (currentRewardPage == selectedPage) {
+					currentRewardIndex = _.findIndex(history, function(info) {
+						return info.state === 'current';
+					});
+				}
 
 				let info = {
+					currentRewardPage,
+					selectedPage,
 					history,
 					currentRewardIndex,
 					selectedReward: new ReactiveVar(history[currentRewardIndex]),
@@ -53,6 +62,13 @@ let showEntranceReward = function() {
 		});
 	}
 }
+
+// Display on page loaded
+Tracker.autorun(function () {
+	if (Meteor.user() && Meteor.user().game) {
+		showEntranceReward();
+	}
+});
 
 // Try to display on any resources changed.
 // In most cases it is 1 check per minute
@@ -84,6 +100,11 @@ Template.entranceReward.onRendered(function() {
 	});
 });
 
+let daysToStartOfPage = function() {
+	let data = Template.instance().data;
+	return ((data.selectedPage - data.currentRewardPage) * Game.EntranceReward.perPage);
+};
+
 Template.entranceReward.helpers({
 	selectedReward: function() {
 		return Template.instance().data.selectedReward.get();
@@ -98,11 +119,11 @@ Template.entranceReward.helpers({
 	},
 
 	daysLeft: function() {
-		return this.selectedReward.get().index - this.currentRewardIndex;
+		return daysToStartOfPage() + this.selectedReward.get().index - this.currentRewardIndex;
 	},
 
 	daysPass: function() {
-		return this.currentRewardIndex - this.selectedReward.get().index;
+		return daysToStartOfPage() + this.currentRewardIndex - this.selectedReward.get().index;
 	},
 
 	// Get nested value

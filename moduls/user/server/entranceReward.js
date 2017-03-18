@@ -49,8 +49,7 @@ game.EntranceReward = function(options) {
 
 
 Game.EntranceReward.getProfit = function() {
-	let rewards = Game.EntranceReward.getValue();
-	let nextDay = (rewards ? rewards.history.length : 0) + 1;
+	let nextDay = Game.Statistic.getUserValue('entranceReward.total') + 1;
 	let reward = Game.EntranceReward.items[nextDay] || Game.EntranceReward.defaultRewards;
 
 	if (_.isString(reward.profit)) {
@@ -76,25 +75,30 @@ Meteor.methods({
 
 		check(page, Match.Integer);
 
-		let perPage = 60; // TODO : Move to config?
-
 		let history = Game.EntranceReward.Collection.findOne({
 			user_id: Meteor.userId()
 		}, {
-			history: {
-				$slice: [page * perPage, perPage]
-			}
+			fields: {history: {
+				$slice: [page * Game.EntranceReward.perPage, Game.EntranceReward.perPage]
+			}}
 		});
 
 		history = (history && history.history) || [];
 
-		if (history.length < perPage) {
-			let firstElement = page * perPage + history.length + 1;
-			let lastElement = firstElement + perPage - history.length;
+		// Count of reward taken on current page
+		let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
+		let currentRewardPage = Math.floor((rewardsTaken + 1) / Game.EntranceReward.perPage);
 
+		if (history.length < Game.EntranceReward.perPage) {
+			let currentPageReward = currentRewardPage == page ? (rewardsTaken % Game.EntranceReward.perPage) : 0;
+			let firstElement = page * Game.EntranceReward.perPage + currentPageReward + 1;
+			let lastElement = firstElement + Game.EntranceReward.perPage - currentPageReward;
+			
 			// take care about references
 			let unclaimed = _.map(Game.EntranceReward.items.slice(firstElement, lastElement), _.clone);
-			unclaimed[0].state = 'current';
+			if (currentRewardPage == page) {
+				unclaimed[0].state = 'current';
+			}
 			history.push.apply(history, unclaimed);
 		}
 

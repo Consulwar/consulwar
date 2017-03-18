@@ -8,7 +8,7 @@ Game.Popup = {
 
 		var popup = Blaze.renderWithData(Template.popup, {
 			zIndex: this.zIndex
-		}, document.body);
+		}, $('.over')[0]);
 
 		var subtemplate = Blaze.renderWithData(
 			Template[templateName],

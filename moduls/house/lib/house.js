@@ -26,11 +26,11 @@ game.HouseItem = function(options) {
 
 	this.icon = function() {
 		return '/img/game/house/' + this.subgroup + '/i/' + this.engName + '.png';
-	}
+	};
 
 	this.image = function() {
 		return '/img/game/house/' + this.subgroup + '/i/' + this.engName + '.jpg';
-	}
+	};
 
 	this.getPrice = function() {
 		return options.price;

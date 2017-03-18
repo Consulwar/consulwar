@@ -25,7 +25,7 @@ game.EntranceRewardRank = function (options) {
 
 	this.icon = function() {
 		return '/img/game/entrancereward/' + this.engName + '.png';
-	}
+	};
 
 	Game.EntranceReward.ranks[this.engName] = this;
 

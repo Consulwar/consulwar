@@ -28,11 +28,11 @@ game.Card = function(options) {
 
 	this.icon = function() {
 		return '/img/game/house/donate/i/' + this.engName + '.png';
-	}
+	};
 
 	this.image = function() {
 		return '/img/game/house/donate/i/' + this.engName + '.png';
-	}
+	};
 
 	Game.Cards.items[this.cardType][this.engName] = this;
 

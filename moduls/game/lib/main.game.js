@@ -527,20 +527,22 @@ Game = {
 		}
 
 		let type = _.keys(obj)[0];
+		let group = '';
+		let engName = '';
 		switch(type) {
 			case 'units':
-				var group = _.keys(obj[type])[0];
-				var engName = _.keys(obj[type][group])[0];
+				group = _.keys(obj[type])[0];
+				engName = _.keys(obj[type][group])[0];
 				return Game.Unit.items.army[group][engName];
 
 			case 'houseItems':
-				var group = _.keys(obj[type])[0];
-				var engName = _.keys(obj[type][group])[0];
+				group = _.keys(obj[type])[0];
+				engName = _.keys(obj[type][group])[0];
 				return Game.House.items[group][engName];
 
 			case 'resources':
-				var engName = _.keys(obj[type])[0];
-				var artefact = Game.Artefacts.items[engName];
+				engName = _.keys(obj[type])[0];
+				let artefact = Game.Artefacts.items[engName];
 				
 				// TODO : remove resources hardcode
 				return artefact || {
@@ -551,11 +553,11 @@ Game = {
 				};
 
 			case 'cards':
-				var engName = _.keys(obj[type])[0];
+				engName = _.keys(obj[type])[0];
 				return Game.Cards.items.donate[engName];
 
 			case 'containers':
-				var engName = _.keys(obj[type])[0];
+				engName = _.keys(obj[type])[0];
 				return Game.Building.special.Container.items[engName];
 		}
 	},

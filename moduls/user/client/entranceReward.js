@@ -36,7 +36,7 @@ let showEntranceReward = function() {
 						obj: Game.getObjectByPath(history[i].profit),
 						profit: history[i].profit,
 						state: history[i].state || (history[i].date ? 'taken' : 'possible')
-					}
+					};
 				}
 
 				let currentRewardIndex = 0;
@@ -61,7 +61,7 @@ let showEntranceReward = function() {
 			}
 		});
 	}
-}
+};
 
 // Display on page loaded
 Tracker.autorun(function () {

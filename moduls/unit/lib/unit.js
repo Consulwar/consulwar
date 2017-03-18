@@ -39,11 +39,11 @@ game.Unit = function(options) {
 
 	this.icon = function() {
 		return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
-	}
+	};
 
 	this.image = function() {
 		return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
-	}
+	};
 
 	this.totalCount = function() {
 		var armies = Game.Unit.Collection.find({
@@ -94,11 +94,11 @@ game.ReptileUnit = function(options) {
 
 	this.icon = function() {
 		return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
-	}
+	};
 
 	this.image = function() {
 		return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
-	}
+	};
 
 	this.canBuild = function() {
 		return false;

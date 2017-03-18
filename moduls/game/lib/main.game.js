@@ -549,7 +549,7 @@ Game = {
 					engName,
 					type: 'resource',
 					icon: '/img/game/' + engName + '.png',
-					image: '/img/game/' + engName + '.png'
+					image: '/img/game/' + engName + '.jpg'
 				};
 
 			case 'cards':
@@ -559,6 +559,14 @@ Game = {
 			case 'containers':
 				engName = _.keys(obj[type])[0];
 				return Game.Building.special.Container.items[engName];
+
+			case 'votePower':
+				return {
+					engName: 'votePower',
+					type: 'votePower',
+					icon: '/img/game/votepower.jpg',
+					image: '/img/game/votepower.jpg'
+				}
 		}
 	},
 

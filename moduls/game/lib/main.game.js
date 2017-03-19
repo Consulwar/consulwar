@@ -564,7 +564,7 @@ Game = {
 				return {
 					engName: 'votePower',
 					type: 'votePower',
-					icon: '/img/game/votepower.jpg',
+					icon: '/img/game/votepower.png',
 					image: '/img/game/votepower.jpg'
 				}
 		}

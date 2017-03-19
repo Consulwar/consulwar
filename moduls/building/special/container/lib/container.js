@@ -36,7 +36,7 @@ game.Container = function(options) {
 	};
 
 	this.icon = function() {
-		return '/img/game/containers/' + this.engName + '.jpg';
+		return '/img/game/containers/' + this.engName + '.png';
 	};
 
 	this.image = function() {

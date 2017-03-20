@@ -566,7 +566,7 @@ Game = {
 					type: 'votePower',
 					icon: '/img/game/votepower.png',
 					image: '/img/game/votepower.jpg'
-				}
+				};
 		}
 	},
 

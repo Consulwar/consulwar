@@ -122,15 +122,23 @@ var saveStatistic = function(field, resources, uid) {
 	}
 };
 
-var rollRandomValues = function(object) {
-	for (var key in object) {
-		if (_.isArray(object[key])) {
-			object[key] = Game.Random.interval( object[key][0], object[key][1] );
-		} else if (_.isObject(object[key])) {
-			object[key] = rollRandomValues(object[key]);
+let rollRandomValues = function(object) {
+	let copyObject = {};
+
+	for (let key in object) {
+		if (object.hasOwnProperty(key)) {
+			let value = object[key];
+			if (_.isArray(value)) {
+				copyObject[key] = Game.Random.interval( value[0], value[1] );
+			} else if (_.isObject(value)) {
+				copyObject[key] = rollRandomValues(value);
+			} else {
+				copyObject[key] = value;
+			}
 		}
 	}
-	return object;
+
+	return copyObject;
 };
 
 Game.Resources.rollProfit = function(drop) {

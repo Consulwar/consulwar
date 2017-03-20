@@ -34,6 +34,14 @@ game.Container = function(options) {
 			? items[this.engName].amount
 			: 0;
 	};
+
+	this.icon = function() {
+		return '/img/game/containers/' + this.engName + '.png';
+	};
+
+	this.image = function() {
+		return '/img/game/containers/' + this.engName + '.jpg';
+	};
 };
 
 Game.Building.special.Container = {

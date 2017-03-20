@@ -92,7 +92,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
 		}
 
-		var choosen = Game.Building.special.Pulsecatcher.canActivate()
+		var choosen = Game.Building.special.Pulsecatcher.canActivate();
 
 		if (!choosen) {
 			throw new Meteor.Error('Вы уже активировали бонус');

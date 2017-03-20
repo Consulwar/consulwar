@@ -23,6 +23,7 @@ initItemClient();
 initCheatsClient();
 initPopupClient();
 initPleerClient();
+initEntranceRewardClient();
 
 
 /*

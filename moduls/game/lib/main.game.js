@@ -470,6 +470,13 @@ Game = {
 			name: 'Генерал Тон Ренек'
 		}
 	},
+
+	getMidnightDate: function(date = this.getCurrentServerTime() * 1000) {
+		let midnight = new Date(date);
+		midnight.setHours(0, 0, 0, 0);
+
+		return midnight;
+	},
 	
 	getCurrentTime: function() {
 		return Math.floor(new Date().valueOf() / 1000);
@@ -506,8 +513,60 @@ Game = {
 			case 'achievement':
 				return Game.Achievements;
 
+			case 'artefact':
+				return Game.Artefacts;
+
 			default:
 				throw new Meteor.Error('Такого объекта нет');
+		}
+	},
+
+	getObjectByPath: function(obj) {
+		if (_.isString(obj) && Game.EntranceReward.ranks[obj]) {
+			return Game.EntranceReward.ranks[obj];
+		}
+
+		let type = _.keys(obj)[0];
+		let group = '';
+		let engName = '';
+		switch(type) {
+			case 'units':
+				group = _.keys(obj[type])[0];
+				engName = _.keys(obj[type][group])[0];
+				return Game.Unit.items.army[group][engName];
+
+			case 'houseItems':
+				group = _.keys(obj[type])[0];
+				engName = _.keys(obj[type][group])[0];
+				return Game.House.items[group][engName];
+
+			case 'resources':
+				engName = _.keys(obj[type])[0];
+				let artefact = Game.Artefacts.items[engName];
+				
+				// TODO : remove resources hardcode
+				return artefact || {
+					engName,
+					type: 'resource',
+					icon: '/img/game/' + engName + '.png',
+					image: '/img/game/' + engName + '.jpg'
+				};
+
+			case 'cards':
+				engName = _.keys(obj[type])[0];
+				return Game.Cards.items.donate[engName];
+
+			case 'containers':
+				engName = _.keys(obj[type])[0];
+				return Game.Building.special.Container.items[engName];
+
+			case 'votePower':
+				return {
+					engName: 'votePower',
+					type: 'votePower',
+					icon: '/img/game/votepower.png',
+					image: '/img/game/votepower.jpg'
+				}
 		}
 	},
 

@@ -37,6 +37,14 @@ game.Unit = function(options) {
 		return Router.routes[this.type].path(options);
 	};
 
+	this.icon = function() {
+		return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
+	};
+
+	this.image = function() {
+		return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
+	};
+
 	this.totalCount = function() {
 		var armies = Game.Unit.Collection.find({
 			user_id: Meteor.userId()
@@ -82,6 +90,14 @@ game.ReptileUnit = function(options) {
 		};
 		
 		return Router.routes[this.type].path(options);
+	};
+
+	this.icon = function() {
+		return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
+	};
+
+	this.image = function() {
+		return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
 	};
 
 	this.canBuild = function() {

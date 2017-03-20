@@ -473,7 +473,7 @@ Game = {
 
 	getMidnightDate: function(date = this.getCurrentServerTime() * 1000) {
 		let midnight = new Date(date);
-		midnight.setHours(0, 0, 0, 0);
+		midnight.setUTCHours(3, 0, 0, 0); // Moscow midnight!
 
 		return midnight.valueOf();
 	},

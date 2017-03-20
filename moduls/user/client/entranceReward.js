@@ -13,10 +13,10 @@ let showEntranceReward = function() {
 	if (!isEntranceRewardDisplayed 
 		&& ((
 				   !user.entranceReward // not get any rewards yet
-				&& (midnightDate > user.createdAt) // play at least 1 day
+				&& (midnightDate > user.createdAt.valueOf()) // play at least 1 day
 			) || (
 				   user.hasOwnProperty('entranceReward') // has rewards history
-				&& midnightDate > user.entranceReward // get last reward at least yesterday
+				&& midnightDate > user.entranceReward.valueOf() // get last reward at least yesterday
 		))
 	) {
 		isEntranceRewardDisplayed = true;
@@ -91,7 +91,7 @@ Template.entranceReward.onRendered(function() {
 				&& user._id == id 
 				&& fields.hasOwnProperty('entranceReward') 
 				&& !this.data.locked
-				&& Game.getMidnightDate() < fields.entranceReward
+				&& Game.getMidnightDate() < fields.entranceReward.valueOf()
 			) {
 				isEntranceRewardDisplayed = false;
 				Blaze.remove(this.view);

@@ -475,7 +475,7 @@ Game = {
 		let midnight = new Date(date);
 		midnight.setHours(0, 0, 0, 0);
 
-		return midnight;
+		return midnight.valueOf();
 	},
 	
 	getCurrentTime: function() {

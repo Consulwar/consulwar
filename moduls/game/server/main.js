@@ -2,6 +2,8 @@
 
 BrowserPolicy.content.allowOriginForAll('*');
 BrowserPolicy.content.allowEval('*');
+BrowserPolicy.content.allowConnectOrigin("ws:");
+BrowserPolicy.content.allowConnectOrigin("wss:");
 //heapdump = Meteor.npmRequire('heapdump');
 
 process.env.METEOR_DOWN_KEY = 'Some_great_key_for_testing_84124';
@@ -61,6 +63,7 @@ Meteor.startup(function () {
 	initItemsServer();
 	initSettingsServer();
 	initQuestServer();
+	initEntranceRewardServer();
 	initCheatsServer();
 	initDDPLimiter();
 
@@ -149,6 +152,7 @@ Meteor.publish('game', function () {
 	if (this.userId) {
 		return Meteor.users.find({_id: this.userId}, {
 			fields: {
+				createdAt: 1,
 				game: 1,
 				username: 1,
 				planetName: 1,
@@ -160,7 +164,8 @@ Meteor.publish('game', function () {
 				timeLastTournament: 1,
 				achievements: 1,
 				settings: 1,
-				music: 1
+				music: 1,
+				entranceReward: 1
 			}
 		});
 	}

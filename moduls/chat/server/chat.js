@@ -50,7 +50,7 @@ var removeAllMessages = function(username) {
 	}, {
 		multi: true
 	});
-}
+};
 
 var checkHasGlobalBan = function(userId) {
 	var blockGlobal = Game.BanHistory.Collection.findOne({

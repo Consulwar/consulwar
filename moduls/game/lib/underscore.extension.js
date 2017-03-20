@@ -77,3 +77,27 @@ _.mapObject = function(obj, iteratee, context) {
 	}
 	return results;
 };
+
+var shallowProperty = function(key) {
+	return function(obj) {
+		return obj == null ? void 0 : obj[key];
+	};
+};
+
+var getLength = shallowProperty('length');
+
+// Generator function to create the findIndex and findLastIndex functions.
+var createPredicateIndexFinder = function(dir) {
+	return function(array, predicate, context) {
+		predicate = cb(predicate, context);
+		var length = getLength(array);
+		var index = dir > 0 ? 0 : length - 1;
+		for (; index >= 0 && index < length; index += dir) {
+			if (predicate(array[index], index, array)) return index;
+		}
+		return -1;
+	};
+};
+
+_.findIndex = createPredicateIndexFinder(1);
+_.findLastIndex = createPredicateIndexFinder(-1);

@@ -2,6 +2,8 @@
 
 BrowserPolicy.content.allowOriginForAll('*');
 BrowserPolicy.content.allowEval('*');
+BrowserPolicy.content.allowConnectOrigin("ws:");
+BrowserPolicy.content.allowConnectOrigin("wss:");
 //heapdump = Meteor.npmRequire('heapdump');
 
 process.env.METEOR_DOWN_KEY = 'Some_great_key_for_testing_84124';

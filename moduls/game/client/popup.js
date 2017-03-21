@@ -8,7 +8,7 @@ Game.Popup = {
 
 		var popup = Blaze.renderWithData(Template.popup, {
 			zIndex: this.zIndex
-		}, document.body);
+		}, $('.over')[0]);
 
 		var subtemplate = Blaze.renderWithData(
 			Template[templateName],
@@ -17,6 +17,7 @@ Game.Popup = {
 		);
 
 		subtemplate.onViewDestroyed(function() {
+			Game.Popup.zIndex--;
 			Blaze.remove(popup);
 		});
 
@@ -29,7 +30,6 @@ Game.Popup = {
 
 Template.popup.events({
 	'click .close': function(e, t) {
-		Game.Popup.zIndex--;
 		Blaze.remove(t.view);
 	}
 });

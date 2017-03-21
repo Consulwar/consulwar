@@ -452,7 +452,7 @@ var helpers = {
 				? Math.floor((resources.crystals.bonus || 0) * 100 / (income.crystals * Game.Resources.bonusStorage))
 				: 0
 			)
-		}
+		};
 	}
 };
 

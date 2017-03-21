@@ -1,0 +1,69 @@
+<template name="entranceReward">
+	<div class="entranceReward scrollbar-inner">
+		<div class="textInfo">
+			{{declension totalRewards 'Получен' 'а' 'о' 'о'}} 
+			<span class="count">{{formatNumber totalRewards}}</span> 
+			{{declension totalRewards 'наград' 'а' 'ы' ''}} 
+			за вход
+		</div>
+		<div class="yourReward">
+			<div class="text">
+				{{#if eq selectedReward.state 'current'}}
+					Ваша награда за вход сегодня
+				{{else}}{{#if eq selectedReward.state 'taken'}}
+					Получена {{daysPass}} {{declension daysPass 'д' 'ень' 'ня' 'ней'}} назад
+				{{else}}
+					{{daysLeft}} {{declension daysLeft 'д' 'ень' 'ня' 'ней'}} до награды
+				{{/if}}{{/if}}
+			</div>
+			{{#if eq selectedReward.obj.type 'rank'}}
+				<div class="rewards {{#if and (eq selectedReward.state 'current') winner}}hasWinner{{/if}}">
+					{{#each selectedReward.obj.rewards}}
+						{{#let reward=(Game.getObjectByPath profit)}}
+							<div 
+								class="
+									reward 
+									{{reward.type}} 
+									{{#if and (eq selectedReward.state 'current') (eq winner reward)}}winner{{/if}}
+								" 
+								style="background-image: url({{reward.image}});" 
+								data-count="{{formatNumber (getAmount profit)}}"
+								data-chance="{{formatNumber chance}}%"
+							>
+							</div>
+						{{/let}}
+					{{/each}}
+				</div>
+			{{else}}
+				<div 
+					class="reward {{selectedReward.obj.type}}" 
+					style="background-image: url({{selectedReward.obj.image}});" 
+					data-count="{{formatNumber (getAmount selectedReward.profit)}}"
+				>
+				</div>
+			{{/if}}
+
+			{{#if eq selectedReward.state 'current'}}
+				{{#if winner}}
+					<div class="take">Забрать</div>
+				{{else}}
+					<div class="roll">Мне повезёт!</div>
+				{{/if}}
+			{{/if}}
+		</div>
+		<div class="paymentItems">
+			{{#each history}}
+				<div 
+					class="
+						rewardItem 
+						state-{{state}}
+						{{#if eq selectedReward.index index}}selected{{/if}}
+					" 
+					style="background-image: url({{obj.icon}});" 
+					data-index="{{index}}"
+				>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+</template>

@@ -88,7 +88,7 @@ UI.registerHelper('battleCountNumber', function(name) {
 });
 
 UI.registerHelper('eq', function(a, b) {
-	return a === b;
+	return _.isEqual(a, b);
 });
 
 UI.registerHelper('and', function(a, b) {
@@ -184,7 +184,7 @@ UI.registerHelper('lookup', function(obj) {
 		}
 		result = result[arguments[i]];
 	}
-	return result;
+	return _.isFunction(result) ? result() : result;
 });
 
 UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {

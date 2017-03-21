@@ -16,7 +16,7 @@ let showEntranceReward = function() {
 				&& (midnightDate > user.createdAt.valueOf()) // play at least 1 day
 			) || (
 				   user.hasOwnProperty('entranceReward') // has rewards history
-				&& midnightDate > user.entranceReward.valueOf() // get last reward at least yesterday
+				&& midnightDate > Game.getMidnightDate(user.entranceReward) // get last reward at least yesterday
 		))
 	) {
 		isEntranceRewardDisplayed = true;
@@ -91,7 +91,7 @@ Template.entranceReward.onRendered(function() {
 				&& user._id == id 
 				&& fields.hasOwnProperty('entranceReward') 
 				&& !this.data.locked
-				&& Game.getMidnightDate() < fields.entranceReward.valueOf()
+				&& Game.getMidnightDate() < Game.getMidnightDate(fields.entranceReward)
 			) {
 				isEntranceRewardDisplayed = false;
 				Blaze.remove(this.view);
@@ -163,9 +163,14 @@ Template.entranceReward.events({
 
 	'click .take, click .close': function(e, t) {
 		Blaze.remove(t.view);
-		Notifications.success('Награда за вход получена.'); // TODO : добавить какая награда получена
 		if (!t.data.locked) {
-			Meteor.call('entranceReward.takeReward');
+			Meteor.call('entranceReward.takeReward', function(err, profit) {
+				if (err) {
+					Notifications.error(err.error);
+				} else {
+					Notifications.success('Награда за вход получена.'); // TODO : добавить какая награда получена
+				}
+			});
 		}
 	}
 });

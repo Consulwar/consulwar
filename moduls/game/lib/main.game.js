@@ -472,8 +472,12 @@ Game = {
 	},
 
 	getMidnightDate: function(date = this.getCurrentServerTime() * 1000) {
+		if (Meteor.isClient) { // Temporary hack for Moscow time
+			date = date.valueOf() + ((new Date()).getTimezoneOffset() + 180) * 60 * 1000;
+		}
+
 		let midnight = new Date(date);
-		midnight.setUTCHours(3, 0, 0, 0); // Moscow midnight!
+		midnight.setUTCHours(-3, 0, 0, 0); // Moscow midnight!
 
 		return midnight.valueOf();
 	},
@@ -483,7 +487,7 @@ Game = {
 	},
 
 	getCurrentServerTime: function() {
-		 if (Meteor.isClient) {
+		if (Meteor.isClient) {
 			return Session.get('serverTime');
 		} else {
 			return Math.floor(new Date().valueOf() / 1000);

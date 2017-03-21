@@ -1,4 +1,5 @@
 initMutualClient = function() {
+'use strict';
 
 initMutualLib();
 

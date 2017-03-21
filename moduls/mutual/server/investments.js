@@ -1,4 +1,5 @@
 initMutualServerInvestments = function () {
+'use strict';
 
 Game.Investments.Collection._ensureIndex({
 	user_id: 1

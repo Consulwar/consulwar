@@ -1,4 +1,5 @@
 initPaymentLib = function() {
+'use strict';
 
 game.PaymentItem = function(options) {
 	this.id = options.id;
@@ -121,4 +122,5 @@ new game.PaymentItem({
 	discount: { rub: 100 }
 });
 
+Game.Helpers.deepFreeze(Game.Payment.items);
 };

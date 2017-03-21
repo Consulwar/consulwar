@@ -1,4 +1,5 @@
 initEntranceRewardClient = function () {
+'use strict';
 
 initEntranceRewardLib();
 initEntranceRewardRanksContent();

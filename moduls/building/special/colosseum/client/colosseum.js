@@ -1,4 +1,5 @@
 initBuildingSpecialColosseumClient = function() {
+'use strict';
 
 initBuildingSpecialColosseumLib();
 

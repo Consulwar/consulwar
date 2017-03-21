@@ -1,5 +1,5 @@
 initStatisticLib = function() {
-
+'use strict';
 
 Game.Statistic = {
 	Collection: new Meteor.Collection('statistic'),

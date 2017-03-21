@@ -1,4 +1,5 @@
 initCardsLib = function() {
+'use strict';
 
 game.Card = function(options) {
 	this.doNotRegisterEffect = true;
@@ -158,7 +159,5 @@ Game.Cards = {
 };
 
 initCardsContent();
-
-Game.Helpers.deepFreeze(Game.Cards.items);
 
 };

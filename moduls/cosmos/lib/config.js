@@ -1,4 +1,5 @@
 initCosmosConfigLib = function() {
+	'use strict';
 
 	if (!Meteor.settings.public.cosmos
 	 || !Meteor.settings.public.cosmos.speedConfig

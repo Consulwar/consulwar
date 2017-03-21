@@ -1,4 +1,5 @@
 initBuildingServer = function() {
+'use strict';
 
 initBuildingLib();
 

@@ -1,4 +1,5 @@
 initUserClient = function() {
+'use strict';
 
 Template.votePower.helpers({
 	votePower: function() {

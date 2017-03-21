@@ -1,4 +1,5 @@
 initResearchServerMethods = function(){
+'use strict';
 
 Meteor.methods({
 	'research.start': function(options) {

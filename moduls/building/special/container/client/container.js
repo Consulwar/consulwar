@@ -1,4 +1,5 @@
 initBuildingSpecialContainerClient = function() {
+'use strict';
 
 initBuildingSpecialContainerLib();
 

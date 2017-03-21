@@ -1,4 +1,5 @@
 initCosmosClient = function() {
+'use strict';
 
 initCosmosLib();
 initCosmosPathView();

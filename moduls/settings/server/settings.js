@@ -1,4 +1,5 @@
 initSettingsServer = function() {
+'use strict';
 
 initSettingsLib();
 

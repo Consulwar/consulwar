@@ -1,4 +1,5 @@
 initBuildingSpecialColosseumServer = function() {
+'use strict';
 
 initBuildingSpecialColosseumLib();
 initBuildingSpecialColosseumContentServer();

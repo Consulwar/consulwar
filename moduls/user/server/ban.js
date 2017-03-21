@@ -1,4 +1,5 @@
 initBanHistoryServer = function() {
+'use strict';
 
 Game.BanHistory = {
 	type: {

@@ -1,4 +1,5 @@
 initBattleLib = function() {
+'use strict';
 
 game.Battle = function(options) {
 	this.constructor = function(options) {
@@ -68,8 +69,6 @@ Game.Battle.result = {
 };
 
 initGalacticContentBattle();
-
-Game.Helpers.deepFreeze(Game.Battle.items);
 
 // ------------------------------------------------------
 // Debug methods

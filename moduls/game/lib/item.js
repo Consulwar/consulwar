@@ -1,4 +1,5 @@
 initItemLib = function() {
+'use strict';
 
 game.IconGroup = function(options) {
 	this.engName = options.engName;
@@ -129,7 +130,4 @@ Game.Icons = {
 };
 
 initIconsContent();
-
-
-Game.Helpers.deepFreeze(Game.Icons.items);
 };

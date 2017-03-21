@@ -1,4 +1,5 @@
 initUnitServerMethods = function() {
+'use strict';
 
 Meteor.methods({
 	'unit.build': function(options) {

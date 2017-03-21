@@ -1,4 +1,5 @@
 initBuildingSpecialPulsecatcherConfigLib = function() {
+'use strict';
 
 	if (!Meteor.settings.public.building
 	 || !Meteor.settings.public.building.special

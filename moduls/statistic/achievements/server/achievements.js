@@ -1,4 +1,5 @@
 initStatisticAchievementsServer = function() {
+'use strict';
 
 initStatisticAchievementsLib();
 

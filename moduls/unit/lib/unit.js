@@ -1,4 +1,5 @@
 initUnitLib = function() {
+'use strict';
 
 initBattleLib();
 
@@ -273,8 +274,6 @@ Game.Unit = {
 };
 
 initUnitsContent();
-
-Game.Helpers.deepFreeze(Game.Unit.items);
 
 /*
 for (var category in Game.Unit.items.army) {

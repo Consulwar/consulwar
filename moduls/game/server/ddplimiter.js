@@ -1,4 +1,5 @@
 initDDPLimiter = function() {
+'use strict';
 
 if (!Meteor.settings.ddplimiter || !Meteor.settings.ddplimiter.isEnabled) {
 

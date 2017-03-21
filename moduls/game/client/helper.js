@@ -1,4 +1,5 @@
 Meteor.startup(function() {
+'use strict';
 
 UI.registerHelper('isNewLayout', function() {
 	var newLayoutGroups = {

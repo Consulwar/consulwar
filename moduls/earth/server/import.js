@@ -1,4 +1,5 @@
 initEarthServerImport = function () {
+'use strict';
 
 var startZone = 'South Africa';
 

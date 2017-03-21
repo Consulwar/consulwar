@@ -1,4 +1,5 @@
 initStatisticAchievementsLib = function() {
+'use strict';
 
 game.Achievement = function(options) {
 	this.doNotRegisterEffect = true;
@@ -110,6 +111,4 @@ Game.Achievements = {
 };
 
 initAchievementsContent();
-
-Game.Helpers.deepFreeze(Game.Achievements.items);
 };

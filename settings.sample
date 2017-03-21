@@ -43,6 +43,29 @@
 		},
 		"statistic": {
 			"countPerPage": 20
+		},
+		"serverStartDate": "2017-01-02T00:00:00.000Z",
+		"beginnersBoost": {
+			"growth": {
+				"days": 300,
+				"firstPartValue": 1,
+				"firstPartPerDays": 30,
+				"secondPartValue": 0.1,
+				"secondPartPerDays": 30
+			},
+			"decrease": {
+				"days": 150,
+				"firstPartValue": 2,
+				"firstPartPerDays": 30,
+				"secondPartValue": 0.2,
+				"secondPartPerDays": 30
+			},
+			"onePower": {
+				"metals": 1000,
+				"crystals": 300,
+				"honor": 5,
+				"time": 10
+			}
 		}
 	},
 	"recaptcha": {

@@ -9,7 +9,7 @@ Game.Resources.currentValue = new ReactiveVar(Game.Resources.getValue());
 
 Tracker.autorun(function(){
 	var baseValue = Game.Resources.getValue();
-	if (Meteor.user() && baseValue) {
+	if (Meteor.user() && Meteor.user().game && baseValue) {
 		var income = Game.Resources.getIncome();
 		var currentTime = Session.get('serverTime');
 		var delta = currentTime - baseValue.updated;

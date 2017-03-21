@@ -477,7 +477,9 @@ Game = {
 		}
 
 		let midnight = new Date(date);
-		midnight.setUTCHours(-3, 0, 0, 0); // Moscow midnight!
+		// Must be -3! Temporary it is 5am
+		// Problem happens when wrong timezone setted with right time
+		midnight.setUTCHours(2, 0, 0, 0); // Moscow midnight!
 
 		return midnight.valueOf();
 	},

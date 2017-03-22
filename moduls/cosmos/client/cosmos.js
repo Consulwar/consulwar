@@ -4,7 +4,7 @@ initCosmosClient = function() {
 initCosmosLib();
 initCosmosPathView();
 
-Game.Helpers.deepFreeze(Game.Planets.types);
+initCosmosContentClient();
 
 Meteor.subscribe('planets');
 var spaceEventsSubscription = Meteor.subscribe('spaceEvents');

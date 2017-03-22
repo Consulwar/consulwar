@@ -1,41 +1,39 @@
 initBeginnerBoostLib = function () {
 'use strict';
 
-const beginnersBoost = Meteor.settings.public.beginnersBoost;
-const growth = beginnersBoost.growth;
-const growthMax = Math.round(growth.days / growth.firstPartPerDays * growth.firstPartValue);
-
-const decrease = beginnersBoost.decrease;
-const decreaseMax = Math.round(decrease.days / decrease.firstPartPerDays * decrease.firstPartValue);
-
-const serverStartDate = new Date(Meteor.settings.public.serverStartDate);
 const SEC_PER_DAY = 1000 * 60 * 60 * 24;
 
 Game.BeginnerBoost = {
-	calculatePower: function (user, affectName) {
+	calculatePower: function (affectName, userRegisterDate = Meteor.user().createdAt) {
 		let serverDate = new Date(Game.getCurrentServerTime() * 1000);
-		let serverDays = Math.floor((serverDate - serverStartDate) / SEC_PER_DAY);
-		let userDays = Math.floor((serverDate - user.createdAt) / SEC_PER_DAY);
+		let serverDays = Math.floor((serverDate - Game.BeginnerBoost.SERVER_START_DATE) / SEC_PER_DAY);
+		let userDays = Math.floor((serverDate - userRegisterDate) / SEC_PER_DAY);
 
 		let power = this.calculateGrowth(serverDays) - this.calculateDecrease(userDays);
-		return Math.max(0, power) * beginnersBoost.onePower[affectName];
+		return Math.max(0, power) * Game.BeginnerBoost.POWER_UNIT[affectName];
 	},
 
 	calculateGrowth: function(days) {
-		if (days <= growth.days) {
-			return Math.floor(days / growth.firstPartPerDays) * growth.firstPartValue;
+		if (days <= Game.BeginnerBoost.GROWTH.days) {
+			return Math.floor(days / Game.BeginnerBoost.GROWTH.firstPartPerDays) * Game.BeginnerBoost.GROWTH.firstPartValue;
 		} else {
-			return growthMax + Math.floor((days - growth.days) / growth.secondPartPerDays) * growth.secondPartValue;
+			const growthMax = Math.round(Game.BeginnerBoost.GROWTH.days / Game.BeginnerBoost.GROWTH.firstPartPerDays * Game.BeginnerBoost.GROWTH.firstPartValue);
+
+			return growthMax + Math.floor((days - Game.BeginnerBoost.GROWTH.days) / Game.BeginnerBoost.GROWTH.secondPartPerDays) * Game.BeginnerBoost.GROWTH.secondPartValue;
 		}
 	},
 
 	calculateDecrease: function(days) {
-		if (days <= decrease.days) {
-			return Math.floor(days / decrease.firstPartPerDays) * decrease.firstPartValue;
+		if (days <= Game.BeginnerBoost.DECREASE.days) {
+			return Math.floor(days / Game.BeginnerBoost.DECREASE.firstPartPerDays) * Game.BeginnerBoost.DECREASE.firstPartValue;
 		} else {
-			return decreaseMax + Math.floor((days - decrease.days) / decrease.secondPartPerDays) * decrease.secondPartValue;
+			const decreaseMax = Math.round(Game.BeginnerBoost.DECREASE.days / Game.BeginnerBoost.DECREASE.firstPartPerDays * Game.BeginnerBoost.DECREASE.firstPartValue);
+
+			return decreaseMax + Math.floor((days - Game.BeginnerBoost.DECREASE.days) / Game.BeginnerBoost.DECREASE.secondPartPerDays) * Game.BeginnerBoost.DECREASE.secondPartValue;
 		}
 	}
 };
+
+initBeginnerBoostConfigLib();
 
 };

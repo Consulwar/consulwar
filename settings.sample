@@ -60,7 +60,7 @@
 				"secondPartValue": 0.2,
 				"secondPartPerDays": 30
 			},
-			"onePower": {
+			"powerUnit": {
 				"metals": 1000,
 				"crystals": 300,
 				"honor": 5,

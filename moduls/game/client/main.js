@@ -143,11 +143,6 @@ var showNotificationFromTask = function(task) {
 };
 
 
-let test = Router.route('/test', function() {
-	console.log('yes');
-});
-
-
 var isActualizeInprogress = false;
 
 Game.actualizeGameInfo = function() {
@@ -467,7 +462,7 @@ Template.newgame.events({
 	}
 });
 
-var ShowModalWindow = function(template, data) {
+window.ShowModalWindow = function(template, data) {
 	Blaze.renderWithData(
 		template, 
 		data, 

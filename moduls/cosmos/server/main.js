@@ -6,6 +6,4 @@ initCosmosServer = function() {
 	initCosmosConfigServer();
 	initCosmosPlanetsServer();
 	initCosmosEventsServer();
-
-	Game.Helpers.deepFreeze(Game.Planets.types);
 };

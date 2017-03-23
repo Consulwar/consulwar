@@ -472,16 +472,19 @@ Game = {
 	},
 
 	getMidnightDate: function(date = this.getCurrentServerTime() * 1000) {
-		if (Meteor.isClient) { // Temporary hack for Moscow time
-			date = date.valueOf() + ((new Date()).getTimezoneOffset() + 180) * 60 * 1000;
+		if (Meteor.isClient) {
+			date = date.valueOf();
+
+			let millisecondsPerDay = 86400000;
+			let daysFromMidnight = Math.floor((date - Session.get('serverMidnight')) / millisecondsPerDay);
+
+			return Session.get('serverMidnight') + millisecondsPerDay * daysFromMidnight;
+		} else {
+			let midnight = new Date(date);
+			midnight.setHours(0, 0, 0, 0);
+
+			return midnight.valueOf();
 		}
-
-		let midnight = new Date(date);
-		// Must be -3! Temporary it is 5am
-		// Problem happens when wrong timezone setted with right time
-		midnight.setUTCHours(2, 0, 0, 0); // Moscow midnight!
-
-		return midnight.valueOf();
 	},
 	
 	getCurrentTime: function() {

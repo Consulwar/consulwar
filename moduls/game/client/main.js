@@ -165,6 +165,9 @@ Game.actualizeGameInfo = function() {
 
 Session.set('serverTimeDelta', null);
 Session.setDefault('serverTime', Math.floor(new Date().valueOf() / 1000));
+let midnight = new Date();
+midnight.setUTCHours(-3, 0, 0, 0);
+Session.set('serverMidnight', midnight);
 
 var syncTimeFunctionId = null;
 var refreshQueueFunctionId = null;
@@ -191,7 +194,10 @@ Game.syncServerTime = function() {
 		}
 
 		// got server time
-		Session.set('serverTimeDelta', new Date().valueOf() - result);
+		Session.set('serverTimeDelta', new Date().valueOf() - result.now);
+
+		Session.set('serverMidnight', result.midnight);
+
 		var serverTime = Math.floor((new Date().valueOf() - Session.get('serverTimeDelta')) / 1000);
 		Session.set('serverTime', serverTime);
 

@@ -104,4 +104,6 @@ Template.containers.events({
 	}
 });
 
+initBuildingSpecialContainerContentClient();
+
 };

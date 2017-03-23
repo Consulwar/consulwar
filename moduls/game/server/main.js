@@ -144,7 +144,10 @@ Meteor.methods({
 
 	getCurrentTime: function() {
 		console.log('getCurrentTime: ', new Date(), this.connection.clientAddress);
-		return new Date().valueOf();
+		return {
+			now: new Date().valueOf(),
+			midnight: Game.getMidnightDate()
+		};
 	}
 });
 

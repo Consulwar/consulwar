@@ -4,17 +4,21 @@ initBeginnerBoostConfigLib = function() {
 	if (!Meteor.settings.public.serverStartDate
 		|| !beginnersBoost
 		|| !beginnersBoost.growth
-		|| !beginnersBoost.growth.days
-		|| !beginnersBoost.growth.firstPartValue
-		|| !beginnersBoost.growth.firstPartPerDays
-		|| !beginnersBoost.growth.secondPartValue
-		|| !beginnersBoost.growth.secondPartPerDays
+		|| !beginnersBoost.growth.initial
+		|| !beginnersBoost.growth.initial.days
+		|| !beginnersBoost.growth.initial.power
+		|| !beginnersBoost.growth.initial.interval
+		|| !beginnersBoost.growth.continuous
+		|| !beginnersBoost.growth.continuous.power
+		|| !beginnersBoost.growth.continuous.interval
 		|| !beginnersBoost.decrease
-		|| !beginnersBoost.decrease.days
-		|| !beginnersBoost.decrease.firstPartValue
-		|| !beginnersBoost.decrease.firstPartPerDays
-		|| !beginnersBoost.decrease.secondPartValue
-		|| !beginnersBoost.decrease.secondPartPerDays
+		|| !beginnersBoost.decrease.initial
+		|| !beginnersBoost.decrease.initial.days
+		|| !beginnersBoost.decrease.initial.power
+		|| !beginnersBoost.decrease.initial.interval
+		|| !beginnersBoost.decrease.continuous
+		|| !beginnersBoost.decrease.continuous.power
+		|| !beginnersBoost.decrease.continuous.interval
 		|| !beginnersBoost.powerUnit
 		|| !beginnersBoost.powerUnit.metals
 		|| !beginnersBoost.powerUnit.crystals

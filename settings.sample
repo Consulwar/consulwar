@@ -44,23 +44,32 @@
 		"statistic": {
 			"countPerPage": 20
 		},
-		"serverStartDate": "2017-01-02T00:00:00.000Z",
+		"serverStartDate": 1483315200000,
 		"beginnersBoost": {
 			"growth": {
-				"days": 300,
-				"firstPartValue": 1,
-				"firstPartPerDays": 30,
-				"secondPartValue": 0.1,
-				"secondPartPerDays": 30
+				"initial": {
+					"days": 300,
+					"power": 1,
+					"interval": 30
+				},
+				"continuous": {
+					"power": 0.1,
+					"interval": 30
+				}
 			},
 			"decrease": {
-				"days": 150,
-				"firstPartValue": 2,
-				"firstPartPerDays": 30,
-				"secondPartValue": 0.2,
-				"secondPartPerDays": 30
+				"initial": {
+					"days": 150,
+					"power": 2,
+					"interval": 30
+				},
+				"continuous": {
+					"power": 0.2,
+					"interval": 30
+				}
 			},
 			"powerUnit": {
+				"humans": 100,
 				"metals": 1000,
 				"crystals": 300,
 				"honor": 5,

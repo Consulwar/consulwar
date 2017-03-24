@@ -3,6 +3,6 @@ initMutualMainLib = function() {
 
 	initMutualLib();
 	initBeginnerBoostLib();
-
+	initBeginnerBoostConfigLib();
 	initMutualContent();
 };

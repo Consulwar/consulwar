@@ -11,24 +11,34 @@ if (Meteor.isServer) {
 	let currentServerTime = Game.getCurrentServerTime() * 1000;
 
 	initBeginnerBoostLib();
+	initBeginnerBoostConfigLib();
 
 	// set 510 days of serverTime
 	Game.BeginnerBoost.SERVER_START_DATE = new Date(currentServerTime - 1000*60*60*24*510);
 	Game.BeginnerBoost.GROWTH = {
-		"days": 300,
-		"firstPartValue": 1,
-		"firstPartPerDays": 30,
-		"secondPartValue": 0.1,
-		"secondPartPerDays": 30
+		"initial": {
+			"days": 300,
+			"power": 1,
+			"interval": 30
+		},
+		"continuous": {
+			"power": 0.1,
+			"interval": 30
+		}
 	};
 	Game.BeginnerBoost.DECREASE = {
-		"days": 150,
-		"firstPartValue": 2,
-		"firstPartPerDays": 30,
-		"secondPartValue": 0.2,
-		"secondPartPerDays": 30
+		"initial": {
+			"days": 150,
+			"power": 2,
+			"interval": 30
+		},
+		"continuous": {
+			"power": 0.2,
+			"interval": 30
+		}
 	};
 	Game.BeginnerBoost.POWER_UNIT = {
+		"humans": 100,
 		"metals": 1000,
 		"crystals": 300,
 		"honor": 5,
@@ -38,13 +48,13 @@ if (Meteor.isServer) {
 	describe("Beginner boost", function () {
 		describe("Growth", function () {
 			it("should grows by 1 for 30 days until 300 days", function () {
-				checkGrowth(1, 0);
+				checkGrowth(1, 0.033);
 				checkGrowth(150, 5);
 				checkGrowth(300, 10);
 			});
 
 			it("should grows by 0.1 for all other days", function () {
-				checkGrowth(301, 10);
+				checkGrowth(301, 10.0033);
 				checkGrowth(330, 10.1);
 				checkGrowth(1200, 13);
 			});
@@ -57,13 +67,13 @@ if (Meteor.isServer) {
 
 		describe("Decrease", function () {
 			it("should decrease by 2 for 30 days until 150 days", function () {
-				checkDecrease(1, 0);
-				checkDecrease(100, 6);
+				checkDecrease(1, 0.066);
+				checkDecrease(100, 6.666);
 				checkDecrease(150, 10);
 			});
 
 			it("should decrease by 0.2 for all other days", function () {
-				checkDecrease(151, 10);
+				checkDecrease(151, 10.0066);
 				checkDecrease(180, 10.2);
 				checkDecrease(1530, 19.2);
 			});
@@ -86,6 +96,7 @@ if (Meteor.isServer) {
 			});
 
 			it("should get affectName from settings", function () {
+				checkCalculatePower(120, 2.7 * 100, 'humans');
 				checkCalculatePower(120, 2.7 * 1000, 'metals');
 				checkCalculatePower(210, 0.3 * 300, 'crystals');
 				checkCalculatePower(120, 2.7 * 5, 'honor');

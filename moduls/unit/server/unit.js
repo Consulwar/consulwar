@@ -1,4 +1,5 @@
 initUnitServer = function() {
+'use strict';
 
 initUnitLib();
 initUnitServerMethods();
@@ -896,8 +897,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		}
 
 		// calculate reward
-		reward = null;
-		cards = null;
+		let reward = null;
+		let cards = null;
 
 		var mission = null;
 		if (options.missionType

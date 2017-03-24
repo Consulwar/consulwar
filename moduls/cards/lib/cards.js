@@ -1,4 +1,5 @@
 initCardsLib = function() {
+'use strict';
 
 game.Card = function(options) {
 	this.doNotRegisterEffect = true;

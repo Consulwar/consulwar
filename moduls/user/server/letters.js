@@ -1,4 +1,5 @@
 Meteor.startup(function() {
+'use strict';
 
 Game.User.convertUsernameToPlainname = function(name) {
 	var result = '';

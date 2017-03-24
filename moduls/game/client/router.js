@@ -1,6 +1,7 @@
 initRouterClient = function() {
+'use strict';
 
-GameRouteController = RouteController.extend({
+window.GameRouteController = RouteController.extend({
 	before: function() {
 		if (!Meteor.userId()) {
 			this.redirect('index');

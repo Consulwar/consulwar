@@ -1,4 +1,5 @@
 initEarthServerMethods = function() {
+'use strict';
 
 Meteor.methods({
 	'earth.voteAction': function(actionName) {

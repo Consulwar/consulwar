@@ -1,4 +1,5 @@
 initSquadLib = function() {
+'use strict';
 
 Game.Squad = {
 

@@ -1,4 +1,5 @@
 initPleerClient = function() {
+'use strict';
 
 var tracks = {
 	1: '1 Последний Дредноут',

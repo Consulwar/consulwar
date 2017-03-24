@@ -1,4 +1,5 @@
 initItemClient = function() {
+'use strict';
 
 Meteor.subscribe('iconsUser');
 Meteor.subscribe('iconsUnique');

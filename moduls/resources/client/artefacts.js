@@ -1,4 +1,5 @@
 initResourcesClientArtefacts = function() {
+'use strict';
 
 initArtefactsLib();
 

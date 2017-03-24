@@ -1,4 +1,5 @@
 initHouseServer = function() {
+'use strict';
 
 initHouseLib();
 

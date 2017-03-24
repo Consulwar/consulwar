@@ -1,4 +1,5 @@
 initBattleLib = function() {
+'use strict';
 
 game.Battle = function(options) {
 	this.constructor = function(options) {

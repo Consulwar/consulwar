@@ -1,6 +1,7 @@
 Meteor.startup(function() {
+'use strict';
 
-Invites = new Meteor.Collection("invites");
+global.Invites = new Meteor.Collection("invites");
 
 Meteor.methods({
 	'user.checkInviteCode': function(code) {

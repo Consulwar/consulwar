@@ -14,28 +14,28 @@ Game.BeginnerBoost = {
 	},
 
 	calculateGrowth: function(days) {
-		const self = Game.BeginnerBoost;
-		if (days <= self.GROWTH.initial.days) {
-			return (days / self.GROWTH.initial.interval) * self.GROWTH.initial.power;
+		const growth = Game.BeginnerBoost.GROWTH;
+		if (days <= growth.initial.days) {
+			return (days / growth.initial.interval) * growth.initial.power;
 		} else {
-			const growthMax = (self.GROWTH.initial.days / self.GROWTH.initial.interval *
-				self.GROWTH.initial.power);
+			const growthMax = (growth.initial.days / growth.initial.interval *
+				growth.initial.power);
 
-			return growthMax + ((days - self.GROWTH.initial.days) / self.GROWTH.continuous.interval) *
-				self.GROWTH.continuous.power;
+			return growthMax + ((days - growth.initial.days) / growth.continuous.interval) *
+				growth.continuous.power;
 		}
 	},
 
 	calculateDecrease: function(days) {
-		const self = Game.BeginnerBoost;
-		if (days <= self.DECREASE.initial.days) {
-			return (days / self.DECREASE.initial.interval) * self.DECREASE.initial.power;
+		const decrease = Game.BeginnerBoost.DECREASE;
+		if (days <= decrease.initial.days) {
+			return (days / decrease.initial.interval) * decrease.initial.power;
 		} else {
-			const decreaseMax = (self.DECREASE.initial.days / self.DECREASE.initial.interval *
-				self.DECREASE.initial.power);
+			const decreaseMax = (decrease.initial.days / decrease.initial.interval *
+				decrease.initial.power);
 
-			return decreaseMax + ((days - self.DECREASE.initial.days) / self.DECREASE.continuous.interval) *
-				self.DECREASE.continuous.power;
+			return decreaseMax + ((days - decrease.initial.days) / decrease.continuous.interval) *
+				decrease.continuous.power;
 		}
 	}
 };

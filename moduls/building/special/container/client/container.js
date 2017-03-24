@@ -1,4 +1,5 @@
 initBuildingSpecialContainerClient = function() {
+'use strict';
 
 initBuildingSpecialContainerLib();
 
@@ -102,5 +103,7 @@ Template.containers.events({
 		});
 	}
 });
+
+initBuildingSpecialContainerContentClient();
 
 };

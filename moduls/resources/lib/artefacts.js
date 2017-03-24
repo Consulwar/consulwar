@@ -1,4 +1,5 @@
 initArtefactsLib = function() {
+'use strict';
 
 game.Artefact = function(options) {
 	this.group = options.group;
@@ -50,5 +51,4 @@ Game.Artefacts = {
 };
 
 initArtefactsContent();
-
 };

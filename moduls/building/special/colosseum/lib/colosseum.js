@@ -1,4 +1,5 @@
 initBuildingSpecialColosseumLib = function() {
+'use strict';
 
 game.ColosseumTournament = function(options) {
 	if (Game.Building.special.Colosseum.tournaments[options.engName]) {

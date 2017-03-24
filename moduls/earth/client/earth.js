@@ -1,4 +1,5 @@
 initEarthClient = function() {
+'use strict';
 
 initEarthLib();
 

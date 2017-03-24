@@ -1,4 +1,5 @@
 initPaymentClient = function() {
+'use strict';
 	
 initPaymentLib();
 

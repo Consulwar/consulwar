@@ -1,7 +1,7 @@
 initBuildingSpecialContainerServer = function() {
+'use strict';
 
 initBuildingSpecialContainerLib();
-initBuildingSpecialContainerContentServer();
 
 Game.Building.special.Container.Collection._ensureIndex({
 	user_id: 1
@@ -121,5 +121,7 @@ Meteor.publish('containers', function () {
 		});
 	}
 });
+
+initBuildingSpecialContainerContentServerMain();
 
 };

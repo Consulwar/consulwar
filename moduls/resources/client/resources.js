@@ -1,4 +1,5 @@
 initResourcesClient = function() {
+'use strict';
 
 initResourcesLib();
 initResourcesClientArtefacts();

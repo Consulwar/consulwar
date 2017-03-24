@@ -1,4 +1,5 @@
 initMailClient = function () {
+'use strict';
 
 initMailLib();
 

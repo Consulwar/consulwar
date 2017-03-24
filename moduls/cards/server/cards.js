@@ -1,4 +1,5 @@
 initCardsServer = function() {
+'use strict';
 	
 initCardsLib();
 

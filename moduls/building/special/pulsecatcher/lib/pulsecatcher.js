@@ -1,4 +1,5 @@
 initBuildingSpecialPulsecatcherLib = function() {
+'use strict';
 
 Game.Building.special.Pulsecatcher = {
 	getQuiz: function(skip = 0) {

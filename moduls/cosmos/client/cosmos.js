@@ -1,7 +1,10 @@
 initCosmosClient = function() {
+'use strict';
 
 initCosmosLib();
 initCosmosPathView();
+
+initCosmosContentClient();
 
 Meteor.subscribe('planets');
 var spaceEventsSubscription = Meteor.subscribe('spaceEvents');

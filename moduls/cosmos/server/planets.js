@@ -1,4 +1,5 @@
 initCosmosPlanetsServer = function() {
+'use strict';
 
 Game.Planets.Collection._ensureIndex({
 	user_id: 1,

@@ -1,4 +1,5 @@
 initMailQuizServer = function() {
+'use strict';
 
 initMailQuizLib();
 

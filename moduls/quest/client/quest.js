@@ -1,4 +1,5 @@
 initQuestClient = function () {
+'use strict';
 
 initQuestLib();
 

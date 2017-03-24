@@ -1,4 +1,5 @@
 initEntranceRewardLib = function() {
+'use strict';
 
 Game.EntranceReward = {
 	Collection: new Meteor.Collection('entranceRewards'),

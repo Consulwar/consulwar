@@ -1,4 +1,5 @@
 initResearchServer = function() {
+'use strict';
 
 initResearchLib();
 initResearchServerMethods();

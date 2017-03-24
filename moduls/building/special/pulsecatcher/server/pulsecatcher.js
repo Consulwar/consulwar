@@ -1,4 +1,5 @@
 initBuildingSpecialPulsecatcherServer = function() {
+'use strict';
 
 initBuildingSpecialPulsecatcherLib();
 

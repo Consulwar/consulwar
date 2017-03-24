@@ -1,4 +1,5 @@
 initCheatsServer = function() {
+'use strict';
 
 if (process.env.NODE_ENV == 'development') {
 

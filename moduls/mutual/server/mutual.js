@@ -1,6 +1,6 @@
 initMutualServer = function () {
 
-initMutualLib();
+initMutualMainLib();
 
 Game.Mutual.add = function(item) {
 	Game.Mutual.initialize(item.group);

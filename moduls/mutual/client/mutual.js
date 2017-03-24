@@ -1,6 +1,6 @@
 initMutualClient = function() {
 
-initMutualLib();
+initMutualMainLib();
 
 Meteor.subscribe('mutualResearch');
 

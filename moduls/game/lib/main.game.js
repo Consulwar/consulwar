@@ -472,10 +472,19 @@ Game = {
 	},
 
 	getMidnightDate: function(date = this.getCurrentServerTime() * 1000) {
-		let midnight = new Date(date);
-		midnight.setHours(0, 0, 0, 0);
+		if (Meteor.isClient) {
+			date = date.valueOf();
 
-		return midnight.valueOf();
+			let millisecondsPerDay = 86400000;
+			let daysFromMidnight = Math.floor((date - Session.get('serverMidnight')) / millisecondsPerDay);
+
+			return Session.get('serverMidnight') + millisecondsPerDay * daysFromMidnight;
+		} else {
+			let midnight = new Date(date);
+			midnight.setHours(0, 0, 0, 0);
+
+			return midnight.valueOf();
+		}
 	},
 	
 	getCurrentTime: function() {
@@ -483,7 +492,7 @@ Game = {
 	},
 
 	getCurrentServerTime: function() {
-		 if (Meteor.isClient) {
+		if (Meteor.isClient) {
 			return Session.get('serverTime');
 		} else {
 			return Math.floor(new Date().valueOf() / 1000);

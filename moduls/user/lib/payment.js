@@ -117,8 +117,8 @@ new game.PaymentItem({
 	profit: {
 		music: true
 	},
-	cost: { rub: 150 },
-	discount: { rub: 100 }
+	cost: { rub: 200 },
+	discount: { rub: 50 }
 });
 
 };

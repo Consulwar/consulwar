@@ -1,4 +1,5 @@
 initBuildingLib = function() {
+'use strict';
 
 game.Building = function(options){
 	game.Building.superclass.constructor.apply(this, arguments);

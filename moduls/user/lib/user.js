@@ -1,4 +1,5 @@
 Meteor.startup(function () {
+'use strict';
 
 Game.User = {
 	getVotePower: function(user) {

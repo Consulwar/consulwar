@@ -1,6 +1,8 @@
 initPaymentServer = function() {
+'use strict';
 
 initPaymentLib();
+
 initPaymentPlatboxServer();
 
 Game.Payment.Expense = {

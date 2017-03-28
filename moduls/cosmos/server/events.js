@@ -1,4 +1,5 @@
 initCosmosEventsServer = function() {
+'use strict';
 
 Game.SpaceEvents.Collection._ensureIndex({
 	user_id: 1,

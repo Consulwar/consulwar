@@ -1,4 +1,5 @@
 initEarthConfigServer = function() {
+	'use strict';
 
 	if (!Meteor.settings.earth
 	 || !Meteor.settings.earth.reinforcementsDelay

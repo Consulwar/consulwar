@@ -1,4 +1,5 @@
 initEntranceRewardServer = function() {
+'use strict';
 
 initEntranceRewardLib();
 

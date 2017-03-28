@@ -1,4 +1,5 @@
 Meteor.startup(function() {
+'use strict';
 
 if (Meteor.settings.mail) {
 

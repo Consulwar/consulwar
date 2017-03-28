@@ -1,4 +1,5 @@
 initQuestLib = function() {
+'use strict';
 
 game.Quest = function(options) {
 	this.engName = options.engName;

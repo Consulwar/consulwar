@@ -1,4 +1,5 @@
 initResearchLib = function() {
+'use strict';
 
 game.Research = function(options){
 	game.Research.superclass.constructor.apply(this, arguments);

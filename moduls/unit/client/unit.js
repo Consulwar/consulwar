@@ -1,4 +1,5 @@
 initUnitClient = function() {
+'use strict';
 
 initUnitLib();
 initSquadLib();

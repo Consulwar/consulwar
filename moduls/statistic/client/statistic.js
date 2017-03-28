@@ -1,4 +1,5 @@
 initStatisticClient = function() {
+'use strict';
 
 initStatisticLib();
 

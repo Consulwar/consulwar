@@ -1,4 +1,5 @@
 initBuildingSpecialMarketClient = function() {
+'use strict';
 
 initBuildingSpecialMarketLib();
 

@@ -1,5 +1,5 @@
 initSettingsLib = function() {
-
+'use strict';
 
 Game.Settings = {
 	emailLettersFrequency: [

@@ -1,4 +1,5 @@
 initBuildingSpecialMarketLib = function() {
+'use strict';
 	
 Game.Building.special.Market = {
 	exchangeRates: {

@@ -1,4 +1,5 @@
 initBuildingServer = function() {
+'use strict';
 
 initBuildingLib();
 
@@ -102,5 +103,4 @@ initBuildingSpecialMarketServer();
 initBuildingSpecialColosseumServer();
 initBuildingSpecialContainerServer();
 initBuildingSpecialPulsecatcherServer();
-
 };

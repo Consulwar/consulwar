@@ -1,4 +1,5 @@
 initBuildingServerMethods = function(){
+'use strict';
 
 Meteor.methods({
 	'building.build': function(options) {

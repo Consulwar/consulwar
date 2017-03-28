@@ -64,6 +64,7 @@ Meteor.startup(function () {
 	initSettingsServer();
 	initQuestServer();
 	initEntranceRewardServer();
+	initBackRewardsServer();
 	initCheatsServer();
 	initDDPLimiter();
 

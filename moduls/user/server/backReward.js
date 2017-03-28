@@ -10,7 +10,7 @@ game.BackReward = function(options) {
 
 
 Game.BackReward.getProfit = function() {
-  let backTime = (+ new Date() - Game.Statistic.getUserValue('update')) * 0.001;
+  let backTime = (+ new Date() - Game.Statistic.getUserValue('updated')) * 0.001;
   let Rewards = Game.Cards.items['backReward'];
   let reward;
 

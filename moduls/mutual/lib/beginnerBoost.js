@@ -4,10 +4,18 @@ initBeginnerBoostLib = function () {
 const SEC_PER_DAY = 1000 * 60 * 60 * 24;
 
 Game.BeginnerBoost = {
-	calculatePower: function (affectName, userRegisterDate = Meteor.user().createdAt) {
-		let serverDate = new Date(Game.getCurrentServerTime() * 1000);
-		let serverDays = Math.floor((serverDate - Game.BeginnerBoost.SERVER_START_DATE) / SEC_PER_DAY);
-		let userDays = Math.floor((serverDate - userRegisterDate) / SEC_PER_DAY);
+	calculatePower: function (affectName, serverDays, userDays) {
+		if (serverDays === undefined) {
+			let serverDate = new Date(Game.getCurrentServerTime() * 1000);
+			serverDays = Math.floor((serverDate - Game.BeginnerBoost.SERVER_START_DATE) / SEC_PER_DAY);
+		}
+
+		if (userDays === undefined) {
+			let userRegisterDate = Meteor.user().createdAt;
+			let updatedDate = new Date(Game.Resources.getValue().updated * 1000);
+			userDays = Math.floor((updatedDate - userRegisterDate) / SEC_PER_DAY);
+		}
+
 
 		let power = this.calculateGrowth(serverDays) - this.calculateDecrease(userDays);
 		return Math.max(0, power) * Game.BeginnerBoost.POWER_UNIT[affectName];

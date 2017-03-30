@@ -8,13 +8,13 @@ if (Meteor.isServer) {
 	require('./beginnerBoost');
 	require('./beginnerBoostConfig');
 
-	let currentServerTime = Game.getCurrentServerTime() * 1000;
-
 	initBeginnerBoostLib();
 	initBeginnerBoostConfigLib();
 
+	require('../../resources/lib/resources.js');
+	initResourcesLib();
+
 	// set 510 days of serverTime
-	Game.BeginnerBoost.SERVER_START_DATE = new Date(currentServerTime - 1000*60*60*24*510);
 	Game.BeginnerBoost.GROWTH = {
 		"initial": {
 			"days": 300,
@@ -86,29 +86,70 @@ if (Meteor.isServer) {
 
 		describe("Both together", function () {
 			it("should check min power to be not negative", function () {
-				const serverStartDateTime = Game.BeginnerBoost.SERVER_START_DATE.getTime() / 1000;
-				const SEC_PER_DAY = 60 * 60 * 24;
-
-				let serverTime = Game.getCurrentServerTime();
-				let serverDays = Math.ceil((serverTime - serverStartDateTime) / SEC_PER_DAY);
-
-				checkCalculatePower(serverDays+10000, 0, 'metals');
+				checkCalculatePower(510, 10000, 0, 'metals');
 			});
 
 			it("should get affectName from settings", function () {
-				checkCalculatePower(120, 2.7 * 100, 'humans');
-				checkCalculatePower(120, 2.7 * 1000, 'metals');
-				checkCalculatePower(210, 0.3 * 300, 'crystals');
-				checkCalculatePower(120, 2.7 * 5, 'honor');
-				checkCalculatePower(210, 0.3 * 10, 'time');
+				checkCalculatePower(510, 120, 2.7 * 100, 'humans');
+				checkCalculatePower(510, 120, 2.7 * 1000, 'metals');
+				checkCalculatePower(510, 210, 0.3 * 300, 'crystals');
+				checkCalculatePower(510, 120, 2.7 * 5, 'honor');
+				checkCalculatePower(510, 210, 0.3 * 10, 'time');
 			});
 
-			function checkCalculatePower(userDays, checkPower, affectName) {
-				let userRegisterDate = new Date(Game.getCurrentServerTime() * 1000 - 1000 * 60 * 60 * 24 * userDays);
-
-				let result = Game.BeginnerBoost.calculatePower(affectName, userRegisterDate);
+			function checkCalculatePower(serverDays, userDays, checkPower, affectName) {
+				let result = Game.BeginnerBoost.calculatePower(affectName, serverDays, userDays);
 				expect(result).to.closeTo(checkPower, 0.001);
 			}
+
+			it("should calculate server days if not set", function() {
+				let currentServerTime = Game.getCurrentServerTime() * 1000;
+				Game.BeginnerBoost.SERVER_START_DATE = new Date(currentServerTime - 1000*60*60*24*510);
+
+				// let userRegisterDate = new Date(Game.getCurrentServerTime() * 1000 - 1000 * 60 * 60 * 24 * userDays);
+
+				let result = Game.BeginnerBoost.calculatePower('metals', undefined, 120);
+				expect(result).to.closeTo(2.7 * 1000, 0.001);
+			});
+
+			Meteor.methods({
+				'beginnerBoost.calculate': function() {
+					return Game.BeginnerBoost.calculatePower('metals', 510);
+				}
+			});
+
+			it("should calculate user days if not set", function() {
+				let storedUser = Meteor.user;
+				let storedUserId = Meteor.userId;
+
+				Meteor.user = function() {
+					return {
+						createdAt: Game.BeginnerBoost.SERVER_START_DATE
+					};
+				};
+
+				Meteor.userId = function() {
+					return "123";
+				};
+
+				Game.Resources.Collection.remove({});
+
+				Game.Resources.Collection.insert({
+					"user_id" : "123",
+					"metals" : {
+						"amount" : 1459154.92,
+						"bonus" : 448,
+						"bonusSeconds" : 7
+					},
+					"updated" : ((new Date(Meteor.user().createdAt).getTime() / 1000) + 120 * 24 * 60 * 60)
+				});
+
+				let result = Meteor.call('beginnerBoost.calculate');
+				expect(result).to.closeTo(2.7 * 1000, 0.001);
+
+				Meteor.user = storedUser;
+				Meteor.userId = storedUserId;
+			});
 		});
 	});
 }

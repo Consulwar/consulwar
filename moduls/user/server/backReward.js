@@ -1,42 +1,29 @@
 initBackRewardServer = function() {
 
-game.BackReward = function(options) {
+'use strict';
 
-  _.extend(this, options);
-
-  Game.BackReward.default = this;
+game.BackReward = function() {
 
 };
 
 
 Game.BackReward.getProfit = function() {
-  let backTime = (+ new Date() - Game.Statistic.getUserValue('updated')) * 0.001;
+  let backTime = Game.getCurrentTime() - Game.Resources.getValue().updated;
   let Rewards = Game.Cards.items['backReward'];
   let reward;
 
   for (var key in Rewards) {
     let r = Rewards[key];
     let fromDay = r.fromDay * 24 * 3600;
-    if ((fromDay *  <= backTime) && (!reward || (reward.fromDay * 24 * 3600 < fromDay))) {
+    if ((fromDay <= backTime) && (!reward || (reward.fromDay * 24 * 3600 < fromDay))) {
       reward = r;
     }
   }
 
-  if (reward) {
-    if (_.isString(reward.profit)) {
-      let rewards = Game.EntranceReward.ranks[reward.profit].rewards;
-      return Game.Resources.rollProfit(rewards);
-    } else {
-      return reward.profit;
-    }
-  } else {
-    return null;
-  }
+  return reward;
 };
 
 Meteor.methods({
-  // TODO: add cache system on frontend to load only necessary data
-
   'backReward.takeReward': function() {
     let user = Meteor.user();
 
@@ -48,11 +35,10 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    let profit = Game.BackReward.getProfit();
+    let card = Game.BackReward.getProfit();
 
-    if (profit) {
-      Game.Resources.addProfit(profit);
-      return profit;
+    if (card) {
+      Game.Cards.activate(card, user)
     }
   }
 });

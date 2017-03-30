@@ -35,6 +35,10 @@ game.Card = function(options) {
 		return '/img/game/house/donate/i/' + this.engName + '.png';
 	};
 
+	if (!Game.Cards.items[this.cardType]) {
+		Game.Cards.items[this.cardType] = {};
+	}
+
 	Game.Cards.items[this.cardType][this.engName] = this;
 
 	this.amount = function() {

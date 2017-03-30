@@ -2,7 +2,7 @@ initBackRewardServer = function() {
 
 'use strict';
 
-game.BackReward = function() {
+Game.BackReward = function() {
 
 };
 
@@ -42,7 +42,5 @@ Meteor.methods({
     }
   }
 });
-
-initBackRewardsContent();
 
 };

@@ -19,7 +19,7 @@ Game.BackReward = {
 		}
 
 		if (card) {
-			Game.Cards.activate(card, user);
+			Game.Cards.activate(card, Meteor.user());
 		}
 	}
 };

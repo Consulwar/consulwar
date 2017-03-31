@@ -4,15 +4,15 @@ initBackRewardServer = function() {
 
 Game.BackReward = {
 	getReward: function() {
-		let backTime = Game.getCurrentTime() - Game.Resources.getValue().updated;
+		let daysFromUpdate = (Game.getCurrentTime() - Game.Resources.getValue().updated) / (24 * 3600);
 		let Cards = Game.Cards.items['backReward'];
 		let card;
 
-		for (var key in Cards) {
+		for (let key in Cards) {
 			if (Cards.hasOwnProperty(key)) {
 				let c = Cards[key];
-				let fromDay = c.fromDay * 24 * 3600;
-				if ((fromDay <= backTime) && (!card || (card.fromDay * 24 * 3600 < fromDay))) {
+				let fromDay = c.fromDay;
+				if ((fromDay <= daysFromUpdate) && (!card || (card.fromDay < fromDay))) {
 					card = c;
 				}
 			}

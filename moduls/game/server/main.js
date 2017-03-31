@@ -128,7 +128,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Meteor.call('backReward.takeReward');
+		let card = Game.BackReward.getProfit();
+		if (card) {
+			Game.Cards.activate(card, user)
+		}
 
 		console.log('Actualize: ', new Date(), user.username);
 

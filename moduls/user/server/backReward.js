@@ -20,24 +20,4 @@ Game.BackReward = {
 	}
 };
 
-Meteor.methods({
-	'backReward.takeReward': function() {
-		let user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		let card = Game.BackReward.getProfit();
-
-		if (card) {
-			Game.Cards.activate(card, user)
-		}
-	}	
-});
-
 };

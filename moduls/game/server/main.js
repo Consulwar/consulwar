@@ -128,6 +128,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
+		Meteor.call('backReward.takeReward');
+
 		console.log('Actualize: ', new Date(), user.username);
 
 		// Update queue tasks and resources

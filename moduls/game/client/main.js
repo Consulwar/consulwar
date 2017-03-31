@@ -237,9 +237,10 @@ Tracker.autorun(function() {
 		Session.set('reconnectTime', null);
 	}
 });
+
+
 Tracker.autorun(function () {
 	if (Meteor.user() && Meteor.user().game) {
-
 		var user = Meteor.user();
 
 		if (user.settings && user.settings.options && user.settings.options.mobileVersion && !$('meta[name="viewport"]').length) {
@@ -281,7 +282,6 @@ Tracker.autorun(function() {
 });
 
 Accounts.onLogin(function () {
-	Meteor.call('backReward.takeReward');
 	Game.actualizeGameInfo();
 });
 /*

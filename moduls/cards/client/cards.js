@@ -1,7 +1,8 @@
 initCardsClient = function() {
 'use strict';
 
-initCardsLib();
+initCardsMainLib();
+
 Meteor.subscribe('cards');
 
 };

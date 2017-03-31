@@ -1,7 +1,7 @@
 initCardsServer = function() {
 'use strict';
 	
-initCardsLib();
+initCardsMainLib();
 
 Game.Cards.Collection._ensureIndex({
 	user_id: 1

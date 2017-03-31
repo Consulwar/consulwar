@@ -11,7 +11,6 @@ game.Card = function(options) {
 	this.cardType = options.cardType;
 	this.durationTime = options.durationTime;
 	this.reloadTime = options.reloadTime;
-	this.fromDay = options.fromDay;
 
 	for (var key in Game.Cards.items) {
 		if (Game.Cards.items[key][this.engName]) {
@@ -159,7 +158,5 @@ Game.Cards = {
 		return null;
 	}
 };
-
-initCardsContent();
 
 };

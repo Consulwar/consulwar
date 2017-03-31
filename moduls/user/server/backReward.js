@@ -3,23 +3,35 @@ initBackRewardServer = function() {
 'use strict';
 
 Game.BackReward = {
-	getReward: function() {
-		let daysFromUpdate = (Game.getCurrentTime() - Game.Resources.getValue().updated) / (24 * 3600);
-		let Cards = Game.Cards.items['backReward'];
-		let card;
+	checkedTimestamps: {
 
-		for (let key in Cards) {
-			if (Cards.hasOwnProperty(key)) {
-				let c = Cards[key];
-				let fromDay = c.fromDay;
-				if ((fromDay <= daysFromUpdate) && (!card || (card.fromDay < fromDay))) {
-					card = c;
+	},
+	getReward: function() {
+		let user = Meteor.user();
+		const currentTime = Game.getCurrentTime();
+		const lastCheck = Game.BackReward.checkedTimestamps[user._id];
+		if (!lastCheck || 
+			((currentTime - lastCheck) > Game.BackRewardCard.SECONDS_BETWEEN_CHECK)
+		) {
+			let daysFromUpdate = (currentTime - Game.Resources.getValue().updated);
+			let cards = Game.Cards.items['backReward'];
+			let applicableCard;
+
+			for (let key in cards) {
+				if (cards.hasOwnProperty(key)) {
+					let card = cards[key];
+					let fromDay = card.fromDay;
+					if ((fromDay <= daysFromUpdate) && (!applicableCard || (applicableCard.fromDay < fromDay))) {
+						applicableCard = card;
+					}
 				}
 			}
-		}
 
-		if (card) {
-			Game.Cards.activate(card, Meteor.user());
+			if (applicableCard) {
+				Game.Cards.activate(applicableCard, user);
+			}
+
+			Game.BackReward.checkedTimestamps[user._id] = currentTime;
 		}
 	}
 };

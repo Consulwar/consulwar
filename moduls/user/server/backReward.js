@@ -3,20 +3,24 @@ initBackRewardServer = function() {
 'use strict';
 
 Game.BackReward = {
-	getProfit: function() {
+	getReward: function() {
 		let backTime = Game.getCurrentTime() - Game.Resources.getValue().updated;
-		let Rewards = Game.Cards.items['backReward'];
-		let reward;
+		let Cards = Game.Cards.items['backReward'];
+		let card;
 
-		for (var key in Rewards) {
-			let r = Rewards[key];
-			let fromDay = r.fromDay * 24 * 3600;
-			if ((fromDay <= backTime) && (!reward || (reward.fromDay * 24 * 3600 < fromDay))) {
-				reward = r;
+		for (var key in Cards) {
+			if (Cards.hasOwnProperty(key)) {
+				let c = Cards[key];
+				let fromDay = c.fromDay * 24 * 3600;
+				if ((fromDay <= backTime) && (!card || (card.fromDay * 24 * 3600 < fromDay))) {
+					card = c;
+				}
 			}
 		}
 
-		return reward;		
+		if (card) {
+			Game.Cards.activate(card, user)
+		}
 	}
 };
 

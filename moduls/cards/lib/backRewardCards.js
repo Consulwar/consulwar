@@ -13,7 +13,7 @@ game.BackRewardCard = function(options) {
 game.extend(game.BackRewardCard, game.Card);
 
 Game.BackRewardCard = {
-	SECONDS_BETWEEN_CHECK: 3600
+	DAYS_BETWEEN_CHECK: 2
 };
 
 };

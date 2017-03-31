@@ -281,9 +281,7 @@ Tracker.autorun(function() {
 	}
 });
 
-Accounts.onLogin(function () {
-	Game.actualizeGameInfo();
-});
+Accounts.onLogin(Game.actualizeGameInfo);
 /*
 Deps.autorun(function(){
 	var user = Meteor.user();

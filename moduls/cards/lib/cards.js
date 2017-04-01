@@ -90,6 +90,9 @@ game.extend(game.Card, game.Item);
 game.BackRewardCard = function(options) {
 	game.BackRewardCard.superclass.constructor.apply(this, arguments);
 	this.fromDay = options.fromDay;
+	if (options.fromDay < Game.BackRewardCard.MIN_REWARD_DAY) {
+		Game.BackRewardCard.MIN_REWARD_DAY = options.fromDay;
+	}
 };
 game.extend(game.BackRewardCard, game.Card);
 
@@ -166,7 +169,7 @@ Game.Cards = {
 };
 
 Game.BackRewardCard = {
-	DAYS_BETWEEN_CHECK: 2
+	MIN_REWARD_DAY: Infinity
 };
 
 initCardsContent();

@@ -43,6 +43,38 @@
 		},
 		"statistic": {
 			"countPerPage": 20
+		},
+		"serverStartDate": 1483315200000,
+		"beginnersBoost": {
+			"growth": {
+				"initial": {
+					"days": 300,
+					"power": 1,
+					"interval": 30
+				},
+				"continuous": {
+					"power": 0.1,
+					"interval": 30
+				}
+			},
+			"decrease": {
+				"initial": {
+					"days": 150,
+					"power": 2,
+					"interval": 30
+				},
+				"continuous": {
+					"power": 0.2,
+					"interval": 30
+				}
+			},
+			"powerUnit": {
+				"humans": 100,
+				"metals": 1000,
+				"crystals": 300,
+				"honor": 5,
+				"time": 10
+			}
 		}
 	},
 	"recaptcha": {

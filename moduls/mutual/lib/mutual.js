@@ -117,5 +117,4 @@ Game.Investments = {
 	}*/
 };
 
-initMutualContent();
 };

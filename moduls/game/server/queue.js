@@ -1,4 +1,6 @@
 Meteor.startup(function() {
+'use strict';
+
 /*
 {
 	// Required fields:

@@ -1,4 +1,5 @@
 initChatLib = function() {
+'use strict';
 
 Game.Chat = {};
 

@@ -1,4 +1,5 @@
 initCosmosLib = function() {
+'use strict';
 
 game.PlanetType = function(options) {
 	if (Game.Planets.types[options.engName]) {

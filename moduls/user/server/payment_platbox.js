@@ -1,4 +1,5 @@
 initPaymentPlatboxServer = function() {
+'use strict';
 
 if (!Meteor.settings.payment
  || !Meteor.settings.payment.platbox

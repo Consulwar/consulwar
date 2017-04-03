@@ -1,4 +1,5 @@
 initCheatsClient = function() {
+'use strict';
 
 Game.Cheats = {};
 
@@ -12,7 +13,7 @@ Game.Cheats.setUnitCount = function (group, name, count) {
 
 Game.Cheats.testBattle = function() {
 	// fleet battle test
-	userArmy = {
+	let userArmy = {
 		army: {
 			fleet: {
 				gammadrone: 100,
@@ -44,7 +45,7 @@ Game.Cheats.testBattle = function() {
 			}
 		}
 	};
-	enemyArmy = {
+	let enemyArmy = {
 		reptiles: {
 			fleet: {
 				sphero: 100,

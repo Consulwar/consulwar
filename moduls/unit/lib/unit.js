@@ -1,4 +1,5 @@
 initUnitLib = function() {
+'use strict';
 
 initBattleLib();
 

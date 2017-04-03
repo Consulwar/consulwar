@@ -1,4 +1,5 @@
 initMailQuizLib = function () {
+'use strict';
 
 Game.Quiz = {
 	Collection: new Meteor.Collection('quiz'),

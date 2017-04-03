@@ -1,4 +1,5 @@
 initCosmosConfigServer = function() {
+	'use strict';
 
 	if (!Meteor.settings.cosmos
 	 || !Meteor.settings.cosmos.enemyRespawnPeriod

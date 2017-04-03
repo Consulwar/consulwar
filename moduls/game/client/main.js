@@ -1,5 +1,7 @@
 Meteor.startup(function () {
+'use strict';
 
+initGameConfigLib();
 initUserClient();
 initPaymentClient();
 initResourcesClient();
@@ -142,11 +144,6 @@ var showNotificationFromTask = function(task) {
 };
 
 
-test = Router.route('/test', function() {
-	console.log('yes');
-});
-
-
 var isActualizeInprogress = false;
 
 Game.actualizeGameInfo = function() {
@@ -267,7 +264,7 @@ Tracker.autorun(function () {
 	}
 });
 
-mutual = {
+let mutual = {
 	item: null,
 	sub: null
 };
@@ -472,7 +469,7 @@ Template.newgame.events({
 	}
 });
 
-ShowModalWindow = function(template, data) {
+window.ShowModalWindow = function(template, data) {
 	Blaze.renderWithData(
 		template, 
 		data, 

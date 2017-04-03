@@ -1,4 +1,5 @@
 initMutualLib = function () {
+'use strict';
 
 game.MutualItem = function(options) {
 	game.MutualItem.superclass.constructor.apply(this, arguments);
@@ -115,7 +116,5 @@ Game.Investments = {
 		return Game.Mutual.get(group, name) >= level;
 	}*/
 };
-
-initMutualContent();
 
 };

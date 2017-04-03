@@ -1,4 +1,5 @@
 initItemsServer = function() {
+'use strict';
 
 initItemLib();
 

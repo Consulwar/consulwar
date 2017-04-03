@@ -1,6 +1,8 @@
 initBuildingSpecialColosseumClient = function() {
+'use strict';
 
 initBuildingSpecialColosseumLib();
+initBuildingSpecialColosseumContentClient();
 
 var selectedTournament = new ReactiveVar('green_ring');
 

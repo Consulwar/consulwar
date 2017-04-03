@@ -205,6 +205,10 @@ game.Item = function(options) {
 
 	this.constructor(options);
 
+	this.deepFreeze = function() {
+		Game.Helpers.deepFreeze(this, ['requirements', 'targets', 'special', 'characteristics', 'earthCharacteristics']);
+	};
+
 	this.currentLevel = function() {
 		return Game.getObjectByType(this.type).get(this.group, this.engName);
 	};
@@ -619,6 +623,10 @@ Game.Effect = function(options) {
 	};
 
 	this.constructor(options);
+
+	this.deepFreeze = function() {
+		Game.Helpers.deepFreeze(this, ['level', 'provider']);
+	};
 
 	this.next = function(level) {
 		level = (level || this.level) + 1;
@@ -1175,5 +1183,25 @@ Game.Helpers = {
 		}
 
 		return result.join(' ');
+	},
+
+	deepFreeze: function (obj, skipFields = ['Collection']) {
+		let propNames = Object.getOwnPropertyNames(obj);
+
+		for (let name of propNames) {
+			if (skipFields.indexOf(name) === -1) {
+				let prop = obj[name];
+
+				if (typeof prop === 'object' && prop !== null) {
+					if (typeof prop.deepFreeze === 'function') {
+						prop.deepFreeze();
+					} else {
+						this.deepFreeze(prop);
+					}
+				}
+			}
+		}
+
+		return Object.freeze(obj);
 	}
 };

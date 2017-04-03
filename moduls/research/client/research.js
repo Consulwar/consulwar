@@ -1,4 +1,5 @@
 initResearchClient = function() {
+'use strict';
 
 initResearchLib();
 

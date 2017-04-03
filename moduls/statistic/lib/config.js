@@ -1,4 +1,5 @@
 initStatisticConfigLib = function() {
+	'use strict';
 
 	if (!Meteor.settings.public.statistic
 	 || !Meteor.settings.public.statistic.countPerPage

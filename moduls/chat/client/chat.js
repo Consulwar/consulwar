@@ -1,4 +1,5 @@
 initChatClient = function() {
+'use strict';
 
 initChatLib();
 

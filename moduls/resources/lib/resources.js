@@ -1,4 +1,5 @@
 initResourcesLib = function() {
+'use strict';
 
 Game.Resources = {
 	Collection: new Meteor.Collection('resources'),

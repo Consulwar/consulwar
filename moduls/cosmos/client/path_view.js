@@ -1,4 +1,5 @@
 initCosmosPathView = function () {
+'use strict';
 
 game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color) {
 
@@ -101,7 +102,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 	};
 
 	var calcDistanseViaPoints = function(points) {
-		distance = 0;
+		let distance = 0;
 
 		if (points && points.length > 1) {
 			for (var i = 0; i < points.length - 1; i++) {

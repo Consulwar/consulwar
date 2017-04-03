@@ -1,4 +1,5 @@
 initBuildingSpecialContainerLib = function() {
+'use strict';
 
 game.Container = function(options) {
 	if (Game.Building.special.Container.items[options.engName]) {

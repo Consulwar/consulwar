@@ -1,4 +1,5 @@
 initEarthConfigLib = function() {
+	'use strict';
 
 	if (!Meteor.settings.public.earth
 	 || !Meteor.settings.public.earth.schedule

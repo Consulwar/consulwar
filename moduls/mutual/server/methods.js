@@ -1,4 +1,5 @@
 initMutualServerMethods = function(){
+'use strict';
 
 Meteor.methods({
 	'mutual.invest': function(options) {

@@ -1,4 +1,5 @@
 initHouseLib = function() {
+'use strict';
 
 game.HouseItem = function(options) {
 	this.doNotRegisterEffect = true;
@@ -127,5 +128,4 @@ Game.House = {
 };
 
 initHouseContent();
-
 };

@@ -1,4 +1,5 @@
 initMenuClient = function() {
+'use strict';
 
 var firstItemGroupURL = function(items) {
 	var firstItem = items[_.keys(items)[0]];

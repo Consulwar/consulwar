@@ -1,4 +1,5 @@
 initChatConfigLib = function() {
+	'use strict';
 
 	if (!Meteor.settings.public.chat
 	 || !Meteor.settings.public.chat.messages

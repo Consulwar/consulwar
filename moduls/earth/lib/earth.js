@@ -1,4 +1,5 @@
 initEarthLib = function() {
+'use strict';
 
 Game.Earth = {
 	checkReinforceTime: function(currentTime) {

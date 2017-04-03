@@ -1,4 +1,5 @@
 initPopupClient = function() {
+'use strict';
 
 Game.Popup = {
 	zIndex: 100,

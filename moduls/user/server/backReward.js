@@ -7,7 +7,7 @@ Game.BackReward = {
 		let daysFromUpdate = (Game.getCurrentTime() - Game.Resources.getValue().updated) / (24 * 3600);
 
 		if (daysFromUpdate < Game.BackRewardCard.MIN_REWARD_DAY) {
-			return;
+			return false;
 		}
 
 		let cards = Game.Cards.items['backReward'];
@@ -22,6 +22,8 @@ Game.BackReward = {
 			}
 		}
 		Game.Cards.activate(applicableCard, Meteor.user());
+
+		return applicableCard;
 	}
 };
 

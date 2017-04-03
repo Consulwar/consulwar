@@ -1,8 +1,9 @@
 initBeginnerBoostConfigLib = function() {
+	'use strict';
+
 	const beginnersBoost = Meteor.settings.public.beginnersBoost;
 
-	if (!Meteor.settings.public.serverStartDate
-		|| !beginnersBoost
+	if (!beginnersBoost
 		|| !beginnersBoost.growth
 		|| !beginnersBoost.growth.initial
 		|| !beginnersBoost.growth.initial.days
@@ -29,7 +30,6 @@ initBeginnerBoostConfigLib = function() {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры буста новичков (см. settings.sample public.beginnersBoost)');
 	}
 
-	Game.BeginnerBoost.SERVER_START_DATE = new Date(Meteor.settings.public.serverStartDate);
 	Game.BeginnerBoost.GROWTH = beginnersBoost.growth;
 	Game.BeginnerBoost.DECREASE = beginnersBoost.decrease;
 	Game.BeginnerBoost.POWER_UNIT = beginnersBoost.powerUnit;

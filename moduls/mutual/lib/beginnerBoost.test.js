@@ -104,7 +104,7 @@ if (Meteor.isServer) {
 
 			it("should calculate server days if not set", function() {
 				let currentServerTime = Game.getCurrentServerTime() * 1000;
-				Game.BeginnerBoost.SERVER_START_DATE = new Date(currentServerTime - 1000*60*60*24*510);
+				Game.SERVER_START_DATE = new Date(currentServerTime - 1000*60*60*24*510);
 
 				// let userRegisterDate = new Date(Game.getCurrentServerTime() * 1000 - 1000 * 60 * 60 * 24 * userDays);
 
@@ -124,7 +124,7 @@ if (Meteor.isServer) {
 
 				Meteor.user = function() {
 					return {
-						createdAt: Game.BeginnerBoost.SERVER_START_DATE
+						createdAt: Game.SERVER_START_DATE
 					};
 				};
 

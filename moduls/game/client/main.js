@@ -1,6 +1,7 @@
 Meteor.startup(function () {
 'use strict';
 
+initGameConfigLib();
 initUserClient();
 initPaymentClient();
 initResourcesClient();

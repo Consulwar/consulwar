@@ -5,7 +5,7 @@ const SEC_PER_DAY = 1000 * 60 * 60 * 24;
 
 let getServerDays = function() {
 	let serverDate = new Date(Game.getCurrentServerTime() * 1000);
-	return Math.floor((serverDate - Game.BeginnerBoost.SERVER_START_DATE) / SEC_PER_DAY);
+	return Math.floor((serverDate - Game.SERVER_START_DATE) / SEC_PER_DAY);
 };
 
 let getUserDays = function() {

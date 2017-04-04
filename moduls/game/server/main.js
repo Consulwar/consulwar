@@ -67,6 +67,7 @@ Meteor.startup(function () {
 	initEntranceRewardServer();
 	initCheatsServer();
 	initDDPLimiter();
+	initAllianceServer();
 
 	SyncedCron.start();
 });

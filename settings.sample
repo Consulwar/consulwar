@@ -75,6 +75,12 @@
 				"honor": 5,
 				"time": 10
 			}
+		},
+		"alliance": {
+			"creatorRating": 100000,
+			"creatorBuildingLevel": 20,
+			"priceInGGK": 100,
+			"priceInHonor": 10000
 		}
 	},
 	"recaptcha": {

@@ -199,14 +199,14 @@ describe("Alliance", function() {
 
 		checkNotThrow({name: 'name1', url: 'url1', tag: 'tag1', type: 1, information:'', priceType: 'ggk'});
 		expect(spend).to.eql({credits: Game.Alliance.PRICE_IN_GGK});
-		expect(chatRoom.name).to.equal('url1');
+		expect(chatRoom.name).to.equal('alliance/url1');
 		expect(chatRoom.title).to.equal('name1');
 
 		Game.Alliance.Collection.remove({owner: '123'});
 
 		checkNotThrow({name: 'name2', url: 'url2', tag: 'tag2', type: 1, information:'', priceType: 'honor'});
 		expect(spend).to.eql({honor: Game.Alliance.PRICE_IN_HONOR});
-		expect(chatRoom.name).to.equal('url2');
+		expect(chatRoom.name).to.equal('alliance/url2');
 		expect(chatRoom.title).to.equal('name2');
 	});
 

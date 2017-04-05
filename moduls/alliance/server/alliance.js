@@ -49,7 +49,7 @@ Meteor.methods({
 			timestamp: Game.getCurrentTime()
 		});
 
-		createChatRoom(user, options.name, options.url);
+		createChatRoom(user, options);
 	}
 });
 
@@ -151,13 +151,15 @@ let checkUnique = function({name, url, tag}) {
 	}
 };
 
-let createChatRoom = function(user, name, url) {
+let createChatRoom = function(user, {name, url}) {
 	let room = {
-		name: url,
+		name: 'alliance/' + url,
 		title: name,
 		owner: user._id,
 		users: [user._id],
-		usernames: [user.username]
+		usernames: [user.username],
+		isOwnerPays: true,
+		credits: 50
 	};
 
 	Game.Chat.Room.Collection.insert(room);

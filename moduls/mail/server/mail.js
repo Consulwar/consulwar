@@ -64,6 +64,29 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 	return users;
 };
 
+game.Mail.addAllianceMessage = function(allianceName, subject, text, timestamp) {
+	let user = Meteor.user();
+
+	Game.Mail.Collection.insert({
+		owner: user._id,
+		//todo type: type,
+		from: 1,
+		sender: 'Альянс ' + allianceName,
+		to: user._id,
+		recipient: user.username,
+		subject: subject,
+		text: text,
+		status: game.Mail.status.unread,
+		timestamp: timestamp || Game.getCurrentTime()
+	});
+
+	Game.Statistic.incrementUser(user._id, {
+		'mail.current': 1,
+		'mail.total': 1
+	});
+};
+
+
 Meteor.methods({
 	'mail.sendLetter': function(recipient, subject, text) {
 		var user = Meteor.user();

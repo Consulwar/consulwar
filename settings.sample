@@ -79,7 +79,7 @@
 		"alliance": {
 			"creatorRating": 100000,
 			"creatorBuildingLevel": 20,
-			"priceInGGK": 100,
+			"priceInCredits": 100,
 			"priceInHonor": 10000
 		}
 	},

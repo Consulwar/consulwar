@@ -80,7 +80,8 @@
 			"creatorRating": 100000,
 			"creatorBuildingLevel": 20,
 			"priceInCredits": 100,
-			"priceInHonor": 10000
+			"priceInHonor": 10000,
+			"invalidateSchedule": "at 4:00 am"
 		}
 	},
 	"recaptcha": {

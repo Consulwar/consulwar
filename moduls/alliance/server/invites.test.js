@@ -61,8 +61,8 @@ describe("Alliance invites", function() {
 			Meteor.users.insert({_id: '78', username: 'tester2'});
 			Game.Alliance.Collection.insert({owner: '123', url: 'alliance1'});
 			Game.Alliance.Invites.Collection.insert({
-				alliance: 'alliance1',
 				username: 'tester2',
+				alliance: 'alliance1',
 				status: Game.Alliance.Invites.status.SENT,
 				timestamp: Game.getCurrentTime()
 			});
@@ -94,8 +94,13 @@ describe("Alliance invites", function() {
 				timestamp: Game.getCurrentTime() - Game.Alliance.Invites.INVALIDATE_TIMEOUT
 			});
 
+			Game.Alliance.Invites.invalidate();
+
 			game.Mail = { addAllianceMessage: function() {} };
 			checkNotThrow('tester2');
+
+			let invites = Game.Alliance.Invites.Collection.find({}).fetch();
+			expect(invites.length).to.equal(2);
 		});
 
 		it("should send mail if ok", function() {
@@ -122,30 +127,74 @@ describe("Alliance invites", function() {
 		};
 	});
 
-	describe("apply", function() {
+	describe("update", function() {
 		it("should check invite exists", function() {
-			checkThrow('alliance1', 'Приглашение не найдено');
+			checkThrow('not_found', true, 'Приглашение не найдено');
+		});
+
+		it("should check invite accepted", function() {
+			let inviteId = Game.Alliance.Invites.Collection.insert({
+				username: 'tester1',
+				alliance: 'alliance1',
+				status: Game.Alliance.Invites.status.ACCEPTED
+			});
+
+			checkThrow(inviteId, true, 'Приглашение уже принято');
+		});
+
+		it("should check invite declined", function() {
+			let inviteId = Game.Alliance.Invites.Collection.insert({
+				username: 'tester1',
+				alliance: 'alliance1',
+				status: Game.Alliance.Invites.status.DECLINED
+			});
+
+			checkThrow(inviteId, true, 'Приглашение уже отклонено');
 		});
 
 		it("should ok if invite exists", function() {
 			Game.Alliance.Collection.insert({url: 'alliance1'});
-			Game.Alliance.Invites.Collection.insert({
-				username: 'tester1',
+			let inviteId = Game.Alliance.Invites.Collection.insert({
+				username: 'tester2',
 				alliance: 'alliance1',
-				status: Game.Alliance.Invites.status.SENT});
+				status: Game.Alliance.Invites.status.SENT,
+				timestamp: Game.getCurrentTime()
+			});
+			Meteor.users.insert({_id: 'id2', username: 'tester2'});
 
-		  checkNotThrow('alliance1');
+		  checkNotThrow(inviteId, true);
 
 			let alliance = Game.Alliance.Collection.findOne({url: 'alliance1'});
-			expect(alliance.participants).to.eql(['tester1']);
+			expect(alliance.participants).to.eql(['tester2']);
+
+			let user = Meteor.users.findOne({username: 'tester2'});
+			expect(user.alliance).to.equal('alliance1');
 		});
 
-		let checkThrow = function(allianceName, err) {
-			expect(function() {Meteor.call('allianceInvites.apply', allianceName);}).to.throw(err);
+		it("should set status declined on isApply == false", function() {
+			Game.Alliance.Collection.insert({url: 'alliance1'});
+			let inviteId = Game.Alliance.Invites.Collection.insert({
+				username: 'tester2',
+				alliance: 'alliance1',
+				status: Game.Alliance.Invites.status.SENT,
+				timestamp: Game.getCurrentTime()
+			});
+
+			checkNotThrow(inviteId, false);
+
+			let invite = Game.Alliance.Invites.Collection.findOne({_id: inviteId});
+			expect(invite.status).to.equal(Game.Alliance.Invites.status.DECLINED);
+
+			let alliance = Game.Alliance.Collection.findOne({url: 'alliance1'});
+			expect(alliance.participants).to.be.undefined;
+		});
+
+		let checkThrow = function(inviteId, isApply, err) {
+			expect(function() {Meteor.call('allianceInvites.update', inviteId, isApply);}).to.throw(err);
 		};
 
-		let checkNotThrow = function(allianceName) {
-			expect(function() {Meteor.call('allianceInvites.apply', allianceName);}).to.not.throw();
+		let checkNotThrow = function(inviteId, isApply) {
+			expect(function() {Meteor.call('allianceInvites.update', inviteId, isApply);}).to.not.throw();
 		};
 	});
 });

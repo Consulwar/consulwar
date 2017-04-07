@@ -10,6 +10,15 @@ Game.Alliance.Invites.Collection._ensureIndex({
 
 Game.Alliance.Invites.INVALIDATE_TIMEOUT = 3 * 24 * 60 * 60;
 
+Game.Alliance.Invites.invalidate = function() {
+	Game.Alliance.Invites.Collection.update({
+		status: Game.Alliance.Invites.status.SENT,
+		timestamp: {$lte: Game.getCurrentTime() - Game.Alliance.Invites.INVALIDATE_TIMEOUT}
+	}, {
+		status: Game.Alliance.Invites.status.INVALIDATED
+	});
+};
+
 Meteor.methods({
 	'allianceInvites.create': function(recipient) {
 		let user = Meteor.user();
@@ -49,29 +58,26 @@ Meteor.methods({
 			throw new Meteor.Error('Невозможно создать приглашение', 'Вы не являетесь владельцем альянса!');
 		}
 
-		let invite = Game.Alliance.Invites.Collection.findOne({
-			username: to.username,
-			alliance: alliance.url
-		});
-
-		if (invite
-			&& invite.status === Game.Alliance.Invites.status.SENT
-			&& invite.timestamp > Game.getCurrentTime() - Game.Alliance.Invites.INVALIDATE_TIMEOUT
-		) {
+		if (Game.Alliance.Invites.Collection.find({
+				username: to.username,
+				alliance: alliance.url,
+				status: Game.Alliance.Invites.status.SENT
+			}, {limit: 1}).count() !== 0) {
 			throw new Meteor.Error('Невозможно создать приглашение', 'Этому игроку уже отправлено приглашение в данный альянс!');
 		}
 
-		Game.Alliance.Invites.Collection.upsert({
+		Game.Alliance.Invites.Collection.insert({
 			alliance: alliance.url,
 			username: to.username,
+			user_id: to._id,
 			status: Game.Alliance.Invites.status.SENT,
 			timestamp: Game.getCurrentTime()
 		});
 
-		game.Mail.addAllianceMessage(alliance.name, 'subject', 'text'); //todo
+		game.Mail.addAllianceMessage(alliance.name, to, 'subject', 'text');
 	},
 
-	'allianceInvites.apply': function(allianceUrl) {
+	'allianceInvites.update': function(inviteId, isApply) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -82,50 +88,39 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('allianceInvites.apply:', new Date(), user.username);
+		console.log('allianceInvites.update:', new Date(), user.username);
+
+		let invite = Game.Alliance.Invites.Collection.findOne({_id: inviteId});
+
+		if (!invite) {
+			throw new Meteor.Error('Невозможно обновить приглашение', 'Приглашение не найдено');
+		}
+
+		if (invite.status === Game.Alliance.Invites.status.ACCEPTED) {
+			throw new Meteor.Error('Невозможно обновить приглашение', 'Приглашение уже принято');
+		}
+
+		if (invite.status === Game.Alliance.Invites.status.DECLINED) {
+			throw new Meteor.Error('Невозможно обновить приглашение', 'Приглашение уже отклонено');
+		}
+
+		if (invite.status === Game.Alliance.Invites.status.INVALIDATED) {
+			throw new Meteor.Error('Невозможно обновить приглашение', 'Приглашение просрочено');
+		}
+
+		let status = isApply ? Game.Alliance.Invites.status.ACCEPTED : Game.Alliance.Invites.status.DECLINED;
 
 		let updatedCount = Game.Alliance.Invites.Collection.update({
-			username: user.username,
-			alliance: allianceUrl,
-			status: Game.Alliance.Invites.status.SENT
+			_id: inviteId
 		}, {
 			$set: {
-				status: Game.Alliance.Invites.status.ACCEPTED
+				status: status,
+				timestamp: Game.getCurrentTime()
 			}
 		});
 
-		if (updatedCount === 0) {
-			throw new Meteor.Error('Невозможно принять приглашение', 'Приглашение не найдено');
-		}
-
-		Game.Alliance.addParticipant(allianceUrl, user);
-	},
-
-	'allianceInvites.cancel': function(allianceUrl) {
-		let user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		console.log('allianceInvites.cancel:', new Date(), user.username);
-
-		let updatedCount = Game.Alliance.Invites.Collection.update({
-			username: user.username,
-			alliance: allianceUrl,
-			status: Game.Alliance.Invites.status.SENT
-		}, {
-			$set: {
-				status: Game.Alliance.Invites.status.DECLINED
-			}
-		});
-
-		if (updatedCount === 0) {
-			throw new Meteor.Error('Невозможно отменить приглашение', 'Приглашение не найдено');
+		if (isApply && updatedCount !== 0) {
+			Game.Alliance.addParticipant(invite.alliance, invite.username);
 		}
 	}
 });

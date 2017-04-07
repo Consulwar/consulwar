@@ -64,16 +64,14 @@ game.Mail.sendMessageToAll = function(type, subject, text, timestamp) {
 	return users;
 };
 
-game.Mail.addAllianceMessage = function(allianceName, subject, text, timestamp) {
-	let user = Meteor.user();
-
+game.Mail.addAllianceMessage = function(allianceName, to, subject, text, timestamp) {
 	Game.Mail.Collection.insert({
-		owner: user._id,
-		//todo type: type,
+		owner: to._id,
+		type: 'alliance',
 		from: 1,
 		sender: 'Альянс ' + allianceName,
-		to: user._id,
-		recipient: user.username,
+		to: to._id,
+		recipient: to.username,
 		subject: subject,
 		text: text,
 		status: game.Mail.status.unread,

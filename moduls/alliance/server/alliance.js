@@ -23,6 +23,16 @@ Game.Alliance.Collection._ensureIndex({
 	deleted: 1
 });
 
+SyncedCron.add({
+	name: 'Инвалидация устаревших заявок и приглашений в альянсы',
+	schedule: function(parser) {
+		return parser.text(Game.Alliance.INVALIDATE_SCHEDULE);
+	},
+	job: function() {
+		Game.Alliance.Invites.invalidate();
+		Game.Alliance.Requests.invalidate();
+	}
+});
 
 Meteor.methods({
 	'alliance.create': function(options) {
@@ -74,7 +84,7 @@ Meteor.methods({
 			}
 		});
 
-		createChatRoom(user, options);
+		Game.Chat.createPrivateRoom(user, 'alliance/' + options.url, options.name);
 	},
 
 	'alliance.enter': function(allianceUrl) {
@@ -91,7 +101,7 @@ Meteor.methods({
 		console.log('alliance.enter:', new Date(), user.username);
 
 		if (user.alliance) {
-			throw new Meteor.Error('Вы уже состоите в альянсе');
+			throw new Meteor.Error('Невозможно вступить в альянс', 'Вы уже состоите в альянсе');
 		}
 
 		let alliance = Game.Alliance.Collection.findOne({
@@ -107,8 +117,34 @@ Meteor.methods({
 			throw new Meteor.Error('Этот альянс не публичный');
 		}
 
-		Game.Alliance.addParticipant(allianceUrl, user);
-	}
+		Game.Alliance.addParticipant(allianceUrl, user.username);
+	},
+
+	'alliance.exit': function() {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('alliance.exit:', new Date(), user.username);
+
+		if (!user.alliance) {
+			throw new Meteor.Error('Невозможно выйти из альянса', 'Вы не состоите в альянсе');
+		}
+
+		let alliance = Game.Alliance.Collection.findOne({url: user.alliance});
+
+		if (alliance.owner === user.username) {
+			throw new Meteor.Error('Невозможно выйти из альянса', 'Вы владелец этого альянса');
+		}
+
+		Game.Alliance.removeParticipant(alliance.url, user.username);
+	},
 });
 
 let checkCreator = function(user) {
@@ -230,20 +266,6 @@ let checkUnique = function({name, url, tag}) {
 			alliance.name === name ? 'именем ' + name	: (alliance.url === url ? 'URL ' + url : 'TAG ' + tag)
 		) + ' уже существует');
 	}
-};
-
-let createChatRoom = function(user, {name, url}) {
-	let room = {
-		name: 'alliance/' + url,
-		title: name,
-		owner: user._id,
-		users: [user._id],
-		usernames: [user.username],
-		isOwnerPays: true,
-		credits: 50
-	};
-
-	Game.Chat.Room.Collection.insert(room);
 };
 
 };

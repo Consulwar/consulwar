@@ -10,17 +10,17 @@ Game.Alliance = {
 		PRIVATE: 2
 	},
 
-	addParticipant: function(allianceUrl, user) {
+	addParticipant: function(allianceUrl, username) {
 		Game.Alliance.Collection.update({
 			url: allianceUrl
 		},{
 			$push: {
-				participants: user.username
+				participants: username
 			}
 		});
 
 		Meteor.users.update({
-			_id: Meteor.userId()
+			username: username
 		}, {
 			$set: {
 				alliance: allianceUrl
@@ -28,17 +28,17 @@ Game.Alliance = {
 		});
 	},
 
-	removeParticipant: function(allianceUrl, user) {
+	removeParticipant: function(allianceUrl, username) {
 		Game.Alliance.Collection.update({
 			url: allianceUrl
 		},{
 			$pull: {
-				participants: user.username
+				participants: username
 			}
 		});
 
 		Meteor.users.update({
-			_id: Meteor.userId()
+			username: username
 		}, {
 			$unset: {
 				alliance: 1

@@ -28,8 +28,6 @@ describe("Alliance", function() {
 	});
 
 	before(function() {
-		resetDatabase();
-
 		initAllianceServer();
 	});
 
@@ -204,28 +202,24 @@ describe("Alliance", function() {
 				}
 			};
 
-			let chatRoom = null;
+			let args = null;
 			Game.Chat = {
-				Room: {
-					Collection: {
-						insert: function(room) {
-							chatRoom = room;
-						}
-					}
+				createPrivateRoom: function() {
+					args = [].slice.call(arguments);
 				}
 			};
 
 			checkNotThrow({name: 'name1', url: 'url1', tag: 'tag1', type: 1, information:'', priceType: 'credits'});
 			expect(spend).to.eql({credits: Game.Alliance.PRICE_IN_CREDITS});
-			expect(chatRoom.name).to.equal('alliance/url1');
-			expect(chatRoom.title).to.equal('name1');
+			expect(args[1]).to.equal('alliance/url1');
+			expect(args[2]).to.equal('name1');
 
 			Game.Alliance.Collection.remove({owner: 'tester1'});
 
 			checkNotThrow({name: 'name2', url: 'url2', tag: 'tag2', type: 1, information:'', priceType: 'honor'});
 			expect(spend).to.eql({honor: Game.Alliance.PRICE_IN_HONOR});
-			expect(chatRoom.name).to.equal('alliance/url2');
-			expect(chatRoom.title).to.equal('name2');
+			expect(args[1]).to.equal('alliance/url2');
+			expect(args[2]).to.equal('name2');
 		});
 
 		let checkThrow = function(options, err) {

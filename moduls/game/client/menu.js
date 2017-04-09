@@ -101,7 +101,7 @@ var menu = {
 		name: 'Палата консула',
 		url: Router.routes.house.path({ group: 'house' }),
 		overlayItems: function() {
-			return Game.House.getPlacedItems();
+			return Game.House.getActiveItems();
 		},
 		routeName: ['house', 'walletHistory'],
 		items: {

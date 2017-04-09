@@ -1,14 +1,9 @@
 <template name="consulHouse">
-	<!--{{#if consulName}}
+	{{#if consulName}}
 		<span class="page-title">
 			Палата консула {{consulName}}
 		</span>
 	{{/if}}
-	{{#if items}}
-		{{#each items}}
-			<div class="{{this.subgroup}}-{{this.engName}}"></div>
-		{{/each}}
-	{{/if}}-->
 	{{> paymentSide}}
 	{{#if isLoading}}
 		{{> loading}}

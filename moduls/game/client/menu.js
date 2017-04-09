@@ -100,6 +100,9 @@ var menu = {
 	house: {
 		name: 'Палата консула',
 		url: Router.routes.house.path({ group: 'house' }),
+		overlayItems: function() {
+			return Game.House.getPlacedItems();
+		},
 		routeName: ['house', 'walletHistory'],
 		items: {
 			donate: {
@@ -382,22 +385,33 @@ var helpers = {
 	},
 
 	items: function() {
-		if (   menu[Router.current().group]
-			&& menu[Router.current().group].items
-			&& (menu[Router.current().group].directItems
-				|| (  Router.current().params.group 
-				   && menu[Router.current().group].items[Router.current().params.group]
-				   && menu[Router.current().group].items[Router.current().params.group].items
-				   )
-				)
+		let group = Router.current().group;
+		let subgroup = Router.current().params.group;
+
+		let menuItems = null;
+		if (menu[group]) {
+			if (menu[group].directItems) {
+				menuItems = menu[group].items;
+			} else if (
+				   menu[group].items
+				&& subgroup 
+				&& menu[group].items[subgroup]
+				&& menu[group].items[subgroup].items
 			) {
-			return (menu[Router.current().group].directItems
-				? _.toArray(menu[Router.current().group].items)
-				: _.toArray(menu[Router.current().group].items[Router.current().params.group].items)
-			);
-		} else {
-			return [];
+				menuItems = menu[group].items[subgroup].items;
+			}
 		}
+
+		return menuItems ? _.toArray(menuItems) : [];
+	},
+
+	overlayItems: function() {
+		let group = Router.current().group;
+		if (menu[group] && menu[group].overlayItems) {
+			return menu[group].overlayItems();
+		}
+
+		return helpers.items();
 	},
 
 	groupedItems: function(items, name) {

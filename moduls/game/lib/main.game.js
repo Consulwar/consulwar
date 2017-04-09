@@ -529,6 +529,9 @@ Game = {
 			case 'artefact':
 				return Game.Artefacts;
 
+			case 'house':
+				return Game.House;
+
 			default:
 				throw new Meteor.Error('Такого объекта нет');
 		}

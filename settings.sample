@@ -79,8 +79,9 @@
 		"alliance": {
 			"creatorRating": 100000,
 			"creatorBuildingLevel": 20,
-			"priceInGGK": 100,
-			"priceInHonor": 10000
+			"priceInCredits": 100,
+			"priceInHonor": 10000,
+			"invalidateSchedule": "at 4:00 am"
 		}
 	},
 	"recaptcha": {

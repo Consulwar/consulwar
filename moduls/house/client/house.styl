@@ -233,10 +233,7 @@ house-item-icon('donate', 'robotsPilots')
 
 
 .donate
-	position absolute
-	z-index 4
-	top 0px
-	left 124px
+	position relative
 	width 1340px
 	height 435px
 	background-color #090e14
@@ -332,3 +329,15 @@ house-item-icon('donate', 'robotsPilots')
 				&:hover
 					-webkit-filter brightness(1.4)
 					filter brightness(1.4)
+						
+.newgame.new .overlay.house
+	pointer-events none
+
+.newgame.new .content.house
+	margin auto
+	width 100%
+	background-color transparent
+	
+	.page-title
+		left 0
+		padding-left 100px

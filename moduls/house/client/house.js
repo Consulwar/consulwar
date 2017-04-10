@@ -62,12 +62,23 @@ Template.consulHouse.onRendered(function() {
 				if (err) {
 					Notifications.error('Не удалось открыть палату консула', err.error);
 				} else {
+					for (let i = 0; i < result.length; i++) {
+						let item = result[i];
+						result[i] = _.clone(Game.House.items[item.subgroup][item.engName]);
+						result[i].currentLevel = function() {
+							return 1;
+						};
+					}
 					houseItems.set(result);
 				}
 			});
 		}
 	});
 });
+
+Game.House.getActiveItems = function() {
+	return houseItems.get();
+}
 
 Template.consulHouse.helpers({
 	isLoading: function() { return isLoading.get(); },

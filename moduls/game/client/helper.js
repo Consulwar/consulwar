@@ -16,7 +16,8 @@ UI.registerHelper('isNewLayout', function() {
 			ground: true,
 			defense: true
 		},
-		artefacts: true
+		artefacts: true,
+		house: true
 	};
 
 	return (

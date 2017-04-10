@@ -86,7 +86,7 @@ Meteor.methods({
 			var count = units[name];
 			var unit = Game.Unit.items.army.ground[ name ];
 
-			if (!unit || unit.type == 'mutual' || unit.currentLevel() < count) {
+			if (!unit || unit.type == 'mutual' || unit.currentLevel() < count || count <= 0) {
 				throw new Meteor.Error('Иш ты чего задумал, шакал.');
 			}
 

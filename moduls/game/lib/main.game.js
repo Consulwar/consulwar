@@ -224,7 +224,7 @@ game.Item = function(options) {
 		var level = _.max(fitLevels);
 
 		if (level != -Infinity) {
-			return [this.type, this.group, this.engName, level].join('/') + '.png';
+			return [this.type, this.group, this.engName, level].join('/') + '.' + (this.overlay.type || 'png');
 		}
 		return null;
 	};
@@ -528,6 +528,9 @@ Game = {
 
 			case 'artefact':
 				return Game.Artefacts;
+
+			case 'house':
+				return Game.House;
 
 			default:
 				throw new Meteor.Error('Такого объекта нет');

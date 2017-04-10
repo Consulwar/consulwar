@@ -65,6 +65,7 @@ Meteor.startup(function () {
 	initSettingsServer();
 	initQuestServer();
 	initEntranceRewardServer();
+	initBackRewardServer();
 	initCheatsServer();
 	initDDPLimiter();
 	initAlliancesServer();
@@ -128,6 +129,8 @@ Meteor.methods({
 		if (user.blocked === true) {
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
+
+		Game.BackReward.getReward();
 
 		console.log('Actualize: ', new Date(), user.username);
 

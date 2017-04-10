@@ -10,6 +10,27 @@ game.HouseItem = function(options) {
 	this.subgroup = options.subgroup;
 	this.isUnique = options.isUnique;
 
+	this.overlay = this.overlay || {
+		x: 0, 
+		y: 0,
+		z: 0
+	}
+
+	this.overlay.levels = this.overlay.levels || [1];
+
+	switch (this.subgroup) {
+		case 'room':
+			this.overlay.z = 0;
+			this.overlay.type = 'jpg';
+			break;
+		case 'tron':
+			this.overlay.z = 1;
+			break;
+		case 'avatar':
+			this.overlay.z = 2;
+			break;
+	}
+
 	if (Game.House.items[this.subgroup][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется предмет палаты консула ' + this.subgroup + ' ' + this.engName);
 	}
@@ -35,10 +56,6 @@ game.HouseItem = function(options) {
 
 	this.getPrice = function() {
 		return options.price;
-	};
-
-	this.currentLevel = function() {
-		return 0;
 	};
 
 	this.checkBought = function() {
@@ -93,11 +110,11 @@ Game.House = {
 		});
 	},
 
-	getItem: function(group, id) {
+	get: function(group, id) {
 		var house = Game.House.getValue();
 
 		if (house && house.items && house.items[group] && house.items[group][id]) {
-			return house.items[group][id];
+			return 1;
 		} else {
 			return null;
 		}

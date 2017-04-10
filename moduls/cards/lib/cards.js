@@ -87,6 +87,15 @@ game.Card = function(options) {
 };
 game.extend(game.Card, game.Item);
 
+game.BackRewardCard = function(options) {
+	game.BackRewardCard.superclass.constructor.apply(this, arguments);
+	this.fromDay = options.fromDay;
+	if (options.fromDay < Game.BackRewardCard.MIN_REWARD_DAY) {
+		Game.BackRewardCard.MIN_REWARD_DAY = options.fromDay;
+	}
+};
+game.extend(game.BackRewardCard, game.Card);
+
 Game.Cards = {
 	Collection: new Meteor.Collection('cards'),
 
@@ -94,7 +103,8 @@ Game.Cards = {
 		general: {},
 		donate: {},
 		pulsecatcher: {},
-		penalty: {}
+		penalty: {},
+		backReward: {}
 	},
 
 	getValue: function(uid) {
@@ -156,6 +166,10 @@ Game.Cards = {
 		}
 		return null;
 	}
+};
+
+Game.BackRewardCard = {
+	MIN_REWARD_DAY: Infinity
 };
 
 initCardsContent();

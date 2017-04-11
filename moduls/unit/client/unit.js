@@ -58,6 +58,15 @@ Template.unitCharacteristics.events({
 			currentCharachteristic
 		)
 		target.attr('data-tooltip', tooltip['data-tooltip']);
+	},
+	'mouseover .targets > li': function(e, t) {
+		$(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
+			Template.unitCharacteristics, 
+			{
+				unit: this,
+				addTitle: true
+			}
+		));
 	}
 });
 

@@ -1,23 +1,23 @@
 <template name="current_resources">
 	<div class="resources">
 		{{#with resources}}
-			<div class="humans" {{incomeTooltip incomeEffects 'humans'}}>
+			<div class="humans" data-tooltip="true" data-tooltip-direction="s">
 				{{formatNumberWithISO humans.amount 5}}
 			</div>
-			<div class="metals" {{incomeTooltip incomeEffects 'metals'}}>
+			<div class="metals" data-tooltip="true" data-tooltip-direction="s">
 				{{formatNumberWithISO metals.amount 5}}
 			</div>
-			<div class="crystals" {{incomeTooltip incomeEffects 'crystals'}}>
+			<div class="crystals" data-tooltip="true" data-tooltip-direction="s">
 				{{formatNumberWithISO crystals.amount 5}}
 			</div>
-			<div class="honor" {{incomeTooltip incomeEffects 'honor'}}>
+			<div class="honor" data-tooltip="true" data-tooltip-direction="s">
 				{{formatNumberWithISO honor.amount 5}}
 			</div>
-			<div class="credits" {{incomeTooltip incomeEffects 'credits'}}>
+			<div class="credits" data-tooltip="true" data-tooltip-direction="s">
 				{{formatNumberWithISO credits.amount 5}}
 			</div>
 		{{/with}}
-		<div class="artefacts">
+		<div class="artefacts" data-tooltip="Артефакты" data-tooltip-direction="s">
 			<a href="{{pathFor route='artefacts' item='silver_plasmoid'}}"></a>
 		</div>
 	</div>

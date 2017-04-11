@@ -84,6 +84,14 @@ Template.item_price.events({
 		Router.go('artefacts', {
 			item: e.currentTarget.dataset.id
 		});
+	},
+	'mouseover .resources > div': function(e, t) {
+		let target = $(e.currentTarget);
+		let tooltip = Blaze._globalHelpers.priceTooltip(
+			this.price, 
+			this.engName
+		)
+		target.attr('data-tooltip', tooltip['data-tooltip']);
 	}
 });
 

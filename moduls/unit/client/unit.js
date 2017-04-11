@@ -49,6 +49,18 @@ Template.unit.onRendered(function() {
 	$('.content .scrollbar-inner').perfectScrollbar();
 });
 
+Template.unitCharacteristics.events({
+	'mouseover .characteristics > div > div': function(e, t) {
+		let target = $(e.currentTarget);
+		let currentCharachteristic = target.parent().attr('class') == 'weapon' ? 'damage' : 'life';
+		let tooltip = Blaze._globalHelpers.militaryTooltip(
+			this.unit.characteristics, 
+			currentCharachteristic
+		)
+		target.attr('data-tooltip', tooltip['data-tooltip']);
+	}
+});
+
 // Из-за разницы в цене единицы и большого количества (из-за скидок) возникает погрешность
 // и необходимость пересчитать дополнительно
 var getMax = function(item, accumulator) {

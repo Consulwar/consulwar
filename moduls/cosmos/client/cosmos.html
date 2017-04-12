@@ -270,24 +270,7 @@
 		" 
 		data-id="{{planet._id}}"
 		href="{{pathFor 'cosmos' hash=planet._id}}" 
-		data-tooltip="
-			{{#if isDisabled}}
-				Недоступна для выбора
-			{{else}}{{#if planet.isEmpty}}
-				{{#if isSent}}
-					Флот в полёте
-				{{else}}
-					Свободная колония
-				{{/if}}
-			{{else}}{{#if planet.notAvaliable}}
-				{{#if planet.canBuy}}
-					Можно купить
-				{{else}}
-					Доступна с повышением ранга
-				{{/if}}
-			{{else}}
-				{{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet}}
-			{{/if}}{{/if}}{{/if}}"
+		data-tooltip="true"
 		data-tooltip-direction="e"
 	>
 		<div class="name">
@@ -374,9 +357,7 @@
 					<time>{{formatSeconds (getTimeLeft this.timeEnd)}}</time>
 					<div class="fleet_marker" style="
 						{{#if this.isBack}}right{{else}}left{{/if}}: {{percentOfWay this.timeStart this.timeEnd}}%;"
-						data-tooltip="
-							{{#if true}}{{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo this.spaceEvent) spaceEvent=this.spaceEvent}}{{/if}}
-						"
+						data-tooltip="true"
 						data-tooltip-direction="e"
 					>
 						&gt;
@@ -389,9 +370,7 @@
 					{{else}}
 						<a class="map-fleet-rept"
 							href="{{pathFor 'cosmos' hash=this.spaceEvent.info.targetId}}" 
-							data-tooltip="
-								{{#if true}}{{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo (Game.SpaceEvents.getOne this.spaceEvent.info.targetId)) spaceEvent=this.spaceEvent}}{{/if}}
-							"
+							data-tooltip="true"
 							data-tooltip-direction="e"
 						>
 						</a>

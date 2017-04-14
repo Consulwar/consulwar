@@ -47,6 +47,12 @@ window.GameRouteController = RouteController.extend({
 	}
 });
 
+window.ChatAllianceRouteController = GameRouteController.extend({
+	before: function() {
+		this.params.room = 'alliance/' + this.params.room;
+		this.next();
+	}
+});
 
 
 var gameRoutes = {
@@ -162,6 +168,16 @@ for (var group in gameRoutes) {
 		registerRoute(group, name, gameRoutes[group][name], gameActions[name]);
 	}
 }
+
+Router.route('/game/chat/alliance/:room', {
+	name: 'chatAlliance',
+	controller: 'ChatAllianceRouteController',
+	before: function() {
+		this.group = 'chat';
+		this.next();
+	},
+	action: Game.Chat.showPage
+});
 
 Router.route('/game', {
 	name: 'game',

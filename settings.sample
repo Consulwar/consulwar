@@ -81,7 +81,9 @@
 			"creatorBuildingLevel": 20,
 			"priceInCredits": 100,
 			"priceInHonor": 10000,
-			"invalidateSchedule": "at 4:00 am"
+			"invalidateSchedule": "at 4:00 am",
+			"leavingTimeout": 259200,
+			"participantsPerLevel": 10
 		}
 	},
 	"recaptcha": {

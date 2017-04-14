@@ -7,6 +7,8 @@ initAllianceConfigLib = function() {
 		|| !Meteor.settings.public.alliance.priceInCredits
 		|| !Meteor.settings.public.alliance.priceInHonor
 		|| !Meteor.settings.public.alliance.invalidateSchedule
+		|| !Meteor.settings.public.alliance.leavingTimeout
+		|| !Meteor.settings.public.alliance.participantsPerLevel
 	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры альянса (см. settings.sample public.alliance)');
 	}
@@ -16,4 +18,6 @@ initAllianceConfigLib = function() {
 	Game.Alliance.PRICE_IN_CREDITS = Meteor.settings.public.alliance.priceInCredits;
 	Game.Alliance.PRICE_IN_HONOR = Meteor.settings.public.alliance.priceInHonor;
 	Game.Alliance.INVALIDATE_SCHEDULE = Meteor.settings.public.alliance.invalidateSchedule;
+	Game.Alliance.LEAVING_TIMEOUT = Meteor.settings.public.alliance.leavingTimeout;
+	Game.Alliance.PARTICIPANTS_PER_LEVEL = Meteor.settings.public.alliance.participantsPerLevel;
 };

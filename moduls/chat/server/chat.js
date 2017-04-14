@@ -37,6 +37,47 @@ var createDefaulRoom = function(name, title, isFree) {
 createDefaulRoom('general', 'Основной', false);
 createDefaulRoom('help', 'Помощь', true);
 
+Game.Chat.createRoom = function(user, name, title, isPublic, isOwnerPays, initialBalance = 0) {
+	let room = {
+		name: name,
+		title: title,
+		owner: user._id,
+		users: [user._id],
+		usernames: [user.username],
+		isPublic,
+		isOwnerPays
+	};
+
+	if (isOwnerPays) {
+		room.credits = initialBalance;
+	}
+
+	Game.Chat.Room.Collection.insert(room);
+};
+
+Game.Chat.Room.addParticipant = function(roomName, user) {
+	Game.Chat.Room.Collection.update({
+		name: roomName
+	}, {
+		$addToSet: {
+			users: user._id,
+			usernames: user.username
+		}
+	});
+};
+
+Game.Chat.Room.removeParticipant = function(roomName, user) {
+	Game.Chat.Room.Collection.update({
+		name: roomName
+	}, {
+		$pull: {
+			users: user._id,
+			usernames: user.username,
+			moderators: user.username
+		}
+	});
+};
+
 Game.Chat.createPrivateRoom = function(user, name, title) {
 	let room = {
 		name: name,

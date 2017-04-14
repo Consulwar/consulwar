@@ -36,8 +36,8 @@ Game.Alliance.Contact.create = function(alliance, user, type) {
 	});
 
 	if (type === Game.Alliance.Contact.type.INVITE) {
-		let subject = "Приглашение в альянс" + alliance.name;
-		let text = `link to ${alliance.url}`;
+		let subject = "Приглашение в альянс " + alliance.name;
+		let text = `link to ${alliance.url}`; //TODO текст письма
 
 		game.Mail.addAllianceMessage(alliance.name, user, subject, text);
 	}
@@ -49,11 +49,11 @@ Game.Alliance.Contact.checkForInvalidatingAll = function() {
 		timestamp: {$lte: Game.getCurrentTime() - Game.Alliance.Contact.INVALIDATE_TIMEOUT}
 	}).fetch();
 
-	for (let contact of invalidates) {
-		Game.Statistic.incrementUser(contact.user_id, {
-			'allianceContact.ignored': 1
-		});
-	}
+	let uidList = invalidates.map(contact => contact.user_id);
+
+	Game.Statistic.incrementGroupUsers(uidList, {
+		'allianceContact.ignored': 1
+	});
 
 	Game.Alliance.Contact.Collection.update({
 		status: Game.Alliance.Contact.status.SENT,
@@ -67,6 +67,7 @@ Game.Alliance.Contact.checkForInvalidatingAll = function() {
 	});
 };
 
+Game.Alliance.Contact.checkForInvalidatingAll();
 
 Game.Alliance.Contact.invalidateForUser = function(userId) {
 	Game.Alliance.Contact.Collection.update({

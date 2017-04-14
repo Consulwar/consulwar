@@ -77,6 +77,11 @@ game.Mail.addAllianceMessage = function(allianceName, to, subject, text, timesta
 		status: game.Mail.status.unread,
 		timestamp: timestamp || Game.getCurrentTime()
 	});
+
+	Game.Statistic.incrementUser(to._id, {
+		'mail.current': 1,
+		'mail.total': 1
+	});
 };
 
 

@@ -78,20 +78,6 @@ Game.Chat.Room.removeParticipant = function(roomName, user) {
 	});
 };
 
-Game.Chat.createPrivateRoom = function(user, name, title) {
-	let room = {
-		name: name,
-		title: title,
-		owner: user._id,
-		users: [user._id],
-		usernames: [user.username],
-		isOwnerPays: true,
-		credits: 50
-	};
-
-	Game.Chat.Room.Collection.insert(room);
-};
-
 var removeAllMessages = function(username) {
 	var target = Meteor.users.findOne({
 		username

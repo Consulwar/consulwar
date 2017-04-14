@@ -48,6 +48,14 @@ Game.Statistic.incrementUser = function(uid, increment) {
 	});
 };
 
+Game.Statistic.incrementGroupUsers = function(uidList, increment) {
+	Game.Statistic.Collection.update({
+		user_id: {$in: uidList}
+	}, {
+		$inc: increment
+	});
+};
+
 Game.Statistic.incrementAllUsers = function(increment) {
 	var bulkOp = Game.Statistic.Collection.rawCollection().initializeUnorderedBulkOp();
 	bulkOp.find({ user_id: { $ne: 'system' } }).update({ $inc: increment });

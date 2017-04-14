@@ -33,17 +33,11 @@ Game.Alliance.create = function(user, options) {
 		type: options.type,
 		information: options.information,
 		level: 1,
-		participants: [user.username],
+		participants: [],
 		timestamp: Game.getCurrentTime()
 	});
 
-	Meteor.users.update({
-		username: user.username
-	}, {
-		$set: {
-			alliance: options.url
-		}
-	});
+	Game.Alliance.addParticipant(options.url, user.username);
 
 	return id;
 };
@@ -51,14 +45,14 @@ Game.Alliance.create = function(user, options) {
 Game.Alliance.get = function(id) {
 	return Game.Alliance.Collection.findOne({
 		_id: id,
-		deleted: { $ne: true }
+		deleted: { $exists: false }
 	});
 };
 
 Game.Alliance.getByUrl = function(url) {
 	return Game.Alliance.Collection.findOne({
 		url,
-		deleted: { $ne: true }
+		deleted: { $exists: false }
 	});
 };
 

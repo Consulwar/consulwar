@@ -22,7 +22,6 @@ Meteor.methods({
 			username: recipient
 		}, {
 			fields: {
-				_id: 1,
 				username: 1,
 				alliance: 1
 			}
@@ -103,9 +102,25 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка в отклонении заявки', 'Такого альянса не существует');
 		}
 
+		let who = Meteor.users.findOne({
+			_id: contact.user_id
+		}, {
+			fields: {
+				username: 1
+			}
+		});
+
+		if (!who) {
+			throw new Meteor.Error('Ошибка в отклонении заявки', 'Такого игрока не существует');
+		}
+
 		Game.Alliance.Contact.decline(contactId);
 
 		Game.Statistic.incrementUser(user._id, {
+			'allianceContact.decline': 1
+		});
+
+		Game.Statistic.incrementUser(who._id, {
 			'allianceContact.declined': 1
 		});
 	}

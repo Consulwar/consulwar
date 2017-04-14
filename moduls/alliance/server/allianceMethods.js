@@ -99,7 +99,6 @@ Meteor.methods({
 				_id: contact.user_id
 			}, {
 				fields: {
-					_id: 1,
 					username: 1,
 					alliance: 1
 				}
@@ -217,7 +216,6 @@ Meteor.methods({
 			username: name
 		}, {
 			fields: {
-				_id: 1,
 				username: 1,
 				alliance: 1
 			}

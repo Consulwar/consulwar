@@ -32,9 +32,6 @@ Meteor.methods({
 					throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств');
 				}
 				break;
-
-			default:
-				throw new Meteor.Error('Невозможно создать альянс', 'Неверный тип оплаты');
 		}
 
 		Game.Alliance.create(user, options);
@@ -68,7 +65,11 @@ Meteor.methods({
 
 		console.log('alliance.join:', new Date(), user.username);
 
+		check(allianceUrl, String);
+
 		if (contactId) {
+			check(contactId, String);
+
 			let contact = Game.Alliance.Contact.get(contactId);
 
 			if (!contact) {
@@ -81,7 +82,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Альянса из запроса не существует');
 			}
 
-			if (alliance.participants.length >= alliance.level * Game.Alliance.PARTICIPANTS_PER_LEVEL) {
+			if (alliance.participants.length >= Game.Alliance.maxParticipantsByLevel(alliance.level)) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Достигнуто максимальное количество учатников');
 			}
 
@@ -104,17 +105,22 @@ Meteor.methods({
 				}
 			});
 
-			if (!participant) {
-				throw new Meteor.Error('Ошибка вступления в альянс', 'Игрока с таким ником не существует');
-			}
-
 			if (participant.alliance) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Игрок уже состоит в альянсе');
 			}
 
+			if (participant.alliance_left_ts
+				&& participant.alliance_left_ts > Game.getCurrentTime() - Game.Alliance.LEAVING_TIMEOUT
+			) {
+				throw new Meteor.Error('Ошибка вступления в альянс', 'Прошло мало времени с предыдущего выхода из альянса');
+			}
+
 			Game.Alliance.Contact.accept(contactId);
+
+			let typeName = contact.type === Game.Alliance.Contact.type.INVITE ? 'invites' : 'requests';
+
 			Game.Statistic.incrementUser(user._id, {
-				'allianceContact.accepted': 1
+				['alliance_contact.accepted_' + typeName]: 1
 			});
 
 			Game.Alliance.Contact.invalidateForUser(participant._id);
@@ -145,7 +151,9 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Достигнуто максимальное количество учатников');
 			}
 
-			if (user.alliance_leave_ts > Game.getCurrentTime() - Game.Alliance.LEAVING_TIMEOUT) {
+			if (user.alliance_left_ts
+				&& user.alliance_left_ts > Game.getCurrentTime() - Game.Alliance.LEAVING_TIMEOUT
+			) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Прошло мало времени с предыдущего выхода из альянса');
 			}
 
@@ -194,7 +202,7 @@ Meteor.methods({
 			_id: user._id
 		}, {
 			$set: {
-				alliance_leave_ts: Game.getCurrentTime()
+				alliance_left_ts: Game.getCurrentTime()
 			}
 		});
 	},
@@ -211,6 +219,8 @@ Meteor.methods({
 		}
 
 		console.log('alliance.leave:', new Date(), user.username);
+
+		check(name, String);
 
 		let participant = Meteor.users.findOne({
 			username: name

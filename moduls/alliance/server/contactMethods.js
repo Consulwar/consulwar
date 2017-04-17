@@ -47,7 +47,7 @@ Meteor.methods({
 
 		switch (type) {
 			case Game.Alliance.Contact.type.INVITE:
-				if (user.alliance !== alliance.url) {
+				if (alliance.owner !== user.username) {
 					throw new Meteor.Error('Невозможно создать приглашение', 'Вы не являетесь владельцем альянса!');
 				}
 				break;
@@ -72,8 +72,10 @@ Meteor.methods({
 
 		Game.Alliance.Contact.create(alliance, to, type);
 
+		let typeName = type === Game.Alliance.Contact.type.INVITE ? 'invites' : 'requests';
+
 		Game.Statistic.incrementUser(user._id, {
-			'allianceContact.created': 1
+			['alliance_contact.created_' + typeName]: 1
 		});
 	},
 
@@ -110,18 +112,20 @@ Meteor.methods({
 			}
 		});
 
-		if (!who) {
-			throw new Meteor.Error('Ошибка в отклонении заявки', 'Такого игрока не существует');
+		if (alliance.owner !== user.username) {
+			throw new Meteor.Error('Ошибка в отклонении заявки', 'Вы не создатель этого альянса');
 		}
 
 		Game.Alliance.Contact.decline(contactId);
 
+		let typeName = contact.type === Game.Alliance.Contact.type.INVITE ? 'invites' : 'requests';
+
 		Game.Statistic.incrementUser(user._id, {
-			'allianceContact.decline': 1
+			['alliance_contact.decline_' + typeName]: 1
 		});
 
 		Game.Statistic.incrementUser(who._id, {
-			'allianceContact.declined': 1
+			['alliance_contact.declined_' + typeName]: 1
 		});
 	}
 });

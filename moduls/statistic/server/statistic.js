@@ -53,6 +53,8 @@ Game.Statistic.incrementGroupUsers = function(uidList, increment) {
 		user_id: {$in: uidList}
 	}, {
 		$inc: increment
+	}, {
+		multi: true
 	});
 };
 

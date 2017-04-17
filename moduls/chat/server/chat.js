@@ -57,7 +57,8 @@ Game.Chat.createRoom = function(user, name, title, isPublic, isOwnerPays, initia
 
 Game.Chat.Room.addParticipant = function(roomName, user) {
 	Game.Chat.Room.Collection.update({
-		name: roomName
+		name: roomName,
+		deleted: { $ne: true }
 	}, {
 		$addToSet: {
 			users: user._id,
@@ -68,7 +69,8 @@ Game.Chat.Room.addParticipant = function(roomName, user) {
 
 Game.Chat.Room.removeParticipant = function(roomName, user) {
 	Game.Chat.Room.Collection.update({
-		name: roomName
+		name: roomName,
+		deleted: { $ne: true }
 	}, {
 		$pull: {
 			users: user._id,

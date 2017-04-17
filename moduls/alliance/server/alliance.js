@@ -24,6 +24,11 @@ Game.Alliance.Collection._ensureIndex({
 	deleted: 1
 });
 
+Game.Alliance.Collection._ensureIndex({
+	deleted: 1
+});
+
+
 Game.Alliance.create = function(user, options) {
 	let id = Game.Alliance.Collection.insert({
 		owner: user.username,
@@ -58,7 +63,8 @@ Game.Alliance.getByUrl = function(url) {
 
 Game.Alliance.addParticipant = function(allianceUrl, username) {
 	Game.Alliance.Collection.update({
-		url: allianceUrl
+		url: allianceUrl,
+		deleted: { $exists: false }
 	},{
 		$push: {
 			participants: username
@@ -76,7 +82,8 @@ Game.Alliance.addParticipant = function(allianceUrl, username) {
 
 Game.Alliance.removeParticipant = function(allianceUrl, username) {
 	Game.Alliance.Collection.update({
-		url: allianceUrl
+		url: allianceUrl,
+		deleted: { $exists: false }
 	},{
 		$pull: {
 			participants: username
@@ -91,16 +98,6 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 		}
 	});
 };
-
-SyncedCron.add({
-	name: 'Инвалидация устаревших запросов в альянсы',
-	schedule: function(parser) {
-		return parser.text(Game.Alliance.INVALIDATE_SCHEDULE);
-	},
-	job: function() {
-		Game.Alliance.Contact.checkForInvalidatingAll();
-	}
-});
 
 initAllianceContactServer();
 

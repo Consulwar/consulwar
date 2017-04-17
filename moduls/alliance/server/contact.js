@@ -22,6 +22,15 @@ Game.Alliance.Contact.Collection._ensureIndex({
 	timestamp: -1
 });
 
+Game.Alliance.Contact.Collection._ensureIndex({
+	user_id: 1,
+	status: 1
+});
+
+Game.Alliance.Contact.Collection._ensureIndex({
+	status: 1
+});
+
 Game.Alliance.Contact.INVALIDATE_TIMEOUT = 3 * 24 * 60 * 60;
 Game.Alliance.Contact.DECLINE_TIMEOUT = 30 * 24 * 60 * 60;
 
@@ -49,15 +58,30 @@ Game.Alliance.Contact.checkForInvalidatingAll = function() {
 		timestamp: {$lte: Game.getCurrentTime() - Game.Alliance.Contact.INVALIDATE_TIMEOUT}
 	}).fetch();
 
-	let uidList = invalidates.map(contact => contact.user_id);
+	let uidIgnoredList = [];
+	for (let contact of invalidates) {
+		if (contact.type === Game.Alliance.Contact.type.INVITE) {
+			uidIgnoredList.push(contact.user_id);
+		}
+	}
 
-	Game.Statistic.incrementGroupUsers(uidList, {
-		'allianceContact.ignored': 1
+	Game.Statistic.incrementGroupUsers(uidIgnoredList, {
+		'alliance_contact.ignored_invites': 1
+	});
+
+	let uidIgnoringList = [];
+	for (let contact of invalidates) {
+		if (contact.type === Game.Alliance.Contact.type.REQUEST) {
+			uidIgnoringList.push(contact.user_id);
+		}
+	}
+
+	Game.Statistic.incrementGroupUsers(uidIgnoringList, {
+		'alliance_contact.ignored_requests': 1
 	});
 
 	Game.Alliance.Contact.Collection.update({
-		status: Game.Alliance.Contact.status.SENT,
-		timestamp: {$lte: Game.getCurrentTime() - Game.Alliance.Contact.INVALIDATE_TIMEOUT}
+		_id: {$in: invalidates.map(contact => contact._id)}
 	}, {
 		$set: {
 			status: Game.Alliance.Contact.status.INVALIDATED
@@ -66,8 +90,6 @@ Game.Alliance.Contact.checkForInvalidatingAll = function() {
 		multi: true
 	});
 };
-
-Game.Alliance.Contact.checkForInvalidatingAll();
 
 Game.Alliance.Contact.invalidateForUser = function(userId) {
 	Game.Alliance.Contact.Collection.update({
@@ -101,7 +123,7 @@ Game.Alliance.Contact.find = function(user, type, alliance) {
 	};
 
 	if (type === Game.Alliance.Contact.type.INVITE) {
-		selector.alliance_id = alliance.id;
+		selector.alliance_id = alliance._id;
 	} else {
 		fields.alliance_id = 1;
 		fields.timestamp = 1;
@@ -115,7 +137,8 @@ Game.Alliance.Contact.find = function(user, type, alliance) {
 
 Game.Alliance.Contact.set = function(id, isAccept) {
 	return Game.Alliance.Contact.Collection.update({
-		_id: id
+		_id: id,
+		status: Game.Alliance.Contact.status.SENT
 	}, {
 		$set: {
 			status: (isAccept ? Game.Alliance.Contact.status.ACCEPTED : Game.Alliance.Contact.status.DECLINED)
@@ -130,5 +153,15 @@ Game.Alliance.Contact.accept = function(contactId) {
 Game.Alliance.Contact.decline = function(contactId) {
 	return Game.Alliance.Contact.set(contactId, false);
 };
+
+SyncedCron.add({
+	name: 'Инвалидация устаревших запросов в альянсы',
+	schedule: function(parser) {
+		return parser.text(Game.Alliance.INVALIDATE_SCHEDULE);
+	},
+	job: function() {
+		Game.Alliance.Contact.checkForInvalidatingAll();
+	}
+});
 
 };

@@ -11,7 +11,7 @@ Game.Alliance = {
 	},
 
 	maxParticipantsByLevel: function(level) {
-		return level * Game.Alliance.PARTICIPANTS_PER_LEVEL;
+		return level * Game.Alliance.PARTICIPANTS_PER_LEVEL + 1; // +1 for owner
 	}
 };
 

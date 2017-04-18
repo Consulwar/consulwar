@@ -5,11 +5,6 @@ initAllianceLib();
 initAllianceServerMethods();
 
 Game.Alliance.Collection._ensureIndex({
-	owner: 1,
-	deleted: 1
-});
-
-Game.Alliance.Collection._ensureIndex({
 	name: 1,
 	deleted: 1
 });
@@ -25,6 +20,7 @@ Game.Alliance.Collection._ensureIndex({
 });
 
 Game.Alliance.Collection._ensureIndex({
+	_id: 1,
 	deleted: 1
 });
 

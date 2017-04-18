@@ -112,7 +112,7 @@ Meteor.methods({
 			}
 		});
 
-		if (alliance.owner !== user.username) {
+		if (contact.type === Game.Alliance.Contact.type.REQUEST && alliance.owner !== user.username) {
 			throw new Meteor.Error('Ошибка в отклонении заявки', 'Вы не создатель этого альянса');
 		}
 

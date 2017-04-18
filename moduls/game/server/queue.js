@@ -49,12 +49,17 @@ Game.Queue.add = function(item) {
 
 	var set = {
 		user_id: Meteor.userId(),
-		status: Game.Queue.status.INCOMPLETE,
 		type: item.type,
 		startTime: startTime,
 		finishTime: startTime + item.time,
 		createdTime: Game.getCurrentTime() // debug field
 	};
+
+	if (set.createdTime > set.finishTime) {
+		set.status = Game.Queue.status.DONE;
+	} else {
+		set.status = Game.Queue.status.INCOMPLETE;
+	}
 
 	var select = {
 		user_id: Meteor.userId(),

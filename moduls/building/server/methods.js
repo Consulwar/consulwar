@@ -19,6 +19,35 @@ Meteor.methods({
 		check(options.group, String);
 		check(options.engName, String);
 
+		let cardsObject = options.cards;
+		let cardList = [];
+
+		if (cardsObject) {
+			check(cardsObject, Object);
+
+			check(cardsObject, Match.Where(function(cards) {
+				for (let cardId in cards) {
+					if (cards.hasOwnProperty(cardId)) {
+						let card = Game.Cards.getItem(cardId);
+						if (!card) {
+							throw new Match.Error('Нет такой карточки');
+						}
+
+						let count = cards[cardId];
+						if (count <= 0) {
+							throw new Match.Error('Неверное количество карточек');
+						}
+
+						_.times(count, () => cardList.push(card));
+					}
+				}
+
+				return true;
+			}));
+		} else {
+			cardsObject = {};
+		}
+
 		Meteor.call('actualizeGameInfo');
 
 		var item = Game.Building.items[options.group] && Game.Building.items[options.group][options.engName];
@@ -38,7 +67,25 @@ Meteor.methods({
 			throw new Meteor.Error('Здание уже максимального уровня');
 		}
 
-		var price = item.price();
+		for (let cardId in cardsObject) {
+			if (cardsObject.hasOwnProperty(cardId)) {
+				let count = cardsObject[cardId];
+				let card = Game.Cards.getItem(cardId);
+
+				if (card.amount() < count) {
+					throw new Meteor.Error('Карточки закончились');
+				}
+
+				_.times(count, function() {
+					let isCardActivated = Game.Cards.activate(card, user);
+					if (!isCardActivated) {
+						throw new Meteor.Error('Не удалось активировать карточку');
+					}
+				});
+			}
+		}
+
+		let price = item.price(null, cardList);
 		set.time = price.time;
 
 		var isTaskInserted = Game.Queue.add(set);
@@ -46,8 +93,10 @@ Meteor.methods({
 			throw new Meteor.Error('Не удалось начать строительство');
 		}
 
+		Game.Cards.spend(cardsObject);
+
 		Game.Resources.spend(price);
-		
+
 		if (price.credits) {
 			Game.Payment.Expense.log(price.credits, 'building', {
 				group: set.group,

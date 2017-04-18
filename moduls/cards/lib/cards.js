@@ -96,6 +96,14 @@ game.BackRewardCard = function(options) {
 };
 game.extend(game.BackRewardCard, game.Card);
 
+game.InstantCard = function(options) {
+	game.InstantCard.superclass.constructor.apply(this, arguments);
+
+	this.dontNeedResourcesUpdate = false;
+	this.time = -1;
+};
+game.extend(game.InstantCard, game.Card);
+
 Game.Cards = {
 	Collection: new Meteor.Collection('cards'),
 
@@ -104,7 +112,8 @@ Game.Cards = {
 		donate: {},
 		pulsecatcher: {},
 		penalty: {},
-		backReward: {}
+		backReward: {},
+		instant: {}
 	},
 
 	getValue: function(uid) {

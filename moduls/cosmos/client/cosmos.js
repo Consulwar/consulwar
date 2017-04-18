@@ -356,6 +356,48 @@ Template.cosmosFleetsInfo_table.helpers({
 	}
 });
 
+Template.cosmosFleetsInfo_table.events({
+	'mouseover .way .fleet_marker, mouseover .end .map-fleet-rept': function (e, t) {
+		$(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
+			Template.cosmosShipInfo, 
+			{
+				ship: Game.Cosmos.getShipInfo(this.spaceEvent),
+				spaceEvent: this.spaceEvent
+			}
+		));
+	},
+
+	'mouseover .planet': function (e, t) {
+		let tooltip = '';
+
+		if (this.isDisabled) {
+			tooltip = 'Недоступна для выбора';
+		} else if (this.planet.isEmpty) {
+			if (this.isSent) {
+				tooltip = 'Флот в полёте';
+			} else {
+				tooltip = 'Свободная колония';
+			}
+		} else if (this.planet.notAvaliable) {
+			if (this.planet.canBuy) {
+				tooltip = 'Можно купить';
+			} else {
+				tooltip = 'Доступна с повышением ранга';
+			}
+		} else {
+			tooltip = Blaze.toHTMLWithData(
+				Template.cosmosPlanetPopup, 
+				{
+					drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
+					planet: this.planet
+				}
+			)
+		}
+
+		$(e.currentTarget).attr('data-tooltip', tooltip);
+	}
+});
+
 Template.cosmos_planet_item.helpers({
 	owner: function() {
 		return (this.planet.mission 
@@ -369,6 +411,38 @@ Template.cosmos_planet_item.helpers({
 	getTimeNextDrop: function(timeCollected) {
 		var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
 		return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
+	}
+});
+
+Template.cosmos_planet_item.events({
+	'mouseover .planet': function (e, t) {
+		let tooptip = '';
+
+		if (this.isDisabled) {
+			tooptip = 'Недоступна для выбора';
+		} else if (this.planet.isEmpty) {
+			if (this.isSent) {
+				tooptip = 'Флот в полёте';
+			} else {
+				tooltip = 'Свободная колония';
+			}
+		} else if (this.planet.notAvaliable) {
+			if (this.planet.canBuy) {
+				tooptip = 'Можно купить';
+			} else {
+				tooltip = 'Доступна с повышением ранга';
+			}
+		} else {
+			tooltip = Blaze.toHTMLWithData(
+				Template.cosmosPlanetPopup, 
+				{
+					drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
+					planet: this.planet
+				}
+			)
+		}
+
+		$(e.currentTarget).attr('data-tooltip', tooltip);
 	}
 });
 
@@ -488,14 +562,6 @@ Template.cosmosFleetsInfo.helpers({
 		return (result.length > 0) ? result : null;
 	}
 });
-/*
-Template.cosmos_planet_item.events({
-	'click .planet[data-id]': function (e, t) {
-		var id = $(e.currentTarget).data('id');
-		Game.Cosmos.showPlanetInfo(id);
-		scrollMapToPlanet(id);
-	}
-});*/
 
 // ----------------------------------------------------------------------------
 // Planet side menu

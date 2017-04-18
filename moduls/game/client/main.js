@@ -1,3 +1,7 @@
+Blaze._allowJavascriptUrls();
+
+buzz.defaults.preload = 'none';
+
 Meteor.startup(function () {
 'use strict';
 
@@ -40,8 +44,6 @@ preloadImages([
 	'/img/error.png'
 ]);
 */
-
-Blaze._allowJavascriptUrls();
 
 ChdFeedbackWidget.init({
 	url: "//consulwar.helprace.com/chd-widgets/feedback",

@@ -15,15 +15,10 @@
 	<div class="achievements">
 		{{#if eq statisticGroup 'general'}}
 			<img 
-				class="{{#if gt selectedUser.rating 25000}}active{{/if}}"
+				class="rank {{#if gt selectedUser.rating 25000}}active{{/if}}"
 				src="/img/game/statistics/achievements/general/rank{{or (Game.User.getLevel selectedUser.rating) 1}}.png"
 				alt="Ранг"
-				data-tooltip="{{useTemplate 
-					'rankTooltip' 
-					rating=selectedUser.rating 
-					rank=(Game.User.getLevel selectedUser.rating)
-					nextRank=(sum 1 (Game.User.getLevel selectedUser.rating))
-				}}"
+				data-tooltip="true"
 			/>
 		{{/if}}
 		{{#each (achievements selectedUser)}}
@@ -34,7 +29,7 @@
 					{{#if gt this.maxLevel 1}}{{or this.currentLevel 1}}{{/if}}.png
 					" 
 				alt="{{this.name}}"
-				data-tooltip="{{useTemplate 'achievementTooltip' achievement=this}}"
+				data-tooltip="true"
 			/>
 		{{/each}}
 	</div>

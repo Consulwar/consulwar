@@ -277,6 +277,28 @@ Template.rating.events({
 	}
 });
 
+Template.achievements.events({
+	'mouseover .achievements > img:not(.rank)': function(e, t) {
+		$(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
+			Template.achievementTooltip, 
+			{
+				achievement: this
+			}
+		));
+	}, 
+
+	'mouseover .achievements > .rank': function(e, t) {
+		$(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
+			Template.rankTooltip, 
+			{
+				rating: this.selectedUser.rating, 
+				rank: Game.User.getLevel(selectedUser.rating),
+				nextRank: Game.User.getLevel(selectedUser.rating) + 1
+			}
+		));
+	}
+});
+
 Template.achievements.helpers({
 	achievements: function (user) {
 		var result = [];
@@ -306,14 +328,6 @@ Template.achievements.helpers({
 
 	rank: function(rating) {
 		return Game.User.getLevel(rating);
-	},
-
-	tooltip: function(achievement) {
-		return {
-			'data-tooltip': Blaze.toHTMLWithData(Template.achievementTooltip, {
-				achievement: achievement
-			})
-		};
 	}
 });
 

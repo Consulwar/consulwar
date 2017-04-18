@@ -1094,7 +1094,7 @@ Template.chatRoomsList.events({
 	},
 
 	'click .hide': function(e, t) {
-		rooms = {};
+		let rooms = {};
 		rooms[e.currentTarget.dataset.roomname] = false;
 		Meteor.call('chat.setupRoomsVisibility', rooms, function(err, data) {
 			if (err) {

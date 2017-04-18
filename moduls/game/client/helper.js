@@ -409,10 +409,6 @@ var getEffectsTooltip = function(price, effects, target, invert, side, isShowCur
 		prevPriority = priority;
 	}
 
-	if (effectsValues.length === 0) {
-		return;
-	}
-
 	if (effectsValues.length && effectsValues[effectsValues.length - 1].total) {
 		effectsValues[effectsValues.length - 1].final = true;
 	}

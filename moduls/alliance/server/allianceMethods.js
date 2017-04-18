@@ -260,6 +260,126 @@ Meteor.methods({
 		Game.Statistic.incrementUser(user._id, {
 			'alliance.kick': 1
 		});
+	},
+
+	'alliance.getUserAlliancePositionInList': function() {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		let position = null;
+
+		if (user.alliance) {
+			let alliance = Game.Alliance.getByUrl(user.alliance);
+
+			position = Game.Alliance.Collection.find({
+				timestamp: { $lt: alliance.timestamp }
+			}).count() + 1;
+		}
+
+		let total = Game.Alliance.Collection.find({}).count();
+
+		return {
+			position,
+			total
+		};
+	},
+
+	'alliance.getPageInList': function(page, countPerPage) {
+		var user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		console.log('alliance.getPageInList:', new Date(), user.username);
+
+		check(page, Match.Integer);
+		check(countPerPage, Match.Integer);
+
+		if (countPerPage > Game.Alliance.COUNT_PER_PAGE) {
+			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+		}
+
+		let result = Game.Alliance.Collection.find({}, {
+			sort: {timestamp: 1},
+			fields: {
+				name: 1,
+				url: 1,
+				timestamp: 1
+			},
+			skip: (page > 0) ? (page - 1) * countPerPage : 0,
+			limit: countPerPage
+		});
+
+		return {
+			alliances: result.fetch(),
+			count: result.count()
+		};
+	},
+
+	'alliance.getInfo': function(url) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		check(url, String);
+
+		let alliance = Game.Alliance.getByUrl(url);
+
+		if (!alliance) {
+			throw new Meteor.Error('Ошибка получения информации об альянсе', 'Альянс не найден');
+		}
+
+		return {
+			name: alliance.name,
+			information: alliance.information,
+			owner: alliance.owner,
+			type: alliance.type
+		};
+	},
+
+	'alliance.getPage': function() {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		if (!user.alliance) {
+			throw new Meteor.Error('Игрок не состоит в альянсе');
+		}
+
+		let alliance = Game.Alliance.getByUrl(user.alliance);
+
+		return {
+			balance: {
+				honor: 0,
+				credits: 0
+			},
+
+			participants: alliance.participants
+		};
 	}
 });
 

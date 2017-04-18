@@ -83,7 +83,8 @@
 			"priceInHonor": 10000,
 			"invalidateSchedule": "at 4:00 am",
 			"leavingTimeout": 259200,
-			"participantsPerLevel": 10
+			"participantsPerLevel": 10,
+			"countPerPage": 20
 		}
 	},
 	"recaptcha": {

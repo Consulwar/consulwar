@@ -31,6 +31,15 @@ Game.Alliance.Contact.Collection._ensureIndex({
 	status: 1
 });
 
+Game.Alliance.Contact.Collection._ensureIndex({
+	alliance_id: 1,
+	type: 1,
+	status: 1,
+	timestamp: 1
+});
+
+
+
 Game.Alliance.Contact.INVALIDATE_TIMEOUT = 3 * 24 * 60 * 60;
 Game.Alliance.Contact.DECLINE_TIMEOUT = 30 * 24 * 60 * 60;
 
@@ -163,5 +172,29 @@ SyncedCron.add({
 		Game.Alliance.Contact.checkForInvalidatingAll();
 	}
 });
+
+Meteor.publish('alliance_contact_requests', function () {
+	if (this.userId) {
+		let user = Meteor.users.findOne({ _id: this.userId });
+		if (user.alliance) {
+			let alliance = Game.Alliance.getByUrl(user.alliance);
+
+			if (alliance.owner === user.username) {
+				return Game.Alliance.Contact.Collection.find({
+					alliance_id: alliance._id,
+					type: Game.Alliance.Contact.type.REQUEST,
+					status: Game.Alliance.Contact.status.SENT
+				}, {
+					fields: {
+						username: 1,
+						timestamp: 1
+					},
+					sort: {timestamp: 1}
+				});
+			}
+		}
+	}
+});
+
 
 };

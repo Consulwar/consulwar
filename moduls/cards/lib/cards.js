@@ -100,7 +100,7 @@ game.InstantCard = function(options) {
 	game.InstantCard.superclass.constructor.apply(this, arguments);
 
 	this.dontNeedResourcesUpdate = false;
-	this.time = -1;
+	this.durationTime = -1;
 };
 game.extend(game.InstantCard, game.Card);
 

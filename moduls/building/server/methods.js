@@ -86,7 +86,16 @@ Meteor.methods({
 		}
 
 		let price = item.price(null, cardList);
-		set.time = price.time;
+		for (let name in price) {
+			if (price.hasOwnProperty(name)) {
+				let count = price[name];
+				if (count < 0) {
+					price[name] = 0;
+				}
+			}
+		}
+
+		set.time = Math.max(2, price.time);
 
 		var isTaskInserted = Game.Queue.add(set);
 		if (!isTaskInserted) {

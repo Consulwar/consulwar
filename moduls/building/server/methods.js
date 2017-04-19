@@ -18,7 +18,10 @@ Meteor.methods({
 		check(options, Object);
 		check(options.group, String);
 		check(options.engName, String);
-		check(options.cards, Object);
+
+		if (options.cards) {
+			check(options.cards, Object);
+		}
 
 		Meteor.call('actualizeGameInfo');
 

@@ -262,7 +262,7 @@ Meteor.methods({
 		});
 	},
 
-	'alliance.getUserAlliancePositionInList': function() {
+	'alliance.getUserAlliancePosition': function(allianceUrl = null) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -275,12 +275,18 @@ Meteor.methods({
 
 		let position = null;
 
-		if (user.alliance) {
-			let alliance = Game.Alliance.getByUrl(user.alliance);
+		if (allianceUrl) {
+			check(allianceUrl, String);
+		} else {
+			allianceUrl = user.alliance;
+		}
 
+		let alliance = Game.Alliance.getByUrl(allianceUrl);
+
+		if (alliance) {
 			position = Game.Alliance.Collection.find({
-				timestamp: { $lt: alliance.timestamp }
-			}).count() + 1;
+					timestamp: { $lt: alliance.timestamp }
+				}).count() + 1;
 		}
 
 		let total = Game.Alliance.Collection.find({}).count();
@@ -328,7 +334,7 @@ Meteor.methods({
 		};
 	},
 
-	'alliance.getInfo': function(url) {
+	'alliance.getInfo': function(url, extended = false) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -347,39 +353,23 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка получения информации об альянсе', 'Альянс не найден');
 		}
 
-		return {
+		let info = {
 			name: alliance.name,
 			information: alliance.information,
 			owner: alliance.owner,
 			type: alliance.type
 		};
-	},
 
-	'alliance.getPage': function() {
-		let user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		if (!user.alliance) {
-			throw new Meteor.Error('Игрок не состоит в альянсе');
-		}
-
-		let alliance = Game.Alliance.getByUrl(user.alliance);
-
-		return {
-			balance: {
+		if (extended && user.alliance === url) {
+			info.balance = {
 				honor: 0,
 				credits: 0
-			},
+			};
 
-			participants: alliance.participants
-		};
+			info.participants = alliance.participants;
+		}
+
+		return info;
 	}
 });
 

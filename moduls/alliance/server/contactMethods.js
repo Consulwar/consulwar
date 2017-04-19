@@ -114,6 +114,8 @@ Meteor.methods({
 
 		if (contact.type === Game.Alliance.Contact.type.REQUEST && alliance.owner !== user.username) {
 			throw new Meteor.Error('Ошибка в отклонении заявки', 'Вы не создатель этого альянса');
+		} else if (contact.type === Game.Alliance.Contact.type.INVITE && contact.username !== user.username) {
+			throw new Meteor.Error('Ошибка в отклонении заявки', 'Это не ваше приглашение');
 		}
 
 		Game.Alliance.Contact.decline(contactId);

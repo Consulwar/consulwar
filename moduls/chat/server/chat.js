@@ -37,6 +37,49 @@ var createDefaulRoom = function(name, title, isFree) {
 createDefaulRoom('general', 'Основной', false);
 createDefaulRoom('help', 'Помощь', true);
 
+Game.Chat.createRoom = function(user, name, title, isPublic, isOwnerPays, initialBalance = 0) {
+	let room = {
+		name: name,
+		title: title,
+		owner: user._id,
+		users: [user._id],
+		usernames: [user.username],
+		isPublic,
+		isOwnerPays
+	};
+
+	if (isOwnerPays) {
+		room.credits = initialBalance;
+	}
+
+	Game.Chat.Room.Collection.insert(room);
+};
+
+Game.Chat.Room.addParticipant = function(roomName, user) {
+	Game.Chat.Room.Collection.update({
+		name: roomName,
+		deleted: { $ne: true }
+	}, {
+		$addToSet: {
+			users: user._id,
+			usernames: user.username
+		}
+	});
+};
+
+Game.Chat.Room.removeParticipant = function(roomName, user) {
+	Game.Chat.Room.Collection.update({
+		name: roomName,
+		deleted: { $ne: true }
+	}, {
+		$pull: {
+			users: user._id,
+			usernames: user.username,
+			moderators: user.username
+		}
+	});
+};
+
 var removeAllMessages = function(username) {
 	var target = Meteor.users.findOne({
 		username

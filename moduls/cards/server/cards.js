@@ -39,19 +39,28 @@ Game.Cards.complete = function(task) {
 	// no action on complete
 };
 
-Game.Cards.activate = function(item, user) {
-	// check input
+Game.Cards.canActivate = function(item, user) {
 	if (!item || !user) {
+		return false;
+	}
+
+	if (item.reloadTime) {
+		let nextReloadTime = item.nextReloadTime();
+		if (nextReloadTime > Game.getCurrentTime()) {
+			return false;
+		}
+	}
+
+	return true;
+};
+
+Game.Cards.activate = function(item, user) {
+	if (!Game.Cards.canActivate(item, user)) {
 		return false;
 	}
 
 	// check reload time
 	if (item.reloadTime) {
-		var nextReloadTime = item.nextReloadTime();
-		if (nextReloadTime > Game.getCurrentTime()) {
-			return false;
-		}
-
 		// set next reload time
 		var set = {};
 		set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
@@ -98,6 +107,22 @@ Game.Cards.activate = function(item, user) {
 
 	// activate card
 	return Game.Queue.add(task);
+};
+
+Game.Cards.canUse = function(obj, user, list=[]) {
+	for (let cardId in obj) {
+		if (obj.hasOwnProperty(cardId)) {
+			let count = obj[cardId];
+			let card = Game.Cards.getItem(cardId);
+			if (count <= 0 || !card || card.amount() < count || !Game.Cards.canActivate(card, user)) {
+				return false;
+			}
+
+			_.times(count, () => list.push(card));
+		}
+	}
+
+	return true;
 };
 
 Meteor.methods({

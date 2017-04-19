@@ -18,35 +18,7 @@ Meteor.methods({
 		check(options, Object);
 		check(options.group, String);
 		check(options.engName, String);
-
-		let cardsObject = options.cards;
-		let cardList = [];
-
-		if (cardsObject) {
-			check(cardsObject, Object);
-
-			check(cardsObject, Match.Where(function(cards) {
-				for (let cardId in cards) {
-					if (cards.hasOwnProperty(cardId)) {
-						let card = Game.Cards.getItem(cardId);
-						if (!card) {
-							throw new Match.Error('Нет такой карточки');
-						}
-
-						let count = cards[cardId];
-						if (count <= 0) {
-							throw new Match.Error('Неверное количество карточек');
-						}
-
-						_.times(count, () => cardList.push(card));
-					}
-				}
-
-				return true;
-			}));
-		} else {
-			cardsObject = {};
-		}
+		check(options.cards, Object);
 
 		Meteor.call('actualizeGameInfo');
 
@@ -67,39 +39,23 @@ Meteor.methods({
 			throw new Meteor.Error('Здание уже максимального уровня');
 		}
 
-		for (let cardId in cardsObject) {
-			if (cardsObject.hasOwnProperty(cardId)) {
-				let count = cardsObject[cardId];
-				let card = Game.Cards.getItem(cardId);
+		let cardsObject = options.cards || {};
+		let cardList = [];
 
-				if (card.amount() < count) {
-					throw new Meteor.Error('Карточки закончились');
-				}
-
-				_.times(count, function() {
-					let isCardActivated = Game.Cards.activate(card, user);
-					if (!isCardActivated) {
-						throw new Meteor.Error('Не удалось активировать карточку');
-					}
-				});
-			}
+		if (!Game.Cards.canUse(cardsObject, user, cardList)) {
+			throw new Meteor.Error('Карточки недоступны для применения');
 		}
 
 		let price = item.price(null, cardList);
-		for (let name in price) {
-			if (price.hasOwnProperty(name)) {
-				let count = price[name];
-				if (count < 0) {
-					price[name] = 0;
-				}
-			}
-		}
-
-		set.time = Math.max(2, price.time);
+		set.time = price.time;
 
 		var isTaskInserted = Game.Queue.add(set);
 		if (!isTaskInserted) {
 			throw new Meteor.Error('Не удалось начать строительство');
+		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
 		}
 
 		Game.Cards.spend(cardsObject);

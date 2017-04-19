@@ -294,6 +294,22 @@ game.Item = function(options) {
 
 		curPrice = Game.Effect.Price.applyTo(this, curPrice, undefined, null, getCardEffects(cards));
 
+		for (let name in curPrice) {
+			if (curPrice.hasOwnProperty(name)) {
+				let value = curPrice[name];
+
+				if (name === 'time') {
+					if (value < 2) {
+						curPrice[name] = 2;
+					}
+				} else {
+					if (value < 0) {
+						curPrice[name] = 0;
+					}
+				}
+			}
+		}
+
 		return curPrice;
 	};
 

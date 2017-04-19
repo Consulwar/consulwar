@@ -262,7 +262,7 @@ Meteor.methods({
 		});
 	},
 
-	'alliance.getUserAlliancePosition': function(allianceUrl = null) {
+	'alliance.getPosition': function(allianceUrl = null) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -273,21 +273,25 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		let position = null;
+		let alliance;
 
 		if (allianceUrl) {
 			check(allianceUrl, String);
+
+			alliance = Game.Alliance.getByUrl(allianceUrl);
+
+			if (!alliance) {
+				throw new Meteor.Error('Ошибка получения позиции альянса', 'Альянс не найден');
+			}
+		} else if (user.alliance) {
+			alliance = Game.Alliance.getByUrl(user.alliance);
 		} else {
-			allianceUrl = user.alliance;
+			throw new Meteor.Error('Ошибка получения позиции альянса', 'Игрок не в альянсе');
 		}
 
-		let alliance = Game.Alliance.getByUrl(allianceUrl);
-
-		if (alliance) {
-			position = Game.Alliance.Collection.find({
-				timestamp: { $lt: alliance.timestamp }
-			}).count() + 1;
-		}
+		let position = Game.Alliance.Collection.find({
+			timestamp: { $lt: alliance.timestamp }
+		}).count() + 1;
 
 		let total = Game.Alliance.Collection.find({}).count();
 

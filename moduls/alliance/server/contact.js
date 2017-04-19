@@ -193,10 +193,9 @@ Meteor.publish('alliance_contact_requests', function () {
 				});
 			}
 		}
-		return null;
-	} else {
-		this.ready();
 	}
+
+	this.ready();
 });
 
 

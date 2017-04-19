@@ -101,7 +101,8 @@ Meteor.methods({
 			}, {
 				fields: {
 					username: 1,
-					alliance: 1
+					alliance: 1,
+					alliance_left_ts: 1
 				}
 			});
 

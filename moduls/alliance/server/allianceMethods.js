@@ -285,8 +285,8 @@ Meteor.methods({
 
 		if (alliance) {
 			position = Game.Alliance.Collection.find({
-					timestamp: { $lt: alliance.timestamp }
-				}).count() + 1;
+				timestamp: { $lt: alliance.timestamp }
+			}).count() + 1;
 		}
 
 		let total = Game.Alliance.Collection.find({}).count();

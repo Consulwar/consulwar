@@ -34,7 +34,7 @@
 			{{> unitCharacteristics unit=unit}}
 
 			<div class="bottom">
-				{{> item_price price=(unitPrice unit count)}}
+				{{> item_price price=(unit.price count undefined)}}
 
 				<div class="actions">
 					<div class="action">

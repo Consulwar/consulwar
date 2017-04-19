@@ -42,9 +42,6 @@ Game.Unit.showReptilePage = function() {
 Template.unit.helpers({
 	count: function() {
 		return this.count.get();
-	},
-	unitPrice: function(unit, count) {
-		return unit.price(count);
 	}
 });
 

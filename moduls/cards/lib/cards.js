@@ -190,6 +190,21 @@ Game.Cards = {
 		return true;
 	},
 
+	canActivate: function(item, user) {
+		if (!item || !user) {
+			return false;
+		}
+
+		if (item.reloadTime) {
+			let nextReloadTime = item.nextReloadTime();
+			if (nextReloadTime > Game.getCurrentTime()) {
+				return false;
+			}
+		}
+
+		return true;
+	},
+
 	objectToList: function(obj) {
 		let result = [];
 

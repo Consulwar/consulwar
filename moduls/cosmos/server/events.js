@@ -812,7 +812,7 @@ var completeHumansArrival = function(event, planet) {
 
 	if (!battleResult || (userArmy && !enemyArmy)) {
 		if (!planet.isDiscovered) {
-			Meteor.call('planet.discover', planet._id);
+			Game.Planets.discover(planet._id);
 		}
 	}
 

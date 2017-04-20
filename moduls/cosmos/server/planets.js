@@ -607,6 +607,31 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 	}
 };
 
+Game.Planets.discover = function(planetId) {
+	// get discovered planet
+	let planet = Game.Planets.getOne(planetId);
+	if (planet.isDiscovered) {
+		return;
+	}
+
+	planet.isDiscovered = true;
+	Game.Planets.update(planet);
+
+	// get base planet
+	let basePlanet = Game.Planets.getBase();
+	if (!basePlanet) {
+		return;
+	}
+
+	// find sectors to discover
+	let sectors = Game.Planets.getSectorsToDiscover(basePlanet.galactic, planet.hand, planet.segment);
+
+	// discover
+	for (let i = 0; i < sectors.length; i++) {
+		Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
+	}
+};
+
 // ----------------------------------------------------------------------------
 // Public methods
 // ----------------------------------------------------------------------------
@@ -678,7 +703,7 @@ Meteor.methods({
 		}
 	},
 
-	'planet.discover': function(planetId) {
+	'planet.discover': function(planetId, cardId) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -691,28 +716,27 @@ Meteor.methods({
 
 		console.log('planet.discover: ', new Date(), user.username);
 
-		// get discovered planet
-		var planet = Game.Planets.getOne(planetId);
-		if (planet.isDiscovered) {
-			return;
+		check(planetId, String);
+		check(cardId, String);
+
+		let cardsObject = {[cardId]: 1};
+
+		if (!Game.Cards.canUse(cardsObject, user)) {
+			throw new Meteor.Error('Карточка недоступна для применения');
 		}
 
-		planet.isDiscovered = true;
-		Game.Planets.update(planet);
+		let cardList = Game.Cards.objectToList(cardsObject);
+		let card = cardList[0];
 
-		// get base planet
-		var basePlanet = Game.Planets.getBase();
-		if (!basePlanet) {
-			return;
+		if (card.group !== 'planetDiscover') {
+			throw new Meteor.Error('Неподходящий тип карточки');
 		}
 
-		// find sectors to discover
-		var sectors = Game.Planets.getSectorsToDiscover(basePlanet.galactic, planet.hand, planet.segment);
+		console.log(Game.Cards.activate(card, user));
 
-		// discover
-		for (var i = 0; i < sectors.length; i++) {
-			Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
-		}
+		Game.Cards.spend(cardsObject);
+
+		Game.Planets.discover(planetId);
 
 		// save statistic
 		Game.Statistic.incrementUser(user._id, {

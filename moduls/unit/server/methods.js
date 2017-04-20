@@ -26,6 +26,24 @@ Meteor.methods({
 			throw new Meteor.Error('Не умничай');
 		}
 
+		let cardsObject;
+		let cardList;
+
+		if (options.cards) {
+			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		} else {
+			cardsObject = {};
+			cardList = [];
+		}
+
 		Meteor.call('actualizeGameInfo');
 
 		var item = Game.Unit.items.army[options.group] && Game.Unit.items.army[options.group][options.engName];
@@ -53,13 +71,19 @@ Meteor.methods({
 			dontNeedResourcesUpdate: true
 		};
 
-		var price = item.price(options.count);
+		let price = item.price(options.count, cardList);
 		set.time = price.time;
 
 		var isTaskInserted = Game.Queue.add(set);
 		if (!isTaskInserted) {
 			throw new Meteor.Error('Не удалось начать подготовку юнитов');
 		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
 
 		Game.Resources.spend(price);
 		

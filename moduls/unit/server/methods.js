@@ -26,8 +26,8 @@ Meteor.methods({
 			throw new Meteor.Error('Не умничай');
 		}
 
-		let cardsObject;
-		let cardList;
+		let cardsObject = {};
+		let cardList = [];
 
 		if (options.cards) {
 			check(options.cards, Object);
@@ -39,9 +39,6 @@ Meteor.methods({
 			}
 
 			cardList = Game.Cards.objectToList(cardsObject);
-		} else {
-			cardsObject = {};
-			cardList = [];
 		}
 
 		Meteor.call('actualizeGameInfo');

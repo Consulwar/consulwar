@@ -252,7 +252,7 @@ game.Item = function(options) {
 		return result;
 	};
 
-	this.price = function(level) {
+	this.price = function(level, cards=[]) {
 		var curPrice = {};
 		var name = null;
 
@@ -292,9 +292,37 @@ game.Item = function(options) {
 			value: _.clone(curPrice)
 		});
 
-		curPrice = Game.Effect.Price.applyTo(this, curPrice);
+		curPrice = Game.Effect.Price.applyTo(this, curPrice, undefined, null, getCardEffects(cards));
+
+		for (let name in curPrice) {
+			if (curPrice.hasOwnProperty(name)) {
+				let value = curPrice[name];
+
+				if (name === 'time') {
+					if (value < 2) {
+						curPrice[name] = 2;
+					}
+				} else {
+					if (value < 0) {
+						curPrice[name] = 0;
+					}
+				}
+			}
+		}
 
 		return curPrice;
+	};
+
+	let getCardEffects = function(cards) {
+		let effects = [];
+
+		for (let card of cards) {
+			for (let effect of card.effect) {
+				effects.push(effect);
+			}
+		}
+
+		return effects;
 	};
 
 	this.next = {
@@ -697,7 +725,7 @@ Game.Effect = function(options) {
 	};
 };
 
-Game.Effect.getRelatedTo = function(obj, isOnlyMutual) {
+Game.Effect.getRelatedTo = function(obj, isOnlyMutual, instantEffects = []) {
 	var effects = {};
 	var i = 0;
 
@@ -758,6 +786,30 @@ Game.Effect.getRelatedTo = function(obj, isOnlyMutual) {
 					);
 				}
 			}
+		}
+	}
+
+	for (let effect of instantEffects) {
+		let insertEffect = null;
+
+		if (effect.condition.type === 'all') {
+			insertEffect = effect;
+		} else if (effect.condition.engName === obj.engName) {
+			insertEffect = effect;
+		} else if (effect.condition.type === obj.type) {
+			if (!effect.condition.group || effect.condition.group === obj.group) {
+				if (!effect.condition.special || effect.condition.special === obj.special) {
+					insertEffect = effect;
+				}
+			}
+		}
+
+		if (insertEffect) {
+			if (effects[insertEffect.priority] === undefined) {
+				effects[insertEffect.priority] = [];
+			}
+
+			effects[insertEffect.priority].push(insertEffect);
 		}
 	}
 
@@ -948,9 +1000,9 @@ Game.Effect.getValue = function(hideEffects, obj) {
 };
 
 // reduce - true = скидка, т.е. вычитаем эффекты
-Game.Effect.applyTo = function(target, obj, hideEffects, isOnlyMutual) {
+Game.Effect.applyTo = function(target, obj, hideEffects, isOnlyMutual, instantEffects = []) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
-	var effects = this.getRelatedTo(target, isOnlyMutual);
+	var effects = this.getRelatedTo(target, isOnlyMutual, instantEffects);
 
 	Object.defineProperty(obj, 'effects', {
 		value: effects,

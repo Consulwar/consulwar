@@ -19,6 +19,24 @@ Meteor.methods({
 		check(options.group, String);
 		check(options.engName, String);
 
+		let cardsObject;
+		let cardList;
+
+		if (options.cards) {
+			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		} else {
+			cardsObject = {};
+			cardList = [];
+		}
+
 		Meteor.call('actualizeGameInfo');
 
 		var item = Game.Building.items[options.group] && Game.Building.items[options.group][options.engName];
@@ -38,7 +56,7 @@ Meteor.methods({
 			throw new Meteor.Error('Здание уже максимального уровня');
 		}
 
-		var price = item.price();
+		let price = item.price(null, cardList);
 		set.time = price.time;
 
 		var isTaskInserted = Game.Queue.add(set);
@@ -46,8 +64,14 @@ Meteor.methods({
 			throw new Meteor.Error('Не удалось начать строительство');
 		}
 
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
+
 		Game.Resources.spend(price);
-		
+
 		if (price.credits) {
 			Game.Payment.Expense.log(price.credits, 'building', {
 				group: set.group,

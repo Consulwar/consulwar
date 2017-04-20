@@ -49,7 +49,6 @@ Game.Queue.add = function(item) {
 
 	var set = {
 		user_id: Meteor.userId(),
-		status: Game.Queue.status.INCOMPLETE,
 		type: item.type,
 		startTime: startTime,
 		finishTime: startTime + item.time,
@@ -90,12 +89,18 @@ Game.Queue.add = function(item) {
 		set.dontNeedResourcesUpdate = true;
 	}
 
-	// check if task need to be processed right now
-	if (set.finishTime < Game.getCurrentTime()) {
-		// mark as processing in progress
-		set.status = Game.Queue.status.INPROGRESS;
-		set.processedTime = Game.getCurrentTime();
-		set.processId = Game.processId;
+	if (set.startTime > set.finishTime) {
+		set.status = Game.Queue.status.DONE;
+	} else {
+		// check if task need to be processed right now
+		if (set.finishTime < set.createdTime) {
+			// mark as processing in progress
+			set.status = Game.Queue.status.INPROGRESS;
+			set.processedTime = Game.getCurrentTime();
+			set.processId = Game.processId;
+		} else {
+			set.status = Game.Queue.status.INCOMPLETE;
+		}
 	}
 
 	// try to insert new task

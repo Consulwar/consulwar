@@ -96,6 +96,14 @@ game.BackRewardCard = function(options) {
 };
 game.extend(game.BackRewardCard, game.Card);
 
+game.InstantCard = function(options) {
+	game.InstantCard.superclass.constructor.apply(this, arguments);
+
+	this.dontNeedResourcesUpdate = true;
+	this.durationTime = -1;
+};
+game.extend(game.InstantCard, game.Card);
+
 Game.Cards = {
 	Collection: new Meteor.Collection('cards'),
 
@@ -104,7 +112,8 @@ Game.Cards = {
 		donate: {},
 		pulsecatcher: {},
 		penalty: {},
-		backReward: {}
+		backReward: {},
+		instant: {}
 	},
 
 	getValue: function(uid) {
@@ -165,6 +174,35 @@ Game.Cards = {
 			}
 		}
 		return null;
+	},
+
+	canUse: function(obj, user) {
+		for (let cardId in obj) {
+			if (obj.hasOwnProperty(cardId)) {
+				let count = obj[cardId];
+				let card = Game.Cards.getItem(cardId);
+				if (count <= 0 || !card || card.amount() < count || !Game.Cards.canActivate(card, user)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	},
+
+	objectToList: function(obj) {
+		let result = [];
+
+		for (let cardId in obj) {
+			if (obj.hasOwnProperty(cardId)) {
+				let count = obj[cardId];
+				let card = Game.Cards.getItem(cardId);
+
+				_.times(count, () => result.push(card));
+			}
+		}
+
+		return result;
 	}
 };
 

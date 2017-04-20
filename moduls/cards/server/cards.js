@@ -109,22 +109,6 @@ Game.Cards.activate = function(item, user) {
 	return Game.Queue.add(task);
 };
 
-Game.Cards.canUse = function(obj, user, list=[]) {
-	for (let cardId in obj) {
-		if (obj.hasOwnProperty(cardId)) {
-			let count = obj[cardId];
-			let card = Game.Cards.getItem(cardId);
-			if (count <= 0 || !card || card.amount() < count || !Game.Cards.canActivate(card, user)) {
-				return false;
-			}
-
-			_.times(count, () => list.push(card));
-		}
-	}
-
-	return true;
-};
-
 Meteor.methods({
 	'cards.buyAndActivate': function (id) {
 		Meteor.call('cards.buy', id);

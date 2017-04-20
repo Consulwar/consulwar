@@ -174,6 +174,35 @@ Game.Cards = {
 			}
 		}
 		return null;
+	},
+
+	canUse: function(obj, user) {
+		for (let cardId in obj) {
+			if (obj.hasOwnProperty(cardId)) {
+				let count = obj[cardId];
+				let card = Game.Cards.getItem(cardId);
+				if (count <= 0 || !card || card.amount() < count || !Game.Cards.canActivate(card, user)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	},
+
+	objectToList: function(obj) {
+		let result = [];
+
+		for (let cardId in obj) {
+			if (obj.hasOwnProperty(cardId)) {
+				let count = obj[cardId];
+				let card = Game.Cards.getItem(cardId);
+
+				_.times(count, () => result.push(card));
+			}
+		}
+
+		return result;
 	}
 };
 

@@ -19,8 +19,22 @@ Meteor.methods({
 		check(options.group, String);
 		check(options.engName, String);
 
+		let cardsObject;
+		let cardList;
+
 		if (options.cards) {
 			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		} else {
+			cardsObject = {};
+			cardList = [];
 		}
 
 		Meteor.call('actualizeGameInfo');
@@ -40,13 +54,6 @@ Meteor.methods({
 
 		if (set.level > item.maxLevel) {
 			throw new Meteor.Error('Здание уже максимального уровня');
-		}
-
-		let cardsObject = options.cards || {};
-		let cardList = [];
-
-		if (!Game.Cards.canUse(cardsObject, user, cardList)) {
-			throw new Meteor.Error('Карточки недоступны для применения');
 		}
 
 		let price = item.price(null, cardList);

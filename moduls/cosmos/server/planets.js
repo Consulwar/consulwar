@@ -703,7 +703,7 @@ Meteor.methods({
 		}
 	},
 
-	'planet.discover': function(planetId, cardId) {
+	'planet.discover': function(planetId) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -717,9 +717,8 @@ Meteor.methods({
 		console.log('planet.discover: ', new Date(), user.username);
 
 		check(planetId, String);
-		check(cardId, String);
 
-		let cardsObject = {[cardId]: 1};
+		let cardsObject = {'planetDiscover1': 1};
 
 		if (!Game.Cards.canUse(cardsObject, user)) {
 			throw new Meteor.Error('Карточка недоступна для применения');
@@ -732,7 +731,7 @@ Meteor.methods({
 			throw new Meteor.Error('Неподходящий тип карточки');
 		}
 
-		console.log(Game.Cards.activate(card, user));
+		Game.Cards.activate(card, user);
 
 		Game.Cards.spend(cardsObject);
 

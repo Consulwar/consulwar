@@ -19,6 +19,21 @@ Meteor.methods({
 		check(options.group, String);
 		check(options.engName, String);
 
+		let cardsObject = {};
+		let cardList = [];
+
+		if (options.cards) {
+			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		}
+
 		Meteor.call('actualizeGameInfo');
 
 		var item = Game.Research.items[options.group] && Game.Research.items[options.group][options.engName];
@@ -38,13 +53,19 @@ Meteor.methods({
 			throw new Meteor.Error('Исследование уже максимального уровня');
 		}
 
-		var price = item.price();
+		let price = item.price(null, cardList);
 		set.time = price.time;
 
 		var isTaskInserted = Game.Queue.add(set);
 		if (!isTaskInserted) {
 			throw new Meteor.Error('Не удалось начать исследование');
 		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
 
 		Game.Resources.spend(price);
 		

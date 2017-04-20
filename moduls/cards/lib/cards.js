@@ -99,7 +99,7 @@ game.extend(game.BackRewardCard, game.Card);
 game.InstantCard = function(options) {
 	game.InstantCard.superclass.constructor.apply(this, arguments);
 
-	this.dontNeedResourcesUpdate = false;
+	this.dontNeedResourcesUpdate = true;
 	this.durationTime = -1;
 };
 game.extend(game.InstantCard, game.Card);

@@ -130,6 +130,16 @@ Game.Queue.complete = function(taskId) {
 	});
 };
 
+Game.Queue.spendTime = function(taskId, time) {
+	Game.Queue.Collection.update({
+		_id: taskId
+	}, {
+		$inc: {
+			finishTime: -time
+		}
+	});
+};
+
 var completeItems = function(items, needResourcesUpdate) {
 	while (items.length > 0) {
 		var item = items.shift();

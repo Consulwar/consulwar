@@ -39,21 +39,6 @@ Game.Cards.complete = function(task) {
 	// no action on complete
 };
 
-Game.Cards.canActivate = function(item, user) {
-	if (!item || !user) {
-		return false;
-	}
-
-	if (item.reloadTime) {
-		let nextReloadTime = item.nextReloadTime();
-		if (nextReloadTime > Game.getCurrentTime()) {
-			return false;
-		}
-	}
-
-	return true;
-};
-
 Game.Cards.activate = function(item, user) {
 	if (!Game.Cards.canActivate(item, user)) {
 		return false;

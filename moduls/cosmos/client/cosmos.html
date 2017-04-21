@@ -589,10 +589,14 @@
 									{{#if eq this.result 0}}tie{{/if}}
 									{{#if eq this.result 1}}victory{{/if}}
 									{{#if eq this.result 2}}defeat{{/if}}
+									{{#if eq this.result 3}}damage{{/if}}
+									{{#if eq this.result 4}}damageVictory{{/if}}
 								">
 									{{#if eq this.result 0}}Ничья{{/if}}
 									{{#if eq this.result 1}}Победа{{/if}}
 									{{#if eq this.result 2}}Поражение{{/if}}
+									{{#if eq this.result 3}}Нанесение Урона{{/if}}
+									{{#if eq this.result 4}}Бдыщь!{{/if}}
 								</div>
 
 								{{> item_price price=this.reward}}

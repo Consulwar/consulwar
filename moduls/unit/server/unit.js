@@ -780,6 +780,8 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 	};
 
 	this.constructor = function(userArmy, enemyArmy, options) {
+		let isOnlyDamage = options.isOnlyDamage;
+
 		// parse options
 		var rounds = (options && options.rounds) ? options.rounds : 3;
 
@@ -1003,12 +1005,20 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			}
 		}
 
+		let result;
 		// calc result
-		var result = Game.Battle.result.tie;
-		if (userArmyRest && !enemyArmyRest) {
-			result = Game.Battle.result.victory;
-		} else if (!userArmyRest && enemyArmyRest) {
-			result = Game.Battle.result.defeat;
+		if (isOnlyDamage) {
+			result = Game.Battle.result.damage;
+			if (!enemyArmyRest) {
+				result = Game.Battle.result.damageVictory;
+			}
+		} else {
+			result = Game.Battle.result.tie;
+			if (userArmyRest && !enemyArmyRest) {
+				result = Game.Battle.result.victory;
+			} else if (!userArmyRest && enemyArmyRest) {
+				result = Game.Battle.result.defeat;
+			}
 		}
 
 		// save results
@@ -1034,6 +1044,10 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			increment['battle.victory'] = 1;
 		} else if (result == Game.Battle.result.defeat) {
 			increment['battle.defeat'] = 1;
+		} else if (result == Game.Battle.result.damage) {
+			increment['battle.damage'] = 1;
+		} else if (result == Game.Battle.result.damageVictory) {
+			increment['battle.damageVictory'] = 1;
 		}
 
 		if (options.missionType && options.missionLevel) {
@@ -1048,6 +1062,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 			} else if (result == Game.Battle.result.defeat) {
 				increment['battle.' + options.missionType + '.defeat'] = 1;
 				increment['battle.' + options.missionType + '.' + options.missionLevel + '.defeat'] = 1;
+			} else if (result == Game.Battle.result.damage) {
+				increment['battle.' + options.missionType + '.damage'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.damage'] = 1;
+			} else if (result == Game.Battle.result.damageVictory) {
+				increment['battle.' + options.missionType + '.damageVictory'] = 1;
+				increment['battle.' + options.missionType + '.' + options.missionLevel + '.damageVictory'] = 1;
 			}
 		}
 

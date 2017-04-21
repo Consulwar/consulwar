@@ -170,6 +170,93 @@ Meteor.methods({
 		Game.Cards.spend(cardsObject);
 	},
 
+	'unit.instantDamage': function(options) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('unit.instantDamage: ', new Date(), user.username);
+
+		let cardsObject = {};
+		let cardList = [];
+
+		if (options.cards) {
+			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		}
+
+		if (cardList.length === 0) {
+			throw new Meteor.Error('Карточки не выбраны');
+		}
+
+		let result = Game.Effect.Special.getValue(true, { engName: 'instantDamage' }, cardList);
+
+		let userArmy = {army: {instant: {}}};
+
+		for (let unitName in result) {
+			if (result.hasOwnProperty(unitName)) {
+				let count = result[unitName];
+
+				if (!_.isNumber(count) || count <= 0) {
+					throw new Meteor.Error('Карточки недоступны для применения');
+				}
+
+				if (!userArmy.army.instant[unitName]) {
+					userArmy.army.instant[unitName] = 0;
+				}
+
+				userArmy.army.instant[unitName] += count;
+			}
+		}
+
+		let planet = Game.Planets.getOne(options.planetId);
+
+		if (planet.user_id !== user._id) {
+			throw new Meteor.Error('В анус себе надемаж пёс!');
+		}
+
+		if (!planet.mission) {
+			throw new Meteor.Error('Враги отсутствуют.');
+		}
+
+		let enemyFleet = Game.Planets.getFleetUnits(planet._id);
+		let enemyArmy = { reptiles: { fleet: enemyFleet } };
+
+		let battleOptions = {
+			missionType: planet.mission.type,
+			missionLevel: planet.mission.level,
+			location: planet._id,
+			userLocation: null,
+			enemyLocation: planet._id,
+			isOnlyDamage: true
+		};
+
+		let battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+
+		let resultEnemyArmy = battleResult.enemyArmy;
+
+		if (resultEnemyArmy) {
+			planet.mission.units = resultEnemyArmy.reptiles.fleet;
+		} else {
+			planet.mission = null;
+		}
+
+		Game.Planets.update(planet);
+	},
+
 	'battleHistory.getPage': function(page, count, isEarth) {
 		check(page, Match.Integer);
 		check(count, Match.Integer);

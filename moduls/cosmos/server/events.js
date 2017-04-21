@@ -131,7 +131,7 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 	}
 
 	// add event
-	var eventId = Game.SpaceEvents.add({
+	let event = {
 		type: Game.SpaceEvents.type.REINFORCEMENT,
 		status: Game.SpaceEvents.status.STARTED,
 		timeStart: options.startTime,
@@ -139,7 +139,13 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 		info: {
 			units: options.units
 		}
-	});
+	};
+
+	if (options.cards) {
+		event.cards = options.cards;
+	}
+
+	var eventId = Game.SpaceEvents.add(event);
 
 	// add task into queue
 	if (eventId) {

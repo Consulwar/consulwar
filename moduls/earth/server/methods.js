@@ -54,7 +54,7 @@ Meteor.methods({
 		});
 	},
 
-	'earth.sendReinforcement': function(units) {
+	'earth.sendReinforcement': function(units, cardsObject) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -97,12 +97,43 @@ Meteor.methods({
 			throw new Meteor.Error('Войска для отправки не выбраны');
 		}
 
+		let cardList = [];
+
+		if (cardsObject) {
+			check(cardsObject, Object);
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+
+			if (cardList.length === 0) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			for (let card of cardList) {
+				if (card.group !== 'reinforcement') {
+					throw new Meteor.Error('Неверный тип карточек');
+				}
+			}
+		}
+
 		// send reinforcements to current point
 		Game.SpaceEvents.sendReinforcement({
 			startTime: currentTime,
 			durationTime: Game.Earth.REINFORCEMENTS_DELAY,
-			units: { army: { ground: units } }
+			units: { army: { ground: units } },
+			cards: cardsObject
 		});
+
+		if (cardList.length !== 0) {
+			for (let card of cardList) {
+				Game.Cards.activate(card, user);
+			}
+
+			Game.Cards.spend(cardsObject);
+		}
 
 		// add at once for quick debug
 		// Game.Earth.addReinforcement( { army: { ground: units } } );

@@ -77,27 +77,8 @@ Meteor.methods({
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}
 
-		var totalCount = 0;
-		var name = null;
-
-		for (name in units) {
-			units[name] = parseInt( units[name], 10 );
-
-			var count = units[name];
-			var unit = Game.Unit.items.army.ground[ name ];
-
-			if (!unit || unit.type == 'mutual' || unit.currentLevel() < count || count <= 0) {
-				throw new Meteor.Error('Иш ты чего задумал, шакал.');
-			}
-
-			totalCount += count;
-		}
-
-		if (totalCount === 0) {
-			throw new Meteor.Error('Войска для отправки не выбраны');
-		}
-
 		let cardList = [];
+		let protectedHonor = 0;
 
 		if (cardsObject) {
 			check(cardsObject, Object);
@@ -112,11 +93,42 @@ Meteor.methods({
 				throw new Meteor.Error('Карточки недоступны для применения');
 			}
 
-			for (let card of cardList) {
-				if (card.group !== 'reinforcement') {
-					throw new Meteor.Error('Неверный тип карточек');
-				}
+			let result = Game.Effect.Special.getValue(true, { engName: 'instantReinforcement' }, cardList);
+
+			protectedHonor = result.protectedHonor;
+
+			if (!_.isNumber(protectedHonor) || protectedHonor <= 0) {
+				throw new Meteor.Error('Карточки недоступны для применения');
 			}
+		}
+
+		var totalCount = 0;
+		var name = null;
+		let honor = 0;
+
+		for (name in units) {
+			units[name] = parseInt( units[name], 10 );
+
+			var count = units[name];
+			var unit = Game.Unit.items.army.ground[ name ];
+
+			if (!unit || unit.type == 'mutual' || unit.currentLevel() < count || count <= 0) {
+				throw new Meteor.Error('Иш ты чего задумал, шакал.');
+			}
+
+			if (protectedHonor) {
+				honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
+			}
+
+			totalCount += count;
+		}
+
+		if (totalCount === 0) {
+			throw new Meteor.Error('Войска для отправки не выбраны');
+		}
+
+		if (protectedHonor && honor > protectedHonor) {
+			throw new Meteor.Error('Карточки нельзя применить');
 		}
 
 		// send reinforcements to current point
@@ -124,7 +136,7 @@ Meteor.methods({
 			startTime: currentTime,
 			durationTime: Game.Earth.REINFORCEMENTS_DELAY,
 			units: { army: { ground: units } },
-			cards: cardsObject
+			protectAllHonor: protectedHonor > 0
 		});
 
 		if (cardList.length !== 0) {

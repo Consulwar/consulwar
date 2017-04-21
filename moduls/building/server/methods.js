@@ -125,9 +125,13 @@ Meteor.methods({
 		Meteor.call('actualizeGameInfo');
 
 		let item = Game.Building.items[options.group] && Game.Building.items[options.group][options.engName];
-		let task;
 
-		if (!item || !(task = Game.Queue.getGroup(item.group)) || (task.engName !== options.engName)) {
+		if (!item) {
+			throw new Meteor.Error('Ускорение строительства невозможно');
+		}
+
+		let task = Game.Queue.getGroup(item.group);
+		if (!task || task.engName !== options.engName) {
 			throw new Meteor.Error('Ускорение строительства невозможно');
 		}
 

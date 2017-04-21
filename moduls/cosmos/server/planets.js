@@ -743,7 +743,7 @@ Meteor.methods({
 		});
 	},
 
-	'planet.collectArtefacts': function(planetId) {
+	'planet.collectArtefacts': function(planetId, cardsObject) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -763,28 +763,41 @@ Meteor.methods({
 			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
 		}
 
-		let cardsObject = {'collectArtefacts1': 1};
+		if (!cardsObject) {
+			throw new Meteor.Error('Карточки не заданы');
+		}
+
+		check(cardsObject, Object);
 
 		if (!Game.Cards.canUse(cardsObject, user)) {
-			throw new Meteor.Error('Карточка недоступна для применения');
+			throw new Meteor.Error('Карточки недоступны для применения');
 		}
 
 		let cardList = Game.Cards.objectToList(cardsObject);
-		let card = cardList[0];
 
-		if (card.group !== 'collectArtefacts') {
-			throw new Meteor.Error('Неподходящий тип карточки');
+		if (cardList.length === 0) {
+			throw new Meteor.Error('Карточки не выбраны');
 		}
 
-		Game.Cards.activate(card, user);
+		let result = Game.Effect.Special.getValue(true, { engName: 'instantCollectArtefacts' }, cardList);
 
-		Game.Cards.spend(cardsObject);
+		let count = result.count;
 
-		let artefacts = Game.Planets.getArtefacts(planet, 1);
+		if (!_.isNumber(count) || count <= 0) {
+			throw new Meteor.Error('Карточки недоступны для применения');
+		}
+
+		let artefacts = Game.Planets.getArtefacts(planet, count);
 
 		if (artefacts) {
 			Game.Resources.add(artefacts);
 		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
 
 		return artefacts;
 	},

@@ -781,13 +781,13 @@ Meteor.methods({
 
 		let result = Game.Effect.Special.getValue(true, { engName: 'instantCollectArtefacts' }, cardList);
 
-		let count = result.count;
+		let cycles = result.cycles;
 
-		if (!_.isNumber(count) || count <= 0) {
+		if (!_.isNumber(cycles) || cycles <= 0) {
 			throw new Meteor.Error('Карточки недоступны для применения');
 		}
 
-		let artefacts = Game.Planets.getArtefacts(planet, count);
+		let artefacts = Game.Planets.getArtefacts(planet, cycles);
 
 		if (artefacts) {
 			Game.Resources.add(artefacts);

@@ -743,6 +743,65 @@ Meteor.methods({
 		});
 	},
 
+	'planet.collectArtefacts': function(planetId, cardsObject) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('planet.collectArtefacts:', new Date(), user.username);
+
+		check(planetId, String);
+
+		let planet = Game.Planets.getOne(planetId);
+		if (!planet || planet.isHome || !planet.armyId) {
+			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+		}
+
+		if (!cardsObject) {
+			throw new Meteor.Error('Карточки не заданы');
+		}
+
+		check(cardsObject, Object);
+
+		if (!Game.Cards.canUse(cardsObject, user)) {
+			throw new Meteor.Error('Карточки недоступны для применения');
+		}
+
+		let cardList = Game.Cards.objectToList(cardsObject);
+
+		if (cardList.length === 0) {
+			throw new Meteor.Error('Карточки не выбраны');
+		}
+
+		let result = Game.Effect.Special.getValue(true, { engName: 'instantCollectArtefacts' }, cardList);
+
+		let count = result.count;
+
+		if (!_.isNumber(count) || count <= 0) {
+			throw new Meteor.Error('Карточки недоступны для применения');
+		}
+
+		let artefacts = Game.Planets.getArtefacts(planet, count);
+
+		if (artefacts) {
+			Game.Resources.add(artefacts);
+		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
+
+		return artefacts;
+	},
+
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {
 		var user = Meteor.user();
 

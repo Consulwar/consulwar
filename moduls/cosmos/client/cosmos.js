@@ -416,19 +416,19 @@ Template.cosmos_planet_item.helpers({
 
 Template.cosmos_planet_item.events({
 	'mouseover .planet': function (e, t) {
-		let tooptip = '';
+		let tooltip = '';
 
 		if (this.isDisabled) {
-			tooptip = 'Недоступна для выбора';
+			tooltip = 'Недоступна для выбора';
 		} else if (this.planet.isEmpty) {
 			if (this.isSent) {
-				tooptip = 'Флот в полёте';
+				tooltip = 'Флот в полёте';
 			} else {
 				tooltip = 'Свободная колония';
 			}
 		} else if (this.planet.notAvaliable) {
 			if (this.planet.canBuy) {
-				tooptip = 'Можно купить';
+				tooltip = 'Можно купить';
 			} else {
 				tooltip = 'Доступна с повышением ранга';
 			}

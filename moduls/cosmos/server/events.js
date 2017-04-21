@@ -138,7 +138,8 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 		timeEnd: options.startTime + options.durationTime,
 		info: {
 			units: options.units
-		}
+		},
+		protectAllHonor: options.protectAllHonor
 	});
 
 	// add task into queue
@@ -157,9 +158,15 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 
 Game.SpaceEvents.completeReinforcement = function(event) {
 	// kill random count on the way
-	var killedPercent = Game.Random.interval(0, 30);
+	let killedPercent = 0;
+	let k = 1;
+
+	if (!event.protectAllHonor) {
+		killedPercent = Game.Random.interval(0, 30);
+		k = 1 - (killedPercent / 100);
+	}
+
 	event.info.killedPercent = killedPercent;
-	var k = 1 - (killedPercent / 100);
 
 	var units = event.info.units;
 	var arrived = null;

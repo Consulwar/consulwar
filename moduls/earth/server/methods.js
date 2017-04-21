@@ -54,7 +54,7 @@ Meteor.methods({
 		});
 	},
 
-	'earth.sendReinforcement': function(units) {
+	'earth.sendReinforcement': function(units, cardsObject) {
 		var user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -77,8 +77,34 @@ Meteor.methods({
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
 		}
 
+		let cardList = [];
+		let protectedHonor = 0;
+
+		if (cardsObject) {
+			check(cardsObject, Object);
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+
+			if (cardList.length === 0) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			let result = Game.Effect.Special.getValue(true, { engName: 'instantReinforcement' }, cardList);
+
+			protectedHonor = result.protectedHonor;
+
+			if (!_.isNumber(protectedHonor) || protectedHonor <= 0) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+		}
+
 		var totalCount = 0;
 		var name = null;
+		let honor = 0;
 
 		for (name in units) {
 			units[name] = parseInt( units[name], 10 );
@@ -90,6 +116,10 @@ Meteor.methods({
 				throw new Meteor.Error('Иш ты чего задумал, шакал.');
 			}
 
+			if (protectedHonor) {
+				honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
+			}
+
 			totalCount += count;
 		}
 
@@ -97,12 +127,25 @@ Meteor.methods({
 			throw new Meteor.Error('Войска для отправки не выбраны');
 		}
 
+		if (protectedHonor && honor > protectedHonor) {
+			throw new Meteor.Error('Карточки нельзя применить');
+		}
+
 		// send reinforcements to current point
 		Game.SpaceEvents.sendReinforcement({
 			startTime: currentTime,
 			durationTime: Game.Earth.REINFORCEMENTS_DELAY,
-			units: { army: { ground: units } }
+			units: { army: { ground: units } },
+			protectAllHonor: protectedHonor > 0
 		});
+
+		if (cardList.length !== 0) {
+			for (let card of cardList) {
+				Game.Cards.activate(card, user);
+			}
+
+			Game.Cards.spend(cardsObject);
+		}
 
 		// add at once for quick debug
 		// Game.Earth.addReinforcement( { army: { ground: units } } );

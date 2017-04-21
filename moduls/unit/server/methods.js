@@ -140,9 +140,13 @@ Meteor.methods({
 		Meteor.call('actualizeGameInfo');
 
 		let item = Game.Unit.items.army[options.group] && Game.Unit.items.army[options.group][options.engName];
-		let task;
 
-		if (!item || !(task = Game.Queue.getGroup(item.group)) || (task.engName !== options.engName)) {
+		if (!item) {
+			throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
+		}
+
+		let task = Game.Queue.getGroup(item.group);
+		if (!task || task.engName !== options.engName) {
 			throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
 		}
 

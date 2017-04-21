@@ -125,9 +125,13 @@ Meteor.methods({
 		Meteor.call('actualizeGameInfo');
 
 		let item = Game.Research.items[options.group] && Game.Research.items[options.group][options.engName];
-		let task;
 
-		if (!item || !(task = Game.Queue.getGroup(item.group)) || (task.engName !== options.engName)) {
+		if (!item) {
+			throw new Meteor.Error('Ускорение исследования невозможно');
+		}
+
+		let task = Game.Queue.getGroup(item.group);
+		if (!task || task.engName !== options.engName) {
 			throw new Meteor.Error('Ускорение исследования невозможно');
 		}
 

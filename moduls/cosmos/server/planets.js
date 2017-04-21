@@ -743,6 +743,52 @@ Meteor.methods({
 		});
 	},
 
+	'planet.collectArtefacts': function(planetId) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		console.log('planet.collectArtefacts:', new Date(), user.username);
+
+		check(planetId, String);
+
+		let planet = Game.Planets.getOne(planetId);
+		if (!planet || planet.isHome || !planet.armyId) {
+			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+		}
+
+		let cardsObject = {'collectArtefacts1': 1};
+
+		if (!Game.Cards.canUse(cardsObject, user)) {
+			throw new Meteor.Error('Карточка недоступна для применения');
+		}
+
+		let cardList = Game.Cards.objectToList(cardsObject);
+		let card = cardList[0];
+
+		if (card.group !== 'collectArtefacts') {
+			throw new Meteor.Error('Неподходящий тип карточки');
+		}
+
+		Game.Cards.activate(card, user);
+
+		Game.Cards.spend(cardsObject);
+
+		let artefacts = Game.Planets.getArtefacts(planet, 1);
+
+		if (artefacts) {
+			Game.Resources.add(artefacts);
+		}
+
+		return artefacts;
+	},
+
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {
 		var user = Meteor.user();
 

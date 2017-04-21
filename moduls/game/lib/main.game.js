@@ -313,18 +313,6 @@ game.Item = function(options) {
 		return curPrice;
 	};
 
-	let getCardEffects = function(cards) {
-		let effects = [];
-
-		for (let card of cards) {
-			for (let effect of card.effect) {
-				effects.push(effect);
-			}
-		}
-
-		return effects;
-	};
-
 	this.next = {
 		price: (function(level) {
 			level = (level || this.currentLevel()) + 2;
@@ -411,6 +399,18 @@ game.Item = function(options) {
 		level = level || 1;
 		return (this.currentLevel() >= level);
 	};
+};
+
+let getCardEffects = function(cards) {
+	let effects = [];
+
+	for (let card of cards) {
+		for (let effect of card.effect) {
+			effects.push(effect);
+		}
+	}
+
+	return effects;
 };
 
 function extend(Child, Parent) {
@@ -966,9 +966,9 @@ Game.Effect.getAll = function() {
 	return this.getRelatedTo({});
 };
 
-Game.Effect.getValue = function(hideEffects, obj) {
+Game.Effect.getValue = function(hideEffects, obj, cards = []) {
 	hideEffects = hideEffects === undefined ? true : hideEffects;
-	var effects = obj === undefined ? this.getAll() : this.getRelatedTo(obj);
+	var effects = obj === undefined ? this.getAll() : this.getRelatedTo(obj, null, getCardEffects(cards));
 	var result = {};
 
 	Object.defineProperty(result, 'effects', {

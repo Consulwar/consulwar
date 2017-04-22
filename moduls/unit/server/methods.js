@@ -338,7 +338,6 @@ Meteor.methods({
 				enemyLocation: zone.name,
 				missionType: 'patrolfleet',
 				missionLevel: 1,
-				damageReduction: Game.Earth.DAMAGE_REDUCTION,
 				isOnlyDamage: true
 			};
 

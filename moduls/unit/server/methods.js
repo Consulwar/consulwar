@@ -222,39 +222,94 @@ Meteor.methods({
 			}
 		}
 
-		let planet = Game.Planets.getOne(options.planetId);
+		let battleResult;
 
-		if (planet.user_id !== user._id) {
-			throw new Meteor.Error('В анус себе надемаж пёс!');
+		if (options.planetId) {
+			check(options.planetId, String);
+
+			let planet = Game.Planets.getOne(options.planetId);
+
+			if (planet.user_id !== user._id) {
+				throw new Meteor.Error('В анус себе надемаж пёс!');
+			}
+
+			if (!planet.mission) {
+				throw new Meteor.Error('Враги отсутствуют.');
+			}
+
+			let enemyFleet = Game.Planets.getFleetUnits(planet._id);
+			let enemyArmy = { reptiles: { fleet: enemyFleet } };
+
+			let battleOptions = {
+				missionType: planet.mission.type,
+				missionLevel: planet.mission.level,
+				location: planet._id,
+				userLocation: null,
+				enemyLocation: planet._id,
+				isOnlyDamage: true
+			};
+
+			battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+
+			let resultEnemyArmy = battleResult.enemyArmy;
+
+			if (resultEnemyArmy) {
+				planet.mission.units = resultEnemyArmy.reptiles.fleet;
+			} else {
+				planet.mission = null;
+			}
+
+			Game.Planets.update(planet);
+
+		} else if (options.targetId) {
+			check(options.targetId, String);
+			check(options.targetX, Number);
+			check(options.targetY, Number);
+
+			let enemyShip = Game.SpaceEvents.getOne(options.targetId);
+			if (!enemyShip) {
+				throw new Meteor.Error('Корабль не существует');
+			}
+
+			if (!enemyShip.info || !enemyShip.info.mission) {
+				throw new Meteor.Error('Данные корабля испорчены');
+			}
+
+			if (enemyShip.info.isHumans) {
+				throw new Meteor.Error('Нельзя перехватить свой корабль');
+			}
+
+			let enemyFleet = Game.SpaceEvents.getFleetUnits(enemyShip);
+			let enemyArmy = { reptiles: { fleet: enemyFleet } };
+
+			let targetPosition = {
+				x: options.targetX,
+				y: options.targetY
+			};
+
+			let battleOptions = {
+				missionType: enemyShip.info.mission.type,
+				missionLevel: enemyShip.info.mission.level,
+				location: targetPosition,
+				userLocation: null,
+				enemyLocation: targetPosition,
+				isOnlyDamage: true
+			};
+
+			battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+
+			let resultEnemyArmy = battleResult.enemyArmy;
+
+			if (resultEnemyArmy) {
+				enemyShip.info.mission.units = resultEnemyArmy.reptiles.fleet;
+			} else {
+				enemyShip.info.mission = null;
+			}
+
+			Game.SpaceEvents.Collection.update({ _id: enemyShip._id }, enemyShip);
 		}
 
-		if (!planet.mission) {
-			throw new Meteor.Error('Враги отсутствуют.');
-		}
-
-		let enemyFleet = Game.Planets.getFleetUnits(planet._id);
-		let enemyArmy = { reptiles: { fleet: enemyFleet } };
-
-		let battleOptions = {
-			missionType: planet.mission.type,
-			missionLevel: planet.mission.level,
-			location: planet._id,
-			userLocation: null,
-			enemyLocation: planet._id,
-			isOnlyDamage: true
-		};
-
-		let battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
-
-		let resultEnemyArmy = battleResult.enemyArmy;
-
-		if (resultEnemyArmy) {
-			planet.mission.units = resultEnemyArmy.reptiles.fleet;
-		} else {
-			planet.mission = null;
-		}
-
-		Game.Planets.update(planet);
+		return battleResult;
 	},
 
 	'battleHistory.getPage': function(page, count, isEarth) {

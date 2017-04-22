@@ -214,14 +214,14 @@ Meteor.methods({
 					throw new Meteor.Error('Карточки недоступны для применения');
 				}
 
-				let [type, group, engName] = unitInfo.split('/');
+				let [type, group, engName] = unitInfo.split('.');
 
 				if (!userArmy[type]) {
 					userArmy[type] = {};
 				}
 
 				if (!userArmy[type][group]) {
-					userArmy[type][group] = {}
+					userArmy[type][group] = {};
 				}
 
 				if (!userArmy[type][group][engName]) {

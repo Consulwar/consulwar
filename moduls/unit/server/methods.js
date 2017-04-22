@@ -307,7 +307,55 @@ Meteor.methods({
 			}
 
 			Game.SpaceEvents.Collection.update({ _id: enemyShip._id }, enemyShip);
+		} else {
+			let currentZone = Game.EarthZones.Collection.findOne({
+				isCurrent: true
+			});
+
+			let enemyArmy = currentZone.enemyArmy;
+
+			let battleOptions = {
+				isEarth: true,
+				moveType: 'fight',
+				location: currentZone.name,
+				userLocation: currentZone.name,
+				enemyLocation: currentZone.name,
+				damageReduction: Game.Earth.DAMAGE_REDUCTION,
+				isOnlyDamage: true
+			};
+
+			let battle = new Game.Unit.Battle(userArmy, enemyArmy, battleOptions);
+
+			battleResult = battle.results;
+
+			let resultEnemyArmy = battleResult.enemyArmy;
+
+			let update = {};
+
+			if (resultEnemyArmy) {
+				update.$set = {
+					enemyArmy: battleResult.enemyArmy
+				};
+			} else {
+				update.$unset = {
+					enemyArmy: 1
+				};
+			}
+
+			Game.EarthZones.Collection.update({ name: currentZone.name }, update);
 		}
+
+		if (battleResult.reward && battleResult.reward.honor > 0) {
+			Game.Resources.add({
+				honor: battleResult.reward.honor
+			});
+		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
 
 		return battleResult;
 	},

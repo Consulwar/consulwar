@@ -204,21 +204,31 @@ Meteor.methods({
 
 		let result = Game.Effect.Special.getValue(true, { engName: 'instantDamage' }, cardList);
 
-		let userArmy = {army: {instant: {}}};
+		let userArmy = {};
 
-		for (let unitName in result) {
-			if (result.hasOwnProperty(unitName)) {
-				let count = result[unitName];
+		for (let unitInfo in result) {
+			if (result.hasOwnProperty(unitInfo)) {
+				let count = result[unitInfo];
 
 				if (!_.isNumber(count) || count <= 0) {
 					throw new Meteor.Error('Карточки недоступны для применения');
 				}
 
-				if (!userArmy.army.instant[unitName]) {
-					userArmy.army.instant[unitName] = 0;
+				let [type, group, engName] = unitInfo.split('/');
+
+				if (!userArmy[type]) {
+					userArmy[type] = {};
 				}
 
-				userArmy.army.instant[unitName] += count;
+				if (!userArmy[type][group]) {
+					userArmy[type][group] = {}
+				}
+
+				if (!userArmy[type][group][engName]) {
+					userArmy[type][group][engName] = 0;
+				}
+
+				userArmy[type][group][engName] += count;
 			}
 		}
 

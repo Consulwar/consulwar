@@ -90,7 +90,7 @@
 			{{> item_characteristic item=unit}}
 			
 			{{#unless eq unit.side 'reptiles'}}
-				{{> item_price price=(unit.price count)}}
+				{{> item_price price=(unit.price count undefined)}}
 
 				<input class="count" type="number" placeholder="Количество" value="1"/>
 

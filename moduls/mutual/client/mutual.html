@@ -16,7 +16,7 @@
 		</div>
 
 		<div class="resources">
-			{{#let price=(mutual.price count)}}
+			{{#let price=(mutual.price count undefined)}}
 				{{#if price.humans}}
 					<div class="humans" {{priceTooltip price 'humans'}}>
 						{{formatNumberWithISO price.humans}}

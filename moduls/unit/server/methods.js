@@ -308,9 +308,15 @@ Meteor.methods({
 
 			Game.SpaceEvents.Collection.update({ _id: enemyShip._id }, enemyShip);
 		} else if (options.zoneId) {
+			check(options.zoneId, String);
+
 			let zone = Game.EarthZones.Collection.findOne({
 				_id: options.zoneId
 			});
+
+			if (!zone) {
+				throw new Meteor.Error('Зона не существует');
+			}
 
 			let enemyArmy = zone.enemyArmy;
 

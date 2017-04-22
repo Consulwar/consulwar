@@ -307,19 +307,21 @@ Meteor.methods({
 			}
 
 			Game.SpaceEvents.Collection.update({ _id: enemyShip._id }, enemyShip);
-		} else {
-			let currentZone = Game.EarthZones.Collection.findOne({
-				isCurrent: true
+		} else if (options.zoneId) {
+			let zone = Game.EarthZones.Collection.findOne({
+				_id: options.zoneId
 			});
 
-			let enemyArmy = currentZone.enemyArmy;
+			let enemyArmy = zone.enemyArmy;
 
 			let battleOptions = {
 				isEarth: true,
 				moveType: 'fight',
-				location: currentZone.name,
-				userLocation: currentZone.name,
-				enemyLocation: currentZone.name,
+				location: zone.name,
+				userLocation: zone.name,
+				enemyLocation: zone.name,
+				missionType: 'patrolfleet',
+				missionLevel: 1,
 				damageReduction: Game.Earth.DAMAGE_REDUCTION,
 				isOnlyDamage: true
 			};
@@ -342,7 +344,11 @@ Meteor.methods({
 				};
 			}
 
-			Game.EarthZones.Collection.update({ name: currentZone.name }, update);
+			Game.EarthZones.Collection.update({ name: zone.name }, update);
+		}
+
+		if (!battleResult) {
+			throw new Meteor.Error('Не выбрана цель.');
 		}
 
 		if (battleResult.reward && battleResult.reward.honor > 0) {

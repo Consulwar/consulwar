@@ -303,7 +303,7 @@ Meteor.methods({
 	},
 
 	'alliance.getPageInList': function(page, countPerPage) {
-		var user = Meteor.user();
+		let user = Meteor.user();
 
 		if (!user || !user._id) {
 			throw new Meteor.Error('Требуется авторизация');

@@ -95,6 +95,18 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 	});
 };
 
+Game.Alliance.addResource = function(allianceUrl, resource) {
+	let key = _.keys(resource)[0];
+
+	Game.Alliance.Collection.update({
+		url: allianceUrl,
+		deleted: { $exists: false }
+	},{
+		$inc: {[`balance.${key}`]: resource[key]}
+	});
+};
+
 initAllianceContactServer();
+initAllianceReplenishmentServer();
 
 };

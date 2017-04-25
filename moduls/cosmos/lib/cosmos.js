@@ -346,47 +346,43 @@ Game.Planets = {
 	calcDistanceByTime: function(currentTime, totalDistance, maxSpeed, acceleration) {
 		totalDistance *= 50;
 
-		var isFlying = true;
-		var maxAccelerationDistance = totalDistance / 2;
-		var speed = 0;
-		var traveledDistance = 0;
-		var time = 0;
+		let incSpeedTime = maxSpeed / acceleration;
+		let incSpeedDist = incSpeedTime * maxSpeed / 2;
 
-		if (time >= currentTime) {
-			isFlying = false;
-		}
+		let traveledDistance = 0;
 
-		while (isFlying && speed < maxSpeed && traveledDistance < maxAccelerationDistance) {
-			speed = Math.min(speed + acceleration, maxSpeed);
-			traveledDistance += speed;
-			time++;
+		if (totalDistance < incSpeedDist * 2) {
+			let shortDistAccTime = Math.sqrt(totalDistance / acceleration);
+			let shortDistMaxSpeed = shortDistAccTime * acceleration;
 
-			if (time >= currentTime) {
-				isFlying = false;
+			let maxTime = shortDistAccTime * 2;
+
+			if (currentTime <= shortDistAccTime) {
+				traveledDistance = acceleration * currentTime * currentTime / 2;
+			} else if (currentTime < maxTime) {
+				let currentSpeed = shortDistMaxSpeed - (currentTime - shortDistAccTime) * acceleration;
+				traveledDistance = acceleration * shortDistAccTime * shortDistAccTime / 2 +
+					(shortDistMaxSpeed + currentSpeed) * (currentTime - shortDistAccTime) / 2;
+			} else {
+				traveledDistance = totalDistance;
+			}
+		} else {
+			let stableSpeedDist = totalDistance - incSpeedDist * 2;
+			let stableSpeedTime = stableSpeedDist / maxSpeed;
+
+			let maxTime = incSpeedTime * 2 + stableSpeedDist / maxSpeed;
+
+			if (currentTime < incSpeedTime) {
+				traveledDistance = acceleration * currentTime * currentTime / 2;
+			} else if (currentTime <= (incSpeedTime + stableSpeedTime)) {
+				traveledDistance = incSpeedDist + (currentTime - incSpeedTime) * maxSpeed;
+			} else if (currentTime <= maxTime) {
+				let slowingTime = currentTime - incSpeedTime - stableSpeedTime;
+				traveledDistance = incSpeedDist + stableSpeedDist + (maxSpeed * 2 - acceleration * slowingTime) * slowingTime / 2;
+			} else {
+				traveledDistance = totalDistance;
 			}
 		}
-
-		var accDistance = traveledDistance;
-
-		while (isFlying && speed !== 0 && traveledDistance < (totalDistance - accDistance)) {
-			traveledDistance += speed;
-			time++;
-
-			if (time >= currentTime) {
-				isFlying = false;
-			}
-		}
-
-		while (isFlying && speed > 0 && traveledDistance < totalDistance) {
-			speed = Math.max(speed - acceleration, acceleration);
-			traveledDistance += speed;
-			time++;
-
-			if (time >= currentTime) {
-				isFlying = false;
-			}
-		}
-
 		return traveledDistance / 50;
 	},
 
@@ -394,74 +390,59 @@ Game.Planets = {
 		currentDistance *= 50;
 		totalDistance *= 50;
 
-		var isFlying = true;
-		var maxAccelerationDistance = totalDistance / 2;
-		var speed = 0;
-		var traveledDistance = 0;
-		var time = 0;
+		let incSpeedTime = maxSpeed / acceleration;
+		let incSpeedDist = incSpeedTime * maxSpeed / 2;
 
-		if (traveledDistance >= currentDistance) {
-			isFlying = false;
+		let stableSpeedDist = totalDistance - incSpeedDist * 2;
+
+		let time;
+
+		if (currentDistance < incSpeedDist) {
+			time = Math.sqrt(2 * currentDistance / acceleration);
+		} else if (currentDistance < (incSpeedDist + stableSpeedDist) ) {
+			let stableSpeedCurrent = currentDistance - incSpeedDist;
+			time = incSpeedTime + (stableSpeedCurrent / maxSpeed);
+		} else if (currentDistance < totalDistance) {
+			let stableSpeedDist = totalDistance - incSpeedDist * 2;
+			let stableSpeedTime = stableSpeedDist / maxSpeed;
+
+			let decSpeedDist = currentDistance - (incSpeedDist + stableSpeedDist);
+
+			// Решаем квадратное уравнение: (a*t^2)/2 - V0 * t + S = 0
+			// дискриминант (b2 - 4ac) = V0^2 - 2 * a * S
+			// корней получается 2, т.е. точек пересечения 2 (ближняя и через возврат с положительным ускорением),
+			// поэтому берем корень с трицательным дискриминантом, это будет ближняя точка
+
+			let decSpeedTime = ( maxSpeed - Math.sqrt(Math.pow(maxSpeed, 2) - 2 * acceleration * decSpeedDist) ) / acceleration;
+
+			time = incSpeedTime + stableSpeedTime + decSpeedTime;
+		} else {
+			time = Game.Planets.calcTotalTimeByDistance(totalDistance, maxSpeed, acceleration);
 		}
 
-		while (isFlying && speed < maxSpeed && traveledDistance < maxAccelerationDistance) {
-			speed = Math.min(speed + acceleration, maxSpeed);
-			traveledDistance += speed;
-			time++;
-
-			if (traveledDistance >= currentDistance) {
-				isFlying = false;
-			}
-		}
-
-		var accDistance = traveledDistance;
-
-		while (isFlying && speed !== 0 && traveledDistance < (totalDistance - accDistance)) {
-			traveledDistance += speed;
-			time++;
-
-			if (traveledDistance >= currentDistance) {
-				isFlying = false;
-			}
-		}
-
-		while (isFlying && speed > 0 && traveledDistance < totalDistance) {
-			speed = Math.max(speed - acceleration, acceleration);
-			traveledDistance += speed;
-			time++;
-
-			if (traveledDistance >= currentDistance) {
-				isFlying = false;
-			}
-		}
-
-		return time;
+		return Math.round(time);
 	},
 
 	calcTotalTimeByDistance: function(distance, maxSpeed, acceleration) {
 		distance *= 50;
 
-		var maxAccelerationDistance = distance / 2;
-		var speed = 0;
-		var traveledDistance = 0;
-		var time = 0;
+		let incSpeedTime = maxSpeed / acceleration;
+		let incSpeedDist = incSpeedTime * maxSpeed / 2;
 
-		// TODO: Формула! Где формула?!
-		while (speed <= maxSpeed && traveledDistance < maxAccelerationDistance) {
-			speed = Math.min(speed + acceleration, maxSpeed);
-			traveledDistance += speed;
-			time++;
+		let totalTime;
+
+		if (distance < incSpeedDist * 2) {
+			let shortDistAccTime = Math.sqrt(distance / acceleration);
+
+			totalTime = shortDistAccTime * 2;
+		} else {
+			let stableSpeedDist = distance - incSpeedDist * 2;
+			let stableSpeedTime = stableSpeedDist / maxSpeed;
+
+			totalTime = stableSpeedTime + incSpeedTime * 2;
 		}
 
-		traveledDistance *= 2;
-		time *= 2;
-
-		while (speed !== 0 && traveledDistance < distance) {
-			traveledDistance += maxSpeed;
-			time++;
-		}
-
-		return time;
+		return Math.round(totalTime);
 	},
 
 	calcFlyTime: function(startPoint, endPoint, engineLevel) {

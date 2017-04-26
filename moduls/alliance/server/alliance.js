@@ -95,6 +95,58 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 	});
 };
 
+Game.Alliance.calculateAllRating = function() {
+	let alliances = Game.Alliance.Collection.find({
+		deleted: { $exists: false }
+	}, {
+		fields: {
+			owner: 1,
+			participants: 1
+		}
+	}).fetch();
+
+	for (let alliance of alliances) {
+		let allianceRating = 0;
+
+		for (let username of alliance.participants) {
+			let userInfo = Meteor.users.findOne({
+				username
+			}, {
+				fields: {
+					rating: 1
+				}
+			});
+
+			allianceRating += userInfo.rating;
+		}
+
+		let ownerUser = Meteor.users.findOne({
+			username: alliance.owner
+		});
+
+		let position = Game.Statistic.getUserPositionInRating('general', ownerUser).position;
+
+		Game.Alliance.Collection.update({
+			_id: alliance._id
+		}, {
+			$set: {
+				rating: allianceRating,
+				owner_position: position
+			}
+		});
+	}
+};
+
+SyncedCron.add({
+	name: 'Расчет рейтинга альянсов',
+	schedule: function(parser) {
+		return parser.text(Game.Alliance.UPDATE_SCHEDULE);
+	},
+	job: function() {
+		Game.Alliance.calculateAllRating();
+	}
+});
+
 initAllianceContactServer();
 
 };

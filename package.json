@@ -1,0 +1,19 @@
+{
+  "name": "consulwar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "babel-runtime": "6.23.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@jira.home.morula.ru:10021/con/consulwar-engine.git"
+  },
+  "author": "",
+  "license": "ISC"
+}

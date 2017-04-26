@@ -107,6 +107,6 @@ Game.Alliance.addResource = function(allianceUrl, resource) {
 };
 
 initAllianceContactServer();
-initAllianceReplenishmentServer();
+initAllianceReplenishmentHistoryServer();
 
 };

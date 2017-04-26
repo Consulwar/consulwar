@@ -1,8 +1,8 @@
-initAllianceReplenishmentServerMethods = function() {
+initAllianceReplenishmentHistoryServerMethods = function() {
 'use strict';
 
 Meteor.methods({
-	'allianceReplenishment.create': function(price) {
+	'allianceReplenishmentHistory.create': function(price) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -48,7 +48,7 @@ Meteor.methods({
 		Game.Resources.spend(resource);
 
 		Game.Alliance.addResource(alliance.url, resource);
-		Game.Alliance.Replenishment.create(alliance, user, resource);
+		Game.Alliance.ReplenishmentHistory.create(alliance, user, resource);
 	}
 });
 

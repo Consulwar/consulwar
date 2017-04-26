@@ -1,11 +1,11 @@
-initAllianceReplenishmentServer = function() {
+initAllianceReplenishmentHistoryServer = function() {
 'use strict';
 
-initAllianceReplenishmentLib();
-initAllianceReplenishmentServerMethods();
+initAllianceReplenishmentHistoryLib();
+initAllianceReplenishmentHistoryServerMethods();
 
-Game.Alliance.Replenishment.create = function(alliance, user, resource) {
-	Game.Alliance.Replenishment.Collection.insert({
+Game.Alliance.ReplenishmentHistory.create = function(alliance, user, resource) {
+	Game.Alliance.ReplenishmentHistory.Collection.insert({
 		username: user.username,
 		user_id: user._id,
 		alliance_id: alliance._id,

@@ -1,8 +1,8 @@
-initAllianceReplenishmentLib = function() {
+initAllianceReplenishmentHistoryLib = function() {
 'use strict';
 
-Game.Alliance.Replenishment = {
-	Collection: new Meteor.Collection('alliance_replenishment')
+Game.Alliance.ReplenishmentHistory = {
+	Collection: new Meteor.Collection('alliance_replenishment_history')
 };
 
 };

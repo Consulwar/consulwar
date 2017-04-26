@@ -148,5 +148,9 @@
 		"isDebug": false,
 		"numRequests": 5,
 		"timeInterval": 10000
+	},
+	"datadog": {
+		"host": "host",
+		"port": 123
 	}
 }

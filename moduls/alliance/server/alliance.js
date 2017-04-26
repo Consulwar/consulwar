@@ -95,6 +95,17 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 	});
 };
 
+Game.Alliance.levelUp = function(alliance) {
+	Game.Alliance.Collection.update({
+		_id: alliance._id,
+		deleted: { $exists: false }
+	},{
+		$inc: {
+			level: 1
+		}
+	});
+};
+
 initAllianceContactServer();
 
 };

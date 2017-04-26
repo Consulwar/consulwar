@@ -375,6 +375,34 @@ Meteor.methods({
 		}
 
 		return info;
+	},
+
+	'alliance.levelUp': function(url) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		console.log('alliance.levelUp:', new Date(), user.username);
+
+		check(url, String);
+
+		let alliance = Game.Alliance.getByUrl(url);
+
+		if (!alliance) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Альянс не найден');
+		}
+
+		let currentLevel = alliance.level;
+
+		//todo check enough alliance balance
+
+		Game.Alliance.levelUp(alliance);
 	}
 });
 

@@ -137,13 +137,38 @@ Game.Alliance.calculateAllRating = function() {
 	}
 };
 
+Game.Alliance.giveCardsForParticipants = function() {
+	let alliances = Game.Alliance.Collection.find({
+		deleted: { $exists: false }
+	}, {
+		fields: {
+			participants: 1
+		}
+	}).fetch();
+
+	for (let alliance of alliances) {
+		for (let username of alliance.participants) {
+			let userInfo = Meteor.users.findOne({
+				username
+			}, {
+				fields: {
+					_id: 1
+				}
+			});
+
+			Game.Cards.add({damage1: 1}, userInfo._id);
+		}
+	}
+};
+
 SyncedCron.add({
-	name: 'Расчет рейтинга альянсов',
+	name: 'Расчет рейтинга альянсов и выдача карточек',
 	schedule: function(parser) {
 		return parser.text(Game.Alliance.UPDATE_SCHEDULE);
 	},
 	job: function() {
 		Game.Alliance.calculateAllRating();
+		Game.Alliance.giveCardsForParticipants();
 	}
 });
 

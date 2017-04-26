@@ -2,7 +2,7 @@ initAllianceReplenishmentHistoryServerMethods = function() {
 'use strict';
 
 Meteor.methods({
-	'allianceReplenishmentHistory.create': function(price) {
+	'allianceReplenishmentHistory.create': function(resource) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -15,14 +15,13 @@ Meteor.methods({
 
 		console.log('alliance.replenishBalance:', new Date(), user.username);
 
-		check(price, Object);
-		if (price.credits) {
-			check(price.credits, Match.Integer);
-		} else if (price.honor) {
-			check(price.honor, Match.Integer);
-		} else {
-			throw new Meteor.Error('Ошибка пополнения баланса.', 'Неверный тип пополнения');
-		}
+		check(resource, Match.OneOf({
+			honor: Match.Integer,
+			credits: Match.Optional(Match.Integer)
+		}, {
+			honor: Match.Optional(Match.Integer),
+			credits: Match.Integer
+		}));
 
 		if (!user.alliance) {
 			throw new Meteor.Error('Ошибка пополнения баланса', 'Вы не состоите в альянсе');
@@ -31,18 +30,15 @@ Meteor.methods({
 		let alliance = Game.Alliance.getByUrl(user.alliance);
 
 		let resources = Game.Resources.getValue();
-		let resource = {};
 
-		if (price.credits) {
-			if (resources.credits.amount < price.credits) {
-				throw new Meteor.Error('Ошибка пополнения баланса', 'Недостаточно средств');
+		for (let name in resource) {
+			if (resource.hasOwnProperty(name)) {
+				let count = resource[name];
+
+				if (resources[name].amount < count) {
+					throw new Meteor.Error('Ошибка пополнения баланса', 'Недостаточно средств');
+				}
 			}
-			resource.credits = price.credits;
-		} else {
-			if (resources.honor.amount < price.honor) {
-				throw new Meteor.Error('Ошибка пополнения баланса', 'Недостаточно средств');
-			}
-			resource.honor = price.honor;
 		}
 
 		Game.Resources.spend(resource);

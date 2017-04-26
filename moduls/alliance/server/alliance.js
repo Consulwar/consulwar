@@ -96,13 +96,19 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 };
 
 Game.Alliance.addResource = function(allianceUrl, resource) {
-	let key = _.keys(resource)[0];
+	let inc = {};
+
+	for (let name in resource) {
+		if (resource.hasOwnProperty(name)) {
+			inc[`balance.${name}`] = resource[name];
+		}
+	}
 
 	Game.Alliance.Collection.update({
 		url: allianceUrl,
 		deleted: { $exists: false }
 	},{
-		$inc: {[`balance.${key}`]: resource[key]}
+		$inc: inc
 	});
 };
 

@@ -3,3 +3,4 @@ settings-*.json
 mupc.json
 mupc-*.json
 *.db
+/node_modules/

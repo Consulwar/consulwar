@@ -34,7 +34,7 @@ Meteor.methods({
 				break;
 		}
 
-		Game.Alliance.create(user, options);
+		let alliance_id = Game.Alliance.create(user, options);
 
 		let price;
 		if (options.priceType === 'credits') {
@@ -44,6 +44,12 @@ Meteor.methods({
 		}
 
 		Game.Resources.spend(price);
+
+		if (price.credits) {
+			Game.Payment.Expense.log(price.credits, 'alliance_create', {
+				alliance_id: alliance_id
+			});
+		}
 
 		Game.Chat.createRoom(user, 'alliance/' + options.url, options.name, false, true, 50);
 

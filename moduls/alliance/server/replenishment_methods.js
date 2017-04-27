@@ -43,6 +43,12 @@ Meteor.methods({
 
 		Game.Resources.spend(resource);
 
+		if (resource.credits) {
+			Game.Payment.Expense.log(resource.credits, 'alliance_replenishment', {
+				alliance_id: alliance._id
+			});
+		}
+
 		Game.Alliance.addResource(alliance.url, resource);
 		Game.Alliance.ReplenishmentHistory.create(alliance, user, resource);
 	}

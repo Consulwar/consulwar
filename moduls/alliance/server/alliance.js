@@ -176,6 +176,24 @@ SyncedCron.add({
 	}
 });
 
+Game.Alliance.addResource = function(allianceUrl, resource) {
+	let inc = {};
+
+	for (let name in resource) {
+		if (resource.hasOwnProperty(name)) {
+			inc[`balance.${name}`] = resource[name];
+		}
+	}
+
+	Game.Alliance.Collection.update({
+		url: allianceUrl,
+		deleted: { $exists: false }
+	},{
+		$inc: inc
+	});
+};
+
 initAllianceContactServer();
+initAllianceReplenishmentHistoryServer();
 
 };

@@ -271,6 +271,11 @@ Game.BattleHistory.Collection._ensureIndex({
 	user_id: 1
 });
 
+Game.BattleHistory.Collection._ensureIndex({
+	user_id: 1,
+	timestamp: -1
+});
+
 Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
 	var history = {
 		user_id: options.isEarth ? 'earth' : Meteor.userId(),

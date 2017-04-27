@@ -6,6 +6,13 @@ Game.SpaceEvents.Collection._ensureIndex({
 	status: 1
 });
 
+Game.SpaceEvents.Collection._ensureIndex({
+	user_id: 1,
+	type: 1,
+	timeEnd: -1,
+	'info.mission.type': 1
+});
+
 Game.SpaceEvents.actualize = function() {
 	var timeCurrent = Game.getCurrentTime();
 

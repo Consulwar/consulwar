@@ -35,6 +35,10 @@ Game.Alliance.create = function(user, options) {
 		information: options.information,
 		level: 1,
 		participants: [],
+		balance: {
+			honor: 0,
+			credits: 0
+		},
 		timestamp: Game.getCurrentTime()
 	});
 
@@ -103,6 +107,23 @@ Game.Alliance.levelUp = function(alliance) {
 		$inc: {
 			level: 1
 		}
+	});
+};
+
+Game.Alliance.spendResource = function(allianceUrl, resource) {
+	let dec = {};
+
+	for (let name in resource) {
+		if (resource.hasOwnProperty(name)) {
+			dec[`balance.${name}`] = -resource[name];
+		}
+	}
+
+	Game.Alliance.Collection.update({
+		url: allianceUrl,
+		deleted: { $exists: false }
+	},{
+		$inc: dec
 	});
 };
 

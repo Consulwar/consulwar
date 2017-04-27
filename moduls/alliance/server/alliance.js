@@ -96,67 +96,71 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 };
 
 Game.Alliance.calculateAllRating = function() {
-	let alliances = Game.Alliance.Collection.find({
-		deleted: { $exists: false }
-	}, {
-		fields: {
-			owner: 1,
-			participants: 1
-		}
+	let alliances = Game.Alliance.getAll().fetch();
+
+	let alliancesByUrl = {};
+	for (let alliance of alliances) {
+		alliancesByUrl[alliance.url] = alliance;
+	}
+
+	let updates = {};
+
+	let users = Meteor.users.find({
+		alliance: { $exists: true }
 	}).fetch();
 
-	for (let alliance of alliances) {
-		let allianceRating = 0;
-
-		for (let username of alliance.participants) {
-			let userInfo = Meteor.users.findOne({
-				username
-			}, {
-				fields: {
-					rating: 1
-				}
-			});
-
-			allianceRating += userInfo.rating;
+	for (let user of users) {
+		let allianceUrl = user.alliance;
+		if (!updates[allianceUrl]) {
+			updates[allianceUrl] = {
+				rating: 0,
+				ownerPosition: 0
+			};
 		}
 
-		let ownerUser = Meteor.users.findOne({
-			username: alliance.owner
-		});
+		updates[allianceUrl].rating += user.rating;
 
-		let position = Game.Statistic.getUserPositionInRating('general', ownerUser).position;
+		let alliance = alliancesByUrl[allianceUrl];
+		if (user.username === alliance.owner) {
+			updates[allianceUrl].ownerPosition = Game.Statistic.getUserPositionInRating('general', user).position;
+		}
+	}
 
-		Game.Alliance.Collection.update({
+	let bulkOp = Game.Alliance.Collection.rawCollection().initializeUnorderedBulkOp();
+
+	for (let alliance of alliances) {
+		let update = updates[alliance.url];
+
+		bulkOp.find({
 			_id: alliance._id
-		}, {
+		}).update({
 			$set: {
-				rating: allianceRating,
-				owner_position: position
+				rating: update.rating,
+				owner_position: update.ownerPosition
 			}
 		});
 	}
+
+	bulkOp.execute(function(err, data) {});
 };
 
 Game.Alliance.giveCardsForParticipants = function() {
-	let alliances = Game.Alliance.Collection.find({
-		deleted: { $exists: false }
-	}, {
-		fields: {
-			participants: 1
-		}
+	let alliances = Game.Alliance.getAll().fetch();
+
+	let alliancesByUrl = {};
+	for (let alliance of alliances) {
+		alliancesByUrl[alliance.url] = alliance;
+	}
+
+	let users = Meteor.users.find({
+		alliance: { $exists: true }
 	}).fetch();
 
-	for (let alliance of alliances) {
-		for (let username of alliance.participants) {
-			let userInfo = Meteor.users.findOne({
-				username
-			}, {
-				fields: {
-					_id: 1
-				}
-			});
+	for (let user of users) {
+		let alliance = alliancesByUrl[user.alliance];
 
-			Game.Cards.add({damage1: 1}, userInfo._id);
+		if (alliance.daily_card) {
+			Game.Cards.add({[alliance.daily_card]: 1}, user._id);
 		}
 	}
 };

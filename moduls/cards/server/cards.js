@@ -63,9 +63,9 @@ Game.Cards.spend = function(cards) {
 				inc[`cards.used.${group}.total`] = count;
 			}
 		}
-	}
 
-	Game.Statistic.incrementUser(Meteor.userId(), inc);
+		Game.Statistic.incrementUser(Meteor.userId(), inc);
+	}
 
 	return Game.Cards.increment(cards, true);
 };

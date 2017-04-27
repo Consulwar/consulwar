@@ -82,7 +82,7 @@
 			"priceInCredits": 100,
 			"priceInHonor": 10000,
 			"invalidateSchedule": "at 4:00 am",
-			"updateSchedule": "at 4:00 am",
+			"updateSchedule": "at 4:30 am",
 			"leavingTimeout": 259200,
 			"participantsPerLevel": 10,
 			"countPerPage": 20

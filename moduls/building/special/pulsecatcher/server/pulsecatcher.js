@@ -41,7 +41,7 @@ Game.Building.special.Pulsecatcher.startNextQuiz = function() {
 };
 
 SyncedCron.add({
-	name: 'Следующее голосование по импульсному уловителю',
+	name: 'Следующее голосование по Импульсному уловителю',
 	schedule: function(parser) {
 		return parser.text(Game.Building.special.Pulsecatcher.UPDATE_SCHEDULE);
 	},

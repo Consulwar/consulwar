@@ -85,7 +85,18 @@
 			"updateSchedule": "at 4:30 am",
 			"leavingTimeout": 259200,
 			"participantsPerLevel": 10,
-			"countPerPage": 20
+			"countPerPage": 20,
+			"levels": {
+				"2": {"price": {"honor": 100000, "credits": 1000}},
+				"3": {"price": {"honor": 200000, "credits": 2000}},
+				"4": {"price": {"honor": 300000, "credits": 3000}},
+				"5": {"price": {"honor": 400000, "credits": 4000}},
+				"6": {"price": {"honor": 500000, "credits": 5000}},
+				"7": {"price": {"honor": 600000, "credits": 6000}},
+				"8": {"price": {"honor": 700000, "credits": 7000}},
+				"9": {"price": {"honor": 800000, "credits": 8000}},
+				"10": {"price": {"honor": 900000, "credits": 9000}}
+			}
 		}
 	},
 	"recaptcha": {

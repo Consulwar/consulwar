@@ -35,6 +35,10 @@ Game.Alliance.create = function(user, options) {
 		information: options.information,
 		level: 1,
 		participants: [],
+		balance: {
+			honor: 0,
+			credits: 0
+		},
 		timestamp: Game.getCurrentTime()
 	});
 
@@ -92,6 +96,51 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 		$unset: {
 			alliance: 1
 		}
+	});
+};
+
+Game.Alliance.levelUp = function(alliance) {
+	Game.Alliance.Collection.update({
+		_id: alliance._id,
+		deleted: { $exists: false }
+	},{
+		$inc: {
+			level: 1
+		}
+	});
+};
+
+Game.Alliance.spendResource = function(allianceUrl, resource) {
+	let dec = {};
+
+	for (let name in resource) {
+		if (resource.hasOwnProperty(name)) {
+			dec[`balance.${name}`] = -resource[name];
+		}
+	}
+
+	Game.Alliance.Collection.update({
+		url: allianceUrl,
+		deleted: { $exists: false }
+	},{
+		$inc: dec
+	});
+};
+
+Game.Alliance.addResource = function(allianceUrl, resource) {
+	let inc = {};
+
+	for (let name in resource) {
+		if (resource.hasOwnProperty(name)) {
+			inc[`balance.${name}`] = resource[name];
+		}
+	}
+
+	Game.Alliance.Collection.update({
+		url: allianceUrl,
+		deleted: { $exists: false }
+	},{
+		$inc: inc
 	});
 };
 
@@ -183,23 +232,6 @@ SyncedCron.add({
 		Game.Alliance.giveCardsForParticipants();
 	}
 });
-
-Game.Alliance.addResource = function(allianceUrl, resource) {
-	let inc = {};
-
-	for (let name in resource) {
-		if (resource.hasOwnProperty(name)) {
-			inc[`balance.${name}`] = resource[name];
-		}
-	}
-
-	Game.Alliance.Collection.update({
-		url: allianceUrl,
-		deleted: { $exists: false }
-	},{
-		$inc: inc
-	});
-};
 
 initAllianceContactServer();
 initAllianceReplenishmentHistoryServer();

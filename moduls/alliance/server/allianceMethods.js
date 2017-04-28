@@ -372,15 +372,60 @@ Meteor.methods({
 		};
 
 		if (extended && user.alliance === url) {
-			info.balance = {
-				honor: 0,
-				credits: 0
-			};
-
+			info.balance = alliance.balance;
 			info.participants = alliance.participants;
 		}
 
 		return info;
+	},
+
+	'alliance.levelUp': function() {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		console.log('alliance.levelUp:', new Date(), user.username);
+
+		if (!user.alliance) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не состоите в альянсе');
+		}
+
+		let alliance = Game.Alliance.getByUrl(user.alliance);
+
+		if (alliance.owner !== user.username) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не создатель альянса');
+		}
+
+		let currentLevel = alliance.level;
+
+		let nextLevel = Game.Alliance.LEVELS[parseInt(currentLevel, 10) + 1];
+
+		if (!nextLevel) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Альянс уже максимального уровня.');
+		}
+
+		let price = nextLevel.price;
+		let balance = alliance.balance;
+
+		for (let name in price) {
+			if (price.hasOwnProperty(name)) {
+				let count = price[name];
+
+				if (balance[name] < count) {
+					throw new Meteor.Error('Ошибка повышения уровня альянса', 'Недостаточно средств на балансе');
+				}
+			}
+		}
+
+		Game.Alliance.spendResource(alliance.url, price);
+
+		Game.Alliance.levelUp(alliance);
 	}
 });
 

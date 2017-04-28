@@ -11,6 +11,7 @@ initAllianceConfigLib = function() {
 		|| !Meteor.settings.public.alliance.leavingTimeout
 		|| !Meteor.settings.public.alliance.participantsPerLevel
 		|| !Meteor.settings.public.alliance.countPerPage
+		|| !Meteor.settings.public.alliance.levels
 	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры альянса (см. settings.sample public.alliance)');
 	}
@@ -24,4 +25,5 @@ initAllianceConfigLib = function() {
 	Game.Alliance.LEAVING_TIMEOUT = Meteor.settings.public.alliance.leavingTimeout;
 	Game.Alliance.PARTICIPANTS_PER_LEVEL = Meteor.settings.public.alliance.participantsPerLevel;
 	Game.Alliance.COUNT_PER_PAGE = Meteor.settings.public.alliance.countPerPage;
+	Game.Alliance.LEVELS = Meteor.settings.public.alliance.levels;
 };

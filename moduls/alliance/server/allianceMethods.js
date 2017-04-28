@@ -19,29 +19,17 @@ Meteor.methods({
 		checkCreator(user);
 
 		let userResources = Game.Resources.getValue();
+		let firstLevel = Game.Alliance.LEVELS[1];
 
-		switch (options.priceType){
-			case 'credits':
-				if (userResources.credits.amount < Game.Alliance.PRICE_IN_CREDITS) {
-					throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств.');
-				}
-				break;
-
-			case 'honor':
-				if (userResources.honor.amount < Game.Alliance.PRICE_IN_HONOR) {
-					throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств');
-				}
-				break;
+		if (userResources[options.priceType].amount < firstLevel.price[options.priceType]) {
+			throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств.');
 		}
 
 		let alliance_id = Game.Alliance.create(user, options);
 
-		let price;
-		if (options.priceType === 'credits') {
-			price = {credits: Game.Alliance.PRICE_IN_CREDITS};
-		} else {
-			price = {honor: Game.Alliance.PRICE_IN_HONOR};
-		}
+		let price = {
+			[options.priceType]: firstLevel.price[options.priceType]
+		};
 
 		Game.Resources.spend(price);
 
@@ -379,7 +367,7 @@ Meteor.methods({
 		return info;
 	},
 
-	'alliance.levelUp': function() {
+	'alliance.levelUp': function(priceType) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -391,6 +379,16 @@ Meteor.methods({
 		}
 
 		console.log('alliance.levelUp:', new Date(), user.username);
+
+		check(priceType, Match.Where(function(priceType) {
+			check(priceType, String);
+
+			if (['credits', 'honor'].indexOf(priceType) === -1) {
+				throw new Match.Error('Неверный тип оплаты');
+			}
+
+			return true;
+		}));
 
 		if (!user.alliance) {
 			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не состоите в альянсе');
@@ -413,17 +411,15 @@ Meteor.methods({
 		let price = nextLevel.price;
 		let balance = alliance.balance;
 
-		for (let name in price) {
-			if (price.hasOwnProperty(name)) {
-				let count = price[name];
+		let count = price[priceType];
 
-				if (balance[name] < count) {
-					throw new Meteor.Error('Ошибка повышения уровня альянса', 'Недостаточно средств на балансе');
-				}
-			}
+		if (balance[priceType] < count) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Недостаточно средств на балансе');
 		}
 
-		Game.Alliance.spendResource(alliance.url, price);
+		Game.Alliance.spendResource(alliance.url, {
+			[priceType]: price[priceType]
+		});
 
 		Game.Alliance.levelUp(alliance);
 	}

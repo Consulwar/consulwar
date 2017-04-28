@@ -79,7 +79,6 @@
 		"alliance": {
 			"creatorRating": 100000,
 			"creatorBuildingLevel": 20,
-			"priceInCredits": 100,
 			"priceInHonor": 10000,
 			"invalidateSchedule": "at 4:00 am",
 			"updateSchedule": "at 4:30 am",
@@ -87,6 +86,7 @@
 			"participantsPerLevel": 10,
 			"countPerPage": 20,
 			"levels": {
+				"1": {"price": {"honor": 10000, "credits": 100}},
 				"2": {"price": {"honor": 100000, "credits": 1000}},
 				"3": {"price": {"honor": 200000, "credits": 2000}},
 				"4": {"price": {"honor": 300000, "credits": 3000}},

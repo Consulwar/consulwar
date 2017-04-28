@@ -96,6 +96,8 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 };
 
 Game.Alliance.calculateAllRating = function() {
+	console.log("Расчет рейтингов альянсов начался:", new Date());
+
 	let alliances = Game.Alliance.getAll().fetch();
 
 	let alliancesByUrl = {};
@@ -141,7 +143,13 @@ Game.Alliance.calculateAllRating = function() {
 		});
 	}
 
-	bulkOp.execute(function(err, data) {});
+	bulkOp.execute(function(err, data) {
+		if (err) {
+			console.log("Расчет рейтингов альянсов завершен с ошибкой:", err, new Date());
+		} else {
+			console.log("Расчет рейтингов альянсов успешно завершен.", new Date());
+		}
+	});
 };
 
 Game.Alliance.giveCardsForParticipants = function() {

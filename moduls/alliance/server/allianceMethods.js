@@ -19,29 +19,17 @@ Meteor.methods({
 		checkCreator(user);
 
 		let userResources = Game.Resources.getValue();
+		let firstLevel = Game.Alliance.LEVELS[1];
 
-		switch (options.priceType){
-			case 'credits':
-				if (userResources.credits.amount < Game.Alliance.PRICE_IN_CREDITS) {
-					throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств.');
-				}
-				break;
-
-			case 'honor':
-				if (userResources.honor.amount < Game.Alliance.PRICE_IN_HONOR) {
-					throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств');
-				}
-				break;
+		if (userResources[options.priceType].amount < firstLevel.price[options.priceType]) {
+			throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно средств.');
 		}
 
 		let alliance_id = Game.Alliance.create(user, options);
 
-		let price;
-		if (options.priceType === 'credits') {
-			price = {credits: Game.Alliance.PRICE_IN_CREDITS};
-		} else {
-			price = {honor: Game.Alliance.PRICE_IN_HONOR};
-		}
+		let price = {
+			[options.priceType]: firstLevel.price[options.priceType]
+		};
 
 		Game.Resources.spend(price);
 
@@ -372,15 +360,68 @@ Meteor.methods({
 		};
 
 		if (extended && user.alliance === url) {
-			info.balance = {
-				honor: 0,
-				credits: 0
-			};
-
+			info.balance = alliance.balance;
 			info.participants = alliance.participants;
 		}
 
 		return info;
+	},
+
+	'alliance.levelUp': function(priceType) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован.');
+		}
+
+		console.log('alliance.levelUp:', new Date(), user.username);
+
+		check(priceType, Match.Where(function(priceType) {
+			check(priceType, String);
+
+			if (['credits', 'honor'].indexOf(priceType) === -1) {
+				throw new Match.Error('Неверный тип оплаты');
+			}
+
+			return true;
+		}));
+
+		if (!user.alliance) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не состоите в альянсе');
+		}
+
+		let alliance = Game.Alliance.getByUrl(user.alliance);
+
+		if (alliance.owner !== user.username) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не создатель альянса');
+		}
+
+		let currentLevel = alliance.level;
+
+		let nextLevel = Game.Alliance.LEVELS[parseInt(currentLevel, 10) + 1];
+
+		if (!nextLevel) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Альянс уже максимального уровня.');
+		}
+
+		let price = nextLevel.price;
+		let balance = alliance.balance;
+
+		let count = price[priceType];
+
+		if (balance[priceType] < count) {
+			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Недостаточно средств на балансе');
+		}
+
+		Game.Alliance.spendResource(alliance.url, {
+			[priceType]: price[priceType]
+		});
+
+		Game.Alliance.levelUp(alliance);
 	}
 });
 

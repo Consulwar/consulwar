@@ -404,12 +404,13 @@ Meteor.methods({
 
 		let currentLevel = alliance.level;
 
-		let price = Game.Alliance.LEVELS[parseInt(currentLevel, 10) + 1].price;
+		let nextLevel = Game.Alliance.LEVELS[parseInt(currentLevel, 10) + 1];
 
-		if (!price) {
+		if (!nextLevel) {
 			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Альянс уже максимального уровня.');
 		}
 
+		let price = nextLevel.price;
 		let balance = alliance.balance;
 
 		for (let name in price) {

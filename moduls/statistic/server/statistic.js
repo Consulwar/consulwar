@@ -136,6 +136,50 @@ Game.Statistic.fixUser = function(userId) {
 	});
 };
 
+Game.Statistic.getUserPositionInRating = function(type, user) {
+	let position;
+	let total;
+	let sortField = Game.Statistic.getSortFieldForType(type).field;
+
+	if (type === "general") {
+		position = Meteor.users.find({
+			rating: { $gt: user.rating }
+		}).count();
+
+		total = Meteor.users.find({
+			rating: { $gt: 0 }
+		}).count();
+	} else {
+		let fields = {};
+		fields[sortField] = 1;
+
+		let selector = {};
+		selector[sortField] = {
+			$gt: Game.Statistic.getUserValue(
+				sortField,
+				Game.Statistic.Collection.findOne({
+					user_id: user._id
+				}, {
+					fields: fields
+				})
+			)
+		};
+
+		position = Game.Statistic.Collection.find(selector).count();
+
+		selector[sortField] = {
+			$gt: 0
+		};
+
+		total = Game.Statistic.Collection.find(selector).count();
+	}
+
+	return {
+		total,
+		position: position + 1
+	};
+};
+
 Meteor.methods({
 	'statistic.fixGame': function() {
 		var user = Meteor.user();
@@ -213,47 +257,7 @@ Meteor.methods({
 		
 		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
 		
-		var position;
-		var total;
-		var sortField = Game.Statistic.getSortFieldForType(type).field;
-
-		if (type == "general") {
-			position = Meteor.users.find({
-				rating: { $gt: selectedUser.rating }
-			}).count();
-
-			total = Meteor.users.find({
-				rating: { $gt: 0 }
-			}).count();
-		} else {
-			var fields = {};
-			fields[sortField] = 1;
-
-			var selector = {};
-			selector[sortField] = { 
-				$gt: Game.Statistic.getUserValue(
-					sortField,
-					Game.Statistic.Collection.findOne({ 
-						user_id: selectedUser._id 
-					}, {
-						fields: fields
-					})
-				)
-			};
-
-			position = Game.Statistic.Collection.find(selector).count();
-
-			selector[sortField] = { 
-				$gt: 0 
-			};
-
-			total = Game.Statistic.Collection.find(selector).count();
-		}
-
-		return {
-			total: total,
-			position: position + 1
-		};
+		return Game.Statistic.getUserPositionInRating(type, selectedUser);
 	},
 
 	'statistic.getPageInRating': function(type, page, countPerPage) {

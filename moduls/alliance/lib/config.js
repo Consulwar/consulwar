@@ -10,7 +10,10 @@ initAllianceConfigLib = function() {
 		|| !Meteor.settings.public.alliance.participantsPerLevel
 		|| !Meteor.settings.public.alliance.countPerPage
 		|| !Meteor.settings.public.alliance.levels
-		|| !checkAllLevels(Meteor.settings.public.alliance.levels)
+		|| !Meteor.settings.public.alliance.levels[1]
+		|| !Meteor.settings.public.alliance.levels[1].price
+		|| !Meteor.settings.public.alliance.levels[1].price.honor
+		|| !Meteor.settings.public.alliance.levels[1].price.credits
 	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры альянса (см. settings.sample public.alliance)');
 	}
@@ -23,14 +26,4 @@ initAllianceConfigLib = function() {
 	Game.Alliance.PARTICIPANTS_PER_LEVEL = Meteor.settings.public.alliance.participantsPerLevel;
 	Game.Alliance.COUNT_PER_PAGE = Meteor.settings.public.alliance.countPerPage;
 	Game.Alliance.LEVELS = Meteor.settings.public.alliance.levels;
-};
-
-let checkAllLevels = function(levels) {
-	for(let i = 1; i <= 10; i++) {
-		if (!levels[i]) {
-			return false;
-		}
-	}
-
-	return true;
 };

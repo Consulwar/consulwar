@@ -79,7 +79,6 @@
 		"alliance": {
 			"creatorRating": 100000,
 			"creatorBuildingLevel": 20,
-			"priceInHonor": 10000,
 			"invalidateSchedule": "at 4:00 am",
 			"updateSchedule": "at 4:30 am",
 			"leavingTimeout": 259200,

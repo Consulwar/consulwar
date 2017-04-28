@@ -104,6 +104,7 @@ Meteor.methods({
 		}
 
 		console.log('entranceReward.getHistory:', new Date(), user.username);
+		Game.datadog.increment('entranceReward.getHistory');
 
 		return history;
 	},

@@ -85,6 +85,7 @@ Meteor.methods({
 		}
 
 		console.log('getQuiz: ', new Date(), user.username);
+		Game.datadog.increment('getQuiz');
 
 		check(id, String);
 
@@ -116,6 +117,7 @@ Meteor.methods({
 		}
 
 		console.log('quizAnswer: ', new Date(), user.username);
+		Game.datadog.increment('quizAnswer');
 
 		check(id, String);
 		check(answer, String);
@@ -236,6 +238,7 @@ Meteor.methods({
 		}
 
 		console.log('createQuiz: ', new Date(), user.username);
+		Game.datadog.increment('createQuiz');
 
 		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
@@ -291,6 +294,7 @@ Meteor.methods({
 		}
 
 		console.log('sendQuiz: ', new Date(), user.username);
+		Game.datadog.increment('sendQuiz');
 
 		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');

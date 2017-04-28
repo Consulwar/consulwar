@@ -193,6 +193,7 @@ Meteor.methods({
 		}
 
 		console.log('statistic.fixGame: ', new Date(), user.username);
+		Game.datadog.increment('statistic.fixGame');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора');
@@ -213,6 +214,7 @@ Meteor.methods({
 		}
 
 		console.log('statistic.fixUser: ', new Date(), user.username);
+		Game.datadog.increment('statistic.fixUser');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора или модератора');
@@ -256,7 +258,8 @@ Meteor.methods({
 		}
 		
 		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
-		
+		Game.datadog.increment('statistic.getUserPositionInRating');
+
 		return Game.Statistic.getUserPositionInRating(type, selectedUser);
 	},
 
@@ -272,6 +275,7 @@ Meteor.methods({
 		}
 
 		console.log('statistic.getPageInRating: ', new Date(), user.username);
+		Game.datadog.increment('statistic.getPageInRating');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);

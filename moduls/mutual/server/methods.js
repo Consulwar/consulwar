@@ -14,6 +14,7 @@ Meteor.methods({
 		}
 
 		console.log('mutual.invest: ', new Date(), user.username);
+		Game.datadog.increment('mutual.invest');
 
 		if (Game.User.getLevel() < 1) {
 			throw new Meteor.Error('Чтобы участвовать в общих исследованиях нужно подрости');

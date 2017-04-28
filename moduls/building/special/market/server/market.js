@@ -16,6 +16,7 @@ Meteor.methods({
 		}
 
 		console.log('market.exchange: ', new Date(), user.username);
+		Game.datadog.increment('market.exchange');
 
 		var userResources = Game.Resources.getValue();
 

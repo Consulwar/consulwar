@@ -69,6 +69,7 @@ Meteor.startup(function () {
 	initCheatsServer();
 	initDDPLimiter();
 	initAllianceServer();
+	initDataDog();
 
 	SyncedCron.start();
 });
@@ -133,6 +134,7 @@ Meteor.methods({
 		Game.BackReward.getReward();
 
 		console.log('Actualize: ', new Date(), user.username);
+		Game.datadog.increment('Actualize');
 
 		// Update queue tasks and resources
 		var needToCheckAgain = Game.Queue.checkAll();

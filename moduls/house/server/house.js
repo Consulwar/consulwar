@@ -84,6 +84,7 @@ Meteor.methods({
 		}
 
 		console.log('house.buyItem: ', new Date(), user.username);
+		Game.datadog.increment('house.buyItem');
 
 		// check config
 		if (!Game.House.items[group] || !Game.House.items[group][id]) {
@@ -152,6 +153,7 @@ Meteor.methods({
 		}
 
 		console.log('house.placeItem: ', new Date(), user.username);
+		Game.datadog.increment('house.placeItem');
 
 		var house = Game.House.getValue();
 
@@ -183,6 +185,7 @@ Meteor.methods({
 		}
 
 		console.log('house.getPlacedItems: ', new Date(), user.username);
+		Game.datadog.increment('house.getPlacedItems');
 
 		check(login, String);
 

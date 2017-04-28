@@ -334,12 +334,14 @@ Meteor.methods({
 		}
 
 		console.log('getBonusResources: ', new Date(), user.username);
+		Game.datadog.increment('getBonusResources');
 
 		if (name != 'crystals' && name != 'metals') {
 			throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? ха-ха');
 		}
 
 		console.log('getBonusResources: ', new Date(), user.username);
+		Game.datadog.increment('getBonusResources');
 
 		Meteor.call('actualizeGameInfo');
 

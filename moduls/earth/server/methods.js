@@ -15,6 +15,7 @@ Meteor.methods({
 		}
 
 		console.log('earth.voteAction: ', new Date(), user.username);
+		Game.datadog.increment('earth.voteAction');
 
 		// check turn
 		var lastTurn = Game.EarthTurns.getLast();
@@ -66,6 +67,7 @@ Meteor.methods({
 		}
 
 		console.log('earth.sendReinforcement: ', new Date(), user.username);
+		Game.datadog.increment('earth.sendReinforcement');
 
 		var currentTime = Game.getCurrentTime();
 

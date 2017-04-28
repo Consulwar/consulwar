@@ -14,6 +14,7 @@ Meteor.methods({
 		}
 
 		console.log('research.start: ', new Date(), user.username);
+		Game.datadog.increment('research.start');
 
 		check(options, Object);
 		check(options.group, String);
@@ -98,6 +99,7 @@ Meteor.methods({
 		}
 
 		console.log('research.speedup: ', new Date(), user.username);
+		Game.datadog.increment('research.speedup');
 
 		check(options, Object);
 		check(options.group, String);

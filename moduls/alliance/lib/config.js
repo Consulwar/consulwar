@@ -7,6 +7,7 @@ initAllianceConfigLib = function() {
 		|| !Meteor.settings.public.alliance.priceInCredits
 		|| !Meteor.settings.public.alliance.priceInHonor
 		|| !Meteor.settings.public.alliance.invalidateSchedule
+		|| !Meteor.settings.public.alliance.updateSchedule
 		|| !Meteor.settings.public.alliance.leavingTimeout
 		|| !Meteor.settings.public.alliance.participantsPerLevel
 		|| !Meteor.settings.public.alliance.countPerPage
@@ -19,6 +20,7 @@ initAllianceConfigLib = function() {
 	Game.Alliance.PRICE_IN_CREDITS = Meteor.settings.public.alliance.priceInCredits;
 	Game.Alliance.PRICE_IN_HONOR = Meteor.settings.public.alliance.priceInHonor;
 	Game.Alliance.INVALIDATE_SCHEDULE = Meteor.settings.public.alliance.invalidateSchedule;
+	Game.Alliance.UPDATE_SCHEDULE = Meteor.settings.public.alliance.updateSchedule;
 	Game.Alliance.LEAVING_TIMEOUT = Meteor.settings.public.alliance.leavingTimeout;
 	Game.Alliance.PARTICIPANTS_PER_LEVEL = Meteor.settings.public.alliance.participantsPerLevel;
 	Game.Alliance.COUNT_PER_PAGE = Meteor.settings.public.alliance.countPerPage;

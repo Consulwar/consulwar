@@ -95,6 +95,95 @@ Game.Alliance.removeParticipant = function(allianceUrl, username) {
 	});
 };
 
+Game.Alliance.calculateAllRating = function() {
+	console.log("Расчет рейтингов альянсов начался:", new Date());
+
+	let alliances = Game.Alliance.getAll().fetch();
+
+	let alliancesByUrl = {};
+	for (let alliance of alliances) {
+		alliancesByUrl[alliance.url] = alliance;
+	}
+
+	let updates = {};
+
+	let users = Meteor.users.find({
+		alliance: { $exists: true }
+	}).fetch();
+
+	for (let user of users) {
+		let allianceUrl = user.alliance;
+		if (!updates[allianceUrl]) {
+			updates[allianceUrl] = {
+				rating: 0,
+				ownerPosition: 0
+			};
+		}
+
+		updates[allianceUrl].rating += user.rating;
+
+		let alliance = alliancesByUrl[allianceUrl];
+		if (user.username === alliance.owner) {
+			updates[allianceUrl].ownerPosition = Game.Statistic.getUserPositionInRating('general', user).position;
+		}
+	}
+
+	let bulkOp = Game.Alliance.Collection.rawCollection().initializeUnorderedBulkOp();
+
+	for (let alliance of alliances) {
+		let update = updates[alliance.url];
+
+		bulkOp.find({
+			_id: alliance._id
+		}).update({
+			$set: {
+				rating: update.rating,
+				owner_position: update.ownerPosition
+			}
+		});
+	}
+
+	bulkOp.execute(function(err, data) {
+		if (err) {
+			console.log("Расчет рейтингов альянсов завершен с ошибкой:", err, new Date());
+		} else {
+			console.log("Расчет рейтингов альянсов успешно завершен.", new Date());
+		}
+	});
+};
+
+Game.Alliance.giveCardsForParticipants = function() {
+	let alliances = Game.Alliance.getAll().fetch();
+
+	let alliancesByUrl = {};
+	for (let alliance of alliances) {
+		alliancesByUrl[alliance.url] = alliance;
+	}
+
+	let users = Meteor.users.find({
+		alliance: { $exists: true }
+	}).fetch();
+
+	for (let user of users) {
+		let alliance = alliancesByUrl[user.alliance];
+
+		if (alliance.daily_card) {
+			Game.Cards.add({[alliance.daily_card]: 1}, user._id);
+		}
+	}
+};
+
+SyncedCron.add({
+	name: 'Расчет рейтинга альянсов и выдача карточек',
+	schedule: function(parser) {
+		return parser.text(Game.Alliance.UPDATE_SCHEDULE);
+	},
+	job: function() {
+		Game.Alliance.calculateAllRating();
+		Game.Alliance.giveCardsForParticipants();
+	}
+});
+
 Game.Alliance.addResource = function(allianceUrl, resource) {
 	let inc = {};
 

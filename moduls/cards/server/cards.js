@@ -7,7 +7,7 @@ Game.Cards.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Cards.increment = function(cards, invertSign) {
+Game.Cards.increment = function(cards, invertSign, uid = Meteor.userId()) {
 	invertSign = invertSign === true ? -1 : 1;
 
 	var inc = null;
@@ -20,15 +20,15 @@ Game.Cards.increment = function(cards, invertSign) {
 
 	if (inc) {
 		Game.Cards.Collection.upsert({
-			user_id: Meteor.userId()
+			user_id: uid
 		}, {
 			$inc: inc
 		});
 	}
 };
 
-Game.Cards.add = function(cards) {
-	return Game.Cards.increment(cards, false);
+Game.Cards.add = function(cards, uid) {
+	return Game.Cards.increment(cards, false, uid);
 };
 
 Game.Cards.spend = function(cards) {

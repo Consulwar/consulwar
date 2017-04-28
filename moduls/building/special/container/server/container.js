@@ -65,6 +65,7 @@ Meteor.methods({
 		}
 
 		console.log('containers.open: ', new Date(), user.username);
+		Game.datadog.increment('containers.open');
 
 		var container = Game.Building.special.Container.items[id];
 

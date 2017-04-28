@@ -172,16 +172,19 @@ if (!Meteor.settings.public.isInviteRequired) {
 Meteor.methods({
 	'totalUsersCount': function() {
 		console.log('user.totalUsersCount: ', new Date(), this.connection.clientAddress);
+		Game.datadog.increment('user.totalUsersCount');
 		return Meteor.users.find().count();
 	},
 
 	'onlineUsersCount': function() {
 		console.log('user.onlineUsersCount: ', new Date(), this.connection.clientAddress);
+		Game.datadog.increment('user.onlineUsersCount');
 		return Meteor.users.find({'status.online': true}).count();
 	},
 
 	'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
 		console.log('user.getIpAddress: ', new Date(), this.connection.clientAddress);
+		Game.datadog.increment('user.getIpAddress');
 		if (key != tempKey) {
 			return null;
 		}
@@ -190,6 +193,7 @@ Meteor.methods({
 
 	'user.checkUsernameExists': function(username) {
 		console.log('user.checkUsernameExists: ', new Date(), this.connection.clientAddress);
+		Game.datadog.increment('user.checkUsernameExists');
 
 		check(username, String);
 
@@ -202,6 +206,7 @@ Meteor.methods({
 
 	'user.checkPlainnameExists': function(username) {
 		console.log('user.checkPlainnameExists: ', new Date(), this.connection.clientAddress);
+		Game.datadog.increment('user.checkPlainnameExists');
 
 		check(username, String);
 
@@ -225,6 +230,7 @@ Meteor.methods({
 		}
 
 		console.log('user.changePlanetName: ', new Date(), user.username);
+		Game.datadog.increment('user.changePlanetName');
 
 		check(name, String);
 		name = name.trim();

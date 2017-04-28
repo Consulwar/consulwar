@@ -14,6 +14,7 @@ Meteor.methods({
 		}
 
 		console.log('unit.build: ', new Date(), user.username);
+		Game.datadog.increment('unit.build');
 
 		check(options, Object);
 		check(options.group, String);
@@ -113,6 +114,7 @@ Meteor.methods({
 		}
 
 		console.log('unit.speedup: ', new Date(), user.username);
+		Game.datadog.increment('unit.speedup');
 
 		check(options, Object);
 		check(options.group, String);
@@ -182,6 +184,7 @@ Meteor.methods({
 		}
 
 		console.log('unit.instantDamage: ', new Date(), user.username);
+		Game.datadog.increment('unit.instantDamage');
 
 		let cardsObject = {};
 		let cardList = [];
@@ -396,6 +399,7 @@ Meteor.methods({
 		}
 
 		console.log('battleHistory.getPage: ', new Date(), user.username);
+		Game.datadog.increment('battleHistory.getPage');
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
@@ -424,6 +428,7 @@ Meteor.methods({
 		}
 
 		console.log('battleHistory.getById: ', new Date(), user.username);
+		Game.datadog.increment('battleHistory.getById');
 
 		return Game.BattleHistory.Collection.findOne({
 			_id: id,

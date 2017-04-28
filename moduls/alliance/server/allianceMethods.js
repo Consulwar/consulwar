@@ -14,6 +14,7 @@ Meteor.methods({
 		}
 
 		console.log('alliance.create:', new Date(), user.username);
+		Game.datadog.increment('alliance.create');
 
 		checkOptions(options);
 		checkCreator(user);
@@ -58,6 +59,7 @@ Meteor.methods({
 		}
 
 		console.log('alliance.join:', new Date(), user.username);
+		Game.datadog.increment('alliance.join');
 
 		check(allianceUrl, String);
 
@@ -174,6 +176,7 @@ Meteor.methods({
 		}
 
 		console.log('alliance.leave:', new Date(), user.username);
+		Game.datadog.increment('alliance.leave');
 
 		if (!user.alliance) {
 			throw new Meteor.Error('Невозможно выйти из альянса', 'Вы не состоите в альянсе');
@@ -213,7 +216,8 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('alliance.leave:', new Date(), user.username);
+		console.log('alliance.kick:', new Date(), user.username);
+		Game.datadog.increment('alliance.kick');
 
 		check(name, String);
 
@@ -308,6 +312,7 @@ Meteor.methods({
 		}
 
 		console.log('alliance.getPageInList:', new Date(), user.username);
+		Game.datadog.increment('alliance.getPageInList');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);
@@ -379,6 +384,7 @@ Meteor.methods({
 		}
 
 		console.log('alliance.levelUp:', new Date(), user.username);
+		Game.datadog.increment('alliance.levelUp');
 
 		check(priceType, Match.Where(function(priceType) {
 			check(priceType, String);

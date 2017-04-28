@@ -166,6 +166,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.sendMessage: ', new Date(), user.username);
+		Game.datadog.increment('chat.sendMessage');
 
 		if (!Game.User.haveVerifiedEmail()) {
 			throw new Meteor.Error('Сперва нужно верифицировать Email');
@@ -472,6 +473,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.blockUser: ', new Date(), user.username);
+		Game.datadog.increment('chat.blockUser');
 
 		if (!options || !options.username) {
 			throw new Meteor.Error('Не указан логин');
@@ -638,6 +640,7 @@ Meteor.methods({
 		}
 
 		console.log('chat.banAccount: ', new Date(), user.username);
+		Game.datadog.increment('chat.banAccount');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -672,6 +675,7 @@ Meteor.methods({
 		}
 
 		console.log('chat.cheaterVaip: ', new Date(), user.username);
+		Game.datadog.increment('chat.cheaterVaip');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -731,6 +735,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.createRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.createRoom');
 
 		// check room name
 		check(title, String);
@@ -819,6 +824,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.removeRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.removeRoom');
 
 		check(name, String);
 
@@ -863,6 +869,7 @@ Meteor.methods({
 		}
 
 		console.log('chat.buyFreeChat: ', new Date(), user.username);
+		Game.datadog.increment('chat.buyFreeChat');
 
 		var resources = Game.Resources.getValue();
 
@@ -893,6 +900,7 @@ Meteor.methods({
 		}
 
 		console.log('chat.addCreditsToRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.addCreditsToRoom');
 
 		check(credits, Match.Integer);
 
@@ -983,6 +991,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.changeDiceModifierForRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.changeDiceModifierForRoom');
 
 		check(roomName, String);
 		check(modifier, Match.Integer);
@@ -1055,6 +1064,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.changeMinRating: ', new Date(), user.username);
+		Game.datadog.increment('chat.changeMinRating');
 
 		check(roomName, String);
 		check(minRating, Match.Integer);
@@ -1127,6 +1137,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.addModeratorToRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.addModeratorToRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1214,6 +1225,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.removeModeratorFromRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.removeModeratorFromRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1283,6 +1295,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.addUserToRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.addUserToRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1369,6 +1382,7 @@ Meteor.methods({
 		checkHasGlobalBan(user._id);
 
 		console.log('chat.removeUserFromRoom: ', new Date(), user.username);
+		Game.datadog.increment('chat.removeUserFromRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1454,6 +1468,7 @@ Meteor.methods({
 		}
 
 		console.log('chat.loadMore: ', new Date(), user.username);
+		Game.datadog.increment('chat.loadMore');
 
 		check(options, Object);
 		check(options.roomName, String);
@@ -1519,6 +1534,7 @@ Meteor.methods({
 		}
 
 		console.log('chat.getRoomsList: ', new Date(), user.username);
+		Game.datadog.increment('chat.getRoomsList');
 
 		return Game.Chat.Room.Collection.find({
 			isOfficial: { $ne: true },

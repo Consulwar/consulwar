@@ -241,6 +241,7 @@ Meteor.methods({
 		}
 
 		console.log('quests.getReward: ', new Date(), user.username);
+		Game.datadog.increment('quests.getReward');
 
 		var quests = Game.Quest.getValue();
 
@@ -302,6 +303,7 @@ Meteor.methods({
 		}
 
 		console.log('quests.getInfo: ', new Date(), user.username);
+		Game.datadog.increment('quests.getInfo');
 
 		var questLine = Game.Quest.regularQuests[questId];
 
@@ -329,6 +331,7 @@ Meteor.methods({
 		}
 
 		console.log('quests.getDailyInfo: ', new Date(), user.username);
+		Game.datadog.increment('quests.getDailyInfo');
 
 		var quests = Game.Quest.getValue();
 
@@ -364,6 +367,7 @@ Meteor.methods({
 		}
 
 		console.log('quests.sendDailyAnswer: ', new Date(), user.username);
+		Game.datadog.increment('quests.sendDailyAnswer');
 
 		var quests = Game.Quest.getValue();
 

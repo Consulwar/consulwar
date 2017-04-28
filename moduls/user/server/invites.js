@@ -6,6 +6,7 @@ global.Invites = new Meteor.Collection("invites");
 Meteor.methods({
 	'user.checkInviteCode': function(code) {
 		console.log('user.checkInviteCode: ', new Date(), this.connection.clientAddress);
+		Game.datadog.increment('user.checkInviteCode');
 
 		check(code, String);
 		

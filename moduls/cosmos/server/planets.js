@@ -650,6 +650,7 @@ Meteor.methods({
 		}
 
 		console.log('planet.initialize: ', new Date(), user.username);
+		Game.datadog.increment('planet.initialize');
 
 		var planets = Game.Planets.getAll().fetch();
 
@@ -715,6 +716,7 @@ Meteor.methods({
 		}
 
 		console.log('planet.discover: ', new Date(), user.username);
+		Game.datadog.increment('planet.discover');
 
 		check(planetId, String);
 
@@ -755,6 +757,7 @@ Meteor.methods({
 		}
 
 		console.log('planet.collectArtefacts:', new Date(), user.username);
+		Game.datadog.increment('planet.collectArtefacts:', new Date(), user.username);
 
 		check(planetId, String);
 
@@ -814,6 +817,7 @@ Meteor.methods({
 		}
 
 		console.log('planet.sendFleet: ', new Date(), user.username);
+		Game.datadog.increment('planet.sendFleet');
 
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
@@ -933,6 +937,7 @@ Meteor.methods({
 		}
 
 		console.log('planet.changeName: ', new Date(), user.username);
+		Game.datadog.increment('planet.changeName');
 
 		check(planetId, String);
 		check(name, String);
@@ -987,6 +992,7 @@ Meteor.methods({
 		}
 
 		console.log('planet.buyExtraColony: ', new Date(), user.username);
+		Game.datadog.increment('planet.buyExtraColony');
 
 		if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
 			throw new Meteor.Error('Больше нельзя купить дополнительных колоний');

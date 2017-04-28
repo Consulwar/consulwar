@@ -14,6 +14,7 @@ Meteor.methods({
 		}
 
 		console.log('building.build: ', new Date(), user.username);
+		Game.datadog.increment('building.build');
 
 		check(options, Object);
 		check(options.group, String);
@@ -98,6 +99,7 @@ Meteor.methods({
 		}
 
 		console.log('building.speedup: ', new Date(), user.username);
+		Game.datadog.increment('building.speedup');
 
 		check(options, Object);
 		check(options.group, String);

@@ -147,6 +147,7 @@ Meteor.methods({
 		}
 
 		console.log('cards.buy: ', new Date(), user.username);
+		Game.datadog.increment('cards.buy');
 
 		var item = Game.Cards.getItem(id);
 		if (!item) {
@@ -199,6 +200,7 @@ Meteor.methods({
 		}
 		
 		console.log('cards.activate: ', new Date(), user.username);
+		Game.datadog.increment('cards.activate');
 
 		var item = Game.Cards.getItem(id);
 		if (!item) {

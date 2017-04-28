@@ -17,6 +17,7 @@ Meteor.methods({
 		}
 
 		console.log('colosseum.startTournament: ', new Date(), user.username);
+		Game.datadog.increment('colosseum.startTournament');
 
 		var tournament = Game.Building.special.Colosseum.tournaments[id];
 

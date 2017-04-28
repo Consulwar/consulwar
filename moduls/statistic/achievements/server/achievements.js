@@ -16,6 +16,7 @@ Meteor.methods({
 		}
 
 		console.log('achievements.complete: ', new Date(), user.username);
+		Game.datadog.increment('achievements.complete');
 
 		var statistic = Game.Statistic.getUser();
 		var achievements = Game.Achievements.getValue();
@@ -77,6 +78,7 @@ Meteor.methods({
 		}
 
 		console.log('achievements.give: ', new Date(), user.username);
+		Game.datadog.increment('achievements.give');
 
 		check(username, String);
 		check(achievementId, String);

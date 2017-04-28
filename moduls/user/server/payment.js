@@ -100,6 +100,7 @@ Meteor.methods({
 		}
 
 		console.log('user.getPaymentIncomeHistory: ', new Date(), user.username);
+		Game.datadog.increment('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
@@ -128,6 +129,7 @@ Meteor.methods({
 		}
 
 		console.log('user.getPaymentIncomeHistory: ', new Date(), user.username);
+		Game.datadog.increment('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
@@ -292,6 +294,7 @@ Meteor.methods({
 		}
 
 		console.log('admin.getPromocodeHistory: ', new Date(), user.username);
+		Game.datadog.increment('admin.getPromocodeHistory');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -371,6 +374,7 @@ Meteor.methods({
 		}
 
 		console.log('admin.addPromoCode: ', new Date(), user.username);
+		Game.datadog.increment('admin.addPromoCode');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -467,6 +471,7 @@ Meteor.methods({
 		}
 
 		console.log('user.activatePromoCode: ', new Date(), user.username);
+		Game.datadog.increment('user.activatePromoCode');
 
 		check(code, String);
 

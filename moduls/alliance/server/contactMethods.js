@@ -13,8 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('allianceContact.create:', new Date(), user.username);
-		Game.datadog.increment('allianceContact.create');
+		Game.Log('allianceContact.create');
 
 		check(allianceUrl, String);
 		check(recipient, String);
@@ -91,8 +90,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('allianceContact.update:', new Date(), user.username);
-		Game.datadog.increment('allianceContact.update');
+		Game.Log('allianceContact.update');
 
 		let contact = Game.Alliance.Contact.get(contactId);
 

@@ -13,8 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('alliance.create:', new Date(), user.username);
-		Game.datadog.increment('alliance.create');
+		Game.Log('alliance.create');
 
 		checkOptions(options);
 		checkCreator(user);
@@ -58,8 +57,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('alliance.join:', new Date(), user.username);
-		Game.datadog.increment('alliance.join');
+		Game.Log('alliance.join');
 
 		check(allianceUrl, String);
 
@@ -175,8 +173,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('alliance.leave:', new Date(), user.username);
-		Game.datadog.increment('alliance.leave');
+		Game.Log('alliance.leave');
 
 		if (!user.alliance) {
 			throw new Meteor.Error('Невозможно выйти из альянса', 'Вы не состоите в альянсе');
@@ -216,8 +213,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('alliance.kick:', new Date(), user.username);
-		Game.datadog.increment('alliance.kick');
+		Game.Log('alliance.kick');
 
 		check(name, String);
 
@@ -311,8 +307,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('alliance.getPageInList:', new Date(), user.username);
-		Game.datadog.increment('alliance.getPageInList');
+		Game.Log('alliance.getPageInList');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);
@@ -383,8 +378,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('alliance.levelUp:', new Date(), user.username);
-		Game.datadog.increment('alliance.levelUp');
+		Game.Log('alliance.levelUp');
 
 		check(priceType, Match.Where(function(priceType) {
 			check(priceType, String);

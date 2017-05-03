@@ -192,8 +192,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('statistic.fixGame: ', new Date(), user.username);
-		Game.datadog.increment('statistic.fixGame');
+		Game.Log('statistic.fixGame');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора');
@@ -213,8 +212,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('statistic.fixUser: ', new Date(), user.username);
-		Game.datadog.increment('statistic.fixUser');
+		Game.Log('statistic.fixUser');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора или модератора');
@@ -257,8 +255,7 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
 		}
 		
-		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
-		Game.datadog.increment('statistic.getUserPositionInRating');
+		Game.Log('statistic.getUserPositionInRating');
 
 		return Game.Statistic.getUserPositionInRating(type, selectedUser);
 	},
@@ -274,8 +271,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('statistic.getPageInRating: ', new Date(), user.username);
-		Game.datadog.increment('statistic.getPageInRating');
+		Game.Log('statistic.getPageInRating');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);

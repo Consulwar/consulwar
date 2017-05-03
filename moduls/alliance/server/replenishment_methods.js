@@ -13,8 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('alliance.replenishBalance:', new Date(), user.username);
-		Game.datadog.increment('alliance.replenishBalance');
+		Game.Log('allianceReplenishmentHistory.create');
 
 		check(resource, Match.OneOf({
 			honor: Match.Integer,

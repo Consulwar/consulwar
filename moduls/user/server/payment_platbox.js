@@ -297,6 +297,8 @@ Router.route('/paymentGateway', function () {
 				payment_system: 'platbox'
 			}, data.account.id);
 
+			Game.datadog.incrementBy('payment_platbox', paymentItem.cost.rub);
+
 			// send response
 			console.log('Transaction finished');
 			console.log('platbox transaction id:', data.platbox_tx_id);

@@ -99,7 +99,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.getPaymentIncomeHistory: ', new Date(), user.username);
+		Game.Log('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
@@ -127,7 +127,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.getPaymentIncomeHistory: ', new Date(), user.username);
+		Game.Log('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
 			throw new Meteor.Error('Много будешь знать - скоро состаришься');
@@ -291,7 +291,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('admin.getPromocodeHistory: ', new Date(), user.username);
+		Game.Log('admin.getPromocodeHistory');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -370,7 +370,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('admin.addPromoCode: ', new Date(), user.username);
+		Game.Log('admin.addPromoCode');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -466,7 +466,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.activatePromoCode: ', new Date(), user.username);
+		Game.Log('user.activatePromoCode');
 
 		check(code, String);
 

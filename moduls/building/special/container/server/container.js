@@ -61,10 +61,10 @@ Meteor.methods({
 		}
 
 		if (Game.Building.items.residential.spaceport.currentLevel() < 1) {
-			throw new Meteor.Error('Нужно построить космопорт');
+			throw new Meteor.Error('Нужно построить Космопорт');
 		}
 
-		console.log('containers.open: ', new Date(), user.username);
+		Game.Log('containers.open');
 
 		var container = Game.Building.special.Container.items[id];
 

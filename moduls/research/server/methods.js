@@ -13,11 +13,26 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('research.start: ', new Date(), user.username);
+		Game.Log('research.start');
 
 		check(options, Object);
 		check(options.group, String);
 		check(options.engName, String);
+
+		let cardsObject = {};
+		let cardList = [];
+
+		if (options.cards) {
+			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		}
 
 		Meteor.call('actualizeGameInfo');
 
@@ -38,13 +53,19 @@ Meteor.methods({
 			throw new Meteor.Error('Исследование уже максимального уровня');
 		}
 
-		var price = item.price();
+		let price = item.price(null, cardList);
 		set.time = price.time;
 
 		var isTaskInserted = Game.Queue.add(set);
 		if (!isTaskInserted) {
 			throw new Meteor.Error('Не удалось начать исследование');
 		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
 
 		Game.Resources.spend(price);
 		
@@ -63,6 +84,75 @@ Meteor.methods({
 				rating: Game.Resources.calculateRatingFromResources(price)
 			}
 		});
+	},
+
+	'research.speedup': function(options) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		Game.Log('research.speedup');
+
+		check(options, Object);
+		check(options.group, String);
+		check(options.engName, String);
+
+		let cardsObject = {};
+		let cardList = [];
+
+		if (options.cards) {
+			check(options.cards, Object);
+
+			cardsObject = options.cards;
+
+			if (!Game.Cards.canUse(cardsObject, user)) {
+				throw new Meteor.Error('Карточки недоступны для применения');
+			}
+
+			cardList = Game.Cards.objectToList(cardsObject);
+		}
+
+		if (cardList.length === 0) {
+			throw new Meteor.Error('Карточки не выбраны');
+		}
+
+		Meteor.call('actualizeGameInfo');
+
+		let item = Game.Research.items[options.group] && Game.Research.items[options.group][options.engName];
+
+		if (!item) {
+			throw new Meteor.Error('Ускорение исследования невозможно');
+		}
+
+		let task = Game.Queue.getGroup(item.group);
+		if (!task || task.engName !== options.engName) {
+			throw new Meteor.Error('Ускорение исследования невозможно');
+		}
+
+		let maxSpendTime = task.finishTime - Game.getCurrentTime() - 2;
+
+		let priceWithoutCards = item.price(null);
+		let priceWithCards = item.price(null, cardList);
+
+		let spendTime = Math.min(priceWithoutCards.time - priceWithCards.time, maxSpendTime);
+
+		if (_.isNaN(spendTime) || spendTime <= 0) {
+			throw new Meteor.Error('Ускорение исследования невозможно');
+		}
+
+		Game.Queue.spendTime(task._id, spendTime);
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
 	}
 });
 

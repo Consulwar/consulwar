@@ -200,6 +200,7 @@ Router.route('/paymentGateway', function () {
 		}, {
 			$setOnInsert: {
 				user_id: user._id,
+				username: user.username,
 				transaction_id: data.platbox_tx_id,
 				payment_system: 'platbox',
 				status: 'check',
@@ -296,6 +297,8 @@ Router.route('/paymentGateway', function () {
 				transaction_id: data.platbox_tx_id,
 				payment_system: 'platbox'
 			}, data.account.id);
+
+			Game.datadog.increment('payment_platbox', paymentItem.cost.rub);
 
 			// send response
 			console.log('Transaction finished');

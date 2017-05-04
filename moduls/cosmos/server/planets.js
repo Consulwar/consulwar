@@ -607,6 +607,31 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
 	}
 };
 
+Game.Planets.discover = function(planetId) {
+	// get discovered planet
+	let planet = Game.Planets.getOne(planetId);
+	if (planet.isDiscovered) {
+		return;
+	}
+
+	planet.isDiscovered = true;
+	Game.Planets.update(planet);
+
+	// get base planet
+	let basePlanet = Game.Planets.getBase();
+	if (!basePlanet) {
+		return;
+	}
+
+	// find sectors to discover
+	let sectors = Game.Planets.getSectorsToDiscover(basePlanet.galactic, planet.hand, planet.segment);
+
+	// discover
+	for (let i = 0; i < sectors.length; i++) {
+		Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
+	}
+};
+
 // ----------------------------------------------------------------------------
 // Public methods
 // ----------------------------------------------------------------------------
@@ -624,7 +649,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.initialize: ', new Date(), user.username);
+		Game.Log('planet.initialize');
 
 		var planets = Game.Planets.getAll().fetch();
 
@@ -689,35 +714,92 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.discover: ', new Date(), user.username);
+		Game.Log('planet.discover');
 
-		// get discovered planet
-		var planet = Game.Planets.getOne(planetId);
-		if (planet.isDiscovered) {
-			return;
+		check(planetId, String);
+
+		let cardsObject = {'planetDiscover1': 1};
+
+		if (!Game.Cards.canUse(cardsObject, user)) {
+			throw new Meteor.Error('Карточка недоступна для применения');
 		}
 
-		planet.isDiscovered = true;
-		Game.Planets.update(planet);
+		let cardList = Game.Cards.objectToList(cardsObject);
+		let card = cardList[0];
 
-		// get base planet
-		var basePlanet = Game.Planets.getBase();
-		if (!basePlanet) {
-			return;
+		if (card.group !== 'planetDiscover') {
+			throw new Meteor.Error('Неподходящий тип карточки');
 		}
 
-		// find sectors to discover
-		var sectors = Game.Planets.getSectorsToDiscover(basePlanet.galactic, planet.hand, planet.segment);
+		Game.Cards.activate(card, user);
 
-		// discover
-		for (var i = 0; i < sectors.length; i++) {
-			Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
-		}
+		Game.Cards.spend(cardsObject);
+
+		Game.Planets.discover(planetId);
 
 		// save statistic
 		Game.Statistic.incrementUser(user._id, {
 			'cosmos.planets.discovered': 1
 		});
+	},
+
+	'planet.collectArtefacts': function(planetId, cardsObject) {
+		let user = Meteor.user();
+
+		if (!user || !user._id) {
+			throw new Meteor.Error('Требуется авторизация');
+		}
+
+		if (user.blocked === true) {
+			throw new Meteor.Error('Аккаунт заблокирован');
+		}
+
+		Game.Log('planet.collectArtefacts:', new Date(), user.username);
+
+		check(planetId, String);
+
+		let planet = Game.Planets.getOne(planetId);
+		if (!planet || planet.isHome || !planet.armyId) {
+			throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+		}
+
+		if (!cardsObject) {
+			throw new Meteor.Error('Карточки не заданы');
+		}
+
+		check(cardsObject, Object);
+
+		if (!Game.Cards.canUse(cardsObject, user)) {
+			throw new Meteor.Error('Карточки недоступны для применения');
+		}
+
+		let cardList = Game.Cards.objectToList(cardsObject);
+
+		if (cardList.length === 0) {
+			throw new Meteor.Error('Карточки не выбраны');
+		}
+
+		let result = Game.Effect.Special.getValue(true, { engName: 'instantCollectArtefacts' }, cardList);
+
+		let cycles = result.cycles;
+
+		if (!_.isNumber(cycles) || cycles <= 0) {
+			throw new Meteor.Error('Карточки недоступны для применения');
+		}
+
+		let artefacts = Game.Planets.getArtefacts(planet, cycles);
+
+		if (artefacts) {
+			Game.Resources.add(artefacts);
+		}
+
+		for (let card of cardList) {
+			Game.Cards.activate(card, user);
+		}
+
+		Game.Cards.spend(cardsObject);
+
+		return artefacts;
 	},
 
 	'planet.sendFleet': function(baseId, targetId, units, isOneway) {
@@ -731,7 +813,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.sendFleet: ', new Date(), user.username);
+		Game.Log('planet.sendFleet');
 
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
@@ -850,7 +932,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.changeName: ', new Date(), user.username);
+		Game.Log('planet.changeName');
 
 		check(planetId, String);
 		check(name, String);
@@ -904,7 +986,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.buyExtraColony: ', new Date(), user.username);
+		Game.Log('planet.buyExtraColony');
 
 		if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
 			throw new Meteor.Error('Больше нельзя купить дополнительных колоний');

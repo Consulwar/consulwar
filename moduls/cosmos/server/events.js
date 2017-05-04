@@ -6,6 +6,13 @@ Game.SpaceEvents.Collection._ensureIndex({
 	status: 1
 });
 
+Game.SpaceEvents.Collection._ensureIndex({
+	user_id: 1,
+	type: 1,
+	timeEnd: -1,
+	'info.mission.type': 1
+});
+
 Game.SpaceEvents.actualize = function() {
 	var timeCurrent = Game.getCurrentTime();
 
@@ -138,7 +145,8 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 		timeEnd: options.startTime + options.durationTime,
 		info: {
 			units: options.units
-		}
+		},
+		protectAllHonor: options.protectAllHonor
 	});
 
 	// add task into queue
@@ -157,9 +165,15 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 
 Game.SpaceEvents.completeReinforcement = function(event) {
 	// kill random count on the way
-	var killedPercent = Game.Random.interval(0, 30);
+	let killedPercent = 0;
+	let k = 1;
+
+	if (!event.protectAllHonor) {
+		killedPercent = Game.Random.interval(0, 30);
+		k = 1 - (killedPercent / 100);
+	}
+
 	event.info.killedPercent = killedPercent;
-	var k = 1 - (killedPercent / 100);
 
 	var units = event.info.units;
 	var arrived = null;
@@ -812,7 +826,7 @@ var completeHumansArrival = function(event, planet) {
 
 	if (!battleResult || (userArmy && !enemyArmy)) {
 		if (!planet.isDiscovered) {
-			Meteor.call('planet.discover', planet._id);
+			Game.Planets.discover(planet._id);
 		}
 	}
 

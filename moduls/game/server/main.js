@@ -68,6 +68,8 @@ Meteor.startup(function () {
 	initBackRewardServer();
 	initCheatsServer();
 	initDDPLimiter();
+	initAllianceServer();
+	initGameLog();
 
 	SyncedCron.start();
 });
@@ -131,7 +133,7 @@ Meteor.methods({
 
 		Game.BackReward.getReward();
 
-		console.log('Actualize: ', new Date(), user.username);
+		Game.Log('Actualize');
 
 		// Update queue tasks and resources
 		var needToCheckAgain = Game.Queue.checkAll();

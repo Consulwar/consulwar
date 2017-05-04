@@ -48,6 +48,16 @@ Game.Statistic.incrementUser = function(uid, increment) {
 	});
 };
 
+Game.Statistic.incrementGroupUsers = function(uidList, increment) {
+	Game.Statistic.Collection.update({
+		user_id: {$in: uidList}
+	}, {
+		$inc: increment
+	}, {
+		multi: true
+	});
+};
+
 Game.Statistic.incrementAllUsers = function(increment) {
 	var bulkOp = Game.Statistic.Collection.rawCollection().initializeUnorderedBulkOp();
 	bulkOp.find({ user_id: { $ne: 'system' } }).update({ $inc: increment });
@@ -126,6 +136,50 @@ Game.Statistic.fixUser = function(userId) {
 	});
 };
 
+Game.Statistic.getUserPositionInRating = function(type, user) {
+	let position;
+	let total;
+	let sortField = Game.Statistic.getSortFieldForType(type).field;
+
+	if (type === "general") {
+		position = Meteor.users.find({
+			rating: { $gt: user.rating }
+		}).count();
+
+		total = Meteor.users.find({
+			rating: { $gt: 0 }
+		}).count();
+	} else {
+		let fields = {};
+		fields[sortField] = 1;
+
+		let selector = {};
+		selector[sortField] = {
+			$gt: Game.Statistic.getUserValue(
+				sortField,
+				Game.Statistic.Collection.findOne({
+					user_id: user._id
+				}, {
+					fields: fields
+				})
+			)
+		};
+
+		position = Game.Statistic.Collection.find(selector).count();
+
+		selector[sortField] = {
+			$gt: 0
+		};
+
+		total = Game.Statistic.Collection.find(selector).count();
+	}
+
+	return {
+		total,
+		position: position + 1
+	};
+};
+
 Meteor.methods({
 	'statistic.fixGame': function() {
 		var user = Meteor.user();
@@ -138,7 +192,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('statistic.fixGame: ', new Date(), user.username);
+		Game.Log('statistic.fixGame');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора');
@@ -158,7 +212,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('statistic.fixUser: ', new Date(), user.username);
+		Game.Log('statistic.fixUser');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Нужны парва администратора или модератора');
@@ -201,49 +255,9 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
 		}
 		
-		console.log('statistic.getUserPositionInRating: ', new Date(), user.username);
-		
-		var position;
-		var total;
-		var sortField = Game.Statistic.getSortFieldForType(type).field;
+		Game.Log('statistic.getUserPositionInRating');
 
-		if (type == "general") {
-			position = Meteor.users.find({
-				rating: { $gt: selectedUser.rating }
-			}).count();
-
-			total = Meteor.users.find({
-				rating: { $gt: 0 }
-			}).count();
-		} else {
-			var fields = {};
-			fields[sortField] = 1;
-
-			var selector = {};
-			selector[sortField] = { 
-				$gt: Game.Statistic.getUserValue(
-					sortField,
-					Game.Statistic.Collection.findOne({ 
-						user_id: selectedUser._id 
-					}, {
-						fields: fields
-					})
-				)
-			};
-
-			position = Game.Statistic.Collection.find(selector).count();
-
-			selector[sortField] = { 
-				$gt: 0 
-			};
-
-			total = Game.Statistic.Collection.find(selector).count();
-		}
-
-		return {
-			total: total,
-			position: position + 1
-		};
+		return Game.Statistic.getUserPositionInRating(type, selectedUser);
 	},
 
 	'statistic.getPageInRating': function(type, page, countPerPage) {
@@ -257,7 +271,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('statistic.getPageInRating: ', new Date(), user.username);
+		Game.Log('statistic.getPageInRating');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);

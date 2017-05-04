@@ -174,10 +174,6 @@ UI.registerHelper('makeObject', function() {
 	return arguments[0].hash;
 });
 
-UI.registerHelper('useTemplate', function(templateName) {
-	return Blaze.toHTMLWithData(Template[templateName], arguments[1].hash);
-});
-
 UI.registerHelper('lookup', function(obj) {
 	var result = obj;
 	for(var i = 1; i < (arguments.length - 1); i++) {
@@ -411,10 +407,6 @@ var getEffectsTooltip = function(price, effects, target, invert, side, isShowCur
 		}
 
 		prevPriority = priority;
-	}
-
-	if (effectsValues.length === 0) {
-		return;
 	}
 
 	if (effectsValues.length && effectsValues[effectsValues.length - 1].total) {

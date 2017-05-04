@@ -171,17 +171,17 @@ if (!Meteor.settings.public.isInviteRequired) {
 
 Meteor.methods({
 	'totalUsersCount': function() {
-		console.log('user.totalUsersCount: ', new Date(), this.connection.clientAddress);
+		Game.Log('user.totalUsersCount', this.connection.clientAddress);
 		return Meteor.users.find().count();
 	},
 
 	'onlineUsersCount': function() {
-		console.log('user.onlineUsersCount: ', new Date(), this.connection.clientAddress);
+		Game.Log('user.onlineUsersCount', this.connection.clientAddress);
 		return Meteor.users.find({'status.online': true}).count();
 	},
 
 	'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
-		console.log('user.getIpAddress: ', new Date(), this.connection.clientAddress);
+		Game.Log('user.getIpAddress', this.connection.clientAddress);
 		if (key != tempKey) {
 			return null;
 		}
@@ -189,7 +189,7 @@ Meteor.methods({
 	},
 
 	'user.checkUsernameExists': function(username) {
-		console.log('user.checkUsernameExists: ', new Date(), this.connection.clientAddress);
+		Game.Log('user.checkUsernameExists', this.connection.clientAddress);
 
 		check(username, String);
 
@@ -201,7 +201,7 @@ Meteor.methods({
 	},
 
 	'user.checkPlainnameExists': function(username) {
-		console.log('user.checkPlainnameExists: ', new Date(), this.connection.clientAddress);
+		Game.Log('user.checkPlainnameExists', this.connection.clientAddress);
 
 		check(username, String);
 
@@ -224,7 +224,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('user.changePlanetName: ', new Date(), user.username);
+		Game.Log('user.changePlanetName');
 
 		check(name, String);
 		name = name.trim();

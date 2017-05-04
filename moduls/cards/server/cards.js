@@ -7,7 +7,7 @@ Game.Cards.Collection._ensureIndex({
 	user_id: 1
 });
 
-Game.Cards.increment = function(cards, invertSign) {
+Game.Cards.increment = function(cards, invertSign, uid = Meteor.userId()) {
 	invertSign = invertSign === true ? -1 : 1;
 
 	var inc = null;
@@ -20,18 +20,53 @@ Game.Cards.increment = function(cards, invertSign) {
 
 	if (inc) {
 		Game.Cards.Collection.upsert({
-			user_id: Meteor.userId()
+			user_id: uid
 		}, {
 			$inc: inc
 		});
 	}
 };
 
-Game.Cards.add = function(cards) {
-	return Game.Cards.increment(cards, false);
+Game.Cards.add = function(cards, uid) {
+	return Game.Cards.increment(cards, false, uid);
 };
 
 Game.Cards.spend = function(cards) {
+	let inc = null;
+	let totalCount = 0;
+	let incGroup = {};
+	for (let id in cards) {
+		if (cards.hasOwnProperty(id)) {
+			if (!inc) {
+				inc = {};
+			}
+			let card = Game.Cards.getItem(id);
+			let count = parseInt(cards[id]);
+			inc[`cards.used.${card.group}.${id}`] = count;
+			totalCount += count;
+
+			if (!incGroup[card.group]) {
+				incGroup[card.group] = 0;
+			}
+
+			incGroup[card.group] += count;
+		}
+	}
+
+	if (inc) {
+		inc['cards.used.total'] = totalCount;
+
+		for (let group in incGroup) {
+			if (incGroup.hasOwnProperty(group)) {
+				let count = incGroup[group];
+
+				inc[`cards.used.${group}.total`] = count;
+			}
+		}
+
+		Game.Statistic.incrementUser(Meteor.userId(), inc);
+	}
+
 	return Game.Cards.increment(cards, true);
 };
 
@@ -40,18 +75,12 @@ Game.Cards.complete = function(task) {
 };
 
 Game.Cards.activate = function(item, user) {
-	// check input
-	if (!item || !user) {
+	if (!Game.Cards.canActivate(item, user)) {
 		return false;
 	}
 
 	// check reload time
 	if (item.reloadTime) {
-		var nextReloadTime = item.nextReloadTime();
-		if (nextReloadTime > Game.getCurrentTime()) {
-			return false;
-		}
-
 		// set next reload time
 		var set = {};
 		set[item.engName + '.nextReloadTime'] = Game.getCurrentTime() + item.durationTime + item.reloadTime;
@@ -117,7 +146,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('cards.buy: ', new Date(), user.username);
+		Game.Log('cards.buy');
 
 		var item = Game.Cards.getItem(id);
 		if (!item) {
@@ -150,7 +179,11 @@ Meteor.methods({
 
 		// save statistic
 		Game.Statistic.incrementUser(user._id, {
-			'cards.bought': 1
+			[`cards.bought.${item.group}.${item.engName}`]: 1
+		});
+
+		Game.Statistic.incrementUser(user._id, {
+			[`cards.bought.total`]: 1
 		});
 	},
 
@@ -165,7 +198,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
-		console.log('cards.activate: ', new Date(), user.username);
+		Game.Log('cards.activate');
 
 		var item = Game.Cards.getItem(id);
 		if (!item) {
@@ -186,11 +219,6 @@ Meteor.methods({
 		var cards = {};
 		cards[id] = 1;
 		Game.Cards.spend(cards);
-
-		// save statistic
-		Game.Statistic.incrementUser(user._id, {
-			'cards.activated': 1
-		});
 	}
 });
 

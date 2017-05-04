@@ -31,10 +31,10 @@
 
 		<div class="item_info">
 
-			{{> unitCharacteristics unit=unit showTooltip=true}}
+			{{> unitCharacteristics unit=unit}}
 
 			<div class="bottom">
-				{{> item_price price=(unit.price count)}}
+				{{> item_price price=(unit.price count undefined)}}
 
 				<div class="actions">
 					<div class="action">
@@ -90,7 +90,7 @@
 			{{> item_characteristic item=unit}}
 			
 			{{#unless eq unit.side 'reptiles'}}
-				{{> item_price price=(unit.price count)}}
+				{{> item_price price=(unit.price count undefined)}}
 
 				<input class="count" type="number" placeholder="Количество" value="1"/>
 
@@ -114,7 +114,7 @@
 			<div class="characteristics">
 				{{#if unit.characteristics.damage}}
 					<div class="weapon">
-						<div class="damage" {{militaryTooltip unit.characteristics 'damage'}}>
+						<div class="damage" data-tooltip="true" data-tooltip-direction="w">
 							{{formatNumberWithISO (div (sum unit.characteristics.damage.min unit.characteristics.damage.max) 2) 4}}
 						</div>
 
@@ -124,7 +124,7 @@
 					</div>
 				{{/if}}
 				<div class="life">
-					<div class="armor" {{militaryTooltip unit.characteristics 'life'}}>
+					<div class="armor" data-tooltip="true" data-tooltip-direction="w">
 						{{formatNumberWithISO unit.characteristics.life 4}}
 					</div>
 
@@ -140,7 +140,7 @@
 					{{#each unit.targets}}
 						<li 
 							class="enough_resources {{this.type}}" 
-							data-tooltip="{{#if ../showTooltip}}{{> unitCharacteristics unit=this addTitle=true}}{{/if}}"
+							data-tooltip="true"
 							data-tooltip-direction="s"
 						>
 							<a 

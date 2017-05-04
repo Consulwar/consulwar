@@ -37,6 +37,49 @@ var createDefaulRoom = function(name, title, isFree) {
 createDefaulRoom('general', 'Основной', false);
 createDefaulRoom('help', 'Помощь', true);
 
+Game.Chat.createRoom = function(user, name, title, isPublic, isOwnerPays, initialBalance = 0) {
+	let room = {
+		name: name,
+		title: title,
+		owner: user._id,
+		users: [user._id],
+		usernames: [user.username],
+		isPublic,
+		isOwnerPays
+	};
+
+	if (isOwnerPays) {
+		room.credits = initialBalance;
+	}
+
+	Game.Chat.Room.Collection.insert(room);
+};
+
+Game.Chat.Room.addParticipant = function(roomName, user) {
+	Game.Chat.Room.Collection.update({
+		name: roomName,
+		deleted: { $ne: true }
+	}, {
+		$addToSet: {
+			users: user._id,
+			usernames: user.username
+		}
+	});
+};
+
+Game.Chat.Room.removeParticipant = function(roomName, user) {
+	Game.Chat.Room.Collection.update({
+		name: roomName,
+		deleted: { $ne: true }
+	}, {
+		$pull: {
+			users: user._id,
+			usernames: user.username,
+			moderators: user.username
+		}
+	});
+};
+
 var removeAllMessages = function(username) {
 	var target = Meteor.users.findOne({
 		username
@@ -122,7 +165,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.sendMessage: ', new Date(), user.username);
+		Game.Log('chat.sendMessage');
 
 		if (!Game.User.haveVerifiedEmail()) {
 			throw new Meteor.Error('Сперва нужно верифицировать Email');
@@ -428,7 +471,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.blockUser: ', new Date(), user.username);
+		Game.Log('chat.blockUser');
 
 		if (!options || !options.username) {
 			throw new Meteor.Error('Не указан логин');
@@ -594,7 +637,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('chat.banAccount: ', new Date(), user.username);
+		Game.Log('chat.banAccount');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -628,7 +671,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('chat.cheaterVaip: ', new Date(), user.username);
+		Game.Log('chat.cheaterVaip');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -687,7 +730,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.createRoom: ', new Date(), user.username);
+		Game.Log('chat.createRoom');
 
 		// check room name
 		check(title, String);
@@ -775,7 +818,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.removeRoom: ', new Date(), user.username);
+		Game.Log('chat.removeRoom');
 
 		check(name, String);
 
@@ -819,7 +862,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('chat.buyFreeChat: ', new Date(), user.username);
+		Game.Log('chat.buyFreeChat');
 
 		var resources = Game.Resources.getValue();
 
@@ -849,7 +892,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('chat.addCreditsToRoom: ', new Date(), user.username);
+		Game.Log('chat.addCreditsToRoom');
 
 		check(credits, Match.Integer);
 
@@ -939,7 +982,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.changeDiceModifierForRoom: ', new Date(), user.username);
+		Game.Log('chat.changeDiceModifierForRoom');
 
 		check(roomName, String);
 		check(modifier, Match.Integer);
@@ -1011,7 +1054,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.changeMinRating: ', new Date(), user.username);
+		Game.Log('chat.changeMinRating');
 
 		check(roomName, String);
 		check(minRating, Match.Integer);
@@ -1083,7 +1126,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.addModeratorToRoom: ', new Date(), user.username);
+		Game.Log('chat.addModeratorToRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1170,7 +1213,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.removeModeratorFromRoom: ', new Date(), user.username);
+		Game.Log('chat.removeModeratorFromRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1239,7 +1282,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.addUserToRoom: ', new Date(), user.username);
+		Game.Log('chat.addUserToRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1325,7 +1368,7 @@ Meteor.methods({
 
 		checkHasGlobalBan(user._id);
 
-		console.log('chat.removeUserFromRoom: ', new Date(), user.username);
+		Game.Log('chat.removeUserFromRoom');
 
 		check(roomName, String);
 		check(username, String);
@@ -1410,7 +1453,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('chat.loadMore: ', new Date(), user.username);
+		Game.Log('chat.loadMore');
 
 		check(options, Object);
 		check(options.roomName, String);
@@ -1475,7 +1518,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		console.log('chat.getRoomsList: ', new Date(), user.username);
+		Game.Log('chat.getRoomsList');
 
 		return Game.Chat.Room.Collection.find({
 			isOfficial: { $ne: true },

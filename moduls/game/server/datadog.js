@@ -25,7 +25,7 @@ if (!Meteor.settings.datadog || !Meteor.settings.datadog.isEnabled) {
 	SyncedCron.add({
 		name: 'Сохранение в метрики онлайн и всего зарегистрированных',
 		schedule: function(parser) {
-			return parser.text('every 5 mins');
+			return parser.text('every 20 sec');
 		},
 		job: function() {
 			Game.datadog.gauge('user.totalUsersCount', Meteor.users.find().count());

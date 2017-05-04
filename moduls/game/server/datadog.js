@@ -10,10 +10,9 @@ if (!Meteor.settings.datadog || !Meteor.settings.datadog.isEnabled) {
 	};
 
 } else {
-	if (!Meteor.settings.datadog
-		|| !Meteor.settings.datadog.host
+	if (   !Meteor.settings.datadog.host
 		|| !Meteor.settings.datadog.port
-		|| Meteor.settings.datadog.prefix !== undefined
+		|| Meteor.settings.datadog.prefix === undefined
 	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры модуля DataDog (см. settings.sample datadog)');
 	}

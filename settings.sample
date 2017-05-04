@@ -161,7 +161,8 @@
 		"timeInterval": 10000
 	},
 	"datadog": {
-		"host": "host",
-		"port": 123
+		"isEnabled": true,
+		"host": "localhost",
+		"port": 8125
 	}
 }

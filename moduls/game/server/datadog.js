@@ -6,8 +6,7 @@ if (!Meteor.settings.datadog || !Meteor.settings.datadog.isEnabled) {
 	console.log('DataDog выключен!');
 
 	Game.datadog = {
-		increment: function() {},
-		set: function() {}
+		increment: function() {}
 	};
 
 } else {
@@ -18,19 +17,20 @@ if (!Meteor.settings.datadog || !Meteor.settings.datadog.isEnabled) {
 	let HOST = Meteor.settings.datadog.host;
 	let PORT = Meteor.settings.datadog.port;
 
-	let StatsD = require('node-dogstatsd').StatsD;
+	let StatsD = require('hot-shots');
 	Game.datadog = new StatsD(HOST, PORT);
 
+	Game.datadog.event('Process started', `processId: ${Game.processId}, pmId: ${process.env.pm_id}`);
 
 	SyncedCron.add({
 		name: 'Сохранение в метрики онлайн и всего зарегистрированных',
 		schedule: function(parser) {
-			return parser.text('every 5 mins');
+			return parser.text('every 20 sec');
 		},
 		job: function() {
-			Game.datadog.set('user.totalUsersCount', Meteor.users.find().count());
+			Game.datadog.gauge('user.totalUsersCount', Meteor.users.find().count());
 
-			Game.datadog.set('user.onlineUsersCount', Meteor.users.find({'status.online': true}).count());
+			Game.datadog.gauge('user.onlineUsersCount', Meteor.users.find({'status.online': true}).count());
 		}
 	});
 

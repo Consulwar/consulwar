@@ -13,8 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('building.build: ', new Date(), user.username);
-		Game.datadog.increment('building.build');
+		Game.Log('building.build');
 
 		check(options, Object);
 		check(options.group, String);
@@ -98,8 +97,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('building.speedup: ', new Date(), user.username);
-		Game.datadog.increment('building.speedup');
+		Game.Log('building.speedup');
 
 		check(options, Object);
 		check(options.group, String);

@@ -649,8 +649,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.initialize: ', new Date(), user.username);
-		Game.datadog.increment('planet.initialize');
+		Game.Log('planet.initialize');
 
 		var planets = Game.Planets.getAll().fetch();
 
@@ -715,8 +714,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.discover: ', new Date(), user.username);
-		Game.datadog.increment('planet.discover');
+		Game.Log('planet.discover');
 
 		check(planetId, String);
 
@@ -756,8 +754,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.collectArtefacts:', new Date(), user.username);
-		Game.datadog.increment('planet.collectArtefacts:', new Date(), user.username);
+		Game.Log('planet.collectArtefacts:', new Date(), user.username);
 
 		check(planetId, String);
 
@@ -816,8 +813,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.sendFleet: ', new Date(), user.username);
-		Game.datadog.increment('planet.sendFleet');
+		Game.Log('planet.sendFleet');
 
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			throw new Meteor.Error('Слишком много флотов уже отправлено');
@@ -936,8 +932,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.changeName: ', new Date(), user.username);
-		Game.datadog.increment('planet.changeName');
+		Game.Log('planet.changeName');
 
 		check(planetId, String);
 		check(name, String);
@@ -991,8 +986,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		console.log('planet.buyExtraColony: ', new Date(), user.username);
-		Game.datadog.increment('planet.buyExtraColony');
+		Game.Log('planet.buyExtraColony');
 
 		if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
 			throw new Meteor.Error('Больше нельзя купить дополнительных колоний');

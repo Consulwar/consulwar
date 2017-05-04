@@ -163,6 +163,7 @@
 	"datadog": {
 		"isEnabled": true,
 		"host": "localhost",
-		"port": 8125
+		"port": 8125,
+		"prefix": "game."
 	}
 }

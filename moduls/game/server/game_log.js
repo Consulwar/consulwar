@@ -4,7 +4,7 @@ initGameLog = function() {
 initDataDog();
 
 Game.Log = function(desc, info = Meteor.user().username) {
-	console.log(desc + ':', new Date(), info);
+	console.log(new Date() + ' ' + info + ': ' + desc);
 
 	Game.datadog.increment(desc);
 };

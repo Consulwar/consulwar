@@ -72,6 +72,11 @@ game.Achievement = function(options) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется достижение ' + options.group + ' ' + options.engName);
 	}
 
+	this.icon = function(level = '') {
+		level = this.maxLevel() > 1 ? level : '';
+		return '/img/game/statistics/achievements/' + this.group + '/' + this.engName + level + '.png';
+	};
+
 	Game.Achievements.items[options.group][options.engName] = this;
 };
 game.extend(game.Achievement, game.Item);

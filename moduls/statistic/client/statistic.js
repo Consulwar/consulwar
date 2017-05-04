@@ -315,11 +315,11 @@ Template.achievements.helpers({
 					name: item.name(level),
 					description: item.description(level),
 					currentLevel: level,
-					maxLevel: item.maxLevel(),
 					nextLevel: nextLevel,
 					nextLevelDescription: item.description(nextLevel),
 					nextLevelName: item.name(nextLevel),
-					effect: item.effect
+					effect: item.effect,
+					icon: item.icon(level || 1)
 				});
 			}
 		}

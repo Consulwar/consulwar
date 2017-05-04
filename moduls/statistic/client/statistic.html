@@ -24,10 +24,7 @@
 		{{#each (achievements selectedUser)}}
 			<img 
 				class="{{#if this.currentLevel}}active{{/if}}"
-				src="
-					/img/game/statistics/achievements/{{../statisticGroup}}/{{this.engName}}
-					{{#if gt this.maxLevel 1}}{{or this.currentLevel 1}}{{/if}}.png
-					" 
+				src="{{this.icon}}" 
 				alt="{{this.name}}"
 				data-tooltip="true"
 			/>

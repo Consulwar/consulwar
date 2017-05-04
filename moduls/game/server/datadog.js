@@ -10,15 +10,20 @@ if (!Meteor.settings.datadog || !Meteor.settings.datadog.isEnabled) {
 	};
 
 } else {
-	if (!Meteor.settings.datadog || !Meteor.settings.datadog.host || !Meteor.settings.datadog.port) {
+	if (!Meteor.settings.datadog
+		|| !Meteor.settings.datadog.host
+		|| !Meteor.settings.datadog.port
+		|| !Meteor.settings.datadog.prefix
+	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры модуля DataDog (см. settings.sample datadog)');
 	}
 
 	let HOST = Meteor.settings.datadog.host;
 	let PORT = Meteor.settings.datadog.port;
+	let PREFIX = Meteor.settings.datadog.prefix;
 
 	let StatsD = require('hot-shots');
-	Game.datadog = new StatsD(HOST, PORT);
+	Game.datadog = new StatsD(HOST, PORT, PREFIX);
 
 	Game.datadog.event('Process started', `processId: ${Game.processId}, pmId: ${process.env.pm_id}`);
 

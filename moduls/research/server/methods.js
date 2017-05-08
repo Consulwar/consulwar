@@ -13,7 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('research.start');
+		Game.Log.method('research.start');
 
 		check(options, Object);
 		check(options.group, String);
@@ -97,7 +97,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('research.speedup');
+		Game.Log.method('research.speedup');
 
 		check(options, Object);
 		check(options.group, String);

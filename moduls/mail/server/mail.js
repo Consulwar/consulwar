@@ -101,7 +101,7 @@ Meteor.methods({
 			throw new Meteor.Error('Только Консул может пользоваться почтой!');
 		}
 		
-		Game.Log('mail.sendLetter');
+		Game.Log.method('mail.sendLetter');
 
 		var block = Game.BanHistory.Collection.findOne({
 			user_id: user._id,
@@ -270,7 +270,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.getLetter');
+		Game.Log.method('mail.getLetter');
 
 		var letter = null;
 
@@ -312,7 +312,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.complainLetter');
+		Game.Log.method('mail.complainLetter');
 
 		check(id, String);
 
@@ -344,7 +344,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.removeLetters');
+		Game.Log.method('mail.removeLetters');
 
 		var updateCount = Game.Mail.Collection.update({
 			_id: { $in: ids },
@@ -375,7 +375,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.blockUser');
+		Game.Log.method('mail.blockUser');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
@@ -461,7 +461,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.resolveComplaint');
+		Game.Log.method('mail.resolveComplaint');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');
@@ -494,7 +494,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.getPrivatePage');
+		Game.Log.method('mail.getPrivatePage');
 
 		check(page, Match.Integer);
 		check(count, Match.Integer);
@@ -541,7 +541,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('mail.getAdminPage');
+		Game.Log.method('mail.getAdminPage');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Ээ, нет. Так не пойдет.');

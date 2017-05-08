@@ -35,6 +35,10 @@ Meteor.methods({
 			if (resource.hasOwnProperty(name)) {
 				let count = resource[name];
 
+				if (count <= 0) {
+					throw new Meteor.Error('Ошибка пополнения баланса', 'Неверная сумма пополнения');
+				}
+
 				if (resources[name].amount < count) {
 					throw new Meteor.Error('Ошибка пополнения баланса', 'Недостаточно средств');
 				}

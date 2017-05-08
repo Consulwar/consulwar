@@ -103,7 +103,7 @@ Meteor.methods({
 			history.push.apply(history, unclaimed);
 		}
 
-		Game.Log('entranceReward.getHistory');
+		Game.Log.method('entranceReward.getHistory');
 
 		return history;
 	},

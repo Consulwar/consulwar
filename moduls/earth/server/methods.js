@@ -14,7 +14,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('earth.voteAction');
+		Game.Log.method('earth.voteAction');
 
 		// check turn
 		var lastTurn = Game.EarthTurns.getLast();
@@ -65,7 +65,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('earth.sendReinforcement');
+		Game.Log.method('earth.sendReinforcement');
 
 		var currentTime = Game.getCurrentTime();
 

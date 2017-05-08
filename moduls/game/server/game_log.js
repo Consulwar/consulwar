@@ -3,15 +3,30 @@ initGameLog = function() {
 
 initDataDog();
 
-Game.Log = function(desc, info = Meteor.user().username) {
-	let now = new Date();
-	let dateStr = now.getFullYear() + '.' + pad(now.getMonth() + 1) + '.' + pad(now.getDate()) + ' ' +
-		pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' +
-		pad1000(now.getMilliseconds());
+Game.Log = function(desc, info) {
+	let dateStr = formatDate();
 
 	console.log('[' + dateStr + '] ' + info + ': ' + desc);
 
 	Game.datadog.increment(desc);
+};
+
+Game.Log.method = function(desc) {
+	let user = Meteor.user();
+
+	let dateStr = formatDate();
+
+	let ip = UserStatus.connections.findOne({userId: user._id}).ipAddr;
+
+	console.log('[' + dateStr + '] ' + user.username + ' (' + ip + '): ' + desc);
+
+	Game.datadog.increment('call.' + desc);
+};
+
+let formatDate = function(date = new Date()) {
+	return date.getFullYear() + '.' + pad(date.getMonth() + 1) + '.' + pad(date.getDate()) + ' ' +
+		pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds()) + '.' +
+		pad1000(date.getMilliseconds());
 };
 
 let pad = function(value) {

@@ -43,7 +43,7 @@ if (!Meteor.settings.datadog || !Meteor.settings.datadog.isEnabled) {
 
 		Game.datadog.gauge('user.total', Meteor.users.find().count());
 		Game.datadog.gauge('user.online', Meteor.users.find({'status.online': true}).count());
-	}
+	};
 
 	UserStatus.events.on('connectionLogin', sendOnlineData);
 	UserStatus.events.on('connectionLogout', sendOnlineData);

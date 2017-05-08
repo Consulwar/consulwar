@@ -133,7 +133,7 @@ Meteor.methods({
 
 		Game.BackReward.getReward();
 
-		Game.Log('Actualize');
+		Game.Log.method('Actualize');
 
 		// Update queue tasks and resources
 		var needToCheckAgain = Game.Queue.checkAll();

@@ -13,7 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('allianceContact.create');
+		Game.Log.method('allianceContact.create');
 
 		check(allianceUrl, String);
 		check(recipient, String);
@@ -90,7 +90,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('allianceContact.update');
+		Game.Log.method('allianceContact.update');
 
 		let contact = Game.Alliance.Contact.get(contactId);
 

@@ -57,7 +57,7 @@
 				</li>
 			{{/if}}
 			{{#if gotLimit}}
-				<li class="limit">Не могу показать больше чем {{maxMessages}} сообщений</li>
+				<li class="limit">Не могу показать больше, чем {{maxMessages}} сообщений</li>
 			{{/if}}
 			{{#each messages}}
 				{{#if this.isMotd}}
@@ -121,7 +121,7 @@
 		<form id="message">
 			{{#if not Game.User.haveVerifiedEmail}}
 				<div class="whyCanNotWrite">
-					Что бы писать в чат необходимо подтвердить вашу почту.
+					Чтобы вы могли писать в чат, необходимо подтвердить вашу почту.
 					<a href="{{pathFor 'settings'}}">Настройки</a>
 				</div>
 				<input type="submit" value="" disabled="true"/>
@@ -200,7 +200,7 @@
 				{{/if}}
 			{{/if}}
 							{{#if eq this.data.type 'changeMinRating'}}
-								установил минимальный рейтинг для комнаты равный {{formatNumber this.data.minRating}}
+								установил минимальный рейтинг для комнаты, равный {{formatNumber this.data.minRating}}
 							{{/if}}
 			{{#if eq this.data.type 'status'}}
 				{{{highlightUser this.message}}}
@@ -212,7 +212,7 @@
 				{{{highlightUser this.message}}}
 			{{/if}}
 			{{#if eq this.data.type 'sepukku'}}
-				совершил кровавое сепукку.
+				совершил кровавое сэппуку.
 			{{/if}}
 			{{#if eq this.data.type 'unblock'}}
 				разблокировал
@@ -342,18 +342,18 @@
 				<tr><td>/remove channel</td><td>удалить текущую комнату</td></tr>
 				<tr><td>/join [channel]</td><td>присоединиться к комнате</td></tr>
 				<tr><td>/add credits [amount]</td><td>пополнить баланс комнаты</td></tr>
-				<tr><td>/add user [username]</td><td>добавить пользователя к комнате</td></tr>
+				<tr><td>/add user [username]</td><td>добавить пользователя в комнату</td></tr>
 				<tr><td>/remove user [username]</td><td>удалить пользователя из комнаты</td></tr>
 				<tr><td>/block [username]</td><td>наказать пользователя</td></tr>
 				<tr><td>/unblock [username]</td><td>простить пользователя</td></tr>
-				<tr><td>/add moderator [username]</td><td>назначить модератора</td></tr>
+				<tr><td>/add moderator [username]</td><td>назначить модератором</td></tr>
 				<tr><td>/remove moderator [username]</td><td>разжаловать модератора</td></tr>
 				<tr><td>/d [n] [m] [(+|-)k]</td><td>бросить n кубиков с m гранями и модификатором k</td></tr>
 				<tr><td>/d mod [(+|-)k]</td><td>задать модификатор костей для чата</td></tr>
 				<tr><td>/med текст %1%2%3% текст</td><td>выбрать случайное развитие событий</td></tr>
 				<tr><td>/me [text]</td><td>писать от третьего лица</td></tr>
-				<tr><td>/coub [id|link]</td><td>показать коуб (50ггк)</td></tr>
-				<tr><td>/сепукку</td><td>совершить сепукку и пожертвовать ресурсы</td></tr>
+				<tr><td>/coub [id|link]</td><td>показать коуб (50 ГГК)</td></tr>
+				<tr><td>/сепукку</td><td>совершить сэппуку и пожертвовать ресурсы</td></tr>
 				<tr><td>/яготов</td><td>вы действительно так думаете?</td></tr>
 				<tr><td>/ilovereptiles</td><td>признаться в любви к Рептилоидам</td></tr>
 			</table>
@@ -368,7 +368,7 @@
 <template name="chatBalance">
 	<div class="chatBalance">
 		<label>
-			<span class="title">Сумма пополениня в ГГК:</span>
+			<span class="title">Сумма пополнения в ГГК:</span>
 			<input type="text" name="credits" value="{{credits}}"/>
 		</label>
 		<div class="button accept">Пополнить</div>
@@ -442,7 +442,7 @@
 				<input type="radio" name="roomPayment" value="crystals"/> кристаллы
 			</label>
 			<label>
-				<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
+				<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ГГК)
 			</label>
 		</div>
 		<div class="creditsBlock">
@@ -515,7 +515,7 @@
 					<input type="radio" name="roomPayment" value="crystals"/> кристаллы
 				</label>
 				<label>
-					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ггк)
+					<input type="radio" name="roomPayment" value="credits" checked="checked"/> кредиты (ГГК)
 				</label>
 			</div>
 			<div class="creditsBlock">

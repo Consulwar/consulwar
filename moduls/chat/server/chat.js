@@ -168,7 +168,7 @@ Meteor.methods({
 		Game.Log('chat.sendMessage');
 
 		if (!Game.User.haveVerifiedEmail()) {
-			throw new Meteor.Error('Сперва нужно верифицировать Email');
+			throw new Meteor.Error('Сперва нужно верифицировать email');
 		}
 
 		// check room name
@@ -200,7 +200,7 @@ Meteor.methods({
 		}).trim();
 
 		if (message.length === 0) {
-			throw new Meteor.Error('Напиши хоть что-нибудь что бы отправить сообщение!');
+			throw new Meteor.Error('Напиши хоть что-нибудь, чтобы отправить сообщение!');
 		}
 
 		// calc price
@@ -357,13 +357,13 @@ Meteor.methods({
 				set.message = message.substr(5).trim();
 				stats['chat.motd'] = 1;
 
-			} else if (message.indexOf('/сепукку') === 0) {
+			} else if (message.indexOf('/сэппуку') === 0) {
 				if (userResources.crystals.amount < 0
 				 || userResources.metals.amount < 0
 				 || userResources.honor.amount < 0
 				 || userResources.credits.amount < 0
 				) {
-					throw new Meteor.Error('Вы слишком бедны что бы совершать сепукку');
+					throw new Meteor.Error('Вы слишком бедны, чтобы совершать сэппуку');
 				}
 
 				set.data = {
@@ -399,7 +399,7 @@ Meteor.methods({
 					set.data = {
 						type: 'notprepared'
 					};
-					set.message = ' думает что готов. Наивный.';
+					set.message = ' думает, что готов. Наивный.';
 					stats['chat.notprepared'] = 1;
 				} else {
 					throw new Meteor.Error('Ты не готов!');
@@ -414,11 +414,11 @@ Meteor.methods({
 					set.data = {
 						type: 'lovereptiles'
 					};
-					set.message = ' признался что поддерживает Рептилоидов. Совет Галактики в Шоке.';
+					set.message = ' признался, что поддерживает Рептилоидов. Совет Галактики в шоке.';
 
 					stats['chat.lovereptiles'] = 1;
 				} else {
-					throw new Meteor.Error('Совет Галактики все ещё в Шоке!');
+					throw new Meteor.Error('Совет Галактики всё ещё в шоке!');
 				}
 			} else {
 				throw new Meteor.Error('Неправильная команда, введите /help для помощи');
@@ -741,11 +741,11 @@ Meteor.methods({
 		}
 
 		if (url.length > 32) {
-			throw new Meteor.Error('URL комнаты должно быть не длиннее 32 символов');
+			throw new Meteor.Error('URL комнаты должен быть не длиннее 32 символов');
 		}
 
 		if (!url.match(/^[a-zA-Z0-9_\-]+$/)) {
-			throw new Meteor.Error('URL комнаты должно состоять только из латинских букв, цифр, дефисов и подчеркиваний');
+			throw new Meteor.Error('URL комнаты может содержать только латинские буквы, цифры, дефисы и подчеркивания');
 		}
 
 		var room = Game.Chat.Room.Collection.findOne({
@@ -897,7 +897,7 @@ Meteor.methods({
 		check(credits, Match.Integer);
 
 		if (credits < 100) {
-			throw new Meteor.Error('Минимальная сумма составляет 100 грязных галлактических кредитов');
+			throw new Meteor.Error('Минимальная сумма составляет 100 Грязных Галактических Кредитов');
 		}
 
 		check(roomName, String);
@@ -908,7 +908,7 @@ Meteor.methods({
 		});
 
 		if (!room) {
-			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+			throw new Meteor.Error('Комнаты с именем ' + roomName + ' не существует');
 		}
 
 		if (!room.isOwnerPays) {
@@ -1137,7 +1137,7 @@ Meteor.methods({
 		});
 
 		if (!room) {
-			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+			throw new Meteor.Error('Комнаты с именем ' + roomName + ' не существует');
 		}
 
 		checkHasRoomBan(user._id, room._id, room.name);
@@ -1224,7 +1224,7 @@ Meteor.methods({
 		});
 
 		if (!room) {
-			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+			throw new Meteor.Error('Комнаты с именем ' + roomName + ' не существует');
 		}
 
 		checkHasRoomBan(user._id, room._id, room.name);
@@ -1293,7 +1293,7 @@ Meteor.methods({
 		});
 
 		if (!room) {
-			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+			throw new Meteor.Error('Комнаты с именем ' + roomName + ' не существует');
 		}
 
 		if (room.isPublic) {
@@ -1379,7 +1379,7 @@ Meteor.methods({
 		});
 
 		if (!room) {
-			throw new Meteor.Error('Коната с именем ' + roomName + ' не существует');
+			throw new Meteor.Error('Комнаты с именем ' + roomName + ' не существует');
 		}
 
 		if (room.isPublic) {
@@ -1601,7 +1601,7 @@ Meteor.methods({
 		check(count, Match.Integer);
 
 		if (count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		var result = Game.Chat.BalanceHistory.Collection.find({

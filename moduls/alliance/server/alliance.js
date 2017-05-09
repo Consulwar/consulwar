@@ -26,7 +26,7 @@ Game.Alliance.Collection._ensureIndex({
 
 
 Game.Alliance.create = function(user, options) {
-	let id = Game.Alliance.Collection.insert({
+	let alliance = {
 		owner: user.username,
 		name: options.name,
 		url: options.url,
@@ -40,9 +40,13 @@ Game.Alliance.create = function(user, options) {
 			credits: 0
 		},
 		timestamp: Game.getCurrentTime()
-	});
+	};
 
-	Game.Alliance.addParticipant(options.url, user.username);
+	let id = Game.Alliance.Collection.insert(alliance);
+
+	alliance._id = id;
+
+	Game.Alliance.addParticipant(alliance, user.username);
 
 	return id;
 };
@@ -61,9 +65,16 @@ Game.Alliance.getByUrl = function(url) {
 	});
 };
 
-Game.Alliance.addParticipant = function(allianceUrl, username) {
+Game.Alliance.getByName = function(name) {
+	return Game.Alliance.Collection.findOne({
+		name,
+		deleted: { $exists: false }
+	});
+};
+
+Game.Alliance.addParticipant = function(alliance, username) {
 	Game.Alliance.Collection.update({
-		url: allianceUrl,
+		_id: alliance._id,
 		deleted: { $exists: false }
 	},{
 		$push: {
@@ -75,14 +86,14 @@ Game.Alliance.addParticipant = function(allianceUrl, username) {
 		username: username
 	}, {
 		$set: {
-			alliance: allianceUrl
+			alliance: alliance.name
 		}
 	});
 };
 
-Game.Alliance.removeParticipant = function(allianceUrl, username) {
+Game.Alliance.removeParticipant = function(alliance, username) {
 	Game.Alliance.Collection.update({
-		url: allianceUrl,
+		_id: alliance._id,
 		deleted: { $exists: false }
 	},{
 		$pull: {
@@ -149,9 +160,9 @@ Game.Alliance.calculateAllRating = function() {
 
 	let alliances = Game.Alliance.getAll().fetch();
 
-	let alliancesByUrl = {};
+	let alliancesByName = {};
 	for (let alliance of alliances) {
-		alliancesByUrl[alliance.url] = alliance;
+		alliancesByName[alliance.name] = alliance;
 	}
 
 	let updates = {};
@@ -161,26 +172,26 @@ Game.Alliance.calculateAllRating = function() {
 	}).fetch();
 
 	for (let user of users) {
-		let allianceUrl = user.alliance;
-		if (!updates[allianceUrl]) {
-			updates[allianceUrl] = {
+		let allianceName = user.alliance;
+		if (!updates[allianceName]) {
+			updates[allianceName] = {
 				rating: 0,
 				ownerPosition: 0
 			};
 		}
 
-		updates[allianceUrl].rating += user.rating;
+		updates[allianceName].rating += user.rating;
 
-		let alliance = alliancesByUrl[allianceUrl];
+		let alliance = alliancesByName[allianceName];
 		if (user.username === alliance.owner) {
-			updates[allianceUrl].ownerPosition = Game.Statistic.getUserPositionInRating('general', user).position;
+			updates[allianceName].ownerPosition = Game.Statistic.getUserPositionInRating('general', user).position;
 		}
 	}
 
 	let bulkOp = Game.Alliance.Collection.rawCollection().initializeUnorderedBulkOp();
 
 	for (let alliance of alliances) {
-		let update = updates[alliance.url];
+		let update = updates[alliance.name];
 
 		bulkOp.find({
 			_id: alliance._id
@@ -204,9 +215,9 @@ Game.Alliance.calculateAllRating = function() {
 Game.Alliance.giveCardsForParticipants = function() {
 	let alliances = Game.Alliance.getAll().fetch();
 
-	let alliancesByUrl = {};
+	let alliancesByName = {};
 	for (let alliance of alliances) {
-		alliancesByUrl[alliance.url] = alliance;
+		alliancesByName[alliance.name] = alliance;
 	}
 
 	let users = Meteor.users.find({
@@ -214,7 +225,7 @@ Game.Alliance.giveCardsForParticipants = function() {
 	}).fetch();
 
 	for (let user of users) {
-		let alliance = alliancesByUrl[user.alliance];
+		let alliance = alliancesByName[user.alliance];
 
 		if (alliance.daily_card) {
 			Game.Cards.add({[alliance.daily_card]: 1}, user._id);

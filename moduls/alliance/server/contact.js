@@ -177,7 +177,7 @@ Meteor.publish('alliance_contact_requests', function () {
 	if (this.userId) {
 		let user = Meteor.users.findOne({ _id: this.userId });
 		if (user.alliance) {
-			let alliance = Game.Alliance.getByUrl(user.alliance);
+			let alliance = Game.Alliance.getByName(user.alliance);
 
 			if (alliance.owner === user.username) {
 				return Game.Alliance.Contact.Collection.find({

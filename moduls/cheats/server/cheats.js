@@ -26,6 +26,7 @@ if (process.env.NODE_ENV == 'development') {
 
 		'cheats.performBattle': function(userArmy, enemyArmy, options) {
 			var result = Game.Unit.performBattle(userArmy, enemyArmy, options);
+			console.log(result);
 			return result.log;
 		},
 

@@ -64,6 +64,27 @@ Game.Cheats.testBattle = function() {
 		}
 	};
 
+	userArmy = {
+		army: {
+			fleet: {
+				gammadrone: 100,
+				wasp: 50,
+				mirage: 40,
+				cruiser: 10
+			}
+		}
+	};
+	enemyArmy = {
+		reptiles: {
+			fleet: {
+				sphero: 100,
+				blade: 50,
+				lacertian: 40
+			}
+		}
+	};
+
+
 	// ground battle test
 	/* userArmy = {
 		army: {
@@ -102,7 +123,7 @@ Game.Cheats.testBattle = function() {
 		}
 	}; */
 
-	options = {
+	let options = {
 		rounds: 3,
 		damageReduction: 0,
 		missionType: 'patrolfleet',

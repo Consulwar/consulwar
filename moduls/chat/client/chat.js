@@ -250,7 +250,7 @@ var createRoom = function(title, url, isPublic, isOwnerPays) {
 	}
 	
 	if (title.length > 32) {
-		return Notifications.error('Максимальная длинна имени 32 символов');
+		return Notifications.error('Максимальная длина имени – 32 символа');
 	}
 
 	if (!url || url.length <= 0) {
@@ -258,7 +258,7 @@ var createRoom = function(title, url, isPublic, isOwnerPays) {
 	}
 	
 	if (url.length > 32) {
-		return Notifications.error('Максимальная длинна URL 32 символов');
+		return Notifications.error('Максимальная длина URL – 32 символа');
 	}
 
 	var message = (
@@ -318,18 +318,18 @@ var addCredits = function(roomName, credits) {
 
 	credits = parseInt(credits);
 	if (!credits || credits < 100) {
-		Notifications.error('Минимальная сумма 100 ГГК');
+		Notifications.error('Минимальная сумма – 100 ГГК');
 		return;
 	}
 
-	var message = 'Зачислить ' + credits + ' ГГК на счет конматы ' + roomName;
+	var message = 'Зачислить ' + credits + ' ГГК на счет комнаты ' + roomName;
 
 	Game.showAcceptWindow(message, function() {
 		Meteor.call('chat.addCreditsToRoom', roomName, credits, function(err, data) {
 			if (err) {
 				Notifications.error(err.error);
 			} else {
-				Notifications.success('Кредиты успешно зачисленны на счет комнаты');
+				Notifications.success('Кредиты успешно зачислены на счет комнаты');
 				closeBalanceWindow();
 			}
 		});
@@ -601,7 +601,7 @@ var getUserRole = function(userId, username, role, rating) {
 	} else if (role == 'helper') {
 		return {
 			id: role,
-			name: 'Помошник'
+			name: 'Помощник'
 		};
 	} else if (isOwner(userId)) {
 		return {

@@ -24,18 +24,18 @@ Meteor.methods({
 		}
 
 		if (lastTurn.users.indexOf(user._id) >= 0) {
-			throw new Meteor.Error('Вы уже голосовали в этом ходу');
+			throw new Meteor.Error('Вы уже голосовали в этом ходе');
 		}
 
 		if (lastTurn.actions[ actionName ] === undefined) {
-			throw new Meteor.Error('Нет такого действия в этом ходу');
+			throw new Meteor.Error('Нет такого действия в этом ходе');
 		}
 
 		// check level
 		var level = Game.User.getLevel();
 
 		if (level <= 0) {
-			throw new Meteor.Error('Маленький ещё, подрости сначала');
+			throw new Meteor.Error('Маленький ещё, подрасти сначала');
 		}
 
 		// save vote
@@ -113,7 +113,7 @@ Meteor.methods({
 			var unit = Game.Unit.items.army.ground[ name ];
 
 			if (!unit || unit.type == 'mutual' || unit.currentLevel() < count || count <= 0) {
-				throw new Meteor.Error('Иш ты чего задумал, шакал.');
+				throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
 			}
 
 			if (protectedHonor) {

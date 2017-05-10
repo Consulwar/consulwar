@@ -107,7 +107,7 @@ Template.consulHouseItem.events({
 		var group = t.data.subgroup;
 
 		if (!t.data.item.canBuy()) {
-			return Notifications.error('Не достаточно денег!');
+			return Notifications.error('Недостаточно денег!');
 		}
 
 		Meteor.call('house.buyItem', group, t.data.item.engName, function(err) {
@@ -139,7 +139,7 @@ Template.consulHouseItem.events({
 Template.consulHouseCards.events({
 	'click .buy': function(e, t) {
 		if (!t.data.item.canBuy()) {
-			return Notifications.error('Не достаточно денег!');
+			return Notifications.error('Недостаточно денег!');
 		}
 
 		Meteor.call('cards.buy', t.data.item.engName, function(err) {

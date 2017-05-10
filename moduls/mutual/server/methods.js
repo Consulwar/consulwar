@@ -13,7 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('mutual.invest');
+		Game.Log.method('mutual.invest');
 
 		if (Game.User.getLevel() < 1) {
 			throw new Meteor.Error('Чтобы участвовать в общих исследованиях нужно подрости');

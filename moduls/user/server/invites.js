@@ -5,7 +5,7 @@ global.Invites = new Meteor.Collection("invites");
 
 Meteor.methods({
 	'user.checkInviteCode': function(code) {
-		Game.Log('user.checkInviteCode');
+		Game.Log.method('user.checkInviteCode');
 
 		check(code, String);
 		

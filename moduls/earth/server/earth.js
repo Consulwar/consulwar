@@ -730,7 +730,7 @@ Game.Earth.checkTurn = function() {
 };
 
 SyncedCron.add({
-	name: 'Следующий ход битвы на земле',
+	name: 'Следующий ход битвы на Земле',
 	schedule: function(parser) {
 		return parser.text(Game.Earth.UPDATE_SCHEDULE);
 	},

@@ -15,7 +15,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('achievements.complete');
+		Game.Log.method('achievements.complete');
 
 		var statistic = Game.Statistic.getUser();
 		var achievements = Game.Achievements.getValue();
@@ -76,7 +76,7 @@ Meteor.methods({
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
 		}
 
-		Game.Log('achievements.give');
+		Game.Log.method('achievements.give');
 
 		check(username, String);
 		check(achievementId, String);

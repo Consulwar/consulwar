@@ -64,7 +64,7 @@ Meteor.methods({
 			throw new Meteor.Error('Нужно построить Космопорт');
 		}
 
-		Game.Log('containers.open');
+		Game.Log.method('containers.open');
 
 		var container = Game.Building.special.Container.items[id];
 

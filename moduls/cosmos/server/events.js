@@ -130,7 +130,7 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 	}
 
 	if (options.durationTime === undefined) {
-		throw new Meteor.Error('Не задано время за которое прибудет подкрепление');
+		throw new Meteor.Error('Не задано время, за которое прибудет подкрепление');
 	}
 
 	if (options.units === undefined) {

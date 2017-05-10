@@ -15,7 +15,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('market.exchange');
+		Game.Log.method('market.exchange');
 
 		var userResources = Game.Resources.getValue();
 

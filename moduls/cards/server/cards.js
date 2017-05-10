@@ -185,6 +185,8 @@ Meteor.methods({
 		Game.Statistic.incrementUser(user._id, {
 			[`cards.bought.total`]: 1
 		});
+
+		return true;
 	},
 
 	'cards.activate': function(id) {

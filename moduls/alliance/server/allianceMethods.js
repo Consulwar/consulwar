@@ -46,7 +46,7 @@ Meteor.methods({
 		});
 	},
 
-	'alliance.join': function(allianceUrl, contactId = null) {
+	'alliance.join': function(info) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -59,12 +59,14 @@ Meteor.methods({
 
 		Game.Log.method('alliance.join');
 
-		check(allianceUrl, String);
+		check(info, Match.OneOf({
+			allianceUrl: String
+		}, {
+			contactId: String
+		}));
 
-		if (contactId) {
-			check(contactId, String);
-
-			let contact = Game.Alliance.Contact.get(contactId);
+		if (info.contactId) {
+			let contact = Game.Alliance.Contact.get(info.contactId);
 
 			if (!contact) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Запрос не найден');
@@ -110,7 +112,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Прошло мало времени с предыдущего выхода из альянса');
 			}
 
-			Game.Alliance.Contact.accept(contactId);
+			Game.Alliance.Contact.accept(info.contactId);
 
 			let typeName = contact.type === Game.Alliance.Contact.type.INVITE ? 'invites' : 'requests';
 
@@ -132,7 +134,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Вы уже состоите в альянсе');
 			}
 
-			let alliance = Game.Alliance.getByUrl(allianceUrl);
+			let alliance = Game.Alliance.getByUrl(info.allianceUrl);
 
 			if (!alliance) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Такого альянса не существует');

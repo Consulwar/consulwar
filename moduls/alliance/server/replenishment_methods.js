@@ -27,7 +27,7 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка пополнения баланса', 'Вы не состоите в альянсе');
 		}
 
-		let alliance = Game.Alliance.getByUrl(user.alliance);
+		let alliance = Game.Alliance.getByName(user.alliance);
 
 		let resources = Game.Resources.getValue();
 

@@ -131,9 +131,8 @@ Game.Cards.activate = function(item, user) {
 
 Meteor.methods({
 	'cards.buyAndActivate': function (id) {
-		Meteor.call('cards.buy', id, function() {
-			Meteor.call('cards.activate', id);
-		});
+		Meteor.call('cards.buy', id);
+		Meteor.call('cards.activate', id);
 	},
 
 	'cards.buy': function(id) {
@@ -186,6 +185,8 @@ Meteor.methods({
 		Game.Statistic.incrementUser(user._id, {
 			[`cards.bought.total`]: 1
 		});
+
+		return true;
 	},
 
 	'cards.activate': function(id) {

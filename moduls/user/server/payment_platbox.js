@@ -8,7 +8,7 @@ if (!Meteor.settings.payment
  || !Meteor.settings.payment.platbox.merchantId
  || !Meteor.settings.payment.platbox.project
 ) {
-	throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры платежки (см. settings.sample payment.platbox)');
+	throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры платёжки (см. settings.sample payment.platbox)');
 }
 
 var BASE_URL = Meteor.settings.payment.platbox.url;
@@ -333,7 +333,7 @@ Router.route('/paymentGateway', function () {
 				break;
 			case 'pay':
 				errorCode = 2001;
-				errorMessge = 'Платёж с указанным идентификатором уже проведен';
+				errorMessge = 'Платёж с указанным идентификатором уже проведён';
 				break;
 			case 'cancel':
 				errorCode = 2002;

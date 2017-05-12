@@ -1,11 +1,11 @@
 <template name="payment">
 	<div class="payment scrollbar-inner">
 		<span>
-			<span class="alert">Помните Консулы:</span> 
+			<span class="alert">Помните, Консулы:</span> 
 			покупая 
-			<span class="ggk">Грязные Галактические Кредиты</span> 
-			— вы поддерживаете 
-			<span class="alert">Борьбу за освобождение Земли от Рептилоидов</span>
+			<span class="ggk">Грязные Галактические Кредиты,</span> 
+			вы поддерживаете 
+			<span class="alert">Борьбу за освобождение Земли от Рептилоидов.</span>
 		</span>
 		<div class="paymentItems">
 			{{#each paymentItems}}
@@ -61,16 +61,16 @@
 	<div class="side_payment">
 		<h2>Грязные галактические кредиты</h2>
 		<div class="buy">
-			Покупая <span class="yellow">Кредиты</span> ты поддерживаешь независимого <span class="blue">российского разработчика.</span>
+			Покупая <span class="yellow">Кредиты,</span> ты поддерживаешь независимого <span class="blue">российского разработчика.</span>
 		</div>
 		<a href="{{pathFor 'walletHistory' type='income' page=1}}">История покупок</a>
 		<a href="{{pathFor 'walletHistory' type='expense' page=1}}">История расходов</a>
 		<div class="promo">
 			{{#if isAdmin}}
-				<span class="create">Создать промо код</span>
-				<a href="{{pathFor 'promocodeHistory' page=1}}" class="promoHistory">История промо кодов</a>
+				<span class="create">Создать промокод</span>
+				<a href="{{pathFor 'promocodeHistory' page=1}}" class="promoHistory">История промокодов</a>
 			{{/if}}
-			<span class="hint">Введите промо код, если он у вас конечно есть</span>
+			<span class="hint">Введите промокод, если он у вас, конечно, есть</span>
 			<input class="code"/>
 			<span class="send">Награда</span>
 		</div>
@@ -101,7 +101,7 @@
 									Покупка: {{this.source.item}}
 								{{/if}}
 								{{#if eq this.source.type 'promo'}}
-									Промо код: {{this.source.code}}
+									Промокод: {{this.source.code}}
 								{{/if}}
 							</td>
 						</tr>
@@ -317,7 +317,7 @@
 		</div>
 
 		<input type="text" name="username" placeholder="Имя пользователя"/>
-		<input type="text" name="code" placeholder="Промо код"/>
+		<input type="text" name="code" placeholder="Промокод"/>
 
 		{{> pages total=countTotal perPage=count}}
 

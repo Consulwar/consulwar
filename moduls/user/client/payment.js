@@ -111,7 +111,7 @@ Template.paymentSide.events({
 
 		var code = t.find('.promo .code').value;
 		if (!code || code.length === 0) {
-			Notifications.error('Нужно ввести промо код');
+			Notifications.error('Нужно ввести промокод');
 			return;
 		}
 
@@ -495,7 +495,7 @@ Template.promocodeCreate.events({
 			}
 
 			if (!object.code || object.code.length < 1) {
-				Notifications.error('Введите название промо кода');
+				Notifications.error('Введите название промокода');
 				return;
 			}
 
@@ -507,12 +507,12 @@ Template.promocodeCreate.events({
 		}
 
 		if (_.isObject(object)) {
-			Game.showAcceptWindow('Создать промо код: \n' + JSON.stringify(object), function() {
+			Game.showAcceptWindow('Создать промокод: \n' + JSON.stringify(object), function() {
 				Meteor.call('admin.addPromoCode', object, function(err) {
 					if (err) {
-						Notifications.error('Не удалось создать промо код', err.error);
+						Notifications.error('Не удалось создать промокод', err.error);
 					} else {
-						Notifications.success('Промо код успешно создан');
+						Notifications.success('Промокод успешно создан');
 					}
 				});
 			});	

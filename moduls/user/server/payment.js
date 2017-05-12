@@ -102,7 +102,7 @@ Meteor.methods({
 		Game.Log.method('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		return Game.Payment.Income.Collection.find({
@@ -130,7 +130,7 @@ Meteor.methods({
 		Game.Log.method('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		return Game.Payment.Expense.Collection.find({
@@ -169,7 +169,7 @@ if (process.env.NODE_ENV == 'development') {
 		'payment.testItem': function(id) {
 			var item = Game.Payment.items[id];
 			if (!item) {
-				throw new Meteor.Error('Непральный id');
+				throw new Meteor.Error('Неправильный id');
 			}
 
 			Game.Payment.Income.log(item.profit, {
@@ -302,7 +302,7 @@ Meteor.methods({
 		check(options.count, Match.Integer);
 
 		if (options.count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		var records = null;
@@ -475,11 +475,11 @@ Meteor.methods({
 		});
 
 		if (!promoCode) {
-			throw new Meteor.Error('Такой код не существует');
+			throw new Meteor.Error('Такого кода не существует');
 		}
 
 		if (promoCode.validthru && promoCode.validthru < Game.getCurrentTime()) {
-			throw new Meteor.Error('Срок использования истек');
+			throw new Meteor.Error('Срок использования истёк');
 		}
 
 		if (promoCode.usersActivated) {

@@ -24,7 +24,7 @@ Template.auth.events({
 					email: email
 				}, function(err) {
 					if (err) {
-						Notifications.error('Восстановление пароля не дуалось', err.error);
+						Notifications.error('Восстановление пароля не удалось', err.error);
 					} else {
 						Notifications.success('Способ восстановления кодов доступа отправлен на почту');
 					}

@@ -46,7 +46,7 @@ Meteor.methods({
 		var item = Game.Unit.items.army[options.group] && Game.Unit.items.army[options.group][options.engName];
 
 		if (!item || !item.canBuild(options.count)) {
-			throw new Meteor.Error('Не достаточно ресурсов');
+			throw new Meteor.Error('Недостаточно ресурсов');
 		}
 
 		if (item.maxCount !== undefined) {
@@ -240,7 +240,7 @@ Meteor.methods({
 			let planet = Game.Planets.getOne(options.planetId);
 
 			if (planet.user_id !== user._id) {
-				throw new Meteor.Error('В анус себе надемаж пёс!');
+				throw new Meteor.Error('В анус себе надемажь, пёс!');
 			}
 
 			if (!planet.mission) {
@@ -325,7 +325,7 @@ Meteor.methods({
 			});
 
 			if (!zone) {
-				throw new Meteor.Error('Зона не существует');
+				throw new Meteor.Error('Зоны не существует');
 			}
 
 			let enemyArmy = zone.enemyArmy;
@@ -398,7 +398,7 @@ Meteor.methods({
 		Game.Log.method('battleHistory.getPage');
 
 		if (count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		return Game.BattleHistory.Collection.find({

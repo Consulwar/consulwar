@@ -35,7 +35,7 @@ class Group {
 		return result;
 	}
 
-	get getAliveCount() {
+	getAliveCount() {
 		return this.units.reduce(function(length, group) {
 			return length + (group.count > 0 ? 1 : 0);
 		}, 0);

@@ -8,20 +8,19 @@ class Unit {
 
 		let characteristics = this.model.earthCharacteristics; //todo
 
-		this.baseHp = characteristics.life;
+		this.weapon = characteristics.weapon;
+		this.health = characteristics.health;
 
-		this.hp = this.baseHp * Game.Unit.rollCount(count);
+		this.hp = this.health.armor * Game.Unit.rollCount(count);
 
-		let damage = characteristics.damage;
+		let damage = this.weapon.damage;
 
 		//todo this.baseDamage = Game.Random.interval( damage.min, damage.max );
 		this.baseDamage = Math.round( (damage.min + damage.max) / 2 );
-
-		this.signature = characteristics.signature;
 	}
 
 	get count() {
-		return Math.ceil(this.hp / this.baseHp);
+		return Math.ceil(this.hp / this.health.armor);
 	}
 
 	get damage() {
@@ -49,14 +48,14 @@ class Unit {
 	receiveDamage(unit, damage) {
 		let rest;
 
-		let eHPModifier = Math.max(1, (this.signature.weapon / unit.signature.ship));
+		let eHPModifier = Math.max(1, (this.weapon.signature / unit.health.signature));
 		let eHP = eHPModifier * this.hp;
 
 		if (eHP > damage) {
 			this.hp -= damage / eHPModifier;
 			rest = 0;
 		} else {
-			rest = damage - this.hp;
+			rest = damage - eHP;
 			this.hp = 0;
 		}
 

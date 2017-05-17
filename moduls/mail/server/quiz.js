@@ -84,7 +84,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('getQuiz');
+		Game.Log.method('getQuiz');
 
 		check(id, String);
 
@@ -115,7 +115,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('quizAnswer');
+		Game.Log.method('quizAnswer');
 
 		check(id, String);
 		check(answer, String);
@@ -142,7 +142,7 @@ Meteor.methods({
 			}
 
 			if (quiz.endDate < Game.getCurrentTime()) {
-				throw new Meteor.Error('Опрос уже завершен');
+				throw new Meteor.Error('Опрос уже завершён');
 			}
 
 			userAnswer = Game.Quiz.Answer.Collection.findOne({
@@ -190,7 +190,7 @@ Meteor.methods({
 			}
 
 			if (quiz.endDate < Game.getCurrentTime()) {
-				throw new Meteor.Error('Опрос уже завершен');
+				throw new Meteor.Error('Опрос уже завершён');
 			}
 
 			userAnswer = Game.Quiz.Answer.Collection.findOne({
@@ -235,7 +235,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('createQuiz');
+		Game.Log.method('createQuiz');
 
 		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');
@@ -290,7 +290,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('sendQuiz');
+		Game.Log.method('sendQuiz');
 
 		if (user.username != 'Zav') {
 			throw new Meteor.Error('Ты не Zav!');

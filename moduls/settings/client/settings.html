@@ -48,22 +48,22 @@
 		<h2>Настройка email</h2>
 		<div class="emailBlock">
 			{{#if user.emails.[0].verified}}
-				<span class="check" data-tooltip="email подтвержден"></span>
+				<span class="check" data-tooltip="email подтверждён"></span>
 				<span class="email">{{user.emails.[0].address}}</span>
 			{{else}}
-				<span class="cross" data-tooltip="email не подтвержден"></span>
+				<span class="cross" data-tooltip="email не подтверждён"></span>
 				<span class="email">{{user.emails.[0].address}}</span>
 				<button name="changeEmail" data-tooltip="изменить email"></button>
 				<button 
 					name="verify" 
-					data-tooltip="Отправить письмо потверждения"
+					data-tooltip="Отправить письмо подтверждения"
 					data-email="{{user.emails.[0].address}}"
 				>
 				</button>
-				<span class="hint">Письмо можно отправить не больше 2 раз в сутки</span>
+				<span class="hint">Письмо можно отправить не более 2 раз в сутки</span>
 			{{/if}}
 		</div>
-		<span class="title">Получать письма не чаще чем раз в:</span>
+		<span class="title">Получать письма не чаще, чем раз в:</span>
 		<div class="emailLettersFrequency">
 			{{#each Game.Settings.emailLettersFrequency}}
 				<button 
@@ -129,7 +129,7 @@
 					data-settings_field="mobileVersion"
 					checked="{{options.mobileVersion}}" 
 				>
-				<span class="checkboxTitle">Эксперементальная мобильная версия</span>
+				<span class="checkboxTitle">Экспериментальная мобильная версия</span>
 			</label>
 			<label class="checkBlock">
 				<input 

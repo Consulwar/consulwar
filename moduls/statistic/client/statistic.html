@@ -89,7 +89,7 @@
 <template name="consulInfo">
 	<div class="consulInfo">
 		<div class="user">
-			<img src="/img/game/chat/icons/{{Game.User.iconPath selectedUser}}.png" alt="Иконка консула"/>
+			<img src="/img/game/chat/icons/{{Game.User.iconPath selectedUser}}.png" alt="Иконка Консула"/>
 			<div class="text">
 				<div class="userName">{{selectedUser.username}}</div>
 				<div>{{Game.User.getLevelName selectedUser.rating}}</div>
@@ -97,7 +97,7 @@
 		</div>
 		<ul class="activity">
 			<li>
-				Статус консула был получен: 
+				Статус Консула был получен: 
 				<span class="registryDate">
 					{{formatYearMonthDay selectedUser.createdAt}}
 				</span>
@@ -125,7 +125,7 @@
 			<a
 				class="open_house"
 				href="{{pathFor 'house' group='house' hash=selectedUser.username}}"
-				data-tooltip="Смотреь палату"
+				data-tooltip="Смотреть палату"
 			>
 			</a>
 			<a
@@ -149,14 +149,14 @@
 			<div class="searchBlock">
 				<div 
 					class="button returnToMe"
-					data-tooltip="Вернуться к своему консулу"
+					data-tooltip="Вернуться к своему Консулу"
 				></div>
 				<div 
 					class="button search"
-					data-tooltip="Поиск консула в статистике"
+					data-tooltip="Поиск Консула в статистике"
 				></div>
 				<input
-					type="text" name="searchUserInRating" placeholder="Имя консула"
+					type="text" name="searchUserInRating" placeholder="Имя Консула"
 				>
 			</div>
 
@@ -320,7 +320,7 @@
 			)
 			(makeObject
 				engName="metals"
-				name="металлы"
+				name="Металлы"
 			)
 			(makeObject
 				engName="crystals"
@@ -352,7 +352,7 @@
 			)
 			(makeObject
 				engName="metals"
-				name="металлы"
+				name="Металлы"
 			)
 			(makeObject
 				engName="crystals"
@@ -692,9 +692,9 @@
 	<h1>
 		{{#if this.data.chat.sepukku}}
 			Совершил {{this.data.chat.sepukku}} 
-			{{declension this.data.chat.sepukku "кровав" "ое" "ых" "ых"}} сепукку
+			{{declension this.data.chat.sepukku "кровав" "ое" "ых" "ых"}} сэппуку
 		{{else}}
-			Не совершал кровавое сепукку
+			Не совершал кровавое сэппуку
 		{{/if}}
 	</h1>
 	<h1>

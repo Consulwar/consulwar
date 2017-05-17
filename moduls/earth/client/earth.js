@@ -16,7 +16,7 @@ Game.Earth.showMap = function() {
 Game.EarthTurns.Collection.find({}).observeChanges({
 	added: function() {
 		if (turnsSubscription.ready()) {
-			Game.showDesktopNotification('Не пропустите новое голосование на земле, Консул!', {
+			Game.showDesktopNotification('Не пропустите новое голосование на Земле, Консул!', {
 				path: Router.path('earth', {group: 'earth'})
 			});
 		}
@@ -277,7 +277,7 @@ Template.reserve.events({
 			if (err) {
 				Notifications.error('Не удалось отправить войска', err.error);
 			} else {
-				Notifications.success('Войска отправлены на землю');
+				Notifications.success('Войска отправлены на Землю');
 			}
 		});
 	}

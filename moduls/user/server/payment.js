@@ -99,10 +99,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('user.getPaymentIncomeHistory');
+		Game.Log.method('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		return Game.Payment.Income.Collection.find({
@@ -127,10 +127,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('user.getPaymentIncomeHistory');
+		Game.Log.method('user.getPaymentIncomeHistory');
 
 		if (count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		return Game.Payment.Expense.Collection.find({
@@ -169,7 +169,7 @@ if (process.env.NODE_ENV == 'development') {
 		'payment.testItem': function(id) {
 			var item = Game.Payment.items[id];
 			if (!item) {
-				throw new Meteor.Error('Непральный id');
+				throw new Meteor.Error('Неправильный id');
 			}
 
 			Game.Payment.Income.log(item.profit, {
@@ -291,7 +291,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('admin.getPromocodeHistory');
+		Game.Log.method('admin.getPromocodeHistory');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -302,7 +302,7 @@ Meteor.methods({
 		check(options.count, Match.Integer);
 
 		if (options.count > 100) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		var records = null;
@@ -370,7 +370,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('admin.addPromoCode');
+		Game.Log.method('admin.addPromoCode');
 
 		if (['admin'].indexOf(user.role) == -1) {
 			throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -466,7 +466,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('user.activatePromoCode');
+		Game.Log.method('user.activatePromoCode');
 
 		check(code, String);
 
@@ -475,11 +475,11 @@ Meteor.methods({
 		});
 
 		if (!promoCode) {
-			throw new Meteor.Error('Такой код не существует');
+			throw new Meteor.Error('Такого кода не существует');
 		}
 
 		if (promoCode.validthru && promoCode.validthru < Game.getCurrentTime()) {
-			throw new Meteor.Error('Срок использования истек');
+			throw new Meteor.Error('Срок использования истёк');
 		}
 
 		if (promoCode.usersActivated) {

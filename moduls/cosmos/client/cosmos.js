@@ -149,7 +149,7 @@ Template.cosmosHistory.onRendered(function() {
 			Meteor.call('battleHistory.getPage', pageNumber, historyCountPerPage, false, function(err, data) {
 				isHistoryLoading.set(false);
 				if (err) {
-					Notifications.error('Не удалось получить историю боев', err.error);
+					Notifications.error('Не удалось получить историю боёв', err.error);
 				} else {
 					// parse data
 					for (var i = 0; i < data.length; i++) {
@@ -585,7 +585,7 @@ Game.Cosmos.getPlanetInfo = function(planet) {
 	if (planet.isHome || planet.armyId) {
 		info.isHumans = true;
 		info.isHome = true;
-		info.status = (planet.isHome) ? 'Планета консула' : 'Колония';
+		info.status = (planet.isHome) ? 'Планета Консула' : 'Колония';
 		if (Game.Planets.getColonies().length <= 1) {
 			info.canSend = false;
 		} else {
@@ -662,7 +662,7 @@ Template.cosmosPlanetPopup.helpers({
 Template.cosmosPlanetPopup.events({
 	'click .open': function(e, t) {
 		if (!Game.User.haveVerifiedEmail()) {
-			return Notifications.info('Сперва нужно верифицировать Email');
+			return Notifications.info('Сперва нужно верифицировать email');
 		}
 
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
@@ -851,7 +851,7 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 	if (spaceEvent.info.isHumans) {
 		info.isHumans = true;
 		info.canSend = false;
-		info.status = 'Флот консула';
+		info.status = 'Флот Консула';
 	} else {
 		info.isHumans = false;
 		info.canSend = true;
@@ -860,7 +860,7 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 			name: Game.Battle.items[spaceEvent.info.mission.type].name,
 			reward: Game.Battle.items[spaceEvent.info.mission.type].level[spaceEvent.info.mission.level].reward
 		};
-		info.status = 'Флот рептилий';
+		info.status = 'Флот Рептилий';
 	}
 
 	var units = Game.SpaceEvents.getFleetUnits(spaceEvent);

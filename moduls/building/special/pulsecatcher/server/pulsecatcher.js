@@ -62,7 +62,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('pulsecatcher.voteBonus');
+		Game.Log.method('pulsecatcher.voteBonus');
 
 		if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');
@@ -87,7 +87,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 		
-		Game.Log('pulsecatcher.activateBonus');
+		Game.Log.method('pulsecatcher.activateBonus');
 
 		if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
 			throw new Meteor.Error('Нужно построить Импульсный уловитель');

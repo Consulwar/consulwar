@@ -13,7 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('allianceReplenishmentHistory.create');
+		Game.Log.method('allianceReplenishmentHistory.create');
 
 		check(resource, Match.OneOf({
 			honor: Match.Integer,
@@ -27,13 +27,17 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка пополнения баланса', 'Вы не состоите в альянсе');
 		}
 
-		let alliance = Game.Alliance.getByUrl(user.alliance);
+		let alliance = Game.Alliance.getByName(user.alliance);
 
 		let resources = Game.Resources.getValue();
 
 		for (let name in resource) {
 			if (resource.hasOwnProperty(name)) {
 				let count = resource[name];
+
+				if (count <= 0) {
+					throw new Meteor.Error('Ошибка пополнения баланса', 'Неверная сумма пополнения');
+				}
 
 				if (resources[name].amount < count) {
 					throw new Meteor.Error('Ошибка пополнения баланса', 'Недостаточно средств');

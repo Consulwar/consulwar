@@ -99,7 +99,7 @@ Game.Statistic.fixUser = function(userId) {
 	});
 
 	if (!user) {
-		throw new Meteor.Error('Пользователь не существует');
+		throw new Meteor.Error('Пользователя не существует');
 	}
 
 	// fix only essential for GUI values!
@@ -192,10 +192,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('statistic.fixGame');
+		Game.Log.method('statistic.fixGame');
 
 		if (['admin'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Нужны парва администратора');
+			throw new Meteor.Error('Нужны права администратора');
 		}
 
 		Game.Statistic.fixGame();
@@ -212,10 +212,10 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('statistic.fixUser');
+		Game.Log.method('statistic.fixUser');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Нужны парва администратора или модератора');
+			throw new Meteor.Error('Нужны права администратора или модератора');
 		}
 
 		check(username, String);
@@ -255,7 +255,7 @@ Meteor.methods({
 			throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
 		}
 		
-		Game.Log('statistic.getUserPositionInRating');
+		Game.Log.method('statistic.getUserPositionInRating');
 
 		return Game.Statistic.getUserPositionInRating(type, selectedUser);
 	},
@@ -271,14 +271,14 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('statistic.getPageInRating');
+		Game.Log.method('statistic.getPageInRating');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);
 		check(type, String);
 
 		if (countPerPage > Game.Statistic.COUNT_PER_PAGE) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		var sortField = Game.Statistic.getSortFieldForType(type).field;

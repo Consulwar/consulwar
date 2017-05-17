@@ -4,7 +4,7 @@
 			<div id="map-battle"></div>
 		</div>
 		<button class="map-control-home"></button>
-		<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боев</a>
+		<a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боёв</a>
 		{{#if isSelection}}
 			<a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
 		{{/if}}
@@ -636,7 +636,7 @@
 			{{> pages total=countTotal perPage=countPerPage}}
 		{{else}}
 			{{#if lt countTotal 1}}
-				<h2>История боев пуста</h2>
+				<h2>История боёв пуста</h2>
 			{{/if}}
 		{{/if}}
 		<a class="btn-close" href="{{pathFor 'cosmos'}}"></a>

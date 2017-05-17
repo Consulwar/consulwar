@@ -25,7 +25,7 @@ Template.emailSettings.events({
 				if (err) {
 					return Notifications.error('Не получилось изменить email', err.message);
 				}
-				Notifications.success('Email успешно изменен');
+				Notifications.success('Email успешно изменён');
 			});
 		});
 	},
@@ -51,7 +51,7 @@ Template.emailSettings.events({
 	'click button[name="verify"]': function(e, t) {
 		Meteor.call('settings.sendVerifyEmail', e.target.dataset.email, function(err) {
 			if (err) {
-				return Notifications.error('Не удалось отправить письмо верифицации.', err.message);
+				return Notifications.error('Не удалось отправить письмо верификации.', err.message);
 			}
 			Notifications.success('Сообщение отправлено');
 		});
@@ -88,7 +88,7 @@ Template.changePassword.events({
 				return Notifications.error(err.message);
 			}
 
-			Notifications.success('Пароль успешно изменен');
+			Notifications.success('Пароль успешно изменён');
 			t.$('form')[0].reset();
 		});
 	}

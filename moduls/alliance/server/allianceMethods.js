@@ -13,7 +13,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('alliance.create');
+		Game.Log.method('alliance.create');
 
 		checkOptions(options);
 		checkCreator(user);
@@ -46,7 +46,7 @@ Meteor.methods({
 		});
 	},
 
-	'alliance.join': function(allianceUrl, contactId = null) {
+	'alliance.join': function(info) {
 		let user = Meteor.user();
 
 		if (!user || !user._id) {
@@ -57,14 +57,16 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('alliance.join');
+		Game.Log.method('alliance.join');
 
-		check(allianceUrl, String);
+		check(info, Match.OneOf({
+			allianceUrl: String
+		}, {
+			contactId: String
+		}));
 
-		if (contactId) {
-			check(contactId, String);
-
-			let contact = Game.Alliance.Contact.get(contactId);
+		if (info.contactId) {
+			let contact = Game.Alliance.Contact.get(info.contactId);
 
 			if (!contact) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Запрос не найден');
@@ -110,7 +112,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Прошло мало времени с предыдущего выхода из альянса');
 			}
 
-			Game.Alliance.Contact.accept(contactId);
+			Game.Alliance.Contact.accept(info.contactId);
 
 			let typeName = contact.type === Game.Alliance.Contact.type.INVITE ? 'invites' : 'requests';
 
@@ -120,7 +122,7 @@ Meteor.methods({
 
 			Game.Alliance.Contact.invalidateForUser(participant._id);
 
-			Game.Alliance.addParticipant(allianceUrl, participant.username);
+			Game.Alliance.addParticipant(alliance, participant.username);
 
 			Game.Chat.Room.addParticipant('alliance/' + alliance.url, participant);
 
@@ -132,7 +134,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Вы уже состоите в альянсе');
 			}
 
-			let alliance = Game.Alliance.getByUrl(allianceUrl);
+			let alliance = Game.Alliance.getByUrl(info.allianceUrl);
 
 			if (!alliance) {
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Такого альянса не существует');
@@ -152,7 +154,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка вступления в альянс', 'Прошло мало времени с предыдущего выхода из альянса');
 			}
 
-			Game.Alliance.addParticipant(allianceUrl, user.username);
+			Game.Alliance.addParticipant(alliance, user.username);
 
 			Game.Chat.Room.addParticipant('alliance/' + alliance.url, user);
 
@@ -173,19 +175,19 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('alliance.leave');
+		Game.Log.method('alliance.leave');
 
 		if (!user.alliance) {
 			throw new Meteor.Error('Невозможно выйти из альянса', 'Вы не состоите в альянсе');
 		}
 
-		let alliance = Game.Alliance.getByUrl(user.alliance);
+		let alliance = Game.Alliance.getByName(user.alliance);
 
 		if (alliance.owner === user.username) {
 			throw new Meteor.Error('Невозможно выйти из альянса', 'Вы создатель этого альянса');
 		}
 
-		Game.Alliance.removeParticipant(alliance.url, user.username);
+		Game.Alliance.removeParticipant(alliance, user.username);
 
 		Game.Chat.Room.removeParticipant('alliance/' + alliance.url, user);
 
@@ -213,7 +215,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('alliance.kick');
+		Game.Log.method('alliance.kick');
 
 		check(name, String);
 
@@ -234,7 +236,7 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка при отчислении участника', 'Игрок не состоит в альянсе');
 		}
 
-		let alliance = Game.Alliance.getByUrl(participant.alliance);
+		let alliance = Game.Alliance.getByName(participant.alliance);
 
 		if (alliance.owner !== user.username) {
 			throw new Meteor.Error('Ошибка при отчислении участника', 'Вы не создатель этого альянса');
@@ -244,7 +246,7 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка при отчислении участника', 'Нельзя отчислить из публичного альянса');
 		}
 
-		Game.Alliance.removeParticipant(alliance.url, participant.username);
+		Game.Alliance.removeParticipant(alliance, participant.username);
 
 		Game.Chat.Room.removeParticipant('alliance/' + alliance.url, participant);
 
@@ -279,7 +281,7 @@ Meteor.methods({
 				throw new Meteor.Error('Ошибка получения позиции альянса', 'Альянс не найден');
 			}
 		} else if (user.alliance) {
-			alliance = Game.Alliance.getByUrl(user.alliance);
+			alliance = Game.Alliance.getByName(user.alliance);
 		} else {
 			throw new Meteor.Error('Ошибка получения позиции альянса', 'Игрок не в альянсе');
 		}
@@ -307,7 +309,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('alliance.getPageInList');
+		Game.Log.method('alliance.getPageInList');
 
 		check(page, Match.Integer);
 		check(countPerPage, Match.Integer);
@@ -359,7 +361,7 @@ Meteor.methods({
 			type: alliance.type
 		};
 
-		if (extended && user.alliance === url) {
+		if (extended && user.alliance === alliance.name) {
 			info.balance = alliance.balance;
 			info.participants = alliance.participants;
 		}
@@ -378,7 +380,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован.');
 		}
 
-		Game.Log('alliance.levelUp');
+		Game.Log.method('alliance.levelUp');
 
 		check(priceType, Match.Where(function(priceType) {
 			check(priceType, String);
@@ -394,7 +396,7 @@ Meteor.methods({
 			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не состоите в альянсе');
 		}
 
-		let alliance = Game.Alliance.getByUrl(user.alliance);
+		let alliance = Game.Alliance.getByName(user.alliance);
 
 		if (alliance.owner !== user.username) {
 			throw new Meteor.Error('Ошибка повышения уровня альянса', 'Вы не создатель альянса');

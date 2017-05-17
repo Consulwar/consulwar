@@ -240,7 +240,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('quests.getReward');
+		Game.Log.method('quests.getReward');
 
 		var quests = Game.Quest.getValue();
 
@@ -301,7 +301,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('quests.getInfo');
+		Game.Log.method('quests.getInfo');
 
 		var questLine = Game.Quest.regularQuests[questId];
 
@@ -328,7 +328,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('quests.getDailyInfo');
+		Game.Log.method('quests.getDailyInfo');
 
 		var quests = Game.Quest.getValue();
 
@@ -363,7 +363,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('quests.sendDailyAnswer');
+		Game.Log.method('quests.sendDailyAnswer');
 
 		var quests = Game.Quest.getValue();
 

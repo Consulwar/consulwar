@@ -83,7 +83,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('house.buyItem');
+		Game.Log.method('house.buyItem');
 
 		// check config
 		if (!Game.House.items[group] || !Game.House.items[group][id]) {
@@ -151,7 +151,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('house.placeItem');
+		Game.Log.method('house.placeItem');
 
 		var house = Game.House.getValue();
 
@@ -182,7 +182,7 @@ Meteor.methods({
 			throw new Meteor.Error('Аккаунт заблокирован');
 		}
 
-		Game.Log('house.getPlacedItems');
+		Game.Log.method('house.getPlacedItems');
 
 		check(login, String);
 

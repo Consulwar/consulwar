@@ -25,7 +25,7 @@ Game.Payment.Income = {
 new game.PaymentItem({
 	id: 'paymentCredits1000',
 	name: '1000 ГГК',
-	description: 'Война дело дорогое, но главное начать',
+	description: 'Война – дело дорогое, но главное начать',
 	profit: {
 		resources: { credits: 1000 }
 	},

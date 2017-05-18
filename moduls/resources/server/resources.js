@@ -209,7 +209,7 @@ Game.Resources.updateWithIncome = function(currentTime) {
 	var resources = Game.Resources.getValue();
 
 	if (currentTime < resources.updated - 10) {
-		throw new Meteor.Error('Ошибка при рассчете доходов', 'Подождите 5 минут');
+		throw new Meteor.Error('Ошибка при расчёте доходов', 'Подождите 5 минут');
 	}
 
 	var delta = currentTime - resources.updated;
@@ -336,7 +336,7 @@ Meteor.methods({
 		Game.Log.method('getBonusResources');
 
 		if (name != 'crystals' && name != 'metals') {
-			throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? ха-ха');
+			throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? Ха-ха');
 		}
 
 		Meteor.call('actualizeGameInfo');

@@ -16,7 +16,7 @@ Meteor.methods({
 		Game.Log.method('mutual.invest');
 
 		if (Game.User.getLevel() < 1) {
-			throw new Meteor.Error('Чтобы участвовать в общих исследованиях нужно подрости');
+			throw new Meteor.Error('Чтобы участвовать в общих исследованиях, нужно подрасти');
 		}
 
 		check(options, Object);
@@ -35,7 +35,7 @@ Meteor.methods({
 		var item = Game.Mutual.items[options.group] && Game.Mutual.items[options.group][options.engName];
 
 		if (!item) {
-			throw new Meteor.Error('Вот жеж ты жук! И чего ты ожидал то?');
+			throw new Meteor.Error('Вот жеж ты жук! И чего ты ожидал-то?');
 		}
 
 		var maxInvestmentsPerUser = Math.floor(item.investments / 5);

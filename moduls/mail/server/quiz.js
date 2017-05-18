@@ -142,7 +142,7 @@ Meteor.methods({
 			}
 
 			if (quiz.endDate < Game.getCurrentTime()) {
-				throw new Meteor.Error('Опрос уже завершен');
+				throw new Meteor.Error('Опрос уже завершён');
 			}
 
 			userAnswer = Game.Quiz.Answer.Collection.findOne({
@@ -190,7 +190,7 @@ Meteor.methods({
 			}
 
 			if (quiz.endDate < Game.getCurrentTime()) {
-				throw new Meteor.Error('Опрос уже завершен');
+				throw new Meteor.Error('Опрос уже завершён');
 			}
 
 			userAnswer = Game.Quiz.Answer.Collection.findOne({

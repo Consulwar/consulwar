@@ -20,7 +20,7 @@ if (Meteor.settings.mail) {
 	// Note: if you need to return HTML instead, use Accounts.emailTemplates.verifyEmail.html
 	Accounts.emailTemplates.verifyEmail.html = function(user, url) {
 		var unsubscribeUrl = 'http://consulwar.ru/unsubscribe@mail=' + user.emails[0].address;
-		var html = '<p>Нажав на эту ссылку, вы подтверждаете, что данная почта недоступна Рептилоидам, что канал связи с параллельной вселенной защищён и вы, истинно Великий Консул - являетесь единственным пользователем данного аккаунта. Удачи в Бою и да прибудет с вами Летающий Макаронный Монстр.: ';
+		var html = '<p>Нажав на эту ссылку, вы подтверждаете, что данная почта недоступна Рептилоидам, канал связи с параллельной вселенной защищён и вы – истинно Великий Консул – являетесь единственным пользователем данного аккаунта. Удачи в бою и да прибудет с вами Летающий Макаронный Монстр. ';
 		html += '<a href="' + url + '">' + url + '</a></p>';
 		html += '<p>Этот адрес электронной почты был получен нами после вашей регистрации в игре ConsulWar и подключения к каналу связи. Это письмо вы получили, так как был запущен новый сервер и открыт новый канал связи.</p>';
 		html += '<p>Если вас больше не интересует спасение параллельной вселенной, и вы больше не хотите получать рассылку от проекта ConsulWar, нажмите на ссылку: ';
@@ -35,7 +35,7 @@ if (Meteor.settings.mail) {
 
 	Accounts.emailTemplates.resetPassword.html = function (user, url) {
 		var unsubscribeUrl = 'http://consulwar.ru/unsubscribe@mail=' + user.emails[0].address;
-		var html = '<p>Чтобы сбросить пароль нажмите на ссылку: ';
+		var html = '<p>Чтобы сбросить пароль, нажмите на ссылку: ';
 		html += '<a href="' + url + '">' + url + '</a></p>';
 		html += '<p>Этот адрес электронной почты был получен нами после вашей регистрации в игре ConsulWar и подключения к каналу связи. Это письмо вы получили, так как был запущен новый сервер и открыт новый канал связи.</p>';
 		html += '<p>Если вас больше не интересует спасение параллельной вселенной, и вы больше не хотите получать рассылку от проекта ConsulWar, нажмите на ссылку: ';
@@ -71,7 +71,7 @@ Accounts.onCreateUser(function(option, user) {
 		}
 
 		if (username.length > 16) {
-			throw new Meteor.Error('Максимальная длинна имени 16 символов');
+			throw new Meteor.Error('Максимальная длина имени – 16 символов');
 		}
 
 		if (!username.match(/^[а-яА-Яa-zA-Z0-9_\- ]+$/)) {
@@ -96,7 +96,7 @@ Accounts.onCreateUser(function(option, user) {
 		});
 
 		if (hasEmail) {
-			throw new Meteor.Error('Такой Email Занят');
+			throw new Meteor.Error('Такой email занят');
 		}
 		return true;
 	}));

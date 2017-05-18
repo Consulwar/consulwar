@@ -88,7 +88,7 @@ Meteor.methods({
 
 		// Count of reward taken on current page
 		let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
-		let currentRewardPage = Math.floor((rewardsTaken + 1) / Game.EntranceReward.perPage);
+		let currentRewardPage = Math.floor(rewardsTaken / Game.EntranceReward.perPage);
 
 		if (history.length < Game.EntranceReward.perPage) {
 			let currentPageReward = currentRewardPage == page ? (rewardsTaken % Game.EntranceReward.perPage) : 0;

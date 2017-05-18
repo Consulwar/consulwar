@@ -44,14 +44,14 @@
 							{{/if}}
 							{{#if consul}}
 								<a class="fleets" href="{{pathFor 'cosmos' hash=consulId}}">
-									Флот консула 
+									Флот Консула 
 									{{#if gt consul 1}}({{consul}}) {{/if}}
 									{{formatSeconds (fleetTime consulTime)}}
 								</a>
 							{{/if}}
 							{{#if reptile}}
 								<a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
-									Флот рептилий 
+									Флот Рептилий 
 									{{#if gt reptile 1}}({{reptile}}) {{/if}}
 									{{formatSeconds (fleetTime reptileTime)}}
 								</a>

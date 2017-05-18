@@ -23,7 +23,7 @@ let showEntranceReward = function() {
 		isEntranceRewardDisplayed = true;
 
 		let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
-		let currentRewardPage = Math.floor((rewardsTaken + 1) / Game.EntranceReward.perPage);
+		let currentRewardPage = Math.floor(rewardsTaken / Game.EntranceReward.perPage);
 		let selectedPage = currentRewardPage; // For future navigation
 
 		Meteor.call('entranceReward.getHistory', selectedPage, function (err, history) {

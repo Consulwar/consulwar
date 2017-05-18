@@ -99,7 +99,7 @@ Game.Statistic.fixUser = function(userId) {
 	});
 
 	if (!user) {
-		throw new Meteor.Error('Пользователь не существует');
+		throw new Meteor.Error('Пользователя не существует');
 	}
 
 	// fix only essential for GUI values!
@@ -195,7 +195,7 @@ Meteor.methods({
 		Game.Log.method('statistic.fixGame');
 
 		if (['admin'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Нужны парва администратора');
+			throw new Meteor.Error('Нужны права администратора');
 		}
 
 		Game.Statistic.fixGame();
@@ -215,7 +215,7 @@ Meteor.methods({
 		Game.Log.method('statistic.fixUser');
 
 		if (['admin', 'helper'].indexOf(user.role) == -1) {
-			throw new Meteor.Error('Нужны парва администратора или модератора');
+			throw new Meteor.Error('Нужны права администратора или модератора');
 		}
 
 		check(username, String);
@@ -278,7 +278,7 @@ Meteor.methods({
 		check(type, String);
 
 		if (countPerPage > Game.Statistic.COUNT_PER_PAGE) {
-			throw new Meteor.Error('Много будешь знать - скоро состаришься');
+			throw new Meteor.Error('Много будешь знать – скоро состаришься');
 		}
 
 		var sortField = Game.Statistic.getSortFieldForType(type).field;
@@ -452,7 +452,8 @@ Meteor.publish('statistic', function() {
 					payment: 1,
 					investments: 1,
 					promocode: 1,
-					colosseum: 1
+					colosseum: 1,
+					entranceReward: 1
 				}
 			});
 		}

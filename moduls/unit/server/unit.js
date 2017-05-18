@@ -161,7 +161,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 
 Game.Unit.mergeArmy = function(sourceId, destId) {
 	if (sourceId == destId) {
-		throw new Meteor.Error('Нельзя слить одну и туже армию');
+		throw new Meteor.Error('Нельзя слить одну и ту же армию');
 	}
 
 	var source = Game.Unit.getArmy(sourceId);

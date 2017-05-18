@@ -18,7 +18,7 @@ Game.User = {
 	},
 
 	levels: [
-		{ rating: 0, name: 'Новичек' },
+		{ rating: 0, name: 'Новичок' },
 		{ rating: 25000, name: 'Консул' },
 		{ rating: 100000, name: 'Правитель' },
 		{ rating: 500000, name: 'Император' },

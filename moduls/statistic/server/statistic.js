@@ -452,7 +452,8 @@ Meteor.publish('statistic', function() {
 					payment: 1,
 					investments: 1,
 					promocode: 1,
-					colosseum: 1
+					colosseum: 1,
+					entranceReward: 1
 				}
 			});
 		}

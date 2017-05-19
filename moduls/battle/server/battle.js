@@ -1,3 +1,4 @@
+import BattleSide from '../imports/side';
 import Group from '../imports/group';
 
 initBattle = function() {
@@ -23,29 +24,53 @@ initBattle = function() {
 		}
 	};
 
-	let group1 = Group.fromObject(userArmy);
+	let group1 = Group.fromObject({army: {fleet: {gammadrone: 100}}});
 	let group2 = Group.fromObject(enemyArmy);
+	let group3 = Group.fromObject({army: {fleet: {wasp: 10}}});
+
+	let side1 = new BattleSide();
+	side1.addGroup(group1);
+	side1.addGroup(group3);
+
+	let side2 = new BattleSide();
+	side2.addGroup(group2);
+
+	roundSides(1, side1, side2);
 
 	// perform Round #1
-	round(1, group1, group2);
+	roundGroups(1, group1, group2);
 
 	group1 = Group.fromObject(group1.getAliveObject());
 	group2 = Group.fromObject(group2.getAliveObject());
 
-	round(2, group1, group2);
+	roundGroups(2, group1, group2);
 
 	group1 = Group.fromObject(group1.getAliveObject());
 	group2 = Group.fromObject(group2.getAliveObject());
 
-	round(3, group1, group2);
+	roundGroups(3, group1, group2);
 
 	group1 = Group.fromObject(group1.getAliveObject());
 	group2 = Group.fromObject(group2.getAliveObject());
 
-	round(4, group1, group2);
+	roundGroups(4, group1, group2);
 };
 
-let round = function(number, group1, group2) {
+let roundSides = function(number, side1, side2) {
+	let groups1 = side1.getGroups();
+	let groups2 = side2.getGroups();
+
+	let damageList1 = side1.getDamageList();
+	let damageList2 = side2.getDamageList();
+
+	fire(damageList1, side2);
+	fire(damageList2, side1);
+
+	console.log(number, side1.toJSON());
+	console.log(number, side2.toJSON());
+};
+
+let roundGroups = function(number, group1, group2) {
 	let damageList1 = group1.getDamageList();
 	let damageList2 = group2.getDamageList();
 

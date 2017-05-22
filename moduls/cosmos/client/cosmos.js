@@ -1651,6 +1651,42 @@ var getFleetAnimation = function(fleet) {
 	};
 };
 
+Template.cosmosObjects.events({
+	'mouseover .map-fleet': function(e, t) {
+		let eventId = e.currentTarget.dataset.id;
+
+		let polyline = pathViews[eventId].polyline;
+		polyline.setStyle({
+			weight: 3
+		});
+		polyline.bringToFront();
+
+		$(`.map-fleet:not([data-id="${eventId}"])`).addClass('blur');
+
+		for (let id in pathViews) {
+			if (id !== eventId) {
+				pathViews[id].polyline.setStyle({opacity: 0.4});
+			}
+		}
+	},
+
+	'mouseout .map-fleet': function(e, t) {
+		let eventId = e.currentTarget.dataset.id;
+
+		pathViews[eventId].polyline.setStyle({
+			weight: 2
+		});
+
+		$(`.map-fleet`).removeClass('blur');
+
+		for (let id in pathViews) {
+			if (id !== eventId) {
+				pathViews[id].polyline.setStyle({opacity: 1});
+			}
+		}
+	}
+});
+
 Template.cosmosObjects.helpers({
 	zoom: function() {
 		return zoom.get();
@@ -1761,7 +1797,9 @@ Template.cosmos.onRendered(function() {
 			event.info.targetPosition,
 			0,
 			0,
-			(event.info.isHumans ? '#c6e84c' : '#ff7566')
+			(event.info.isHumans ? '#c6e84c' : '#ff7566'),
+			id,
+			pathViews
 		);
 	};
 

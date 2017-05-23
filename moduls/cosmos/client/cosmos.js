@@ -1662,6 +1662,12 @@ Template.cosmosObjects.events({
 		polyline.bringToFront();
 
 		$(`.map-fleet:not([data-id="${eventId}"])`).addClass('blur');
+		$('.map-planet-marker').addClass('blur');
+
+		let planetsId = '[data-id="' + _.map(pathViews[eventId].planetsInPath, (planet)=> planet._id).
+			join('"], [data-id="') + '"]';
+
+		$(planetsId).removeClass('blur');
 
 		for (let id in pathViews) {
 			if (id !== eventId) {
@@ -1678,6 +1684,8 @@ Template.cosmosObjects.events({
 		});
 
 		$(`.map-fleet`).removeClass('blur');
+
+		$('.map-planet-marker').removeClass('blur');
 
 		for (let id in pathViews) {
 			if (id !== eventId) {
@@ -1720,6 +1728,8 @@ Template.cosmosObjects.helpers({
 	getFleetAnimation: getFleetAnimation,
 
 	isHidden: function(x, y) {
+		return false;
+
 		if (bounds.get().contains(new L.latLng(x, y))) {
 			return false;
 		} else {
@@ -1806,7 +1816,7 @@ Template.cosmos.onRendered(function() {
 	var removePath = function(id) {
 		if (mapView && pathViews[id]) {
 			pathViews[id].remove();
-			pathViews[id] = null;
+			delete pathViews[id];
 		}
 	};
 

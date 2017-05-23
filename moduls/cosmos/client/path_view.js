@@ -1,11 +1,23 @@
 initCosmosPathView = function () {
 'use strict';
 
-game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color) {
+game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, color, eventId, pathViews) {
 
 	var allPlanets = Game.Planets.getAll().fetch();
+	let planetsByHand = [];
 	for (var i = 0; i < allPlanets.length; i++) {
-		allPlanets[i].radius = (allPlanets[i].size + 3) * 0.02;
+		let planet = allPlanets[i];
+		planet.radius = (planet.size + 3) * 0.02;
+
+		let hand = planet.hand;
+		let segment = planet.segment;
+		if (!planetsByHand[hand]) {
+			planetsByHand[hand] = [];
+		}
+		if (!planetsByHand[hand][segment]) {
+			planetsByHand[hand][segment] = [];
+		}
+		planetsByHand[hand][segment].push(planet);
 	}
 
 	var hitLineVsCircle = function(x1, y1, x2, y2, cx, cy, cRad) {
@@ -51,13 +63,15 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		curved.properties = { stroke: '#0f0' };
 
 		var curvedCoords = curved.geometry.coordinates;
-		var result = [];
+		var result = [{x:points[0].x, y:points[0].y}];
 		for (var n = 0; n < curvedCoords.length; n++) {
 			result.push({
 				x: curvedCoords[n][0],
 				y: curvedCoords[n][1]
 			});
 		}
+
+		result.push({x:points[points.length-1].x, y:points[points.length-1].y});
 
 		return result;
 	};
@@ -192,6 +206,250 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		return coords;
 	};
 
+	let findNearestPlanet = function(point) {
+		let minDistance = Infinity;
+		let foundPlanet;
+
+		for (let planet of allPlanets) {
+			let distance = distanceSqr(planet, point);
+			if (distance < minDistance) {
+				minDistance = distance;
+				foundPlanet = planet;
+			}
+		}
+
+		return foundPlanet;
+	};
+
+	let distanceSqr = function(p1, p2) {
+		let dx = p2.x - p1.x;
+		let dy = p2.y - p1.y;
+		return dx * dx + dy * dy;
+	};
+
+	const angleCoefficient = 2;
+	const distanceCoefficient = 1;
+
+	let relevance = function(start, finish, candidate) {
+		let ax = candidate.x - start.x;
+		let ay = candidate.y - start.y;
+
+		let bx = finish.x - start.x;
+		let by = finish.y - start.y;
+
+		let bDist = Math.sqrt(bx * bx + by * by);
+		let aDist = Math.sqrt(ax * ax + ay * ay);
+
+		let cos = (ax * bx + ay * by) / (aDist * bDist);
+
+		if (cos < 0) {
+			return 0;
+		}
+
+		let dist = bDist / aDist;
+
+		return cos * angleCoefficient + dist * distanceCoefficient;
+	};
+
+	let findBestPlanet_ = function(start, finish, candidates) {
+		let relMax = -Infinity;
+		let foundPlanet = finish;
+
+		for (let candidate of candidates) {
+			if (candidate === start) {
+				continue;
+			}
+
+			let check = relevance(start, finish, candidate);
+			if (check > relMax) {
+				relMax = check;
+				foundPlanet = candidate;
+			}
+		}
+
+		return foundPlanet;
+	};
+
+	let findBestPlanet = function(current, finish, candidates) {
+		let maxDist = -Infinity;
+		let minDist = Infinity;
+		let foundPlanet = finish;
+
+		let currentDist = distanceSqr(current, finish);
+
+		for (let candidate of candidates) {
+			if (candidate === current) {
+				continue;
+			}
+
+			let distCandidateFinish = distanceSqr(candidate, finish);
+			let distCandidateCurrent = distanceSqr(candidate, current);
+
+			if (distCandidateFinish < currentDist/* && distCandidateFinish > maxDist */&& distCandidateCurrent < minDist) {
+				maxDist = distCandidateFinish;
+				minDist = distCandidateCurrent;
+				foundPlanet = candidate;
+			}
+		}
+
+		return foundPlanet;
+	};
+
+	let concatSegments = function(startIndex, segments) {
+		if (startIndex < segments.length - 1) {
+			return segments[startIndex].concat( segments[startIndex + 1] );
+		} else {
+			return segments[startIndex];
+		}
+	};
+
+	let fillCoordsFromSegments = function(startPlanet, finishPlanet, segments, coords, planetsInPath) {
+		let planets;
+		let n = 0;
+		let bestPlanet;
+
+		let currentIndex = 0;
+		planets = concatSegments(currentIndex, segments);
+
+		let currentPlanet = startPlanet;
+
+		do {
+			bestPlanet = findBestPlanet(currentPlanet, finishPlanet, planets);
+
+			planetsInPath.push(bestPlanet);
+
+			coords.push(getConnectionPoints(coords[coords.length-1], currentPlanet, bestPlanet));
+
+			if (bestPlanet.segment !== currentPlanet.segment) {
+				currentIndex++;
+				planets = concatSegments(currentIndex, segments);
+			}
+
+			currentPlanet = bestPlanet;
+
+			if (n++ > 500) {
+				console.log('Path build failed! Near planet:', currentPlanet);
+				break;
+			}
+		} while (bestPlanet !== finishPlanet);
+	};
+
+	let fillHandSegments = function(hand, startSegment, finishSegment, segments) {
+		let sign = Math.sign(finishSegment - startSegment);
+		let segment = startSegment;
+		do {
+			segments.push(planetsByHand[hand][segment]);
+			segment += sign;
+		} while( segment !== finishSegment );
+
+		segments.push(planetsByHand[hand][finishSegment]);
+	};
+
+	let isCenter = function(planet) {
+		return planet.hand === 0 && planet.segment === 0;
+	};
+
+	let getNewPath = function(startPoint, finishPoint, planetsInPath) {
+		let coords = [];
+		coords.push(startPoint);
+
+		let startPlanet = findNearestPlanet(startPoint);
+
+		planetsInPath.push(startPlanet);
+
+		let finishPlanet = findNearestPlanet(finishPoint);
+
+		let segments = [];
+
+		if (startPlanet.hand === finishPlanet.hand) {
+			fillHandSegments(startPlanet.hand, startPlanet.segment, finishPlanet.segment, segments);
+
+			fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords, planetsInPath);
+		} else {
+			if (isCenter(finishPlanet)) { //finish in center
+				// add hand
+				fillHandSegments(startPlanet.hand, startPlanet.segment, 1, segments);
+				// add center
+				segments.push(planetsByHand[0][0]);
+
+				fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords, planetsInPath);
+			} else if (isCenter(startPlanet)) { // start in center
+				// add center
+				segments.push(planetsByHand[0][0]);
+				// add hand
+				fillHandSegments(finishPlanet.hand, 1, finishPlanet.segment, segments);
+
+				fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords, planetsInPath);
+			} else { // start and finish in different hands
+				// find nearest planet from center
+				let minDistance = Infinity;
+				let startCenterPlanet;
+
+				let cx = 0;
+				let cy = 0;
+				let planets = planetsByHand[startPlanet.hand][1];
+				for (let planet of planets) {
+					cx += planet.x;
+					cy += planet.y;
+				}
+				let count = planets.length;
+				let centerSegment = {x: cx / count, y: cy / count};
+
+				for (let planet of planets) {
+					let distance = distanceSqr(planet, centerSegment);
+					if (distance < minDistance) {
+						minDistance = distance;
+						startCenterPlanet = planet;
+					}
+				}
+
+				// add first hand
+				fillHandSegments(startPlanet.hand, startPlanet.segment, 1, segments);
+
+				fillCoordsFromSegments(startPlanet, startCenterPlanet, segments, coords, planetsInPath);
+
+				// find nearest planet from center
+				minDistance = Infinity;
+				let finishCenterPlanet;
+
+				cx = 0;
+				cy = 0;
+				planets = planetsByHand[finishPlanet.hand][1];
+				for (let planet of planets) {
+					cx += planet.x;
+					cy += planet.y;
+				}
+				count = planets.length;
+				centerSegment = {x: cx / count, y: cy / count};
+
+				for (let planet of planets) {
+					let distance = distanceSqr(planet, centerSegment);
+					if (distance < minDistance) {
+						minDistance = distance;
+						finishCenterPlanet = planet;
+					}
+				}
+
+				// add center
+				segments = [planetsByHand[startPlanet.hand][1]];
+				segments.push([planetsByHand[0][0]]);
+				segments.push([planetsByHand[finishPlanet.hand][1]]);
+
+				fillCoordsFromSegments(startCenterPlanet, finishCenterPlanet, segments, coords, planetsInPath);
+
+				// add second hand
+				segments.length = 0;
+				fillHandSegments(finishPlanet.hand, 1, finishPlanet.segment, segments);
+
+				fillCoordsFromSegments(finishCenterPlanet, finishPlanet, segments, coords, planetsInPath);
+			}
+		}
+
+		coords.push(finishPoint);
+
+		return coords;
+	};
+
 	this.polyline = null;
 	this.lineOptions = null;
 	this.totalDistance = null;
@@ -206,8 +464,12 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		endPoint.x -= endOffset * Math.cos(angle);
 		endPoint.y -= endOffset * Math.sin(angle);
 
+		this.planetsInPath = [];
+
 		// build path
-		var points = getPath(startPoint, endPoint);
+		let points = getNewPath(startPoint, endPoint, this.planetsInPath);
+		// let points = getPath(startPoint, endPoint);
+
 		points = buildSpline(points);
 
 		this.polyline = new L.Polyline([], {
@@ -216,6 +478,48 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			opacity: 1,
 			smoothFactor: 1
 		}).addTo(map);
+
+		let polyline = this.polyline;
+		let planetsInPath = this.planetsInPath;
+
+		polyline.on('mouseover', function() {
+			polyline.setStyle({
+				// color: 'purple',
+				weight: 3
+			});
+			polyline.bringToFront();
+
+			$(`.map-fleet:not([data-id="${eventId}"])`).addClass('blur');
+
+			$('.map-planet-marker').addClass('blur');
+
+			let planetsId = '[data-id="' + _.map(planetsInPath, (planet)=> planet._id).
+				join('"], [data-id="') + '"]';
+
+			$(planetsId).removeClass('blur');
+
+			for (let id in pathViews) {
+				if (id !== eventId) {
+					pathViews[id].polyline.setStyle({opacity: 0.4});
+				}
+			}
+		});
+
+		polyline.on('mouseout', function() {
+			polyline.setStyle({
+				weight: 2
+			});
+
+			$(`.map-fleet`).removeClass('blur');
+
+			$('.map-planet-marker').removeClass('blur');
+
+			for (let id in pathViews) {
+				if (id !== eventId) {
+					pathViews[id].polyline.setStyle({opacity: 1});
+				}
+			}
+		});
 
 		for (var i = 0; i < points.length; i++) {
 			this.polyline.addLatLng(L.latLng(points[i].x, points[i].y));

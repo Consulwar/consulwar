@@ -227,7 +227,6 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		return dx * dx + dy * dy;
 	};
 
-	//todo comment
 	const angleCoefficient = 2;
 	const distanceCoefficient = 1;
 
@@ -304,7 +303,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		}
 	};
 
-	let fillCoordsFromSegments = function(startPlanet, finishPlanet, segments, coords) {
+	let fillCoordsFromSegments = function(startPlanet, finishPlanet, segments, coords, planetsInPath) {
 		let planets;
 		let n = 0;
 		let bestPlanet;
@@ -317,9 +316,9 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		do {
 			bestPlanet = findBestPlanet(currentPlanet, finishPlanet, planets);
 
-			// if (bestPlanet !== finishPlanet) {
-				coords.push(getConnectionPoints(coords[coords.length-1], currentPlanet, bestPlanet));
-			// }
+			planetsInPath.push(bestPlanet);
+
+			coords.push(getConnectionPoints(coords[coords.length-1], currentPlanet, bestPlanet));
 
 			if (bestPlanet.segment !== currentPlanet.segment) {
 				currentIndex++;
@@ -350,11 +349,14 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		return planet.hand === 0 && planet.segment === 0;
 	};
 
-	let getNewPath = function(startPoint, finishPoint) {
+	let getNewPath = function(startPoint, finishPoint, planetsInPath) {
 		let coords = [];
 		coords.push(startPoint);
 
 		let startPlanet = findNearestPlanet(startPoint);
+
+		planetsInPath.push(startPlanet);
+
 		let finishPlanet = findNearestPlanet(finishPoint);
 
 		let segments = [];
@@ -362,7 +364,7 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		if (startPlanet.hand === finishPlanet.hand) {
 			fillHandSegments(startPlanet.hand, startPlanet.segment, finishPlanet.segment, segments);
 
-			fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords);
+			fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords, planetsInPath);
 		} else {
 			if (isCenter(finishPlanet)) { //finish in center
 				// add hand
@@ -370,21 +372,31 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 				// add center
 				segments.push(planetsByHand[0][0]);
 
-				fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords);
+				fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords, planetsInPath);
 			} else if (isCenter(startPlanet)) { // start in center
 				// add center
 				segments.push(planetsByHand[0][0]);
 				// add hand
 				fillHandSegments(finishPlanet.hand, 1, finishPlanet.segment, segments);
 
-				fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords);
+				fillCoordsFromSegments(startPlanet, finishPlanet, segments, coords, planetsInPath);
 			} else { // start and finish in different hands
 				// find nearest planet from center
 				let minDistance = Infinity;
 				let startCenterPlanet;
 
-				for (let planet of planetsByHand[0][0]) {
-					let distance = distanceSqr(planet, startPoint);
+				let cx = 0;
+				let cy = 0;
+				let planets = planetsByHand[startPlanet.hand][1];
+				for (let planet of planets) {
+					cx += planet.x;
+					cy += planet.y;
+				}
+				let count = planets.length;
+				let centerSegment = {x: cx / count, y: cy / count};
+
+				for (let planet of planets) {
+					let distance = distanceSqr(planet, centerSegment);
 					if (distance < minDistance) {
 						minDistance = distance;
 						startCenterPlanet = planet;
@@ -394,16 +406,24 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 				// add first hand
 				fillHandSegments(startPlanet.hand, startPlanet.segment, 1, segments);
 
-				segments.push(planetsByHand[0][0]);
-
-				fillCoordsFromSegments(startPlanet, startCenterPlanet, segments, coords);
+				fillCoordsFromSegments(startPlanet, startCenterPlanet, segments, coords, planetsInPath);
 
 				// find nearest planet from center
 				minDistance = Infinity;
 				let finishCenterPlanet;
 
-				for (let planet of planetsByHand[0][0]) {
-					let distance = distanceSqr(planet, finishPoint);
+				cx = 0;
+				cy = 0;
+				planets = planetsByHand[finishPlanet.hand][1];
+				for (let planet of planets) {
+					cx += planet.x;
+					cy += planet.y;
+				}
+				count = planets.length;
+				centerSegment = {x: cx / count, y: cy / count};
+
+				for (let planet of planets) {
+					let distance = distanceSqr(planet, centerSegment);
 					if (distance < minDistance) {
 						minDistance = distance;
 						finishCenterPlanet = planet;
@@ -411,14 +431,17 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 				}
 
 				// add center
-				segments = [planetsByHand[0][0]];
+				segments = [planetsByHand[startPlanet.hand][1]];
+				segments.push([planetsByHand[0][0]]);
+				segments.push([planetsByHand[finishPlanet.hand][1]]);
 
-				fillCoordsFromSegments(startCenterPlanet, finishCenterPlanet, segments, coords);
+				fillCoordsFromSegments(startCenterPlanet, finishCenterPlanet, segments, coords, planetsInPath);
 
 				// add second hand
+				segments.length = 0;
 				fillHandSegments(finishPlanet.hand, 1, finishPlanet.segment, segments);
 
-				fillCoordsFromSegments(finishCenterPlanet, finishPlanet, segments, coords);
+				fillCoordsFromSegments(finishCenterPlanet, finishPlanet, segments, coords, planetsInPath);
 			}
 		}
 
@@ -441,8 +464,10 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		endPoint.x -= endOffset * Math.cos(angle);
 		endPoint.y -= endOffset * Math.sin(angle);
 
+		this.planetsInPath = [];
+
 		// build path
-		let points = getNewPath(startPoint, endPoint);
+		let points = getNewPath(startPoint, endPoint, this.planetsInPath);
 		// let points = getPath(startPoint, endPoint);
 
 		points = buildSpline(points);
@@ -455,6 +480,8 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 		}).addTo(map);
 
 		let polyline = this.polyline;
+		let planetsInPath = this.planetsInPath;
+
 		polyline.on('mouseover', function() {
 			polyline.setStyle({
 				// color: 'purple',
@@ -463,6 +490,13 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			polyline.bringToFront();
 
 			$(`.map-fleet:not([data-id="${eventId}"])`).addClass('blur');
+
+			$('.map-planet-marker').addClass('blur');
+
+			let planetsId = '[data-id="' + _.map(planetsInPath, (planet)=> planet._id).
+				join('"], [data-id="') + '"]';
+
+			$(planetsId).removeClass('blur');
 
 			for (let id in pathViews) {
 				if (id !== eventId) {
@@ -477,6 +511,8 @@ game.PathView = function(map, startPoint, endPoint, startOffset, endOffset, colo
 			});
 
 			$(`.map-fleet`).removeClass('blur');
+
+			$('.map-planet-marker').removeClass('blur');
 
 			for (let id in pathViews) {
 				if (id !== eventId) {

@@ -120,7 +120,7 @@
 	background-color none
 
 	&.blur
-		 z-index 999
+		 z-index 1 !important
 		 -webkit-filter blur(2px)
 		 filter blur(2px)
 
@@ -227,6 +227,11 @@
 		border-color $color-metal
 		&.zoom-lt-5
 			background-color $color-metal
+
+	&.blur
+		z-index 2 !important
+		-webkit-filter blur(2px)
+		filter blur(2px)
 
 	&.zoom-lt-7
 		border-width 2px

@@ -1,4 +1,5 @@
-import Unit from './unit';
+// import Unit from './unit';
+import Unit from './mergedUnit';
 
 const priorityDamageCoefs = [0.4, 0.3, 0.2];
 
@@ -149,9 +150,9 @@ class Group {
 						continue;
 					}
 
-					let count = group[unitName];
+					let unit = group[unitName];
 
-					units.push(new Unit(sideName, groupName, unitName, count));
+					units.push(new Unit(sideName, groupName, unitName, unit.weapon, unit.health, unit.count));
 				}
 			}
 		}

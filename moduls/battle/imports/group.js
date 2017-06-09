@@ -1,7 +1,6 @@
-// import Unit from './unit';
-import Unit from './mergedUnit';
+import Unit from './unit';
 
-const priorityDamageCoefs = [0.4, 0.3, 0.2];
+const priorityDamageCoef = [0.4, 0.3, 0.2];
 
 const restCoef = 0.8;
 
@@ -11,29 +10,10 @@ class Group {
 		this.units = units;
 	}
 
-	getDamageList() {
+	getDamageList(damageReduction) {
 		return this.units.map(function(unit) {
-			return [unit, unit.damage];
+			return [unit, unit.getTotalDamage() * damageReduction];
 		});
-	}
-
-	getAliveObject() {
-		let result = {};
-
-		for (let unit of this.units) {
-			let count = unit.count;
-			if (count > 0) {
-				if (!result[unit.side]) {
-					result[unit.side] = {};
-				}
-				if (!result[unit.side][unit.group]) {
-					result[unit.side][unit.group] = {};
-				}
-				result[unit.side][unit.group][unit.name] = count;
-			}
-		}
-
-		return result;
 	}
 
 	getAliveCount() {
@@ -42,8 +22,8 @@ class Group {
 		}, 0);
 	}
 
-	receiveDamage(unit, allDamage) {
-		let targetDamages = this.fillTargetDamages(unit, allDamage);
+	receiveDamage(unit, damage) {
+		let targetDamages = this.fillTargetDamages(unit, damage);
 
 		let additionalDamage = 0;
 
@@ -68,7 +48,7 @@ class Group {
 
 			// Заполняем массив приоритетных целей, если такие имеются в группе
 			for (let target of this.units) {
-				if (target.hp <= 0) {
+				if (target.health.total <= 0) {
 					continue;
 				}
 
@@ -92,8 +72,8 @@ class Group {
 			let additionalDamageCoef = 1.0;
 
 			// Вычисляем дополнительный урон, который будет распределен по всем не приоритетным целям
-			for (let i = 0; i < priorityDamageCoefs.length; i++) {
-				let coef = priorityDamageCoefs[i];
+			for (let i = 0; i < priorityDamageCoef.length; i++) {
+				let coef = priorityDamageCoef[i];
 				if (priorities[i]) {
 					additionalDamageCoef -= coef;
 					targetDamages.push([priorities[i], allDamage * coef]);
@@ -113,20 +93,13 @@ class Group {
 			// Если у атакующего юнита нет приоритетов - распределяем урон равномерно по всем в группе
 			let damage = Math.floor(allDamage / this.getAliveCount());
 			for (let target of this.units) {
-				if (target.hp > 0) {
+				if (target.health.total > 0) {
 					targetDamages.push([target, damage]);
 				}
 			}
 		}
 
 		return targetDamages;
-	}
-
-	//todo remove
-	toJSON() {
-		return this.units.map(function(unit) {
-			return unit.toString();
-		});
 	}
 
 	static fromObject(group) {

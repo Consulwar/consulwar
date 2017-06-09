@@ -74,7 +74,7 @@ Game.Alliance.Contact.checkForInvalidatingAll = function() {
 		}
 	}
 
-	Game.Statistic.incrementGroupUsers(uidIgnoredList, {
+	Game.Statistic.incrementGroupUserIds(uidIgnoredList, {
 		'alliance_contact.ignored_invites': 1
 	});
 
@@ -85,7 +85,7 @@ Game.Alliance.Contact.checkForInvalidatingAll = function() {
 		}
 	}
 
-	Game.Statistic.incrementGroupUsers(uidIgnoringList, {
+	Game.Statistic.incrementGroupUserIds(uidIgnoringList, {
 		'alliance_contact.ignored_requests': 1
 	});
 

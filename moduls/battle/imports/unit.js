@@ -1,65 +1,43 @@
 class Unit {
-	constructor(side, group, name, count) {
+	constructor(side, group, name, weapon, health, count) {
 		this.side = side;
 		this.group = group;
 		this.name = name;
 
 		this.model = Game.Unit.items[side][group][name];
 
-		let characteristics = this.model.earthCharacteristics; //todo
+		this.weapon = weapon;
+		this.health = health;
 
-		this.weapon = characteristics.weapon;
-		this.health = characteristics.health;
-
-		this.hp = this.health.armor * Game.Unit.rollCount(count);
-
-		let damage = this.weapon.damage;
-
-		//todo this.baseDamage = Game.Random.interval( damage.min, damage.max );
-		this.baseDamage = Math.round( (damage.min + damage.max) / 2 );
+		this.count = count;
 	}
 
-	get count() {
-		return Math.ceil(this.hp / this.health.armor);
-	}
-
-	get damage() {
-		return Math.floor( this.baseDamage * this.count);
+	getTotalDamage() {
+		//todo use after tests Game.Random.interval( damage.min, damage.max );
+		return Math.floor(Math.round( (this.weapon.damage.min * this.count + this.weapon.damage.max * this.count) / 2 ));
 	}
 
 	isEqualsToModel(unit) {
-		return this.side === unit.side && this.group === unit.group && this.name === unit.engName;
+		return this.name === unit.engName && this.group === unit.group && this.side === unit.side;
 	}
 
-	//todo remove
-	toString() {
-		return `{ name: ${this.name}, hp: ${this.hp}, count: ${this.count} }`;
-	}
-
-	//todo remove
-	toJSON() {
-		return {
-			name: this.name,
-			hp: this.hp,
-			count: this.count
-		};
-	}
-
+	// Получение damage от unit
+	// Возращает "лишний" урон, не примененный на текущего юнита
 	receiveDamage(unit, damage) {
-		let rest;
+		let restHP;
 
-		let eHPModifier = Math.max(1, (this.weapon.signature / unit.health.signature));
-		let eHP = eHPModifier * this.hp;
+		let eHPModifier = Math.max(1, (unit.weapon.signature / this.health.signature));
+		let eHP = eHPModifier * this.health.total;
 
 		if (eHP > damage) {
-			this.hp -= damage / eHPModifier;
-			rest = 0;
+			this.health.total -= damage / eHPModifier;
+			restHP = 0;
 		} else {
-			rest = damage - eHP;
-			this.hp = 0;
+			restHP = damage - eHP;
+			this.health.total = 0;
 		}
 
-		return rest;
+		return restHP;
 	}
 }
 

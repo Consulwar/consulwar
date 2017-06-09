@@ -48,9 +48,19 @@ Game.Statistic.incrementUser = function(uid, increment) {
 	});
 };
 
-Game.Statistic.incrementGroupUsers = function(uidList, increment) {
+Game.Statistic.incrementGroupUserIds = function(uidList, increment) {
 	Game.Statistic.Collection.update({
 		user_id: {$in: uidList}
+	}, {
+		$inc: increment
+	}, {
+		multi: true
+	});
+};
+
+Game.Statistic.incrementGroupUserNames = function(namesList, increment) {
+	Game.Statistic.Collection.update({
+		username: {$in: namesList}
 	}, {
 		$inc: increment
 	}, {

@@ -8,6 +8,7 @@ Meteor.startup(function () {
 initGameConfigLib();
 initUserClient();
 initPaymentClient();
+initPromoCodeClient();
 initResourcesClient();
 initCardsClient();
 initStatisticClient();

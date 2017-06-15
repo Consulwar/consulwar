@@ -160,29 +160,4 @@ Meteor.publish('paymentIncome', function() {
 	}
 });
 
-// ----------------------------------------------------------------------------
-// Public methods only for development!
-// ----------------------------------------------------------------------------
-
-if (process.env.NODE_ENV == 'development') {
-	Meteor.methods({
-		'payment.testItem': function(id) {
-			var item = Game.Payment.items[id];
-			if (!item) {
-				throw new Meteor.Error('Неправильный id');
-			}
-
-			Game.Payment.Income.log(item.profit, {
-				type: 'payment',
-				item: item.id
-			});
-		}
-	});
-}
-
-// ----------------------------------------------------------------------------
-// Promo codes
-// ----------------------------------------------------------------------------
-
-
 };

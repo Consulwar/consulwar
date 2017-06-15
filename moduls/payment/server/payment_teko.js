@@ -1,4 +1,8 @@
+initPaymentTekoServer = function() {
+'use strict';
+
 const PAYMENT_SYSTEM = 'teko';
+const RUB = 643;
 
 const errorCodes = {
 	400: 'Неверный формат сообщения',
@@ -14,183 +18,199 @@ const errorCodes = {
 	2002: 'Платёж с указанным идентификатором уже отменён'
 };
 
-initPaymentTekoServer = function() {
-'use strict';
-
 Game.Payment.Teko = {};
 
 initConfigTekoServer();
 
-Router.route('/api/payment/teko/check', function () {
-	checkRequest(this.request, this.response, function({user, data, response}) {
-		// try to insert transaction
-		let checkResult = Game.Payment.Transactions.Collection.upsert({
+class PaymentError extends Meteor.Error {
+	constructor(code) {
+		super(errorCodes[code]);
+		this.code = code;
+	}
+}
+
+Router.route('/api/payment/teko/check', processRequest( function(user, data) {
+	// try to insert transaction
+	let checkResult = Game.Payment.Transactions.Collection.upsert({
+		user_id: user._id,
+		transaction_id: data.tx.id,
+		payment_system: PAYMENT_SYSTEM
+	}, {
+		$setOnInsert: {
 			user_id: user._id,
+			username: user.username,
+			transaction_id: data.tx.id,
+			payment_system: PAYMENT_SYSTEM,
+			status: 'check',
+			time_created: Game.getCurrentTime()
+		}
+	});
+
+	if (checkResult.insertedId) {
+		// transaction inserted
+		console.log('Transaction created');
+		console.log('teko transaction id:', data.tx.id);
+		console.log('merchant transaction id:', checkResult.insertedId);
+		console.log('-------------------------------------');
+		return checkResult.insertedId;
+	} else {
+		throw new PaymentError(getTransactionErrorCode(user, data));
+	}
+
+}), {where: 'server'});
+
+Router.route('/api/payment/teko/success', processRequest( function(user, data, paymentItem) {
+	let payResult = Game.Payment.Transactions.Collection.update({
+		_id: data.partner_tx.id,
+		user_id: user._id,
+		transaction_id: data.tx.id,
+		payment_system: PAYMENT_SYSTEM,
+		status: 'check'
+	}, {
+		$set: {
+			status: 'pay',
+			time_updated: Game.getCurrentTime(),
+			amount: paymentItem.cost.rub
+		}
+	});
+
+	if (payResult === 1) {
+		// add profit
+		if (data.order.extra.profit.resources !== undefined) {
+			Game.Resources.addProfit(data.order.extra.profit, data.dst.id);
+		} else {
+			// Обработка музыки
+			if (data.order.extra.profit.music) {
+				Meteor.users.update({
+					_id: data.dst.id
+				}, {
+					$set: {
+						music: true
+					}
+				});
+			}
+		}
+
+		Game.Payment.Income.log(data.order.extra.profit, {
+			type: 'payment',
+			item: paymentItem.id,
 			transaction_id: data.tx.id,
 			payment_system: PAYMENT_SYSTEM
-		}, {
-			$setOnInsert: {
-				user_id: user._id,
-				username: user.username,
-				transaction_id: data.tx.id,
-				payment_system: PAYMENT_SYSTEM,
-				status: 'check',
-				time_created: Game.getCurrentTime()
-			}
-		});
+		}, data.dst.id);
 
-		if (checkResult.insertedId) {
-			// transaction inserted
-			console.log('Transaction created');
-			console.log('teko transaction id:', data.tx.id);
-			console.log('merchant transaction id:', checkResult.insertedId);
-			console.log('-------------------------------------');
-			answerSuccess(response, checkResult.insertedId);
-			return true;
+		Game.Log.increment('payment_teko', paymentItem.cost.rub);
+
+		// send response
+		console.log('Transaction finished');
+		console.log('teko transaction id:', data.tx.id);
+		console.log('merchant transaction id:', data.partner_tx.id);
+		console.log('-------------------------------------');
+
+		return data.partner_tx.id;
+	} else {
+		throw new PaymentError(getTransactionErrorCode(user, data));
+	}
+}), {where: 'server'});
+
+Router.route('/api/payment/teko/cancel', processRequest( function(user, data) {
+	let cancelResult = Game.Payment.Transactions.Collection.update({
+		_id: data.partner_tx.id,
+		user_id: user._id,
+		transaction_id: data.tx.id,
+		payment_system: PAYMENT_SYSTEM,
+		status: 'check'
+	}, {
+		$set: {
+			status: 'cancel',
+			time_updated: Game.getCurrentTime(),
+			reason: {
+				code: data.code,
+				description: data.description
+			}
 		}
-		return false;
 	});
-}, {where: 'server'});
 
-Router.route('/api/payment/teko/success', function () {
-	checkRequest(this.request, this.response, function({user, data, paymentItem, response}) {
-		let payResult = Game.Payment.Transactions.Collection.update({
-			_id: data.partner_tx.id,
-			user_id: user._id,
-			transaction_id: data.tx.id,
-			payment_system: PAYMENT_SYSTEM,
-			status: 'check'
-		}, {
-			$set: {
-				status: 'pay',
-				time_updated: Game.getCurrentTime(),
-				amount: paymentItem.cost.rub
-			}
-		});
+	if (cancelResult === 1) {
+		// transaction canceled
+		console.log('Transaction canceled');
+		console.log('teko transaction id:', data.tx.id);
+		console.log('merchant transaction id:', data.partner_tx.id);
+		console.log('-------------------------------------');
 
-		if (payResult === 1) {
-			// add profit
-			if (data.order.extra.profit.resources !== undefined) {
-				Game.Resources.addProfit(data.order.extra.profit, data.dst.id);
+		return data.partner_tx.id;
+	} else {
+		throw new PaymentError(getTransactionErrorCode(user, data));
+	}
+}), {where: 'server'} );
+
+function processRequest(onProcess) {
+	return function() {
+		let data = this.request.body;
+
+		try {
+			checkRequest(this.request);
+
+			let user = Meteor.users.findOne({
+				_id: data.dst.id
+			});
+
+			checkUser(user);
+
+			let paymentItem = Game.Payment.items[ data.order.item_list[0].id ];
+
+			checkData(data, paymentItem);
+
+			let id = onProcess(user, data, paymentItem);
+			answerSuccess(this.response, id);
+
+		} catch (err) {
+			if (err instanceof PaymentError) {
+				answerError(this.response, data, err.code);
 			} else {
-				// Обработка музыки
-				if (data.order.extra.profit.music) {
-					Meteor.users.update({
-						_id: data.dst.id
-					}, {
-						$set: {
-							music: true
-						}
-					});
-				}
+				throw err;
 			}
-
-			Game.Payment.Income.log(data.order.extra.profit, {
-				type: 'payment',
-				item: paymentItem.id,
-				transaction_id: data.tx.id,
-				payment_system: PAYMENT_SYSTEM
-			}, data.dst.id);
-
-			Game.datadog.increment('payment_teko', paymentItem.cost.rub);
-
-			// send response
-			console.log('Transaction finished');
-			console.log('teko transaction id:', data.tx.id);
-			console.log('merchant transaction id:', data.partner_tx.id);
-			console.log('-------------------------------------');
-			answerSuccess(response, data.partner_tx.id);
-			return true;
 		}
+	};
+}
 
-		return false;
-	});
-}, {where: 'server'});
-
-Router.route('/api/payment/teko/cancel', function () {
-	checkRequest(this.request, this.response, function({user, data, response}) {
-		let cancelResult = Game.Payment.Transactions.Collection.update({
-			_id: data.partner_tx.id,
-			user_id: user._id,
-			transaction_id: data.tx.id,
-			payment_system: PAYMENT_SYSTEM,
-			status: 'check'
-		}, {
-			$set: {
-				status: 'cancel',
-				time_updated: Game.getCurrentTime(),
-				reason: {
-					code: data.code,
-					description: data.description
-				}
-			}
-		});
-
-		if (cancelResult === 1) {
-			// transaction canceled
-			console.log('Transaction canceled');
-			console.log('teko transaction id:', data.tx.id);
-			console.log('merchant transaction id:', data.partner_tx.id);
-			console.log('-------------------------------------');
-
-			answerSuccess(response, data.partner_tx.id);
-			return true;
-		}
-		return false;
-	});
-}, {where: 'server'});
-
-let checkRequest = function(request, response, onOk) {
+let checkRequest = function(request) {
 	let data = request.body;
 
 	//check body
 	if (!_.isObject(data)) {
-		answerError(response, data, 400);
-		return;
+		throw new PaymentError(400);
 	}
 
 	// check signature
 	if (request.headers.signature !== signString(request.rawBody)) {
-		answerError(response, data, 401);
-		return;
+		throw new PaymentError(401);
 	}
 
 	if (!checkDataFormat(data)) {
-		answerError(response, data, 406);
-		return;
+		throw new PaymentError(406);
 	}
+};
 
-	let user = Meteor.users.findOne({
-		_id: data.dst.id
-	});
-
+let checkUser = function(user) {
 	if (!user || !user._id || user.blocked === true) {
-		answerError(response, data, 1001);
-		return;
+		throw new PaymentError(1001);
 	}
+};
 
-	if (data.payment.currency !== 643) {
-		answerError(response, data, 1002);
-		return;
+let checkData = function(data, paymentItem) {
+	if (data.payment.currency !== RUB) {
+		throw new PaymentError(1002);
 	}
-
-	let paymentItem = Game.Payment.items[ data.order.item_list[0].id ];
 
 	if (data.payment.exponent !== 2 || data.payment.amount !== paymentItem.cost.rub * 100) {
-		answerError(response, data, 1003);
-		return;
+		throw new PaymentError(1003);
 	}
 
 	if ( !paymentItem
 		|| !paymentItem.profit
 		|| !_.isEqual(paymentItem.profit, data.order.extra.profit)
 	) {
-		answerError(response, data, 1005);
-		return;
-	}
-
-	if (!onOk({user, data, paymentItem, response})) {
-		handleTransactionError(user, data, response);
+		throw new PaymentError(1005);
 	}
 };
 
@@ -200,7 +220,7 @@ let answerError = function(response, data, code) {
 		success: false,
 		result: {
 			tx: {
-				id: data.partner_tx.id,
+				id: (data.partner_tx || data.tx).id,
 				start_t: Date.now()
 			},
 			code: code,
@@ -273,7 +293,7 @@ let checkDataFormat = function(data) {
 	return true;
 };
 
-let handleTransactionError = function(user, data, response) {
+let getTransactionErrorCode = function(user, data) {
 	let errorCode = 1000;
 
 	let transaction = Game.Payment.Transactions.Collection.findOne({
@@ -296,7 +316,7 @@ let handleTransactionError = function(user, data, response) {
 		}
 	}
 
-	answerError(response, data, errorCode);
+	return errorCode;
 };
 
 Meteor.methods({
@@ -329,7 +349,7 @@ Meteor.methods({
 			},
 			payment: {
 				amount: paymentItem.cost.rub * 100,
-				currency: 643, //RUB
+				currency: RUB,
 				exponent: 2
 			},
 			order: {

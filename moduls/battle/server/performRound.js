@@ -1,20 +1,20 @@
 import Group from '../imports/group';
 
-let performRound = function(battle, {damageReduction = 0}) {
+let performRound = function(battle, damageReduction = 0) {
 	if (damageReduction < 0) {
 		damageReduction = 0;
 	} else if (damageReduction >= 100) {
 		damageReduction = 99.99;
 	}
-	damageReduction = 1 - (damageReduction / 100);
+	let damageCoef = 1 - (damageReduction / 100);
 
 	mergeGroups(battle);
 
 	let group1 = Group.fromObject(battle.battleUnits[1]);
 	let group2 = Group.fromObject(battle.battleUnits[2]);
 
-	let damageList1 = group1.getDamageList(damageReduction);
-	let damageList2 = group2.getDamageList(damageReduction);
+	let damageList1 = group1.getDamageList(damageCoef);
+	let damageList2 = group2.getDamageList(damageCoef);
 
 	fire(damageList1, group2);
 	fire(damageList2, group1);

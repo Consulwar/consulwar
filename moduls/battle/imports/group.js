@@ -5,14 +5,44 @@ const priorityDamageCoef = [0.4, 0.3, 0.2];
 const restCoef = 0.8;
 
 class Group {
+	static fromObject(group) {
+		let units = [];
+
+		for (let sideName in group) {
+			if (!group.hasOwnProperty(sideName)) {
+				continue;
+			}
+			let side = group[sideName];
+
+			for (let groupName in side) {
+				if (!side.hasOwnProperty(groupName)) {
+					continue;
+				}
+
+				let group = side[groupName];
+
+				for (let unitName in group) {
+					if (!group.hasOwnProperty(unitName)) {
+						continue;
+					}
+
+					let unit = group[unitName];
+
+					units.push(new Unit(sideName, groupName, unitName, unit.weapon, unit.health, unit.count));
+				}
+			}
+		}
+
+		return new Group(units);
+	}
 
 	constructor(units) {
 		this.units = units;
 	}
 
-	getDamageList(damageReduction) {
+	getDamageList(damageCoef) {
 		return this.units.map(function(unit) {
-			return [unit, unit.getTotalDamage() * damageReduction];
+			return [unit, unit.getTotalDamage() * damageCoef];
 		});
 	}
 
@@ -100,37 +130,6 @@ class Group {
 		}
 
 		return targetDamages;
-	}
-
-	static fromObject(group) {
-		let units = [];
-
-		for (let sideName in group) {
-			if (!group.hasOwnProperty(sideName)) {
-				continue;
-			}
-			let side = group[sideName];
-
-			for (let groupName in side) {
-				if (!side.hasOwnProperty(groupName)) {
-					continue;
-				}
-
-				let group = side[groupName];
-
-				for (let unitName in group) {
-					if (!group.hasOwnProperty(unitName)) {
-						continue;
-					}
-
-					let unit = group[unitName];
-
-					units.push(new Unit(sideName, groupName, unitName, unit.weapon, unit.health, unit.count));
-				}
-			}
-		}
-
-		return new Group(units);
 	}
 }
 

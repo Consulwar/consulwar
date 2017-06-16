@@ -11,8 +11,10 @@ let Status = {
 	finish: 2
 };
 
+const USER_SIDE = '1';
+
 class Battle {
-	static create() {
+	static create(username, userArmy, enemyName, enemyArmy) {
 		let round = 1;
 		let initialUnits = {};
 		let armyPowers = {};
@@ -43,17 +45,9 @@ class Battle {
 		return Collection.find({user_names: username}).fetch();
 	}
 
-	constructor({_id, initialUnits, armyPowers, currentUnits, battleUnits, round}) {
-		this.id = _id;
-
-		this.initialUnits = initialUnits;
-		this.armyPowers = armyPowers;
-		this.currentUnits = currentUnits;
-		this.battleUnits = battleUnits;
-		this.round = round;
-	}
-
 	static addGroup(id, side, username, group) {
+		let modifier2 = createGroupModifier(side, username);
+
 		let key = `${side}.${username}`;
 
 		let groupPower = calculateGroupPower(group);
@@ -65,7 +59,7 @@ class Battle {
 			}
 		};
 
-		if (parseInt(side, 10) === 1) {
+		if (side === USER_SIDE) {
 			modifier.$addToSet = {
 				user_names: username
 			};
@@ -78,8 +72,18 @@ class Battle {
 		Collection.update({_id: id}, modifier);
 	}
 
+	constructor({_id, initialUnits, armyPowers, currentUnits, battleUnits, round}) {
+		this.id = _id;
+
+		this.initialUnits = initialUnits;
+		this.armyPowers = armyPowers;
+		this.currentUnits = currentUnits;
+		this.battleUnits = battleUnits;
+		this.round = round;
+	}
+
 	performSpaceRound(options) {
-		let roundResult = performRound(this, options);
+		let roundResult = performRound(this, options.damageReduction);
 
 		this.update({
 			$set: {
@@ -88,7 +92,7 @@ class Battle {
 			$inc: roundResult.decrement
 		});
 
-		let userArmyRest = '1' in roundResult.left;
+		let userArmyRest = USER_SIDE in roundResult.left;
 		let enemyArmyRest = '2' in roundResult.left;
 
 		this.giveHonor(roundResult, options);
@@ -203,11 +207,6 @@ class Battle {
 
 			totalReward.metals = Math.floor( killedCost.metals * 0.1 );
 			totalReward.crystals = Math.floor( killedCost.crystals * 0.1 );
-		}
-
-		// reward bonus
-		if (options.missionType === 'tradefleet') {
-			totalReward = Game.Effect.Special.applyTo({ engName: 'tradefleetBonus' }, totalReward, true);
 		}
 
 		let armyPowers = this.armyPowers;
@@ -337,6 +336,10 @@ class Battle {
 		});
 	}
 }
+
+let createGroupModifier = function() {
+
+};
 
 let calculateGroupPower = function(group) {
 	let totalDamage = 0;

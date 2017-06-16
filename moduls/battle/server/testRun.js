@@ -1,7 +1,42 @@
 import Battle from './battle';
 
 initBattle = function() {
-	let battle = Battle.create();
+	let battle = Battle.create(
+		'Zav', {
+			army: {
+				fleet: {
+					gammadrone: {
+						count: 10,
+						weapon: {
+							damage: {min: 80, max: 100},
+							signature: 100
+						},
+						health: {
+							armor: 200,
+							signature: 100
+						}
+					}
+				}
+			}
+		},
+		'ai1', {
+			reptiles: {
+				fleet: {
+					sphero: {
+						count: 41,
+						weapon: {
+							damage: {min: 40, max: 50},
+							signature: 50
+						},
+						health: {
+							armor: 100,
+							signature: 50
+						}
+					}
+				}
+			}
+		}
+	);
 
 	Battle.addGroup(battle.id, '1', 'Zav', {
 		army: {

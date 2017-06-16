@@ -143,6 +143,7 @@ Router.route('/api/payment/teko/cancel', processRequest( function(user, data) {
 	}
 }), {where: 'server'} );
 
+// get onProcess function that returns transaction id
 function processRequest(onProcess) {
 	return function() {
 		let data = this.request.body;
@@ -367,8 +368,8 @@ Meteor.methods({
 			},
 			locale: Game.Payment.Teko.LOCALE,
 			product: Game.Payment.Teko.PRODUCT,
-			theme: 'light',
-			url: 'https://consulwar.ru/'
+			theme: Game.Payment.Teko.THEME,
+			url: Game.Payment.Teko.GAME_URL
 		};
 
 		pay.signature = signObject(pay);
@@ -409,8 +410,7 @@ let signObject = function(data) {
 };
 
 let signedKey = function(key) {
-	return ['initiator', 'dst', 'payment', 'order', 'product', 'redirect_url', 'locale', 'comment',
-		'inner_cur_amount', 'inner_cur_name'].indexOf(key) >= 0;
+	return Game.Payment.Teko.SIGNED_KEYS.indexOf(key) >= 0;
 };
 
 let objectRecursiveSort = function(obj) {

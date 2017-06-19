@@ -10,6 +10,28 @@ game.Unit = function(options) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
 	}
 
+	//todo remove after set correct values
+	if (!options.characteristics.weapon) {
+		let characteristics = options.characteristics;
+
+		if (characteristics.damage) {
+			characteristics.weapon = {
+				damage: { min: characteristics.damage.min, max: characteristics.damage.max },
+				signature: 100
+			};
+		} else {
+			characteristics.weapon = {
+				damage: { min: 0, max: 0 },
+				signature: 100
+			};
+		}
+
+		characteristics.health = {
+			armor: characteristics.life,
+			signature: 100
+		};
+	}
+
 	Game.Unit.items.army[this.side][this.engName] = this;
 
 	this.star = function() {

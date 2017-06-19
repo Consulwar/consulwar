@@ -1,3 +1,5 @@
+import Battle from '../../battle/server/battle';
+
 initEarthServer = function() {
 'use strict';
 
@@ -200,16 +202,21 @@ Game.Earth.performBattleAtZone = function(name, options) {
 
 	options.damageReduction = Game.Earth.DAMAGE_REDUCTION;
 
-	var battleResult = Game.Unit.performBattle(
-		zone.userArmy,
-		zone.enemyArmy,
-		options
-	);
+	let battle = Battle.create('user', zone.userArmy, 'ai', zone.enemyArmy);
+	let roundResult;
+	let round = 1;
+	do {
+		roundResult = battle.performEarthRound(options);
+		round++;
+	} while (round <= 3 && battle.status === Battle.Status.progress);
+
+	let userArmy = roundResult.left['1'];
+	let enemyArmy = roundResult.left['2'];
 
 	var result = null;
 
-	if (battleResult.userArmy) {
-		if (battleResult.enemyArmy) {
+	if (userArmy) {
+		if (enemyArmy) {
 			result = 'tie';
 		} else {
 			result = 'victory';
@@ -232,8 +239,8 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		}
 	};
 
-	if (battleResult.userArmy) {
-		update.$set.userArmy = battleResult.userArmy;
+	if (userArmy) {
+		update.$set.userArmy = userArmy;
 	} else {
 		if (!update.$unset) {
 			update.$unset = {};
@@ -241,8 +248,8 @@ Game.Earth.performBattleAtZone = function(name, options) {
 		update.$unset.userArmy = 1;
 	}
 
-	if (battleResult.enemyArmy) {
-		update.$set.enemyArmy = battleResult.enemyArmy;
+	if (enemyArmy) {
+		update.$set.enemyArmy = enemyArmy;
 	} else {
 		if (!update.$unset) {
 			update.$unset = {};

@@ -12,27 +12,49 @@ let Status = {
 };
 
 const USER_SIDE = '1';
+const ENEMY_SIDE = '2';
 
 class Battle {
 	static create(username, userArmy, enemyName, enemyArmy) {
+		traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
+			userArmy[armyName][typeName][unitName] = createUnit(armyName, typeName, unitName, count);
+		});
+
+		traverseGroup(enemyArmy, function(armyName, typeName, unitName, count) {
+			enemyArmy[armyName][typeName][unitName] = createUnit(armyName, typeName, unitName, count);
+		});
+
 		let round = 1;
-		let initialUnits = {};
-		let armyPowers = {};
-		let currentUnits = {};
+
+		let initialUnits = {
+			[USER_SIDE]: {
+				[username]: [userArmy]
+			},
+			[ENEMY_SIDE]: {
+				[enemyName]: [enemyArmy]
+			}
+		};
+
+		let armyPowers = {
+			[username]: calculateGroupPower(userArmy)
+		};
+
+		let currentUnits = deepClone(initialUnits);
 		let battleUnits = {};
+		let status = Status.progress;
 
 		let id = Collection.insert({
-			status: Status.progress,
+			status: status,
 			time_start: Game.getCurrentTime(),
 			round: round,
-			user_names: [],
+			user_names: [username],
 			initialUnits,
 			armyPowers,
 			currentUnits,
 			battleUnits
 		});
 
-		return new Battle({_id: id, initialUnits, armyPowers, currentUnits, battleUnits, round});
+		return new Battle({_id: id, initialUnits, armyPowers, currentUnits, battleUnits, round, status});
 	}
 
 	static fromDB(id) {
@@ -46,8 +68,6 @@ class Battle {
 	}
 
 	static addGroup(id, side, username, group) {
-		let modifier2 = createGroupModifier(side, username);
-
 		let key = `${side}.${username}`;
 
 		let groupPower = calculateGroupPower(group);
@@ -72,9 +92,10 @@ class Battle {
 		Collection.update({_id: id}, modifier);
 	}
 
-	constructor({_id, initialUnits, armyPowers, currentUnits, battleUnits, round}) {
+	constructor({_id, initialUnits, armyPowers, currentUnits, battleUnits, round, status}) {
 		this.id = _id;
 
+		this.status = status;
 		this.initialUnits = initialUnits;
 		this.armyPowers = armyPowers;
 		this.currentUnits = currentUnits;
@@ -83,6 +104,18 @@ class Battle {
 	}
 
 	performSpaceRound(options) {
+		let roundResult = this.performRound(options);
+
+		this.giveHonor(roundResult, options);
+
+		return roundResult;
+	}
+
+	performEarthRound(options) {
+		return this.performRound(options);
+	}
+
+	performRound(options) {
 		let roundResult = performRound(this, options.damageReduction);
 
 		this.update({
@@ -93,9 +126,8 @@ class Battle {
 		});
 
 		let userArmyRest = USER_SIDE in roundResult.left;
-		let enemyArmyRest = '2' in roundResult.left;
+		let enemyArmyRest = ENEMY_SIDE in roundResult.left;
 
-		this.giveHonor(roundResult, options);
 		this.saveRoundStatistic(roundResult);
 
 		if (!userArmyRest || !enemyArmyRest) {
@@ -116,7 +148,7 @@ class Battle {
 	}
 
 	giveHonor(roundResult, options) {
-		let killedCost = Game.Unit.calculateArmyCost(roundResult.killed[2]);
+		let killedCost = Game.Unit.calculateArmyCost(roundResult.killed[ENEMY_SIDE]);
 		let mission = Game.Battle.items[ options.missionType ];
 		let totalHonor = (getPoints(killedCost) / 100) * (mission.honor * 0.01);
 
@@ -138,7 +170,7 @@ class Battle {
 	}
 
 	saveRoundStatistic(roundResult) {
-		if (_.keys(this.currentUnits[1]).length === 1) {
+		if (_.keys(this.currentUnits[USER_SIDE]).length === 1) {
 			this.saveSingleUserStatistic(roundResult);
 		} else {
 			this.saveMultiUsersStatistic(roundResult);
@@ -148,7 +180,7 @@ class Battle {
 	saveSingleUserStatistic(roundResult) {
 		let increment = {};
 
-		let userUnits = roundResult.killed[1];
+		let userUnits = roundResult.killed[USER_SIDE];
 		let totalLost = 0;
 
 		traverseGroup(userUnits, function(armyName, typeName, unitName, count) {
@@ -158,7 +190,7 @@ class Battle {
 
 		increment['units.lost.total'] = totalLost;
 
-		let enemyUnits = roundResult.killed[2];
+		let enemyUnits = roundResult.killed[ENEMY_SIDE];
 		totalLost = 0;
 
 		traverseGroup(enemyUnits, function(armyName, typeName, unitName, count) {
@@ -173,19 +205,21 @@ class Battle {
 
 	saveMultiUsersStatistic(roundResult) {
 		let increment = {};
-		let userNames = _.keys(this.currentUnits[1]);
+		let userNames = _.keys(this.currentUnits[USER_SIDE]);
 
 		console.log('multiUsers', increment);
 		//todo Game.Statistic.incrementGroupUserNames(userNames, increment);
 	}
 
 	finishBattle(userArmyRest, enemyArmyRest, options) {
+		this.status = Status.finish;
+
 		this.giveReward(userArmyRest, enemyArmyRest, options);
 		this.saveBattleStatistic(userArmyRest, enemyArmyRest, options);
 
 		this.update({
 			$set: {
-				status: Status.finish
+				status: this.status
 			}
 		});
 	}
@@ -202,7 +236,7 @@ class Battle {
 			totalReward.metals = mission.reward.metals;
 			totalReward.crystals = mission.reward.crystals;
 		} else {
-			let killedArmy = this.calculateTotalKilled(2);
+			let killedArmy = this.calculateTotalKilled(ENEMY_SIDE);
 			let killedCost = Game.Unit.calculateArmyCost(killedArmy);
 
 			totalReward.metals = Math.floor( killedCost.metals * 0.1 );
@@ -233,7 +267,7 @@ class Battle {
 	}
 
 	saveBattleStatistic(userArmyRest, enemyArmyRest, options) {
-		let userNames = _.keys(this.currentUnits[1]);
+		let userNames = _.keys(this.currentUnits[USER_SIDE]);
 
 		let fieldName = (userNames.length === 1) ? 'battle' : 'multiUsersBattle';
 
@@ -249,7 +283,7 @@ class Battle {
 				result = Game.Battle.result.tie;
 			} else if(userArmyRest) {
 				result = Game.Battle.result.victory;
-			} else if (enemyArmyRest) {
+			} else {
 				result = Game.Battle.result.defeat;
 			}
 		}
@@ -257,37 +291,16 @@ class Battle {
 		let increment = {};
 
 		increment[`${fieldName}.total`] = 1;
-		if (result === Game.Battle.result.tie) {
-			increment[`${fieldName}.tie`] = 1;
-		} else if (result === Game.Battle.result.victory) {
-			increment[`${fieldName}.victory`] = 1;
-		} else if (result === Game.Battle.result.defeat) {
-			increment[`${fieldName}.defeat`] = 1;
-		} else if (result === Game.Battle.result.damage) {
-			increment[`${fieldName}.damage`] = 1;
-		} else if (result === Game.Battle.result.damageVictory) {
-			increment[`${fieldName}.damageVictory`] = 1;
-		}
+
+		let resultName = Game.Battle.resultNames[result];
+		increment[`${fieldName}.${resultName}`] = 1;
 
 		if (options.missionType && options.missionLevel) {
-			increment[`${fieldName}.` + options.missionType + '.total'] = 1;
-			increment[`${fieldName}.` + options.missionType + '.' + options.missionLevel + '.total'] = 1;
-			if (result === Game.Battle.result.tie) {
-				increment[`${fieldName}.` + options.missionType + '.tie'] = 1;
-				increment[`${fieldName}.` + options.missionType + '.' + options.missionLevel + '.tie'] = 1;
-			} else if (result === Game.Battle.result.victory) {
-				increment[`${fieldName}.` + options.missionType + '.victory'] = 1;
-				increment[`${fieldName}.` + options.missionType + '.' + options.missionLevel + '.victory'] = 1;
-			} else if (result === Game.Battle.result.defeat) {
-				increment[`${fieldName}.` + options.missionType + '.defeat'] = 1;
-				increment[`${fieldName}.` + options.missionType + '.' + options.missionLevel + '.defeat'] = 1;
-			} else if (result === Game.Battle.result.damage) {
-				increment[`${fieldName}.` + options.missionType + '.damage'] = 1;
-				increment[`${fieldName}.` + options.missionType + '.' + options.missionLevel + '.damage'] = 1;
-			} else if (result === Game.Battle.result.damageVictory) {
-				increment[`${fieldName}.` + options.missionType + '.damageVictory'] = 1;
-				increment[`${fieldName}.` + options.missionType + '.' + options.missionLevel + '.damageVictory'] = 1;
-			}
+			increment[`${fieldName}.${options.missionType}.total`] = 1;
+			increment[`${fieldName}.${options.missionType}.${options.missionLevel}.total`] = 1;
+
+			increment[`${fieldName}.${options.missionType}.${resultName}`] = 1;
+			increment[`${fieldName}.${options.missionType}.${options.missionLevel}.${resultName}`] = 1;
 		}
 
 		Game.Statistic.incrementGroupUserNames(userNames, increment);
@@ -337,9 +350,7 @@ class Battle {
 	}
 }
 
-let createGroupModifier = function() {
-
-};
+Battle.Status = Status;
 
 let calculateGroupPower = function(group) {
 	let totalDamage = 0;
@@ -441,6 +452,22 @@ let deepClone = function(object) {
 	});
 
 	return clone;
+};
+
+let createUnit = function(armyName, typeName, unitName, count) {
+	let characteristics = Game.Unit.items[armyName][typeName][unitName].characteristics;
+
+	return {
+		count: Game.Unit.rollCount(count),
+		weapon: {
+			damage: {min: characteristics.weapon.damage.min, max: characteristics.weapon.damage.max},
+			signature: characteristics.weapon.signature
+		},
+		health: {
+			armor: characteristics.health.armor,
+			signature: characteristics.health.signature
+		}
+	};
 };
 
 export default Battle;

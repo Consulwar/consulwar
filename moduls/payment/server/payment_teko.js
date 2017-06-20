@@ -410,7 +410,18 @@ let signObject = function(data) {
 };
 
 let signedKey = function(key) {
-	return Game.Payment.Teko.SIGNED_KEYS.indexOf(key) >= 0;
+	return [
+		'initiator',
+		'dst',
+		'payment',
+		'order',
+		'product',
+		'redirect_url',
+		'locale',
+		'comment',
+		'inner_cur_amount',
+		'inner_cur_name'
+	].indexOf(key) >= 0;
 };
 
 let objectRecursiveSort = function(obj) {

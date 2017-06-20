@@ -116,9 +116,7 @@
 			"locale": "ru",
 			"url": "http://pg.teko.io:3005/init_session",
 			"theme": "light",
-			"gameUrl": "https://consulwar.ru/",
-			"signedKeys": ["initiator", "dst", "payment", "order", "product", "redirect_url", "locale",
-				"comment", "inner_cur_amount", "inner_cur_name"]
+			"gameUrl": "https://consulwar.ru/"
 		}
 	},
 	"kadira": { 

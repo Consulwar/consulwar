@@ -188,11 +188,13 @@ let calcBattleHealth = function({battleUnits}) {
 
 					let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
 
-					let totalHP = battleUnit.health.armor * battleUnit.count;
-
-					let killed = (totalHP - battleUnit.health.total) / battleUnit.health.armor;
-
-					battleUnit.health.total = -(totalHP - Math.floor(killed) * unit.health.armor - battleUnit.health.total);
+					if (battleUnit.count === 0) {
+						battleUnit.health.total = 0;
+					} else {
+						let totalHP = battleUnit.health.armor * battleUnit.count;
+						let killed = (totalHP - battleUnit.health.total) / battleUnit.health.armor;
+						battleUnit.health.total = -(totalHP - Math.floor(killed) * unit.health.armor - battleUnit.health.total);
+					}
 
 					battleUnit.weapon.damage = {min: 0, max: 0};
 					battleUnit.weapon.signature = 0;

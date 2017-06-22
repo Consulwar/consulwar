@@ -35,18 +35,18 @@ if (process.env.NODE_ENV == 'development') {
 			let battle = Battle.create(
 				'Zav', {
 					"army" : {
-						"fleet" : {
-							"gammadrone" : {
-								"count" : 146,
+						"ground" : {
+							"horizontalbarman" : {
+								"count" : 1277659,
 								"weapon" : {
 									"damage" : {
-										"min" : 80,
-										"max" : 100
+										"min" : 27,
+										"max" : 34
 									},
 									"signature" : 100
 								},
 								"health" : {
-									"armor" : 200,
+									"armor" : 16,
 									"signature" : 100
 								}
 							}
@@ -55,32 +55,172 @@ if (process.env.NODE_ENV == 'development') {
 				},
 				'ai1', {
 					"reptiles" : {
-						"fleet" : {
-							"sphero" : {
-								"count" : 14,
+						"ground" : {
+							"striker" : {
+								"count" : 146822,
 								"weapon" : {
 									"damage" : {
-										"min" : 40,
-										"max" : 50
-									},
-									"signature" : 80
-								},
-								"health" : {
-									"armor" : 150,
-									"signature" : 80
-								}
-							},
-							"blade" : {
-								"count" : 6,
-								"weapon" : {
-									"damage" : {
-										"min" : 320,
-										"max" : 400
+										"min" : 11,
+										"max" : 14
 									},
 									"signature" : 100
 								},
 								"health" : {
-									"armor" : 700,
+									"armor" : 35,
+									"signature" : 100
+								}
+							},
+							"ripper" : {
+								"count" : 129945,
+								"weapon" : {
+									"damage" : {
+										"min" : 36,
+										"max" : 45
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 22,
+									"signature" : 100
+								}
+							},
+							"horror" : {
+								"count" : 190,
+								"weapon" : {
+									"damage" : {
+										"min" : 0,
+										"max" : 0
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 85,
+									"signature" : 100
+								}
+							},
+							// "slider" : {
+							// 	"count" : 189,
+							// 	"weapon" : {
+							// 		"damage" : {
+							// 			"min" : 240,
+							// 			"max" : 300
+							// 		},
+							// 		"signature" : 100
+							// 	},
+							// 	"health" : {
+							// 		"armor" : 1000,
+							// 		"signature" : 100
+							// 	}
+							// },
+							"breaker" : {
+								"count" : 1576,
+								"weapon" : {
+									"damage" : {
+										"min" : 120,
+										"max" : 150
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 500,
+									"signature" : 100
+								}
+							},
+							"crusher" : {
+								"count" : 146,
+								"weapon" : {
+									"damage" : {
+										"min" : 1200,
+										"max" : 1500
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 35000,
+									"signature" : 100
+								}
+							},
+							// "geccon" : {
+							// 	"count" : 107,
+							// 	"weapon" : {
+							// 		"damage" : {
+							// 			"min" : 7600,
+							// 			"max" : 9500
+							// 		},
+							// 		"signature" : 100
+							// 	},
+							// 	"health" : {
+							// 		"armor" : 2000,
+							// 		"signature" : 100
+							// 	}
+							// },
+							"amfizben" : {
+								"count" : 2681,
+								"weapon" : {
+									"damage" : {
+										"min" : 180,
+										"max" : 225
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 350,
+									"signature" : 100
+								}
+							},
+							"amphibian" : {
+								"count" : 1198,
+								"weapon" : {
+									"damage" : {
+										"min" : 4400,
+										"max" : 5500
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 2500,
+									"signature" : 100
+								}
+							},
+							"chipping" : {
+								"count" : 150,
+								"weapon" : {
+									"damage" : {
+										"min" : 44000,
+										"max" : 55000
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 150000,
+									"signature" : 100
+								}
+							},
+							"toofucking" : {
+								"count" : 69,
+								"weapon" : {
+									"damage" : {
+										"min" : 16000,
+										"max" : 20000
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 30000,
+									"signature" : 100
+								}
+							},
+							"patron" : {
+								"count" : 141,
+								"weapon" : {
+									"damage" : {
+										"min" : 20000,
+										"max" : 25000
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 15000,
 									"signature" : 100
 								}
 							}
@@ -138,9 +278,8 @@ if (process.env.NODE_ENV == 'development') {
 			// });
 
 			let options = {
-				damageReduction: 0,
-				missionType: 'defencefleet',
-				missionLevel: 1
+				isEarth: true,
+				damageReduction: Game.Earth.DAMAGE_REDUCTION
 			};
 
 			battle = Battle.fromDB(battle.id);
@@ -149,7 +288,7 @@ if (process.env.NODE_ENV == 'development') {
 
 			let round = 1;
 			do {
-				let roundResult = battle.performSpaceRound(options);
+				let roundResult = battle.performEarthRound(options);
 				roundResults.push(roundResult);
 				round++;
 			} while (round <= count);

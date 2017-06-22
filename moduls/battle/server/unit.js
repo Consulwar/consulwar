@@ -13,8 +13,8 @@ class Unit {
 	}
 
 	getTotalDamage() {
-		//todo use after tests Game.Random.interval( damage.min, damage.max );
-		return Math.floor(Math.round( (this.weapon.damage.min * this.count + this.weapon.damage.max * this.count) / 2 ));
+		let damage = this.weapon.damage;
+		return Math.floor(Game.Random.interval(damage.min * this.count, damage.max * this.count) / 2 );
 	}
 
 	isEqualsToModel(unit) {
@@ -27,10 +27,10 @@ class Unit {
 		let restHP;
 
 		let eHPModifier = Math.max(1, (unit.weapon.signature / this.health.signature));
-		let eHP = eHPModifier * this.health.total;
+		let eHP = Math.floor(eHPModifier * this.health.total);
 
 		if (eHP > damage) {
-			this.health.total -= damage / eHPModifier;
+			this.health.total -= Math.floor(damage / eHPModifier);
 			restHP = 0;
 		} else {
 			restHP = damage - eHP;

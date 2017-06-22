@@ -1,4 +1,4 @@
-import Group from '../imports/group';
+import Group from './group';
 
 let performRound = function(battle, damageReduction = 0) {
 	if (damageReduction < 0) {
@@ -36,6 +36,10 @@ let mergeGroups = function(battle) {
 	let battleUnits = battle.battleUnits;
 
 	battle.traverse(function({unit, sideName, armyName, typeName, unitName}) {
+		if (unit.count === 0) {
+			return;
+		}
+
 		if (!battleUnits[sideName]) {
 			battleUnits[sideName] = {};
 		}
@@ -91,8 +95,9 @@ let mergeParam = function(unitDestination, unitSource, path) {
 		u2Obj = u2Obj[p];
 	}
 
-	u1Obj[key] = (u1Obj[key] * unitDestination.count + u2Obj[key] * unitSource.count) /
-		(unitDestination.count + unitSource.count);
+	u1Obj[key] = ( (u1Obj[key] * unitDestination.count + u2Obj[key] * unitSource.count) /
+		(unitDestination.count + unitSource.count)
+	);
 };
 
 let recalculateCurrentCounts = function(battle) {
@@ -103,6 +108,10 @@ let recalculateCurrentCounts = function(battle) {
 	let decrement = {};
 
 	battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
+		if (unit.count === 0) {
+			return;
+		}
+
 		let sideBattleUnits = battleUnits[sideName];
 
 		let battleUnit = sideBattleUnits[armyName][typeName][unitName];
@@ -111,7 +120,7 @@ let recalculateCurrentCounts = function(battle) {
 
 		let floatCurrentAlive = unit.count / battleUnit.count * alive;
 
-		let left = Math.floor(floatCurrentAlive) + Game.Random.chance(floatCurrentAlive % 1 * 100);
+		let left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);
 
 		let killed = unit.count - left;
 

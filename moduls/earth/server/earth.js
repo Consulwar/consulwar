@@ -1,4 +1,4 @@
-import Battle from '../../battle/server/battle';
+import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
 
 initEarthServer = function() {
 'use strict';
@@ -202,16 +202,10 @@ Game.Earth.performBattleAtZone = function(name, options) {
 
 	options.damageReduction = Game.Earth.DAMAGE_REDUCTION;
 
-	let battle = Battle.create('user', zone.userArmy, 'ai', zone.enemyArmy);
-	let roundResult;
-	let round = 1;
-	do {
-		roundResult = battle.performEarthRound(options);
-		round++;
-	} while (round <= 3 && battle.status === Battle.Status.progress);
+	let battleResult = legacyToNewBattle(zone.userArmy, zone.enemyArmy, options);
 
-	let userArmy = roundResult.left['1'];
-	let enemyArmy = roundResult.left['2'];
+	let userArmy = battleResult.userArmy;
+	let enemyArmy = battleResult.enemyArmy;
 
 	var result = null;
 

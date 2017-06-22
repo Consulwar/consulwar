@@ -71,8 +71,6 @@ Meteor.startup(function () {
 	initAllianceServer();
 	initGameLog();
 
-	initBattle();
-
 	SyncedCron.start();
 });
 

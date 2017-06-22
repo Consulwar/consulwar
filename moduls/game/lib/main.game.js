@@ -143,6 +143,28 @@ game.Item = function(options) {
 		}
 		
 		if (options.characteristics) {
+			//todo remove after set correct values in content
+			if (!options.characteristics.weapon) {
+				let characteristics = options.characteristics;
+
+				if (characteristics.damage) {
+					characteristics.weapon = {
+						damage: { min: characteristics.damage.min, max: characteristics.damage.max },
+						signature: 100
+					};
+				} else {
+					characteristics.weapon = {
+						damage: { min: 0, max: 0 },
+						signature: 100
+					};
+				}
+
+				characteristics.health = {
+					armor: characteristics.life,
+					signature: 100
+				};
+			}
+
 			// --------------------------------------------------------------
 			// TODO: Нужно отрефакторить поле characteristics
 			//       Сейчас нельзя брать special из characteristics

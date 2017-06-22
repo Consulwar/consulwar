@@ -1,3 +1,6 @@
+import traverseGroup from '../../battle/lib/imports/traverseGroup';
+import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
+
 initUnitLib = function() {
 'use strict';
 
@@ -8,28 +11,6 @@ game.Unit = function(options) {
 
 	if (Game.Unit.items.army[this.side][this.engName]) {
 		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
-	}
-
-	//todo remove after set correct values
-	if (!options.characteristics.weapon) {
-		let characteristics = options.characteristics;
-
-		if (characteristics.damage) {
-			characteristics.weapon = {
-				damage: { min: characteristics.damage.min, max: characteristics.damage.max },
-				signature: 100
-			};
-		} else {
-			characteristics.weapon = {
-				damage: { min: 0, max: 0 },
-				signature: 100
-			};
-		}
-
-		characteristics.health = {
-			armor: characteristics.life,
-			signature: 100
-		};
 	}
 
 	Game.Unit.items.army[this.side][this.engName] = this;
@@ -235,28 +216,44 @@ Game.Unit = {
 	},
 
 	calculateUnitsPower: function(units) {
-		var power = 0;
-		var totalDamage = 0;
-		var totalLife = 0;
+		let group = {};
 
-		for (let side in units) {
-			for (let group in units[side]) {
-				for (let name in units[side][group]) {
-					let unit = Game.Unit.items[side][group][name];
-					let count = units[side][group][name];
-					if (_.isNumber(unit.power)) {
-						power += unit.power * count;
-					} else {
-						totalDamage += unit.characteristics.damage.max * count;
-						totalLife += unit.characteristics.life * count;
-					}
-				}
+		traverseGroup(units, function(armyName, typeName, unitName, count) {
+			let unit = Game.Unit.items[armyName][typeName][unitName];
+			let characteristics = unit.characteristics;
+
+			let insertedUnit;
+			if (_.isNumber(unit.power)) {
+				insertedUnit = {
+					power: unit.power,
+					count: count
+				};
+			} else {
+				insertedUnit = {
+					weapon: {
+						damage: {
+							max: characteristics.weapon.damage.max
+						}
+					},
+					health: {
+						armor: characteristics.health.armor
+					},
+					count: count
+				};
 			}
-		}
 
-		power += Math.floor((totalDamage / 1000) + (totalLife / 2000));
+			if (!group[armyName]) {
+				group[armyName] = {};
+			}
 
-		return power;
+			if (!group[armyName][typeName]) {
+				group[armyName][typeName] = {};
+			}
+
+			group[armyName][typeName][unitName] = insertedUnit;
+		});
+
+		return calculateGroupPower(group);
 	},
 
 	calcUnitsHealth: function(units) {

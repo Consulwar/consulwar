@@ -1,3 +1,5 @@
+import Battle from '../../battle/server/battle';
+
 initCheatsServer = function() {
 'use strict';
 
@@ -26,8 +28,136 @@ if (process.env.NODE_ENV == 'development') {
 
 		'cheats.performBattle': function(userArmy, enemyArmy, options) {
 			var result = Game.Unit.performBattle(userArmy, enemyArmy, options);
-			console.log(result);
 			return result.log;
+		},
+
+		'cheats.performBattleRounds': function(count) {
+			let battle = Battle.create(
+				'Zav', {
+					"army" : {
+						"fleet" : {
+							"gammadrone" : {
+								"count" : 146,
+								"weapon" : {
+									"damage" : {
+										"min" : 80,
+										"max" : 100
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 200,
+									"signature" : 100
+								}
+							}
+						}
+					}
+				},
+				'ai1', {
+					"reptiles" : {
+						"fleet" : {
+							"sphero" : {
+								"count" : 14,
+								"weapon" : {
+									"damage" : {
+										"min" : 40,
+										"max" : 50
+									},
+									"signature" : 80
+								},
+								"health" : {
+									"armor" : 150,
+									"signature" : 80
+								}
+							},
+							"blade" : {
+								"count" : 6,
+								"weapon" : {
+									"damage" : {
+										"min" : 320,
+										"max" : 400
+									},
+									"signature" : 100
+								},
+								"health" : {
+									"armor" : 700,
+									"signature" : 100
+								}
+							}
+						}
+					}
+				}
+			);
+
+			// Battle.addGroup(battle.id, '1', 'Zav', {
+			// 	army: {
+			// 		fleet: {
+			// 			gammadrone: {
+			// 				count: 10,
+			// 				weapon: {
+			// 					damage: {min: 80, max: 110},
+			// 					signature: 100
+			// 				},
+			// 				health: {
+			// 					armor: 200,
+			// 					signature: 100
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// });
+			//
+			// Battle.addGroup(battle.id, '1', 'dwarf', {
+			// 	army: {
+			// 		fleet: {
+			// 			gammadrone: {
+			// 				count: 10,
+			// 				weapon: {
+			// 					damage: {min: 80, max: 110},
+			// 					signature: 100
+			// 				},
+			// 				health: {
+			// 					armor: 200,
+			// 					signature: 100
+			// 				}
+			// 			},
+			//
+			// 			wasp: {
+			// 				count: 10,
+			// 				weapon: {
+			// 					damage: {min: 240, max: 300},
+			// 					signature: 100
+			// 				},
+			// 				health: {
+			// 					armor: 500,
+			// 					signature: 100
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// });
+
+			let options = {
+				damageReduction: 0,
+				missionType: 'defencefleet',
+				missionLevel: 1
+			};
+
+			battle = Battle.fromDB(battle.id);
+
+			let roundResults = [];
+
+			let round = 1;
+			do {
+				let roundResult = battle.performSpaceRound(options);
+				roundResults.push(roundResult);
+				round++;
+			} while (round <= count);
+
+			return {
+				battle,
+				roundResults
+			};
 		},
 
 		'cheats.testMissionGenerate': function (planet) {

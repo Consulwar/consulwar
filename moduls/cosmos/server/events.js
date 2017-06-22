@@ -1,4 +1,4 @@
-import Battle from '../../battle/server/battle';
+import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
 
 initCosmosEventsServer = function() {
 'use strict';
@@ -721,7 +721,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId, mission) {
 
 var completeHumansArrival = function(event, planet) {
 	var newTask = null;
-	let battle = null;
+	let battleResult = null;
 	var userArmy = null;
 	var enemyArmy = null;
 
@@ -746,18 +746,10 @@ var completeHumansArrival = function(event, planet) {
 		var userFleet = Game.SpaceEvents.getFleetUnits(event);
 		userArmy = { army: { fleet: userFleet } };
 
-		let user = Meteor.user();
+		battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
 
-		battle = Battle.create(user.username, userArmy, 'ai', enemyArmy);
-		let roundResult;
-		let round = 1;
-		do {
-			roundResult = battle.performSpaceRound(battleOptions);
-			round++;
-		} while (round <= 3 && battle.status === Battle.Status.progress);
-
-		userArmy = roundResult.left['1'];
-		enemyArmy = roundResult.left['2'];
+		userArmy = battleResult.userArmy;
+		enemyArmy = battleResult.enemyArmy;
 
 		if (userArmy && enemyArmy) {
 			// tie
@@ -779,7 +771,7 @@ var completeHumansArrival = function(event, planet) {
 	}
 
 	// update planet info
-	if (event.info.isOneway && (!battle || (userArmy && !enemyArmy))) {
+	if (event.info.isOneway && (!battleResult || (userArmy && !enemyArmy))) {
 		// stay on planet
 		if (planet.isHome || planet.armyId) {
 			// merge army
@@ -798,7 +790,7 @@ var completeHumansArrival = function(event, planet) {
 				targetPlanet: planet._id
 			});
 		}
-	} else if (!battle || userArmy) {
+	} else if (!battleResult || userArmy) {
 		// return ship
 		newTask = Game.SpaceEvents.sendShip({
 			startPosition:  event.info.targetPosition,
@@ -819,7 +811,7 @@ var completeHumansArrival = function(event, planet) {
 
 	Game.Planets.update(planet);
 
-	if (!battle || (userArmy && !enemyArmy)) {
+	if (!battleResult || (userArmy && !enemyArmy)) {
 		if (!planet.isDiscovered) {
 			Game.Planets.discover(planet._id);
 		}
@@ -873,18 +865,10 @@ var completeReptilesArrival = function(event, planet) {
 			delete userArmy.army.ground;
 		}
 
-		let user = Meteor.user();
+		let battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
 
-		let battle = Battle.create(user.username, userArmy, 'ai', enemyArmy);
-		let roundResult;
-		let round = 1;
-		do {
-			roundResult = battle.performSpaceRound(battleOptions);
-			round++;
-		} while (round <= 3 && battle.status === Battle.Status.progress);
-
-		userArmy = roundResult.left['1'];
-		enemyArmy = roundResult.left['2'];
+		userArmy = battleResult.userArmy;
+		enemyArmy = battleResult.enemyArmy;
 
 		// restore ground units
 		if (userArmyGround) {
@@ -1058,18 +1042,9 @@ var completeShipFight = function(event) {
 			? { reptiles: { fleet: secondFleet } }
 			: { reptiles: { fleet: firstFleet } };
 
-		let user = Meteor.user();
-
-		let battle = Battle.create(user.username, userArmy, 'ai', enemyArmy);
-		let roundResult;
-		let round = 1;
-		do {
-			roundResult = battle.performSpaceRound(battleOptions);
-			round++;
-		} while (round <= 3 && battle.status === Battle.Status.progress);
-
-		userArmy = roundResult.left['1'];
-		enemyArmy = roundResult.left['2'];
+		let battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
+		userArmy = battleResult.userArmy;
+		enemyArmy = battleResult.enemyArmy;
 
 		var firstArmy = (event.info.isHumans)
 			? userArmy

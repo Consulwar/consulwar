@@ -1,9 +1,11 @@
 import performRound from './performRound';
+import calculateGroupPower from '../lib/imports/calculateGroupPower';
+import traverseGroup from '../lib/imports/traverseGroup';
 
 let Collection = new Meteor.Collection('battle');
 
 Collection._ensureIndex({
-	user_names: 1
+	userNames: 1
 });
 
 let Status = {
@@ -16,14 +18,6 @@ const ENEMY_SIDE = '2';
 
 class Battle {
 	static create(username, userArmy, enemyName, enemyArmy) {
-		traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
-			userArmy[armyName][typeName][unitName] = createUnit(armyName, typeName, unitName, count);
-		});
-
-		traverseGroup(enemyArmy, function(armyName, typeName, unitName, count) {
-			enemyArmy[armyName][typeName][unitName] = createUnit(armyName, typeName, unitName, count);
-		});
-
 		let round = 1;
 
 		let initialUnits = {
@@ -45,9 +39,9 @@ class Battle {
 
 		let id = Collection.insert({
 			status: status,
-			time_start: Game.getCurrentTime(),
+			timeStart: new Date(),
 			round: round,
-			user_names: [username],
+			userNames: [username],
 			initialUnits,
 			armyPowers,
 			currentUnits,
@@ -64,7 +58,7 @@ class Battle {
 	}
 
 	static findForUsername(username) {
-		return Collection.find({user_names: username}).fetch();
+		return Collection.find({userNames: username}).fetch();
 	}
 
 	static addGroup(id, side, username, group) {
@@ -81,7 +75,7 @@ class Battle {
 
 		if (side === USER_SIDE) {
 			modifier.$addToSet = {
-				user_names: username
+				userNames: username
 			};
 
 			modifier.$inc = {
@@ -106,7 +100,7 @@ class Battle {
 	performSpaceRound(options) {
 		let roundResult = this.performRound(options);
 
-		this.giveHonor(roundResult, options);
+		roundResult.honors = this.giveHonor(roundResult, options);
 
 		return roundResult;
 	}
@@ -148,6 +142,8 @@ class Battle {
 	}
 
 	giveHonor(roundResult, options) {
+		let honors = {};
+
 		let killedCost = Game.Unit.calculateArmyCost(roundResult.killed[ENEMY_SIDE]);
 		let mission = Game.Battle.items[ options.missionType ];
 		let totalHonor = (getPoints(killedCost) / 100) * (mission.honor * 0.01);
@@ -164,9 +160,13 @@ class Battle {
 					let user = Meteor.users.findOne({username});
 
 					Game.Resources.add({honor}, user._id);
+
+					honors[username] = honor;
 				}
 			}
 		}
+
+		return honors;
 	}
 
 	saveRoundStatistic(roundResult) {
@@ -214,8 +214,26 @@ class Battle {
 	finishBattle(userArmyRest, enemyArmyRest, options) {
 		this.status = Status.finish;
 
-		this.giveReward(userArmyRest, enemyArmyRest, options);
-		this.saveBattleStatistic(userArmyRest, enemyArmyRest, options);
+		if (options.isOnlyDamage) {
+			if (enemyArmyRest) {
+				this.result = Game.Battle.result.damage;
+			} else {
+				this.result = Game.Battle.result.damageVictory;
+			}
+		} else {
+			if (userArmyRest && enemyArmyRest) {
+				this.result = Game.Battle.result.tie;
+			} else if(userArmyRest) {
+				this.result = Game.Battle.result.victory;
+			} else {
+				this.result = Game.Battle.result.defeat;
+			}
+		}
+
+		if (!options.isEarth) {
+			this.giveReward(userArmyRest, enemyArmyRest, options);
+			this.saveBattleStatistic(this.result, options);
+		}
 
 		this.update({
 			$set: {
@@ -225,6 +243,9 @@ class Battle {
 	}
 
 	giveReward(userArmyRest, enemyArmyRest, options) {
+		this.rewards = {};
+		this.cards = null;
+
 		if (!userArmyRest || enemyArmyRest) {
 			return;
 		}
@@ -262,31 +283,50 @@ class Battle {
 
 				let user = Meteor.users.findOne({username});
 				Game.Resources.add(reward, user._id);
+
+				this.rewards[username] = reward;
 			}
+		}
+
+		let names = _.keys(armyPowers);
+
+		if (options.artefacts) {
+			let artefacts = [];
+			for (let artefactName in options.artefacts) {
+				if (options.artefacts.hasOwnProperty(artefactName)) {
+					let count = options.artefacts[artefactName];
+					_.times(count, () => artefacts.push(artefactName));
+				}
+			}
+
+			for (let artefactName of artefacts) {
+				let username = names[Game.Random.interval(0, names.length - 1)];
+				let user = Meteor.users.findOne({username});
+
+				Game.Resources.add({[artefactName]: 1}, user._id);
+			}
+		}
+
+		if (mission.cards) {
+			let missionCards = mission.cards;
+			for (let cardName in missionCards) {
+				if (missionCards.hasOwnProperty(cardName)) {
+					if (Game.Random.chance( missionCards[cardName] )) {
+						let username = names[Game.Random.interval(0, names.length - 1)];
+						let user = Meteor.users.findOne({username});
+
+						Game.Cards.add({[cardName]: 1}, user._id);
+					}
+				}
+			}
+			this.cards = missionCards;
 		}
 	}
 
-	saveBattleStatistic(userArmyRest, enemyArmyRest, options) {
+	saveBattleStatistic(result, options) {
 		let userNames = _.keys(this.currentUnits[USER_SIDE]);
 
 		let fieldName = (userNames.length === 1) ? 'battle' : 'multiUsersBattle';
-
-		let result;
-		if (options.isOnlyDamage) {
-			if (enemyArmyRest) {
-				result = Game.Battle.result.damage;
-			} else {
-				result = Game.Battle.result.damageVictory;
-			}
-		} else {
-			if (userArmyRest && enemyArmyRest) {
-				result = Game.Battle.result.tie;
-			} else if(userArmyRest) {
-				result = Game.Battle.result.victory;
-			} else {
-				result = Game.Battle.result.defeat;
-			}
-		}
 
 		let increment = {};
 
@@ -352,18 +392,6 @@ class Battle {
 
 Battle.Status = Status;
 
-let calculateGroupPower = function(group) {
-	let totalDamage = 0;
-	let totalLife = 0;
-
-	traverseGroup(group, function(armyName, typeName, unitName, unit) {
-		totalDamage += unit.weapon.damage.max * unit.count;
-		totalLife += unit.health.armor * unit.count;
-	});
-
-	return Math.floor((totalDamage / 1000) + (totalLife / 2000));
-};
-
 let calculateTotalPower = function(armyPowers) {
 	let totalPower = 0;
 
@@ -405,31 +433,6 @@ let traverseSide = function(units, sideName, callback) {
 	}
 };
 
-let traverseGroup = function(group, callback) {
-	for (let armyName in group) {
-		if (!group.hasOwnProperty(armyName)) {
-			continue;
-		}
-		let army = group[armyName];
-
-		for (let typeName in army) {
-			if (!army.hasOwnProperty(typeName)) {
-				continue;
-			}
-
-			let armyUnits = army[typeName];
-
-			for (let unitName in armyUnits) {
-				if (!armyUnits.hasOwnProperty(unitName)) {
-					continue;
-				}
-
-				callback(armyName, typeName, unitName, armyUnits[unitName]);
-			}
-		}
-	}
-};
-
 let getPoints = function(resources) {
 	let points = 0;
 	for (let res in resources) {
@@ -452,22 +455,6 @@ let deepClone = function(object) {
 	});
 
 	return clone;
-};
-
-let createUnit = function(armyName, typeName, unitName, count) {
-	let characteristics = Game.Unit.items[armyName][typeName][unitName].characteristics;
-
-	return {
-		count: Game.Unit.rollCount(count),
-		weapon: {
-			damage: {min: characteristics.weapon.damage.min, max: characteristics.weapon.damage.max},
-			signature: characteristics.weapon.signature
-		},
-		health: {
-			armor: characteristics.health.armor,
-			signature: characteristics.health.signature
-		}
-	};
 };
 
 export default Battle;

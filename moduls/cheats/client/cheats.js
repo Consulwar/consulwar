@@ -64,27 +64,6 @@ Game.Cheats.testBattle = function() {
 		}
 	};
 
-	userArmy = {
-		army: {
-			fleet: {
-				gammadrone: 100,
-				wasp: 50,
-				mirage: 40,
-				cruiser: 10
-			}
-		}
-	};
-	enemyArmy = {
-		reptiles: {
-			fleet: {
-				sphero: 100,
-				blade: 50,
-				lacertian: 40
-			}
-		}
-	};
-
-
 	// ground battle test
 	/* userArmy = {
 		army: {
@@ -123,7 +102,7 @@ Game.Cheats.testBattle = function() {
 		}
 	}; */
 
-	let options = {
+	options = {
 		rounds: 3,
 		damageReduction: 0,
 		missionType: 'patrolfleet',
@@ -131,6 +110,12 @@ Game.Cheats.testBattle = function() {
 	};
 
 	Meteor.call('cheats.performBattle', userArmy, enemyArmy, options, function(err, data) {
+		console.log(data);
+	});
+};
+
+Game.Cheats.testBattleRounds = function(count) {
+	Meteor.call('cheats.performBattleRounds', count, function(err, data) {
 		console.log(data);
 	});
 };

@@ -428,8 +428,6 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 		// Выключил лог, так как он нигде не юзается, а память жрет.
 		// И вообще мы его будем переделывать!
 		// currentLog += message + '\n';
-
-		console.log(message);
 	};
 
 	var hasAlive = function(units) {

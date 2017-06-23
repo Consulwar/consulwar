@@ -11,6 +11,18 @@ process.env.METEOR_DOWN_KEY = 'Some_great_key_for_testing_84124';
 Game.processId = uuid.new();
 Game.PROCESS_TIMEOUT = 300;
 
+// For access to rawBody in routes
+Router.configureBodyParsers = function () {
+	Router.onBeforeAction(Iron.Router.bodyParser.json({
+		type: '*/*',
+		verify: function(req, res, buffer) {
+			req.rawBody = buffer.toString();
+		},
+		where: 'server'
+	}));
+	Router.onBeforeAction(Iron.Router.bodyParser.urlencoded({extended: false}));
+};
+
 var ApplicationCollection = new Meteor.Collection('application');
 
 Game.checkIsProcessActive = function(processId) {
@@ -49,6 +61,7 @@ Meteor.startup(function () {
 	initGameConfigLib();
 	initBanHistoryServer();
 	initPaymentServer();
+	initPromoCodeServer();
 	initStatisticServer();
 	initResourcesServer();
 	initCardsServer();

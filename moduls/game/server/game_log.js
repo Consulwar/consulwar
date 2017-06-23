@@ -11,6 +11,10 @@ Game.Log = function(desc, info) {
 	Game.datadog.increment(desc);
 };
 
+Game.Log.increment = function(desc, count) {
+	Game.datadog.increment(desc, count);
+};
+
 Game.Log.method = function(desc) {
 	let user = Meteor.user();
 

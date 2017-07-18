@@ -7,7 +7,7 @@ Template.auth.events({
 
 		Meteor.loginWithPassword(email, password, function(err){
 			if (err){
-				Notifications.error('Авторизация неудалась', err.error == 400 || err.error == 403 ? 'Неверный логин и/или пароль' : err.error);
+				Notifications.error('Авторизация не удалась', err.error == 400 || err.error == 403 ? 'Неверный логин и/или пароль' : err.error);
 			} else {
 				Router.go('game');
 			}

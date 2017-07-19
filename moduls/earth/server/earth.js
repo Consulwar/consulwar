@@ -14,7 +14,7 @@ initEarthServer = function() {
 
 initEarthLib();
 initEarthConfigServer();
-initEarthServerImport();
+initEarthServerImportHex();
 
 Game.EarthTurns.Collection._ensureIndex({
 	timeStart: -1
@@ -23,7 +23,7 @@ Game.EarthTurns.Collection._ensureIndex({
 // Auto import on server start
 // If db.zones is empty
 if (Game.EarthZones.Collection.find().count() === 0) {
-	Game.Earth.importZones();
+	Game.Earth.generateZones();
 }
 
 var checkIsStationaryUnit = function(side, group, name) {

@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@turf/turf": "^4.5.2",
     "babel-runtime": "6.23.0",
     "bcrypt": "1.0.2",
-    "hot-shots": "4.4.0"
+    "hot-shots": "4.4.0",
+    "mapbox": "^1.0.0-beta7"
   },
   "devDependencies": {},
   "scripts": {

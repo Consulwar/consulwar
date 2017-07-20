@@ -107,6 +107,16 @@
 			"secretKey": "ABCDEFGHIJKLMNOP",
 			"merchantId": "42424242424242",
 			"project": "consulwar"
+		},
+		"teko": {
+			"initiatorId": "id",
+			"secretKey": "key",
+			"product": "prd",
+			"showcase": "shwcs",
+			"locale": "ru",
+			"url": "http://pg.teko.io:3005/init_session",
+			"theme": "light",
+			"gameUrl": "https://consulwar.ru/"
 		}
 	},
 	"kadira": { 
@@ -154,6 +164,9 @@
 				[[44.6923828125, -17.35063837604883], [39.19921875,-16.1724728083975]],
 				[[-36.5625, -6.839169626342808], [-11.25, 9.102096738726456]],
 				[[-4.306640625, 39.16414104768742], [-3.6035156249999996, 32.175612478499325]]
+			],
+			"startPoints": [
+				[25.13671875, -30.29701788337204]
 			]
 		}
 	},

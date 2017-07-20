@@ -12,6 +12,7 @@ initEarthConfigServer = function() {
 	 || !Meteor.settings.earth.generating.hexUnits
 	 || !Meteor.settings.earth.generating.minAreaMerge
 	 || !Meteor.settings.earth.generating.autoLinkList
+	 || !Meteor.settings.earth.generating.startPoints
 	) {
 		throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры боев на земле (см. settings.sample earth)');
 	}

@@ -4,18 +4,22 @@ const MapboxClient = require('mapbox');
 initEarthServerImportHex = function () {
 'use strict';
 
-const {hexSize, hexUnits, minAreaMerge, autoLinkList} = Game.Earth.GENERATING;
+const {hexSize, hexUnits, minAreaMerge, autoLinkList, startPoints} = Game.Earth.GENERATING;
 
+let startZones = [];
+let startZone;
 
 Game.Earth.generateZones = function() {
 	console.log('Generating zones');
 
+	let mapBox = new MapboxClient(Meteor.settings.public.mapbox.accessToken);
+
 	const geoJson = JSON.parse(Assets.getText('earth-union.json'));
 
-	let bbox = [-0, -90, -180, 90];
+	let bbox = [-170, -90, 10, 90];
 	let hexgrid = turf.hexGrid(bbox, hexSize, hexUnits);
 
-	let bbox2 = [0, -90, 180, 90];
+	let bbox2 = [10, -90, 190, 90];
 	let hexgrid2 = turf.hexGrid(bbox2, hexSize, hexUnits);
 
 	let combined = combineBBoxes(hexgrid.features, hexgrid2.features);
@@ -85,7 +89,33 @@ Game.Earth.generateZones = function() {
 
 	} while (!allFull(hexes));
 
-	generateNames(hexes, function () {
+	generateNames(mapBox, hexes, function () {
+		for (let point of startPoints) {
+			for (let hex of hexes) {
+				let feature = hex.feature;
+				if (turf.inside(turf.point(point), feature)) {
+					startZones.push(feature.properties.name);
+				}
+			}
+		}
+
+		console.log('startZones', startZones);
+
+		startZone = startZones[0];
+
+		for (let hex of hexes) {
+			let name = hex.feature.properties.name;
+
+			Game.EarthZones.Collection.insert({
+				name: name,
+				geometry: hex.feature.geometry,
+				links: [],
+				isEnemy: (startZones.indexOf(name) < 0),
+				isCurrent: (startZone === name ),
+				isVisible: (startZone === name )
+			});
+		}
+
 		for (let i = 0; i < hexes.length; i++) {
 			let hex1 = hexes[i];
 
@@ -101,7 +131,8 @@ Game.Earth.generateZones = function() {
 		for (let link of autoLinkList) {
 			let first, second;
 
-			for (let feature of geoJson.features) {
+			for (let hex of hexes) {
+				let feature = hex.feature;
 				if (turf.inside(turf.point(link[0]), feature)) {
 					first = feature;
 				} else if (turf.inside(turf.point(link[1]), feature)) {
@@ -270,9 +301,7 @@ let hexesIntersected = function(hex1, hex2) {
 	}
 };
 
-let generateNames = function (hexes, callback) {
-	let mapBox = new MapboxClient(Meteor.settings.public.mapbox.accessToken);
-
+let generateNames = function (mapBox, hexes, callback) {
 	let allCount = hexes.length;
 
 	for (let {feature} of hexes) {
@@ -285,15 +314,6 @@ let generateNames = function (hexes, callback) {
 		mapBox.geocodeReverse({latitude, longitude}, {types: 'place,region,country'}, function (err, res) {
 			if (res.features.length !== 0) {
 				feature.properties.name = res.features[0].text;
-
-				Game.EarthZones.Collection.insert({
-					name: res.features[0].text,
-					geometry: feature.geometry,
-					links: [],
-					isEnemy: true,
-					isCurrent: false,
-					isVisible: true //todo for test
-				});
 			}
 
 			if (--allCount <= 0) {

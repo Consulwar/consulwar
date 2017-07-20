@@ -828,6 +828,7 @@ Template.earth.onRendered(function() {
 		$('#map-content').html('<div id="map-earth"></div>');
 
 		mapView = L.map('map-earth', {
+			crs: L.CRS.Simple,
 			zoomAnimation: false,
 			zoomControl: false,
 			doubleClickZoom: false,

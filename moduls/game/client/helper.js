@@ -218,6 +218,61 @@ UI.registerHelper('formatSeconds', Game.Helpers.formatSeconds);
 UI.registerHelper('formatTime', Game.Helpers.formatTime);
 UI.registerHelper('getNumeralEnding', Game.Helpers.getNumeralEnding);
 
+UI.registerHelper('formatProfit', function(profit) {
+	if (profit == 'random') {
+		return 'Случайная награда';
+	}
+
+	var result = '';
+	for (var type in profit) {
+		switch (type) {
+			case 'resources':
+				for (var resName in profit[type]) {
+					result += resName + ': ' + parseInt(profit[type][resName], 10) + ' ';
+				}
+				break;
+			case 'units':
+				for (var unitGroup in profit[type]) {
+					for (var unitName in profit[type][unitGroup]) {
+						result += Game.Unit.items.army[unitGroup][unitName].name + ': ';
+						result += parseInt(profit[type][unitGroup][unitName], 10) + ' ';
+					}
+				}
+				break;
+			case 'cards':
+				for (var cardId in profit[type]) {
+					var card = Game.Cards.getItem(cardId);
+					if (card) {
+						result += card.name + ': ';
+						result += parseInt(profit[type][cardId], 10) + ' ';
+					}
+				}
+				break;
+			case 'houseItems':
+				for (var houseItemGroup in profit[type]) {
+					for (var houseItemName in profit[type][houseItemGroup]) {
+						result += Game.House.items[houseItemGroup][houseItemName].name + ': ';
+						result += parseInt(profit[type][houseItemGroup][houseItemName], 10) + ' ';
+					}
+				}
+				break;
+			case 'containers':
+				for (var containerId in profit[type]) {
+					var container = Game.Building.special.Container.items[containerId];
+					if (container) {
+						result += 'Бесплатный контейнер: ';
+						result += parseInt(profit[type][containerId], 10) + ' ';
+					}
+				}
+				break;
+			case 'votePower':
+				result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
+				break;
+		}
+	}
+	return result;
+});
+
 var iso = {
 	0: '',
 	1: 'K',

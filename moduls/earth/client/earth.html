@@ -14,63 +14,24 @@
 			</h2>
 			<!-- buttons -->
 			<a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
-			{{#if turn}}
-				{{#if turn.canVote}}
-					{{#if eq turn.type "move"}}
-						<a class="btn-attack" data-action="{{zone.name}}">
-							{{#if zone.isEnemy}}
-								В атаку
-							{{else}}
-								{{#if zone.isCurrent}}
-									Ждём
-								{{else}}
-									Идём
-								{{/if}}
-							{{/if}} {{votePercent zone.name turn}}%
-						</a>
-					{{/if}}
-					{{#if eq turn.type "battle"}}
-						<a class="btn-attack" data-action="battle">
-							Воюем {{votePercent "battle" turn}}%
-						</a>
-						<a class="btn-attack" data-action="retreat">
-							Отступаем {{votePercent "retreat" turn}}%
-						</a>
-					{{/if}}
-				{{/if}}
-			{{/if}}
-			{{#if zone.isCurrent}}
-				<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth'}}">Подкрепление</a>
-			{{/if}}
-			<!-- info -->
-			{{#if turn}}
-				{{#if turn.canVote}}
-					<p>Сила голоса: {{votePower}}</p>
-				{{else}}
-					{{#if gt votePower 0}}
-						<p>Вы уже проголосовали</p>
+			{{#if hasLink}}
+				<a class="btn-command" data-action="{{zone.name}}">
+					{{#if zone.isEnemy}}
+						В атаку
 					{{else}}
-						<p>Вы не можете голосовать</p>
+						{{#if eq army.zoneName zone.name}}
+							Ждём
+						{{else}}
+							Идём
+						{{/if}}
 					{{/if}}
-					<p>Всего голосов: {{turn.count}}</p>
-					{{#if eq turn.type "move"}}
-						<p>
-							{{#if zone.isEnemy}}
-								В атаку
-							{{else}}
-								{{#if zone.isCurrent}}
-									Ждём
-								{{else}}
-									Идём
-								{{/if}}
-							{{/if}}
-							: {{votePercent zone.name turn}}%
-						</p>
-					{{/if}}
-					{{#if eq turn.type "battle"}}
-						<p>Воюем: {{votePercent "battle" turn}}%</p>
-						<p>Отступаем: {{votePercent "retreat" turn}}%</p>
-					{{/if}}
+				</a>
+				{{#if eq army.zoneName zone.name}}
+					<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
+				{{/if}}
+			{{else}}
+				{{#if not zone.isEnemy}}
+					<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Отправить</a>
 				{{/if}}
 			{{/if}}
 		</div>
@@ -109,7 +70,7 @@
 				</ul>
 			</div>
 			{{#if info.isCurrent}}
-				<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth'}}">Подкрепление</a>
+				<a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=info.name}}">Подкрепление</a>
 			{{/if}}
 			<a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
 			<!-- <a class="btn-special">Спец атака</a> -->

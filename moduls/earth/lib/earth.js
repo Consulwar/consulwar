@@ -56,6 +56,16 @@ Game.EarthTurns = {
 	}
 };
 
+Game.EarthUnits = {
+	Collection: new Meteor.Collection('earthUnits'),
+
+	get: function () {
+		return Game.EarthUnits.Collection.findOne({
+			user_id: Meteor.userId()
+		});
+	}
+};
+
 initEarthConfigLib();
 
 };

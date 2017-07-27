@@ -20,6 +20,10 @@ Game.EarthTurns.Collection._ensureIndex({
 	timeStart: -1
 });
 
+Game.EarthUnits.Collection._ensureIndex({
+	user_id: 1,
+});
+
 // Auto import on server start
 // If db.zones is empty
 if (Game.EarthZones.Collection.find().count() === 0) {
@@ -48,13 +52,13 @@ var setupUnitHierarchy = function(units, side, group, name) {
 	return units;
 };
 
-Game.Earth.addReinforcement = function(units) {
-	var currentZone = Game.EarthZones.Collection.findOne({
-		isCurrent: true
-	});
-
-	if (!currentZone) {
-		throw new Meteor.Error('Не установлена текущая зона');
+Game.Earth.addReinforcement = function(units, targetZoneName) {
+	let army = Game.EarthUnits.get();
+	let zoneName;
+	if (army) {
+		zoneName = army.zoneName;
+	} else {
+		zoneName = targetZoneName;
 	}
 
 	var honor = 0;
@@ -70,7 +74,7 @@ Game.Earth.addReinforcement = function(units) {
 					honor += Game.Resources.calculateHonorFromReinforcement(
 						Game.Unit.items[side][group][name].price(count)
 					);
-					inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
+					inc['units' + '.' + side + '.' + group + '.' + name ] = count;
 					stats['reinforcements.arrived.' + side + '.' + group + '.' + name] = count;
 					stats['reinforcements.arrived.total'] += count;
 				}
@@ -79,16 +83,21 @@ Game.Earth.addReinforcement = function(units) {
 	}
 	
 	if (stats['reinforcements.arrived.total'] > 0) {
-		Game.Statistic.incrementUser(Meteor.userId(), stats);
+		let user_id = Meteor.userId();
+
+		Game.Statistic.incrementUser(user_id, stats);
 
 		Game.Resources.add({
 			honor: honor
 		});
 
-		Game.EarthZones.Collection.update({
-			isCurrent: true
+		Game.EarthUnits.Collection.upsert({
+			user_id: user_id
 		}, {
-			$inc: inc
+			$inc: inc,
+			$setOnInsert: {
+				zoneName
+			}
 		});
 	}
 };
@@ -750,6 +759,12 @@ Meteor.publish('turns', function() {
 		sort: { timeStart: -1 },
 		limit: 1
 	});
+});
+
+Meteor.publish('earthUnits', function () {
+	if (this.userId) {
+		return Game.EarthUnits.Collection.find({user_id: this.userId});
+	}
 });
 
 initEarthServerMethods();

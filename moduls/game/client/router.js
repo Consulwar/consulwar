@@ -86,7 +86,7 @@ var gameRoutes = {
 	earth: {
 		mutual: 'mutual/:group(research)/:item?',
 		earth: 'mutual/:group(earth)',
-		earthReserve: 'mutual/:group(earth)/reserve',
+		earthReserve: 'mutual/:group(earth)/reserve/:name',
 		earthZone: 'mutual/:group(earth)/zone/:name?',
 		earthHistory: 'mutual/:group(earth)/history/:page',
 	},

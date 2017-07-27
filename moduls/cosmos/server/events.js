@@ -146,7 +146,8 @@ Game.SpaceEvents.sendReinforcement = function(options) {
 		info: {
 			units: options.units
 		},
-		protectAllHonor: options.protectAllHonor
+		protectAllHonor: options.protectAllHonor,
+		targetZoneName: options.targetZoneName
 	});
 
 	// add task into queue
@@ -205,7 +206,7 @@ Game.SpaceEvents.completeReinforcement = function(event) {
 
 	// save reinforcements
 	if (arrived) {
-		Game.Earth.addReinforcement( arrived );
+		Game.Earth.addReinforcement( arrived, event.targetZoneName );
 	}
 
 	// reinforcements don't create new tasks

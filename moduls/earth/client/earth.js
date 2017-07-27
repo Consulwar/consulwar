@@ -5,6 +5,7 @@ initEarthLib();
 
 Meteor.subscribe('zones');
 var turnsSubscription = Meteor.subscribe('turns');
+Meteor.subscribe('earthUnits');
 
 Game.Earth.showMap = function() {
 	this.render('earth', {
@@ -177,10 +178,13 @@ Template.earthHistory.events({
 // ----------------------------------------------------------------------------
 
 Game.Earth.showReserve = function() {
+	const name = this.params.name;
+
 	Router.current().render('reserve', {
 		to: 'content',
 		data: {
-			honor: new ReactiveVar(0)
+			honor: new ReactiveVar(0),
+			name
 		}
 	});
 };
@@ -273,7 +277,7 @@ Template.reserve.events({
 			return Notifications.info('Выберите войска для отправки');
 		}
 
-		Meteor.call('earth.sendReinforcement', units, function(err) {
+		Meteor.call('earth.sendReinforcement', units, null, t.data.name, function(err) {
 			if (err) {
 				Notifications.error('Не удалось отправить войска', err.error);
 			} else {
@@ -413,6 +417,23 @@ Template.earthZonePopup.helpers({
 		return Game.EarthZones.getByName(this.name);
 	},
 
+	hasLink: function () {
+		let army = Game.EarthUnits.get();
+		if (army) {
+			let armyZone = Game.EarthZones.getByName(army.zoneName);
+
+			if (this.name === army.zoneName || armyZone.links.indexOf(this.name) !== -1) {
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+	army: function() {
+		return Game.EarthUnits.get();
+	},
+
 	turn: function() {
 		var turn = Game.EarthTurns.getLast();
 		if (!turn) {
@@ -461,9 +482,9 @@ Template.earthZonePopup.helpers({
 });
 
 Template.earthZonePopup.events({
-	'click .btn-attack': function(e, t) {
+	'click .btn-command': function(e, t) {
 		var action = $(e.currentTarget).attr('data-action');
-		Meteor.call('earth.voteAction', action);
+		Meteor.call('earth.moveArmy', action);
 	}
 });
 
@@ -491,6 +512,7 @@ var ZoneView = function(mapView, zoneData) {
 	this.constructor = function() {
 		this.id = zone._id;
 		this.name = zone.name;
+		this.links = zone.links;
 
 		// polygon
 		polygon = L.GeoJSON.geometryToLayer({
@@ -569,7 +591,9 @@ var ZoneView = function(mapView, zoneData) {
 	this.update = function() {
 		zone = Game.EarthZones.getByName(this.name);
 
-		if (zone.isVisible) {
+		this.isVisible = zone.isVisible;
+
+		if (this.isVisible) {
 
 			// calculate army power
 			var maxPower = Game.EarthZones.calcMaxHealth();
@@ -753,7 +777,7 @@ var ZoneView = function(mapView, zoneData) {
 // Line view (line on map which displays zone connection + vote result)
 // ----------------------------------------------------------------------------
 
-var LineView = function(start, finish) {
+var LineView = function(start, finish, selected) {
 
 	var line = null;
 	var text = null;
@@ -763,7 +787,7 @@ var LineView = function(start, finish) {
 		// create line
 		line = new L.Polyline([], {
 			clickable: false,
-			color: '#4a82c4',
+			color: selected ? '#4a82c4' : '#374a60',
 			weight: 3,
 			smoothFactor: 1
 		}).addTo(mapView);
@@ -817,7 +841,7 @@ var LineView = function(start, finish) {
 var mapView = null;
 var mapBounds = null;
 var zoneViews = {};
-var lineViews = {};
+const lineViews = [];
 var observerZones = null;
 
 Template.earth.onRendered(function() {
@@ -885,68 +909,74 @@ Template.earth.onRendered(function() {
 		}
 	});
 
-	// show turn lines and track db updates
-	// TODO: Make reactive!
-	this.autorun(function() {
-		// remove current lines
-		for (var key in lineViews) {
-			lineViews[ key ].remove();
-		}
-
-		// get current zone
-		var currentZone = Game.EarthZones.getCurrent();
-		if (!currentZone) {
-			return;
-		}
-
-		// get last turn
-		var turn = Game.EarthTurns.getLast();
-		if (!turn) {
-			return;
-		}
-
-		if (turn.type != 'move') {
-			/* don't show this info
-			var battle = 0;
-			var retreat = 0;
-
-			if (turn.totalVotePower > 0) {
-				battle = (turn.actions.battle / turn.totalVotePower) * 100;
-				retreat = (turn.actions.retreat / turn.totalVotePower) * 100;
-			}
-
-			zoneViews[ currentZone.name ].updateText(
-				'Воюем: ' + Math.round(battle) + '%' + '\n' + 'Отступаем: ' + Math.round(retreat) + '%'
-			);
-			*/
-			return;
-		}
-
-		// draw new lines
-		for (var name in turn.actions) {
-			var value = (turn.totalVotePower > 0)
-				? (turn.actions[name] / turn.totalVotePower) * 100
-				: 0;
-
-			if (name == currentZone.name) {
-				zoneViews[ currentZone.name ].updateText( Math.round(value) + '%' );
-				continue;
-			}
-
-			var start = zoneViews[ currentZone.name ];
-			var finish = zoneViews[ name ];
-
-			if (!start || !finish) {
-				continue;
-			}
-
-			finish.updateText( Math.round(value) + '%' );
-			lineViews[ name ] = new LineView(start, finish);
-			// don't show text above line
-			// lineViews[ name ].update( Math.round(value) + '%' );
+	Game.EarthUnits.Collection.find({}).observeChanges({
+		added: function () {
+			showLines(Game.EarthUnits.get());
+		},
+		changed: function() {
+			showLines(Game.EarthUnits.get());
+		},
+		removed: function () {
+			showLines(Game.EarthUnits.get());
 		}
 	});
+
+	// show turn lines and track db updates
+	// TODO: Make reactive!
+	function f1() {
+		this.autorun(function () {
+			// remove current lines
+			for (var key in lineViews) {
+				lineViews[key].remove();
+			}
+
+			// get current zone
+			var currentZone = Game.EarthZones.getCurrent();
+			if (!currentZone) {
+				return;
+			}
+
+			// get last turn
+			var turn = Game.EarthTurns.getLast();
+			if (!turn) {
+				return;
+			}
+
+			// draw new lines
+			for (var name in turn.actions) {
+				if (name == currentZone.name) {
+					continue;
+				}
+
+				var start = zoneViews[currentZone.name];
+				var finish = zoneViews[name];
+
+				if (!start || !finish) {
+					continue;
+				}
+
+				lineViews[name] = new LineView(start, finish);
+			}
+		});
+	}
 });
+
+let showLines = function (army) {
+	lineViews.forEach( lineView => lineView.remove() );
+
+	lineViews.length = 0;
+
+	if (army) {
+		let armyZone = zoneViews[army.zoneName];
+		armyZone.links.forEach(function (name) {
+			let finish = zoneViews[name];
+			if (finish && finish.isVisible) {
+				let selected = (name === army.targetZone);
+				lineViews.push(new LineView(armyZone, finish, selected));
+			}
+		});
+	}
+};
 
 Template.earth.onDestroyed(function() {
 	Game.Earth.hideZonePopup();

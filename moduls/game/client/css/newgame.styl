@@ -18,1650 +18,1650 @@ $color-row-hover =  #2a3a4a
 @import 'nib'
 
 menu-icon(name)
-	.{name}-icon:not([disabled])
-		background-image url("/img/game/menu/" name ".png")
-		&:hover,
-		&.active
-			background-image url("/img/game/menu/" name "_a.png")
-	
-	.{name}-icon[disabled]
-		background-image url("/img/game/menu/" name "_d.png")
+  .{name}-icon:not([disabled])
+    background-image url("/img/game/menu/" name ".png")
+    &:hover,
+    &.active
+      background-image url("/img/game/menu/" name "_a.png")
+  
+  .{name}-icon[disabled]
+    background-image url("/img/game/menu/" name "_d.png")
 
 side-icon(name)
-	.{name}-icon
-		background-image url("/img/game/side/" name ".png")
-		&:hover,
-		&.active
-			background-image url("/img/game/side/" name "_a.png")
+  .{name}-icon
+    background-image url("/img/game/side/" name ".png")
+    &:hover,
+    &.active
+      background-image url("/img/game/side/" name "_a.png")
 
 bottom-icon(type, group, name)
-	.{name}-icon
-		background-image url("/img/game/" type "/" group "/i/" name ".png")
-		
+  .{name}-icon
+    background-image url("/img/game/" type "/" group "/i/" name ".png")
+    
 bottom-icon-notimplemented(type, group, name)
-	.{name}-icon
-		background-image url("/img/game/notimplemented_icon.png")
+  .{name}-icon
+    background-image url("/img/game/notimplemented_icon.png")
 
 bottom-side-icon(type, side, group, name)
-	.{name}-icon
-		background-image url("/img/game/" type "/" side "/" group "/i/" name ".png")
-		
+  .{name}-icon
+    background-image url("/img/game/" type "/" side "/" group "/i/" name ".png")
+    
 bottom-side-icon-notimplemented(type, side, group, name)
-	.{name}-icon
-		background-image url("/img/game/notimplemented_icon.png")
+  .{name}-icon
+    background-image url("/img/game/notimplemented_icon.png")
 
 overlay-image(menu, sub, name, x, y, z)
-	.{name}-icon:before
-		content url("/img/game/" menu "/" sub "/" name ".png")
-		left x px
-		top y px
-		z-index z
+  .{name}-icon:before
+    content url("/img/game/" menu "/" sub "/" name ".png")
+    left x px
+    top y px
+    z-index z
 
 overlay-item(name, x, y, z)
-	.{name}-icon
-		left x px
-		top y px
-		z-index z
-		
+  .{name}-icon
+    left x px
+    top y px
+    z-index z
+    
 requirements-icon(menu, sub, name)
-	.{name}-icon
-		background-image url("/img/game/" menu "/" sub "/r/" name ".jpg")
-		
+  .{name}-icon
+    background-image url("/img/game/" menu "/" sub "/r/" name ".jpg")
+    
 requirements-icon-notimplemented(menu, sub, name)
-	.{name}-icon
-		background-image url("/img/game/notimplemented_req.jpg")
+  .{name}-icon
+    background-image url("/img/game/notimplemented_req.jpg")
 
 html, body
-	position relative
-	width 100%
-	height 100%
-	
-	.page
-		width 100%
-		height 100%
-		
-		.newgame 
-			width 100%
-			height 100%
+  position relative
+  width 100%
+  height 100%
+  
+  .page
+    width 100%
+    height 100%
+    
+    .newgame 
+      width 100%
+      height 100%
 
 body.game
-	max-width 1920px
-	max-height 1080px
-	margin 0 auto
-	
-	button
-		background-color transparent
-		border 0
-		cursor pointer
-						
-		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
-		
-		&.orangeButton,
-		&.greenButton
-			flex-shrink 0
-			background-repeat no-repeat
-			color $color-white
-			font-weight bold
-			
-		&.orangeButton
-			width 119px
-			height 33px
-			background-image url(/img/game/orange_button.png)
-		
-		&.greenButton
-			width 181px
-			height 50px
-			background-image url(/img/game/green_button.png)
-			font-size 20px
+  max-width 1920px
+  max-height 1080px
+  margin 0 auto
+  
+  button
+    background-color transparent
+    border 0
+    cursor pointer
+            
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+    
+    &.orangeButton,
+    &.greenButton
+      flex-shrink 0
+      background-repeat no-repeat
+      color $color-white
+      font-weight bold
+      
+    &.orangeButton
+      width 119px
+      height 33px
+      background-image url(/img/game/orange_button.png)
+    
+    &.greenButton
+      width 181px
+      height 50px
+      background-image url(/img/game/green_button.png)
+      font-size 20px
 
-	@import '{}/moduls/game/client/css/player.styl'
-	@import '{}/moduls/game/client/css/popup.styl'
-	@import '{}/moduls/building/client/building.styl'
-	@import '{}/moduls/research/client/research.styl'
-	@import '{}/moduls/mutual/client/mutual.styl'
-	@import '{}/moduls/mail/client/mail.styl'
-	@import '{}/moduls/chat/client/chat.styl'
-	@import '{}/moduls/game/client/css/item.styl'
-	@import '{}/moduls/cosmos/client/cosmos.styl'
-	@import '{}/moduls/resources/client/resources.styl'
-	@import '{}/moduls/user/client/user.styl'
-	@import '{}/moduls/payment/client/payment.styl'
-	@import '{}/moduls/payment/client/promocode.styl'
-	@import '{}/moduls/user/client/entranceReward.styl'
+  @import '{}/moduls/game/client/css/player.styl'
+  @import '{}/moduls/game/client/css/popup.styl'
+  @import '{}/moduls/building/client/building.styl'
+  @import '{}/moduls/research/client/research.styl'
+  @import '{}/moduls/mutual/client/mutual.styl'
+  @import '{}/moduls/mail/client/mail.styl'
+  @import '{}/moduls/chat/client/chat.styl'
+  @import '{}/moduls/game/client/css/item.styl'
+  @import '{}/moduls/cosmos/client/cosmos.styl'
+  @import '{}/moduls/resources/client/resources.styl'
+  @import '{}/moduls/user/client/user.styl'
+  @import '{}/moduls/payment/client/payment.styl'
+  @import '{}/moduls/payment/client/promocode.styl'
+  @import '{}/moduls/user/client/entranceReward.styl'
 
 
 .page
-	position relative
-	//width 100vw
-	//height 100vh
-	width 100%
-	height 100%
-	overflow auto
+  position relative
+  //width 100vw
+  //height 100vh
+  width 100%
+  height 100%
+  overflow auto
 
 .wrap
-	position relative
-	width 100%
-	height 100%
-	overflow hidden
-	
-	.page 
-		.overlay_wrap
-			position absolute
-			top 0
-			left 0
-			width 100%
-			height 100%
-			overflow hidden
+  position relative
+  width 100%
+  height 100%
+  overflow hidden
+  
+  .page 
+    .overlay_wrap
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      overflow hidden
 
-			> .overlay
-				position absolute
-				z-index 0
-				left 50%
-				top 50%
-				margin-left -960px
-				margin-top -540px
-				display block
-				width 1920px
-				height 1080px
-				background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
-				background-repeat repeat, no-repeat, no-repeat
-				background-blend-mode normal, exclusion, normal
-				
-				&.planet.residential
-					.collectBonus
-						position absolute
-						display none
-						z-index 20
-						width 71px
-						height 71px
-						border-radius 50%
-						background-color $color-black
-						cursor pointer
-						overflow hidden
-						
-						&:hover
-							-webkit-filter brightness(1.2)
-							filter brightness(1.2)
-						
-						.currentValue
-							width 100%
-							position absolute
-							bottom 0
-							left 0
-						
-						&.active
-							display block
-							&:after
-								content ''
-								position absolute
-								top 0px
-								left 0px
-								width 71px
-								height 71px
-								box-sizing border-box
-								background-repeat no-repeat
-								background-position center center
-								border-radius 50%
-								border-width 2px
-								border-style solid
+      > .overlay
+        position absolute
+        z-index 0
+        left 50%
+        top 50%
+        margin-left -960px
+        margin-top -540px
+        display block
+        width 1920px
+        height 1080px
+        background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
+        background-repeat repeat, no-repeat, no-repeat
+        background-blend-mode normal, exclusion, normal
+        
+        &.planet.residential
+          .collectBonus
+            position absolute
+            display none
+            z-index 20
+            width 71px
+            height 71px
+            border-radius 50%
+            background-color $color-black
+            cursor pointer
+            overflow hidden
+            
+            &:hover
+              -webkit-filter brightness(1.2)
+              filter brightness(1.2)
+            
+            .currentValue
+              width 100%
+              position absolute
+              bottom 0
+              left 0
+            
+            &.active
+              display block
+              &:after
+                content ''
+                position absolute
+                top 0px
+                left 0px
+                width 71px
+                height 71px
+                box-sizing border-box
+                background-repeat no-repeat
+                background-position center center
+                border-radius 50%
+                border-width 2px
+                border-style solid
 
-						&.metals
-							top 734px
-							right 508px
-							&.active:after
-								background-image url(/img/game/metals_bonus.png)
-								border-color $color-metal
-							
-							.currentValue
-								background-color $color-metal
-							
-						&.crystals
-							top 666px
-							left 696px
-							&.active:after
-								background-image url(/img/game/crystals_bonus.png)
-								border-color $color-crystal
-							
-							.currentValue
-								background-color $color-crystal
+            &.metals
+              top 734px
+              right 508px
+              &.active:after
+                background-image url(/img/game/metals_bonus.png)
+                border-color $color-metal
+              
+              .currentValue
+                background-color $color-metal
+              
+            &.crystals
+              top 666px
+              left 696px
+              &.active:after
+                background-image url(/img/game/crystals_bonus.png)
+                border-color $color-crystal
+              
+              .currentValue
+                background-color $color-crystal
 
-						&.colosseum
-							top 630px
-							left 388px
-							&.active:after
-								border-width 0
-								background-image url(/img/game/colosseum/collect.png)
-								
-						&.pulsecatcher
-							top 649px
-							left 1138px
-							&.active:after
-								border-width 0
-								background-image url(/img/game/pulsecatcher/collect.png)
-					
-				&.hideNet
-					background-repeat no-repeat, no-repeat, no-repeat
-				
-				&.item,
-				&.ground
-					background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
-					
-				&.fleet
-					background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
-					
-				&.cosmos
-					background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
+            &.colosseum
+              top 630px
+              left 388px
+              &.active:after
+                border-width 0
+                background-image url(/img/game/colosseum/collect.png)
+                
+            &.pulsecatcher
+              top 649px
+              left 1138px
+              &.active:after
+                border-width 0
+                background-image url(/img/game/pulsecatcher/collect.png)
+          
+        &.hideNet
+          background-repeat no-repeat, no-repeat, no-repeat
+        
+        &.item,
+        &.ground
+          background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
+          
+        &.fleet
+          background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
+          
+        &.cosmos
+          background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
 
-				&.artefacts
-					background-repeat no-repeat, no-repeat
-					background-blend-mode exclusion, normal
-					
-					.item
-						height 90%
-						&:before
-							content ''
-							position absolute
-							top 0
-							left 0
-							width 100%
-							height 100%
-							background-position center
+        &.artefacts
+          background-repeat no-repeat, no-repeat
+          background-blend-mode exclusion, normal
+          
+          .item
+            height 90%
+            &:before
+              content ''
+              position absolute
+              top 0
+              left 0
+              width 100%
+              height 100%
+              background-position center
 
-					&.white
-						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-						.item:before
-							background-image url(/img/game/artefact/white/bg.png)
-					&.green
-						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-						.item:before
-							background-image url(/img/game/artefact/green/bg.png)
-					&.blue
-						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-						.item:before
-							background-image url(/img/game/artefact/blue/bg.png)
-					&.purple
-						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-						.item:before
-							background-image url(/img/game/artefact/purple/bg.png)
-					&.orange
-						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-						.item:before
-							background-image url(/img/game/artefact/orange/bg.png)
-					&.red
-						background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-						.item:before
-							background-image url(/img/game/artefact/red/bg.png)
+          &.white
+            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+            .item:before
+              background-image url(/img/game/artefact/white/bg.png)
+          &.green
+            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+            .item:before
+              background-image url(/img/game/artefact/green/bg.png)
+          &.blue
+            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+            .item:before
+              background-image url(/img/game/artefact/blue/bg.png)
+          &.purple
+            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+            .item:before
+              background-image url(/img/game/artefact/purple/bg.png)
+          &.orange
+            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+            .item:before
+              background-image url(/img/game/artefact/orange/bg.png)
+          &.red
+            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
+            .item:before
+              background-image url(/img/game/artefact/red/bg.png)
 
-				.item
-					position absolute
-					top 0
-					left 0
-					width 60%
-					height 100%
-					background-repeat no-repeat
-					background-position center center
-				
-				a
-					position absolute
-					
-					&:before
-						position absolute
-						top 0
-						left 0
-						-webkit-filter blur(0)
-						filter blur(0)
-						opacity 1
-						transition opacity .5s, filter 2s, -webkit-filter 2s
-					
-					&:hover:before
-						-webkit-filter brightness(1.1)
-						filter brightness(1.1)
-							
-					img
-						position absolute
-						z-index 1
-						
-						&:hover
-							-webkit-filter brightness(1.1)
-							filter brightness(1.1)
-						
-						&[progress]
-							z-index 2
-							
-						+ img
-							opacity 0.8
+        .item
+          position absolute
+          top 0
+          left 0
+          width 60%
+          height 100%
+          background-repeat no-repeat
+          background-position center center
+        
+        a
+          position absolute
+          
+          &:before
+            position absolute
+            top 0
+            left 0
+            -webkit-filter blur(0)
+            filter blur(0)
+            opacity 1
+            transition opacity .5s, filter 2s, -webkit-filter 2s
+          
+          &:hover:before
+            -webkit-filter brightness(1.1)
+            filter brightness(1.1)
+              
+          img
+            position absolute
+            z-index 1
+            
+            &:hover
+              -webkit-filter brightness(1.1)
+              filter brightness(1.1)
+            
+            &[progress]
+              z-index 2
+              
+            + img
+              opacity 0.8
 
-						&[progress="100"]
-							-webkit-filter blur(20px)
-							filter blur(20px)
-						&[progress="90"]
-							-webkit-filter blur(18px)
-							filter blur(18px)
-						&[progress="80"]
-							-webkit-filter blur(16px)
-							filter blur(16px)
-						&[progress="70"]
-							-webkit-filter blur(12px)
-							filter blur(12px)
-						&[progress="60"]
-							-webkit-filter blur(8px)
-							filter blur(8px)
-						&[progress="50"]
-							-webkit-filter blur(6px)
-							filter blur(6px)
-						&[progress="40"]
-							-webkit-filter blur(4px)
-							filter blur(4px)
-						&[progress="30"]
-							-webkit-filter blur(3px)
-							filter blur(3px)
-						&[progress="20"]
-							-webkit-filter blur(2px)
-							filter blur(2px)
-						&[progress="10"]
-							-webkit-filter blur(1px)
-							filter blur(1px)
-					
-					&[progress="100"]:before
-						-webkit-filter blur(20px)
-						filter blur(20px)
-					&[progress="90"]:before
-						-webkit-filter blur(18px)
-						filter blur(18px)
-					&[progress="80"]:before
-						-webkit-filter blur(16px)
-						filter blur(16px)
-					&[progress="70"]:before
-						-webkit-filter blur(12px)
-						filter blur(12px)
-					&[progress="60"]:before
-						-webkit-filter blur(8px)
-						filter blur(8px)
-					&[progress="50"]:before
-						-webkit-filter blur(6px)
-						filter blur(6px)
-					&[progress="40"]:before
-						-webkit-filter blur(4px)
-						filter blur(4px)
-					&[progress="30"]:before
-						-webkit-filter blur(3px)
-						filter blur(3px)
-					&[progress="20"]:before
-						-webkit-filter blur(2px)
-						filter blur(2px)
-					&[progress="10"]:before
-						-webkit-filter blur(1px)
-						filter blur(1px)
-		
-		@import '{}/moduls/game/client/css/mobile.styl'
+            &[progress="100"]
+              -webkit-filter blur(20px)
+              filter blur(20px)
+            &[progress="90"]
+              -webkit-filter blur(18px)
+              filter blur(18px)
+            &[progress="80"]
+              -webkit-filter blur(16px)
+              filter blur(16px)
+            &[progress="70"]
+              -webkit-filter blur(12px)
+              filter blur(12px)
+            &[progress="60"]
+              -webkit-filter blur(8px)
+              filter blur(8px)
+            &[progress="50"]
+              -webkit-filter blur(6px)
+              filter blur(6px)
+            &[progress="40"]
+              -webkit-filter blur(4px)
+              filter blur(4px)
+            &[progress="30"]
+              -webkit-filter blur(3px)
+              filter blur(3px)
+            &[progress="20"]
+              -webkit-filter blur(2px)
+              filter blur(2px)
+            &[progress="10"]
+              -webkit-filter blur(1px)
+              filter blur(1px)
+          
+          &[progress="100"]:before
+            -webkit-filter blur(20px)
+            filter blur(20px)
+          &[progress="90"]:before
+            -webkit-filter blur(18px)
+            filter blur(18px)
+          &[progress="80"]:before
+            -webkit-filter blur(16px)
+            filter blur(16px)
+          &[progress="70"]:before
+            -webkit-filter blur(12px)
+            filter blur(12px)
+          &[progress="60"]:before
+            -webkit-filter blur(8px)
+            filter blur(8px)
+          &[progress="50"]:before
+            -webkit-filter blur(6px)
+            filter blur(6px)
+          &[progress="40"]:before
+            -webkit-filter blur(4px)
+            filter blur(4px)
+          &[progress="30"]:before
+            -webkit-filter blur(3px)
+            filter blur(3px)
+          &[progress="20"]:before
+            -webkit-filter blur(2px)
+            filter blur(2px)
+          &[progress="10"]:before
+            -webkit-filter blur(1px)
+            filter blur(1px)
+    
+    @import '{}/moduls/game/client/css/mobile.styl'
 
-	
+  
 .tooltip
-	.inner
-		> .map-planet-popup
-			position relative
-			border 0
-			background transparent
-			padding 0
-			
-		> .unit
-			width 390px
+  .inner
+    > .map-planet-popup
+      position relative
+      border 0
+      background transparent
+      padding 0
+      
+    > .unit
+      width 390px
 
 .unit
-	.effects
-		font-weight bold
-		.currentLevel
-			color $color-metal
-			margin 0
-		.limit
-			color $color-human
-		
-	.title
-		text-align center
-		font-size 16px
-		font-weight bold
-		margin-bottom 10px
+  .effects
+    font-weight bold
+    .currentLevel
+      color $color-metal
+      margin 0
+    .limit
+      color $color-human
+    
+  .title
+    text-align center
+    font-size 16px
+    font-weight bold
+    margin-bottom 10px
 
 .characteristics
-	display flex
-	justify-content space-around
-	font-size 15px
-	margin 10px 0
-	
-	.weapon
-		color $color-honor
-		
-	.life
-		color $color-white
-		
-	.weapon,
-	.life
-		display flex
-		align-items baseline
-		
-		div:before
-			display inline-block
-			vertical-align middle
-			margin-right 3px
+  display flex
+  justify-content space-around
+  font-size 15px
+  margin 10px 0
+  
+  .weapon
+    color $color-honor
+    
+  .life
+    color $color-white
+    
+  .weapon,
+  .life
+    display flex
+    align-items baseline
+    
+    div:before
+      display inline-block
+      vertical-align middle
+      margin-right 3px
 
-	.damage:before
-		content url(/img/game/unit/damage.png)
-		
-	.damage_signature
-		visibility hidden
-		&:before
-			content url(/img/game/unit/damage_signature.png)
-		
-	.armor:before
-		content url(/img/game/unit/armor.png)
-		
-	.armor_signature
-		visibility hidden
-		&:before
-			content url(/img/game/unit/armor_signature.png)
-	
-	div
-		width 50%
+  .damage:before
+    content url(/img/game/unit/damage.png)
+    
+  .damage_signature
+    visibility hidden
+    &:before
+      content url(/img/game/unit/damage_signature.png)
+    
+  .armor:before
+    content url(/img/game/unit/armor.png)
+    
+  .armor_signature
+    visibility hidden
+    &:before
+      content url(/img/game/unit/armor_signature.png)
+  
+  div
+    width 50%
 
 .targets_title
-	color $color-human
-	font-weight bold
-	margin 5px 0				
+  color $color-human
+  font-weight bold
+  margin 5px 0        
 
 .targets
-	display flex
-	list-style-type none
-	justify-content space-around
-	margin 10px 0
-	
-	li
-		width 64px
-		height 64px
-		
-		a
-			display block
-			width 100%
-			height 100%
-			background-size 100%
+  display flex
+  list-style-type none
+  justify-content space-around
+  margin 10px 0
+  
+  li
+    width 64px
+    height 64px
+    
+    a
+      display block
+      width 100%
+      height 100%
+      background-size 100%
 
 .close
-	display block
-	width 22px
-	height 22px
-	background-image url(/img/game/close_new.png)
-	background-repeat no-repeat
-	background-position center center
-	padding 7px
-	-webkit-filter grayscale(0.5)
-	filter grayscale(0.5)
-	cursor pointer
-	
-	&:hover
-		-webkit-filter grayscale(0)
-		filter grayscale(0)
+  display block
+  width 22px
+  height 22px
+  background-image url(/img/game/close_new.png)
+  background-repeat no-repeat
+  background-position center center
+  padding 7px
+  -webkit-filter grayscale(0.5)
+  filter grayscale(0.5)
+  cursor pointer
+  
+  &:hover
+    -webkit-filter grayscale(0)
+    filter grayscale(0)
 
 .over .close
-	position absolute
-	top 0
-	right 0
+  position absolute
+  top 0
+  right 0
 
 .spinner-container
-	position absolute
-	top 0
-	left 0
-	background-color rgba(0,0,0,0.5)
+  position absolute
+  top 0
+  left 0
+  background-color rgba(0,0,0,0.5)
 
 .newgame
-	position relative
-	display flex
-	flex-shrink 0
-	justify-content space-between
-	flex-direction column
-	width 100%
-	min-width 870px
-	max-width 1920px
-	height 100%
-	max-height 1080px
-	align-items stretch
-	
-	// Возврат оригинального цвета
-	.leaflet-container a
-		color inherit
-	
-	.notImplemented
-		color $color-human
-		
-	.tie
-		color $color-crystal
-	.victory
-		color $color-ggk
-	.defeat
-		color $color-honor
-		
-	.newMessage
-		position absolute
-		bottom 250px
-		right 0
-		display block
-		padding 18px 16px
-		background-color $color-black
-		color $color-metal
-		z-index 4
-		font-size 16px
-		text-decoration none
-		font-weight bold
-		
-		&:before
-			content url(/img/game/message.png)
-			vertical-align middle
-			width 34px
-			height 23px
-			display inline-block
-			margin-right 20px
-						
-		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
-	
-	button, a
-		outline none
+  position relative
+  display flex
+  flex-shrink 0
+  justify-content space-between
+  flex-direction column
+  width 100%
+  min-width 870px
+  max-width 1920px
+  height 100%
+  max-height 1080px
+  align-items stretch
+  
+  // Возврат оригинального цвета
+  .leaflet-container a
+    color inherit
+  
+  .notImplemented
+    color $color-human
+    
+  .tie
+    color $color-crystal
+  .victory
+    color $color-ggk
+  .defeat
+    color $color-honor
+    
+  .newMessage
+    position absolute
+    bottom 250px
+    right 0
+    display block
+    padding 18px 16px
+    background-color $color-black
+    color $color-metal
+    z-index 4
+    font-size 16px
+    text-decoration none
+    font-weight bold
+    
+    &:before
+      content url(/img/game/message.png)
+      vertical-align middle
+      width 34px
+      height 23px
+      display inline-block
+      margin-right 20px
+            
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+  
+  button, a
+    outline none
 
-	&.new	
-		.item_info
-			width 360px
-			padding 5px 15px
-			display flex
-			flex-shrink 0
-			flex-direction column
-			justify-content space-between
-			
-			h2
-				font-size 15px
-				color $color-human
-				margin 10px 0
+  &.new  
+    .item_info
+      width 360px
+      padding 5px 15px
+      display flex
+      flex-shrink 0
+      flex-direction column
+      justify-content space-between
+      
+      h2
+        font-size 15px
+        color $color-human
+        margin 10px 0
 
-			.effects
-				.title
-					color $color-white
-						
-				.currentLevel
-					margin-bottom 20px
-					.effect
-						color $color-metal
-					
-				.nextLevel
-					margin 20px 0
-					.effect
-						color $color-ggk
-			
-			.planets
-				display flex
-				justify-content space-around
-				flex-wrap wrap
-				min-height 80px
-				
-			
-			.actions
-				display flex
-				flex-shrink 0
-				justify-content flex-end
-				padding 25px 0 10px
-				
-				.action
-					display flex
-					flex-wrap wrap
-					justify-content space-between
-					align-items flex-end
-					padding 0 7.5px
-					width 50%
-					
-					.notImplemented
-						flex-wrap nowrap
-						margin 0 0 8px 0
-						justify-content space-between
-						-webkit-filter grayscale(1) brightness(0.6)
-						filter grayscale(1) brightness(0.6)
-					
-					.transition
-						width 100%
+      .effects
+        .title
+          color $color-white
+            
+        .currentLevel
+          margin-bottom 20px
+          .effect
+            color $color-metal
+          
+        .nextLevel
+          margin 20px 0
+          .effect
+            color $color-ggk
+      
+      .planets
+        display flex
+        justify-content space-around
+        flex-wrap wrap
+        min-height 80px
+        
+      
+      .actions
+        display flex
+        flex-shrink 0
+        justify-content flex-end
+        padding 25px 0 10px
+        
+        .action
+          display flex
+          flex-wrap wrap
+          justify-content space-between
+          align-items flex-end
+          padding 0 7.5px
+          width 50%
+          
+          .notImplemented
+            flex-wrap nowrap
+            margin 0 0 8px 0
+            justify-content space-between
+            -webkit-filter grayscale(1) brightness(0.6)
+            filter grayscale(1) brightness(0.6)
+          
+          .transition
+            width 100%
 
-					.max
-						display inline-block
-						width 43px
-						height 24px
-						border 0
-						background-image url(/img/game/max.png)
-						cursor pointer
-						
-						&:hover
-							-webkit-filter brightness(1.2)
-							filter brightness(1.2)
-					
-					.count
-						width 115px
-						text-align center
-						border-radius 5px
-						padding-top 2px
-						-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-						-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-						box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-						border 2px solid #335168
-						background-color #adadad
-						align-self center
-						
-						& + .build
-							margin-top 8px
-					
-					.build
-						width 100%
-						box-sizing border-box
+          .max
+            display inline-block
+            width 43px
+            height 24px
+            border 0
+            background-image url(/img/game/max.png)
+            cursor pointer
+            
+            &:hover
+              -webkit-filter brightness(1.2)
+              filter brightness(1.2)
+          
+          .count
+            width 115px
+            text-align center
+            border-radius 5px
+            padding-top 2px
+            -webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+            box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+            border 2px solid #335168
+            background-color #adadad
+            align-self center
+            
+            & + .build
+              margin-top 8px
+          
+          .build
+            width 100%
+            box-sizing border-box
 
-				div
-					width 100%
-					-webkit-flex-shrink 1
-					flex-shrink 1
-					display flex
-					flex-direction row
-					flex-wrap wrap
-					overflow hidden
+        div
+          width 100%
+          -webkit-flex-shrink 1
+          flex-shrink 1
+          display flex
+          flex-direction row
+          flex-wrap wrap
+          overflow hidden
 
-				progress
-					align-self flex-start
-					max-width 100%
-				
-		.main_action,
-		.additional_action,
-		.back_action
-			text-transform uppercase
-			color $color-black
-			border 0
-			padding 15px 15px
-			font-size 16px
-			cursor pointer
-			outline 2px solid black
-			outline-offset -7px
-			text-decoration none
-			text-align center
-			
-			&[disabled="true"],
-			&[disabled="disabled"],
-			&.disabled
-				-webkit-filter grayscale(1) brightness(0.3) !important
-				filter grayscale(1) brightness(0.3) !important
+        progress
+          align-self flex-start
+          max-width 100%
+        
+    .main_action,
+    .additional_action,
+    .back_action
+      text-transform uppercase
+      color $color-black
+      border 0
+      padding 15px 15px
+      font-size 16px
+      cursor pointer
+      outline 2px solid black
+      outline-offset -7px
+      text-decoration none
+      text-align center
+      
+      &[disabled="true"],
+      &[disabled="disabled"],
+      &.disabled
+        -webkit-filter grayscale(1) brightness(0.3) !important
+        filter grayscale(1) brightness(0.3) !important
 
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
-					
-		.main_action
-			flex-shrink 0
-			background linear-gradient(left, #f1c54c, #e28e49);
-			
-		.additional_action
-			margin 0 auto 0 0
-			background linear-gradient(left, #449bd8, #43c0d1);
-			
-			&.metal,
-			&.crystal
-				width 100%
-		
-		.back_action
-			background linear-gradient(left, #999999, #959595);
-					
-		.content.artefacts
-			.description
-				height 80px			
+      &:hover
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)
+          
+    .main_action
+      flex-shrink 0
+      background linear-gradient(left, #f1c54c, #e28e49);
+      
+    .additional_action
+      margin 0 auto 0 0
+      background linear-gradient(left, #449bd8, #43c0d1);
+      
+      &.metal,
+      &.crystal
+        width 100%
+    
+    .back_action
+      background linear-gradient(left, #999999, #959595);
+          
+    .content.artefacts
+      .description
+        height 80px      
 
-		.content
-			width 720px
-			height auto
-			
-			margin auto 15% auto auto
-			padding 0
-			
-			background-color rgba($color-black, 0.7)
-			
-			display flex
-			flex-shrink 0
-			flex-wrap wrap
-			justify-content space-between
-			align-items stretch
-			
-			&.cosmos
-				width 960px
-				margin auto
-				flex-shrink 1
-				&.cosmosHistory
-					min-height 400px
-					.attack-menu
-						display none
-					
-				.attack-menu
-					display flex
-						
-			div.header
-				display flex
-				flex-shrink 0
-				width 100%
-				height 36px
-				text-align center
-				justify-content space-between
-				align-items center
-				background-color $color-black
-				font-size 16px
-				
-				.level
-					width 180px
-					color $color-description
-					
-					span
-						font-weight bold
-						color $color-metal
-				
-				.name
-					margin auto
-					color $color-white
-					
-					&:after
-						content ""
-						position relative
-						display inline-block
-						vertical-align sub
-						background-image url(/img/game/star.png)
-		
-					&.star1:after
-						width 23px
-						height 18px
-						
-					&.star2:after
-						width 46px
-						height 18px
-						
-					&.star3:after
-						width 69px
-						height 18px
-					
-				.toggle_description
-					display block
-					margin 0
-					padding 0
-					width 21px
-					height 26px
-					background-image url(/img/game/description.png)
-					border 0
-					background-color transparent
-					cursor pointer
-					margin auto 10px auto auto
-					-webkit-filter grayscale(1)
-					filter grayscale(1)
-					
-					&.active
-						-webkit-filter grayscale(0)
-						filter grayscale(0)
-							
-						&:hover
-							-webkit-filter grayscale(0) brightness(1.4)
-							filter grayscale(0) brightness(1.4)
-					
-					&:hover
-						-webkit-filter grayscale(1) brightness(1.4)
-						filter grayscale(1) brightness(1.4)
-			
-			> .description
-				position relative
-				height 106px
-				padding 15px
-				font-size 14px
-				color $color-description
-				background-color rgba($color-black, 0.4)
-				
-				.scrollbar-inner
-					height 100%
-					overflow-y auto
-					
-			.additional_info
-				width 230px
-				padding 5px 15px
-				background-color rgba($color-black, 0.7)
-				
-			.artefactsStatistics
-				display flex
-				flex-direction column
-				font-size 36px
-				justify-content space-around
-				text-align center
-				
-				span
-					color $color-ggk
+    .content
+      width 720px
+      height auto
+      
+      margin auto 15% auto auto
+      padding 0
+      
+      background-color rgba($color-black, 0.7)
+      
+      display flex
+      flex-shrink 0
+      flex-wrap wrap
+      justify-content space-between
+      align-items stretch
+      
+      &.cosmos
+        width 960px
+        margin auto
+        flex-shrink 1
+        &.cosmosHistory
+          min-height 400px
+          .attack-menu
+            display none
+          
+        .attack-menu
+          display flex
+            
+      div.header
+        display flex
+        flex-shrink 0
+        width 100%
+        height 36px
+        text-align center
+        justify-content space-between
+        align-items center
+        background-color $color-black
+        font-size 16px
+        
+        .level
+          width 180px
+          color $color-description
+          
+          span
+            font-weight bold
+            color $color-metal
+        
+        .name
+          margin auto
+          color $color-white
+          
+          &:after
+            content ""
+            position relative
+            display inline-block
+            vertical-align sub
+            background-image url(/img/game/star.png)
+    
+          &.star1:after
+            width 23px
+            height 18px
+            
+          &.star2:after
+            width 46px
+            height 18px
+            
+          &.star3:after
+            width 69px
+            height 18px
+          
+        .toggle_description
+          display block
+          margin 0
+          padding 0
+          width 21px
+          height 26px
+          background-image url(/img/game/description.png)
+          border 0
+          background-color transparent
+          cursor pointer
+          margin auto 10px auto auto
+          -webkit-filter grayscale(1)
+          filter grayscale(1)
+          
+          &.active
+            -webkit-filter grayscale(0)
+            filter grayscale(0)
+              
+            &:hover
+              -webkit-filter grayscale(0) brightness(1.4)
+              filter grayscale(0) brightness(1.4)
+          
+          &:hover
+            -webkit-filter grayscale(1) brightness(1.4)
+            filter grayscale(1) brightness(1.4)
+      
+      > .description
+        position relative
+        height 106px
+        padding 15px
+        font-size 14px
+        color $color-description
+        background-color rgba($color-black, 0.4)
+        
+        .scrollbar-inner
+          height 100%
+          overflow-y auto
+          
+      .additional_info
+        width 230px
+        padding 5px 15px
+        background-color rgba($color-black, 0.7)
+        
+      .artefactsStatistics
+        display flex
+        flex-direction column
+        font-size 36px
+        justify-content space-around
+        text-align center
+        
+        span
+          color $color-ggk
 
-			.requirements
-				min-height 302px
-				
-				.title
-					font-size 16px
-					color $color-science
-				
-				>a
-					display block
-					width 171px
-					height 32px
-					padding 8px 0 12px 74px
-					background-repeat no-repeat
-					background-position 2px center
-					margin-top 12px
-					text-decoration none
+      .requirements
+        min-height 302px
+        
+        .title
+          font-size 16px
+          color $color-science
+        
+        >a
+          display block
+          width 171px
+          height 32px
+          padding 8px 0 12px 74px
+          background-repeat no-repeat
+          background-position 2px center
+          margin-top 12px
+          text-decoration none
 
-	.content
-		position relative
-		display flex
-		align-items flex-start
-		flex-shrink 0
-		z-index 4
-		
-		width 100%
-		height 428px
-			
-		&:has(#map-content)
-			top 0
-			left 0
-			width 100%
-			height 100%
-		
-		.information
-			display flex
-			margin 0 auto
-			max-width 1400px
-			flex-shrink 1
-			
-			.description
-				width auto
-				min-width 600px
-				margin-right 5px
-			
-			& + .overlay
-				display none
-				
-				& + .additional_area
-					min-width 0
-					flex-shrink 10000
-		.overlay
-			position relative
-			flex-shrink 1
-			left auto
-			margin 0 auto
-			
-	.permanent
-		position absolute
-		left 0
-		top 0
-		width 100%
-		height 100%
-		z-index 3
-	
-	.resources
-		display flex
-		flex-shrink 0
-		justify-content flex-start
-		list-style-type none
-		white-space nowrap
-		flex-wrap wrap
-		
-		.white
-			color $color-white
-		.green
-			color $color-ggk
-		.blue
-			color $color-metal
-		.purple
-			color $color-crystal
-		.orange
-			color $color-human
-		.red
-			color $color-honor
+  .content
+    position relative
+    display flex
+    align-items flex-start
+    flex-shrink 0
+    z-index 4
+    
+    width 100%
+    height 428px
+      
+    &:has(#map-content)
+      top 0
+      left 0
+      width 100%
+      height 100%
+    
+    .information
+      display flex
+      margin 0 auto
+      max-width 1400px
+      flex-shrink 1
+      
+      .description
+        width auto
+        min-width 600px
+        margin-right 5px
+      
+      & + .overlay
+        display none
+        
+        & + .additional_area
+          min-width 0
+          flex-shrink 10000
+    .overlay
+      position relative
+      flex-shrink 1
+      left auto
+      margin 0 auto
+      
+  .permanent
+    position absolute
+    left 0
+    top 0
+    width 100%
+    height 100%
+    z-index 3
+  
+  .resources
+    display flex
+    flex-shrink 0
+    justify-content flex-start
+    list-style-type none
+    white-space nowrap
+    flex-wrap wrap
+    
+    .white
+      color $color-white
+    .green
+      color $color-ggk
+    .blue
+      color $color-metal
+    .purple
+      color $color-crystal
+    .orange
+      color $color-human
+    .red
+      color $color-honor
 
-	header
-		position relative
-		margin-top 10px
-		display flex
-		flex-shrink 0
-		align-items flex-start
-		width 100%
-		height 90px
-		z-index 5
-		
-		.resources
-			padding 9px 9px 8px 0
-			background-color rgba(0, 0, 0, 0.8)
-			border 2px solid rgba(100, 100, 100, 0.8)
-			border-left 0
-			border-radius 0 50px 50px 0
+  header
+    position relative
+    margin-top 10px
+    display flex
+    flex-shrink 0
+    align-items flex-start
+    width 100%
+    height 90px
+    z-index 5
+    
+    .resources
+      padding 9px 9px 8px 0
+      background-color rgba(0, 0, 0, 0.8)
+      border 2px solid rgba(100, 100, 100, 0.8)
+      border-left 0
+      border-radius 0 50px 50px 0
 
-		> .menu
-			position relative
-			display flex
-			flex-shrink 0
-			height 90px
-			flex-direction column
-			margin 0 auto
+    > .menu
+      position relative
+      display flex
+      flex-shrink 0
+      height 90px
+      flex-direction column
+      margin 0 auto
 
-			.main_menu
-				display flex
-				flex-shrink 0
-				justify-content center
-				list-style-type none
-				margin 0 auto
-				
-				li
-					position relative
-					display block
-					width 53px
-					height 53px
-					overflow hidden
-					background-color $color-black
+      .main_menu
+        display flex
+        flex-shrink 0
+        justify-content center
+        list-style-type none
+        margin 0 auto
+        
+        li
+          position relative
+          display block
+          width 53px
+          height 53px
+          overflow hidden
+          background-color $color-black
 
-					img
-						position absolute
-						left 0
-						top -(@height)
-					
-					&:hover,
-					&.active
-						border-bottom 4px solid transparent
-						&.planet
-							border-color #e8e8e8
-						
-						&.research
-							border-color #689dd2
-						
-						&.army
-							border-color #b56d37
-						
-						&.galaxy
-							border-color #8ed5fb
-						
-						&.earth
-							border-color #d0574a
-						
-						&.house
-							border-color #fefea8
-						
-						&.alliance
-							border-color #6468cb
-						
-						&.chat
-							border-color #fcb50d
-						
-						&.info
-							border-color #7fb1bd
+          img
+            position absolute
+            left 0
+            top -(@height)
+          
+          &:hover,
+          &.active
+            border-bottom 4px solid transparent
+            &.planet
+              border-color #e8e8e8
+            
+            &.research
+              border-color #689dd2
+            
+            &.army
+              border-color #b56d37
+            
+            &.galaxy
+              border-color #8ed5fb
+            
+            &.earth
+              border-color #d0574a
+            
+            &.house
+              border-color #fefea8
+            
+            &.alliance
+              border-color #6468cb
+            
+            &.chat
+              border-color #fcb50d
+            
+            &.info
+              border-color #7fb1bd
 
-					&.active
-						img
-							top 0
-					
-			
-			.second_menu
-				display flex
-				flex-shrink 0
-				position absolute
-				top 57px
-				left 0
-				list-style-type none
-				padding 8px
-				background-color $color-black
+          &.active
+            img
+              top 0
+          
+      
+      .second_menu
+        display flex
+        flex-shrink 0
+        position absolute
+        top 57px
+        left 0
+        list-style-type none
+        padding 8px
+        background-color $color-black
 
-				li
-					a
-						text-decoration none
-						color $color-description
-					
-					&.active
-						a
-							color $color-metal
-				
-				li + li
-					&:before
-						content '/'
-						color $color-white
-						margin 0 0 0 4px
-				
+        li
+          a
+            text-decoration none
+            color $color-description
+          
+          &.active
+            a
+              color $color-metal
+        
+        li + li
+          &:before
+            content '/'
+            color $color-white
+            margin 0 0 0 4px
+        
 
-		.menu_soc
-			width 100px
-			height 25px
-			margin-right 15px
-			text-align right
-			
-			a
-				display inline-block
-				height 25px
-				width 25px
-				text-decoration none
-				margin-left 5px
-				opacity 0.8
-				
-				&:hover
-					opacity 1
+    .menu_soc
+      width 100px
+      height 25px
+      margin-right 15px
+      text-align right
+      
+      a
+        display inline-block
+        height 25px
+        width 25px
+        text-decoration none
+        margin-left 5px
+        opacity 0.8
+        
+        &:hover
+          opacity 1
 
-	.bottom_menu
-		position relative
-		display flex
-		width 100%
-		height 6.6vw
-		max-height 105px
-		min-height 70px
-		text-align center
-		flex-wrap nowrap
-		justify-content center
-		margin-bottom 20px
-		
-		&.artefacts
-			flex-wrap wrap
-			max-height none
-			height auto
-			
-			li
-				min-height 60px
-				min-width 40px
-				
-			> li:last-child
-					margin 10px 10px 3px
-		
-		.group
-			max-width none
-			max-height none
-			margin 10px 30px 3px
-			width auto
-			border 0
-			background transparent
-			align-items center
-			justify-content center
-			height 9.8vmin
-			
-			&:hover
-				background transparent
-			
-			ul
-				height 100%
-			
-			li
-				max-width none
-				max-height none
-				width 8.3vmin
-			
+  .bottom_menu
+    position relative
+    display flex
+    width 100%
+    height 6.6vw
+    max-height 105px
+    min-height 70px
+    text-align center
+    flex-wrap nowrap
+    justify-content center
+    margin-bottom 20px
+    
+    &.artefacts
+      flex-wrap wrap
+      max-height none
+      height auto
+      
+      li
+        min-height 60px
+        min-width 40px
+        
+      > li:last-child
+          margin 10px 10px 3px
+    
+    .group
+      max-width none
+      max-height none
+      margin 10px 30px 3px
+      width auto
+      border 0
+      background transparent
+      align-items center
+      justify-content center
+      height 9.8vmin
+      
+      &:hover
+        background transparent
+      
+      ul
+        height 100%
+      
+      li
+        max-width none
+        max-height none
+        width 8.3vmin
+      
 
-		li
-			display inline-block
-			max-width 105px
-			max-height 105px
-			margin 0 0.1vmin
-			height 100%
-			width 6.9vw
-			min-width 66px
-			min-height 66px
-			box-sizing border-box
-		
-		a
-			position absolute
-			top 0
-			left 0
-			display block
-			width 100%
-			height 100%
-			background-size 100%
-			background-repeat no-repeat
-		
+    li
+      display inline-block
+      max-width 105px
+      max-height 105px
+      margin 0 0.1vmin
+      height 100%
+      width 6.9vw
+      min-width 66px
+      min-height 66px
+      box-sizing border-box
+    
+    a
+      position absolute
+      top 0
+      left 0
+      display block
+      width 100%
+      height 100%
+      background-size 100%
+      background-repeat no-repeat
+    
 
-	.fleet_info
-		position absolute
-		z-index 8
-		left 0
-		top 100px
-		width 0
-		padding 0
-		height 71px
-		background-color grey
-		display flex
-		flex-shrink 0
-		flex-direction column
-		justify-content center
-		background-color rgba($color-black, 0.5)
-		font-weight bold
-		background-image url(/img/game/attack.png)
-		background-repeat no-repeat
-		background-position right top
-		
-		&.attack
-			min-width 71px
-		
-		&.active
-			width 215px
-			height 61px
-			padding 5px 80px 5px 15px
-			
-			button:before
-				transform scaleX(1)
-			
-		
-		button
-			position absolute
-			top 0
-			right -20px
-			display flex
-			justify-content center
-			align-items center
-			width 20px
-			height 100%
-			background-color rgba($color-black, 0.4)
-			border 0
-			cursor pointer
-			
-			&:before
-				content url(/img/game/arrow.png)
-				position absolute
-				transform scaleX(-1)
-				-webkit-filter grayscale(1) brightness(0.5)
-				filter grayscale(1) brightness(0.5)
+  .fleet_info
+    position absolute
+    z-index 8
+    left 0
+    top 100px
+    width 0
+    padding 0
+    height 71px
+    background-color grey
+    display flex
+    flex-shrink 0
+    flex-direction column
+    justify-content center
+    background-color rgba($color-black, 0.5)
+    font-weight bold
+    background-image url(/img/game/attack.png)
+    background-repeat no-repeat
+    background-position right top
+    
+    &.attack
+      min-width 71px
+    
+    &.active
+      width 215px
+      height 61px
+      padding 5px 80px 5px 15px
+      
+      button:before
+        transform scaleX(1)
+      
+    
+    button
+      position absolute
+      top 0
+      right -20px
+      display flex
+      justify-content center
+      align-items center
+      width 20px
+      height 100%
+      background-color rgba($color-black, 0.4)
+      border 0
+      cursor pointer
+      
+      &:before
+        content url(/img/game/arrow.png)
+        position absolute
+        transform scaleX(-1)
+        -webkit-filter grayscale(1) brightness(0.5)
+        filter grayscale(1) brightness(0.5)
 
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
-					
-				&:before
-					-webkit-filter grayscale(0)
-					filter grayscale(0)
-		
-		.attack
-			position absolute
-			right 0
-			top 0
-			width 71px
-			height 17px
-			padding-top 54px
-			background-image url(/img/game/attack.png)
-			background-position right bottom
-			text-align center
-		
-		&:not(.active) a:not(.attack)
-			display none
+      &:hover
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)
+          
+        &:before
+          -webkit-filter grayscale(0)
+          filter grayscale(0)
+    
+    .attack
+      position absolute
+      right 0
+      top 0
+      width 71px
+      height 17px
+      padding-top 54px
+      background-image url(/img/game/attack.png)
+      background-position right bottom
+      text-align center
+    
+    &:not(.active) a:not(.attack)
+      display none
 
-		a
-			text-decoration none
-		
-		.fleets,
-		.reinforcements
-			color $color-ggk
-		
-		.reptiles
-			color $color-honor
-			
-	.planet:not(.overlay):not(.content):not(li)
-		display inline-flex
-		vertical-align middle
-		width 80px
-		flex-direction column
-		align-items center
-		justify-content space-between
-		
-		text-decoration none
-		
-		h2
-			height 20px
-			font-size 18px
-		
-		.map-planet-marker
-			flex-shrink 0
-		
-		.map-fleet-rept
-			position relative
-			margin auto
-			flex-shrink 0
+    a
+      text-decoration none
+    
+    .fleets,
+    .reinforcements
+      color $color-ggk
+    
+    .reptiles
+      color $color-honor
+      
+  .planet:not(.overlay):not(.content):not(li)
+    display inline-flex
+    vertical-align middle
+    width 80px
+    flex-direction column
+    align-items center
+    justify-content space-between
+    
+    text-decoration none
+    
+    h2
+      height 20px
+      font-size 18px
+    
+    .map-planet-marker
+      flex-shrink 0
+    
+    .map-fleet-rept
+      position relative
+      margin auto
+      flex-shrink 0
 
-		&.humans
-			color $color-ggk
-			
-		&.reptiles
-			color $color-honor
-	
-	.fleet_info_full
-		overflow-y auto
-		left 0
-		top 171px
-		bottom 125px
-		z-index 7
-		position absolute
-		width 330px
-		background-color rgba($color-black, 0.8)
-		text-align center
-		box-sizing border-box
-		font-weight bold
-		
-		.fleets
-			position relative
-			box-sizing border-box
-			height 100%
-			border-top 20px solid transparent
-			
-			.scrollbar-inner
-				height 100%
-				overflow auto
-		
-		&:not(.active)
-			height 20px
-			
-			ul
-				display none
-		
-		button
-			position absolute
-			top 0
-			left 0
-			display flex
-			justify-content center
-			align-items center
-			width 100%
-			height 20px
-			background-color rgba($color-black, 0.4)
-			border 0
-			cursor pointer
-			z-index 1
-			
-			&:before
-				content url(/img/game/arrow.png)
-				position absolute
-				transform rotate(90deg) scaleX(-1)
-				-webkit-filter grayscale(1) brightness(0.5)
-				filter grayscale(1) brightness(0.5)
+    &.humans
+      color $color-ggk
+      
+    &.reptiles
+      color $color-honor
+  
+  .fleet_info_full
+    overflow-y auto
+    left 0
+    top 171px
+    bottom 125px
+    z-index 7
+    position absolute
+    width 330px
+    background-color rgba($color-black, 0.8)
+    text-align center
+    box-sizing border-box
+    font-weight bold
+    
+    .fleets
+      position relative
+      box-sizing border-box
+      height 100%
+      border-top 20px solid transparent
+      
+      .scrollbar-inner
+        height 100%
+        overflow auto
+    
+    &:not(.active)
+      height 20px
+      
+      ul
+        display none
+    
+    button
+      position absolute
+      top 0
+      left 0
+      display flex
+      justify-content center
+      align-items center
+      width 100%
+      height 20px
+      background-color rgba($color-black, 0.4)
+      border 0
+      cursor pointer
+      z-index 1
+      
+      &:before
+        content url(/img/game/arrow.png)
+        position absolute
+        transform rotate(90deg) scaleX(-1)
+        -webkit-filter grayscale(1) brightness(0.5)
+        filter grayscale(1) brightness(0.5)
 
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
-					
-				&:before
-					-webkit-filter grayscale(0)
-					filter grayscale(0)
-		
-		&.active
-			display block
-			
-			button:before
-				transform rotate(90deg) scaleX(1)
-		
-		&.hide
-			display none
+      &:hover
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)
+          
+        &:before
+          -webkit-filter grayscale(0)
+          filter grayscale(0)
+    
+    &.active
+      display block
+      
+      button:before
+        transform rotate(90deg) scaleX(1)
+    
+    &.hide
+      display none
 
-		a
-			text-decoration none
-				
-		&.compact
-			li
-				height 30px
-				border-bottom 1px dashed rgba($color-white, 0.2)
-				
-				h2
-					font-size 12px
-					position absolute
-					width 100%
+    a
+      text-decoration none
+        
+    &.compact
+      li
+        height 30px
+        border-bottom 1px dashed rgba($color-white, 0.2)
+        
+        h2
+          font-size 12px
+          position absolute
+          width 100%
 
-				.start,
-				.end
-					top 0
-				
-				.map-planet-marker
-					display none
-					
-				.way
-					height 2px
-					
-					time
-						margin-top 2px
-					
-					.fleet_marker
-						top -10px
-		
-		li
-			position relative
-			display flex
-			flex-direction column
-			height 100px
-			border-bottom 1px dashed rgba($color-white, 0.1)
-			
-			h2
-				height 20px
-				font-size 18px
-					
-			
-			.start,
-			.end
-				width 80px
-				position absolute
-				top 20px
-				bottom 0
-				display inline-flex
-				
-			.start
-				left 0
-			
-			.end
-				right 0
-				
-			&.back
-				.start 
-					left initial
-					right 0
-				
-				.fleet_marker
-					transform scaleX(-1)
-				
-				.end
-					left 0
-					right initial
-			
-			.map-planet-marker
-				flex-shrink 0
-			
-			.map-fleet-rept
-				position relative
-				margin auto
-				flex-shrink 0
+        .start,
+        .end
+          top 0
+        
+        .map-planet-marker
+          display none
+          
+        .way
+          height 2px
+          
+          time
+            margin-top 2px
+          
+          .fleet_marker
+            top -10px
+    
+    li
+      position relative
+      display flex
+      flex-direction column
+      height 100px
+      border-bottom 1px dashed rgba($color-white, 0.1)
+      
+      h2
+        height 20px
+        font-size 18px
+          
+      
+      .start,
+      .end
+        width 80px
+        position absolute
+        top 20px
+        bottom 0
+        display inline-flex
+        
+      .start
+        left 0
+      
+      .end
+        right 0
+        
+      &.back
+        .start 
+          left initial
+          right 0
+        
+        .fleet_marker
+          transform scaleX(-1)
+        
+        .end
+          left 0
+          right initial
+      
+      .map-planet-marker
+        flex-shrink 0
+      
+      .map-fleet-rept
+        position relative
+        margin auto
+        flex-shrink 0
 
-			&.humans
-				color $color-ggk
-				
-			&.reptiles
-				color $color-honor
+      &.humans
+        color $color-ggk
+        
+      &.reptiles
+        color $color-honor
 
-			.way
-				position relative
-				display inline-block
-				vertical-align middle
-				margin auto 40px
-				height 4px
-				
-				&.humans
-					background-color $color-ggk
-				
-				&.reptiles
-					background-color $color-honor
-				
-				time
-					display block
-					width 100%
-					text-align center
-					margin-top 8px
-				
-				.fleet_marker
-					position absolute
-					font-size 20px
-					top -20px
-					z-index 2
-		
-	> .user
-		position absolute
-		z-index 15
-		top 100px
-		right 15px
-		width 70px
-		height 95px
-		background-color $color-black
-		
-		.servertime
-			display block
-			height 20px
-			padding-top 5px
-			text-align center
-			color $color-metal
-		
-		.mini_menu
-			display flex
-			flex-shrink 0
-			flex-direction column
-			justify-content flex-end
-			width 23px
-			height h = 69px
-			position absolute
-			left -(@width)
-			bottom 0
-			background-color $color-black
-			
-			a
-				display block
-				width 100%
-				height (h / 3)
-				text-decoration none
-				background-repeat no-repeat
-				background-position bottom center
+      .way
+        position relative
+        display inline-block
+        vertical-align middle
+        margin auto 40px
+        height 4px
+        
+        &.humans
+          background-color $color-ggk
+        
+        &.reptiles
+          background-color $color-honor
+        
+        time
+          display block
+          width 100%
+          text-align center
+          margin-top 8px
+        
+        .fleet_marker
+          position absolute
+          font-size 20px
+          top -20px
+          z-index 2
+    
+  > .user
+    position absolute
+    z-index 15
+    top 100px
+    right 15px
+    width 70px
+    height 95px
+    background-color $color-black
+    
+    .servertime
+      display block
+      height 20px
+      padding-top 5px
+      text-align center
+      color $color-metal
+    
+    .mini_menu
+      display flex
+      flex-shrink 0
+      flex-direction column
+      justify-content flex-end
+      width 23px
+      height h = 69px
+      position absolute
+      left -(@width)
+      bottom 0
+      background-color $color-black
+      
+      a
+        display block
+        width 100%
+        height (h / 3)
+        text-decoration none
+        background-repeat no-repeat
+        background-position bottom center
 
-				&.active,
-				&:hover
-					background-position top center
+        &.active,
+        &:hover
+          background-position top center
 
-				&.statistics
-					background-image url(/img/game/statistics.png)
-				
-				&.settings
-					background-image url(/img/game/settings.png)
-		
-		&:hover
-			.menu
-				display flex
-				flex-shrink 0
+        &.statistics
+          background-image url(/img/game/statistics.png)
+        
+        &.settings
+          background-image url(/img/game/settings.png)
+    
+    &:hover
+      .menu
+        display flex
+        flex-shrink 0
 
-		.menu
-			position absolute
-			display none
-			width 108px
-			height 155px
-			padding 15px 5px
-			right 0
-			bottom -(@height + 30px)
-			background-color $color-black
-			flex-direction column
-			text-align center
-			
-			a
-				text-decoration none
-				color $color-description
+    .menu
+      position absolute
+      display none
+      width 108px
+      height 155px
+      padding 15px 5px
+      right 0
+      bottom -(@height + 30px)
+      background-color $color-black
+      flex-direction column
+      text-align center
+      
+      a
+        text-decoration none
+        color $color-description
 
-				&:hover
-					color $color-metal
+        &:hover
+          color $color-metal
 
 
-			.support:first-child
-				margin-top 20px
-				
-			.support:last-child
-				margin-bottom 20px
-	
-	.quest
-		position absolute
-		z-index 10
-		bottom 140px
-		right 0
-		width 215px
-		height 70px
-		
-		padding 9px 9px 8px 85px
-		background-color rgba(0, 0, 0, 0.8)
-		background-position 10px center
-		border 2px solid rgba(100, 100, 100, 0.8)
-		border-right 0
-		border-radius 50px 0 0 50px
-	
+      .support:first-child
+        margin-top 20px
+        
+      .support:last-child
+        margin-bottom 20px
+  
+  .quest
+    position absolute
+    z-index 10
+    bottom 140px
+    right 0
+    width 215px
+    height 70px
+    
+    padding 9px 9px 8px 85px
+    background-color rgba(0, 0, 0, 0.8)
+    background-position 10px center
+    border 2px solid rgba(100, 100, 100, 0.8)
+    border-right 0
+    border-radius 50px 0 0 50px
+  
 
-	.additional_area
-		background-repeat no-repeat
-		flex-shrink 3
-		opacity 0.8
-		z-index 4
-		
-		.title
-			display flex
-			flex-direction column
-			justify-content space-around
-			position relative
-			margin auto
-			width 100%
-			height 100%
-			color $color-white
-			font-weight bold
-			white-space nowrap
-			text-align center
-			
-			h2
-				text-overflow ellipsis
-				overflow hidden
-			
-			.prompt
-				color $color-metal
-				
-			.finished
-				color $color-ggk
+  .additional_area
+    background-repeat no-repeat
+    flex-shrink 3
+    opacity 0.8
+    z-index 4
+    
+    .title
+      display flex
+      flex-direction column
+      justify-content space-around
+      position relative
+      margin auto
+      width 100%
+      height 100%
+      color $color-white
+      font-weight bold
+      white-space nowrap
+      text-align center
+      
+      h2
+        text-overflow ellipsis
+        overflow hidden
+      
+      .prompt
+        color $color-metal
+        
+      .finished
+        color $color-ggk
 
-		.quests-switch
-			display block
-			position absolute
-			right 25px
-			bottom 50px
-			width 36px
-			height 36px
-			background-position center center
-			background-repeat no-repeat
+    .quests-switch
+      display block
+      position absolute
+      right 25px
+      bottom 50px
+      width 36px
+      height 36px
+      background-position center center
+      background-repeat no-repeat
 
-			&:hover
-				-webkit-filter brightness(1.5)
-				filter brightness(1.5)
+      &:hover
+        -webkit-filter brightness(1.5)
+        filter brightness(1.5)
 
-			&.open
-				background-image url(/img/game/arrow_open.png)
-				
-			&.close
-				background-image url(/img/game/arrow_close.png)
+      &.open
+        background-image url(/img/game/arrow_open.png)
+        
+      &.close
+        background-image url(/img/game/arrow_close.png)
 
-		.quests
-			position absolute
-			display flex
-			flex-direction column
-			right 0px
-			bottom 90px
-			z-index 5
-			width 300px
-			
-			li
-				cursor pointer
-				display inline-block
-				padding 10px
-				margin-top 5px
-				width 100%
-				box-sizing border-box
-				border-radius 10px
-				font-weight bold
-				font-size 16px
-				overflow hidden
-				text-overflow ellipsis
-				text-align left
-				white-space nowrap
-				background rgb(0, 0, 0)
-				background rgba(0, 0, 0, 0.8)
-			
-				&:hover
-					-webkit-filter brightness(1.4)
-					filter brightness(1.4)
+    .quests
+      position absolute
+      display flex
+      flex-direction column
+      right 0px
+      bottom 90px
+      z-index 5
+      width 300px
+      
+      li
+        cursor pointer
+        display inline-block
+        padding 10px
+        margin-top 5px
+        width 100%
+        box-sizing border-box
+        border-radius 10px
+        font-weight bold
+        font-size 16px
+        overflow hidden
+        text-overflow ellipsis
+        text-align left
+        white-space nowrap
+        background rgb(0, 0, 0)
+        background rgba(0, 0, 0, 0.8)
+      
+        &:hover
+          -webkit-filter brightness(1.4)
+          filter brightness(1.4)
 
-			.prompt
-				border-color #ffffff
-				color #ffffff
-			
-			.inprogress
-				border-color #56baf2
-				color #56baf2
-				
-			.finished
-				border-color #e9a844
-				color #e9a844
+      .prompt
+        border-color #ffffff
+        color #ffffff
+      
+      .inprogress
+        border-color #56baf2
+        color #56baf2
+        
+      .finished
+        border-color #e9a844
+        color #e9a844
 
-		&.quest
-			cursor pointer
+    &.quest
+      cursor pointer
 
-			&.prompt:after,
-			&.finished:after
-				position absolute
-				top 10px
-				right 33px
-			
-			&.prompt:after
-				content url(/img/game/quests/hasquest.png)
-				
-			&.finished:after
-				content url(/img/game/quests/hasreward.png)
-		
-		&.bolz
-			background-image url(/img/game/quests/bolz.png)
+      &.prompt:after,
+      &.finished:after
+        position absolute
+        top 10px
+        right 33px
+      
+      &.prompt:after
+        content url(/img/game/quests/hasquest.png)
+        
+      &.finished:after
+        content url(/img/game/quests/hasreward.png)
+    
+    &.bolz
+      background-image url(/img/game/quests/bolz.png)
 
-		&.tamily
-			background-image url(/img/game/quests/tamily.png)
-		
-		&.portal
-			margin auto 0 auto auto
-			min-width 100px
-			width 267px
-			height 428px
-			background-image url(/img/game/portal.jpg)
-	
-		&.thirdenginery
-			background-image url(/img/game/quests/thirdenginery.png)
-	
-		&.vaha
-			background-image url(/img/game/quests/vaha.png)
-	
-		&.psm
-			background-image url(/img/game/quests/psm.png)
-	
-		&.tilps
-			background-image url(/img/game/quests/tilps.png)
-	
-		&.nataly
-			background-image url(/img/game/quests/nataly.png)
-	
-		&.mechanic
-			background-image url(/img/game/quests/mechanic.png)
-	
-		&.calibrator
-			background-image url(/img/game/quests/calibrator.png)
-	
-		&.bolz
-			background-image url(/img/game/quests/bolz.png)
-	
-		&.renexis
-			background-image url(/img/game/quests/renexis.png)
-		
-		&.general
-			margin auto 0 auto auto
-			min-width 100px
-			width 267px
-			height 428px
-			background-image url(/img/game/unit/reptiles/heroes/general.jpg)
+    &.tamily
+      background-image url(/img/game/quests/tamily.png)
+    
+    &.portal
+      margin auto 0 auto auto
+      min-width 100px
+      width 267px
+      height 428px
+      background-image url(/img/game/portal.jpg)
+  
+    &.thirdenginery
+      background-image url(/img/game/quests/thirdenginery.png)
+  
+    &.vaha
+      background-image url(/img/game/quests/vaha.png)
+  
+    &.psm
+      background-image url(/img/game/quests/psm.png)
+  
+    &.tilps
+      background-image url(/img/game/quests/tilps.png)
+  
+    &.nataly
+      background-image url(/img/game/quests/nataly.png)
+  
+    &.mechanic
+      background-image url(/img/game/quests/mechanic.png)
+  
+    &.calibrator
+      background-image url(/img/game/quests/calibrator.png)
+  
+    &.bolz
+      background-image url(/img/game/quests/bolz.png)
+  
+    &.renexis
+      background-image url(/img/game/quests/renexis.png)
+    
+    &.general
+      margin auto 0 auto auto
+      min-width 100px
+      width 267px
+      height 428px
+      background-image url(/img/game/unit/reptiles/heroes/general.jpg)
 
 .content.wallet,
 .content.admin
-	.overlay
-		display none
-	
-	> *
-		margin auto !important
+  .overlay
+    display none
+  
+  > *
+    margin auto !important
 
 .scrollbar-inner
-	position relative
+  position relative
 
 .ps-scrollbar-y
-	background-color $color-metal !important
-	opacity 1 !important
-	border-radius 0 !important
-	
+  background-color $color-metal !important
+  opacity 1 !important
+  border-radius 0 !important
+  
 .ps-scrollbar-y-rail
-	opacity 1 !important
-	background-color transparent !important
-	
+  opacity 1 !important
+  background-color transparent !important
+  
 .ps-scrollbar-x-rail
-	display none !important
+  display none !important

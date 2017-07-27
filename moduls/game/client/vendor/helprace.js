@@ -66,8 +66,8 @@
                 dom.style.borderBottomLeftRadius = borderRadius;
                 dom.style.borderBottomRightRadius = borderRadius;
 
-				this.closeDom.style.bottom = 'auto';
-				this.closeDom.style.top = '19px';
+        this.closeDom.style.bottom = 'auto';
+        this.closeDom.style.top = '19px';
 
                 this.setTransform('translate(0,0)', dom);
             }
@@ -158,7 +158,7 @@
         createTab : function () {
             var span,
                 dom = '',
-				close = '',
+        close = '',
                 cfg = this.config,
                 position = cfg.tabPosition;
 

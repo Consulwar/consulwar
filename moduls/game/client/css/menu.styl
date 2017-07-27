@@ -1,166 +1,166 @@
 
-.items		
-	li
-		position relative
-		display inline-block
-		margin-right 10px
-		margin-bottom 15px
-		vertical-align top
-		text-align center
-		width 105px
-		height 105px
-		background-color #090E14
-		border 2px solid #263D4F
-		border-radius 10px
-		background-position center center
-		background-repeat no-repeat
-		cursor pointer
-		
-		&.star1:before
-			content ""
-			position absolute
-			top -22px
-			left 50%
-			transform translate(-50%, 0)
-			width 23px
-			height 18px
-			background-image url(/img/game/star.png)
-			
-		&.star2:before
-			content ""
-			position absolute
-			top -22px
-			left 50%
-			transform translate(-50%, 0)
-			width 46px
-			height 18px
-			background-image url(/img/game/star.png)
-			
-		&.star3:before
-			content ""
-			position absolute
-			top -22px
-			left 50%
-			transform translate(-50%, 0)
-			width 69px
-			height 18px
-			background-image url(/img/game/star.png)
+.items    
+  li
+    position relative
+    display inline-block
+    margin-right 10px
+    margin-bottom 15px
+    vertical-align top
+    text-align center
+    width 105px
+    height 105px
+    background-color #090E14
+    border 2px solid #263D4F
+    border-radius 10px
+    background-position center center
+    background-repeat no-repeat
+    cursor pointer
+    
+    &.star1:before
+      content ""
+      position absolute
+      top -22px
+      left 50%
+      transform translate(-50%, 0)
+      width 23px
+      height 18px
+      background-image url(/img/game/star.png)
+      
+    &.star2:before
+      content ""
+      position absolute
+      top -22px
+      left 50%
+      transform translate(-50%, 0)
+      width 46px
+      height 18px
+      background-image url(/img/game/star.png)
+      
+    &.star3:before
+      content ""
+      position absolute
+      top -22px
+      left 50%
+      transform translate(-50%, 0)
+      width 69px
+      height 18px
+      background-image url(/img/game/star.png)
 
-		a
-			border-radius 10px
-			
-			.level
-				position absolute
-				display block
-				z-index 1
-				top 6px
-				left 7px
-				width 30px
-				height 25px
-				padding-top 5px
-				text-align center
-				font-size 18px
-				border-radius 50%
-				color #fff
-				background-color rgba(0, 0, 0, 0.65)
-			
-			.count
-				position absolute
-				display block
-				z-index 1
-				top 6px
-				left 0
-				padding 5px
-				text-align right
-				background linear-gradient(to right, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 60%)
-				font-size 14px
+    a
+      border-radius 10px
+      
+      .level
+        position absolute
+        display block
+        z-index 1
+        top 6px
+        left 7px
+        width 30px
+        height 25px
+        padding-top 5px
+        text-align center
+        font-size 18px
+        border-radius 50%
+        color #fff
+        background-color rgba(0, 0, 0, 0.65)
+      
+      .count
+        position absolute
+        display block
+        z-index 1
+        top 6px
+        left 0
+        padding 5px
+        text-align right
+        background linear-gradient(to right, rgba(0,0,0,1) 0%,rgba(0,0,0,0) 60%)
+        font-size 14px
 
-		&.battle
-			a, div
-				-webkit-filter grayscale(0.5) brightness(0.75)
-				filter grayscale(0.5) brightness(0.75)
-		
-		a, div
-			display block
-			width 100%
-			height 100%
-			-webkit-filter grayscale(1)
-			filter grayscale(1)
-			transition filter .5s, -webkit-filter .5s
-			background-size 100%
-			overflow hidden
-			
-			&:hover
-				-webkit-filter grayscale(0)
-				filter grayscale(0)
-		
-		&.enough_resources
-			a, div
-				-webkit-filter grayscale(0)
-				filter grayscale(0)
-				
-		&.disabled a:before, &.disabled div:before
-			content ''
-			position absolute
-			top 0
-			left 0
-			width 100%
-			height 100%
-			background-image url(/img/game/disabled.png)
-			background-position center center
-			background-repeat no-repeat
-		
-		&.progress 
-			a
-				&:before
-					content ''
-					display block
-					position absolute
-					top 6px
-					right 6px
-					z-index 1
-					width 30px
-					height 25px
-					padding-top 5px
-					background-color rgba(0, 0, 0, 0.65)
-					background-image url(/img/game/progress_small.png)
-					background-position center center
-					background-repeat no-repeat
-					border-radius 50%
-			
-				&:after
-					content attr(data-remaining)
-					display block
-					position absolute
-					left 0
-					bottom 0
-					width 100%
-					height 22px
-					padding-top 3px
-					text-align center
-					color #fff
-					font-size 18px
-					background-color rgba(0, 0, 0, 0.65)
-			
-			
-		&:last-child
-			margin 0
-			
+    &.battle
+      a, div
+        -webkit-filter grayscale(0.5) brightness(0.75)
+        filter grayscale(0.5) brightness(0.75)
+    
+    a, div
+      display block
+      width 100%
+      height 100%
+      -webkit-filter grayscale(1)
+      filter grayscale(1)
+      transition filter .5s, -webkit-filter .5s
+      background-size 100%
+      overflow hidden
+      
+      &:hover
+        -webkit-filter grayscale(0)
+        filter grayscale(0)
+    
+    &.enough_resources
+      a, div
+        -webkit-filter grayscale(0)
+        filter grayscale(0)
+        
+    &.disabled a:before, &.disabled div:before
+      content ''
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      background-image url(/img/game/disabled.png)
+      background-position center center
+      background-repeat no-repeat
+    
+    &.progress 
+      a
+        &:before
+          content ''
+          display block
+          position absolute
+          top 6px
+          right 6px
+          z-index 1
+          width 30px
+          height 25px
+          padding-top 5px
+          background-color rgba(0, 0, 0, 0.65)
+          background-image url(/img/game/progress_small.png)
+          background-position center center
+          background-repeat no-repeat
+          border-radius 50%
+      
+        &:after
+          content attr(data-remaining)
+          display block
+          position absolute
+          left 0
+          bottom 0
+          width 100%
+          height 22px
+          padding-top 3px
+          text-align center
+          color #fff
+          font-size 18px
+          background-color rgba(0, 0, 0, 0.65)
+      
+      
+    &:last-child
+      margin 0
+      
 
-		&:hover,
-		&.active
-			background-color #18202B
-			border-color #80BAEC
-			-webkit-filter grayscale(0)
-			filter grayscale(0)
-				
-			a, div
-				-webkit-filter grayscale(0)
-				filter grayscale(0)
-		
-		
-		bottom-icon('battle', 'attack', 'patrolfleet')
-		bottom-icon('battle', 'attack', 'defencefleet')
-		bottom-icon('battle', 'attack', 'battlefleet')
-		bottom-icon('battle', 'attack', 'tradefleet')
-		//bottom-icon('battle', 'attack', 'commandor')
+    &:hover,
+    &.active
+      background-color #18202B
+      border-color #80BAEC
+      -webkit-filter grayscale(0)
+      filter grayscale(0)
+        
+      a, div
+        -webkit-filter grayscale(0)
+        filter grayscale(0)
+    
+    
+    bottom-icon('battle', 'attack', 'patrolfleet')
+    bottom-icon('battle', 'attack', 'defencefleet')
+    bottom-icon('battle', 'attack', 'battlefleet')
+    bottom-icon('battle', 'attack', 'tradefleet')
+    //bottom-icon('battle', 'attack', 'commandor')

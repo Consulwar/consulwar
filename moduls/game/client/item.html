@@ -1,211 +1,211 @@
 <template name="item_requirements">
-	{{#if requirements}}
-	<div class="additional_info requirements">
-		<span class="title">Необходимые технологии:</span>
-		{{#each requirements}}
-		<a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">
-			{{#if gt this.[1] 1}}{{this.[1]}} уровень{{/if}}
-			<div class="{{this.[0].type}}">{{this.[0].name}}</div>
-		</a>
-		{{/each}}
-	</div>
-	{{/if}}
+  {{#if requirements}}
+  <div class="additional_info requirements">
+    <span class="title">Необходимые технологии:</span>
+    {{#each requirements}}
+    <a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">
+      {{#if gt this.[1] 1}}{{this.[1]}} уровень{{/if}}
+      <div class="{{this.[0].type}}">{{this.[0].name}}</div>
+    </a>
+    {{/each}}
+  </div>
+  {{/if}}
 </template>
 
 <template name="item_effect">
-	{{#if item.effect}}
-		<div class="currentLevel">
-			{{#if item.maxLevel}}
-				<div class="title">
-					{{#with item.effect.[0]}}
-						Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-					{{/with}}
-				</div>
-			{{/if}}
-			{{#each item.effect}}
-				{{#if result}}
-					<div class="effect">
-						{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
-						{{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
-					</div>
-				{{/if}}
-			{{/each}}
-		</div>
+  {{#if item.effect}}
+    <div class="currentLevel">
+      {{#if item.maxLevel}}
+        <div class="title">
+          {{#with item.effect.[0]}}
+            Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+          {{/with}}
+        </div>
+      {{/if}}
+      {{#each item.effect}}
+        {{#if result}}
+          <div class="effect">
+            {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+            {{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
 
-		{{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
-			<div class="nextLevel">
-				<div class="title">
-					{{#with item.effect.[0].next}}
-						Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-					{{/with}}
-				</div>
-				{{#each item.effect}}
-					{{#with this.next}}
-						{{#if and result (not (eq ../result result))}}
-							<div class="effect">
-								{{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
-								{{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
-							</div>
-						{{/if}}
-					{{/with}}
-				{{/each}}
-			</div>
-		{{/if}}
-	{{/if}}
+    {{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
+      <div class="nextLevel">
+        <div class="title">
+          {{#with item.effect.[0].next}}
+            Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+          {{/with}}
+        </div>
+        {{#each item.effect}}
+          {{#with this.next}}
+            {{#if and result (not (eq ../result result))}}
+              <div class="effect">
+                {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+                {{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+              </div>
+            {{/if}}
+          {{/with}}
+        {{/each}}
+      </div>
+    {{/if}}
+  {{/if}}
 </template>
 
 <template name="item_characteristic">
-	{{#if item.characteristics}}
-		<div class="characteristics">
-			{{#if item.targets}}
-				Приоритеты атаки:
-				<ol class="targets">
-					{{#each item.targets}}
-						<li><a href="{{this.url}}">{{this.name}}</a></li>
-					{{/each}}
-				</ol>
-			{{/if}}
-			{{#each item.triggers.battle}}
-			{{this.name}}
-			{{/each}}
+  {{#if item.characteristics}}
+    <div class="characteristics">
+      {{#if item.targets}}
+        Приоритеты атаки:
+        <ol class="targets">
+          {{#each item.targets}}
+            <li><a href="{{this.url}}">{{this.name}}</a></li>
+          {{/each}}
+        </ol>
+      {{/if}}
+      {{#each item.triggers.battle}}
+      {{this.name}}
+      {{/each}}
 
-			{{#if eq item.characteristics.special 'air'}}
-				*Воздушная единица<br/>
-			{{/if}}
+      {{#if eq item.characteristics.special 'air'}}
+        *Воздушная единица<br/>
+      {{/if}}
 
-			{{#each item.characteristics.notAttack}}
-			{{#if eq this 'air'}}
-				*Не атакует воздушные цели
-			{{/if}}
-			{{/each}}
-			
-			{{#if item.characteristics.damage}}
-				<span class="damage" {{militaryTooltip item.characteristics 'damage'}}>
-					{{formatNumberWithISO item.characteristics.damage.min}} —
-					{{formatNumberWithISO item.characteristics.damage.max}}
-				</span>
-			{{/if}} 
-			<span class="life" {{militaryTooltip item.characteristics 'life'}}>
-				{{formatNumberWithISO item.characteristics.life}}
-			</span>
-		</div>
-	{{/if}}
+      {{#each item.characteristics.notAttack}}
+      {{#if eq this 'air'}}
+        *Не атакует воздушные цели
+      {{/if}}
+      {{/each}}
+      
+      {{#if item.characteristics.damage}}
+        <span class="damage" {{militaryTooltip item.characteristics 'damage'}}>
+          {{formatNumberWithISO item.characteristics.damage.min}} —
+          {{formatNumberWithISO item.characteristics.damage.max}}
+        </span>
+      {{/if}} 
+      <span class="life" {{militaryTooltip item.characteristics 'life'}}>
+        {{formatNumberWithISO item.characteristics.life}}
+      </span>
+    </div>
+  {{/if}}
 </template>
 
 <template name="tooltipTable">
-	<table>
-		{{#each values}}
-			<tr class="
-				{{#if this.total}}total{{/if}}
-				{{#if this.negative}}negative{{/if}}
-				{{#if this.final}}final{{/if}}
-			">
-				{{#if or this.initial this.total}}
-					<td colspan="4">
-						{{#if this.initial}}
-							Начальное значение: {{this.initial}}
-						{{else}}
-							{{#if this.final}}
-								Всего:
-							{{else}}
-								Итог:
-							{{/if}} 
-							{{this.total}}
-						{{/if}}
-					</td>
-				{{else}}
-					<td>{{this.sign}}</td>
-					<td>{{this.value}}</td>
-					{{#if this.percent}}
-						<td>{{this.percent}}%</td>
-					{{/if}}
-					<td colspan="{{#if not this.percent}}2{{else}}1{{/if}}">{{this.source}}</td>
-				{{/if}}
-			</tr>
-		{{/each}}
-		{{#if or current (eq current 0)}}
-			<tr class="current"><td colspan="4">В наличии: {{formatNumber current}}</td></tr>
-		{{/if}}
-		{{#if gt time 0}}
-			<tr class="time"><td colspan="4">Накопится через: {{formatSeconds time}}</td></tr>
-		{{/if}}
-	</table>
+  <table>
+    {{#each values}}
+      <tr class="
+        {{#if this.total}}total{{/if}}
+        {{#if this.negative}}negative{{/if}}
+        {{#if this.final}}final{{/if}}
+      ">
+        {{#if or this.initial this.total}}
+          <td colspan="4">
+            {{#if this.initial}}
+              Начальное значение: {{this.initial}}
+            {{else}}
+              {{#if this.final}}
+                Всего:
+              {{else}}
+                Итог:
+              {{/if}} 
+              {{this.total}}
+            {{/if}}
+          </td>
+        {{else}}
+          <td>{{this.sign}}</td>
+          <td>{{this.value}}</td>
+          {{#if this.percent}}
+            <td>{{this.percent}}%</td>
+          {{/if}}
+          <td colspan="{{#if not this.percent}}2{{else}}1{{/if}}">{{this.source}}</td>
+        {{/if}}
+      </tr>
+    {{/each}}
+    {{#if or current (eq current 0)}}
+      <tr class="current"><td colspan="4">В наличии: {{formatNumber current}}</td></tr>
+    {{/if}}
+    {{#if gt time 0}}
+      <tr class="time"><td colspan="4">Накопится через: {{formatSeconds time}}</td></tr>
+    {{/if}}
+  </table>
 </template>
 
 <template name="icons">
-	<div class="smoke"></div>
-	<div class="select-icon-block">
-		<div class="close"></div>
-		
-		<div class="tabItems">Ваши иконки</div>
-		<div class="tabShop">Купить иконку</div>
+  <div class="smoke"></div>
+  <div class="select-icon-block">
+    <div class="close"></div>
+    
+    <div class="tabItems">Ваши иконки</div>
+    <div class="tabShop">Купить иконку</div>
 
-		<div class="icons">
-			{{#let tab=currentTab}}
-				{{#each iconGroups}}
-					<h2 class="{{this.engName}}">{{this.name}}</h2>
-					{{#if this.items}}
-						<ul>
-							{{#each this.items}}
-								<li 
-									class="
-										{{#if isSelectedCondition this.group this.engName}}
-											selected
-										{{else}}
-											{{#if this.checkHas}}
-												select
-											{{else}}
-												{{#if and (eq tab 'shop') (not this.checkUniqueSold)}}
-													buy
-												{{/if}}
-											{{/if}}
-										{{/if}}
-										"
-									data-group="{{this.group}}"
-									data-id="{{this.engName}}"
-									data-tooltip="
-										{{#if not this.meetRequirements}}
-											Доступна с {{this.requirements.rank}} ранга
-										{{else}}
-											{{#if this.checkSelected}}
-												Текущая
-											{{else}}
-												{{#if this.checkHas}}
-													Выбрать
-												{{else}}
-													{{#if and (eq tab 'shop')}}
-														{{#if this.checkUniqueSold}}
-															Куплена другим игроком
-														{{else}}
-															Купить
-														{{/if}}
-													{{/if}}
-												{{/if}}
-											{{/if}}
-										{{/if}}
-										"
-									disabled="{{not this.meetRequirements}}"
-								>
-									<img src="/img/game/chat/icons/{{this.group}}/{{this.engName}}.png"/>
-									{{#if and (eq tab 'shop')}}
-										{{#if this.checkHas}}
-											<span class="has">Куплена</span>
-										{{else}}
-											{{#if not this.checkUniqueSold}}
-												<span class="credits">
-													{{formatNumber this.price.credits}}
-												</span>
-											{{/if}}
-										{{/if}}
-									{{/if}}
-								</li>
-							{{/each}}
-						</ul>
-					{{else}}
-						<div class="info">У вас нет иконок такого типа</div>
-					{{/if}}
-				{{/each}}
-			{{/let}}
-		</div>
-	</div>
+    <div class="icons">
+      {{#let tab=currentTab}}
+        {{#each iconGroups}}
+          <h2 class="{{this.engName}}">{{this.name}}</h2>
+          {{#if this.items}}
+            <ul>
+              {{#each this.items}}
+                <li 
+                  class="
+                    {{#if isSelectedCondition this.group this.engName}}
+                      selected
+                    {{else}}
+                      {{#if this.checkHas}}
+                        select
+                      {{else}}
+                        {{#if and (eq tab 'shop') (not this.checkUniqueSold)}}
+                          buy
+                        {{/if}}
+                      {{/if}}
+                    {{/if}}
+                    "
+                  data-group="{{this.group}}"
+                  data-id="{{this.engName}}"
+                  data-tooltip="
+                    {{#if not this.meetRequirements}}
+                      Доступна с {{this.requirements.rank}} ранга
+                    {{else}}
+                      {{#if this.checkSelected}}
+                        Текущая
+                      {{else}}
+                        {{#if this.checkHas}}
+                          Выбрать
+                        {{else}}
+                          {{#if and (eq tab 'shop')}}
+                            {{#if this.checkUniqueSold}}
+                              Куплена другим игроком
+                            {{else}}
+                              Купить
+                            {{/if}}
+                          {{/if}}
+                        {{/if}}
+                      {{/if}}
+                    {{/if}}
+                    "
+                  disabled="{{not this.meetRequirements}}"
+                >
+                  <img src="/img/game/chat/icons/{{this.group}}/{{this.engName}}.png"/>
+                  {{#if and (eq tab 'shop')}}
+                    {{#if this.checkHas}}
+                      <span class="has">Куплена</span>
+                    {{else}}
+                      {{#if not this.checkUniqueSold}}
+                        <span class="credits">
+                          {{formatNumber this.price.credits}}
+                        </span>
+                      {{/if}}
+                    {{/if}}
+                  {{/if}}
+                </li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <div class="info">У вас нет иконок такого типа</div>
+          {{/if}}
+        {{/each}}
+      {{/let}}
+    </div>
+  </div>
 </template>

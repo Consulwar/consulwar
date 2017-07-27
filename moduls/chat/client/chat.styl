@@ -1,1047 +1,1047 @@
 .content.chat:not(.mail):not(.mailAdmin)
-	height 100%	
-	flex-shrink 1
-	
-	.permanent_chat
-		display flex
+  height 100%  
+  flex-shrink 1
+  
+  .permanent_chat
+    display flex
 
 .content.chat
-	.overlay
-		display none
+  .overlay
+    display none
 
 @media (max-width: 1144px)
-	.fleet_info.attack ~ .content.chat
-		.permanent_chat
-			.channels
-				padding-top 65px
+  .fleet_info.attack ~ .content.chat
+    .permanent_chat
+      .channels
+        padding-top 65px
 
 
 @media (max-width: 1617px)
-	.fleet_info.active ~ .content.chat
-		.permanent_chat
-			.channels
-				padding-top 85px
+  .fleet_info.active ~ .content.chat
+    .permanent_chat
+      .channels
+        padding-top 85px
 
 
 .fleet_info.attack ~ .content.chat
-	.permanent_chat.wide
-			.channels
-				padding-top 65px
+  .permanent_chat.wide
+      .channels
+        padding-top 65px
 
 .fleet_info.attack ~ .content.chat
-	.permanent_chat.wide
-			.channels
-				padding-top 85px
+  .permanent_chat.wide
+      .channels
+        padding-top 85px
 
 .fleet_info_full.active:not(.hide) ~ .content.chat
-	.permanent_chat.wide
-		width calc(100% - 330px)
-		margin 0 0 0 auto
-		
-		.channels
-			padding-top 0
+  .permanent_chat.wide
+    width calc(100% - 330px)
+    margin 0 0 0 auto
+    
+    .channels
+      padding-top 0
 
 .page .newgame.chat .bottom_menu
-	display none
+  display none
 
 .permanent_chat
-	display none
-	position relative
-	width 960px
-	height 100%
-	flex-grow 0
-	flex-shrink 1
-	z-index 3
-	margin 0 auto
-	background-color rgba(0, 0, 0, 0.8)
-	
-	&.wide
-		width 100%
-		
-	.channelCreate,
-	.channelList
-		position relative
-		display flex
-		flex-wrap wrap
-		align-items center
-		justify-content center
-		flex-grow 0
-		flex-shrink 0
-		padding 15px
-		background-color rgba(0, 0, 0, 0.4)
-		overflow auto
-		
-		&.hide
-			display none
-		
-		h1
-			width 100%
-			
-		ul
-			list-style-type none
-	
-	.channelList
-		justify-content flex-start
-		flex-shrink 1
-		
-		ul
-			font-size 30px
-			width 100%
-		
-		li
-			cursor pointer
-			
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
+  display none
+  position relative
+  width 960px
+  height 100%
+  flex-grow 0
+  flex-shrink 1
+  z-index 3
+  margin 0 auto
+  background-color rgba(0, 0, 0, 0.8)
+  
+  &.wide
+    width 100%
+    
+  .channelCreate,
+  .channelList
+    position relative
+    display flex
+    flex-wrap wrap
+    align-items center
+    justify-content center
+    flex-grow 0
+    flex-shrink 0
+    padding 15px
+    background-color rgba(0, 0, 0, 0.4)
+    overflow auto
+    
+    &.hide
+      display none
+    
+    h1
+      width 100%
+      
+    ul
+      list-style-type none
+  
+  .channelList
+    justify-content flex-start
+    flex-shrink 1
+    
+    ul
+      font-size 30px
+      width 100%
+    
+    li
+      cursor pointer
+      
+      &:hover
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)
 
-	.chat
-		display flex
-		flex-direction column
-		height 100%
-		width 100%
-		
-	.roomsList,
-	.channelList	
-		.addChannel
-			display inline-block
-			height 24px
-			width 24px
-			transform rotate(45deg)
-			background-image url(img/game/close.png)
-			background-size 100%
-			float right
+  .chat
+    display flex
+    flex-direction column
+    height 100%
+    width 100%
+    
+  .roomsList,
+  .channelList  
+    .addChannel
+      display inline-block
+      height 24px
+      width 24px
+      transform rotate(45deg)
+      background-image url(img/game/close.png)
+      background-size 100%
+      float right
 
-		.listContainer
-			display inline-block
-			float left
-			width 853px
-			height 46px
-			overflow hidden
-			background-color #090a0d
+    .listContainer
+      display inline-block
+      float left
+      width 853px
+      height 46px
+      overflow hidden
+      background-color #090a0d
 
-		ul
-			position relative
-			white-space nowrap
-			vertical-align top
-			margin 5px
-			list-style-type none
-			
-			li
-				display flex
-				align-items center
-				justify-content space-between
-				height 30px
-				&.active
-					background-color #13161b
+    ul
+      position relative
+      white-space nowrap
+      vertical-align top
+      margin 5px
+      list-style-type none
+      
+      li
+        display flex
+        align-items center
+        justify-content space-between
+        height 30px
+        &.active
+          background-color #13161b
 
-				a
-					vertical-align middle
-					display inline-block
-					text-decoration none
-					font-weight bold
-					color #dfdfdf
-					
-					&:before
-						vertical-align middle
-						display inline-block
-						content ""
-						width 10px
-						height 10px
-						margin-right 8px
-						border-radius 50%
-						border 4px solid #bd32fb
-						background-color #532167
-						
-					&.credits:before
-						border 4px solid #bff632
-						background-color #555e33
-					
-					&.public:before
-						background none
-					
-				.hide
-					vertical-align middle
-					cursor pointer
-					display inline-block
-					margin-left 10px
-					width 30px
-					height 30px
-					background-image url(/img/game/cosmomap/button_close.png)
-					background-repeat no-repeat
-				
-					&:hover
-						background-image url(/img/game/cosmomap/button_close_active.png)
+        a
+          vertical-align middle
+          display inline-block
+          text-decoration none
+          font-weight bold
+          color #dfdfdf
+          
+          &:before
+            vertical-align middle
+            display inline-block
+            content ""
+            width 10px
+            height 10px
+            margin-right 8px
+            border-radius 50%
+            border 4px solid #bd32fb
+            background-color #532167
+            
+          &.credits:before
+            border 4px solid #bff632
+            background-color #555e33
+          
+          &.public:before
+            background none
+          
+        .hide
+          vertical-align middle
+          cursor pointer
+          display inline-block
+          margin-left 10px
+          width 30px
+          height 30px
+          background-image url(/img/game/cosmomap/button_close.png)
+          background-repeat no-repeat
+        
+          &:hover
+            background-image url(/img/game/cosmomap/button_close_active.png)
 
-	.channels
-		position relative
-		display flex
-		flex-direction column
-		width 180px
-		height 100%
-		box-sizing border-box
-		
-		nav
-			position relative
-			display flex
-			flex-direction column
-			width 100%
-			padding 8px
-			min-height 120px
-			flex-shrink 1
-			flex-grow 0
-			flex-basis 1
-			box-sizing border-box
-			overflow-y auto
-			overflow-x hidden
-			z-index 1
-		
-			> a
-				display flex
-				flex-shrink 0
-				height 30px
-				align-items center
-				justify-content flex-start
-				vertical-align middle
-				text-decoration none
-				font-weight bold
-				color #dfdfdf
-				overflow hidden
-				
-				&.active
-					background-color #13161b
-				
-				&:before
-					vertical-align middle
-					display inline-block
-					content ""
-					width 10px
-					height 10px
-					margin-right 8px
-					border-radius 50%
-					border 4px solid #bd32fb
-					background-color #532167
-					flex-shrink 0
-					
-				&.credits:before
-					border 4px solid #bff632
-					background-color #555e33
-				
-				&.public:before
-					background none
+  .channels
+    position relative
+    display flex
+    flex-direction column
+    width 180px
+    height 100%
+    box-sizing border-box
+    
+    nav
+      position relative
+      display flex
+      flex-direction column
+      width 100%
+      padding 8px
+      min-height 120px
+      flex-shrink 1
+      flex-grow 0
+      flex-basis 1
+      box-sizing border-box
+      overflow-y auto
+      overflow-x hidden
+      z-index 1
+    
+      > a
+        display flex
+        flex-shrink 0
+        height 30px
+        align-items center
+        justify-content flex-start
+        vertical-align middle
+        text-decoration none
+        font-weight bold
+        color #dfdfdf
+        overflow hidden
+        
+        &.active
+          background-color #13161b
+        
+        &:before
+          vertical-align middle
+          display inline-block
+          content ""
+          width 10px
+          height 10px
+          margin-right 8px
+          border-radius 50%
+          border 4px solid #bd32fb
+          background-color #532167
+          flex-shrink 0
+          
+        &.credits:before
+          border 4px solid #bff632
+          background-color #555e33
+        
+        &.public:before
+          background none
 
-				&:hover
-					-webkit-filter brightness(1.2)
-					filter brightness(1.2)
-						
-				span
-					overflow hidden
-					
-				.hide
-					display inline-block
-					margin 0 0 0 auto
-					width 30px
-					height 30px
-					background-image url(/img/game/cosmomap/button_close.png)
-					background-repeat no-repeat
-					flex-shrink 0
-				
-					&:hover
-						background-image url(/img/game/cosmomap/button_close_active.png)
+        &:hover
+          -webkit-filter brightness(1.2)
+          filter brightness(1.2)
+            
+        span
+          overflow hidden
+          
+        .hide
+          display inline-block
+          margin 0 0 0 auto
+          width 30px
+          height 30px
+          background-image url(/img/game/cosmomap/button_close.png)
+          background-repeat no-repeat
+          flex-shrink 0
+        
+          &:hover
+            background-image url(/img/game/cosmomap/button_close_active.png)
 
-		.toggle
-			position absolute
-			height 100%
-			width 20px
-			right 0
-			display flex
-			justify-content center
-			align-items center	
-			background-color rgba(0, 0, 0, 0.4)
-			border 0
-			cursor pointer
-			z-index 0
-			
-			&:before
-				content url(/img/game/arrow.png)
-				position absolute
-				transform scaleX(1)
-				-webkit-filter grayscale(1) brightness(0.5)
-				filter grayscale(1) brightness(0.5)
+    .toggle
+      position absolute
+      height 100%
+      width 20px
+      right 0
+      display flex
+      justify-content center
+      align-items center  
+      background-color rgba(0, 0, 0, 0.4)
+      border 0
+      cursor pointer
+      z-index 0
+      
+      &:before
+        content url(/img/game/arrow.png)
+        position absolute
+        transform scaleX(1)
+        -webkit-filter grayscale(1) brightness(0.5)
+        filter grayscale(1) brightness(0.5)
 
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
-					
-				&:before
-					-webkit-filter grayscale(0)
-					filter grayscale(0)
+      &:hover
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)
+          
+        &:before
+          -webkit-filter grayscale(0)
+          filter grayscale(0)
 
-		&.hide
-			width 20px
-			overflow hidden
-			> *:not(.toggle)
-				display none
-			.toggle
-				&:before
-					transform scaleX(-1)
+    &.hide
+      width 20px
+      overflow hidden
+      > *:not(.toggle)
+        display none
+      .toggle
+        &:before
+          transform scaleX(-1)
 
-		.roomsPopup
-			position absolute
-			z-index 2
-			top 46px
-			right 185px
-			background-color #0b0b0b
-			width 200px
-			
-			ul
-				display block
-				max-height 500px
-				overflow-x hidden
-				overflow-y auto
-				
-				li
-					display block
-					padding 10px
-					font-weight bold
-					color #56baf2
-					
-					input
-						vertical-align middle
-						margin-right 10px
-				
-					
-			.save
-				display inline-block
-				cursor pointer
-				background-repeat no-repeat
-				background-size 100% 100%
-				background-image url(/img/game/chat/accept.png)
-				font-size 24px
-				font-weight bold
-				text-align center
-				color #FFFFFF
-				width 150px
-				height 35px
-				padding-top 5px
-				margin-top 10px
-				margin-bottom 10px
-				margin-left 25px
-			
-				&:hover:not(.disabled)
-					-webkit-filter brightness(1.4)
-					filter brightness(1.4)
-		
-	
-	.profile
-		cursor pointer
-		position relative
-		width 195px
-		vertical-align top
-		float left
-		clear both
-	
-	.username 
-		color #c4aba1
-	.role
-		color #acdaf9
-		
-	
-	.admin .username,
-	.admin .role
-		color #d65f52
-	.helper .username,
-	.helper .role
-		color #a57fce
-	.owner .username,
-	.owner .role
-		color #e9a844
-	.moderator .username,
-	.moderator .role
-		color #56baf2
-				
-	.me .username,
-	.me .role
-		color #ABC851
+    .roomsPopup
+      position absolute
+      z-index 2
+      top 46px
+      right 185px
+      background-color #0b0b0b
+      width 200px
+      
+      ul
+        display block
+        max-height 500px
+        overflow-x hidden
+        overflow-y auto
+        
+        li
+          display block
+          padding 10px
+          font-weight bold
+          color #56baf2
+          
+          input
+            vertical-align middle
+            margin-right 10px
+        
+          
+      .save
+        display inline-block
+        cursor pointer
+        background-repeat no-repeat
+        background-size 100% 100%
+        background-image url(/img/game/chat/accept.png)
+        font-size 24px
+        font-weight bold
+        text-align center
+        color #FFFFFF
+        width 150px
+        height 35px
+        padding-top 5px
+        margin-top 10px
+        margin-bottom 10px
+        margin-left 25px
+      
+        &:hover:not(.disabled)
+          -webkit-filter brightness(1.4)
+          filter brightness(1.4)
+    
+  
+  .profile
+    cursor pointer
+    position relative
+    width 195px
+    vertical-align top
+    float left
+    clear both
+  
+  .username 
+    color #c4aba1
+  .role
+    color #acdaf9
+    
+  
+  .admin .username,
+  .admin .role
+    color #d65f52
+  .helper .username,
+  .helper .role
+    color #a57fce
+  .owner .username,
+  .owner .role
+    color #e9a844
+  .moderator .username,
+  .moderator .role
+    color #56baf2
+        
+  .me .username,
+  .me .role
+    color #ABC851
 
 
-	.additionals
-		margin auto 0 0
-		width 100%
-		
-		.control
-			.user
-				img
-					vertical-align middle
+  .additionals
+    margin auto 0 0
+    width 100%
+    
+    .control
+      .user
+        img
+          vertical-align middle
 
-			.title
-				padding 10px 0px
-				text-align center
-				color #e0e0e0
+      .title
+        padding 10px 0px
+        text-align center
+        color #e0e0e0
 
-			.settings
-			.info
-			.dollar
-				float left
-				cursor pointer
-				display inline-block
-				width 65px
-				height 66px
-				background-repeat no-repeat
-			.settings
-				background-image url(/img/game/chat/settings-disabled.png)
-				&:hover
-					background-image url(/img/game/chat/settings.png)
-			.info
-				background-image url(/img/game/chat/info-disabled.png)
-				&:hover
-					background-image url(/img/game/chat/info.png)
-			.dollar
-				background-image url(/img/game/chat/dollar-disabled.png)
-				&:hover
-					background-image url(/img/game/chat/dollar.png)
+      .settings
+      .info
+      .dollar
+        float left
+        cursor pointer
+        display inline-block
+        width 65px
+        height 66px
+        background-repeat no-repeat
+      .settings
+        background-image url(/img/game/chat/settings-disabled.png)
+        &:hover
+          background-image url(/img/game/chat/settings.png)
+      .info
+        background-image url(/img/game/chat/info-disabled.png)
+        &:hover
+          background-image url(/img/game/chat/info.png)
+      .dollar
+        background-image url(/img/game/chat/dollar-disabled.png)
+        &:hover
+          background-image url(/img/game/chat/dollar.png)
 
-			.price
-				display block
-				position absolute
-				top 410px
-				width 185px
-				height 65px
-				padding 5px
-				text-align center
-				
-				span
-					display block
-					position absolute
-					width 120px
-					color #e9a844
-				
-				ul
-					display block
-					position absolute
-				right 0
-				
-		.addCredits
-			display block
-			width 100%
-			padding 10px
-			text-align center
-			
-			span
-				display block
-				color #e8e8e8
-				
-			ul
-				display block
-				
-			.credits
-				margin auto
-				
-		.buyFreeChat
-			position relative
-			cursor pointer
-			display block
-			width 100%
-			box-sizing border-box
-			height 75px
-			padding 3px 5px 3px 70px
-			color #b5d054
-			border 2px solid #b5d054
-			background-color #090E14
-			
-			.resources
-				position absolute
-				top 50%
-				margin-top -25px
-				left 5px
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			
-			ul
-				margin-top 3px
+      .price
+        display block
+        position absolute
+        top 410px
+        width 185px
+        height 65px
+        padding 5px
+        text-align center
+        
+        span
+          display block
+          position absolute
+          width 120px
+          color #e9a844
+        
+        ul
+          display block
+          position absolute
+        right 0
+        
+    .addCredits
+      display block
+      width 100%
+      padding 10px
+      text-align center
+      
+      span
+        display block
+        color #e8e8e8
+        
+      ul
+        display block
+        
+      .credits
+        margin auto
+        
+    .buyFreeChat
+      position relative
+      cursor pointer
+      display block
+      width 100%
+      box-sizing border-box
+      height 75px
+      padding 3px 5px 3px 70px
+      color #b5d054
+      border 2px solid #b5d054
+      background-color #090E14
+      
+      .resources
+        position absolute
+        top 50%
+        margin-top -25px
+        left 5px
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+      
+      ul
+        margin-top 3px
 
-			span
-				width 100%
+      span
+        width 100%
 
-	.messages
-		position relative
-		background-color #13161b
-		height 100%
-		width 100%
-		flex-shrink 10
-		overflow-y auto
-		overflow-x hidden
-		
-		li
-			position relative
-			display block
-			padding 2.5px
-			background-color #13161b
-			
-			p
-				cursor pointer
+  .messages
+    position relative
+    background-color #13161b
+    height 100%
+    width 100%
+    flex-shrink 10
+    overflow-y auto
+    overflow-x hidden
+    
+    li
+      position relative
+      display block
+      padding 2.5px
+      background-color #13161b
+      
+      p
+        cursor pointer
 
-			.profile:hover
-			.profile.selected
-			p:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
+      .profile:hover
+      .profile.selected
+      p:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
 
-			.username
-				position absolute
-				top 3px
-				left 50px
-				width 150px
-				
-				&.me
-					color #ABC851
-				
-			.role
-				position absolute
-				top 22px
-				left 50px
-				width 150px
-				
-			&.message
-				position relative
-				display inline-block
-				vertical-align top
-				max-width calc(100% - 200px)
-				width 100%
-				line-height 19px
-				color #dcdcdc
-				float right
-				padding 0px
+      .username
+        position absolute
+        top 3px
+        left 50px
+        width 150px
+        
+        &.me
+          color #ABC851
+        
+      .role
+        position absolute
+        top 22px
+        left 50px
+        width 150px
+        
+      &.message
+        position relative
+        display inline-block
+        vertical-align top
+        max-width calc(100% - 200px)
+        width 100%
+        line-height 19px
+        color #dcdcdc
+        float right
+        padding 0px
 
-			span
-				color #C4ABA1
-				
-				&:not(.dice)
-					cursor pointer
-					
-				&.dice
-					color #3eb5f1
+      span
+        color #C4ABA1
+        
+        &:not(.dice)
+          cursor pointer
+          
+        &.dice
+          color #3eb5f1
 
-				&.medice
-					color #F0F8FF
-					opacity .5
+        &.medice
+          color #F0F8FF
+          opacity .5
 
-					&.selected
-						color #8eb021
-						opacity 1
-			
-			&.motd
-				text-align center
-				clear both
+          &.selected
+            color #8eb021
+            opacity 1
+      
+      &.motd
+        text-align center
+        clear both
 
-			&.more
-			&.missed
-				height 48px
-				padding 13px 0
-				box-sizing border-box
-				cursor pointer
-				text-align center
-				background-color #0f1116
-				clear both
-				
-				span
-					color #dfdfdf
-				
-					&:before
-					&:after
-						margin 0 20px
-						vertical-align middle
-						display inline-block
-						content url(/img/game/chat/more.png)
-			
-			&.limit
-				text-align center
-				color #A15755
+      &.more
+      &.missed
+        height 48px
+        padding 13px 0
+        box-sizing border-box
+        cursor pointer
+        text-align center
+        background-color #0f1116
+        clear both
+        
+        span
+          color #dfdfdf
+        
+          &:before
+          &:after
+            margin 0 20px
+            vertical-align middle
+            display inline-block
+            content url(/img/game/chat/more.png)
+      
+      &.limit
+        text-align center
+        color #A15755
 
-			.remove
-			.removeModerator
-			.block
-			.changeMinRating
-				color red
+      .remove
+      .removeModerator
+      .block
+      .changeMinRating
+        color red
 
-			.lovereptiles
-			.notprepared
-				font-style italic
-				color red
-			
-			.add
-			.addfunds
-			.addModerator
-			.unblock
-				color green
-				
-			.sepukku
-				color #ff5441
-				
-			.status
-				font-style italic
+      .lovereptiles
+      .notprepared
+        font-style italic
+        color red
+      
+      .add
+      .addfunds
+      .addModerator
+      .unblock
+        color green
+        
+      .sepukku
+        color #ff5441
+        
+      .status
+        font-style italic
 
-			.positive_number
-				color #009900
+      .positive_number
+        color #009900
 
-				&.roomModifier
-					color #008000
+        &.roomModifier
+          color #008000
 
-			.negative_number
-				color #dc6257
+      .negative_number
+        color #dc6257
 
-				&.roomModifier
-					color red
-	form
-		display flex
-		width 100%
-		height 58px
-		flex-shrink 10
-		overflow hidden
-		
-		textarea, .whyCanNotWrite
-			width 100%
-			flex-shrink 1
-			height 100%
-			box-sizing border-box
-			padding 2px
-			border 1px solid #151515
-			background-color #0b0b0b
-			color #fff
-			resize none
-			vertical-align top
-			font-size 17px
-			overflow hidden
+        &.roomModifier
+          color red
+  form
+    display flex
+    width 100%
+    height 58px
+    flex-shrink 10
+    overflow hidden
+    
+    textarea, .whyCanNotWrite
+      width 100%
+      flex-shrink 1
+      height 100%
+      box-sizing border-box
+      padding 2px
+      border 1px solid #151515
+      background-color #0b0b0b
+      color #fff
+      resize none
+      vertical-align top
+      font-size 17px
+      overflow hidden
 
-		.whyCanNotWrite
-			color red
-			
-		input
-			width 200px
-			height 62px
-			padding 2px
-			border 1px solid #1D2D3C
-			background-color #090E14
-			color #fff
-			resize none
-			vertical-align top
-			font-size 17px
-			overflow hidden
+    .whyCanNotWrite
+      color red
+      
+    input
+      width 200px
+      height 62px
+      padding 2px
+      border 1px solid #1D2D3C
+      background-color #090E14
+      color #fff
+      resize none
+      vertical-align top
+      font-size 17px
+      overflow hidden
 
-		[type="submit"]
-			width 58px
-			height 58px
-			box-sizing border-box
-			flex-shrink 0
-			background-repeat no-repeat
-			background-image url(/img/game/chat/send-disabled.png)
-			vertical-align top
-			cursor pointer
-			overflow hidden
-			text-indent -999px
-			line-height 0px
-			
-			&:hover
-				background-image url(/img/game/chat/send.png)
-		
-		
-	.participants
-		ul
-			padding 11px
-			text-align left
-			list-style-type none
-			
-			li
-				color #777777
-			
-				span
-					cursor pointer
-				
-				&.online
-					color #FFFFFF
-				
-				&:hover
-					background-color rgba(255, 255, 255, 0.02)
+    [type="submit"]
+      width 58px
+      height 58px
+      box-sizing border-box
+      flex-shrink 0
+      background-repeat no-repeat
+      background-image url(/img/game/chat/send-disabled.png)
+      vertical-align top
+      cursor pointer
+      overflow hidden
+      text-indent -999px
+      line-height 0px
+      
+      &:hover
+        background-image url(/img/game/chat/send.png)
+    
+    
+  .participants
+    ul
+      padding 11px
+      text-align left
+      list-style-type none
+      
+      li
+        color #777777
+      
+        span
+          cursor pointer
+        
+        &.online
+          color #FFFFFF
+        
+        &:hover
+          background-color rgba(255, 255, 255, 0.02)
 
-	.userPopup
-		position absolute
-		z-index 10
-		
-		.response
-		.add
-		.block
-		.userStatistic
-			float left
-			display inline-block
-			width 48px
-			height 48px
-			background-repeat no-repeat
-			background-size 100% 100%
-			
-		.userStatistic
-			background-image url(/img/game/chat/statistics.png)
-			background-color #2e394d
+  .userPopup
+    position absolute
+    z-index 10
+    
+    .response
+    .add
+    .block
+    .userStatistic
+      float left
+      display inline-block
+      width 48px
+      height 48px
+      background-repeat no-repeat
+      background-size 100% 100%
+      
+    .userStatistic
+      background-image url(/img/game/chat/statistics.png)
+      background-color #2e394d
 
-		.response
-			background-image url(/img/game/chat/arrow-down.png)
-		
-		.add
-			background-image url(/img/game/chat/add-disabled.png)
-			&.active
-				background-image url(/img/game/chat/add.png)
-				
-		.block
-			background-image url(/img/game/chat/ban-disabled.png)
-			&.active
-				background-image url(/img/game/chat/ban.png)
-			
-		.active
-			cursor pointer
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			
-		.rooms
-			display none
-			position absolute
-			top 48px
-			left 48px
-			background-color #000000
-			width 200px
-			max-height 300px
-			overflow-x hidden
-			overflow-y auto
-			
-			
-			li
-				cursor pointer
-				display block
-				padding 10px
-				font-weight bold
-				color #56baf2
-				
-				&:hover
-					-webkit-filter brightness(1.4)
-					filter brightness(1.4)
+    .response
+      background-image url(/img/game/chat/arrow-down.png)
+    
+    .add
+      background-image url(/img/game/chat/add-disabled.png)
+      &.active
+        background-image url(/img/game/chat/add.png)
+        
+    .block
+      background-image url(/img/game/chat/ban-disabled.png)
+      &.active
+        background-image url(/img/game/chat/ban.png)
+      
+    .active
+      cursor pointer
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+      
+    .rooms
+      display none
+      position absolute
+      top 48px
+      left 48px
+      background-color #000000
+      width 200px
+      max-height 300px
+      overflow-x hidden
+      overflow-y auto
+      
+      
+      li
+        cursor pointer
+        display block
+        padding 10px
+        font-weight bold
+        color #56baf2
+        
+        &:hover
+          -webkit-filter brightness(1.4)
+          filter brightness(1.4)
 
 .chatHelp
 .chatBalance
 .chatControl
 .channelCreate
 .channelList
-	textarea
-	input
-		padding 10px 7px
-		border 2px solid #006382
-		background-color #C0C0C0
-		border-radius 5px
-		box-shadow inset 2px 2px 2px #000
-		color #000000
-		font-weight bold
-		font-size 14px
-			
-	.button
-		display inline-block
-		cursor pointer
-		background-repeat no-repeat
-		background-size 100% 100%
-		font-size 24px
-		font-weight bold
-		text-align center
-		color #FFFFFF
-		
-		&:hover:not(.disabled)
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
+  textarea
+  input
+    padding 10px 7px
+    border 2px solid #006382
+    background-color #C0C0C0
+    border-radius 5px
+    box-shadow inset 2px 2px 2px #000
+    color #000000
+    font-weight bold
+    font-size 14px
+      
+  .button
+    display inline-block
+    cursor pointer
+    background-repeat no-repeat
+    background-size 100% 100%
+    font-size 24px
+    font-weight bold
+    text-align center
+    color #FFFFFF
+    
+    &:hover:not(.disabled)
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
 
-		&.disabled
-			-webkit-filter grayscale(1)
-			filter grayscale(1)
+    &.disabled
+      -webkit-filter grayscale(1)
+      filter grayscale(1)
 
-		&.accept
-		&.cancel
-			width 106px
-			height 35px
-			padding-top 5px
-		
-		&.accept
-			background-image url(/img/game/chat/accept.png)
-			
-		&.cancel
-			background-image url(/img/game/chat/cancel.png)
+    &.accept
+    &.cancel
+      width 106px
+      height 35px
+      padding-top 5px
+    
+    &.accept
+      background-image url(/img/game/chat/accept.png)
+      
+    &.cancel
+      background-image url(/img/game/chat/cancel.png)
 
 
 .channelCreate
 .channelList
-	.close
-		cursor pointer
-		display block
-		position absolute
-		z-index 4
-		right 5px
-		top 5px
-		width 30px
-		height 30px
-		background-image url(/img/game/cosmomap/button_close.png)
-		background-repeat no-repeat
-	
-		&:hover
-			background-image url(/img/game/cosmomap/button_close_active.png)
-		
+  .close
+    cursor pointer
+    display block
+    position absolute
+    z-index 4
+    right 5px
+    top 5px
+    width 30px
+    height 30px
+    background-image url(/img/game/cosmomap/button_close.png)
+    background-repeat no-repeat
+  
+    &:hover
+      background-image url(/img/game/cosmomap/button_close_active.png)
+    
 .chatHelp
-	width 560px
-	background-color #030303
+  width 560px
+  background-color #030303
 
-	td
-		padding-left 10px
+  td
+    padding-left 10px
 
-	&:after
-		display block
-		content ""
-		width 100%
-		height 10px
-		background-color #13161b
+  &:after
+    display block
+    content ""
+    width 100%
+    height 10px
+    background-color #13161b
 
-	.tabCommands
-	.tabRules
-		display block
-		cursor pointer
-		position absolute
-		width 280px
-		height 30px
-		padding-top 10px
-		background-color #13161b
-		text-align center
-		font-size 14px
-		font-weight bold
-		color #e8e8e8
-		
-		&.active
-			background-color #292f3b
-			color #56baf2
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-				
-	.tabCommands
-		left 0px
-	
-	.tabRules
-		right 0px
-		
-	.rules
-	.commands
-		padding 50px 10px 10px 10px
-		font-weight bold
-		font-size 14px
-		color #888888
-	
-	.rules
-		display none
+  .tabCommands
+  .tabRules
+    display block
+    cursor pointer
+    position absolute
+    width 280px
+    height 30px
+    padding-top 10px
+    background-color #13161b
+    text-align center
+    font-size 14px
+    font-weight bold
+    color #e8e8e8
+    
+    &.active
+      background-color #292f3b
+      color #56baf2
+    
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+        
+  .tabCommands
+    left 0px
+  
+  .tabRules
+    right 0px
+    
+  .rules
+  .commands
+    padding 50px 10px 10px 10px
+    font-weight bold
+    font-size 14px
+    color #888888
+  
+  .rules
+    display none
 
-	iframe
-		border none
-		width 540px
-		height 400px
-		background-color #FFFFFF
-	
+  iframe
+    border none
+    width 540px
+    height 400px
+    background-color #FFFFFF
+  
 .chatBalance
-	width 420px
-	background-color #13161b
-	
-	label
-		display block
-		position absolute
-		top 30px
-		left 30px
-		width 230px
-		background-repeat no-repeat
-		background-position bottom right
-		background-image url(/img/game/credits.png)
+  width 420px
+  background-color #13161b
+  
+  label
+    display block
+    position absolute
+    top 30px
+    left 30px
+    width 230px
+    background-repeat no-repeat
+    background-position bottom right
+    background-image url(/img/game/credits.png)
 
-		input
-			width 152px
-			margin-bottom 5px
+    input
+      width 152px
+      margin-bottom 5px
 
-		.title
-			display block
-			color #56baf2
-			font-weight bold
-			font-size 14px
-			margin-bottom 10px
+    .title
+      display block
+      color #56baf2
+      font-weight bold
+      font-size 14px
+      margin-bottom 10px
 
-	.button
-		&.accept
-			position absolute
-			left 280px
-			top 57px
-			text-transform uppercase
-			font-weight bold
-			font-size 14px
-			padding-top 10px
-			height 30px
+  .button
+    &.accept
+      position absolute
+      left 280px
+      top 57px
+      text-transform uppercase
+      font-weight bold
+      font-size 14px
+      padding-top 10px
+      height 30px
 
-	.historyTitle
-		display block
-		margin-top 110px
-		font-weight bold
-		font-size 14px
-		color #FFFFFF
-		text-align center
-		padding 10px
+  .historyTitle
+    display block
+    margin-top 110px
+    font-weight bold
+    font-size 14px
+    color #FFFFFF
+    text-align center
+    padding 10px
 
-	.data
-		padding 10px
-		background-color #030303
-		font-weight bold
-		font-size 14px
-		color #888888
-		
-		table
-			width 100%
-		
-		span
-			display block
-			text-align center
-	
-	.pages
-		width 100%
-		height 40px
-		background-color #13161b
-		
-		li
-			a
-				font-size 18px
-				width 30px
-				padding-top 10px
-				height 30px
+  .data
+    padding 10px
+    background-color #030303
+    font-weight bold
+    font-size 14px
+    color #888888
+    
+    table
+      width 100%
+    
+    span
+      display block
+      text-align center
+  
+  .pages
+    width 100%
+    height 40px
+    background-color #13161b
+    
+    li
+      a
+        font-size 18px
+        width 30px
+        padding-top 10px
+        height 30px
 
 .chatControl
-	width 880px
+  width 880px
 
 .chatControl, .channelCreate
-	.inputWithCounter
-		color #dfdfdf
-		
-		&.err:after
-			color #dc6257
+  .inputWithCounter
+    color #dfdfdf
+    
+    &.err:after
+      color #dc6257
 
-		&:after
-			content attr(data-counter)
-			display inline-block
-			font-size 14px
-			width 20px
-			margin 3px 0 0 -28px
-			text-align center
+    &:after
+      content attr(data-counter)
+      display inline-block
+      font-size 14px
+      width 20px
+      margin 3px 0 0 -28px
+      text-align center
 
-		input
-			padding-right 25px
+    input
+      padding-right 25px
 
-	h2
-		font-size 14px
-		color #e9a844
-		margin-bottom 10px
+  h2
+    font-size 14px
+    color #e9a844
+    margin-bottom 10px
 
-	.roomControl
-		display inline-block
-		float left
-		width 320px
-		padding 20px
-		background-color #13161b
+  .roomControl
+    display inline-block
+    float left
+    width 320px
+    padding 20px
+    background-color #13161b
 
-	.userControl
-		display inline-block
-		float right
-		width 480px
-		padding 20px
-		background-color #232832
-		
-	.controlBlock
-		margin-top 20px
-		
-	.creditsBlock
-		display flex
-		margin-bottom 15px
-		color #C6E84C
-		font-weight bold
-		text-align center
+  .userControl
+    display inline-block
+    float right
+    width 480px
+    padding 20px
+    background-color #232832
+    
+  .controlBlock
+    margin-top 20px
+    
+  .creditsBlock
+    display flex
+    margin-bottom 15px
+    color #C6E84C
+    font-weight bold
+    text-align center
 
-		.hint
-			width 250px
-			margin-top 5px
-		
-		.amount
-			width 50px
-			padding-top 48px
-			background-repeat no-repeat
-			background-position top center
-			background-image url(/img/game/credits.png)
+    .hint
+      width 250px
+      margin-top 5px
+    
+    .amount
+      width 50px
+      padding-top 48px
+      background-repeat no-repeat
+      background-position top center
+      background-image url(/img/game/credits.png)
 
-	.button
-		&.removeRoom
-			width 66px
-			height 66px
-			background-image url(/img/game/chat/delete.png)
-			margin-bottom -28px
-			&.disabled
-				background-image url(/img/game/chat/delete-disabled.png)
+  .button
+    &.removeRoom
+      width 66px
+      height 66px
+      background-image url(/img/game/chat/delete.png)
+      margin-bottom -28px
+      &.disabled
+        background-image url(/img/game/chat/delete-disabled.png)
 
-		&.accept
-			text-transform uppercase
-			padding-top 10px
-			height 30px
-			font-size 14px
-			margin-right 10px
-			
-			&.removeModerator
-				width 120px
-				
-			&.create
-				margin-left 60px
-				width 200px
-			
-		&.cancel
-			text-transform uppercase
-			padding-top 3px
-			height 37px
-			font-size 14px
-			float right
+    &.accept
+      text-transform uppercase
+      padding-top 10px
+      height 30px
+      font-size 14px
+      margin-right 10px
+      
+      &.removeModerator
+        width 120px
+        
+      &.create
+        margin-left 60px
+        width 200px
+      
+    &.cancel
+      text-transform uppercase
+      padding-top 3px
+      height 37px
+      font-size 14px
+      float right
 
-	label
-	.radioBlock
-		display inline-block
-		margin-bottom 10px
-		margin-right 10px
-		
-		>label
-			font-weight bold
-			display inline-block
-			width 140px
+  label
+  .radioBlock
+    display inline-block
+    margin-bottom 10px
+    margin-right 10px
+    
+    >label
+      font-weight bold
+      display inline-block
+      width 140px
 
-		.title
-			display block
-			color #56baf2
-			font-weight bold
-			font-size 14px
-			margin-bottom 10px
-			
-		.hint
-			display block
-			color #adadad
-			font-size 14px
-			margin-top 5px
+    .title
+      display block
+      color #56baf2
+      font-weight bold
+      font-size 14px
+      margin-bottom 10px
+      
+    .hint
+      display block
+      color #adadad
+      font-size 14px
+      margin-top 5px
 
-		>textarea
-			width 415px
-			height 50px
-			
-		input[type="radio"]
-			margin-right 15px
-			vertical-align middle
-			box-shadow none
-			width 20px
-			height 20px
-			
+    >textarea
+      width 415px
+      height 50px
+      
+    input[type="radio"]
+      margin-right 15px
+      vertical-align middle
+      box-shadow none
+      width 20px
+      height 20px
+      

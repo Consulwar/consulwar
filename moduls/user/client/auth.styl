@@ -1,374 +1,374 @@
 .register
-	position absolute
-	top 65px
-	left 50%
-	width 278px //315
-	height 203px
-	padding 13px 18.5px
-	background-repeat no-repeat
-	background-position top left
-	
+  position absolute
+  top 65px
+  left 50%
+  width 278px //315
+  height 203px
+  padding 13px 18.5px
+  background-repeat no-repeat
+  background-position top left
+  
 .auth
-	position absolute
-	top 20px
-	left 50%
-	margin-left 150px
-	
-	input[name="username"],
-	input[name="password"]
-		width 180px
-		height 15px
-		padding 5px
-		margin-right 10px
-		margin-bottom 15px
-		background-color #000000
-		border 2px solid #ffffff
-		border-radius 5px
-		font-size 14px
-		color #ffffff
-		
-		&::-webkit-input-placeholder
-			color #ffffff
-			
-		&::-moz-placeholder
-			color #ffffff
-		
-	select
-		width 278px
-		height 28px
-		margin-bottom 12px
-		background-color #232526
-		border 0
-		border-radius 5px
-		box-shadow inset 2px 2px 2px #000
-		
-		color #999DA1
-		
-		.server
-			color #993A2E
-			
-	label
-		margin-right 20px
-		
-	input[name="remember"]
-		vertical-align middle
-		
-	input[type="submit"]
-		display block
-		position absolute
-		top 0px
-		left 410px
-		width 32px
-		height 59px
-		color transparent
-		border 0
-		background-color transparent
-		background-image url(/img/auth_submit.png)
-		background-repeat no-repeat
-		cursor pointer
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-	
-	a
-		position relative
-		color #D4D4D3
-		margin-right 20px
+  position absolute
+  top 20px
+  left 50%
+  margin-left 150px
+  
+  input[name="username"],
+  input[name="password"]
+    width 180px
+    height 15px
+    padding 5px
+    margin-right 10px
+    margin-bottom 15px
+    background-color #000000
+    border 2px solid #ffffff
+    border-radius 5px
+    font-size 14px
+    color #ffffff
+    
+    &::-webkit-input-placeholder
+      color #ffffff
+      
+    &::-moz-placeholder
+      color #ffffff
+    
+  select
+    width 278px
+    height 28px
+    margin-bottom 12px
+    background-color #232526
+    border 0
+    border-radius 5px
+    box-shadow inset 2px 2px 2px #000
+    
+    color #999DA1
+    
+    .server
+      color #993A2E
+      
+  label
+    margin-right 20px
+    
+  input[name="remember"]
+    vertical-align middle
+    
+  input[type="submit"]
+    display block
+    position absolute
+    top 0px
+    left 410px
+    width 32px
+    height 59px
+    color transparent
+    border 0
+    background-color transparent
+    background-image url(/img/auth_submit.png)
+    background-repeat no-repeat
+    cursor pointer
+    
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+  
+  a
+    position relative
+    color #D4D4D3
+    margin-right 20px
 
 .consul_here
-	position absolute
-	top 110px
-	left 50%
-	margin-left -320px
-	width 600px
-	padding 5px 20px
-	background -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)
-	background -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 25%,rgba(0,0,0,0.5) 75%,rgba(0,0,0,0) 100%)
-	background linear-gradient(to right, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 25%,rgba(0,0,0,0.5) 75%,rgba(0,0,0,0) 100%)
-	
-	>a
-		display block
-		width 300px
-		height 38px
-		padding 14px
-		margin 0 auto
-		background-color #d65f52
-		color #fffbfc
-		font-size 28px
-		text-decoration none
-		text-align center
-		border-radius 10px
-			
-		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
+  position absolute
+  top 110px
+  left 50%
+  margin-left -320px
+  width 600px
+  padding 5px 20px
+  background -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0) 100%)
+  background -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 25%,rgba(0,0,0,0.5) 75%,rgba(0,0,0,0) 100%)
+  background linear-gradient(to right, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 25%,rgba(0,0,0,0.5) 75%,rgba(0,0,0,0) 100%)
+  
+  >a
+    display block
+    width 300px
+    height 38px
+    padding 14px
+    margin 0 auto
+    background-color #d65f52
+    color #fffbfc
+    font-size 28px
+    text-decoration none
+    text-align center
+    border-radius 10px
+      
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
 
 
 .smoke
-	position fixed
-	top 0
-	left 0
-	width 100%
-	height 100%
-	z-index 99
-	background-color rgba(0, 0, 0, .8)
+  position fixed
+  top 0
+  left 0
+  width 100%
+  height 100%
+  z-index 99
+  background-color rgba(0, 0, 0, .8)
 
 .agreement
-	display none
-	position absolute
-	top 0
-	left 0
-	width 100%
-	height 100%
-	background-color #171b1c
-	border-radius 5px
-	
-	iframe
-		margin-top 17px
-		margin-left 17px
-		width 860px
-		height 450px
-		background-color #FFFFFF
-		color #000000
-		
-	.hide-agreement
-		display block
-		width 280px
-		margin-left 300px
-		margin-top 5px
-		padding 13px 12px
-		background-color #41CFEF
-		border 0
-		color #fff
-		font-size 18px
-		font-weight bold
-		text-decoration none
-		text-align center
-		-webkit-filter brightness(0.8)
-		filter brightness(0.8)
-		
-		&:hover
-			-webkit-filter brightness(1)
-			filter brightness(1)
+  display none
+  position absolute
+  top 0
+  left 0
+  width 100%
+  height 100%
+  background-color #171b1c
+  border-radius 5px
+  
+  iframe
+    margin-top 17px
+    margin-left 17px
+    width 860px
+    height 450px
+    background-color #FFFFFF
+    color #000000
+    
+  .hide-agreement
+    display block
+    width 280px
+    margin-left 300px
+    margin-top 5px
+    padding 13px 12px
+    background-color #41CFEF
+    border 0
+    color #fff
+    font-size 18px
+    font-weight bold
+    text-decoration none
+    text-align center
+    -webkit-filter brightness(0.8)
+    filter brightness(0.8)
+    
+    &:hover
+      -webkit-filter brightness(1)
+      filter brightness(1)
 
 .modal
-	width 835px
-	height 510px
-	
-	padding 17px 48px 17px 17px
+  width 835px
+  height 510px
+  
+  padding 17px 48px 17px 17px
 
-	border 1px solid #2D4D5C
-	border-radius 5px
-	
-	background-color #171B1C
-	
-	font-size 16px
-	color #ABAFB2
-	
-	img
-		float left
-		margin-right 43px
-	
-	>.title
-		color #9C3A2D
-		font-weight bold
-		margin 15px 0 40px
-		font-size 20px
-		
-	p
-		color #FE9528
-		font-weight bold
-		padding-bottom 30px
-	
-	>a
-		position relative
-		float left
-		display block
-		width 350px
-		max-width 80%
-		padding 16px 42px
-		margin 15.8px 0
-		color #fff
-		text-decoration none
-		color #fff
-		font-size 18px
-		
-		&.positive
-			background-color #719241
-			&:hover
-				background-color #A9CB64
+  border 1px solid #2D4D5C
+  border-radius 5px
+  
+  background-color #171B1C
+  
+  font-size 16px
+  color #ABAFB2
+  
+  img
+    float left
+    margin-right 43px
+  
+  >.title
+    color #9C3A2D
+    font-weight bold
+    margin 15px 0 40px
+    font-size 20px
+    
+  p
+    color #FE9528
+    font-weight bold
+    padding-bottom 30px
+  
+  >a
+    position relative
+    float left
+    display block
+    width 350px
+    max-width 80%
+    padding 16px 42px
+    margin 15.8px 0
+    color #fff
+    text-decoration none
+    color #fff
+    font-size 18px
+    
+    &.positive
+      background-color #719241
+      &:hover
+        background-color #A9CB64
 
-		&.negative
-			background-color #782E25
-			&:hover
-				background-color #B8493B
-			
-			&.close
-				width 350px
-				height auto
-				background-image none
-				padding 16px 42px
-				-webkit-filter grayscale(0)
-				filter grayscale(0)
+    &.negative
+      background-color #782E25
+      &:hover
+        background-color #B8493B
+      
+      &.close
+        width 350px
+        height auto
+        background-image none
+        padding 16px 42px
+        -webkit-filter grayscale(0)
+        filter grayscale(0)
 
-		&.neutral
-			background-color #3B3B3B
-			&:hover
-				background-color #5C5C5C
-	
-	.g-recaptcha
-		position relative
-		
-		iframe
-			position absolute
-			transform scale(0.86)
-			transform-origin 0 0
+    &.neutral
+      background-color #3B3B3B
+      &:hover
+        background-color #5C5C5C
+  
+  .g-recaptcha
+    position relative
+    
+    iframe
+      position absolute
+      transform scale(0.86)
+      transform-origin 0 0
 
-	label
-		display block
-		
-		.title
-			color #FE9528
-			padding-bottom 5px
-			
-		a
-			font-size 12px
-			color #559099
-			vertical-align middle
-			
-		
-	input[type="text"],
-	input[type="password"]
-		width 280px
-		padding 13px 12px
-		border 2px solid #006382
-		background-color #C0C0C0
-		border-radius 5px
-		box-shadow inset 2px 2px 2px #000
-		margin-bottom 15px
-		
-	input[type="checkbox"]
-		vertical-align middle
-		
-	input[type="submit"]
-		width 280px
-		padding 13px 12px
-		background-color #41CFEF
-		border 0
-		color #fff
-		font-size 18px
-		font-weight bold
-		cursor pointer
-		margin-top 15px
-		-webkit-filter brightness(0.8)
-		filter brightness(0.8)
-		
-		&:hover
-			-webkit-filter brightness(1)
-			filter brightness(1)
-	
-	input[name="code"]
-		margin-bottom 10px
-		
-	select
-		width 278px
-		height 28px
-		margin-bottom 12px
-		background-color #232526
-		border 0
-		border-radius 5px
-		box-shadow inset 2px 2px 2px #000
-		
-		color #999DA1
-		
-		.server
-			color #993A2E
-	
-	input.err
-		border 2px solid red
-	
-	.error_text
-		display inline-block
-		width 130px
-		color red
-		vertical-align middle
-		font-size 14px
+  label
+    display block
+    
+    .title
+      color #FE9528
+      padding-bottom 5px
+      
+    a
+      font-size 12px
+      color #559099
+      vertical-align middle
+      
+    
+  input[type="text"],
+  input[type="password"]
+    width 280px
+    padding 13px 12px
+    border 2px solid #006382
+    background-color #C0C0C0
+    border-radius 5px
+    box-shadow inset 2px 2px 2px #000
+    margin-bottom 15px
+    
+  input[type="checkbox"]
+    vertical-align middle
+    
+  input[type="submit"]
+    width 280px
+    padding 13px 12px
+    background-color #41CFEF
+    border 0
+    color #fff
+    font-size 18px
+    font-weight bold
+    cursor pointer
+    margin-top 15px
+    -webkit-filter brightness(0.8)
+    filter brightness(0.8)
+    
+    &:hover
+      -webkit-filter brightness(1)
+      filter brightness(1)
+  
+  input[name="code"]
+    margin-bottom 10px
+    
+  select
+    width 278px
+    height 28px
+    margin-bottom 12px
+    background-color #232526
+    border 0
+    border-radius 5px
+    box-shadow inset 2px 2px 2px #000
+    
+    color #999DA1
+    
+    .server
+      color #993A2E
+  
+  input.err
+    border 2px solid red
+  
+  .error_text
+    display inline-block
+    width 130px
+    color red
+    vertical-align middle
+    font-size 14px
 
 .modal
-	&.reward
-		display flex
-		flex-direction column
-		justify-content space-between
-		align-items center
-		width 403px
-		height 297px
-		padding 0
-		font-size 24px
-		font-weight bold
-		text-align center
-		border none
-		background-image url(/img/game/quests/reward_back.png)
-		background-repeat no-repeat
-		background-position center center
-		
-		.resources
-			margin auto
+  &.reward
+    display flex
+    flex-direction column
+    justify-content space-between
+    align-items center
+    width 403px
+    height 297px
+    padding 0
+    font-size 24px
+    font-weight bold
+    text-align center
+    border none
+    background-image url(/img/game/quests/reward_back.png)
+    background-repeat no-repeat
+    background-position center center
+    
+    .resources
+      margin auto
 
-		.take
-			display block
-			cursor pointer
-			width 181px
-			height 40px
-			padding-top 10px
-			margin-bottom 20px
-			color #FFFFFF
-			background-image url(/img/game/quests/btn_take.png)
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-		
+    .take
+      display block
+      cursor pointer
+      width 181px
+      height 40px
+      padding-top 10px
+      margin-bottom 20px
+      color #FFFFFF
+      background-image url(/img/game/quests/btn_take.png)
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+    
 .quest
-	font-size 14px
-	padding-bottom 10px
-	color #b6c5d3
-	font-weight normal
-	
-	p
-		font-size 14px
-		padding-bottom 10px
-		color #b6c5d3
-		font-weight normal
-	
-	.title
-		margin-bottom 20px
-		color #169CB9
-	
-	.name
-		position absolute
-		bottom 10px
-		left 17px
-		margin 0
-		width 330px
-		height 35px
-		padding-top 10px
-		font-size 22px
-		color #FFFFFF
-		font-weight bold
-		white-space nowrap
-		text-align center
-		background-color rgba(0, 0, 0, 0.5)
-	
-	.prize
-		color #E99245
-	
-	>a.neutral
-		background-color #1D809F
-		
-		&:hover
-			background-color #228CAD
-	
-	.count
-		color #FE9528
-		
+  font-size 14px
+  padding-bottom 10px
+  color #b6c5d3
+  font-weight normal
+  
+  p
+    font-size 14px
+    padding-bottom 10px
+    color #b6c5d3
+    font-weight normal
+  
+  .title
+    margin-bottom 20px
+    color #169CB9
+  
+  .name
+    position absolute
+    bottom 10px
+    left 17px
+    margin 0
+    width 330px
+    height 35px
+    padding-top 10px
+    font-size 22px
+    color #FFFFFF
+    font-weight bold
+    white-space nowrap
+    text-align center
+    background-color rgba(0, 0, 0, 0.5)
+  
+  .prize
+    color #E99245
+  
+  >a.neutral
+    background-color #1D809F
+    
+    &:hover
+      background-color #228CAD
+  
+  .count
+    color #FE9528
+    

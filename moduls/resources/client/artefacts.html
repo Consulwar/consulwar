@@ -1,94 +1,94 @@
 <template name="item_artefact">
-	<div class="header">
-		<div class="level">
-			{{#if item.amount}}
-				<span>{{formatNumber item.amount}}</span>
-				{{declension item.amount 'единиц' 'а' 'ы' ''}}  
-			{{else}}
-				Отсутствуют
-			{{/if}}
-		</div>
-		<div class="name">
-			{{item.name}}
-		</div>
+  <div class="header">
+    <div class="level">
+      {{#if item.amount}}
+        <span>{{formatNumber item.amount}}</span>
+        {{declension item.amount 'единиц' 'а' 'ы' ''}}  
+      {{else}}
+        Отсутствуют
+      {{/if}}
+    </div>
+    <div class="name">
+      {{item.name}}
+    </div>
 
-		<button 
-			class="
-				toggle_description 
-				{{#if not options.hideDescription}}active{{/if}}
-			"
-		></button>
-		<a href="{{backToGroupLink}}" class="close"></a>
-	</div>
+    <button 
+      class="
+        toggle_description 
+        {{#if not options.hideDescription}}active{{/if}}
+      "
+    ></button>
+    <a href="{{backToGroupLink}}" class="close"></a>
+  </div>
 
-	<div 
-		class="description" 
-		style="{{#if options.hideDescription}}display: none;{{/if}}">
-		<div class="scrollbar-inner">{{item.description}}</div>
-	</div>
+  <div 
+    class="description" 
+    style="{{#if options.hideDescription}}display: none;{{/if}}">
+    <div class="scrollbar-inner">{{item.description}}</div>
+  </div>
 
-	<div class="item_info">
-		{{#if nearestPlanets}}
-			<h2>Ближайшие планеты:</h2>
-			<div class="planets">
-				{{#each nearestPlanets}}
-					{{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
-				{{/each}}
-			</div>
-			{{#if topPlanets}}
-				<h2>Лучшие планеты:</h2>
-				<div class="planets">
-					{{#each topPlanets}}
-						{{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
-					{{/each}}
-				</div>
-			{{/if}}
-		{{else}}
-			<p class="warning">
-				{{#if eq item.engName 'ruby_plasmoid'}}
-					<h2>Этот артефакт может быть только синтезирован.</h2>
-				{{else}}
-					<h2>Вы ещё не открыли планеты с этим артефактом. Разведайте галактику.</h2>
-				{{/if}}
-			</p>
-		{{/if}}
+  <div class="item_info">
+    {{#if nearestPlanets}}
+      <h2>Ближайшие планеты:</h2>
+      <div class="planets">
+        {{#each nearestPlanets}}
+          {{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
+        {{/each}}
+      </div>
+      {{#if topPlanets}}
+        <h2>Лучшие планеты:</h2>
+        <div class="planets">
+          {{#each topPlanets}}
+            {{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
+          {{/each}}
+        </div>
+      {{/if}}
+    {{else}}
+      <p class="warning">
+        {{#if eq item.engName 'ruby_plasmoid'}}
+          <h2>Этот артефакт может быть только синтезирован.</h2>
+        {{else}}
+          <h2>Вы ещё не открыли планеты с этим артефактом. Разведайте галактику.</h2>
+        {{/if}}
+      </p>
+    {{/if}}
 
-		<div class="bottom">
-			<div class="actions">
-				<div class="action">
-					{{#if nearestPlanets}}
-						<a class="additional_action findall" href="{{pathFor 'cosmos' hash=item.engName}}">Все планеты</a>
-					{{/if}}
-				</div>
-			</div>
-		</div> 
-	</div>
-	
-	<div class="additional_info artefactsStatistics">
-		{{#if userPlanets}}
-			<div>
-				<span>{{formatNumber userPlanets.planets}}</span>
-				{{declension userPlanets.planets 'планет' 'a' 'ы' ''}}
-			</div>
-			<div>
-				<span>
-					{{#if not (eq userPlanets.chance.min userPlanets.chance.max)}}
-						{{formatNumber userPlanets.chance.min}} – {{formatNumber userPlanets.chance.max}}%
-					{{else}}
-						{{formatNumber userPlanets.chance.min}}%
-					{{/if}}
-				</span>
-			</div>
-			<div>
-				<span>{{formatNumber userPlanets.chance.total}}</span> в день
-			</div>
-			<div>
-				<span>{{formatSeconds (getTimeNextDrop userPlanets.collection)}}</span>
-			</div>
-		{{else}}
-			<div>
-				Добыча не&nbsp;ведется
-			</div>
-		{{/if}}
-	</div>
+    <div class="bottom">
+      <div class="actions">
+        <div class="action">
+          {{#if nearestPlanets}}
+            <a class="additional_action findall" href="{{pathFor 'cosmos' hash=item.engName}}">Все планеты</a>
+          {{/if}}
+        </div>
+      </div>
+    </div> 
+  </div>
+  
+  <div class="additional_info artefactsStatistics">
+    {{#if userPlanets}}
+      <div>
+        <span>{{formatNumber userPlanets.planets}}</span>
+        {{declension userPlanets.planets 'планет' 'a' 'ы' ''}}
+      </div>
+      <div>
+        <span>
+          {{#if not (eq userPlanets.chance.min userPlanets.chance.max)}}
+            {{formatNumber userPlanets.chance.min}} – {{formatNumber userPlanets.chance.max}}%
+          {{else}}
+            {{formatNumber userPlanets.chance.min}}%
+          {{/if}}
+        </span>
+      </div>
+      <div>
+        <span>{{formatNumber userPlanets.chance.total}}</span> в день
+      </div>
+      <div>
+        <span>{{formatSeconds (getTimeNextDrop userPlanets.collection)}}</span>
+      </div>
+    {{else}}
+      <div>
+        Добыча не&nbsp;ведется
+      </div>
+    {{/if}}
+  </div>
 </template>

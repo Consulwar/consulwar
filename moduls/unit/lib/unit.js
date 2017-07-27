@@ -4,309 +4,309 @@ initUnitLib = function() {
 initBattleLib();
 
 game.Unit = function(options) {
-	game.Unit.superclass.constructor.apply(this, arguments);
+  game.Unit.superclass.constructor.apply(this, arguments);
 
-	if (Game.Unit.items.army[this.side][this.engName]) {
-		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
-	}
+  if (Game.Unit.items.army[this.side][this.engName]) {
+    throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
+  }
 
-	Game.Unit.items.army[this.side][this.engName] = this;
+  Game.Unit.items.army[this.side][this.engName] = this;
 
-	this.star = function() {
-		if (!options.fleetup || !Game.Research.items.fleetups[options.fleetup]) {
-			return 0;
-		}
+  this.star = function() {
+    if (!options.fleetup || !Game.Research.items.fleetups[options.fleetup]) {
+      return 0;
+    }
 
-		var level = Game.Research.items.fleetups[options.fleetup].currentLevel();
-		if (level < 10) {
-			return 0;
-		} else if (level < 50) {
-			return 1;
-		} else if (level < 100) {
-			return 2;
-		} else {
-			return 3;
-		}
-	};
+    var level = Game.Research.items.fleetups[options.fleetup].currentLevel();
+    if (level < 10) {
+      return 0;
+    } else if (level < 50) {
+      return 1;
+    } else if (level < 100) {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
 
-	this.url = function(options) {
-		options = options || {
-			group: this.group,
-			item: this.engName
-		};
-		
-		return Router.routes[this.type].path(options);
-	};
+  this.url = function(options) {
+    options = options || {
+      group: this.group,
+      item: this.engName
+    };
+    
+    return Router.routes[this.type].path(options);
+  };
 
-	this.icon = function() {
-		return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
-	};
+  this.icon = function() {
+    return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
+  };
 
-	this.image = function() {
-		return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
-	};
+  this.image = function() {
+    return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
+  };
 
-	this.totalCount = function() {
-		var armies = Game.Unit.Collection.find({
-			user_id: Meteor.userId()
-		}).fetch();
+  this.totalCount = function() {
+    var armies = Game.Unit.Collection.find({
+      user_id: Meteor.userId()
+    }).fetch();
 
-		var result = 0;
-		for (var i = 0; i < armies.length; i++) {
-			if (armies[i].units
-			 && armies[i].units.army
-			 && armies[i].units.army[this.group]
-			 && armies[i].units.army[this.group][this.engName]
-			) {
-				result += parseInt( armies[i].units.army[this.group][this.engName] );
-			}
-		}
-		return result;
-	};
+    var result = 0;
+    for (var i = 0; i < armies.length; i++) {
+      if (armies[i].units
+       && armies[i].units.army
+       && armies[i].units.army[this.group]
+       && armies[i].units.army[this.group][this.engName]
+      ) {
+        result += parseInt( armies[i].units.army[this.group][this.engName] );
+      }
+    }
+    return result;
+  };
 
-	if (options.power !== undefined) {
-		this.power = options.power;
-	}
+  if (options.power !== undefined) {
+    this.power = options.power;
+  }
 
-	this.type = 'unit';
-	this.side = 'army';
-	this.battleEffects = options.battleEffects;
-	this.maxCount = options.maxCount;
+  this.type = 'unit';
+  this.side = 'army';
+  this.battleEffects = options.battleEffects;
+  this.maxCount = options.maxCount;
 };
 game.extend(game.Unit, game.Item);
 
 game.ReptileUnit = function(options) {
-	game.ReptileUnit.superclass.constructor.apply(this, arguments);
+  game.ReptileUnit.superclass.constructor.apply(this, arguments);
 
-	if (Game.Unit.items.reptiles[this.group][this.engName]) {
-		throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит reptiles ' + this.group + ' ' + this.engName);
-	}
+  if (Game.Unit.items.reptiles[this.group][this.engName]) {
+    throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит reptiles ' + this.group + ' ' + this.engName);
+  }
 
-	Game.Unit.items.reptiles[this.group][this.engName] = this;
+  Game.Unit.items.reptiles[this.group][this.engName] = this;
 
-	this.url = function(options) {
-		options = options || {
-			group: this.group,
-			item: this.engName
-		};
-		
-		return Router.routes[this.type].path(options);
-	};
+  this.url = function(options) {
+    options = options || {
+      group: this.group,
+      item: this.engName
+    };
+    
+    return Router.routes[this.type].path(options);
+  };
 
-	this.icon = function() {
-		return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
-	};
+  this.icon = function() {
+    return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
+  };
 
-	this.image = function() {
-		return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
-	};
+  this.image = function() {
+    return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
+  };
 
-	this.canBuild = function() {
-		return false;
-	};
+  this.canBuild = function() {
+    return false;
+  };
 
-	this.currentLevel = function() {
-		return 0;
-	};
+  this.currentLevel = function() {
+    return 0;
+  };
 
-	this.isEnoughResources = function() {
-		return true;
-	};
+  this.isEnoughResources = function() {
+    return true;
+  };
 
-	if (options.power) {
-		this.power = options.power;
-	}
+  if (options.power) {
+    this.power = options.power;
+  }
 
-	this.type = 'reptileUnit';
-	this.side = 'reptiles';
-	this.battleEffects = options.battleEffects;
+  this.type = 'reptileUnit';
+  this.side = 'reptiles';
+  this.battleEffects = options.battleEffects;
 };
 game.extend(game.ReptileUnit, game.Item);
 
 game.ReptileHero = function(options){
-	game.ReptileHero.superclass.constructor.apply(this, arguments);
+  game.ReptileHero.superclass.constructor.apply(this, arguments);
 
-	this.type = 'reptileHero';
+  this.type = 'reptileHero';
 };
 game.extend(game.ReptileHero, game.ReptileUnit);
 
 game.BattleEffect = function(options) {
-	Game.Unit.battleEffects[options.key] = options.func;
+  Game.Unit.battleEffects[options.key] = options.func;
 };
 
 /*game.MutualUnit = function(options){
-	game.MutualUnit.superclass.constructor.apply(this, arguments);
+  game.MutualUnit.superclass.constructor.apply(this, arguments);
 
-	Game.Unit.items[
-		this.menu == 'army' ? 'army' : 'reptiles'
-	][
-		this.side == 'heroes' 
-			? 'ground' 
-			: this.side == 'rheroes'
-				? 'rground'
-				: this.side
-	][this.engName] = this;
+  Game.Unit.items[
+    this.menu == 'army' ? 'army' : 'reptiles'
+  ][
+    this.side == 'heroes' 
+      ? 'ground' 
+      : this.side == 'rheroes'
+        ? 'rground'
+        : this.side
+  ][this.engName] = this;
 
-	//this.type = 'mutualUnit';
+  //this.type = 'mutualUnit';
 };
 game.extend(game.MutualUnit, game.MutualItem)*/
 /*
 game.Hero = function(options){
-	game.Hero.superclass.constructor.apply(this, arguments);
+  game.Hero.superclass.constructor.apply(this, arguments);
 
-	Game.Unit.items['army'][
-		this.side == 'heroes' 
-			? 'ground' 
-			: this.side == 'rheroes'
-				? 'rground'
-				: this.side
-	][this.engName] = this;
+  Game.Unit.items['army'][
+    this.side == 'heroes' 
+      ? 'ground' 
+      : this.side == 'rheroes'
+        ? 'rground'
+        : this.side
+  ][this.engName] = this;
 
-	this.group = 'hero';
-	//this.type = 'hero';
+  this.group = 'hero';
+  //this.type = 'hero';
 };
 game.extend(game.Hero, game.MutualItem)
 */
 
 Game.Unit = {
 
-	location: {
-		HOME: 1,
-		PLANET: 2,
-		SHIP: 3
-	},
+  location: {
+    HOME: 1,
+    PLANET: 2,
+    SHIP: 3
+  },
 
-	Collection: new Meteor.Collection('units'),
+  Collection: new Meteor.Collection('units'),
 
-	getArmy: function (id) {
-		return Game.Unit.Collection.findOne({
-			user_id: Meteor.userId(),
-			_id: id
-		});
-	},
+  getArmy: function (id) {
+    return Game.Unit.Collection.findOne({
+      user_id: Meteor.userId(),
+      _id: id
+    });
+  },
 
-	getHomeArmy: function() {
-		return Game.Unit.Collection.findOne({
-			user_id: Meteor.userId(),
-			location: Game.Unit.location.HOME
-		});
-	},
+  getHomeArmy: function() {
+    return Game.Unit.Collection.findOne({
+      user_id: Meteor.userId(),
+      location: Game.Unit.location.HOME
+    });
+  },
 
-	get: function(group, name) {
-		var record = Game.Unit.getHomeArmy();
+  get: function(group, name) {
+    var record = Game.Unit.getHomeArmy();
 
-		if (record
-		 && record.units
-		 && record.units.army
-		 && record.units.army[group]
-		 && record.units.army[group][name]
-		) {
-			return record.units.army[group][name];
-		} else {
-			return 0;
-		}
-	},
+    if (record
+     && record.units
+     && record.units.army
+     && record.units.army[group]
+     && record.units.army[group][name]
+    ) {
+      return record.units.army[group][name];
+    } else {
+      return 0;
+    }
+  },
 
-	has: function(group, name, count) {
-		count = count || 1;
-		return Game.Unit.get(group, name) >= count;
-	},
+  has: function(group, name, count) {
+    count = count || 1;
+    return Game.Unit.get(group, name) >= count;
+  },
 
-	calculateUnitsPower: function(units) {
-		var power = 0;
-		var totalDamage = 0;
-		var totalLife = 0;
+  calculateUnitsPower: function(units) {
+    var power = 0;
+    var totalDamage = 0;
+    var totalLife = 0;
 
-		for (let side in units) {
-			for (let group in units[side]) {
-				for (let name in units[side][group]) {
-					let unit = Game.Unit.items[side][group][name];
-					let count = units[side][group][name];
-					if (_.isNumber(unit.power)) {
-						power += unit.power * count;
-					} else {
-						totalDamage += unit.characteristics.damage.max * count;
-						totalLife += unit.characteristics.life * count;
-					}
-				}
-			}
-		}
+    for (let side in units) {
+      for (let group in units[side]) {
+        for (let name in units[side][group]) {
+          let unit = Game.Unit.items[side][group][name];
+          let count = units[side][group][name];
+          if (_.isNumber(unit.power)) {
+            power += unit.power * count;
+          } else {
+            totalDamage += unit.characteristics.damage.max * count;
+            totalLife += unit.characteristics.life * count;
+          }
+        }
+      }
+    }
 
-		power += Math.floor((totalDamage / 1000) + (totalLife / 2000));
+    power += Math.floor((totalDamage / 1000) + (totalLife / 2000));
 
-		return power;
-	},
+    return power;
+  },
 
-	calcUnitsHealth: function(units) {
-		if (!units) {
-			return 0;
-		}
+  calcUnitsHealth: function(units) {
+    if (!units) {
+      return 0;
+    }
 
-		var power = 0;
-		for (var side in units) {
-			for (var group in units[side]) {
-				for (var name in units[side][group]) {
-					var life = Game.Unit.items[side][group][name].characteristics.life;
-					var count = units[side][group][name];
-					if (life && count) {
-						power += (life * count);
-					}
-				}
-			}
-		}
-		return power;
-	},
+    var power = 0;
+    for (var side in units) {
+      for (var group in units[side]) {
+        for (var name in units[side][group]) {
+          var life = Game.Unit.items[side][group][name].characteristics.life;
+          var count = units[side][group][name];
+          if (life && count) {
+            power += (life * count);
+          }
+        }
+      }
+    }
+    return power;
+  },
 
-	items: {
-		army: {
-			fleet: {},
-			ground: {},
-			defense: {},
-			instant: {}
-		},
-		reptiles: {
-			fleet: {},
-			ground: {},
-			heroes: {}
-		}
-	},
+  items: {
+    army: {
+      fleet: {},
+      ground: {},
+      defense: {},
+      instant: {}
+    },
+    reptiles: {
+      fleet: {},
+      ground: {},
+      heroes: {}
+    }
+  },
 
-	battleEffects: {}
+  battleEffects: {}
 };
 
 initUnitsContent();
 
 /*
 for (var category in Game.Unit.items.army) {
-	for (var name in Game.Unit.items.army[category]) {
-		Game.Unit.items.army[category][name].targetsNames = [];
+  for (var name in Game.Unit.items.army[category]) {
+    Game.Unit.items.army[category][name].targetsNames = [];
 
-		if (Game.Unit.items.army[category][name].targets == undefined) {
-			continue;
-		}
+    if (Game.Unit.items.army[category][name].targets == undefined) {
+      continue;
+    }
 
-		for (var i = 0; i < Game.Unit.items.army[category][name].targets.length; i++) {
-			Game.Unit.items.army[category][name].targetsNames.push(
-				Game.Unit.items.reptiles[category][Game.Unit.items.army[category][name].targets[i]].name
-			)
-		}
-	}
+    for (var i = 0; i < Game.Unit.items.army[category][name].targets.length; i++) {
+      Game.Unit.items.army[category][name].targetsNames.push(
+        Game.Unit.items.reptiles[category][Game.Unit.items.army[category][name].targets[i]].name
+      )
+    }
+  }
 }
 
 for (var category in Game.Unit.items.reptiles) {
-	for (var name in Game.Unit.items.reptiles[category]) {
-		Game.Unit.items.reptiles[category][name].targetsNames = [];
+  for (var name in Game.Unit.items.reptiles[category]) {
+    Game.Unit.items.reptiles[category][name].targetsNames = [];
 
-		if (Game.Unit.items.reptiles[category][name].targets == undefined) {
-			continue;
-		}
+    if (Game.Unit.items.reptiles[category][name].targets == undefined) {
+      continue;
+    }
 
-		for (var i = 0; i < Game.Unit.items.reptiles[category][name].targets.length; i++) {
-			Game.Unit.items.reptiles[category][name].targetsNames.push(
-				Game.Unit.items.army[category.substr(1)][Game.Unit.items.reptiles[category][name].targets[i]].name
-			)
-		}
-	}
+    for (var i = 0; i < Game.Unit.items.reptiles[category][name].targets.length; i++) {
+      Game.Unit.items.reptiles[category][name].targetsNames.push(
+        Game.Unit.items.army[category.substr(1)][Game.Unit.items.reptiles[category][name].targets[i]].name
+      )
+    }
+  }
 }
 */
 

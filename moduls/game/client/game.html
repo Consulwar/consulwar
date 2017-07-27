@@ -1,214 +1,214 @@
 <template name="newgame">
-	{{> connection}}
+  {{> connection}}
 
-	<div class="wrap {{#if options.mobileVersion}}mobileVersion{{/if}}"> 
-		<div class="page">
-			<div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}} {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
-				<div class="overlay_wrap">
-					{{#if isNewLayout}}
-						{{> overlay_menu}}
-					{{else}}
-						<div class="overlay {{#if options.hideNet}}hideNet{{/if}}"></div>
-					{{/if}}
-				</div>
-				
-				<header>
-					{{> current_resources}}
+  <div class="wrap {{#if options.mobileVersion}}mobileVersion{{/if}}"> 
+    <div class="page">
+      <div class="newgame scrollbar-inner {{#if isNewLayout}}new{{/if}} {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
+        <div class="overlay_wrap">
+          {{#if isNewLayout}}
+            {{> overlay_menu}}
+          {{else}}
+            <div class="overlay {{#if options.hideNet}}hideNet{{/if}}"></div>
+          {{/if}}
+        </div>
+        
+        <header>
+          {{> current_resources}}
 
-					{{> main_menu}}
+          {{> main_menu}}
 
-					{{> player}}
+          {{> player}}
 
-					<div class="menu_soc">
-						<a data-tooltip="ConsulTimes" target="_blank" data-tooltip-direction="s" href="http://times.consulwar.ru/">
-							<img alt="Consul Times" src="/img/game/consultimes.png"/>
-						</a>
-						<a data-tooltip="Группа ВК" target="_blank" data-tooltip-direction="s" href="http://vk.com/consulwar">
-							<img alt="Группа ВК" src="/img/game/vk.png"/>
-						</a>
-						<a data-tooltip="ConsulWiki" target="_blank" data-tooltip-direction="s" href="http://ru.consulwar.wikia.com/">
-							<img alt="ConsulWiki" src="/img/game/wiki.png"/>
-						</a>
-					</div>
-				</header>
+          <div class="menu_soc">
+            <a data-tooltip="ConsulTimes" target="_blank" data-tooltip-direction="s" href="http://times.consulwar.ru/">
+              <img alt="Consul Times" src="/img/game/consultimes.png"/>
+            </a>
+            <a data-tooltip="Группа ВК" target="_blank" data-tooltip-direction="s" href="http://vk.com/consulwar">
+              <img alt="Группа ВК" src="/img/game/vk.png"/>
+            </a>
+            <a data-tooltip="ConsulWiki" target="_blank" data-tooltip-direction="s" href="http://ru.consulwar.wikia.com/">
+              <img alt="ConsulWiki" src="/img/game/wiki.png"/>
+            </a>
+          </div>
+        </header>
 
-				<div class="fleet_info {{#if not options.hideFleetInfo}}active{{/if}} {{#if fleetInfo.isWaitingAttack}}attack{{/if}}">
-					{{#if fleetInfo}}
-						{{#with fleetInfo}}
-							{{#if reinforcements}}
-								<a class="reinforcements" href="{{pathFor 'cosmos' hash=reinforcementsId}}">
-									Подкрепление 
-									{{#if gt reinforcements 1}}({{reinforcements}}) {{/if}}
-									{{formatSeconds (fleetTime reinforcementsTime)}}
-								</a>
-							{{/if}}
-							{{#if consul}}
-								<a class="fleets" href="{{pathFor 'cosmos' hash=consulId}}">
-									Флот Консула 
-									{{#if gt consul 1}}({{consul}}) {{/if}}
-									{{formatSeconds (fleetTime consulTime)}}
-								</a>
-							{{/if}}
-							{{#if reptile}}
-								<a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
-									Флот Рептилий 
-									{{#if gt reptile 1}}({{reptile}}) {{/if}}
-									{{formatSeconds (fleetTime reptileTime)}}
-								</a>
-							{{/if}}
-							{{#if isWaitingAttack}}
-								<a class="attack reptiles" href="{{pathFor 'cosmos' hash=attackId}}">
-									{{formatSeconds (fleetTime attackTime)}}
-								</a>
-							{{/if}}
-						{{/with}}
-					{{else}}
-						<a>Нет передвижений флота</a>
-					{{/if}}
-					<button class="toggle"></button>
-				</div>
+        <div class="fleet_info {{#if not options.hideFleetInfo}}active{{/if}} {{#if fleetInfo.isWaitingAttack}}attack{{/if}}">
+          {{#if fleetInfo}}
+            {{#with fleetInfo}}
+              {{#if reinforcements}}
+                <a class="reinforcements" href="{{pathFor 'cosmos' hash=reinforcementsId}}">
+                  Подкрепление 
+                  {{#if gt reinforcements 1}}({{reinforcements}}) {{/if}}
+                  {{formatSeconds (fleetTime reinforcementsTime)}}
+                </a>
+              {{/if}}
+              {{#if consul}}
+                <a class="fleets" href="{{pathFor 'cosmos' hash=consulId}}">
+                  Флот Консула 
+                  {{#if gt consul 1}}({{consul}}) {{/if}}
+                  {{formatSeconds (fleetTime consulTime)}}
+                </a>
+              {{/if}}
+              {{#if reptile}}
+                <a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
+                  Флот Рептилий 
+                  {{#if gt reptile 1}}({{reptile}}) {{/if}}
+                  {{formatSeconds (fleetTime reptileTime)}}
+                </a>
+              {{/if}}
+              {{#if isWaitingAttack}}
+                <a class="attack reptiles" href="{{pathFor 'cosmos' hash=attackId}}">
+                  {{formatSeconds (fleetTime attackTime)}}
+                </a>
+              {{/if}}
+            {{/with}}
+          {{else}}
+            <a>Нет передвижений флота</a>
+          {{/if}}
+          <button class="toggle"></button>
+        </div>
 
-				<div class="
-					fleet_info_full
-					{{#if options.compactFleetInfo}}compact{{/if}}
-					{{#if options.hideFleetInfo}}hide{{/if}}
-					{{#if options.showFleetInfoFull}}active{{/if}}
-					"
-				>
-					<button class="toggle"></button>
-					<div class="fleets scrollbar-inner">
-						{{> cosmosFleetsInfo}}
-					</div>
-				</div>
+        <div class="
+          fleet_info_full
+          {{#if options.compactFleetInfo}}compact{{/if}}
+          {{#if options.hideFleetInfo}}hide{{/if}}
+          {{#if options.showFleetInfoFull}}active{{/if}}
+          "
+        >
+          <button class="toggle"></button>
+          <div class="fleets scrollbar-inner">
+            {{> cosmosFleetsInfo}}
+          </div>
+        </div>
 
-				<div class="user">
-					<span class="servertime" data-tooltip="Время сервера" data-tooltip-direction="s">
-						{{formatHours serverTime -180}}
-					</span>
-					<a href="javascript: Game.Chat.showIconsWindow();">
-						<img src="/img/game/chat/icons/{{userIcon}}.png"/>
-					</a>
-					<div class="mini_menu">
-						<a 
-							class="
-								statistics
-								{{#if eq currentRouteName 'statistics'}}
-									active
-								{{/if}}
-							" 
-							href="{{pathFor 'statistics' group="general"}}">
-						</a>
-						<a 
-							class="
-								settings
-								{{#if eq currentRouteName 'settings'}}
-									active
-								{{/if}}
-							"
-							href="{{pathFor 'settings'}}">
-						</a>
-					</div>
-					<div class="menu">
-						<a href="{{pathFor 'mail' page=1}}">Почта</a>
-						<a href="{{pathFor 'statistics' group='general'}}">Статистика</a>
-						<a href="{{pathFor 'settings'}}">Настройки</a>
+        <div class="user">
+          <span class="servertime" data-tooltip="Время сервера" data-tooltip-direction="s">
+            {{formatHours serverTime -180}}
+          </span>
+          <a href="javascript: Game.Chat.showIconsWindow();">
+            <img src="/img/game/chat/icons/{{userIcon}}.png"/>
+          </a>
+          <div class="mini_menu">
+            <a 
+              class="
+                statistics
+                {{#if eq currentRouteName 'statistics'}}
+                  active
+                {{/if}}
+              " 
+              href="{{pathFor 'statistics' group="general"}}">
+            </a>
+            <a 
+              class="
+                settings
+                {{#if eq currentRouteName 'settings'}}
+                  active
+                {{/if}}
+              "
+              href="{{pathFor 'settings'}}">
+            </a>
+          </div>
+          <div class="menu">
+            <a href="{{pathFor 'mail' page=1}}">Почта</a>
+            <a href="{{pathFor 'statistics' group='general'}}">Статистика</a>
+            <a href="{{pathFor 'settings'}}">Настройки</a>
 
-						<a class="support" href="javascript: ChdFeedbackWidget.show();">Вопрос</a>
-						<a class="support" href="javascript: ChdFeedbackWidget.show();">Ошибка</a>
-						<a class="support" href="javascript: ChdFeedbackWidget.show();">Идея</a>
-						<a class="support" target="_blank" href="http://consulwar.helprace.com/">Тех. поддержка</a>
+            <a class="support" href="javascript: ChdFeedbackWidget.show();">Вопрос</a>
+            <a class="support" href="javascript: ChdFeedbackWidget.show();">Ошибка</a>
+            <a class="support" href="javascript: ChdFeedbackWidget.show();">Идея</a>
+            <a class="support" target="_blank" href="http://consulwar.helprace.com/">Тех. поддержка</a>
 
-						<a href="{{pathFor 'logout'}}">Выход</a>
-					</div>
-				</div>
-		<!--
-				<div class="quest">
-				</div>
-		-->
+            <a href="{{pathFor 'logout'}}">Выход</a>
+          </div>
+        </div>
+    <!--
+        <div class="quest">
+        </div>
+    -->
 
-				<div class="content {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
-					{{>yield region="content"}}
+        <div class="content {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
+          {{>yield region="content"}}
 
-					{{#unless isNewLayout}}
-						{{> overlay_menu}}
-					{{/unless}}
-					
-					{{> yield "cosmosAttackMenu"}}
+          {{#unless isNewLayout}}
+            {{> overlay_menu}}
+          {{/unless}}
+          
+          {{> yield "cosmosAttackMenu"}}
 
-					<div class="permanent_chat {{#if options.wideChat}}wide{{/if}}">
-						{{>yield region="permanent_chat"}}
-					</div>
-				</div>
-				{{> additional_area}}
+          <div class="permanent_chat {{#if options.wideChat}}wide{{/if}}">
+            {{>yield region="permanent_chat"}}
+          </div>
+        </div>
+        {{> additional_area}}
 
-				{{>yield region="permanent_content"}}
+        {{>yield region="permanent_content"}}
 
-				{{#if (or Game.Quest.hasNewDaily Game.Mail.hasUnread)}}
-					<a href="{{pathFor 'mail' page=1}}" class="newMessage">
-						Новое сообщение
-					</a>
-				{{/if}}
+        {{#if (or Game.Quest.hasNewDaily Game.Mail.hasUnread)}}
+          <a href="{{pathFor 'mail' page=1}}" class="newMessage">
+            Новое сообщение
+          </a>
+        {{/if}}
 
 
 
-				{{> items_menu}}
-			</div>
-		</div>
-	</div>
+        {{> items_menu}}
+      </div>
+    </div>
+  </div>
 
-	{{> tooltips }}
-	{{> notifications}}
+  {{> tooltips }}
+  {{> notifications}}
 </template>
 
 <template name="item">
-	{{#if active_item}}
-	<div class="information {{active_item.type}}">
-		<img src="/img/game/{{active_menu}}/{{active_side}}/{{active_item.engName}}.jpg">
-		<div class="description">
-			<p>{{active_item.description}}</p>
-		</div>
-		
-		{{> Template.dynamic template=additionalArea}}
-	</div>
-	{{/if}}
+  {{#if active_item}}
+  <div class="information {{active_item.type}}">
+    <img src="/img/game/{{active_menu}}/{{active_side}}/{{active_item.engName}}.jpg">
+    <div class="description">
+      <p>{{active_item.description}}</p>
+    </div>
+    
+    {{> Template.dynamic template=additionalArea}}
+  </div>
+  {{/if}}
 </template>
 
 <template name="acceptWindow">
-	<div class="smoke" style="z-index: 199;"></div>
-	<div class="acceptWindow" style="z-index: 200;">
-		<div class="close"></div>
-		<span class="title">Подтвердите действие</span>
-		<span class="message">{{message}}</span>
-		<div class="button accept">Да</div>
-		<div class="button cancel">Нет</div>
-	</div>
+  <div class="smoke" style="z-index: 199;"></div>
+  <div class="acceptWindow" style="z-index: 200;">
+    <div class="close"></div>
+    <span class="title">Подтвердите действие</span>
+    <span class="message">{{message}}</span>
+    <div class="button accept">Да</div>
+    <div class="button cancel">Нет</div>
+  </div>
 </template>
 
 <template name="inputWindow">
-	<div class="smoke" style="z-index: 199;"></div>
-	<div class="inputWindow" style="z-index: 200;">
-		<div class="close"></div>
-		<span class="title">{{message}}</span>
-		<input type="text" value="{{value}}"/>
-		<div class="button accept">Ок</div>
-		<div class="button cancel">Отмена</div>
-	</div>
+  <div class="smoke" style="z-index: 199;"></div>
+  <div class="inputWindow" style="z-index: 200;">
+    <div class="close"></div>
+    <span class="title">{{message}}</span>
+    <input type="text" value="{{value}}"/>
+    <div class="button accept">Ок</div>
+    <div class="button cancel">Отмена</div>
+  </div>
 </template>
 
 <template name="connection">
-	{{#unless connection.connected}}
-		<div class="smoke"></div>
-		<div class="disconnected">
-			Связь прервана<br/>
-			{{#if eq connection.status 'connecting'}}Попытка восстановления…<br/>{{/if}}
-			{{#unless eq connection.status 'connecting'}}
-				{{#unless eq connection.status 'waiting'}}
-					{{connection.status}}<br/>
-				{{/unless}}
-			{{/unless}}
-			{{#if eq connection.status 'waiting'}}
-				Восстановление связи через <span>{{formatSeconds reconnectTime}}</span>
-			{{/if}}
-		</div>
-	{{/unless}}
+  {{#unless connection.connected}}
+    <div class="smoke"></div>
+    <div class="disconnected">
+      Связь прервана<br/>
+      {{#if eq connection.status 'connecting'}}Попытка восстановления…<br/>{{/if}}
+      {{#unless eq connection.status 'connecting'}}
+        {{#unless eq connection.status 'waiting'}}
+          {{connection.status}}<br/>
+        {{/unless}}
+      {{/unless}}
+      {{#if eq connection.status 'waiting'}}
+        Восстановление связи через <span>{{formatSeconds reconnectTime}}</span>
+      {{/if}}
+    </div>
+  {{/unless}}
 </template>

@@ -1,35 +1,35 @@
 <template name="containers">
-	<div class="modal containers">
-		<div class="container">
-			{{#if unit}}
-				<img 
-					alt="{{unit.name}}" 
-					src="
-					{{#unless unit.notImplemented}}
-						/img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
-					{{else}}
-						/img/game/notimplemented.jpg
-					{{/unless}}
-					"
-				>
-				<span class="title">{{unit.name}}</span>
-			{{/if}}
-		</div>
-		<div class="top"></div>
-		<div class="bottom"></div>
-		{{#if lt amount 1}}
-			<div class="resources">
-				<div class="credits">{{credits}}</div>
-			</div>
-		{{else}}
-			<div class="amount">
-				Бесплатных контейнеров: {{amount}}
-			</div>
-		{{/if}}
-		<div class="open">Открыть</div>
-		<div class="take">Забрать</div>
-		{{#if isLoading}}
-			{{> loading}}
-		{{/if}}
-	</div>
+  <div class="modal containers">
+    <div class="container">
+      {{#if unit}}
+        <img 
+          alt="{{unit.name}}" 
+          src="
+          {{#unless unit.notImplemented}}
+            /img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
+          {{else}}
+            /img/game/notimplemented.jpg
+          {{/unless}}
+          "
+        >
+        <span class="title">{{unit.name}}</span>
+      {{/if}}
+    </div>
+    <div class="top"></div>
+    <div class="bottom"></div>
+    {{#if lt amount 1}}
+      <div class="resources">
+        <div class="credits">{{credits}}</div>
+      </div>
+    {{else}}
+      <div class="amount">
+        Бесплатных контейнеров: {{amount}}
+      </div>
+    {{/if}}
+    <div class="open">Открыть</div>
+    <div class="take">Забрать</div>
+    {{#if isLoading}}
+      {{> loading}}
+    {{/if}}
+  </div>
 </template>

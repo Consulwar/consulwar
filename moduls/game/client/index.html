@@ -1,80 +1,80 @@
 <template name="index">
-	<div class="index">
-		<header>
-			<div class="stats">
-				<span class="registred">Зарегистрировано: <span class="count">{{totalUsersCount}}</span></span>
-				<span class="online">Онлайн: <span class="count">{{onlineUsersCount}}</span></span>
-			</div>
-			<span class="logo">Мы – маленькая студия из пары человек – стараемся сделать интересный и качественный проект. Мы благодарим вас за помощь и вашу поддержку!</span>
-		</header>
+  <div class="index">
+    <header>
+      <div class="stats">
+        <span class="registred">Зарегистрировано: <span class="count">{{totalUsersCount}}</span></span>
+        <span class="online">Онлайн: <span class="count">{{onlineUsersCount}}</span></span>
+      </div>
+      <span class="logo">Мы – маленькая студия из пары человек – стараемся сделать интересный и качественный проект. Мы благодарим вас за помощь и вашу поддержку!</span>
+    </header>
 
-		<div class="center_image">
-			<img src="/img/consuls.png" alt="Consuls. Когда противник крайне ебуч, приходят они">
-			<h3>открытый бета-тест</h3>
-		</div>
+    <div class="center_image">
+      <img src="/img/consuls.png" alt="Consuls. Когда противник крайне ебуч, приходят они">
+      <h3>открытый бета-тест</h3>
+    </div>
 
-		<div class="description">
-			<span>
-				Консулы – это не просто игра. Это целая параллельная вселенная, где наша родная планета захвачена Рептилоидными силами противника, и только тебе, Консул, люди могут доверить контроль, и лишь от тебя зависит, что ждёт этот мир: яркий свет победы или бездонная тьма поражения. Контроль над собственной планетой, власть над людьми, уникальная система решений путём выбора плана действий всем консулатом. Думаешь, ты просто так сидел столько лет на диване и доказывал свою правоту в интернете? А вот и нет! Это была подготовка, ты избранный, Консул! Теперь, главное, не обосраться…
-			</span> 
-		</div>
+    <div class="description">
+      <span>
+        Консулы – это не просто игра. Это целая параллельная вселенная, где наша родная планета захвачена Рептилоидными силами противника, и только тебе, Консул, люди могут доверить контроль, и лишь от тебя зависит, что ждёт этот мир: яркий свет победы или бездонная тьма поражения. Контроль над собственной планетой, власть над людьми, уникальная система решений путём выбора плана действий всем консулатом. Думаешь, ты просто так сидел столько лет на диване и доказывал свою правоту в интернете? А вот и нет! Это была подготовка, ты избранный, Консул! Теперь, главное, не обосраться…
+      </span> 
+    </div>
 
-		{{> auth}}
+    {{> auth}}
 
-		{{> register}}
+    {{> register}}
 
-		<div class="awards">
-			<img src="/img/awards.png" alt="">
-		</div>
+    <div class="awards">
+      <img src="/img/awards.png" alt="">
+    </div>
 
-		<div class="screenshots">
-			<ul>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/1.jpg"><img src="/img/screenshots/1p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/2.jpg"><img src="/img/screenshots/2p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/3.jpg"><img src="/img/screenshots/3p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/4.jpg"><img src="/img/screenshots/4p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/5.jpg"><img src="/img/screenshots/5p.jpg" alt="" /></a></li>
-				<li><a class="fancybox" rel="group" href="/img/screenshots/6.jpg"><img src="/img/screenshots/6p.jpg" alt="" /></a></li>
-			</ul>
-		</div>
+    <div class="screenshots">
+      <ul>
+        <li><a class="fancybox" rel="group" href="/img/screenshots/1.jpg"><img src="/img/screenshots/1p.jpg" alt="" /></a></li>
+        <li><a class="fancybox" rel="group" href="/img/screenshots/2.jpg"><img src="/img/screenshots/2p.jpg" alt="" /></a></li>
+        <li><a class="fancybox" rel="group" href="/img/screenshots/3.jpg"><img src="/img/screenshots/3p.jpg" alt="" /></a></li>
+        <li><a class="fancybox" rel="group" href="/img/screenshots/4.jpg"><img src="/img/screenshots/4p.jpg" alt="" /></a></li>
+        <li><a class="fancybox" rel="group" href="/img/screenshots/5.jpg"><img src="/img/screenshots/5p.jpg" alt="" /></a></li>
+        <li><a class="fancybox" rel="group" href="/img/screenshots/6.jpg"><img src="/img/screenshots/6p.jpg" alt="" /></a></li>
+      </ul>
+    </div>
 
-		<div class="feedback">
-			<ul>
-				<li>
-					<img src="/img/ot1.png">
-					<div class="name">Парень в костюме</div>
-					<p>
-						Мне очень понравилась эта игра, буду играть сам и обязательно 
-						расскажу всем своим друзьям.
-					</p>
-					<div class="suggest">Парень в костюме и с умным видом херни не посоветует!</div>
-				</li>
-				<li>
-					<img src="/img/ot2.png">
-					<div class="name">Миловидная Деваха</div>
-					<p>
-						Это просто замечательная игра, убивать Рептилоидов так весело, особенно люблю делать это голенькой…
-					</p>
-					<div class="suggest">Миловидные девушки всегда играют в такие игры голенькими, ещё одна причина пройти регистрацию.</div>
-				</li>
-				<li>
-					<img src="/img/ot3.png">
-					<div class="name">Просто Негр</div>
-					<p>
-						Это очень хороший игра, возможно, даже лучше, чем баскетбол и КФС.
-					</p>
-					<div class="suggest">Отзыв от чёрного парня даёт всем понять, какие мы расово терпимые и продвинутые ребята.</div>
-				</li>
-			</ul>
-		</div>
+    <div class="feedback">
+      <ul>
+        <li>
+          <img src="/img/ot1.png">
+          <div class="name">Парень в костюме</div>
+          <p>
+            Мне очень понравилась эта игра, буду играть сам и обязательно 
+            расскажу всем своим друзьям.
+          </p>
+          <div class="suggest">Парень в костюме и с умным видом херни не посоветует!</div>
+        </li>
+        <li>
+          <img src="/img/ot2.png">
+          <div class="name">Миловидная Деваха</div>
+          <p>
+            Это просто замечательная игра, убивать Рептилоидов так весело, особенно люблю делать это голенькой…
+          </p>
+          <div class="suggest">Миловидные девушки всегда играют в такие игры голенькими, ещё одна причина пройти регистрацию.</div>
+        </li>
+        <li>
+          <img src="/img/ot3.png">
+          <div class="name">Просто Негр</div>
+          <p>
+            Это очень хороший игра, возможно, даже лучше, чем баскетбол и КФС.
+          </p>
+          <div class="suggest">Отзыв от чёрного парня даёт всем понять, какие мы расово терпимые и продвинутые ребята.</div>
+        </li>
+      </ul>
+    </div>
 
-		<footer>
-		</footer>
+    <footer>
+    </footer>
 
-		{{>yield region="modal"}}
+    {{>yield region="modal"}}
 
-		<div class="over"></div>
-	</div>
+    <div class="over"></div>
+  </div>
 
-	{{> notifications}}
+  {{> notifications}}
 </template>

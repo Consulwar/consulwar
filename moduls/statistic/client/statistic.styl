@@ -1,402 +1,402 @@
 side-statistic-icon(name, background)
-	.{name}-icon
-		background-image url("/img/game/side/" name ".png")
+  .{name}-icon
+    background-image url("/img/game/side/" name ".png")
 
-		&.active:after
-			background-color background
+    &.active:after
+      background-color background
 
 
 .content
-	&.statistics
-		height 600px
+  &.statistics
+    height 600px
 
-		.spinner-container
-			background-color #000
+    .spinner-container
+      background-color #000
 
-	.second_menu
-		position relative
-		float left
-		width 124px
-		z-index 11
-		
-		li
-			position relative
-		
-		a
-			display block
-			width 100%
-			height 100%
+  .second_menu
+    position relative
+    float left
+    width 124px
+    z-index 11
+    
+    li
+      position relative
+    
+    a
+      display block
+      width 100%
+      height 100%
 
-		.general-icon, .science-icon, .cosmos-icon, .battle-icon, .communication-icon
-			font-size 0
-			-webkit-filter grayscale(1)
-			filter grayscale(1)
-			width 70px
-			height 70px
-			background-position 5px center
+    .general-icon, .science-icon, .cosmos-icon, .battle-icon, .communication-icon
+      font-size 0
+      -webkit-filter grayscale(1)
+      filter grayscale(1)
+      width 70px
+      height 70px
+      background-position 5px center
 
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
 
-			&.active
-				-webkit-filter brightness(1)
-				filter brightness(1)
-				background-color #090e14
-				&:after
-					position absolute
-					top 0
-					left 0
-					content " "
-					height 70px
-					width 5px
+      &.active
+        -webkit-filter brightness(1)
+        filter brightness(1)
+        background-color #090e14
+        &:after
+          position absolute
+          top 0
+          left 0
+          content " "
+          height 70px
+          width 5px
 
-		side-statistic-icon(general, #42c7ff)
-		side-statistic-icon(science, #a6b131)
-		side-statistic-icon(cosmos, #d6645e)
-		side-statistic-icon(battle, #d6925e)
-		side-statistic-icon(communication, #785ed6)
+    side-statistic-icon(general, #42c7ff)
+    side-statistic-icon(science, #a6b131)
+    side-statistic-icon(cosmos, #d6645e)
+    side-statistic-icon(battle, #d6925e)
+    side-statistic-icon(communication, #785ed6)
 
-	.statistic
-		position relative
-		height 594px
-		margin-left 70px
-		background-color #04080B
-		z-index 10
+  .statistic
+    position relative
+    height 594px
+    margin-left 70px
+    background-color #04080B
+    z-index 10
 
-		.consulInfo
-			background-color #13161b
-			position absolute
-			display flex
-			left 315px
-			top 0px
-			height 70px
-			width 1044px
-			padding 18px
-	
-			a
-				text-decoration none
-				display inline-block
-				width 70px
-				height 70px
+    .consulInfo
+      background-color #13161b
+      position absolute
+      display flex
+      left 315px
+      top 0px
+      height 70px
+      width 1044px
+      padding 18px
+  
+      a
+        text-decoration none
+        display inline-block
+        width 70px
+        height 70px
 
-			.user
-				display flex
-				width 300px
-				height 70px
+      .user
+        display flex
+        width 300px
+        height 70px
 
-				img
-					width 70px
-					height 70px
+        img
+          width 70px
+          height 70px
 
-				.text
-					margin-left 10px
-					padding-top 15px
-					height 70px
-					font-size 18px
-					font-weight bold
+        .text
+          margin-left 10px
+          padding-top 15px
+          height 70px
+          font-size 18px
+          font-weight bold
 
-					.userName
-						color #d6b69c
+          .userName
+            color #d6b69c
 
-					.allianceName
-						color #56baf2
+          .allianceName
+            color #56baf2
 
-			.activity
-				font-size 15px
-				width 300px
-				height 70px
-				list-style-type none
+      .activity
+        font-size 15px
+        width 300px
+        height 70px
+        list-style-type none
 
-				li
-					padding-top 10px
+        li
+          padding-top 10px
 
-				.status
-					font-weight bold
+        .status
+          font-weight bold
 
-					&.active
-						color #56baf2
+          &.active
+            color #56baf2
 
-					&:not(.active)
-						color red
+          &:not(.active)
+            color red
 
-			.voicePower
-				display flex
-				width 200px
-				height 70px
-				border 2px solid #6b5737
-				background-color #131313
+      .voicePower
+        display flex
+        width 200px
+        height 70px
+        border 2px solid #6b5737
+        background-color #131313
 
-				&:before
-					display block
-					content ""
-					width 85px
-					height 70px
-					background-repeat no-repeat
-					background-position center
-					background-image url(/img/game/statistics/power_of_voice.png)
+        &:before
+          display block
+          content ""
+          width 85px
+          height 70px
+          background-repeat no-repeat
+          background-position center
+          background-image url(/img/game/statistics/power_of_voice.png)
 
-				ul
-					list-style-type none
-					font-size 14px
-					font-weight bold
-					display block
-					width 110px
-					height 70px
-					text-align center
-					padding-top 15px
+        ul
+          list-style-type none
+          font-size 14px
+          font-weight bold
+          display block
+          width 110px
+          height 70px
+          text-align center
+          padding-top 15px
 
-					.number
-						font-size 24px
-						color #e9a844
+          .number
+            font-size 24px
+            color #e9a844
 
-			.additionalButtons
-				height 70px
-				margin-left 10px
+      .additionalButtons
+        height 70px
+        margin-left 10px
 
-				a
-					width 70px
-					height 70px
-					background-repeat no-repeat
-					-webkit-filter grayscale(1)
-					filter grayscale(1)
+        a
+          width 70px
+          height 70px
+          background-repeat no-repeat
+          -webkit-filter grayscale(1)
+          filter grayscale(1)
 
-					&:hover
-						-webkit-filter grayscale(0)
-						filter grayscale(0)
+          &:hover
+            -webkit-filter grayscale(0)
+            filter grayscale(0)
 
-				.send_message
-					background-image url(/img/game/statistics/message.png)
+        .send_message
+          background-image url(/img/game/statistics/message.png)
 
-				.open_house
-					background-image url(/img/game/statistics/house.png)
+        .open_house
+          background-image url(/img/game/statistics/house.png)
 
-				.show_detail_statistic
-					background-image url(/img/game/statistics/detail.png)
+        .show_detail_statistic
+          background-image url(/img/game/statistics/detail.png)
 
 
-		.achievements
-			background-color #131313
-			position absolute
-			display block
-			left 315px
-			top 106px
-			height 454px
-			width 1040px
-			padding 20px
+    .achievements
+      background-color #131313
+      position absolute
+      display block
+      left 315px
+      top 106px
+      height 454px
+      width 1040px
+      padding 20px
 
-			img
-				width 70px
-				height 70px
-				margin 10px
-				-webkit-filter grayscale(1) brightness(0.2)
-				filter grayscale(1) brightness(0.2)
+      img
+        width 70px
+        height 70px
+        margin 10px
+        -webkit-filter grayscale(1) brightness(0.2)
+        filter grayscale(1) brightness(0.2)
 
-				&.active
-					-webkit-filter brightness(1)
-					filter brightness(1)
+        &.active
+          -webkit-filter brightness(1)
+          filter brightness(1)
 
-	.rating
-		position absolute
-		height 600px
-		width 315px
-		background-color #000
-		z-index 10
+  .rating
+    position absolute
+    height 600px
+    width 315px
+    background-color #000
+    z-index 10
 
-		.spinner-container
-			position absolute
-			top 0px
-			background none
+    .spinner-container
+      position absolute
+      top 0px
+      background none
 
-		.searchBlock
-			position relative
-			display block
-			width 315px
-			height 40px
-			background-color #13161b
+    .searchBlock
+      position relative
+      display block
+      width 315px
+      height 40px
+      background-color #13161b
 
-			.search, .returnToMe
-				display block
-				position absolute
-				top 0px
-				width 40px
-				height 40px
-				cursor pointer
-				background-repeat no-repeat
-				background-position center
-				-webkit-filter grayscale(1)
-				filter grayscale(1)
+      .search, .returnToMe
+        display block
+        position absolute
+        top 0px
+        width 40px
+        height 40px
+        cursor pointer
+        background-repeat no-repeat
+        background-position center
+        -webkit-filter grayscale(1)
+        filter grayscale(1)
 
-				&:hover
-					-webkit-filter brightness(1)
-					filter brightness(1)
+        &:hover
+          -webkit-filter brightness(1)
+          filter brightness(1)
 
-			.search
-				left 100px
-				background-image url(/img/game/statistics/search.png)
+      .search
+        left 100px
+        background-image url(/img/game/statistics/search.png)
 
-			.returnToMe
-				left 5px
-				background-image url(/img/game/statistics/my_position.png)
-				
-			input
-				top 0px
-				margin-top 3px
-				padding 8px 7px
-				border 2px solid #006382
-				background-color #C0C0C0
-				border-radius 5px
-				box-shadow inset 2px 2px 2px #000
-				color #000000
-				font-weight bold
-				font-size 14px
-				position absolute
-				left 145px
-				width 150px
+      .returnToMe
+        left 5px
+        background-image url(/img/game/statistics/my_position.png)
+        
+      input
+        top 0px
+        margin-top 3px
+        padding 8px 7px
+        border 2px solid #006382
+        background-color #C0C0C0
+        border-radius 5px
+        box-shadow inset 2px 2px 2px #000
+        color #000000
+        font-weight bold
+        font-size 14px
+        position absolute
+        left 145px
+        width 150px
 
-		h2
-			padding-top 20px
-			width 100%
-			text-align center
+    h2
+      padding-top 20px
+      width 100%
+      text-align center
 
-		.data
-			display block
-			height 480px
-			overflow-y auto
+    .data
+      display block
+      height 480px
+      overflow-y auto
 
-		table
-			width 100%
-			border-collapse collapse
-			position relative
+    table
+      width 100%
+      border-collapse collapse
+      position relative
 
-			tr
-				height 40px
-				
-				&:nth-child(odd)
-					background-color #0B121A
-				
-				&:nth-child(even)
-					background-color #0E1821
-				
-				&:hover:not(.header)
-					cursor pointer
-					background-color #000015
+      tr
+        height 40px
+        
+        &:nth-child(odd)
+          background-color #0B121A
+        
+        &:nth-child(even)
+          background-color #0E1821
+        
+        &:hover:not(.header)
+          cursor pointer
+          background-color #000015
 
-				&.header
-					background-color #000
+        &.header
+          background-color #000
 
-				&.selectedUser
-					color #0081e5
-					background-color #000015
+        &.selectedUser
+          color #0081e5
+          background-color #000015
 
-					&:after
-						position absolute
-						left 0
-						content " "
-						height 40px
-						width 5px
-						background-color #56bbf3
+          &:after
+            position absolute
+            left 0
+            content " "
+            height 40px
+            width 5px
+            background-color #56bbf3
 
-				&.me
-					color #ABC851
-				
-			td, th
-				text-align left
-				
-				&:nth-child(1)
-					width 50px
-					padding 12px
-					text-align center
+        &.me
+          color #ABC851
+        
+      td, th
+        text-align left
+        
+        &:nth-child(1)
+          width 50px
+          padding 12px
+          text-align center
 
-				&:nth-child(2)
-					width 150px
+        &:nth-child(2)
+          width 150px
 
-				&:nth-child(3)
-					width 100px
+        &:nth-child(3)
+          width 100px
 
-				img
-					margin-left 5px
+        img
+          margin-left 5px
 
 
 .detailStatistic
-	display block
-	position fixed
-	z-index 100
-	top 50%
-	left 50%
-	transform translate(-50%, -50%)
-	background-image none
-	background-color #030303
-	width 560px
-	height 400px
-	font-size 0
+  display block
+  position fixed
+  z-index 100
+  top 50%
+  left 50%
+  transform translate(-50%, -50%)
+  background-image none
+  background-color #030303
+  width 560px
+  height 400px
+  font-size 0
 
-	.close
-		right -30px
-		top -30px
-		cursor pointer
-		display block
-		position absolute
-		z-index 4
-		width 30px
-		height 30px
-		background-image url(/img/game/cosmomap/button_close.png)
-		background-repeat no-repeat
-	
-		&:hover
-			background-image url(/img/game/cosmomap/button_close_active.png)
-	.tab
-		display inline-block
-		cursor pointer
-		width 25%
-		height 30px
-		padding-top 10px
-		background-color #13161b
-		text-align center
-		font-weight bold
-		font-size 14px
-		color #e8e8e8
-		margin 0px
-		text-decoration none
-		
-		&.active
-			background-color #292f3b
-			color #56baf2
-		
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-	.page
-		height 400px
-		overflow-y auto
-		padding 10px
-		font-weight bold
-		font-size 14px
-		color #888888
-		background-color #030303
-		display block
+  .close
+    right -30px
+    top -30px
+    cursor pointer
+    display block
+    position absolute
+    z-index 4
+    width 30px
+    height 30px
+    background-image url(/img/game/cosmomap/button_close.png)
+    background-repeat no-repeat
+  
+    &:hover
+      background-image url(/img/game/cosmomap/button_close_active.png)
+  .tab
+    display inline-block
+    cursor pointer
+    width 25%
+    height 30px
+    padding-top 10px
+    background-color #13161b
+    text-align center
+    font-weight bold
+    font-size 14px
+    color #e8e8e8
+    margin 0px
+    text-decoration none
+    
+    &.active
+      background-color #292f3b
+      color #56baf2
+    
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+  .page
+    height 400px
+    overflow-y auto
+    padding 10px
+    font-weight bold
+    font-size 14px
+    color #888888
+    background-color #030303
+    display block
 
-	th, h1, h2, h3, h4, h5, h6
-		margin 5px 0 5px 0
-		color #56baf2
-		font-weight bold
-		text-align left
+  th, h1, h2, h3, h4, h5, h6
+    margin 5px 0 5px 0
+    color #56baf2
+    font-weight bold
+    text-align left
 
-	table
-		width 100%
-		display block
-		color #ffffff
+  table
+    width 100%
+    display block
+    color #ffffff
 
-		&:after
-			display block
-			content ""
-			margin-top 10px
-			width 100%
-			height 10px
-			background-color #13161b
+    &:after
+      display block
+      content ""
+      margin-top 10px
+      width 100%
+      height 10px
+      background-color #13161b
 
-		tr
-			width 100%
+    tr
+      width 100%
 
-			td
-				width 25%
+      td
+        width 25%

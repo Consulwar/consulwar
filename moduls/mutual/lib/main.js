@@ -1,8 +1,8 @@
 initMutualMainLib = function() {
-	'use strict';
+  'use strict';
 
-	initMutualLib();
-	initBeginnerBoostLib();
-	initBeginnerBoostConfigLib();
-	initMutualContent();
+  initMutualLib();
+  initBeginnerBoostLib();
+  initBeginnerBoostConfigLib();
+  initMutualContent();
 };

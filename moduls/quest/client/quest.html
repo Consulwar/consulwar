@@ -1,43 +1,43 @@
 <template name="quest">
-	<div class="modal quest scrollbar-inner">
-		<img src="/img/game/{{who}}.jpg" alt="">
-		{{#if (characterName who)}}
-			<span class="name">{{characterName who}}</span>
-		{{/if}}
-		<div class="title">{{title}}</div>
-		{{{text}}}
-		
-		<br/><br/>
-		<span class="prize">
-			{{#if reward}}
-				{{#if or reward.metals reward.crystals}}
-					Награда: {{#if reward.metals}}{{formatNumber reward.metals}} металла{{/if}}{{#if reward.crystals}}{{#if reward.metals}}, {{/if}}{{formatNumber reward.crystals}} кристалла{{/if}}
-				{{else}}
-					Награды нет
-				{{/if}}
-			{{/if}}
-		</span>
+  <div class="modal quest scrollbar-inner">
+    <img src="/img/game/{{who}}.jpg" alt="">
+    {{#if (characterName who)}}
+      <span class="name">{{characterName who}}</span>
+    {{/if}}
+    <div class="title">{{title}}</div>
+    {{{text}}}
+    
+    <br/><br/>
+    <span class="prize">
+      {{#if reward}}
+        {{#if or reward.metals reward.crystals}}
+          Награда: {{#if reward.metals}}{{formatNumber reward.metals}} металла{{/if}}{{#if reward.crystals}}{{#if reward.metals}}, {{/if}}{{formatNumber reward.crystals}} кристалла{{/if}}
+        {{else}}
+          Награды нет
+        {{/if}}
+      {{/if}}
+    </span>
 
-		{{#if isPrompt}}
-			{{#each options}}
-				<a data-option="{{this.name}}" class="{{this.mood}}" href="#">{{this.text}}</a>
-			{{/each}}
-		{{/if}}
+    {{#if isPrompt}}
+      {{#each options}}
+        <a data-option="{{this.name}}" class="{{this.mood}}" href="#">{{this.text}}</a>
+      {{/each}}
+    {{/if}}
 
-		{{#if isLoading}}
-			{{> loading}}
-		{{/if}}
-	</div>
+    {{#if isLoading}}
+      {{> loading}}
+    {{/if}}
+  </div>
 </template>
 
 <template name="reward">
-	<div class="modal reward">
-		{{> item_price price=reward class='large'}}
+  <div class="modal reward">
+    {{> item_price price=reward class='large'}}
 
-		<span class="take">Награда</span>
+    <span class="take">Награда</span>
 
-		{{#if isLoading}}
-			{{> loading}}
-		{{/if}}
-	</div>
+    {{#if isLoading}}
+      {{> loading}}
+    {{/if}}
+  </div>
 </template>

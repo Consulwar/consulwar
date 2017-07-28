@@ -2,114 +2,114 @@ initResourcesLib = function() {
 'use strict';
 
 Game.Resources = {
-	Collection: new Meteor.Collection('resources'),
+  Collection: new Meteor.Collection('resources'),
 
-	bonusStorage: 6,
+  bonusStorage: 6,
 
-	getValue: function(uid) {
-		return Game.Resources.Collection.findOne({user_id: uid !== undefined ? uid : Meteor.userId()});
-	},
+  getValue: function(uid) {
+    return Game.Resources.Collection.findOne({user_id: uid !== undefined ? uid : Meteor.userId()});
+  },
 
-	/**
-	 * income - общая добыца
-	 * delta - количество секунд
-	 * uncountedSeconds - бонусные секунды
-	 */
-	calculateFinalAmount: function(baseAmount, income, delta, uncountedSeconds, bonus) {
-		var result = Game.Resources.calculateProduction(income, delta, uncountedSeconds, bonus);
+  /**
+   * income - общая добыца
+   * delta - количество секунд
+   * uncountedSeconds - бонусные секунды
+   */
+  calculateFinalAmount: function(baseAmount, income, delta, uncountedSeconds, bonus) {
+    var result = Game.Resources.calculateProduction(income, delta, uncountedSeconds, bonus);
 
-		result.amount += baseAmount;
-		if (bonus) {
-			result.bonus = Math.min(result.bonus + bonus, income * Game.Resources.bonusStorage);
-		}
+    result.amount += baseAmount;
+    if (bonus) {
+      result.bonus = Math.min(result.bonus + bonus, income * Game.Resources.bonusStorage);
+    }
 
-		return result;
-	},
+    return result;
+  },
 
-	calculateProduction: function(income, delta, uncountedSeconds, halfToBonus) {
-		delta += uncountedSeconds ? uncountedSeconds : 0;
+  calculateProduction: function(income, delta, uncountedSeconds, halfToBonus) {
+    delta += uncountedSeconds ? uncountedSeconds : 0;
 
-		var interval = 3600 * (halfToBonus ? 2 : 1);
-		var result = null;
+    var interval = 3600 * (halfToBonus ? 2 : 1);
+    var result = null;
 
-		// Добыча в секунду (дробное)
-		var incomePerSecond = income / interval;
-		if (incomePerSecond < 1 || Meteor.isClient) {
-			// Количество секунд необходимых для получения единицы ресурса
-			var secondsForOne = interval / income;
+    // Добыча в секунду (дробное)
+    var incomePerSecond = income / interval;
+    if (incomePerSecond < 1 || Meteor.isClient) {
+      // Количество секунд необходимых для получения единицы ресурса
+      var secondsForOne = interval / income;
 
-			// Общая сумма прибыли
-			var amount = Math.floor(delta / secondsForOne);
+      // Общая сумма прибыли
+      var amount = Math.floor(delta / secondsForOne);
 
-			// Количество использованных секунд (округление в большу сторону)
-			var usedSeconds = Math.ceil(amount * secondsForOne);
-			if (Meteor.isClient) {
-				usedSeconds = amount * secondsForOne;
-			}
+      // Количество использованных секунд (округление в большу сторону)
+      var usedSeconds = Math.ceil(amount * secondsForOne);
+      if (Meteor.isClient) {
+        usedSeconds = amount * secondsForOne;
+      }
 
-			// Количетсво неиспользованных секунд
-			var secondsLeft = delta - usedSeconds;
+      // Количетсво неиспользованных секунд
+      var secondsLeft = delta - usedSeconds;
 
-			result = {
-				amount: amount,
-				bonusSeconds: secondsLeft
-			};
+      result = {
+        amount: amount,
+        bonusSeconds: secondsLeft
+      };
 
-			if (halfToBonus) {
-				result.bonus = amount;
-			}
+      if (halfToBonus) {
+        result.bonus = amount;
+      }
 
-			return result;
-		} else {
-			var totalAmount = Math.floor((income * delta) / interval);
+      return result;
+    } else {
+      var totalAmount = Math.floor((income * delta) / interval);
 
-			result = {
-				amount: totalAmount,
-				bonusSeconds: 0
-			};
+      result = {
+        amount: totalAmount,
+        bonusSeconds: 0
+      };
 
-			if (halfToBonus) {
-				result.bonus = totalAmount;
-			}
-		
-			return result;
-		}
-	},
+      if (halfToBonus) {
+        result.bonus = totalAmount;
+      }
+    
+      return result;
+    }
+  },
 
-	getIncome: function() {
-		return Game.Effect.Income.getValue();
-	},
+  getIncome: function() {
+    return Game.Effect.Income.getValue();
+  },
 
-	calculateRatingFromResources: function(resources) {
-		var rating = 0;
+  calculateRatingFromResources: function(resources) {
+    var rating = 0;
 
-		rating += ((resources.metals) || 0);
-		rating += ((resources.crystals * 3) || 0);
-		rating += ((resources.humans * 4) || 0);
-		rating += ((resources.honor * 5) || 0);
+    rating += ((resources.metals) || 0);
+    rating += ((resources.crystals * 3) || 0);
+    rating += ((resources.humans * 4) || 0);
+    rating += ((resources.honor * 5) || 0);
 
-		return Math.floor(rating / 100);
-	},
+    return Math.floor(rating / 100);
+  },
 
-	calculateHonorFromResources: function(resources) {
-		var honor = 0;
-		
-		if (resources.base) {
-			honor += ((resources.base.metals) || 0);
-			honor += ((resources.base.crystals * 3) || 0);
-			honor += ((resources.base.humans * 4) || 0);
-		}
+  calculateHonorFromResources: function(resources) {
+    var honor = 0;
+    
+    if (resources.base) {
+      honor += ((resources.base.metals) || 0);
+      honor += ((resources.base.crystals * 3) || 0);
+      honor += ((resources.base.humans * 4) || 0);
+    }
 
-		return Math.floor(honor / 150);
-	},
+    return Math.floor(honor / 150);
+  },
 
-	calculateHonorFromReinforcement: function(resources) {
-		return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.5);
-	},
+  calculateHonorFromReinforcement: function(resources) {
+    return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.5);
+  },
 
-	calculateHonorFromMutualResearch: function(resources) {
-		return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.375);
-	}
+  calculateHonorFromMutualResearch: function(resources) {
+    return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.375);
+  }
 };
 
 };

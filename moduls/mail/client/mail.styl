@@ -1,368 +1,368 @@
 .content
-	.mail
-		position relative
-		z-index 2
-		height 435px
-		min-width 800px
-		width 1200px
-		flex-shrink 1
-		margin auto
-		
-		background-color #04080B
+  .mail
+    position relative
+    z-index 2
+    height 435px
+    min-width 800px
+    width 1200px
+    flex-shrink 1
+    margin auto
+    
+    background-color #04080B
 
-		.data
-			height 355px
-			overflow-y auto
+    .data
+      height 355px
+      overflow-y auto
 
-		table
-			width 100%
-			border-collapse collapse
-			
-			input
-				cursor pointer
+    table
+      width 100%
+      border-collapse collapse
+      
+      input
+        cursor pointer
 
-			tr
-				height 40px
-				cursor pointer
-				
-				&.header
-					cursor auto
+      tr
+        height 40px
+        cursor pointer
+        
+        &.header
+          cursor auto
 
-				&:nth-child(odd):not(.header)
-					background-color #0B121A
-				
-				&:nth-child(even)
-					background-color #0E1821
-					
-				&.from_tamily
-					color #3AB6F2
-					
-				&.from_system
-					&.battle_win
-						color #A9C362
-					&.battle_draw
-						color #D8E2EB
-					&.battle_lose
-						color #9D3830
-					&.quiz
-						color #3CB3ED
-						font-weight bold
-				
-				&:hover
-					-webkit-filter brightness(1.2)
-					filter brightness(1.2)
-				
-			td, th
-				text-align left
-					
-				&:nth-child(1)
-					width 40px
-					text-align center
-			
-				&:nth-child(2)
-					width 180px
-				
-				&:nth-child(3)
-					width 330px
-				
-				&:nth-child(4)
-					width 150px
-				
-		.delete_selected, .new_message, .admin_page
-			display block
-			position absolute
-			color #2D7B9F
-			border 2px solid #2D7B9F
-			background-color #000
-			padding 8px 15px
-			font-size 16px
-			font-weight bold
-			text-decoration none
-			cursor pointer
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
+        &:nth-child(odd):not(.header)
+          background-color #0B121A
+        
+        &:nth-child(even)
+          background-color #0E1821
+          
+        &.from_tamily
+          color #3AB6F2
+          
+        &.from_system
+          &.battle_win
+            color #A9C362
+          &.battle_draw
+            color #D8E2EB
+          &.battle_lose
+            color #9D3830
+          &.quiz
+            color #3CB3ED
+            font-weight bold
+        
+        &:hover
+          -webkit-filter brightness(1.2)
+          filter brightness(1.2)
+        
+      td, th
+        text-align left
+          
+        &:nth-child(1)
+          width 40px
+          text-align center
+      
+        &:nth-child(2)
+          width 180px
+        
+        &:nth-child(3)
+          width 330px
+        
+        &:nth-child(4)
+          width 150px
+        
+    .delete_selected, .new_message, .admin_page
+      display block
+      position absolute
+      color #2D7B9F
+      border 2px solid #2D7B9F
+      background-color #000
+      padding 8px 15px
+      font-size 16px
+      font-weight bold
+      text-decoration none
+      cursor pointer
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
 
-			&.disabled
-				cursor default
-				-webkit-filter brightness(0.5)
-				filter brightness(0.5)
-		
-		.delete_selected
-			left 2px
-			bottom 2px
+      &.disabled
+        cursor default
+        -webkit-filter brightness(0.5)
+        filter brightness(0.5)
+    
+    .delete_selected
+      left 2px
+      bottom 2px
 
-		.new_message
-			right 2px
-			bottom 2px
-			
-		.admin_page
-			top 2px
-			right 2px
-		
-		.complaint
-			display: inline-block;
-			font-size: 16px;
-			font-weight: bold;
-			padding: 15px;
-			color: #d55f51;
+    .new_message
+      right 2px
+      bottom 2px
+      
+    .admin_page
+      top 2px
+      right 2px
+    
+    .complaint
+      display: inline-block;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 15px;
+      color: #d55f51;
 
-		blockquote
-			padding 10px
-			color #BBBBBB
-			background-color #1A2631
-			border 1px solid #000000
+    blockquote
+      padding 10px
+      color #BBBBBB
+      background-color #1A2631
+      border 1px solid #000000
 
-		.letter, .battle_letter, .battle_on_earth_letter, form
-			display none
-			position absolute
-			top 0px
-			left 0px
-			width 100%
-			height 100%
-			background-color #04080B
+    .letter, .battle_letter, .battle_on_earth_letter, form
+      display none
+      position absolute
+      top 0px
+      left 0px
+      width 100%
+      height 100%
+      background-color #04080B
 
-		.letter, .battle_letter, .battle_on_earth_letter
-			
-			.text
-				width 1305px
-				height 300px
-				background-color #0E1821
-				color #fff
-				padding 15px 10px
-				margin-top 3px
-				overflow-y scroll
-				
-			.name, .subject
-				margin 0 30px
-			
-			time
-				position relative
-				right 10px
-		
-		form
-			div
-				background-color #0F1923
-				padding 14px
-			
-			label
-				display inline-block
-				color #50B2EF
-				background-repeat no-repeat
-				background-position center right
-				
-				&.check
-					background-image url(/img/game/check.png)
-			
-				&.cross
-					background-image url(/img/game/cross.png)
+    .letter, .battle_letter, .battle_on_earth_letter
+      
+      .text
+        width 1305px
+        height 300px
+        background-color #0E1821
+        color #fff
+        padding 15px 10px
+        margin-top 3px
+        overflow-y scroll
+        
+      .name, .subject
+        margin 0 30px
+      
+      time
+        position relative
+        right 10px
+    
+    form
+      div
+        background-color #0F1923
+        padding 14px
+      
+      label
+        display inline-block
+        color #50B2EF
+        background-repeat no-repeat
+        background-position center right
+        
+        &.check
+          background-image url(/img/game/check.png)
+      
+        &.cross
+          background-image url(/img/game/cross.png)
 
-				&:nth-child(1)
-					padding-right 40px
-					
-				&:nth-child(2)
-					margin-left 30px
-				
-				input
-					background-color #333D47
-					height 17px
-					border 0
-					box-shadow inset 2px 2px 2px #000
-					padding 10px 18px
-					color #fff
-					
-					&.subject
-						width 300px
-					
-			textarea
-				width 1290px
-				height 220px
-				background-color #17212B
-				color #fff
-				padding 15px 10px
-				border 2px solid #000
-				margin-top 13px
-				resize none
-			
-		button, input[type="submit"]
-			border 2px solid #2D7B9F
-			color #2D7B9F
-			padding 10px 15px
-			margin 5px
-			background transparent
-			font-size 16px
-			font-weight bold
-			cursor pointer
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-				
-		input[type="submit"],
-		.reply
-			position absolute
-			right 10px
-			
-		.battle_letter, 
-		.battle_on_earth_letter
-			.result
-				position relative
-				width 1000px
-				height 385px
-				text-align center
-				
-				table
-					width 30%
-					text-align left
-					
-					tr
-						height 15px
-						
-					td
-						padding 3px
-				
-				.fleet, .army, .reptiles
-					position absolute
-					top 0
-					background-color #0F1922
-					
-					li
-						display block
-						width 180px
-						height 20px
-						background-repeat no-repeat
-						font-size 20px
-						padding 20px 0
-				
+        &:nth-child(1)
+          padding-right 40px
+          
+        &:nth-child(2)
+          margin-left 30px
+        
+        input
+          background-color #333D47
+          height 17px
+          border 0
+          box-shadow inset 2px 2px 2px #000
+          padding 10px 18px
+          color #fff
+          
+          &.subject
+            width 300px
+          
+      textarea
+        width 1290px
+        height 220px
+        background-color #17212B
+        color #fff
+        padding 15px 10px
+        border 2px solid #000
+        margin-top 13px
+        resize none
+      
+    button, input[type="submit"]
+      border 2px solid #2D7B9F
+      color #2D7B9F
+      padding 10px 15px
+      margin 5px
+      background transparent
+      font-size 16px
+      font-weight bold
+      cursor pointer
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+        
+    input[type="submit"],
+    .reply
+      position absolute
+      right 10px
+      
+    .battle_letter, 
+    .battle_on_earth_letter
+      .result
+        position relative
+        width 1000px
+        height 385px
+        text-align center
+        
+        table
+          width 30%
+          text-align left
+          
+          tr
+            height 15px
+            
+          td
+            padding 3px
+        
+        .fleet, .army, .reptiles
+          position absolute
+          top 0
+          background-color #0F1922
+          
+          li
+            display block
+            width 180px
+            height 20px
+            background-repeat no-repeat
+            font-size 20px
+            padding 20px 0
+        
 
-				.fleet, .army
-					left 0
-					li
-						padding-left 260px
-						background-position left center
-						
-					.wasp
-						background-image url(/img/game/army/fleet/battle/wasp.jpg)
-					.cruiser
-						background-image url(/img/game/army/fleet/battle/cruiser.jpg)
-					.battleship
-						background-image url(/img/game/army/fleet/battle/battleship.jpg)
-					.carrier
-						background-image url(/img/game/army/fleet/battle/carrier.jpg)
-					.flagship
-						background-image url(/img/game/army/fleet/battle/flagship.jpg)
-				
-				.reptiles
-					right 0
-					li
-						padding-right 260px
-						background-position right center
-						
-					.blade
-						background-image url(/img/game/reptiles/fleet/battle/blade.jpg)
-					.dragon
-						background-image url(/img/game/reptiles/fleet/battle/dragon.jpg)
-					.hydra
-						background-image url(/img/game/reptiles/fleet/battle/hydra.jpg)
-					.armadillo
-						background-image url(/img/game/reptiles/fleet/battle/armadillo.jpg)
-					.shadow
-						background-image url(/img/game/reptiles/fleet/battle/shadow.jpg)
-					.trioniks
-						background-image url(/img/game/reptiles/fleet/battle/trioniks.jpg)
-				
-				.profit
-					position absolute
-					left 50%
-					margin-left -60px
-					width 120px
-					color #E2D757
-					font-size 17px
-					font-weight bold
-					
-					li
-						margin-right 0
-						margin-top 20px
-					
+        .fleet, .army
+          left 0
+          li
+            padding-left 260px
+            background-position left center
+            
+          .wasp
+            background-image url(/img/game/army/fleet/battle/wasp.jpg)
+          .cruiser
+            background-image url(/img/game/army/fleet/battle/cruiser.jpg)
+          .battleship
+            background-image url(/img/game/army/fleet/battle/battleship.jpg)
+          .carrier
+            background-image url(/img/game/army/fleet/battle/carrier.jpg)
+          .flagship
+            background-image url(/img/game/army/fleet/battle/flagship.jpg)
+        
+        .reptiles
+          right 0
+          li
+            padding-right 260px
+            background-position right center
+            
+          .blade
+            background-image url(/img/game/reptiles/fleet/battle/blade.jpg)
+          .dragon
+            background-image url(/img/game/reptiles/fleet/battle/dragon.jpg)
+          .hydra
+            background-image url(/img/game/reptiles/fleet/battle/hydra.jpg)
+          .armadillo
+            background-image url(/img/game/reptiles/fleet/battle/armadillo.jpg)
+          .shadow
+            background-image url(/img/game/reptiles/fleet/battle/shadow.jpg)
+          .trioniks
+            background-image url(/img/game/reptiles/fleet/battle/trioniks.jpg)
+        
+        .profit
+          position absolute
+          left 50%
+          margin-left -60px
+          width 120px
+          color #E2D757
+          font-size 17px
+          font-weight bold
+          
+          li
+            margin-right 0
+            margin-top 20px
+          
 
 .quiz
-	
-	&.modal > .title
-		margin-bottom 0
-		font-size 16px
-		
-	&.modal > a
-		font-size 14px
-		padding 10px 15px
-		width 430px
-		margin 10px 0
+  
+  &.modal > .title
+    margin-bottom 0
+    font-size 16px
+    
+  &.modal > a
+    font-size 14px
+    padding 10px 15px
+    width 430px
+    margin 10px 0
 
-	&.modal > progress
-		position relative
-		width 450px
-		height 25px
-		margin-top 40px
-		background-color #000
-		font-size 14px
-			
-		&[role][aria-valuenow]
-			background-color #000
-				
-		&::-moz-progress-bar 
-			background-color #56baf2
+  &.modal > progress
+    position relative
+    width 450px
+    height 25px
+    margin-top 40px
+    background-color #000
+    font-size 14px
+      
+    &[role][aria-valuenow]
+      background-color #000
+        
+    &::-moz-progress-bar 
+      background-color #56baf2
 
-		&::-webkit-progress-value
-			background-color #56baf2
-			
-		&[aria-valuenow]:before
-			background-color #56baf2
-		
-		&:before
-			content attr(data-option)
-			display block
-			position absolute
-			bottom 25px
-			font-size 15px
-			color #cfdcdf
-			
-		&:after
-			position absolute
-			width 100%
-			top 0
-			left 0
-			display block
-			content attr(value) ' (' attr(data-percent) '%)'
-			font-size 20px
-			text-align center
-			color #ededed
-	
-	.vote_power
-		font-size 12px
+    &::-webkit-progress-value
+      background-color #56baf2
+      
+    &[aria-valuenow]:before
+      background-color #56baf2
+    
+    &:before
+      content attr(data-option)
+      display block
+      position absolute
+      bottom 25px
+      font-size 15px
+      color #cfdcdf
+      
+    &:after
+      position absolute
+      width 100%
+      top 0
+      left 0
+      display block
+      content attr(value) ' (' attr(data-percent) '%)'
+      font-size 20px
+      text-align center
+      color #ededed
+  
+  .vote_power
+    font-size 12px
 
-	.previous_question, .next_question
-		position absolute
-		top 50%
-		margin-top -23px
-		background-repeat no-repeat
-		background-position center
-		cursor pointer
-		display block
-		width 46px
-		height 46px
-		-webkit-filter grayscale(1)
-		filter grayscale(1)
+  .previous_question, .next_question
+    position absolute
+    top 50%
+    margin-top -23px
+    background-repeat no-repeat
+    background-position center
+    cursor pointer
+    display block
+    width 46px
+    height 46px
+    -webkit-filter grayscale(1)
+    filter grayscale(1)
 
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
 
-	.previous_question
-		left 0
-		margin-left -23px
-		background-image url(/img/game/left-arrow.png)
+  .previous_question
+    left 0
+    margin-left -23px
+    background-image url(/img/game/left-arrow.png)
 
-	.next_question
-		right 0
-		margin-right -23px
-		background-image url(/img/game/right-arrow.png)
+  .next_question
+    right 0
+    margin-right -23px
+    background-image url(/img/game/right-arrow.png)

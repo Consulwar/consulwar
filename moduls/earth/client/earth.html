@@ -54,7 +54,10 @@
         <ul>
           {{#each info.userArmy}}
             <li>
-              <span>{{this.count}}</span> {{this.name}}
+              <span>{{this.count}}
+                {{#if this.userUnitsCount}} ({{this.userUnitsCount}}) {{/if}}
+              </span>
+              {{this.name}}
             </li>
           {{/each}}
         </ul>

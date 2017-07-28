@@ -20,8 +20,8 @@ Game.EarthUnits.Collection._ensureIndex({
   user_id: 1,
 });
 
-Game.ZoneUnits.Collection._ensureIndex({
-  zoneName: 1,
+Game.EarthZones.Collection._ensureIndex({
+  name: 1
 });
 
 Game.EarthUnits.incArmy = function (user_id, inc, zoneName) {
@@ -34,11 +34,11 @@ Game.EarthUnits.incArmy = function (user_id, inc, zoneName) {
     }
   });
 
-  Game.ZoneUnits.Collection.update({
-    zoneName
+  Game.EarthZones.Collection.update({
+    name: zoneName
   }, {
     $inc: inc
-  })
+  });
 };
 
 // Auto import on server start
@@ -91,7 +91,7 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
           honor += Game.Resources.calculateHonorFromReinforcement(
             Game.Unit.items[side][group][name].price(count)
           );
-          inc['units' + '.' + side + '.' + group + '.' + name ] = count;
+          inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
           stats['reinforcements.arrived.' + side + '.' + group + '.' + name] = count;
           stats['reinforcements.arrived.total'] += count;
         }
@@ -543,12 +543,6 @@ Meteor.publish('zones', function () {
 Meteor.publish('earthUnits', function () {
   if (this.userId) {
     return Game.EarthUnits.Collection.find({user_id: this.userId});
-  }
-});
-
-Meteor.publish('zoneUnits', function () {
-  if (this.userId) {
-    return Game.ZoneUnits.Collection.find();
   }
 });
 

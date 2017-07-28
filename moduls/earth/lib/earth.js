@@ -45,10 +45,6 @@ Game.EarthUnits = {
   }
 };
 
-Game.ZoneUnits = {
-  Collection: new Meteor.Collection('zoneUnits')
-};
-
 initEarthConfigLib();
 
 };

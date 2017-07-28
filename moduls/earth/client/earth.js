@@ -5,7 +5,6 @@ initEarthLib();
 
 Meteor.subscribe('zones');
 Meteor.subscribe('earthUnits');
-Meteor.subscribe('zoneUnits');
 
 Game.Earth.showMap = function() {
   this.render('earth', {
@@ -291,24 +290,25 @@ Game.Earth.showZone = function() {
 Template.earthZoneInfo.helpers({
   info: function() {
     var zone = Game.EarthZones.getByName(this.name);
-
-    let zoneUserArmy = Game.ZoneUnits.Collection.findOne({zoneName: this.name}).units;
+    let userUnits = Game.EarthUnits.get().userArmy;
 
     var maxPower = Game.EarthZones.calcMaxHealth();
-    var currentUserPower = Game.Unit.calcUnitsHealth( zoneUserArmy );
+    var currentUserPower = Game.Unit.calcUnitsHealth( zone.userArmy );
     var currentEnemyPower = Game.Unit.calcUnitsHealth( zone.enemyArmy );
 
     var side = null;
     var group = null;
     var name = null;
 
-    var userArmy = (zoneUserArmy) ? [] : null;
-    for (side in zoneUserArmy) {
-      for (group in zoneUserArmy[side]) {
-        for (name in zoneUserArmy[side][group]) {
+    var userArmy = (zone.userArmy) ? [] : null;
+    for (side in zone.userArmy) {
+      for (group in zone.userArmy[side]) {
+        for (name in zone.userArmy[side][group]) {
           userArmy.push({
             name: Game.Unit.items[side][group][name].name,
-            count: zoneUserArmy[side][group][name]
+            count: zone.userArmy[side][group][name],
+            userUnitsCount: (userUnits[side] && userUnits[side][group]) ?
+              userUnits[side][group][name] : null,
           });
         }
       }

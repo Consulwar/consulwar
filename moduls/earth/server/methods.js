@@ -2,58 +2,6 @@ initEarthServerMethods = function() {
 'use strict';
 
 Meteor.methods({
-	'earth.voteAction': function(actionName) {
-		// check user
-		var user = Meteor.user();
-
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
-
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
-
-		Game.Log.method('earth.voteAction');
-
-		// check turn
-		var lastTurn = Game.EarthTurns.getLast();
-
-		if (!lastTurn) {
-			throw new Meteor.Error('Не создано ни одного хода');
-		}
-
-		if (lastTurn.users.indexOf(user._id) >= 0) {
-			throw new Meteor.Error('Вы уже голосовали в этом ходе');
-		}
-
-		if (lastTurn.actions[ actionName ] === undefined) {
-			throw new Meteor.Error('Нет такого действия в этом ходе');
-		}
-
-		// check level
-		var level = Game.User.getLevel();
-
-		if (level <= 0) {
-			throw new Meteor.Error('Маленький ещё, подрасти сначала');
-		}
-
-		// save vote
-		var votePower = Game.User.getVotePower();
-
-		var inc = {
-			totalVotePower: votePower
-		};
-		inc['actions.' + actionName] = votePower;
-
-		Game.EarthTurns.Collection.update({
-			_id: lastTurn._id
-		}, {
-			$addToSet: { users: user._id },
-			$inc: inc
-		});
-	},
-
 	'earth.sendReinforcement': function(units, cardsObject, zoneName) {
 		const user = Meteor.user();
 
@@ -236,22 +184,6 @@ if (process.env.NODE_ENV === 'development') {
 		'earth.linkZones': Game.Earth.linkZones,
 		'earth.unlinkZones': Game.Earth.unlinkZones,
 		'earth.nextTurn': Game.Earth.nextTurn,
-
-		'earth.voteActionDev': function(actionName, votePower) {
-			votePower = votePower || 1;
-			let lastTurn = Game.EarthTurns.getLast();
-
-			if (!lastTurn || lastTurn.actions[ actionName ] === undefined) {
-				return;
-			}
-
-			lastTurn.actions[ actionName ] += votePower;
-			lastTurn.totalVotePower += votePower;
-
-			Game.EarthTurns.Collection.update({
-				_id: lastTurn._id
-			}, lastTurn);
-		}
 	});
 }
 

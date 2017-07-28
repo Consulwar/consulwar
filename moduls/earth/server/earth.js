@@ -16,13 +16,30 @@ initEarthLib();
 initEarthConfigServer();
 initEarthServerImport();
 
-Game.EarthTurns.Collection._ensureIndex({
-	timeStart: -1
-});
-
 Game.EarthUnits.Collection._ensureIndex({
 	user_id: 1,
 });
+
+Game.ZoneUnits.Collection._ensureIndex({
+	zoneName: 1,
+});
+
+Game.EarthUnits.incArmy = function (user_id, inc, zoneName) {
+	Game.EarthUnits.Collection.upsert({
+		user_id: user_id
+	}, {
+		$inc: inc,
+		$setOnInsert: {
+			zoneName
+		}
+	});
+
+	Game.ZoneUnits.Collection.update({
+		zoneName
+	}, {
+		$inc: inc
+	})
+};
 
 // Auto import on server start
 // If db.zones is empty
@@ -91,31 +108,13 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
 			honor: honor
 		});
 
-		Game.EarthUnits.Collection.upsert({
-			user_id: user_id
-		}, {
-			$inc: inc,
-			$setOnInsert: {
-				zoneName
-			}
-		});
+		Game.EarthUnits.incArmy(user_id, inc, zoneName);
 	}
-};
-
-Game.Earth.countActivePlayers = function() {
-	return Meteor.users.find({
-		'status.lastLogin.date': {
-			$gt: new Date((new Date()).setDate((new Date()).getDate() - 3))
-		},
-		'rating': {
-			$gt: 24999
-		}
-	}).count();
 };
 
 Game.Earth.generateEnemyArmy = function(level) {
 	// count online players
-	var players = Game.Earth.countActivePlayers();
+	var players = Game.User.countActivePlayers();
 
 	if (players < Game.Earth.MIN_ACTIVE_PLAYERS) {
 		players = Game.Earth.MIN_ACTIVE_PLAYERS;
@@ -273,165 +272,15 @@ Game.Earth.performBattleAtZone = function(name, options) {
 	return result;
 };
 
-Game.Earth.setCurrentZone = function(name) {
-	console.log('Set ' + name + ' as current zone');
-
-	Game.EarthZones.Collection.update({
-		isCurrent: true
-	}, {
-		$set: {
-			isCurrent: false
-		}
-	});
-
-	Game.EarthZones.Collection.update({
-		name: name
-	}, {
-		$set: {
-			isCurrent: true
-		}
-	});
-};
-
-Game.Earth.moveArmy = function(destination) {
-	console.log('Move user army to ' + destination);
-
-	var currentZone = Game.EarthZones.Collection.findOne({
-		isCurrent: true
-	});
-
-	if (!currentZone) {
-		throw new Meteor.Error('Не установлена текущая зона');
-	}
-
-	var destZone = Game.EarthZones.Collection.findOne({
-		name: destination
-	});
-
-	if (!destZone) {
-		throw new Meteor.Error('Зона с именем ' + destination + ' не найдена');
-	}
-
-	// check zones connected
-	if (!currentZone.links
-	 ||  currentZone.links.indexOf(destZone.name) < 0
-	 || !destZone.links
-	 ||  destZone.links.indexOf(currentZone.name) < 0
-	) {
-		throw new Meteor.Error('Зона ' + currentZone.name + ' не связана с зоной ' + destZone.name);
-	}
-
-	// move units
-	var currentArmy = currentZone.userArmy;
-	var destArmy = destZone.userArmy;
-	var restArmy = null;
-
-	if (currentArmy) {
-		for (var side in currentArmy) {
-			for (var group in currentArmy[side]) {
-				for (var name in currentArmy[side][group]) {
-
-					var count = parseInt( currentArmy[side][group][name], 10 );
-
-					if (count <= 0) {
-						continue;
-					}
-
-					if (checkIsStationaryUnit(side, group, name)) {
-						// stay on current point
-						restArmy = setupUnitHierarchy(restArmy, side, group, name);
-						restArmy[side][group][name] = count;
-					} else {
-						// move
-						destArmy = setupUnitHierarchy(destArmy, side, group, name);
-						destArmy[side][group][name] += count;
-					}
-
-				}
-			}
-		}
-	}
-
-	if (destArmy) {
-		// update army at current zone
-		if (restArmy) {
-			Game.EarthZones.Collection.update({
-				name: currentZone.name
-			}, {
-				$set: {
-					userArmy: restArmy
-				}
-			});
-		} else {
-			Game.EarthZones.Collection.update({
-				name: currentZone.name
-			}, {
-				$unset: {
-					userArmy: 1
-				}
-			});
-		}
-
-		// update army at destination zone
-		Game.EarthZones.Collection.update({
-			name: destZone.name
-		}, {
-			$set: {
-				userArmy: destArmy
-			}
-		});
-	}
-
-	console.log('Moved army: ', destArmy);
-	return destArmy;
-};
-
-Game.Earth.retreat = function() {
-	console.log('Retreat!');
-
-	// get current zone
-	var currentZone = Game.EarthZones.Collection.findOne({
-		isCurrent: true
-	});
-
-	if (!currentZone) {
-		throw new Meteor.Error('Не установлена текущая зона');
-	}
-
-	// get zone for retreat
-	var retreatZone = Game.EarthZones.Collection.findOne({
-		name: { $in: currentZone.links },
-		isVisible: true,
-		isEnemy: { $ne: true }
-	});
-
-	var movedArmy = null;
-
-	if (retreatZone) {
-		// try to move army
-		movedArmy = Game.Earth.moveArmy(retreatZone.name);
-		Game.Earth.setCurrentZone(retreatZone.name);
-	} else {
-		// if no retreat zone, make first found user zone current
-		var emptyZone = Game.EarthZones.Collection.findOne({
-			isVisible: true,
-			isEnemy: { $ne: true }
-		});
-		Game.Earth.setCurrentZone(emptyZone.name);
-	}
-
-	// destroy rest army
-	Game.EarthZones.Collection.update({
-		name: currentZone.name
-	}, {
-		$set: { isEnemy: true },
-		$unset: { userArmy: 1 }
-	});
-
-	return movedArmy;
-};
-
 Game.Earth.nextTurn = function() {
+	console.log('-------- Earth next turn start --------');
+
+	// TODO:
+
+	console.log('-------- Earth next turn end ----------');
+};
+
+Game.Earth.nextTurn_ = function() {
 	console.log('-------- Earth next turn start --------');
 
 	var currentZone = Game.EarthZones.Collection.findOne({
@@ -451,13 +300,13 @@ Game.Earth.nextTurn = function() {
 
 		// Only start zone is available, so try to observer nearby zones
 		if (Game.Mutual.has('research', 'reccons')
-		 && Game.Earth.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
+		 && Game.User.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
 		) {
 			Game.Earth.observeZone(currentZone.name);
 			Game.Earth.createTurn();
 		} else {
 			console.log('Unacceptable conditions!');
-			console.log('Active players ' + Game.Earth.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
+			console.log('Active players ' + Game.User.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
 			console.log('Mutual research is ' + Game.Mutual.has('research', 'reccons'));
 		}
 
@@ -473,69 +322,6 @@ Game.Earth.nextTurn = function() {
 	}
 
 	console.log('-------- Earth next turn end ----------');
-};
-
-Game.Earth.createTurn = function() {
-	console.log('Create next turn');
-
-	var currentZone = Game.EarthZones.Collection.findOne({
-		isCurrent: true
-	});
-
-	if (!currentZone) {
-		throw new Meteor.Error('Не установлена текущая зона');
-	}
-
-	// create turn
-	var options = null;
-
-	if (currentZone.enemyArmy) {
-
-		// Got enemy at current zone! Proceed battle or retreat?
-		console.log('Got enemy at current zone! Retreat or fight?');
-
-		options = {
-			type: 'battle',
-			timeStart: Game.getCurrentTime(),
-			actions: {
-				battle: 0,
-				retreat: 0
-			},
-			totalVotePower: 0,
-			users: []
-		};
-
-	} else {
-
-		// No enemy at current zone! What we gonna do?
-		console.log('No enemy at current zone! Move or wait?');
-
-		var zonesAround = Game.EarthZones.Collection.find({
-			name: { $in: currentZone.links },
-			isVisible: { $ne: false }
-		}).fetch();
-
-		var actionsList = {};
-		actionsList[ currentZone.name ] = 0;
-
-		for (var i = 0; i < zonesAround.length; i++) {
-			actionsList[ zonesAround[i].name ] = 0;
-		}
-
-		options = {
-			type: 'move',
-			timeStart: Game.getCurrentTime(),
-			actions: actionsList,
-			totalVotePower: 0,
-			users: []
-		};
-
-	}
-
-	// Save turn
-	if (options) {
-		Game.EarthTurns.Collection.insert(options);
-	}
 };
 
 Game.Earth.checkTurn = function() {
@@ -754,16 +540,15 @@ Meteor.publish('zones', function () {
 	}
 });
 
-Meteor.publish('turns', function() {
-	return Game.EarthTurns.Collection.find({}, {
-		sort: { timeStart: -1 },
-		limit: 1
-	});
-});
-
 Meteor.publish('earthUnits', function () {
 	if (this.userId) {
 		return Game.EarthUnits.Collection.find({user_id: this.userId});
+	}
+});
+
+Meteor.publish('zoneUnits', function () {
+	if (this.userId) {
+		return Game.ZoneUnits.Collection.find();
 	}
 });
 

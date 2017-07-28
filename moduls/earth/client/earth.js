@@ -4,8 +4,8 @@ initEarthClient = function() {
 initEarthLib();
 
 Meteor.subscribe('zones');
-var turnsSubscription = Meteor.subscribe('turns');
 Meteor.subscribe('earthUnits');
+Meteor.subscribe('zoneUnits');
 
 Game.Earth.showMap = function() {
 	this.render('earth', {
@@ -13,16 +13,6 @@ Game.Earth.showMap = function() {
 		data: {}
 	});
 };
-
-Game.EarthTurns.Collection.find({}).observeChanges({
-	added: function() {
-		if (turnsSubscription.ready()) {
-			Game.showDesktopNotification('Не пропустите новое голосование на Земле, Консул!', {
-				path: Router.path('earth', {group: 'earth'})
-			});
-		}
-	}
-});
 
 // ----------------------------------------------------------------------------
 // Earth battle history
@@ -247,10 +237,6 @@ Template.reserve.events({
 	},
 
 	'click .btn-send': function(e, t) {
-		if (!Game.Earth.checkReinforceTime( Session.get('serverTime') )) {
-			return Notifications.info('С 17:00 до 19:00 по МСК отправка войск недоступна');
-		}
-
 		if (!Game.SpaceEvents.checkCanSendFleet()) {
 			return Notifications.info('Слишком много флотов уже отправлено');
 		}
@@ -306,21 +292,23 @@ Template.earthZoneInfo.helpers({
 	info: function() {
 		var zone = Game.EarthZones.getByName(this.name);
 
+		let zoneUserArmy = Game.ZoneUnits.Collection.findOne({zoneName: this.name}).units;
+
 		var maxPower = Game.EarthZones.calcMaxHealth();
-		var currentUserPower = Game.Unit.calcUnitsHealth( zone.userArmy );
+		var currentUserPower = Game.Unit.calcUnitsHealth( zoneUserArmy );
 		var currentEnemyPower = Game.Unit.calcUnitsHealth( zone.enemyArmy );
 
 		var side = null;
 		var group = null;
 		var name = null;
 
-		var userArmy = (zone.userArmy) ? [] : null;
-		for (side in zone.userArmy) {
-			for (group in zone.userArmy[side]) {
-				for (name in zone.userArmy[side][group]) {
+		var userArmy = (zoneUserArmy) ? [] : null;
+		for (side in zoneUserArmy) {
+			for (group in zoneUserArmy[side]) {
+				for (name in zoneUserArmy[side][group]) {
 					userArmy.push({
 						name: Game.Unit.items[side][group][name].name,
-						count: zone.userArmy[side][group][name]
+						count: zoneUserArmy[side][group][name]
 					});
 				}
 			}
@@ -433,52 +421,6 @@ Template.earthZonePopup.helpers({
 	army: function() {
 		return Game.EarthUnits.get();
 	},
-
-	turn: function() {
-		var turn = Game.EarthTurns.getLast();
-		if (!turn) {
-			return null;
-		}
-
-		var zone = Game.EarthZones.getByName(this.name);
-		if (!zone) {
-			return null;
-		}
-		if (!zone.isCurrent) {
-			if (turn.type != 'move' || turn.actions[zone.name] === undefined) {
-				return null;
-			}
-		}
-
-		if (turn) {
-			turn.count = turn.users.length;
-		}
-
-		if (turn
-		 && turn.users.indexOf(Meteor.userId()) < 0
-		 && Game.User.getLevel() > 0
-		) {
-			turn.canVote = true;
-		} else {
-			turn.canVote = false;
-		}
-
-		return turn;
-	},
-
-	votePower: function() {
-		return Game.User.getVotePower();
-	},
-
-	votePercent: function(name, turn) {
-		if (!name || !turn || turn.totalVotePower <= 0) {
-			return 0;
-		}
-
-		var totalValue = turn.totalVotePower;
-		var actionValue = turn.actions[ name ];
-		return Math.round( actionValue / totalValue * 100 );
-	}
 });
 
 Template.earthZonePopup.events({
@@ -920,45 +862,6 @@ Template.earth.onRendered(function() {
 			showLines(Game.EarthUnits.get());
 		}
 	});
-
-	// show turn lines and track db updates
-	// TODO: Make reactive!
-	function f1() {
-		this.autorun(function () {
-			// remove current lines
-			for (var key in lineViews) {
-				lineViews[key].remove();
-			}
-
-			// get current zone
-			var currentZone = Game.EarthZones.getCurrent();
-			if (!currentZone) {
-				return;
-			}
-
-			// get last turn
-			var turn = Game.EarthTurns.getLast();
-			if (!turn) {
-				return;
-			}
-
-			// draw new lines
-			for (var name in turn.actions) {
-				if (name == currentZone.name) {
-					continue;
-				}
-
-				var start = zoneViews[currentZone.name];
-				var finish = zoneViews[name];
-
-				if (!start || !finish) {
-					continue;
-				}
-
-				lineViews[name] = new LineView(start, finish);
-			}
-		});
-	}
 });
 
 let showLines = function (army) {

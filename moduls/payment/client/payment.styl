@@ -1,0 +1,324 @@
+payment-icon(name)
+  .{name}-icon
+    background-image url("/img/game/payment/" name ".png")
+
+
+payment-icon('paymentCredits1000')
+payment-icon('paymentCredits2500')
+payment-icon('paymentCredits5000')
+payment-icon('paymentCredits10000')
+payment-icon('paymentCredits25000')
+payment-icon('paymentCredits50000')
+
+
+.side_payment
+  position relative
+  width 340px
+  height 433px
+  margin-left auto
+  z-index 2
+  color #B1B1B1
+  
+  h2
+    color #E9A844
+    font-size 20px
+    font-weight bold
+    text-align center
+    padding-top 10px
+    
+  a
+    display inline-block
+    width 165px
+    color #56BAF2
+    text-align center
+    text-decoration none
+    
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+      
+  .buy
+    display block
+    cursor pointer
+    background-image url(/img/game/payment/buy.png)
+    background-repeat no-repeat
+    margin 20px 10px
+    width 145px
+    height 95px
+    padding-left 170px
+    padding-top 10px
+    
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+        
+    .yellow
+      color #E9A844
+      
+    .blue
+      color #56BAF2
+
+  .promo
+    position absolute
+    display block
+    bottom 0px
+    right 0px
+    width 340px
+
+    .create
+    .promoHistory
+      position absolute
+      display block
+      cursor pointer
+      width 100%
+      text-align center
+      text-decoration none
+      color #56BAF2
+    
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+          
+    .create
+      bottom 110px
+    
+    .promoHistory
+      bottom 85px
+    
+    .hint
+      position absolute
+      display block
+      right 0px
+      bottom 60px
+      width 100%
+      text-align center
+      font-size 14px
+      
+    .send
+      position absolute
+      display block
+      bottom 4px
+      right 10px
+      width 80px
+      height 20px
+      padding 10px 10px
+      margin 5px
+      background-image url(/img/game/payment/btn-back.png)
+      background-repeat no-repeat
+      font-size 16px
+      font-weight bold
+      text-align center
+      color #FFFFFF
+      cursor pointer
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+
+    .code
+      position absolute
+      right 130px
+      bottom 10px
+      width 176px
+      height 33px
+      border-radius 5px
+      padding 2px 10px
+      -webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+      -moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+      box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+      border 2px solid #335168
+      background-color #adadad
+      font-size 16px
+      font-weight bold
+
+.smoke
+  &.reward
+    z-index 199
+
+.payment
+  position relative
+  width 960px
+  height 540px
+  padding 10px
+  box-sizing border-box
+  background-color $color-black
+  font-size 14px
+  color $color-ggk
+  overflow auto
+  
+  > span
+    color $color-white
+    
+    .alert
+      color $color-honor
+
+    .ggk
+      color $color-ggk
+
+  &.platbox
+    width 1030px
+    height 95%
+    max-width 100%
+    max-height 730px
+    padding 10px
+    overflow hidden
+    
+    iframe
+      width 100%
+      height 100%
+      background-color #FFFFFF
+      
+  &.teko
+    width 476px
+    height 95%
+    max-width 100%
+    max-height 652px
+    padding 10px
+    overflow hidden
+
+    iframe
+      width 100%
+      height 100%
+      background-color #FFFFFF
+
+  &.reward
+    width 272px
+    height 367px
+    border none
+    background-image url(img/game/payment/reward-back.jpg)
+    background-repeat no-repeat
+      
+    img
+      margin-top 50px
+      margin-left 85px
+      
+    .count
+      color #C6E846
+      font-size 24px
+      font-weight bold
+      text-align center
+
+    .description
+      margin 20px
+      color #E9A844
+      font-size 18px
+      font-weight normal
+      text-align center
+      
+    .take
+      display block
+      cursor pointer
+      width 181px
+      height 40px
+      padding-top 10px
+      margin-left 45px
+      color #FFFFFF
+      font-size 24px
+      font-weight bold
+      text-align center
+      background-image url(/img/game/quests/btn_take.png)
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+
+  .paymentItems
+    display flex
+    flex-wrap wrap
+    flex-direction row
+    justify-content space-between
+    width 100%
+    margin 10px 0
+    
+    > div
+      display block
+      width 303px
+      height 229px
+      background-repeat no-repeat
+      background-position center top
+      color $color-ggk
+      margin 5px 0
+      
+      .description
+        color $color-human
+        font-size 15px
+        font-weight bold
+        margin 12px 20px
+        span
+          color $color-ggk
+          margin 0 3px
+      
+      .profit,
+      .price
+        display flex
+        align-items center
+        width 230px
+        height 46px
+        padding-left 64px
+        box-sizing border-box
+        background-repeat no-repeat
+        background-position left center
+        font-size 20px
+        margin 12px 0
+      
+      .profit
+        color $color-ggk
+        background-image url(/img/game/credits.png)
+        
+        .previous
+          -webkit-filter grayscale(1) brightness(0.6)
+          filter grayscale(1) brightness(0.6)
+          font-size 15px
+          text-decoration line-through
+          margin-left 8px
+
+      .price
+        color $color-white
+        background-image url(/img/game/payment/rub.png)
+
+      .profit,
+      .price,
+      .greenButton
+        margin-left 61px
+        
+      .greenButton
+        margin-top 6px
+    
+
+.content
+  .paymentHistory
+    position relative
+    height 435px
+    margin-left 0px
+    background-color #04080B
+    z-index 10
+  
+    .data
+      height 355px
+      overflow-y auto
+      
+    table
+      width 100%
+      border-collapse collapse
+
+      tr
+        height 40px
+
+        &:nth-child(odd):not(.header)
+          background-color #0B121A
+        
+        &:nth-child(even)
+          background-color #0E1821
+        
+      td, th
+        text-align left
+          
+        &:nth-child(1)
+          padding-left 10px
+          width 150px
+      
+        &:nth-child(2)
+          width 350px
+        
+        &:nth-child(3)
+          width 200px

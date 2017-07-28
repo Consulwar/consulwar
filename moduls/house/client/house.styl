@@ -1,10 +1,10 @@
 house-group-icon(group)
-	.{group}-icon
-		background-image url("/img/game/house/" group "/icon.png")
+  .{group}-icon
+    background-image url("/img/game/house/" group "/icon.png")
 
 house-item-icon(group, name)
-	.{group}-{name}-icon
-		background-image url("/img/game/house/" group "/i/" name ".png")
+  .{group}-{name}-icon
+    background-image url("/img/game/house/" group "/i/" name ".png")
 
 
 house-item-icon('room', 'consul')
@@ -20,6 +20,7 @@ house-item-icon('tron', 'stool')
 house-item-icon('avatar', 'consul')
 house-item-icon('avatar', 'czar')
 house-item-icon('avatar', 'johnsnow')
+house-item-icon('avatar', 'strawman')
 
 
 house-item-icon('donate', 'uncleBuilder')
@@ -27,290 +28,290 @@ house-item-icon('donate', 'nuclearComplex')
 house-item-icon('donate', 'robotsPilots')
 
 .content
-	.house
-		
-		button
-			cursor pointer
-			position absolute
-			bottom 15px
-			left 500px
-			font-size 16px
-			text-align center
-			padding-top 20px
-			padding-bottom 20px
-			width 180px
-			background-color #000000
+  .house
+    
+    button
+      cursor pointer
+      position absolute
+      bottom 15px
+      left 500px
+      font-size 16px
+      text-align center
+      padding-top 20px
+      padding-bottom 20px
+      width 180px
+      background-color #000000
 
-		.buy
-			border 2px solid #91b935
-			color #91b935
-			
-		.place
-			border 2px solid #C3882A
-			color #EBA742
-			
-		.activate
-			bottom 100px
-			border 2px solid #C3882A
-			color #EBA742
+    .buy
+      border 2px solid #91b935
+      color #91b935
+      
+    .place
+      border 2px solid #C3882A
+      color #EBA742
+      
+    .activate
+      bottom 100px
+      border 2px solid #C3882A
+      color #EBA742
 
-		.remove
-			border 2px solid #D15D50
-			color #D15D50
+    .remove
+      border 2px solid #D15D50
+      color #D15D50
 
-		.profit
-			padding-top 20px
-			font-size 16px
-			font-weight bold
-			color #EBA742
+    .profit
+      padding-top 20px
+      font-size 16px
+      font-weight bold
+      color #EBA742
 
-		.unique
-			position absolute
-			bottom 15px
-			left 500px
-			width 132px
-			height 40px
-			background-position center center
-			background-repeat no-repeat
-			background-image url(/img/game/house/ico_unique.png)
+    .unique
+      position absolute
+      bottom 15px
+      left 500px
+      width 132px
+      height 40px
+      background-position center center
+      background-repeat no-repeat
+      background-image url(/img/game/house/ico_unique.png)
 
-		.planet
-			display block
-			text-decoration none
-			font-weight bold
-			padding-top 10px
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
+    .planet
+      display block
+      text-decoration none
+      font-weight bold
+      padding-top 10px
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
 
-		.findall
-			display block
-			margin-top 10px
-			padding 20px
-			width 180px
-			background-color #000000
-			border 2px solid #C3882A
-			color #EBA742
-			font-size 16px
-			text-align center
-			text-decoration none
+    .findall
+      display block
+      margin-top 10px
+      padding 20px
+      width 180px
+      background-color #000000
+      border 2px solid #C3882A
+      color #EBA742
+      font-size 16px
+      text-align center
+      text-decoration none
 
 .consul-items
-	display block
-	overflow-x hidden
-	overflow-y scroll
-	position relative
-	float right
-	margin-top -20px
-	margin-right -20px
-	margin-left 10px
-	width 638px
-	height 428px
-	background-color #090E14
+  display block
+  overflow-x hidden
+  overflow-y scroll
+  position relative
+  float right
+  margin-top -20px
+  margin-right -20px
+  margin-left 10px
+  width 638px
+  height 428px
+  background-color #090E14
 
-	li
-		display inline-block
-		width 115px
-		height 165px
-		margin-left 4px
-		margin-bottom 4px
+  li
+    display inline-block
+    width 115px
+    height 165px
+    margin-left 4px
+    margin-bottom 4px
 
-	a
-		cursor pointer
-		display block
-		border 3px solid #1A3552
-		border-radius 3px
-		width 100%
-		height 100%
-		background-color #000000
-		background-repeat no-repeat
-		
-		&:hover
-			border 3px solid #3EB4F1
-			
-	.active
-		border 3px solid #C3882A
-		
-		&:hover
-			border 3px solid #D59B3C
-			
-	.placed
-		border 3px solid #FFFFFF
-		
-		&:hover
-			border 3px solid #FFFFFF
-			
-	.new:after
-		content ""
-		display block
-		width 100%
-		height 95%
-		background-position center bottom
-		background-repeat no-repeat
-		background-image url(/img/game/house/ico_new.png)
-	
-	.has:after
-		content ""
-		display block
-		width 100%
-		height 95%
-		background-position center bottom
-		background-repeat no-repeat
-		background-image url(/img/game/house/ico_has.png)
+  a
+    cursor pointer
+    display block
+    border 3px solid #1A3552
+    border-radius 3px
+    width 100%
+    height 100%
+    background-color #000000
+    background-repeat no-repeat
+    
+    &:hover
+      border 3px solid #3EB4F1
+      
+  .active
+    border 3px solid #C3882A
+    
+    &:hover
+      border 3px solid #D59B3C
+      
+  .placed
+    border 3px solid #FFFFFF
+    
+    &:hover
+      border 3px solid #FFFFFF
+      
+  .new:after
+    content ""
+    display block
+    width 100%
+    height 95%
+    background-position center bottom
+    background-repeat no-repeat
+    background-image url(/img/game/house/ico_new.png)
+  
+  .has:after
+    content ""
+    display block
+    width 100%
+    height 95%
+    background-position center bottom
+    background-repeat no-repeat
+    background-image url(/img/game/house/ico_has.png)
 
 
 .consul-artefacts
-	display block
-	overflow-x hidden
-	overflow-y scroll
-	position relative
-	float right
-	margin-top -20px
-	margin-right -20px
-	margin-left 10px
-	width 638px
-	height 428px
-	background-color #090E14
+  display block
+  overflow-x hidden
+  overflow-y scroll
+  position relative
+  float right
+  margin-top -20px
+  margin-right -20px
+  margin-left 10px
+  width 638px
+  height 428px
+  background-color #090E14
 
-	li
-		display inline-block
-		width 115px
-		height 115px
-		margin-left 4px
-		margin-bottom 4px
+  li
+    display inline-block
+    width 115px
+    height 115px
+    margin-left 4px
+    margin-bottom 4px
 
-	a
-		cursor pointer
-		display block
-		border 3px solid #1A3552
-		border-radius 3px
-		width 105px
-		height 13px
-		padding 5px
-		padding-top 90px
-		padding-bottom 10px
-		background-color #000000
-		background-repeat no-repeat
-		background-position center 15px
-		text-decoration none
-		text-align center
-		
-		&:hover
-			border 3px solid #3EB4F1
-			
-	.active
-		border 3px solid #C3882A
-		
-		&:hover
-			border 3px solid #D59B3C
+  a
+    cursor pointer
+    display block
+    border 3px solid #1A3552
+    border-radius 3px
+    width 105px
+    height 13px
+    padding 5px
+    padding-top 90px
+    padding-bottom 10px
+    background-color #000000
+    background-repeat no-repeat
+    background-position center 15px
+    text-decoration none
+    text-align center
+    
+    &:hover
+      border 3px solid #3EB4F1
+      
+  .active
+    border 3px solid #C3882A
+    
+    &:hover
+      border 3px solid #D59B3C
 
 
 .donate
-	position relative
-	width 1340px
-	height 435px
-	background-color #090e14
-	background-image url(/img/game/house/donate/back.jpg)
-	background-size 100% 100%
-	
-	.info
-		margin 10px
-		padding 10px
-		width 380px
-		height 395px
-		background-color rgba(0, 0, 0, 0.8)
-		
-		.title
-			margin-bottom 30px
-			font-size 18px
-			font-weight bold
-			color #FFFFFF
-			
-		.description
-			font-size 14px
-			font-weight normal
-			color #527CA2
-			margin-bottom 30px
-			
-		.duration
-			font-size 14px
-			font-weight bold
-			color #FFFFFF
-			margin-bottom 5px
-			
-		.effect
-			font-size 14px
-			font-weight bold
-			color #E9A844
-			margin-bottom 5px
+  position relative
+  width 1340px
+  height 435px
+  background-color #090e14
+  background-image url(/img/game/house/donate/back.jpg)
+  background-size 100% 100%
+  
+  .info
+    margin 10px
+    padding 10px
+    width 380px
+    height 395px
+    background-color rgba(0, 0, 0, 0.8)
+    
+    .title
+      margin-bottom 30px
+      font-size 18px
+      font-weight bold
+      color #FFFFFF
+      
+    .description
+      font-size 14px
+      font-weight normal
+      color #527CA2
+      margin-bottom 30px
+      
+    .duration
+      font-size 14px
+      font-weight bold
+      color #FFFFFF
+      margin-bottom 5px
+      
+    .effect
+      font-size 14px
+      font-weight bold
+      color #E9A844
+      margin-bottom 5px
 
-		.resources
-			margin-top 25px
-			
-			li
-				width 100%
+    .resources
+      margin-top 25px
+      
+      li
+        width 100%
 
-	.donate-items
-		display block
-		position absolute
-		top 10px
-		left 420px
-		
-		li
-			display inline-block
-			width 300px
-			height 415px
-			background-repeat no-repeat
-			background-position center top
-			text-align center
-			font-weight bold
-			-webkit-filter grayscale(1)
-			filter grayscale(1)
-			
-			&.active
-				-webkit-filter grayscale(0)
-				filter grayscale(0)
-			
-			a
-				display block
-				width 300px
-				height 360px
-			
-			.time
-				display block
-				width 280px
-				height 37px
-				margin-left 10px
-				padding-top 18px
-				background-color rgba(0, 0, 0, 0.8)
-				text-align center
-				font-size 14px
-				font-weight bold
-				color #FFFFFF
+  .donate-items
+    display block
+    position absolute
+    top 10px
+    left 420px
+    
+    li
+      display inline-block
+      width 300px
+      height 415px
+      background-repeat no-repeat
+      background-position center top
+      text-align center
+      font-weight bold
+      -webkit-filter grayscale(1)
+      filter grayscale(1)
+      
+      &.active
+        -webkit-filter grayscale(0)
+        filter grayscale(0)
+      
+      a
+        display block
+        width 300px
+        height 360px
+      
+      .time
+        display block
+        width 280px
+        height 37px
+        margin-left 10px
+        padding-top 18px
+        background-color rgba(0, 0, 0, 0.8)
+        text-align center
+        font-size 14px
+        font-weight bold
+        color #FFFFFF
 
-			.activate
-			.buy
-				display block
-				cursor pointer
-				margin 0 auto
-				width 181px
-				height 40px
-				padding-top 10px
-				color #FFFFFF
-				font-size 20px
-				background-image url(/img/game/quests/btn_take.png)
-				&:hover
-					-webkit-filter brightness(1.4)
-					filter brightness(1.4)
-						
+      .activate
+      .buy
+        display block
+        cursor pointer
+        margin 0 auto
+        width 181px
+        height 40px
+        padding-top 10px
+        color #FFFFFF
+        font-size 20px
+        background-image url(/img/game/quests/btn_take.png)
+        &:hover
+          -webkit-filter brightness(1.4)
+          filter brightness(1.4)
+            
 .newgame.new .overlay.house
-	pointer-events none
+  pointer-events none
 
 .newgame.new .content.house
-	margin auto
-	width 100%
-	background-color transparent
-	
-	.page-title
-		left 0
-		padding-left 100px
+  margin auto
+  width 100%
+  background-color transparent
+  
+  .page-title
+    left 0
+    padding-left 100px

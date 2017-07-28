@@ -1,181 +1,181 @@
 .resources
-	display flex
-	flex-direction row
-	justify-content flex-start
-	align-items flex-start
-	
-	> div
-		width 50px
-		margin auto 7.5px
-		height 12px
-		padding-top 38px
-		background-repeat no-repeat
-		background-position top center
-		background-size 35px 35px
-		text-align center
-		vertical-align top
-		font-size 12px
-		font-weight bold
-		
-		a
-			display block
-			width 100%
-			height 100%
-	
-		&.artefact
-			cursor pointer
-			background-size 65%
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
+  display flex
+  flex-direction row
+  justify-content flex-start
+  align-items flex-start
+  
+  > div
+    width 50px
+    margin auto 7.5px
+    height 12px
+    padding-top 38px
+    background-repeat no-repeat
+    background-position top center
+    background-size 35px 35px
+    text-align center
+    vertical-align top
+    font-size 12px
+    font-weight bold
+    
+    a
+      display block
+      width 100%
+      height 100%
+  
+    &.artefact
+      cursor pointer
+      background-size 65%
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
 
-	.humans
-		background-image url(/img/game/humans.png)
-		color #FFB74A
-	.metals
-		background-image url(/img/game/metals.png)
-		color #66CCE2
-	.crystals
-		background-image url(/img/game/crystals.png)
-		color #D36FFF
-	.credits
-		background-image url(/img/game/credits.png)
-		color #C6E84C
-		cursor pointer
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-	
-	.artefacts
-		width 47px
-		height 47px
-		padding 0
-		cursor pointer
-		background-size 47px 47px
-		background-image url(/img/game/artefacts.png)
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
+  .humans
+    background-image url(/img/game/humans.png)
+    color #FFB74A
+  .metals
+    background-image url(/img/game/metals.png)
+    color #66CCE2
+  .crystals
+    background-image url(/img/game/crystals.png)
+    color #D36FFF
+  .credits
+    background-image url(/img/game/credits.png)
+    color #C6E84C
+    cursor pointer
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+  
+  .artefacts
+    width 47px
+    height 47px
+    padding 0
+    cursor pointer
+    background-size 47px 47px
+    background-image url(/img/game/artefacts.png)
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
 
-	.honor
-		background-image url(/img/game/honor.png)
-		color #FF7566
-	.time
-		width 100%
-		height 20px
-		padding 0
-		margin 0
-		color #aaa
-		text-align left
-		
-		time
-			color #fff
-			
-		+ div
-			margin-left 0
-	
-	.button
-		width 160px
-		height 64px
-		padding-top 0
-		
-	&.big
-		> div
-			width 120px
-			padding-top 70px
-			background-size 68px 67px
+  .honor
+    background-image url(/img/game/honor.png)
+    color #FF7566
+  .time
+    width 100%
+    height 20px
+    padding 0
+    margin 0
+    color #aaa
+    text-align left
+    
+    time
+      color #fff
+      
+    + div
+      margin-left 0
+  
+  .button
+    width 160px
+    height 64px
+    padding-top 0
+    
+  &.big
+    > div
+      width 120px
+      padding-top 70px
+      background-size 68px 67px
 
-		.metals
-			background-image url(/img/game/metals_big.png)
-		.crystals
-			background-image url(/img/game/crystals_big.png)
-		.honor
-			background-image url(/img/game/honor_big.png)
-			
-	&.large
-		> div
-			width 160px
-			padding-top 106px
-			background-size 104px 103px
-			font-size 24px
+    .metals
+      background-image url(/img/game/metals_big.png)
+    .crystals
+      background-image url(/img/game/crystals_big.png)
+    .honor
+      background-image url(/img/game/honor_big.png)
+      
+  &.large
+    > div
+      width 160px
+      padding-top 106px
+      background-size 104px 103px
+      font-size 24px
 
-		.metals
-			background-image url(/img/game/quests/metals.png)
-		.crystals
-			background-image url(/img/game/quests/crystals.png)
-		.credits
-			background-image url(/img/game/quests/honor.png)
+    .metals
+      background-image url(/img/game/quests/metals.png)
+    .crystals
+      background-image url(/img/game/quests/crystals.png)
+    .credits
+      background-image url(/img/game/quests/honor.png)
 
 .bonus
-	position relative
-	width 200px
-	height 24px
-	font-weight bold
-	background-color #000
-	z-index 20
-	cursor pointer
-		
-	&::-webkit-progress-bar
-		background-color #000
-		
-	&[role][aria-valuenow]
-		background-color #000
-	
-	&:before
-		content attr(value) ' / ' attr(max)
-		position absolute
-		top 0
-		left 0
-		display flex
-		width 100%
-		height 100%
-		align-items center
-		justify-content center
-		text-align center
-		color $color-white
-	
-	&.metals
-		border 1px solid $color-metal
-		&::-moz-progress-bar 
-			background-color #5697D7
+  position relative
+  width 200px
+  height 24px
+  font-weight bold
+  background-color #000
+  z-index 20
+  cursor pointer
+    
+  &::-webkit-progress-bar
+    background-color #000
+    
+  &[role][aria-valuenow]
+    background-color #000
+  
+  &:before
+    content attr(value) ' / ' attr(max)
+    position absolute
+    top 0
+    left 0
+    display flex
+    width 100%
+    height 100%
+    align-items center
+    justify-content center
+    text-align center
+    color $color-white
+  
+  &.metals
+    border 1px solid $color-metal
+    &::-moz-progress-bar 
+      background-color #5697D7
 
-		&::-webkit-progress-value
-			background-color #5697D7
-			
-		&[aria-valuenow]:before
-			background-color #5697D7
-		
-	&.crystals
-		border 1px solid $color-crystal
-		&::-moz-progress-bar 
-			background-color #D7559B
+    &::-webkit-progress-value
+      background-color #5697D7
+      
+    &[aria-valuenow]:before
+      background-color #5697D7
+    
+  &.crystals
+    border 1px solid $color-crystal
+    &::-moz-progress-bar 
+      background-color #D7559B
 
-		&::-webkit-progress-value
-			background-color #D7559B
-			
-		&[aria-valuenow]:before
-			background-color #D7559B
+    &::-webkit-progress-value
+      background-color #D7559B
+      
+    &[aria-valuenow]:before
+      background-color #D7559B
 
 .information
-	>.resources
-		position absolute
-		bottom 10px
-		left 370px
-		
-		.button:nth-child(6)
-			margin-top 2px
-			height 82px
-			
-			button
-				margin 8px 0
+  >.resources
+    position absolute
+    bottom 10px
+    left 370px
+    
+    .button:nth-child(6)
+      margin-top 2px
+      height 82px
+      
+      button
+        margin 8px 0
 
-		button
-			padding 15px 10px
-			margin 6px 0
-		
-	&.mutual
-		.resources
-			width 356px
-			
-			.credits
-				margin-top 20px
+    button
+      padding 15px 10px
+      margin 6px 0
+    
+  &.mutual
+    .resources
+      width 356px
+      
+      .credits
+        margin-top 20px

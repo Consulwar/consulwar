@@ -1,181 +1,181 @@
 <template name="consulHouse">
-	{{#if consulName}}
-		<span class="page-title">
-			Палата консула {{consulName}}
-		</span>
-	{{/if}}
-	{{> paymentSide}}
-	{{#if isLoading}}
-		{{> loading}}
-	{{/if}}
+  {{#if consulName}}
+    <span class="page-title">
+      Палата консула {{consulName}}
+    </span>
+  {{/if}}
+  {{> paymentSide}}
+  {{#if isLoading}}
+    {{> loading}}
+  {{/if}}
 </template>
 
 <template name="consulHouseItem">
-	<div class="information house">
-		<div class="image">
-			<img src="/img/game/house/{{subgroup}}/i/{{item.engName}}.jpg">
-			<span class="title">{{item.name}}</span>
-		</div>
-		<div class="description">
-			<ul class ="consul-items">
-				{{#each subgroupItems}}
-					<li>
-						<a 
-							class="
-								{{subgroup}}-{{this.engName}}-icon 
-								{{#if this.checkBought}}
-									has
-								{{else}}
-									{{#if this.isNew}}new{{/if}}
-								{{/if}} 
-								{{#if eq ../item.engName this.engName}}active{{/if}} 
-								{{#if this.checkPlaced}}placed{{/if}}"
-							href="{{this.url}}"
-						></a>
-					</li>
-				{{/each}}
-			</ul>
-			<p>
-				{{item.description}}
-			</p>
+  <div class="information house">
+    <div class="image">
+      <img src="/img/game/house/{{subgroup}}/i/{{item.engName}}.jpg">
+      <span class="title">{{item.name}}</span>
+    </div>
+    <div class="description">
+      <ul class ="consul-items">
+        {{#each subgroupItems}}
+          <li>
+            <a 
+              class="
+                {{subgroup}}-{{this.engName}}-icon 
+                {{#if this.checkBought}}
+                  has
+                {{else}}
+                  {{#if this.isNew}}new{{/if}}
+                {{/if}} 
+                {{#if eq ../item.engName this.engName}}active{{/if}} 
+                {{#if this.checkPlaced}}placed{{/if}}"
+              href="{{this.url}}"
+            ></a>
+          </li>
+        {{/each}}
+      </ul>
+      <p>
+        {{item.description}}
+      </p>
 
-			{{> item_effect item=item}}
-		</div>
-		{{#if item.checkBought}}
-			{{#unless item.checkPlaced}}
-				<button class="place">Установить</button>
-			{{/unless}}
-		{{else}}
-			{{#if item.isUnique}}
-				<div class="unique"></div>
-			{{else}}
-				{{#if item.getPrice}}
-					{{> item_price price=(item.getPrice 1)}}
-					<button class="buy">Приобрести</button>
-				{{/if}}
-			{{/if}}
-		{{/if}}
-	</div>
+      {{> item_effect item=item}}
+    </div>
+    {{#if item.checkBought}}
+      {{#unless item.checkPlaced}}
+        <button class="place">Установить</button>
+      {{/unless}}
+    {{else}}
+      {{#if item.isUnique}}
+        <div class="unique"></div>
+      {{else}}
+        {{#if item.getPrice}}
+          {{> item_price price=(item.getPrice 1)}}
+          <button class="buy">Приобрести</button>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  </div>
 </template>
 
 <template name="consulHouseCards">
-	<div class="information house">
-		<div class="image">
-			<img 
-				alt="{{item.name}}" 
-				src="
-				{{#unless item.notImplemented}}
-					/img/game/item/{{item.engName}}.jpg
-				{{else}}
-					/img/game/notimplemented.jpg
-				{{/unless}}
-				"
-			>
-			<span class="title">{{item.name}}</span>
-			{{#if gt item.amount 0}}
-				<span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>
-			{{/if}}
-		</div>
-		<div class="description">
-			<ul class ="consul-artefacts">
-				{{#each subgroupItems}}
-					<li>
-						{{this.name}}
-						<a 
-							class="
-								{{this.engName}} 
-								{{#if eq ../item.engName this.engName}}active{{/if}}"
-							href="{{this.url}}"
-						>{{formatNumberWithISO this.amount}}</a>
-					</li>
-				{{/each}}
-			</ul>
-			{{#if item.description}}
-				<p>{{{item.description}}}</p>
-			{{/if}}
+  <div class="information house">
+    <div class="image">
+      <img 
+        alt="{{item.name}}" 
+        src="
+        {{#unless item.notImplemented}}
+          /img/game/item/{{item.engName}}.jpg
+        {{else}}
+          /img/game/notimplemented.jpg
+        {{/unless}}
+        "
+      >
+      <span class="title">{{item.name}}</span>
+      {{#if gt item.amount 0}}
+        <span class="level" title="{{formatNumber item.amount}}">{{formatNumberWithISO item.amount}}</span>
+      {{/if}}
+    </div>
+    <div class="description">
+      <ul class ="consul-artefacts">
+        {{#each subgroupItems}}
+          <li>
+            {{this.name}}
+            <a 
+              class="
+                {{this.engName}} 
+                {{#if eq ../item.engName this.engName}}active{{/if}}"
+              href="{{this.url}}"
+            >{{formatNumberWithISO this.amount}}</a>
+          </li>
+        {{/each}}
+      </ul>
+      {{#if item.description}}
+        <p>{{{item.description}}}</p>
+      {{/if}}
 
-			{{> item_effect item=item}}
+      {{> item_effect item=item}}
 
-			{{#if finishTime}}
-				<p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft finishTime)}}</p>
-			{{else}}
-				{{#if reloadTime}}
-					<p>Можно повторно активировать через {{formatSeconds (getTimeLeft reloadTime)}}</p>
-				{{/if}}
-			{{/if}}
-		</div>
-		{{#if canActivate}}
-			<button class="activate">Активировать</button>
-		{{/if}}
-		{{#if item.getPrice}}
-			{{> item_price price=(item.getPrice 1)}}
-			<button class="buy">Приобрести</button>
-		{{/if}}
-	</div>
+      {{#if finishTime}}
+        <p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft finishTime)}}</p>
+      {{else}}
+        {{#if reloadTime}}
+          <p>Можно повторно активировать через {{formatSeconds (getTimeLeft reloadTime)}}</p>
+        {{/if}}
+      {{/if}}
+    </div>
+    {{#if canActivate}}
+      <button class="activate">Активировать</button>
+    {{/if}}
+    {{#if item.getPrice}}
+      {{> item_price price=(item.getPrice 1)}}
+      <button class="buy">Приобрести</button>
+    {{/if}}
+  </div>
 </template>
 
 <template name="consulHouseDonate">
-	<div class="donate">
-		<div class="info">
-			<div class="title">{{item.name}}</div>
-			<div class="description">{{item.description}}</div>
-			<div class="duration">Срок действия: {{formatTime item.durationTime}}</div>
-			{{#each item.effect}}
-				<div class="effect">{{this.pretext}}{{this.result}}{{this.aftertext}}</div>
-			{{/each}}
-			{{> item_price price=(item.getPrice 1)}}
-		</div>
-		{{!--
-		<ul class="donate-items">
-			{{#each subgroupItems}}
-				<li class="donate-{{this.engName}}-icon {{#if eq ../item.engName this.engName}}active{{/if}}">
-					<a href="{{this.url}}"></a>
-					{{#if this.getActiveTask}}
-						<span class="time">{{formatTime (getTimeLeft this)}}</span>
-					{{else}}
-						{{#if gt this.amount 0}}
-							<span class="activate" data-id="{{this.engName}}">Активировать</span>
-						{{else}}
-							<span class="buy" data-id="{{this.engName}}">Купить</span>
-						{{/if}}
-					{{/if}}
-				</li>
-			{{/each}}
-		</ul>
-		--}}
-		<ul class="donate-items">
-				<li class="donate-uncleBuilder-icon active" style="position: absolute;z-index: 9;left: 125px;"></li>
-			
-				<li class="donate-nuclearComplex-icon active" style="
-					position: absolute;
-					left: 300px;
-					z-index: 10;
-				"></li>
-			
-				<li class="donate-robotsPilots-icon active" style="
-					position: absolute;
-					left: 470px;
-					z-index: 9;
-				"></li>
-			
-				<li class="donate-Crazy-icon active" style="
-					position: absolute;
-					width: 900px;
-					height: 600px;
-					z-index: 20;
-				">
-					<a href="/game/planet/house/donate/Crazy"></a>
-					{{#if subgroupItems.[0].getActiveTask}}
-						<span class="time" style="margin: 0 auto;">{{formatTime (getTimeLeft subgroupItems.[0])}}</span>
-					{{else}}
-						{{#if gt subgroupItems.[0].amount 0}}
-							<span class="activate" data-id="{{subgroupItems.[0].engName}}">Активировать</span>
-						{{else}}
-							<span class="buy" data-id="{{subgroupItems.[0].engName}}">Купить</span>
-						{{/if}}
-					{{/if}}
-				</li>
-			
-		</ul>
-	</div>	
+  <div class="donate">
+    <div class="info">
+      <div class="title">{{item.name}}</div>
+      <div class="description">{{item.description}}</div>
+      <div class="duration">Срок действия: {{formatTime item.durationTime}}</div>
+      {{#each item.effect}}
+        <div class="effect">{{this.pretext}}{{this.result}}{{this.aftertext}}</div>
+      {{/each}}
+      {{> item_price price=(item.getPrice 1)}}
+    </div>
+    {{!--
+    <ul class="donate-items">
+      {{#each subgroupItems}}
+        <li class="donate-{{this.engName}}-icon {{#if eq ../item.engName this.engName}}active{{/if}}">
+          <a href="{{this.url}}"></a>
+          {{#if this.getActiveTask}}
+            <span class="time">{{formatTime (getTimeLeft this)}}</span>
+          {{else}}
+            {{#if gt this.amount 0}}
+              <span class="activate" data-id="{{this.engName}}">Активировать</span>
+            {{else}}
+              <span class="buy" data-id="{{this.engName}}">Купить</span>
+            {{/if}}
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+    --}}
+    <ul class="donate-items">
+        <li class="donate-uncleBuilder-icon active" style="position: absolute;z-index: 9;left: 125px;"></li>
+      
+        <li class="donate-nuclearComplex-icon active" style="
+          position: absolute;
+          left: 300px;
+          z-index: 10;
+        "></li>
+      
+        <li class="donate-robotsPilots-icon active" style="
+          position: absolute;
+          left: 470px;
+          z-index: 9;
+        "></li>
+      
+        <li class="donate-Crazy-icon active" style="
+          position: absolute;
+          width: 900px;
+          height: 600px;
+          z-index: 20;
+        ">
+          <a href="/game/planet/house/donate/Crazy"></a>
+          {{#if subgroupItems.[0].getActiveTask}}
+            <span class="time" style="margin: 0 auto;">{{formatTime (getTimeLeft subgroupItems.[0])}}</span>
+          {{else}}
+            {{#if gt subgroupItems.[0].amount 0}}
+              <span class="activate" data-id="{{subgroupItems.[0].engName}}">Активировать</span>
+            {{else}}
+              <span class="buy" data-id="{{subgroupItems.[0].engName}}">Купить</span>
+            {{/if}}
+          {{/if}}
+        </li>
+      
+    </ul>
+  </div>  
 </template>

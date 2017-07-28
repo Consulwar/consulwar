@@ -5,59 +5,59 @@ initBuildingSpecialColosseumLib();
 initBuildingSpecialColosseumContentServerMain();
 
 Meteor.methods({
-	'colosseum.startTournament': function(id) {
-		var user = Meteor.user();
+  'colosseum.startTournament': function(id) {
+    var user = Meteor.user();
 
-		if (!user || !user._id) {
-			throw new Meteor.Error('Требуется авторизация');
-		}
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
 
-		if (user.blocked === true) {
-			throw new Meteor.Error('Аккаунт заблокирован');
-		}
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
 
-		Game.Log.method('colosseum.startTournament');
+    Game.Log.method('colosseum.startTournament');
 
-		var tournament = Game.Building.special.Colosseum.tournaments[id];
+    var tournament = Game.Building.special.Colosseum.tournaments[id];
 
-		if (!tournament) {
-			throw new Meteor.Error('Нет такого турнира');
-		}
+    if (!tournament) {
+      throw new Meteor.Error('Нет такого турнира');
+    }
 
-		Meteor.call('actualizeGameInfo');
+    Meteor.call('actualizeGameInfo');
 
-		if (!Game.Building.special.Colosseum.checkCanStart()
-		 || !tournament.checkLevel()
-		 || !tournament.checkPrice()
-		) {
-			throw new Meteor.Error('Невозможно начать турнир');
-		}
+    if (!Game.Building.special.Colosseum.checkCanStart()
+     || !tournament.checkLevel()
+     || !tournament.checkPrice()
+    ) {
+      throw new Meteor.Error('Невозможно начать турнир');
+    }
 
-		// spend resources
-		Game.Resources.spend(tournament.price);
+    // spend resources
+    Game.Resources.spend(tournament.price);
 
-		// update time
-		Meteor.users.update({
-			_id: user._id
-		}, {
-			$set: {
-				timeLastTournament: Game.getCurrentTime()
-			}
-		});
+    // update time
+    Meteor.users.update({
+      _id: user._id
+    }, {
+      $set: {
+        timeLastTournament: Game.getCurrentTime()
+      }
+    });
 
-		// add reward
-		var profit = Game.Resources.rollProfit(tournament.drop);
-		if (profit) {
-			Game.Resources.addProfit(profit);
-		}
+    // add reward
+    var profit = Game.Resources.rollProfit(tournament.drop);
+    if (profit) {
+      Game.Resources.addProfit(profit);
+    }
 
-		var stats = { 'colosseum.tournaments.total': 1 };
-		stats['colosseum.tournaments.' + tournament.engName] = 1;
+    var stats = { 'colosseum.tournaments.total': 1 };
+    stats['colosseum.tournaments.' + tournament.engName] = 1;
 
-		Game.Statistic.incrementUser(user._id, stats);
+    Game.Statistic.incrementUser(user._id, stats);
 
-		return profit;
-	}
+    return profit;
+  }
 });
 
 };

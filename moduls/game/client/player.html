@@ -1,62 +1,62 @@
 <template name="player">
-	<div class="player">
-		<div data-id="{{currentTrack.id}}" class="currentTrack {{#if isPlaying}}play{{/if}}">
-			<button class="playpause"></button>
-			<span>{{currentTrack.name}}</span>
-			<button class="openPlaylist"></button>
-		</div>
+  <div class="player">
+    <div data-id="{{currentTrack.id}}" class="currentTrack {{#if isPlaying}}play{{/if}}">
+      <button class="playpause"></button>
+      <span>{{currentTrack.name}}</span>
+      <button class="openPlaylist"></button>
+    </div>
 
-		<div class="playlist {{#if isShowPlaylist}}show{{/if}}">
-			<div class="controls {{#if selectedTrack}}hasSelected{{/if}}">
-				<button class="prev"></button>
-				<button class="next"></button>
-				<button class="shuffle {{#if isShuffle}}enabled{{/if}}"></button>
-				<button class="movedown"></button>
-				<button class="moveup"></button>
-				<button class="toggle {{#if selectedTrack.disabled}}enable{{/if}}"></button>
-			</div>
-			<ul>
-				{{#each tracks}}
-					<li 
-						class="
-							{{#if eq selectedTrack.id this.id}}selected{{/if}}
-							{{#if this.disabled}}disabled{{/if}}
-							{{#if eq currentTrack.id this.id}}
-								current
-								{{#if isPlaying}}play{{/if}}
-							{{/if}}
-							
-						" 
-						data-id="{{this.id}}">
-						<button class="playpause"></button>
-						<span>{{this.name}}</span>
-					</li>
-				{{/each}}
-			</ul>
-			<div class="author">
-				Автор музыки:
-				<a href="http://cyclone-music-space.ru/?from=consulwar">Антон Брежнев</a>
-			</div>
-			{{#if hasMusic}}
-				<button class="downloadMusic orangeButton">Скачать альбом</button>
-			{{else}}
-				<button 
-					class="buyMusic orangeButton" 
-					data-tooltip="{{#if true}}{{> musicTooltip}}{{/if}}"
-					data-tooltip-direction="s"
-				>
-					Купить альбом
-				</button>
-			{{/if}}
-		</div>
-	</div>
+    <div class="playlist {{#if isShowPlaylist}}show{{/if}}">
+      <div class="controls {{#if selectedTrack}}hasSelected{{/if}}">
+        <button class="prev"></button>
+        <button class="next"></button>
+        <button class="shuffle {{#if isShuffle}}enabled{{/if}}"></button>
+        <button class="movedown"></button>
+        <button class="moveup"></button>
+        <button class="toggle {{#if selectedTrack.disabled}}enable{{/if}}"></button>
+      </div>
+      <ul>
+        {{#each tracks}}
+          <li 
+            class="
+              {{#if eq selectedTrack.id this.id}}selected{{/if}}
+              {{#if this.disabled}}disabled{{/if}}
+              {{#if eq currentTrack.id this.id}}
+                current
+                {{#if isPlaying}}play{{/if}}
+              {{/if}}
+              
+            " 
+            data-id="{{this.id}}">
+            <button class="playpause"></button>
+            <span>{{this.name}}</span>
+          </li>
+        {{/each}}
+      </ul>
+      <div class="author">
+        Автор музыки:
+        <a href="http://cyclone-music-space.ru/?from=consulwar">Антон Брежнев</a>
+      </div>
+      {{#if hasMusic}}
+        <button class="downloadMusic orangeButton">Скачать альбом</button>
+      {{else}}
+        <button 
+          class="buyMusic orangeButton" 
+          data-tooltip="{{#if true}}{{> musicTooltip}}{{/if}}"
+          data-tooltip-direction="s"
+        >
+          Купить альбом
+        </button>
+      {{/if}}
+    </div>
+  </div>
 </template>
 
 <template name="musicTooltip">
-	<div style="width: 400px">
-		<p><b>200р</b> <strike>250р</strike> — скидка раннего доступа.</p>
-		<p>Купить текущие и предстоящие треки данного альбома. Ожидаемая продолжительность — 1 час. </p>
-		<p>После приобретения разрешается некоммерческое распространение и использование в любом виде.</p>
-		<p>25% отчисляется автору.</p>
-	</div>
+  <div style="width: 400px">
+    <p><b>250р</b></p>
+    <p>Купить текущие и предстоящие треки данного альбома. Ожидаемая продолжительность — 1 час. </p>
+    <p>После приобретения разрешается некоммерческое распространение и использование в любом виде.</p>
+    <p>25% отчисляется автору.</p>
+  </div>
 </template>

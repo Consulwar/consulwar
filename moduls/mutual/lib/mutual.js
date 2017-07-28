@@ -2,119 +2,119 @@ initMutualLib = function () {
 'use strict';
 
 game.MutualItem = function(options) {
-	game.MutualItem.superclass.constructor.apply(this, arguments);
+  game.MutualItem.superclass.constructor.apply(this, arguments);
 
-	this.constructor = function(options) {
-		this.investments = options.investments;
-	};
+  this.constructor = function(options) {
+    this.investments = options.investments;
+  };
 
-	this.constructor(options);
+  this.constructor(options);
 
-	this.url = function(options) {
-		options = options || {
-			group: this.group,
-			item: this.engName
-		};
-		
-		return Router.routes[this.type].path(options);
-	};
+  this.url = function(options) {
+    options = options || {
+      group: this.group,
+      item: this.engName
+    };
+    
+    return Router.routes[this.type].path(options);
+  };
 
-	this.currentLevel = function() {
-		return Math.floor(this.currentInvestments() / this.investments);
-	};
+  this.currentLevel = function() {
+    return Math.floor(this.currentInvestments() / this.investments);
+  };
 
-	this.currentInvestments = function() {
-		return Game.Mutual.get(this.group, this.engName) || 0;
-	};
+  this.currentInvestments = function() {
+    return Game.Mutual.get(this.group, this.engName) || 0;
+  };
 
-	this.type = 'mutual';
+  this.type = 'mutual';
 };
 game.extend(game.MutualItem, game.Item);
 
 game.MutualResearch = function(options){
-	game.MutualResearch.superclass.constructor.apply(this, arguments);
+  game.MutualResearch.superclass.constructor.apply(this, arguments);
 
-	if (Game.Mutual.items[this.group][this.engName]) {
-		throw new Meteor.Error('Ошибка в контенте', 'Дублируется общее исследование ' + this.engName);
-	}
+  if (Game.Mutual.items[this.group][this.engName]) {
+    throw new Meteor.Error('Ошибка в контенте', 'Дублируется общее исследование ' + this.engName);
+  }
 
-	Game.Mutual.items[this.group][this.engName] = this;
+  Game.Mutual.items[this.group][this.engName] = this;
 
-	//this.type = 'MutualResearch';
-	this.group = 'research';
+  //this.type = 'MutualResearch';
+  this.group = 'research';
 };
 game.extend(game.MutualResearch, game.MutualItem);
 
 Game.Mutual = {
-	Collection: new Meteor.Collection('mutual'),
+  Collection: new Meteor.Collection('mutual'),
 
-	getValue: function(group) {
-		return Game.Mutual.Collection.findOne({group: group});
-	},
+  getValue: function(group) {
+    return Game.Mutual.Collection.findOne({group: group});
+  },
 
-	get: function(group, name) {
-		var item = Game.Mutual.getValue(group);
+  get: function(group, name) {
+    var item = Game.Mutual.getValue(group);
 
-		if (item && item[name]) {
-			return item[name];
-		} else {
-			return 0;
-		}
-	},
+    if (item && item[name]) {
+      return item[name];
+    } else {
+      return 0;
+    }
+  },
 
-	has: function(group, name, level) {
-		level = level || 1;
-		if (Game.Mutual.items[group] && Game.Mutual.items[group][name]) {
-			return Game.Mutual.items[group][name].currentLevel() >= level;
-		}
-		return false;
-	},
+  has: function(group, name, level) {
+    level = level || 1;
+    if (Game.Mutual.items[group] && Game.Mutual.items[group][name]) {
+      return Game.Mutual.items[group][name].currentLevel() >= level;
+    }
+    return false;
+  },
 
-	items: {
-		research: {},
-		council: {}
-	}
+  items: {
+    research: {},
+    council: {}
+  }
 };
 
 Game.Investments = {
-	Collection: new Meteor.Collection('investments'),
+  Collection: new Meteor.Collection('investments'),
 
-	getValue: function(item) {
-		return Game.Investments.Collection.findOne({
-			user_id: Meteor.userId(),
-			group: item.group,
-			engName: item.engName
-		});
-	},
+  getValue: function(item) {
+    return Game.Investments.Collection.findOne({
+      user_id: Meteor.userId(),
+      group: item.group,
+      engName: item.engName
+    });
+  },
 
-	getTopInvestors: function(item) {
-		return Game.Investments.Collection.find({
-			group: item.group,
-			engName: item.engName
-		}, {
-			sort: {
-				investments: -1
-			},
-			limit: 5
-		});
-	},
+  getTopInvestors: function(item) {
+    return Game.Investments.Collection.find({
+      group: item.group,
+      engName: item.engName
+    }, {
+      sort: {
+        investments: -1
+      },
+      limit: 5
+    });
+  },
 
-	items: {}
+  items: {}
 /*
-	get: function(group, name) {
-		var item = Game.Mutual.getValue(group);
+  get: function(group, name) {
+    var item = Game.Mutual.getValue(group);
 
-		if (item && item[name]) {
-			return item[name];
-		} else {
-			return 0;
-		}
-	},
+    if (item && item[name]) {
+      return item[name];
+    } else {
+      return 0;
+    }
+  },
 
-	has: function(group, name, level) {
-		level = level || 1;
-		return Game.Mutual.get(group, name) >= level;
-	}*/
+  has: function(group, name, level) {
+    level = level || 1;
+    return Game.Mutual.get(group, name) >= level;
+  }*/
 };
 
 };

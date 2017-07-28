@@ -1,46 +1,46 @@
 <template name="pages">
-	{{#if pages}}
-		<div class="pages">
-			<ul>
-				{{#unless pages.hasFirst}}
-					<li>
-						<a 
-							class="{{#if eq 1 current}}active{{/if}}"
-							href="{{route 1 saveHash}}"
-							data-page="1" 
-							data-tooltip="Первая страница"
-						>
-							&lt;
-						</a>
-					</li>
-				{{/unless}}
-				{{#let currentPage=current}}
-					{{#each pages.items}}
-						<li>
-							<a
-								class="{{#if eq this.page currentPage}}active{{/if}}"
-								href="{{route this.page ../saveHash}}" 
-								data-page="{{this.page}}" 
-								data-tooltip="{{this.start}} - {{this.end}}"
-							>
-								{{this.page}}
-							</a>
-						</li>
-					{{/each}}
-				{{/let}}
-				{{#unless pages.hasLast}}
-					<li>
-						<a 
-							class="{{#if eq maxPage current}}active{{/if}}"
-							href="{{route maxPage saveHash}}" 
-							data-page="{{maxPage}}" 
-							data-tooltip="Последняя страница"
-						>
-							&gt;
-						</a>
-					</li>
-				{{/unless}}
-			</ul>
-		</div>
-	{{/if}}
+  {{#if pages}}
+    <div class="pages">
+      <ul>
+        {{#unless pages.hasFirst}}
+          <li>
+            <a 
+              class="{{#if eq 1 current}}active{{/if}}"
+              href="{{route 1 saveHash}}"
+              data-page="1" 
+              data-tooltip="Первая страница"
+            >
+              &lt;
+            </a>
+          </li>
+        {{/unless}}
+        {{#let currentPage=current}}
+          {{#each pages.items}}
+            <li>
+              <a
+                class="{{#if eq this.page currentPage}}active{{/if}}"
+                href="{{route this.page ../saveHash}}" 
+                data-page="{{this.page}}" 
+                data-tooltip="{{this.start}} - {{this.end}}"
+              >
+                {{this.page}}
+              </a>
+            </li>
+          {{/each}}
+        {{/let}}
+        {{#unless pages.hasLast}}
+          <li>
+            <a 
+              class="{{#if eq maxPage current}}active{{/if}}"
+              href="{{route maxPage saveHash}}" 
+              data-page="{{maxPage}}" 
+              data-tooltip="Последняя страница"
+            >
+              &gt;
+            </a>
+          </li>
+        {{/unless}}
+      </ul>
+    </div>
+  {{/if}}
 </template>

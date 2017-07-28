@@ -1,212 +1,212 @@
 import Group from './group';
 
 let performRound = function(battle, damageReduction = 0) {
-	if (damageReduction < 0) {
-		damageReduction = 0;
-	} else if (damageReduction >= 100) {
-		damageReduction = 99.99;
-	}
-	let damageCoef = 1 - (damageReduction / 100);
+  if (damageReduction < 0) {
+    damageReduction = 0;
+  } else if (damageReduction >= 100) {
+    damageReduction = 99.99;
+  }
+  let damageCoef = 1 - (damageReduction / 100);
 
-	mergeGroups(battle);
+  mergeGroups(battle);
 
-	let group1 = Group.fromObject(battle.battleUnits[1]);
-	let group2 = Group.fromObject(battle.battleUnits[2]);
+  let group1 = Group.fromObject(battle.battleUnits[1]);
+  let group2 = Group.fromObject(battle.battleUnits[2]);
 
-	let damageList1 = group1.getDamageList(damageCoef);
-	let damageList2 = group2.getDamageList(damageCoef);
+  let damageList1 = group1.getDamageList(damageCoef);
+  let damageList2 = group2.getDamageList(damageCoef);
 
-	fire(damageList1, group2);
-	fire(damageList2, group1);
+  fire(damageList1, group2);
+  fire(damageList2, group1);
 
-	let result = recalculateCurrentCounts(battle);
+  let result = recalculateCurrentCounts(battle);
 
-	calcBattleHealth(battle);
+  calcBattleHealth(battle);
 
-	return result;
+  return result;
 };
 
 let fire = function(damageList, target) {
-	for (let [unit, damage] of damageList) {
-		target.receiveDamage(unit, damage);
-	}
+  for (let [unit, damage] of damageList) {
+    target.receiveDamage(unit, damage);
+  }
 };
 
 let mergeGroups = function(battle) {
-	let battleUnits = battle.battleUnits;
+  let battleUnits = battle.battleUnits;
 
-	battle.traverse(function({unit, sideName, armyName, typeName, unitName}) {
-		if (unit.count === 0) {
-			return;
-		}
+  battle.traverse(function({unit, sideName, armyName, typeName, unitName}) {
+    if (unit.count === 0) {
+      return;
+    }
 
-		if (!battleUnits[sideName]) {
-			battleUnits[sideName] = {};
-		}
+    if (!battleUnits[sideName]) {
+      battleUnits[sideName] = {};
+    }
 
-		if (!battleUnits[sideName][armyName]) {
-			battleUnits[sideName][armyName] = {};
-		}
+    if (!battleUnits[sideName][armyName]) {
+      battleUnits[sideName][armyName] = {};
+    }
 
-		if (!battleUnits[sideName][armyName][typeName]) {
-			battleUnits[sideName][armyName][typeName] = {};
-		}
+    if (!battleUnits[sideName][armyName][typeName]) {
+      battleUnits[sideName][armyName][typeName] = {};
+    }
 
-		if (!battleUnits[sideName][armyName][typeName][unitName]) {
-			battleUnits[sideName][armyName][typeName][unitName] = {
-				count: unit.count,
-				weapon: {
-					damage: {
-						min: unit.weapon.damage.min,
-						max: unit.weapon.damage.max
-					},
-					signature: unit.weapon.signature
-				},
-				health: {
-					armor: unit.health.armor,
-					signature: unit.health.signature,
-					total: unit.health.armor * unit.count
-				}
-			};
-		} else {
-			let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
+    if (!battleUnits[sideName][armyName][typeName][unitName]) {
+      battleUnits[sideName][armyName][typeName][unitName] = {
+        count: unit.count,
+        weapon: {
+          damage: {
+            min: unit.weapon.damage.min,
+            max: unit.weapon.damage.max
+          },
+          signature: unit.weapon.signature
+        },
+        health: {
+          armor: unit.health.armor,
+          signature: unit.health.signature,
+          total: unit.health.armor * unit.count
+        }
+      };
+    } else {
+      let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
 
-			mergeParam(battleUnit, unit, ['weapon', 'damage', 'min']);
-			mergeParam(battleUnit, unit, ['weapon', 'damage', 'max']);
-			mergeParam(battleUnit, unit, ['weapon', 'signature']);
+      mergeParam(battleUnit, unit, ['weapon', 'damage', 'min']);
+      mergeParam(battleUnit, unit, ['weapon', 'damage', 'max']);
+      mergeParam(battleUnit, unit, ['weapon', 'signature']);
 
-			mergeParam(battleUnit, unit, ['health', 'armor']);
-			mergeParam(battleUnit, unit, ['health', 'signature']);
+      mergeParam(battleUnit, unit, ['health', 'armor']);
+      mergeParam(battleUnit, unit, ['health', 'signature']);
 
-			battleUnit.health.total += unit.health.armor * unit.count;
+      battleUnit.health.total += unit.health.armor * unit.count;
 
-			battleUnit.count += unit.count;
-		}
-	});
+      battleUnit.count += unit.count;
+    }
+  });
 };
 
 let mergeParam = function(unitDestination, unitSource, path) {
-	let key = path.pop();
+  let key = path.pop();
 
-	let u1Obj = unitDestination;
-	let u2Obj = unitSource;
-	for (let p of path) {
-		u1Obj = u1Obj[p];
-		u2Obj = u2Obj[p];
-	}
+  let u1Obj = unitDestination;
+  let u2Obj = unitSource;
+  for (let p of path) {
+    u1Obj = u1Obj[p];
+    u2Obj = u2Obj[p];
+  }
 
-	u1Obj[key] = ( (u1Obj[key] * unitDestination.count + u2Obj[key] * unitSource.count) /
-		(unitDestination.count + unitSource.count)
-	);
+  u1Obj[key] = ( (u1Obj[key] * unitDestination.count + u2Obj[key] * unitSource.count) /
+    (unitDestination.count + unitSource.count)
+  );
 };
 
 let recalculateCurrentCounts = function(battle) {
-	let battleUnits = battle.battleUnits;
+  let battleUnits = battle.battleUnits;
 
-	let killedObj = {};
-	let leftObj = {};
-	let decrement = {};
+  let killedObj = {};
+  let leftObj = {};
+  let decrement = {};
 
-	battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
-		if (unit.count === 0) {
-			return;
-		}
+  battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
+    if (unit.count === 0) {
+      return;
+    }
 
-		let sideBattleUnits = battleUnits[sideName];
+    let sideBattleUnits = battleUnits[sideName];
 
-		let battleUnit = sideBattleUnits[armyName][typeName][unitName];
+    let battleUnit = sideBattleUnits[armyName][typeName][unitName];
 
-		let alive = battleUnit.health.total / battleUnit.health.armor;
+    let alive = battleUnit.health.total / battleUnit.health.armor;
 
-		let floatCurrentAlive = unit.count / battleUnit.count * alive;
+    let floatCurrentAlive = unit.count / battleUnit.count * alive;
 
-		let left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);
+    let left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);
 
-		let killed = unit.count - left;
+    let killed = unit.count - left;
 
-		unit.count = left;
+    unit.count = left;
 
-		if (left > 0) {
-			incToObj(leftObj, [sideName, armyName, typeName, unitName], left);
-		}
+    if (left > 0) {
+      incToObj(leftObj, [sideName, armyName, typeName, unitName], left);
+    }
 
-		incToObj(killedObj, [sideName, armyName, typeName, unitName], killed);
+    incToObj(killedObj, [sideName, armyName, typeName, unitName], killed);
 
-		decrement[`currentUnits.${sideName}.${username}.${groupNum}.${armyName}.${typeName}.${unitName}.count`] = -killed;
-	});
+    decrement[`currentUnits.${sideName}.${username}.${groupNum}.${armyName}.${typeName}.${unitName}.count`] = -killed;
+  });
 
-	return {
-		left: leftObj,
-		killed: killedObj,
-		decrement: decrement
-	};
+  return {
+    left: leftObj,
+    killed: killedObj,
+    decrement: decrement
+  };
 };
 
 let incToObj = function(obj, fields, value) {
-	let key = fields.pop();
+  let key = fields.pop();
 
-	for (let field of fields) {
-		if ( !obj[field] ) {
-			obj[field] = {};
-		}
-		obj = obj[field];
-	}
+  for (let field of fields) {
+    if ( !obj[field] ) {
+      obj[field] = {};
+    }
+    obj = obj[field];
+  }
 
-	if (!obj[key]) {
-		obj[key] = value;
-	} else {
-		obj[key] += value;
-	}
+  if (!obj[key]) {
+    obj[key] = value;
+  } else {
+    obj[key] += value;
+  }
 };
 
 let calcBattleHealth = function({battleUnits}) {
-	for (let sideName in battleUnits) {
-		if (!battleUnits.hasOwnProperty(sideName)) {
-			continue;
-		}
+  for (let sideName in battleUnits) {
+    if (!battleUnits.hasOwnProperty(sideName)) {
+      continue;
+    }
 
-		let group = battleUnits[sideName];
+    let group = battleUnits[sideName];
 
-		for (let armyName in group) {
-			if (!group.hasOwnProperty(armyName)) {
-				continue;
-			}
-			let army = group[armyName];
+    for (let armyName in group) {
+      if (!group.hasOwnProperty(armyName)) {
+        continue;
+      }
+      let army = group[armyName];
 
-			for (let typeName in army) {
-				if (!army.hasOwnProperty(typeName)) {
-					continue;
-				}
-				let units = army[typeName];
+      for (let typeName in army) {
+        if (!army.hasOwnProperty(typeName)) {
+          continue;
+        }
+        let units = army[typeName];
 
-				for (let unitName in units) {
-					if (!units.hasOwnProperty(unitName)) {
-						continue;
-					}
+        for (let unitName in units) {
+          if (!units.hasOwnProperty(unitName)) {
+            continue;
+          }
 
-					let unit = units[unitName];
+          let unit = units[unitName];
 
-					let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
+          let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
 
-					if (battleUnit.count === 0) {
-						battleUnit.health.total = 0;
-					} else {
-						let totalHP = battleUnit.health.armor * battleUnit.count;
-						let killed = (totalHP - battleUnit.health.total) / battleUnit.health.armor;
-						battleUnit.health.total = -(totalHP - Math.floor(killed) * unit.health.armor - battleUnit.health.total);
-					}
+          if (battleUnit.count === 0) {
+            battleUnit.health.total = 0;
+          } else {
+            let totalHP = battleUnit.health.armor * battleUnit.count;
+            let killed = (totalHP - battleUnit.health.total) / battleUnit.health.armor;
+            battleUnit.health.total = -(totalHP - Math.floor(killed) * unit.health.armor - battleUnit.health.total);
+          }
 
-					battleUnit.weapon.damage = {min: 0, max: 0};
-					battleUnit.weapon.signature = 0;
+          battleUnit.weapon.damage = {min: 0, max: 0};
+          battleUnit.weapon.signature = 0;
 
-					battleUnit.health.armor = 0;
-					battleUnit.health.signature = 0;
+          battleUnit.health.armor = 0;
+          battleUnit.health.signature = 0;
 
-					battleUnit.count = 0;
-				}
-			}
-		}
-	}
+          battleUnit.count = 0;
+        }
+      }
+    }
+  }
 };
 
 export default performRound;

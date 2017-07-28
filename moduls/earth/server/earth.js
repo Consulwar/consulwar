@@ -1,3 +1,5 @@
+import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
+
 initEarthServer = function() {
 'use strict';
 
@@ -208,16 +210,15 @@ Game.Earth.performBattleAtZone = function(name, options) {
 
   options.damageReduction = Game.Earth.DAMAGE_REDUCTION;
 
-  var battleResult = Game.Unit.performBattle(
-    zone.userArmy,
-    zone.enemyArmy,
-    options
-  );
+  let battleResult = legacyToNewBattle(zone.userArmy, zone.enemyArmy, options);
+
+  let userArmy = battleResult.userArmy;
+  let enemyArmy = battleResult.enemyArmy;
 
   var result = null;
 
-  if (battleResult.userArmy) {
-    if (battleResult.enemyArmy) {
+  if (userArmy) {
+    if (enemyArmy) {
       result = 'tie';
     } else {
       result = 'victory';
@@ -240,8 +241,8 @@ Game.Earth.performBattleAtZone = function(name, options) {
     }
   };
 
-  if (battleResult.userArmy) {
-    update.$set.userArmy = battleResult.userArmy;
+  if (userArmy) {
+    update.$set.userArmy = userArmy;
   } else {
     if (!update.$unset) {
       update.$unset = {};
@@ -249,8 +250,8 @@ Game.Earth.performBattleAtZone = function(name, options) {
     update.$unset.userArmy = 1;
   }
 
-  if (battleResult.enemyArmy) {
-    update.$set.enemyArmy = battleResult.enemyArmy;
+  if (enemyArmy) {
+    update.$set.enemyArmy = enemyArmy;
   } else {
     if (!update.$unset) {
       update.$unset = {};

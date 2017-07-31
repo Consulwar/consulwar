@@ -16,11 +16,11 @@
       <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
       {{#if hasLink}}
         <a class="btn-command" data-action="{{zone.name}}">
-          {{#if zone.isEnemy}}
-            В атаку
+          {{#if eq army.zoneName zone.name}}
+            Ждём
           {{else}}
-            {{#if eq army.zoneName zone.name}}
-              Ждём
+            {{#if zone.isEnemy}}
+              В атаку
             {{else}}
               Идём
             {{/if}}

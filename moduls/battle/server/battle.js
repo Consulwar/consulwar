@@ -8,7 +8,7 @@ Collection._ensureIndex({
   userNames: 1
 });
 
-let Status = {
+const Status = {
   progress: 1,
   finish: 2
 };
@@ -17,21 +17,19 @@ const USER_SIDE = '1';
 const ENEMY_SIDE = '2';
 
 class Battle {
-  static create(username, userArmy, enemyName, enemyArmy) {
+  static create(userArmies, enemyArmies) {
     let round = 1;
 
     let initialUnits = {
-      [USER_SIDE]: {
-        [username]: [userArmy]
-      },
-      [ENEMY_SIDE]: {
-        [enemyName]: [enemyArmy]
-      }
+      [USER_SIDE]: userArmies,
+      [ENEMY_SIDE]: enemyArmies
     };
 
-    let armyPowers = {
-      [username]: calculateGroupPower(userArmy)
-    };
+    let armyPowers = {};
+
+    _.pairs(userArmies).forEach(function ([name, army]) {
+      armyPowers[name] = calculateGroupPower(army[0]);
+    });
 
     let currentUnits = deepClone(initialUnits);
     let battleUnits = {};
@@ -41,7 +39,7 @@ class Battle {
       status: status,
       timeStart: new Date(),
       round: round,
-      userNames: [username],
+      userNames: _.keys(userArmies),
       initialUnits,
       armyPowers,
       currentUnits,
@@ -86,6 +84,20 @@ class Battle {
     Collection.update({_id: id}, modifier);
   }
 
+  static removeUserArmy(id, username) {
+    const key = `${USER_SIDE}.${username}`;
+
+    const modifier = {
+      $unset: {
+        [`initialUnits.${key}`]: 1,
+        [`currentUnits.${key}`]: 1,
+        [`armyPowers.${username}`]: 1,
+      }
+    };
+
+    Collection.update({_id: id}, modifier);
+  }
+
   constructor({_id, initialUnits, armyPowers, currentUnits, battleUnits, round, status}) {
     this.id = _id;
 
@@ -106,18 +118,24 @@ class Battle {
   }
 
   performEarthRound(options) {
+    options.isEarth = true;
     return this.performRound(options);
   }
 
   performRound(options) {
     let roundResult = performRound(this, options.damageReduction);
 
-    this.update({
+    let modifier = {
       $set: {
         battleUnits: this.battleUnits
-      },
-      $inc: roundResult.decrement
-    });
+      }
+    };
+
+    if (_.keys(roundResult.decrement).length !== 0) {
+      modifier.$inc = roundResult.decrement;
+    }
+
+    this.update(modifier);
 
     let userArmyRest = USER_SIDE in roundResult.left;
     let enemyArmyRest = ENEMY_SIDE in roundResult.left;
@@ -391,6 +409,8 @@ class Battle {
 }
 
 Battle.Status = Status;
+Battle.USER_SIDE = USER_SIDE;
+Battle.ENEMY_SIDE = ENEMY_SIDE;
 
 let calculateTotalPower = function(armyPowers) {
   let totalPower = 0;

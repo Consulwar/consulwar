@@ -290,7 +290,11 @@ Game.Earth.showZone = function() {
 Template.earthZoneInfo.helpers({
   info: function() {
     var zone = Game.EarthZones.getByName(this.name);
-    let userUnits = Game.EarthUnits.get().userArmy;
+    let userUnits = Game.EarthUnits.get();
+    let userUnitsArmy = {};
+    if (userUnits && userUnits.zoneName === this.name) {
+      userUnitsArmy = userUnits.userArmy;
+    }
 
     var maxPower = Game.EarthZones.calcMaxHealth();
     var currentUserPower = Game.Unit.calcUnitsHealth( zone.userArmy );
@@ -307,8 +311,8 @@ Template.earthZoneInfo.helpers({
           userArmy.push({
             name: Game.Unit.items[side][group][name].name,
             count: zone.userArmy[side][group][name],
-            userUnitsCount: (userUnits[side] && userUnits[side][group]) ?
-              userUnits[side][group][name] : null,
+            userUnitsCount: (userUnitsArmy[side] && userUnitsArmy[side][group]) ?
+              userUnitsArmy[side][group][name] : null,
           });
         }
       }
@@ -418,8 +422,25 @@ Template.earthZonePopup.helpers({
     return false;
   },
 
+  notBattle: function () {
+    let army = Game.EarthUnits.get();
+    if (army) {
+      let armyZone = Game.EarthZones.getByName(army.zoneName);
+
+      if (armyZone.battleID) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+
   army: function() {
     return Game.EarthUnits.get();
+  },
+
+  isAdmin: function() {
+    return Meteor.user().role === 'admin';
   },
 });
 
@@ -427,7 +448,15 @@ Template.earthZonePopup.events({
   'click .btn-command': function(e, t) {
     var action = $(e.currentTarget).attr('data-action');
     Meteor.call('earth.moveArmy', action);
-  }
+  },
+
+  'click .btn-admin-panel': function (e, t) {
+    const zoneName = $(e.currentTarget).attr('data-action');
+
+    Blaze.renderWithData(Template.adminReptileChange, {
+      zoneName
+    }, $('.over')[0]);
+  },
 });
 
 // ----------------------------------------------------------------------------
@@ -534,8 +563,9 @@ var ZoneView = function(mapView, zoneData) {
     zone = Game.EarthZones.getByName(this.name);
 
     this.isVisible = zone.isVisible;
+    const isAdmin = Meteor.user().role === 'admin';
 
-    if (this.isVisible) {
+    if (this.isVisible || isAdmin) {
 
       // calculate army power
       var maxPower = Game.EarthZones.calcMaxHealth();
@@ -615,7 +645,8 @@ var ZoneView = function(mapView, zoneData) {
   this.hidePopup = Game.Earth.hideZonePopup;
 
   this.refreshZoom = function() {
-    if (!zone || !zone.isVisible) {
+    const isAdmin = Meteor.user().role === 'admin';
+    if (!zone || !zone.isVisible && !isAdmin) {
       return;
     }
 
@@ -870,6 +901,10 @@ let showLines = function (army) {
   lineViews.length = 0;
 
   if (army) {
+    if (Game.EarthZones.getByName(army.zoneName).battleID) {
+      return;
+    }
+
     let armyZone = zoneViews[army.zoneName];
     armyZone.links.forEach(function (name) {
       let finish = zoneViews[name];
@@ -899,6 +934,55 @@ Template.earth.onDestroyed(function() {
     mapBounds = null;
   }
   */
+});
+
+
+Template.adminReptileChange.helpers({
+  army: function () {
+    const zone = Game.EarthZones.getByName(this.zoneName);
+    const zoneArmy = zone.enemyArmy ? zone.enemyArmy.reptiles.ground : {};
+
+    let result = [];
+
+    const groundUnits = Game.Unit.items.reptiles.ground;
+    for (let unitName in groundUnits) {
+      if (groundUnits.hasOwnProperty(unitName)) {
+        result.push({
+          engName: unitName,
+          name: groundUnits[unitName].name,
+          count: zoneArmy[unitName] || 0,
+        });
+      }
+    }
+
+    return result;
+  },
+});
+
+Template.adminReptileChange.events({
+  'click .close': function (e, t) {
+    Blaze.remove(t.view);
+  },
+
+  'click .change': function (e, t) {
+    let modifier = {};
+
+    const elements = $('.armies li');
+    for (let i = 0; i < elements.length; i++) {
+      const id = $(elements[i]).attr('data-id');
+      const count = Math.max(0, parseInt($(elements[i]).find('input').val(), 10));
+
+      modifier[`enemyArmy.reptiles.ground.${id}`] = count;
+    }
+
+    Meteor.call('earth.setReptileArmy', this.zoneName, modifier, function(err) {
+      if (err) {
+        Notifications.error('Не удалось изменить армию: ', err.error);
+      } else {
+        Notifications.success('Армия успешно изменена.');
+      }
+    });
+  },
 });
 
 };

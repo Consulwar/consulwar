@@ -164,12 +164,52 @@ Meteor.methods({
       throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
     }
 
-    Game.EarthUnits.Collection.update({
-      user_id: user._id
+    if (armyZone.battleID) {
+      throw new Meteor.Error('Невозможно перемещение армий во время боя.');
+    }
+
+    if (army.zoneName === targetZone) {
+      Game.EarthUnits.Collection.update({
+        user_id: user._id
+      }, {
+        $unset: {
+          targetZone: 1
+        }
+      });
+    } else {
+      Game.EarthUnits.Collection.update({
+        user_id: user._id
+      }, {
+        $set: {
+          targetZone
+        }
+      });
+    }
+  },
+
+  'earth.setReptileArmy': function (zoneName, modifier) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method('earth.setReptileArmy');
+
+    if (['admin'].indexOf(user.role) === -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    check(zoneName, String);
+
+    Game.EarthZones.Collection.update({
+      name: zoneName
     }, {
-      $set: {
-        targetZone
-      }
+      $set: modifier
     });
   },
 });

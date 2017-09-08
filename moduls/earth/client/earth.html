@@ -15,17 +15,19 @@
       <!-- buttons -->
       <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
       {{#if hasLink}}
-        <a class="btn-command" data-action="{{zone.name}}">
-          {{#if eq army.zoneName zone.name}}
-            Ждём
-          {{else}}
-            {{#if zone.isEnemy}}
-              В атаку
+        {{#if notBattle}}
+          <a class="btn-command" data-action="{{zone.name}}">
+            {{#if eq army.zoneName zone.name}}
+              Ждём
             {{else}}
-              Идём
+              {{#if zone.isEnemy}}
+                В атаку
+              {{else}}
+                Идём
+              {{/if}}
             {{/if}}
-          {{/if}}
-        </a>
+          </a>
+        {{/if}}
         {{#if eq army.zoneName zone.name}}
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
         {{/if}}
@@ -33,6 +35,9 @@
         {{#if not zone.isEnemy}}
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Отправить</a>
         {{/if}}
+      {{/if}}
+      {{#if and isAdmin zone.isEnemy}}
+        <a class="btn-admin-panel" data-action="{{zone.name}}">Админка</a>
       {{/if}}
     </div>
   {{/if}}
@@ -260,5 +265,28 @@
       {{/if}}
     {{/if}}
     <a class="btn-back" href="{{pathFor 'earthHistory' group='earth' page=currentPage}}"></a>
+  </div>
+</template>
+
+<template name="adminReptileChange">
+  <div class="smoke"></div>
+  <div class="adminReptile">
+    <h2 title="{{this.zoneName}}" class="text-enemy">
+      {{this.zoneName}}
+    </h2>
+
+    <div class="close"></div>
+
+    <ul class="armies">
+      {{#each army}}
+        <li data-id="{{this.engName}}">
+          <label>{{this.name}}</label>
+
+          <input type="number" value="{{this.count}}"/>
+        </li>
+      {{/each}}
+    </ul>
+
+    <div class="change">Изменить</div>
   </div>
 </template>

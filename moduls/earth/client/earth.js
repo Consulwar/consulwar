@@ -288,6 +288,14 @@ Game.Earth.showZone = function() {
 };
 
 Template.earthZoneInfo.helpers({
+  zone: function() {
+    return Game.EarthZones.getByName(this.name);
+  },
+
+  army: function() {
+    return Game.EarthUnits.get();
+  },
+
   info: function() {
     var zone = Game.EarthZones.getByName(this.name);
     let userUnits = Game.EarthUnits.get();
@@ -355,7 +363,6 @@ Template.earthZoneInfo.helpers({
 
     return {
       name: zone.name,
-      isCurrent: zone.isCurrent,
       capturedPercent: capturedPercent,
       userCount: userCount,
       userPower: userPower,

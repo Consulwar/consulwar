@@ -77,7 +77,7 @@
           {{/each}}
         </ul>
       </div>
-      {{#if info.isCurrent}}
+      {{#if eq army.zoneName zone.name}}
         <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=info.name}}">Подкрепление</a>
       {{/if}}
       <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>

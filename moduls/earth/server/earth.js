@@ -68,28 +68,6 @@ if (Game.EarthZones.Collection.find().count() === 0) {
   Game.Earth.generateZones();
 }
 
-var checkIsStationaryUnit = function(side, group, name) {
-  return[
-    'reptiles.ground.chipping'
-  ].indexOf(side + '.' + group + '.' + name) != -1;
-};
-
-var setupUnitHierarchy = function(units, side, group, name) {
-  if (!units) {
-    units = {};
-  }
-  if (!units[side]) {
-    units[side] = {};
-  }
-  if (!units[side][group]) {
-    units[side][group] = {};
-  }
-  if (!units[side][group][name]) {
-    units[side][group][name] = 0;
-  }
-  return units;
-};
-
 Game.Earth.addReinforcement = function(units, targetZoneName) {
   let army = Game.EarthUnits.get();
   let zoneName;
@@ -213,6 +191,8 @@ Game.Earth.observeZone = function(name) {
 
 Game.Earth.nextTurn = function() {
   console.log('-------- Earth next turn start --------');
+
+  checkInitialState();
 
   let earthUnitsByZone = {};
   let movedUnitsTo = {};
@@ -440,6 +420,33 @@ Game.Earth.nextTurn = function() {
   });
 
   console.log('-------- Earth next turn end ----------');
+};
+
+const checkInitialState = function () {
+  var enemyZonesCount = Game.EarthZones.Collection.find({
+    isEnemy: true,
+    isVisible: true
+  }).count();
+
+  if (enemyZonesCount <= 0) {
+    // Only start zone is available, so try to observer nearby zones
+    if (Game.Mutual.has('research', 'reccons')
+      && Game.User.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
+    ) {
+      const startZones = Game.EarthZones.Collection.find({
+        isStarting: true
+      }).fetch();
+
+      startZones.forEach(function (zone) {
+        Game.Earth.observeZone(zone.name);
+      });
+    } else {
+      console.log('Unacceptable conditions!');
+      console.log('Active players ' + Game.User.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
+      console.log('Mutual research is ' + Game.Mutual.has('research', 'reccons'));
+    }
+
+  }
 };
 
 const moveArmy = function (army, targetZoneName) {

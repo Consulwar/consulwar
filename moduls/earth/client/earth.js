@@ -434,7 +434,7 @@ Template.earthZonePopup.helpers({
     if (army) {
       let armyZone = Game.EarthZones.getByName(army.zoneName);
 
-      if (armyZone.battleID) {
+      if (armyZone && armyZone.battleID) {
         return false;
       }
     }

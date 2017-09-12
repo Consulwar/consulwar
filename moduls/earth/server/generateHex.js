@@ -184,7 +184,6 @@ initEarthServerImportHex = function () {
 
 
   const startZones = [];
-  let startZone;
 
   Game.Earth.generateZones = function () {
     console.log('Generating zones');
@@ -276,8 +275,6 @@ initEarthServerImportHex = function () {
 
     console.log('startZones', startZones);
 
-    startZone = startZones[0];
-
     for (const hex of hexes) {
       const name = hex.feature.properties.name;
 
@@ -286,8 +283,8 @@ initEarthServerImportHex = function () {
         geometry: hex.feature.geometry,
         links: [],
         isEnemy: (startZones.indexOf(name) < 0),
-        isCurrent: (startZone === name),
-        isVisible: (startZone === name),
+        isStarting: (startZones.indexOf(name) !== -1),
+        isVisible: (startZones.indexOf(name) !== -1),
       });
     }
 

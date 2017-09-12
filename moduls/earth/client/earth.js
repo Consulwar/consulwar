@@ -58,7 +58,7 @@ Template.earthHistory.onRendered(function() {
     if (Router.current().route.getName() != 'earthHistory') {
       return;
     }
-    
+
     var pageNumber = parseInt( Router.current().getParams().page, 10 );
     var itemId = Router.current().getParams().hash;
 
@@ -818,13 +818,14 @@ const lineViews = [];
 var observerZones = null;
 
 Template.earth.onRendered(function() {
-  
+
   if (!mapView) {
 
     // first time manualy create div inside template
     $('#map-content').html('<div id="map-earth"></div>');
 
     mapView = L.map('map-earth', {
+      crs: L.CRS.Simple,
       zoomAnimation: false,
       zoomControl: false,
       doubleClickZoom: false,
@@ -844,7 +845,7 @@ Template.earth.onRendered(function() {
         accessToken: Meteor.settings.public.mapbox.accessToken
       }).addTo(mapView);
     }
-    
+
     mapView.on('click', function(e) {
       Game.Earth.hideZonePopup();
     });
@@ -923,11 +924,11 @@ Template.earth.onDestroyed(function() {
     observerZones.stop();
     observerZones = null;
   }
-  
+
   /* Code for map remove
   zoneViews = {};
   lineViews = {};
-  
+
   if (mapView) {
     mapView.remove();
     mapView = null;

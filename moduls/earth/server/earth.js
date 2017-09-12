@@ -18,7 +18,7 @@ initEarthServer = function() {
 
 initEarthLib();
 initEarthConfigServer();
-initEarthServerImport();
+initEarthServerImportHex();
 
 Game.EarthUnits.Collection._ensureIndex({
   user_id: 1,
@@ -65,7 +65,7 @@ Game.EarthUnits.incArmy = function (user, inc, zoneName, units) {
 // Auto import on server start
 // If db.zones is empty
 if (Game.EarthZones.Collection.find().count() === 0) {
-  Game.Earth.importZones();
+  Game.Earth.generateZones();
 }
 
 var checkIsStationaryUnit = function(side, group, name) {
@@ -119,7 +119,7 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
       }
     }
   }
-  
+
   if (stats['reinforcements.arrived.total'] > 0) {
     let user = Meteor.user();
 
@@ -189,7 +189,7 @@ Game.Earth.observeZone = function(name) {
   }).count();
 
   visibleZones += zonesAround.length;
-  
+
   var level = Math.round(visibleZones / 5); // each 5 visible zones = 1 difficulty level
   if (level < 1) {
     level = 1; // min level

@@ -1,6 +1,6 @@
 tournament-icon(name)
-	.{name}-icon
-		background-image url("/img/game/colosseum/" name ".jpg")
+  .{name}-icon
+    background-image url("/img/game/colosseum/" name ".jpg")
 
 tournament-icon('mortal_combat')
 tournament-icon('mad_race')
@@ -10,70 +10,70 @@ tournament-icon('extermination')
 tournament-icon('bloody_mess')
 
 .colosseum-menu
-	display flex
-	flex-direction row
-	flex-wrap wrap
-	width 100%
-	height auto
-	padding 15px 0
-	justify-content space-between
-			
-	.tournament
-		width 141px // 240
-		height 175px
-		background-repeat no-repeat
-		background-position center center
-		background-size 141px 175px
-		text-align center
-		font-weight bold
-		margin 10px 6%
-		-webkit-filter grayscale(1)
-		filter grayscale(1)
-		cursor pointer
-		
-		&.active
-			-webkit-filter none
-			filter none
+  display flex
+  flex-direction row
+  flex-wrap wrap
+  width 100%
+  height auto
+  padding 15px 0
+  justify-content space-between
+      
+  .tournament
+    width 141px // 240
+    height 175px
+    background-repeat no-repeat
+    background-position center center
+    background-size 141px 175px
+    text-align center
+    font-weight bold
+    margin 10px 6%
+    -webkit-filter grayscale(1)
+    filter grayscale(1)
+    cursor pointer
+    
+    &.active
+      -webkit-filter none
+      filter none
 
-		&.disabled
-			cursor not-allowed
-			-webkit-filter grayscale(1) brightness(0.2)
-			filter grayscale(1) brightness(0.2)
-	
-	.selectedTournament
-		display flex
-		flex-direction row
-		align-items center
-		width 250px
-		
-		.nextTournament
-			display flex
-			flex-direction row
-			
-			div
-				font-size 14px
-				padding-top 3px
-			
-			time
-				margin-left 4px
-				font-size 18px
-				color $color-metal
-		
-		.result
-			display flex
-			flex-direction column
-			font-size 12px
-			justify-content space-around
-			
-			.name
-				color $color-white
-				
-			.description
-				color $color-metal
-	
-	.start
-		width 187px
-		margin 0 0 0 44px
-	
-	.back
-		margin 0 44px 0 0 
+    &.disabled
+      cursor not-allowed
+      -webkit-filter grayscale(1) brightness(0.2)
+      filter grayscale(1) brightness(0.2)
+  
+  .selectedTournament
+    display flex
+    flex-direction row
+    align-items center
+    width 250px
+    
+    .nextTournament
+      display flex
+      flex-direction row
+      
+      div
+        font-size 14px
+        padding-top 3px
+      
+      time
+        margin-left 4px
+        font-size 18px
+        color $color-metal
+    
+    .result
+      display flex
+      flex-direction column
+      font-size 12px
+      justify-content space-around
+      
+      .name
+        color $color-white
+        
+      .description
+        color $color-metal
+  
+  .start
+    width 187px
+    margin 0 0 0 44px
+  
+  .back
+    margin 0 44px 0 0 

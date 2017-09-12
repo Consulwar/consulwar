@@ -1,348 +1,348 @@
 @media (max-width: 960px)
-	.mobileVersion
-		.overlay_wrap
-			position fixed
-			> .overlay
-				background-repeat repeat, repeat, repeat
-				
-				&.hideNet
-					background-repeat no-repeat, repeat, repeat
-				
-				&.artefacts
-					background-repeat repeat, repeat
-		
-		.newgame.new.house .overlay_wrap 
-			position relative
-			flex-shrink 0
-			order 4
+  .mobileVersion
+    .overlay_wrap
+      position fixed
+      > .overlay
+        background-repeat repeat, repeat, repeat
+        
+        &.hideNet
+          background-repeat no-repeat, repeat, repeat
+        
+        &.artefacts
+          background-repeat repeat, repeat
+    
+    .newgame.new.house .overlay_wrap 
+      position relative
+      flex-shrink 0
+      order 4
 
-		.newgame,
-		.newgame.new
-			min-width initial
-			justify-content flex-start
-			
-			header
-				order 2
-				height auto
-				flex-wrap wrap
-				margin 0
-				
-				.resources
-					order 2
-					width 100%
-					box-sizing border-box
-					border-radius 0
-					flex-wrap nowrap
-					border-width 1px
-					padding-right 0
-					justify-content space-around
-					> div
-						padding 0
-						margin auto 5px
-						background-image none
-						
-					.artefacts
-						height auto
-						:before
-							content 'Арт.'
-				
-				.menu
-					order 3
-					max-width 100%
-					height auto
-					
-					.main_menu
-						width 100%
-						
-						li
-							img
-								left 50%
-								margin-left -26.5px
-					
-					.second_menu
-						position relative
-						top initial
-				
-				.menu_soc
-					order 1
-					display flex
-					width 100%
-					justify-content space-around
-			
+    .newgame,
+    .newgame.new
+      min-width initial
+      justify-content flex-start
+      
+      header
+        order 2
+        height auto
+        flex-wrap wrap
+        margin 0
+        
+        .resources
+          order 2
+          width 100%
+          box-sizing border-box
+          border-radius 0
+          flex-wrap nowrap
+          border-width 1px
+          padding-right 0
+          justify-content space-around
+          > div
+            padding 0
+            margin auto 5px
+            background-image none
+            
+          .artefacts
+            height auto
+            :before
+              content 'Арт.'
+        
+        .menu
+          order 3
+          max-width 100%
+          height auto
+          
+          .main_menu
+            width 100%
+            
+            li
+              img
+                left 50%
+                margin-left -26.5px
+          
+          .second_menu
+            position relative
+            top initial
+        
+        .menu_soc
+          order 1
+          display flex
+          width 100%
+          justify-content space-around
+      
 
-			.fleet_info
-				position fixed
-				top initial
-				bottom 0
-				z-index 20
+      .fleet_info
+        position fixed
+        top initial
+        bottom 0
+        z-index 20
 
-			.fleet_info_full
-				position fixed
-				top initial
-				bottom 71px
-				z-index 20
-			
-				&.active
-					top 0
-					
-					button:before
-						transform rotate(90deg) scaleX(-1)
-			
-				button
-					position fixed
-					top initial
-					bottom 71px
-					width 330px
-					
-					&:before
-						transform rotate(90deg) scaleX(1)
-			
-			> .user
-				order 1
-				position relative
-				right initial
-				top initial
-				height auto
-				width 100%
-				height 100px
-				display flex
-				flex-direction row
-				flex-wrap wrap
-				flex-shrink 0
-				
-				.servertime
-					width 100%
-				
-				.menu
-					position relative
-					display flex
-					bottom initial
-					right initial
-					height auto
-					flex-direction row
-					width calc(100% - 75px)
-					justify-content space-between
-					box-sizing border-box
-					text-decoration underline
-					flex-wrap wrap
-					padding 10px
-					align-items center
-					
-					a
-						margin 0 5px
-					
-					.support
-						margin 0 5px
-			
-			.bottom_menu
-				order 3
-				flex-wrap wrap
-				height auto
-				min-height initial
-				flex-shrink 0
-				max-height none
-				margin 0
-				
-				li
-					min-width 55px
-					min-height 55px
+      .fleet_info_full
+        position fixed
+        top initial
+        bottom 71px
+        z-index 20
+      
+        &.active
+          top 0
+          
+          button:before
+            transform rotate(90deg) scaleX(-1)
+      
+        button
+          position fixed
+          top initial
+          bottom 71px
+          width 330px
+          
+          &:before
+            transform rotate(90deg) scaleX(1)
+      
+      > .user
+        order 1
+        position relative
+        right initial
+        top initial
+        height auto
+        width 100%
+        height 100px
+        display flex
+        flex-direction row
+        flex-wrap wrap
+        flex-shrink 0
+        
+        .servertime
+          width 100%
+        
+        .menu
+          position relative
+          display flex
+          bottom initial
+          right initial
+          height auto
+          flex-direction row
+          width calc(100% - 75px)
+          justify-content space-between
+          box-sizing border-box
+          text-decoration underline
+          flex-wrap wrap
+          padding 10px
+          align-items center
+          
+          a
+            margin 0 5px
+          
+          .support
+            margin 0 5px
+      
+      .bottom_menu
+        order 3
+        flex-wrap wrap
+        height auto
+        min-height initial
+        flex-shrink 0
+        max-height none
+        margin 0
+        
+        li
+          min-width 55px
+          min-height 55px
 
-			.content
-				order 4
-				width 100%
-				overflow hidden
-				
-				&.chat
-					flex-shrink 0 !important
-					height 90% !important
-					
-					.messages
-						.profile
-							display none
-						
-						li
-							max-width 100%
-							&.more
-							&.missed
-								span
-									&:before
-									&:after
-										margin 0 3px
-							
-							&[data-username]:before
-								content attr(data-username) ': '
-								display inline
-								color #c4aba1
-							
-							p
-								display inline
-								
-							&.admin
-								&:before
-									color #d65f52
-							&.helper
-								&:before
-									color #a57fce
-							&.owner
-								&:before
-									color #e9a844
-							&.moderator
-								&:before
-									color #56baf2
-							&.me
-								&:before
-									color #ABC851
-									
-				&.cosmos
-					flex-shrink 0
-					max-width 100%
-					
-					.attack-menu
-						max-width 100%
-						
-					.departure
-						display flex
-						flex-direction column
-						max-width 100%
-							
-						.planets
-							order 1
-							
-							.name,
-							.location
-								visibility visible
-						
-						.fleet
-							order 2
-							max-width 100%
-							
-						.squads
-							order 3
-							max-width 100%
-							flex-direction row
-							justify-content space-around
-							height auto
-							padding 0
-							margin 0
-							
-							.squad
-								margin 1px
-							
-							.control
-								flex-direction row
-								width 100%
-								height 26px
-								margin 10px
-						
-						.unitsAdditionalControl
-							order 4
-							
-							.unitsPower
-								margin 10px
-						
-					.target
-						width 100%
-				
-				.header
-					.level
-						width 95px
-					
-				.description
-					height auto !important
-					
-					.scrollbar-inner
-						overflow initial !important
-				
-				.item_info
-					flex-shrink 1
-				
-				.additional_info
-					width 100%
-					display flex
-					flex-wrap wrap
-					align-items flex-start
-					min-height initial
-					
-					&.artefactsStatistics
-						align-items center
-					
-					.title
-						width 100%
-					
-					a
-						width 90px
-						
-				&.earth:not(.research):not(.earthReserve):not(.earthZone)
-					position relative
-					height 90%
-					flex-shrink 0
-					
-				.pulsecatcher-menu
-					.pulsecatcherGetBonus
-						order 1
-						margin-bottom 20px
-						width 100%
-					
-					.previousBonus
-						display none
-					
-					.pulsecatcherVote
-						order 3
-						width 100%
-						
-					.back 
-						order 4
-						position relative
-						right initial
-						bottom initial
-						margin 20px auto
-				
-				.colosseum-menu
-					justify-content center
-					
-					.tournament
-						margin 10px auto
-					
-					.start,
-					.back
-						margin 20px 40px
-			
-			.permanent
-				position relative
-				order 5
-				flex-shrink 0
-				height 90%
+      .content
+        order 4
+        width 100%
+        overflow hidden
+        
+        &.chat
+          flex-shrink 0 !important
+          height 90% !important
+          
+          .messages
+            .profile
+              display none
+            
+            li
+              max-width 100%
+              &.more
+              &.missed
+                span
+                  &:before
+                  &:after
+                    margin 0 3px
+              
+              &[data-username]:before
+                content attr(data-username) ': '
+                display inline
+                color #c4aba1
+              
+              p
+                display inline
+                
+              &.admin
+                &:before
+                  color #d65f52
+              &.helper
+                &:before
+                  color #a57fce
+              &.owner
+                &:before
+                  color #e9a844
+              &.moderator
+                &:before
+                  color #56baf2
+              &.me
+                &:before
+                  color #ABC851
+                  
+        &.cosmos
+          flex-shrink 0
+          max-width 100%
+          
+          .attack-menu
+            max-width 100%
+            
+          .departure
+            display flex
+            flex-direction column
+            max-width 100%
+              
+            .planets
+              order 1
+              
+              .name,
+              .location
+                visibility visible
+            
+            .fleet
+              order 2
+              max-width 100%
+              
+            .squads
+              order 3
+              max-width 100%
+              flex-direction row
+              justify-content space-around
+              height auto
+              padding 0
+              margin 0
+              
+              .squad
+                margin 1px
+              
+              .control
+                flex-direction row
+                width 100%
+                height 26px
+                margin 10px
+            
+            .unitsAdditionalControl
+              order 4
+              
+              .unitsPower
+                margin 10px
+            
+          .target
+            width 100%
+        
+        .header
+          .level
+            width 95px
+          
+        .description
+          height auto !important
+          
+          .scrollbar-inner
+            overflow initial !important
+        
+        .item_info
+          flex-shrink 1
+        
+        .additional_info
+          width 100%
+          display flex
+          flex-wrap wrap
+          align-items flex-start
+          min-height initial
+          
+          &.artefactsStatistics
+            align-items center
+          
+          .title
+            width 100%
+          
+          a
+            width 90px
+            
+        &.earth:not(.research):not(.earthReserve):not(.earthZone)
+          position relative
+          height 90%
+          flex-shrink 0
+          
+        .pulsecatcher-menu
+          .pulsecatcherGetBonus
+            order 1
+            margin-bottom 20px
+            width 100%
+          
+          .previousBonus
+            display none
+          
+          .pulsecatcherVote
+            order 3
+            width 100%
+            
+          .back 
+            order 4
+            position relative
+            right initial
+            bottom initial
+            margin 20px auto
+        
+        .colosseum-menu
+          justify-content center
+          
+          .tournament
+            margin 10px auto
+          
+          .start,
+          .back
+            margin 20px 40px
+      
+      .permanent
+        position relative
+        order 5
+        flex-shrink 0
+        height 90%
 
-			.additional_area
-				position relative
-				bottom initial
-				right initial
-				order 2
-				height auto
-				margin 0 0 0 auto
-				width 100%
-				border-radius 0
-				padding 9px
-				box-sizing border-box
-				background-position 15px 2px
+      .additional_area
+        position relative
+        bottom initial
+        right initial
+        order 2
+        height auto
+        margin 0 0 0 auto
+        width 100%
+        border-radius 0
+        padding 9px
+        box-sizing border-box
+        background-position 15px 2px
 
-				.title
-					padding-left 75px
-					box-sizing border-box
-					
-					h2
-						text-align center
-				
-				.quests
-					position relative
-					bottom initial
-					width 100%
+        .title
+          padding-left 75px
+          box-sizing border-box
+          
+          h2
+            text-align center
+        
+        .quests
+          position relative
+          bottom initial
+          width 100%
 
-			.newMessage
-				position fixed
-				bottom 0
-				padding 0
-		
-		.popup
-			.entranceReward 
-				height 100%
+      .newMessage
+        position fixed
+        bottom 0
+        padding 0
+    
+    .popup
+      .entranceReward 
+        height 100%

@@ -1,81 +1,81 @@
 <template name="pulsecatcher">
-	<div class="pulsecatcher-menu">
-		{{> pulsecatcherGetBonus choosenBonus=choosenBonus}}
-		{{> pulsecatcherVote bonusList=bonusList}}
+  <div class="pulsecatcher-menu">
+    {{> pulsecatcherGetBonus choosenBonus=choosenBonus}}
+    {{> pulsecatcherVote bonusList=bonusList}}
 
-		<div class="previousBonus">
-			Предыдущий бонус:
-			{{> item_effect item=previousBonusCard}}
-		</div>
+    <div class="previousBonus">
+      Предыдущий бонус:
+      {{> item_effect item=previousBonusCard}}
+    </div>
 
-		<a href="{{building.url}}" class="back back_action">
-			Назад
-		</a>
-	</div>
+    <a href="{{building.url}}" class="back back_action">
+      Назад
+    </a>
+  </div>
 </template>
 
 <template name="pulsecatcherGetBonus">
-	<div class="pulsecatcherGetBonus">
-		<img class="activeBonus" src="/img/game/pulsecatcher/{{choosenBonus.card.engName}}.jpg"/>
-		<div class="todayBonus">
-			Бонус на сегодня:
-			{{> item_effect item=choosenBonus.card}}
-		</div>
-		<button class="activate additional_action" disabled="{{#unless choosenBonus.canActivate}}disabled{{/unless}}">
-			{{#if choosenBonus.canActivate}}
-				Получить бонус
-			{{else}}
-				Бонус активен
-			{{/if}}
-		</button>
+  <div class="pulsecatcherGetBonus">
+    <img class="activeBonus" src="/img/game/pulsecatcher/{{choosenBonus.card.engName}}.jpg"/>
+    <div class="todayBonus">
+      Бонус на сегодня:
+      {{> item_effect item=choosenBonus.card}}
+    </div>
+    <button class="activate additional_action" disabled="{{#unless choosenBonus.canActivate}}disabled{{/unless}}">
+      {{#if choosenBonus.canActivate}}
+        Получить бонус
+      {{else}}
+        Бонус активен
+      {{/if}}
+    </button>
 
-		{{#if isLoading}}
-			{{> loading}}
-		{{/if}}
-	</div>
+    {{#if isLoading}}
+      {{> loading}}
+    {{/if}}
+  </div>
 </template>
 
 <template name="pulsecatcherVote">
-	<div class="pulsecatcherVote">
-		<div class="options">
-			{{#each bonusList}}
-				<div 
-					class="
-						option
-						{{#if eq activeOption this.engName}}active{{/if}}
-						{{#if eq userVote.answer this.engName}}user{{/if}}
-					" 
-					data-id="{{this.engName}}"
-				>
-					<img class="activeBonus" src="/img/game/pulsecatcher/{{this.engName}}.jpg"/>
-					<span class="effect">
-						{{#each this.effect}}
-							{{#if result}}
-								{{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
-							{{/if}}
-						{{/each}}
-					</span>
-					
-					{{#if userVote}}
-						<span class="result" data-id="{{this.engName}}" data-percent="{{calcVoteValue this.engName}}">
-							<span class="percent"></span>
-						</span>
-					{{/if}}
-				</div>
-			{{/each}}
-		</div>
-		{{#unless userVote}}
-			<p class="whatToDo">Сделайте выбор интересующего вас бонуса. Чем выше Сила вашего Голоса, тем больше шансов у вас повлиять на то, что именно ваш выбор будет решающим.</p>
-		{{/unless}}
-		<p class="whatWillHappen">Набравший больше всего голосов бонус становится доступным к использованию в течение суток, на следующий день.</p>
+  <div class="pulsecatcherVote">
+    <div class="options">
+      {{#each bonusList}}
+        <div 
+          class="
+            option
+            {{#if eq activeOption this.engName}}active{{/if}}
+            {{#if eq userVote.answer this.engName}}user{{/if}}
+          " 
+          data-id="{{this.engName}}"
+        >
+          <img class="activeBonus" src="/img/game/pulsecatcher/{{this.engName}}.jpg"/>
+          <span class="effect">
+            {{#each this.effect}}
+              {{#if result}}
+                {{name}}{{pretext}}{{formatNumber result}}{{aftertext}}<br/>
+              {{/if}}
+            {{/each}}
+          </span>
+          
+          {{#if userVote}}
+            <span class="result" data-id="{{this.engName}}" data-percent="{{calcVoteValue this.engName}}">
+              <span class="percent"></span>
+            </span>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+    {{#unless userVote}}
+      <p class="whatToDo">Сделайте выбор интересующего вас бонуса. Чем выше Сила вашего Голоса, тем больше шансов у вас повлиять на то, что именно ваш выбор будет решающим.</p>
+    {{/unless}}
+    <p class="whatWillHappen">Набравший больше всего голосов бонус становится доступным к использованию в течение суток, на следующий день.</p>
 
-		<div>
-			{{> votePower}}
-			<button class="vote main_action" disabled="{{#if or userVote (not activeOption)}}disabled{{/if}}">Отдать голос</button>
-		</div>
+    <div>
+      {{> votePower}}
+      <button class="vote main_action" disabled="{{#if or userVote (not activeOption)}}disabled{{/if}}">Отдать голос</button>
+    </div>
 
-		{{#if isLoading}}
-			{{> loading}}
-		{{/if}}
-	</div>
+    {{#if isLoading}}
+      {{> loading}}
+    {{/if}}
+  </div>
 </template>

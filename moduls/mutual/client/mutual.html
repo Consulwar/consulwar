@@ -1,94 +1,94 @@
 <template name="item_mutual">
-	<div class="information {{mutual.type}}">
-		<div class="image">
-			<img alt="{{mutual.name}}" src="/img/game/mutual/{{mutual.group}}/{{mutual.engName}}.jpg">
-			<span class="title">{{mutual.name}}</span>
-			{{#if mutual.currentLevel}}
-				<span class="level" title="{{formatNumber mutual.currentLevel}}">{{formatNumberWithISO mutual.currentLevel}} уровень</span>
-			{{/if}}
-		</div>
-		<div class="description">
-			{{> item_requirements requirements=mutual.requirements}}
+  <div class="information {{mutual.type}}">
+    <div class="image">
+      <img alt="{{mutual.name}}" src="/img/game/mutual/{{mutual.group}}/{{mutual.engName}}.jpg">
+      <span class="title">{{mutual.name}}</span>
+      {{#if mutual.currentLevel}}
+        <span class="level" title="{{formatNumber mutual.currentLevel}}">{{formatNumberWithISO mutual.currentLevel}} уровень</span>
+      {{/if}}
+    </div>
+    <div class="description">
+      {{> item_requirements requirements=mutual.requirements}}
 
-			<p>{{mutual.description}}</p>
-			
-			{{> item_effect item=mutual}}
-		</div>
+      <p>{{mutual.description}}</p>
+      
+      {{> item_effect item=mutual}}
+    </div>
 
-		<div class="resources">
-			{{#let price=(mutual.price count undefined)}}
-				{{#if price.humans}}
-					<div class="humans" {{priceTooltip price 'humans'}}>
-						{{formatNumberWithISO price.humans}}
-					</div>
-				{{/if}}
-				{{#if price.honor}}
-					<div class="honor" {{priceTooltip price 'honor'}}>
-						{{formatNumberWithISO price.honor}}
-					</div>
-				{{/if}}
-				{{#if price.metals}}
-					<div class="metals" {{priceTooltip price 'metals'}}>
-						{{formatNumberWithISO price.metals}}
-					</div>
-				{{/if}}
-				{{#if price.crystals}}
-					<div class="crystals" {{priceTooltip price 'crystals'}}>
-						{{formatNumberWithISO price.crystals}}
-					</div>
-				{{/if}}
-				<div class="button">
-					<button 
-						class="build" 
-						data-action="invest" 
-						data-currency="resources" 
-						disabled="{{not (mutual.canBuild count 'resources')}}"
-					>
-						Вложить ресурсы
-					</button>
-				</div>
-				
-				{{#if price.credits}}
-					<div></div>
-					<div class="credits" {{priceTooltip price 'credits'}}>
-						{{formatNumberWithISO price.credits}}
-					</div>
-					<div class="button">
-						или
-						<button 
-							class="build" 
-							data-action="invest" 
-							data-currency="credits" 
-							disabled="{{not (mutual.canBuild count 'credits')}}"
-						>
-							Вложить кредиты
-						</button>
-					</div>
-				{{/if}}
-			{{/let}}
-		</div>
+    <div class="resources">
+      {{#let price=(mutual.price count undefined)}}
+        {{#if price.humans}}
+          <div class="humans" {{priceTooltip price 'humans'}}>
+            {{formatNumberWithISO price.humans}}
+          </div>
+        {{/if}}
+        {{#if price.honor}}
+          <div class="honor" {{priceTooltip price 'honor'}}>
+            {{formatNumberWithISO price.honor}}
+          </div>
+        {{/if}}
+        {{#if price.metals}}
+          <div class="metals" {{priceTooltip price 'metals'}}>
+            {{formatNumberWithISO price.metals}}
+          </div>
+        {{/if}}
+        {{#if price.crystals}}
+          <div class="crystals" {{priceTooltip price 'crystals'}}>
+            {{formatNumberWithISO price.crystals}}
+          </div>
+        {{/if}}
+        <div class="button">
+          <button 
+            class="build" 
+            data-action="invest" 
+            data-currency="resources" 
+            disabled="{{not (mutual.canBuild count 'resources')}}"
+          >
+            Вложить ресурсы
+          </button>
+        </div>
+        
+        {{#if price.credits}}
+          <div></div>
+          <div class="credits" {{priceTooltip price 'credits'}}>
+            {{formatNumberWithISO price.credits}}
+          </div>
+          <div class="button">
+            или
+            <button 
+              class="build" 
+              data-action="invest" 
+              data-currency="credits" 
+              disabled="{{not (mutual.canBuild count 'credits')}}"
+            >
+              Вложить кредиты
+            </button>
+          </div>
+        {{/if}}
+      {{/let}}
+    </div>
 
-		<progress max="{{mutual.investments}}" value="{{mutual.currentInvestments}}"></progress>
+    <progress max="{{mutual.investments}}" value="{{mutual.currentInvestments}}"></progress>
 
-		<input class="count" type="number" placeholder="Количество" value="{{count}}"/>
-		
-		{{> top_investors}}
+    <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
+    
+    {{> top_investors}}
 
-		{{> Template.dynamic template=additionalArea}}
-	</div>
+    {{> Template.dynamic template=additionalArea}}
+  </div>
 </template>
 
 <template name="top_investors">
-	<div class="additional_area">
-		<ol>
-		{{#each investors}}
-			<li>
-				{{this.username}} — {{this.investments}} вложений<br/>
-				{{#if this.resources.metals}}<span class="metals">{{this.resources.metals}} металла</span>{{/if}} 
-				{{#if this.resources.crystals}}<span class="crystals">{{this.resources.crystals}} кристалла</span>{{/if}} 
-				{{#if this.resources.credits}}<span class="credits">{{this.resources.credits}} кредитов</span>{{/if}}
-			</li>
-		{{/each}}
-		</ol>
-	</div>
+  <div class="additional_area">
+    <ol>
+    {{#each investors}}
+      <li>
+        {{this.username}} — {{this.investments}} вложений<br/>
+        {{#if this.resources.metals}}<span class="metals">{{this.resources.metals}} металла</span>{{/if}} 
+        {{#if this.resources.crystals}}<span class="crystals">{{this.resources.crystals}} кристалла</span>{{/if}} 
+        {{#if this.resources.credits}}<span class="credits">{{this.resources.credits}} кредитов</span>{{/if}}
+      </li>
+    {{/each}}
+    </ol>
+  </div>
 </template>

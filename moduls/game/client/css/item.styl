@@ -1,489 +1,489 @@
 .content
-	.page-title
-		position absolute
-		z-index 100
-		top 55px
-		left 124px
-		padding 10px 10px 10px 20px
-		background linear-gradient(to right, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0) 100%)
-		font-size 20px
-		min-width 40px
-		text-align right
+  .page-title
+    position absolute
+    z-index 100
+    top 55px
+    left 124px
+    padding 10px 10px 10px 20px
+    background linear-gradient(to right, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0) 100%)
+    font-size 20px
+    min-width 40px
+    text-align right
 
 .information
-	position relative
-	z-index 3
-	margin-left 124px
-	padding 3.5px
-	//width 1024px
-	height 428px
-	background-color #090e14
-		
-	&.mutual
-		
-		.description
-			p
-				//max-width 600px
-		
-		.count
-			bottom 55px
+  position relative
+  z-index 3
+  margin-left 124px
+  padding 3.5px
+  //width 1024px
+  height 428px
+  background-color #090e14
+    
+  &.mutual
+    
+    .description
+      p
+        //max-width 600px
+    
+    .count
+      bottom 55px
 
-	.image
-		position relative
-		display inline-block
-		width 350px
-		height 430px
-		margin-right 20px
-		// 372 16
-		.title
-			position absolute
-			bottom 0
-			left 0
-			width 100%
-			height 35px
-			padding-top 10px
-			font-size 22px
-			white-space nowrap
-			text-align center
-			background-color rgba(0, 0, 0, 0.5)
-		
-		.level
-			position absolute
-			top 55px
-			left 0
-			padding 10px 10px 10px 20px
-			background linear-gradient(to right, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0) 100%)
-			font-size 20px
-			min-width 40px
-			text-align right
-			
-			
-	p
-		//max-width 700px
-		font-size 14px
-		color #b6c5d3
-		
-	.description
-		width 940px
-	
-	.small_description
-		width 300px
-	
-	.description, .small_description
-		position relative
-		display inline-block
-		vertical-align top
-		margin-top 20px
-		
-		.requirements
-			position relative
-			float right
-			width 240px
-			margin-left 30px
-			margin-bottom 10px
-			
-			.title
-				font-size 16px
-				color #598AB3
-			
-			>a
-				display block
-				width 171px
-				height 32px
-				padding 8px 0 12px 74px
-				background-repeat no-repeat
-				background-position 2px center
-				margin-top 12px
-				text-decoration none
-			
-		.currentLevel
-			margin-top 10px
-			color #42617D
-			
-		.nextLevel
-			margin-top 10px
-			color #88A23F
-			
-		.limit
-			margin-top 10px
-			color #FFB74A
+  .image
+    position relative
+    display inline-block
+    width 350px
+    height 430px
+    margin-right 20px
+    // 372 16
+    .title
+      position absolute
+      bottom 0
+      left 0
+      width 100%
+      height 35px
+      padding-top 10px
+      font-size 22px
+      white-space nowrap
+      text-align center
+      background-color rgba(0, 0, 0, 0.5)
+    
+    .level
+      position absolute
+      top 55px
+      left 0
+      padding 10px 10px 10px 20px
+      background linear-gradient(to right, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0) 100%)
+      font-size 20px
+      min-width 40px
+      text-align right
+      
+      
+  p
+    //max-width 700px
+    font-size 14px
+    color #b6c5d3
+    
+  .description
+    width 940px
+  
+  .small_description
+    width 300px
+  
+  .description, .small_description
+    position relative
+    display inline-block
+    vertical-align top
+    margin-top 20px
+    
+    .requirements
+      position relative
+      float right
+      width 240px
+      margin-left 30px
+      margin-bottom 10px
+      
+      .title
+        font-size 16px
+        color #598AB3
+      
+      >a
+        display block
+        width 171px
+        height 32px
+        padding 8px 0 12px 74px
+        background-repeat no-repeat
+        background-position 2px center
+        margin-top 12px
+        text-decoration none
+      
+    .currentLevel
+      margin-top 10px
+      color #42617D
+      
+    .nextLevel
+      margin-top 10px
+      color #88A23F
+      
+    .limit
+      margin-top 10px
+      color #FFB74A
 
-		.notImplemented
-		.warning
-			color #FFB74A
-		
-	.characteristics
-		position absolute
-		bottom 125px
-		left 390px
-		width 300px
-		padding 10px 40px 10px 10px
-		border 1px solid #3D1E1B
-		background-color #000
-		margin-top 20px
-		min-height 75px
-		color #994732
-		
-		.life,
-		.damage
-			position absolute
-			left 175px
-			
-			&:before
-				position relative
-				top 4px
-				vertical-align middle
-		
-		.damage
-			color #B75B50
-			top 14px
-			
-			&:before
-				content url(/img/game/damage.png)
-				width 21px
-				height 21px
-				padding 0 5px
-		
-		.life
-			color #BBBBBB
-			top 45px
-			
-			&:before
-				content url(/img/game/life.png)
-				width 18px
-				height 21px
-				padding 0 6.5px
-		
-		.targets
-			width 150px
-			padding-left 20px
-			a
-				color #d3912e
-	
-	.build
-		color #91B935
-		border 2px solid #91B935
-		background-color #000
-		padding 20px 45px
-		font-size 16px
-		cursor pointer
-		
-		&[data-action="invest"]:not([data-currency="credits"])
-			color #5cabc1
-			border-color #5cabc1
-		
-		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
-	
+    .notImplemented
+    .warning
+      color #FFB74A
+    
+  .characteristics
+    position absolute
+    bottom 125px
+    left 390px
+    width 300px
+    padding 10px 40px 10px 10px
+    border 1px solid #3D1E1B
+    background-color #000
+    margin-top 20px
+    min-height 75px
+    color #994732
+    
+    .life,
+    .damage
+      position absolute
+      left 175px
+      
+      &:before
+        position relative
+        top 4px
+        vertical-align middle
+    
+    .damage
+      color #B75B50
+      top 14px
+      
+      &:before
+        content url(/img/game/damage.png)
+        width 21px
+        height 21px
+        padding 0 5px
+    
+    .life
+      color #BBBBBB
+      top 45px
+      
+      &:before
+        content url(/img/game/life.png)
+        width 18px
+        height 21px
+        padding 0 6.5px
+    
+    .targets
+      width 150px
+      padding-left 20px
+      a
+        color #d3912e
+  
+  .build
+    color #91B935
+    border 2px solid #91B935
+    background-color #000
+    padding 20px 45px
+    font-size 16px
+    cursor pointer
+    
+    &[data-action="invest"]:not([data-currency="credits"])
+      color #5cabc1
+      border-color #5cabc1
+    
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+  
 
-	progress
-		border 0
-		margin-bottom -1px
+  progress
+    border 0
+    margin-bottom -1px
 
-	.market,
-	.tournament,
-	.containers,
-	.pulsecatcher
-		color #3591B9
-		border 2px solid #3591B9
-		background-color #000
-		padding 20px 0px
-		width 200px
-		font-size 16px
-		cursor pointer
-		text-decoration none
-		text-align center
-		
-		&.disabled
-			pointer-events none
-			-webkit-filter grayscale(1)
-			filter grayscale(1)
+  .market,
+  .tournament,
+  .containers,
+  .pulsecatcher
+    color #3591B9
+    border 2px solid #3591B9
+    background-color #000
+    padding 20px 0px
+    width 200px
+    font-size 16px
+    cursor pointer
+    text-decoration none
+    text-align center
+    
+    &.disabled
+      pointer-events none
+      -webkit-filter grayscale(1)
+      filter grayscale(1)
 
-		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
-	
-	.select_all,
-	.send_reinforcement,
-	.send_fleet
-		background-color #000
-		font-size 16px
-		font-weight bold
-		cursor pointer
-		
-		&:hover
-			-webkit-filter brightness(1.2)
-			filter brightness(1.2)
-		
-	.select_all,
-	.send_reinforcement
-		display inline-block
-		margin 20px 5px
-		padding 10px 15px
-		color #5f8cb3
-		border 2px solid #5f8cb3
-	
-	.send_fleet
-		position absolute
-		bottom 15px
-		left 370px
-		color #92402b
-		border 2px solid #92402b
-		padding 15px 30px
-		
-	
-	>.build
-		position absolute
-		bottom 15px
-		left 750px
-		
-	>.market,
-	>.containers,
-	>.tournament,
-	>.pulsecatcher
-		position absolute
-		bottom 85px
-		left 750px
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+  
+  .select_all,
+  .send_reinforcement,
+  .send_fleet
+    background-color #000
+    font-size 16px
+    font-weight bold
+    cursor pointer
+    
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+    
+  .select_all,
+  .send_reinforcement
+    display inline-block
+    margin 20px 5px
+    padding 10px 15px
+    color #5f8cb3
+    border 2px solid #5f8cb3
+  
+  .send_fleet
+    position absolute
+    bottom 15px
+    left 370px
+    color #92402b
+    border 2px solid #92402b
+    padding 15px 30px
+    
+  
+  >.build
+    position absolute
+    bottom 15px
+    left 750px
+    
+  >.market,
+  >.containers,
+  >.tournament,
+  >.pulsecatcher
+    position absolute
+    bottom 85px
+    left 750px
 
-	progress
-		position absolute
-		bottom 15px
-		left 750px
-		width 200px
-		font-weight bold
-		border 1px solid #3e4059
-		background-color #000
-		
-		&::-moz-progress-bar 
-			background-color #3cb8ee
+  progress
+    position absolute
+    bottom 15px
+    left 750px
+    width 200px
+    font-weight bold
+    border 1px solid #3e4059
+    background-color #000
+    
+    &::-moz-progress-bar 
+      background-color #3cb8ee
 
-		&::-webkit-progress-value
-			background-color #3cb8ee
-			
-		&::-webkit-progress-bar
-			background-color #000
-			
-		&[aria-valuenow]:before
-			background-color #3cb8ee
-			
-		&[role][aria-valuenow]
-			background-color #000
-		
-		&:before
-			content attr(value) ' / ' attr(max)
-			position absolute
-			display block
-			width 100%
-			top -20px
-			text-align center
-			color #9aceda
-		
-	.count
-		position absolute
-		bottom 90px
-		left 750px
-		width 196px
-		height 20px
-		border-radius 5px
-		padding-top 2px
-		-webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-		-moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-		box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-		border 2px solid #335168
-		background-color #adadad
-		text-align center
-	
-	.items
-		display inline-block
-		width 700px
-		text-align center
-		
-		.disabled
-			cursor not-allowed
-		
-		li:not(.disabled)
-			a:before, div:before
-				content attr(data-count)
-				position absolute
-				bottom 0
-				left 0
-				width 100%
-				height 17px
-				background-color rgba(0, 0, 0, 0.5)
-				text-align center
-				color #ddd
+    &::-webkit-progress-value
+      background-color #3cb8ee
+      
+    &::-webkit-progress-bar
+      background-color #000
+      
+    &[aria-valuenow]:before
+      background-color #3cb8ee
+      
+    &[role][aria-valuenow]
+      background-color #000
+    
+    &:before
+      content attr(value) ' / ' attr(max)
+      position absolute
+      display block
+      width 100%
+      top -20px
+      text-align center
+      color #9aceda
+    
+  .count
+    position absolute
+    bottom 90px
+    left 750px
+    width 196px
+    height 20px
+    border-radius 5px
+    padding-top 2px
+    -webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+    box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
+    border 2px solid #335168
+    background-color #adadad
+    text-align center
+  
+  .items
+    display inline-block
+    width 700px
+    text-align center
+    
+    .disabled
+      cursor not-allowed
+    
+    li:not(.disabled)
+      a:before, div:before
+        content attr(data-count)
+        position absolute
+        bottom 0
+        left 0
+        width 100%
+        height 17px
+        background-color rgba(0, 0, 0, 0.5)
+        text-align center
+        color #ddd
 
 .tooltip
-	z-index 500
-	background-color rgba(0, 0, 0, 0.8)
-	padding 10px
-	border 2px solid #e3c26a
-	border-radius 10px
-	
-	&.hide
-		display none
-	
-	.title
-		color #ffffff
-		
-	.text
-		color #56baf2
-		margin-top 10px
-		margin-bottom 10px
+  z-index 500
+  background-color rgba(0, 0, 0, 0.8)
+  padding 10px
+  border 2px solid #e3c26a
+  border-radius 10px
+  
+  &.hide
+    display none
+  
+  .title
+    color #ffffff
+    
+  .text
+    color #56baf2
+    margin-top 10px
+    margin-bottom 10px
 
-	.next_level
-		color #dc6257
-		margin-bottom 10px
-		font-weight bold
-		border-top 1px dashed #dfdfdf
-		margin-top 20px
-		padding-top 10px
-		
-	.effect
-		color #88a23f
+  .next_level
+    color #dc6257
+    margin-bottom 10px
+    font-weight bold
+    border-top 1px dashed #dfdfdf
+    margin-top 20px
+    padding-top 10px
+    
+  .effect
+    color #88a23f
 
-	.notImplemented
-		color #FFB74A
+  .notImplemented
+    color #FFB74A
 
-	tr
-		&.total + tr > td
-			padding-top 10px
-			
-		&.total td
-			border-top 1px dashed #dfdfdf
+  tr
+    &.total + tr > td
+      padding-top 10px
+      
+    &.total td
+      border-top 1px dashed #dfdfdf
 
-		&.negative td
-			color #ff7566
-		
-		&.final td
-			color #ffffff
-			font-weight bold
-			
-		&.current td,
-		&.time td
-			color #ffb74a
+    &.negative td
+      color #ff7566
+    
+    &.final td
+      color #ffffff
+      font-weight bold
+      
+    &.current td,
+    &.time td
+      color #ffb74a
 
-	td
-		color #56baf2
-		padding 4px
-		text-align right
+  td
+    color #56baf2
+    padding 4px
+    text-align right
 
-		&:last-child
-			color #dfdfdf
-			text-align left
+    &:last-child
+      color #dfdfdf
+      text-align left
 
 .select-icon-block
-	display inline-block
-	position fixed
-	z-index 100
-	top 50%
-	left 50%
-	transform translate(-50%, -50%)
-	background-image none
-	background-color #13161b
-	width 880px
-	font-weight bold
-	font-size 14px
+  display inline-block
+  position fixed
+  z-index 100
+  top 50%
+  left 50%
+  transform translate(-50%, -50%)
+  background-image none
+  background-color #13161b
+  width 880px
+  font-weight bold
+  font-size 14px
 
-	.close
-		cursor pointer
-		display block
-		position absolute
-		z-index 4
-		right 5px
-		top 5px
-		width 30px
-		height 30px
-		background-image url(/img/game/cosmomap/button_close.png)
-		background-repeat no-repeat
-	
-		&:hover
-			background-image url(/img/game/cosmomap/button_close_active.png)
-	
-	h2
-		font-size 14px
-		
-	.info
-		margin-top 10px
-		margin-bottom 20px
-		color #888888
+  .close
+    cursor pointer
+    display block
+    position absolute
+    z-index 4
+    right 5px
+    top 5px
+    width 30px
+    height 30px
+    background-image url(/img/game/cosmomap/button_close.png)
+    background-repeat no-repeat
+  
+    &:hover
+      background-image url(/img/game/cosmomap/button_close_active.png)
+  
+  h2
+    font-size 14px
+    
+  .info
+    margin-top 10px
+    margin-bottom 20px
+    color #888888
 
-	.tabItems
-	.tabShop
-		cursor pointer
-		display inline-block
-		padding-left 50px
-		padding-top 10px
-		height 30px
-		width 180px
-		background-repeat no-repeat
-		background-color #030405
-		
-		&.active
-			background-color #13161b
+  .tabItems
+  .tabShop
+    cursor pointer
+    display inline-block
+    padding-left 50px
+    padding-top 10px
+    height 30px
+    width 180px
+    background-repeat no-repeat
+    background-color #030405
+    
+    &.active
+      background-color #13161b
 
-		&:hover
-			-webkit-filter brightness(1.4)
-			filter brightness(1.4)
-			
-	.tabItems
-		color #56baf2
-		background-position 10px 10px
-		background-image url(/img/game/chat/icons-list.png)
-	.tabShop
-		color #e9a844
-		background-position 10px 7px
-		background-image url(/img/game/chat/icons-shop.png)
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+      
+  .tabItems
+    color #56baf2
+    background-position 10px 10px
+    background-image url(/img/game/chat/icons-list.png)
+  .tabShop
+    color #e9a844
+    background-position 10px 7px
+    background-image url(/img/game/chat/icons-shop.png)
 
-	.common
-		color #FFFFFF
-	.extra
-		color #56baf2
-	.rare
-		color #954eff
-	.exclusive
-		color #e9a844
-	
-	.icons
-		margin-top 10px
-		margin-bottom 10px
-		padding 5px
-		height 500px
-		overflow hidden
-		overflow-y auto
-	
-	ul
-		display block
-		vertical-align top
-		margin 10px 0px
-		
-		li
-			cursor pointer
-			display inline-block
-			vertical-align top
-			padding 5px
-			
-			&:hover
-				-webkit-filter brightness(1.4)
-				filter brightness(1.4)
-			
-			&.selected
-				outline 4px solid #56baf2
+  .common
+    color #FFFFFF
+  .extra
+    color #56baf2
+  .rare
+    color #954eff
+  .exclusive
+    color #e9a844
+  
+  .icons
+    margin-top 10px
+    margin-bottom 10px
+    padding 5px
+    height 500px
+    overflow hidden
+    overflow-y auto
+  
+  ul
+    display block
+    vertical-align top
+    margin 10px 0px
+    
+    li
+      cursor pointer
+      display inline-block
+      vertical-align top
+      padding 5px
+      
+      &:hover
+        -webkit-filter brightness(1.4)
+        filter brightness(1.4)
+      
+      &.selected
+        outline 4px solid #56baf2
 
-			.has
-				display block
-				height 17px
-				padding-top 3px
-				text-align center
-				color #888888
+      .has
+        display block
+        height 17px
+        padding-top 3px
+        text-align center
+        color #888888
 
-			.credits
-				display block
-				height 17px
-				padding-top 3px
-				padding-left 22px
-				background-image url(/img/game/credits.png)
-				background-repeat no-repeat
-				background-size 20px 20px
-				color #C6E84C
+      .credits
+        display block
+        height 17px
+        padding-top 3px
+        padding-left 22px
+        background-image url(/img/game/credits.png)
+        background-repeat no-repeat
+        background-size 20px 20px
+        color #C6E84C

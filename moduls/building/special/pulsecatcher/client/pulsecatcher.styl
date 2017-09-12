@@ -1,6 +1,6 @@
 pulsecatcher-icon(id, name)
-	.{id}-icon
-		background-image url("/img/game/pulsecatcher/" name ".jpg")
+  .{id}-icon
+    background-image url("/img/game/pulsecatcher/" name ".jpg")
 
 pulsecatcher-icon('pulsecatcherFleetDamage', 'fleet_damage')
 pulsecatcher-icon('pulsecatcherFleetLife', 'fleet_life')
@@ -10,127 +10,127 @@ pulsecatcher-icon('pulsecatcherResourcesHonor', 'resources_honor')
 
 
 .pulsecatcherGetBonus
-	position relative
-	width 304px
-	margin 0 28px
-	display flex
-	flex-direction column
-	justify-content space-around
-	
-	.effect
-		color $color-human
-		margin 10px 0 18px
-	
-	.activeBonus
-		margin 0 auto 12px
-		
-	.todayBonus
-		width 304px
-		margin 0 auto
+  position relative
+  width 304px
+  margin 0 28px
+  display flex
+  flex-direction column
+  justify-content space-around
+  
+  .effect
+    color $color-human
+    margin 10px 0 18px
+  
+  .activeBonus
+    margin 0 auto 12px
+    
+  .todayBonus
+    width 304px
+    margin 0 auto
 
 .pulsecatcherVote
-	position relative
-	display flex
-	flex-direction column
-	justify-content space-around
-	align-items center
-	width 340px
-	height 422px
-	margin 0 10px
-	
-	.effect,
-	.result
-		color $color-metal
-		
-	.result
-		position relative
-		margin-top 8px
-		width 80px
-		height 80px
-		margin 10px
-		background-color $color-black
-		border-radius 50%
-		
-		.percent
-			position absolute
-			display flex
-			left 0
-			top 0
-			width 100%
-			height 100%
-			align-items center
-			justify-content center
-			font-weight bold
-	
-	.options
-		display flex
-		flex-direction row
-		justify-content space-around
-		width 100%
-		overflow hidden
-		
-		.option
-			display flex
-			flex-direction column
-			width 100px
-			text-align center
-			cursor pointer
+  position relative
+  display flex
+  flex-direction column
+  justify-content space-around
+  align-items center
+  width 340px
+  height 422px
+  margin 0 10px
+  
+  .effect,
+  .result
+    color $color-metal
+    
+  .result
+    position relative
+    margin-top 8px
+    width 80px
+    height 80px
+    margin 10px
+    background-color $color-black
+    border-radius 50%
+    
+    .percent
+      position absolute
+      display flex
+      left 0
+      top 0
+      width 100%
+      height 100%
+      align-items center
+      justify-content center
+      font-weight bold
+  
+  .options
+    display flex
+    flex-direction row
+    justify-content space-around
+    width 100%
+    overflow hidden
+    
+    .option
+      display flex
+      flex-direction column
+      width 100px
+      text-align center
+      cursor pointer
 
-			&:hover
-				-webkit-filter brightness(1.2)
-				filter brightness(1.2)
-					
-			&.active,
-			&.user
-				.effect,
-				.result
-					color $color-ggk
-			
-			.effect
-				display block
-				width 100%
-				max-width 100%
-				padding 0 21px
-				margin-top 10px
-				box-sizing border-box
-				font-weight bold
-			
-			img
-				width 100px
-	
-	p
-		text-align center
-		padding 0 30px
+      &:hover
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)
+          
+      &.active,
+      &.user
+        .effect,
+        .result
+          color $color-ggk
+      
+      .effect
+        display block
+        width 100%
+        max-width 100%
+        padding 0 21px
+        margin-top 10px
+        box-sizing border-box
+        font-weight bold
+      
+      img
+        width 100px
+  
+  p
+    text-align center
+    padding 0 30px
 
-	.whatToDo
-		margin-top 30px
-		color $color-human
-		
-	.whatWillHappen
-		margin-bottom 25px
-		color $color-white
+  .whatToDo
+    margin-top 30px
+    color $color-human
+    
+  .whatWillHappen
+    margin-bottom 25px
+    color $color-white
 
 .pulsecatcher-menu
-	display flex
-	flex-direction row
-	flex-wrap wrap
-	width 100%
-	height auto
-	padding 20px 0 10px
-	
-	.back
-		position absolute
-		bottom 10px
-		right 18px
-		width 165px
-	
-	.previousBonus
-		position absolute
-		bottom 17px
-		width 220px
-		left 50%
-		margin-left -110px
-		text-align center
-		
-		.effect
-			color $color-metal
+  display flex
+  flex-direction row
+  flex-wrap wrap
+  width 100%
+  height auto
+  padding 20px 0 10px
+  
+  .back
+    position absolute
+    bottom 10px
+    right 18px
+    width 165px
+  
+  .previousBonus
+    position absolute
+    bottom 17px
+    width 220px
+    left 50%
+    margin-left -110px
+    text-align center
+    
+    .effect
+      color $color-metal

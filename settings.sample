@@ -1,192 +1,191 @@
 {
-	"public": {
-		"yandex": {
-			"id": 123
-		},
-		"mapbox": {
-			"id": "***",
-			"accessToken": "***"
-		},
-		"cosmos": {
-			"speedConfig": [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100 ],
-			"minSpeed": 3,
-			"maxSpeed": 80,
-			"minAcc": 0.4,
-			"maxAcc": 2,
-			"speedFactor": 0.016666,
-			"collectArtefactsPeriod": 120
-		},
-		"earth": {
-			"schedule": "at 4:00 pm"
-		},
-		"building": {
-			"special": {
-				"pulsecatcher": {
-					"schedule": "at 4:00 pm"
-				}
-			}
-		},
-		"isInviteRequired": true,
-		"recaptcha": {
-			"publickey": "ABCDEFGHIJKLMNOP"
-		},	
-		"chat": {
-			"messages": {
-				"limit": 1000,
-				"loadCount": 20,
-				"freeChatPrice": 5000
-			},
-			"room": {
-				"usersLimit": 20,
-				"moderatorsLimit": 10
-			}
-		},
-		"statistic": {
-			"countPerPage": 20
-		},
-		"serverStartDate": 1483315200000,
-		"beginnersBoost": {
-			"growth": {
-				"initial": {
-					"days": 300,
-					"power": 1,
-					"interval": 30
-				},
-				"continuous": {
-					"power": 0.1,
-					"interval": 30
-				}
-			},
-			"decrease": {
-				"initial": {
-					"days": 150,
-					"power": 2,
-					"interval": 30
-				},
-				"continuous": {
-					"power": 0.2,
-					"interval": 30
-				}
-			},
-			"powerUnit": {
-				"humans": 100,
-				"metals": 1000,
-				"crystals": 300,
-				"honor": 5,
-				"time": 10
-			}
-		},
-		"alliance": {
-			"creatorRating": 100000,
-			"creatorBuildingLevel": 20,
-			"invalidateSchedule": "at 4:00 am",
-			"updateSchedule": "at 4:30 am",
-			"leavingTimeout": 259200,
-			"participantsPerLevel": 10,
-			"countPerPage": 20,
-			"levels": {
-				"1": {"price": {"honor": 10000, "credits": 100}},
-				"2": {"price": {"honor": 100000, "credits": 1000}},
-				"3": {"price": {"honor": 200000, "credits": 2000}},
-				"4": {"price": {"honor": 300000, "credits": 3000}},
-				"5": {"price": {"honor": 400000, "credits": 4000}},
-				"6": {"price": {"honor": 500000, "credits": 5000}},
-				"7": {"price": {"honor": 600000, "credits": 6000}},
-				"8": {"price": {"honor": 700000, "credits": 7000}},
-				"9": {"price": {"honor": 800000, "credits": 8000}},
-				"10": {"price": {"honor": 900000, "credits": 9000}}
-			}
-		}
-	},
-	"recaptcha": {
-		"privatekey": "ABCDEFGHIJKLMNOP"
-	},
-	"payment": {
-		"platbox": {
-			"url": "https://playground.platbox.com/paybox",
-			"secretKey": "ABCDEFGHIJKLMNOP",
-			"merchantId": "42424242424242",
-			"project": "consulwar"
-		},
-		"teko": {
-			"initiatorId": "id",
-			"secretKey": "key",
-			"product": "prd",
-			"showcase": "shwcs",
-			"locale": "ru",
-			"url": "http://pg.teko.io:3005/init_session",
-			"theme": "light",
-			"gameUrl": "https://consulwar.ru/"
-		}
-	},
-	"kadira": { 
-		"appId": "***", 
-		"appSecret": "***" 
-	},
-	"mail": {
-		"protocol": "smtp",
-		"username": "***",
-		"password": "***",
-		"server":   "smtp.gmail.com",
-		"port": 25,
-		"from": "*** <***@***>",
-		"sitename": "***"
-	},
-	"chat": {
-		"messages": {
-			"subscribeLimit": 20
-		}
-	},
-	"earth": {
-		"reinforcementsDelay": 120,
-		"minActivePlayers": 100,
-		"spawnCoefficient": 0.1,
-		"damageReduction": 95,
-		"spawn": {
-			"striker": 10000,
-			"ripper": 9000,
-			"horror": 100,
-			"slider": 80,
-			"breaker": 120,
-			"crusher": 10,
-			"geccon": 30,
-			"amfizben": 200,
-			"amphibian": 140,
-			"chipping": 10,
-			"toofucking": 5,
-			"patron": 10
-		},
-		"generating": {
-			"hexSize": 10,
-			"hexUnits": "degrees",
-			"minAreaMerge": 0.6,
-			"autoLinkList": [
-				[[44.6923828125, -17.35063837604883], [39.19921875,-16.1724728083975]],
-				[[-36.5625, -6.839169626342808], [-11.25, 9.102096738726456]],
-				[[-4.306640625, 39.16414104768742], [-3.6035156249999996, 32.175612478499325]]
-			],
-			"startPoints": [
-				[25.13671875, -30.29701788337204]
-			]
-		}
-	},
-	"cosmos": {
-		"enemyRespawnPeriod": 120,
-		"tradeFleetPeriod": 120,
-		"attackPlayerPeriod": 120,
-		"triggerAttackDelay": 1800,
-		"funPeriod": 86400
-	},
-	"ddplimiter": {
-		"isEnabled": true,
-		"isDebug": false,
-		"numRequests": 5,
-		"timeInterval": 10000
-	},
-	"datadog": {
-		"isEnabled": true,
-		"host": "localhost",
-		"port": 8125,
-		"prefix": "game."
-	}
+  "public": {
+    "yandex": {
+      "id": 123
+    },
+    "mapbox": {
+      "id": "***",
+      "accessToken": "***"
+    },
+    "cosmos": {
+      "speedConfig": [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100 ],
+      "minSpeed": 3,
+      "maxSpeed": 80,
+      "minAcc": 0.4,
+      "maxAcc": 2,
+      "speedFactor": 0.016666,
+      "collectArtefactsPeriod": 120
+    },
+    "earth": {
+      "schedule": "at 4:00 pm"
+    },
+    "building": {
+      "special": {
+        "pulsecatcher": {
+          "schedule": "at 4:00 pm"
+        }
+      }
+    },
+    "isInviteRequired": true,
+    "recaptcha": {
+      "publickey": "ABCDEFGHIJKLMNOP"
+    },  
+    "chat": {
+      "messages": {
+        "limit": 1000,
+        "loadCount": 20,
+        "freeChatPrice": 5000
+      },
+      "room": {
+        "usersLimit": 20,
+        "moderatorsLimit": 10
+      }
+    },
+    "statistic": {
+      "countPerPage": 20
+    },
+    "serverStartDate": 1483315200000,
+    "beginnersBoost": {
+      "growth": {
+        "initial": {
+          "days": 300,
+          "power": 1,
+          "interval": 30
+        },
+        "continuous": {
+          "power": 0.1,
+          "interval": 30
+        }
+      },
+      "decrease": {
+        "initial": {
+          "days": 150,
+          "power": 2,
+          "interval": 30
+        },
+        "continuous": {
+          "power": 0.2,
+          "interval": 30
+        }
+      },
+      "powerUnit": {
+        "humans": 100,
+        "metals": 1000,
+        "crystals": 300,
+        "honor": 5,
+        "time": 10
+      }
+    },
+    "alliance": {
+      "creatorRating": 100000,
+      "creatorBuildingLevel": 20,
+      "invalidateSchedule": "at 4:00 am",
+      "updateSchedule": "at 4:30 am",
+      "leavingTimeout": 259200,
+      "participantsPerLevel": 10,
+      "countPerPage": 20,
+      "levels": {
+        "1": {"price": {"honor": 10000, "credits": 100}},
+        "2": {"price": {"honor": 100000, "credits": 1000}},
+        "3": {"price": {"honor": 200000, "credits": 2000}},
+        "4": {"price": {"honor": 300000, "credits": 3000}},
+        "5": {"price": {"honor": 400000, "credits": 4000}},
+        "6": {"price": {"honor": 500000, "credits": 5000}},
+        "7": {"price": {"honor": 600000, "credits": 6000}},
+        "8": {"price": {"honor": 700000, "credits": 7000}},
+        "9": {"price": {"honor": 800000, "credits": 8000}},
+        "10": {"price": {"honor": 900000, "credits": 9000}}
+      }
+    }
+  },
+  "recaptcha": {
+    "privatekey": "ABCDEFGHIJKLMNOP"
+  },
+  "payment": {
+    "platbox": {
+      "url": "https://playground.platbox.com/paybox",
+      "secretKey": "ABCDEFGHIJKLMNOP",
+      "merchantId": "42424242424242",
+      "project": "consulwar"
+    },
+    "teko": {
+      "initiatorId": "id",
+      "secretKey": "key",
+      "product": "prd",
+      "showcase": "shwcs",
+      "locale": "ru",
+      "url": "http://pg.teko.io:3005/init_session",
+      "theme": "light",
+      "gameUrl": "https://consulwar.ru/"
+    }
+  },
+  "kadira": { 
+    "appId": "***", 
+    "appSecret": "***" 
+  },
+  "mail": {
+    "protocol": "smtp",
+    "username": "***",
+    "password": "***",
+    "server":   "smtp.gmail.com",
+    "port": 25,
+    "from": "*** <***@***>",
+    "sitename": "***"
+  },
+  "chat": {
+    "messages": {
+      "subscribeLimit": 20
+    }
+  },
+  "earth": {
+    "reinforcementsDelay": 120,
+    "minActivePlayers": 100,
+    "spawnCoefficient": 0.1,
+    "damageReduction": 95,
+    "spawn": {
+      "striker": 10000,
+      "ripper": 9000,
+      "horror": 100,
+      "slider": 80,
+      "breaker": 120,
+      "crusher": 10,
+      "geccon": 30,
+      "amfizben": 200,
+      "amphibian": 140,
+      "chipping": 10,
+      "toofucking": 5,
+      "patron": 10
+    },
+  "generating": {
+      "hexSize": 10,
+      "hexUnits": "degrees",
+      "minAreaMerge": 0.6,
+      "autoLinkList": [
+        [[44.6923828125, -17.35063837604883], [39.19921875,-16.1724728083975]],
+        [[-36.5625, -6.839169626342808], [-11.25, 9.102096738726456]],
+        [[-4.306640625, 39.16414104768742], [-3.6035156249999996, 32.175612478499325]]
+      ],
+      "startPoints": [
+        [25.13671875, -30.29701788337204]
+      ]
+    }},
+  "cosmos": {
+    "enemyRespawnPeriod": 120,
+    "tradeFleetPeriod": 120,
+    "attackPlayerPeriod": 120,
+    "triggerAttackDelay": 1800,
+    "funPeriod": 86400
+  },
+  "ddplimiter": {
+    "isEnabled": true,
+    "isDebug": false,
+    "numRequests": 5,
+    "timeInterval": 10000
+  },
+  "datadog": {
+    "isEnabled": true,
+    "host": "localhost",
+    "port": 8125,
+    "prefix": "game."
+  }
 }

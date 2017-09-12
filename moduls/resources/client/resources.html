@@ -1,45 +1,45 @@
 <template name="current_resources">
-	<div class="resources">
-		{{#with resources}}
-			<div class="humans" data-tooltip="true" data-tooltip-direction="s">
-				{{formatNumberWithISO humans.amount 5}}
-			</div>
-			<div class="metals" data-tooltip="true" data-tooltip-direction="s">
-				{{formatNumberWithISO metals.amount 5}}
-			</div>
-			<div class="crystals" data-tooltip="true" data-tooltip-direction="s">
-				{{formatNumberWithISO crystals.amount 5}}
-			</div>
-			<div class="honor" data-tooltip="true" data-tooltip-direction="s">
-				{{formatNumberWithISO honor.amount 5}}
-			</div>
-			<div class="credits" data-tooltip="true" data-tooltip-direction="s">
-				{{formatNumberWithISO credits.amount 5}}
-			</div>
-		{{/with}}
-		<div class="artefacts" data-tooltip="Артефакты" data-tooltip-direction="s">
-			<a href="{{pathFor route='artefacts' item='silver_plasmoid'}}"></a>
-		</div>
-	</div>
+  <div class="resources">
+    {{#with resources}}
+      <div class="humans" data-tooltip="true" data-tooltip-direction="s">
+        {{formatNumberWithISO humans.amount 5}}
+      </div>
+      <div class="metals" data-tooltip="true" data-tooltip-direction="s">
+        {{formatNumberWithISO metals.amount 5}}
+      </div>
+      <div class="crystals" data-tooltip="true" data-tooltip-direction="s">
+        {{formatNumberWithISO crystals.amount 5}}
+      </div>
+      <div class="honor" data-tooltip="true" data-tooltip-direction="s">
+        {{formatNumberWithISO honor.amount 5}}
+      </div>
+      <div class="credits" data-tooltip="true" data-tooltip-direction="s">
+        {{formatNumberWithISO credits.amount 5}}
+      </div>
+    {{/with}}
+    <div class="artefacts" data-tooltip="Артефакты" data-tooltip-direction="s">
+      <a href="{{pathFor route='artefacts' item='silver_plasmoid'}}"></a>
+    </div>
+  </div>
 </template>
 
 <template name="item_price">
-	<div class="resources {{class}}">
-		{{#each (getResources price)}}
-			{{#if eq this.engName 'time'}}
-				<div class="time" data-tooltip="true" data-tooltip-direction="n">
-					Время строительства: 
-					<time>{{formatSeconds this.amount}}</time>
-				</div>
-			{{else}}
-				<div 
-					class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact {{this.group}}{{/if}}" 
-					data-tooltip="true" data-tooltip-direction="n"
-					data-id="{{this.engName}}"
-				>
-					{{formatNumberWithISO this.amount 5}}
-				</div>
-			{{/if}}
-		{{/each}}
-	</div>
+  <div class="resources {{class}}">
+    {{#each (getResources price)}}
+      {{#if eq this.engName 'time'}}
+        <div class="time" data-tooltip="true" data-tooltip-direction="n">
+          Время строительства: 
+          <time>{{formatSeconds this.amount}}</time>
+        </div>
+      {{else}}
+        <div 
+          class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact {{this.group}}{{/if}}" 
+          data-tooltip="true" data-tooltip-direction="n"
+          data-id="{{this.engName}}"
+        >
+          {{formatNumberWithISO this.amount 5}}
+        </div>
+      {{/if}}
+    {{/each}}
+  </div>
 </template>

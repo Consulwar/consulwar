@@ -1,9 +1,9 @@
 initCosmosServer = function() {
-	'use strict';
+  'use strict';
 
-	initCosmosLib();
-	initCosmosContentServer();
-	initCosmosConfigServer();
-	initCosmosPlanetsServer();
-	initCosmosEventsServer();
+  initCosmosLib();
+  initCosmosContentServer();
+  initCosmosConfigServer();
+  initCosmosPlanetsServer();
+  initCosmosEventsServer();
 };

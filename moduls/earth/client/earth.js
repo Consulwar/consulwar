@@ -966,16 +966,13 @@ Template.adminReptileChange.events({
 
   'click .change': function (e, t) {
     let modifier = {};
+    let units = {};
 
     const elements = $('.armies li');
-    for (let i = 0; i < elements.length; i++) {
-      const id = $(elements[i]).attr('data-id');
-      const count = Math.max(0, parseInt($(elements[i]).find('input').val(), 10));
 
-      modifier[`enemyArmy.reptiles.ground.${id}`] = count;
-    }
+    fillInfo(elements, modifier, units);
 
-    Meteor.call('earth.setReptileArmy', this.zoneName, modifier, function(err) {
+    Meteor.call('earth.setReptileArmy', this.zoneName, modifier, units, false, function(err) {
       if (err) {
         Notifications.error('Не удалось изменить армию: ', err.error);
       } else {
@@ -983,6 +980,36 @@ Template.adminReptileChange.events({
       }
     });
   },
+
+  'click .changeTurn': function (e, t) {
+    let modifier = {};
+    let units = {};
+
+    const elements = $('.armies li');
+
+    fillInfo(elements, modifier, units);
+
+    Meteor.call('earth.setReptileArmy', this.zoneName, modifier, units, true, function(err) {
+      if (err) {
+        Notifications.error('Не удалось внести изменения: ', err.error);
+      } else {
+        Notifications.success('Армия успешно добавлена на следующий ход.');
+      }
+    });
+  },
 });
+
+const fillInfo = function (elements, modifier, units) {
+  for (let i = 0; i < elements.length; i++) {
+    const id = $(elements[i]).attr('data-id');
+    const count = Math.max(0, parseInt($(elements[i]).find('input').val(), 10));
+
+    modifier[`enemyArmy.reptiles.ground.${id}`] = count;
+
+    if (count > 0) {
+      units[id] = count;
+    }
+  }
+};
 
 };

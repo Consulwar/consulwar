@@ -36,7 +36,7 @@
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Отправить</a>
         {{/if}}
       {{/if}}
-      {{#if and isAdmin zone.isEnemy}}
+      {{#if isAdmin}}
         <a class="btn-admin-panel" data-action="{{zone.name}}">Админка</a>
       {{/if}}
     </div>
@@ -288,5 +288,6 @@
     </ul>
 
     <div class="change">Изменить</div>
+    <div class="changeTurn">Изменить на ход</div>
   </div>
 </template>

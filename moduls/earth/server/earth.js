@@ -28,6 +28,10 @@ Game.EarthZones.Collection._ensureIndex({
   name: 1
 });
 
+Game.Earth.ReptileTurn = {
+  Collection: new Meteor.Collection('earthReptileTurn')
+};
+
 Game.EarthUnits.incArmy = function (user, inc, zoneName, units) {
   Game.EarthUnits.Collection.upsert({
     user_id: user._id
@@ -207,87 +211,6 @@ Game.Earth.observeZone = function(name) {
   }
 };
 
-Game.Earth.performBattleAtZone = function(name, options) {
-  console.log('Perform battle at ' + name);
-
-  var zone = Game.EarthZones.Collection.findOne({
-    name: name
-  });
-
-  if (!zone) {
-    throw new Meteor.Error('Зона с именем ' + name + ' не найдена');
-  }
-
-  if (!zone.enemyArmy) {
-    console.log('No enemy army, then no need to fight');
-    return null; // No need to fight!
-  }
-
-  options.damageReduction = Game.Earth.DAMAGE_REDUCTION;
-
-  let battleResult = legacyToNewBattle(zone.userArmy, zone.enemyArmy, options);
-
-  let userArmy = battleResult.userArmy;
-  let enemyArmy = battleResult.enemyArmy;
-
-  var result = null;
-
-  if (userArmy) {
-    if (enemyArmy) {
-      result = 'tie';
-    } else {
-      result = 'victory';
-    }
-  } else {
-    result = 'defeat';
-  }
-
-  // update zone
-  var isEnemy = zone.isEnemy;
-  if (isEnemy) {
-    isEnemy = (result == 'victory') ? false : true;
-  } else {
-    isEnemy = (result == 'defeat') ? true : false;
-  }
-
-  var update = {
-    $set: {
-      isEnemy: isEnemy
-    }
-  };
-
-  if (userArmy) {
-    update.$set.userArmy = userArmy;
-  } else {
-    if (!update.$unset) {
-      update.$unset = {};
-    }
-    update.$unset.userArmy = 1;
-  }
-
-  if (enemyArmy) {
-    update.$set.enemyArmy = enemyArmy;
-  } else {
-    if (!update.$unset) {
-      update.$unset = {};
-    }
-    update.$unset.enemyArmy = 1;
-  }
-
-  Game.EarthZones.Collection.update({ name: name }, update);
-
-  if (result == 'victory') {
-    Game.Earth.observeZone(name);
-  }
-  
-  if (result == 'defeat') {
-    Game.Earth.retreat();
-  }
-
-  console.log('Battle result: ' + result);
-  return result;
-};
-
 Game.Earth.nextTurn = function() {
   console.log('-------- Earth next turn start --------');
 
@@ -335,6 +258,28 @@ Game.Earth.nextTurn = function() {
     earthUnitsByZone[zoneName][army.username] = [userArmy];
   });
 
+  let moveReptileTo = {};
+
+  Game.Earth.ReptileTurn.Collection.find({}).forEach(function (info) {
+    if (!moveReptileTo[info.targetZone]) {
+      moveReptileTo[info.targetZone] = [];
+    }
+    moveReptileTo[info.targetZone].push(info.army);
+
+    let inc = {};
+    _.pairs(info.army).forEach(function ([name, count]) {
+      inc[`enemyArmy.reptiles.ground.${name}`] = count;
+    });
+
+    Game.EarthZones.Collection.update({
+      name: info.targetZone
+    }, {
+      $inc: inc
+    });
+  });
+
+  Game.Earth.ReptileTurn.Collection.remove({});
+
   Game.EarthZones.getAll().forEach(function (zone) {
     let battle;
 
@@ -351,6 +296,27 @@ Game.Earth.nextTurn = function() {
           Battle.addGroup(zone.battleID, Battle.USER_SIDE, moved.name, userArmy);
         });
       }
+
+      if (moveReptileTo[zone.name]) {
+        moveReptileTo[zone.name].forEach(function (movedArmy) {
+          let reptileArmy = {
+            reptiles: {
+              ground: {}
+            }
+          };
+          _.pairs(movedArmy).forEach(function ([name, count]) {
+            reptileArmy.reptiles.ground[name] = count;
+          });
+
+          traverseGroup(reptileArmy, function(armyName, typeName, unitName, count) {
+            const unit = createUnit(armyName, typeName, unitName, count);
+            reptileArmy[armyName][typeName][unitName] = unit;
+          });
+
+          Battle.addGroup(zone.battleID, Battle.ENEMY_SIDE, 'ai', reptileArmy);
+        });
+      }
+
       battle = Battle.fromDB(zone.battleID);
     } else if (zone.enemyArmy && zone.userArmy) {
       let enemyArmy = deepClone(zone.enemyArmy);
@@ -375,8 +341,6 @@ Game.Earth.nextTurn = function() {
       const roundResult = battle.performEarthRound({
         damageReduction: Game.Earth.DAMAGE_REDUCTION
       });
-
-      console.log('roundResult', roundResult); //TODO: remove
 
       if (battle.status === Battle.Status.finish) {
         let modifier = {
@@ -425,8 +389,6 @@ Game.Earth.nextTurn = function() {
         unsetEarthUnits[name] = true;
       });
 
-      console.log('unsetEarthUnits.before', unsetEarthUnits); //TODO: remove
-
       battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
         if (sideName === Battle.ENEMY_SIDE || unit.count === 0) {
           return;
@@ -472,8 +434,6 @@ Game.Earth.nextTurn = function() {
           console.log("Пересчет армий в зонах завершен с ошибкой", err, new Date());
         }
       });
-
-      console.log('unsetEarthUnits.after', unsetEarthUnits); //TODO: remove
 
       Game.EarthUnits.Collection.remove({'username':{'$in':_.keys(unsetEarthUnits)}})
     }
@@ -572,251 +532,6 @@ const deepClone = function(object) {
   });
 
   return clone;
-};
-
-
-Game.Earth.nextTurn_ = function() {
-  console.log('-------- Earth next turn start --------');
-
-  var currentZone = Game.EarthZones.Collection.findOne({
-    isCurrent: true
-  });
-
-  if (!currentZone) {
-    throw new Meteor.Error('Текущая зона не установлена');
-  }
-
-  var enemyZonesCount = Game.EarthZones.Collection.find({
-    isEnemy: true,
-    isVisible: true
-  }).count();
-
-  if (!currentZone.isEnemy && enemyZonesCount <= 0) {
-
-    // Only start zone is available, so try to observer nearby zones
-    if (Game.Mutual.has('research', 'reccons')
-     && Game.User.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
-    ) {
-      Game.Earth.observeZone(currentZone.name);
-      Game.Earth.createTurn();
-    } else {
-      console.log('Unacceptable conditions!');
-      console.log('Active players ' + Game.User.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
-      console.log('Mutual research is ' + Game.Mutual.has('research', 'reccons'));
-    }
-
-  } else {
-
-    // There are enemy zones, perform turn
-    if (Game.EarthTurns.getLast()) {
-      Game.Earth.checkTurn();
-    } else {
-      Game.Earth.createTurn();
-    }
-
-  }
-
-  console.log('-------- Earth next turn end ----------');
-};
-
-Game.Earth.checkTurn = function() {
-  console.log('Check current turn');
-
-  var lastTurn = Game.EarthTurns.getLast();
-
-  if (!lastTurn) {
-    throw new Meteor.Error('Не создано ни одного хода');
-  }
-
-  var battleResult = null;
-  var turnResult = null;
-  var movedArmy = null;
-  var battleOptions = null;
-
-  var currentZone = Game.EarthZones.Collection.findOne({
-    isCurrent: true
-  });
-
-  if (lastTurn.type == 'move') {
-
-    var targetName = null;
-    for (var zoneName in lastTurn.actions) {
-      if (targetName === null || lastTurn.actions[zoneName] > lastTurn.actions[targetName]) {
-        targetName = zoneName;
-      }
-    }
-
-    // try to move army
-    movedArmy = (currentZone.name != targetName)
-      ? Game.Earth.moveArmy(targetName)
-      : null;
-
-    if (movedArmy) {
-
-      console.log('Consuls decided to move');
-
-      // Move and try to perform battle
-      Game.Earth.setCurrentZone(targetName);
-      turnResult = 'move';
-
-      battleOptions = {
-        isEarth: true,
-        moveType: turnResult,
-        location: targetName,
-        userLocation: currentZone.name,
-        enemyLocation: targetName
-      };
-
-      battleResult = Game.Earth.performBattleAtZone(targetName, battleOptions);
-
-      // no battle, then save additional history
-      if (battleResult === null) {
-        battleOptions.enemyLocation = null;
-        Game.BattleHistory.add(
-          movedArmy,
-          null, // no enemy!
-          battleOptions,
-          null // no battle results!
-        );
-      }
-
-    } else {
-
-      console.log('Consuls decided to wait');
-
-      // Stay at current zone
-      // Enemy can attack (chance 1/3)
-      var attackArmy = null;
-      var nearZone = null;
-
-      if (currentZone.name != 'South Africa' && Game.Random.interval(1, 99) <= 33) {
-        // find near enemy zone
-        nearZone = Game.EarthZones.Collection.findOne({
-          name: { $in: currentZone.links },
-          isVisible: true,
-          isEnemy: true
-        });
-
-        // get 10 - 50 % of enemy army
-        if (nearZone) {
-          var k = Game.Random.interval(10, 50) / 100;
-          var enemyArmy = nearZone.enemyArmy;
-          
-          for (var side in enemyArmy) {
-            for (var group in enemyArmy[side]) {
-              for (var name in enemyArmy[side][group]) {
-                // skip stationary units
-                if (checkIsStationaryUnit(side, group, name)) {
-                  continue;
-                }
-
-                var count = parseInt( enemyArmy[side][group][name], 10 );
-                count = Math.floor( count * k );
-
-                if (count <= 0) {
-                  continue;
-                }
-
-                attackArmy = setupUnitHierarchy(attackArmy, side, group, name);
-                attackArmy[side][group][name] = count;
-              }
-            }
-          }  
-        }
-      }
-
-      if (attackArmy) {
-        // attack
-        console.log('But enemy attacked!');
-        turnResult = 'defend';
-
-        battleOptions = {
-          isEarth: true,
-          moveType: turnResult,
-          location: currentZone.name,
-          userLocation: currentZone.name,
-          enemyLocation: (nearZone ? nearZone.name : null)
-        };
-
-        Game.EarthZones.Collection.update({
-          name: currentZone.name
-        }, {
-          $set: { enemyArmy: attackArmy }
-        });
-
-        battleResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
-      } else {
-        // no battle
-        console.log('And nothing happened');
-        turnResult = 'wait';
-
-        // save additional history
-        Game.BattleHistory.add(
-          currentZone.userArmy,
-          null, // no enemy!
-          {
-            isEarth: true,
-            moveType: turnResult,
-            location: currentZone.name,
-            userLocation: currentZone.name
-          },
-          null // no battle results!
-        );
-      }
-    }
-
-  } else {
-
-    // Retreat or fight?
-    if (lastTurn.actions.battle > lastTurn.actions.retreat) {
-      // fight
-      console.log('Consuls decided to fight');
-      turnResult = 'fight';
-
-      battleOptions = {
-        isEarth: true,
-        moveType: turnResult,
-        location: currentZone.name,
-        userLocation: currentZone.name,
-        enemyLocation: currentZone.name
-      };
-
-      battleResult = Game.Earth.performBattleAtZone(currentZone.name, battleOptions);
-    } else {
-      // retreat
-      console.log('Consuls decided to retreat');
-      movedArmy = Game.Earth.retreat();
-      turnResult = 'retreat';
-
-      // no battle, then save additional history
-      Game.BattleHistory.add(
-        movedArmy,
-        currentZone.enemyArmy,
-        {
-          isEarth: true,
-          moveType: turnResult,
-          location: currentZone.name,
-          userLocation: currentZone.name,
-          enemyLocation: currentZone.name
-        },
-        null // no battle results!
-      );
-    }
-
-  }
-
-  // Save turn result
-  Game.EarthTurns.Collection.update({
-    _id: lastTurn._id
-  }, {
-    $set: {
-      turnResult: turnResult,
-      battleResult: battleResult
-    }
-  });
-
-  // Create next turn
-  Game.Earth.createTurn();
 };
 
 SyncedCron.add({

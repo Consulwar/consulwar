@@ -187,7 +187,7 @@ Meteor.methods({
     }
   },
 
-  'earth.setReptileArmy': function (zoneName, modifier) {
+  'earth.setReptileArmy': function (zoneName, modifier, units, isOnTurn) {
     const user = Meteor.user();
 
     if (!user || !user._id) {
@@ -205,12 +205,32 @@ Meteor.methods({
     }
 
     check(zoneName, String);
+    check(units, Object);
 
-    Game.EarthZones.Collection.update({
-      name: zoneName
-    }, {
-      $set: modifier
-    });
+    if (isOnTurn) {
+      Game.Earth.ReptileTurn.Collection.insert({
+        targetZone: zoneName,
+        army: units,
+      });
+    } else {
+      let setModifier = {};
+      let unsetModifier = {};
+
+      _.pairs(modifier).forEach(function ([key, value]) {
+        if (value > 0) {
+          setModifier[key] = value;
+        } else {
+          unsetModifier[key] = 1;
+        }
+      });
+
+      Game.EarthZones.Collection.update({
+        name: zoneName
+      }, {
+        $set: setModifier,
+        $unset: unsetModifier,
+      });
+    }
   },
 });
 

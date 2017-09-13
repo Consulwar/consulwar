@@ -59,6 +59,17 @@ var letters = [
 
 var tempKey = uuid.new();
 
+Game.User.countActivePlayers = function() {
+  return Meteor.users.find({
+    'status.lastLogin.date': {
+      $gt: new Date((new Date()).setDate((new Date()).getDate() - 3))
+    },
+    'rating': {
+      $gt: 24999
+    }
+  }).count();
+};
+
 Accounts.onCreateUser(function(option, user) {
   check(option.username, String);
 

@@ -152,7 +152,7 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 Game.Chat.showPage = function() {
    this.render('empty', { to: 'content' });
    if (!currentRoomName) {
-      this.render('chat', { to: 'permanent_chat' }  ;  
+      this.render('chat', { to: 'permanent_chat' });
    }
 };
 
@@ -206,7 +206,7 @@ Template.chat.onRendered(function() {
             messages.remove({});
             hasMore.set(true);
             isSending.set(false);
-            gotLimit.set(fal  e);  
+            gotLimit.set(false);
             firstMessage = null;
             lastMessage = null;
 
@@ -975,7 +975,7 @@ Template.chatUserPopup.helpers({
       var result = [];
       for (var i = 0; i < rooms.length; i++) {
          if (!rooms[i].isPublic && rooms[i].owner == Meteor.userId()) {
-            result.push(rooms[  ]);  
+            result.push(rooms[i]);
          }
       }
 

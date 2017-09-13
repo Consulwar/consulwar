@@ -1,300 +1,292 @@
 <template name="earth">
-   <div id="map-content" class="information"></div>
-   <a class="btn-history-earth" href="{{pathFor 'earthHistory' group='earth' page=1}}">История боёв</a>
+  <div id="map-content" class="information"></div>
 </template>
 
 <template name="earthZonePopup">
-   {{#if zone}}
-      <div 
-         class="point-popup" 
-         style="left: {{position.x}}px; top: {{position.y}}px;"
-      >
-         <h2 title="{{info.name}}" class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
-            {{zone.name}}
-         </h2>
-         <!-- buttons -->
-         <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
-         {{#if turn}}
-            {{#if turn.canVote}}
-               {{#if eq turn.type "move"}}
-                  <a class="btn-attack" data-action="{{zone.name}}">
-                     {{#if zone.isEnemy}}
-                        В атаку
-                     {{else}}
-                        {{#if zone.isCurrent}}
-                           Ждём
-                        {{else}}
-                           Идём
-                        {{/if}}
-                     {{/if}} {{votePercent zone.name turn}}%
-                  </a>
-               {{/if}}
-               {{#if eq turn.type "battle"}}
-                  <a class="btn-attack" data-action="battle">
-                     Воюем {{votePercent "battle" turn}}%
-                  </a>
-                  <a class="btn-attack" data-action="retreat">
-                     Отступаем {{votePercent "retreat" turn}}%
-                  </a>
-               {{/if}}
-            {{/if}}
-         {{/if}}
-         {{#if zone.isCurrent}}
-            <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth'}}">Подкрепление</a>
-         {{/if}}
-         <!-- info -->
-         {{#if turn}}
-            {{#if turn.canVote}}
-               <p>Сила голоса: {{votePower}}</p>
+  {{#if zone}}
+    <div 
+      class="point-popup" 
+      style="left: {{position.x}}px; top: {{position.y}}px;"
+    >
+      <h2 title="{{info.name}}" class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
+        {{zone.name}}
+      </h2>
+      <!-- buttons -->
+      <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
+      {{#if hasLink}}
+        {{#if notBattle}}
+          <a class="btn-command" data-action="{{zone.name}}">
+            {{#if eq army.zoneName zone.name}}
+              Ждём
             {{else}}
-               {{#if gt votePower 0}}
-                  <p>Вы уже проголосовали</p>
-               {{else}}
-                  <p>Вы не можете голосовать</p>
-               {{/if}}
-               <p>Всего голосов: {{turn.count}}</p>
-               {{#if eq turn.type "move"}}
-                  <p>
-                     {{#if zone.isEnemy}}
-                        В атаку
-                     {{else}}
-                        {{#if zone.isCurrent}}
-                           Ждём
-                        {{else}}
-                           Идём
-                        {{/if}}
-                     {{/if}}
-                     : {{votePercent zone.name turn}}%
-                  </p>
-               {{/if}}
-               {{#if eq turn.type "battle"}}
-                  <p>Воюем: {{votePercent "battle" turn}}%</p>
-                  <p>Отступаем: {{votePercent "retreat" turn}}%</p>
-               {{/if}}
+              {{#if zone.isEnemy}}
+                В атаку
+              {{else}}
+                Идём
+              {{/if}}
             {{/if}}
-         {{/if}}
-      </div>
-   {{/if}}
+          </a>
+        {{/if}}
+        {{#if eq army.zoneName zone.name}}
+          <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
+        {{/if}}
+      {{else}}
+        {{#if not zone.isEnemy}}
+          <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Отправить</a>
+        {{/if}}
+      {{/if}}
+      {{#if isAdmin}}
+        <a class="btn-admin-panel" data-action="{{zone.name}}">Админка</a>
+      {{/if}}
+    </div>
+  {{/if}}
 </template>
 
 <template name="earthZoneInfo">
-   {{#if info}}
-      <div class="zone-info">
-         <div class="summary-info">
-            <h2>{{info.name}}</h2>
-            <div>
-               Захвачено на: {{info.capturedPercent}}%
-               <div class="humans">Точек людей: {{info.userCount}}</div>
-               <div class="reptiles">Точек рептилий: {{info.enemyCount}}</div>
-            </div>
-         </div>
-         <div class="army-humans">
-            <p>Люди<br><span>Сила: {{info.userPower}}</span></p>
-            <ul>
-               {{#each info.userArmy}}
-                  <li>
-                     <span>{{this.count}}</span> {{this.name}}
-                  </li>
-               {{/each}}
-            </ul>
-         </div>
-         <div class="army-reptiles">
-            <p>Рептилоиды<br><span>Сила: {{info.enemyPower}}</span></p>
-            <ul>
-               {{#each info.enemyArmy}}
-                  <li>
-                     <span>{{this.count}}</span> {{this.name}}
-                  </li>
-               {{/each}}
-            </ul>
-         </div>
-         {{#if info.isCurrent}}
-            <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth'}}">Подкрепление</a>
-         {{/if}}
-         <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
-         <!-- <a class="btn-special">Спец атака</a> -->
+  {{#if info}}
+    <div class="zone-info">
+      <div class="summary-info">
+        <h2>{{info.name}}</h2>
+        <div>
+          Захвачено на: {{info.capturedPercent}}%
+          <div class="humans">Точек людей: {{info.userCount}}</div>
+          <div class="reptiles">Точек рептилий: {{info.enemyCount}}</div>
+        </div>
       </div>
-   {{/if}}
+      <div class="army-humans">
+        <p>Люди<br><span>Сила: {{info.userPower}}</span></p>
+        <ul>
+          {{#each info.userArmy}}
+            <li>
+              <span>{{this.count}}
+                {{#if this.userUnitsCount}} ({{this.userUnitsCount}}) {{/if}}
+              </span>
+              {{this.name}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="army-reptiles">
+        <p>Рептилоиды<br><span>Сила: {{info.enemyPower}}</span></p>
+        <ul>
+          {{#each info.enemyArmy}}
+            <li>
+              <span>{{this.count}}</span> {{this.name}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{#if eq army.zoneName zone.name}}
+        <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=info.name}}">Подкрепление</a>
+      {{/if}}
+      <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
+      <!-- <a class="btn-special">Спец атака</a> -->
+    </div>
+  {{/if}}
 </template>
 
 <template name="reserve">
-   <div class="zone-reserve">
-      {{#if units}}
-         <ul class="items units">
-            {{#each units}}
-               <li 
-                  class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}"
-                  data-id="{{this.engName}}"
-                  data-max="{{this.max}}"
-               >
-                  <a class="{{this.engName}}-icon"></a>
-                  <div class="max">{{formatNumberWithISO this.max}}</div>
-                  <input class="count" type="number" placeholder="Количество"  value="0">
-               </li>
-            {{/each}}
-         </ul>
-      {{/if}}
+  <div class="zone-reserve">
+    {{#if units}}
+      <ul class="items units">
+        {{#each units}}
+          <li 
+            class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}"
+            data-id="{{this.engName}}"
+            data-max="{{this.max}}"
+          >
+            <a class="{{this.engName}}-icon"></a>
+            <div class="max">{{formatNumberWithISO this.max}}</div>
+            <input class="count" type="number" placeholder="Количество"  value="0">
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+    
+    <div class="description">
+      <p>Как вам известно, Консул, на Земле идут ожесточённые бои против сил захватчиков. Рептилоиды не сдают позиции, а их силы всё растут. Галактический Совет не может поддерживать достаточное количество войск для обороны и наступления, поэтому освобождение нашей родной планеты загнётся без вашей поддержки. Отправить подкрепление на Активную Точку можно в любое время суток, кроме двух часов наступления.</p><br/>
+
+      <p>С 17:00 до 19:00 по МСК отправка войск недоступна.</p><br/>
+
+      <p>До 30% войск могут быть потеряны в пути.</p><br/>
+
+      <p class="remuneration">
+        Ваша поддержка Военной Кампании не останется незамеченной, Консул. После отправки этих отрядов вы получите Очки Чести в размере:
+        <div class="resources">
+          <div class="honor">{{formatNumber honor}}</div>
+        </div>
+      </p>
       
-      <div class="description">
-         <p>Как вам известно, Консул, на Земле идут ожесточённые бои против сил захватчиков. Рептилоиды не сдают позиции, а их силы всё растут. Галактический Совет не может поддерживать достаточное количество войск для обороны и наступления, поэтому освобождение нашей родной планеты загнётся без вашей поддержки. Отправить подкрепление на Активную Точку можно в любое время суток, кроме двух часов наступления.</p><br/>
+      <a class="btn-all">Выбрать всех</a>
+      <a class="btn-send">Отправить</a>
+    </div>
 
-         <p>С 17:00 до 19:00 по МСК отправка войск недоступна.</p><br/>
-
-         <p>До 30% войск могут быть потеряны в пути.</p><br/>
-
-         <p class="remuneration">
-            Ваша поддержка Военной Кампании не останется незамеченной, Консул. После отправки этих отрядов вы получите Очки Чести в размере:
-            <div class="resources">
-               <div class="honor">{{formatNumber honor}}</div>
-            </div>
-         </p>
-         
-         <a class="btn-all">Выбрать всех</a>
-         <a class="btn-send">Отправить</a>
-      </div>
-
-      <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
-   </div>
-   <div class="additional_area bolz">
-      <span class="title">Адмирал Стил Болз</span>
-   </div>
+    <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
+  </div>
+  <div class="additional_area bolz">
+    <span class="title">Адмирал Стил Болз</span>
+  </div>
 </template>
 
 <template name="earthHistory">
-   <div class="history">
-      {{#if battles}}
-         <table>
-            <tr class="header">
-               <th class="sides">Событие</th>
-               <th class="result">Итог</th>
-               <th class="time">Время  /th>  
+  <div class="history">
+    {{#if battles}}
+      <table>
+        <tr class="header">
+          <th class="sides">Событие</th>
+          <th class="result">Итог</th>
+          <th class="time">Время</th>
+        </tr>
+      </table>
+      <div class="data">
+        <table>
+          {{#each battles}}
+            <tr data-id="{{this._id}}">
+              <td>
+                {{#if eq this.moveType 'wait'}}
+                  <span class="humans">Консулы</span>
+                   остаются на точке 
+                  <span class="humans">{{this.location}}</span>
+                {{/if}}
+
+                {{#if eq this.moveType 'defend'}}
+                  <span class="reptiles">Рептилоиды ({{this.enemyLocation}})</span>
+                   атакуют 
+                  <span class="humans">Консулов ({{this.userLocation}})</span>
+                {{/if}}
+
+                {{#if eq this.moveType 'move'}}
+                  {{#if this.enemyArmy}}
+                    <span class="humans">Консулы ({{this.userLocation}})</span>
+                     атакуют 
+                    <span class="reptiles">Рептилоидов ({{this.enemyLocation}})</span>
+                  {{else}}
+                    <span class="humans">Консулы</span>
+                     переходят на точку 
+                    <span class="humans">{{this.location}}</span>
+                  {{/if}}
+                {{/if}}
+
+                {{#if eq this.moveType 'fight'}}
+                  <span class="humans">Консулы</span>
+                   продолжают бой с 
+                  <span class="reptiles">рептилоидами</span>
+                   на точке 
+                  <span class="reptiles">{{this.location}}</span>
+                {{/if}}
+
+                {{#if eq this.moveType 'retreat'}}
+                  <span class="humans">Консулы</span>
+                   оступают с точки 
+                  <span class="reptiles">{{this.location}}</span>
+                {{/if}}
+              </td>
+              <td>
+                {{#if eq this.result 0}}Тактическая ничья{{/if}}
+                {{#if eq this.result 1}}Героическая победа{{/if}}
+                {{#if eq this.result 2}}Полное поражение{{/if}}
+              </td>
+              <td>{{formatDate this.timestamp}}</td>
             </tr>
-         </table>
-         <div class="data">
-            <table>
-               {{#each battles}}
-                  <tr data-id="{{this._id}}">
-                     <td>
-                        {{#if eq this.moveType 'wait'}}
-                           <span class="humans">Консулы</span>
-                            остаются на точке 
-                           <span class="humans">{{this.location}}</span>
-                        {{/if}}
-
-                        {{#if eq this.moveType 'defend'}}
-                           <span class="reptiles">Рептилоиды ({{this.enemyLocation}})</span>
-                            атакуют 
-                           <span class="humans">Консулов ({{this.userLocation}})</span>
-                        {{/if}}
-
-                        {{#if eq this.moveType 'move'}}
-                           {{#if this.enemyArmy}}
-                              <span class="humans">Консулы ({{this.userLocation}})</span>
-                               атакуют 
-                              <span class="reptiles">Рептилоидов ({{this.enemyLocation}})</span>
-                           {{else}}
-                              <span class="humans">Консулы</span>
-                               переходят на точку 
-                              <span class="humans">{{this.location}}</span>
-                           {{/if}}
-                        {{/if}}
-
-                        {{#if eq this.moveType 'fight'}}
-                           <span class="humans">Консулы</span>
-                            продолжают бой с 
-                           <span class="reptiles">рептилоидами</span>
-                            на точке 
-                           <span class="reptiles">{{this.location}}</span>
-                        {{/if}}
-
-                        {{#if eq this.moveType 'retreat'}}
-                           <span class="humans">Консулы</span>
-                            оступают с точки 
-                           <span class="reptiles">{{this.location}}</span>
-                        {{/if}}
-                     </td>
-                     <td>
-                        {{#if eq this.result 0}}Тактическая ничья{{/if}}
-                        {{#if eq this.result 1}}Героическая победа{{/if}}
-                        {{#if eq this.result 2}}Полное поражение{{/if}}
-                     </td>
-                     <td>{{formatDate this.timestamp}}</td>
-                  </tr>
-               {{/each}}
-            </table>
-         </div>
-         {{> pages total=countTotal perPage=countPerPage}}
-      {{else}}
-         {{#if lt countTotal 1}}
-            <h2>История боев пуста</h2>
-         {{/if}}
+          {{/each}}
+        </table>
+      </div>
+      {{> pages total=countTotal perPage=countPerPage}}
+    {{else}}
+      {{#if lt countTotal 1}}
+        <h2>История боев пуста</h2>
       {{/if}}
-      <a class="btn-close" href="{{pathFor 'earth' group='earth'}}"></a>
-   </div>
+    {{/if}}
+    <a class="btn-close" href="{{pathFor 'earth' group='earth'}}"></a>
+  </div>
 
-   {{#if battle}}
-      {{> earthHistoryItem battle=battle}}
-   {{/if}}
+  {{#if battle}}
+    {{> earthHistoryItem battle=battle}}
+  {{/if}}
 
-   {{#if isLoading}}
-      {{> loading}}
-   {{/if}}
+  {{#if isLoading}}
+    {{> loading}}
+  {{/if}}
 </template>
 
 <template name="earthHistoryItem">
-   <div class="history-item">
-      {{#if battle}}
-         <div
-            class="
-               result
-               {{#if eq battle.result 0}}tie{{/if}}
-               {{#if eq battle.result 1}}victory{{/if}}
-               {{#if eq battle.result 2}}defeat{{/if}}
-            "
-         >
-            {{#if eq battle.result 0}}Тактическая ничья{{/if}}
-            {{#if eq battle.result 1}}Героическая победа{{/if}}
-            {{#if eq battle.result 2}}Полное поражение{{/if}}
-         </div>
-         {{#if battle.userArmy}}
-            <div class="user-army">
-               <p class="humans">Люди</p>
-               <table>
-                  <tr class="header">
-                     <th class="name"></th>
-                     <th class="count">Было</th>
-                     <th class="count">Осталось</th>
-                  </tr>
-                  {{#each (getArmyInfo battle.userArmy battle.userArmyRest)}}
-                     <tr>
-                        <td class="name humans">{{this.name}}</td>
-                        <td class="count">{{formatNumberWithISO this.start}}</td>
-                        <td class="count">{{formatNumberWithISO this.end}}</td>
-                     </tr>
-                  {{/each}}
-               </table>
-            </div>
-         {{/if}}
-         {{#if battle.enemyArmy}}
-            <div class="enemy-army">
-               <p class="reptiles">Рептилоиды</p>
-               <table>
-                  <tr class="header">
-                     <th class="count">Осталось</th>
-                     <th class="count">Было</th>
-                     <th class="name"></th>
-                  </tr>
-                  {{#each (getArmyInfo battle.enemyArmy battle.enemyArmyRest)}}
-                     <tr>
-                        <td class="count">{{formatNumberWithISO this.end}}</td>
-                        <td class="count">{{formatNumberWithISO this.start}}</td>
-                        <td class="name reptiles">{{this.name}}</td>
-                     </tr>
-                  {{/each}}
-               </table>
-            </div>
-         {{/if}}
+  <div class="history-item">
+    {{#if battle}}
+      <div
+        class="
+          result
+          {{#if eq battle.result 0}}tie{{/if}}
+          {{#if eq battle.result 1}}victory{{/if}}
+          {{#if eq battle.result 2}}defeat{{/if}}
+        "
+      >
+        {{#if eq battle.result 0}}Тактическая ничья{{/if}}
+        {{#if eq battle.result 1}}Героическая победа{{/if}}
+        {{#if eq battle.result 2}}Полное поражение{{/if}}
+      </div>
+      {{#if battle.userArmy}}
+        <div class="user-army">
+          <p class="humans">Люди</p>
+          <table>
+            <tr class="header">
+              <th class="name"></th>
+              <th class="count">Было</th>
+              <th class="count">Осталось</th>
+            </tr>
+            {{#each (getArmyInfo battle.userArmy battle.userArmyRest)}}
+              <tr>
+                <td class="name humans">{{this.name}}</td>
+                <td class="count">{{formatNumberWithISO this.start}}</td>
+                <td class="count">{{formatNumberWithISO this.end}}</td>
+              </tr>
+            {{/each}}
+          </table>
+        </div>
       {{/if}}
-      <a class="btn-back" href="{{pathFor 'earthHistory' group='earth' page=currentPage}}"></a>
-   </div>
+      {{#if battle.enemyArmy}}
+        <div class="enemy-army">
+          <p class="reptiles">Рептилоиды</p>
+          <table>
+            <tr class="header">
+              <th class="count">Осталось</th>
+              <th class="count">Было</th>
+              <th class="name"></th>
+            </tr>
+            {{#each (getArmyInfo battle.enemyArmy battle.enemyArmyRest)}}
+              <tr>
+                <td class="count">{{formatNumberWithISO this.end}}</td>
+                <td class="count">{{formatNumberWithISO this.start}}</td>
+                <td class="name reptiles">{{this.name}}</td>
+              </tr>
+            {{/each}}
+          </table>
+        </div>
+      {{/if}}
+    {{/if}}
+    <a class="btn-back" href="{{pathFor 'earthHistory' group='earth' page=currentPage}}"></a>
+  </div>
+</template>
+
+<template name="adminReptileChange">
+  <div class="smoke"></div>
+  <div class="adminReptile">
+    <h2 title="{{this.zoneName}}" class="text-enemy">
+      {{this.zoneName}}
+    </h2>
+
+    <div class="close"></div>
+
+    <ul class="armies">
+      {{#each army}}
+        <li data-id="{{this.engName}}">
+          <label>{{this.name}}</label>
+
+          <input type="number" value="{{this.count}}"/>
+        </li>
+      {{/each}}
+    </ul>
+
+    <div class="change">Изменить</div>
+    <div class="changeTurn">Изменить на ход</div>
+  </div>
 </template>

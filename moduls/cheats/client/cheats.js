@@ -114,6 +114,12 @@ Game.Cheats.testBattle = function() {
   });
 };
 
+Game.Cheats.testBattleRounds = function(count) {
+  Meteor.call('cheats.performBattleRounds', count, function(err, data) {
+    console.log(data);
+  });
+};
+
 // ----------------------------------------------------------------------------
 // Cosmos cheats
 // ----------------------------------------------------------------------------

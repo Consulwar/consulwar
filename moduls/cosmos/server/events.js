@@ -1,3 +1,5 @@
+import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
+
 initCosmosEventsServer = function() {
 'use strict';
 
@@ -146,7 +148,8 @@ Game.SpaceEvents.sendReinforcement = function(options) {
     info: {
       units: options.units
     },
-    protectAllHonor: options.protectAllHonor
+    protectAllHonor: options.protectAllHonor,
+    targetZoneName: options.targetZoneName
   });
 
   // add task into queue
@@ -205,7 +208,7 @@ Game.SpaceEvents.completeReinforcement = function(event) {
 
   // save reinforcements
   if (arrived) {
-    Game.Earth.addReinforcement( arrived );
+    Game.Earth.addReinforcement( arrived, event.targetZoneName );
   }
 
   // reinforcements don't create new tasks
@@ -719,7 +722,7 @@ Game.SpaceEvents.sendReptileFleetToPlanet = function(planetId, mission) {
 
 var completeHumansArrival = function(event, planet) {
   var newTask = null;
-  var battleResult = null;
+  let battleResult = null;
   var userArmy = null;
   var enemyArmy = null;
 
@@ -744,7 +747,8 @@ var completeHumansArrival = function(event, planet) {
     var userFleet = Game.SpaceEvents.getFleetUnits(event);
     userArmy = { army: { fleet: userFleet } };
 
-    battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+    battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
+
     userArmy = battleResult.userArmy;
     enemyArmy = battleResult.enemyArmy;
 
@@ -764,22 +768,6 @@ var completeHumansArrival = function(event, planet) {
       // everyone died
       Game.Unit.removeArmy(event.info.armyId);
       planet.mission = null;
-    }
-
-    // add battle reward
-    var reward = {};
-    if (battleResult.reward) {
-      _.extend(reward, battleResult.reward);
-    }
-    if (battleResult.artefacts) {
-      _.extend(reward, battleResult.artefacts);
-    }
-    if (_.keys(reward).length > 0) {
-      Game.Resources.add(reward);
-    }
-    // add battle cards
-    if (battleResult.cards) {
-      Game.Cards.add(battleResult.cards);
     }
   }
 
@@ -878,26 +866,10 @@ var completeReptilesArrival = function(event, planet) {
       delete userArmy.army.ground;
     }
 
-    // perform battle
-    var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+    let battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
+
     userArmy = battleResult.userArmy;
     enemyArmy = battleResult.enemyArmy;
-
-    // add battle reward
-    var reward = {};
-    if (battleResult.reward) {
-      _.extend(reward, battleResult.reward);
-    }
-    if (battleResult.artefacts) {
-      _.extend(reward, battleResult.artefacts);
-    }
-    if (_.keys(reward).length > 0) {
-      Game.Resources.add(reward);
-    }
-    // add battle cards
-    if (battleResult.cards) {
-      Game.Cards.add(battleResult.cards);
-    }
 
     // restore ground units
     if (userArmyGround) {
@@ -927,7 +899,7 @@ var completeReptilesArrival = function(event, planet) {
     }
 
     // after battle
-    if (battleResult.result == Game.Battle.result.defeat) {
+    if (!userArmy && enemyArmy) {
       // collect all gained artefacts until defeat
       if (!planet.isHome) {
         var delta = event.timeEnd - planet.timeArtefacts;
@@ -1071,15 +1043,17 @@ var completeShipFight = function(event) {
       ? { reptiles: { fleet: secondFleet } }
       : { reptiles: { fleet: firstFleet } };
 
-    var battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
+    let battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
+    userArmy = battleResult.userArmy;
+    enemyArmy = battleResult.enemyArmy;
 
     var firstArmy = (event.info.isHumans)
-      ? battleResult.userArmy
-      : battleResult.enemyArmy;
+      ? userArmy
+      : enemyArmy;
 
     var secondArmy = (event.info.isHumans)
-      ? battleResult.enemyArmy
-      : battleResult.userArmy;
+      ? enemyArmy
+      : userArmy;
 
     // update units
     if (firstArmy) {
@@ -1108,22 +1082,6 @@ var completeShipFight = function(event) {
       // target fleet destroyed
       targetShip.status = Game.SpaceEvents.status.FINISHED;
       Game.SpaceEvents.Collection.update({ _id: targetShip._id}, targetShip);
-    }
-
-    // add battle reward
-    var reward = {};
-    if (battleResult.reward) {
-      _.extend(reward, battleResult.reward);
-    }
-    if (battleResult.artefacts) {
-      _.extend(reward, battleResult.artefacts);
-    }
-    if (_.keys(reward).length > 0) {
-      Game.Resources.add(reward);
-    }
-    // add battle cards
-    if (battleResult.cards) {
-      Game.Cards.add(battleResult.cards);
     }
   }
 

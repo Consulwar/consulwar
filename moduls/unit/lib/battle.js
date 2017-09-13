@@ -70,6 +70,14 @@ Game.Battle.result = {
   damageVictory: 4
 };
 
+Game.Battle.resultNames = {
+  [Game.Battle.result.tie]: 'tie',
+  [Game.Battle.result.victory]: 'victory',
+  [Game.Battle.result.defeat]: 'defeat',
+  [Game.Battle.result.damage]: 'damage',
+  [Game.Battle.result.damageVictory]: 'damageVictory'
+};
+
 initGalacticContentBattle();
 
 // ------------------------------------------------------

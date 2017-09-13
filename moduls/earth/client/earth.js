@@ -840,7 +840,7 @@ Template.earth.onRendered(function() {
       fadeAnimation: false,
       inertia: false,
       zoom: 4,
-      minZoom: 4,
+      minZoom: 2,
       maxZoom: 6
     });
     mapView.setView([47.36865, 8.539183], 4);

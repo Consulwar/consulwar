@@ -246,8 +246,23 @@ Template.register_window_step3.events({
   }
 });
 
+let negativeCloseEvent = {
+  'click .negative': function(e, t) {
+    t.$('.close')[0].click()
+  }
+};
+Template.register_window_step4.events(negativeCloseEvent);
+Template.register_window_step5.events(negativeCloseEvent);
+Template.register_window_step6.events(negativeCloseEvent);
+
 Template.register_window_step7.helpers({
   points: function() {
     return Session.get('register_points');
+  }
+});
+
+Template.register_window_step7.events({
+  'click .positive': function(e, t) {
+    t.$('.close')[0].click()
   }
 });

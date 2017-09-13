@@ -2,60 +2,8 @@ initEarthServerMethods = function() {
 'use strict';
 
 Meteor.methods({
-  'earth.voteAction': function(actionName) {
-    // check user
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method('earth.voteAction');
-
-    // check turn
-    var lastTurn = Game.EarthTurns.getLast();
-
-    if (!lastTurn) {
-      throw new Meteor.Error('Не создано ни одного хода');
-    }
-
-    if (lastTurn.users.indexOf(user._id) >= 0) {
-      throw new Meteor.Error('Вы уже голосовали в этом ходе');
-    }
-
-    if (lastTurn.actions[ actionName ] === undefined) {
-      throw new Meteor.Error('Нет такого действия в этом ходе');
-    }
-
-    // check level
-    var level = Game.User.getLevel();
-
-    if (level <= 0) {
-      throw new Meteor.Error('Маленький ещё, подрасти сначала');
-    }
-
-    // save vote
-    var votePower = Game.User.getVotePower();
-
-    var inc = {
-      totalVotePower: votePower
-    };
-    inc['actions.' + actionName] = votePower;
-
-    Game.EarthTurns.Collection.update({
-      _id: lastTurn._id
-    }, {
-      $addToSet: { users: user._id },
-      $inc: inc
-    });
-  },
-
-  'earth.sendReinforcement': function(units, cardsObject) {
-    var user = Meteor.user();
+  'earth.sendReinforcement': function(units, cardsObject, zoneName) {
+    const user = Meteor.user();
 
     if (!user || !user._id) {
       throw new Meteor.Error('Требуется авторизация');
@@ -67,14 +15,28 @@ Meteor.methods({
 
     Game.Log.method('earth.sendReinforcement');
 
-    var currentTime = Game.getCurrentTime();
-
-    if (!Game.Earth.checkReinforceTime(currentTime)) {
-      throw new Meteor.Error('С 17:00 до 19:00 по МСК отправка войск недоступна');
-    }
+    const currentTime = Game.getCurrentTime();
 
     if (!Game.SpaceEvents.checkCanSendFleet()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
+    }
+
+    let army = Game.EarthUnits.get();
+    let targetZoneName;
+
+    if (army) {
+      targetZoneName = army.zoneName;
+    } else {
+      check(zoneName, String);
+
+      let zone = Game.EarthZones.getByName(zoneName);
+      if (!zone) {
+        throw new Meteor.Error('Не существует указанная зона отправки.');
+      }
+      if (zone.isEnemy) {
+        throw new Meteor.Error('Зона не доступна для отправки.');
+      }
+      targetZoneName = zoneName;
     }
 
     let cardList = [];
@@ -102,25 +64,26 @@ Meteor.methods({
       }
     }
 
-    var totalCount = 0;
-    var name = null;
+    let totalCount = 0;
     let honor = 0;
 
-    for (name in units) {
-      units[name] = parseInt( units[name], 10 );
+    for (let name in units) {
+      if (units.hasOwnProperty(name)) {
+        units[name] = parseInt( units[name], 10 );
 
-      var count = units[name];
-      var unit = Game.Unit.items.army.ground[ name ];
+        const count = units[name];
+        const unit = Game.Unit.items.army.ground[name];
 
-      if (!unit || unit.type == 'mutual' || unit.currentLevel() < count || count <= 0) {
-        throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
+        if (!unit || unit.type === 'mutual' || unit.currentLevel() < count || count <= 0) {
+          throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
+        }
+
+        if (protectedHonor) {
+          honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
+        }
+
+        totalCount += count;
       }
-
-      if (protectedHonor) {
-        honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
-      }
-
-      totalCount += count;
     }
 
     if (totalCount === 0) {
@@ -136,7 +99,8 @@ Meteor.methods({
       startTime: currentTime,
       durationTime: Game.Earth.REINFORCEMENTS_DELAY,
       units: { army: { ground: units } },
-      protectAllHonor: protectedHonor > 0
+      protectAllHonor: protectedHonor > 0,
+      targetZoneName
     });
 
     if (cardList.length !== 0) {
@@ -147,55 +111,138 @@ Meteor.methods({
       Game.Cards.spend(cardsObject);
     }
 
-    // add at once for quick debug
-    // Game.Earth.addReinforcement( { army: { ground: units } } );
-
     // remove units
-    var stats = {};
+    const stats = {};
     stats['reinforcements.sent.total'] = 0;
 
-    for (name in units) {
-      Game.Unit.remove({
-        group: 'ground',
-        engName: name,
-        count: units[name]
-      });
+    for (let name in units) {
+      if (units.hasOwnProperty(name)) {
+        Game.Unit.remove({
+          group: 'ground',
+          engName: name,
+          count: units[name]
+        });
 
-      stats['reinforcements.sent.army.ground.' + name] = units[name];
-      stats['reinforcements.sent.total'] += units[name];
+        stats['reinforcements.sent.army.ground.' + name] = units[name];
+        stats['reinforcements.sent.total'] += units[name];
+      }
     }
 
     // save statistic
     Game.Statistic.incrementUser(user._id, stats);
-  }
+  },
+
+  'earth.moveArmy': function(targetZone) {
+    // check user
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method('earth.moveArmy');
+
+    check(targetZone, String);
+
+    let army = Game.EarthUnits.get();
+
+    if (!army) {
+      throw new Meteor.Error('Армия отсутствует.');
+    }
+
+    if (!Game.EarthZones.getByName(targetZone)) {
+      throw new Meteor.Error('Не существует указанная зона перемещения.');
+    }
+
+    let armyZone = Game.EarthZones.getByName(army.zoneName);
+
+    if (targetZone !== army.zoneName && armyZone.links.indexOf(targetZone) === -1) {
+      throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
+    }
+
+    if (armyZone.battleID) {
+      throw new Meteor.Error('Невозможно перемещение армий во время боя.');
+    }
+
+    if (army.zoneName === targetZone) {
+      Game.EarthUnits.Collection.update({
+        user_id: user._id
+      }, {
+        $unset: {
+          targetZone: 1
+        }
+      });
+    } else {
+      Game.EarthUnits.Collection.update({
+        user_id: user._id
+      }, {
+        $set: {
+          targetZone
+        }
+      });
+    }
+  },
+
+  'earth.setReptileArmy': function (zoneName, modifier, units, isOnTurn) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method('earth.setReptileArmy');
+
+    if (['admin'].indexOf(user.role) === -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    check(zoneName, String);
+    check(units, Object);
+
+    if (isOnTurn) {
+      Game.Earth.ReptileTurn.Collection.insert({
+        targetZone: zoneName,
+        army: units,
+      });
+    } else {
+      let setModifier = {};
+      let unsetModifier = {};
+
+      _.pairs(modifier).forEach(function ([key, value]) {
+        if (value > 0) {
+          setModifier[key] = value;
+        } else {
+          unsetModifier[key] = 1;
+        }
+      });
+
+      Game.EarthZones.Collection.update({
+        name: zoneName
+      }, {
+        $set: setModifier,
+        $unset: unsetModifier,
+      });
+    }
+  },
 });
 
 // ----------------------------------------------------------------------------
 // Public methods only for development!
 // ----------------------------------------------------------------------------
 
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV === 'development') {
   Meteor.methods({
-    'earth.importZones': Game.Earth.importZones,
     'earth.linkZones': Game.Earth.linkZones,
     'earth.unlinkZones': Game.Earth.unlinkZones,
     'earth.nextTurn': Game.Earth.nextTurn,
-
-    'earth.voteActionDev': function(actionName, votePower) {
-      votePower = votePower || 1;
-      var lastTurn = Game.EarthTurns.getLast();
-
-      if (!lastTurn || lastTurn.actions[ actionName ] === undefined) {
-        return;
-      }
-      
-      lastTurn.actions[ actionName ] += votePower;
-      lastTurn.totalVotePower += votePower;
-
-      Game.EarthTurns.Collection.update({
-        _id: lastTurn._id
-      }, lastTurn);
-    }
   });
 }
 

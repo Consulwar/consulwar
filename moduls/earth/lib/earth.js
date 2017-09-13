@@ -1,12 +1,7 @@
 initEarthLib = function() {
 'use strict';
 
-Game.Earth = {
-  checkReinforceTime: function(currentTime) {
-    var hours = new Date(currentTime * 1000).getUTCHours();
-    return (hours >= 14 && hours < 16) ? false : true;
-  }
-};
+Game.Earth = {};
 
 Game.EarthZones = {
   Collection: new Meteor.Collection('zones'),
@@ -18,12 +13,6 @@ Game.EarthZones = {
   getByName: function(name) {
     return Game.EarthZones.Collection.findOne({
       name: name
-    });
-  },
-
-  getCurrent: function() {
-    return Game.EarthZones.Collection.findOne({
-      isCurrent: true
     });
   },
 
@@ -46,12 +35,12 @@ Game.EarthZones = {
   }
 };
 
-Game.EarthTurns = {
-  Collection: new Meteor.Collection('turns'),
+Game.EarthUnits = {
+  Collection: new Meteor.Collection('earthUnits'),
 
-  getLast: function() {
-    return Game.EarthTurns.Collection.findOne({}, {
-      sort: { timeStart: -1 }
+  get: function () {
+    return Game.EarthUnits.Collection.findOne({
+      user_id: Meteor.userId()
     });
   }
 };

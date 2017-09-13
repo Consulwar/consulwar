@@ -77,8 +77,6 @@
         {{> item_requirements requirements=unit.requirements}}
 
         <p>{{unit.description}}</p>
-        
-        {{> unitBattleEffects unit=unit}}
 
         {{#if unit.maxCount}}
           <div class="limit">
@@ -163,8 +161,6 @@
       {{/each}}
 
       <div class="effects">
-        {{> unitBattleEffects unit=unit}}
-
         {{#if unit.maxCount}}
           <div class="limit">
             Всего юнитов {{formatNumber unit.totalCount}} из {{formatNumber unit.maxCount}}

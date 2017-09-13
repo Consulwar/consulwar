@@ -14,7 +14,7 @@ window.GameRouteController = RouteController.extend({
       this.redirect('index');
       alert('Аккаунт заблокирован');
     }
-      
+
     this.wait(Meteor.subscribe('game'));
     this.wait(Meteor.subscribe('resources'));
     this.wait(Meteor.subscribe('queue'));
@@ -86,16 +86,15 @@ var gameRoutes = {
   earth: {
     mutual: 'mutual/:group(research)/:item?',
     earth: 'mutual/:group(earth)',
-    earthReserve: 'mutual/:group(earth)/reserve',
+    earthReserve: 'mutual/:group(earth)/reserve/:name',
     earthZone: 'mutual/:group(earth)/zone/:name?',
-    earthHistory: 'mutual/:group(earth)/history/:page',
   },
 
 
   statistics: {
     statistics: 'statistics/:group(general|science|cosmos|battle|communication)?/:page?'
   },
-  
+
   chat: {
     chat: 'chat/:room',
     mail: 'mail/:page',
@@ -117,7 +116,7 @@ var gameActions = {
   research: Game.Research.showPage,
   house: Game.House.showPage,
   artefacts: Game.Resources.showArtefactsPage,
-  
+
   walletHistory: Game.Payment.showHistory,
   promocodeHistory: Game.Payment.showPromocodeHistory,
 

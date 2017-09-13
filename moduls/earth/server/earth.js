@@ -1,6 +1,5 @@
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import Battle from '../../battle/server/battle';
-import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
 
 initEarthServer = function() {
 'use strict';

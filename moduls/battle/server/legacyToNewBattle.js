@@ -25,7 +25,7 @@ let legacyToNewBattle = function(origUserArmy, origEnemyArmy, battleOptions) {
     username = user.username;
   }
 
-  let battle = Battle.create({ [username]: userArmy }, { 'ai': enemyArmy });
+  let battle = Battle.create({ [username]: [userArmy] }, { 'ai': [enemyArmy] });
   let roundResult;
   let round = 1;
   let honor = 0;

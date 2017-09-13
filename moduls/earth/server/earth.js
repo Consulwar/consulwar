@@ -397,23 +397,27 @@ Game.Earth.nextTurn = function() {
         }
       });
 
-      let bulkOp = Game.EarthUnits.Collection.rawCollection().initializeUnorderedBulkOp();
+      const pairs = _.pairs(leftArmies);
 
-      _.pairs(leftArmies).forEach(function ([username, army]) {
-        bulkOp.find({
-          username: username
-        }).update({
-          $set: {
-            userArmy: army
+      if (pairs.length > 0) {
+        let bulkOp = Game.EarthUnits.Collection.rawCollection().initializeUnorderedBulkOp();
+
+        pairs.forEach(function ([username, army]) {
+          bulkOp.find({
+            username: username
+          }).update({
+            $set: {
+              userArmy: army
+            }
+          });
+        });
+
+        bulkOp.execute(function(err) {
+          if (err) {
+            console.log("Пересчет армий в зонах завершен с ошибкой", err, new Date());
           }
         });
-      });
-
-      bulkOp.execute(function(err) {
-        if (err) {
-          console.log("Пересчет армий в зонах завершен с ошибкой", err, new Date());
-        }
-      });
+      }
 
       Game.EarthUnits.Collection.remove({'username':{'$in':_.keys(unsetEarthUnits)}})
     }

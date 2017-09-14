@@ -304,7 +304,7 @@ Template.earthZoneInfo.helpers({
       userUnitsArmy = userUnits.userArmy;
     }
 
-    var maxPower = Game.EarthZones.calcMaxHealth();
+    var maxHealth = Game.EarthZones.calcMaxHealth();
     var currentUserPower = Game.Unit.calcUnitsHealth( zone.userArmy );
     var currentEnemyPower = Game.Unit.calcUnitsHealth( zone.enemyArmy );
 
@@ -353,12 +353,12 @@ Template.earthZoneInfo.helpers({
     var totalCount = userCount + enemyCount;
     var capturedPercent = Math.round( (userCount / totalCount) * 100 );
 
-    var userPower = (maxPower > 0)
-      ? Math.round( (currentUserPower / maxPower) * 100 )
+    var userPower = (maxHealth > 0)
+      ? Math.round( (currentUserPower / maxHealth) * 100 )
       : 0;
 
-    var enemyPower = (maxPower > 0)
-      ? Math.round( (currentEnemyPower / maxPower) * 100 )
+    var enemyPower = (maxHealth > 0)
+      ? Math.round( (currentEnemyPower / maxHealth) * 100 )
       : 0;
 
     return {
@@ -470,6 +470,8 @@ Template.earthZonePopup.events({
 // Zone view (maker + polygon on map which displays zone status)
 // ----------------------------------------------------------------------------
 
+let maxHealth = -1;
+
 var ZoneView = function(mapView, zoneData) {
   this.id = null;
   this.name = null;
@@ -573,21 +575,16 @@ var ZoneView = function(mapView, zoneData) {
     const isAdmin = Meteor.user().role === 'admin';
 
     if (this.isVisible || isAdmin) {
-
       // calculate army power
-      var maxPower = Game.EarthZones.calcMaxHealth();
+      let currentHumanHealth = Game.Unit.calcUnitsHealth(zone.userArmy);
+      let currentReptileHealth = Game.Unit.calcUnitsHealth(zone.enemyArmy);
+      maxHealth = Math.max(currentHumanHealth, currentReptileHealth, maxHealth);
 
-      if (maxPower > 0) {
-        var currentHumanPower = Game.Unit.calcUnitsHealth(zone.userArmy);
-        humanPower = Math.round( (currentHumanPower / maxPower) * 100 );
+      if (maxHealth > 0) {
+        humanPower = Math.round((currentHumanHealth / maxHealth) * 100);
+        reptilePower = Math.round((currentReptileHealth / maxHealth ) * 100);
       } else {
         humanPower = 0;
-      }
-
-      if (maxPower > 0) {
-        var currentReptilePower = Game.Unit.calcUnitsHealth(zone.enemyArmy);
-        reptilePower = Math.round( (currentReptilePower / maxPower ) * 100);
-      } else {
         reptilePower = 0;
       }
 
@@ -857,6 +854,8 @@ Template.earth.onRendered(function() {
       Game.Earth.hideZonePopup();
     });
 
+    maxHealth = Game.EarthZones.calcMaxHealth();
+
     // create existing zones
     var zones = Game.EarthZones.getAll().fetch();
     for (var i = 0; i < zones.length; i++) {
@@ -881,6 +880,8 @@ Template.earth.onRendered(function() {
   // track db updates
   observerZones = Game.EarthZones.getAll().observeChanges({
     changed: function(id, fields) {
+      maxHealth = Game.EarthZones.calcMaxHealth();
+
       var name = Game.EarthZones.Collection.findOne({ _id: id }).name;
       if (mapView && zoneViews) {
         for (var key in zoneViews) {

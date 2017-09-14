@@ -87,13 +87,7 @@
                   {{#if eqandtrue this.alliance user.alliance}}ally{{/if}} 
                   {{#if eq this.username user.username}}me{{/if}}
                 ">
-                <img src="/img/game/chat/icons/
-                  {{#if this.iconPath}}
-                    {{this.iconPath}}
-                  {{else}}
-                    common/1
-                  {{/if}}
-                sm.png"/>
+                <img src="/img/game/chat/icons/{{#if this.iconPath}}{{this.iconPath}}{{else}}common/1{{/if}}sm.png"/>
                 <div class="username">
                   {{this.username}}
                 </div>

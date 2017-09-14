@@ -25,7 +25,7 @@ Game.Rating.showPage = function() {
   var self = this;
   var pageNumber = parseInt( this.params.page, 10 );
   var statisticGroup = this.params.group;
-  var hash = this.getParams().hash && this.getParams().hash.split('/');
+  var hash = this.getParams().hash && decodeURIComponent(this.getParams().hash).split('/');
   var detailStatisticTab;
 
   if (hash && (hash[0] != selectedUserName || statisticGroup != laststatisticGroup) && pageNumber) {

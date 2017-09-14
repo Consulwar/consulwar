@@ -82,18 +82,12 @@ var menu = {
   },
   earth: {
     name: 'Общее',
-    routeName: ['mutual', 'earth', 'earthHistory'],
+    routeName: ['mutual', 'earth'],
     url: Router.routes.earth.path({ group: 'earth' }),
     items: {
       earth: {
         name: 'Земля',
         url: Router.routes.earth.path({ group: 'earth' })
-      },
-      research: {
-        name: 'Исследования',
-        additionalArea: 'calibrator',
-        url: firstItemGroupURL(Game.Mutual.items.research),
-        items: Game.Mutual.items.research
       }
     }
   },

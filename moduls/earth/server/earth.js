@@ -433,9 +433,7 @@ const checkInitialState = function () {
 
   if (enemyZonesCount <= 0) {
     // Only start zone is available, so try to observer nearby zones
-    if (Game.Mutual.has('research', 'reccons')
-      && Game.User.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS
-    ) {
+    if (Game.User.countActivePlayers() >= Game.Earth.MIN_ACTIVE_PLAYERS) {
       const startZones = Game.EarthZones.Collection.find({
         isStarting: true
       }).fetch();
@@ -446,9 +444,7 @@ const checkInitialState = function () {
     } else {
       console.log('Unacceptable conditions!');
       console.log('Active players ' + Game.User.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
-      console.log('Mutual research is ' + Game.Mutual.has('research', 'reccons'));
     }
-
   }
 };
 
@@ -556,7 +552,17 @@ SyncedCron.add({
 
 Meteor.publish('zones', function () {
   if (this.userId) {
-    return Game.EarthZones.Collection.find();
+    const user = Meteor.users.findOne({
+      _id: this.userId,
+    }, {
+      fields: { role: 1 },
+    });
+
+    if (user.role === 'admin') {
+      return Game.EarthZones.Collection.find();
+    }
+
+    return Game.EarthZones.Collection.find({ isVisible: true });
   }
 });
 

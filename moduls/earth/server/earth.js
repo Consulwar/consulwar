@@ -552,7 +552,11 @@ SyncedCron.add({
 
 Meteor.publish('zones', function () {
   if (this.userId) {
-    const user = Meteor.users.findOne({ _id: this.userId });
+    const user = Meteor.users.findOne({
+      _id: this.userId,
+    }, {
+      fields: { role: 1 },
+    });
 
     if (user.role === 'admin') {
       return Game.EarthZones.Collection.find();

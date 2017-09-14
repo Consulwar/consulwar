@@ -556,7 +556,13 @@ SyncedCron.add({
 
 Meteor.publish('zones', function () {
   if (this.userId) {
-    return Game.EarthZones.Collection.find();
+    const user = Meteor.users.findOne({ _id: this.userId });
+
+    if (user.role === 'admin') {
+      return Game.EarthZones.Collection.find();
+    }
+
+    return Game.EarthZones.Collection.find({ isVisible: true });
   }
 });
 

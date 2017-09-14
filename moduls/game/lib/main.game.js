@@ -178,10 +178,7 @@ game.Item = function(options) {
 
       Object.defineProperty(this, 'characteristics', {
         get: function() {
-          var characteristics = _.clone(options.characteristics);
-          if (options.characteristics.damage) {
-            characteristics.damage = _.clone(options.characteristics.damage);
-          }
+          var characteristics = Game.Helpers.deepClone(options.characteristics);
 
           var result = Game.Effect.Military.applyTo(this, characteristics, false);
           result.base = options.characteristics;
@@ -1045,14 +1042,27 @@ Game.Effect.applyTo = function(target, obj, hideEffects, isOnlyMutual, instantEf
 
       switch (item) {
         case 'damage':
-          if (priority % 2 == 1) {
-            obj[item].min += effect * (this.reduce ? -1 : 1);
-            obj[item].max += effect * (this.reduce ? -1 : 1);
+          if (priority % 2 === 1) {
+            obj.weapon.damage.min += effect * (this.reduce ? -1 : 1);
+            obj.weapon.damage.max += effect * (this.reduce ? -1 : 1);
           } else {
-            obj[item].min = obj[item].min + Math.floor(obj[item].min * (0.01 * effect)) * (this.reduce ? -1 : 1);
-            obj[item].max = obj[item].max + Math.floor(obj[item].max * (0.01 * effect)) * (this.reduce ? -1 : 1);
+            obj.weapon.damage.min = obj.weapon.damage.min +
+              (Math.floor(obj.weapon.damage.min * (0.01 * effect)) * (this.reduce ? -1 : 1));
+
+            obj.weapon.damage.max = obj.weapon.damage.max +
+              (Math.floor(obj.weapon.damage.max * (0.01 * effect)) * (this.reduce ? -1 : 1));
           }
           break;
+
+        case 'life':
+          if (priority % 2 === 1) {
+            obj.health.armor += effect * (this.reduce ? -1 : 1);
+          } else {
+            obj.health.armor = obj.health.armor +
+              (Math.floor(obj.health.armor * (0.01 * effect)) * (this.reduce ? -1 : 1));
+          }
+          break;
+
         default:
           if (priority % 2 == 1) {
             obj[item] += effect * (this.reduce ? -1 : 1);
@@ -1280,5 +1290,17 @@ Game.Helpers = {
     }
 
     return Object.freeze(obj);
-  }
+  },
+
+  deepClone: function deepClone(object) {
+    const clone = _.clone(object);
+
+    _.each(clone, function(value, key) {
+      if (_.isObject(value)) {
+        clone[key] = deepClone(value);
+      }
+    });
+
+    return clone;
+  },
 };

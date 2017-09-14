@@ -265,7 +265,7 @@ Game.Unit = {
     for (var side in units) {
       for (var group in units[side]) {
         for (var name in units[side][group]) {
-          var life = Game.Unit.items[side][group][name].characteristics.life;
+          var life = Game.Unit.items[side][group][name].characteristics.health.armor;
           var count = units[side][group][name];
           if (life && count) {
             power += (life * count);

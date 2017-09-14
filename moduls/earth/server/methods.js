@@ -215,21 +215,26 @@ Meteor.methods({
     } else {
       let setModifier = {};
       let unsetModifier = {};
+      let setAndUnset = {};
 
       _.pairs(modifier).forEach(function ([key, value]) {
         if (value > 0) {
           setModifier[key] = value;
+          setAndUnset.$set = setModifier;
         } else {
           unsetModifier[key] = 1;
+          setAndUnset.$unset = unsetModifier;
         }
       });
 
-      Game.EarthZones.Collection.update({
-        name: zoneName
-      }, {
-        $set: setModifier,
-        $unset: unsetModifier,
-      });
+      if (setAndUnset.$set || setAndUnset.$unset) {
+        Game.EarthZones.Collection.update(
+          {
+            name: zoneName
+          },
+          setAndUnset,
+        );
+      }
     }
   },
 });

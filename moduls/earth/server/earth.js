@@ -175,15 +175,22 @@ Game.Earth.observeZone = function(name) {
   }
 
   // mark as visible + generate enemy army at each new zone
-  for (var i = 0; i < zonesAround.length; i++) {
+  for (let i = 0; i < zonesAround.length; i++) {
+    const modifier = {
+      isVisible: true,
+      isEnemy: true,
+    };
+
+    const nameI = zonesAround[i].name;
+
+    if (!Game.EarthZones.getByName(nameI).enemyArmy) {
+      modifier.enemyArmy = Game.Earth.generateEnemyArmy(level);
+    }
+
     Game.EarthZones.Collection.update({
-      name: zonesAround[i].name
+      name: nameI,
     }, {
-      $set: {
-        isVisible: true,
-        isEnemy: true,
-        enemyArmy: Game.Earth.generateEnemyArmy(level)
-      }
+      $set: modifier,
     });
   }
 };

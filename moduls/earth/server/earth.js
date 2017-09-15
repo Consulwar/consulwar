@@ -175,15 +175,22 @@ Game.Earth.observeZone = function(name) {
   }
 
   // mark as visible + generate enemy army at each new zone
-  for (var i = 0; i < zonesAround.length; i++) {
+  for (let i = 0; i < zonesAround.length; i++) {
+    const modifier = {
+      isVisible: true,
+      isEnemy: true,
+    };
+
+    const nameI = zonesAround[i].name;
+
+    if (!Game.EarthZones.getByName(nameI).enemyArmy) {
+      modifier.enemyArmy = Game.Earth.generateEnemyArmy(level);
+    }
+
     Game.EarthZones.Collection.update({
-      name: zonesAround[i].name
+      name: nameI,
     }, {
-      $set: {
-        isVisible: true,
-        isEnemy: true,
-        enemyArmy: Game.Earth.generateEnemyArmy(level)
-      }
+      $set: modifier,
     });
   }
 };
@@ -310,9 +317,21 @@ Game.Earth.nextTurn = function() {
       });
 
       Game.EarthZones.Collection.update({
-        _id: zone._id
+        _id: zone._id,
       }, {
-        $set: { battleID: battle.id }
+        $set: { battleID: battle.id },
+      });
+    } else if (zone.enemyArmy && !zone.isEnemy) {
+      Game.EarthZones.Collection.update({
+        _id: zone._id,
+      }, {
+        $set: { isEnemy: true },
+      });
+    } else if (zone.userArmy && zone.isEnemy) {
+      Game.EarthZones.Collection.update({
+        _id: zone._id,
+      }, {
+        $set: { isEnemy: false },
       });
     }
 

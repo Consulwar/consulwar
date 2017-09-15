@@ -208,10 +208,20 @@ Meteor.methods({
     check(units, Object);
 
     if (isOnTurn) {
-      Game.Earth.ReptileTurn.Collection.insert({
-        targetZone: zoneName,
-        army: units,
+      const inc = {};
+
+      _.pairs(units).forEach(function ([unitName, count]) {
+        inc[`army.${unitName}`] = count;
       });
+
+      Game.Earth.ReptileTurn.Collection.upsert(
+        {
+          targetZone: zoneName,
+        },
+        {
+          $inc: inc,
+        },
+      );
     } else {
       let setModifier = {};
       let unsetModifier = {};

@@ -1011,11 +1011,11 @@ Template.adminReptileChange.events({
 const fillInfo = function (elements, modifier, units) {
   for (let i = 0; i < elements.length; i++) {
     const id = $(elements[i]).attr('data-id');
-    const count = Math.max(0, parseInt($(elements[i]).find('input').val(), 10));
+    const count = parseInt($(elements[i]).find('input').val(), 10);
 
-    modifier[`enemyArmy.reptiles.ground.${id}`] = count;
+    modifier[`enemyArmy.reptiles.ground.${id}`] = Math.max(0, count);
 
-    if (count > 0) {
+    if (count !== 0) {
       units[id] = count;
     }
   }

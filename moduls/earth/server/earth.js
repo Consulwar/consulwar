@@ -517,7 +517,7 @@ const moveArmy = function (army, targetZoneName) {
 };
 
 const createUnit = function(armyName, typeName, unitName, count) {
-  let characteristics = Game.Unit.items[armyName][typeName][unitName].characteristics;
+  let characteristics = Game.Unit.items[armyName][typeName][unitName].options.characteristics;
 
   return {
     count: Game.Unit.rollCount(count),

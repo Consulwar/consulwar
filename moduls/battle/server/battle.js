@@ -140,7 +140,9 @@ class Battle {
     let userArmyRest = USER_SIDE in roundResult.left;
     let enemyArmyRest = ENEMY_SIDE in roundResult.left;
 
-    this.saveRoundStatistic(roundResult);
+    if (!options.isEarth) {
+      this.saveRoundStatistic(roundResult);
+    }
 
     if (!userArmyRest || !enemyArmyRest) {
       this.finishBattle(userArmyRest, enemyArmyRest, options);

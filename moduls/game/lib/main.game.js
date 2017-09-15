@@ -87,6 +87,8 @@ game.Item = function(options) {
   this.constructor = function(options) {
     var self = this;
 
+    this.options = options;
+
     this.order = itemCurrentOrder;
     itemCurrentOrder++;
 

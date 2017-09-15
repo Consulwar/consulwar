@@ -317,9 +317,21 @@ Game.Earth.nextTurn = function() {
       });
 
       Game.EarthZones.Collection.update({
-        _id: zone._id
+        _id: zone._id,
       }, {
-        $set: { battleID: battle.id }
+        $set: { battleID: battle.id },
+      });
+    } else if (zone.enemyArmy && !zone.isEnemy) {
+      Game.EarthZones.Collection.update({
+        _id: zone._id,
+      }, {
+        $set: { isEnemy: true },
+      });
+    } else if (zone.userArmy && zone.isEnemy) {
+      Game.EarthZones.Collection.update({
+        _id: zone._id,
+      }, {
+        $set: { isEnemy: false },
       });
     }
 

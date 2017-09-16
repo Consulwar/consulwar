@@ -52,6 +52,7 @@ game.Unit = function(options) {
     if (idParts[1] === 'Ground') {
       return this._targets.map((target) => {
         let [, type, group, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
         }
@@ -61,6 +62,7 @@ game.Unit = function(options) {
     } else {
       return this._targets.map((target) => {
         let [, type, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
         }
@@ -170,6 +172,7 @@ game.ReptileUnit = function(options) {
     if (idParts[1] === 'Ground') {
       return this._targets.map((target) => {
         let [, type, group, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
         }
@@ -179,6 +182,7 @@ game.ReptileUnit = function(options) {
     } else {
       return this._targets.map((target) => {
         let [, type, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
         }

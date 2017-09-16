@@ -46,7 +46,7 @@ export default {
     } else if (level < 80) {
       price.garyoldmanium = [5, 'slowLinearGrow', 60];
     } else {
-      price.ancient_scheme = [3, 'slowLinearGrow', 80];
+      price.AncientScheme = [3, 'slowLinearGrow', 80];
     }
     return price;
   },

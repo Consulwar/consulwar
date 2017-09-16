@@ -48,7 +48,7 @@ export default {
     } else if (level < 80) {
       price.nicolascagium = [5, 'slowLinearGrow', 60];
     } else {
-      price.ancient_technology = [3, 'slowLinearGrow', 80];
+      price.AncientTechnology = [3, 'slowLinearGrow', 80];
     }
     return price;
   },

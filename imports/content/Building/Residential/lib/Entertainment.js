@@ -45,11 +45,11 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.crystal_fragments = [4, 'slowLinearGrow', 40];
+      price.CrystalFragments = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
       price.batteries = [5, 'slowLinearGrow', 60];
     } else {
-      price.plasma_transistors = [5, 'slowLinearGrow', 80];
+      price.PlasmaTransistors = [5, 'slowLinearGrow', 80];
     }
     return price;
   },

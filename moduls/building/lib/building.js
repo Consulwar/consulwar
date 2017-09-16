@@ -7,6 +7,10 @@ game.Building = function(options){
   options.name = options.title;
   options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
 
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+
   options.effect = [];
   if (options.effects) {
     _(options.effects).keys().forEach((effectType) => {
@@ -17,10 +21,17 @@ game.Building = function(options){
           aftertext: effect.textAfter,
         };
 
-        if (legacyEffect.condition) {
+        if (legacyEffect.condition && legacyEffect.condition.id) {
+          const conditionIdParts = legacyEffect.condition.id.split('/');
+          let engName = conditionIdParts[conditionIdParts.length - 1].toLocaleLowerCase();
+
+          if (Game.newToLegacyNames[engName]) {
+            engName = Game.newToLegacyNames[engName];
+          }
+
           legacyEffect.condition = {
             ...legacyEffect.condition,
-            engName: legacyEffect.id,
+            engName,
           }
         }
         
@@ -32,10 +43,19 @@ game.Building = function(options){
   this._basePrice = options.basePrice;
   options.basePrice = function(level = this.currentLevel()) {
     const price = this._basePrice(level);
+    const realPrice = {};
     _(price).keys().forEach((resourceName) => {
-      price[resourceName][1] = Game.functions[price[resourceName][1]];
+      let realName = resourceName.toLocaleLowerCase();
+      if (Game.newToLegacyNames[realName]) {
+        realName = Game.newToLegacyNames[realName];
+      }
+      realPrice[realName] = [
+        price[resourceName][0],
+        Game.functions[price[resourceName][1]],
+        price[resourceName][2],
+      ];
     });
-    return price;
+    return realPrice;
   }
 
   this._requirements = options.requirements;
@@ -43,7 +63,10 @@ game.Building = function(options){
     const requirements = this._requirements(level);
 
     requirements.forEach((requirement) => {
-      const [className, group, engName] = requirement[0].split('/');
+      let [className, group, engName] = requirement[0].split('/');
+      if (Game.newToLegacyNames[engName]) {
+        engName = Game.newToLegacyNames[engName];
+      }
       requirement[0] = Game[className].items[group.toLocaleLowerCase()][engName.toLocaleLowerCase()];
     });
 

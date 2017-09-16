@@ -45,9 +45,9 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.reptile_technology = [4, 'slowLinearGrow', 40];
+      price.ReptileTechnology = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.plasma_transistors = [5, 'slowLinearGrow', 60];
+      price.PlasmaTransistors = [5, 'slowLinearGrow', 60];
     } else {
       price.garyoldmanium = [5, 'slowLinearGrow', 80];
     }

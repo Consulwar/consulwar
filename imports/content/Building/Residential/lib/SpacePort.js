@@ -33,9 +33,9 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.ship_details = [4, 'slowLinearGrow', 40];
+      price.ShipDetails = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.reptile_technology = [4, 'slowLinearGrow', 60];
+      price.ReptileTechnology = [4, 'slowLinearGrow', 60];
     } else {
       price.chip = [6, 'slowLinearGrow', 80];
     }

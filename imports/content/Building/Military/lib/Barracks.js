@@ -49,11 +49,11 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.weapon_parts = [3, 'slowLinearGrow', 40];
+      price.WeaponParts = [3, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.reptile_technology = [4, 'slowLinearGrow', 60];
+      price.ReptileTechnology = [4, 'slowLinearGrow', 60];
     } else {
-      price.sapphire_plasmoid = [6, 'slowLinearGrow', 80];
+      price.SapphirePlasmoid = [6, 'slowLinearGrow', 80];
     }
     return price;
   },

@@ -75,9 +75,9 @@ export default {
     } else if (level < 60) {
       price.meteorFragments = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.rotary_amplifier = [5, 'slowLinearGrow', 60];
+      price.RotaryAmplifier = [5, 'slowLinearGrow', 60];
     } else {
-      price.plasma_transistors = [5, 'slowLinearGrow', 80];
+      price.PlasmaTransistors = [5, 'slowLinearGrow', 80];
     }
     return price;
   },

@@ -73,9 +73,9 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.crystal_fragments = [4, 'slowLinearGrow', 40];
+      price.CrystalFragments = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.rotary_amplifier = [5, 'slowLinearGrow', 60];
+      price.RotaryAmplifier = [5, 'slowLinearGrow', 60];
     } else {
       price.nanoWires = [6, 'slowLinearGrow', 80];
     }

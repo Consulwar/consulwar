@@ -37,11 +37,11 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.quad_cooler = [6, 'slowLinearGrow', 40];
+      price.QuadCooler = [6, 'slowLinearGrow', 40];
     } else if (level < 80) {
       price.nicolascagium = [5, 'slowLinearGrow', 60];
     } else {
-      price.ancient_scheme = [3, 'slowLinearGrow', 80];
+      price.AncientScheme = [3, 'slowLinearGrow', 80];
     }
     return price;
   },

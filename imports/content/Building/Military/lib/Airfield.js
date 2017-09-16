@@ -49,9 +49,9 @@ export default {
     } else if (level < 40) {
       // no changes
     } else if (level < 60) {
-      price.secret_technology = [4, 'slowLinearGrow', 40];
+      price.SecretTechnology = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.quad_cooler = [6, 'slowLinearGrow', 60];
+      price.QuadCooler = [6, 'slowLinearGrow', 60];
     } else {
       price.keanureevesium = [4, 'slowLinearGrow', 80];
     }

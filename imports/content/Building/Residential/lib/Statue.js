@@ -36,15 +36,15 @@ export default {
 
     if (level < 20) {
       price.humans = [50, 'slowLinearGrow', 0];
-      price.emerald_plasmoid = [4, 'slowLinearGrow', 0];
+      price.EmeraldPlasmoid = [4, 'slowLinearGrow', 0];
     } else if (level < 40) {
-      price.sapphire_plasmoid = [6, 'slowLinearGrow', 20];
+      price.SapphirePlasmoid = [6, 'slowLinearGrow', 20];
     } else if (level < 60) {
-      price.amethyst_plasmoid = [4, 'slowLinearGrow', 40];
+      price.AmethystPlasmoid = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.topaz_plasmoid = [3, 'slowLinearGrow', 60];
+      price.TopazPlasmoid = [3, 'slowLinearGrow', 60];
     } else {
-      price.ruby_plasmoid = [8, 'slowLinearGrow', 80];
+      price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
     }
     return price;
   },

@@ -46,9 +46,9 @@ export default {
     } else if (level < 60) {
       price.jimcarrium = [4, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.ancient_knowledge = [4, 'slowLinearGrow', 60];
+      price.AncientKnowledge = [4, 'slowLinearGrow', 60];
     } else {
-      price.ruby_plasmoid = [8, 'slowLinearGrow', 80];
+      price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
     }
     return price;
   },

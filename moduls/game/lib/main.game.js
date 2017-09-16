@@ -453,6 +453,43 @@ game.extend = extend;
 
 
 Game = {
+  newToLegacyNames: {
+    mine: 'bomb',
+    ionmine: 'ionbomb',
+    triplecrystalgun: 'trilinear',
+    orbitaldefensestation: 'deforbital',
+
+    father: 'fathers',
+    psiman: 'psimans',
+
+    xynlet: 'prickartillery',
+
+    butterfly: 'relax',
+    trionyx: 'trioniks',
+    gecko: 'geccon',
+    amphisbaena: 'amfizben',
+
+    silverplasmoid: 'silver_plasmoid',
+    shipdetails: 'ship_details',
+    meteorfragments: 'meteor_fragments',
+    weaponparts: 'weapon_parts',
+    crystalfragments: 'crystal_fragments',
+    emeraldplasmoid: 'emerald_plasmoid',
+    rotaryamplifier: 'rotary_amplifier',
+    secrettechnology: 'secret_technology',
+    reptiletechnology: 'reptile_technology',
+    sapphireplasmoid: 'sapphire_plasmoid',
+    quadcooler: 'quad_cooler',
+    plasmatransistors: 'plasma_transistors',
+    amethystplasmoid: 'amethyst_plasmoid',
+    topazplasmoid: 'topaz_plasmoid',
+    ancientartefact: 'ancient_artefact',
+    ancienttechnology: 'ancient_technology',
+    ancientknowledge: 'ancient_knowledge',
+    ancientscheme: 'ancient_scheme',
+    rubyplasmoid: 'ruby_plasmoid',
+  },
+
   PRODUCTION_FACTOR: 1.48902803168182,
   PRICE_FACTOR: 1.568803194,
 

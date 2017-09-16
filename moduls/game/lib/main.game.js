@@ -232,6 +232,9 @@ game.Item = function(options) {
     return Game.getObjectByType(this.type).get(this.group, this.engName);
   };
 
+  // New-to-legacy
+  this.getCurrentLevel = this.currentLevel; 
+
   this.getOverlayImage = function(currentLevel) {
     currentLevel = currentLevel || this.currentLevel();
 
@@ -670,6 +673,11 @@ Game.Effect = function(options) {
       },
       enumerable: true
     });
+
+    // New-to-legacy
+    this.getCurrentLevel = function() {
+      return this.provider.getCurrentLevel();
+    };
   };
 
   this.constructor(options);

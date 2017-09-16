@@ -51,7 +51,7 @@ game.Unit = function(options) {
   options.targets = function() {
     if (idParts[1] === 'Ground') {
       return this._targets.map((target) => {
-        let [, type, side, group, engName] = target.split('/');
+        let [, type, group, side, engName] = target.split('/');
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
         }
@@ -169,7 +169,7 @@ game.ReptileUnit = function(options) {
   options.targets = function() {
     if (idParts[1] === 'Ground') {
       return this._targets.map((target) => {
-        let [, type, side, group, engName] = target.split('/');
+        let [, type, group, side, engName] = target.split('/');
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
         }

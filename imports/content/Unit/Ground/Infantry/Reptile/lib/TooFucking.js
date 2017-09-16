@@ -14,8 +14,8 @@ export default {
     life: 30000,
   },
   targets: [
-    'Unit/Ground/Lost',
-    'Unit/Ground/Horizontalbarman',
-    'Unit/Ground/Fathers',
+    'Unit/Ground/Infantry/Human/Lost',
+    'Unit/Ground/Infantry/Human/Horizontalbarman',
+    'Unit/Ground/Infantry/Human/Fathers',
   ],
 };

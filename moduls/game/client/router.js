@@ -76,7 +76,6 @@ var gameRoutes = {
 
   info: {
     reptileUnit: 'info/reptiles/:group(fleet|ground)/:item?',
-    reptileHero: 'info/reptiles/:group(heroes)/:item?'
   },
 
   research: {
@@ -126,7 +125,6 @@ var gameActions = {
 
   unit: Game.Unit.showPage,
   reptileUnit: Game.Unit.showReptilePage,
-  reptileHero: Game.Unit.showReptilePage,
 
   mutual: Game.Mutual.showPage,
   earth: Game.Earth.showMap,
@@ -195,47 +193,5 @@ Router.route('pageNotFound', {
     }
   }
 });
-
-/*
-game/planet/residential
-game/planet/military
-
-game/planet/counsul
-
-army/humans/...3
-army/reptiles/...3
-
-game/army/fleet
-game/army/heroes
-game/army/ground
-
-game/research/evolution
-game/research/fleetups
-game/research/mutual
-
-game/battle/space
-game/battle/earth
-game/battle/earth/reinforcement
-
-game/messages/mail
-game/messages/chat/:channel
-*/
-
-/*
-Router.route( 'pageNotFound', {
-  path: '/game/(.*)',
-  action: function() {
-    if (this.params.menu && (this.params.menu in menu)) {
-      if (!(this.params.side && (this.params.side in menu[this.params.menu]))) {
-        return this.redirect('game', {
-          menu: this.params.menu,
-          side: Object.keys(menu[this.params.menu])[0]
-        })
-      }
-    } else {
-      return this.redirect('game', {menu: 'planet'});
-    }
-  }
-});*/
 
 };

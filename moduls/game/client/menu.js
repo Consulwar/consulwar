@@ -191,7 +191,7 @@ var menu = {
   },
   info: {
     name: 'Рептилии',
-    routeName: ['reptileUnit', 'reptileHero'],
+    routeName: ['reptileUnit'],
     url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
     items: {
       fleet: {
@@ -199,13 +199,7 @@ var menu = {
         additionalArea: 'general',
         url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
         items: Game.Unit.items.reptiles.fleet
-      }, 
-      heroes: {
-        name: 'Герои',
-        additionalArea: 'general',
-        url: firstItemGroupURL(Game.Unit.items.reptiles.heroes),
-        items: Game.Unit.items.reptiles.heroes
-      }, 
+      },
       ground: {
         name: 'Армия',
         additionalArea: 'general',

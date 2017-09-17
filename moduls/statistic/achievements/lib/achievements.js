@@ -2,6 +2,30 @@ initStatisticAchievementsLib = function() {
 'use strict';
 
 game.Achievement = function(options) {
+  // New-to-legacy
+  const [, group, engName] = options.id.split('/');
+  options.name = options.title;
+  options.group = group.toLocaleLowerCase();
+  options.engName = engName.toLocaleLowerCase();
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+  if (Game.newToLegacyNames[options.group]) {
+    options.group = Game.newToLegacyNames[options.group];
+  }
+  Game.newToLegacyEffects(options);
+
+  if (options.field) {
+    options.field = (options.field
+      .split('/')
+      .map((part) => part.toLocaleLowerCase())
+      .map((part) => Game.newToLegacyNames[part] || part)
+      .join('.')
+    );
+  }
+  //
+
   this.doNotRegisterEffect = true;
 
   game.Achievement.superclass.constructor.apply(this, arguments);
@@ -37,6 +61,9 @@ game.Achievement = function(options) {
     }
     return 0;
   }).bind(this);
+
+  // New-to-legacy
+  this.getCurrentLevel = this.currentLevel; 
   
   this.nextLevel = (function (achievements) {
     var currentLevel = this.currentLevel(achievements);

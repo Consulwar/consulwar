@@ -7,9 +7,7 @@ export default {
       {
         textBefore: 'Строительство всех зданий на ',
         textAfter: '% быстрее',
-        condition: {
-          type: 'Building',
-        },
+        condition: 'Building',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {
@@ -19,9 +17,7 @@ export default {
       {
         textBefore: 'Дополнительное ускорение ',
         textAfter: '%',
-        condition: {
-          type: 'Building',
-        },
+        condition: 'Building',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {

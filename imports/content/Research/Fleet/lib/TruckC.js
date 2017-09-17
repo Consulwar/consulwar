@@ -10,9 +10,7 @@ export default {
         notImplemented: true,
         textBefore: 'Добыча Трака ',
         textAfter: ' металла',
-        condition: {
-          id: 'truckCapacity',
-        },
+        condition: 'Unique/truckCapacity',
         priority: 1,
         affect: 'metals',
         result(level = this.getCurrentLevel()) {
@@ -30,9 +28,7 @@ export default {
         notImplemented: true,
         textBefore: 'Добыча Трака ',
         textAfter: ' кристалла',
-        condition: {
-          id: 'truckCapacity',
-        },
+        condition: 'Unique/truckCapacity',
         priority: 1,
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {

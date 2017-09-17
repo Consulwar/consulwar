@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Флагмана +',
-        condition: {
-          id: 'Unit/Space/Human/Flagship',
-        },
+        condition: 'Unit/Space/Human/Flagship',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Флагмана +',
-        condition: {
-          id: 'Unit/Space/Human/Flagship',
-        },
+        condition: 'Unit/Space/Human/Flagship',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

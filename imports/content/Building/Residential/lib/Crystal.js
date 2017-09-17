@@ -41,9 +41,7 @@ export default {
         textBefore: 'Укрытия для ',
         textAfter: ' грамм кристалла',
         priority: 1,
-        condition: {
-          id: 'bunker',
-        },
+        condition: 'Unique/bunker',
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
           return [

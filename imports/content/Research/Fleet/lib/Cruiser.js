@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Крейсера +',
-        condition: {
-          id: 'Unit/Space/Human/Cruiser',
-        },
+        condition: 'Unit/Space/Human/Cruiser',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Крейсера +',
-        condition: {
-          id: 'Unit/Space/Human/Cruiser',
-        },
+        condition: 'Unit/Space/Human/Cruiser',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

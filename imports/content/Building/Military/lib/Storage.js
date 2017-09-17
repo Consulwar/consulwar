@@ -8,9 +8,7 @@ export default {
         textBefore: 'Поставка ресурсов за ежедневные задания +',
         textAfter: '%',
         priority: 2,
-        condition: {
-          id: 'dailyQuestReward',
-        },
+        condition: 'Unique/dailyQuestReward',
         affect: ['crystals', 'metals'],
         result(level = this.getCurrentLevel()) {
           return level * 0.5;
@@ -20,9 +18,7 @@ export default {
         textBefore: 'Заданий в сутки: ',
         textAfter: '',
         priority: 1,
-        condition: {
-          id: 'dailyQuestCount',
-        },
+        condition: 'Unique/dailyQuestCount',
         affect: 'count',
         result(level = this.getCurrentLevel()) {
           return [1, 2, 3, 4, 5, 6][Math.floor(level / 20)];

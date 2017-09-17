@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Пожинателя +',
-        condition: {
-          id: 'Unit/Space/Human/Reaper',
-        },
+        condition: 'Unit/Space/Human/Reaper',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Пожинателя +',
-        condition: {
-          id: 'Unit/Space/Human/Reaper',
-        },
+        condition: 'Unit/Space/Human/Reaper',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

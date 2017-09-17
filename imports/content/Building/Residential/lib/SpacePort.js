@@ -9,9 +9,7 @@ export default {
         textAfter: ' ГГК',
         affect: 'credits',
         priority: 1,
-        condition: {
-          id: 'containerPrice',
-        },
+        condition: 'Unique/containerPrice',
         result(level = this.getCurrentLevel()) {
           return level * 1;
         },

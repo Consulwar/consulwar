@@ -19,9 +19,7 @@ export default {
         textBefore: 'Укрытия для ',
         textAfter: ' населения планеты',
         priority: 1,
-        condition: {
-          id: 'bunker',
-        },
+        condition: 'Unique/bunker',
         affect: 'humans',
         result(level = this.getCurrentLevel()) {
           return [

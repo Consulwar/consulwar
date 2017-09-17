@@ -7,9 +7,7 @@ export default {
       {
         textBefore: 'Исследования на ',
         textAfter: '% дешевле',
-        condition: {
-          type: 'research',
-        },
+        condition: 'Research',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {

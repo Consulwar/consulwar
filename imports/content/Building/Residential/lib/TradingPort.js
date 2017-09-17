@@ -8,9 +8,7 @@ export default {
         textBefore: '',
         textAfter: '% к выгодной сделке',
         priority: 2,
-        condition: {
-          id: 'tradingBonus',
-        },
+        condition: 'Unique/tradingBonus',
         affect: 'amount',
         result(level = this.getCurrentLevel()) {
           return level * 0.5;

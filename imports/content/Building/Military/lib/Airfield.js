@@ -7,11 +7,7 @@ export default {
       {
         textBefore: 'Строительство авиации на ',
         textAfter: '% дешевле',
-        condition: {
-          type: 'unit',
-          group: 'ground',
-          special: 'air',
-        },
+        condition: 'Unit/Ground/Air/Human',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {
@@ -21,11 +17,7 @@ export default {
       {
         textBefore: 'Строительство авиации на ',
         textAfter: '% быстрее',
-        condition: {
-          type: 'unit',
-          group: 'ground',
-          special: 'air',
-        },
+        condition: 'Unit/Ground/Air/Human',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {

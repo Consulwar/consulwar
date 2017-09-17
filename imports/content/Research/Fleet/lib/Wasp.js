@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Осы +',
-        condition: {
-          id: 'Unit/Space/Human/Wasp',
-        },
+        condition: 'Unit/Space/Human/Wasp',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Осы +',
-        condition: {
-          id: 'Unit/Space/Human/Wasp',
-        },
+        condition: 'Unit/Space/Human/Wasp',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

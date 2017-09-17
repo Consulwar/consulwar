@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Гаммадрона +',
-        condition: {
-          id: 'Unit/Space/Human/Gammadrone',
-        },
+        condition: 'Unit/Space/Human/Gammadrone',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Гаммадрона +',
-        condition: {
-          id: 'Unit/Space/Human/Gammadrone',
-        },
+        condition: 'Unit/Space/Human/Gammadrone',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

@@ -7,9 +7,7 @@ export default {
       {
         textBefore: 'Исследования на ',
         textAfter: '% быстрее',
-        condition: {
-          type: 'research',
-        },
+        condition: 'Research',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {

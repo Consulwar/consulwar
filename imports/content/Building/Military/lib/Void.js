@@ -18,9 +18,7 @@ export default {
       {
         textBefore: 'Потерянные требуют на ',
         textAfter: '% меньше людей',
-        condition: {
-          id: 'lost',
-        },
+        condition: 'Unit/Ground/Infantry/Human/Lost',
         priority: 2,
         affect: 'humans',
         result(level = this.getCurrentLevel()) {

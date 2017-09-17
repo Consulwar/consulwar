@@ -7,10 +7,7 @@ export default {
       {
         textBefore: 'Строительство флота на ',
         textAfter: '% дешевле',
-        condition: {
-          type: 'unit',
-          group: 'fleet',
-        },
+        condition: 'Unit/Space/Human',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {
@@ -20,10 +17,7 @@ export default {
       {
         textBefore: 'Строительство флота на ',
         textAfter: '% быстрее',
-        condition: {
-          type: 'unit',
-          group: 'fleet',
-        },
+        condition: 'Unit/Space/Human',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {

@@ -485,7 +485,7 @@ Game = {
     plasmatransistors: 'plasma_transistors',
     amethystplasmoid: 'amethyst_plasmoid',
     topazplasmoid: 'topaz_plasmoid',
-    ancientartefact: 'ancient_artefact',
+    ancientartifact: 'ancient_artefact',
     ancienttechnology: 'ancient_technology',
     ancientknowledge: 'ancient_knowledge',
     ancientscheme: 'ancient_scheme',

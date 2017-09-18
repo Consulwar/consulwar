@@ -11,6 +11,10 @@ game.Achievement = function(options) {
   if (Game.newToLegacyNames[options.engName]) {
     options.engName = Game.newToLegacyNames[options.engName];
   }
+
+  if (options.group === 'space') {
+    options.group = 'cosmos';
+  }
   if (Game.newToLegacyNames[options.group]) {
     options.group = Game.newToLegacyNames[options.group];
   }

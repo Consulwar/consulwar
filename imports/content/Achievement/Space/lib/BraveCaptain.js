@@ -2,7 +2,7 @@ export default {
   id: 'Achievement/Space/BraveCaptain',
   field: 'Battle/DefenseFleet/10/Victory',
   levels: [1],
-  name: 'Смелый капитан',
+  title: 'Смелый капитан',
   description: 'Победить оборону 10 уровня',
   effects: {
     Special: [

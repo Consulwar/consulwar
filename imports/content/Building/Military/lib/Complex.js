@@ -7,10 +7,7 @@ export default {
       {
         textBefore: 'Урон оборонительных сооружений +',
         textAfter: '%',
-        condition: {
-          type: 'unit',
-          group: 'defense',
-        },
+        condition: 'Unit/Defense/Human',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {

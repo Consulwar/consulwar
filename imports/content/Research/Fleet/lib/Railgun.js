@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Рейлгана +',
-        condition: {
-          id: 'Unit/Space/Human/Railgun',
-        },
+        condition: 'Unit/Space/Human/Railgun',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Рейлгана +',
-        condition: {
-          id: 'Unit/Space/Human/Railgun',
-        },
+        condition: 'Unit/Space/Human/Railgun',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

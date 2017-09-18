@@ -8,9 +8,7 @@ export default {
     Military: [
       {
         textBefore: 'Урон Миража +',
-        condition: {
-          id: 'Unit/Space/Human/Mirage',
-        },
+        condition: 'Unit/Space/Human/Mirage',
         priority: 1,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -24,9 +22,7 @@ export default {
       },
       {
         textBefore: 'Броня Миража +',
-        condition: {
-          id: 'Unit/Space/Human/Mirage',
-        },
+        condition: 'Unit/Space/Human/Mirage',
         priority: 1,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

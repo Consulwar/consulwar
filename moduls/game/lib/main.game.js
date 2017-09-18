@@ -456,6 +456,8 @@ game.extend = extend;
 
 Game = {
   newToLegacyNames: {
+    space: 'cosmos',
+
     mine: 'bomb',
     ionmine: 'ionbomb',
     triplecrystalgun: 'trilinear',
@@ -485,11 +487,90 @@ Game = {
     plasmatransistors: 'plasma_transistors',
     amethystplasmoid: 'amethyst_plasmoid',
     topazplasmoid: 'topaz_plasmoid',
-    ancientartefact: 'ancient_artefact',
+    ancientartifact: 'ancient_artefact',
     ancienttechnology: 'ancient_technology',
     ancientknowledge: 'ancient_knowledge',
     ancientscheme: 'ancient_scheme',
     rubyplasmoid: 'ruby_plasmoid',
+
+    defensefleet: 'defencefleet',
+    metallurgist: 'metallurg',
+    leader: 'ruler',
+    lossoflosses: 'lossloss',
+  },
+
+  newToLegacyEffects(options) {
+    options.effect = [];
+    if (options.effects) {
+      _(options.effects).keys().forEach((effectType) => {
+        options.effects[effectType].forEach((effect) => {
+          const legacyEffect = { 
+            ...effect,
+            pretext: effect.textBefore,
+            aftertext: effect.textAfter,
+          };
+  
+          if (legacyEffect.condition) {
+            const conditionIdParts = legacyEffect.condition.split('/');
+            let type;
+            let group;
+            let special;
+            let side;
+            let engName;
+  
+            switch(conditionIdParts[0]) {
+              case 'Unique':
+                engName = conditionIdParts[1];
+                break;
+              case 'Building':
+              case 'Research':
+                [type, group, engName] = conditionIdParts;
+                break;
+              case 'Unit':
+                if (conditionIdParts.length == 1) {
+                  type = 'Unit';
+                } else {
+                  if (conditionIdParts[1] === 'Ground') {
+                    [type, group, special, side, engName] = conditionIdParts;
+                  } else {
+                    [type, group, side, engName] = conditionIdParts;
+                  }
+                }
+                break;
+              default:
+                throw Meteor.Error('Неизвестное условие');
+                break;
+            }
+            
+            if (type || group || special || engName) {
+              legacyEffect.condition = {};
+            }
+  
+            if (type) {
+              type = type.toLocaleLowerCase();
+              legacyEffect.condition.type = Game.newToLegacyNames[type] || type;
+            }
+            
+            if (group) {
+              group = group.toLocaleLowerCase();
+              legacyEffect.condition.group = Game.newToLegacyNames[group] || group;
+            }
+  
+            if (special && special !== '*') {
+              special = special.toLocaleLowerCase();
+              legacyEffect.condition.special = Game.newToLegacyNames[special] || special;
+            }
+  
+            if (engName) {
+              engName = engName.toLocaleLowerCase();
+              legacyEffect.condition.engName = Game.newToLegacyNames[engName] || engName;
+            }
+          }
+          
+          options.effect.push(new Game.Effect[effectType](legacyEffect));
+        });
+      });
+    }
   },
 
   PRODUCTION_FACTOR: 1.48902803168182,

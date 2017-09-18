@@ -2,6 +2,22 @@ initArtefactsLib = function() {
 'use strict';
 
 game.Artefact = function(options) {
+  // New-to-legacy
+  const idParts = options.id.split('/');
+  options.name = options.title;
+
+  options.group = idParts[2].toLocaleLowerCase();
+  options.engName = idParts[3].toLocaleLowerCase();
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+
+  if (Game.newToLegacyNames[options.group]) {
+    options.group = Game.newToLegacyNames[options.group];
+  }
+  //
+
   this.group = options.group;
   this.engName = options.engName;
   this.name = options.name;

@@ -7,10 +7,7 @@ export default {
       {
         textBefore: 'Броня оборонных сооружений +',
         textAfter: '%',
-        condition: {
-          type: 'unit',
-          group: 'defense',
-        },
+        condition: 'Unit/Defense/Human',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {
@@ -20,10 +17,7 @@ export default {
       {
         textBefore: 'Дополнительный бонус ',
         textAfter: '%',
-        condition: {
-          type: 'unit',
-          group: 'defense',
-        },
+        condition: 'Unit/Defense/Human',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

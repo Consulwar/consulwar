@@ -5,9 +5,7 @@ export default {
   effects: {
     Special: [
       {
-        condition: {
-          id: 'spaceEngine',
-        },
+        condition: 'Unique/spaceEngine',
         textBefore: '',
         textAfter: ' уровень движетелей',
         result(level = this.getCurrentLevel()) {

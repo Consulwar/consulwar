@@ -11,34 +11,7 @@ game.Building = function(options){
     options.engName = Game.newToLegacyNames[options.engName];
   }
 
-  options.effect = [];
-  if (options.effects) {
-    _(options.effects).keys().forEach((effectType) => {
-      options.effects[effectType].forEach((effect) => {
-        const legacyEffect = { 
-          ...effect,
-          pretext: effect.textBefore,
-          aftertext: effect.textAfter,
-        };
-
-        if (legacyEffect.condition && legacyEffect.condition.id) {
-          const conditionIdParts = legacyEffect.condition.id.split('/');
-          let engName = conditionIdParts[conditionIdParts.length - 1].toLocaleLowerCase();
-
-          if (Game.newToLegacyNames[engName]) {
-            engName = Game.newToLegacyNames[engName];
-          }
-
-          legacyEffect.condition = {
-            ...legacyEffect.condition,
-            engName,
-          }
-        }
-        
-        options.effect.push(new Game.Effect[effectType](legacyEffect));
-      });
-    });
-  }
+  Game.newToLegacyEffects(options);
 
   this._basePrice = options.basePrice;
   options.basePrice = function(level = this.currentLevel()) {

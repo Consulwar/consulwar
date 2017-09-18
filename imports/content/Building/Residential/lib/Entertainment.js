@@ -7,9 +7,7 @@ export default {
       {
         textBefore: 'Снижает стоимость всех строений на ',
         textAfter: '%',
-        condition: {
-          type: 'building',
-        },
+        condition: 'Building',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {
@@ -19,9 +17,7 @@ export default {
       {
         textBefore: 'Дополнительно снижает стоимость строений на ',
         textAfter: '%',
-        condition: {
-          type: 'building',
-        },
+        condition: 'Building',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {

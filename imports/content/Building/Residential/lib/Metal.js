@@ -41,9 +41,7 @@ export default {
         textBefore: 'Укрытия для ',
         textAfter: ' килограмм металла',
         priority: 1,
-        condition: {
-          id: 'bunker',
-        },
+        condition: 'Unique/bunker',
         affect: 'metals',
         result(level = this.getCurrentLevel()) {
           return [

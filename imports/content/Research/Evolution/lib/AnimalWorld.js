@@ -8,9 +8,7 @@ export default {
         textBefore: 'Сообщения в общий чат дешевле на ',
         textAfter: '%',
         priority: 2,
-        condition: {
-          name: 'message',
-        },
+        condition: 'Unique/message',
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
           return level * 0.1;
@@ -20,9 +18,7 @@ export default {
         textBefore: 'Дополнительный бонус ',
         textAfter: '%',
         priority: 2,
-        condition: {
-          name: 'message',
-        },
+        condition: 'Unique/message',
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
           return [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];

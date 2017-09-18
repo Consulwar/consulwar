@@ -17,7 +17,7 @@ game.Unit = function(options) {
   }
 
   if (idParts[1] === 'Ground') {
-    options.special = idParts[idParts.length - 2].toLocaleLowerCase();
+    options.characteristics.special = idParts[2].toLocaleLowerCase();
   }
 
   const newToLegacyUpgradeNames = {

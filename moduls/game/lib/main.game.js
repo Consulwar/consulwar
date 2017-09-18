@@ -563,7 +563,9 @@ Game = {
             }
   
             if (engName) {
-              engName = engName.toLocaleLowerCase();
+              if (conditionIdParts[0] !== 'Unique') {
+                engName = engName.toLocaleLowerCase();
+              }
               legacyEffect.condition.engName = Game.newToLegacyNames[engName] || engName;
             }
           }

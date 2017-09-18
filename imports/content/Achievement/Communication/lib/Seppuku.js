@@ -18,9 +18,9 @@ export default {
         textBefore: 'Сообщения в общий чат дешевле на ',
         textAfter: '%',
         priority: 2,
-        condition: 'Unique/Message',
+        condition: 'Unique/message',
         affect: 'crystals',
-        result(level = this.currentLevel()) {
+        result(level = this.getCurrentLevel()) {
           return [10, 20, 30][level - 1];
         },
       },

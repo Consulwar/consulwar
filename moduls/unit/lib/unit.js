@@ -16,6 +16,10 @@ game.Unit = function(options) {
     options.engName = Game.newToLegacyNames[options.engName];
   }
 
+  if (idParts[1] === 'Ground') {
+    options.characteristics.special = idParts[2].toLocaleLowerCase();
+  }
+
   const newToLegacyUpgradeNames = {
     gammadrone: 'gammabetaalpha',
     wasp: 'royalwasphornet',

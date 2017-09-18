@@ -11,8 +11,8 @@ export default {
   power: 0,
   characteristics: {
     damage: {
-      min: 40,
-      max: 50,
+      min: 2500,
+      max: 2500,
     },
     life: 2500,
   },

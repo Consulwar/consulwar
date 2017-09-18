@@ -2,7 +2,7 @@ export default {
   id: 'Achievement/Space/CarryingLight',
   field: 'Reptiles/Killed/Reptiles/Fleet/Shadow',
   levels: [10],
-  name: 'Несущий свет',
+  title: 'Несущий свет',
   description: 'Уничтожить 10 кораблей Тень',
   effects: {
     Military: [

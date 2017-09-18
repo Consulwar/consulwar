@@ -2,7 +2,7 @@ export default {
   id: 'Achievement/Space/PirateRaid',
   field: 'Battle/PatrolFleet/10/Victory',
   levels: [1],
-  name: 'Пиратский рейд',
+  title: 'Пиратский рейд',
   description: 'Победить патруль 10 уровня',
   effects: {
     Special: [

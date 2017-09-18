@@ -38,7 +38,7 @@ export default {
     } else if (level < 60) {
       price.nicolascagium = [5, 'slowLinearGrow', 40];
     } else if (level < 80) {
-      price.AncientArtefact = [3, 'slowLinearGrow', 60];
+      price.AncientArtifact = [3, 'slowLinearGrow', 60];
     } else {
       price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
     }

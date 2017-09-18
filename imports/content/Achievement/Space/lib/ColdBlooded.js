@@ -2,7 +2,7 @@ export default {
   id: 'Achievement/Space/ColdBlooded',
   field: 'Reptiles/Killed/Reptiles/Fleet/Blade',
   levels: [100000],
-  name: 'Хладнокровных хладнокровно',
+  title: 'Хладнокровных хладнокровно',
   description: 'Уничтожил 100 000 Клинков',
   effects: {
     Military: [

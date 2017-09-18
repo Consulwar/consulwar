@@ -454,7 +454,7 @@ game.extend = extend;
 
 Game = {
   newToLegacyNames: {
-    space: 'cosmos',
+    space: 'fleet',
 
     mine: 'bomb',
     ionmine: 'ionbomb',
@@ -495,6 +495,7 @@ Game = {
     metallurgist: 'metallurg',
     leader: 'ruler',
     lossoflosses: 'lossloss',
+    seppuku: 'sepukku',
   },
 
   newToLegacyEffects(options) {

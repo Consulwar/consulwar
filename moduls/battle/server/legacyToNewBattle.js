@@ -72,7 +72,7 @@ let legacyToNewBattle = function(origUserArmy, origEnemyArmy, battleOptions) {
     battleResults.reward = reward;
   }
 
-  if (battleOptions.artefacts) {
+  if (battleOptions.artefacts && battle.result === Game.Battle.result.victory) {
     battleResults.artefacts = battleOptions.artefacts;
   }
 

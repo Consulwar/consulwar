@@ -496,6 +496,9 @@ Game = {
     leader: 'ruler',
     lossoflosses: 'lossloss',
     seppuku: 'sepukku',
+
+    natalyverlen: 'nataly',
+    thirdengineering: 'thirdenginery',
   },
 
   newToLegacyEffects(options) {

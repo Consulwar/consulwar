@@ -66,6 +66,21 @@ game.QuestLine = function(options, quests) {
 };
 
 game.DailyQuest = function(options) {
+  // New-to-legacy
+  let [, , who, engName] = options.id.split('/');
+  options.who = who.toLocaleLowerCase();
+  options.engName = engName; // No need to lower case!
+  options.name = options.title;
+
+  if (Game.newToLegacyNames[options.who]) {
+    options.who = Game.newToLegacyNames[options.who];
+  }
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+  //
+
   if (!options.engName) {
     throw new Meteor.Error('Ошибка в контенте', 'Не указано имя ежедневного задания');
   }
@@ -338,7 +353,7 @@ Meteor.methods({
 
     var quest = Game.Quest.dailyQuests[quests.daily.engName];
     var answers = {};
-
+    console.log(quest, quests.daily.engName);
     for (var name in quest.answers) {
       answers[name] = quest.answers[name].text;
     }

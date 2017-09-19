@@ -1,5 +1,6 @@
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import Battle from '../../battle/server/battle';
+import Generals from './generals';
 
 initEarthServer = function() {
 'use strict';
@@ -21,6 +22,10 @@ initEarthServerImportHex();
 
 Game.EarthUnits.Collection._ensureIndex({
   user_id: 1,
+});
+
+Game.EarthUnits.Collection._ensureIndex({
+  username: 1,
 });
 
 Game.EarthZones.Collection._ensureIndex({
@@ -206,18 +211,21 @@ Game.Earth.nextTurn = function() {
   Game.EarthUnits.Collection.find({}).forEach(function (army) {
     let zoneName = army.zoneName;
 
-    if (army.targetZone) {
+    if (army.targetZone || army.generalsTarget) {
+      const targetZone = army.targetZone || army.generalsTarget;
+
       Game.EarthUnits.Collection.update({
-        _id: army._id
+        _id: army._id,
       }, {
         $set: {
-          zoneName: army.targetZone
+          zoneName: targetZone,
         },
         $unset: {
-          targetZone: 1
-        }
+          targetZone: 1,
+          generalsTarget: 1,
+        },
       });
-      zoneName = army.targetZone;
+      zoneName = targetZone;
 
       moveArmy(army, zoneName);
 
@@ -440,6 +448,8 @@ Game.Earth.nextTurn = function() {
       Game.EarthUnits.Collection.remove({'username':{'$in':_.keys(unsetEarthUnits)}})
     }
   });
+
+  Generals.reCalculate();
 
   console.log('-------- Earth next turn end ----------');
 };

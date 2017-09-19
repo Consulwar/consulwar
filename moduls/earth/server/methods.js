@@ -1,3 +1,6 @@
+import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
+
 initEarthServerMethods = function() {
 'use strict';
 
@@ -246,6 +249,64 @@ Meteor.methods({
         );
       }
     }
+  },
+
+  'earth.generalCommand'(targetZone, users) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method('earth.generalCommand');
+
+    // TODO: if (Game.Earth.TIME_TO_GENERAL_COMMAND) {
+    //
+    // }
+
+    check(targetZone, String);
+    check(users, Match.Maybe(Array));
+
+    const zone = Game.EarthZones.Collection.findOne({
+      'general.username': user.username,
+    });
+    if (!zone) {
+      throw new Meteor.Error('Ишь чего удумал.');
+    }
+
+    if (!Game.EarthZones.getByName(targetZone)) {
+      throw new Meteor.Error('Не существует указанная зона перемещения.');
+    }
+
+    if (targetZone !== zone.name && zone.links.indexOf(targetZone) === -1) {
+      throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
+    }
+
+    if (zone.battleID) {
+      throw new Meteor.Error('Невозможно перемещение армий во время боя.');
+    }
+
+    const selector = {
+      zoneName: zone.name,
+      generalsTarget: { $exists: false },
+    };
+    if (Array.isArray(users)) {
+      selector.username = { $in: users };
+    }
+
+    console.log(selector);
+
+    Game.EarthUnits.Collection.update(selector, {
+      $set: {
+        generalsTarget: targetZone,
+      },
+    }, {
+      multi: true,
+    });
   },
 });
 

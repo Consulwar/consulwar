@@ -383,7 +383,7 @@ Meteor.methods({
 
     var quest = Game.Quest.dailyQuests[quests.daily.engName];
     var answers = {};
-    console.log(quest, quests.daily.engName);
+    
     for (var name in quest.answers) {
       answers[name] = quest.answers[name].text;
     }

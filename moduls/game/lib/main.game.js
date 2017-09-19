@@ -234,6 +234,9 @@ game.Item = function(options) {
     return Game.getObjectByType(this.type).get(this.group, this.engName);
   };
 
+  // New-to-legacy
+  this.getCurrentLevel = this.currentLevel; 
+
   this.getOverlayImage = function(currentLevel) {
     currentLevel = currentLevel || this.currentLevel();
 
@@ -452,6 +455,138 @@ game.extend = extend;
 
 
 Game = {
+  newToLegacyNames: {
+    space: 'fleet',
+
+    mine: 'bomb',
+    ionmine: 'ionbomb',
+    triplecrystalgun: 'trilinear',
+    orbitaldefensestation: 'deforbital',
+
+    father: 'fathers',
+    psiman: 'psimans',
+
+    xynlet: 'prickartillery',
+
+    butterfly: 'relax',
+    trionyx: 'trioniks',
+    gecko: 'geccon',
+    amphisbaena: 'amfizben',
+
+    silverplasmoid: 'silver_plasmoid',
+    shipdetails: 'ship_details',
+    meteorfragments: 'meteor_fragments',
+    weaponparts: 'weapon_parts',
+    crystalfragments: 'crystal_fragments',
+    emeraldplasmoid: 'emerald_plasmoid',
+    rotaryamplifier: 'rotary_amplifier',
+    secrettechnology: 'secret_technology',
+    reptiletechnology: 'reptile_technology',
+    sapphireplasmoid: 'sapphire_plasmoid',
+    quadcooler: 'quad_cooler',
+    plasmatransistors: 'plasma_transistors',
+    amethystplasmoid: 'amethyst_plasmoid',
+    topazplasmoid: 'topaz_plasmoid',
+    ancientartifact: 'ancient_artefact',
+    ancienttechnology: 'ancient_technology',
+    ancientknowledge: 'ancient_knowledge',
+    ancientscheme: 'ancient_scheme',
+    rubyplasmoid: 'ruby_plasmoid',
+
+    defensefleet: 'defencefleet',
+    metallurgist: 'metallurg',
+    leader: 'ruler',
+    lossoflosses: 'lossloss',
+    seppuku: 'sepukku',
+
+    natalyverlen: 'nataly',
+    thirdengineering: 'thirdenginery',
+
+    greenring: 'green_ring',
+    bloodymess: 'bloody_mess',
+    mortalcombat: 'mortal_combat',
+    madrace: 'mad_race',
+    firedragon: 'fire_dragon',
+
+    throne: 'tron',
+  },
+
+  newToLegacyEffects(options) {
+    options.effect = [];
+    if (options.effects) {
+      _(options.effects).keys().forEach((effectType) => {
+        options.effects[effectType].forEach((effect) => {
+          const legacyEffect = { 
+            ...effect,
+            pretext: effect.textBefore,
+            aftertext: effect.textAfter,
+          };
+  
+          if (legacyEffect.condition) {
+            const conditionIdParts = legacyEffect.condition.split('/');
+            let type;
+            let group;
+            let special;
+            let side;
+            let engName;
+  
+            switch(conditionIdParts[0]) {
+              case 'Unique':
+                engName = conditionIdParts[1];
+                break;
+              case 'Building':
+              case 'Research':
+                [type, group, engName] = conditionIdParts;
+                break;
+              case 'Unit':
+                if (conditionIdParts.length == 1) {
+                  type = 'Unit';
+                } else {
+                  if (conditionIdParts[1] === 'Ground') {
+                    [type, group, special, side, engName] = conditionIdParts;
+                  } else {
+                    [type, group, side, engName] = conditionIdParts;
+                  }
+                }
+                break;
+              default:
+                throw Meteor.Error('Неизвестное условие');
+                break;
+            }
+            
+            if (type || group || special || engName) {
+              legacyEffect.condition = {};
+            }
+  
+            if (type) {
+              type = type.toLocaleLowerCase();
+              legacyEffect.condition.type = Game.newToLegacyNames[type] || type;
+            }
+            
+            if (group) {
+              group = group.toLocaleLowerCase();
+              legacyEffect.condition.group = Game.newToLegacyNames[group] || group;
+            }
+  
+            if (special && special !== '*') {
+              special = special.toLocaleLowerCase();
+              legacyEffect.condition.special = Game.newToLegacyNames[special] || special;
+            }
+  
+            if (engName) {
+              if (conditionIdParts[0] !== 'Unique') {
+                engName = engName.toLocaleLowerCase();
+              }
+              legacyEffect.condition.engName = Game.newToLegacyNames[engName] || engName;
+            }
+          }
+          
+          options.effect.push(new Game.Effect[effectType](legacyEffect));
+        });
+      });
+    }
+  },
+
   PRODUCTION_FACTOR: 1.48902803168182,
   PRICE_FACTOR: 1.568803194,
 
@@ -672,6 +807,11 @@ Game.Effect = function(options) {
       },
       enumerable: true
     });
+
+    // New-to-legacy
+    this.getCurrentLevel = function() {
+      return this.provider.getCurrentLevel();
+    };
   };
 
   this.constructor(options);

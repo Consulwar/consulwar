@@ -2,6 +2,33 @@ initBuildingSpecialContainerLib = function() {
 'use strict';
 
 game.Container = function(options) {
+  // New-to-legacy
+  const idParts = options.id.split('/');
+  options.name = options.title;
+  options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
+
+  if (options.engName == 'small') {
+    options.engName = 'defaultContainer';
+  }
+
+  if (options.drop) {
+    this._drop = options.drop;
+    options.drop = [];
+    this._drop.forEach((drop) => {
+      let profit = { units: { fleet: {} } };
+      _(drop.profit).keys().forEach((profitId) => {
+        const idParts = profitId.split('/');
+        let engName = idParts[idParts.length - 1].toLocaleLowerCase();
+        profit.units.fleet[engName] = drop.profit[profitId];
+      });
+      options.drop.push({
+        chance: drop.chance,
+        profit,
+      });
+    })
+  }
+  //
+
   if (Game.Building.special.Container.items[options.engName]) {
     throw new Meteor.Error('Ошибка в контенте', 'Дублируется контейнер ' + options.engName);
   }

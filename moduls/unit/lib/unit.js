@@ -7,6 +7,88 @@ initUnitLib = function() {
 initBattleLib();
 
 game.Unit = function(options) {
+  // New-to-legacy
+  const idParts = options.id.split('/');
+  options.name = options.title;
+  options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+
+  if (idParts[1] === 'Ground') {
+    options.characteristics.special = idParts[2].toLocaleLowerCase();
+  }
+
+  const newToLegacyUpgradeNames = {
+    gammadrone: 'gammabetaalpha',
+    wasp: 'royalwasphornet',
+    mirage: 'mirageghostphantom',
+    frigate: 'frigatesupportbattle',
+    truckc: 'truckctruckbtrucka',
+    cruiser: 'cruiserlinearnonlinear',
+    battleship: 'battleshipquadhex',
+    carrier: 'carrierbaseprojectx',
+    dreadnought: 'dreadnoughtbeamplasma',
+    railgun: 'railgunsniperartillery',
+    reaper: 'reaperancientmythical',
+    flagship: 'flagshiproyalimperial',
+  }
+  options.fleetup = newToLegacyUpgradeNames[options.engName];
+
+  this._requirements = options.requirements;
+  options.requirements = function() {
+    const requirements = this._requirements();
+
+    requirements.forEach((requirement) => {
+      let [className, group, engName] = requirement[0].split('/');
+      if (Game.newToLegacyNames[engName]) {
+        engName = Game.newToLegacyNames[engName];
+      }
+      requirement[0] = Game[className].items[group.toLocaleLowerCase()][engName.toLocaleLowerCase()];
+    });
+
+    return requirements;
+  }
+
+  this._targets = options.targets;
+  options.targets = function() {
+    if (idParts[1] === 'Ground') {
+      return this._targets.map((target) => {
+        let [, type, group, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
+        if (Game.newToLegacyNames[engName]) {
+          engName = Game.newToLegacyNames[engName];
+        }
+        side = (side === 'Human' ? 'army' : 'reptiles');
+        return Game.Unit.items[side].ground[engName.toLocaleLowerCase()];
+      });
+    } else {
+      return this._targets.map((target) => {
+        let [, type, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
+        if (Game.newToLegacyNames[engName]) {
+          engName = Game.newToLegacyNames[engName];
+        }
+        side = (side === 'Human' ? 'army' : 'reptiles'); 
+        return Game.Unit.items[side].fleet[engName.toLocaleLowerCase()];
+      });
+    }
+  }
+
+  if (options.basePrice) {
+    this._basePrice = options.basePrice;
+    options.basePrice = {};
+    _(this._basePrice).keys().forEach((resourceName) => {
+      let realName = resourceName.toLocaleLowerCase();
+      if (Game.newToLegacyNames[realName]) {
+        realName = Game.newToLegacyNames[realName];
+      }
+      options.basePrice[realName] = this._basePrice[resourceName];
+    });
+  }
+  //
+
   game.Unit.superclass.constructor.apply(this, arguments);
 
   if (Game.Unit.items.army[this.side][this.engName]) {
@@ -79,6 +161,53 @@ game.Unit = function(options) {
 game.extend(game.Unit, game.Item);
 
 game.ReptileUnit = function(options) {
+  // New-to-legacy
+  const idParts = options.id.split('/');
+  options.name = options.title;
+  options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
+  options.fleetup = options.upgrade;
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+
+  this._targets = options.targets;
+  options.targets = function() {
+    if (idParts[1] === 'Ground') {
+      return this._targets.map((target) => {
+        let [, type, group, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
+        if (Game.newToLegacyNames[engName]) {
+          engName = Game.newToLegacyNames[engName];
+        }
+        side = (side === 'Human' ? 'army' : 'reptiles');
+        return Game.Unit.items[side].ground[engName.toLocaleLowerCase()];
+      });
+    } else {
+      return this._targets.map((target) => {
+        let [, type, side, engName] = target.split('/');
+        engName = engName.toLocaleLowerCase();
+        if (Game.newToLegacyNames[engName]) {
+          engName = Game.newToLegacyNames[engName];
+        }
+        side = (side === 'Human' ? 'army' : 'reptiles'); 
+        return Game.Unit.items[side].fleet[engName.toLocaleLowerCase()];
+      });
+    }
+  }
+
+  if (options.basePrice) {
+    this._basePrice = options.basePrice;
+    options.basePrice = {};
+    _(this._basePrice).keys().forEach((resourceName) => {
+      let realName = resourceName.toLocaleLowerCase();
+      if (Game.newToLegacyNames[realName]) {
+        realName = Game.newToLegacyNames[realName];
+      }
+      options.basePrice[realName] = this._basePrice[resourceName];
+    });
+  }
+  //
   game.ReptileUnit.superclass.constructor.apply(this, arguments);
 
   if (Game.Unit.items.reptiles[this.group][this.engName]) {

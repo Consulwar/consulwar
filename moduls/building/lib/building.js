@@ -2,6 +2,51 @@ initBuildingLib = function() {
 'use strict';
 
 game.Building = function(options){
+  // New-to-legacy
+  const idParts = options.id.split('/');
+  options.name = options.title;
+  options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+
+  Game.newToLegacyEffects(options);
+
+  this._basePrice = options.basePrice;
+  options.basePrice = function(level = this.currentLevel()) {
+    const price = this._basePrice(level);
+    const realPrice = {};
+    _(price).keys().forEach((resourceName) => {
+      let realName = resourceName.toLocaleLowerCase();
+      if (Game.newToLegacyNames[realName]) {
+        realName = Game.newToLegacyNames[realName];
+      }
+      realPrice[realName] = [
+        price[resourceName][0],
+        Game.functions[price[resourceName][1]],
+        price[resourceName][2],
+      ];
+    });
+    return realPrice;
+  }
+
+  this._requirements = options.requirements;
+  options.requirements = function(level = this.currentLevel()) {
+    const requirements = this._requirements(level);
+
+    requirements.forEach((requirement) => {
+      let [className, group, engName] = requirement[0].split('/');
+      if (Game.newToLegacyNames[engName]) {
+        engName = Game.newToLegacyNames[engName];
+      }
+      requirement[0] = Game[className].items[group.toLocaleLowerCase()][engName.toLocaleLowerCase()];
+    });
+
+    return requirements;
+  }
+  //
+
   game.Building.superclass.constructor.apply(this, arguments);
 
   this.type = 'building';

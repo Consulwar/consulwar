@@ -122,6 +122,4 @@ Meteor.publish('containers', function () {
   }
 });
 
-initBuildingSpecialContainerContentServerMain();
-
 };

@@ -499,6 +499,12 @@ Game = {
 
     natalyverlen: 'nataly',
     thirdengineering: 'thirdenginery',
+
+    greenring: 'green_ring',
+    bloodymess: 'bloody_mess',
+    mortalcombat: 'mortal_combat',
+    madrace: 'mad_race',
+    firedragon: 'fire_dragon',
   },
 
   newToLegacyEffects(options) {

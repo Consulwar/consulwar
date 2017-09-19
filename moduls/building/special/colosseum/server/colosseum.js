@@ -2,7 +2,6 @@ initBuildingSpecialColosseumServer = function() {
 'use strict';
 
 initBuildingSpecialColosseumLib();
-initBuildingSpecialColosseumContentServerMain();
 
 Meteor.methods({
   'colosseum.startTournament': function(id) {

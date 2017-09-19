@@ -23,7 +23,7 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
           case 'Research':
             return Game[idParts[0]].has(
               Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
-              Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
+              Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
               condition[1]
             );
         }

@@ -10,7 +10,41 @@ Game.Quest.Collection._ensureIndex({
 Game.Quest.regularQuests = {};
 Game.Quest.dailyQuests = {};
 
-game.QuestLine = function(options, quests) {
+game.QuestLine = function(options, quests, isNew = true) {
+  if (isNew) {
+    // New-to-legacy
+    let [, , who, engName] = options.id.split('/');
+    options.who = who.toLocaleLowerCase();
+    options.engName = engName; // No need to lower case!
+    options.finishText = options.finalText;
+
+    if (Game.newToLegacyNames[options.who]) {
+      options.who = Game.newToLegacyNames[options.who];
+    }
+
+    options.canStart = function() {
+      return _(options.condition).every((condition) => {
+        let idParts = condition[0].split('/');
+
+        switch(idParts[0]) {
+          case 'Quest':
+            return Game.Quest.checkFinished(idParts[idParts.length - 1]);
+          case 'Building':
+          case 'Research':
+            return Game[idParts[0]].has(
+              Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
+              Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
+              condition[1]
+            );
+        }
+        return false;
+      });
+    }
+
+    quests = options.quests.map(quest => new game.Quest(quest));
+    //
+  }
+
   this.constructor = function(options, quests) {
     if (!options.engName) {
       throw new Meteor.Error('Ошибка в контенте', 'Не указано имя цепочки заданий');
@@ -74,10 +108,6 @@ game.DailyQuest = function(options) {
 
   if (Game.newToLegacyNames[options.who]) {
     options.who = Game.newToLegacyNames[options.who];
-  }
-
-  if (Game.newToLegacyNames[options.engName]) {
-    options.engName = Game.newToLegacyNames[options.engName];
   }
   //
 

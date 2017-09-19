@@ -2,6 +2,23 @@ initHouseLib = function() {
 'use strict';
 
 game.HouseItem = function(options) {
+  // New-to-legacy
+  const idParts = options.id.split('/');
+  options.name = options.title;
+  options.subgroup = idParts[1].toLocaleLowerCase();
+  options.engName = idParts[2].toLocaleLowerCase();
+
+  if (Game.newToLegacyNames[options.engName]) {
+    options.engName = Game.newToLegacyNames[options.engName];
+  }
+
+  if (Game.newToLegacyNames[options.subgroup]) {
+    options.subgroup = Game.newToLegacyNames[options.subgroup];
+  }
+  options.group = options.subgroup;
+
+  Game.newToLegacyEffects(options);
+  //
   this.doNotRegisterEffect = true;
 
   game.HouseItem.superclass.constructor.apply(this, arguments);

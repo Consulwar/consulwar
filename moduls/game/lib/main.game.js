@@ -505,6 +505,8 @@ Game = {
     mortalcombat: 'mortal_combat',
     madrace: 'mad_race',
     firedragon: 'fire_dragon',
+
+    throne: 'tron',
   },
 
   newToLegacyEffects(options) {

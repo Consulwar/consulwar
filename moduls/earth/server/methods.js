@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthServerMethods = function() {
 'use strict';
@@ -151,19 +152,23 @@ Meteor.methods({
 
     check(targetZone, String);
 
-    let army = Game.EarthUnits.get();
+    let earthUnits = Game.EarthUnits.get();
 
-    if (!army) {
+    if (!earthUnits) {
       throw new Meteor.Error('Армия отсутствует.');
+    }
+
+    if (earthUnits.generalCommand === ResponseToGeneral.accept) {
+      throw new Meteor.Error('Вы уже приняли приказ генерала.');
     }
 
     if (!Game.EarthZones.getByName(targetZone)) {
       throw new Meteor.Error('Не существует указанная зона перемещения.');
     }
 
-    let armyZone = Game.EarthZones.getByName(army.zoneName);
+    let armyZone = Game.EarthZones.getByName(earthUnits.zoneName);
 
-    if (targetZone !== army.zoneName && armyZone.links.indexOf(targetZone) === -1) {
+    if (targetZone !== earthUnits.zoneName && armyZone.links.indexOf(targetZone) === -1) {
       throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
     }
 
@@ -171,23 +176,19 @@ Meteor.methods({
       throw new Meteor.Error('Невозможно перемещение армий во время боя.');
     }
 
-    if (army.zoneName === targetZone) {
-      Game.EarthUnits.Collection.update({
-        user_id: user._id
-      }, {
-        $unset: {
-          targetZone: 1
-        }
-      });
+    const modifier = {
+      $set: {},
+    };
+
+    if (earthUnits.zoneName === targetZone) {
+      modifier.$set.command = Command.WAIT;
+      modifier.$unset = { commandTarget: 1 };
     } else {
-      Game.EarthUnits.Collection.update({
-        user_id: user._id
-      }, {
-        $set: {
-          targetZone
-        }
-      });
+      modifier.$set.command = Command.MOVE;
+      modifier.$set.commandTarget = targetZone;
     }
+
+    Game.EarthUnits.Collection.update({ user_id: user._id }, modifier);
   },
 
   'earth.setReptileArmy': function (zoneName, modifier, units, isOnTurn) {
@@ -251,7 +252,7 @@ Meteor.methods({
     }
   },
 
-  'earth.generalCommand'(targetZone, users) {
+  'earth.generalCommand'(command, commandTarget) {
     const user = Meteor.user();
 
     if (!user || !user._id) {
@@ -264,13 +265,6 @@ Meteor.methods({
 
     Game.Log.method('earth.generalCommand');
 
-    // TODO: if (Game.Earth.TIME_TO_GENERAL_COMMAND) {
-    //
-    // }
-
-    check(targetZone, String);
-    check(users, Match.Maybe(Array));
-
     const zone = Game.EarthZones.Collection.findOne({
       'general.username': user.username,
     });
@@ -278,35 +272,99 @@ Meteor.methods({
       throw new Meteor.Error('Ишь чего удумал.');
     }
 
-    if (!Game.EarthZones.getByName(targetZone)) {
-      throw new Meteor.Error('Не существует указанная зона перемещения.');
-    }
-
-    if (targetZone !== zone.name && zone.links.indexOf(targetZone) === -1) {
-      throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
-    }
-
     if (zone.battleID) {
-      throw new Meteor.Error('Невозможно перемещение армий во время боя.');
+      throw new Meteor.Error('Невозможна отдача приказов во время боя.');
     }
 
-    const selector = {
-      zoneName: zone.name,
-      generalsTarget: { $exists: false },
-    };
-    if (Array.isArray(users)) {
-      selector.username = { $in: users };
+    if (zone.general.command) {
+      if (zone.general.command === 'none') {
+        throw new Meteor.Error('Время отдачи приказов прошло.');
+      } else {
+        throw new Meteor.Error('Приказ уже отдан.');
+      }
     }
 
-    console.log(selector);
+    check(command, String);
+    check(commandTarget, Match.Maybe(String));
 
-    Game.EarthUnits.Collection.update(selector, {
-      $set: {
-        generalsTarget: targetZone,
-      },
-    }, {
-      multi: true,
-    });
+    if (command === Command.MOVE) {
+      const set = {};
+
+      if (commandTarget === zone.name) {
+        set['general.command'] = Command.WAIT;
+      } else {
+        set['general.command'] = command;
+
+        if (!Game.EarthZones.getByName(commandTarget)) {
+          throw new Meteor.Error('Не существует указанная зона перемещения.');
+        }
+
+        if (zone.links.indexOf(commandTarget) === -1) {
+          throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
+        }
+
+        set['general.commandTarget'] = commandTarget;
+
+        Game.EarthZones.Collection.update({
+          name: zone.name,
+        }, {
+          $set: set,
+        });
+      }
+    } else {
+      throw new Meteor.Error('Некоректный приказ.');
+    }
+  },
+
+  'earth.responseToGeneral'(isAccept) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method('earth.responseToGeneral');
+
+    check(isAccept, Boolean);
+
+    const earthUnits = Game.EarthUnits.get();
+
+    if (!earthUnits) {
+      throw new Meteor.Error('Армия отсутствует.');
+    }
+
+    if (earthUnits.generalCommand) {
+      throw new Meteor.Error('Решение уже принято');
+    }
+
+    const zone = Game.EarthZones.getByName(earthUnits.zoneName);
+    if (!zone.general || !zone.general.command || zone.general.command === Command.NONE) {
+      throw new Meteor.Error('Нет приказа генерала');
+    }
+
+    if (isAccept) {
+      Game.EarthUnits.Collection.update({
+        _id: earthUnits._id,
+      }, {
+        $set: {
+          generalCommand: ResponseToGeneral.ACCEPT,
+          command: zone.general.command,
+          commandTarget: zone.general.commandTarget,
+        },
+      });
+    } else {
+      Game.EarthUnits.Collection.update({
+        _id: earthUnits._id,
+      }, {
+        $set: {
+          generalCommand: ResponseToGeneral.DECLINE,
+        },
+      });
+    }
   },
 });
 

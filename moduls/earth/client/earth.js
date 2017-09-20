@@ -1,3 +1,5 @@
+import { Command, ResponseToGeneral } from '../lib/generals';
+
 initEarthClient = function() {
 'use strict';
 
@@ -446,8 +448,35 @@ Template.earthZonePopup.helpers({
     return Game.EarthUnits.get();
   },
 
-  isAdmin: function() {
-    return Meteor.user().role === 'admin';
+  isGeneralAndNotCommand() {
+    const earthUnit = Game.EarthUnits.get();
+
+    if (earthUnit) {
+      const zone = Game.EarthZones.getByName(earthUnit.zoneName);
+      return zone.general && zone.general.username === earthUnit.username &&
+        !zone.general.command;
+    }
+
+    return false;
+  },
+
+  hasCommand() {
+    const earthUnit = Game.EarthUnits.get();
+
+    if (earthUnit) {
+      const zone = Game.EarthZones.getByName(earthUnit.zoneName);
+      return zone.general && zone.general.command;
+    }
+
+    return false;
+  },
+
+  ResponseToGeneral() {
+    return ResponseToGeneral;
+  },
+
+  Command() {
+    return Command;
   },
 });
 
@@ -455,6 +484,19 @@ Template.earthZonePopup.events({
   'click .btn-command': function(e, t) {
     var action = $(e.currentTarget).attr('data-action');
     Meteor.call('earth.moveArmy', action);
+  },
+
+  'click .btn-general-command'(event) {
+    const target = $(event.currentTarget).attr('data-action');
+    Meteor.call('earth.generalCommand', 'move', target);
+  },
+
+  'click .btn-response-yes'() {
+    Meteor.call('earth.responseToGeneral', true);
+  },
+
+  'click .btn-response-no'() {
+    Meteor.call('earth.responseToGeneral', false);
   },
 
   'click .btn-admin-panel': function (e, t) {
@@ -918,7 +960,7 @@ let showLines = function (army) {
     armyZone.links.forEach(function (name) {
       let finish = zoneViews[name];
       if (finish && finish.isVisible) {
-        let selected = (name === army.targetZone);
+        let selected = (name === army.commandTarget);
         lineViews.push(new LineView(armyZone, finish, selected));
       }
     });

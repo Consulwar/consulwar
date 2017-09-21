@@ -333,7 +333,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('getBonusResources');
+    Game.Log.method.call(this, 'getBonusResources');
 
     if (name != 'crystals' && name != 'metals') {
       throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? Ха-ха');

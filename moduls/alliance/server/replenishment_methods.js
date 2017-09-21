@@ -13,7 +13,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('allianceReplenishmentHistory.create');
+    Game.Log.method.call(this, 'allianceReplenishmentHistory.create');
 
     check(resource, Match.OneOf({
       honor: Match.Integer,

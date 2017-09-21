@@ -995,7 +995,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
       }
 
       // honor
-      var honor = Math.floor(Game.Resources.calculateHonorFromResources(killedCost) * (mission.honor * 0.01));
+      var honor = Math.floor(Game.Resources.calculateHonorFromResources(killedCost, true) * (mission.honor * 0.01));
       if (honor > 0) {
         reward.honor = honor;
       }

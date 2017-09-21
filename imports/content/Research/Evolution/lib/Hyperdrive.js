@@ -21,7 +21,7 @@ export default {
     };
 
     if (level > 19) {
-      price.honor = [30, 'slowExponentialGrow', 20];
+      price.honor = [30, 'slowLinearGrow', 20];
     }
 
     if (level < 20) {

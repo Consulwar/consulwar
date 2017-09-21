@@ -2,7 +2,7 @@ import Unit from './unit';
 
 const priorityDamageCoef = [0.4, 0.3, 0.2];
 
-const restCoef = 0.8;
+const restCoef = 1;
 
 class Group {
   static fromObject(group) {

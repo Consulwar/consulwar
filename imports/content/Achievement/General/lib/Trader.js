@@ -1,9 +1,9 @@
 export default {
   id: 'Achievement/General/Trader',
   field: 'Resources/Bought/Total',
-  levels: [100000000],
+  levels: [1000000],
   title: 'Торговец',
-  description: 'Выторговать любых ресурсов на 100 000К за всё время',
+  description: 'Выторговать любых ресурсов на 1 000 000 за всё время',
   effects: {
     Special: [
       {

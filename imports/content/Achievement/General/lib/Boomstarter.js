@@ -2,7 +2,7 @@ export default {
   id: 'Achievement/General/Boomstarter',
   title: 'Бумстартер',
   description: 'Помогал проекту на бумстартере',
-  effect: {
+  effects: {
     Income: [
       {
         textBefore: '+',

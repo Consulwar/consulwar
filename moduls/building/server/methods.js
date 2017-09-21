@@ -13,7 +13,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('building.build');
+    Game.Log.method.call(this, 'building.build');
 
     check(options, Object);
     check(options.group, String);
@@ -97,7 +97,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('building.speedup');
+    Game.Log.method.call(this, 'building.speedup');
 
     check(options, Object);
     check(options.group, String);

@@ -165,7 +165,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.sendMessage');
+    Game.Log.method.call(this, 'chat.sendMessage');
 
     if (!Game.User.haveVerifiedEmail()) {
       throw new Meteor.Error('Сперва нужно верифицировать email');
@@ -471,7 +471,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.blockUser');
+    Game.Log.method.call(this, 'chat.blockUser');
 
     if (!options || !options.username) {
       throw new Meteor.Error('Не указан логин');
@@ -637,7 +637,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('chat.banAccount');
+    Game.Log.method.call(this, 'chat.banAccount');
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -671,7 +671,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('chat.cheaterVaip');
+    Game.Log.method.call(this, 'chat.cheaterVaip');
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -730,7 +730,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.createRoom');
+    Game.Log.method.call(this, 'chat.createRoom');
 
     // check room name
     check(title, String);
@@ -818,7 +818,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.removeRoom');
+    Game.Log.method.call(this, 'chat.removeRoom');
 
     check(name, String);
 
@@ -862,7 +862,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('chat.buyFreeChat');
+    Game.Log.method.call(this, 'chat.buyFreeChat');
 
     var resources = Game.Resources.getValue();
 
@@ -892,7 +892,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('chat.addCreditsToRoom');
+    Game.Log.method.call(this, 'chat.addCreditsToRoom');
 
     check(credits, Match.Integer);
 
@@ -982,7 +982,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.changeDiceModifierForRoom');
+    Game.Log.method.call(this, 'chat.changeDiceModifierForRoom');
 
     check(roomName, String);
     check(modifier, Match.Integer);
@@ -1054,7 +1054,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.changeMinRating');
+    Game.Log.method.call(this, 'chat.changeMinRating');
 
     check(roomName, String);
     check(minRating, Match.Integer);
@@ -1126,7 +1126,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.addModeratorToRoom');
+    Game.Log.method.call(this, 'chat.addModeratorToRoom');
 
     check(roomName, String);
     check(username, String);
@@ -1213,7 +1213,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.removeModeratorFromRoom');
+    Game.Log.method.call(this, 'chat.removeModeratorFromRoom');
 
     check(roomName, String);
     check(username, String);
@@ -1282,7 +1282,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.addUserToRoom');
+    Game.Log.method.call(this, 'chat.addUserToRoom');
 
     check(roomName, String);
     check(username, String);
@@ -1368,7 +1368,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method('chat.removeUserFromRoom');
+    Game.Log.method.call(this, 'chat.removeUserFromRoom');
 
     check(roomName, String);
     check(username, String);
@@ -1453,7 +1453,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('chat.loadMore');
+    Game.Log.method.call(this, 'chat.loadMore');
 
     check(options, Object);
     check(options.roomName, String);
@@ -1518,7 +1518,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('chat.getRoomsList');
+    Game.Log.method.call(this, 'chat.getRoomsList');
 
     return Game.Chat.Room.Collection.find({
       isOfficial: { $ne: true },

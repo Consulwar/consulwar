@@ -13,7 +13,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('unit.build');
+    Game.Log.method.call(this, 'unit.build');
 
     check(options, Object);
     check(options.group, String);
@@ -112,7 +112,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('unit.speedup');
+    Game.Log.method.call(this, 'unit.speedup');
 
     check(options, Object);
     check(options.group, String);
@@ -181,7 +181,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('unit.instantDamage');
+    Game.Log.method.call(this, 'unit.instantDamage');
 
     let cardsObject = {};
     let cardList = [];
@@ -395,7 +395,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('battleHistory.getPage');
+    Game.Log.method.call(this, 'battleHistory.getPage');
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');
@@ -423,7 +423,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('battleHistory.getById');
+    Game.Log.method.call(this, 'battleHistory.getById');
 
     return Game.BattleHistory.Collection.findOne({
       _id: id,

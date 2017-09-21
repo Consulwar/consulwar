@@ -17,7 +17,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.sendReinforcement');
+    Game.Log.method.call(this, 'earth.sendReinforcement');
 
     const currentTime = Game.getCurrentTime();
 
@@ -148,7 +148,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.moveArmy');
+    Game.Log.method.call(this, 'earth.moveArmy');
 
     check(targetZone, String);
 
@@ -202,7 +202,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.setReptileArmy');
+    Game.Log.method.call(this, 'earth.setReptileArmy');
 
     if (['admin'].indexOf(user.role) === -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -263,7 +263,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.generalCommand');
+    Game.Log.method.call(this, 'earth.generalCommand');
 
     const zone = Game.EarthZones.Collection.findOne({
       'general.username': user.username,
@@ -327,7 +327,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.responseToGeneral');
+    Game.Log.method.call(this, 'earth.responseToGeneral');
 
     check(isAccept, Boolean);
 

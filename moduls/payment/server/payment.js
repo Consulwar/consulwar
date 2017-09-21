@@ -99,7 +99,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('user.getPaymentIncomeHistory');
+    Game.Log.method.call(this, 'user.getPaymentIncomeHistory');
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');
@@ -127,7 +127,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('user.getPaymentIncomeHistory');
+    Game.Log.method.call(this, 'user.getPaymentIncomeHistory');
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');

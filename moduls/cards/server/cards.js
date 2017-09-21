@@ -146,7 +146,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('cards.buy');
+    Game.Log.method.call(this, 'cards.buy');
 
     var item = Game.Cards.getItem(id);
     if (!item) {
@@ -200,7 +200,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
     
-    Game.Log.method('cards.activate');
+    Game.Log.method.call(this, 'cards.activate');
 
     var item = Game.Cards.getItem(id);
     if (!item) {

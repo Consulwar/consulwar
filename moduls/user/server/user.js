@@ -235,7 +235,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('user.changePlanetName');
+    Game.Log.method.call(this, 'user.changePlanetName');
 
     check(name, String);
     name = name.trim();

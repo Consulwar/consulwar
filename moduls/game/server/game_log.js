@@ -20,9 +20,9 @@ Game.Log.method = function(desc) {
 
   let dateStr = formatDate();
 
-  let ip = UserStatus.connections.findOne({userId: user._id}).ipAddr;
+  let ip = this.connection.clientAddress;
 
-  console.log('[' + dateStr + '] ' + user.username + ' (' + ip + '): ' + desc);
+  console.log('[' + dateStr + '] ' + (user ? user.username : '') + ' (' + ip + '): ' + desc);
 
   Game.datadog.increment('call.' + desc);
 };

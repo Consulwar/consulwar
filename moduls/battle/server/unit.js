@@ -14,7 +14,7 @@ class Unit {
 
   getTotalDamage() {
     let damage = this.weapon.damage;
-    return Math.floor(Game.Random.interval(damage.min * this.count, damage.max * this.count) / 2 );
+    return Game.Random.interval(damage.min * this.count, damage.max * this.count);
   }
 
   isEqualsToModel(unit) {

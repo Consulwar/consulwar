@@ -10,7 +10,7 @@ export default {
         priority: 1,
         affect: 'humans',
         result() {
-          return 60;
+          return 10;
         },
       },
     ],

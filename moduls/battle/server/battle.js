@@ -4,10 +4,6 @@ import traverseGroup from '../lib/imports/traverseGroup';
 
 let Collection = new Meteor.Collection('battle');
 
-Collection._ensureIndex({
-  userNames: 1
-});
-
 const Status = {
   progress: 1,
   finish: 2
@@ -53,10 +49,6 @@ class Battle {
     let battle = Collection.findOne({_id: id});
 
     return new Battle(battle);
-  }
-
-  static findForUsername(username) {
-    return Collection.find({userNames: username}).fetch();
   }
 
   static addGroup(id, side, username, group) {
@@ -166,7 +158,7 @@ class Battle {
 
     let killedCost = Game.Unit.calculateArmyCost(roundResult.killed[ENEMY_SIDE]);
     let mission = Game.Battle.items[ options.missionType ];
-    let totalHonor = (getPoints(killedCost) / 100) * (mission.honor * 0.01);
+    let totalHonor = Game.Resources.calculateHonorFromResources(killedCost) * (mission.honor * 0.01);
 
     if (totalHonor > 0) {
       let armyPowers = this.armyPowers;

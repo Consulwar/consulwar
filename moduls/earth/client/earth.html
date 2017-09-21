@@ -15,7 +15,27 @@
       <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
       {{#if hasLink}}
         {{#if notBattle}}
-          <a class="btn-command" data-action="{{zone.name}}">
+          {{#unless eq army.generalCommand ResponseToGeneral.ACCEPT}}
+            <a class="btn-command" data-action="{{zone.name}}">
+              {{#if eq army.zoneName zone.name}}
+                Ждём
+              {{else}}
+                {{#if zone.isEnemy}}
+                  В атаку
+                {{else}}
+                  Идём
+                {{/if}}
+              {{/if}}
+            </a>
+          {{/unless}}
+        {{/if}}
+        {{#if eq army.zoneName zone.name}}
+          <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
+        {{/if}}
+
+        {{#if and (eq armyZone.general.username user.username) (not armyZone.general.command)}}
+          <a class="btn-general-command" data-action="{{zone.name}}">
+            Приказ:
             {{#if eq army.zoneName zone.name}}
               Ждём
             {{else}}
@@ -27,15 +47,35 @@
             {{/if}}
           </a>
         {{/if}}
+
         {{#if eq army.zoneName zone.name}}
-          <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
+          {{#if zone.general.command}}
+            Генерал приказал:
+            {{#if eq zone.general.command Command.MOVE}}
+              Идем на {{zone.general.commandTarget}}
+            {{else}}
+              Ждём
+            {{/if}}
+
+            {{#if army.generalCommand}}
+              Вы
+              {{#if eq army.generalCommand ResponseToGeneral.ACCEPT}}
+                согласились
+              {{else}}
+                не согласились
+              {{/if}}
+            {{else}}
+              <a class="btn-response-yes" data-action="{{zone.name}}">Да</a>
+              <a class="btn-response-no" data-action="{{zone.name}}">Нет</a>
+            {{/if}}
+          {{/if}}
         {{/if}}
       {{else}}
         {{#if not zone.isEnemy}}
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Отправить</a>
         {{/if}}
       {{/if}}
-      {{#if isAdmin}}
+      {{#if eq user.role 'admin'}}
         <a class="btn-admin-panel" data-action="{{zone.name}}">Админка</a>
       {{/if}}
     </div>

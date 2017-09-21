@@ -2,9 +2,9 @@ export default {
   notImplemented: true,
   id: 'Achievement/General/Leader',
   // field: 'statue.gained.honor',
-  levels: [1000000],
+  levels: [100000],
   title: 'Вождь',
-  description: 'Заработать 1 000К чести от статуи консула',
+  description: 'Заработать 100 000 чести от статуи консула',
   effects: {
     Special: [
       {

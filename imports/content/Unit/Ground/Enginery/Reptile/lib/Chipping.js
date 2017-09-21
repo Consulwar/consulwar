@@ -4,8 +4,8 @@ export default {
   description: 'Отбойный Комплекс — это огромное боевое здание, до упора напичканное турелями, системами ПВО и дальнобойными орудиями. Обычно такие комплексы Рептилии устанавливают в самых важных боевых точках и сражаться с их и без того сильной армией, да ещё при поддержке этих Комплексов становится буквально адской задачей.',
   basePrice: {
     humans: 10000,
-    metals: 1500000,
-    crystals: 540000,
+    metals: 15000,
+    crystals: 5400,
     time: 3600,
   },
   characteristics: {
@@ -18,6 +18,6 @@ export default {
   targets: [
     'Unit/Ground/Enginery/Human/MotherTank',
     'Unit/Ground/Enginery/Human/Grandmother',
-    'Unit/Ground/Enginery/Human/Hbhr',
+    'Unit/Ground/Enginery/Human/HBHR',
   ],
 };

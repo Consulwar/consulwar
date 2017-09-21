@@ -1,9 +1,9 @@
 export default {
   id: 'Achievement/General/Slaver',
   field: 'Resources/Spent/Humans',
-  levels: [100000000],
+  levels: [1000000],
   title: 'Работорговец',
-  description: 'Потратить 100 000К людей',
+  description: 'Потратить 1 000 000 людей',
   effects: {
     Income: [
       {
@@ -12,7 +12,7 @@ export default {
         priority: 1,
         affect: 'humans',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 3000 : 0;
+          return (level > 0) ? 30 : 0;
         },
       },
     ],

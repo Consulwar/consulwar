@@ -7,7 +7,7 @@ export default {
       {
         condition: 'Unique/spaceEngine',
         textBefore: '',
-        textAfter: ' уровень движетелей',
+        textAfter: ' уровень движителей',
         result(level = this.getCurrentLevel()) {
           return level;
         },
@@ -16,12 +16,12 @@ export default {
   },
   basePrice(level = this.getCurrentLevel()) {
     const price = {
-      metals: [30, 'slowExponentialGrow', 0],
-      crystals: [200, 'slowExponentialGrow', 0],
+      metals: [0.3, 'slowExponentialGrow', 0],
+      crystals: [2, 'slowExponentialGrow', 0],
     };
 
     if (level > 19) {
-      price.honor = [300, 'slowLinearGrow', 20];
+      price.honor = [30, 'slowExponentialGrow', 20];
     }
 
     if (level < 20) {

@@ -344,12 +344,17 @@ Game.Unit = {
     return Game.Unit.get(group, name) >= count;
   },
 
-  calculateUnitsPower: function(units) {
+  calculateUnitsPower: function(units, isEarth = false) {
     let group = {};
 
     traverseGroup(units, function(armyName, typeName, unitName, count) {
       let unit = Game.Unit.items[armyName][typeName][unitName];
-      let characteristics = unit.characteristics;
+      let characteristics;
+      if (isEarth) {
+        characteristics = unit.options.characteristics;
+      } else {
+        characteristics = unit.characteristics;
+      }
 
       let insertedUnit;
       if (_.isNumber(unit.power)) {

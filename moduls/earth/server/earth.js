@@ -1,5 +1,9 @@
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import Battle from '../../battle/server/battle';
+import Generals from './generals';
+
+const Command = Generals.Command;
+const ResponseToGeneral = Generals.ResponseToGeneral;
 
 initEarthServer = function() {
 'use strict';
@@ -21,6 +25,10 @@ initEarthServerImportHex();
 
 Game.EarthUnits.Collection._ensureIndex({
   user_id: 1,
+});
+
+Game.EarthUnits.Collection._ensureIndex({
+  username: 1,
 });
 
 Game.EarthZones.Collection._ensureIndex({
@@ -200,71 +208,12 @@ Game.Earth.nextTurn = function() {
 
   checkInitialState();
 
-  let earthUnitsByZone = {};
-  let movedUnitsTo = {};
+  const earthUnitsByZone = {};
+  const movedUnitsTo = {};
+  moveUserArmies(earthUnitsByZone, movedUnitsTo);
 
-  Game.EarthUnits.Collection.find({}).forEach(function (army) {
-    let zoneName = army.zoneName;
-
-    if (army.targetZone) {
-      Game.EarthUnits.Collection.update({
-        _id: army._id
-      }, {
-        $set: {
-          zoneName: army.targetZone
-        },
-        $unset: {
-          targetZone: 1
-        }
-      });
-      zoneName = army.targetZone;
-
-      moveArmy(army, zoneName);
-
-      if (!movedUnitsTo[zoneName]) {
-        movedUnitsTo[zoneName] = [];
-      }
-      movedUnitsTo[zoneName].push({
-        name: army.username,
-        army: army.userArmy,
-      });
-    }
-
-    if (!earthUnitsByZone[zoneName]) {
-      earthUnitsByZone[zoneName] = {};
-    }
-
-    let userArmy = deepClone(army.userArmy);
-
-    traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
-      const unit = createUnit(armyName, typeName, unitName, count);
-      userArmy[armyName][typeName][unitName] = unit;
-    });
-
-    earthUnitsByZone[zoneName][army.username] = [userArmy];
-  });
-
-  let moveReptileTo = {};
-
-  Game.Earth.ReptileTurn.Collection.find({}).forEach(function (info) {
-    if (!moveReptileTo[info.targetZone]) {
-      moveReptileTo[info.targetZone] = [];
-    }
-    moveReptileTo[info.targetZone].push(info.army);
-
-    let inc = {};
-    _.pairs(info.army).forEach(function ([name, count]) {
-      inc[`enemyArmy.reptiles.ground.${name}`] = count;
-    });
-
-    Game.EarthZones.Collection.update({
-      name: info.targetZone
-    }, {
-      $inc: inc
-    });
-  });
-
-  Game.Earth.ReptileTurn.Collection.remove({});
+  const moveReptileTo = {};
+  moveReptileArmies(moveReptileTo);
 
   Game.EarthZones.getAll().forEach(function (zone) {
     let battle;
@@ -441,6 +390,8 @@ Game.Earth.nextTurn = function() {
     }
   });
 
+  Generals.reCalculate();
+
   console.log('-------- Earth next turn end ----------');
 };
 
@@ -465,6 +416,104 @@ const checkInitialState = function () {
       console.log('Active players ' + Game.User.countActivePlayers() + ' of ' + Game.Earth.MIN_ACTIVE_PLAYERS);
     }
   }
+};
+
+const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
+  const generalsCommandByZone = {};
+
+  Game.EarthZones.Collection.find({
+    'general.command': { $exists: true },
+  }).forEach(function (zone) {
+    generalsCommandByZone[zone.name] = {
+      generalCommand: zone.general.command,
+      generalCommandTarget: zone.general.commandTarget,
+    };
+  });
+
+  Game.EarthUnits.Collection.find({}).forEach(function (earthUnits) {
+    let targetZoneName;
+
+    const currentZoneName = earthUnits.zoneName;
+
+    const { generalCommand, generalCommandTarget } =
+      generalsCommandByZone[currentZoneName] || { generalCommand: Command.NONE };
+
+    if (
+      (generalCommand !== Command.NONE) &&
+      (earthUnits.generalCommand === ResponseToGeneral.ACCEPT ||
+      (!earthUnits.command && earthUnits.generalCommand !== ResponseToGeneral.DECLINE))
+    ) {
+      if (generalCommand === Command.WAIT) {
+        targetZoneName = currentZoneName;
+      } else {
+        targetZoneName = generalCommandTarget;
+      }
+    } else if (earthUnits.command === Command.MOVE) {
+      targetZoneName = earthUnits.commandTarget;
+    } else {
+      targetZoneName = currentZoneName;
+    }
+
+    if (targetZoneName !== currentZoneName) {
+      Game.EarthUnits.Collection.update({
+        _id: earthUnits._id,
+      }, {
+        $set: {
+          zoneName: targetZoneName,
+        },
+        $unset: {
+          command: 1,
+          commandTarget: 1,
+          generalCommand: 1,
+        },
+      });
+
+      moveArmy(earthUnits, targetZoneName);
+
+      if (!movedUnitsTo[targetZoneName]) {
+        movedUnitsTo[targetZoneName] = [];
+      }
+      movedUnitsTo[targetZoneName].push({
+        name: earthUnits.username,
+        army: earthUnits.userArmy,
+      });
+    }
+
+    if (!earthUnitsByZone[targetZoneName]) {
+      earthUnitsByZone[targetZoneName] = {};
+    }
+
+    let userArmy = deepClone(earthUnits.userArmy);
+
+    traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
+      const unit = createUnit(armyName, typeName, unitName, count);
+      userArmy[armyName][typeName][unitName] = unit;
+    });
+
+    earthUnitsByZone[targetZoneName][earthUnits.username] = [userArmy];
+  });
+};
+
+const moveReptileArmies = function (moveReptileTo) {
+  Game.Earth.ReptileTurn.Collection.find({}).forEach(function (info) {
+    if (!moveReptileTo[info.targetZone]) {
+      moveReptileTo[info.targetZone] = [];
+    }
+    moveReptileTo[info.targetZone].push(info.army);
+
+    const inc = {};
+    _.pairs(info.army).forEach(function ([name, count]) {
+      inc[`enemyArmy.reptiles.ground.${name}`] = count;
+    });
+
+    Game.EarthZones.Collection.update({
+      name: info.targetZone,
+    }, {
+      $inc: inc,
+    });
+  });
+
+  Game.Earth.ReptileTurn.Collection.remove({});
 };
 
 const moveArmy = function (army, targetZoneName) {
@@ -567,6 +616,16 @@ SyncedCron.add({
   job: function() {
     Game.Earth.nextTurn();
   }
+});
+
+SyncedCron.add({
+  name: 'Завершение времени отдачи команд генералами',
+  schedule(parser) {
+    return parser.text(Game.Earth.TIME_TO_GENERAL_COMMAND);
+  },
+  job() {
+    Generals.finishCommandsTime();
+  },
 });
 
 Meteor.publish('zones', function () {

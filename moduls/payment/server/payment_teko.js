@@ -332,7 +332,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method('teko.getPaymentUrl');
+    Game.Log.method.call(this, 'teko.getPaymentUrl');
 
     // check payment item
     check(id, String);

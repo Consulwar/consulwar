@@ -76,11 +76,11 @@ Game.PromoCode.History.Collection._ensureIndex({
 });
 
 Game.PromoCode.randomItems =  [{
-  resources: { metals: 50000, crystals: 15000 }
+  resources: { metals: 500, crystals: 150 }
 }, {
   resources: { credits: 100 }
 }, {
-  resources: { honor: 250 }
+  resources: { honor: 25 }
 }, {
   units: { fleet: { wasp: 30 } }
 }, {
@@ -109,7 +109,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('admin.getPromocodeHistory');
+    Game.Log.method.call(this, 'admin.getPromocodeHistory');
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -188,7 +188,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('admin.addPromoCode');
+    Game.Log.method.call(this, 'admin.addPromoCode');
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -284,7 +284,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('user.activatePromoCode');
+    Game.Log.method.call(this, 'user.activatePromoCode');
 
     check(code, String);
 

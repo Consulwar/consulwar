@@ -649,7 +649,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('planet.initialize');
+    Game.Log.method.call(this, 'planet.initialize');
 
     var planets = Game.Planets.getAll().fetch();
 
@@ -714,7 +714,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('planet.discover');
+    Game.Log.method.call(this, 'planet.discover');
 
     check(planetId, String);
 
@@ -754,7 +754,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('planet.collectArtefacts:');
+    Game.Log.method.call(this, 'planet.collectArtefacts:');
 
     check(planetId, String);
 
@@ -813,7 +813,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('planet.sendFleet');
+    Game.Log.method.call(this, 'planet.sendFleet');
 
     if (!Game.SpaceEvents.checkCanSendFleet()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
@@ -932,7 +932,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('planet.changeName');
+    Game.Log.method.call(this, 'planet.changeName');
 
     check(planetId, String);
     check(name, String);
@@ -986,7 +986,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('planet.buyExtraColony');
+    Game.Log.method.call(this, 'planet.buyExtraColony');
 
     if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
       throw new Meteor.Error('Больше нельзя купить дополнительных колоний');

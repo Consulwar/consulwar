@@ -4,10 +4,6 @@ import traverseGroup from '../lib/imports/traverseGroup';
 
 let Collection = new Meteor.Collection('battle');
 
-Collection._ensureIndex({
-  userNames: 1
-});
-
 const Status = {
   progress: 1,
   finish: 2
@@ -53,10 +49,6 @@ class Battle {
     let battle = Collection.findOne({_id: id});
 
     return new Battle(battle);
-  }
-
-  static findForUsername(username) {
-    return Collection.find({userNames: username}).fetch();
   }
 
   static addGroup(id, side, username, group) {

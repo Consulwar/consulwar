@@ -418,6 +418,14 @@ Template.earthZonePopup.helpers({
     return Game.EarthZones.getByName(this.name);
   },
 
+  armyZone() {
+    const earthUnit = Game.EarthUnits.get();
+    if (earthUnit) {
+      return Game.EarthZones.getByName(earthUnit.zoneName);
+    }
+    return null;
+  },
+
   hasLink: function () {
     let army = Game.EarthUnits.get();
     if (army) {
@@ -446,29 +454,6 @@ Template.earthZonePopup.helpers({
 
   army: function() {
     return Game.EarthUnits.get();
-  },
-
-  isGeneralAndNotCommand() {
-    const earthUnit = Game.EarthUnits.get();
-
-    if (earthUnit) {
-      const zone = Game.EarthZones.getByName(earthUnit.zoneName);
-      return zone.general && zone.general.username === earthUnit.username &&
-        !zone.general.command;
-    }
-
-    return false;
-  },
-
-  hasCommand() {
-    const earthUnit = Game.EarthUnits.get();
-
-    if (earthUnit) {
-      const zone = Game.EarthZones.getByName(earthUnit.zoneName);
-      return zone.general && zone.general.command;
-    }
-
-    return false;
   },
 
   ResponseToGeneral() {

@@ -4,7 +4,7 @@ class Generals {
   static reCalculate() {
     Generals.clearCurrents();
 
-    Game.EarthZones.getAll().forEach(function (zone) {
+    Game.EarthZones.getAll().forEach((zone) => {
       Generals.calculate(zone);
     });
   }

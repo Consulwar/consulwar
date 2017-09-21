@@ -4,8 +4,8 @@ export default {
   description: 'Крушитель чуть более поворотливый, чем наша Мамка, и гораздо меньших размеров. При этом особый наклон брони из странных сплавов, которые мы так и не смогли изучить, позволяет ему держать поразительное количество урона, при этом в ответ выдавая не меньше. И хоть ему не сравниться с нашими Тяжёлыми Танками, стоимость его гораздо ниже… Иначе как объяснить такое огромное количество этой техники в армии Рептилоидов?',
   basePrice: {
     humans: 500,
-    metals: 600000,
-    crystals: 120000,
+    metals: 6000,
+    crystals: 1200,
     time: 180,
   },
   characteristics: {
@@ -18,6 +18,6 @@ export default {
   targets: [
     'Unit/Ground/Enginery/Human/EasyTank',
     'Unit/Ground/Enginery/Human/Grandmother',
-    'Unit/Ground/Enginery/Human/Hbhr',
+    'Unit/Ground/Enginery/Human/HBHR',
   ],
 };

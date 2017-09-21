@@ -16,6 +16,7 @@ Game.Log.increment = function(desc, count) {
 };
 
 Game.Log.method = function(desc) {
+  return;
   let user = Meteor.user();
 
   let dateStr = formatDate();

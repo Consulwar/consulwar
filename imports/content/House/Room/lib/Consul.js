@@ -10,7 +10,7 @@ export default {
         priority: 1,
         affect: 'metals',
         result() {
-          return 30;
+          return 40;
         },
       },
     ],

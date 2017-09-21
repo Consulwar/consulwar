@@ -15,13 +15,13 @@ export default {
         affect: 'metals',
         result(level = this.getCurrentLevel()) {
           if (level < 10) {
-            return 2000 + (level * 20);
+            return 20 + (level * 0.2);
           } else if (level < 50) {
-            return 2000 + (level * 40);
+            return 20 + (level * 0.4);
           } else if (level < 100) {
-            return 2000 + (level * 80);
+            return 20 + (level * 0.8);
           }
-          return 2000 + (level * 160);
+          return 20 + (level * 1.6);
         },
       },
       {
@@ -33,20 +33,20 @@ export default {
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
           if (level < 10) {
-            return 1000 + (level * 10);
+            return 10 + (level * 0.1);
           } else if (level < 50) {
-            return 1000 + (level * 20);
+            return 10 + (level * 0.2);
           } else if (level < 100) {
-            return 1000 + (level * 40);
+            return 10 + (level * 0.4);
           }
-          return 1000 + (level * 80);
+          return 10 + (level * 0.8);
         },
       },
     ],
   },
   basePrice() {
     return {
-      honor: [400, 'slowExponentialGrow', 0],
+      honor: [40, 'slowExponentialGrow', 0],
     };
   },
   maxLevel: 100,

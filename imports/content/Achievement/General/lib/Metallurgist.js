@@ -1,9 +1,9 @@
 export default {
   id: 'Achievement/General/Metallurgist',
   field: 'Resources/Spent/Metals',
-  levels: [100000000],
+  levels: [1000000],
   title: 'Металлург',
-  description: 'Потратить 100 000К металла',
+  description: 'Потратить 1 000 000 металла',
   effects: {
     Income: [
       {
@@ -12,7 +12,7 @@ export default {
         priority: 1,
         affect: 'metals',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 2500 : 0;
+          return (level > 0) ? 25 : 0;
         },
       },
     ],

@@ -29,7 +29,7 @@ Game.Chat.Messages = {
 
     var income = Math.floor(Game.Resources.getIncome().crystals / 30);
     var basePrice = { 
-      crystals: Math.ceil(Math.max(Math.min(income, 10000), 100))
+      crystals: Math.ceil(Math.max(Math.min(income, 100), 1))
     };
     var price = Game.Effect.Price.applyTo({ engName: 'message' }, basePrice, true);
     if (!price || !price.crystals) {

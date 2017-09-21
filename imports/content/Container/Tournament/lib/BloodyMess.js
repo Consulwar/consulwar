@@ -4,6 +4,6 @@ export default {
   description: 'Шанс получить зеленый артефакт',
   level: 20,
   price: {
-    honor: 1000,
+    honor: 100,
   },
 };

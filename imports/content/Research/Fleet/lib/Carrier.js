@@ -38,7 +38,7 @@ export default {
   },
   basePrice() {
     return {
-      honor: [1200, 'slowExponentialGrow', 0],
+      honor: [120, 'slowExponentialGrow', 0],
     };
   },
   maxLevel: 100,

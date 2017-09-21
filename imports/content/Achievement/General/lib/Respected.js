@@ -1,9 +1,9 @@
 export default {
   id: 'Achievement/General/Respected',
   field: 'Resources/Spent/Honor',
-  levels: [10000000],
+  levels: [1000000],
   title: 'Почитаемый',
-  description: 'Потратить 10 000К чести',
+  description: 'Потратить 1 000 000 чести',
   effects: {
     Income: [
       {
@@ -12,7 +12,7 @@ export default {
         priority: 1,
         affect: 'honor',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 100 : 0;
+          return (level > 0) ? 10 : 0;
         },
       },
     ],

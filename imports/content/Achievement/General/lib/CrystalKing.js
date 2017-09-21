@@ -1,9 +1,9 @@
 export default {
   id: 'Achievement/General/CrystalKing',
   field: 'Resources/Spent/Crystals',
-  levels: [100000000],
+  levels: [1000000],
   title: 'Кристальный Король',
-  description: 'Потратить 100 000К кристаллов',
+  description: 'Потратить 1 000 000 кристаллов',
   effects: {
     Income: [
       {
@@ -12,7 +12,7 @@ export default {
         priority: 1,
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 2000 : 0;
+          return (level > 0) ? 20 : 0;
         },
       },
     ],

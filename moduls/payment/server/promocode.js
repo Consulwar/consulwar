@@ -76,11 +76,11 @@ Game.PromoCode.History.Collection._ensureIndex({
 });
 
 Game.PromoCode.randomItems =  [{
-  resources: { metals: 50000, crystals: 15000 }
+  resources: { metals: 500, crystals: 150 }
 }, {
   resources: { credits: 100 }
 }, {
-  resources: { honor: 250 }
+  resources: { honor: 25 }
 }, {
   units: { fleet: { wasp: 30 } }
 }, {

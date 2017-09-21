@@ -17,7 +17,8 @@
       "collectArtefactsPeriod": 120
     },
     "earth": {
-      "schedule": "at 4:00 pm"
+      "schedule": "at 4:00 pm",
+      "timeToGeneralCommand": "at 8:00 pm"
     },
     "building": {
       "special": {

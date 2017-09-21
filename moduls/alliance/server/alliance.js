@@ -156,9 +156,13 @@ Game.Alliance.addResource = function(allianceUrl, resource) {
 };
 
 Game.Alliance.calculateAllRating = function() {
-  console.log("Расчет рейтингов альянсов начался:", new Date());
-
   let alliances = Game.Alliance.getAll().fetch();
+
+  if (alliances.length === 0) {
+    return;
+  }
+
+  console.log("Расчет рейтингов альянсов начался:", new Date());
 
   let alliancesByName = {};
   for (let alliance of alliances) {

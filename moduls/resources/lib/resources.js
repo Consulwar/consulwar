@@ -85,19 +85,23 @@ Game.Resources = {
 
     rating += ((resources.metals) || 0);
     rating += ((resources.crystals * 3) || 0);
-    rating += ((resources.humans * 4) || 0);
-    rating += ((resources.honor * 5) || 0);
+    rating += ((resources.humans * 2) || 0);
+    rating += ((resources.honor * 0.5) || 0);
 
-    return Math.floor(rating / 100);
+    return Math.floor(rating);
   },
 
-  calculateHonorFromResources: function(resources) {
+  calculateHonorFromResources: function(resources, notBase = false) {
     var honor = 0;
-    
-    if (resources.base) {
-      honor += ((resources.base.metals) || 0);
-      honor += ((resources.base.crystals * 3) || 0);
-      honor += ((resources.base.humans * 4) || 0);
+
+    if (notBase) {
+      honor += ((resources.metals) || 0) * 10;
+      honor += ((resources.crystals * 3) || 0) * 10;
+      honor += ((resources.humans * 4) || 0) * 5;
+    } else if (resources.base) {
+      honor += ((resources.base.metals) || 0) * 10;
+      honor += ((resources.base.crystals * 3) || 0) * 10;
+      honor += ((resources.base.humans * 4) || 0) * 5;
     }
 
     return Math.floor(honor / 150);

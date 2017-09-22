@@ -158,7 +158,7 @@ class Battle {
 
     let killedCost = Game.Unit.calculateArmyCost(roundResult.killed[ENEMY_SIDE]);
     let mission = Game.Battle.items[ options.missionType ];
-    let totalHonor = (getPoints(killedCost) / 100) * (mission.honor * 0.01);
+    let totalHonor = Game.Resources.calculateHonorFromResources(killedCost, true) * (mission.honor * 0.01);
 
     if (totalHonor > 0) {
       let armyPowers = this.armyPowers;

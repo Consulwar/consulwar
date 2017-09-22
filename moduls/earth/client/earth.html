@@ -33,7 +33,7 @@
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
         {{/if}}
 
-        {{#if isGeneralAndNotCommand}}
+        {{#if and (eq armyZone.general.username user.username) (not armyZone.general.command)}}
           <a class="btn-general-command" data-action="{{zone.name}}">
             Приказ:
             {{#if eq army.zoneName zone.name}}
@@ -49,7 +49,7 @@
         {{/if}}
 
         {{#if eq army.zoneName zone.name}}
-          {{#if hasCommand}}
+          {{#if zone.general.command}}
             Генерал приказал:
             {{#if eq zone.general.command Command.MOVE}}
               Идем на {{zone.general.commandTarget}}

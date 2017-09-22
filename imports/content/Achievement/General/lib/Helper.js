@@ -10,7 +10,7 @@ export default {
         priority: 1,
         affect: 'honor',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 10 : 0;
+          return (level > 0) ? 1 : 0;
         },
       },
     ],

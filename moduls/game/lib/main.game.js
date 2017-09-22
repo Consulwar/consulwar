@@ -302,13 +302,13 @@ game.Item = function(options) {
       }
 
       if (!curPrice.time) {
-        curPrice.time = Math.max( Math.floor(sum / 12), 30 );
+        curPrice.time = Math.max( Math.floor(sum / 0.12), 5 );
       }
     } else {
       level = level ? level : 1;
 
       for (name in this.basePrice) {
-        curPrice[name] = this.basePrice[name] * level;
+        curPrice[name] = Math.ceil(this.basePrice[name] * level);
       }
     }
 

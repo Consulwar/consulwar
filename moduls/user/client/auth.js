@@ -248,7 +248,7 @@ Template.register_window_step3.events({
 
 let negativeCloseEvent = {
   'click .negative': function(e, t) {
-    t.$('.close')[0].click()
+    $('.register_window .close')[0].click();
   }
 };
 Template.register_window_step4.events(negativeCloseEvent);

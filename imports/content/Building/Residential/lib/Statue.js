@@ -10,7 +10,7 @@ export default {
         priority: 1,
         affect: 'honor',
         result(level = this.getCurrentLevel()) {
-          return level * 10;
+          return level * 1;
         },
       },
       {
@@ -19,19 +19,19 @@ export default {
         priority: 1,
         affect: 'honor',
         result(level = this.getCurrentLevel()) {
-          return [0, 10, 30, 50, 100, 250][Math.floor(level / 20)];
+          return [0, 1, 3, 5, 10, 25][Math.floor(level / 20)];
         },
       },
     ],
   },
   basePrice(level = this.getCurrentLevel()) {
     const price = {
-      metals: [5000, 'slowExponentialGrow', 0],
-      crystals: [2000, 'slowExponentialGrow', 0],
+      metals: [50, 'slowExponentialGrow', 0],
+      crystals: [20, 'slowExponentialGrow', 0],
     };
 
     if (level > 19) {
-      price.honor = [500, 'slowLinearGrow', 20];
+      price.honor = [50, 'slowLinearGrow', 20];
     }
 
     if (level < 20) {

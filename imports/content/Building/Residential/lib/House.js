@@ -10,7 +10,33 @@ export default {
         priority: 1,
         affect: 'humans',
         result(level = this.getCurrentLevel()) {
-          return level * 40;
+          return [
+            0,
+            1, 2, 3, 4, 5,
+            6, 7, 8, 9, 10,
+            11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20,
+            21.2, 22.4, 23.6, 24.8, 26,
+            27.2, 28.4, 29.6, 30.8, 32,
+            33.2, 34.4, 35.6, 36.8, 38,
+            39.2, 40.4, 41.6, 42.8, 45,
+            46.4, 47.8, 49.2, 50.6, 52,
+            53.4, 54.8, 56.2, 57.6, 59,
+            60.4, 61.8, 63.2, 64.6, 66,
+            67.4, 68.8, 70.2, 71.6, 75,
+            76.6, 78.2, 79.8, 81.4, 83,
+            84.6, 86.2, 87.8, 89.4, 91,
+            92.6, 94.2, 95.8, 97.4, 99,
+            100.6, 102.2, 103.8, 105.4, 110,
+            111.8, 113.6, 115.4, 117.2, 119,
+            120.8, 122.6, 124.4, 126.2, 128,
+            129.8, 131.6, 133.4, 135.2, 137,
+            138.8, 140.6, 142.4, 144.2, 150,
+            152, 154, 156, 158, 160,
+            162, 164, 166, 168, 170,
+            172, 174, 176, 178, 180,
+            182, 184, 186, 188, 200,
+          ][level];
         },
       },
     ],
@@ -24,11 +50,12 @@ export default {
         result(level = this.getCurrentLevel()) {
           return [
             0,
-            100000,
-            250000,
-            500000,
-            1000000,
-            2000000,
+            1000,
+            2500,
+            5000,
+            10000,
+            20000,
+            40000,
           ][Math.floor(level / 20)];
         },
       },
@@ -36,12 +63,12 @@ export default {
   },
   basePrice(level = this.getCurrentLevel()) {
     const price = {
-      metals: [20, 'slowExponentialGrow', 0],
-      crystals: [10, 'slowExponentialGrow', 0],
+      metals: [0.2, 'slowExponentialGrow', 0],
+      crystals: [0.1, 'slowExponentialGrow', 0],
     };
 
     if (level > 19) {
-      price.honor = [40, 'slowLinearGrow', 20];
+      price.honor = [4, 'slowLinearGrow', 20];
     }
 
     if (level < 20) {

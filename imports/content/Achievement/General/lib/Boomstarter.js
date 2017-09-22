@@ -2,7 +2,7 @@ export default {
   id: 'Achievement/General/Boomstarter',
   title: 'Бумстартер',
   description: 'Помогал проекту на бумстартере',
-  effect: {
+  effects: {
     Income: [
       {
         textBefore: '+',
@@ -10,7 +10,7 @@ export default {
         priority: 1,
         affect: 'metals',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 1000 : 0;
+          return (level > 0) ? 10 : 0;
         },
       },
       {
@@ -19,7 +19,7 @@ export default {
         priority: 1,
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
-          return (level > 0) ? 300 : 0;
+          return (level > 0) ? 3 : 0;
         },
       },
     ],

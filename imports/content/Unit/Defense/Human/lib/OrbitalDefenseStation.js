@@ -3,8 +3,8 @@ export default {
   title: 'Орбитальная Станция Обороны',
   description: 'Космическая Станция Обороны —это гигантский боевой комплекс на орбите планеты. Броня этого грандиозного сооружения почти непробиваема, а вооружение отличается невероятной точностью и мощностью. Имей вы такой объект на орбите своей колонии, Консул, Чешуйчатые подумали бы дважды, прежде чем нападать на вас.',
   basePrice: {
-    metals: 1200000,
-    crystals: 350000,
+    metals: 12000,
+    crystals: 3500,
     time: 60 * 60 * 24,
   },
   characteristics: {
@@ -24,7 +24,7 @@ export default {
       ['Building/Military/DefenseComplex', 90],
       ['Research/Evolution/Engineering', 85],
       ['Research/Evolution/Converter', 70],
-      ['Building/Military/Oscd', 10],
+      ['Building/Military/OSCD', 10],
     ];
   },
 };

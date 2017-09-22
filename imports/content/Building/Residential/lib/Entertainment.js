@@ -28,12 +28,12 @@ export default {
   },
   basePrice(level = this.getCurrentLevel()) {
     const price = {
-      metals: [300, 'slowExponentialGrow', 0],
-      crystals: [400, 'slowExponentialGrow', 0],
+      metals: [3, 'slowExponentialGrow', 0],
+      crystals: [4, 'slowExponentialGrow', 0],
     };
 
     if (level > 19) {
-      price.honor = [700, 'slowLinearGrow', 20];
+      price.honor = [70, 'slowLinearGrow', 20];
     }
 
     if (level < 20) {

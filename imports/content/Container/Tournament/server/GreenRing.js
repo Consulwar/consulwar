@@ -26,8 +26,8 @@ export default {
     {
       chance: 10,
       profit: {
-        'Resource/Base/Metal': 25000,
-        'Resource/Base/Crystal': 25000,
+        'Resource/Base/Metal': 250,
+        'Resource/Base/Crystal': 250,
       },
     },
   ],

@@ -24,7 +24,7 @@ export default {
         priority: 1,
         affect: 'humans',
         result(level = this.getCurrentLevel()) {
-          return [100, 250, 500, 750, 1000][level - 1];
+          return [1, 2.5, 5, 7.5, 10][level - 1];
         },
       },
     ],

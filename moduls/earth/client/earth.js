@@ -4,6 +4,7 @@ initEarthClient = function() {
 'use strict';
 
 initEarthLib();
+initEarthAdminClient();
 
 Meteor.subscribe('zones');
 Meteor.subscribe('earthUnits');
@@ -986,81 +987,5 @@ Template.earth.onDestroyed(function() {
   }
   */
 });
-
-
-Template.adminReptileChange.helpers({
-  army: function () {
-    const zone = Game.EarthZones.getByName(this.zoneName);
-    const zoneArmy = zone.enemyArmy ? zone.enemyArmy.reptiles.ground : {};
-
-    let result = [];
-
-    const groundUnits = Game.Unit.items.reptiles.ground;
-    for (let unitName in groundUnits) {
-      if (groundUnits.hasOwnProperty(unitName)) {
-        result.push({
-          engName: unitName,
-          name: groundUnits[unitName].name,
-          count: zoneArmy[unitName] || 0,
-        });
-      }
-    }
-
-    return result;
-  },
-});
-
-Template.adminReptileChange.events({
-  'click .close': function (e, t) {
-    Blaze.remove(t.view);
-  },
-
-  'click .change': function (e, t) {
-    let modifier = {};
-    let units = {};
-
-    const elements = $('.armies li');
-
-    fillInfo(elements, modifier, units);
-
-    Meteor.call('earth.setReptileArmy', this.zoneName, modifier, units, false, function(err) {
-      if (err) {
-        Notifications.error('Не удалось изменить армию: ', err.error);
-      } else {
-        Notifications.success('Армия успешно изменена.');
-      }
-    });
-  },
-
-  'click .changeTurn': function (e, t) {
-    let modifier = {};
-    let units = {};
-
-    const elements = $('.armies li');
-
-    fillInfo(elements, modifier, units);
-
-    Meteor.call('earth.setReptileArmy', this.zoneName, modifier, units, true, function(err) {
-      if (err) {
-        Notifications.error('Не удалось внести изменения: ', err.error);
-      } else {
-        Notifications.success('Армия успешно добавлена на следующий ход.');
-      }
-    });
-  },
-});
-
-const fillInfo = function (elements, modifier, units) {
-  for (let i = 0; i < elements.length; i++) {
-    const id = $(elements[i]).attr('data-id');
-    const count = parseInt($(elements[i]).find('input').val(), 10);
-
-    modifier[`enemyArmy.reptiles.ground.${id}`] = Math.max(0, count);
-
-    if (count !== 0) {
-      units[id] = count;
-    }
-  }
-};
 
 };

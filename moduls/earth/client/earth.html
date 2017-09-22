@@ -306,27 +306,3 @@
     <a class="btn-back" href="{{pathFor 'earthHistory' group='earth' page=currentPage}}"></a>
   </div>
 </template>
-
-<template name="adminReptileChange">
-  <div class="smoke"></div>
-  <div class="adminReptile">
-    <h2 title="{{this.zoneName}}" class="text-enemy">
-      {{this.zoneName}}
-    </h2>
-
-    <div class="close"></div>
-
-    <ul class="armies">
-      {{#each army}}
-        <li data-id="{{this.engName}}">
-          <label>{{this.name}}</label>
-
-          <input type="number" value="{{this.count}}"/>
-        </li>
-      {{/each}}
-    </ul>
-
-    <div class="change">Изменить</div>
-    <div class="changeTurn">Изменить на ход</div>
-  </div>
-</template>

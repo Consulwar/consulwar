@@ -430,6 +430,17 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
     };
   });
 
+  const bonuses = {};
+
+  Game.EarthZones.Collection.find({
+    bonus: { $exists: true },
+  }).forEach(function (zone) {
+    bonuses[zone.name] = {
+      bonus: zone.bonus,
+      players: [],
+    };
+  });
+
   Game.EarthUnits.Collection.find({}).forEach(function (earthUnits) {
     let targetZoneName;
 
@@ -454,19 +465,41 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
       targetZoneName = currentZoneName;
     }
 
-    if (targetZoneName !== currentZoneName) {
-      Game.EarthUnits.Collection.update({
-        _id: earthUnits._id,
-      }, {
-        $set: {
-          zoneName: targetZoneName,
-        },
-        $unset: {
-          command: 1,
-          commandTarget: 1,
-          generalCommand: 1,
-        },
+    let isGetBonus = false;
+    if (earthUnits.generalCommand === ResponseToGeneral.DECLINE) {
+      isGetBonus = false;
+    } else if (generalCommand === Command.NONE) {
+      isGetBonus = true;
+    } else if (earthUnits.generalCommand === ResponseToGeneral.ACCEPT) {
+      isGetBonus = true;
+    } else if (!earthUnits.generalCommand && !earthUnits.command) {
+      isGetBonus = true;
+    } else if (
+      earthUnits.command === generalCommand
+      && earthUnits.commandTarget === generalCommandTarget
+    ) {
+      isGetBonus = true;
+    }
+
+    if (isGetBonus && bonuses[currentZoneName]) {
+      bonuses[currentZoneName].players.push({
+        user_id: earthUnits.user_id,
+        value: 0,
       });
+    }
+
+    const modifier = {
+      $unset: {
+        command: 1,
+        commandTarget: 1,
+        generalCommand: 1,
+      },
+    };
+
+    if (targetZoneName !== currentZoneName) {
+      modifier.$set = {
+        zoneName: targetZoneName,
+      };
 
       moveArmy(earthUnits, targetZoneName);
 
@@ -478,6 +511,8 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
         army: earthUnits.userArmy,
       });
     }
+
+    Game.EarthUnits.Collection.update({ _id: earthUnits._id }, modifier);
 
     if (!earthUnitsByZone[targetZoneName]) {
       earthUnitsByZone[targetZoneName] = {};
@@ -492,6 +527,58 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
 
     earthUnitsByZone[targetZoneName][earthUnits.username] = [userArmy];
   });
+
+  giveBonuses(bonuses);
+};
+
+const giveBonuses = function (bonuses) {
+  _.values(bonuses).forEach(function ({ bonus, players }) {
+    if (players.length === 0) {
+      return;
+    }
+
+    // stage 1 - give all the players average count
+    const averageValue = Math.floor(bonus.count / players.length);
+    if (averageValue > 0) {
+      players.forEach(function (player) {
+        player.value = averageValue;
+      });
+    }
+
+    // stage 2 - the rest give by shuffling players and give by by the piece
+    let rest = bonus.count - (averageValue * players.length);
+    if (rest > 0) {
+      players = _.shuffle(players);
+
+      let i = 0;
+      while (rest > 0) {
+        players[i].value += 1;
+        rest -= 1;
+        i += 1;
+      }
+    }
+
+    players.forEach(function ({ user_id, value }) {
+      if (value > 0) {
+        const profit = createBonusObject(bonus.id, value);
+        Game.Resources.addProfit(profit, user_id);
+      }
+    });
+  });
+};
+
+const createBonusObject = function (id, value) {
+  const bonusObj = {};
+  const keys = id.split('.');
+  const lastKey = keys.pop();
+  let curObj = bonusObj;
+  keys.forEach(function (key) {
+    curObj[key] = {};
+    curObj = curObj[key];
+  });
+  curObj[lastKey] = value;
+
+  return bonusObj;
 };
 
 const moveReptileArmies = function (moveReptileTo) {

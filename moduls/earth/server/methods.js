@@ -158,7 +158,7 @@ Meteor.methods({
       throw new Meteor.Error('Армия отсутствует.');
     }
 
-    if (earthUnits.generalCommand === ResponseToGeneral.accept) {
+    if (earthUnits.generalCommand === ResponseToGeneral.ACCEPT) {
       throw new Meteor.Error('Вы уже приняли приказ генерала.');
     }
 
@@ -362,6 +362,45 @@ Meteor.methods({
       }, {
         $set: {
           generalCommand: ResponseToGeneral.DECLINE,
+        },
+      });
+    }
+  },
+
+  'earth.setBonus'(zoneName, bonus) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'earth.setReptileArmy');
+
+    if (['admin'].indexOf(user.role) === -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    check(zoneName, String);
+    check(bonus, Match.Maybe(Object));
+
+    if (!bonus) {
+      Game.EarthZones.Collection.update({
+        name: zoneName,
+      }, {
+        $unset: {
+          bonus: 1,
+        },
+      });
+    } else {
+      Game.EarthZones.Collection.update({
+        name: zoneName,
+      }, {
+        $set: {
+          bonus,
         },
       });
     }

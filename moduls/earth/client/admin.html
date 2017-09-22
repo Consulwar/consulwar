@@ -1,0 +1,36 @@
+<template name="adminReptileChange">
+  <div class="smoke"></div>
+  <div class="adminReptile">
+    <h2 title="{{this.zoneName}}" class="text-enemy">
+      {{this.zoneName}}
+    </h2>
+
+    <div class="close"></div>
+
+    <ul class="armies">
+      {{#each army}}
+        <li data-id="{{this.engName}}">
+          <label>{{this.name}}</label>
+
+          <input type="number" value="{{this.count}}"/>
+        </li>
+      {{/each}}
+    </ul>
+
+    <div class="change">Изменить</div>
+    <div class="changeTurn">Изменить на ход</div>
+
+    <br/>
+    <div class="bonusProfit">
+      Бонус:
+      <select>
+        {{#each options}}
+          <option {{this.selected}} name="{{this.id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+      <input type="text" value="{{currentValue}}"/>
+      <div class="setBonus">Установить</div>
+      <div class="deleteBonus">Удалить</div>
+    </div>
+  </div>
+</template>

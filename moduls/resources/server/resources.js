@@ -162,7 +162,7 @@ Game.Resources.rollProfit = function(drop) {
   return rollRandomValues( drop[i].profit );
 };
 
-Game.Resources.addProfit = function(profit, uid) {
+Game.Resources.addProfit = function(profit, uid = Meteor.userId()) {
   if (profit.resources) {
     Game.Resources.add(profit.resources, uid);
   }
@@ -182,24 +182,24 @@ Game.Resources.addProfit = function(profit, uid) {
 
   if (profit.votePower) {
     Meteor.users.update({
-      _id: uid !== undefined ? uid : Meteor.userId()
+      _id: uid,
     }, {
-      $inc: { votePowerBonus: profit.votePower }
+      $inc: { votePowerBonus: profit.votePower },
     });
   }
 
   if (profit.cards) {
-    Game.Cards.add(profit.cards);
+    Game.Cards.add(profit.cards, uid);
   }
 
   if (profit.containers) {
-    Game.Building.special.Container.add(profit.containers);
+    Game.Building.special.Container.add(profit.containers, uid);
   }
 
   if (profit.houseItems) {
     for (var itemGroup in profit.houseItems) {
       for (var itemName in profit.houseItems[itemGroup]) {
-        Game.House.add(itemGroup, itemName);
+        Game.House.add(itemGroup, itemName, uid);
       }
     }
   }

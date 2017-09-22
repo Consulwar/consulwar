@@ -7,21 +7,20 @@ Game.Building.special.Container.Collection._ensureIndex({
   user_id: 1
 });
 
-Game.Building.special.Container.initialize = function(user) {
-  user = user || Meteor.user();
-  var currentValue = Game.Building.special.Container.getValue(user._id);
+Game.Building.special.Container.initialize = function(user_id = Meteor.userId()) {
+  var currentValue = Game.Building.special.Container.getValue(user_id);
 
   if (currentValue === undefined) {
     Game.Building.special.Container.Collection.insert({
-      user_id: user._id
+      user_id,
     });
   }
 };
 
-Game.Building.special.Container.increment = function(containers, invertSign) {
+Game.Building.special.Container.increment = function(containers, invertSign, user_id = Meteor.userId()) {
   invertSign = invertSign === true ? -1 : 1;
 
-  Game.Building.special.Container.initialize();
+  Game.Building.special.Container.initialize(user_id);
 
   var inc = null;
   for (var key in containers) {
@@ -33,19 +32,19 @@ Game.Building.special.Container.increment = function(containers, invertSign) {
 
   if (inc) {
     Game.Building.special.Container.Collection.update({
-      user_id: Meteor.userId()
+      user_id,
     }, {
-      $inc: inc
+      $inc: inc,
     });
   }
 };
 
-Game.Building.special.Container.add = function(containers) {
-  return Game.Building.special.Container.increment(containers, false);
+Game.Building.special.Container.add = function(containers, user_id) {
+  return Game.Building.special.Container.increment(containers, false, user_id);
 };
 
-Game.Building.special.Container.spend = function(containers) {
-  return Game.Building.special.Container.increment(containers, true);
+Game.Building.special.Container.spend = function(containers, user_id) {
+  return Game.Building.special.Container.increment(containers, true, user_id);
 };
 
 Meteor.methods({

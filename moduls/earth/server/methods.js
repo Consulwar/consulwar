@@ -405,6 +405,36 @@ Meteor.methods({
       });
     }
   },
+
+  'earth.getEarthUnits'(username) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'earth.getEarthUnits');
+
+    check(username, String);
+
+    const earthUnits = Game.EarthUnits.Collection.findOne({
+      username,
+    }, {
+      fields: {
+        userArmy: 1,
+      },
+    });
+
+    if (earthUnits) {
+      return earthUnits.userArmy;
+    }
+
+    return null;
+  },
 });
 
 // ----------------------------------------------------------------------------

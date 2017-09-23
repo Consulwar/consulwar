@@ -419,6 +419,26 @@ Template.earthZonePopup.helpers({
     return Game.EarthZones.getByName(this.name);
   },
 
+  zoneBonusLine() {
+    const zone = Game.EarthZones.getByName(this.name);
+
+    const { id, count } = zone.bonus;
+
+    const bonusObj = {};
+    const keys = id.split('.');
+    const lastKey = keys.pop();
+    let curObj = bonusObj;
+    keys.forEach((key) => {
+      curObj[key] = {};
+      curObj = curObj[key];
+    });
+    curObj[lastKey] = count;
+
+    const item = Game.getObjectByPath(bonusObj);
+
+    return `${item.name}, ${count}`;
+  },
+
   armyZone() {
     const earthUnit = Game.EarthUnits.get();
     if (earthUnit) {

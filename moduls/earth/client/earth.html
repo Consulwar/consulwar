@@ -11,6 +11,10 @@
       <h2 title="{{info.name}}" class="{{#if info.isEnemy}}text-enemy{{else}}text-ours{{/if}}">
         {{zone.name}}
       </h2>
+      {{#if zone.bonus}}
+        <div>Бонус точки: {{zoneBonusLine}}</div>
+      {{/if}}
+      <div>Консулов: {{zone.usersCount}}</div>
       <!-- buttons -->
       <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
       {{#if hasLink}}

@@ -23,6 +23,7 @@
   .change,
   .setBonus,
   .deleteBonus
+  .changeTurn
     display block
     position relative
     cursor pointer
@@ -36,24 +37,9 @@
     font-weight bold
     background-image url(/img/game/quests/btn_take.png)
 
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-
-  .changeTurn
-    display block
-    position relative
-    cursor pointer
-    width 181px
-    height 40px
-    margin 0 auto
-    margin-top 20px
-    padding-top 10px
-    color #FFFFFF
-    font-size 20px
-    line-height 27px
-    font-weight bold
-    background-image url(/img/game/quests/btn_take.png)
+    &.changeTurn
+      font-size 20px
+      line-height 27px
 
     &:hover
       -webkit-filter brightness(1.4)

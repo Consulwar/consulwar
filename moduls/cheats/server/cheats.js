@@ -33,203 +33,85 @@ if (process.env.NODE_ENV == 'development') {
 
     'cheats.performBattleRounds': function(count) {
       let battle = Battle.create(
-        'Zav', {
-          "army" : {
-            "ground" : {
-              "horizontalbarman" : {
-                "count" : 1277659,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 27,
-                    "max" : 34
+        {
+          'tester1': [
+            {
+              "army": {
+                "fleet": {
+                  "gammadrone": {
+                    "count": 100,
+                    "weapon": {
+                      "damage": {
+                        "min": 552,
+                        "max": 575,
+                      },
+                      "signature": 100,
+                    },
+                    "health": {
+                      "armor": 1008,
+                      "signature": 100,
+                    },
                   },
-                  "signature" : 100
                 },
-                "health" : {
-                  "armor" : 16,
-                  "signature" : 100
-                }
-              }
-            }
-          }
+              },
+            },
+          ],
         },
-        'ai1', {
-          "reptiles" : {
-            "ground" : {
-              "striker" : {
-                "count" : 146822,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 11,
-                    "max" : 14
+        {
+          'ai1': [
+            {
+              "reptiles": {
+                "fleet": {
+                  "sphero": {
+                    "count": 7,
+                    "weapon": {
+                      "damage": {
+                        "min": 40,
+                        "max": 50,
+                      },
+                      "signature": 100,
+                    },
+                    "health": {
+                      "armor": 150,
+                      "signature": 100,
+                    },
                   },
-                  "signature" : 100
+                  "blade": {
+                    "count": 2,
+                    "weapon": {
+                      "damage": {
+                        "min": 320,
+                        "max": 400,
+                      },
+                      "signature": 100,
+                    },
+                    "health": {
+                      "armor": 700,
+                      "signature": 100,
+                    },
+                  },
+                  "trioniks": {
+                    "count": 2,
+                    "weapon": {
+                      "damage": {
+                        "min": 80,
+                        "max": 100,
+                      },
+                      "signature": 100,
+                    },
+                    "health": {
+                      "armor": 3500,
+                      "signature": 100,
+                    },
+                  },
                 },
-                "health" : {
-                  "armor" : 35,
-                  "signature" : 100
-                }
               },
-              "ripper" : {
-                "count" : 129945,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 36,
-                    "max" : 45
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 22,
-                  "signature" : 100
-                }
-              },
-              "horror" : {
-                "count" : 190,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 0,
-                    "max" : 0
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 85,
-                  "signature" : 100
-                }
-              },
-              // "slider" : {
-              //   "count" : 189,
-              //   "weapon" : {
-              //     "damage" : {
-              //       "min" : 240,
-              //       "max" : 300
-              //     },
-              //     "signature" : 100
-              //   },
-              //   "health" : {
-              //     "armor" : 1000,
-              //     "signature" : 100
-              //   }
-              // },
-              "breaker" : {
-                "count" : 1576,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 120,
-                    "max" : 150
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 500,
-                  "signature" : 100
-                }
-              },
-              "crusher" : {
-                "count" : 146,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 1200,
-                    "max" : 1500
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 35000,
-                  "signature" : 100
-                }
-              },
-              // "geccon" : {
-              //   "count" : 107,
-              //   "weapon" : {
-              //     "damage" : {
-              //       "min" : 7600,
-              //       "max" : 9500
-              //     },
-              //     "signature" : 100
-              //   },
-              //   "health" : {
-              //     "armor" : 2000,
-              //     "signature" : 100
-              //   }
-              // },
-              "amfizben" : {
-                "count" : 2681,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 180,
-                    "max" : 225
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 350,
-                  "signature" : 100
-                }
-              },
-              "amphibian" : {
-                "count" : 1198,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 4400,
-                    "max" : 5500
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 2500,
-                  "signature" : 100
-                }
-              },
-              "chipping" : {
-                "count" : 150,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 44000,
-                    "max" : 55000
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 150000,
-                  "signature" : 100
-                }
-              },
-              "toofucking" : {
-                "count" : 69,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 16000,
-                    "max" : 20000
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 30000,
-                  "signature" : 100
-                }
-              },
-              "patron" : {
-                "count" : 141,
-                "weapon" : {
-                  "damage" : {
-                    "min" : 20000,
-                    "max" : 25000
-                  },
-                  "signature" : 100
-                },
-                "health" : {
-                  "armor" : 15000,
-                  "signature" : 100
-                }
-              }
-            }
-          }
-        }
+            },
+          ],
+        },
       );
 
-      // Battle.addGroup(battle.id, '1', 'Zav', {
+      // Battle.addGroup(battle.id, '1', 'Tester2', {
       //   army: {
       //     fleet: {
       //       gammadrone: {

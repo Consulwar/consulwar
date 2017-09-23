@@ -485,12 +485,12 @@ Template.earthZonePopup.events({
     Meteor.call('earth.responseToGeneral', false);
   },
 
-  'click .btn-admin-panel': function (e, t) {
-    const zoneName = $(e.currentTarget).attr('data-action');
+  'click .btn-admin-panel': function (event, templateInstance) {
+    const zoneName = templateInstance.$(event.currentTarget).attr('data-action');
 
-    Blaze.renderWithData(Template.adminReptileChange, {
-      zoneName
-    }, $('.over')[0]);
+    Game.Popup.show('adminReptileChange', {
+      zoneName,
+    });
   },
 });
 
@@ -550,11 +550,11 @@ var ZoneView = function(mapView, zoneData) {
     };
 
     var enemyStyle = {
-      color: '#913b31',
+      color: (zone.isVisible ? '#913b31' : '#694743'),
       weight: 2,
       opacity: 0.1,
       fillOpacity: 0.05,
-      fillColor: '#913b31'
+      fillColor: (zone.isVisible ? '#913b31' : '#694743'),
     };
 
     var enemyStyleHover = {

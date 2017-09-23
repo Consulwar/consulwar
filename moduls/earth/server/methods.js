@@ -304,13 +304,13 @@ Meteor.methods({
         }
 
         set['general.commandTarget'] = commandTarget;
-
-        Game.EarthZones.Collection.update({
-          name: zone.name,
-        }, {
-          $set: set,
-        });
       }
+
+      Game.EarthZones.Collection.update({
+        name: zone.name,
+      }, {
+        $set: set,
+      });
     } else {
       throw new Meteor.Error('Некоректный приказ.');
     }

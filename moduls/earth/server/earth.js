@@ -532,7 +532,7 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
 };
 
 const giveBonuses = function (bonuses) {
-  _.values(bonuses).forEach(function ({ bonus, players }) {
+  _.values(bonuses).forEach(({ bonus, players }) => {
     if (players.length === 0) {
       return;
     }
@@ -540,7 +540,7 @@ const giveBonuses = function (bonuses) {
     // stage 1 - give all the players average count
     const averageValue = Math.floor(bonus.count / players.length);
     if (averageValue > 0) {
-      players.forEach(function (player) {
+      players.forEach((player) => {
         player.value = averageValue;
       });
     }
@@ -558,7 +558,7 @@ const giveBonuses = function (bonuses) {
       }
     }
 
-    players.forEach(function ({ user_id, value }) {
+    players.forEach(({ user_id, value }) => {
       if (value > 0) {
         const profit = createBonusObject(bonus.id, value);
         Game.Resources.addProfit(profit, user_id);
@@ -572,7 +572,7 @@ const createBonusObject = function (id, value) {
   const keys = id.split('.');
   const lastKey = keys.pop();
   let curObj = bonusObj;
-  keys.forEach(function (key) {
+  keys.forEach((key) => {
     curObj[key] = {};
     curObj = curObj[key];
   });

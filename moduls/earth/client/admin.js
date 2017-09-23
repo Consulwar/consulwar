@@ -8,20 +8,13 @@ Template.adminReptileChange.helpers({
     const zone = Game.EarthZones.getByName(this.zoneName);
     const zoneArmy = zone.enemyArmy ? zone.enemyArmy.reptiles.ground : {};
 
-    let result = [];
-
     const groundUnits = Game.Unit.items.reptiles.ground;
-    for (let unitName in groundUnits) {
-      if (groundUnits.hasOwnProperty(unitName)) {
-        result.push({
-          engName: unitName,
-          name: groundUnits[unitName].name,
-          count: zoneArmy[unitName] || 0,
-        });
-      }
-    }
 
-    return result;
+    return _(groundUnits).keys().map(unitName => ({
+      engName: unitName,
+      name: groundUnits[unitName].name,
+      count: zoneArmy[unitName] || 0,
+    }));
   },
 
   options() {
@@ -54,43 +47,43 @@ Template.adminReptileChange.helpers({
 
     push({ name: '----------------------------------------' });
 
-    for (let cardName in Game.Cards.items.donate) {
+    _(Game.Cards.items.donate).keys().forEach(function (cardName) {
       push({
-        id: 'cards.' + cardName,
+        id: `cards.${cardName}`,
         name: Game.Cards.items.donate[cardName].name,
       });
-    }
+    });
 
     push({ name: '----------------------------------------' });
 
-    for (let unitGroup in Game.Unit.items.army) {
-      for (let unitName in Game.Unit.items.army[unitGroup]) {
+    _(Game.Unit.items.army).keys().forEach((unitGroup) => {
+      _(Game.Unit.items.army[unitGroup]).keys().forEach((unitName) => {
         push({
-          id: 'units.' + unitGroup + '.' + unitName,
+          id: `units.${unitGroup}.${unitName}`,
           name: Game.Unit.items.army[unitGroup][unitName].name,
         });
-      }
-    }
+      });
+    });
 
     push({ name: '----------------------------------------' });
 
-    for (let itemGroup in Game.House.items) {
-      for (let itemName in Game.House.items[itemGroup]) {
+    _(Game.House.items).keys().forEach((itemGroup) => {
+      _(Game.House.items[itemGroup]).keys().forEach((itemName) => {
         push({
-          id: 'houseItems.' + itemGroup + '.' + itemName,
+          id: `houseItems.${itemGroup}.${itemName}`,
           name: Game.House.items[itemGroup][itemName].name,
         });
-      }
-    }
+      });
+    });
 
     push({ name: '----------------------------------------' });
 
-    for (let artefactName in Game.Artefacts.items) {
+    _(Game.Artefacts.items).keys().forEach((artefactName) => {
       push({
-        id: 'resources.' + artefactName,
+        id: `resources.${artefactName}`,
         name: Game.Artefacts.items[artefactName].name,
       });
-    }
+    });
 
     return result;
   },
@@ -105,31 +98,31 @@ Template.adminReptileChange.helpers({
   },
 });
 
-const fillInfo = function (elements, modifier, units) {
-  for (let i = 0; i < elements.length; i += 1) {
-    const id = $(elements[i]).attr('data-id');
-    const count = parseInt($(elements[i]).find('input').val(), 10);
+const getInfoFromForm = function (elements) {
+  const modifier = {};
+  const units = {};
+
+  elements.forEach((element) => {
+    const id = element.attr('data-id');
+    const count = parseInt(element.find('input').val(), 10);
 
     modifier[`enemyArmy.reptiles.ground.${id}`] = Math.max(0, count);
 
     if (count !== 0) {
       units[id] = count;
     }
-  }
+  });
+
+  return {
+    modifier,
+    units,
+  };
 };
 
 Template.adminReptileChange.events({
-  'click .close'(event, templateInstance) {
-    Blaze.remove(templateInstance.view);
-  },
-
-  'click .change'() {
-    const modifier = {};
-    const units = {};
-
-    const elements = $('.armies li');
-
-    fillInfo(elements, modifier, units);
+  'click .change'(event, templateInstance) {
+    const elements = templateInstance.$('.armies li');
+    const { modifier, units } = getInfoFromForm(elements);
 
     Meteor.call('earth.setReptileArmy', this.zoneName, modifier, units, false, function(err) {
       if (err) {
@@ -140,13 +133,9 @@ Template.adminReptileChange.events({
     });
   },
 
-  'click .changeTurn'() {
-    const modifier = {};
-    const units = {};
-
-    const elements = $('.armies li');
-
-    fillInfo(elements, modifier, units);
+  'click .changeTurn'(event, templateInstance) {
+    const elements = templateInstance.$('.armies li');
+    const { modifier, units } = getInfoFromForm(elements);
 
     Meteor.call('earth.setReptileArmy', this.zoneName, modifier, units, true, function(err) {
       if (err) {
@@ -157,10 +146,10 @@ Template.adminReptileChange.events({
     });
   },
 
-  'click .setBonus'() {
-    const element = $('.bonusProfit');
-    const id = $(element).find(':selected').attr('name');
-    const count = parseInt($(element).find('input').val(), 10);
+  'click .setBonus'(event, templateInstance) {
+    const element = templateInstance.$('.bonusProfit');
+    const id = templateInstance.$(element).find(':selected').attr('name');
+    const count = parseInt(templateInstance.$(element).find('input').val(), 10);
 
     if (id && count > 0) {
       Meteor.call('earth.setBonus', this.zoneName, { id, count }, function(err) {

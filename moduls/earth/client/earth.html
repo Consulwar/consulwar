@@ -50,7 +50,7 @@
 
         {{#if eq army.zoneName zone.name}}
           {{#if zone.general.command}}
-            Генерал приказал:
+            Генерал {{zone.general.username}} приказал:
             {{#if eq zone.general.command Command.MOVE}}
               Идем на {{zone.general.commandTarget}}
             {{else}}

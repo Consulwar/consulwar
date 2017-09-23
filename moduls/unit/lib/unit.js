@@ -317,9 +317,9 @@ Game.Unit = {
     });
   },
 
-  getHomeArmy: function() {
+  getHomeArmy: function(user_id = Meteor.userId()) {
     return Game.Unit.Collection.findOne({
-      user_id: Meteor.userId(),
+      user_id,
       location: Game.Unit.location.HOME
     });
   },

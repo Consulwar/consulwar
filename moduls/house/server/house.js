@@ -45,21 +45,21 @@ Game.House.initialize = function(user, isRewrite) {
   }
 };
 
-Game.House.add = function (group, id) {
+Game.House.add = function (group, id, user_id = Meteor.userId()) {
   var set = {};
   set['items.' + group + '.' + id] = {
-    isPlaced: false
+    isPlaced: false,
   };
 
   var condition = {
-    user_id: Meteor.userId()
+    user_id,
   };
   condition['items.' + group + '.' + id] = {
-    $exists: false
+    $exists: false,
   };
 
   Game.House.Collection.update(condition, {
-    $set: set
+    $set: set,
   });
 };
 

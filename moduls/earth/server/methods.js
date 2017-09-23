@@ -158,7 +158,7 @@ Meteor.methods({
       throw new Meteor.Error('Армия отсутствует.');
     }
 
-    if (earthUnits.generalCommand === ResponseToGeneral.accept) {
+    if (earthUnits.generalCommand === ResponseToGeneral.ACCEPT) {
       throw new Meteor.Error('Вы уже приняли приказ генерала.');
     }
 
@@ -263,7 +263,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.generalCommand');
+    Game.Log.method.call(this, 'earth.generalCommand');
 
     const zone = Game.EarthZones.Collection.findOne({
       'general.username': user.username,
@@ -304,13 +304,13 @@ Meteor.methods({
         }
 
         set['general.commandTarget'] = commandTarget;
-
-        Game.EarthZones.Collection.update({
-          name: zone.name,
-        }, {
-          $set: set,
-        });
       }
+
+      Game.EarthZones.Collection.update({
+        name: zone.name,
+      }, {
+        $set: set,
+      });
     } else {
       throw new Meteor.Error('Некоректный приказ.');
     }
@@ -327,7 +327,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method('earth.responseToGeneral');
+    Game.Log.method.call(this, 'earth.responseToGeneral');
 
     check(isAccept, Boolean);
 
@@ -362,6 +362,45 @@ Meteor.methods({
       }, {
         $set: {
           generalCommand: ResponseToGeneral.DECLINE,
+        },
+      });
+    }
+  },
+
+  'earth.setBonus'(zoneName, bonus) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'earth.setReptileArmy');
+
+    if (['admin'].indexOf(user.role) === -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    check(zoneName, String);
+    check(bonus, Match.Maybe(Object));
+
+    if (!bonus) {
+      Game.EarthZones.Collection.update({
+        name: zoneName,
+      }, {
+        $unset: {
+          bonus: 1,
+        },
+      });
+    } else {
+      Game.EarthZones.Collection.update({
+        name: zoneName,
+      }, {
+        $set: {
+          bonus,
         },
       });
     }

@@ -743,14 +743,27 @@ Game = {
       case 'resources':
         engName = _.keys(obj[type])[0];
         let artefact = Game.Artefacts.items[engName];
-        
-        // TODO : remove resources hardcode
-        return artefact || {
-          engName,
-          type: 'resource',
-          icon: '/img/game/' + engName + '.png',
-          image: '/img/game/' + engName + '.jpg'
-        };
+
+        if (artefact) {
+          return artefact;
+        } else {
+          const nameByRes = {
+            humans: 'Люди',
+            metals: 'Металл',
+            crystals: 'Кристалл',
+            honor: 'Честь',
+            credits: 'ГГК',
+          };
+
+          // TODO : remove resources hardcode
+          return {
+            engName,
+            name: nameByRes[engName],
+            type: 'resource',
+            icon: `/img/game/${engName}.png`,
+            image: `/img/game/${engName}.jpg`,
+          };
+        }
 
       case 'cards':
         engName = _.keys(obj[type])[0];

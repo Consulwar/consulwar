@@ -118,9 +118,17 @@ let recalculateCurrentCounts = function(battle) {
 
     let alive = battleUnit.health.total / battleUnit.health.armor;
 
-    let floatCurrentAlive = unit.count / battleUnit.count * alive;
+    let floatCurrentAlive = (unit.count / battleUnit.count) * alive;
 
-    let left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);
+    let left;
+
+    const isBattle1x1 = !_(battle.initialUnits).values().some(side => _(side).keys().length > 1);
+
+    if (isBattle1x1) {
+      left = Math.ceil(floatCurrentAlive);
+    } else {
+      left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);
+    }
 
     let killed = unit.count - left;
 

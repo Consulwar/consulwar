@@ -12,7 +12,7 @@ Game.Unit.Collection._ensureIndex({
 Game.Unit.set = function(unit, invertSign, uid) {
   invertSign = invertSign === true ? -1 : 1;
 
-  Game.Unit.initialize();
+  Game.Unit.initialize(uid);
 
   var inc = {};
   inc['units.army.' + unit.group + '.' + unit.engName] = parseInt(unit.count * invertSign);
@@ -45,13 +45,12 @@ Game.Unit.complete = function(task) {
   Game.Statistic.incrementUser(Meteor.userId(), increment);
 };
 
-Game.Unit.initialize = function(user) {
-  user = user || Meteor.user();
-  var currentValue = Game.Unit.getHomeArmy();
+Game.Unit.initialize = function(user_id = Meteor.userId()) {
+  var currentValue = Game.Unit.getHomeArmy(user_id);
 
   if (currentValue === undefined) {
     Game.Unit.Collection.insert({
-      user_id: user._id,
+      user_id,
       location: Game.Unit.location.HOME
     });
   }

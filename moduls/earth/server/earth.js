@@ -32,7 +32,11 @@ Game.EarthUnits.Collection._ensureIndex({
 });
 
 Game.EarthZones.Collection._ensureIndex({
-  name: 1
+  name: 1,
+});
+
+Game.EarthZones.Collection._ensureIndex({
+  zoneName: 1,
 });
 
 Game.Earth.ReptileTurn = {
@@ -41,19 +45,25 @@ Game.Earth.ReptileTurn = {
 
 Game.EarthUnits.incArmy = function (user, inc, zoneName, units) {
   Game.EarthUnits.Collection.upsert({
-    user_id: user._id
+    user_id: user._id,
   }, {
     $inc: inc,
     $setOnInsert: {
       username: user.username,
       zoneName,
-    }
+      justReinforcement: true,
+    },
   });
 
+  const usersCount = Game.EarthUnits.Collection.find({ zoneName }).count();
+
   Game.EarthZones.Collection.update({
-    name: zoneName
+    name: zoneName,
   }, {
-    $inc: inc
+    $inc: inc,
+    $set: {
+      usersCount,
+    },
   });
 
   const battleID = Game.EarthZones.getByName(zoneName).battleID;
@@ -284,16 +294,19 @@ Game.Earth.nextTurn = function() {
       });
     }
 
+    let modifier = {
+      $set: {
+        usersCount: Game.EarthUnits.Collection.find({ zoneName: zone.name }).count(),
+      },
+    };
+
     if (battle) {
       const roundResult = battle.performEarthRound({
         damageReduction: Game.Earth.DAMAGE_REDUCTION
       });
 
       if (battle.status === Battle.Status.finish) {
-        let modifier = {
-          $unset: { battleID: 1 },
-          $set: {}
-        };
+        modifier.$unset = { battleID: 1 };
 
         if (Battle.USER_SIDE in roundResult.left) {
           Game.Earth.observeZone(zone.name);
@@ -301,33 +314,25 @@ Game.Earth.nextTurn = function() {
         } else {
           modifier.$set.isEnemy = true;
         }
-
-        Game.EarthZones.Collection.update({
-          _id: zone._id
-        }, modifier);
       }
 
-      let modifier = {};
-
       if (Battle.USER_SIDE in roundResult.left) {
-        modifier.$set = { userArmy: roundResult.left[Battle.USER_SIDE] };
+        modifier.$set.userArmy = roundResult.left[Battle.USER_SIDE];
       } else {
-        modifier.$unset = { userArmy: 1 };
+        if (!modifier.$unset) {
+          modifier.$unset = {};
+        }
+        modifier.$unset.userArmy = 1;
       }
 
       if (Battle.ENEMY_SIDE in roundResult.left) {
-        if (!modifier.$set) {
-          modifier.$set = {};
-        }
         modifier.$set.enemyArmy = roundResult.left[Battle.ENEMY_SIDE];
       } else {
         if (!modifier.$unset) {
           modifier.$unset = {};
         }
-        modifier.$unset.enemyArmy = 1 ;
+        modifier.$unset.enemyArmy = 1;
       }
-
-      Game.EarthZones.Collection.update({ _id: zone._id }, modifier);
 
       //update units in EarthUnits for each user in the battle
       let leftArmies = {};
@@ -386,8 +391,10 @@ Game.Earth.nextTurn = function() {
         });
       }
 
-      Game.EarthUnits.Collection.remove({'username':{'$in':_.keys(unsetEarthUnits)}})
+      Game.EarthUnits.Collection.remove({ username: { $in: _.keys(unsetEarthUnits) } });
     }
+
+    Game.EarthZones.Collection.update({ _id: zone._id }, modifier);
   });
 
   Generals.reCalculate();
@@ -481,7 +488,7 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
       isGetBonus = true;
     }
 
-    if (isGetBonus && bonuses[currentZoneName]) {
+    if (isGetBonus && bonuses[currentZoneName] && !earthUnits.justReinforcement) {
       bonuses[currentZoneName].players.push({
         user_id: earthUnits.user_id,
         value: 0,
@@ -529,6 +536,12 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
   });
 
   giveBonuses(bonuses);
+
+  Game.EarthUnits.Collection.update({}, {
+    $unset: {
+      justReinforcement: 1,
+    },
+  });
 };
 
 const giveBonuses = function (bonuses) {

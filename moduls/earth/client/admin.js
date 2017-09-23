@@ -47,7 +47,7 @@ Template.adminReptileChange.helpers({
 
     push({ name: '----------------------------------------' });
 
-    _(Game.Cards.items.donate).keys().forEach(function (cardName) {
+    _(Game.Cards.items.donate).keys().forEach((cardName) => {
       push({
         id: `cards.${cardName}`,
         name: Game.Cards.items.donate[cardName].name,

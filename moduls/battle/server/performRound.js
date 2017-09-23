@@ -122,12 +122,7 @@ let recalculateCurrentCounts = function(battle) {
 
     let left;
 
-    let isBattle1x1 = true;
-    _.values(battle.initialUnits).forEach(function (initialUnits) {
-      if (_.keys(initialUnits).length > 1) {
-        isBattle1x1 = false;
-      }
-    });
+    const isBattle1x1 = !_(battle.initialUnits).values().some(side => _(side).keys().length > 1);
 
     if (isBattle1x1) {
       left = Math.ceil(floatCurrentAlive);

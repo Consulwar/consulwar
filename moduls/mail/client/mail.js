@@ -76,7 +76,7 @@ Template.mail.onRendered(function() {
       }
       // compose letter
       else if (hash.indexOf('compose') === 0) {
-        composeLetter(hash.substr('compose'.length + 1), template);
+        composeLetter(decodeURIComponent(hash.substr('compose'.length + 1)), template);
       }
       // reply
       else if (hash.indexOf('reply') === 0) {

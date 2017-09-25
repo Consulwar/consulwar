@@ -1,18 +1,22 @@
 export default {
   id: 'Unit/Defense/Human/OrbitalDefenseStation',
   title: 'Орбитальная Станция Обороны',
-  description: 'Космическая Станция Обороны —это гигантский боевой комплекс на орбите планеты. Броня этого грандиозного сооружения почти непробиваема, а вооружение отличается невероятной точностью и мощностью. Имей вы такой объект на орбите своей колонии, Консул, Чешуйчатые подумали бы дважды, прежде чем нападать на вас.',
+  description: 'Космическая Станция Обороны — это гигантский боевой комплекс на орбите планеты. Броня этого грандиозного сооружения почти непробиваема, а вооружение отличается невероятной точностью и мощностью. Имей вы такой объект на орбите своей колонии, Консул, Чешуйчатые подумали бы дважды, прежде чем нападать на вас.',
   basePrice: {
-    metals: 12000,
-    crystals: 3500,
-    time: 60 * 60 * 24,
+    humans: 3000000,
+    metals: 20000000,
+    crystals: 20000000,
+    time: 90 * 24 * 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 160000,
-      max: 200000,
+    weapon: {
+      damage: { min: 20000000, max: 20000000 },
+      signature: 15000,
     },
-    life: 800000,
+    health: {
+      armor: 500000000,
+      signature: 100000,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Armadillo',
@@ -21,10 +25,9 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/DefenseComplex', 90],
-      ['Research/Evolution/Engineering', 85],
-      ['Research/Evolution/Converter', 70],
-      ['Building/Military/OSCD', 10],
+      ['Building/Residential/Alliance', 30],
+      ['Research/Evolution/Engineering', 28],
+      ['Building/Military/OSCD', 5],
     ];
   },
 };

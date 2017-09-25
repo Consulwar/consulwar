@@ -3,21 +3,22 @@ export default {
   title: 'Виверна',
   description: 'Виверна достаточно быстроходный крейсер зелёных чешуйчатых пиздюков, этот корабль – олицетворение их наглости и коварства. Тактика Рептилоидных адмиралов обычно строится вокруг способности Виверны на высокой скорости заходить на атаку с незащищённых областей, наносить серьёзный урон и снова скрываться в тени своего флота. Как ужас, летящий на крыльях ночи, Виверна появляется из ниоткуда и уходит в никуда, появляясь и нанося удары в самых неожиданных местах.',
   basePrice: {
-    humans: 100,
-    metals: 135,
-    crystals: 45,
-    time: 500,
+    metals: 5500,
+    crystals: 1500,
   },
   characteristics: {
-    damage: {
-      min: 1600,
-      max: 2000,
+    weapon: {
+      damage: { min: 1260, max: 1540 },
+      signature: 120,
     },
-    life: 6000,
+    health: {
+      armor: 2000,
+      signature: 80,
+    },
   },
   targets: [
     'Unit/Space/Human/Frigate',
-    'Unit/Space/Human/TruckC',
     'Unit/Space/Human/Cruiser',
+    'Unit/Space/Human/Battleship',
   ],
 };

@@ -165,6 +165,10 @@ game.Item = function(options) {
           armor: characteristics.life,
           signature: 100
         };
+      } else {
+        // !
+        options.characteristics.damage = options.characteristics.weapon.damage;
+        options.characteristics.life = options.characteristics.health.armor;
       }
 
       // --------------------------------------------------------------
@@ -183,7 +187,11 @@ game.Item = function(options) {
           var characteristics = Game.Helpers.deepClone(options.characteristics);
 
           var result = Game.Effect.Military.applyTo(this, characteristics, false);
-          result.base = options.characteristics;
+          result.base = {
+            ...options.characteristics,
+            damage: options.characteristics.weapon.damage,
+            life: options.characteristics.health.armor,
+          };
 
           return result;
         },
@@ -251,6 +259,11 @@ game.Item = function(options) {
       return [this.type, this.group, this.engName, level].join('/') + '.' + (this.overlay.type || 'png');
     }
     return null;
+  };
+
+  this.getOverlayOwn = function() {
+    const imgName = (this.overlay && this.overlay.own) || 'item';
+    return `/img/game/${this.type}/${this.group}/${this.engName}/${imgName}.png`;
   };
 
   this.getOverlay = function() {

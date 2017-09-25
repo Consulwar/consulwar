@@ -1,9 +1,9 @@
 export default {
   id: 'Achievement/Space/MadAdmiral',
-  field: 'Battle/BattleFleet/10/Victory',
+  field: 'Battle/BattleFleet/7/Victory',
   levels: [1],
   title: 'Безбашенный адмирал',
-  description: 'Победить боевой флот 10 уровня',
+  description: 'Победить боевой флот 7 уровня',
   effects: {
     Special: [
       {

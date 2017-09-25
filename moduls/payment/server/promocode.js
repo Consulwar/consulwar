@@ -82,13 +82,13 @@ Game.PromoCode.randomItems =  [{
 }, {
   resources: { honor: 25 }
 }, {
-  units: { fleet: { wasp: 30 } }
+  units: { fleet: { wasp: 8 } }
 }, {
-  units: { fleet: { mirage: 15 } }
+  units: { fleet: { mirage: 3 } }
 }, {
-  units: { defense: { bomb: 150 } }
+  units: { defense: { bomb: 30 } }
 }, {
-  units: { defense: { turret: 20 } }
+  units: { defense: { turret: 10 } }
 }, {
   units: { ground: { horizontalbarman: 50 } }
 }, {

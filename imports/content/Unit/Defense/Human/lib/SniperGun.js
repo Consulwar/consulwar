@@ -3,16 +3,19 @@ export default {
   title: 'Снайпер Ган',
   description: 'Такие орудия, как Снайпер Ган и Рельсовая Пушка, устанавливаются на специальных платформах на орбите вашей планеты. Они способны вести прицельный точечный огонь по хорошо бронированным кораблям. Дальность стрельбы позволяет этому орудию некоторое время избегать атак после начала боя.',
   basePrice: {
-    metals: 200,
-    crystals: 100,
-    time: 60 * 5,
+    metals: 4000,
+    crystals: 2000,
+    time: 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 2400,
-      max: 3000,
+    weapon: {
+      damage: { min: 4000, max: 6000 },
+      signature: 500,
     },
-    life: 20000,
+    health: {
+      armor: 12000,
+      signature: 1000,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Wyvern',
@@ -21,8 +24,8 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/DefenseComplex', 40],
-      ['Research/Evolution/Engineering', 35],
+      ['Building/Military/DefenseComplex', 33],
+      ['Research/Evolution/Drill', 30],
     ];
   },
 };

@@ -8,30 +8,22 @@ export default {
     Military: [
       {
         textBefore: 'Урон Рейлгана +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Railgun',
-        priority: 1,
+        priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 250;
-          } else if (level < 100) {
-            return level * 500;
-          }
-          return level * 1000;
+          return level * 0.4;
         },
       },
       {
         textBefore: 'Броня Рейлгана +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Railgun',
-        priority: 1,
+        priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 100;
-          } else if (level < 100) {
-            return level * 200;
-          }
-          return level * 400;
+          return level * 0.4;
         },
       },
     ],

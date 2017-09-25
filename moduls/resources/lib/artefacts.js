@@ -50,6 +50,10 @@ game.Artefact = function(options) {
     };
     return Router.routes.artefacts.path(options);
   };
+  
+  this.getOverlayOwn = function() {
+    return `/img/game/${this.type}/${this.group}/${this.engName}/item.jpg`;
+  };
 
   this.icon = function() {
     return '/img/game/artefact/' + this.group + '/i/' + this.engName + '.png';

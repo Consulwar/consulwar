@@ -3,28 +3,31 @@ export default {
   title: 'Крейсер',
   description: 'Крейсер, как понятно из названия, универсальный боевой корабль, способный выполнять практически любые задачи независимо от основного флота. Оснащён высокоточным ионным орудием, способным вывести из строя почти любые щиты противника. Крейсер также отлично подходит для уничтожения небольших и шустрых целей. Его нельзя назвать основным оружием в космических баталиях против Рептилоидов, однако же и нельзя недооценивать его потенциал. Если флот противника состоит преимущественно из кораблей класса «штурмовик», то несколько таких машинок расправятся с ними гораздо быстрее, чем сотня Ос.',
   basePrice: {
-    humans: 1500,
-    metals: 300,
-    crystals: 100,
-    time: 600,
+    humans: 1000,
+    metals: 13000,
+    crystals: 4000,
+    time: 1 * 24 * 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 2400,
-      max: 3000,
+    weapon: {
+      damage: { min: 5400, max: 6600 },
+      signature: 380,
     },
-    life: 7000,
+    health: {
+      armor: 13000,
+      signature: 750,
+    },
   },
   targets: [
-    'Unit/Space/Reptile/Wyvern',
-    'Unit/Space/Reptile/Dragon',
     'Unit/Space/Reptile/Hydra',
+    'Unit/Space/Reptile/Armadillo',
+    'Unit/Space/Reptile/Lacertian',
   ],
   requirements() {
     return [
-      ['Building/Military/Airfield', 35],
       ['Building/Military/Shipyard', 30],
-      ['Research/Evolution/Science', 25],
+      ['Building/Military/Barracks', 32],
+      ['Research/Evolution/Energy', 30],
     ];
   },
 };

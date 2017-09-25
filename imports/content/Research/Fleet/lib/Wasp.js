@@ -8,30 +8,22 @@ export default {
     Military: [
       {
         textBefore: 'Урон Осы +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Wasp',
-        priority: 1,
+        priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 2;
-          } else if (level < 100) {
-            return level * 4;
-          }
-          return level * 8;
+          return level * 0.4;
         },
       },
       {
         textBefore: 'Броня Осы +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Wasp',
-        priority: 1,
+        priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 3;
-          } else if (level < 100) {
-            return level * 5;
-          }
-          return level * 10;
+          return level * 0.4;
         },
       },
     ],

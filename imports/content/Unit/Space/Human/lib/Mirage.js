@@ -3,27 +3,31 @@ export default {
   title: 'Мираж',
   description: 'В рамках поиска новых технологий, повышающих уровень защиты от Рептилий, на основе системы «стелс» атмосферных истребителей был разработан новый аппарат. Мираж отражает большинство сигналов, и он практически невидим на радарах противника. Однако же всё это не позволяет кораблю быть полностью неуловимым, а лишь усложняет наведение на цель. Тем не менее этого достаточно, чтобы он выполнял свою задачу. Удачных манёвров мираж выполняет больше, хотя по урону и броне соответствует Осе.',
   basePrice: {
-    humans: 50,
-    metals: 33,
-    crystals: 13.75,
-    time: 200,
+    humans: 5,
+    metals: 180,
+    crystals: 60,
+    time: 20 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 400,
-      max: 500,
+    weapon: {
+      damage: { min: 18, max: 22 },
+      signature: 8,
     },
-    life: 1000,
+    health: {
+      armor: 80,
+      signature: 50,
+    },
   },
   targets: [
-    'Unit/Space/Reptile/Lacertian',
-    'Unit/Space/Reptile/Blade',
     'Unit/Space/Reptile/Sphero',
+    'Unit/Space/Reptile/Octopus',
+    'Unit/Space/Reptile/Wyvern',
   ],
   requirements() {
     return [
-      ['Building/Military/Airfield', 20],
-      ['Building/Military/Shipyard', 15],
+      ['Building/Residential/SpacePort', 45],
+      ['Building/Military/Airfield', 45],
+      ['Research/Evolution/Nanotechnology', 20],
     ];
   },
 };

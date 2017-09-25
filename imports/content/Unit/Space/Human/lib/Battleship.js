@@ -3,29 +3,31 @@ export default {
   title: 'Линкор',
   description: 'Линкор или Линейный корабль — основная боевая единица в космосе. Сам Адмирал Стил Болз назвал эти Линкоры величайшим космическим орудием. Понятно, что есть корабли и мощнее, однако же сочетание серьёзного вооружения, крепкой брони, относительно невысокой стоимости и прекрасных показателей приоритетов атаки делают Линкоры самым полезным кораблём на поле боя, способным дать отпор даже крайне Ебучим Флотилиям Рептилоидов.',
   basePrice: {
-    humans: 7500,
-    metals: 650,
-    crystals: 140,
-    time: 60 * 20,
+    humans: 5000,
+    metals: 150000,
+    crystals: 30000,
+    time: 2 * 24 * 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 4000,
-      max: 5000,
+    weapon: {
+      damage: { min: 36000, max: 44000 },
+      signature: 500,
     },
-    life: 15000,
+    health: {
+      armor: 160000,
+      signature: 1000,
+    },
   },
   targets: [
+    'Unit/Space/Reptile/Armadillo',
     'Unit/Space/Reptile/Hydra',
     'Unit/Space/Reptile/Dragon',
-    'Unit/Space/Reptile/Wyvern',
   ],
   requirements() {
     return [
-      ['Building/Military/Airfield', 45],
-      ['Building/Military/Shipyard', 40],
-      ['Research/Evolution/Alloy', 40],
-      ['Research/Evolution/Hyperdrive', 1],
+      ['Building/Military/Shipyard', 35],
+      ['Research/Evolution/Alloy', 35],
+      ['Research/Evolution/Hyperdrive', 20],
     ];
   },
 };

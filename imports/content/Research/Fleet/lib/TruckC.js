@@ -5,13 +5,37 @@ export default {
   title: 'Усиление Трака С',
   description: 'Траки – это небоевые корабли, однако же они участвуют в бою, они ремонтируют корабли союзников и собирают ценные детали на поле боя, чтобы ваши сражения окупались. Так или иначе, без средств к существованию любая война будет проиграна очень быстро. И Рептилоиды тоже это понимают, поэтому они не позволят беспрепятственно летать вашим тракам и собирать ценный материал. Боюсь, Консул, вам придётся улучшать системы управления этих кораблей, чтобы они могли не получать урон во время боя.',
   effects: {
+    Military: [
+      {
+        textBefore: 'Урон Трака +',
+        textAfter: '%',
+        condition: 'Unit/Space/Human/TruckC',
+        priority: 2,
+        affect: 'damage',
+        result(level = this.getCurrentLevel()) {
+          return level * 0.4;
+        },
+      },
+      {
+        textBefore: 'Броня Трака +',
+        textAfter: '%',
+        condition: 'Unit/Space/Human/TruckC',
+        priority: 2,
+        affect: 'life',
+        result(level = this.getCurrentLevel()) {
+          return level * 0.4;
+        },
+      },
+    ],
+    /*
     Special: [
       {
         notImplemented: true,
         textBefore: 'Добыча Трака ',
+        textAfter: '%',
         textAfter: ' металла',
         condition: 'Unique/truckCapacity',
-        priority: 1,
+        priority: 2,
         affect: 'metals',
         result(level = this.getCurrentLevel()) {
           if (level < 10) {
@@ -27,9 +51,10 @@ export default {
       {
         notImplemented: true,
         textBefore: 'Добыча Трака ',
+        textAfter: '%',
         textAfter: ' кристалла',
         condition: 'Unique/truckCapacity',
-        priority: 1,
+        priority: 2,
         affect: 'crystals',
         result(level = this.getCurrentLevel()) {
           if (level < 10) {
@@ -43,6 +68,7 @@ export default {
         },
       },
     ],
+    */
   },
   basePrice() {
     return {

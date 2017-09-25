@@ -1,6 +1,7 @@
+import { _ } from 'meteor/underscore';
 import traverseGroup from './traverseGroup';
 
-let calculateGroupPower = function(group) {
+const calculateGroupPower = function(group) {
   let power = 0;
   let totalDamage = 0;
   let totalLife = 0;
@@ -14,7 +15,7 @@ let calculateGroupPower = function(group) {
     }
   });
 
-  return power + Math.floor((totalDamage / 1000) + (totalLife / 2000));
+  return power + Math.floor((totalDamage / 50) + (totalLife / 100));
 };
 
 export default calculateGroupPower;

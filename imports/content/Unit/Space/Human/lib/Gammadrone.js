@@ -3,25 +3,30 @@ export default {
   title: 'Гаммадрон',
   description: 'Гаммадроны – это шустрые беспилотные убийцы. Их задачи – ловить на себя часть урона и уничтожать небольшие быстрые корабли Рептилоидов. Конечно, имея целый рой таких аппаратов, можно навалять даже самому крупному кораблю. Но, наверное, это всё же не самая лучшая тактика. Хотя кто знает, Консул, всё зависит только от вас. Тем не менее гаммадроны – дешёвые и крайне полезные единицы.',
   basePrice: {
-    metals: 6,
-    crystals: 2.5,
-    time: 30,
+    metals: 62,
+    crystals: 16,
+    time: 5 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 80,
-      max: 100,
+    weapon: {
+      damage: { min: 1, max: 1 },
+      signature: 8,
     },
-    life: 200,
+    health: {
+      armor: 24,
+      signature: 8,
+    },
   },
   targets: [
-    'Unit/Space/Reptile/Sphero',
-    'Unit/Space/Reptile/Blade',
-    'Unit/Space/Reptile/Lacertian',
+    'Unit/Space/Reptile/Wyvern',
+    'Unit/Space/Reptile/Dragon',
+    'Unit/Space/Reptile/Hydra',
   ],
   requirements() {
     return [
-      ['Building/Military/Shipyard', 1],
+      ['Building/Residential/SpacePort', 35],
+      ['Building/Military/DefenseComplex', 44],
+      ['Research/Evolution/Nanotechnology', 10],
     ];
   },
 };

@@ -53,7 +53,7 @@
         {{/if}}
 
         {{#if eq army.zoneName zone.name}}
-          {{#if zone.general.command}}
+          {{#if and zone.general.command (not (eq zone.general.command Command.NONE))}}
             Генерал {{zone.general.username}} приказал:
             {{#if eq zone.general.command Command.MOVE}}
               Идем на {{zone.general.commandTarget}}

@@ -224,6 +224,10 @@ game.ReptileUnit = function(options) {
     
     return Router.routes[this.type].path(options);
   };
+  
+  this.getOverlayOwn = function() {
+    return `/img/game/unit/reptiles/${this.group}/${this.engName}.jpg`;
+  };
 
   this.icon = function() {
     return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';

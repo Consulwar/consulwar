@@ -3,15 +3,18 @@ export default {
   title: 'Трилинейный Кристалл-Ган',
   description: 'Вершина технологической эволюции. Мощность этого орудия просто колоссальна, его концентрированная кристаллическая плазма награждает моментальным загаром тысячи Рептилоидов, находящихся на бортах крупных кораблей. Щиты ТКГ могут выдерживать огромное количество урона, так что разрушить эти орудия практически невозможно.',
   basePrice: {
-    credits: 5000,
-    time: 60 * 30,
+    credits: 40000,
+    time: 10 * 24 * 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 200000,
-      max: 250000,
+    weapon: {
+      damage: { min: 9000000, max: 11000000 },
+      signature: 10000,
     },
-    life: 1500000,
+    health: {
+      armor: 100000000,
+      signature: 20000,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Shadow',
@@ -20,8 +23,9 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/DefenseComplex', 80],
-      ['Research/Evolution/Engineering', 75],
+      ['Building/Residential/Political', 65],
+      ['Building/Military/Storage', 48],
+      ['Research/Evolution/Engineering', 58],
     ];
   },
 };

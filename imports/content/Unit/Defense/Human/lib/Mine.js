@@ -3,15 +3,18 @@ export default {
   title: 'Мины',
   description: 'Мины — прекрасное средство против кораблей среднего размера. Огромные минные поля устанавливаются в местах, приоритетных для варп-прыжка. Крупные корабли без проблем могут выдерживать урон таких мин, зато корабли поменьше будут уничтожены сразу по прибытии.',
   basePrice: {
-    metals: 5,
-    time: 5,
+    metals: 20,
+    time: 5 * 3,
   },
   characteristics: {
-    damage: {
-      min: 160,
-      max: 200,
+    weapon: {
+      damage: { min: 5, max: 5 },
+      signature: 1,
     },
-    life: 5,
+    health: {
+      armor: 1,
+      signature: 1000,
+    },
   },
   targets: [
     // нет приоритетной цели, рандом
@@ -19,6 +22,7 @@ export default {
   requirements() {
     return [
       ['Building/Military/DefenseComplex', 1],
+      ['Research/Evolution/Energy', 8],
     ];
   },
 };

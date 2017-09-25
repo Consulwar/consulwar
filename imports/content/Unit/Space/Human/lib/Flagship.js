@@ -4,29 +4,31 @@ export default {
   description: 'Венец творения современной боевой космонавтики. Данный корабль производится лишь в одном экземпляре и лишь для Консулов. Разработки подобной боевой системы были начаты ещё 10 лет назад для особо рьяных и особо богатых милитаристов — членов галактического совета, однако война с Рептилиями расставила свои приоритеты и прототип был переоборудован специально для борьбы с чешуйчатыми, а после появления Консулов вопросов не осталось. Императорский Флагман — это символ силы его Правителя и это страх для его врагов! Рептилоиды стараются избегать боя с Императорским Флагманом, ибо даже им понятно, что лучше уйти сейчас и выжить, чем погибнуть в страшных муках и потерять половину флота.',
   basePrice: {
     humans: 150000,
-    metals: 30000,
-    crystals: 5000,
-    time: 60 * 60 * 24 * 3,
+    metals: 1000000,
+    crystals: 100000,
+    time: 24 * 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 120000,
-      max: 150000,
+    weapon: {
+      damage: { min: 900000, max: 1100000 },
+      signature: 10000,
     },
-    life: 600000,
+    health: {
+      armor: 3000000,
+      signature: 10000,
+    },
   },
   maxCount: 1,
   targets: [
     'Unit/Space/Reptile/Shadow',
-    'Unit/Space/Reptile/Prism',
-    'Unit/Space/Reptile/Wyvern',
+    'Unit/Space/Reptile/Godzilla',
+    'Unit/Space/Reptile/Armadillo',
   ],
   requirements() {
     return [
-      ['Building/Military/Shipyard', 65],
-      ['Research/Evolution/Alloy', 70],
-      ['Research/Evolution/Nanotechnology', 60],
-      ['Research/Evolution/Hyperdrive', 60],
+      ['Building/Residential/Political', 25],
+      ['Building/Residential/Alliance', 25],
+      ['Building/Military/Storage', 25],
     ];
   },
 };

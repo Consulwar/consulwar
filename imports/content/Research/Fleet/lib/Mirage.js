@@ -8,30 +8,22 @@ export default {
     Military: [
       {
         textBefore: 'Урон Миража +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Mirage',
-        priority: 1,
+        priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 3;
-          } else if (level < 100) {
-            return level * 6;
-          }
-          return level * 12;
+          return level * 0.4;
         },
       },
       {
         textBefore: 'Броня Миража +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Mirage',
-        priority: 1,
+        priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 5;
-          } else if (level < 100) {
-            return level * 10;
-          }
-          return level * 20;
+          return level * 0.4;
         },
       },
     ],

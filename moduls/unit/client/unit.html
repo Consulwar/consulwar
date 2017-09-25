@@ -1,38 +1,38 @@
 <template name="unit">
-  {{#if isNewLayout}}
-    <div class="header">
-      <div class="level">
-        {{#if unit.currentLevel}}
-          <span>{{formatNumber unit.currentLevel}} </span>
-          {{declension unit.currentLevel 'единиц' 'а' 'ы' ''}} 
-        {{else}}
-          Не построено
-        {{/if}}
-      </div>
-
-      <div class="name {{#if unit.star}}star{{unit.star}}{{/if}}">
-        {{unit.name}}
-      </div>
-
-      <button 
-        class="
-          toggle_description 
-          {{#if not options.hideDescription}}active{{/if}}
-        "
-      ></button>
-      <a href="{{backToGroupLink}}" class="close"></a>
+  <div class="header">
+    <div class="level">
+      {{#if unit.currentLevel}}
+        <span>{{formatNumber unit.currentLevel}} </span>
+        {{declension unit.currentLevel 'единиц' 'а' 'ы' ''}} 
+      {{else}}
+        Не построено
+      {{/if}}
     </div>
 
-    <div 
-      class="description" 
-      style="{{#if options.hideDescription}}display: none;{{/if}}">
-      <div class="scrollbar-inner">{{unit.description}}</div>
+    <div class="name {{#if unit.star}}star{{unit.star}}{{/if}}">
+      {{unit.name}}
     </div>
 
-    <div class="item_info">
+    <button 
+      class="
+        toggle_description 
+        {{#if not options.hideDescription}}active{{/if}}
+      "
+    ></button>
+    <a href="{{backToGroupLink}}" class="close"></a>
+  </div>
 
-      {{> unitCharacteristics unit=unit}}
+  <div 
+    class="description" 
+    style="{{#if options.hideDescription}}display: none;{{/if}}">
+    <div class="scrollbar-inner">{{unit.description}}</div>
+  </div>
 
+  <div class="item_info">
+
+    {{> unitCharacteristics unit=unit}}
+
+    {{#unless eq unit.side 'reptiles'}}
       <div class="bottom">
         {{> item_price price=(unit.price count undefined)}}
 
@@ -48,56 +48,10 @@
             <button class="main_action build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
           </div>
         </div>
-      </div> 
-    </div>
-    {{> item_requirements requirements=unit.requirements}}
-  {{else}}
-
-    <div class="information {{unit.type}}">
-      <div class="image">
-        <img 
-          alt="{{unit.name}}" 
-          src="
-          {{#unless unit.notImplemented}}
-            /img/game/unit/{{unit.side}}/{{unit.group}}/{{unit.engName}}.jpg
-          {{else}}
-            /img/game/notimplemented.jpg
-          {{/unless}}
-          "
-        >
-        <span class="title">{{unit.name}}</span>
-        {{#if unit.currentLevel}}
-          <span class="level" title="{{formatNumber unit.currentLevel}}">
-            {{formatNumberWithISO unit.currentLevel}} 
-            {{declension unit.currentLevel 'юнит' '' 'а' 'ов'}}
-          </span>
-        {{/if}}
       </div>
-      <div class="description">
-        {{> item_requirements requirements=unit.requirements}}
-
-        <p>{{unit.description}}</p>
-
-        {{#if unit.maxCount}}
-          <div class="limit">
-            Всего юнитов {{formatNumber unit.totalCount}} из {{formatNumber unit.maxCount}}
-          </div>
-        {{/if}}
-      </div>
-
-      {{> item_characteristic item=unit}}
-      
-      {{#unless eq unit.side 'reptiles'}}
-        {{> item_price price=(unit.price count undefined)}}
-
-        <input class="count" type="number" placeholder="Количество" value="1"/>
-
-        <button class="build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
-      {{/unless}}
-      
-      {{> Template.dynamic template=additionalArea}}
-    </div>
-  {{/if}}
+    {{/unless}}
+  </div>
+  {{> item_requirements requirements=unit.requirements}}
 </template>
 
 <template name="unitCharacteristics">
@@ -110,24 +64,23 @@
       {{/if}}
 
       <div class="characteristics">
-        {{#if unit.characteristics.damage}}
-          <div class="weapon">
-            <div class="damage" data-tooltip="true" data-tooltip-direction="w">
-              {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 4}}
-            </div>
-
-            <div class="damage_signature">100
-              {{formatNumberWithISO unit.characteristics.damage.signature 4}}
-            </div>
+        <div class="weapon">
+          <div class="damage" data-tooltip="true" data-tooltip-direction="w">
+            {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 4}}
           </div>
-        {{/if}}
+
+          <div class="damage_signature">
+            {{formatNumberWithISO unit.characteristics.weapon.signature 4}}
+          </div>
+        </div>
+
         <div class="life">
           <div class="armor" data-tooltip="true" data-tooltip-direction="w">
             {{formatNumberWithISO unit.characteristics.health.armor 4}}
           </div>
 
-          <div class="armor_signature">100
-            {{formatNumberWithISO unit.characteristics.signature 4}}
+          <div class="armor_signature">
+            {{formatNumberWithISO unit.characteristics.health.signature 4}}
           </div>
         </div>
       </div>
@@ -150,16 +103,6 @@
         </ol>
       {{/if}}
 
-      {{#if eq unit.characteristics.special 'air'}}
-        <div>*Воздушная единица</div>
-      {{/if}}
-
-      {{#each unit.characteristics.notAttack}}
-        {{#if eq this 'air'}}
-          <div>*Не атакует воздушные цели</div>
-        {{/if}}
-      {{/each}}
-
       <div class="effects">
         {{#if unit.maxCount}}
           <div class="limit">
@@ -167,20 +110,6 @@
           </div>
         {{/if}}
       </div>
-    </div>
-  {{/if}}
-</template>
-
-<template name="unitBattleEffects">
-  {{#if unit.battleEffects}}
-    <div class="currentLevel">
-      {{#each unit.battleEffects}}
-        {{#if result}}
-          {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
-          {{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
-          <br/>
-        {{/if}}
-      {{/each}}
     </div>
   {{/if}}
 </template>

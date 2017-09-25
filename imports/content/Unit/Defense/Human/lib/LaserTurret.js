@@ -3,15 +3,18 @@ export default {
   title: 'Лазерная Турель',
   description: 'Лазерные Турели — это следующая модификация обычных Турелей, принцип действия тот же. Находясь в отдалённой точке космоса, эти орудия способны крайне быстро и эффективно уничтожать небольшие корабли противника, ухитрившиеся подобраться слишком близко к вашей планете. Очень полезная штука, Консул.',
   basePrice: {
-    credits: 50,
-    time: 60,
+    credits: 5,
+    time: 20 * 3,
   },
   characteristics: {
-    damage: {
-      min: 1200,
-      max: 1500,
+    weapon: {
+      damage: { min: 25, max: 35 },
+      signature: 90,
     },
-    life: 5000,
+    health: {
+      armor: 200,
+      signature: 45,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Blade',
@@ -20,8 +23,7 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/DefenseComplex', 30],
-      ['Research/Evolution/Engineering', 20],
+      ['Building/Residential/House', 10],
     ];
   },
 };

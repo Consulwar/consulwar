@@ -2,22 +2,23 @@ Meteor.startup(function() {
 'use strict';
 
 UI.registerHelper('isNewLayout', function() {
-  var newLayoutGroups = {
+  const newLayoutGroups = {
     planet: {
       residential: true,
-      military: true
+      military: true,
     },
     research: {
-      evolution: true
+      evolution: true,
     },
     cosmos: true,
     army: {
       fleet: true,
       ground: true,
-      defense: true
+      defense: true,
     },
     artefacts: true,
-    house: true
+    house: true,
+    info: true,
   };
 
   return (

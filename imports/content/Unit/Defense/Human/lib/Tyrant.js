@@ -3,15 +3,18 @@ export default {
   title: 'Жидкоплазменный Тиран',
   description: 'Когда Рептилии атакуют вас мощным флотом и выстраивают серьёзную оборону из крупных и тяжёлых кораблей, они точно не ожидают, что вы будете поливать их строй жидкой плазмой. Эта новейшая разработка в области вооружения способна, словно нож — масло, прорезать корабли ваших врагов насквозь. Изплазмительное орудие.',
   basePrice: {
-    credits: 1000,
-    time: 60 * 20,
+    credits: 5000,
+    time: 24 * 60 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 36000,
-      max: 45000,
+    weapon: {
+      damage: { min: 360000, max: 440000 },
+      signature: 1800,
     },
-    life: 250000,
+    health: {
+      armor: 4000000,
+      signature: 2500,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Armadillo',
@@ -20,8 +23,9 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/DefenseComplex', 70],
-      ['Research/Evolution/Engineering', 65],
+      ['Building/Residential/Political', 50],
+      ['Research/Evolution/Crystallization', 54],
+      ['Research/Evolution/Hyperdrive', 43],
     ];
   },
 };

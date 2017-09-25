@@ -3,15 +3,18 @@ export default {
   title: 'Рельсовая Пушка',
   description: 'Рельсовая Пушка просто необходима для любителей ваншот тактики. Корабли Рептилоидов средней мощности разлетаются в щепки от одного выстрела такого орудия, как Рельсовая Пушка. Эти орудия действительно могут перевернуть ход битвы несколькими залпами, Консул.',
   basePrice: {
-    credits: 300,
-    time: 60 * 5,
+    credits: 250,
+    time: 30 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 9600,
-      max: 12000,
+    weapon: {
+      damage: { min: 18000, max: 22000 },
+      signature: 400,
     },
-    life: 50000,
+    health: {
+      armor: 25000,
+      signature: 800,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Hydra',
@@ -20,8 +23,8 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/DefenseComplex', 50],
-      ['Research/Evolution/Engineering', 45],
+      ['Building/Residential/Political', 30],
+      ['Research/Evolution/Drill', 28],
     ];
   },
 };

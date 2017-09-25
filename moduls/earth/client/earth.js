@@ -666,6 +666,9 @@ var ZoneView = function(mapView, zoneData) {
       } else if (zone.isEnemy) {
         polygon.bringToBack();
         element.addClass('earth-marker-enemy');
+        if (!zone.isVisible) {
+          element.addClass('earth-marker-not-visible');
+        }
       } else {
         polygon.bringToFront();
         element.addClass('earth-marker-our');

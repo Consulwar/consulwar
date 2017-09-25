@@ -3,27 +3,29 @@ export default {
   title: 'Оса',
   description: 'Оса — это быстрый штурмовой корабль. Она способна вести бой как на дальнем, так и на близком расстоянии. Также её особенностью является то, что устройство данного корабля позволяет ему цепляться с помощью хвоста за обшивку кораблей противника, после чего Оса разделяется на две части. Пилотируемая капсула отправляется на ближайший крупный боевой корабль, а «жало» вместе с двигателями остаётся в обшивке корабля противника. Благодаря дистанционному управлению хвостовыми двигателями, несколько тысяч Ос могут взять под контроль движения любого корабля. Ну, или просто взорвать его к херам вместе с капитаном-неудачником, подпустившим Ос слишком близко к своему кораблю.',
   basePrice: {
-    humans: 10,
-    metals: 15,
-    crystals: 7.5,
-    time: 60 + 45,
+    humans: 5,
+    metals: 75,
+    crystals: 25,
+    time: 10 * 60 * 3,
   },
   characteristics: {
-    damage: {
-      min: 240,
-      max: 300,
+    weapon: {
+      damage: { min: 8, max: 12 },
+      signature: 10,
     },
-    life: 500,
+    health: {
+      armor: 35,
+      signature: 60,
+    },
   },
   targets: [
     'Unit/Space/Reptile/Sphero',
-    'Unit/Space/Reptile/Blade',
-    'Unit/Space/Reptile/Lacertian',
+    'Unit/Space/Reptile/Armadillo',
+    'Unit/Space/Reptile/Wyvern',
   ],
   requirements() {
     return [
-      ['Building/Military/Airfield', 10],
-      ['Building/Military/Shipyard', 10],
+      ['Building/Residential/Spaceport', 1],
     ];
   },
 };

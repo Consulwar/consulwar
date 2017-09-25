@@ -8,30 +8,22 @@ export default {
     Military: [
       {
         textBefore: 'Урон Пожинателя +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Reaper',
-        priority: 1,
+        priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 300;
-          } else if (level < 100) {
-            return level * 600;
-          }
-          return level * 1200;
+          return level * 0.4;
         },
       },
       {
         textBefore: 'Броня Пожинателя +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Reaper',
-        priority: 1,
+        priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 600;
-          } else if (level < 100) {
-            return level * 1200;
-          }
-          return level * 2400;
+          return level * 0.4;
         },
       },
     ],

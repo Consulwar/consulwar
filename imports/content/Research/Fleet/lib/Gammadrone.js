@@ -8,30 +8,22 @@ export default {
     Military: [
       {
         textBefore: 'Урон Гаммадрона +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Gammadrone',
-        priority: 1,
+        priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level;
-          } else if (level < 100) {
-            return level * 2;
-          }
-          return level * 4;
+          return level * 0.4;
         },
       },
       {
         textBefore: 'Броня Гаммадрона +',
+        textAfter: '%',
         condition: 'Unit/Space/Human/Gammadrone',
-        priority: 1,
+        priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {
-          if (level < 50) {
-            return level * 2;
-          } else if (level < 100) {
-            return level * 3;
-          }
-          return level * 6;
+          return level * 0.4;
         },
       },
     ],

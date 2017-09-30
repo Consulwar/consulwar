@@ -10,6 +10,8 @@ game.PlanetType = function (options) {
 
 Game.Cosmos = {};
 
+Game.Cosmos.Jobs = new JobCollection('spaceQueue');
+
 Game.Planets = {
 
   Collection: new Meteor.Collection('planets'),

@@ -34,7 +34,7 @@ let legacyToNewBattle = function(origUserArmy, origEnemyArmy, battleOptions) {
       roundResult = battle.performEarthRound(battleOptions);
     } else {
       roundResult = battle.performSpaceRound(battleOptions);
-      honor += roundResult.honors[username];
+      honor += roundResult.honors[username]; // TODO: honors doesn't exists
     }
 
     round++;
@@ -44,7 +44,7 @@ let legacyToNewBattle = function(origUserArmy, origEnemyArmy, battleOptions) {
   if (battle.status !== Battle.Status.finish) {
     battle.result = Game.Battle.result.tie;
   } else if (!battleOptions.isEarth) {
-    reward = battle.rewards[username];
+    reward = battle.rewards[username]; // TODO: rewards doesn't exists
   }
 
   if (honor) {

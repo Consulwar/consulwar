@@ -239,7 +239,7 @@ Game.Unit.calculateArmyCost = function(army) {
           continue;
         }
 
-        var price = Game.Unit.items[side][group][name].price(count);
+        var price = Game.Unit.items[side][group][name].getBasePrice(count);
         if (price && price.base) {
           if (price.base.metals) {
             cost.metals += price.base.metals;

@@ -149,6 +149,16 @@ game.Unit = function(options) {
     return result;
   };
 
+  this.getBasePrice = function (count = 1) {
+    const curPrice = { base: {} };
+
+    _(this.basePrice).keys().forEach((resource) => {
+      curPrice.base[resource] = Math.ceil(this.basePrice[resource] * count);
+    });
+
+    return curPrice;
+  };
+
   if (options.power !== undefined) {
     this.power = options.power;
   }
@@ -247,6 +257,16 @@ game.ReptileUnit = function(options) {
 
   this.isEnoughResources = function() {
     return true;
+  };
+
+  this.getBasePrice = function (count = 1) {
+    const curPrice = { base: {} };
+
+    _(this.basePrice).keys().forEach((resource) => {
+      curPrice.base[resource] = Math.ceil(this.basePrice[resource] * count);
+    });
+
+    return curPrice;
   };
 
   if (options.power) {

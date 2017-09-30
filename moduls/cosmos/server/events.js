@@ -1,4 +1,6 @@
 import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
+import createGroup from '../../battle/lib/imports/createGroup';
+import Battle from '../../battle/server/battle';
 
 initCosmosEventsServer = function() {
 'use strict';
@@ -13,6 +15,11 @@ Game.SpaceEvents.Collection._ensureIndex({
   type: 1,
   timeEnd: -1,
   'info.mission.type': 1
+});
+
+Game.Cosmos.Jobs._ensureIndex({
+  'data.planetID': 1,
+  status: 1,
 });
 
 Game.SpaceEvents.actualize = function() {
@@ -741,11 +748,57 @@ var completeHumansArrival = function(event, planet) {
       artefacts: Game.Planets.getArtefacts(planet)
     };
 
-    var enemyFleet = Game.Planets.getFleetUnits(planet._id);
+    const enemyFleet = Game.Planets.getFleetUnits(planet._id);
     enemyArmy = { reptiles: { fleet: enemyFleet } };
 
-    var userFleet = Game.SpaceEvents.getFleetUnits(event);
+    const userFleet = Game.SpaceEvents.getFleetUnits(event);
     userArmy = { army: { fleet: userFleet } };
+
+    const username = Meteor.user().username;
+    const userGroup = createGroup(userArmy);
+
+    const jobRaw = Game.Cosmos.Jobs.findOne({
+      'data.planetID': planet._id,
+      status: { $ne: 'completed' },
+    });
+
+    if (jobRaw) {
+      const battleID = jobRaw.data.battleID;
+
+      Battle.addGroup(battleID, Battle.USER_SIDE, username, userGroup);
+    } else {
+      const enemyGroup = createGroup(enemyArmy);
+
+      const options = {
+        missionType: planet.mission.type,
+        missionLevel: planet.mission.level,
+        artefacts: Game.Planets.getArtefacts(planet),
+      };
+
+      const battle = Battle.create(options,
+        {
+          [username]: [userGroup],
+        }, {
+          ai: [enemyGroup],
+        },
+      );
+
+      // Create a Job
+      const job = new Job(Game.Cosmos.Jobs, 'spaceBattle', {
+        planetID: planet._id,
+        battleID: battle.id,
+        event,
+      });
+
+      job.delay(5 * 1000) // Wait an 20 seconds before first try
+        .save();
+    }
+
+    Game.Unit.removeArmy(event.info.armyId);
+
+
+    return null;
+
 
     battleResult = legacyToNewBattle(userArmy, enemyArmy, battleOptions);
 
@@ -1253,4 +1306,67 @@ Meteor.publish('spaceEvents', function () {
   }
 });
 
+Game.Cosmos.Jobs.processJobs('spaceBattle', (job, cb) => {
+  job.done();
+
+  const { battleID, planetID, event } = job.data;
+
+  const battle = Battle.fromDB(battleID);
+  const planet = Game.Planets.Collection.findOne({ _id: planetID });
+
+  const roundResult = battle.performRound();
+
+  if (battle.status === Battle.Status.finish) {
+    if (Battle.USER_SIDE in roundResult.left) {
+      planet.mission = null;
+
+      let targetId;
+      const username = battle.userNames[0];
+      if (battle.initialUnits[Battle.USER_SIDE][username].length === 1) {
+        // battle without aid
+        targetId = event.info.startPlanetId;
+      } else {
+        const user = Meteor.users.findOne({ username });
+        targetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
+      }
+
+      // return ship
+      const newJob = new Job(Game.Cosmos.Jobs, 'returnShip', {
+        startPosition: event.info.targetPosition,
+        startPlanetId: event.info.targetId,
+        targetPosition: event.info.startPosition,
+        targetType: Game.SpaceEvents.target.PLANET,
+        targetId,
+        startTime: event.timeEnd,
+        flyTime: event.timeEnd - event.timeStart,
+        isHumans: true,
+        isOneway: true,
+        isBack: true,
+        engineLevel: event.info.engineLevel,
+        mission: null,
+        armyId: event.info.armyId,
+      });
+
+      newJob.delay((event.timeEnd - event.timeStart) * 1000)
+        .save();
+    } else {
+      planet.mission.units = roundResult.left[Battle.ENEMY_SIDE].reptiles.fleet;
+    }
+  } else {
+    planet.mission.units = roundResult.left[Battle.ENEMY_SIDE].reptiles.fleet;
+
+    job.rerun({
+      wait: 5 * 1000,
+    });
+  }
+
+  Game.Planets.update(planet);
+
+  cb();
+});
+
+Game.Cosmos.Jobs.processJobs('returnShip', (job, cb) => {
+  job.done();
+  cb();
+});
 };

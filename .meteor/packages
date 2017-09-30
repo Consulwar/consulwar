@@ -59,3 +59,4 @@ jparker:crypto-sha1
 jparker:crypto-base64
 shell-server@0.2.4
 dynamic-import@0.1.1
+vsivsi:job-collection

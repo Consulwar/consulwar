@@ -82,6 +82,7 @@ Meteor.startup(function () {
   initGameLog();
 
   SyncedCron.start();
+  Game.Cosmos.Jobs.startJobServer();
 });
 
 Router.route('/legal/:filename?', function() {

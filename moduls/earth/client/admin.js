@@ -102,9 +102,10 @@ const getInfoFromForm = function (elements) {
   const modifier = {};
   const units = {};
 
-  elements.forEach((element) => {
-    const id = element.attr('data-id');
-    const count = parseInt(element.find('input').val(), 10);
+  _(elements).each((element) => {
+    const $element = $(element);
+    const id = $element.attr('data-id');
+    const count = parseInt($element.find('input').val(), 10);
 
     modifier[`enemyArmy.reptiles.ground.${id}`] = Math.max(0, count);
 

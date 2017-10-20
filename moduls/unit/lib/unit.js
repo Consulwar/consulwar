@@ -334,9 +334,9 @@ Game.Unit = {
 
   Collection: new Meteor.Collection('units'),
 
-  getArmy: function (id) {
+  getArmy: function (id, user_id = Meteor.userId()) {
     return Game.Unit.Collection.findOne({
-      user_id: Meteor.userId(),
+      user_id,
       _id: id
     });
   },

@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import createGroup from '../../battle/lib/imports/createGroup';
 import Battle from '../../battle/server/battle';
 import Generals from './generals';
@@ -80,8 +81,8 @@ if (Game.EarthZones.Collection.find().count() === 0) {
   Game.Earth.generateZones();
 }
 
-Game.Earth.addReinforcement = function(units, targetZoneName) {
-  let army = Game.EarthUnits.get();
+Game.Earth.addReinforcement = function(units, targetZoneName, user = Meteor.user()) {
+  let army = Game.EarthUnits.get(user._id);
   let zoneName;
   if (army) {
     zoneName = army.zoneName;
@@ -100,7 +101,7 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
         var count = parseInt( units[side][group][name], 10 );
         if (count > 0) {
           honor += Game.Resources.calculateHonorFromReinforcement(
-            Game.Unit.items[side][group][name].price(count)
+            Game.Unit.items[side][group][name].getBasePrice(count),
           );
           inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
           stats['reinforcements.arrived.' + side + '.' + group + '.' + name] = count;
@@ -111,13 +112,11 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
   }
 
   if (stats['reinforcements.arrived.total'] > 0) {
-    let user = Meteor.user();
-
     Game.Statistic.incrementUser(user._id, stats);
 
     Game.Resources.add({
-      honor: honor
-    });
+      honor: honor,
+    }, user._id);
 
     Game.EarthUnits.incArmy(user, inc, zoneName, units);
   }

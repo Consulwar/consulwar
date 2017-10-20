@@ -1,4 +1,8 @@
 import Battle from '../../battle/server/battle';
+import {
+  spawnTradeFleet,
+  sendReptileFleetToPlanet,
+} from '../../../imports/modules/space/server/actualize';
 
 initCheatsServer = function() {
 'use strict';
@@ -186,11 +190,11 @@ if (process.env.NODE_ENV == 'development') {
     },
 
     'cheats.spawnTradeFleet': function(hand, segment) {
-      Game.SpaceEvents.spawnTradeFleet(hand, segment);
+      spawnTradeFleet(hand, segment);
     },
 
     'cheats.sendReptileFleetToPlanet': function(planetId) {
-      Game.SpaceEvents.sendReptileFleetToPlanet(planetId);
+      sendReptileFleetToPlanet(planetId);
     },
 
     'cheats.generateAllPlanets': function() {

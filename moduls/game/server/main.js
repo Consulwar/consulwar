@@ -1,3 +1,6 @@
+import { spaceEvents } from '../../../imports/modules/space/lib/events';
+import { spaceActualize } from '../../../imports/modules/space/server/actualize';
+
 //BrowserPolicy.framing.allowAll();
 
 BrowserPolicy.content.allowOriginForAll('*');
@@ -82,7 +85,7 @@ Meteor.startup(function () {
   initGameLog();
 
   SyncedCron.start();
-  Game.Cosmos.Jobs.startJobServer();
+  spaceEvents.startJobServer();
 });
 
 Router.route('/legal/:filename?', function() {
@@ -152,7 +155,7 @@ Meteor.methods({
       Game.Queue.checkAll();
     }
 
-    Game.SpaceEvents.actualize();
+    spaceActualize();
     Game.Planets.actualize();
     Game.Quest.actualize();
 

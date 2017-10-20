@@ -714,9 +714,6 @@ Game = {
       case 'research':
         return Game.Research;
 
-      case 'spaceEvent':
-        return Game.SpaceEvents;
-
       case 'card':
         return Game.Cards;
 
@@ -1472,3 +1469,5 @@ Game.Helpers = {
     return clone;
   },
 };
+
+export default Game;

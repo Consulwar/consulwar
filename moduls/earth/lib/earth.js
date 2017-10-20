@@ -38,10 +38,8 @@ Game.EarthZones = {
 Game.EarthUnits = {
   Collection: new Meteor.Collection('earthUnits'),
 
-  get: function () {
-    return Game.EarthUnits.Collection.findOne({
-      user_id: Meteor.userId()
-    });
+  get: function (user_id = Meteor.userId()) {
+    return Game.EarthUnits.Collection.findOne({ user_id });
   }
 };
 

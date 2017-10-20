@@ -303,22 +303,6 @@ class Battle {
 
     const names = this.userNames;
 
-    if (this.options.artefacts) {
-      const artefacts = [];
-      _(this.options.artefacts).pairs().forEach(([artefactName, count]) => {
-        _.times(count, () => artefacts.push(artefactName));
-      });
-
-      for (let artefactName of artefacts) {
-        const username = names[Game.Random.interval(0, names.length - 1)];
-        const user = Meteor.users.findOne({ username });
-
-        Game.Resources.add({ [artefactName]: 1 }, user._id);
-
-        inc[`reward.${username}.artefact.${artefactName}`] = 1;
-      }
-    }
-
     if (mission.cards) {
       const missionCards = mission.cards;
       _(missionCards).pairs().forEach(([cardName, chance]) => {

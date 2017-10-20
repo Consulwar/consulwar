@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Command, ResponseToGeneral } from '../lib/generals';
+import { canSendFleet } from '../../../imports/modules/space/lib/events';
+import Reinforcement from '../../../imports/modules/space/server/reinforcement';
 
 initEarthServerMethods = function() {
 'use strict';
@@ -21,11 +23,11 @@ Meteor.methods({
 
     const currentTime = Game.getCurrentTime();
 
-    if (!Game.SpaceEvents.checkCanSendFleet()) {
+    if (!canSendFleet()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
-    let army = Game.EarthUnits.get();
+    const army = Game.EarthUnits.get();
     let targetZoneName;
 
     if (army) {
@@ -33,7 +35,7 @@ Meteor.methods({
     } else {
       check(zoneName, String);
 
-      let zone = Game.EarthZones.getByName(zoneName);
+      const zone = Game.EarthZones.getByName(zoneName);
       if (!zone) {
         throw new Meteor.Error('Не существует указанная зона отправки.');
       }
@@ -99,12 +101,11 @@ Meteor.methods({
     }
 
     // send reinforcements to current point
-    Game.SpaceEvents.sendReinforcement({
-      startTime: currentTime,
-      durationTime: Game.Earth.REINFORCEMENTS_DELAY,
+    Reinforcement.add({
+      user_id: user._id,
       units: { army: { ground: units } },
       protectAllHonor: protectedHonor > 0,
-      targetZoneName
+      targetZoneName,
     });
 
     if (cardList.length !== 0) {

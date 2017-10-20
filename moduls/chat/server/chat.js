@@ -1,3 +1,5 @@
+import makeFun from '../../../imports/modules/space/server/makeFun';
+
 initChatServer = function() {
 'use strict';
 
@@ -395,7 +397,7 @@ Meteor.methods({
         Game.Payment.Expense.log(50, 'sepukku');
         
       } else if (message.indexOf('/яготов') === 0) {
-        if (Game.SpaceEvents.makeFun()) {
+        if (makeFun()) {
           set.data = {
             type: 'notprepared'
           };

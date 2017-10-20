@@ -56,34 +56,34 @@ Game.Unit.initialize = function(user_id = Meteor.userId()) {
   }
 };
 
-Game.Unit.removeArmy = function(id) {
-  if (Game.Unit.getHomeArmy()._id == id) {
+Game.Unit.removeArmy = function(id, user_id = Meteor.userId()) {
+  if (Game.Unit.getHomeArmy(user_id)._id == id) {
     Game.Unit.Collection.update({ _id: id }, { $set: { 'units': {} } } );
   } else {
     Game.Unit.Collection.remove({ _id: id });
   }
 };
 
-Game.Unit.createArmy = function(units, location) {
+Game.Unit.createArmy = function(units, location, user_id = Meteor.userId()) {
   var record = {};
 
-  record.user_id = Meteor.userId();
+  record.user_id = user_id;
   record.units = units;
   record.location = location;
 
   return Game.Unit.Collection.insert(record);
 };
 
-Game.Unit.updateArmy = function(id, units) {
-  var army = Game.Unit.getArmy(id);
+Game.Unit.updateArmy = function(id, units, user_id = Meteor.userId()) {
+  var army = Game.Unit.getArmy(id, user_id);
   if (army) {
     army.units = units;
     Game.Unit.Collection.update({ _id: id }, army);
   }
 };
 
-Game.Unit.moveArmy = function (id, location) {
-  var army = Game.Unit.getArmy(id);
+Game.Unit.moveArmy = function (id, location, user_id = Meteor.userId()) {
+  var army = Game.Unit.getArmy(id, user_id);
   if (army) {
     army.location = location;
     Game.Unit.Collection.update({ _id: id }, army);
@@ -158,13 +158,13 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
   return Game.Unit.createArmy(destUnits, destLocation);
 };
 
-Game.Unit.mergeArmy = function(sourceId, destId) {
+Game.Unit.mergeArmy = function(sourceId, destId, user_id = Meteor.userId()) {
   if (sourceId == destId) {
     throw new Meteor.Error('Нельзя слить одну и ту же армию');
   }
 
-  var source = Game.Unit.getArmy(sourceId);
-  var dest = Game.Unit.getArmy(destId);
+  var source = Game.Unit.getArmy(sourceId, user_id);
+  var dest = Game.Unit.getArmy(destId, user_id);
 
   if (!source || !source.units || !dest || !dest.units) {
     throw new Meteor.Error('Армии с указанными id не найдены');
@@ -201,11 +201,11 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
   }
 
   // remove source
-  Game.Unit.removeArmy(sourceId);
+  Game.Unit.removeArmy(sourceId, user_id);
 
   // update destination units
   if (mergeCount > 0) {
-    Game.Unit.updateArmy(destId, destUnits);
+    Game.Unit.updateArmy(destId, destUnits, user_id);
   }
 };
 

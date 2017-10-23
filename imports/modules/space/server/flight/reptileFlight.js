@@ -17,13 +17,13 @@ const flyBack = function (data) {
     startPosition: data.targetPosition,
     targetPosition: data.startPosition,
     targetId: data.startPlanetId,
-  }, data.user_id);
+  }, data.userId);
 };
 
 export default function reptileFlight(data) {
-  const { user_id } = data;
+  const { userId } = data;
 
-  const planet = Game.Planets.getOne(data.targetId, user_id);
+  const planet = Game.Planets.getOne(data.targetId, userId);
 
   if (!planet.mission) {
     if (planet.armyId || planet.isHome) {
@@ -41,7 +41,7 @@ export default function reptileFlight(data) {
         let userArmy;
 
         if (planet.isHome) {
-          const homeArmy = Game.Unit.getHomeArmy(user_id);
+          const homeArmy = Game.Unit.getHomeArmy(userId);
           if (homeArmy && homeArmy.units && homeArmy.units.army && homeArmy.units.army.ground) {
             Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground);
 
@@ -50,16 +50,16 @@ export default function reptileFlight(data) {
 
           userArmy = homeArmy.units;
         } else {
-          const planetArmy = Game.Unit.getArmy(planet.armyId, user_id);
+          const planetArmy = Game.Unit.getArmy(planet.armyId, userId);
           if (planetArmy) {
             userArmy = planetArmy.units;
           }
 
-          Game.Unit.removeArmy(planet.armyId, user_id);
+          Game.Unit.removeArmy(planet.armyId, userId);
           planet.armyId = null;
         }
 
-        const username = Meteor.users.findOne({ _id: user_id }).username;
+        const username = Meteor.users.findOne({ _id: userId }).username;
         const userGroup = createGroup(userArmy);
 
         const options = {

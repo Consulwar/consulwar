@@ -22,7 +22,7 @@ spaceEvents.processJobs(
     prefetch: 1,
   },
   (job, cb) => {
-    const { units, protectAllHonor, targetZoneName, user_id } = job.data;
+    const { units, protectAllHonor, targetZoneName, userId } = job.data;
 
     // kill random count on the way
     let killedPercent = 0;
@@ -65,7 +65,7 @@ spaceEvents.processJobs(
 
     // save reinforcements
     if (arrived) {
-      const user = Meteor.users.findOne({ _id: user_id });
+      const user = Meteor.users.findOne({ _id: userId });
       Game.Earth.addReinforcement(arrived, targetZoneName, user);
     }
 

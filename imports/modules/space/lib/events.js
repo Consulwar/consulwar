@@ -6,7 +6,7 @@ export const spaceEvents = new JobCollection('spaceEvents');
 
 if (Meteor.isServer) {
   spaceEvents._ensureIndex({
-    'data.user_id': 1,
+    'data.userId': 1,
     'data.planetId': 1,
     status: 1,
   });
@@ -16,7 +16,7 @@ if (Meteor.isServer) {
   Meteor.publish('spaceEvents', function () {
     if (this.userId) {
       return spaceEvents.find({
-        'data.user_id': this.userId,
+        'data.userId': this.userId,
         status: { $ne: 'completed' },
       });
     }
@@ -26,7 +26,7 @@ if (Meteor.isServer) {
 
 const getCurrentFleetsCount = function () {
   return spaceEvents.find({
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
     status: { $ne: 'completed' },
   }).count();
 };
@@ -37,7 +37,7 @@ export function canSendFleet() {
 
 export function getAll() {
   return spaceEvents.find({
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
   }, {
     sort: {
       after: 1,

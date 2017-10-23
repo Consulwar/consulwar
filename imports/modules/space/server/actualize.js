@@ -71,12 +71,12 @@ export function spawnTradeFleet(hand, segment) {
 const actualizeTradeFleets = function() {
   // find fleets and group by sector
   spaceEvents.find({
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
     status: { $ne: 'completed' },
   });
 
   const fleets = spaceEvents.find({
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
     type: EVENT_TYPE,
     after: { $gt: Game.getCurrentTime() * 1000 },
     'data.mission.type': 'tradefleet',

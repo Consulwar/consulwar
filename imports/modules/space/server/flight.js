@@ -6,10 +6,10 @@ import { Job } from '../lib/jobs';
 
 import { EVENT_TYPE, Target } from '../lib/flight';
 
-function add(data, user_id) {
+function add(data, userId) {
   const savedData = {
     ...data,
-    user_id,
+    userId,
   };
 
   const job = new Job(spaceEvents, EVENT_TYPE, savedData);
@@ -18,25 +18,25 @@ function add(data, user_id) {
 }
 
 export default class Flight {
-  static toPlanet(data, user_id = Meteor.userId()) {
+  static toPlanet(data, userId = Meteor.userId()) {
     add({
       ...data,
       targetType: Target.PLANET,
-    }, user_id);
+    }, userId);
   }
 
-  static toShip(data, user_id = Meteor.userId()) {
+  static toShip(data, userId = Meteor.userId()) {
     add({
       ...data,
       targetType: Target.SHIP,
-    }, user_id);
+    }, userId);
   }
 
-  static toBattle(data, user_id = Meteor.userId()) {
+  static toBattle(data, userId = Meteor.userId()) {
     add({
       ...data,
       targetType: Target.BATTLE,
-    }, user_id);
+    }, userId);
   }
 }
 

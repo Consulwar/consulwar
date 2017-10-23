@@ -6,7 +6,7 @@ export const EVENT_TYPE = 'battle';
 export function getBattles() {
   return spaceEvents.find({
     type: EVENT_TYPE,
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
     status: { $ne: 'completed' },
   }, {
     sort: {
@@ -18,7 +18,7 @@ export function getBattles() {
 export function findByBattleId(battleId) {
   return spaceEvents.findOne({
     type: EVENT_TYPE,
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
     'data.battleId': battleId,
     status: { $ne: 'completed' },
   });

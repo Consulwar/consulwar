@@ -180,7 +180,7 @@ function completeOnBattle(data, userId) {
 }
 
 export default function humansFlight(data) {
-  const userId = data.user_id;
+  const userId = data.userId;
 
   switch (data.targetType) {
     case Target.PLANET:

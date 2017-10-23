@@ -13,7 +13,7 @@ export const Target = {
 export function getFleets() {
   return spaceEvents.find({
     type: EVENT_TYPE,
-    'data.user_id': Meteor.userId(),
+    'data.userId': Meteor.userId(),
     status: { $ne: 'completed' },
   }, {
     sort: {
@@ -30,7 +30,7 @@ export function getFleetUnits(data) {
 
     return _.clone(Game.Battle.items[data.mission.type].level[data.mission.level].enemies);
   } else if (data.armyId) {
-    const army = Game.Unit.getArmy(data.armyId, data.user_id);
+    const army = Game.Unit.getArmy(data.armyId, data.userId);
     if (army && army.units && army.units.army) {
       return army.units.army.fleet;
     }
@@ -39,9 +39,9 @@ export function getFleetUnits(data) {
   return null;
 }
 
-export function getOne(_id, user_id = Meteor.userId()) {
+export function getOne(_id, userId = Meteor.userId()) {
   return spaceEvents.findOne({
-    'data.user_id': user_id,
+    'data.userId': userId,
     _id,
     status: { $ne: 'completed' },
   });

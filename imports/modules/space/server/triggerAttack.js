@@ -8,10 +8,10 @@ import { Job } from '../lib/jobs';
 const EVENT_TYPE = 'triggerAttack';
 
 export default class TriggerAttack {
-  static add(data, delay, user_id) {
+  static add(data, delay, userId) {
     const savedData = {
       ...data,
-      user_id,
+      userId,
     };
 
     const job = new Job(spaceEvents, EVENT_TYPE, savedData);
@@ -24,7 +24,7 @@ spaceEvents.processJobs(EVENT_TYPE, (job, cb) => {
   job.done();
 
   const data = job.data;
-  const userId = data.user_id;
+  const userId = data.userId;
 
   const planet = Game.Planets.getOne(data.targetPlanet, userId);
 

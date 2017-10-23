@@ -1,11 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 
+import createGroup from '/moduls/battle/lib/imports/createGroup';
+import Battle from '/moduls/battle/server/battle';
+
 import Flight from '../flight';
 import { getFleetUnits } from '../../lib/flight';
-
-import createGroup from '../../../../../moduls/battle/lib/imports/createGroup';
-import Battle from '../../../../../moduls/battle/server/battle';
 
 import BattleEvents from '../battle';
 

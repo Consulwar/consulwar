@@ -1,5 +1,5 @@
+import { canSendFleet } from '/imports/modules/space/lib/events';
 import { Command, ResponseToGeneral } from '../lib/generals';
-import { canSendFleet } from '../../../imports/modules/space/lib/events';
 
 initEarthClient = function() {
 'use strict';

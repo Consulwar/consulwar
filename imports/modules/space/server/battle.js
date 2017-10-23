@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
+import Battle from '/moduls/battle/server/battle';
+
 import { spaceEvents } from '../lib/events';
-import Battle from '../../../../moduls/battle/server/battle';
 import { EVENT_TYPE } from '../lib/battle';
 import Flight from './flight';
 import { Job } from '../lib/jobs';

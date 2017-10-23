@@ -1,5 +1,5 @@
-import { getReinforcements } from '../../../imports/modules/space/lib/reinforcement';
-import { getFleets, Target, getOne } from '../../../imports/modules/space/lib/flight';
+import { getReinforcements } from '/imports/modules/space/lib/reinforcement';
+import { getFleets, Target, getOne } from '/imports/modules/space/lib/flight';
 
 Blaze._allowJavascriptUrls();
 

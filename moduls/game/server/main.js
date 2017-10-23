@@ -1,5 +1,5 @@
-import { spaceEvents } from '../../../imports/modules/space/lib/events';
-import { spaceActualize } from '../../../imports/modules/space/server/actualize';
+import { spaceEvents } from '/imports/modules/space/lib/events';
+import { spaceActualize } from '/imports/modules/space/server/actualize';
 
 //BrowserPolicy.framing.allowAll();
 

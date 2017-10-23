@@ -1,6 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 
+import createGroup from '/moduls/battle/lib/imports/createGroup';
+import Battle from '/moduls/battle/server/battle';
+
 import Flight from '../flight';
 import { getFleetUnits, Target, getOne } from '../../lib/flight';
 
@@ -8,9 +11,6 @@ import TriggerAttack from '../triggerAttack';
 import { TRIGGER_ATTACK_DELAY } from '../config';
 
 import BattleEvents from '../battle';
-
-import createGroup from '../../../../../moduls/battle/lib/imports/createGroup';
-import Battle from '../../../../../moduls/battle/server/battle';
 
 function completeOnPlanet(data, userId) {
   const planet = Game.Planets.getOne(data.targetId, userId);

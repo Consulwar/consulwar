@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { canSendFleet } from '/imports/modules/space/lib/events';
+import Reinforcement from '/imports/modules/space/server/reinforcement';
+
 import { Command, ResponseToGeneral } from '../lib/generals';
-import { canSendFleet } from '../../../imports/modules/space/lib/events';
-import Reinforcement from '../../../imports/modules/space/server/reinforcement';
 
 initEarthServerMethods = function() {
 'use strict';

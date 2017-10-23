@@ -1,4 +1,4 @@
-import { getFleetUnits, getOne } from '../../../imports/modules/space/lib/flight';
+import { getFleetUnits, getOne } from '/imports/modules/space/lib/flight';
 
 initUnitServerMethods = function() {
 'use strict';

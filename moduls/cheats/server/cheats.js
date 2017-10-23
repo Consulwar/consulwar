@@ -1,8 +1,9 @@
-import Battle from '../../battle/server/battle';
 import {
   spawnTradeFleet,
   sendReptileFleetToPlanet,
-} from '../../../imports/modules/space/server/actualize';
+} from '/imports/modules/space/server/actualize';
+
+import Battle from '../../battle/server/battle';
 
 initCheatsServer = function() {
 'use strict';

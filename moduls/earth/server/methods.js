@@ -173,7 +173,7 @@ Meteor.methods({
       throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
     }
 
-    if (armyZone.battleID) {
+    if (armyZone.battleId) {
       throw new Meteor.Error('Невозможно перемещение армий во время боя.');
     }
 
@@ -273,7 +273,7 @@ Meteor.methods({
       throw new Meteor.Error('Ишь чего удумал.');
     }
 
-    if (zone.battleID) {
+    if (zone.battleId) {
       throw new Meteor.Error('Невозможна отдача приказов во время боя.');
     }
 

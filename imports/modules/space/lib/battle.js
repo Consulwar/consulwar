@@ -15,11 +15,11 @@ export function getBattles() {
   });
 }
 
-export function findByBattleId(battleID) {
+export function findByBattleId(battleId) {
   return spaceEvents.findOne({
     type: EVENT_TYPE,
     'data.user_id': Meteor.userId(),
-    'data.battleID': battleID,
+    'data.battleId': battleId,
     status: { $ne: 'completed' },
   });
 }

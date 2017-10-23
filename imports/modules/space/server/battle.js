@@ -14,18 +14,18 @@ export default class BattleEvents {
       .save();
   }
 
-  static findByPlanetID(planetID) {
+  static findByPlanetId(planetId) {
     return spaceEvents.findOne({
       type: EVENT_TYPE,
-      'data.planetID': planetID,
+      'data.planetId': planetId,
       status: { $ne: 'completed' },
     });
   }
 
-  static findByFleetID(fleetID) {
+  static findByFleetId(fleetId) {
     return spaceEvents.findOne({
       type: EVENT_TYPE,
-      'data.fleetID': fleetID,
+      'data.fleetId': fleetId,
       status: { $ne: 'completed' },
     });
   }
@@ -35,14 +35,14 @@ spaceEvents.processJobs(EVENT_TYPE, (job, cb) => {
   job.done();
 
   const data = job.data;
-  const { battleID, planetID } = data;
+  const { battleId, planetId } = data;
 
   let planet = null;
-  if (planetID) {
-    planet = Game.Planets.Collection.findOne({ _id: planetID });
+  if (planetId) {
+    planet = Game.Planets.Collection.findOne({ _id: planetId });
   }
 
-  const battle = Battle.fromDB(battleID);
+  const battle = Battle.fromDB(battleId);
 
   const roundResult = battle.performRound();
 
@@ -75,7 +75,7 @@ spaceEvents.processJobs(EVENT_TYPE, (job, cb) => {
         isOneway: true,
         isBack: true,
         startPosition: data.targetId,
-        startPlanetId: planetID,
+        startPlanetId: planetId,
         targetPosition: data.startPosition,
         targetId,
         flyTime: data.flyTime,
@@ -107,7 +107,7 @@ spaceEvents.processJobs(EVENT_TYPE, (job, cb) => {
         isOneway: true,
         isBack: true,
         startPosition: data.targetId,
-        startPlanetId: planetID,
+        startPlanetId: planetId,
         targetPosition: data.startPosition,
         targetId: data.startPlanetId,
         flyTime: data.flyTime,

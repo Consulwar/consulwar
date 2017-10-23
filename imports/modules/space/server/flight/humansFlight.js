@@ -28,12 +28,12 @@ function completeOnPlanet(data, userId) {
     const username = Meteor.users.findOne({ _id: userId }).username;
     const userGroup = createGroup(userArmy);
 
-    const jobRaw = BattleEvents.findByPlanetID(planet._id);
+    const jobRaw = BattleEvents.findByPlanetId(planet._id);
 
     if (jobRaw) {
-      const battleID = jobRaw.data.battleID;
+      const battleId = jobRaw.data.battleId;
 
-      Battle.addGroup(battleID, Battle.USER_SIDE, username, userGroup);
+      Battle.addGroup(battleId, Battle.USER_SIDE, username, userGroup);
     } else {
       const enemyGroup = createGroup(enemyArmy);
 
@@ -52,8 +52,8 @@ function completeOnPlanet(data, userId) {
 
       BattleEvents.add({
         ...data,
-        planetID: planet._id,
-        battleID: battle.id,
+        planetId: planet._id,
+        battleId: battle.id,
       });
     }
 
@@ -125,20 +125,20 @@ function completeOnShip(data, userId) {
 
     BattleEvents.add({
       ...data,
-      fleetID: data.targetId,
-      battleID: battle.id,
+      fleetId: data.targetId,
+      battleId: battle.id,
     });
 
     Game.Unit.removeArmy(data.armyId, userId);
   } else {
-    const battleID = BattleEvents.findByFleetID(data.targetId);
+    const battleId = BattleEvents.findByFleetId(data.targetId);
 
-    if (battleID) {
+    if (battleId) {
       const username = Meteor.users.findOne({ _id: userId }).username;
       const userFleet = getFleetUnits(data);
       const userArmy = { army: { fleet: userFleet } };
       const userGroup = createGroup(userArmy);
-      Battle.addGroup(battleID, Battle.USER_SIDE, username, userGroup);
+      Battle.addGroup(battleId, Battle.USER_SIDE, username, userGroup);
 
       Game.Unit.removeArmy(data.armyId, userId);
     } else {
@@ -156,15 +156,15 @@ function completeOnShip(data, userId) {
 }
 
 function completeOnBattle(data, userId) {
-  const battleID = data.targetId;
+  const battleId = data.targetId;
 
-  const battle = Battle.fromDB(battleID);
+  const battle = Battle.fromDB(battleId);
   if (battle) {
     const username = Meteor.users.findOne({ _id: userId }).username;
     const userFleet = getFleetUnits(data);
     const userArmy = { army: { fleet: userFleet } };
     const userGroup = createGroup(userArmy);
-    Battle.addGroup(battleID, Battle.USER_SIDE, username, userGroup);
+    Battle.addGroup(battleId, Battle.USER_SIDE, username, userGroup);
 
     Game.Unit.removeArmy(data.armyId, userId);
   } else {

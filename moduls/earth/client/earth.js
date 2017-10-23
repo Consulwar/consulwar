@@ -466,7 +466,7 @@ Template.earthZonePopup.helpers({
     if (army) {
       let armyZone = Game.EarthZones.getByName(army.zoneName);
 
-      if (armyZone && armyZone.battleID) {
+      if (armyZone && armyZone.battleId) {
         return false;
       }
     }
@@ -962,7 +962,7 @@ let showLines = function (army) {
   lineViews.length = 0;
 
   if (army) {
-    if (Game.EarthZones.getByName(army.zoneName).battleID) {
+    if (Game.EarthZones.getByName(army.zoneName).battleId) {
       return;
     }
 

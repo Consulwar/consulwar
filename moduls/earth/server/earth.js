@@ -67,11 +67,11 @@ Game.EarthUnits.incArmy = function (user, inc, zoneName, units) {
     },
   });
 
-  const battleID = Game.EarthZones.getByName(zoneName).battleID;
-  if (battleID) {
+  const battleId = Game.EarthZones.getByName(zoneName).battleId;
+  if (battleId) {
     const userArmy = createGroup(units);
 
-    Battle.addGroup(battleID, Battle.USER_SIDE, user.username, userArmy);
+    Battle.addGroup(battleId, Battle.USER_SIDE, user.username, userArmy);
   }
 };
 
@@ -222,12 +222,12 @@ Game.Earth.nextTurn = function() {
   Game.EarthZones.getAll().forEach(function (zone) {
     let battle;
 
-    if (zone.battleID) {
+    if (zone.battleId) {
       if (movedUnitsTo[zone.name]) {
         movedUnitsTo[zone.name].forEach(function (moved) {
           let userArmy = createGroup(moved.army);
 
-          Battle.addGroup(zone.battleID, Battle.USER_SIDE, moved.name, userArmy);
+          Battle.addGroup(zone.battleId, Battle.USER_SIDE, moved.name, userArmy);
         });
       }
 
@@ -244,11 +244,11 @@ Game.Earth.nextTurn = function() {
 
           const reptileGroup = createGroup(reptileArmy);
 
-          Battle.addGroup(zone.battleID, Battle.ENEMY_SIDE, 'ai', reptileGroup);
+          Battle.addGroup(zone.battleId, Battle.ENEMY_SIDE, 'ai', reptileGroup);
         });
       }
 
-      battle = Battle.fromDB(zone.battleID);
+      battle = Battle.fromDB(zone.battleId);
     } else if (zone.enemyArmy && zone.userArmy) {
       const enemyArmy = createGroup(zone.enemyArmy);
       const options = {
@@ -263,7 +263,7 @@ Game.Earth.nextTurn = function() {
       Game.EarthZones.Collection.update({
         _id: zone._id,
       }, {
-        $set: { battleID: battle.id },
+        $set: { battleId: battle.id },
       });
     } else if (zone.enemyArmy && !zone.isEnemy) {
       Game.EarthZones.Collection.update({
@@ -289,7 +289,7 @@ Game.Earth.nextTurn = function() {
       const roundResult = battle.performRound();
 
       if (battle.status === Battle.Status.finish) {
-        modifier.$unset = { battleID: 1 };
+        modifier.$unset = { battleId: 1 };
 
         if (Battle.USER_SIDE in roundResult.left) {
           Game.Earth.observeZone(zone.name);

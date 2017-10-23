@@ -31,12 +31,12 @@ export default function reptileFlight(data) {
       const enemyArmy = { reptiles: { fleet: enemyFleet } };
       const enemyGroup = createGroup(enemyArmy);
 
-      const jobRaw = BattleEvents.findByPlanetID(planet._id);
+      const jobRaw = BattleEvents.findByPlanetId(planet._id);
 
       if (jobRaw) {
-        const battleID = jobRaw.data.battleID;
+        const battleId = jobRaw.data.battleId;
 
-        Battle.addGroup(battleID, Battle.USER_SIDE, 'ai', enemyGroup);
+        Battle.addGroup(battleId, Battle.USER_SIDE, 'ai', enemyGroup);
       } else {
         let userArmy;
 
@@ -77,8 +77,8 @@ export default function reptileFlight(data) {
 
         BattleEvents.add({
           ...data,
-          planetID: planet._id,
-          battleID: battle.id,
+          planetId: planet._id,
+          battleId: battle.id,
         });
       }
     } else {

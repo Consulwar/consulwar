@@ -2,12 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import { JobCollection } from './jobs';
 
-export const spaceEvents = new JobCollection('spaceQueue');
+export const spaceEvents = new JobCollection('spaceEvents');
 
 if (Meteor.isServer) {
   spaceEvents._ensureIndex({
     'data.user_id': 1,
-    'data.planetID': 1,
+    'data.planetId': 1,
     status: 1,
   });
 

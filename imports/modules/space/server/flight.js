@@ -1,10 +1,12 @@
 import { Meteor } from 'meteor/meteor';
-import { spaceEvents } from '../lib/events';
+import { Job } from '/moduls/game/lib/jobs';
+import Space from '../lib/space';
 import humansFlight from './flight/humansFlight';
 import reptileFlight from './flight/reptileFlight';
-import { Job } from '../lib/jobs';
+import Lib from '../lib/flight';
+import Config from './config';
 
-import { EVENT_TYPE, Target } from '../lib/flight';
+const { EVENT_TYPE, Target } = Lib;
 
 function add(data, userId) {
   const savedData = {
@@ -12,44 +14,58 @@ function add(data, userId) {
     userId,
   };
 
-  const job = new Job(spaceEvents, EVENT_TYPE, savedData);
-  job.delay(data.flyTime * 1000)
+  const job = new Job(Space.jobs, EVENT_TYPE, savedData);
+  job
+    .retry(Config.JOBS.retries)
+    .delay(data.flyTime * 1000)
     .save();
 }
 
-export default class Flight {
-  static toPlanet(data, userId = Meteor.userId()) {
+const queue = Space.jobs.processJobs(
+  EVENT_TYPE,
+  {
+    concurrency: Config.JOBS.concurrency,
+    payload: Config.JOBS.payload,
+    pollInterval: Config.JOBS.pollInterval,
+    prefetch: Config.JOBS.prefetch,
+  },
+  (job, cb) => {
+    const data = job.data;
+
+    if (data.isHumans) {
+      humansFlight(data);
+    } else {
+      reptileFlight(data);
+    }
+
+    job.done();
+    cb();
+  },
+);
+
+export default {
+  ...Lib,
+
+  toPlanet(data, userId = Meteor.userId()) {
     add({
       ...data,
       targetType: Target.PLANET,
     }, userId);
-  }
+  },
 
-  static toShip(data, userId = Meteor.userId()) {
+  toShip(data, userId = Meteor.userId()) {
     add({
       ...data,
       targetType: Target.SHIP,
     }, userId);
-  }
+  },
 
-  static toBattle(data, userId = Meteor.userId()) {
+  toBattle(data, userId = Meteor.userId()) {
     add({
       ...data,
       targetType: Target.BATTLE,
     }, userId);
-  }
-}
+  },
 
-spaceEvents.processJobs(EVENT_TYPE, (job, cb) => {
-  job.done();
-
-  const data = job.data;
-
-  if (data.isHumans) {
-    humansFlight(data);
-  } else {
-    reptileFlight(data);
-  }
-
-  cb();
-});
+  queue,
+};

@@ -1,17 +1,18 @@
 import { Meteor } from 'meteor/meteor';
+import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
-import { spaceEvents } from './events';
+import Space from './space';
 
-export const EVENT_TYPE = 'flight';
+const EVENT_TYPE = 'flight';
 
-export const Target = {
+const Target = {
   SHIP: 1,
   PLANET: 2,
   BATTLE: 3,
 };
 
-export function getFleets() {
-  return spaceEvents.find({
+const getFleets = function() {
+  return Space.collection.find({
     type: EVENT_TYPE,
     'data.userId': Meteor.userId(),
     status: { $ne: 'completed' },
@@ -20,9 +21,9 @@ export function getFleets() {
       after: 1,
     },
   });
-}
+};
 
-export function getFleetUnits(data) {
+const getFleetUnits = function(data) {
   if (data.mission) {
     if (data.mission.units) {
       return data.mission.units;
@@ -37,12 +38,20 @@ export function getFleetUnits(data) {
   }
 
   return null;
-}
+};
 
-export function getOne(_id, userId = Meteor.userId()) {
-  return spaceEvents.findOne({
+const getOneByUserId = function(_id, userId = Meteor.userId()) {
+  return Space.collection.findOne({
     'data.userId': userId,
     _id,
     status: { $ne: 'completed' },
   });
-}
+};
+
+export default {
+  EVENT_TYPE,
+  Target,
+  getFleets,
+  getFleetUnits,
+  getOneByUserId,
+};

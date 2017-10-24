@@ -1,7 +1,4 @@
-import {
-  spawnTradeFleet,
-  sendReptileFleetToPlanet,
-} from '/imports/modules/space/server/actualize';
+import Reptiles from '/imports/modules/space/server/reptiles';
 
 import Battle from '../../battle/server/battle';
 
@@ -191,11 +188,11 @@ if (process.env.NODE_ENV == 'development') {
     },
 
     'cheats.spawnTradeFleet': function(hand, segment) {
-      spawnTradeFleet(hand, segment);
+      Reptiles.spawnTradeFleet(hand, segment);
     },
 
     'cheats.sendReptileFleetToPlanet': function(planetId) {
-      sendReptileFleetToPlanet(planetId);
+      Reptiles.sendReptileFleetToPlanet(planetId);
     },
 
     'cheats.generateAllPlanets': function() {

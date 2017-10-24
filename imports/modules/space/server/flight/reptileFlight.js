@@ -5,7 +5,6 @@ import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
 import Flight from '../flight';
-import { getFleetUnits } from '../../lib/flight';
 
 import BattleEvents from '../battle';
 
@@ -27,7 +26,7 @@ export default function reptileFlight(data) {
 
   if (!planet.mission) {
     if (planet.armyId || planet.isHome) {
-      const enemyFleet = getFleetUnits(data);
+      const enemyFleet = Flight.getFleetUnits(data);
       const enemyArmy = { reptiles: { fleet: enemyFleet } };
       const enemyGroup = createGroup(enemyArmy);
 
@@ -43,7 +42,7 @@ export default function reptileFlight(data) {
         if (planet.isHome) {
           const homeArmy = Game.Unit.getHomeArmy(userId);
           if (homeArmy && homeArmy.units && homeArmy.units.army && homeArmy.units.army.ground) {
-            Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground);
+            Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground, userId);
 
             delete homeArmy.units.army.ground;
           }
@@ -59,7 +58,11 @@ export default function reptileFlight(data) {
           planet.armyId = null;
         }
 
-        const username = Meteor.users.findOne({ _id: userId }).username;
+        const username = Meteor.users.findOne({
+          _id: userId,
+        }, {
+          fields: { username: 1 },
+        }).username;
         const userGroup = createGroup(userArmy);
 
         const options = {
@@ -76,9 +79,13 @@ export default function reptileFlight(data) {
         );
 
         BattleEvents.add({
-          ...data,
-          planetId: planet._id,
-          battleId: battle.id,
+          userArmy,
+          enemyArmy,
+          data: {
+            ...data,
+            planetId: planet._id,
+            battleId: battle.id,
+          },
         });
       }
     } else {

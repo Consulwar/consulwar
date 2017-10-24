@@ -5,10 +5,9 @@ import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
 import Flight from '../flight';
-import { getFleetUnits, Target, getOne } from '../../lib/flight';
 
 import TriggerAttack from '../triggerAttack';
-import { TRIGGER_ATTACK_DELAY } from '../config';
+import Config from '../config';
 
 import BattleEvents from '../battle';
 
@@ -22,10 +21,14 @@ function completeOnPlanet(data, userId) {
     const enemyFleet = Game.Planets.getFleetUnits(planet._id, userId);
     enemyArmy = { reptiles: { fleet: enemyFleet } };
 
-    const userFleet = getFleetUnits(data);
+    const userFleet = Flight.getFleetUnits(data);
     userArmy = { army: { fleet: userFleet } };
 
-    const username = Meteor.users.findOne({ _id: userId }).username;
+    const username = Meteor.users.findOne({
+      _id: userId,
+    }, {
+      fields: { username: 1 },
+    }).username;
     const userGroup = createGroup(userArmy);
 
     const jobRaw = BattleEvents.findByPlanetId(planet._id);
@@ -51,9 +54,13 @@ function completeOnPlanet(data, userId) {
       );
 
       BattleEvents.add({
-        ...data,
-        planetId: planet._id,
-        battleId: battle.id,
+        userArmy,
+        enemyArmy,
+        data: {
+          ...data,
+          planetId: planet._id,
+          battleId: battle.id,
+        },
       });
     }
 
@@ -79,7 +86,7 @@ function completeOnPlanet(data, userId) {
         // add reptiles attack trigger
         TriggerAttack.add({
           targetPlanet: planet._id,
-        }, TRIGGER_ATTACK_DELAY, userId);
+        }, Config.TRIGGER_ATTACK_DELAY, userId);
       }
     } else {
       Flight.toPlanet({
@@ -96,17 +103,22 @@ function completeOnPlanet(data, userId) {
 }
 
 function completeOnShip(data, userId) {
-  const targetShip = getOne(data.targetId, userId);
+  const targetShip = Flight.getOneByUserId(data.targetId, userId);
   if (targetShip) {
-    targetShip.done();
+    const job = Flight.jobs.getJob(targetShip._id);
+    job.done();
 
     // Create battle
-    const enemyFleet = getFleetUnits(targetShip.data);
+    const enemyFleet = Flight.getFleetUnits(targetShip.data);
     const enemyArmy = { reptiles: { fleet: enemyFleet } };
     const enemyGroup = createGroup(enemyArmy);
 
-    const username = Meteor.users.findOne({ _id: userId }).username;
-    const userFleet = getFleetUnits(data);
+    const username = Meteor.users.findOne({
+      _id: userId,
+    }, {
+      fields: { username: 1 },
+    }).username;
+    const userFleet = Flight.getFleetUnits(data);
     const userArmy = { army: { fleet: userFleet } };
     const userGroup = createGroup(userArmy);
 
@@ -124,9 +136,13 @@ function completeOnShip(data, userId) {
     );
 
     BattleEvents.add({
-      ...data,
-      fleetId: data.targetId,
-      battleId: battle.id,
+      userArmy,
+      enemyArmy,
+      data: {
+        ...data,
+        fleetId: data.targetId,
+        battleId: battle.id,
+      },
     });
 
     Game.Unit.removeArmy(data.armyId, userId);
@@ -134,8 +150,12 @@ function completeOnShip(data, userId) {
     const battleId = BattleEvents.findByFleetId(data.targetId);
 
     if (battleId) {
-      const username = Meteor.users.findOne({ _id: userId }).username;
-      const userFleet = getFleetUnits(data);
+      const username = Meteor.users.findOne({
+        _id: userId,
+      }, {
+        fields: { username: 1 },
+      }).username;
+      const userFleet = Flight.getFleetUnits(data);
       const userArmy = { army: { fleet: userFleet } };
       const userGroup = createGroup(userArmy);
       Battle.addGroup(battleId, Battle.USER_SIDE, username, userGroup);
@@ -160,8 +180,12 @@ function completeOnBattle(data, userId) {
 
   const battle = Battle.fromDB(battleId);
   if (battle) {
-    const username = Meteor.users.findOne({ _id: userId }).username;
-    const userFleet = getFleetUnits(data);
+    const username = Meteor.users.findOne({
+      _id: userId,
+    }, {
+      fields: { username: 1 },
+    }).username;
+    const userFleet = Flight.getFleetUnits(data);
     const userArmy = { army: { fleet: userFleet } };
     const userGroup = createGroup(userArmy);
     Battle.addGroup(battleId, Battle.USER_SIDE, username, userGroup);
@@ -183,15 +207,15 @@ export default function humansFlight(data) {
   const userId = data.userId;
 
   switch (data.targetType) {
-    case Target.PLANET:
+    case Flight.Target.PLANET:
       completeOnPlanet(data, userId);
       break;
 
-    case Target.SHIP:
+    case Flight.Target.SHIP:
       completeOnShip(data, userId);
       break;
 
-    case Target.BATTLE:
+    case Flight.Target.BATTLE:
       completeOnBattle(data, userId);
       break;
 

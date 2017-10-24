@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import { canSendFleet } from '/imports/modules/space/lib/events';
+import Space from '/imports/modules/space/lib/space';
 import Reinforcement from '/imports/modules/space/server/reinforcement';
 
 import { Command, ResponseToGeneral } from '../lib/generals';
@@ -24,7 +24,7 @@ Meteor.methods({
 
     const currentTime = Game.getCurrentTime();
 
-    if (!canSendFleet()) {
+    if (!Space.canSendFleet()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 

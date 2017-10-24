@@ -14,8 +14,10 @@ if (!Meteor.settings.public.cosmos
 
 const speedFactor = Meteor.settings.public.cosmos.speedFactor;
 
-export const SPEED_CONFIG = Meteor.settings.public.cosmos.speedConfig;
-export const MIN_SPEED = Meteor.settings.public.cosmos.minSpeed * speedFactor;
-export const MAX_SPEED = Meteor.settings.public.cosmos.maxSpeed * speedFactor;
-export const MIN_ACC = Meteor.settings.public.cosmos.minAcc * Math.pow(speedFactor, 2);
-export const MAX_ACC = Meteor.settings.public.cosmos.maxAcc * Math.pow(speedFactor, 2);
+export default {
+  SPEED_CONFIG: Meteor.settings.public.cosmos.speedConfig,
+  MIN_SPEED: Meteor.settings.public.cosmos.minSpeed * speedFactor,
+  MAX_SPEED: Meteor.settings.public.cosmos.maxSpeed * speedFactor,
+  MIN_ACC: Meteor.settings.public.cosmos.minAcc * (speedFactor ** 2),
+  MAX_ACC: Meteor.settings.public.cosmos.maxAcc * (speedFactor ** 2),
+};

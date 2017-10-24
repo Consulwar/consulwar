@@ -89,9 +89,9 @@ export function calcSegmentRandomPoints(pointsAmount, hand, segment, maxHands,
     let offset = (Game.Random.random() * handAngleOffset) - (handAngleOffset / 2);
     offset *= narrowFactor / distance;
     if (offset < 0) {
-      offset = (Math.pow(offset, 2)) * -1;
+      offset = (offset ** 2) * -1;
     } else {
-      offset = Math.pow(offset, 2);
+      offset **= 2;
     }
 
     if (Math.abs(offset) >= handAngle / 2) {

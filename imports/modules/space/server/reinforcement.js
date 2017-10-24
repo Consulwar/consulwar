@@ -1,25 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
+import { Job } from '/moduls/game/lib/jobs';
 import Game from '/moduls/game/lib/main.game';
-import { spaceEvents } from '../lib/events';
-import { EVENT_TYPE } from '../lib/reinforcement';
-import { Job } from '../lib/jobs';
+import Space from '../lib/space';
+import Lib from '../lib/reinforcement';
+import Config from './config';
 
-export default class Reinforcement {
-  static add(data) {
-    const job = new Job(spaceEvents, EVENT_TYPE, data);
-    job.delay(Game.Earth.REINFORCEMENTS_DELAY * 1000)
-      .save();
-  }
-}
-
-spaceEvents.processJobs(
-  EVENT_TYPE,
+const queue = Space.jobs.processJobs(
+  Lib.EVENT_TYPE,
   {
-    concurrency: 4,
-    payload: 1,
-    pollInterval: 100,
-    prefetch: 1,
+    concurrency: Config.JOBS.concurrency,
+    payload: Config.JOBS.payload,
+    pollInterval: Config.JOBS.pollInterval,
+    prefetch: Config.JOBS.prefetch,
   },
   (job, cb) => {
     const { units, protectAllHonor, targetZoneName, userId } = job.data;
@@ -32,8 +25,6 @@ spaceEvents.processJobs(
       killedPercent = Game.Random.interval(0, 30);
       k = 1 - (killedPercent / 100);
     }
-
-    job.done({ killedPercent });
 
     let arrived = null;
 
@@ -69,6 +60,24 @@ spaceEvents.processJobs(
       Game.Earth.addReinforcement(arrived, targetZoneName, user);
     }
 
+    job.done({ killedPercent });
     cb();
   },
 );
+
+export default {
+  ...Lib,
+
+  add(data) {
+    const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
+    job
+      .retry({
+        retries: Config.JOBS.retry.retries,
+        wait: Config.JOBS.retry.wait,
+      })
+      .delay(Game.Earth.REINFORCEMENTS_DELAY * 1000)
+      .save();
+  },
+
+  queue,
+};

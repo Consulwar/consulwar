@@ -170,12 +170,24 @@
         [25.13671875, -30.29701788337204]
       ]
     }},
-  "cosmos": {
+  "space": {
     "enemyRespawnPeriod": 120,
     "tradeFleetPeriod": 120,
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
-    "funPeriod": 86400
+    "funPeriod": 86400,
+
+    "jobs": {
+      "concurrency": 10,
+      "payload": 1,
+      "pollInterval": 1000,
+      "prefetch": 1,
+      "promote": 500,
+      "retry": {
+        "retries": 1,
+        "wait": 120000
+      }
+    }
   },
   "ddplimiter": {
     "isEnabled": true,

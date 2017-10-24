@@ -223,7 +223,7 @@ Game.Unit.rollCount = function(name) {
   }
 };
 
-Game.Unit.calculateArmyCost = function(army) {
+Game.Unit.calculateBaseArmyCost = function(army) {
   var cost = {
     metals: 0,
     crystals: 0,
@@ -919,7 +919,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
     if (mission) {
       reward = {};
 
-      var killedCost = Game.Unit.calculateArmyCost(enemyArmyKilled);
+      var killedCost = Game.Unit.calculateBaseArmyCost(enemyArmyKilled);
 
       if (userArmyRest && !enemyArmyRest) {
         // metals + crystals

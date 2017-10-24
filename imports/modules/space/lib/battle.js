@@ -1,12 +1,12 @@
 import { Meteor } from 'meteor/meteor';
-import { spaceEvents } from './events';
+import Space from './space';
 
-export const EVENT_TYPE = 'battle';
+const EVENT_TYPE = 'battle';
 
-export function getBattles() {
-  return spaceEvents.find({
+function getAllByUserId(userId = Meteor.userId()) {
+  return Space.collection.find({
     type: EVENT_TYPE,
-    'data.userId': Meteor.userId(),
+    'data.userId': userId,
     status: { $ne: 'completed' },
   }, {
     sort: {
@@ -15,11 +15,16 @@ export function getBattles() {
   });
 }
 
-export function findByBattleId(battleId) {
-  return spaceEvents.findOne({
+function findByBattleId(battleId) {
+  return Space.collection.findOne({
     type: EVENT_TYPE,
-    'data.userId': Meteor.userId(),
     'data.battleId': battleId,
     status: { $ne: 'completed' },
   });
 }
+
+export default {
+  EVENT_TYPE,
+  getAllByUserId,
+  findByBattleId,
+};

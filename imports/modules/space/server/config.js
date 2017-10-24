@@ -1,17 +1,26 @@
 import { Meteor } from 'meteor/meteor';
 
-if (!Meteor.settings.cosmos
-  || !Meteor.settings.cosmos.enemyRespawnPeriod
-  || !Meteor.settings.cosmos.tradeFleetPeriod
-  || !Meteor.settings.cosmos.attackPlayerPeriod
-  || !Meteor.settings.cosmos.triggerAttackDelay
-  || !Meteor.settings.cosmos.funPeriod
+if (!Meteor.settings.space
+  || !Meteor.settings.space.enemyRespawnPeriod
+  || !Meteor.settings.space.tradeFleetPeriod
+  || !Meteor.settings.space.attackPlayerPeriod
+  || !Meteor.settings.space.triggerAttackDelay
+  || !Meteor.settings.space.funPeriod
+  || !Meteor.settings.space.jobs
+  || !Meteor.settings.space.jobs.concurrency
+  || !Meteor.settings.space.jobs.payload
+  || !Meteor.settings.space.jobs.pollInterval
+  || !Meteor.settings.space.jobs.prefetch
+  || !Meteor.settings.space.jobs.promote
 ) {
-  throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры космоса (см. settings.sample cosmos)');
+  throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры космоса (см. settings.sample space)');
 }
 
-export const ENEMY_RESPAWN_PERIOD = Meteor.settings.cosmos.enemyRespawnPeriod;
-export const TRADE_FLEET_PERIOD = Meteor.settings.cosmos.tradeFleetPeriod;
-export const ATTACK_PLAYER_PERIOD = Meteor.settings.cosmos.attackPlayerPeriod;
-export const TRIGGER_ATTACK_DELAY = Meteor.settings.cosmos.triggerAttackDelay;
-export const FUN_PERIOD = Meteor.settings.cosmos.funPeriod;
+export default {
+  ENEMY_RESPAWN_PERIOD: Meteor.settings.space.enemyRespawnPeriod,
+  TRADE_FLEET_PERIOD: Meteor.settings.space.tradeFleetPeriod,
+  ATTACK_PLAYER_PERIOD: Meteor.settings.space.attackPlayerPeriod,
+  TRIGGER_ATTACK_DELAY: Meteor.settings.space.triggerAttackDelay,
+  FUN_PERIOD: Meteor.settings.space.funPeriod,
+  JOBS: Meteor.settings.space.jobs,
+};

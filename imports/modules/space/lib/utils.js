@@ -1,13 +1,30 @@
-import {
+import Config from './config';
+
+const {
   SPEED_CONFIG,
   MIN_SPEED,
   MAX_SPEED,
   MIN_ACC,
   MAX_ACC,
-} from './config';
+} = Config;
+
+function calcSpeedK(level) {
+  const config = SPEED_CONFIG;
+  let k = 0;
+
+  if (level >= 100) {
+    k = 100;
+  } else if (level >= 1) {
+    const i = Math.floor(level / 10);
+    const j = level % 10;
+    k = config[i] + (((config[i + 1] - config[i]) / 10) * j);
+  }
+
+  return k / 100;
+}
 
 export function calcDistance(start, end) {
-  return Math.sqrt(Math.pow((end.x - start.x), 2) + Math.pow((end.y - start.y), 2));
+  return Math.sqrt(((end.x - start.x) ** 2) + ((end.y - start.y) ** 2));
 }
 
 export function calcAngle(start, end) {
@@ -110,7 +127,7 @@ export function calcTimeByDistance(currentDistance, totalDistance, maxSpeed, acc
     // возврат с положительным ускорением),
     // поэтому берем корень с трицательным дискриминантом, это будет ближняя точка
 
-    const decSpeedTime = (maxSpeed - Math.sqrt((Math.pow(maxSpeed, 2) - 2) *
+    const decSpeedTime = (maxSpeed - Math.sqrt(((maxSpeed ** 2) - 2) *
       acceleration * decSpeedDist)) / acceleration;
 
     time = incSpeedTime + stableSpeedTime + decSpeedTime;
@@ -119,21 +136,6 @@ export function calcTimeByDistance(currentDistance, totalDistance, maxSpeed, acc
   }
 
   return Math.round(time);
-}
-
-function calcSpeedK(level) {
-  const config = SPEED_CONFIG;
-  let k = 0;
-
-  if (level >= 100) {
-    k = 100;
-  } else if (level >= 1) {
-    const i = Math.floor(level / 10);
-    const j = level % 10;
-    k = config[i] + (((config[i + 1] - config[i]) / 10) * j);
-  }
-
-  return k / 100;
 }
 
 export function calcMaxSpeed(level) {

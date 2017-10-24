@@ -8,7 +8,7 @@ import {
   calcFlyTime,
 } from './utils';
 
-export default function (attackerPlanet, attackerEngineLevel, targetShip, timeCurrent) {
+export default function ({ attackerPlanet, attackerEngineLevel, targetShip, timeCurrent }) {
   const angle = calcAngle(
     targetShip.data.startPosition,
     targetShip.data.targetPosition,

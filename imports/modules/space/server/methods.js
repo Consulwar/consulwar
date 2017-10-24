@@ -1,13 +1,15 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';
-import { canSendFleet } from '../lib/events';
+import Space from '../lib/space';
 import calcAttackOptions from '../lib/calcAttackOptions';
 import { calcFlyTime } from '../lib/utils';
-import { getOne, Target } from '../lib/flight';
 import Flight from './flight';
 import TriggerAttack from './triggerAttack';
-import { TRIGGER_ATTACK_DELAY, ENEMY_RESPAWN_PERIOD } from './config';
-import { findByBattleId } from '../lib/battle';
+import Config from './config';
+import Battle from './battle';
+
+const { TRIGGER_ATTACK_DELAY, ENEMY_RESPAWN_PERIOD } = Config;
 
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units, targetX, targetY) {
@@ -23,11 +25,17 @@ Meteor.methods({
 
     Game.Log.method.call(this, 'space.attackReptileFleet');
 
+    check(baseId, String);
+    check(targetId, String);
+    check(units, Object);
+    check(targetX, Number);
+    check(targetY, Number);
+
     if (!Game.User.haveVerifiedEmail()) {
       throw new Meteor.Error('Сперва нужно верифицировать Email');
     }
 
-    if (!canSendFleet()) {
+    if (!Space.canSendFleet()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
@@ -36,7 +44,7 @@ Meteor.methods({
       throw new Meteor.Error('Плаента не существует');
     }
 
-    const enemyShip = getOne(targetId);
+    const enemyShip = Flight.getOneByUserId(targetId);
     if (!enemyShip) {
       throw new Meteor.Error('Корабль не существует');
     }
@@ -65,12 +73,12 @@ Meteor.methods({
     const timeCurrent = Game.getCurrentTime() * 1000;
     const timeLeft = enemyShip.after - timeCurrent;
 
-    const attackOptions = calcAttackOptions(
-      basePlanet,
-      engineLevel,
-      enemyShip,
+    const attackOptions = calcAttackOptions({
+      attackerPlanet: basePlanet,
+      attackerEngineLevel: engineLevel,
+      targetShip: enemyShip,
       timeCurrent,
-    );
+    });
 
     if (!attackOptions || attackOptions.time >= timeLeft) {
       throw new Meteor.Error('Невозможно перехватить');
@@ -128,13 +136,19 @@ Meteor.methods({
 
     Game.Log.method.call(this, 'space.sendFleet');
 
-    if (!canSendFleet()) {
+    check(baseId, String);
+    check(targetType, Number);
+    check(targetId, String);
+    check(units, Object);
+    check(isOneway, Boolean);
+
+    if (!Space.canSendFleet()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
     let target;
 
-    if (targetType === Target.PLANET) {
+    if (targetType === Flight.Target.PLANET) {
       if (baseId === targetId) {
         throw new Meteor.Error('Стартовая планета и конечная должны быть разными');
       }
@@ -145,8 +159,8 @@ Meteor.methods({
       }
 
       target = targetPlanet;
-    } else if (targetType === Target.BATTLE) {
-      const battleEvent = findByBattleId(targetId);
+    } else if (targetType === Flight.Target.BATTLE) {
+      const battleEvent = Battle.findByBattleId(targetId);
 
       if (!battleEvent) {
         throw new Meteor.Error('Не найдено сражение');
@@ -203,7 +217,7 @@ Meteor.methods({
       armyId: newArmyId,
     };
 
-    if (targetType === Target.PLANET) {
+    if (targetType === Flight.Target.PLANET) {
       Flight.toPlanet(data);
     } else {
       Flight.toBattle(data);
@@ -223,3 +237,4 @@ Meteor.methods({
     });
   },
 });
+

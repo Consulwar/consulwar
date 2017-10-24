@@ -1,5 +1,5 @@
-import { spaceEvents } from '/imports/modules/space/lib/events';
-import { spaceActualize } from '/imports/modules/space/server/actualize';
+import initSpaceServer from '/imports/modules/space/server/index';
+import Reptiles from '/imports/modules/space/server/reptiles';
 
 //BrowserPolicy.framing.allowAll();
 
@@ -85,7 +85,7 @@ Meteor.startup(function () {
   initGameLog();
 
   SyncedCron.start();
-  spaceEvents.startJobServer();
+  initSpaceServer();
 });
 
 Router.route('/legal/:filename?', function() {
@@ -155,7 +155,7 @@ Meteor.methods({
       Game.Queue.checkAll();
     }
 
-    spaceActualize();
+    Reptiles.actualize();
     Game.Planets.actualize();
     Game.Quest.actualize();
 

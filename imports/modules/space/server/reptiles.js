@@ -1,12 +1,14 @@
 import { Meteor } from 'meteor/meteor';
+import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
-import { spaceEvents } from '../lib/events';
+import Space from '../lib/space';
 import Flight from './flight';
 import { calcFlyTime } from '../lib/utils';
-import { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } from './config';
-import { EVENT_TYPE } from '../lib/flight';
+import Config from './config';
 
-export function spawnTradeFleet(hand, segment) {
+const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
+
+function spawnTradeFleet(hand, segment) {
   // find planets inside hand
   const finishPlanets = Game.Planets.Collection.find({
     user_id: Meteor.userId(),
@@ -70,14 +72,14 @@ export function spawnTradeFleet(hand, segment) {
 
 const actualizeTradeFleets = function() {
   // find fleets and group by sector
-  spaceEvents.find({
+  Space.collection.find({
     'data.userId': Meteor.userId(),
     status: { $ne: 'completed' },
   });
 
-  const fleets = spaceEvents.find({
+  const fleets = Space.collection.find({
     'data.userId': Meteor.userId(),
-    type: EVENT_TYPE,
+    type: Flight.EVENT_TYPE,
     after: { $gt: Game.getCurrentTime() * 1000 },
     'data.mission.type': 'tradefleet',
   }).fetch();
@@ -105,7 +107,7 @@ const actualizeTradeFleets = function() {
   }
 
   // check each occupied hand
-  for (const hand in occupied) {
+  _(occupied).keys().forEach((hand) => {
     // aggregate and sort hand sectors
     const sectors = [];
     for (i = 0; i < occupied[hand].length; i += 1) {
@@ -155,25 +157,29 @@ const actualizeTradeFleets = function() {
             break;
           }
         }
-        if (hasFleet) {
-          continue; // skip this interval
+        if (!hasFleet) {
+          // spawn trade fleet
+          spawnTradeFleet(
+            parseInt(hand, 10),
+            startInterval[Game.Random.interval(0, startInterval.length - 1)],
+          );
         }
-
-        // spawn trade fleet
-        spawnTradeFleet(
-          parseInt(hand, 10),
-          startInterval[Game.Random.interval(0, startInterval.length - 1)],
-        );
       }
     }
-  }
+  });
 };
 
-export function sendReptileFleetToPlanet(planetId, mission) {
-  // get target planet
-  const targetPlanet = Game.Planets.getOne(planetId);
-  if (!targetPlanet) {
-    throw new Meteor.Error('Нет такой планеты');
+function sendReptileFleetToPlanet({
+  planetId,
+  targetPlanet = Game.Planets.getOne(planetId),
+  mission = (
+    targetPlanet.isHome
+      ? Game.Planets.getReptileAttackMission()
+      : Game.Planets.generateMission(targetPlanet)
+  ),
+}) {
+  if (!mission) {
+    throw new Meteor.Error('Не получилось сгенерировать миссию для нападения');
   }
 
   // find available start planets
@@ -207,16 +213,6 @@ export function sendReptileFleetToPlanet(planetId, mission) {
 
     const engineLevel = 0;
 
-    if (!mission) {
-      mission = (targetPlanet.isHome)
-        ? Game.Planets.getReptileAttackMission()
-        : Game.Planets.generateMission(targetPlanet);
-    }
-
-    if (!mission) {
-      throw new Meteor.Error('Не получилось сгенерировать миссию для нападения');
-    }
-
     Flight.toPlanet({
       startPosition,
       startPlanetId: startPlanet._id,
@@ -232,7 +228,7 @@ export function sendReptileFleetToPlanet(planetId, mission) {
   }
 }
 
-export function spaceActualize() {
+function actualize() {
   const timeCurrent = Game.getCurrentTime();
 
   // Try to attack player
@@ -280,3 +276,9 @@ export function spaceActualize() {
     Game.Planets.setLastTradeFleetTime(timeCurrent);
   }
 }
+
+export default {
+  spawnTradeFleet,
+  sendReptileFleetToPlanet,
+  actualize,
+};

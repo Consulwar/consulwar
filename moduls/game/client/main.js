@@ -1,5 +1,5 @@
-import { getReinforcements } from '/imports/modules/space/lib/reinforcement';
-import { getFleets, Target, getOne } from '/imports/modules/space/lib/flight';
+import Reinforcement from '/imports/modules/space/client/reinforcement';
+import Flight from '/imports/modules/space/client/flight';
 
 Blaze._allowJavascriptUrls();
 
@@ -352,8 +352,8 @@ var helpers = {
   },
 
   fleetInfo: function() {
-    var reinforcements = getReinforcements().fetch();
-    var fleets = getFleets().fetch();
+    var reinforcements = Reinforcement.getAllByUserId().fetch();
+    var fleets = Flight.getFleets().fetch();
     
     if (reinforcements.length === 0 && fleets.length === 0) {
       return null;
@@ -385,13 +385,13 @@ var helpers = {
         }
         // check attack
         if (!isWaitingAttack) {
-          if (fleets[i].data.targetType === Target.SHIP) {
+          if (fleets[i].data.targetType === Flight.Target.SHIP) {
             // check ship
-            var ship = getOne(fleets[i].data.targetId);
+            var ship = Flight.getOneByUserId(fleets[i].data.targetId);
             if (ship && ship.data.isHumans) {
               isWaitingAttack = true;
             }
-          } else if (fleets[i].data.targetType === Target.PLANET) {
+          } else if (fleets[i].data.targetType === Flight.Target.PLANET) {
             // check planet
             var planet = Game.Planets.getOne(fleets[i].data.targetId);
             if (planet && (planet.isHome || planet.armyId) && after > attackTime) {

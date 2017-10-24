@@ -1,4 +1,4 @@
-import { getFleets } from '/imports/modules/space/lib/flight';
+import Flight from '/imports/modules/space/lib/flight';
 
 initCosmosLib = function () {
 'use strict';
@@ -91,7 +91,7 @@ Game.Planets = {
     // count already targeted planets
     var targets = [];
     var isTargetInList = false;
-    var fleets = getFleets().fetch();
+    var fleets = Flight.getFleets().fetch();
     var id = null;
 
     for (var i = 0; i < fleets.length; i++) {

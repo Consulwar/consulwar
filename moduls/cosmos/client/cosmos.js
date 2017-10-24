@@ -1,5 +1,5 @@
-import { spaceEvents, canSendFleet, getAll } from '/imports/modules/space/lib/events';
-import { getReinforcements } from '/imports/modules/space/lib/reinforcement';
+import Space from '/imports/modules/space/lib/space';
+import Reinforcement from '/imports/modules/space/client/reinforcement';
 import {
   calcDistanceByTime,
   calcFlyTime,
@@ -8,13 +8,7 @@ import {
   calcAcceleration,
 } from '/imports/modules/space/lib/utils';
 import calcAttackOptions from '/imports/modules/space/lib/calcAttackOptions';
-import {
-  getFleets,
-  getOne,
-  getFleetUnits,
-  Target,
-  EVENT_TYPE,
-} from '/imports/modules/space/lib/flight';
+import Flight from '/imports/modules/space/client/flight';
 
 import {
   calcSegmentRandomPoints,
@@ -50,7 +44,7 @@ var activeSquad = new ReactiveVar(null);
 var selectedUnits = new ReactiveVar(null);
 
 
-getAll().observe({
+Space.getAllByUserId().observe({
   added: function(event) {
     if (spaceEventsSubscription.ready()) {
       showNotificationFromSpaceEvent(event);
@@ -347,7 +341,7 @@ var scrollMapToPlanet = function(id) {
 
 var scrollMapToFleet = function(id) {
   var path = pathViews[id];
-  var spaceEvent = getOne(id);
+  var spaceEvent = Flight.getOneByUserId(id);
 
   if (path && spaceEvent) {
     var totalFlyDistance = Game.Planets.calcDistance(
@@ -480,7 +474,7 @@ Template.cosmosFleetsInfo.helpers({
     var i = 0;
     var data = null;
 
-    var fleets = getFleets().fetch();
+    var fleets = Flight.getFleets().fetch();
     for (i = 0; i < fleets.length; i++) {
       if (!fleets[i].data.isHumans) {
         continue;
@@ -523,7 +517,7 @@ Template.cosmosFleetsInfo.helpers({
         }
       } else {
         data.name = 'Перехват';
-        var target = getOne(fleets[i].data.targetId);
+        var target = Flight.getOneByUserId(fleets[i].data.targetId);
         data.name += (
           ' ' + Game.Battle.items[target.data.mission.type].name
           + ' ' + target.data.mission.level
@@ -533,7 +527,7 @@ Template.cosmosFleetsInfo.helpers({
       result.push(data);
     }
     
-    var reinforcements = getReinforcements().fetch();
+    var reinforcements = Reinforcement.getAllByUserId().fetch();
     for (i = 0; i < reinforcements.length; i++) {
       data = {
         isReinforcement: true,
@@ -551,7 +545,7 @@ Template.cosmosFleetsInfo.helpers({
 
   reptileFleets: function () {
     var result = [];
-    var fleets = getFleets().fetch();
+    var fleets = Flight.getFleets().fetch();
     for (var i = 0; i < fleets.length; i++) {
       if (fleets[i].data.isHumans) {
         continue;
@@ -693,7 +687,7 @@ Template.cosmosPlanetPopup.events({
       return Notifications.info('Сперва нужно верифицировать email');
     }
 
-    if (!canSendFleet()) {
+    if (!Space.canSendFleet()) {
       return Notifications.info('Слишком много флотов уже отправлено');
     }
 
@@ -839,7 +833,7 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
     isPopupLocked = true;
   }
 
-  var spaceEvent = getOne(id);
+  var spaceEvent = Flight.getOneByUserId(id);
 
   cosmosPopupView = Blaze.renderWithData(
     Template.cosmosShipInfo, {
@@ -891,7 +885,7 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
     info.status = 'Флот Рептилий';
   }
 
-  var units = getFleetUnits(spaceEvent);
+  var units = Flight.getFleetUnits(spaceEvent);
   if (units) {
     var side = (spaceEvent.data.isHumans) ? 'army' : 'reptiles';
     info.units = [];
@@ -966,7 +960,7 @@ Template.cosmosShipInfo.helpers({
 
 Template.cosmosShipInfo.events({
   'click .open': function(e, t) {
-    if (!canSendFleet()) {
+    if (!Space.canSendFleet()) {
       Notifications.info('Слишком много флотов уже отправлено');
       return;
     }
@@ -1066,14 +1060,14 @@ var timeAttack = function(id) {
     return calcFlyTime(basePlanet, targetPlanet, engineLevel);
   }
 
-  var targetShip = getOne(targetId);
+  var targetShip = Flight.getOneByUserId(targetId);
   if (targetShip) {
-    var result = calcAttackOptions(
-      basePlanet,
-      engineLevel,
+    var result = calcAttackOptions({
+      attackerPlanet: basePlanet,
+      attackerEngineLevel: engineLevel,
       targetShip,
-      Session.get('serverTime'),
-    );
+      timeCurrent: Session.get('serverTime'),
+    });
     return (result) ? result.time : null;
   }
 
@@ -1086,7 +1080,7 @@ Template.cosmosAttackMenu.helpers({
   },
 
   ship: function() {
-    return getOne(this.id);
+    return Flight.getOneByUserId(this.id);
   },
 
   planet: function() {
@@ -1097,7 +1091,7 @@ Template.cosmosAttackMenu.helpers({
 
   timeLeft: function() {
     var targetId = this.id;
-    var targetShip = getOne(targetId);
+    var targetShip = Flight.getOneByUserId(targetId);
     if (targetShip) {
       return dateToTime(targetShip.after) - Session.get('serverTime');
     }
@@ -1240,7 +1234,7 @@ Template.cosmosAttackMenu.helpers({
     // count sent
     var sentCount = 0;
 
-    var fleets = getFleets().fetch();
+    var fleets = Flight.getFleets().fetch();
     for (let i = 0; i < fleets.length; i++) {
       var fleet = fleets[i];
 
@@ -1434,7 +1428,7 @@ Template.cosmosAttackMenu.events({
 
     var targetId = t.data.id;
     var planet = Game.Planets.getOne(targetId);
-    var ship = getOne(targetId);
+    var ship = Flight.getOneByUserId(targetId);
 
     if (!planet && !ship) {
       Notifications.info('Не выбрана цель');
@@ -1447,7 +1441,7 @@ Template.cosmosAttackMenu.events({
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
-        Target.PLANET,
+        Flight.Target.PLANET,
         targetId,
         units,
         isOneway,
@@ -1619,7 +1613,7 @@ Game.Cosmos.renderCosmosObjects = function() {
       },
 
       fleets: function() {
-        var fleets = getFleets().fetch();
+        var fleets = Flight.getFleets().fetch();
         return _.map(fleets, function(spaceEvent) {
           return {
             spaceEvent: spaceEvent,
@@ -1849,9 +1843,9 @@ Template.cosmos.onRendered(function() {
     }
   };
 
-  observerSpaceEvents = getAll().observeChanges({
+  observerSpaceEvents = Space.getAllByUserId().observeChanges({
     added: function(id, event) {
-      if (event.type === EVENT_TYPE) {
+      if (event.type === Flight.EVENT_TYPE) {
         createPath(id, event);
       }
     },
@@ -2067,7 +2061,7 @@ Game.Planets.debugDump = function() {
   dumpItems( Game.Planets.Collection.find().fetch() );
   
   console.log('------------ SPACE EVENTS --------------');
-  dumpItems( spaceEvents.find({status: 1}).fetch());
+  dumpItems( Space.collection.find({status: 1}).fetch());
 };
 
 };

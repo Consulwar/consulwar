@@ -1,4 +1,4 @@
-import { canSendFleet } from '/imports/modules/space/lib/events';
+import Space from '/imports/modules/space/lib/space';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthClient = function() {
@@ -240,7 +240,7 @@ Template.reserve.events({
   },
 
   'click .btn-send': function(e, t) {
-    if (!canSendFleet()) {
+    if (!Space.canSendFleet()) {
       return Notifications.info('Слишком много флотов уже отправлено');
     }
 

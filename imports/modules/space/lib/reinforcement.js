@@ -1,11 +1,11 @@
 import { Meteor } from 'meteor/meteor';
-import { spaceEvents } from './events';
+import Space from './space';
 
-export const EVENT_TYPE = 'reinforcement';
+const EVENT_TYPE = 'reinforcement';
 
-export function getReinforcements() {
-  return spaceEvents.find({
-    'data.userId': Meteor.userId(),
+function getAllByUserId(userId = Meteor.userId()) {
+  return Space.collection.find({
+    'data.userId': userId,
     type: EVENT_TYPE,
     status: { $ne: 'completed' },
   }, {
@@ -14,3 +14,8 @@ export function getReinforcements() {
     },
   });
 }
+
+export default {
+  EVENT_TYPE,
+  getAllByUserId,
+};

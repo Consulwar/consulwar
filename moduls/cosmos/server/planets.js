@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import { ENEMY_RESPAWN_PERIOD } from '/imports/modules/space/server/config';
+import Config from '/imports/modules/space/server/config';
 import {
   calcSegmentRandomPoints,
   calcSegmentPlanetsAmount,
@@ -89,7 +89,7 @@ Game.Planets.actualize = function() {
           // restore previous
           planet.mission.units = null;
         }
-        planet.timeRespawn = timeCurrent + ENEMY_RESPAWN_PERIOD;
+        planet.timeRespawn = timeCurrent + Config.ENEMY_RESPAWN_PERIOD;
         Game.Planets.update(planet);
       }
     }
@@ -517,22 +517,27 @@ Game.Planets.checkSectorDiscovered = function(hand, segment, user_id = Meteor.us
   return false;
 };
 
-Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered,
-                                       user_id = Meteor.userId()) {
+Game.Planets.generateSector = function(
+  galactic,
+  hand,
+  segment,
+  isSkipDiscovered,
+  userId = Meteor.userId(),
+) {
   // check galactic bounds
   if (segment > galactic.segments || segment < 0) return;
   if (hand >= galactic.hands || hand < 0) return;
 
   // check sector already discovered
   if (isSkipDiscovered
-   && Game.Planets.checkSectorDiscovered(hand, segment, user_id)
+   && Game.Planets.checkSectorDiscovered(hand, segment, userId)
   ) {
     return;
   }
 
   // find near planets
   var nearPlanets = [];
-  var planets = Game.Planets.getAll(user_id).fetch();
+  var planets = Game.Planets.getAll(userId).fetch();
   var i = 0;
 
   for (i = 0; i < planets.length; i++) {
@@ -593,11 +598,11 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
       hand,
       segment,
       type,
-      user_id,
+      userId,
     );
 
     var newPlanet = {
-      name: Game.Planets.generateName(user_id),
+      name: Game.Planets.generateName(userId),
       type: type.engName,
       artefacts: artefacts,
       // state
@@ -613,14 +618,14 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
       size: size
     };
 
-    Game.Planets.add(newPlanet, user_id);
+    Game.Planets.add(newPlanet, userId);
     freeSpots.splice(n, 1);
   }
 };
 
-Game.Planets.discover = function(planetId, user_id = Meteor.userId()) {
+Game.Planets.discover = function(planetId, userId = Meteor.userId()) {
   // get discovered planet
-  let planet = Game.Planets.getOne(planetId, user_id);
+  let planet = Game.Planets.getOne(planetId, userId);
   if (planet.isDiscovered) {
     return;
   }
@@ -629,7 +634,7 @@ Game.Planets.discover = function(planetId, user_id = Meteor.userId()) {
   Game.Planets.update(planet);
 
   // get base planet
-  let basePlanet = Game.Planets.getBase(user_id);
+  let basePlanet = Game.Planets.getBase(userId);
   if (!basePlanet) {
     return;
   }
@@ -641,7 +646,7 @@ Game.Planets.discover = function(planetId, user_id = Meteor.userId()) {
   // discover
   for (let i = 0; i < sectors.length; i++) {
     Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand,
-      sectors[i].segment, true, user_id);
+      sectors[i].segment, true, userId);
   }
 };
 

@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
+import { _ } from 'meteor/underscore';
+import Game from '/moduls/game/lib/main.game';
+
 import performRound from './performRound';
 import calculateGroupPower from '../lib/imports/calculateGroupPower';
 import traverseGroup from '../lib/imports/traverseGroup';
@@ -66,28 +69,28 @@ class Battle {
   }
 
   static addGroup(id, side, username, group) {
-    let key = `${side}.${username}`;
+    const key = `${side}.${username}`;
 
-    let groupPower = calculateGroupPower(group);
+    const groupPower = calculateGroupPower(group);
 
-    let modifier = {
+    const modifier = {
       $push: {
         [`initialUnits.${key}`]: group,
-        [`currentUnits.${key}`]: group
-      }
+        [`currentUnits.${key}`]: group,
+      },
     };
 
     if (side === USER_SIDE) {
       modifier.$addToSet = {
-        userNames: username
+        userNames: username,
       };
 
       modifier.$inc = {
-        [`armyPowers.${username}`]: groupPower
+        [`armyPowers.${username}`]: groupPower,
       };
     }
 
-    Collection.update({_id: id}, modifier);
+    Collection.update({ _id: id }, modifier);
   }
 
   static removeUserArmy(id, username) {
@@ -98,14 +101,23 @@ class Battle {
         [`initialUnits.${key}`]: 1,
         [`currentUnits.${key}`]: 1,
         [`armyPowers.${username}`]: 1,
-      }
+      },
     };
 
-    Collection.update({_id: id}, modifier);
+    Collection.update({ _id: id }, modifier);
   }
 
-  constructor({ _id, initialUnits, armyPowers, currentUnits, battleUnits,
-                round, status, options, userNames }) {
+  constructor({
+    _id,
+    initialUnits,
+    armyPowers,
+    currentUnits,
+    battleUnits,
+    round,
+    status,
+    options,
+    userNames,
+  }) {
     this.id = _id;
 
     this.options = options;
@@ -155,11 +167,11 @@ class Battle {
   }
 
   update(modifier) {
-    return Collection.update({_id: this.id}, modifier);
+    return Collection.update({ _id: this.id }, modifier);
   }
 
   giveHonor(roundResult) {
-    const killedCost = Game.Unit.calculateArmyCost(roundResult.killed[ENEMY_SIDE]);
+    const killedCost = Game.Unit.calculateBaseArmyCost(roundResult.killed[ENEMY_SIDE]);
     const mission = Game.Battle.items[this.options.missionType];
     const totalHonor = Game.Resources.calculateHonorFromResources(killedCost, true) *
       (mission.honor * 0.01);
@@ -193,9 +205,9 @@ class Battle {
   }
 
   saveSingleUserStatistic(roundResult) {
-    let increment = {};
+    const increment = {};
 
-    let userUnits = roundResult.killed[USER_SIDE];
+    const userUnits = roundResult.killed[USER_SIDE];
     let totalLost = 0;
 
     traverseGroup(userUnits, function(armyName, typeName, unitName, count) {
@@ -205,7 +217,7 @@ class Battle {
 
     increment['units.lost.total'] = totalLost;
 
-    let enemyUnits = roundResult.killed[ENEMY_SIDE];
+    const enemyUnits = roundResult.killed[ENEMY_SIDE];
     totalLost = 0;
 
     traverseGroup(enemyUnits, function(armyName, typeName, unitName, count) {
@@ -223,7 +235,7 @@ class Battle {
     let increment = {};
 
     console.log('multiUsers', increment);
-    //todo Game.Statistic.incrementGroupUserNames(this.userNames, increment);
+    // TODO: Game.Statistic.incrementGroupUserNames(this.userNames, increment);
   }
 
   finishBattle(userArmyRest, enemyArmyRest) {
@@ -252,8 +264,8 @@ class Battle {
 
     this.update({
       $set: {
-        status: this.status
-      }
+        status: this.status,
+      },
     });
   }
 
@@ -272,7 +284,7 @@ class Battle {
       totalReward.crystals = mission.reward.crystals;
     } else {
       const killedArmy = this.calculateTotalKilled(ENEMY_SIDE);
-      const killedCost = Game.Unit.calculateArmyCost(killedArmy);
+      const killedCost = Game.Unit.calculateBaseArmyCost(killedArmy);
 
       totalReward.metals = Math.floor(killedCost.metals * 0.1);
       totalReward.crystals = Math.floor(killedCost.crystals * 0.1);
@@ -323,13 +335,13 @@ class Battle {
   }
 
   saveBattleStatistic(result) {
-    let fieldName = (this.userNames.length === 1) ? 'battle' : 'multiUsersBattle';
+    const fieldName = (this.userNames.length === 1) ? 'battle' : 'multiUsersBattle';
 
-    let increment = {};
+    const increment = {};
 
     increment[`${fieldName}.total`] = 1;
 
-    let resultName = Game.Battle.resultNames[result];
+    const resultName = Game.Battle.resultNames[result];
     increment[`${fieldName}.${resultName}`] = 1;
 
     if (this.options.missionType && this.options.missionLevel) {
@@ -344,12 +356,12 @@ class Battle {
   }
 
   calculateTotalKilled(sideName) {
-    let initialUnits = this.initialUnits;
-    let result = {};
+    const initialUnits = this.initialUnits;
+    const result = {};
 
     traverseSide(this.currentUnits, sideName, function(username, groupNum, group) {
       traverseGroup(group, function(armyName, typeName, unitName, unit) {
-        let diff = initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count - unit.count;
+        const diff = initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count - unit.count;
 
         if (!result[armyName]) {
           result[armyName] = {};
@@ -380,7 +392,7 @@ class Battle {
           groupNum,
           armyName,
           typeName,
-          unitName
+          unitName,
         });
       });
     });

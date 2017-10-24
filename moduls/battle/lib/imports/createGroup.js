@@ -1,8 +1,7 @@
 import traverseGroup from './traverseGroup';
 
 const createUnit = function (armyName, typeName, unitName, count) {
-  const characteristics =
-    Game.Unit.items[armyName][typeName][unitName].options.characteristics;
+  const characteristics = Game.Unit.items[armyName][typeName][unitName].options.characteristics;
 
   return {
     count: Game.Unit.rollCount(count),

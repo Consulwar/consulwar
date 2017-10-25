@@ -53,7 +53,7 @@
       {{/if}}
       
       {{#if planet.isHumans}}
-        <h2 class="humans">{{planet.status}}</h2>
+        <h2 class="humans">{{planet.title}}</h2>
       {{else}}{{#if planet.mission}}
         <h2 class="reptiles">
           {{planet.mission.name}}
@@ -448,14 +448,8 @@
         {{#if isHighlighted this.planet}}highlighted{{/if}}
         {{this.planet.type}} 
         leaflet-zoom-hide 
-        leaflet-interactive 
-        {{#if or this.planet.isHome this.planet.armyId}}
-          map-planet-border-human
-        {{else}}{{#if this.planet.mission}}
-          map-planet-border-reptile
-        {{else}}
-          map-planet-border-empty
-        {{/if}}{{/if}}
+        leaflet-interactive
+        map-planet-border-{{statusName}}
         {{#if and (gt zoom 5) (options.rotatePlanets)}}map-planet-marker-animated{{/if}}
         {{#if lt zoom 9}}zoom-lt-9{{/if}}
         {{#if lt zoom 7}}zoom-lt-7{{/if}}

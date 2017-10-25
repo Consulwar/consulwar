@@ -16,6 +16,12 @@ Game.Planets = {
 
   Collection: new Meteor.Collection('planets'),
 
+  status: {
+    NOBODY: 1,
+    HUMANS: 2,
+    REPTILES: 3,
+  },
+
   RENAME_PLANET_PRICE: 200,
   MAX_EXTRA_COLONIES: 10,
 
@@ -72,10 +78,7 @@ Game.Planets = {
   getColonies: function () {
     return Game.Planets.Collection.find({
       user_id: Meteor.userId(),
-      $or: [
-        { isHome: true },
-        { armyId: { $ne: null } },
-      ],
+      status: Game.Planets.status.HUMANS,
     }).fetch();
   },
 

@@ -607,7 +607,7 @@ Game.Cosmos.getPlanetInfo = function(planet) {
   if (planet.isHome || planet.armyId) {
     info.isHumans = true;
     info.isHome = true;
-    info.status = (planet.isHome) ? 'Планета Консула' : 'Колония';
+    info.title = (planet.isHome) ? 'Планета Консула' : 'Колония';
     if (Game.Planets.getColonies().length <= 1) {
       info.canSend = false;
     } else {
@@ -1729,6 +1729,15 @@ Template.cosmosObjects.helpers({
       : this.planet.armyId || this.planet.isHome 
         ? 'humans' 
         : null
+    );
+  },
+
+  statusName() {
+    return (this.planet.status === Game.Planets.status.REPTILES
+        ? 'reptile'
+        : this.planet.status === Game.Planets.status.HUMANS
+          ? 'human'
+          : 'empty'
     );
   },
 

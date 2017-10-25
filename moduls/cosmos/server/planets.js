@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import Game from '/moduls/game/lib/main.game';
 import Config from '/imports/modules/space/server/config';
 import {
   calcSegmentRandomPoints,
@@ -112,9 +113,20 @@ Game.Planets.update = function(planet) {
   return data;
 };
 
-Game.Planets.add = function(planet, user_id = Meteor.userId()) {
-  planet.user_id = user_id;
-  return Game.Planets.Collection.insert(planet);
+Game.Planets.add = function(planet, userId = Meteor.userId()) {
+  let status = Game.Planets.status.NOBODY;
+
+  if (planet.isHome || planet.armyId) {
+    status = Game.Planets.status.HUMANS;
+  } else if (planet.mission) {
+    status = Game.Planets.status.REPTILES;
+  }
+
+  return Game.Planets.Collection.insert({
+    ...planet,
+    user_id: userId,
+    status,
+  });
 };
 
 Game.Planets.generateArtefacts = function(galactic, hand, segment, type, user_id = Meteor.userId()) {

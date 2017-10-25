@@ -19,7 +19,7 @@ export default function () {
     const planet = colonies[i];
     const fleets = planet.isHome ? 3 : 1;
     for (let j = 0; j < fleets; j += 1) {
-      Reptiles.sendReptileFleetToPlanet(planet._id, mission);
+      Reptiles.sendReptileFleetToPlanet({ planetId: planet._id, mission });
     }
   }
 

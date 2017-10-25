@@ -259,7 +259,7 @@ function actualize() {
       }
 
       if (targetPlanet) {
-        sendReptileFleetToPlanet(targetPlanet._id);
+        sendReptileFleetToPlanet({ planetId: targetPlanet._id });
         break; // maximum 1 simultaneous attack
       }
     }

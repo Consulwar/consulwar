@@ -192,7 +192,7 @@ if (process.env.NODE_ENV == 'development') {
     },
 
     'cheats.sendReptileFleetToPlanet': function(planetId) {
-      Reptiles.sendReptileFleetToPlanet(planetId);
+      Reptiles.sendReptileFleetToPlanet({ planetId });
     },
 
     'cheats.generateAllPlanets': function() {

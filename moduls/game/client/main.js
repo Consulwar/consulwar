@@ -385,13 +385,13 @@ var helpers = {
         }
         // check attack
         if (!isWaitingAttack) {
-          if (fleets[i].data.targetType === Flight.Target.SHIP) {
+          if (fleets[i].data.targetType === Flight.TARGET.SHIP) {
             // check ship
-            var ship = Flight.getOneByUserId(fleets[i].data.targetId);
+            var ship = Flight.getOne(fleets[i].data.targetId);
             if (ship && ship.data.isHumans) {
               isWaitingAttack = true;
             }
-          } else if (fleets[i].data.targetType === Flight.Target.PLANET) {
+          } else if (fleets[i].data.targetType === Flight.TARGET.PLANET) {
             // check planet
             var planet = Game.Planets.getOne(fleets[i].data.targetId);
             if (planet && (planet.isHome || planet.armyId) && after > attackTime) {

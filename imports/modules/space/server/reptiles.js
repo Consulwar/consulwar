@@ -3,12 +3,12 @@ import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 import Space from '../lib/space';
 import Flight from './flight';
-import { calcFlyTime } from '../lib/utils';
+import Utils from '../lib/utils';
 import Config from './config';
 
 const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
 
-function spawnTradeFleet(hand, segment) {
+const spawnTradeFleet = function(hand, segment) {
   // find planets inside hand
   const finishPlanets = Game.Planets.Collection.find({
     user_id: Meteor.userId(),
@@ -52,7 +52,7 @@ function spawnTradeFleet(hand, segment) {
     mission.type = 'tradefleet';
 
     const engineLevel = 0;
-    const flyTime = calcFlyTime(startPosition, targetPosition, engineLevel);
+    const flyTime = Utils.calcFlyTime(startPosition, targetPosition, engineLevel);
 
     Flight.toPlanet({
       startPosition,
@@ -68,7 +68,7 @@ function spawnTradeFleet(hand, segment) {
       segment: startPlanet.segment,
     });
   }
-}
+};
 
 const actualizeTradeFleets = function() {
   // find fleets and group by sector
@@ -169,7 +169,7 @@ const actualizeTradeFleets = function() {
   });
 };
 
-function sendReptileFleetToPlanet({
+const sendReptileFleetToPlanet = function({
   planetId,
   targetPlanet = Game.Planets.getOne(planetId),
   mission = (
@@ -219,16 +219,16 @@ function sendReptileFleetToPlanet({
       targetPosition,
       targetId: targetPlanet._id,
       startTime: timeCurrent,
-      flyTime: calcFlyTime(startPosition, targetPosition, engineLevel),
+      flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
       isHumans: false,
       isOneway: false,
       engineLevel,
       mission,
     });
   }
-}
+};
 
-function actualize() {
+const actualize = function() {
   const timeCurrent = Game.getCurrentTime();
 
   // Try to attack player
@@ -275,7 +275,7 @@ function actualize() {
     actualizeTradeFleets();
     Game.Planets.setLastTradeFleetTime(timeCurrent);
   }
-}
+};
 
 export default {
   spawnTradeFleet,

@@ -5,7 +5,7 @@ import Space from './space';
 
 const EVENT_TYPE = 'flight';
 
-const Target = {
+const TARGET = {
   SHIP: 1,
   PLANET: 2,
   BATTLE: 3,
@@ -40,9 +40,8 @@ const getFleetUnits = function(data) {
   return null;
 };
 
-const getOneByUserId = function(_id, userId = Meteor.userId()) {
+const getOne = function(_id) {
   return Space.collection.findOne({
-    'data.userId': userId,
     _id,
     status: { $ne: 'completed' },
   });
@@ -50,8 +49,8 @@ const getOneByUserId = function(_id, userId = Meteor.userId()) {
 
 export default {
   EVENT_TYPE,
-  Target,
+  TARGET,
   getFleets,
   getFleetUnits,
-  getOneByUserId,
+  getOne,
 };

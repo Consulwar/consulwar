@@ -4,14 +4,14 @@ import Game from '/moduls/game/lib/main.game';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
-import Flight from '../flight';
+import Flight from './flight';
 
-import TriggerAttack from '../triggerAttack';
-import Config from '../config';
+import TriggerAttack from './triggerAttack';
+import Config from './config';
 
-import BattleEvents from '../battle';
+import BattleEvents from './battle';
 
-function completeOnPlanet(data, userId) {
+const completeOnPlanet = function(data, userId) {
   const planet = Game.Planets.getOne(data.targetId, userId);
 
   let userArmy = null;
@@ -100,10 +100,10 @@ function completeOnPlanet(data, userId) {
       }, userId);
     }
   }
-}
+};
 
-function completeOnShip(data, userId) {
-  const targetShip = Flight.getOneByUserId(data.targetId, userId);
+const completeOnShip = function(data, userId) {
+  const targetShip = Flight.getOne(data.targetId);
   if (targetShip) {
     const job = Flight.jobs.getJob(targetShip._id);
     job.done();
@@ -173,9 +173,9 @@ function completeOnShip(data, userId) {
       }, userId);
     }
   }
-}
+};
 
-function completeOnBattle(data, userId) {
+const completeOnBattle = function(data, userId) {
   const battleId = data.targetId;
 
   const battle = Battle.fromDB(battleId);
@@ -201,21 +201,21 @@ function completeOnBattle(data, userId) {
       targetId: data.startPlanetId,
     }, userId);
   }
-}
+};
 
-export default function humansFlight(data) {
+export default function humansArrival(data) {
   const userId = data.userId;
 
   switch (data.targetType) {
-    case Flight.Target.PLANET:
+    case Flight.TARGET.PLANET:
       completeOnPlanet(data, userId);
       break;
 
-    case Flight.Target.SHIP:
+    case Flight.TARGET.SHIP:
       completeOnShip(data, userId);
       break;
 
-    case Flight.Target.BATTLE:
+    case Flight.TARGET.BATTLE:
       completeOnBattle(data, userId);
       break;
 

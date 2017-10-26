@@ -1,5 +1,3 @@
 import Lib from '../lib/flight';
 
-export default {
-  ...Lib,
-};
+export default Lib;

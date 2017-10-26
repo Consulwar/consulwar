@@ -8,7 +8,7 @@ const {
   MAX_ACC,
 } = Config;
 
-function calcSpeedK(level) {
+const calcSpeedK = function(level) {
   const config = SPEED_CONFIG;
   let k = 0;
 
@@ -21,17 +21,17 @@ function calcSpeedK(level) {
   }
 
   return k / 100;
-}
+};
 
-export function calcDistance(start, end) {
+const calcDistance = function(start, end) {
   return Math.sqrt(((end.x - start.x) ** 2) + ((end.y - start.y) ** 2));
-}
+};
 
-export function calcAngle(start, end) {
+const calcAngle = function(start, end) {
   return Math.atan2(end.y - start.y, end.x - start.x);
-}
+};
 
-export function calcDistanceByTime(currentTime, totalDistance, maxSpeed, acceleration) {
+const calcDistanceByTime = function(currentTime, totalDistance, maxSpeed, acceleration) {
   const totalDistanceMultiple = totalDistance * 50;
 
   const incSpeedTime = maxSpeed / acceleration;
@@ -75,9 +75,9 @@ export function calcDistanceByTime(currentTime, totalDistance, maxSpeed, acceler
     }
   }
   return traveledDistance / 50;
-}
+};
 
-export function calcTotalTimeByDistance(totalDistance, maxSpeed, acceleration) {
+const calcTotalTimeByDistance = function(totalDistance, maxSpeed, acceleration) {
   const totalDistanceMultiple = totalDistance * 50;
 
   const incSpeedTime = maxSpeed / acceleration;
@@ -97,9 +97,9 @@ export function calcTotalTimeByDistance(totalDistance, maxSpeed, acceleration) {
   }
 
   return Math.round(totalTime);
-}
+};
 
-export function calcTimeByDistance(currentDistance, totalDistance, maxSpeed, acceleration) {
+const calcTimeByDistance = function(currentDistance, totalDistance, maxSpeed, acceleration) {
   const currentDistanceMultiple = currentDistance * 50;
   const totalDistanceMultiple = totalDistance * 50;
 
@@ -136,24 +136,35 @@ export function calcTimeByDistance(currentDistance, totalDistance, maxSpeed, acc
   }
 
   return Math.round(time);
-}
+};
 
-export function calcMaxSpeed(level) {
+const calcMaxSpeed = function(level) {
   const min = MIN_SPEED;
   const max = MAX_SPEED;
   return min + ((max - min) * calcSpeedK(level));
-}
+};
 
-export function calcAcceleration(level) {
+const calcAcceleration = function(level) {
   const min = MIN_ACC;
   const max = MAX_ACC;
   return min + ((max - min) * calcSpeedK(level));
-}
+};
 
-export function calcFlyTime(startPoint, endPoint, engineLevel) {
+const calcFlyTime = function(startPoint, endPoint, engineLevel) {
   const distance = calcDistance(startPoint, endPoint);
   const maxSpeed = calcMaxSpeed(engineLevel);
   const acceleration = calcAcceleration(engineLevel);
 
   return calcTotalTimeByDistance(distance, maxSpeed, acceleration);
-}
+};
+
+export default {
+  calcDistance,
+  calcAngle,
+  calcDistanceByTime,
+  calcTotalTimeByDistance,
+  calcTimeByDistance,
+  calcMaxSpeed,
+  calcAcceleration,
+  calcFlyTime,
+};

@@ -3,7 +3,7 @@ import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';
 import Space from '../lib/space';
 import calcAttackOptions from '../lib/calcAttackOptions';
-import { calcFlyTime } from '../lib/utils';
+import Utils from '../lib/utils';
 import Flight from './flight';
 import TriggerAttack from './triggerAttack';
 import Config from './config';
@@ -44,7 +44,7 @@ Meteor.methods({
       throw new Meteor.Error('Плаента не существует');
     }
 
-    const enemyShip = Flight.getOneByUserId(targetId);
+    const enemyShip = Flight.getOne(targetId);
     if (!enemyShip) {
       throw new Meteor.Error('Корабль не существует');
     }
@@ -148,7 +148,7 @@ Meteor.methods({
 
     let target;
 
-    if (targetType === Flight.Target.PLANET) {
+    if (targetType === Flight.TARGET.PLANET) {
       if (baseId === targetId) {
         throw new Meteor.Error('Стартовая планета и конечная должны быть разными');
       }
@@ -159,7 +159,7 @@ Meteor.methods({
       }
 
       target = targetPlanet;
-    } else if (targetType === Flight.Target.BATTLE) {
+    } else if (targetType === Flight.TARGET.BATTLE) {
       const battleEvent = Battle.findByBattleId(targetId);
 
       if (!battleEvent) {
@@ -211,13 +211,13 @@ Meteor.methods({
       startPlanetId: basePlanet._id,
       targetPosition,
       targetId: target._id,
-      flyTime: calcFlyTime(startPosition, targetPosition, engineLevel),
+      flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
       engineLevel,
       isOneway,
       armyId: newArmyId,
     };
 
-    if (targetType === Flight.Target.PLANET) {
+    if (targetType === Flight.TARGET.PLANET) {
       Flight.toPlanet(data);
     } else {
       Flight.toBattle(data);

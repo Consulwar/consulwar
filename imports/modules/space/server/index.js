@@ -2,14 +2,44 @@ import { Meteor } from 'meteor/meteor';
 import Space from '../lib/space';
 import Config from './config';
 import './methods';
-import Flight from './flight';
-import Reinforcement from './reinforcement';
-import Battle from './battle';
-import TriggerAttack from './triggerAttack';
+import FlightQueue from './jobs/flight';
+import ReinforcementQueue from './jobs/reinforcement';
+import BattleQueue from './jobs/battle';
+import TriggerAttackQueue from './jobs/triggerAttack';
 
 Space.collection._ensureIndex({
   'data.userId': 1,
+  status: 1,
+});
+
+Space.collection._ensureIndex({
+  type: 1,
+  'data.userId': 1,
+  status: 1,
+});
+
+Space.collection._ensureIndex({
+  type: 1,
+  'data.userId': 1,
+  status: 1,
+  after: 1,
+});
+
+Space.collection._ensureIndex({
+  type: 1,
   'data.planetId': 1,
+  status: 1,
+});
+
+Space.collection._ensureIndex({
+  type: 1,
+  'data.battleId': 1,
+  status: 1,
+});
+
+Space.collection._ensureIndex({
+  type: 1,
+  'data.fleetId': 1,
   status: 1,
 });
 
@@ -31,16 +61,16 @@ export default function initSpaceServer() {
   process.on('SIGINT', function() {
     let i = 0;
 
-    function done() {
+    const done = function() {
       i += 1;
       if (i >= 4) {
         process.exit(0);
       }
-    }
+    };
 
-    Flight.queue.shutdown({ level: 'soft' }, done);
-    Reinforcement.queue.shutdown({ level: 'soft' }, done);
-    Battle.queue.shutdown({ level: 'soft' }, done);
-    TriggerAttack.queue.shutdown({ level: 'soft' }, done);
+    FlightQueue.shutdown({ level: 'soft' }, done);
+    ReinforcementQueue.shutdown({ level: 'soft' }, done);
+    BattleQueue.shutdown({ level: 'soft' }, done);
+    TriggerAttackQueue.shutdown({ level: 'soft' }, done);
   });
 }

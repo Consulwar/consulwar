@@ -1,16 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import { Job } from '/moduls/game/lib/jobs';
 import Space from '../lib/space';
-import humansFlight from './flight/humansFlight';
-import reptileFlight from './flight/reptileFlight';
 import Lib from '../lib/flight';
 import Config from './config';
 
-const { EVENT_TYPE, Target } = Lib;
+const { EVENT_TYPE, TARGET } = Lib;
 
-function add(data, userId) {
+const add = function(data, targetType, userId) {
   const savedData = {
     ...data,
+    targetType,
     userId,
   };
 
@@ -19,53 +18,20 @@ function add(data, userId) {
     .retry(Config.JOBS.retries)
     .delay(data.flyTime * 1000)
     .save();
-}
-
-const queue = Space.jobs.processJobs(
-  EVENT_TYPE,
-  {
-    concurrency: Config.JOBS.concurrency,
-    payload: Config.JOBS.payload,
-    pollInterval: Config.JOBS.pollInterval,
-    prefetch: Config.JOBS.prefetch,
-  },
-  (job, cb) => {
-    const data = job.data;
-
-    if (data.isHumans) {
-      humansFlight(data);
-    } else {
-      reptileFlight(data);
-    }
-
-    job.done();
-    cb();
-  },
-);
+};
 
 export default {
   ...Lib,
 
   toPlanet(data, userId = Meteor.userId()) {
-    add({
-      ...data,
-      targetType: Target.PLANET,
-    }, userId);
+    add(data, TARGET.PLANET, userId);
   },
 
   toShip(data, userId = Meteor.userId()) {
-    add({
-      ...data,
-      targetType: Target.SHIP,
-    }, userId);
+    add(data, TARGET.SHIP, userId);
   },
 
   toBattle(data, userId = Meteor.userId()) {
-    add({
-      ...data,
-      targetType: Target.BATTLE,
-    }, userId);
+    add(data, TARGET.BATTLE, userId);
   },
-
-  queue,
 };

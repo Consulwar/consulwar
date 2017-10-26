@@ -1,19 +1,23 @@
 import Space from '/imports/modules/space/lib/space';
 import Reinforcement from '/imports/modules/space/client/reinforcement';
-import {
+import Utils from '/imports/modules/space/lib/utils';
+import calcAttackOptions from '/imports/modules/space/lib/calcAttackOptions';
+import Flight from '/imports/modules/space/client/flight';
+
+import PlanetGeneration from '/imports/modules/space/lib/planetGeneration';
+
+const {
   calcDistanceByTime,
   calcFlyTime,
   calcTotalTimeByDistance,
   calcMaxSpeed,
   calcAcceleration,
-} from '/imports/modules/space/lib/utils';
-import calcAttackOptions from '/imports/modules/space/lib/calcAttackOptions';
-import Flight from '/imports/modules/space/client/flight';
+} = Utils;
 
-import {
+const {
   calcSegmentRandomPoints,
   calcSegmentPlanetsAmount,
-} from '/imports/modules/space/lib/planetGeneration';
+} = PlanetGeneration;
 
 initCosmosClient = function() {
 'use strict';
@@ -341,7 +345,7 @@ var scrollMapToPlanet = function(id) {
 
 var scrollMapToFleet = function(id) {
   var path = pathViews[id];
-  var spaceEvent = Flight.getOneByUserId(id);
+  var spaceEvent = Flight.getOne(id);
 
   if (path && spaceEvent) {
     var totalFlyDistance = Game.Planets.calcDistance(
@@ -517,7 +521,7 @@ Template.cosmosFleetsInfo.helpers({
         }
       } else {
         data.name = 'Перехват';
-        var target = Flight.getOneByUserId(fleets[i].data.targetId);
+        var target = Flight.getOne(fleets[i].data.targetId);
         data.name += (
           ' ' + Game.Battle.items[target.data.mission.type].name
           + ' ' + target.data.mission.level
@@ -833,7 +837,7 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
     isPopupLocked = true;
   }
 
-  var spaceEvent = Flight.getOneByUserId(id);
+  var spaceEvent = Flight.getOne(id);
 
   cosmosPopupView = Blaze.renderWithData(
     Template.cosmosShipInfo, {
@@ -1060,7 +1064,7 @@ var timeAttack = function(id) {
     return calcFlyTime(basePlanet, targetPlanet, engineLevel);
   }
 
-  var targetShip = Flight.getOneByUserId(targetId);
+  var targetShip = Flight.getOne(targetId);
   if (targetShip) {
     var result = calcAttackOptions({
       attackerPlanet: basePlanet,
@@ -1080,7 +1084,7 @@ Template.cosmosAttackMenu.helpers({
   },
 
   ship: function() {
-    return Flight.getOneByUserId(this.id);
+    return Flight.getOne(this.id);
   },
 
   planet: function() {
@@ -1091,7 +1095,7 @@ Template.cosmosAttackMenu.helpers({
 
   timeLeft: function() {
     var targetId = this.id;
-    var targetShip = Flight.getOneByUserId(targetId);
+    var targetShip = Flight.getOne(targetId);
     if (targetShip) {
       return dateToTime(targetShip.after) - Session.get('serverTime');
     }
@@ -1428,7 +1432,7 @@ Template.cosmosAttackMenu.events({
 
     var targetId = t.data.id;
     var planet = Game.Planets.getOne(targetId);
-    var ship = Flight.getOneByUserId(targetId);
+    var ship = Flight.getOne(targetId);
 
     if (!planet && !ship) {
       Notifications.info('Не выбрана цель');
@@ -1441,7 +1445,7 @@ Template.cosmosAttackMenu.events({
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
-        Flight.Target.PLANET,
+        Flight.TARGET.PLANET,
         targetId,
         units,
         isOneway,

@@ -278,7 +278,7 @@ Meteor.methods({
       check(options.targetX, Number);
       check(options.targetY, Number);
 
-      let enemyShip = Flight.getOneByUserId(options.targetId);
+      let enemyShip = Flight.getOne(options.targetId);
       if (!enemyShip) {
         throw new Meteor.Error('Корабль не существует');
       }

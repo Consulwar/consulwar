@@ -1,7 +1,14 @@
 import Game from '/moduls/game/lib/main.game';
 
-export function calcSegmentCenter(hand, segment, maxHands, maxSegments,
-  rotationFactor, maxRadius, galacticAngle) {
+const calcSegmentCenter = function(
+  hand,
+  segment,
+  maxHands,
+  maxSegments,
+  rotationFactor,
+  maxRadius,
+  galacticAngle,
+) {
   // central sector
   if (segment === 0) {
     return {
@@ -19,10 +26,16 @@ export function calcSegmentCenter(hand, segment, maxHands, maxSegments,
     x: distance * Math.cos(angle),
     y: distance * Math.sin(angle),
   };
-}
+};
 
-export function calcSegmentPlanetsAmount(hand, segment, maxHands, maxSegments,
-  minPlanets, maxPlanets) {
+const calcSegmentPlanetsAmount = function(
+  hand,
+  segment,
+  maxHands,
+  maxSegments,
+  minPlanets,
+  maxPlanets,
+) {
   const kCenter = 0.1; // center = 10% of all planets
   const kHand = (1 - kCenter) / maxHands;
 
@@ -40,10 +53,19 @@ export function calcSegmentPlanetsAmount(hand, segment, maxHands, maxSegments,
 
   const amount = Game.Random.interval(min, max);
   return (amount >= 1) ? amount : 0;
-}
+};
 
-export function calcSegmentRandomPoints(pointsAmount, hand, segment, maxHands,
-  maxSegments, rotationFactor, narrowFactor, maxRadius, galacticAngle) {
+const calcSegmentRandomPoints = function(
+  pointsAmount,
+  hand,
+  segment,
+  maxHands,
+  maxSegments,
+  rotationFactor,
+  narrowFactor,
+  maxRadius,
+  galacticAngle,
+) {
   const result = [];
   let angle = 0;
   let distance = 0;
@@ -109,4 +131,10 @@ export function calcSegmentRandomPoints(pointsAmount, hand, segment, maxHands,
   }
 
   return result;
-}
+};
+
+export default {
+  calcSegmentCenter,
+  calcSegmentPlanetsAmount,
+  calcSegmentRandomPoints,
+};

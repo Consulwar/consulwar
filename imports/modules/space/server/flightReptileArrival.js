@@ -4,11 +4,11 @@ import Game from '/moduls/game/lib/main.game';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
-import Flight from '../flight';
+import Flight from './flight';
 
-import BattleEvents from '../battle';
+import BattleEvents from './battle';
 
-const flyBack = function (data) {
+const flyBack = function(data) {
   Flight.toPlanet({
     ...data,
     isOneway: true,
@@ -19,7 +19,7 @@ const flyBack = function (data) {
   }, data.userId);
 };
 
-export default function reptileFlight(data) {
+export default function reptileArrival(data) {
   const { userId } = data;
 
   const planet = Game.Planets.getOne(data.targetId, userId);

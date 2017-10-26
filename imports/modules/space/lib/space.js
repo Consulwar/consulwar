@@ -5,18 +5,18 @@ import { JobCollection } from '/moduls/game/lib/jobs';
 const jobs = new JobCollection('spaceEvents');
 const collection = jobs; // для более внятного использования
 
-const getCurrentFleetsCount = function (userId = Meteor.userId()) {
+const getCurrentFleetsCount = function(userId = Meteor.userId()) {
   return Game.Unit.Collection.find({
     user_id: userId,
     location: { $ne: Game.Unit.location.HOME },
   }).count();
 };
 
-function canSendFleet(userId = Meteor.userId()) {
-  return getCurrentFleetsCount(userId) < Game.Planets.getMaxColoniesCount();
-}
+const canSendFleet = function(userId = Meteor.userId()) {
+  return getCurrentFleetsCount(userId) < (Game.Planets.getMaxColoniesCount() * 2);
+};
 
-function getAllByUserId(userId = Meteor.userId()) {
+const getAllByUserId = function(userId = Meteor.userId()) {
   return collection.find({
     'data.userId': userId,
   }, {
@@ -24,7 +24,7 @@ function getAllByUserId(userId = Meteor.userId()) {
       after: 1,
     },
   });
-}
+};
 
 export default {
   jobs,

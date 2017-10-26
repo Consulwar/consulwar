@@ -2,11 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';
 import Config from '/imports/modules/space/server/config';
-import {
+import PlanetGeneration from '/imports/modules/space/lib/planetGeneration';
+
+const {
   calcSegmentRandomPoints,
   calcSegmentPlanetsAmount,
   calcSegmentCenter,
-} from '/imports/modules/space/lib/planetGeneration';
+} = PlanetGeneration;
 
 initCosmosPlanetsServer = function() {
 'use strict';
@@ -116,10 +118,8 @@ Game.Planets.update = function(planet) {
 Game.Planets.add = function(planet, userId = Meteor.userId()) {
   let status = Game.Planets.status.NOBODY;
 
-  if (planet.isHome || planet.armyId) {
+  if (planet.isHome) {
     status = Game.Planets.status.HUMANS;
-  } else if (planet.mission) {
-    status = Game.Planets.status.REPTILES;
   }
 
   return Game.Planets.Collection.insert({

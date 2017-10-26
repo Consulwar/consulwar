@@ -1,4 +1,6 @@
-import {
+import Utils from './utils';
+
+const {
   calcAngle,
   calcDistance,
   calcMaxSpeed,
@@ -6,9 +8,9 @@ import {
   calcDistanceByTime,
   calcTimeByDistance,
   calcFlyTime,
-} from './utils';
+} = Utils;
 
-export default function ({ attackerPlanet, attackerEngineLevel, targetShip, timeCurrent }) {
+export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeCurrent }) {
   const angle = calcAngle(
     targetShip.data.startPosition,
     targetShip.data.targetPosition,
@@ -34,7 +36,7 @@ export default function ({ attackerPlanet, attackerEngineLevel, targetShip, time
     targetShipAcc,
   );
 
-  const check = function (distance) {
+  const check = function(distance) {
     // target time
     const timeToPoint = calcTimeByDistance(
       distance,

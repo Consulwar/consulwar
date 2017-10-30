@@ -1737,9 +1737,9 @@ Template.cosmosObjects.helpers({
   },
 
   statusName() {
-    return (this.planet.status === Game.Planets.status.REPTILES
+    return (this.planet.status === Game.Planets.STATUS.REPTILES
         ? 'reptile'
-        : this.planet.status === Game.Planets.status.HUMANS
+        : this.planet.status === Game.Planets.STATUS.HUMANS
           ? 'human'
           : 'empty'
     );

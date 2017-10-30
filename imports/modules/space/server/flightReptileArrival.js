@@ -89,6 +89,8 @@ export default function reptileArrival(data) {
         });
       }
     } else {
+      planet.status = Game.Planets.STATUS.NOBODY;
+
       planet.mission = {
         type: data.mission.type === 'tradefleet' ? 'patrolfleet' : data.mission.type,
         level: data.mission.level,

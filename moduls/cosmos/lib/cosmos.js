@@ -16,7 +16,7 @@ Game.Planets = {
 
   Collection: new Meteor.Collection('planets'),
 
-  status: {
+  STATUS: {
     NOBODY: 1,
     HUMANS: 2,
     REPTILES: 3,
@@ -78,7 +78,14 @@ Game.Planets = {
   getColonies: function () {
     return Game.Planets.Collection.find({
       user_id: Meteor.userId(),
-      status: Game.Planets.status.HUMANS,
+      status: Game.Planets.STATUS.HUMANS,
+    }).fetch();
+  },
+
+  getPlanetsWithArmy(userId = Meteor.userId()) {
+    return Game.Planets.Collection.find({
+      user_id: userId,
+      armyId: { $exists: true },
     }).fetch();
   },
 

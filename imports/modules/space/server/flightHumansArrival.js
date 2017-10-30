@@ -10,6 +10,7 @@ import TriggerAttack from './triggerAttack';
 import Config from './config';
 
 import BattleEvents from './battle';
+import Utils from '../lib/utils';
 
 const completeOnPlanet = function(data, userId) {
   const planet = Game.Planets.getOne(data.targetId, userId);
@@ -147,20 +148,18 @@ const completeOnShip = function(data, userId) {
 
     Game.Unit.removeArmy(data.armyId, userId);
   } else {
-    const battleId = BattleEvents.findByFleetId(data.targetId);
+    const battleEvent = BattleEvents.findByFleetId(data.targetId);
 
-    if (battleId) {
-      const username = Meteor.users.findOne({
-        _id: userId,
-      }, {
-        fields: { username: 1 },
-      }).username;
-      const userFleet = Flight.getFleetUnits(data);
-      const userArmy = { army: { fleet: userFleet } };
-      const userGroup = createGroup(userArmy);
-      Battle.addGroup(battleId, Battle.USER_SIDE, username, userGroup);
+    if (battleEvent) {
+      // go to new battle position
+      const flyTime = Utils.calcFlyTime(data.startPosition,
+        battleEvent.data.targetPosition, data.engineLevel);
 
-      Game.Unit.removeArmy(data.armyId, userId);
+      Flight.toBattle({
+        ...data,
+        targetId: battleEvent._id,
+        flyTime,
+      }, userId);
     } else {
       // fly back
       Flight.toPlanet({

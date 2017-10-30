@@ -60,17 +60,17 @@ Game.Planets.actualize = function() {
       continue;
     }
 
-    if (planet.armyId) {
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
       // auto collect artefacts
       if (planet.timeArtefacts) {
         var delta = timeCurrent - planet.timeArtefacts;
-        var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
+        var count = Math.floor(delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD);
         if (count > 0) {
           var artefacts = Game.Planets.getArtefacts(planet, count);
           if (artefacts) {
             Game.Resources.add(artefacts);
           }
-          planet.timeArtefacts += ( Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count );
+          planet.timeArtefacts += (Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count);
           Game.Planets.update(planet);
         }
       }
@@ -86,6 +86,7 @@ Game.Planets.actualize = function() {
             if (Game.Random.random() <= 0.5) {
               planet.mission = Game.Planets.generateMission(planet);
               sector.occupied += 1;
+              planet.status = Game.Planets.STATUS.REPTILES;
             }
           }
         } else if (planet.mission.units) {
@@ -116,16 +117,9 @@ Game.Planets.update = function(planet) {
 };
 
 Game.Planets.add = function(planet, userId = Meteor.userId()) {
-  let status = Game.Planets.status.NOBODY;
-
-  if (planet.isHome) {
-    status = Game.Planets.status.HUMANS;
-  }
-
   return Game.Planets.Collection.insert({
     ...planet,
     user_id: userId,
-    status,
   });
 };
 
@@ -618,6 +612,7 @@ Game.Planets.generateSector = function(
       type: type.engName,
       artefacts: artefacts,
       // state
+      status: Game.Planets.STATUS.NOBODY,
       armyId: null,
       mission: null,
       timeRespawn: 0,
@@ -711,6 +706,7 @@ Meteor.methods({
       var planetId = Game.Planets.add({
         name: user.planetName,
         isHome: true,
+        status: Game.Planets.STATUS.HUMANS,
         type: 'terran',
         // generation
         hand: hand,
@@ -925,7 +921,7 @@ Meteor.methods({
     Game.Payment.Expense.log(price, 'planetBuy');
   },
 
-  'planet.mineArtefacts'(planetId) {
+  'planet.startMining'(planetId) {
     const user = Meteor.user();
 
     if (!user || !user._id) {
@@ -936,7 +932,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'planet.mineArtifacts');
+    Game.Log.method.call(this, 'planet.startMining');
 
     check(planetId, String);
 
@@ -945,15 +941,43 @@ Meteor.methods({
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
     }
 
-    if (planet.timeArtefacts) {
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
       throw new Meteor.Error('На планете уже ведется добыча артефактов');
+    } else if (planet.status === Game.Planets.STATUS.REPTILES) {
+      const artefacts = Game.Planets.getArtefacts(planet, 1);
+      if (artefacts) {
+        Game.Resources.add(artefacts);
+      }
     }
 
-    const artefacts = Game.Planets.getArtefacts(planet, 1);
-    if (artefacts) {
-      Game.Resources.add(artefacts);
-    }
     planet.timeArtefacts = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+    planet.status = Game.Planets.STATUS.HUMANS;
+
+    Game.Planets.update(planet);
+  },
+
+  'planet.stopMining'(planetId) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'planet.stopMining');
+
+    check(planetId, String);
+
+    const planet = Game.Planets.getOne(planetId);
+    if (!planet || planet.isHome || planet.status !== Game.Planets.STATUS.HUMANS) {
+      throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+    }
+
+    planet.status = Game.Planets.STATUS.NOBODY;
+
     Game.Planets.update(planet);
   },
 });

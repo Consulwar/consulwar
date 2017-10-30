@@ -244,17 +244,17 @@ const actualize = function() {
         // choose base planet
         targetPlanet = Game.Planets.getBase();
       } else if (chances.colony >= Game.Random.interval(0, 100)) {
-        // choose from colonies, exclude base planet
-        const colonies = Game.Planets.getColonies();
-        let n = colonies.length;
+        // choose from planets with army, exclude base planet
+        const planets = Game.Planets.getPlanetsWithArmy();
+        let n = planets.length;
         while (n > 0) {
           n -= 1;
-          if (colonies[n].isHome) {
-            colonies.splice(n, 1);
+          if (planets[n].isHome) {
+            planets.splice(n, 1);
           }
         }
-        if (colonies.length > 0) {
-          targetPlanet = colonies[Game.Random.interval(0, colonies.length - 1)];
+        if (planets.length > 0) {
+          targetPlanet = planets[Game.Random.interval(0, planets.length - 1)];
         }
       }
 

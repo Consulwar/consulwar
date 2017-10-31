@@ -42,7 +42,7 @@ Game.Building.special.Market = {
       true
     ).amount;
 
-    return Math.round(amount);
+    return Math.floor(amount);
   }
 };
 

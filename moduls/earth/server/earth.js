@@ -541,6 +541,8 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
     $unset: {
       justReinforcement: 1,
     },
+  }, {
+    multi: true,
   });
 };
 

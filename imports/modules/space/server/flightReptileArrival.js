@@ -13,9 +13,9 @@ const flyBack = function(data) {
     ...data,
     isOneway: true,
     isBack: true,
-    startPosition: data.targetPosition,
+    startPosition: data.returnDestination,
     targetPosition: data.startPosition,
-    targetId: data.startPlanetId,
+    targetId: data.returnPlanetId,
   }, data.userId);
 };
 
@@ -41,10 +41,13 @@ export default function reptileArrival(data) {
 
         if (planet.isHome) {
           const homeArmy = Game.Unit.getHomeArmy(userId);
-          if (homeArmy && homeArmy.units && homeArmy.units.army && homeArmy.units.army.ground) {
-            Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground, userId);
-
-            delete homeArmy.units.army.ground;
+          if (homeArmy && homeArmy.units && homeArmy.units.army) {
+            if (homeArmy.units.army.ground) {
+              Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground, userId);
+              delete homeArmy.units.army.ground;
+            } else {
+              Game.Unit.removeArmy(homeArmy._id, userId);
+            }
           }
 
           userArmy = homeArmy.units;

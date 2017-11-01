@@ -107,13 +107,13 @@ Game.Planets = {
     for (var i = 0; i < fleets.length; i++) {
       var fleet = fleets[i];
 
-      if (!fleet.info.isHumans) {
+      if (!fleet.data.isHumans) {
         continue;
       }
 
-      id = fleet.info.isOneway
-        ? fleet.info.targetId
-        : fleet.info.startPlanetId;
+      id = fleet.data.isOneway
+        ? fleet.data.targetId
+        : fleet.data.startPlanetId;
 
       if (targets.indexOf(id) == -1) {
         targets.push(id);

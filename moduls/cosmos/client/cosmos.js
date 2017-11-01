@@ -2072,9 +2072,9 @@ Game.Planets.debugDump = function() {
 
   console.log('--------------- PLANETS ----------------');
   dumpItems( Game.Planets.Collection.find().fetch() );
-  
+
   console.log('------------ SPACE EVENTS --------------');
-  dumpItems( Space.collection.find({status: 1}).fetch());
+  dumpItems(Space.collection.find({ status: { $ne: 'completed' } }).fetch());
 };
 
 };

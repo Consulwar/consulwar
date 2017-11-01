@@ -37,18 +37,29 @@ export default Space.jobs.processJobs(
       const isUserVictory = (Battle.USER_SIDE in roundResult.left);
       const army = roundResult.left[Battle[(isUserVictory ? 'USER_SIDE' : 'ENEMY_SIDE')]];
 
-      const newArmyId = Game.Unit.createArmy(
-        army,
-        Game.Unit.location.SHIP,
-        user._id,
-      );
-
-      if (planet && data.isOneway) {
+      if (planet && (data.isOneway || data.isHumans !== isUserVictory)) {
         // Победитель остается на планете
+        const newArmyId = Game.Unit.createArmy(
+          army,
+          Game.Unit.location.SHIP,
+          user._id,
+        );
+
         if (isUserVictory) {
           planet.mission = null;
-          planet.armyId = newArmyId;
+          if (planet.isHome || planet.armyId) {
+            // merge army
+            const destArmyId = (planet.isHome)
+              ? Game.Unit.getHomeArmy(user._id)._id
+              : planet.armyId;
+            Game.Unit.mergeArmy(newArmyId, destArmyId, user._id);
+          } else {
+            // move army
+            Game.Unit.moveArmy(newArmyId, Game.Unit.location.PLANET, user._id);
+            planet.armyId = newArmyId;
+          }
         } else {
+          planet.status = Game.Planets.STATUS.NOBODY;
           planet.armyId = null;
 
           if (planet.mission) {
@@ -65,33 +76,39 @@ export default Space.jobs.processJobs(
         }
       } else {
         // Победитель возвращается
-        let targetId;
-        if (isUserVictory && battle.initialUnits[Battle.USER_SIDE][username].length > 1) {
-          // user battle with help
-          targetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
-        } else {
-          targetId = data.startPlanetId;
+        let newArmyId = null;
+        let targetId = data.returnPlanetId;
+
+        if (isUserVictory) {
+          newArmyId = Game.Unit.createArmy(
+            army,
+            Game.Unit.location.SHIP,
+            user._id,
+          );
+
+          if (battle.initialUnits[Battle.USER_SIDE][username].length > 1) {
+            // user battle with help
+            targetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
+          }
         }
 
         if (planet) {
           planet.mission = null;
-          if (!isUserVictory) {
-            planet.armyId = null;
+          if (!isUserVictory && !planet.isHome) {
             planet.status = Game.Planets.STATUS.NOBODY;
           }
         }
 
         // return humans ship
         Flight.toPlanet({
+          ...data,
           isHumans: isUserVictory,
           isOneway: true,
           isBack: true,
           startPosition: data.targetPosition,
           startPlanetId: planetId,
-          targetPosition: data.startPosition,
+          targetPosition: data.returnDestination,
           targetId,
-          flyTime: data.flyTime,
-          engineLevel: data.engineLevel,
           armyId: newArmyId,
         }, user._id);
       }
@@ -99,7 +116,11 @@ export default Space.jobs.processJobs(
       if (planet) {
         Game.Planets.update(planet);
       }
+
+      job.done();
     } else {
+      job.done();
+
       job.rerun({
         wait: battleDelay({
           userArmy: roundResult.left[Battle.USER_SIDE],
@@ -108,7 +129,6 @@ export default Space.jobs.processJobs(
       });
     }
 
-    job.done();
     cb();
   },
 );

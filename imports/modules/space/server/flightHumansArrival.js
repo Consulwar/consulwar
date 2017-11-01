@@ -90,12 +90,13 @@ const completeOnPlanet = function(data, userId) {
         }, Config.TRIGGER_ATTACK_DELAY, userId);
       }
     } else {
+      // fly back
       Flight.toPlanet({
         ...data,
         isOneway: true,
         isBack: true,
-        startPosition: data.targetPosition,
-        startPlanetId: data.targetId,
+        startPosition: data.returnDestination,
+        startPlanetId: data.returnPlanetId,
         targetPosition: data.startPosition,
         targetId: data.startPlanetId,
       }, userId);
@@ -166,9 +167,9 @@ const completeOnShip = function(data, userId) {
         ...data,
         isOneway: true,
         isBack: true,
-        startPosition: data.targetPosition,
+        startPosition: data.returnDestination,
         targetPosition: data.startPosition,
-        targetId: data.startPlanetId,
+        targetId: data.returnPlanetId,
       }, userId);
     }
   }
@@ -191,13 +192,14 @@ const completeOnBattle = function(data, userId) {
 
     Game.Unit.removeArmy(data.armyId, userId);
   } else {
+    // fly back
     Flight.toPlanet({
       ...data,
       isOneway: true,
       isBack: true,
-      startPosition: data.targetPosition,
+      startPosition: data.returnDestination,
       targetPosition: data.startPosition,
-      targetId: data.startPlanetId,
+      targetId: data.returnPlanetId,
     }, userId);
   }
 };

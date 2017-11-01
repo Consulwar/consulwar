@@ -13,6 +13,11 @@ const add = function(data, targetType, userId) {
     userId,
   };
 
+  if (!data.isOneway && !data.isBack) {
+    savedData.returnDestination = data.startPosition;
+    savedData.returnPlanetId = data.startPlanetId;
+  }
+
   const job = new Job(Space.jobs, EVENT_TYPE, savedData);
   job
     .retry(Config.JOBS.retries)

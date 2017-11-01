@@ -3,6 +3,7 @@ import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';
 import Config from '/imports/modules/space/server/config';
 import PlanetGeneration from '/imports/modules/space/lib/planetGeneration';
+import Space from '/imports/modules/space/lib/space';
 
 const {
   calcSegmentRandomPoints,
@@ -784,9 +785,13 @@ Meteor.methods({
 
     check(planetId, String);
 
-    let planet = Game.Planets.getOne(planetId);
+    const planet = Game.Planets.getOne(planetId);
     if (!planet || planet.isHome || !planet.armyId) {
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+    }
+
+    if (planet.status !== Game.Planets.STATUS.HUMANS) {
+      throw new Meteor.Error('На планете не ведется добыча артефактов');
     }
 
     if (!cardsObject) {
@@ -1030,8 +1035,7 @@ Game.Planets.debugCalcArtefactsChances = function() {
 Game.Planets.debugImportCosmos = function(userId, planets, spaceEvents) {
   // clear cosmos + queue
   Game.Planets.Collection.remove({user_id: userId});
-  Game.Queue.Collection.remove({user_id: userId});
-  Game.SpaceEvents.Collection.remove({user_id: userId});
+  Space.collection.remove({ user_id: userId });
 
   // import planets
   var i = 0;
@@ -1060,7 +1064,7 @@ Game.Planets.debugImportCosmos = function(userId, planets, spaceEvents) {
     event.timeStart += deltaTime;
     event.timeEnd += deltaTime;
     event.user_id = userId;
-    Game.SpaceEvents.Collection.insert(event);
+    Space.collection.insert(event);
   }
 };
 

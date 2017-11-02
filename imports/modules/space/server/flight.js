@@ -13,7 +13,7 @@ const add = function(data, targetType, userId) {
     userId,
   };
 
-  if (!data.isOneway && !data.isBack) {
+  if (!data.returnDestination) {
     savedData.returnDestination = data.startPosition;
     savedData.returnPlanetId = data.startPlanetId;
   }

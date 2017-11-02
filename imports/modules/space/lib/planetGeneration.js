@@ -19,8 +19,11 @@ const calcSegmentCenter = function(
 
   // hand segment
   const distance = (maxRadius * (segment + 0.5)) / maxSegments;
-  const angle = galacticAngle + (hand * ((Math.PI * 2) / maxHands)) +
-    (distance * rotationFactor);
+  const angle = (
+    galacticAngle +
+    (hand * ((Math.PI * 2) / maxHands)) +
+    (distance * rotationFactor)
+  );
 
   return {
     x: distance * Math.cos(angle),

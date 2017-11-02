@@ -11,7 +11,7 @@ const TARGET = {
   BATTLE: 3,
 };
 
-const getFleets = function() {
+const getFleetsEvents = function() {
   return Space.collection.find({
     type: EVENT_TYPE,
     'data.userId': Meteor.userId(),
@@ -50,7 +50,7 @@ const getOne = function(_id) {
 export default {
   EVENT_TYPE,
   TARGET,
-  getFleets,
+  getFleetsEvents,
   getFleetUnits,
   getOne,
 };

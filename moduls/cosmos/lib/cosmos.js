@@ -101,7 +101,7 @@ Game.Planets = {
     // count already targeted planets
     var targets = [];
     var isTargetInList = false;
-    var fleets = Flight.getFleets().fetch();
+    var fleets = Flight.getFleetsEvents().fetch();
     var id = null;
 
     for (var i = 0; i < fleets.length; i++) {

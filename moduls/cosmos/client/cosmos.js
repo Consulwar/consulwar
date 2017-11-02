@@ -478,7 +478,7 @@ Template.cosmosFleetsInfo.helpers({
     var i = 0;
     var data = null;
 
-    var fleets = Flight.getFleets().fetch();
+    var fleets = Flight.getFleetsEvents().fetch();
     for (i = 0; i < fleets.length; i++) {
       if (!fleets[i].data.isHumans) {
         continue;
@@ -549,7 +549,7 @@ Template.cosmosFleetsInfo.helpers({
 
   reptileFleets: function () {
     var result = [];
-    var fleets = Flight.getFleets().fetch();
+    var fleets = Flight.getFleetsEvents().fetch();
     for (var i = 0; i < fleets.length; i++) {
       if (fleets[i].data.isHumans) {
         continue;
@@ -1238,7 +1238,7 @@ Template.cosmosAttackMenu.helpers({
     // count sent
     var sentCount = 0;
 
-    var fleets = Flight.getFleets().fetch();
+    var fleets = Flight.getFleetsEvents().fetch();
     for (let i = 0; i < fleets.length; i++) {
       var fleet = fleets[i];
 
@@ -1617,7 +1617,7 @@ Game.Cosmos.renderCosmosObjects = function() {
       },
 
       fleets: function() {
-        var fleets = Flight.getFleets().fetch();
+        var fleets = Flight.getFleetsEvents().fetch();
         return _.map(fleets, function(spaceEvent) {
           return {
             spaceEvent: spaceEvent,

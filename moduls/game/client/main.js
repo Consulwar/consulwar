@@ -353,7 +353,7 @@ var helpers = {
 
   fleetInfo: function() {
     var reinforcements = Reinforcement.getAllByUserId().fetch();
-    var fleets = Flight.getFleets().fetch();
+    var fleets = Flight.getFleetsEvents().fetch();
     
     if (reinforcements.length === 0 && fleets.length === 0) {
       return null;

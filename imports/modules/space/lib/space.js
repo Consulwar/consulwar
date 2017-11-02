@@ -12,8 +12,12 @@ const getCurrentFleetsCount = function(userId = Meteor.userId()) {
   }).count();
 };
 
+const getMaxFleetCount = function() {
+  return Game.Planets.getMaxColoniesCount() * 2;
+};
+
 const canSendFleet = function(userId = Meteor.userId()) {
-  return getCurrentFleetsCount(userId) < (Game.Planets.getMaxColoniesCount() * 2);
+  return getCurrentFleetsCount(userId) < getMaxFleetCount();
 };
 
 const getAllByUserId = function(userId = Meteor.userId()) {
@@ -29,6 +33,7 @@ const getAllByUserId = function(userId = Meteor.userId()) {
 export default {
   jobs,
   collection,
+  getMaxFleetCount,
   canSendFleet,
   getAllByUserId,
 };

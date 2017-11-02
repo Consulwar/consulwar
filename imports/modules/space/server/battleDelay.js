@@ -1,3 +1,5 @@
+import Config from './config';
+
 export default function (/* { userArmy, enemyArmy } */) {
-  return 5 * 1000;
+  return Config.BATTLE_DELAY;
 }

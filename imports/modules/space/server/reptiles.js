@@ -2,16 +2,18 @@ import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 import Space from '../lib/space';
-import Flight from './flight';
+import FlightEvents from './flightEvents';
 import Utils from '../lib/utils';
 import Config from './config';
 
 const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
 
 const spawnTradeFleet = function(hand, segment) {
+  const user = Meteor.user();
+
   // find planets inside hand
   const finishPlanets = Game.Planets.Collection.find({
-    user_id: Meteor.userId(),
+    user_id: user._id,
     hand,
     mission: { $ne: null },
   }).fetch();
@@ -54,7 +56,10 @@ const spawnTradeFleet = function(hand, segment) {
     const engineLevel = 0;
     const flyTime = Utils.calcFlyTime(startPosition, targetPosition, engineLevel);
 
-    Flight.toPlanet({
+    FlightEvents.add({
+      targetType: FlightEvents.TARGET.PLANET,
+      userId: user._id,
+      username: user.username,
       startPosition,
       startPlanetId: startPlanet._id,
       targetPosition,
@@ -79,7 +84,7 @@ const actualizeTradeFleets = function() {
 
   const fleets = Space.collection.find({
     'data.userId': Meteor.userId(),
-    type: Flight.EVENT_TYPE,
+    type: FlightEvents.EVENT_TYPE,
     after: { $gt: Game.getCurrentTime() * 1000 },
     'data.mission.type': 'tradefleet',
   }).fetch();
@@ -213,7 +218,12 @@ const sendReptileFleetToPlanet = function({
 
     const engineLevel = 0;
 
-    Flight.toPlanet({
+    const user = Meteor.user();
+
+    FlightEvents.add({
+      targetType: FlightEvents.TARGET.PLANET,
+      userId: user._id,
+      username: user.username,
       startPosition,
       startPlanetId: startPlanet._id,
       targetPosition,
@@ -274,6 +284,47 @@ const actualize = function() {
   if (timeCurrent >= timeLastTradeFleet + TRADE_FLEET_PERIOD) {
     actualizeTradeFleets();
     Game.Planets.setLastTradeFleetTime(timeCurrent);
+  }
+};
+
+const stealUserResources = function({ enemyArmy, userId, battle }) {
+  const userResources = Game.Resources.getValue(userId);
+  const stealCost = Game.Unit.calculateBaseArmyCost(enemyArmy);
+  // TODO: need to use userId
+  const bunker = Game.Effect.Special.getValue(true, { engName: 'bunker' });
+
+  _(stealCost).pairs().forEach(([resName, value]) => {
+    const stealAmount = Math.floor(value * 0.2); // 20%
+
+    let userAmount = (userResources[resName] && userResources[resName].amount)
+      ? userResources[resName].amount
+      : 0;
+
+    // save some resources
+    if (bunker && bunker[resName]) {
+      if (bunker[resName] < userAmount) {
+        userAmount -= bunker[resName];
+      } else {
+        userAmount = 0;
+      }
+    }
+
+    if (stealAmount > userAmount) {
+      stealCost[resName] = userAmount;
+    } else {
+      stealCost[resName] = stealAmount;
+    }
+  });
+
+  Game.Resources.steal(stealCost);
+
+  // save history
+  if (battle) {
+    battle.update({
+      $set: {
+        lostResources: stealCost,
+      },
+    });
   }
 };
 

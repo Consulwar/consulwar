@@ -289,6 +289,16 @@ game.Item = function(options) {
     return result;
   };
 
+  this.getBasePrice = function (count = 1) {
+    const curPrice = { base: {} };
+
+    _(this.basePrice).keys().forEach((resource) => {
+      curPrice.base[resource] = Math.ceil(this.basePrice[resource] * count);
+    });
+
+    return curPrice;
+  };
+
   this.price = function(level, cards=[]) {
     var curPrice = {};
     var name = null;

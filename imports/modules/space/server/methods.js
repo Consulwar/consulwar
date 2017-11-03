@@ -4,12 +4,10 @@ import Game from '/moduls/game/lib/main.game';
 import Space from '../lib/space';
 import calcAttackOptions from '../lib/calcAttackOptions';
 import Utils from '../lib/utils';
-import Flight from './flight';
-import TriggerAttack from './triggerAttack';
+import FlightEvents from './flightEvents';
+import TriggerAttackEvents from './triggerAttackEvents';
 import Config from './config';
-import Battle from './battle';
-
-const { TRIGGER_ATTACK_DELAY, ENEMY_RESPAWN_PERIOD } = Config;
+import BattleEvents from './battleEvents';
 
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units, targetX, targetY) {
@@ -44,7 +42,7 @@ Meteor.methods({
       throw new Meteor.Error('Плаента не существует');
     }
 
-    const enemyShip = Flight.getOne(targetId);
+    const enemyShip = FlightEvents.getOne(targetId);
     if (!enemyShip) {
       throw new Meteor.Error('Корабль не существует');
     }
@@ -103,7 +101,10 @@ Meteor.methods({
 
     Game.Planets.update(basePlanet);
 
-    Flight.toShip({
+    FlightEvents.add({
+      targetType: FlightEvents.TARGET.SHIP,
+      userId: user._id,
+      username: user.username,
       startPosition,
       startPlanetId: basePlanet._id,
       targetPosition,
@@ -148,7 +149,7 @@ Meteor.methods({
 
     let target;
 
-    if (targetType === Flight.TARGET.PLANET) {
+    if (targetType === FlightEvents.TARGET.PLANET) {
       if (baseId === targetId) {
         throw new Meteor.Error('Стартовая планета и конечная должны быть разными');
       }
@@ -159,8 +160,8 @@ Meteor.methods({
       }
 
       target = targetPlanet;
-    } else if (targetType === Flight.TARGET.BATTLE) {
-      const battleEvent = Battle.findByBattleId(targetId);
+    } else if (targetType === FlightEvents.TARGET.BATTLE) {
+      const battleEvent = BattleEvents.findByBattleId(targetId);
 
       if (!battleEvent) {
         throw new Meteor.Error('Не найдено сражение');
@@ -190,7 +191,7 @@ Meteor.methods({
     if (!baseArmy) {
       basePlanet.armyId = null;
     }
-    basePlanet.timeRespawn = Game.getCurrentTime() + ENEMY_RESPAWN_PERIOD;
+    basePlanet.timeRespawn = Game.getCurrentTime() + Config.ENEMY_RESPAWN_PERIOD;
     Game.Planets.update(basePlanet);
 
     const startPosition = {
@@ -206,6 +207,9 @@ Meteor.methods({
     const engineLevel = Game.Planets.getEngineLevel();
 
     const data = {
+      userId: user._id,
+      username: user.username,
+      targetType,
       isHumans: true,
       startPosition,
       startPlanetId: basePlanet._id,
@@ -217,18 +221,15 @@ Meteor.methods({
       armyId: newArmyId,
     };
 
-    if (targetType === Flight.TARGET.PLANET) {
-      Flight.toPlanet(data);
-    } else {
-      Flight.toBattle(data);
-    }
+    FlightEvents.add(data);
 
     // if planet is colony
     if (!basePlanet.isHome && basePlanet.armyId) {
       // add reptiles attack trigger
-      TriggerAttack.add({
+      TriggerAttackEvents.add({
         targetPlanet: basePlanet._id,
-      }, TRIGGER_ATTACK_DELAY, user._id);
+        userId: user._id,
+      });
     }
 
     // save statistic

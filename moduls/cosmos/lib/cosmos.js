@@ -1,9 +1,9 @@
-import Flight from '/imports/modules/space/lib/flight';
+import FlightEvents from '/imports/modules/space/lib/flightEvents';
 
-initCosmosLib = function () {
+initCosmosLib = function() {
 'use strict';
 
-game.PlanetType = function (options) {
+game.PlanetType = function(options) {
   if (Game.Planets.types[options.engName]) {
     throw new Meteor.Error('Ошибка в контенте', 'Дублируется тип планеты ' + options.engName);
   }
@@ -101,7 +101,7 @@ Game.Planets = {
     // count already targeted planets
     var targets = [];
     var isTargetInList = false;
-    var fleets = Flight.getFleetsEvents().fetch();
+    var fleets = FlightEvents.getFleetsEvents().fetch();
     var id = null;
 
     for (var i = 0; i < fleets.length; i++) {

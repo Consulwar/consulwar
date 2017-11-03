@@ -20,20 +20,9 @@ const canSendFleet = function(userId = Meteor.userId()) {
   return getCurrentFleetsCount(userId) < getMaxFleetCount();
 };
 
-const getAllByUserId = function(userId = Meteor.userId()) {
-  return collection.find({
-    'data.userId': userId,
-  }, {
-    sort: {
-      after: 1,
-    },
-  });
-};
-
 export default {
   jobs,
   collection,
   getMaxFleetCount,
   canSendFleet,
-  getAllByUserId,
 };

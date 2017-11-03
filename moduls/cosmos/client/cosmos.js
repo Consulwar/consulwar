@@ -1,8 +1,8 @@
-import Space from '/imports/modules/space/lib/space';
+import Space from '/imports/modules/space/client/space';
 import Reinforcement from '/imports/modules/space/client/reinforcement';
 import Utils from '/imports/modules/space/lib/utils';
 import calcAttackOptions from '/imports/modules/space/lib/calcAttackOptions';
-import Flight from '/imports/modules/space/client/flight';
+import FlightEvents from '/imports/modules/space/client/flightEvents';
 
 import PlanetGeneration from '/imports/modules/space/lib/planetGeneration';
 
@@ -345,7 +345,7 @@ var scrollMapToPlanet = function(id) {
 
 var scrollMapToFleet = function(id) {
   var path = pathViews[id];
-  var spaceEvent = Flight.getOne(id);
+  var spaceEvent = FlightEvents.getOne(id);
 
   if (path && spaceEvent) {
     var totalFlyDistance = Game.Planets.calcDistance(
@@ -478,7 +478,7 @@ Template.cosmosFleetsInfo.helpers({
     var i = 0;
     var data = null;
 
-    var fleets = Flight.getFleetsEvents().fetch();
+    var fleets = FlightEvents.getFleetsEvents().fetch();
     for (i = 0; i < fleets.length; i++) {
       if (!fleets[i].data.isHumans) {
         continue;
@@ -521,7 +521,7 @@ Template.cosmosFleetsInfo.helpers({
         }
       } else {
         data.name = 'Перехват';
-        var target = Flight.getOne(fleets[i].data.targetId);
+        var target = FlightEvents.getOne(fleets[i].data.targetId);
         data.name += (
           ' ' + Game.Battle.items[target.data.mission.type].name
           + ' ' + target.data.mission.level
@@ -549,7 +549,7 @@ Template.cosmosFleetsInfo.helpers({
 
   reptileFleets: function () {
     var result = [];
-    var fleets = Flight.getFleetsEvents().fetch();
+    var fleets = FlightEvents.getFleetsEvents().fetch();
     for (var i = 0; i < fleets.length; i++) {
       if (fleets[i].data.isHumans) {
         continue;
@@ -837,7 +837,7 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
     isPopupLocked = true;
   }
 
-  var spaceEvent = Flight.getOne(id);
+  var spaceEvent = FlightEvents.getOne(id);
 
   cosmosPopupView = Blaze.renderWithData(
     Template.cosmosShipInfo, {
@@ -889,7 +889,7 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
     info.status = 'Флот Рептилий';
   }
 
-  var units = Flight.getFleetUnits(spaceEvent);
+  var units = FlightEvents.getFleetUnits(spaceEvent);
   if (units) {
     var side = (spaceEvent.data.isHumans) ? 'army' : 'reptiles';
     info.units = [];
@@ -1064,7 +1064,7 @@ var timeAttack = function(id) {
     return calcFlyTime(basePlanet, targetPlanet, engineLevel);
   }
 
-  var targetShip = Flight.getOne(targetId);
+  var targetShip = FlightEvents.getOne(targetId);
   if (targetShip) {
     var result = calcAttackOptions({
       attackerPlanet: basePlanet,
@@ -1084,7 +1084,7 @@ Template.cosmosAttackMenu.helpers({
   },
 
   ship: function() {
-    return Flight.getOne(this.id);
+    return FlightEvents.getOne(this.id);
   },
 
   planet: function() {
@@ -1095,7 +1095,7 @@ Template.cosmosAttackMenu.helpers({
 
   timeLeft: function() {
     var targetId = this.id;
-    var targetShip = Flight.getOne(targetId);
+    var targetShip = FlightEvents.getOne(targetId);
     if (targetShip) {
       return dateToTime(targetShip.after) - Session.get('serverTime');
     }
@@ -1238,7 +1238,7 @@ Template.cosmosAttackMenu.helpers({
     // count sent
     var sentCount = 0;
 
-    var fleets = Flight.getFleetsEvents().fetch();
+    var fleets = FlightEvents.getFleetsEvents().fetch();
     for (let i = 0; i < fleets.length; i++) {
       var fleet = fleets[i];
 
@@ -1432,7 +1432,7 @@ Template.cosmosAttackMenu.events({
 
     var targetId = t.data.id;
     var planet = Game.Planets.getOne(targetId);
-    var ship = Flight.getOne(targetId);
+    var ship = FlightEvents.getOne(targetId);
 
     if (!planet && !ship) {
       Notifications.info('Не выбрана цель');
@@ -1445,7 +1445,7 @@ Template.cosmosAttackMenu.events({
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
-        Flight.TARGET.PLANET,
+        FlightEvents.TARGET.PLANET,
         targetId,
         units,
         isOneway,
@@ -1617,7 +1617,7 @@ Game.Cosmos.renderCosmosObjects = function() {
       },
 
       fleets: function() {
-        var fleets = Flight.getFleetsEvents().fetch();
+        var fleets = FlightEvents.getFleetsEvents().fetch();
         return _.map(fleets, function(spaceEvent) {
           return {
             spaceEvent: spaceEvent,
@@ -1858,7 +1858,7 @@ Template.cosmos.onRendered(function() {
 
   observerSpaceEvents = Space.getAllByUserId().observeChanges({
     added: function(id, event) {
-      if (event.type === Flight.EVENT_TYPE) {
+      if (event.type === FlightEvents.EVENT_TYPE) {
         createPath(id, event);
       }
     },

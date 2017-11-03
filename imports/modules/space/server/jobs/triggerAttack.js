@@ -2,7 +2,7 @@ import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 
 import Space from '../../lib/space';
-import Flight from '../flight';
+import FlightEvents from '../flightEvents';
 import Utils from '../../lib/utils';
 import Config from '../config';
 import Lib from '../../lib/triggerAttack';
@@ -89,7 +89,10 @@ export default Space.jobs.processJobs(
       y: planet.y,
     };
 
-    Flight.toPlanet({
+    FlightEvents.add({
+      targetType: FlightEvents.TARGET.PLANET,
+      userId,
+      username: data.username,
       startPosition,
       startPlanetId: nearestPlanet._id,
       targetPosition,
@@ -99,7 +102,7 @@ export default Space.jobs.processJobs(
       isOneway: false,
       engineLevel: 1,
       mission,
-    }, userId);
+    });
 
     return done();
   },

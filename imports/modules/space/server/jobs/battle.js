@@ -5,7 +5,7 @@ import Battle from '/moduls/battle/server/battle';
 import Config from '../config';
 import Space from '../../lib/space';
 import Lib from '../../lib/battle';
-import Flight from '../flight';
+import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
 
 export default Space.jobs.processJobs(
@@ -59,7 +59,9 @@ export default Space.jobs.processJobs(
             planet.armyId = newArmyId;
           }
         } else {
-          planet.status = Game.Planets.STATUS.NOBODY;
+          if (planet.status === Game.Planets.STATUS.HUMANS) {
+            planet.status = Game.Planets.STATUS.NOBODY;
+          }
           planet.armyId = null;
 
           if (planet.mission) {
@@ -77,7 +79,7 @@ export default Space.jobs.processJobs(
       } else {
         // Победитель возвращается
         let newArmyId = null;
-        let targetId = data.returnPlanetId;
+        let returnPlanetId = data.returnPlanetId;
 
         if (isUserVictory) {
           newArmyId = Game.Unit.createArmy(
@@ -88,7 +90,7 @@ export default Space.jobs.processJobs(
 
           if (battle.initialUnits[Battle.USER_SIDE][username].length > 1) {
             // user battle with help
-            targetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
+            returnPlanetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
           }
         }
 
@@ -100,17 +102,13 @@ export default Space.jobs.processJobs(
         }
 
         // return humans ship
-        Flight.toPlanet({
+        FlightEvents.flyBack({
           ...data,
+          targetType: FlightEvents.TARGET.PLANET,
           isHumans: isUserVictory,
-          isOneway: true,
-          isBack: true,
-          startPosition: data.targetPosition,
-          startPlanetId: planetId,
-          targetPosition: data.returnDestination,
-          targetId,
+          returnPlanetId,
           armyId: newArmyId,
-        }, user._id);
+        });
       }
 
       if (planet) {

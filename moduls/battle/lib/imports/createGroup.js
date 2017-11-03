@@ -1,6 +1,7 @@
 import traverseGroup from './traverseGroup';
 
 const createUnit = function (armyName, typeName, unitName, count) {
+  // TODO: need to use user effects
   const characteristics = Game.Unit.items[armyName][typeName][unitName].options.characteristics;
 
   return {

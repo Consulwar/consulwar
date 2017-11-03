@@ -4,19 +4,14 @@ import Config from './config';
 import Lib from '../lib/triggerAttack';
 
 export default {
-  add(data, delay, userId) {
-    const savedData = {
-      ...data,
-      userId,
-    };
-
-    const job = new Job(Space.jobs, Lib.EVENT_TYPE, savedData);
+  add(data) {
+    const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
     job
       .retry({
         retries: Config.JOBS.retry.retries,
         wait: Config.JOBS.retry.wait,
       })
-      .delay(delay * 1000)
+      .delay(Config.TRIGGER_ATTACK_DELAY * 1000)
       .save();
   },
 };

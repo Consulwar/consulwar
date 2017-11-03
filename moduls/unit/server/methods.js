@@ -1,4 +1,4 @@
-import Flight from '/imports/modules/space/server/flight';
+import FlightEvents from '/imports/modules/space/server/flightEvents';
 
 initUnitServerMethods = function() {
 'use strict';
@@ -278,7 +278,7 @@ Meteor.methods({
       check(options.targetX, Number);
       check(options.targetY, Number);
 
-      let enemyShip = Flight.getOne(options.targetId);
+      let enemyShip = FlightEvents.getOne(options.targetId);
       if (!enemyShip) {
         throw new Meteor.Error('Корабль не существует');
       }
@@ -291,7 +291,7 @@ Meteor.methods({
         throw new Meteor.Error('Нельзя перехватить свой корабль');
       }
 
-      let enemyFleet = Flight.getFleetUnits(enemyShip);
+      let enemyFleet = FlightEvents.getFleetUnits(enemyShip);
       let enemyArmy = { reptiles: { fleet: enemyFleet } };
 
       let targetPosition = {

@@ -1,41 +1,29 @@
-import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
-import Flight from './flight';
+import FlightEvents from './flightEvents';
 
-import BattleEvents from './battle';
-
-const flyBack = function(data) {
-  Flight.toPlanet({
-    ...data,
-    isOneway: true,
-    isBack: true,
-    startPosition: data.returnDestination,
-    targetPosition: data.startPosition,
-    targetId: data.returnPlanetId,
-  }, data.userId);
-};
+import BattleEvents from './battleEvents';
 
 export default function reptileArrival(data) {
-  const { userId } = data;
+  const { userId, username } = data;
 
   const planet = Game.Planets.getOne(data.targetId, userId);
 
   if (!planet.mission) {
     if (planet.armyId || planet.isHome) {
-      const enemyFleet = Flight.getFleetUnits(data);
+      const enemyFleet = FlightEvents.getFleetUnits(data);
       const enemyArmy = { reptiles: { fleet: enemyFleet } };
       const enemyGroup = createGroup(enemyArmy);
 
-      const jobRaw = BattleEvents.findByPlanetId(planet._id);
+      const job = BattleEvents.findByPlanetId(planet._id);
 
-      if (jobRaw) {
-        const battleId = jobRaw.data.battleId;
+      if (job) {
+        const battleId = job.data.battleId;
 
-        Battle.addGroup(battleId, Battle.USER_SIDE, 'ai', enemyGroup);
+        Battle.addGroup(battleId, Battle.ENEMY_SIDE, 'ai', enemyGroup);
       } else {
         let userArmy;
 
@@ -61,56 +49,38 @@ export default function reptileArrival(data) {
           planet.armyId = null;
         }
 
-        const username = Meteor.users.findOne({
-          _id: userId,
-        }, {
-          fields: { username: 1 },
-        }).username;
-        const userGroup = createGroup(userArmy);
-
-        const options = {
-          missionType: data.mission.type,
-          missionLevel: data.mission.level,
-        };
-
-        const battle = Battle.create(options,
-          {
-            [username]: [userGroup],
-          }, {
-            ai: [enemyGroup],
-          },
-        );
-
-        BattleEvents.add({
+        BattleEvents.createBattleAndAdd({
+          username,
           userArmy,
           enemyArmy,
+          enemyGroup,
+          mission: data.mission,
           data: {
             ...data,
             planetId: planet._id,
-            battleId: battle.id,
           },
         });
       }
     } else {
-      planet.status = Game.Planets.STATUS.NOBODY;
+      if (planet.status === Game.Planets.STATUS.HUMANS) {
+        planet.status = Game.Planets.STATUS.NOBODY;
+      }
 
-      planet.mission = {
-        type: data.mission.type === 'tradefleet' ? 'patrolfleet' : data.mission.type,
-        level: data.mission.level,
-        units: data.mission.units,
-      };
-
-      if (!data.isOneway) {
-        flyBack(data);
+      if (data.isOneway) {
+        FlightEvents.flyBack(data);
+      } else {
+        planet.mission = {
+          type: data.mission.type === 'tradefleet' ? 'patrolfleet' : data.mission.type,
+          level: data.mission.level,
+          units: data.mission.units,
+        };
       }
     }
-  } else if (!planet.isHome) {
+  } else if (!data.isOneway) {
+    FlightEvents.flyBack(data);
+  } else {
     // restore mission units
     planet.mission.units = null;
-
-    if (!data.isOneway) {
-      flyBack(data);
-    }
   }
 
   Game.Planets.update(planet);

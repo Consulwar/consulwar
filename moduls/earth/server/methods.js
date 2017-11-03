@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import Space from '/imports/modules/space/lib/space';
-import Reinforcement from '/imports/modules/space/server/reinforcement';
+import ReinforcementEvents from '/imports/modules/space/server/reinforcementEvents';
 
 import { Command, ResponseToGeneral } from '../lib/generals';
 
@@ -24,7 +23,7 @@ Meteor.methods({
 
     const currentTime = Game.getCurrentTime();
 
-    if (!Space.canSendFleet()) {
+    if (!ReinforcementEvents.canSendReinforcement()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
@@ -102,7 +101,7 @@ Meteor.methods({
     }
 
     // send reinforcements to current point
-    Reinforcement.add({
+    ReinforcementEvents.add({
       user_id: user._id,
       units: { army: { ground: units } },
       protectAllHonor: protectedHonor > 0,

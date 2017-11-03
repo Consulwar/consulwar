@@ -1,4 +1,4 @@
-import Space from '/imports/modules/space/lib/space';
+import Reinforcement from '/imports/modules/space/client/reinforcement';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthClient = function() {
@@ -240,8 +240,8 @@ Template.reserve.events({
   },
 
   'click .btn-send': function(e, t) {
-    if (!Space.canSendFleet()) {
-      return Notifications.info('Слишком много флотов уже отправлено');
+    if (!Reinforcement.canSendReinforcement()) {
+      return Notifications.info('Слишком много подкреплений уже отправлено');
     }
 
     var total = 0;

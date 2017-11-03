@@ -1,5 +1,5 @@
 import Space from '../../lib/space';
-import Lib from '../../lib/flight';
+import Lib from '../../lib/flightEvents';
 import Config from '../config';
 
 import humansArrival from '../flightHumansArrival';

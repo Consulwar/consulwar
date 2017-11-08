@@ -8,6 +8,7 @@ if (!Meteor.settings.public.cosmos
   || !Meteor.settings.public.cosmos.maxAcc
   || !Meteor.settings.public.cosmos.speedFactor
   || !Meteor.settings.public.cosmos.collectArtefactsPeriod
+  || !Meteor.settings.public.cosmos.fromSpaceToHangarPeriod
 ) {
   throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры космоса (см. settings.sample public.cosmos)');
 }
@@ -20,4 +21,5 @@ export default {
   MAX_SPEED: Meteor.settings.public.cosmos.maxSpeed * speedFactor,
   MIN_ACC: Meteor.settings.public.cosmos.minAcc * (speedFactor ** 2),
   MAX_ACC: Meteor.settings.public.cosmos.maxAcc * (speedFactor ** 2),
+  FROM_SPACE_TO_HANGAR_PERIOD: Meteor.settings.public.cosmos.fromSpaceToHangarPeriod,
 };

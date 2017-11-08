@@ -153,8 +153,8 @@ Game.Planets = {
     return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
   },
 
-  getFleetUnits: function (planetId, user_id = Meteor.userId()) {
-    var planet = Game.Planets.getOne(planetId, user_id);
+  getFleetUnits: function (planetId, userId = Meteor.userId()) {
+    var planet = Game.Planets.getOne(planetId, userId);
     if (!planet) {
       return null;
     }
@@ -167,8 +167,8 @@ Game.Planets = {
       }
     } else if (planet.armyId || planet.isHome) {
       var army = (planet.isHome)
-        ? Game.Unit.getHomeArmy(user_id)
-        : Game.Unit.getArmy(planet.armyId, user_id);
+        ? Game.Unit.getHomeFleetArmy({ userId })
+        : Game.Unit.getArmy(planet.armyId, userId);
       if (army && army.units && army.units.army) {
         return army.units.army.fleet;
       }

@@ -50,7 +50,7 @@ export default Space.jobs.processJobs(
           if (planet.isHome || planet.armyId) {
             // merge army
             const destArmyId = (planet.isHome)
-              ? Game.Unit.getHomeArmy(user._id)._id
+              ? Game.Unit.getHomeFleetArmy({ userId: user._id })._id
               : planet.armyId;
             Game.Unit.mergeArmy(newArmyId, destArmyId, user._id);
           } else {

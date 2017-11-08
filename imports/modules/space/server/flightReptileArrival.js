@@ -28,7 +28,7 @@ export default function reptileArrival(data) {
         let userArmy;
 
         if (planet.isHome) {
-          const homeArmy = Game.Unit.getHomeArmy(userId);
+          const homeArmy = Game.Unit.getHomeFleetArmy({ userId });
           if (homeArmy && homeArmy.units && homeArmy.units.army) {
             if (homeArmy.units.army.ground) {
               Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground, userId);

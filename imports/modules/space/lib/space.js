@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import { JobCollection } from '/moduls/game/lib/jobs';
+import Config from './config';
 
 const jobs = new JobCollection('spaceEvents');
 const collection = jobs; // для более внятного использования
@@ -20,9 +21,18 @@ const canSendFleet = function(userId = Meteor.userId()) {
   return getCurrentFleetsCount(userId) < getMaxFleetCount();
 };
 
+const canMoveFromSpaceToHangar = function(user = Meteor.user()) {
+  const date = Game.getCurrentServerTime() * 1000;
+  return (
+    !user.lastMoveToHangar ||
+    user.lastMoveToHangar > (date - Config.FROM_SPACE_TO_HANGAR_PERIOD)
+  );
+};
+
 export default {
   jobs,
   collection,
   getMaxFleetCount,
   canSendFleet,
+  canMoveFromSpaceToHangar,
 };

@@ -1,3 +1,6 @@
+import { Meteor } from 'meteor/meteor';
+import Game from '/moduls/game/lib/main.game';
+
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
 
@@ -321,15 +324,22 @@ Game.Unit = {
     });
   },
 
-  getHomeArmy: function(user_id = Meteor.userId()) {
+  getHangarArmy(userId = Meteor.userId()) {
     return Game.Unit.Collection.findOne({
-      user_id,
-      location: Game.Unit.location.HOME
+      user_id: userId,
+      location: Game.Unit.location.HOME,
     });
   },
 
+  getHomeFleetArmy({
+    userId = Meteor.userId(),
+    homePlanet = Game.Planets.getBase(userId),
+  } = {}) {
+    return Game.Unit.getArmy(homePlanet.armyId, userId);
+  },
+
   get: function(group, name) {
-    var record = Game.Unit.getHomeArmy();
+    var record = Game.Unit.getHomeFleetArmy();
 
     if (record
      && record.units
@@ -343,9 +353,10 @@ Game.Unit = {
     }
   },
 
-  has: function(group, name, count) {
-    count = count || 1;
-    return Game.Unit.get(group, name) >= count;
+  has: function(group, name, count = 1) {
+    return Game.Unit.Collection.findOne({
+      [`units.army.${group}.${name}`]: { $gte: count },
+    });
   },
 
   calculateUnitsPower: function(units, isEarth = false) {

@@ -28,10 +28,10 @@ const completeOnPlanetMission = function(data) {
 
   const userGroup = createGroup(userArmy);
 
-  const job = BattleEvents.findByPlanetId(planet._id);
+  const battleEvent = BattleEvents.findByPlanetId(planet._id);
 
-  if (job) {
-    Battle.addGroup(job.data.battleId, Battle.USER_SIDE, username, userGroup);
+  if (battleEvent) {
+    Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, username, userGroup);
   } else {
     BattleEvents.createBattleAndAdd({
       username,
@@ -60,7 +60,7 @@ const completeOnEmptyPlanet = function(data) {
     if (planet.isHome || planet.armyId) {
       // merge army
       const destArmyId = (planet.isHome)
-        ? Game.Unit.getHomeArmy(userId)._id
+        ? Game.Unit.getHomeFleetArmy({ userId })._id
         : planet.armyId;
       Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
     } else {
@@ -88,7 +88,21 @@ const completeOnPlanet = function(data) {
   if (planet.mission) {
     completeOnPlanetMission({ ...data, planet });
   } else {
-    completeOnEmptyPlanet({ ...data, planet });
+    const battleEvent = BattleEvents.findByPlanetId(planet._id);
+
+    if (battleEvent) {
+      const userArmy = {
+        army: {
+          fleet: FlightEvents.getFleetUnits(data),
+        },
+      };
+
+      const userGroup = createGroup(userArmy);
+
+      Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
+    } else {
+      completeOnEmptyPlanet({ ...data, planet });
+    }
   }
 };
 

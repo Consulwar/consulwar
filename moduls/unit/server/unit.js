@@ -1,3 +1,9 @@
+import { Meteor } from 'meteor/meteor';
+import Game from '/moduls/game/lib/main.game';
+import BattleEvents from '/imports/modules/space/server/battleEvents';
+import createGroup from '/moduls/battle/lib/imports/createGroup';
+import Battle from '/moduls/battle/server/battle';
+
 initUnitServer = function() {
 'use strict';
 
@@ -9,7 +15,7 @@ Game.Unit.Collection._ensureIndex({
   user_id: 1
 });
 
-Game.Unit.set = function(unit, invertSign, uid) {
+Game.Unit.set = function(unit, invertSign, uid = Meteor.userId(), location = Game.Unit.location.HOME) {
   invertSign = invertSign === true ? -1 : 1;
 
   Game.Unit.initialize(uid);
@@ -18,8 +24,8 @@ Game.Unit.set = function(unit, invertSign, uid) {
   inc['units.army.' + unit.group + '.' + unit.engName] = parseInt(unit.count * invertSign);
 
   Game.Unit.Collection.update({
-    user_id: uid !== undefined ? uid : Meteor.userId(),
-    location: Game.Unit.location.HOME
+    user_id: uid,
+    location,
   }, {
     $inc: inc
   });
@@ -27,8 +33,8 @@ Game.Unit.set = function(unit, invertSign, uid) {
   return inc;
 };
 
-Game.Unit.add = function(unit, uid) {
-  return Game.Unit.set(unit, false, uid);
+Game.Unit.add = function(unit, uid, location) {
+  return Game.Unit.set(unit, false, uid, location);
 };
 
 Game.Unit.remove = function(unit, uid) {
@@ -36,29 +42,72 @@ Game.Unit.remove = function(unit, uid) {
 };
 
 Game.Unit.complete = function(task) {
-  Game.Unit.add(task);
+  const user = Meteor.user();
 
   // save statistic
-  var increment = {};
+  const increment = {};
   increment['units.build.total'] = task.count;
   increment['units.build.army.' + task.group + '.' + task.engName] = task.count;
-  Game.Statistic.incrementUser(Meteor.userId(), increment);
+  Game.Statistic.incrementUser(user._id, increment);
+
+  let location;
+  if (
+    task.group === 'ground' ||
+    (user.settings && user.settings.options && user.settings.options.completeUnitToHangar)
+  ) {
+    location = Game.Unit.location.HOME;
+  } else {
+    const homePlanet = Game.Planets.getBase();
+    const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
+
+    if (battleEvent) {
+      const userGroup = createGroup(task);
+      Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, user.username, userGroup);
+      return;
+    }
+
+    location = Game.Unit.location.PLANET;
+  }
+
+  Game.Unit.add(task, user._id, location);
 };
 
-Game.Unit.initialize = function(user_id = Meteor.userId()) {
-  var currentValue = Game.Unit.getHomeArmy(user_id);
+Game.Unit.initialize = function(userId = Meteor.userId()) {
+  const hangarArmy = Game.Unit.getHangarArmy(userId);
 
-  if (currentValue === undefined) {
+  if (hangarArmy === undefined) {
     Game.Unit.Collection.insert({
-      user_id,
-      location: Game.Unit.location.HOME
+      user_id: userId,
+      location: Game.Unit.location.HOME,
+      units: {},
+    });
+  }
+
+  const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId });
+  if (homeFleetArmy === undefined) {
+    const fleetArmyId = Game.Unit.Collection.insert({
+      user_id: userId,
+      location: Game.Unit.location.PLANET,
+      units: {},
+    });
+
+    Game.Planets.Collection.update({
+      user_id: userId,
+      isHome: true,
+    }, {
+      $set: {
+        armyId: fleetArmyId,
+      },
     });
   }
 };
 
-Game.Unit.removeArmy = function(id, user_id = Meteor.userId()) {
-  if (Game.Unit.getHomeArmy(user_id)._id == id) {
-    Game.Unit.Collection.update({ _id: id }, { $set: { 'units': {} } } );
+Game.Unit.removeArmy = function(id, userId = Meteor.userId()) {
+  if (
+    Game.Unit.getHomeFleetArmy({ userId })._id === id ||
+    Game.Unit.getHangarArmy(userId)._id === id
+  ) {
+    Game.Unit.Collection.update({ _id: id }, { $set: { units: {} } });
   } else {
     Game.Unit.Collection.remove({ _id: id });
   }

@@ -87,7 +87,7 @@ Meteor.methods({
     // check and slice units
     let sourceArmyId = basePlanet.armyId;
     if (basePlanet.isHome) {
-      sourceArmyId = Game.Unit.getHomeArmy()._id;
+      sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
     }
 
     const destUnits = { army: { fleet: units } };
@@ -180,7 +180,7 @@ Meteor.methods({
     // slice units
     let sourceArmyId = basePlanet.armyId;
     if (basePlanet.isHome) {
-      sourceArmyId = Game.Unit.getHomeArmy()._id;
+      sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
     }
 
     const destUnits = { army: { fleet: units } };
@@ -236,6 +236,63 @@ Meteor.methods({
     Game.Statistic.incrementUser(user._id, {
       'cosmos.fleets.sent': 1,
     });
+  },
+
+  'space.moveFromSpaceToHangar'() {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'space.moveToHangar');
+
+    if (!Space.canMoveFromSpaceToHangar(user)) {
+      throw new Meteor.Error('Отправка флота недоступна.');
+    }
+
+    const hangarArmy = Game.Unit.getHangarArmy(user._id);
+    const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId: user._id });
+
+    Game.Unit.mergeArmy(homeFleetArmy._id, hangarArmy._id, user._id);
+
+    // update time
+    Meteor.users.update({
+      _id: user._id,
+    }, {
+      $set: {
+        lastMoveToHangar: Game.getCurrentTime(),
+      },
+    });
+  },
+
+  'space.moveFromHangarToSpace'(army) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'space.moveFromHangarToSpace');
+
+    check(army, Object);
+
+    const hangarArmy = Game.Unit.getHangarArmy(user._id);
+
+    const destUnits = { army };
+    const newArmyId = Game.Unit.sliceArmy(hangarArmy._id, destUnits, Game.Unit.location.PLANET);
+
+    const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId: user._id });
+
+    Game.Unit.mergeArmy(newArmyId, homeFleetArmy._id, user._id);
   },
 });
 

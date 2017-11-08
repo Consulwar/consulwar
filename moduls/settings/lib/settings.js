@@ -25,7 +25,8 @@ Game.Settings = {
     wideChat: [true, false],
     showDistanceFromPlanets: [true, false],
     mobileVersion: [true, false],
-    textUnits: [true, false]
+    textUnits: [true, false],
+    completeUnitToHangar: [true, false],
   }
 };
 

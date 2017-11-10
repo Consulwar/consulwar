@@ -15,7 +15,7 @@
       "maxAcc": 2,
       "speedFactor": 0.016666,
       "collectArtefactsPeriod": 120,
-      "fromSpaceToHangarPeriod": 86400
+      "fromSpaceToHangarPeriod": 86400000
     },
     "earth": {
       "schedule": "at 4:00 pm",

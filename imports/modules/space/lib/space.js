@@ -22,10 +22,10 @@ const canSendFleet = function(userId = Meteor.userId()) {
 };
 
 const canMoveFromSpaceToHangar = function(user = Meteor.user()) {
-  const date = Game.getCurrentServerTime() * 1000;
+  const date = new Date();
   return (
     !user.lastMoveToHangar ||
-    user.lastMoveToHangar > (date - Config.FROM_SPACE_TO_HANGAR_PERIOD)
+    user.lastMoveToHangar < (date - Config.FROM_SPACE_TO_HANGAR_PERIOD)
   );
 };
 

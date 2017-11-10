@@ -252,7 +252,7 @@ Meteor.methods({
     Game.Log.method.call(this, 'space.moveToHangar');
 
     if (!Space.canMoveFromSpaceToHangar(user)) {
-      throw new Meteor.Error('Отправка флота недоступна.');
+      throw new Meteor.Error('Перемещение флота недоступно.');
     }
 
     const hangarArmy = Game.Unit.getHangarArmy(user._id);
@@ -265,7 +265,7 @@ Meteor.methods({
       _id: user._id,
     }, {
       $set: {
-        lastMoveToHangar: Game.getCurrentTime(),
+        lastMoveToHangar: new Date(),
       },
     });
   },

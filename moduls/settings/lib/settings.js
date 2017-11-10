@@ -26,9 +26,7 @@ Game.Settings = {
     showDistanceFromPlanets: [true, false],
     mobileVersion: [true, false],
     textUnits: [true, false],
-    completeUnitToHangar: [true, false],
-  }
+    moveCompletedUnitToHangar: [true, false],
+  },
 };
-
-
 };

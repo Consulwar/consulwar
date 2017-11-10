@@ -53,7 +53,7 @@ Game.Unit.complete = function(task) {
   let location;
   if (
     task.group === 'ground' ||
-    (user.settings && user.settings.options && user.settings.options.completeUnitToHangar)
+    (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar)
   ) {
     location = Game.Unit.location.HOME;
   } else {

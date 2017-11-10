@@ -5,7 +5,7 @@ const createUnit = function (armyName, typeName, unitName, count) {
   const characteristics = Game.Unit.items[armyName][typeName][unitName].options.characteristics;
 
   return {
-    count: Game.Unit.rollCount(count),
+    count,
     weapon: {
       damage: {
         min: characteristics.weapon.damage.min,
@@ -24,8 +24,12 @@ export default function (army) {
   const group = Game.Helpers.deepClone(army);
 
   traverseGroup(group, function (armyName, typeName, unitName, count) {
-    const unit = createUnit(armyName, typeName, unitName, count);
-    group[armyName][typeName][unitName] = unit;
+    const realCount = Game.Unit.rollCount(count);
+
+    if (realCount > 0) {
+      const unit = createUnit(armyName, typeName, unitName, realCount);
+      group[armyName][typeName][unitName] = unit;
+    }
   });
 
   return group;

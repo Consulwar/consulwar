@@ -141,7 +141,7 @@ Template.notificationsSettings.events({
     });
   },
 
-  'change .customization input': function(e, t) {
+  'change .customization input, change .otherSettings input': function(e, t) {
     var field = $(e.target).data('settings_field');
 
     var options = Meteor.user().settings && Meteor.user().settings.options;

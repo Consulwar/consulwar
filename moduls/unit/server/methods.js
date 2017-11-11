@@ -1,4 +1,7 @@
 import FlightEvents from '/imports/modules/space/server/flightEvents';
+import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import Game from '/moduls/game/lib/main.game';
 
 initUnitServerMethods = function() {
 'use strict';
@@ -381,6 +384,50 @@ Meteor.methods({
     Game.Cards.spend(cardsObject);
 
     return battleResult;
+  },
+
+  'unit.repair'(group, engName) {
+    const user = Meteor.user();
+
+    if (!user || !user._id) {
+      throw new Meteor.Error('Требуется авторизация');
+    }
+
+    if (user.blocked === true) {
+      throw new Meteor.Error('Аккаунт заблокирован');
+    }
+
+    Game.Log.method.call(this, 'unit.repair');
+
+    check(group, String);
+    check(engName, String);
+
+    Game.Wrecks.actualize();
+
+    const wrecks = Game.Wrecks.Collection.findOne({ userId: user._id });
+
+    if (!wrecks || !wrecks.units.army[group] || !wrecks.units.army[group][engName]) {
+      throw new Meteor.Error('Нет юнитов для восстановления');
+    }
+
+    const count = wrecks.units.army[group][engName].count;
+    const unit = Game.Unit.items.army[group][engName];
+    const price = unit.getBasePrice(count * Game.Wrecks.PRICE_COEFFICIENT);
+
+    const resources = Game.Resources.getValue(user._id);
+    _(price).pairs().forEach(([name, value]) => {
+      if (name !== 'time' && resources[name].amount < value) {
+        throw new Meteor.Error('Недостаточно ресурсов');
+      }
+    });
+
+    // TODO: repairing
+
+    // save statistic
+    Game.Statistic.incrementUser(user._id, {
+      'units.repair.total': count,
+      [`units.repair.army.${group}.${engName}`]: count,
+    });
   },
 
   'battleHistory.getPage': function(page, count, isEarth) {

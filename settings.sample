@@ -98,6 +98,9 @@
         "9": {"price": {"honor": 800000, "credits": 8000}},
         "10": {"price": {"honor": 900000, "credits": 9000}}
       }
+    },
+    "wrecks": {
+      "priceCoefficient": 0.9
     }
   },
   "recaptcha": {

@@ -1,5 +1,14 @@
 //BrowserPolicy.framing.allowAll();
 
+if (
+  !Meteor.settings.public.domain
+) {
+  throw new Meteor.Error(
+    'Ошибка в настройках',
+    'Не указан рабочий домен (см. settings.sample public.domain)',
+  );
+}
+
 BrowserPolicy.content.allowOriginForAll('*');
 BrowserPolicy.content.allowEval('*');
 BrowserPolicy.content.allowConnectOrigin("ws:");

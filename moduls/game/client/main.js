@@ -47,7 +47,7 @@ preloadImages([
 */
 
 ChdFeedbackWidget.init({
-  url: "//consulwar.helprace.com/chd-widgets/feedback",
+  url: "//info.consulwar.ru/chd-widgets/feedback",
   assetsUrl: "//d1culzimi74ed4.cloudfront.net/",
   feedbackType: "link"
 });
@@ -243,6 +243,8 @@ Tracker.autorun(function() {
 });
 
 
+Session.set('helpraceAuth', false);
+let isHelpraceAuthInProgress = false;
 Tracker.autorun(function () {
   if (Meteor.user() && Meteor.user().game) {
     var user = Meteor.user();
@@ -264,6 +266,25 @@ Tracker.autorun(function () {
 
     Session.set('username', user.username);
     Session.set('planetName', user.planetName);
+
+    if (
+      Meteor.settings.public.helprace 
+      && !isHelpraceAuthInProgress 
+      && user.emails && user.emails[0] && user.emails[0].verified
+    ) {
+      isHelpraceAuthInProgress = true;
+      Meteor.call('helpraceJwt.login', (err, result) => {
+        isHelpraceAuthInProgress = false;
+        if (!err && result) {
+          Session.set(
+            'helpraceAuth', 
+            `https://auth.helprace.com/jwt/${Meteor.settings.public.helprace.subdomain}?jwt=${result}`
+          );
+        }
+      });
+    }
+  } else {
+    Session.set('helpraceAuth', false);
   }
 });
 
@@ -423,7 +444,9 @@ var helpers = {
       return user.settings.chat.icon;
     }
     return 'common/1';
-  }
+  },
+
+  helpraceAuth: () => Session.get('helpraceAuth'),
 };
 
 

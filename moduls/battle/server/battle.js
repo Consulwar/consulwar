@@ -361,7 +361,14 @@ class Battle {
 
     traverseSide(this.currentUnits, sideName, function(username, groupNum, group) {
       traverseGroup(group, function(armyName, typeName, unitName, unit) {
-        const diff = initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count - unit.count;
+        const diff = (
+          initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count -
+          unit.count
+        );
+
+        if (diff === 0) {
+          return;
+        }
 
         if (!result[armyName]) {
           result[armyName] = {};

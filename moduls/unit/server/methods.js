@@ -412,16 +412,30 @@ Meteor.methods({
 
     const count = wrecks.units.army[group][engName].count;
     const unit = Game.Unit.items.army[group][engName];
-    const price = unit.getBasePrice(count * Game.Wrecks.PRICE_COEFFICIENT);
+    const price = unit.getBasePrice(count);
+
+    // TODO: add effect(s) on PRICE_COEFFICIENT
+    const priceCoefficient = Game.Wrecks.PRICE_COEFFICIENT;
 
     const resources = Game.Resources.getValue(user._id);
-    _(price).pairs().forEach(([name, value]) => {
-      if (name !== 'time' && resources[name].amount < value) {
+    _(price.base).pairs().forEach(([name, value]) => {
+      if (name !== 'time' && (resources[name].amount * priceCoefficient) < value) {
         throw new Meteor.Error('Недостаточно ресурсов');
       }
     });
 
-    // TODO: repairing
+    Game.Unit.add({
+      unit: {
+        group,
+        engName,
+        count,
+      },
+      user,
+    });
+
+    Game.Wrecks.removeUnit(wrecks, group, engName);
+
+    Game.Resources.spend(price.base);
 
     // save statistic
     Game.Statistic.incrementUser(user._id, {

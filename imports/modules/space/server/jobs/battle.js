@@ -37,6 +37,11 @@ export default Space.jobs.processJobs(
       const isUserVictory = (Battle.USER_SIDE in roundResult.left);
       const army = roundResult.left[Battle[(isUserVictory ? 'USER_SIDE' : 'ENEMY_SIDE')]];
 
+      Game.Wrecks.addUnits({
+        units: battle.calculateTotalKilled(Battle.USER_SIDE),
+        userId: user._id,
+      });
+
       if (planet && (data.isOneway || data.isHumans !== isUserVictory)) {
         // Победитель остается на планете
         const newArmyId = Game.Unit.createArmy(

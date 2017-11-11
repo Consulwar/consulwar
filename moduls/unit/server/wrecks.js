@@ -22,7 +22,11 @@ Game.Wrecks.actualize = function(userId = Meteor.userId()) {
 
   const delta = (new Date() - wrecks.updated) / 1000;
 
-  const modifier = {};
+  const modifier = {
+    $set: {
+      updated: new Date(),
+    },
+  };
 
   traverseGroup(wrecks.units, (sideName, typeName, unitName, info) => {
     const unit = Game.Unit.items[sideName][typeName][unitName];
@@ -38,10 +42,6 @@ Game.Wrecks.actualize = function(userId = Meteor.userId()) {
 
       modifier.$unset[key] = 1;
     } else {
-      if (!modifier.$set) {
-        modifier.$set = {};
-      }
-
       modifier.$set[key] = {
         count: info.count - result.count,
         bonusSeconds: result.bonusSeconds,
@@ -49,8 +49,39 @@ Game.Wrecks.actualize = function(userId = Meteor.userId()) {
     }
   });
 
-  if (_(modifier).keys().length > 0) {
-    Game.Wrecks.Collection.update({ _id: wrecks._id }, modifier);
+  Game.Wrecks.Collection.update({ _id: wrecks._id }, modifier);
+};
+
+Game.Wrecks.addUnits = function({ units, userId = Meteor.userId() }) {
+  if (!units.army) {
+    return;
   }
+
+  const $inc = {};
+
+  _(units.army).pairs().forEach(([groupName, group]) => {
+    _(group).pairs().forEach(([engName, count]) => {
+      $inc[`units.army.${groupName}.${engName}.count`] = count;
+    });
+  });
+
+  Game.Wrecks.Collection.upsert({
+    userId,
+  }, {
+    $inc,
+    $setOnInsert: {
+      updated: new Date(),
+    },
+  });
+};
+
+Game.Wrecks.removeUnit = function(wrecks, group, engName) {
+  Game.Wrecks.Collection.update({
+    _id: wrecks._id,
+  }, {
+    $unset: {
+      [`units.army.${group}.${engName}`]: 1,
+    },
+  });
 };
 };

@@ -267,7 +267,11 @@ Tracker.autorun(function () {
     Session.set('username', user.username);
     Session.set('planetName', user.planetName);
 
-    if (!isHelpraceAuthInProgress && user.emails && user.emails[0] && user.emails[0].verified) {
+    if (
+      Meteor.settings.public.helprace 
+      && !isHelpraceAuthInProgress 
+      && user.emails && user.emails[0] && user.emails[0].verified
+    ) {
       isHelpraceAuthInProgress = true;
       Meteor.call('helpraceJwt.login', (err, result) => {
         isHelpraceAuthInProgress = false;

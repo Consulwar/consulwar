@@ -12,10 +12,10 @@ if (
   ) {
     throw new Meteor.Error(
       'Ошибка в настройках',
-      'Не заданы не все настройки helprace (см. settings.sample helprace и public.helprace)',
+      'Заданы не все настройки helprace (см. settings.sample helprace и public.helprace)',
     );
   }
-  
+
   Meteor.methods({
     'helpraceJwt.login'() {
       Game.Log.method.call(this, 'helpraceJwt.login');

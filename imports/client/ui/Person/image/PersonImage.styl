@@ -1,0 +1,56 @@
+@import '{}/imports/client/ui/colors.styl'
+
+.cw--PersonImage
+  position relative
+  width 330px
+  height 500px
+
+  &__avatar
+    width 330px
+    height 500px
+
+  &__title
+    position absolute
+    bottom 0
+    left 0
+    width 100%
+    padding 10px 0
+    font-size 22px
+    color $cw--color_white
+    font-weight bold
+    white-space nowrap
+    text-align center
+    background-color alpha($cw--color_black, 0.5)
+
+  &__change
+    position absolute
+    top 4px
+    right 8px
+    display flex
+    width 65px
+    height 65px
+    align-content center
+    justify-content center
+    border-radius 50%
+    background radial-gradient(65.00px at 50% 0%, #56BAF2 0%, #2474A1 100%);
+
+    &:before
+      content ""
+      position absolute
+      z-index 0
+      top 50%
+      left 50%
+      margin-left -28px
+      margin-top -28px
+      display block
+      width 56px
+      height 56px
+      border-radius 50%
+      background-color $cw--color_black
+    
+    .cw--PersonImage__icon
+      z-index 2
+
+  &__icon
+    width 50px
+    height 50px

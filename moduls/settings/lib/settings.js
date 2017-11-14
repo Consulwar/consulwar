@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+
 initSettingsLib = function() {
 'use strict';
 
@@ -25,8 +27,21 @@ Game.Settings = {
     wideChat: [true, false],
     showDistanceFromPlanets: [true, false],
     mobileVersion: [true, false],
-    textUnits: [true, false]
-  }
+    textUnits: [true, false],
+    isMultiSkinEnabled: [false, true],
+  },
+
+  getOption({
+    name,
+    user = Meteor.user(),
+  }) {
+    return (
+         user
+      && user.settings
+      && user.settings.options
+      && user.settings.options[name]
+    );
+  },
 };
 
 

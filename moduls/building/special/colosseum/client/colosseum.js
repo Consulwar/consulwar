@@ -59,8 +59,11 @@ Template.colosseum.events({
       }
       // show reward window
       if (profit && profit.resources) {
-        Game.Popup.show('colosseumReward', {
-          reward: profit.resources
+        Game.Popup.show({
+          templateName: 'colosseumReward',
+          data: {
+            reward: profit.resources,
+          },
         });
       }
     });

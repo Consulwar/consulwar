@@ -11,28 +11,28 @@ var canShowReward = false;
 var isPaymentSuccess = false;
 
 var showPaymentWindow = function() {
-  Game.Popup.show('payment');
+  Game.Popup.show({ templateName: 'payment' });
   canShowReward = true;
 };
 
 var showPlatboxWindow = function(url) {
   if (url) {
     isPaymentSuccess = false;
-    Game.Popup.show('paymentPlatbox', { url });
+    Game.Popup.show({ templateName: 'paymentPlatbox', data: { url } });
   }
 };
 
 var showTekoWindow = function(url) {
   if (url) {
     isPaymentSuccess = false;
-    Game.Popup.show('paymentTeko', { url });
+    Game.Popup.show({ templateName: 'paymentTeko', data: { url } });
   }
 };
 
 var showRewardWindow = function(itemId) {
   var item = Game.Payment.items[itemId];
   if (item) {
-    Game.Popup.show('paymentReward', { item });
+    Game.Popup.show({ templateName: 'paymentReward', data: { item } });
   }
 };
 

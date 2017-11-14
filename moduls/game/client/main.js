@@ -108,7 +108,7 @@ Template.index.events({
 
   'click .start_registration': function(e, t) {
     e.preventDefault();
-    Game.Popup.show('register_window');
+    Game.Popup.show({ templateName: 'register_window' });
   }
 });
 

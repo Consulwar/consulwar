@@ -6,8 +6,11 @@ initPromoCodeClient = function() {
 // ----------------------------------------------------------------------------
 
 Game.Payment.showPromocodeReward = function(profit) {
-  Game.Popup.show('promocodeReward', {
-    profit: profit
+  Game.Popup.show({
+    templateName: 'promocodeReward',
+    data: {
+      profit,
+    },
   });
 };
 

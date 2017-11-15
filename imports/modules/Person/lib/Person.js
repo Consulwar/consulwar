@@ -11,8 +11,8 @@ class Person {
   }) {
     this.id = id;
     this.title = title;
-    this.skin = _({ default: {} }).extend(skin);
-    this.skinCount = _(skin).keys().length;
+    this.skin = _({ default: { isFree: true } }).extend(skin);
+    this.skinCount = _(this.skin).keys().length;
     this.defaultText = defaultText;
 
     // For legacy
@@ -29,6 +29,16 @@ class Person {
     //
   }
 
+  getFreeSkins() {
+    return (
+      _(this.skin)
+        .chain()
+        .keys()
+        .filter(key => this.skin[key].isFree === true)
+        .value()
+    );
+  }
+
   getAvailableSkins({ user = Meteor.user() } = {}) {
     const skins = (
       user.Person
@@ -36,7 +46,9 @@ class Person {
       && user.Person[this.id].has
     );
 
-    return (skins && _(['default']).union(skins)) || ['default'];
+    const freeSkins = this.getFreeSkins();
+
+    return (skins && _(freeSkins).union(skins)) || freeSkins;
   }
 
   getActiveSkins({ user = Meteor.user() } = {}) {

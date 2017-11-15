@@ -25,6 +25,7 @@ class Person {
     }
 
     Game.Persons[this.engName] = this;
+    Game.Persons[this.id] = this;
     //
   }
 

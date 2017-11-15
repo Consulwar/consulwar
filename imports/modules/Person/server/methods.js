@@ -55,7 +55,7 @@ Meteor.methods({
     });
 
     person.activateSkins({
-      user,
+      userId: user._id,
       ids: skinIds.length ? _(skinIds).uniq() : ['default'],
     });
   },
@@ -102,6 +102,6 @@ Meteor.methods({
       skinId,
     });
 
-    person.addSkin({ user, id: skinId });
+    person.addSkin({ userId: user._id, id: skinId });
   },
 });

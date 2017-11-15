@@ -4,10 +4,10 @@ import libPerson from '../lib/Person';
 class Person extends libPerson {
   addSkin({
     id,
-    user = Meteor.user(),
+    userId = Meteor.userId(),
   }) {
     Meteor.users.update({
-      _id: user._id,
+      _id: userId,
     }, {
       $addToSet: {
         [`Person.${this.id}.has`]: id,
@@ -17,10 +17,10 @@ class Person extends libPerson {
 
   activateSkins({
     ids,
-    user = Meteor.user(),
+    userId = Meteor.userId(),
   }) {
     Meteor.users.update({
-      _id: user._id,
+      _id: userId,
     }, {
       $set: {
         [`Person.${this.id}.active`]: ids.length ? ids : ['default'],

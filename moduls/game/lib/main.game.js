@@ -762,6 +762,17 @@ Game = {
           icon: '/img/game/votepower.png',
           image: '/img/game/votepower.jpg'
         };
+
+      case 'personSkin':
+        let personId = _.keys(obj[type])[0];
+        let skinId = _.keys(obj[type][personId])[0];
+        
+        return {
+          engName: 'personSkin',
+          type: 'personSkin',
+          icon: Game.Persons[personId].getIcon(),
+          image: Game.Persons[personId].getImage(skinId)
+        };
     }
   },
 

@@ -269,6 +269,13 @@ UI.registerHelper('formatProfit', function(profit) {
       case 'votePower':
         result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
         break;
+      case 'personSkin':
+        _(profit[type]).pairs().forEach(([personId, skins]) => {
+          skins.forEach((skinId) => {
+            result += `Скин персонажа ${Game.Person[personId]}: ${skinId} `;
+          });
+        });
+        break;
     }
   }
   return result;

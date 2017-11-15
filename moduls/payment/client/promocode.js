@@ -1,3 +1,5 @@
+import persons from '/imports/content/Person/client';
+
 initPromoCodeClient = function() {
 'use strict';
 
@@ -6,8 +8,11 @@ initPromoCodeClient = function() {
 // ----------------------------------------------------------------------------
 
 Game.Payment.showPromocodeReward = function(profit) {
-  Game.Popup.show('promocodeReward', {
-    profit: profit
+  Game.Popup.show({
+    templateName: 'promocodeReward',
+    data: {
+      profit,
+    },
   });
 };
 
@@ -131,7 +136,23 @@ Template.promocodeReward.helpers({
     }
 
     return result.length > 0 ? result : null;
-  }
+  },
+
+  personSkin() {
+    if (!this.profit || !this.profit.personSkin) {
+      return null;
+    }
+
+    var result = [];
+
+    _(this.profit.personSkin).pairs().forEach(([personId, skins]) => {
+      _(skins).keys().forEach((skinId) => {
+        result.push(persons[personId].getImage(skinId));
+      });
+    });
+
+    return result.length > 0 ? result : null;
+  },
 });
 
 Template.promocodeReward.events({
@@ -215,6 +236,19 @@ Template.promocodeCreate.helpers({
         name: Game.Artefacts.items[artefactName].name
       });
     }
+
+    result.push({ name: '----------------------------------------' });
+
+    _(persons).values().forEach((person) => {
+      _(person.skin).pairs().forEach(([skinId, options]) => {
+        if (!options.isFree && _(options).keys().length > 0) {
+          result.push({
+            id: `personSkin.${person.id}.${skinId}`,
+            name: `${person.title} — ${skinId}`,
+          });
+        }
+      });
+    });
 
     return result;
   }

@@ -58,7 +58,7 @@ let showEntranceReward = function() {
           )
         };
 
-        Game.Popup.show('entranceReward', info);
+        Game.Popup.show({ templateName: 'entranceReward', data: info });
       }
     });
   }

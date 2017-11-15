@@ -1,0 +1,89 @@
+<template name="PersonSkinPopup">
+  <div class="cw--PersonSkinPopup">
+    <div class="cw--PersonSkinPopup__title">
+      Сменить наряд Персонажа
+    </div>
+    <div class="cw--PersonSkinPopup__settings">
+      <label class="cw--PersonSkinPopup__settingsOption">
+        <input 
+          type="radio" 
+          name="multiSkin"
+          value="false"
+          checked={{not user.settings.options.isMultiSkinEnabled}}
+          onChange={{changeMultiSkinOption}}
+        />
+        Один наряд
+      </label>
+      <label class="cw--PersonSkinPopup__settingsOption">
+        <input 
+          type="radio" 
+          name="multiSkin"
+          value="true"
+          checked={{user.settings.options.isMultiSkinEnabled}}
+          onChange={{changeMultiSkinOption}}
+        />
+        Сменяемые наряды
+      </label>
+    </div>
+    <div class="cw--PersonSkinPopup__skinList scrollbar-inner">
+      {{#each skin in skins}}
+        <div class="cw--PersonSkinPopup__skin">
+          <div class="cw--PersonSkinPopup__skinImageBlock">
+            <img
+              class="cw--PersonSkinPopup__skinImage"
+              src="{{person.getImage skin.id}}" 
+              alt="{{skin.title}}"
+            />
+            {{#if not skin.has}}
+              {{#if skin.isUnique}} 
+                <div class="cw--PersonSkinPopup__skinInfo cw--color_crystal">
+                  Уникальный
+                </div>
+              {{else if skin.price}}
+                <div class="cw--PersonSkinPopup__skinInfo cw--color_credits">
+                  {{> iconCredits class="cw--PersonSkinPopup__iconCredits"}}
+                  {{formatNumber skin.price.credits}}
+                </div>
+              {{/if}}
+            {{/if}}
+          </div>
+            
+          <button 
+            class="
+              cw--button
+              cw--button_type_primary
+              {{#if skin.has}}
+                cw--button_type_primary_blue
+                {{#if not skin.isActive}}
+                  cw--button_notActive
+                {{/if}}
+              {{else}}
+                {{#if skin.isUnique}}
+                  cw--button_type_primary_blue
+                  cw--button_disabled
+                {{else}}
+                  cw--button_type_primary_orange
+                {{/if}}
+              {{/if}}
+            "
+            onClick={{skinAction skin.id}}
+          >
+            {{#if skin.has}}
+              {{#if skin.isActive}}
+                Активен
+              {{else}}
+                Активировать
+              {{/if}}
+            {{else}}
+              {{#if skin.isUnique}}
+                Недоступен
+              {{else}}
+                Купить
+              {{/if}}
+            {{/if}}
+          </button>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>

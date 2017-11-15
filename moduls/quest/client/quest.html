@@ -1,9 +1,6 @@
 <template name="quest">
   <div class="modal quest scrollbar-inner">
-    <img src="/img/game/{{who}}.jpg" alt="">
-    {{#if (characterName who)}}
-      <span class="name">{{characterName who}}</span>
-    {{/if}}
+    {{> PersonImage person=person}}
     <div class="title">{{title}}</div>
     {{{text}}}
     

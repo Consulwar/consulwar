@@ -51,6 +51,16 @@
     {{#if profit.votePower}}
     <span class="votepower">Сила голоса +{{profit.votePower}}</span>
     {{/if}}
+
+    {{#if personSkin}}
+      <ul class="personSkin">
+        {{#each skin in personSkin}}
+          <li>
+            <img src="{{skin}}"/>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
     <span class="take">Награда</span>
   </div>
 </template>

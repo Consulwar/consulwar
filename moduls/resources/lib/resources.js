@@ -113,7 +113,27 @@ Game.Resources = {
 
   calculateHonorFromMutualResearch: function(resources) {
     return Math.floor(Game.Resources.calculateHonorFromResources(resources) * 0.375);
-  }
+  },
+
+  has({
+    resources,
+    user = Meteor.user(),
+    availableResources = Game.Resources.getValue(user._id),
+  }) {
+    if (!availableResources) {
+      return false;
+    }
+
+    return !_(resources).pairs().some(([resourceName, amount]) => {
+      if (
+           resourceName !== 'time'
+        && (!availableResources[resourceName] || availableResources[resourceName].amount < amount)
+      ) {
+        return true;
+      }
+      return false;
+    });
+  },
 };
 
 };

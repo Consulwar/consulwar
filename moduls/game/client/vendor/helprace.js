@@ -277,7 +277,7 @@
                 windowWidth = document.body.clientWidth,
                 windowHeight = self.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
                 iframeWidth = 1020,
-                iframeHeight = 560,
+                iframeHeight = 480,
                 iframeTop = Math.round((windowHeight - iframeHeight) / 2),
                 iframeLeft = Math.round((windowWidth - iframeWidth) / 2);
 
@@ -338,8 +338,8 @@
             iframeEl.style.height = iframeHeight + 'px';
             iframeEl.style.padding = '8px';
             iframeEl.style.border = 'none';
-            iframeEl.style.background = '#fcfcfc';
-            iframeEl.style.border = '1px solid #A6A6A6';
+            iframeEl.style.background = '#131313';
+            iframeEl.style.border = '0px solid #A6A6A6';
             iframeEl.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.7)';
             iframeEl.style.borderRadius = '3px';
             iframeEl.style.overflow = 'hidden';

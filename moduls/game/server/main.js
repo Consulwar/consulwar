@@ -1,3 +1,5 @@
+import '/imports/modules/Person/server/methods';
+
 //BrowserPolicy.framing.allowAll();
 
 if (
@@ -178,7 +180,7 @@ Meteor.methods({
 
 Meteor.publish('game', function () {
   if (this.userId) {
-    return Meteor.users.find({_id: this.userId}, {
+    return Meteor.users.find({ _id: this.userId }, {
       fields: {
         createdAt: 1,
         game: 1,
@@ -193,8 +195,9 @@ Meteor.publish('game', function () {
         achievements: 1,
         settings: 1,
         music: 1,
-        entranceReward: 1
-      }
+        entranceReward: 1,
+        Person: 1,
+      },
     });
   }
 });

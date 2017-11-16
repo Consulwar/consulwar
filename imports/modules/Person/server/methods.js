@@ -36,7 +36,7 @@ Meteor.methods({
     const user = Meteor.user();
     checkUser(user);
 
-    Game.Log.method.call(this, 'Person.setSkin');
+    Game.Log.method.call(this, 'Person.setActiveSkins');
 
     check(personId, String);
     check(skinIds, [String]);

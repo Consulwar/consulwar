@@ -31,7 +31,7 @@ class Log {
 
   static add({ name, info }) {
     // eslint-disable-next-line no-console
-    console.log(`[${formatDate()} ${info}: ${name}]`);
+    console.log(`[${formatDate()}] ${info}: ${name}`);
 
     Log.increment({ name });
   }
@@ -45,7 +45,7 @@ class Log {
     const ip = this.connection.clientAddress;
 
     // eslint-disable-next-line no-console
-    console.log(`[${formatDate()} ${username} (${ip}): ${name}]`);
+    console.log(`[${formatDate()}] ${username} (${ip}): ${name}`);
     Log.increment({ name: `call.${name}` });
   }
 }

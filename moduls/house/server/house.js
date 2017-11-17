@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initHouseServer = function() {
 'use strict';
 
@@ -83,7 +85,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'house.buyItem');
+    Log.method.call(this, { name: 'house.buyItem', user });
 
     // check config
     if (!Game.House.items[group] || !Game.House.items[group][id]) {
@@ -151,7 +153,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'house.placeItem');
+    Log.method.call(this, { name: 'house.placeItem', user });
 
     var house = Game.House.getValue();
 
@@ -182,7 +184,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'house.getPlacedItems');
+    Log.method.call(this, { name: 'house.getPlacedItems', user });
 
     check(login, String);
 

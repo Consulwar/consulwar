@@ -1,3 +1,4 @@
+import Log from '/imports/modules/Log/server/Log';
 import persons from '/imports/content/Person/server';
 
 initResourcesServer = function() {
@@ -346,7 +347,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'getBonusResources');
+    Log.method.call(this, { name: 'getBonusResources', user });
 
     if (name != 'crystals' && name != 'metals') {
       throw new Meteor.Error('А как тебе вариант, что сейчас у тебя обнулится весь рейтинг? Ха-ха');

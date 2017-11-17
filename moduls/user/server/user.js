@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 Meteor.startup(function() {
 'use strict';
 
@@ -182,17 +184,17 @@ if (!Meteor.settings.public.isInviteRequired) {
 
 Meteor.methods({
   'totalUsersCount': function() {
-    Game.Log('user.totalUsersCount', this.connection.clientAddress);
+    Log.add({ name: 'user.totalUsersCount', info: this.connection.clientAddress });
     return Meteor.users.find().count();
   },
 
   'onlineUsersCount': function() {
-    Game.Log('user.onlineUsersCount', this.connection.clientAddress);
+    Log.add({ name: 'user.onlineUsersCount', info: this.connection.clientAddress });
     return Meteor.users.find({'status.online': true}).count();
   },
 
   'user.getIpAddress': function(key) { // TODO: Подумать как избавиться от этого метода!
-    Game.Log('user.getIpAddress', this.connection.clientAddress);
+    Log.add({ name: 'user.getIpAddress', info: this.connection.clientAddress });
     if (key != tempKey) {
       return null;
     }
@@ -200,7 +202,7 @@ Meteor.methods({
   },
 
   'user.checkUsernameExists': function(username) {
-    Game.Log('user.checkUsernameExists', this.connection.clientAddress);
+    Log.add({ name: 'user.checkUsernameExists', info: this.connection.clientAddress });
 
     check(username, String);
 
@@ -212,7 +214,7 @@ Meteor.methods({
   },
 
   'user.checkPlainnameExists': function(username) {
-    Game.Log('user.checkPlainnameExists', this.connection.clientAddress);
+    Log.add({ name: 'user.checkPlainnameExists', info: this.connection.clientAddress });
 
     check(username, String);
 
@@ -235,7 +237,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'user.changePlanetName');
+    Log.method.call(this, { name: 'user.changePlanetName', user });
 
     check(name, String);
     name = name.trim();

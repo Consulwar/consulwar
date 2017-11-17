@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initStatisticAchievementsServer = function() {
 'use strict';
 
@@ -15,7 +17,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'achievements.complete');
+    Log.method.call(this, { name: 'achievements.complete', user });
 
     var statistic = Game.Statistic.getUser();
     var achievements = Game.Achievements.getValue();
@@ -76,7 +78,7 @@ Meteor.methods({
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
     }
 
-    Game.Log.method.call(this, 'achievements.give');
+    Log.method.call(this, { name: 'achievements.give', user });
 
     check(username, String);
     check(achievementId, String);

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
+import Log from '/imports/modules/Log/server/Log';
 import persons from '/imports/content/Person/server';
 
 const checkUser = function(user) {
@@ -36,7 +37,7 @@ Meteor.methods({
     const user = Meteor.user();
     checkUser(user);
 
-    Game.Log.method.call(this, 'Person.setActiveSkins');
+    Log.method.call(this, { name: 'Person.setActiveSkins', user });
 
     check(personId, String);
     check(skinIds, [String]);
@@ -67,7 +68,7 @@ Meteor.methods({
     const user = Meteor.user();
     checkUser(user);
 
-    Game.Log.method.call(this, 'Person.buySkin');
+    Log.method.call(this, { name: 'Person.buySkin', user });
 
     check(personId, String);
     check(skinId, String);

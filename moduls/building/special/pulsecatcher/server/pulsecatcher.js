@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initBuildingSpecialPulsecatcherServer = function() {
 'use strict';
 
@@ -62,7 +64,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'pulsecatcher.voteBonus');
+    Log.method.call(this, { name: 'pulsecatcher.voteBonus', user });
 
     if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');
@@ -87,7 +89,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
     
-    Game.Log.method.call(this, 'pulsecatcher.activateBonus');
+    Log.method.call(this, { name: 'pulsecatcher.activateBonus', user });
 
     if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');

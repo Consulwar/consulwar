@@ -1,6 +1,6 @@
-import libPerson from '../lib/Person';
+import LibPerson from '../lib/Person';
 
-class Person extends libPerson {
+class Person extends LibPerson {
 
 }
 

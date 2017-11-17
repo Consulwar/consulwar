@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initPaymentServer = function() {
 'use strict';
 
@@ -99,7 +101,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'user.getPaymentIncomeHistory');
+    Log.method.call(this, { name: 'user.getPaymentIncomeHistory', user });
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');
@@ -127,7 +129,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'user.getPaymentIncomeHistory');
+    Log.method.call(this, { name: 'user.getPaymentIncomeHistory', user });
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');

@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import Log from '/imports/modules/Log/server/Log';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthServerMethods = function() {
@@ -17,7 +18,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.sendReinforcement');
+    Log.method.call(this, { name: 'earth.sendReinforcement', user });
 
     const currentTime = Game.getCurrentTime();
 
@@ -148,7 +149,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.moveArmy');
+    Log.method.call(this, { name: 'earth.moveArmy', user });
 
     check(targetZone, String);
 
@@ -202,7 +203,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.setReptileArmy');
+    Log.method.call(this, { name: 'earth.setReptileArmy', user });
 
     if (['admin'].indexOf(user.role) === -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -263,7 +264,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.generalCommand');
+    Log.method.call(this, { name: 'earth.generalCommand', user });
 
     const zone = Game.EarthZones.Collection.findOne({
       'general.username': user.username,
@@ -327,7 +328,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.responseToGeneral');
+    Log.method.call(this, { name: 'earth.responseToGeneral', user });
 
     check(isAccept, Boolean);
 
@@ -378,7 +379,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.setReptileArmy');
+    Log.method.call(this, { name: 'earth.setReptileArmy', user });
 
     if (['admin'].indexOf(user.role) === -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -417,7 +418,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'earth.getEarthUnits');
+    Log.method.call(this, { name: 'earth.getEarthUnits', user });
 
     check(username, String);
 

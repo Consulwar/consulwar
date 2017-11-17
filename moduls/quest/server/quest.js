@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initQuestServer = function() {
 'use strict';
 
@@ -285,7 +287,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'quests.getReward');
+    Log.method.call(this, { name: 'quests.getReward', user });
 
     var quests = Game.Quest.getValue();
 
@@ -346,7 +348,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'quests.getInfo');
+    Log.method.call(this, { name: 'quests.getInfo', user });
 
     var questLine = Game.Quest.regularQuests[questId];
 
@@ -373,7 +375,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'quests.getDailyInfo');
+    Log.method.call(this, { name: 'quests.getDailyInfo', user });
 
     var quests = Game.Quest.getValue();
 
@@ -408,7 +410,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'quests.sendDailyAnswer');
+    Log.method.call(this, { name: 'quests.sendDailyAnswer', user });
 
     var quests = Game.Quest.getValue();
 

@@ -1,3 +1,5 @@
+import containerCollection from '/imports/modules/Container/lib/collection';
+
 initBuildingSpecialContainerLib = function() {
 'use strict';
 
@@ -73,7 +75,7 @@ game.Container = function(options) {
 };
 
 Game.Building.special.Container = {
-  Collection: new Meteor.Collection('containers'),
+  Collection: containerCollection,
 
   items: {},
 

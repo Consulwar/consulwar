@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initPromoCodeServer = function() {
 'use strict';
 
@@ -109,7 +111,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'admin.getPromocodeHistory');
+    Log.method.call(this, { name: 'admin.getPromocodeHistory', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -188,7 +190,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'admin.addPromoCode');
+    Log.method.call(this, { name: 'admin.addPromoCode', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -285,7 +287,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'user.activatePromoCode');
+    Log.method.call(this, { name: 'user.activatePromoCode', user });
 
     check(code, String);
 

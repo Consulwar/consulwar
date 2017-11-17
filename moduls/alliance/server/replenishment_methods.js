@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initAllianceReplenishmentHistoryServerMethods = function() {
 'use strict';
 
@@ -13,7 +15,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'allianceReplenishmentHistory.create');
+    Log.method.call(this, { name: 'allianceReplenishmentHistory.create', user });
 
     check(resource, Match.OneOf({
       honor: Match.Integer,

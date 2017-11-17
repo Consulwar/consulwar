@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initEntranceRewardServer = function() {
 'use strict';
 
@@ -103,7 +105,7 @@ Meteor.methods({
       history.push.apply(history, unclaimed);
     }
 
-    Game.Log.method.call(this, 'entranceReward.getHistory');
+    Log.method.call(this, { name: 'entranceReward.getHistory', user });
 
     return history;
   },

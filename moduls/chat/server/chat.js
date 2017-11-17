@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initChatServer = function() {
 'use strict';
 
@@ -165,7 +167,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.sendMessage');
+    Log.method.call(this, { name: 'chat.sendMessage', user });
 
     if (!Game.User.haveVerifiedEmail()) {
       throw new Meteor.Error('Сперва нужно верифицировать email');
@@ -471,7 +473,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.blockUser');
+    Log.method.call(this, { name: 'chat.blockUser', user });
 
     if (!options || !options.username) {
       throw new Meteor.Error('Не указан логин');
@@ -637,7 +639,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'chat.banAccount');
+    Log.method.call(this, { name: 'chat.banAccount', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -671,7 +673,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'chat.cheaterVaip');
+    Log.method.call(this, { name: 'chat.cheaterVaip', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -730,7 +732,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.createRoom');
+    Log.method.call(this, { name: 'chat.createRoom', user });
 
     // check room name
     check(title, String);
@@ -818,7 +820,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.removeRoom');
+    Log.method.call(this, { name: 'chat.removeRoom', user });
 
     check(name, String);
 
@@ -862,7 +864,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'chat.buyFreeChat');
+    Log.method.call(this, { name: 'chat.buyFreeChat', user });
 
     var resources = Game.Resources.getValue();
 
@@ -892,7 +894,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'chat.addCreditsToRoom');
+    Log.method.call(this, { name: 'chat.addCreditsToRoom', user });
 
     check(credits, Match.Integer);
 
@@ -982,7 +984,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.changeDiceModifierForRoom');
+    Log.method.call(this, { name: 'chat.changeDiceModifierForRoom', user });
 
     check(roomName, String);
     check(modifier, Match.Integer);
@@ -1054,7 +1056,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.changeMinRating');
+    Log.method.call(this, { name: 'chat.changeMinRating', user });
 
     check(roomName, String);
     check(minRating, Match.Integer);
@@ -1126,7 +1128,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.addModeratorToRoom');
+    Log.method.call(this, { name: 'chat.addModeratorToRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1213,7 +1215,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.removeModeratorFromRoom');
+    Log.method.call(this, { name: 'chat.removeModeratorFromRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1282,7 +1284,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.addUserToRoom');
+    Log.method.call(this, { name: 'chat.addUserToRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1368,7 +1370,7 @@ Meteor.methods({
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.removeUserFromRoom');
+    Log.method.call(this, { name: 'chat.removeUserFromRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1453,7 +1455,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'chat.loadMore');
+    Log.method.call(this, { name: 'chat.loadMore', user });
 
     check(options, Object);
     check(options.roomName, String);
@@ -1518,7 +1520,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'chat.getRoomsList');
+    Log.method.call(this, { name: 'chat.getRoomsList', user });
 
     return Game.Chat.Room.Collection.find({
       isOfficial: { $ne: true },

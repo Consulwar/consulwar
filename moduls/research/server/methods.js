@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initResearchServerMethods = function(){
 'use strict';
 
@@ -13,7 +15,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'research.start');
+    Log.method.call(this, { name: 'research.start', user });
 
     check(options, Object);
     check(options.group, String);
@@ -97,7 +99,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'research.speedup');
+    Log.method.call(this, { name: 'research.speedup', user });
 
     check(options, Object);
     check(options.group, String);

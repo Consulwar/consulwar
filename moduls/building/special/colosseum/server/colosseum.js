@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initBuildingSpecialColosseumServer = function() {
 'use strict';
 
@@ -15,7 +17,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'colosseum.startTournament');
+    Log.method.call(this, { name: 'colosseum.startTournament', user });
 
     var tournament = Game.Building.special.Colosseum.tournaments[id];
 

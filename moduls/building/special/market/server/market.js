@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initBuildingSpecialMarketServer = function() {
 'use strict';
 
@@ -15,7 +17,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'market.exchange');
+    Log.method.call(this, { name: 'market.exchange', user });
 
     var userResources = Game.Resources.getValue();
 

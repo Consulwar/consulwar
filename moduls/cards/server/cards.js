@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initCardsServer = function() {
 'use strict';
   
@@ -146,7 +148,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'cards.buy');
+    Log.method.call(this, { name: 'cards.buy', user });
 
     var item = Game.Cards.getItem(id);
     if (!item) {
@@ -200,7 +202,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
     
-    Game.Log.method.call(this, 'cards.activate');
+    Log.method.call(this, { name: 'cards.activate', user });
 
     var item = Game.Cards.getItem(id);
     if (!item) {

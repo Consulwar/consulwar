@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initMailQuizServer = function() {
 'use strict';
 
@@ -84,7 +86,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'getQuiz');
+    Log.method.call(this, { name: 'getQuiz', user });
 
     check(id, String);
 
@@ -115,7 +117,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'quizAnswer');
+    Log.method.call(this, { name: 'quizAnswer', user });
 
     check(id, String);
     check(answer, String);
@@ -235,7 +237,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'createQuiz');
+    Log.method.call(this, { name: 'createQuiz', user });
 
     if (user.username != 'Zav') {
       throw new Meteor.Error('Ты не Zav!');
@@ -290,7 +292,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'sendQuiz');
+    Log.method.call(this, { name: 'sendQuiz', user });
 
     if (user.username != 'Zav') {
       throw new Meteor.Error('Ты не Zav!');

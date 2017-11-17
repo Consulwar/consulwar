@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initPaymentTekoServer = function() {
 'use strict';
 
@@ -98,7 +100,7 @@ Router.route('/api/payment/teko/success', processRequest( function(user, data, p
       payment_system: PAYMENT_SYSTEM
     }, data.dst.id);
 
-    Game.Log.increment('payment_teko', paymentItem.cost.rub);
+    Log.increment({ name: 'payment_teko', count: paymentItem.cost.rub });
 
     // send response
     console.log('Transaction finished');
@@ -332,7 +334,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован.');
     }
 
-    Game.Log.method.call(this, 'teko.getPaymentUrl');
+    Log.method.call(this, { name: 'teko.getPaymentUrl', user });
 
     // check payment item
     check(id, String);

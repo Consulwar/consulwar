@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initMutualServerMethods = function(){
 'use strict';
 
@@ -13,7 +15,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'mutual.invest');
+    Log.method.call(this, { name: 'mutual.invest', user });
 
     if (Game.User.getLevel() < 1) {
       throw new Meteor.Error('Чтобы участвовать в общих исследованиях, нужно подрасти');

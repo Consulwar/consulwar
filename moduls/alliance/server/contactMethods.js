@@ -1,3 +1,5 @@
+import Log from '/imports/modules/Log/server/Log';
+
 initAllianceContactServerMethods = function() {
 'use strict';
 
@@ -13,7 +15,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'allianceContact.create');
+    Log.method.call(this, { name: 'allianceContact.create', user });
 
     check(allianceUrl, String);
     check(recipient, String);
@@ -90,7 +92,7 @@ Meteor.methods({
       throw new Meteor.Error('Аккаунт заблокирован');
     }
 
-    Game.Log.method.call(this, 'allianceContact.update');
+    Log.method.call(this, { name: 'allianceContact.update', user });
 
     let contact = Game.Alliance.Contact.get(contactId);
 

@@ -1,4 +1,5 @@
-import '/imports/modules/Person/server/methods';
+import '/imports/modules/Person/server';
+import Log from '/imports/modules/Log/server/Log';
 
 //BrowserPolicy.framing.allowAll();
 
@@ -90,7 +91,6 @@ Meteor.startup(function () {
   initCheatsServer();
   initDDPLimiter();
   initAllianceServer();
-  initGameLog();
 
   SyncedCron.start();
 });
@@ -154,7 +154,7 @@ Meteor.methods({
 
     Game.BackReward.getReward();
 
-    Game.Log.method.call(this, 'Actualize');
+    Log.method.call(this, { name: 'Actualize', user });
 
     // Update queue tasks and resources
     var needToCheckAgain = Game.Queue.checkAll();
@@ -169,8 +169,8 @@ Meteor.methods({
     return true;
   },
 
-  getCurrentTime: function() {
-    console.log('getCurrentTime: ', new Date(), this.connection.clientAddress);
+  getCurrentTime: function () {
+    Log.method.call(this, { name: 'getCurrentTime' });
     return {
       now: new Date().valueOf(),
       midnight: Game.getMidnightDate()

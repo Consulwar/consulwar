@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initStatisticServer = function() {
 'use strict';
@@ -194,15 +195,8 @@ Game.Statistic.getUserPositionInRating = function(type, user) {
 
 Meteor.methods({
   'statistic.fixGame': function() {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'statistic.fixGame', user });
 
@@ -214,15 +208,8 @@ Meteor.methods({
   },
 
   'statistic.fixUser': function(username) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'statistic.fixUser', user });
 
@@ -244,15 +231,8 @@ Meteor.methods({
   },
 
   'statistic.getUserPositionInRating': function(type, selectedUserName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(selectedUserName, String);
     check(type, String);
@@ -273,15 +253,8 @@ Meteor.methods({
   },
 
   'statistic.getPageInRating': function(type, page, countPerPage) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'statistic.getPageInRating', user });
 
@@ -335,15 +308,8 @@ Meteor.methods({
   },
 
   'statistic.getUserStatistic': function(userName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(userName, String);
 
@@ -393,15 +359,8 @@ Meteor.methods({
   },
 
   'statistic.getUserInfo': function(userName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(userName, String);
 

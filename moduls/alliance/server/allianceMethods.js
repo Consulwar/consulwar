@@ -1,19 +1,13 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initAllianceServerMethods = function() {
 'use strict';
 
 Meteor.methods({
   'alliance.create': function(options) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'alliance.create', user });
 
@@ -49,15 +43,8 @@ Meteor.methods({
   },
 
   'alliance.join': function(info) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'alliance.join', user });
 
@@ -167,15 +154,8 @@ Meteor.methods({
   },
 
   'alliance.leave': function() {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'alliance.leave', user });
 
@@ -207,15 +187,8 @@ Meteor.methods({
   },
 
   'alliance.kick': function(name) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'alliance.kick', user });
 
@@ -262,15 +235,8 @@ Meteor.methods({
   },
 
   'alliance.getPosition': function(allianceUrl = null) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     let alliance;
 
@@ -301,15 +267,8 @@ Meteor.methods({
   },
 
   'alliance.getPageInList': function(page, countPerPage) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'alliance.getPageInList', user });
 
@@ -338,15 +297,8 @@ Meteor.methods({
   },
 
   'alliance.getInfo': function(url, extended = false) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(url, String);
 
@@ -372,15 +324,8 @@ Meteor.methods({
   },
 
   'alliance.levelUp': function(priceType) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'alliance.levelUp', user });
 

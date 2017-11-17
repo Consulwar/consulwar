@@ -1,19 +1,13 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initUnitServerMethods = function() {
 'use strict';
 
 Meteor.methods({
   'unit.build': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'unit.build', user });
 
@@ -104,15 +98,8 @@ Meteor.methods({
   },
 
   'unit.speedup': function(options) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'unit.speedup', user });
 
@@ -173,15 +160,8 @@ Meteor.methods({
   },
 
   'unit.instantDamage': function(options) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'unit.instantDamage', user });
 
@@ -387,15 +367,8 @@ Meteor.methods({
     check(page, Match.Integer);
     check(count, Match.Integer);
 
-    var user = Meteor.user();
-    
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'battleHistory.getPage', user });
 
@@ -415,15 +388,8 @@ Meteor.methods({
   'battleHistory.getById': function(id, isEarth) {
     check(id, String);
 
-    var user = Meteor.user();
-    
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'battleHistory.getById', user });
 

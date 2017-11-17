@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initMailServer = function () {
 'use strict';
@@ -89,15 +90,8 @@ game.Mail.addAllianceMessage = function(allianceName, to, subject, text, timesta
 
 Meteor.methods({
   'mail.sendLetter': function(recipient, subject, text) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     if (user.rating < 25000) {
       throw new Meteor.Error('Только Консул может пользоваться почтой!');
@@ -262,15 +256,8 @@ Meteor.methods({
   },
 
   'mail.getLetter': function(id) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.getLetter', user });
 
@@ -304,15 +291,8 @@ Meteor.methods({
   },
 
   'mail.complainLetter': function(id) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.complainLetter', user });
 
@@ -336,15 +316,8 @@ Meteor.methods({
   },
 
   'mail.removeLetters': function(ids) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.removeLetters', user });
 
@@ -367,15 +340,8 @@ Meteor.methods({
   },
 
   'mail.blockUser': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.blockUser', user });
 
@@ -453,15 +419,8 @@ Meteor.methods({
   },
 
   'mail.resolveComplaint': function(id, resolution, comment) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.resolveComplaint', user });
 
@@ -486,15 +445,8 @@ Meteor.methods({
   },
 
   'mail.getPrivatePage': function(page, count) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.getPrivatePage', user });
 
@@ -533,15 +485,8 @@ Meteor.methods({
   },
 
   'mail.getAdminPage': function(page, count) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'mail.getAdminPage', user });
 

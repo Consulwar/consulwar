@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initMailQuizServer = function() {
 'use strict';
@@ -76,15 +77,8 @@ Meteor.call('sendQuiz', "NRpFEtMk4crreGZvB");
 
 Meteor.methods({
   getQuiz: function(id) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'getQuiz', user });
 
@@ -107,15 +101,8 @@ Meteor.methods({
   },
 
   quizAnswer: function(id, answer, questionNum) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'quizAnswer', user });
 
@@ -227,15 +214,8 @@ Meteor.methods({
   },
 
   createQuiz: function(options) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'createQuiz', user });
 
@@ -282,15 +262,8 @@ Meteor.methods({
   },
 
   sendQuiz: function(id) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'sendQuiz', user });
 

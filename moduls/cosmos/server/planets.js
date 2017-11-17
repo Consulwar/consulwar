@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initCosmosPlanetsServer = function() {
 'use strict';
@@ -641,15 +642,8 @@ Game.Planets.discover = function(planetId) {
 Meteor.methods({
   'planet.initialize': function() {
     // For planets initialization Meteor.user() required!
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'planet.initialize', user });
 
@@ -706,15 +700,8 @@ Meteor.methods({
   },
 
   'planet.discover': function(planetId) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'planet.discover', user });
 
@@ -746,15 +733,8 @@ Meteor.methods({
   },
 
   'planet.collectArtefacts': function(planetId, cardsObject) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'planet.collectArtefacts:', user });
 
@@ -805,15 +785,8 @@ Meteor.methods({
   },
 
   'planet.sendFleet': function(baseId, targetId, units, isOneway) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'planet.sendFleet', user });
 
@@ -924,15 +897,8 @@ Meteor.methods({
   },
 
   'planet.changeName': function(planetId, name) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'planet.changeName', user });
 
@@ -978,15 +944,8 @@ Meteor.methods({
   },
 
   'planet.buyExtraColony': function() {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'planet.buyExtraColony', user });
 

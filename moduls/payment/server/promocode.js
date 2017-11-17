@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initPromoCodeServer = function() {
 'use strict';
@@ -101,15 +102,8 @@ Game.PromoCode.randomItems =  [{
 
 Meteor.methods({
   'admin.getPromocodeHistory': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'admin.getPromocodeHistory', user });
 
@@ -180,15 +174,8 @@ Meteor.methods({
   },
 
   'admin.addPromoCode': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'admin.addPromoCode', user });
 
@@ -277,15 +264,8 @@ Meteor.methods({
   },
 
   'user.activatePromoCode': function(code) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'user.activatePromoCode', user });
 

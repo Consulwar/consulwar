@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initBuildingSpecialContainerServer = function() {
 'use strict';
 
@@ -49,21 +52,14 @@ Game.Building.special.Container.spend = function(containers, user_id) {
 
 Meteor.methods({
   'containers.open': function(id) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     if (Game.Building.items.residential.spaceport.currentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Космопорт');
     }
 
-    Game.Log.method.call(this, 'containers.open');
+    Log.method.call(this, { name: 'containers.open', user });
 
     var container = Game.Building.special.Container.items[id];
 

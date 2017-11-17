@@ -1,19 +1,13 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initAllianceContactServerMethods = function() {
 'use strict';
 
 Meteor.methods({
   'allianceContact.create': function(allianceUrl, recipient, type) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'allianceContact.create', user });
 
@@ -82,15 +76,8 @@ Meteor.methods({
   },
 
   'allianceContact.decline': function(contactId) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'allianceContact.update', user });
 

@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initBuildingSpecialMarketServer = function() {
 'use strict';
@@ -7,15 +8,8 @@ initBuildingSpecialMarketLib();
 
 Meteor.methods({
   'market.exchange': function(resourceFrom, resourceTo, amount) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'market.exchange', user });
 

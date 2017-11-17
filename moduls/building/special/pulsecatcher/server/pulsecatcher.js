@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 initBuildingSpecialPulsecatcherServer = function() {
 'use strict';
@@ -54,15 +55,8 @@ SyncedCron.add({
 
 Meteor.methods({
   'pulsecatcher.voteBonus': function(answer) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'pulsecatcher.voteBonus', user });
 
@@ -79,15 +73,8 @@ Meteor.methods({
   },
 
   'pulsecatcher.activateBonus': function() {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
     
     Log.method.call(this, { name: 'pulsecatcher.activateBonus', user });
 

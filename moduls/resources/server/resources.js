@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import persons from '/imports/content/Person/server';
+import User from '/imports/modules/User/server/User';
 
 initResourcesServer = function() {
 'use strict';
@@ -337,15 +338,8 @@ Game.Resources.initialize = function(user) {
 
 Meteor.methods({
   getBonusResources: function(name) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'getBonusResources', user });
 

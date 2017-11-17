@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthServerMethods = function() {
@@ -8,15 +9,8 @@ initEarthServerMethods = function() {
 
 Meteor.methods({
   'earth.sendReinforcement': function(units, cardsObject, zoneName) {
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.sendReinforcement', user });
 
@@ -139,15 +133,8 @@ Meteor.methods({
 
   'earth.moveArmy': function(targetZone) {
     // check user
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.moveArmy', user });
 
@@ -193,15 +180,8 @@ Meteor.methods({
   },
 
   'earth.setReptileArmy': function (zoneName, modifier, units, isOnTurn) {
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.setReptileArmy', user });
 
@@ -254,15 +234,8 @@ Meteor.methods({
   },
 
   'earth.generalCommand'(command, commandTarget) {
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.generalCommand', user });
 
@@ -318,15 +291,8 @@ Meteor.methods({
   },
 
   'earth.responseToGeneral'(isAccept) {
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.responseToGeneral', user });
 
@@ -369,15 +335,8 @@ Meteor.methods({
   },
 
   'earth.setBonus'(zoneName, bonus) {
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.setReptileArmy', user });
 
@@ -408,15 +367,8 @@ Meteor.methods({
   },
 
   'earth.getEarthUnits'(username) {
-    const user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Log.method.call(this, { name: 'earth.getEarthUnits', user });
 

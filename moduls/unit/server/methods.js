@@ -1,4 +1,4 @@
-import FlightEvents from '/imports/modules/space/server/flightEvents';
+import FlightEvents from '/imports/modules/Space/server/flightEvents';
 
 initUnitServerMethods = function() {
 'use strict';

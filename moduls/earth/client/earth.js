@@ -1,4 +1,4 @@
-import Reinforcement from '/imports/modules/space/client/reinforcement';
+import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthClient = function() {

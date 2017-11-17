@@ -103,12 +103,13 @@ Game.Quest.showGreeteing = function(who) {
   loadedQuest.set(null);
 
   // show character greeting text
-  var text = Game.Persons[who].text;
+  var text = Game.Persons[who].defaultText;
   if (text && text.length > 0) {
     Game.Popup.show({
       templateName: 'quest',
       data: {
         who,
+        person: Game.Persons[who],
         type: 'quest',
         text,
       },

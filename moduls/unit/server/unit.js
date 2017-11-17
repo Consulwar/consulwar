@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
-import BattleEvents from '/imports/modules/space/server/battleEvents';
+import BattleEvents from '/imports/modules/Space/server/battleEvents';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 

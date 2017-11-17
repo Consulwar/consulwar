@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import ReinforcementEvents from '/imports/modules/space/server/reinforcementEvents';
+import ReinforcementEvents from '/imports/modules/Space/server/reinforcementEvents';
 
 import { Command, ResponseToGeneral } from '../lib/generals';
 

@@ -1,5 +1,5 @@
-import Reinforcement from '/imports/modules/space/client/reinforcement';
-import FlightEvents from '/imports/modules/space/client/flightEvents';
+import Reinforcement from '/imports/modules/Space/client/reinforcement';
+import FlightEvents from '/imports/modules/Space/client/flightEvents';
 
 Blaze._allowJavascriptUrls();
 

@@ -1,4 +1,4 @@
-import FlightEvents from '/imports/modules/space/server/flightEvents';
+import FlightEvents from '/imports/modules/Space/server/flightEvents';
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';

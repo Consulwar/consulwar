@@ -1,10 +1,10 @@
-import Space from '/imports/modules/space/client/space';
-import Reinforcement from '/imports/modules/space/client/reinforcement';
-import Utils from '/imports/modules/space/lib/utils';
-import calcAttackOptions from '/imports/modules/space/lib/calcAttackOptions';
-import FlightEvents from '/imports/modules/space/client/flightEvents';
+import Space from '/imports/modules/Space/client/space';
+import Reinforcement from '/imports/modules/Space/client/reinforcement';
+import Utils from '/imports/modules/Space/lib/utils';
+import calcAttackOptions from '/imports/modules/Space/lib/calcAttackOptions';
+import FlightEvents from '/imports/modules/Space/client/flightEvents';
 
-import PlanetGeneration from '/imports/modules/space/lib/planetGeneration';
+import PlanetGeneration from '/imports/modules/Space/lib/planetGeneration';
 
 const {
   calcDistanceByTime,

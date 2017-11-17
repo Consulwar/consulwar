@@ -1,4 +1,4 @@
-import makeFun from '/imports/modules/space/server/makeFun';
+import makeFun from '/imports/modules/Space/server/makeFun';
 
 initChatServer = function() {
 'use strict';

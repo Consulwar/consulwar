@@ -1,4 +1,4 @@
-import Reptiles from '/imports/modules/space/server/reptiles';
+import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import Battle from '../../battle/server/battle';
 

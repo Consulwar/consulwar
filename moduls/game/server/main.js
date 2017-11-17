@@ -1,5 +1,5 @@
-import initSpaceServer from '/imports/modules/space/server/index';
-import Reptiles from '/imports/modules/space/server/reptiles';
+import initSpaceServer from '/imports/modules/Space/server/index';
+import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import '/imports/modules/Person/server/methods';
 

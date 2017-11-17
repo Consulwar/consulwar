@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';
-import Config from '/imports/modules/space/server/config';
-import PlanetGeneration from '/imports/modules/space/lib/planetGeneration';
-import Space from '/imports/modules/space/lib/space';
+import Config from '/imports/modules/Space/server/config';
+import PlanetGeneration from '/imports/modules/Space/lib/planetGeneration';
+import Space from '/imports/modules/Space/lib/space';
 
 const {
   calcSegmentRandomPoints,

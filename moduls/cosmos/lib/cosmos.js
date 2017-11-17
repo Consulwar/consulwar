@@ -1,4 +1,4 @@
-import FlightEvents from '/imports/modules/space/lib/flightEvents';
+import FlightEvents from '/imports/modules/Space/lib/flightEvents';
 
 initCosmosLib = function() {
 'use strict';

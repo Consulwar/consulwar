@@ -8,6 +8,10 @@ export default {
       {
         notImplemented: true,
         textBefore: 'у Тамили появляется особый диалог',
+        priority: 1,
+        result(level = this.getCurrentLevel()) {
+          return level;
+        },
       },
     ],
   },

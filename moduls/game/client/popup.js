@@ -1,24 +1,31 @@
-initPopupClient = function() {
-'use strict';
+import { Blaze } from 'meteor/blaze';
+import { Template } from 'meteor/templating';
+import { $ } from 'meteor/jquery';
+import Game from '/moduls/game/lib/main.game';
 
+initPopupClient = function() {
 Game.Popup = {
   zIndex: 100,
 
-  show: function(templateName, data) {
-    this.zIndex++;
+  show({
+    templateName,
+    data,
+    template = Template[templateName],
+  }) {
+    this.zIndex += 1;
 
-    var popup = Blaze.renderWithData(Template.popup, {
-      zIndex: this.zIndex
+    const popup = Blaze.renderWithData(Template.popup, {
+      zIndex: this.zIndex,
     }, $('.over')[0]);
 
-    var subtemplate = Blaze.renderWithData(
-      Template[templateName],
+    const subtemplate = Blaze.renderWithData(
+      template,
       data,
-      $(popup.firstNode())[0]
+      $(popup.firstNode())[0],
     );
 
     subtemplate.onViewDestroyed(function() {
-      Game.Popup.zIndex--;
+      Game.Popup.zIndex -= 1;
       Blaze.remove(popup);
     });
 
@@ -26,13 +33,12 @@ Game.Popup = {
       .parent()
       .find('>*:first-child')
       .append('<button class="close"></button>');
-  }
+  },
 };
 
 Template.popup.events({
-  'click .close': function(e, t) {
-    Blaze.remove(t.view);
-  }
+  'click .close'(event, templateInstance) {
+    Blaze.remove(templateInstance.view);
+  },
 });
-
 };

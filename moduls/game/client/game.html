@@ -116,7 +116,7 @@
             <a class="support" href="javascript: ChdFeedbackWidget.show();">Вопрос</a>
             <a class="support" href="javascript: ChdFeedbackWidget.show();">Ошибка</a>
             <a class="support" href="javascript: ChdFeedbackWidget.show();">Идея</a>
-            <a class="support" target="_blank" href="http://consulwar.helprace.com/">Тех. поддержка</a>
+            <a class="support" target="_blank" href="https://info.consulwar.ru/">Тех. поддержка</a>
 
             <a href="{{pathFor 'logout'}}">Выход</a>
           </div>
@@ -158,6 +158,14 @@
 
   {{> tooltips }}
   {{> notifications}}
+  {{#if helpraceAuth}}
+    <img 
+      src="{{helpraceAuth}}" 
+      width="1" 
+      height="1" 
+      style="position: absolute; top: -10000px; left: -10000px;" 
+    />
+  {{/if}}
 </template>
 
 <template name="item">

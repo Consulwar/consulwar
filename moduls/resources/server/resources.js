@@ -1,3 +1,5 @@
+import persons from '/imports/content/Person/server';
+
 initResourcesServer = function() {
 'use strict';
 
@@ -205,6 +207,17 @@ Game.Resources.addProfit = function(profit, uid = Meteor.userId()) {
         Game.House.add(itemGroup, itemName, uid);
       }
     }
+  }
+
+  if (profit.personSkin) {
+    _(profit.personSkin).pairs().forEach(([personId, skins]) => {
+      _(skins).keys().forEach((skinId) => {
+        persons[personId].addSkin({
+          userId: uid,
+          id: skinId,
+        });
+      });
+    });
   }
 };
 

@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+
 initSettingsClient = function() {
 'use strict';
 
@@ -5,6 +7,20 @@ initSettingsLib();
 
 Game.Settings.showPage = function() {
   this.render('settings', { to: 'content' });
+};
+
+Game.Settings.invertOption = function({
+  user = Meteor.user(),
+  name,
+}) {
+  const currentValue = Game.Settings.getOption({ user, name });
+  Meteor.call('settings.setOption', name, !currentValue, (err) => {
+    if (err) {
+      Notifications.error('Не удалось изменить настройки.', err.message);
+    } else {
+      Notifications.success('Настройки успешно изменены.');
+    }
+  });
 };
 
 Template.settings.events({
@@ -144,14 +160,7 @@ Template.notificationsSettings.events({
   'change .customization input, change .otherSettings input': function(e, t) {
     var field = $(e.target).data('settings_field');
 
-    var options = Meteor.user().settings && Meteor.user().settings.options;
-    Meteor.call('settings.setOption', field, !(options && options[field]), function(err) {
-      if (err) {
-        Notifications.error('Не удалось изменить настройки.', err.message);
-      } else {
-        Notifications.success('Настройки успешно изменены.');
-      }
-    });
+    Game.Settings.invertOption({ name: field });
   }
 });
 

@@ -339,6 +339,11 @@ Template.additional_area.helpers({
     return who && Game.Persons[who] ? Game.Persons[who].name : null;
   },
 
+  sideHeroIcon() {
+    const who = getSideHeroByRoute(Router.current());
+    return who && Game.Persons[who] ? Game.Persons[who].getIcon() : null;
+  },
+
   status: function() {
     var who = getSideHeroByRoute( Router.current() );
     var quest = (who) ? Game.Quest.getOneByHero(who) : null;

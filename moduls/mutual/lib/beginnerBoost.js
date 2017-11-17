@@ -17,6 +17,10 @@ let getUserDays = function() {
 Game.BeginnerBoost = {
   calculatePower: function (affectName, serverDays = getServerDays(), userDays = getUserDays()) {
     let power = this.calculateGrowth(serverDays) - this.calculateDecrease(userDays);
+    let rank = Game.User.getLevel();
+    const maxRank = Game.User.getMaxLevel();
+    
+    power *= (1 - (rank / maxRank));
     return Math.max(0, power) * Game.BeginnerBoost.POWER_UNIT[affectName];
   },
 

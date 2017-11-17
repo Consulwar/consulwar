@@ -1,0 +1,60 @@
+@import '{}/imports/client/ui/colors.styl'
+
+.cw--button
+  display flex
+  align-items center
+  justify-content center
+  font-size 18px
+
+  &_type
+    &_primary
+      border 0
+      padding 12px
+      outline 2px solid $cw--color_black
+      outline-offset -5px
+
+      &_small
+        padding 8px
+
+      &_orange
+        background linear-gradient(90deg, #FF9C2E 0%, #FFD44A 100%)
+
+      &_blue
+        background linear-gradient(90deg, #55B1E4 0%, #75EEFF 100%)
+
+    &_secondary
+      padding 8px
+      border 1px solid
+
+      &_human
+        border-color $cw--color_human
+        color $cw--color_human
+
+      &_metal
+        border-color $cw--color_metal
+        color $cw--color_metal
+
+      &_crystal
+        border-color $cw--color_crystal
+        color $cw--color_crystal
+
+      &_honor
+        border-color $cw--color_honor
+        color $cw--color_honor
+
+      &_ggk
+        border-color $cw--color_ggk
+        color $cw--color_ggk
+  
+  &_notActive
+    -webkit-filter brightness(0.5)
+    filter brightness(0.5)
+
+  &_disabled
+    cursor not-allowed !important
+    -webkit-filter grayscale(1) brightness(0.5) !important
+    filter grayscale(1) brightness(0.5) !important
+
+  &:hover
+    -webkit-filter brightness(1.2)
+    filter brightness(1.2)

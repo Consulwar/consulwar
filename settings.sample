@@ -1,5 +1,9 @@
 {
   "public": {
+    "domain": "consulwar.ru",
+    "helprace": {
+      "subdomain": "consulwar"
+    },
     "yandex": {
       "id": 123
     },
@@ -102,6 +106,9 @@
     "wrecks": {
       "priceCoefficient": 0.9
     }
+  },
+  "helprace": {
+    "secret": "xxx"
   },
   "recaptcha": {
     "privatekey": "ABCDEFGHIJKLMNOP"

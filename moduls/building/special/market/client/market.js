@@ -8,7 +8,7 @@ var activeFrom = new ReactiveVar(null);
 var activeTo = new ReactiveVar(null);
 
 Game.Building.special.Market.showWindow = function() {
-  Game.Popup.show('market');
+  Game.Popup.show({ templateName: 'market' });
 };
 
 Template.market.helpers({

@@ -27,7 +27,9 @@
     "eslint-plugin-react": "^6.10.3"
   },
   "babel": {
-    "plugins": ["transform-exponentiation-operator"]
+    "plugins": [
+      "transform-exponentiation-operator"
+    ]
   },
   "scripts": {
     "lint": "eslint ./imports;exit 0",

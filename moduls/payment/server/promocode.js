@@ -223,6 +223,7 @@ Meteor.methods({
        && !options.profit.cards
        && !options.profit.containers
        && !options.profit.houseItems
+       && !options.profit.personSkin
       ) {
         isProfitOk = false;
       }

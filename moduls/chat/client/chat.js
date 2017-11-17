@@ -1156,7 +1156,7 @@ Template.channelList.events({
 // ----------------------------------------------------------------------------
 
 Game.Chat.showHelpWindow = function() {
-   Game.Popup.show('chatHelp');
+  Game.Popup.show({ templateName: 'chatHelp' });
 };
 
 Template.chatHelp.onRendered(function() {
@@ -1191,12 +1191,15 @@ var balanceHistoryCount = new ReactiveVar(null);
 var balanceLoading = new ReactiveVar(false);
 
 Game.Chat.showBalanceWindow = function(roomName, credits) {
-   Game.Popup.show('chatBalance', {
+   Game.Popup.show({
+     templateName: 'chatBalance', 
+     data: {
       currentPage: 1,
       count: 20,
       roomName: roomName,
-      credits: credits
-   });
+      credits: credits,
+    },
+  });
 };
 
 var loadBalanceHistory = function(roomName, page, count) {
@@ -1255,9 +1258,12 @@ Template.chatBalance.events({
 var createPriceCredits = new ReactiveVar(null);
 
 Game.Chat.showControlWindow = function(username) {
-   Game.Popup.show('chatControl', {
-      username: username
-   });
+  Game.Popup.show({
+    templateName: 'chatControl', 
+    data: {
+      username: username,
+    },
+  });
 };
 
 var calculateCreatePriceCredits = function(t) {

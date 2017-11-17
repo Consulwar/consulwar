@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+
 initSettingsLib = function() {
 'use strict';
 
@@ -27,6 +29,19 @@ Game.Settings = {
     mobileVersion: [true, false],
     textUnits: [true, false],
     moveCompletedUnitToHangar: [true, false],
+    isMultiSkinEnabled: [false, true],
+  },
+
+  getOption({
+    name,
+    user = Meteor.user(),
+  }) {
+    return (
+         user
+      && user.settings
+      && user.settings.options
+      && user.settings.options[name]
+    );
   },
 };
 };

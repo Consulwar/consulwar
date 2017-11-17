@@ -1,7 +1,18 @@
 import initSpaceServer from '/imports/modules/space/server/index';
 import Reptiles from '/imports/modules/space/server/reptiles';
 
+import '/imports/modules/Person/server/methods';
+
 //BrowserPolicy.framing.allowAll();
+
+if (
+  !Meteor.settings.public.domain
+) {
+  throw new Meteor.Error(
+    'Ошибка в настройках',
+    'Не указан рабочий домен (см. settings.sample public.domain)',
+  );
+}
 
 BrowserPolicy.content.allowOriginForAll('*');
 BrowserPolicy.content.allowEval('*');
@@ -173,7 +184,7 @@ Meteor.methods({
 
 Meteor.publish('game', function () {
   if (this.userId) {
-    return Meteor.users.find({_id: this.userId}, {
+    return Meteor.users.find({ _id: this.userId }, {
       fields: {
         createdAt: 1,
         game: 1,
@@ -188,8 +199,9 @@ Meteor.publish('game', function () {
         achievements: 1,
         settings: 1,
         music: 1,
-        entranceReward: 1
-      }
+        entranceReward: 1,
+        Person: 1,
+      },
     });
   }
 });

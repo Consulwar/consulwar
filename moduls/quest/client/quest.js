@@ -1,3 +1,11 @@
+import persons from '/imports/content/Person/client/';
+import '/imports/client/ui/Person/image/PersonImage';
+
+const engNameToPerson = {};
+_(persons).values().forEach((person) => {
+  engNameToPerson[person.engName] = person;
+});
+
 initQuestClient = function () {
 'use strict';
 
@@ -16,11 +24,15 @@ Game.Quest.showDailyQuest = function() {
 
   if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
     // show inprogress daily quest
-    Game.Popup.show('quest', {
-      who: dailyQuest.who || 'tamily',
-      type: 'daily',
-      title: dailyQuest.name,
-      isPrompt: true
+    Game.Popup.show({
+      templateName: 'quest',
+      data: {
+        who: dailyQuest.who || 'tamily',
+        person: Game.Persons[dailyQuest.who || 'tamily'],
+        type: 'daily',
+        title: dailyQuest.name,
+        isPrompt: true,
+      },
     });
 
     // load full info
@@ -31,11 +43,15 @@ Game.Quest.showDailyQuest = function() {
     });
   } else {
     // show finished daily quest
-    Game.Popup.show('quest', {
-      who: dailyQuest.who || 'tamily',
-      type: 'daily',
-      title: dailyQuest.name, 
-      text: dailyQuest.result
+    Game.Popup.show({
+      templateName: 'quest',
+      data: {
+        who: dailyQuest.who || 'tamily',
+        person: Game.Persons[dailyQuest.who || 'tamily'],
+        type: 'daily',
+        title: dailyQuest.name, 
+        text: dailyQuest.result,
+      },
     });
   }
 };
@@ -48,19 +64,27 @@ Game.Quest.showQuest = function(id) {
 
   if (currentQuest.status == Game.Quest.status.FINISHED) {
     // quest finished, render reward popup
-    Game.Popup.show('reward', {
-      type: 'quest',
-      engName: currentQuest.engName,
-      who: currentQuest.who
+    Game.Popup.show({
+      templateName: 'reward',
+      data: {
+        type: 'quest',
+        engName: currentQuest.engName,
+        who: currentQuest.who,
+        person: Game.Persons[currentQuest.who],
+      },
     });
   } else {
     // quest not finished, render reqular quest window
-    Game.Popup.show('quest', {
-      type: 'quest',
-      engName: currentQuest.engName,
-      who: currentQuest.who,
-      title: currentQuest.name,
-      isPrompt: currentQuest.status == Game.Quest.status.PROMPT
+    Game.Popup.show({
+      templateName: 'quest',
+      data: {
+        type: 'quest',
+        engName: currentQuest.engName,
+        who: currentQuest.who,
+        person: Game.Persons[currentQuest.who],
+        title: currentQuest.name,
+        isPrompt: currentQuest.status == Game.Quest.status.PROMPT,
+      },
     });
   }
 
@@ -79,12 +103,16 @@ Game.Quest.showGreeteing = function(who) {
   loadedQuest.set(null);
 
   // show character greeting text
-  var text = Game.Persons[who].text;
+  var text = Game.Persons[who].defaultText;
   if (text && text.length > 0) {
-    Game.Popup.show('quest', {
-      who: who,
-      type: 'quest',
-      text: text
+    Game.Popup.show({
+      templateName: 'quest',
+      data: {
+        who,
+        person: Game.Persons[who],
+        type: 'quest',
+        text,
+      },
     });
   }
 };
@@ -135,7 +163,7 @@ Template.quest.helpers({
   },
 
   characterName: function(who) {
-    return Game.Persons[who] ? Game.Persons[who].name : null;
+    return engNameToPerson[who] ? engNameToPerson[who].title : null;
   }
 });
 

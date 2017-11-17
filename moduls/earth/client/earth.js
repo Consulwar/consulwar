@@ -509,8 +509,11 @@ Template.earthZonePopup.events({
   'click .btn-admin-panel': function (event, templateInstance) {
     const zoneName = templateInstance.$(event.currentTarget).attr('data-action');
 
-    Game.Popup.show('adminReptileChange', {
-      zoneName,
+    Game.Popup.show({
+      templateName: 'adminReptileChange',
+      data: {
+        zoneName,
+      },
     });
   },
 });

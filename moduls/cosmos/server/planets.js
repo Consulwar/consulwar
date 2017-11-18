@@ -4,6 +4,8 @@ import Game from '/moduls/game/lib/main.game';
 import Config from '/imports/modules/Space/server/config';
 import PlanetGeneration from '/imports/modules/Space/lib/planetGeneration';
 import Space from '/imports/modules/Space/lib/space';
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 
 const {
   calcSegmentRandomPoints,
@@ -665,17 +667,10 @@ Game.Planets.discover = function(planetId, userId = Meteor.userId()) {
 Meteor.methods({
   'planet.initialize': function() {
     // For planets initialization Meteor.user() required!
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.initialize');
+    Log.method.call(this, { name: 'planet.initialize', user });
 
     var planets = Game.Planets.getAll().fetch();
 
@@ -731,17 +726,10 @@ Meteor.methods({
   },
 
   'planet.discover': function(planetId) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.discover');
+    Log.method.call(this, { name: 'planet.discover', user });
 
     check(planetId, String);
 
@@ -771,17 +759,10 @@ Meteor.methods({
   },
 
   'planet.collectArtefacts': function(planetId, cardsObject) {
-    let user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.collectArtefacts:');
+    Log.method.call(this, { name: 'planet.collectArtefacts:', user });
 
     check(planetId, String);
 
@@ -834,17 +815,10 @@ Meteor.methods({
   },
 
   'planet.changeName': function(planetId, name) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.changeName');
+    Log.method.call(this, { name: 'planet.changeName', user });
 
     check(planetId, String);
     check(name, String);
@@ -888,17 +862,10 @@ Meteor.methods({
   },
 
   'planet.buyExtraColony': function() {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.buyExtraColony');
+    Log.method.call(this, { name: 'planet.buyExtraColony', user });
 
     if (Game.Planets.getExtraColoniesCount >= Game.Planets.MAX_EXTRA_COLONIES) {
       throw new Meteor.Error('Больше нельзя купить дополнительных колоний');

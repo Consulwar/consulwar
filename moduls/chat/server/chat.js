@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 import makeFun from '/imports/modules/Space/server/makeFun';
 
 initChatServer = function() {
@@ -155,19 +158,12 @@ var getAccessLevel = function(user, room) {
 
 Meteor.methods({
   'chat.sendMessage': function(message, roomName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.sendMessage');
+    Log.method.call(this, { name: 'chat.sendMessage', user });
 
     if (!Game.User.haveVerifiedEmail()) {
       throw new Meteor.Error('Сперва нужно верифицировать email');
@@ -461,19 +457,12 @@ Meteor.methods({
   },
 
   'chat.blockUser': function(options) {
-    var user = Meteor.user();
-
-    if (!user && !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.blockUser');
+    Log.method.call(this, { name: 'chat.blockUser', user });
 
     if (!options || !options.username) {
       throw new Meteor.Error('Не указан логин');
@@ -629,17 +618,10 @@ Meteor.methods({
   },
 
   'chat.banAccount': function(username) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'chat.banAccount');
+    Log.method.call(this, { name: 'chat.banAccount', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -663,17 +645,10 @@ Meteor.methods({
   },
 
   'chat.cheaterVaip': function(username) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'chat.cheaterVaip');
+    Log.method.call(this, { name: 'chat.cheaterVaip', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -720,19 +695,12 @@ Meteor.methods({
   },
 
   'chat.createRoom': function(title, url, isPublic, isOwnerPays) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.createRoom');
+    Log.method.call(this, { name: 'chat.createRoom', user });
 
     // check room name
     check(title, String);
@@ -808,19 +776,12 @@ Meteor.methods({
   },
 
   'chat.removeRoom': function(name) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.removeRoom');
+    Log.method.call(this, { name: 'chat.removeRoom', user });
 
     check(name, String);
 
@@ -854,17 +815,10 @@ Meteor.methods({
   },
 
   'chat.buyFreeChat': function() {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'chat.buyFreeChat');
+    Log.method.call(this, { name: 'chat.buyFreeChat', user });
 
     var resources = Game.Resources.getValue();
 
@@ -884,17 +838,10 @@ Meteor.methods({
   },
 
   'chat.addCreditsToRoom': function(roomName, credits) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'chat.addCreditsToRoom');
+    Log.method.call(this, { name: 'chat.addCreditsToRoom', user });
 
     check(credits, Match.Integer);
 
@@ -972,19 +919,12 @@ Meteor.methods({
   },
 
   'chat.changeDiceModifierForRoom': function(roomName, modifier) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.changeDiceModifierForRoom');
+    Log.method.call(this, { name: 'chat.changeDiceModifierForRoom', user });
 
     check(roomName, String);
     check(modifier, Match.Integer);
@@ -1044,19 +984,12 @@ Meteor.methods({
   },
 
   'chat.changeMinRating': function(roomName, minRating) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.changeMinRating');
+    Log.method.call(this, { name: 'chat.changeMinRating', user });
 
     check(roomName, String);
     check(minRating, Match.Integer);
@@ -1116,19 +1049,12 @@ Meteor.methods({
   },
 
   'chat.addModeratorToRoom': function(roomName, username) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.addModeratorToRoom');
+    Log.method.call(this, { name: 'chat.addModeratorToRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1203,19 +1129,12 @@ Meteor.methods({
   },
 
   'chat.removeModeratorFromRoom': function(roomName, username) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.removeModeratorFromRoom');
+    Log.method.call(this, { name: 'chat.removeModeratorFromRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1272,19 +1191,12 @@ Meteor.methods({
   },
 
   'chat.addUserToRoom': function(roomName, username) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.addUserToRoom');
+    Log.method.call(this, { name: 'chat.addUserToRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1358,19 +1270,12 @@ Meteor.methods({
   },
 
   'chat.removeUserFromRoom': function(roomName, username) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     checkHasGlobalBan(user._id);
 
-    Game.Log.method.call(this, 'chat.removeUserFromRoom');
+    Log.method.call(this, { name: 'chat.removeUserFromRoom', user });
 
     check(roomName, String);
     check(username, String);
@@ -1445,17 +1350,10 @@ Meteor.methods({
   },
 
   'chat.loadMore': function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'chat.loadMore');
+    Log.method.call(this, { name: 'chat.loadMore', user });
 
     check(options, Object);
     check(options.roomName, String);
@@ -1510,17 +1408,10 @@ Meteor.methods({
   },
 
   'chat.getRoomsList': function() {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'chat.getRoomsList');
+    Log.method.call(this, { name: 'chat.getRoomsList', user });
 
     return Game.Chat.Room.Collection.find({
       isOfficial: { $ne: true },
@@ -1533,15 +1424,8 @@ Meteor.methods({
   },
 
   'chat.setupRoomsVisibility': function(rooms) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(rooms, Object);
 
@@ -1574,15 +1458,8 @@ Meteor.methods({
   },
 
   'chat.getBalanceHistory': function(roomName, page, count) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(roomName, String);
 

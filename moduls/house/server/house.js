@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initHouseServer = function() {
 'use strict';
 
@@ -73,17 +76,10 @@ Game.House.update = function(data) {
 
 Meteor.methods({
   'house.buyItem': function(group, id) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'house.buyItem');
+    Log.method.call(this, { name: 'house.buyItem', user });
 
     // check config
     if (!Game.House.items[group] || !Game.House.items[group][id]) {
@@ -141,17 +137,10 @@ Meteor.methods({
   },
 
   'house.placeItem': function(group, id) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'house.placeItem');
+    Log.method.call(this, { name: 'house.placeItem', user });
 
     var house = Game.House.getValue();
 
@@ -172,17 +161,10 @@ Meteor.methods({
   },
 
   'house.getPlacedItems': function(login) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'house.getPlacedItems');
+    Log.method.call(this, { name: 'house.getPlacedItems', user });
 
     check(login, String);
 

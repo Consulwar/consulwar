@@ -1,3 +1,6 @@
+import '/imports/modules/Person/server';
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 import initSpaceServer from '/imports/modules/Space/server/index';
 import Reptiles from '/imports/modules/Space/server/reptiles';
 
@@ -93,7 +96,6 @@ Meteor.startup(function () {
   initCheatsServer();
   initDDPLimiter();
   initAllianceServer();
-  initGameLog();
 
   SyncedCron.start();
   initSpaceServer();
@@ -146,19 +148,12 @@ Router.route('/unsubscribe', function() {
 
 Meteor.methods({
   actualizeGameInfo: function() {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     Game.BackReward.getReward();
 
-    Game.Log.method.call(this, 'Actualize');
+    Log.method.call(this, { name: 'Actualize', user });
 
     // Update queue tasks and resources
     var needToCheckAgain = Game.Queue.checkAll();
@@ -173,8 +168,8 @@ Meteor.methods({
     return true;
   },
 
-  getCurrentTime: function() {
-    console.log('getCurrentTime: ', new Date(), this.connection.clientAddress);
+  getCurrentTime: function () {
+    Log.method.call(this, { name: 'getCurrentTime' });
     return {
       now: new Date().valueOf(),
       midnight: Game.getMidnightDate()

@@ -1,3 +1,5 @@
+import User from '/imports/modules/User/server/User';
+
 initUnitServerSquad = function() {
 'use strict';
 
@@ -57,15 +59,8 @@ Game.Unit.remove = function(slot) {
 
 Meteor.methods({
   'squad.setName': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(options, Match.ObjectIncluding({
       slot: Match.Where(function(slot) {
@@ -91,15 +86,8 @@ Meteor.methods({
   }, 
 
   'squad.setIcon': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(options, Match.ObjectIncluding({
       slot: Match.Where(function(slot) {
@@ -124,15 +112,8 @@ Meteor.methods({
   },
 
   'squad.setUnits': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(options, Match.ObjectIncluding({
       slot: Match.Where(function(slot) {
@@ -163,15 +144,8 @@ Meteor.methods({
   },
 
   'squad.remove': function(options) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(options, Match.ObjectIncluding({
       slot: Match.Where(function(slot) {

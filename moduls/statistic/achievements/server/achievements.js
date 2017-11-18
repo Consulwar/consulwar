@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initStatisticAchievementsServer = function() {
 'use strict';
 
@@ -5,17 +8,10 @@ initStatisticAchievementsLib();
 
 Meteor.methods({
   'achievements.complete': function(completed) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'achievements.complete');
+    Log.method.call(this, { name: 'achievements.complete', user });
 
     var statistic = Game.Statistic.getUser();
     var achievements = Game.Achievements.getValue();
@@ -62,21 +58,14 @@ Meteor.methods({
   },
 
   'achievements.give': function(username, achievementGroup, achievementId, level) {
-    var user = Meteor.user();
-
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
     }
 
-    Game.Log.method.call(this, 'achievements.give');
+    Log.method.call(this, { name: 'achievements.give', user });
 
     check(username, String);
     check(achievementId, String);

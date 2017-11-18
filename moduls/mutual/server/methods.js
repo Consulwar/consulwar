@@ -1,19 +1,15 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initMutualServerMethods = function(){
 'use strict';
 
 Meteor.methods({
   'mutual.invest': function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'mutual.invest');
+    Log.method.call(this, { name: 'mutual.invest', user });
 
     if (Game.User.getLevel() < 1) {
       throw new Meteor.Error('Чтобы участвовать в общих исследованиях, нужно подрасти');

@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initCardsServer = function() {
 'use strict';
   
@@ -136,17 +139,10 @@ Meteor.methods({
   },
 
   'cards.buy': function(id) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'cards.buy');
+    Log.method.call(this, { name: 'cards.buy', user });
 
     var item = Game.Cards.getItem(id);
     if (!item) {
@@ -190,17 +186,10 @@ Meteor.methods({
   },
 
   'cards.activate': function(id) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
     
-    Game.Log.method.call(this, 'cards.activate');
+    Log.method.call(this, { name: 'cards.activate', user });
 
     var item = Game.Cards.getItem(id);
     if (!item) {

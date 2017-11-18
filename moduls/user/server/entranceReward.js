@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initEntranceRewardServer = function() {
 'use strict';
 
@@ -64,15 +67,8 @@ Game.EntranceReward.getProfit = function() {
 Meteor.methods({
   // TODO: add cache system on frontend to load only necessary data
   'entranceReward.getHistory': function(page = 0) {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(page, Match.Integer);
 
@@ -103,21 +99,14 @@ Meteor.methods({
       history.push.apply(history, unclaimed);
     }
 
-    Game.Log.method.call(this, 'entranceReward.getHistory');
+    Log.method.call(this, { name: 'entranceReward.getHistory', user });
 
     return history;
   },
 
   'entranceReward.takeReward': function() {
-    let user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     let currentDate = Game.getMidnightDate();
 

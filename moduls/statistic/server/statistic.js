@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initStatisticServer = function() {
 'use strict';
 
@@ -192,17 +195,10 @@ Game.Statistic.getUserPositionInRating = function(type, user) {
 
 Meteor.methods({
   'statistic.fixGame': function() {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'statistic.fixGame');
+    Log.method.call(this, { name: 'statistic.fixGame', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Нужны права администратора');
@@ -212,17 +208,10 @@ Meteor.methods({
   },
 
   'statistic.fixUser': function(username) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'statistic.fixUser');
+    Log.method.call(this, { name: 'statistic.fixUser', user });
 
     if (['admin', 'helper'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Нужны права администратора или модератора');
@@ -242,15 +231,8 @@ Meteor.methods({
   },
 
   'statistic.getUserPositionInRating': function(type, selectedUserName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(selectedUserName, String);
     check(type, String);
@@ -265,23 +247,16 @@ Meteor.methods({
       throw new Meteor.Error('Пользователя с именем ' + selectedUserName + ' не существует');
     }
     
-    Game.Log.method.call(this, 'statistic.getUserPositionInRating');
+    Log.method.call(this, { name: 'statistic.getUserPositionInRating', user });
 
     return Game.Statistic.getUserPositionInRating(type, selectedUser);
   },
 
   'statistic.getPageInRating': function(type, page, countPerPage) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'statistic.getPageInRating');
+    Log.method.call(this, { name: 'statistic.getPageInRating', user });
 
     check(page, Match.Integer);
     check(countPerPage, Match.Integer);
@@ -333,15 +308,8 @@ Meteor.methods({
   },
 
   'statistic.getUserStatistic': function(userName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(userName, String);
 
@@ -391,15 +359,8 @@ Meteor.methods({
   },
 
   'statistic.getUserInfo': function(userName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     check(userName, String);
 

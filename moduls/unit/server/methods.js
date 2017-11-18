@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 import FlightEvents from '/imports/modules/Space/server/flightEvents';
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
@@ -8,17 +11,10 @@ initUnitServerMethods = function() {
 
 Meteor.methods({
   'unit.build': function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'unit.build');
+    Log.method.call(this, { name: 'unit.build', user });
 
     check(options, Object);
     check(options.group, String);
@@ -107,17 +103,10 @@ Meteor.methods({
   },
 
   'unit.speedup': function(options) {
-    let user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'unit.speedup');
+    Log.method.call(this, { name: 'unit.speedup', user });
 
     check(options, Object);
     check(options.group, String);
@@ -176,17 +165,10 @@ Meteor.methods({
   },
 
   'unit.instantDamage': function(options) {
-    let user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'unit.instantDamage');
+    Log.method.call(this, { name: 'unit.instantDamage', user });
 
     let cardsObject = {};
     let cardList = [];
@@ -448,17 +430,10 @@ Meteor.methods({
     check(page, Match.Integer);
     check(count, Match.Integer);
 
-    var user = Meteor.user();
-    
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'battleHistory.getPage');
+    Log.method.call(this, { name: 'battleHistory.getPage', user });
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');
@@ -476,17 +451,10 @@ Meteor.methods({
   'battleHistory.getById': function(id, isEarth) {
     check(id, String);
 
-    var user = Meteor.user();
-    
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'battleHistory.getById');
+    Log.method.call(this, { name: 'battleHistory.getById', user });
 
     return Game.BattleHistory.Collection.findOne({
       _id: id,

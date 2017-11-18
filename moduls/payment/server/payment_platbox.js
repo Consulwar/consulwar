@@ -1,3 +1,5 @@
+import User from '/imports/modules/User/server/User';
+
 initPaymentPlatboxServer = function() {
 'use strict';
 
@@ -393,15 +395,8 @@ var signString = function(str) {
 
 Meteor.methods({
   'platbox.getPaymentUrl': function(id) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     console.log('platbox.getPaymentUrl: ', new Date(), user.username);
 

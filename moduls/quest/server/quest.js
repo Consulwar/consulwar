@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initQuestServer = function() {
 'use strict';
 
@@ -154,15 +157,8 @@ Game.Quest.initialize = function(user, isRewrite) {
 };
 
 Game.Quest.actualize = function() {
-  var user = Meteor.user();
-
-  if (!user || !user._id) {
-    throw new Meteor.Error('Требуется авторизация');
-  }
-
-  if (user.blocked === true) {
-    throw new Meteor.Error('Аккаунт заблокирован');
-  }
+    const user = User.getById();
+    User.checkAuth({ user });
 
   var quests = Game.Quest.getValue();
 
@@ -239,15 +235,8 @@ Game.Quest.actualize = function() {
 
 Meteor.methods({
   'quests.sendAction': function(questId, action) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     var quests = Game.Quest.getValue();
 
@@ -275,17 +264,10 @@ Meteor.methods({
   },
 
   'quests.getReward': function(questId) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'quests.getReward');
+    Log.method.call(this, { name: 'quests.getReward', user });
 
     var quests = Game.Quest.getValue();
 
@@ -336,17 +318,10 @@ Meteor.methods({
   },
 
   'quests.getInfo': function(questId, stepName) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'quests.getInfo');
+    Log.method.call(this, { name: 'quests.getInfo', user });
 
     var questLine = Game.Quest.regularQuests[questId];
 
@@ -363,17 +338,10 @@ Meteor.methods({
   },
 
   'quests.getDailyInfo': function() {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'quests.getDailyInfo');
+    Log.method.call(this, { name: 'quests.getDailyInfo', user });
 
     var quests = Game.Quest.getValue();
 
@@ -398,17 +366,10 @@ Meteor.methods({
   },
 
   'quests.sendDailyAnswer': function(answer) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'quests.sendDailyAnswer');
+    Log.method.call(this, { name: 'quests.sendDailyAnswer', user });
 
     var quests = Game.Quest.getValue();
 

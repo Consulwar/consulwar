@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initPaymentServer = function() {
 'use strict';
 
@@ -89,17 +92,10 @@ Game.Payment.Expense.log = function(credits, type, info, uid) {
 
 Meteor.methods({
   'user.getPaymentIncomeHistory': function(page, count) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'user.getPaymentIncomeHistory');
+    Log.method.call(this, { name: 'user.getPaymentIncomeHistory', user });
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');
@@ -117,17 +113,10 @@ Meteor.methods({
   },
 
   'user.getPaymentExpenseHistory': function(page, count) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'user.getPaymentIncomeHistory');
+    Log.method.call(this, { name: 'user.getPaymentIncomeHistory', user });
 
     if (count > 100) {
       throw new Meteor.Error('Много будешь знать – скоро состаришься');

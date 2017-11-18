@@ -1323,8 +1323,7 @@ game.Function = function(options) {
 };
 
 Game.functions = {};
-
-initFunctionsContent();
+Meteor.startup(() => initFunctionsContent());
 
 Game.Helpers = {
   formatHours: function(timestamp, offset) {

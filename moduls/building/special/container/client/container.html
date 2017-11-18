@@ -17,13 +17,13 @@
     </div>
     <div class="top"></div>
     <div class="bottom"></div>
-    {{#if lt amount 1}}
+    {{#if lt count 1}}
       <div class="resources">
         <div class="credits">{{credits}}</div>
       </div>
     {{else}}
       <div class="amount">
-        Бесплатных контейнеров: {{amount}}
+        Бесплатных контейнеров: {{count}}
       </div>
     {{/if}}
     <div class="open">Открыть</div>

@@ -1,3 +1,5 @@
+import containers from '/imports/content/Container/Fleet/client/';
+
 initBuildingSpecialContainerClient = function() {
 'use strict';
 
@@ -53,11 +55,11 @@ Template.containers.helpers({
   },
 
   credits: function() {
-    return Game.Building.special.Container.items.defaultContainer.getPrice().credits;
+    return containers['Container/Fleet/Small'].getPrice().credits;
   },
 
-  amount: function() {
-    return Game.Building.special.Container.items.defaultContainer.amount();
+  count: function() {
+    return containers['Container/Fleet/Small'].getCount();
   }
 });
 
@@ -79,28 +81,39 @@ Template.containers.events({
       return;
     }
 
-    var item = Game.Building.special.Container.items.defaultContainer;
+    var item = containers['Container/Fleet/Small'];
 
-    if (item.amount() <= 0 && !item.checkPrice()) {
+    if (item.getCount() <= 0 && !item.isEnoughResources()) {
       Notifications.error('Недостаточно средств');
       return;
     }
 
+
     isLoading.set(true);
-    Meteor.call('containers.open', item.engName, function(err, profit) {
-      isLoading.set(false);
-      if (err) {
-        Notifications.error('Не удалось открыть контейнер', err.error);
-        return;
-      }
-      // show reward
-      if (profit && profit.units && profit.units) {
-        var group = _.keys(profit.units)[0];
-        var engName = _.keys(profit.units[group])[0];
-        rewardUnit.set(Game.Unit.items.army[group][engName]);
-        startAnimation(t);
-      }
-    });
+    if (item.getCount() <= 0) {
+      Meteor.call('Building/Residential/SpacePort.buyContainer', { id: item.id }, (err) => {
+        isLoading.set(false);
+        if (err) {
+          Notifications.error('Не удалось купить контейнер', err.error);
+          return;
+        }
+      });
+    } else {
+      Meteor.call('Building/Residential/SpacePort.openContainer', { id: item.id }, (err, profit) => {
+        isLoading.set(false);
+        if (err) {
+          Notifications.error('Не удалось открыть контейнер', err.error);
+          return;
+        }
+        // show reward
+        if (profit && profit.units && profit.units) {
+          var group = _.keys(profit.units)[0];
+          var engName = _.keys(profit.units[group])[0];
+          rewardUnit.set(Game.Unit.items.army[group][engName]);
+          startAnimation(t);
+        }
+      });
+    }
   }
 });
 

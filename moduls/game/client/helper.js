@@ -1,3 +1,5 @@
+import helpers from '/imports/client/ui/helpers';
+
 Meteor.startup(function() {
 'use strict';
 
@@ -293,66 +295,9 @@ var iso = {
   8: 'Y'
 };
 
-UI.registerHelper('formatNumberWithISO', function(price, limit) {
-  if (!_.isNumber(price)) {
-    return price;
-  }
+UI.registerHelper('formatNumberWithISO', helpers.formatNumberWithIso);
 
-  limit = (_.isNumber(limit) 
-    ? limit < 3
-      ? 3
-      : limit
-    : 5);
-
-  var exponent = 0;
-  var rest = 0;
-  while (price.toString().length > limit) {
-    rest = price % 1000;
-    price = Math.floor(price / 1000);
-    exponent++;
-  }
-
-  rest = ('00' + rest.toString()).substr(-3);
-  price = price.toString();
-
-  if (price.length <= limit - 2 && rest.substr(1, 1) !== '0') {
-    rest = '.' + rest.substr(0, 2);
-  } else if (price.length <= limit - 1 && rest.substr(0, 1) !== '0') {
-    rest = '.' + rest.substr(0, 1);
-  } else {
-    price = Math.round(price + '.' + rest).toString();
-    rest = '';
-  }
-
-  price = price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-
-  if (iso[exponent] === undefined) {
-    return 'o_O ??';
-  }
-
-  return price + rest + iso[exponent];
-});
-
-var formatNumber = function (num, delimeter) {
-  delimeter = delimeter || '';
-
-  num = _.isObject(num) || _.isArray(num) ? num : [num];
-
-  return _.map(num, function(value) {
-    if (_.isNumber(value)) {
-      value = parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0], 10);
-      if (value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0].substr(-1) !== '0') {
-        value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
-      } else if (value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0].substr(-1) !== '0') {
-        value = value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0];
-      }
-    }
-    value = value.toString();
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  }).join(delimeter);
-};
-
-UI.registerHelper('formatNumber', formatNumber);
+UI.registerHelper('formatNumber', helpers.formatNumber);
 
 
 var getEffectsTooltip = function(price, effects, target, invert, side, isShowCurrent) {
@@ -373,7 +318,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side, isShowCur
     if (target == 'time') {
       return Game.Helpers.formatSeconds(value);
     } else {
-      return formatNumber(value, ' - ');
+      return helpers.formatNumber(value, ' - ');
     }
   };
 

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import StatsD from 'hot-shots';
-import UserStatus from 'meteor/mizzao:user-status';
+import { UserStatus } from 'meteor/mizzao:user-status';
 import Game from '/moduls/game/lib/main.game';
 import userCollection from '/imports/modules/User/lib/collection';
 

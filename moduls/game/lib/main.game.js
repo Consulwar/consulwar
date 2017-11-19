@@ -1456,4 +1456,5 @@ Game.Helpers = {
   },
 };
 
+export { game };
 export default Game;

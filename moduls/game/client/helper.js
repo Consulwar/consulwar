@@ -295,10 +295,17 @@ var iso = {
   8: 'Y'
 };
 
-UI.registerHelper('formatNumberWithISO', helpers.formatNumberWithIso);
+UI.registerHelper('formatNumberWithISO', (number, limit) => (
+  _.isNumber(limit)
+    ? helpers.formatNumberWithIso(number, limit)
+    : helpers.formatNumberWithIso(number)
+));
 
-UI.registerHelper('formatNumber', helpers.formatNumber);
-
+UI.registerHelper('formatNumber', (number, delimeter) => (
+  _.isString(delimeter)
+    ? helpers.formatNumber(number, delimeter)
+    : helpers.formatNumber(number)
+));
 
 var getEffectsTooltip = function(price, effects, target, invert, side, isShowCurrent) {
   if (price.base === undefined) {

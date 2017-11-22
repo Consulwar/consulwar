@@ -894,17 +894,10 @@ Meteor.methods({
   },
 
   'planet.startMining'(planetId) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.startMining');
+    Log.method.call(this, { name: 'planet.startMining', user });
 
     check(planetId, String);
 
@@ -929,17 +922,10 @@ Meteor.methods({
   },
 
   'planet.stopMining'(planetId) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'planet.stopMining');
+    Log.method.call(this, { name: 'planet.stopMining', user });
 
     check(planetId, String);
 

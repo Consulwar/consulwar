@@ -1,3 +1,6 @@
+import { Meteor } from 'meteor/meteor';
+import Game from '/moduls/game/lib/main.game';
+
 import Space from '/imports/modules/Space/client/space';
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import Utils from '/imports/modules/Space/lib/utils';
@@ -5,6 +8,9 @@ import calcAttackOptions from '/imports/modules/Space/lib/calcAttackOptions';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 
 import PlanetGeneration from '/imports/modules/Space/lib/planetGeneration';
+
+import PathView from '/imports/modules/Space/client/PathView';
+import Ship from '/imports/modules/Space/client/Ship';
 
 const {
   calcDistanceByTime,
@@ -1600,7 +1606,85 @@ Template.cosmosAttackMenu.events({
 // Cosmos map content
 // ----------------------------------------------------------------------------
 
-Game.Cosmos.renderCosmosObjects = function() {
+const ships = [];
+
+Game.Cosmos.renderPlanets = function(
+  shipsLayer,
+  planets = Game.Planets.getAll().fetch(),
+  offset = [0, 0],
+) {
+  planets.forEach((planet) => {
+    const color = (
+      planet.status === Game.Planets.STATUS.HUMANS
+        ? '#c6e84c'
+        : (
+          planet.status === Game.Planets.STATUS.REPTILES
+            ? '#dc6257'
+            : '#ffffff'
+        )
+    );
+    const radius = 0.01 + (planet.size / 20);
+    const circle = L.circle(
+      [planet.x + offset[0], planet.y + offset[1]],
+      {
+        radius,
+        color,
+        fillOpacity: 0.8,
+      },
+    ).addTo(mapView);
+
+    circle.on('mouseover', function() {
+      if (!isPopupLocked) {
+        Game.Cosmos.showPlanetPopup(planet._id);
+      }
+    });
+
+    circle.on('mouseout', function() {
+      if (!isPopupLocked) {
+        Game.Cosmos.hidePlanetPopup();
+      }
+    });
+
+    circle.on('click', function(event) {
+      Game.Cosmos.showPlanetInfo(planet._id);
+      L.DomEvent.stopPropagation(event);
+    });
+
+    if (planet.mission || planet.armyId) {
+      const ship = new Ship({
+        isStatic: true,
+        planet,
+        planetRadius: radius,
+        mapView,
+        shipsLayer,
+      });
+
+      ships.push(ship);
+    }
+  });
+
+  window.ships = ships;
+};
+
+Game.Cosmos.renderFleets = function(
+  shipsLayer,
+  fleets = FlightEvents.getFleetsEvents().fetch()
+) {
+  fleets.forEach((fleet) => {
+    const ship = new Ship({
+      isStatic: false,
+      eventId: fleet._id,
+      fleet,
+      mapView,
+      shipsLayer,
+      path: pathViews[fleet._id],
+    });
+
+    ships.push(ship);
+  });
+};
+
+Game.Cosmos.renderCosmosObjects_ = function() {
   // Add layer for markers
   $(mapView.getContainer()).append('<div class="leaflet-marker-pane"></div>');
  
@@ -1672,6 +1756,8 @@ var getFleetAnimation = function(fleet) {
   var coords =  mapView.latLngToLayerPoint(new L.latLng(curPoint.x, curPoint.y));
 
   return {
+    lat: curPoint.x,
+    lng: curPoint.y,
     x: coords.x,
     y: coords.y,
     angle: angleDeg
@@ -1798,30 +1884,33 @@ Template.cosmos.onRendered(function() {
     inertia: false,
     center: [0, 0],
     zoom: 7,
-    minZoom: 2, //3
-    maxZoom: 10
+    minZoom: -10,
+    maxZoom: 10,
   });
 
-  zoom.set( mapView.getZoom() );
-  mapView.on('zoomend', function(e) {
-    zoom.set( mapView.getZoom() );
-  }.bind(this));
+  const pathsLayer = L.layerGroup().addTo(mapView);
+  const shipsLayer = L.layerGroup().addTo(mapView);
 
-  bounds.set( mapView.getBounds() );
-  mapView.on('moveend', function(e) {
-    bounds.set( mapView.getBounds() );
-  }.bind(this));
+  zoom.set(mapView.getZoom());
+  mapView.on('zoomend', function() {
+    zoom.set(mapView.getZoom());
+  });
+
+  bounds.set(mapView.getBounds());
+  mapView.on('moveend', function() {
+    bounds.set(mapView.getBounds());
+  });
 
   // Init planets
-  var alignMapToBasePlanet = function() {
-    var homePlanet = Game.Planets.getBase();
+  const alignMapToBasePlanet = function() {
+    const homePlanet = Game.Planets.getBase();
     if (homePlanet) {
       mapView.setView([homePlanet.x, homePlanet.y], 7);
     }
     isLoading.set(false);
   };
 
-  var planets = Game.Planets.getAll().fetch();
+  const planets = Game.Planets.getAll().fetch();
   if (planets.length === 0) {
     Meteor.call('planet.initialize', function(err, data) {
       alignMapToBasePlanet();
@@ -1837,15 +1926,13 @@ Template.cosmos.onRendered(function() {
     }
 
     // draw path
-    pathViews[id] = new game.PathView(
-      mapView,
+    pathViews[id] = new PathView(
+      pathsLayer,
       event.data.startPosition,
       event.data.targetPosition,
-      0,
-      0,
       (event.data.isHumans ? '#c6e84c' : '#ff7566'),
       id,
-      pathViews
+      pathViews,
     );
   };
 
@@ -1860,6 +1947,16 @@ Template.cosmos.onRendered(function() {
     added: function(id, event) {
       if (event.type === FlightEvents.EVENT_TYPE) {
         createPath(id, event);
+        const ship = new Ship({
+          isStatic: false,
+          eventId: id,
+          fleet: event,
+          mapView,
+          shipsLayer,
+          path: pathViews[id],
+        });
+
+        ships.push(ship);
       }
     },
 
@@ -1869,7 +1966,7 @@ Template.cosmos.onRendered(function() {
   });
 
   // Render cosmos objects
-  Game.Cosmos.renderCosmosObjects.call(this);
+  Game.Cosmos.renderPlanets(shipsLayer, planets);
 
   // Show default side info
   //Game.Cosmos.showFleetsInfo();
@@ -1877,6 +1974,8 @@ Template.cosmos.onRendered(function() {
   mapView.on('click', function(e) {
     Game.Cosmos.hidePlanetPopup();
   });
+
+  Game.Cosmos.renderFleets(shipsLayer);
 
   // Scroll to space object on hash change
   this.autorun(function() {

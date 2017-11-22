@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Game from '/moduls/game/lib/main.game';
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 import Space from '../lib/space';
 import calcAttackOptions from '../lib/calcAttackOptions';
 import Utils from '../lib/utils';
@@ -11,17 +13,10 @@ import BattleEvents from './battleEvents';
 
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units, targetX, targetY) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'space.attackReptileFleet');
+    Log.method.call(this, { name: 'space.attackReptileFleet', user });
 
     check(baseId, String);
     check(targetId, String);
@@ -125,17 +120,10 @@ Meteor.methods({
   },
 
   'space.sendFleet'(baseId, targetType, targetId, units, isOneway) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'space.sendFleet');
+    Log.method.call(this, { name: 'space.sendFleet', user });
 
     check(baseId, String);
     check(targetType, Number);
@@ -239,17 +227,10 @@ Meteor.methods({
   },
 
   'space.moveFromSpaceToHangar'() {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'space.moveToHangar');
+    Log.method.call(this, { name: 'space.moveToHangar', user });
 
     if (!Space.canMoveFromSpaceToHangar(user)) {
       throw new Meteor.Error('Перемещение флота недоступно.');
@@ -271,17 +252,10 @@ Meteor.methods({
   },
 
   'space.moveFromHangarToSpace'(army) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'space.moveFromHangarToSpace');
+    Log.method.call(this, { name: 'space.moveFromHangarToSpace', user });
 
     check(army, Object);
 

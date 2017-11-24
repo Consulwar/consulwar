@@ -1,3 +1,4 @@
+import Game from '/moduls/game/lib/main.game';
 import Utils from './utils';
 
 const {
@@ -25,7 +26,7 @@ export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeC
     y: targetShip.data.startPosition.y,
   };
 
-  const targetShipTime = timeCurrent - targetShip.created;
+  const targetShipTime = timeCurrent - Game.dateToTime(targetShip.created);
   const targetShipSpeed = calcMaxSpeed(targetShip.data.engineLevel);
   const targetShipAcc = calcAcceleration(targetShip.data.engineLevel);
 

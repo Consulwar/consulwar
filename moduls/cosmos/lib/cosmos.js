@@ -85,7 +85,7 @@ Game.Planets = {
   getPlanetsWithArmy(userId = Meteor.userId()) {
     return Game.Planets.Collection.find({
       user_id: userId,
-      armyId: { $exists: true },
+      armyId: { $exists: true, $ne: null },
     }).fetch();
   },
 

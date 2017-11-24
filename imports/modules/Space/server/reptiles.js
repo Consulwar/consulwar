@@ -79,7 +79,7 @@ const actualizeTradeFleets = function() {
   // find fleets and group by sector
   Space.collection.find({
     'data.userId': Meteor.userId(),
-    status: { $ne: 'completed' },
+    status: Space.filterActive,
   });
 
   const fleets = Space.collection.find({
@@ -228,7 +228,6 @@ const sendReptileFleetToPlanet = function({
       startPlanetId: startPlanet._id,
       targetPosition,
       targetId: targetPlanet._id,
-      startTime: timeCurrent,
       flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
       isHumans: false,
       isOneway: false,

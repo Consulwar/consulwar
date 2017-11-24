@@ -5,6 +5,7 @@ import Config from './config';
 
 const jobs = new JobCollection('spaceEvents');
 const collection = jobs; // для более внятного использования
+const filterActive = { $nin: ['completed', 'cancelled'] };
 
 const getCurrentFleetsCount = function(userId = Meteor.userId()) {
   return Game.Unit.Collection.find({
@@ -32,6 +33,7 @@ const canMoveFromSpaceToHangar = function(user = Meteor.user()) {
 export default {
   jobs,
   collection,
+  filterActive,
   getMaxFleetCount,
   canSendFleet,
   canMoveFromSpaceToHangar,

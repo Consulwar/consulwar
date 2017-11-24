@@ -319,10 +319,6 @@ Deps.autorun(function(){
   }
 });*/
 
-const dateToTime = function (date) {
-  return Math.floor(new Date(date).getTime() / 1000);
-};
-
 var helpers = {
   currentRouteName: function() { return Router.current().route.getName(); },
   information: function() {
@@ -391,7 +387,7 @@ var helpers = {
     var attackTime = null;
 
     for (var i = 0; i < fleets.length; i++) {
-      const after = dateToTime(fleets[i].after);
+      const after = Game.dateToTime(fleets[i].after);
       if (fleets[i].data.isHumans) {
         consul++;
         if (consulTime > after) {
@@ -427,7 +423,7 @@ var helpers = {
 
     return {
       reinforcements: reinforcements.length,
-      reinforcementsTime: reinforcements.length > 0 ? dateToTime(reinforcements[0].after) : 0,
+      reinforcementsTime: reinforcements.length > 0 ? Game.dateToTime(reinforcements[0].after) : 0,
       reinforcementsId: reinforcements.length > 0 ? reinforcements[0]._id : null,
       consul: consul,
       consulTime: consulTime,

@@ -69,11 +69,16 @@ class PathView {
     }
   }
 
-  along(k) {
+  alongLine(k) {
     const coords = this.lineOptions.geometry.coordinates;
-    const vector = {x: coords[1][0] - coords[0][0], y: coords[1][1] - coords[0][1]};
-    const length = Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
-    return {x: (vector.x / length) * k, y: (vector.y / length) * k};
+    const vector = {
+      x: coords[1][0] - coords[0][0],
+      y: coords[1][1] - coords[0][1],
+    };
+    return {
+      x: coords[0][0] + (vector.x * k),
+      y: coords[0][1] + (vector.y * k),
+    };
   }
 
   getPointAlongDistanceByCoef(_k) {
@@ -84,14 +89,14 @@ class PathView {
       k = 0;
     }
 
-    // const along1 = this.along(this.totalDistance * k);
+    return this.alongLine(k);
 
-    const along = turf.along(this.lineOptions, this.totalDistance * k, 'kilometers');
-
-    return {
-      x: along.geometry.coordinates[0],
-      y: along.geometry.coordinates[1],
-    };
+    // const along = turf.along(this.lineOptions, this.totalDistance * k, 'kilometers');
+    //
+    // return {
+    //   x: along.geometry.coordinates[0],
+    //   y: along.geometry.coordinates[1],
+    // };
   }
 }
 

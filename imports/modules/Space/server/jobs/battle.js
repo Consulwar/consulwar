@@ -7,6 +7,7 @@ import Space from '../../lib/space';
 import Lib from '../../lib/battle';
 import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
+import Utils from '../../lib/utils';
 
 export default Space.jobs.processJobs(
   Lib.EVENT_TYPE,
@@ -97,6 +98,31 @@ export default Space.jobs.processJobs(
             // user battle with help
             returnPlanetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
           }
+
+          // return humans ship
+          FlightEvents.flyBack({
+            ...data,
+            targetType: FlightEvents.TARGET.PLANET,
+            isHumans: isUserVictory,
+            returnPlanetId,
+            armyId: newArmyId,
+          });
+        } else {
+          const { reptileData } = data;
+          const startPosition = data.targetPosition;
+          const planet = Game.Planets.getOne(reptileData.targetId, user._id);
+          const targetPosition = {
+            x: planet.x,
+            y: planet.y,
+          };
+
+          // fly the old way
+          FlightEvents.add({
+            ...reptileData,
+            startPosition,
+            targetPosition,
+            flyTime: Utils.calcFlyTime(startPosition, targetPosition, 1),
+          });
         }
 
         if (planet) {
@@ -105,15 +131,6 @@ export default Space.jobs.processJobs(
             planet.status = Game.Planets.STATUS.NOBODY;
           }
         }
-
-        // return humans ship
-        FlightEvents.flyBack({
-          ...data,
-          targetType: FlightEvents.TARGET.PLANET,
-          isHumans: isUserVictory,
-          returnPlanetId,
-          armyId: newArmyId,
-        });
       }
 
       if (planet) {

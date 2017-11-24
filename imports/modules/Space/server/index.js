@@ -47,7 +47,7 @@ Meteor.publish('spaceEvents', function () {
   if (this.userId) {
     return Space.collection.find({
       'data.userId': this.userId,
-      status: { $ne: 'completed' },
+      status: Space.filterActive,
     });
   }
   return null;

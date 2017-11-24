@@ -4,6 +4,7 @@ import Game from '/moduls/game/lib/main.game';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
+import Space from '../lib/space';
 import FlightEvents from './flightEvents';
 
 import TriggerAttackEvents from './triggerAttackEvents';
@@ -110,8 +111,8 @@ const completeOnShip = function(data) {
   const targetShip = FlightEvents.getOne(data.targetId);
 
   if (targetShip) {
-    const job = FlightEvents.jobs.getJob(targetShip._id);
-    job.done();
+    const job = Space.jobs.getJob(targetShip._id);
+    job.cancel();
 
     // Create battle
     const enemyArmy = {
@@ -134,6 +135,7 @@ const completeOnShip = function(data) {
       data: {
         ...data,
         fleetId: data.targetId,
+        reptileData: targetShip.data,
       },
     });
 

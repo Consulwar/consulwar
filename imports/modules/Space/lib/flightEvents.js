@@ -15,7 +15,7 @@ const getFleetsEvents = function() {
   return Space.collection.find({
     type: EVENT_TYPE,
     'data.userId': Meteor.userId(),
-    status: { $ne: 'completed' },
+    status: Space.filterActive,
   }, {
     sort: {
       after: 1,
@@ -43,7 +43,7 @@ const getFleetUnits = function(data) {
 const getOne = function(_id) {
   return Space.collection.findOne({
     _id,
-    status: { $ne: 'completed' },
+    status: Space.filterActive,
   });
 };
 

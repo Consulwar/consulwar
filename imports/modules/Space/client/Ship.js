@@ -1,5 +1,6 @@
 import { Tracker } from 'meteor/tracker';
 import { _ } from 'meteor/underscore';
+import Game from '/moduls/game/lib/main.game';
 import Utils from '/imports/modules/Space/lib/utils';
 
 import Space from './space';
@@ -38,10 +39,6 @@ const createTriangle = function(x, y, offset, size) {
   ];
 };
 
-const dateToTime = function (date) {
-  return Math.floor(new Date(date).getTime() / 1000);
-};
-
 const getFleetAnimation = function(fleet, mapView, path) {
   const currentTime = Session.get('serverTime');
 
@@ -54,7 +51,7 @@ const getFleetAnimation = function(fleet, mapView, path) {
   }
 
   const currentDistance = calcDistanceByTime(
-    currentTime - dateToTime(fleet.spaceEvent.created),
+    currentTime - Game.dateToTime(fleet.spaceEvent.created),
     fleet.totalFlyDistance,
     fleet.maxSpeed,
     fleet.acceleration,
@@ -95,6 +92,7 @@ class Ship {
     planetRadius,
     mapView,
     shipsLayer,
+    isPopupLocked,
   }) {
     this.mapView = mapView;
     this.shipsLayer = shipsLayer;
@@ -111,6 +109,23 @@ class Ship {
       this.color = (planet.mission ? 'red' : 'green');
 
       this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
+
+      this.polygon.on('mouseover', function() {
+        if (!isPopupLocked.get()) {
+          Game.Cosmos.showPlanetPopup(planet._id);
+        }
+      });
+
+      this.polygon.on('mouseout', function() {
+        if (!isPopupLocked.get()) {
+          Game.Cosmos.hidePlanetPopup();
+        }
+      });
+
+      this.polygon.on('click', function(event) {
+        Game.Cosmos.showPlanetInfo(planet._id);
+        L.DomEvent.stopPropagation(event);
+      });
 
       this.watchPlanet(planet._id, planet.mission ? 'mission' : 'armyId');
     } else {
@@ -133,6 +148,23 @@ class Ship {
       this.color = (fleet.data.mission ? 'red' : 'green');
 
       this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
+
+      this.polygon.on('mouseover', function() {
+        if (!isPopupLocked.get()) {
+          Game.Cosmos.showShipInfo.call({spaceEvent: fleet}, eventId);
+        }
+      });
+
+      this.polygon.on('mouseout', function() {
+        if (!isPopupLocked.get()) {
+          Game.Cosmos.hidePlanetPopup();
+        }
+      });
+
+      this.polygon.on('click', function(event) {
+        Game.Cosmos.showShipInfo.call({spaceEvent: fleet}, eventId, true);
+        L.DomEvent.stopPropagation(event);
+      });
 
       this.watchEvent(eventId);
       this.startAutorun();

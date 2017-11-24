@@ -63,8 +63,8 @@ Meteor.methods({
     };
 
     // check time
-    const timeCurrent = Game.getCurrentTime() * 1000;
-    const timeLeft = enemyShip.after - timeCurrent;
+    const timeCurrent = Game.getCurrentTime();
+    const timeLeft = Game.dateToTime(enemyShip.after) - timeCurrent;
 
     const attackOptions = calcAttackOptions({
       attackerPlanet: basePlanet,
@@ -104,7 +104,6 @@ Meteor.methods({
       startPlanetId: basePlanet._id,
       targetPosition,
       targetId: enemyShip._id,
-      startTime: timeCurrent,
       flyTime: timeAttack,
       isHumans: true,
       isOneway: false,

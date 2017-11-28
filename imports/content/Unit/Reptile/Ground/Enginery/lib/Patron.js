@@ -9,11 +9,14 @@ export default {
     time: 7200,
   },
   characteristics: {
-    damage: {
-      min: 20000,
-      max: 25000,
+    weapon: {
+      damage: { min: 80000, max: 120000 },
+      signature: 60,
     },
-    life: 15000,
+    health: {
+      armor: 200000,
+      signature: 90,
+    },
   },
   targets: [
     'Unit/Human/Ground/Enginery/Hbhr',

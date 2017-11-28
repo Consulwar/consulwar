@@ -9,11 +9,14 @@ export default {
     time: 480,
   },
   characteristics: {
-    damage: {
-      min: 6400,
-      max: 8000,
+    weapon: {
+      damage: { min: 3200, max: 3600 },
+      signature: 3,
     },
-    life: 1500,
+    health: {
+      armor: 26000,
+      signature: 20,
+    },
   },
   targets: [
     'Unit/Reptile/Ground/Infantry/TooFucking',

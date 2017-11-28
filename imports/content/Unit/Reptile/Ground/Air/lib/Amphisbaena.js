@@ -9,11 +9,14 @@ export default {
     time: 30,
   },
   characteristics: {
-    damage: {
-      min: 180,
-      max: 225,
+    weapon: {
+      damage: { min: 5000, max: 7000 },
+      signature: 60,
     },
-    life: 350,
+    health: {
+      armor: 2500,
+      signature: 30,
+    },
   },
   targets: [
     'Unit/Human/Ground/Air/Fast',

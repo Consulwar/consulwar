@@ -9,11 +9,14 @@ export default {
     time: 20,
   },
   characteristics: {
-    damage: {
-      min: 120,
-      max: 150,
+    weapon: {
+      damage: { min: 300, max: 380 },
+      signature: 4,
     },
-    life: 500,
+    health: {
+      armor: 1000,
+      signature: 20,
+    },
   },
   targets: [
     'Unit/Human/Ground/Infantry/Horizontalbarman',

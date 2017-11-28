@@ -9,11 +9,14 @@ export default {
     time: 15,
   },
   characteristics: {
-    damage: {
-      min: 1,
-      max: 300,
+    weapon: {
+      damage: { min: 1000, max: 3000 },
+      signature: 5,
     },
-    life: 500,
+    health: {
+      armor: 4000,
+      signature: 2,
+    },
   },
   targets: [],
   requirements() {

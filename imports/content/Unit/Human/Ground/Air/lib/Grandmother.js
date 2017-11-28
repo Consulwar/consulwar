@@ -9,11 +9,14 @@ export default {
     time: 180,
   },
   characteristics: {
-    damage: {
-      min: 3456,
-      max: 4320,
+    weapon: {
+      damage: { min: 25000, max: 29000 },
+      signature: 300,
     },
-    life: 2400,
+    health: {
+      armor: 110000,
+      signature: 100,
+    },
   },
   targets: [
     'Unit/Reptile/Ground/Enginery/Gecko',

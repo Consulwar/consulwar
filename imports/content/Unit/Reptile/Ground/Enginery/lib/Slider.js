@@ -9,11 +9,14 @@ export default {
     time: 30,
   },
   characteristics: {
-    damage: {
-      min: 240,
-      max: 300,
+    weapon: {
+      damage: { min: 3500, max: 3850 },
+      signature: 16,
     },
-    life: 1000,
+    health: {
+      armor: 20000,
+      signature: 35,
+    },
   },
   targets: [
     'Unit/Human/Ground/Enginery/Agmogedcar',

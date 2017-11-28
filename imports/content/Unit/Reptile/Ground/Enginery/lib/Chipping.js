@@ -9,11 +9,14 @@ export default {
     time: 3600,
   },
   characteristics: {
-    damage: {
-      min: 44000,
-      max: 55000,
+    weapon: {
+      damage: { min: 250000, max: 250000 },
+      signature: 100,
     },
-    life: 150000,
+    health: {
+      armor: 5000000,
+      signature: 4000,
+    },
   },
   targets: [
     'Unit/Human/Ground/Enginery/MotherTank',

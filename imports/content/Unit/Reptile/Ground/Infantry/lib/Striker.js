@@ -8,11 +8,14 @@ export default {
     time: 2,
   },
   characteristics: {
-    damage: {
-      min: 11,
-      max: 14,
+    weapon: {
+      damage: { min: 2, max: 4 },
+      signature: 5,
     },
-    life: 35,
+    health: {
+      armor: 12,
+      signature: 3,
+    },
   },
   targets: [
     'Unit/Human/Ground/Infantry/Fathers',

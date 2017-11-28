@@ -7,11 +7,14 @@ export default {
     time: 1,
   },
   characteristics: {
-    damage: {
-      min: 16000,
-      max: 20000,
+    weapon: {
+      damage: { min: 5000, max: 7000 },
+      signature: 4,
     },
-    life: 30000,
+    health: {
+      armor: 15000,
+      signature: 1,
+    },
   },
   targets: [
     'Unit/Human/Ground/Infantry/Lost',

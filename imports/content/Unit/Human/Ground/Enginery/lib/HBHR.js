@@ -9,11 +9,14 @@ export default {
     time: 7200,
   },
   characteristics: {
-    damage: {
-      min: 20480,
-      max: 25600,
+    weapon: {
+      damage: { min: 40000, max: 60000 },
+      signature: 40,
     },
-    life: 48000,
+    health: {
+      armor: 390000,
+      signature: 500,
+    },
   },
   targets: [
     'Unit/Reptile/Ground/Enginery/Patron',

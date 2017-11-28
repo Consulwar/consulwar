@@ -8,11 +8,14 @@ export default {
     time: 2,
   },
   characteristics: {
-    damage: {
-      min: 8,
-      max: 10,
+    weapon: {
+      damage: { min: 2, max: 3 },
+      signature: 5,
     },
-    life: 24,
+    health: {
+      armor: 25,
+      signature: 5,
+    },
   },
   targets: [
     'Unit/Reptile/Ground/Infantry/Striker',

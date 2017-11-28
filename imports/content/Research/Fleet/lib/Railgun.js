@@ -1,4 +1,4 @@
-import Railgun from '/imports/content/Unit/Space/Human/lib/Railgun';
+import Railgun from '/imports/content/Unit/Human/Space/lib/Railgun';
 
 export default {
   id: 'Research/Fleet/Railgun',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Рейлгана +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Railgun',
+        condition: 'Unit/Human/Space/Railgun',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Рейлгана +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Railgun',
+        condition: 'Unit/Human/Space/Railgun',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

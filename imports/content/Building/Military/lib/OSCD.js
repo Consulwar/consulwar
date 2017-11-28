@@ -7,7 +7,7 @@ export default {
       {
         textBefore: 'Броня космических станций +',
         textAfter: '%',
-        condition: 'Unit/Defense/Human/OrbitalDefenseStation',
+        condition: 'Unit/Human/Defense/OrbitalDefenseStation',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

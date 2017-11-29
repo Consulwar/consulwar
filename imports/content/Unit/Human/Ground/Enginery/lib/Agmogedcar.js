@@ -4,9 +4,9 @@ export default {
   description: 'Таки прототип Бгоневичка был изготовлен не в этой вселенной. Главнокомандующий ФШМ с Кибер-Пиратом и Товарищем Ульяновым изобрели эту крайне быструю и эффективную машинку для своих целей. После перемещения ФШМ во Вселенную 42 создание Бгоневичка стало одной из причин принятия его на высокие военные посты. Скорость и управляемость Бгоневичка позволяют ему быть настоящим «охотником» на воздушные войска и тяжёлую пехоту противника.',
   basePrice: {
     humans: 10,
-    metals: 150,
-    crystals: 35,
-    time: 20,
+    metals: 2450,
+    crystals: 500,
+    time: 900 * 5,
   },
   characteristics: {
     weapon: {
@@ -19,9 +19,9 @@ export default {
     },
   },
   targets: [
-    'Unit/Reptile/Ground/Infantry/Ripper',
-    'Unit/Reptile/Ground/Air/Amfizben',
     'Unit/Reptile/Ground/Air/Amphibian',
+    'Unit/Reptile/Ground/Air/Amphisbaena',
+    'Unit/Reptile/Ground/Enginery/Breaker',
   ],
   requirements() {
     return [

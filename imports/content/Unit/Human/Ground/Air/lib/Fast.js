@@ -3,10 +3,10 @@ export default {
   title: 'Скорострел',
   description: 'Быстрый, резкий, неумолимый воздушный убийца. Говорят, что инженер, создавший это чудо, ублажал себя всю ночь на схемы Скорострела, пока не умер от перенасыщения гормонами счастья. Дело в том, что Скорострел — действительно гениальное изобретение. Равных ему нет в воздухе. Даже Рептилоиды не добились таких успехов. Больше Скорострелов, Консул, и в небе мы будем короли!',
   basePrice: {
-    humans: 5,
-    metals: 100,
-    crystals: 45,
-    time: 30,
+    humans: 25,
+    metals: 6375,
+    crystals: 4500,
+    time: 4500 * 3,
   },
   characteristics: {
     weapon: {
@@ -19,8 +19,8 @@ export default {
     },
   },
   targets: [
+    'Unit/Reptile/Ground/Air/Amphisbaena',
     'Unit/Reptile/Ground/Air/Amphibian',
-    'Unit/Reptile/Ground/Air/Amfizben',
     'Unit/Reptile/Ground/Infantry/Striker',
   ],
   requirements() {

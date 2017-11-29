@@ -3,10 +3,7 @@ export default {
   title: 'Покровитель',
   description: 'Покровитель — это своего рода осадное орудие Чешуйчатых. Способен вести огонь как по технике и лётным войскам, так и по пехоте. Для огромного боевого робота обладает крайне высокой манёвренностью, показатели по броне не очень высокие, однако же основные орудия наносят мощнейший урон и способны буквально прожигать даже самые крепкие бронелисты. Будьте внимательны на поле боя, Консул, если на точке присутствует данная техника.',
   basePrice: {
-    metals: 8000,
-    crystals: 3200,
-    humans: 4000,
-    time: 7200,
+    unires: 450000,
   },
   characteristics: {
     weapon: {
@@ -19,7 +16,7 @@ export default {
     },
   },
   targets: [
-    'Unit/Human/Ground/Enginery/Hbhr',
+    'Unit/Human/Ground/Enginery/HBHR',
     'Unit/Human/Ground/Enginery/Grandmother',
     'Unit/Human/Ground/Enginery/EasyTank',
   ],

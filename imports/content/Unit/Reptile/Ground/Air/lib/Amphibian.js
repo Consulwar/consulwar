@@ -3,10 +3,7 @@ export default {
   title: 'Амфибия',
   description: 'Амфибия получила своё название благодаря способности находиться не только в небе, но и подниматься на высокую орбиту, сражаться в космосе и даже под водой. Собственно, зачастую эскадрильи Рептилий, состоящие из Амфибий, как раз и наносили коварные удары из-под воды, появляясь в тылу нашей армии. Чешуйчатым хитрости не занимать…',
   basePrice: {
-    humans: 100,
-    metals: 1200,
-    crystals: 600,
-    time: 180,
+    unires: 120000,
   },
   characteristics: {
     weapon: {
@@ -19,8 +16,8 @@ export default {
     },
   },
   targets: [
+    'Unit/Human/Ground/Air/Butterfly',
     'Unit/Human/Ground/Enginery/MotherTank',
-    'Unit/Human/Ground/Enginery/EasyTank',
-    'Unit/Human/Ground/Enginery/Agmogedcar',
+    'Unit/Human/Ground/Enginery/HBHR',
   ],
 };

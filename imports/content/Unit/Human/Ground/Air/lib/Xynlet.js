@@ -3,10 +3,10 @@ export default {
   title: 'XYNлёт',
   description: 'Ксинолёт был изобретён специально для уничтожения самых опасных наземных единиц рептилий. После многочисленных поражений в боях против опасных КЕР наш инженерный отдел занялся разработкой техники для поиска и ликвидации Самого Злоебучего Врага. Именно такой техникой и является Ксинолёт – он быстрый, юркий, мощный, бесшумный. Возникает из ниоткуда, уничтожает противника и снова пропадает с радаров… Ах… Сказка.',
   basePrice: {
-    humans: 20,
-    metals: 1500,
-    crystals: 1000,
-    time: 480,
+    humans: 50,
+    metals: 27250,
+    crystals: 17500,
+    time: 17500 * 3,
   },
   characteristics: {
     weapon: {
@@ -20,8 +20,8 @@ export default {
   },
   targets: [
     'Unit/Reptile/Ground/Infantry/TooFucking',
-    'Unit/Reptile/Ground/Infantry/Ripper',
     'Unit/Reptile/Ground/Infantry/Horror',
+    'Unit/Reptile/Ground/Infantry/Ripper',
   ],
   requirements() {
     return [

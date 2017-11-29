@@ -24,7 +24,7 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/Barracks', 1],
+      ['Building/Residential/House', 1],
     ];
   },
 };

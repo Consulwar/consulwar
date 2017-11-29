@@ -25,10 +25,9 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/Factory', 100],
-      ['Research/Evolution/Energy', 100],
-      ['Building/Military/Complex', 80],
-      ['Building/Residential/BlackMarket', 80],
+      ['Building/Military/Factory', 70],
+      ['Building/Military/Complex', 65],
+      ['Research/Evolution/Engineering', 64],
     ];
   },
 };

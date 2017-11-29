@@ -25,8 +25,9 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/Barracks', 80],
-      ['Building/Military/Void', 1],
+      ['Building/Military/Barracks', 75],
+      ['Building/Military/Void', 45],
+      ['Research/Evolution/DoomsDaySizing', 45],
     ];
   },
 };

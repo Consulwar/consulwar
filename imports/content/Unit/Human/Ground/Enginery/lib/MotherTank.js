@@ -26,8 +26,8 @@ export default {
   requirements() {
     return [
       ['Building/Military/Factory', 60],
-      ['Research/Evolution/Energy', 60],
-      ['Building/Military/Complex', 40],
+      ['Research/Evolution/Alloy', 50],
+      ['Research/Evolution/Ikea', 50],
     ];
   },
 };

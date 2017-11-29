@@ -25,8 +25,8 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/Barracks', 20],
-      ['Building/Military/Factory', 20],
+      ['Building/Military/Barracks', 28],
+      ['Research/Evolution/Alloy', 20],
     ];
   },
 };

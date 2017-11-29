@@ -22,7 +22,8 @@ export default {
   requirements() {
     return [
       ['Building/Military/Barracks', 60],
-      ['Building/Residential/PulseCatcher', 40],
+      ['Research/Evolution/Crystallization', 60],
+      ['Research/Evolution/Science', 59],
     ];
   },
 };

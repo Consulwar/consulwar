@@ -26,6 +26,7 @@ export default {
   requirements() {
     return [
       ['Building/Military/Airfield', 40],
+      ['Research/Evolution/Drill', 40],
     ];
   },
 };

@@ -1,4 +1,4 @@
-import Flagship from '/imports/content/Unit/Space/Human/lib/Flagship';
+import Flagship from '/imports/content/Unit/Human/Space/lib/Flagship';
 
 export default {
   id: 'Research/Fleet/Flagship',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Флагмана +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Flagship',
+        condition: 'Unit/Human/Space/Flagship',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Флагмана +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Flagship',
+        condition: 'Unit/Human/Space/Flagship',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

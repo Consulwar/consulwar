@@ -7,7 +7,7 @@ export default {
       {
         textBefore: 'Броня флота +',
         textAfter: '%',
-        condition: 'Unit/Space/Human',
+        condition: 'Unit/Human/Space',
         priority: 2,
         affect: 'life',
         result() {

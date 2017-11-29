@@ -567,10 +567,10 @@ Game = {
                 if (conditionIdParts.length == 1) {
                   type = 'Unit';
                 } else {
-                  if (conditionIdParts[1] === 'Ground') {
-                    [type, group, special, side, engName] = conditionIdParts;
+                  if (conditionIdParts[2] === 'Ground') {
+                    [type, side, group, special, engName] = conditionIdParts;
                   } else {
-                    [type, group, side, engName] = conditionIdParts;
+                    [type, side, group, engName] = conditionIdParts;
                   }
                 }
                 break;

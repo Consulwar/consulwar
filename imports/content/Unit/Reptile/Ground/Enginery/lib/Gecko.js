@@ -18,6 +18,6 @@ export default {
   targets: [
     'Unit/Human/Ground/Enginery/EasyTank',
     'Unit/Human/Ground/Enginery/Agmogedcar',
-    'Unit/Human/Ground/Infantry/Psiman',
+    'Unit/Human/Ground/Infantry/Father',
   ],
 };

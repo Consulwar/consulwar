@@ -17,7 +17,7 @@ export default {
   },
   targets: [
     'Unit/Human/Ground/Air/Fast',
-    'Unit/Human/Ground/Air/Grandmother',
+    'Unit/Human/Ground/Air/Xynlet',
     'Unit/Human/Ground/Air/Butterfly',
   ],
 };

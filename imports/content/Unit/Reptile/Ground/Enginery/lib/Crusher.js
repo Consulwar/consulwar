@@ -16,8 +16,8 @@ export default {
     },
   },
   targets: [
-    'Unit/Human/Ground/Enginery/EasyTank',
+    'Unit/Human/Ground/Enginery/MotherTank',
     'Unit/Human/Ground/Enginery/Grandmother',
-    'Unit/Human/Ground/Enginery/HBHR',
+    'Unit/Human/Ground/Air/Butterfly',
   ],
 };

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import jwt from 'jwt-simple';
-
+import Log from '/imports/modules/Log/server/Log';
 
 if (
   Meteor.settings.public.helprace
@@ -18,9 +18,10 @@ if (
 
   Meteor.methods({
     'helpraceJwt.login'() {
-      Game.Log.method.call(this, 'helpraceJwt.login');
       const user = Meteor.user();
       if (user && user.emails && user.emails[0] && user.emails[0].verified) {
+        Log.method.call(this, { name: 'helpraceJwt.login', user });
+
         let avatar = 'common/1';
         if (user.settings && user.settings.chat && user.settings.chat.icon) {
           avatar = user.settings.chat.icon;

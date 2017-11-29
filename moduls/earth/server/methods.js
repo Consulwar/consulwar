@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthServerMethods = function() {
@@ -7,17 +9,10 @@ initEarthServerMethods = function() {
 
 Meteor.methods({
   'earth.sendReinforcement': function(units, cardsObject, zoneName) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.sendReinforcement');
+    Log.method.call(this, { name: 'earth.sendReinforcement', user });
 
     const currentTime = Game.getCurrentTime();
 
@@ -138,17 +133,10 @@ Meteor.methods({
 
   'earth.moveArmy': function(targetZone) {
     // check user
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.moveArmy');
+    Log.method.call(this, { name: 'earth.moveArmy', user });
 
     check(targetZone, String);
 
@@ -192,17 +180,10 @@ Meteor.methods({
   },
 
   'earth.setReptileArmy': function (zoneName, modifier, units, isOnTurn) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.setReptileArmy');
+    Log.method.call(this, { name: 'earth.setReptileArmy', user });
 
     if (['admin'].indexOf(user.role) === -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -253,17 +234,10 @@ Meteor.methods({
   },
 
   'earth.generalCommand'(command, commandTarget) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.generalCommand');
+    Log.method.call(this, { name: 'earth.generalCommand', user });
 
     const zone = Game.EarthZones.Collection.findOne({
       'general.username': user.username,
@@ -317,17 +291,10 @@ Meteor.methods({
   },
 
   'earth.responseToGeneral'(isAccept) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.responseToGeneral');
+    Log.method.call(this, { name: 'earth.responseToGeneral', user });
 
     check(isAccept, Boolean);
 
@@ -368,17 +335,10 @@ Meteor.methods({
   },
 
   'earth.setBonus'(zoneName, bonus) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.setReptileArmy');
+    Log.method.call(this, { name: 'earth.setReptileArmy', user });
 
     if (['admin'].indexOf(user.role) === -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -407,17 +367,10 @@ Meteor.methods({
   },
 
   'earth.getEarthUnits'(username) {
-    const user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'earth.getEarthUnits');
+    Log.method.call(this, { name: 'earth.getEarthUnits', user });
 
     check(username, String);
 

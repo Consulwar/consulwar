@@ -7,7 +7,7 @@ export default {
       {
         textBefore: 'Стоимость подготовки наземных войск на ',
         textAfter: '% дешевле',
-        condition: 'Unit/Ground/*/Human',
+        condition: 'Unit/Human/Ground',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {

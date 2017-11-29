@@ -1,4 +1,4 @@
-import Battleship from '/imports/content/Unit/Space/Human/lib/Battleship';
+import Battleship from '/imports/content/Unit/Human/Space/lib/Battleship';
 
 export default {
   id: 'Research/Fleet/Battleship',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Линкора +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Battleship',
+        condition: 'Unit/Human/Space/Battleship',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Линкора +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Battleship',
+        condition: 'Unit/Human/Space/Battleship',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

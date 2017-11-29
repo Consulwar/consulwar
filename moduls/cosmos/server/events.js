@@ -1,3 +1,4 @@
+import User from '/imports/modules/User/server/User';
 import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
 
 initCosmosEventsServer = function() {
@@ -1137,15 +1138,8 @@ Game.SpaceEvents.completeShip = function(event) {
 
 Meteor.methods({
   'spaceEvents.attackReptFleet': function(baseId, targetId, units, targetX, targetY) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     console.log('spaceEvents.attackReptFleet: ', new Date(), user.username);
 

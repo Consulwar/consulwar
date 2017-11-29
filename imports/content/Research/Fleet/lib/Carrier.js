@@ -1,4 +1,4 @@
-import Carrier from '/imports/content/Unit/Space/Human/lib/Carrier';
+import Carrier from '/imports/content/Unit/Human/Space/lib/Carrier';
 
 export default {
   id: 'Research/Fleet/Carrier',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Авианосца +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Carrier',
+        condition: 'Unit/Human/Space/Carrier',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Авианосца +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Carrier',
+        condition: 'Unit/Human/Space/Carrier',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

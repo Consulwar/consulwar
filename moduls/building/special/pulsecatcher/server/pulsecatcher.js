@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initBuildingSpecialPulsecatcherServer = function() {
 'use strict';
 
@@ -52,17 +55,10 @@ SyncedCron.add({
 
 Meteor.methods({
   'pulsecatcher.voteBonus': function(answer) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'pulsecatcher.voteBonus');
+    Log.method.call(this, { name: 'pulsecatcher.voteBonus', user });
 
     if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');
@@ -77,17 +73,10 @@ Meteor.methods({
   },
 
   'pulsecatcher.activateBonus': function() {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
     
-    Game.Log.method.call(this, 'pulsecatcher.activateBonus');
+    Log.method.call(this, { name: 'pulsecatcher.activateBonus', user });
 
     if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');

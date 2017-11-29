@@ -1,3 +1,5 @@
+import User from '/imports/modules/User/server/User';
+
 initItemsServer = function() {
 'use strict';
 
@@ -30,15 +32,8 @@ Game.Icons.canUseIcon = function(group, engName) {
 
 Meteor.methods({
   'icon.buy': function(group, engName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     var icon = Game.Icons.getIcon(group, engName);
     if (!icon) {
@@ -84,15 +79,8 @@ Meteor.methods({
 
 
   'chat.selectIcon': function(group, engName) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     if (Game.Icons.canUseIcon(group, engName)) {
       Meteor.users.update({
@@ -106,15 +94,8 @@ Meteor.methods({
   },
 
   'chat.setUserIcon': function(username, iconPath) {
-    var user = Meteor.user();
-
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
+    const user = User.getById();
+    User.checkAuth({ user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');

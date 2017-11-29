@@ -2,19 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
+import User from '/imports/modules/User/server/User';
+import Log from '/imports/modules/Log/server/Log';
 import persons from '/imports/content/Person/server';
 
-const checkUser = function(user) {
-  if (!(user && user._id)) {
-    throw new Meteor.Error('Требуется авторизация');
-  }
 
-  if (user.blocked === true) {
-    throw new Meteor.Error('Аккаунт заблокирован.');
-  }
-};
-
-const checkSkinExists = function({
+const checkSkinExists = function ({
   personId,
   person = persons[personId],
   skinId,
@@ -33,10 +26,10 @@ Meteor.methods({
     personId,
     skinIds,
   }) {
-    const user = Meteor.user();
-    checkUser(user);
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    Game.Log.method.call(this, 'Person.setActiveSkins');
+    Log.method.call(this, { name: 'Person.setActiveSkins', user });
 
     check(personId, String);
     check(skinIds, [String]);
@@ -64,10 +57,10 @@ Meteor.methods({
     personId,
     skinId,
   }) {
-    const user = Meteor.user();
-    checkUser(user);
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    Game.Log.method.call(this, 'Person.buySkin');
+    Log.method.call(this, { name: 'Person.buySkin', user });
 
     check(personId, String);
     check(skinId, String);

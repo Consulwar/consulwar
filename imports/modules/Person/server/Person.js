@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import libPerson from '../lib/Person';
+import LibPerson from '../lib/Person';
 
-class Person extends libPerson {
+class Person extends LibPerson {
   addSkin({
     id,
     userId = Meteor.userId(),

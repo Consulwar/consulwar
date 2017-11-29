@@ -1,19 +1,15 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initBuildingServerMethods = function(){
 'use strict';
 
 Meteor.methods({
   'building.build': function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'building.build');
+    Log.method.call(this, { name: 'building.build', user });
 
     check(options, Object);
     check(options.group, String);
@@ -87,17 +83,10 @@ Meteor.methods({
   },
 
   'building.speedup': function(options) {
-    let user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'building.speedup');
+    Log.method.call(this, { name: 'building.speedup', user });
 
     check(options, Object);
     check(options.group, String);

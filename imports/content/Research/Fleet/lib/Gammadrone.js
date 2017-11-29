@@ -1,4 +1,4 @@
-import Gammadrone from '/imports/content/Unit/Space/Human/lib/Gammadrone';
+import Gammadrone from '/imports/content/Unit/Human/Space/lib/Gammadrone';
 
 export default {
   id: 'Research/Fleet/Gammadrone',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Гаммадрона +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Gammadrone',
+        condition: 'Unit/Human/Space/Gammadrone',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Гаммадрона +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Gammadrone',
+        condition: 'Unit/Human/Space/Gammadrone',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

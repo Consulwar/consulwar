@@ -1,4 +1,4 @@
-import Reaper from '/imports/content/Unit/Space/Human/lib/Reaper';
+import Reaper from '/imports/content/Unit/Human/Space/lib/Reaper';
 
 export default {
   id: 'Research/Fleet/Reaper',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Пожинателя +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Reaper',
+        condition: 'Unit/Human/Space/Reaper',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Пожинателя +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Reaper',
+        condition: 'Unit/Human/Space/Reaper',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

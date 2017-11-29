@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initMailQuizServer = function() {
 'use strict';
 
@@ -74,17 +77,10 @@ Meteor.call('sendQuiz', "NRpFEtMk4crreGZvB");
 
 Meteor.methods({
   getQuiz: function(id) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'getQuiz');
+    Log.method.call(this, { name: 'getQuiz', user });
 
     check(id, String);
 
@@ -105,17 +101,10 @@ Meteor.methods({
   },
 
   quizAnswer: function(id, answer, questionNum) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'quizAnswer');
+    Log.method.call(this, { name: 'quizAnswer', user });
 
     check(id, String);
     check(answer, String);
@@ -225,17 +214,10 @@ Meteor.methods({
   },
 
   createQuiz: function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'createQuiz');
+    Log.method.call(this, { name: 'createQuiz', user });
 
     if (user.username != 'Zav') {
       throw new Meteor.Error('Ты не Zav!');
@@ -280,17 +262,10 @@ Meteor.methods({
   },
 
   sendQuiz: function(id) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!(user && user._id)) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован.');
-    }
-
-    Game.Log.method.call(this, 'sendQuiz');
+    Log.method.call(this, { name: 'sendQuiz', user });
 
     if (user.username != 'Zav') {
       throw new Meteor.Error('Ты не Zav!');

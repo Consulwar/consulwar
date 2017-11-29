@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initBuildingSpecialColosseumServer = function() {
 'use strict';
 
@@ -5,17 +8,10 @@ initBuildingSpecialColosseumLib();
 
 Meteor.methods({
   'colosseum.startTournament': function(id) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'colosseum.startTournament');
+    Log.method.call(this, { name: 'colosseum.startTournament', user });
 
     var tournament = Game.Building.special.Colosseum.tournaments[id];
 

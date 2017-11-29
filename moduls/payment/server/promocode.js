@@ -1,3 +1,6 @@
+import Log from '/imports/modules/Log/server/Log';
+import User from '/imports/modules/User/server/User';
+
 initPromoCodeServer = function() {
 'use strict';
 
@@ -90,26 +93,19 @@ Game.PromoCode.randomItems =  [{
 }, {
   units: { defense: { turret: 10 } }
 }, {
-  units: { ground: { horizontalbarman: 50 } }
+  units: { ground: { horizontalbarman: 3 } }
 }, {
-  units: { ground: { agmogedcar: 5 } }
+  units: { ground: { agmogedcar: 1 } }
 }, {
-  units: { ground: { fast: 5 } }
+  units: { ground: { fast: 1 } }
 }];
 
 Meteor.methods({
   'admin.getPromocodeHistory': function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'admin.getPromocodeHistory');
+    Log.method.call(this, { name: 'admin.getPromocodeHistory', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -178,17 +174,10 @@ Meteor.methods({
   },
 
   'admin.addPromoCode': function(options) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'admin.addPromoCode');
+    Log.method.call(this, { name: 'admin.addPromoCode', user });
 
     if (['admin'].indexOf(user.role) == -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
@@ -275,17 +264,10 @@ Meteor.methods({
   },
 
   'user.activatePromoCode': function(code) {
-    var user = Meteor.user();
+    const user = User.getById();
+    User.checkAuth({ user });
 
-    if (!user || !user._id) {
-      throw new Meteor.Error('Требуется авторизация');
-    }
-
-    if (user.blocked === true) {
-      throw new Meteor.Error('Аккаунт заблокирован');
-    }
-
-    Game.Log.method.call(this, 'user.activatePromoCode');
+    Log.method.call(this, { name: 'user.activatePromoCode', user });
 
     check(code, String);
 

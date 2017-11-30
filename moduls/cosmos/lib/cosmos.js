@@ -63,7 +63,7 @@ Game.Planets = {
 
   getOne: function (id, user_id = Meteor.userId()) {
     return Game.Planets.Collection.findOne({
-      user_id,
+      // user_id,
       _id: id,
     });
   },

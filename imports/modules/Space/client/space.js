@@ -11,7 +11,18 @@ const getAllByUserId = function(userId = Meteor.userId()) {
   });
 };
 
+const getAllByUserIdAndUsername = function(username, user = Meteor.user) {
+  return Lib.collection.find({
+    'data.username': { $in: [user.username, username] },
+  }, {
+    sort: {
+      after: 1,
+    },
+  });
+};
+
 export default {
   ...Lib,
   getAllByUserId,
+  getAllByUserIdAndUsername,
 };

@@ -938,13 +938,27 @@ Meteor.methods({
 
     Game.Planets.update(planet);
   },
+
+  'planet.getAllByUsername'({
+    username,
+    userId = Meteor.users.findOne({ username })._id,
+  }) {
+    return Game.Planets.getAll(userId).fetch();
+  },
 });
 
-Meteor.publish('planets', function () {
+Meteor.publish('planets', function (username) {
   if (this.userId) {
-    return Game.Planets.Collection.find({
-      user_id: this.userId
-    });
+    if (username) {
+      const userIds = [this.userId, Meteor.users.findOne({ username })._id];
+      return Game.Planets.Collection.find({
+        user_id: { $in: userIds }
+      });
+    } else {
+      return Game.Planets.Collection.find({
+        user_id: this.userId
+      });
+    }
   }
 });
 

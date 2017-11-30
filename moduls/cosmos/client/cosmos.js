@@ -14,6 +14,9 @@ import PathView from '/imports/modules/Space/client/PathView';
 import Ship from '/imports/modules/Space/client/Ship';
 import BattleIcon from '/imports/modules/Space/client/BattleIcon';
 
+import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
+import MutualConfig from '/imports/modules/MutualSpace/lib/config';
+
 const {
   calcDistanceByTime,
   calcFlyTime,
@@ -36,7 +39,8 @@ initCosmosPathView();
 initCosmosContentClient();
 
 Meteor.subscribe('planets');
-var spaceEventsSubscription = Meteor.subscribe('spaceEvents');
+let spaceEventsSubscription = Meteor.subscribe('spaceEvents');
+Meteor.subscribe('spaceHex');
 
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
@@ -55,6 +59,7 @@ var isPopupLocked = new ReactiveVar(false);
 var activeSquad = new ReactiveVar(null);
 var selectedUnits = new ReactiveVar(null);
 
+let galacticOffset = [0, 0];
 
 Space.getAllByUserId().observe({
   added: function(event) {
@@ -597,8 +602,8 @@ Template.cosmosFleetsInfo.helpers({
 // Planet side menu
 // ----------------------------------------------------------------------------
 
-Game.Cosmos.showPlanetInfo = function(id) {
-  Game.Cosmos.showPlanetPopup(id, true);
+Game.Cosmos.showPlanetInfo = function(id, offset) {
+  Game.Cosmos.showPlanetPopup(id, true, offset);
 };
 
 Game.Cosmos.getPlanetInfo = function(planet) {
@@ -787,7 +792,7 @@ Game.Cosmos.getPlanetPopupInfo = function(planet) {
   };
 };
 
-Game.Cosmos.showPlanetPopup = function(id, isLock) {
+Game.Cosmos.showPlanetPopup = function(id, isLock, offset = [0, 0]) {
   if (!mapView) {
     return;
   }
@@ -812,7 +817,9 @@ Game.Cosmos.showPlanetPopup = function(id, isLock) {
       position: function() {
         var k = Math.pow(2, (zoom.get() - 7));
         var iconSize = (planet.size + 3) * 4;
-        var position = mapView.latLngToLayerPoint(new L.latLng(planet.x, planet.y));
+        var position = mapView.latLngToLayerPoint(
+          new L.latLng(offset[0] + planet.x, offset[1] + planet.y),
+        );
         position.x += 24 + 10 + Math.round(iconSize * k / 2);
         position.y -= 85;
         return position;
@@ -1604,9 +1611,8 @@ Template.cosmosAttackMenu.events({
 // Cosmos map content
 // ----------------------------------------------------------------------------
 
-// const ships = [];
-
 Game.Cosmos.renderPlanets = function(
+  planetsLayer,
   shipsLayer,
   planets = Game.Planets.getAll().fetch(),
   offset = [0, 0],
@@ -1629,11 +1635,11 @@ Game.Cosmos.renderPlanets = function(
         color,
         fillOpacity: 0.8,
       },
-    ).addTo(mapView);
+    ).addTo(planetsLayer);
 
     circle.on('mouseover', function() {
       if (!isPopupLocked.get()) {
-        Game.Cosmos.showPlanetPopup(planet._id);
+        Game.Cosmos.showPlanetPopup(planet._id, false, offset);
       }
     });
 
@@ -1644,7 +1650,7 @@ Game.Cosmos.renderPlanets = function(
     });
 
     circle.on('click', function(event) {
-      Game.Cosmos.showPlanetInfo(planet._id);
+      Game.Cosmos.showPlanetInfo(planet._id, offset);
       L.DomEvent.stopPropagation(event);
     });
 
@@ -1656,13 +1662,10 @@ Game.Cosmos.renderPlanets = function(
         mapView,
         shipsLayer,
         isPopupLocked,
+        origin: offset,
       });
-
-      // ships.push(ship);
     }
   });
-
-  // window.ships = ships;
 };
 
 Game.Cosmos.renderFleets = function(
@@ -1670,6 +1673,14 @@ Game.Cosmos.renderFleets = function(
   fleets = FlightEvents.getFleetsEvents().fetch()
 ) {
   fleets.forEach((fleet) => {
+    const galacticHex = mutualSpaceCollection.findOne({username: fleet.data.username});
+
+    let offset = [0, 0];
+    if (galacticHex) {
+      const center = hexCenter(galacticHex);
+      offset = [-center.y, center.x];
+    }
+
     const ship = new Ship({
       isStatic: false,
       eventId: fleet._id,
@@ -1678,9 +1689,8 @@ Game.Cosmos.renderFleets = function(
       shipsLayer,
       path: pathViews[fleet._id],
       isPopupLocked,
+      origin: offset
     });
-
-    // ships.push(ship);
   });
 };
 
@@ -1689,12 +1699,196 @@ Game.Cosmos.renderBattles = function(
   battleEvents = BattleEvents.getAllByUserId().fetch()
 ) {
   battleEvents.forEach((battleEvent) => {
+    const galacticHex = mutualSpaceCollection.findOne({username: battleEvent.data.username});
+
+    let offset = [0, 0];
+    if (galacticHex) {
+      const center = hexCenter(galacticHex);
+      offset = [-center.y, center.x];
+    }
+
     new BattleIcon({
       battleEventId: battleEvent._id,
       battleEvent,
       mapView,
+      origin: offset,
     });
   });
+};
+
+const size = MutualConfig.GALACTIC_RADIUS;
+const hexCenter = function(hex) {
+  const x = size * 3/2 * hex.x;
+  const y = size * Math.sqrt(3) * (hex.z + hex.x/2);
+  return { x, y };
+};
+
+Game.Cosmos.renderMutualSpace = function(planetsLayer, shipsLayer, pathsLayer, hexesLayer) {
+  const user = Meteor.user();
+
+  const size = MutualConfig.GALACTIC_RADIUS;
+
+  const hexCenter = function(hex) {
+    const x = size * 3/2 * hex.x;
+    const y = size * Math.sqrt(3) * (hex.z + hex.x/2);
+    return { x, y };
+  };
+
+  const hexCorner = function(center, hex, i) {
+    const angle_deg = 60 * i;
+    const angle_rad = Math.PI / 180 * angle_deg;
+    return [
+      -center.y + size * Math.sin(angle_rad),
+      center.x + size * Math.cos(angle_rad),
+    ];
+  };
+
+  const hexCorners = function(hex) {
+    const corners = [];
+    const center = hexCenter(hex);
+
+    for( let i = 0; i <= 5; i += 1 ) {
+      corners.push(hexCorner(center, hex, i));
+    }
+
+    return corners;
+  };
+
+  mutualSpaceCollection.find({}).fetch().forEach((hex) => {
+    const needLoad = (hex.username && hex.username !== user.username);
+
+    const hexPoly = L.polygon(hexCorners(hex), {
+      fill: needLoad,
+      color: 'blue',
+    }).addTo(hexesLayer);
+
+    if (needLoad) {
+      hexPoly.on('click', () => {
+        Meteor.call('planet.getAllByUsername', { username: hex.username }, (err, planets2) => {
+          const center = hexCenter(hex);
+          Game.Cosmos.renderPlanets(planetsLayer, shipsLayer, planets2, [-center.y, center.x]);
+
+          Meteor.subscribe('planets', hex.username);
+
+          spaceEventsSubscription = Meteor.subscribe('spaceEvents', hex.username);
+
+          var removePath = function(id) {
+            if (mapView && pathViews[id]) {
+              pathViews[id].remove();
+              delete pathViews[id];
+            }
+          };
+          var createPath = function(id, event, offset) {
+            if (!mapView || pathViews[id]) {
+              return;
+            }
+
+            // draw path
+            pathViews[id] = new PathView(
+              pathsLayer,
+              event.data.startPosition,
+              event.data.targetPosition,
+              (event.data.isHumans ? '#c6e84c' : '#ff7566'),
+              id,
+              pathViews,
+              offset,
+            );
+          };
+
+          observerSpaceEvents = Space.getAllByUserIdAndUsername(hex.username).observeChanges({
+            added: function(id, event) {
+              const galacticHex = mutualSpaceCollection.findOne({username: event.data.username});
+
+              let offset = [0, 0];
+              if (galacticHex) {
+                const center = hexCenter(galacticHex);
+                offset = [-center.y, center.x];
+              }
+
+              if (event.type === FlightEvents.EVENT_TYPE) {
+                createPath(id, event, offset);
+                const ship = new Ship({
+                  isStatic: false,
+                  eventId: id,
+                  fleet: event,
+                  mapView,
+                  shipsLayer,
+                  path: pathViews[id],
+                  isPopupLocked,
+                  origin: offset,
+                });
+              } else if (event.type === BattleEvents.EVENT_TYPE) {
+                new BattleIcon({
+                  battleEventId: id,
+                  battleEvent: event,
+                  mapView,
+                  origin: offset,
+                })
+              }
+            },
+
+            removed: function(id) {
+              removePath(id);
+            }
+          });
+
+          hexPoly.setStyle({ fill: false });
+        });
+      });
+    }
+  });
+
+  // Meteor.call('mutualSpace.getHexes', (err, hexes) => {
+  //   const size = MutualConfig.GALACTIC_RADIUS;
+  //
+  //   const hexCenter = function(hex) {
+  //     const x = size * 3/2 * hex.x;
+  //     const y = size * Math.sqrt(3) * (hex.z + hex.x/2);
+  //     return { x, y };
+  //   };
+  //
+  //   const hexCorner = function(center, hex, i) {
+  //     const angle_deg = 60 * i;
+  //     const angle_rad = Math.PI / 180 * angle_deg;
+  //     return [
+  //       -center.y + size * Math.sin(angle_rad),
+  //       center.x + size * Math.cos(angle_rad),
+  //     ];
+  //   };
+  //
+  //   const hexCorners = function(hex) {
+  //     const corners = [];
+  //     const center = hexCenter(hex);
+  //
+  //     for( let i = 0; i <= 5; i += 1 ) {
+  //       corners.push(hexCorner(center, hex, i));
+  //     }
+  //
+  //     return corners;
+  //   };
+  //
+  //   hexes.forEach((hex) => {
+  //     const needLoad = (hex.username && hex.username !== user.username);
+  //
+  //     const hexPoly = L.polygon(hexCorners(hex), {
+  //       fill: needLoad,
+  //       color: 'blue',
+  //     }).addTo(mapView);
+  //
+  //     if (needLoad) {
+  //       hexPoly.on('click', () => {
+  //         Meteor.call('planet.getAllByUsername', { username: hex.username }, (err, planets2) => {
+  //           const center = hexCenter(hex);
+  //           Game.Cosmos.renderPlanets(shipsLayer, planets2, [-center.y, center.x]);
+  //
+  //           planetsSubscription = Meteor.subscribe('planets', hex.username);
+  //
+  //           hexPoly.setStyle({ fill: false });
+  //         });
+  //       });
+  //     }
+  //   });
+  // });
 };
 
 Game.Cosmos.renderCosmosObjects_ = function() {
@@ -1901,8 +2095,10 @@ Template.cosmos.onRendered(function() {
     maxZoom: 10,
   });
 
+  const planetsLayer = L.layerGroup().addTo(mapView);
   const pathsLayer = L.layerGroup().addTo(mapView);
   const shipsLayer = L.layerGroup().addTo(mapView);
+  const hexesLayer = L.layerGroup().addTo(mapView);
 
   zoom.set(mapView.getZoom());
   mapView.on('zoomend', function() {
@@ -1915,10 +2111,33 @@ Template.cosmos.onRendered(function() {
   });
 
   // Init planets
-  const alignMapToBasePlanet = function() {
+  const alignMapToBasePlanet = function(planets) {
+    const galacticHex = mutualSpaceCollection.findOne({username: Meteor.user().username});
+
+    if (galacticHex) {
+      const center = hexCenter(galacticHex);
+      galacticOffset = [-center.y, center.x];
+    }
+
+    showGalactic({
+      offset: galacticOffset,
+      planets,
+      planetsLayer,
+      fleets: FlightEvents.getFleetsEvents().fetch(),
+      shipsLayer,
+      pathsLayer,
+      battles: BattleEvents.getAllByUserId().fetch(),
+    });
+
+    if (galacticHex) {
+      showHexes(hexesLayer);
+    }
+
     const homePlanet = Game.Planets.getBase();
     if (homePlanet) {
-      mapView.setView([homePlanet.x, homePlanet.y], 7);
+      mapView.setView([
+        galacticOffset[0] + homePlanet.x, galacticOffset[1] + homePlanet.y
+      ], 7);
     }
     isLoading.set(false);
   };
@@ -1926,14 +2145,14 @@ Template.cosmos.onRendered(function() {
   const planets = Game.Planets.getAll().fetch();
   if (planets.length === 0) {
     Meteor.call('planet.initialize', function(err, data) {
-      alignMapToBasePlanet();
+      alignMapToBasePlanet(Game.Planets.getAll().fetch());
     });
   } else {
-    alignMapToBasePlanet();
+    alignMapToBasePlanet(planets);
   }
 
   // Paths
-  var createPath = function(id, event) {
+  var createPath = function(id, event, offset) {
     if (!mapView || pathViews[id]) {
       return;
     }
@@ -1946,6 +2165,7 @@ Template.cosmos.onRendered(function() {
       (event.data.isHumans ? '#c6e84c' : '#ff7566'),
       id,
       pathViews,
+      offset,
     );
   };
 
@@ -1958,8 +2178,16 @@ Template.cosmos.onRendered(function() {
 
   observerSpaceEvents = Space.getAllByUserId().observeChanges({
     added: function(id, event) {
+      const galacticHex = mutualSpaceCollection.findOne({ username: event.data.username });
+
+      let offset = [0, 0];
+      if (galacticHex) {
+        const center = hexCenter(galacticHex);
+        offset = [-center.y, center.x];
+      }
+
       if (event.type === FlightEvents.EVENT_TYPE) {
-        createPath(id, event);
+        createPath(id, event, offset);
         const ship = new Ship({
           isStatic: false,
           eventId: id,
@@ -1968,14 +2196,14 @@ Template.cosmos.onRendered(function() {
           shipsLayer,
           path: pathViews[id],
           isPopupLocked,
+          origin: offset,
         });
-
-        // ships.push(ship);
       } else if (event.type === BattleEvents.EVENT_TYPE) {
         new BattleIcon({
           battleEventId: id,
           battleEvent: event,
           mapView,
+          origin: offset,
         })
       }
     },
@@ -1985,8 +2213,16 @@ Template.cosmos.onRendered(function() {
     }
   });
 
+  const galacticHex = mutualSpaceCollection.findOne({username: Meteor.user().username});
+
+  let offset = [0, 0];
+  if (galacticHex) {
+    const center = hexCenter(galacticHex);
+    offset = [-center.y, center.x];
+  }
+
   // Render cosmos objects
-  Game.Cosmos.renderPlanets(shipsLayer, planets);
+  Game.Cosmos.renderPlanets(planetsLayer, shipsLayer, planets, offset);
 
   Game.Planets.Collection.find({}).observeChanges({
     changed: (id, fields) => {
@@ -2003,9 +2239,8 @@ Template.cosmos.onRendered(function() {
           mapView,
           shipsLayer,
           isPopupLocked,
+          origin: galacticOffset,
         });
-
-        // ships.push(ship);
       }
     },
   });
@@ -2020,6 +2255,8 @@ Template.cosmos.onRendered(function() {
   Game.Cosmos.renderFleets(shipsLayer);
 
   Game.Cosmos.renderBattles(shipsLayer);
+
+  Game.Cosmos.renderMutualSpace(planetsLayer, shipsLayer, pathsLayer, hexesLayer);
 
   // Scroll to space object on hash change
   this.autorun(function() {
@@ -2045,6 +2282,65 @@ Template.cosmos.onRendered(function() {
     }
   });
 });
+
+const showGalactic = function({
+  offset,
+  planets,
+  planetsLayer,
+  fleets,
+  shipsLayer,
+  pathsLayer,
+  battles,
+}) {
+  Game.Cosmos.renderPlanets(planetsLayer, shipsLayer, planets, offset);
+
+  Game.Cosmos.renderFleets(shipsLayer, fleets);
+
+  Game.Cosmos.renderBattles(shipsLayer, battles);
+};
+
+const showHexes = function(hexesLayer) {
+  const size = MutualConfig.GALACTIC_RADIUS;
+
+  const hexCenter = function(hex) {
+    const x = size * 3/2 * hex.x;
+    const y = size * Math.sqrt(3) * (hex.z + hex.x/2);
+    return { x, y };
+  };
+
+  const hexCorner = function(center, hex, i) {
+    const angle_deg = 60 * i;
+    const angle_rad = Math.PI / 180 * angle_deg;
+    return [
+      -center.y + size * Math.sin(angle_rad),
+      center.x + size * Math.cos(angle_rad),
+    ];
+  };
+
+  const hexCorners = function(hex) {
+    const corners = [];
+    const center = hexCenter(hex);
+
+    for( let i = 0; i <= 5; i += 1 ) {
+      corners.push(hexCorner(center, hex, i));
+    }
+
+    return corners;
+  };
+
+  Meteor.call('mutualSpace.getHexes', (err, hexes) => {
+    const user = Meteor.user();
+
+    hexes.forEach((hex) => {
+      const needLoad = (hex.username && hex.username !== user.username);
+
+      const hexPoly = L.polygon(hexCorners(hex), {
+        fill: needLoad,
+        color: 'blue',
+      }).addTo(hexesLayer);
+    });
+  });
+};
 
 Template.cosmos.onDestroyed(function() {
   // --------------------------------
@@ -2126,12 +2422,85 @@ Template.cosmos.events({
     if (mapView) {
       var homePlanet = Game.Planets.getBase();
       if (homePlanet) {
-        mapView.setView([homePlanet.x, homePlanet.y], 7);
+        const galacticHex = mutualSpaceCollection.findOne({username: Meteor.user().username});
+
+        let offset = [0, 0];
+        if (galacticHex) {
+          const center = hexCenter(galacticHex);
+          offset = [-center.y, center.x];
+        }
+
+        mapView.setView([offset[0] + homePlanet.x, offset[1] + homePlanet.y], 7);
       } else {
         mapView.setView([0, 0], 7);
       }
     }
-  }
+  },
+
+  'click .btn-mutual-space'(e, t) {
+    if (mapView) {
+      Meteor.call('mutualSpace.access', (err, { hexes, insertedId }) => {
+        if (err) {
+          Notifications.error('Не удалось совершить выход в космос', err.error);
+          return;
+        }
+
+        const size = MutualConfig.GALACTIC_RADIUS;
+
+        const hexCenter = function(hex) {
+          const x = size * 3/2 * hex.x;
+          const y = size * Math.sqrt(3) * (hex.z + hex.x/2);
+          return { x, y };
+        };
+
+        const hexCorner = function(center, hex, i) {
+          const angle_deg = 60 * i;
+          const angle_rad = Math.PI / 180 * angle_deg;
+          return [
+            -center.y + size * Math.sin(angle_rad),
+            center.x + size * Math.cos(angle_rad),
+          ];
+        };
+
+        const hexCorners = function(hex) {
+          const corners = [];
+          const center = hexCenter(hex);
+
+          for( let i = 0; i <= 5; i += 1 ) {
+            corners.push(hexCorner(center, hex, i));
+          }
+
+          return corners;
+        };
+
+        hexes.forEach((hex) => {
+          const needLoad = (hex.username && hex.username !== user.username);
+
+          if (hex._id === insertedId) {
+            // TODO: self hex
+          }
+
+          const hexPoly = L.polygon(hexCorners(hex), {
+            fill: needLoad,
+            color: 'blue',
+          }).addTo(mapView);
+
+          if (needLoad) {
+            hexPoly.on('click', () => {
+              Meteor.call('planet.getAllByUsername', { username: hex.username }, (err, planets2) => {
+                const center = hexCenter(hex);
+                Game.Cosmos.renderPlanets(shipsLayer, planets2, [-center.y, center.x]);
+
+                Meteor.subscribe('planets', hex.username);
+
+                hexPoly.setStyle({ fill: false });
+              });
+            });
+          }
+        });
+      });
+    }
+  },
 });
 
 // ------------------------------------------------------

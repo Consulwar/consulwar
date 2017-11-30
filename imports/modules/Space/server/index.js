@@ -43,12 +43,20 @@ Space.collection._ensureIndex({
   status: 1,
 });
 
-Meteor.publish('spaceEvents', function () {
+Meteor.publish('spaceEvents', function (username) {
   if (this.userId) {
-    return Space.collection.find({
-      'data.userId': this.userId,
-      status: Space.filterActive,
-    });
+    if (username) {
+      const userIds = [this.userId, Meteor.users.findOne({ username })._id];
+      return Space.collection.find({
+        'data.userId': { $in: userIds },
+        status: Space.filterActive,
+      });
+    } else {
+      return Space.collection.find({
+        'data.userId': this.userId,
+        status: Space.filterActive,
+      });
+    }
   }
   return null;
 });

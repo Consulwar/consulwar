@@ -8,6 +8,9 @@
     {{#if isSelection}}
       <a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
     {{/if}}
+    {{#if gt user.rating 100000}}
+      <a class="btn-mutual-space">Общий космос</a>
+    {{/if}}
     
     {{#if isLoading}}
       {{> loading}}

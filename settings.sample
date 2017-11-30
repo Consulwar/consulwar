@@ -105,6 +105,10 @@
     },
     "wrecks": {
       "priceCoefficient": 0.9
+    },
+    "mutualSpace": {
+      "galacticRadius": 52,
+      "accessRating": 10000
     }
   },
   "helprace": {

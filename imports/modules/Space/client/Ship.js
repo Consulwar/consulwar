@@ -93,6 +93,7 @@ class Ship {
     mapView,
     shipsLayer,
     isPopupLocked,
+    origin = [0, 0],
   }) {
     this.mapView = mapView;
     this.shipsLayer = shipsLayer;
@@ -103,7 +104,7 @@ class Ship {
         x: planet.x + (planetRadius * 0.2),
         y: planet.y - (planetRadius * 0.2),
       };
-      const offset = [-(planetRadius * 0.7), (planetRadius * 0.5)];
+      const offset = [origin[0] + -(planetRadius * 0.7), origin[1] + (planetRadius * 0.5)];
       const latlngs = createTriangle(planet.x, planet.y, offset, this.size);
 
       this.color = (planet.mission ? 'red' : 'green');
@@ -112,7 +113,7 @@ class Ship {
 
       this.polygon.on('mouseover', function() {
         if (!isPopupLocked.get()) {
-          Game.Cosmos.showPlanetPopup(planet._id);
+          Game.Cosmos.showPlanetPopup(planet._id, false, origin);
         }
       });
 
@@ -123,7 +124,7 @@ class Ship {
       });
 
       this.polygon.on('click', function(event) {
-        Game.Cosmos.showPlanetInfo(planet._id);
+        Game.Cosmos.showPlanetInfo(planet._id, origin);
         L.DomEvent.stopPropagation(event);
       });
 

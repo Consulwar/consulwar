@@ -64,7 +64,27 @@ class Group {
       let rest = target.receiveDamage(unit, damage + additionalDamage);
 
       // Распределяем оставшийся от атаки урон на еще не атакованных юнитов
-      additionalDamage += Math.round(rest * restCoef) / (length - (i+1));
+      if (i === length - 1) {
+        additionalDamage += Math.round(rest * restCoef);
+      } else {
+        additionalDamage += Math.round(rest * restCoef) / (length - (i+1));
+      }
+    }
+
+    while (additionalDamage > 0) {
+      const previousAdditionalDamage = additionalDamage;
+
+      for (let i = 0; i < length; i++) {
+        let [target] = targetDamages[i];
+
+        let rest = target.receiveDamage(unit, additionalDamage);
+
+        additionalDamage -= rest;
+      }
+
+      if (previousAdditionalDamage === additionalDamage) {
+        break;
+      }
     }
   }
 

@@ -93,11 +93,11 @@ Game.PromoCode.randomItems =  [{
 }, {
   units: { defense: { turret: 10 } }
 }, {
-  units: { ground: { horizontalbarman: 50 } }
+  units: { ground: { horizontalbarman: 3 } }
 }, {
-  units: { ground: { agmogedcar: 5 } }
+  units: { ground: { agmogedcar: 1 } }
 }, {
-  units: { ground: { fast: 5 } }
+  units: { ground: { fast: 1 } }
 }];
 
 Meteor.methods({

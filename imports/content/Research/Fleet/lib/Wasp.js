@@ -1,4 +1,4 @@
-import Wasp from '/imports/content/Unit/Space/Human/lib/Wasp';
+import Wasp from '/imports/content/Unit/Human/Space/lib/Wasp';
 
 export default {
   id: 'Research/Fleet/Wasp',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Осы +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Wasp',
+        condition: 'Unit/Human/Space/Wasp',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Осы +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Wasp',
+        condition: 'Unit/Human/Space/Wasp',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

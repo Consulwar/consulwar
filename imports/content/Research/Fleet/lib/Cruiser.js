@@ -1,4 +1,4 @@
-import Cruiser from '/imports/content/Unit/Space/Human/lib/Cruiser';
+import Cruiser from '/imports/content/Unit/Human/Space/lib/Cruiser';
 
 export default {
   id: 'Research/Fleet/Cruiser',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Крейсера +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Cruiser',
+        condition: 'Unit/Human/Space/Cruiser',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Крейсера +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Cruiser',
+        condition: 'Unit/Human/Space/Cruiser',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

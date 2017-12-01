@@ -7,7 +7,7 @@ export default {
       {
         textBefore: 'Подготовка пехоты на ',
         textAfter: '% дешевле',
-        condition: 'Unit/Ground/Infantry/Human',
+        condition: 'Unit/Human/Ground/Infantry',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {
@@ -17,7 +17,7 @@ export default {
       {
         textBefore: 'Подготовка пехоты на ',
         textAfter: '% быстрее',
-        condition: 'Unit/Ground/Infantry/Human',
+        condition: 'Unit/Human/Ground/Infantry',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {

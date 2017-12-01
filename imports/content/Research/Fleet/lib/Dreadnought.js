@@ -1,4 +1,4 @@
-import Dreadnought from '/imports/content/Unit/Space/Human/lib/Dreadnought';
+import Dreadnought from '/imports/content/Unit/Human/Space/lib/Dreadnought';
 
 export default {
   id: 'Research/Fleet/Dreadnought',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Дредноута +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Dreadnought',
+        condition: 'Unit/Human/Space/Dreadnought',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Дредноута +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Dreadnought',
+        condition: 'Unit/Human/Space/Dreadnought',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

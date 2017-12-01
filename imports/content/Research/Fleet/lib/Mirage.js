@@ -1,4 +1,4 @@
-import Mirage from '/imports/content/Unit/Space/Human/lib/Mirage';
+import Mirage from '/imports/content/Unit/Human/Space/lib/Mirage';
 
 export default {
   id: 'Research/Fleet/Mirage',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Миража +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Mirage',
+        condition: 'Unit/Human/Space/Mirage',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Миража +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Mirage',
+        condition: 'Unit/Human/Space/Mirage',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

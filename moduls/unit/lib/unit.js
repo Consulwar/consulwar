@@ -19,8 +19,8 @@ game.Unit = function(options) {
     options.engName = Game.newToLegacyNames[options.engName];
   }
 
-  if (idParts[1] === 'Ground') {
-    options.characteristics.special = idParts[2].toLocaleLowerCase();
+  if (idParts[2] === 'Ground') {
+    options.characteristics.special = idParts[3].toLocaleLowerCase();
   }
 
   const newToLegacyUpgradeNames = {
@@ -56,9 +56,9 @@ game.Unit = function(options) {
 
   this._targets = options.targets;
   options.targets = function() {
-    if (idParts[1] === 'Ground') {
+    if (idParts[2] === 'Ground') {
       return this._targets.map((target) => {
-        let [, type, group, side, engName] = target.split('/');
+        let [, side, type, group, engName] = target.split('/');
         engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
@@ -68,7 +68,7 @@ game.Unit = function(options) {
       });
     } else {
       return this._targets.map((target) => {
-        let [, type, side, engName] = target.split('/');
+        let [, side, type, engName] = target.split('/');
         engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
@@ -176,9 +176,9 @@ game.ReptileUnit = function(options) {
 
   this._targets = options.targets;
   options.targets = function() {
-    if (idParts[1] === 'Ground') {
+    if (idParts[2] === 'Ground') {
       return this._targets.map((target) => {
-        let [, type, group, side, engName] = target.split('/');
+        let [, side, type, group, engName] = target.split('/');
         engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];
@@ -188,7 +188,7 @@ game.ReptileUnit = function(options) {
       });
     } else {
       return this._targets.map((target) => {
-        let [, type, side, engName] = target.split('/');
+        let [, side, type, engName] = target.split('/');
         engName = engName.toLocaleLowerCase();
         if (Game.newToLegacyNames[engName]) {
           engName = Game.newToLegacyNames[engName];

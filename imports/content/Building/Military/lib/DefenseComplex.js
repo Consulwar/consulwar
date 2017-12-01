@@ -7,7 +7,7 @@ export default {
       {
         textBefore: 'Строительство обороны на ',
         textAfter: '% дешевле',
-        condition: 'Unit/Defense/Human',
+        condition: 'Unit/Human/Defense',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level = this.getCurrentLevel()) {
@@ -17,7 +17,7 @@ export default {
       {
         textBefore: 'Строительство обороны на ',
         textAfter: '% быстрее',
-        condition: 'Unit/Defense/Human',
+        condition: 'Unit/Human/Defense',
         priority: 2,
         affect: 'time',
         result(level = this.getCurrentLevel()) {

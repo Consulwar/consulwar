@@ -7,7 +7,7 @@ export default {
       {
         textBefore: '+',
         textAfter: '% к урону флагмана',
-        condition: 'Unit/Space/Human/Flagship',
+        condition: 'Unit/Human/Space/Flagship',
         priority: 4,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {

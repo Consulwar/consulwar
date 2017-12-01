@@ -1,4 +1,4 @@
-import Frigate from '/imports/content/Unit/Space/Human/lib/Frigate';
+import Frigate from '/imports/content/Unit/Human/Space/lib/Frigate';
 
 export default {
   id: 'Research/Fleet/Frigate',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Фрегата +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Frigate',
+        condition: 'Unit/Human/Space/Frigate',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Фрегата +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/Frigate',
+        condition: 'Unit/Human/Space/Frigate',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

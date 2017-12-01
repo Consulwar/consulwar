@@ -1,4 +1,4 @@
-import TruckC from '/imports/content/Unit/Space/Human/lib/TruckC';
+import TruckC from '/imports/content/Unit/Human/Space/lib/TruckC';
 
 export default {
   id: 'Research/Fleet/TruckC',
@@ -9,7 +9,7 @@ export default {
       {
         textBefore: 'Урон Трака +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/TruckC',
+        condition: 'Unit/Human/Space/TruckC',
         priority: 2,
         affect: 'damage',
         result(level = this.getCurrentLevel()) {
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Броня Трака +',
         textAfter: '%',
-        condition: 'Unit/Space/Human/TruckC',
+        condition: 'Unit/Human/Space/TruckC',
         priority: 2,
         affect: 'life',
         result(level = this.getCurrentLevel()) {

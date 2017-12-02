@@ -2,7 +2,9 @@ import { _ } from 'meteor/underscore';
 
 // Return formated string from number or array of numbers
 // If array provided than divide it by delimiter
-const formatNumber = function (num, delimiter = ' - ') {
+// Warn: non breaking space used (alt + 255). It not just simple spaces!
+// used to prevent breaking numbers
+const formatNumber = function (num, delimiter = ' - ') {
   const result = _.isObject(num) || _.isArray(num) ? num : [num];
 
   const singlePattern = /^-?\d+(?:\.\d{0,1})?/;
@@ -21,7 +23,8 @@ const formatNumber = function (num, delimiter = ' - ') {
         res = firstMatched(res, singlePattern);
       }
     }
-    return res.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    // non breaking space used
+    return res.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }).join(delimiter);
 };
 

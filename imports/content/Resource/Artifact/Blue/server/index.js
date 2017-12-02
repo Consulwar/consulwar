@@ -1,8 +1,8 @@
-import SapphirePlasmoid from '../lib/SapphirePlasmoid';
-import QuadCooler from '../lib/QuadCooler';
-import PlasmaTransistors from '../lib/PlasmaTransistors';
-import NanoWires from '../lib/NanoWires';
-import Chip from '../lib/Chip';
+import SapphirePlasmoid from './SapphirePlasmoid';
+import QuadCooler from './QuadCooler';
+import PlasmaTransistors from './PlasmaTransistors';
+import NanoWires from './NanoWires';
+import Chip from './Chip';
 
 export default {
   'Resource/Artifact/Blue/SapphirePlasmoid': SapphirePlasmoid,

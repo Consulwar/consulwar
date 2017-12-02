@@ -1,7 +1,7 @@
-initArtefactsLib = function() {
-'use strict';
+import { default as Game, game } from '/moduls/game/lib/main.game';
 
 game.Artefact = function(options) {
+  this.id = options.id;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;
@@ -17,7 +17,6 @@ game.Artefact = function(options) {
     options.group = Game.newToLegacyNames[options.group];
   }
   //
-
   this.group = options.group;
   this.engName = options.engName;
   this.name = options.name;
@@ -59,16 +58,21 @@ game.Artefact = function(options) {
     return '/img/game/artefact/' + this.group + '/i/' + this.engName + '.png';
   };
 
+  this.getIcon = this.icon;
+
   this.image = function() {
     return '/img/game/artefact/' + this.group + '/' + this.engName + '/item.jpg';
   };
+
+  this.getImage = this.image;
 
   Game.Artefacts.items[options.engName] = this;
 };
 
 Game.Artefacts = {
-  items: {}
+  items: {},
 };
 
-initArtefactsContent();
-};
+const Artifact = game.Artefact;
+
+export default Artifact;

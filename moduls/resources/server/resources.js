@@ -6,7 +6,6 @@ initResourcesServer = function() {
 'use strict';
 
 initResourcesLib();
-initArtefactsLib();
 
 Game.Resources.Collection._ensureIndex({
   user_id: 1

@@ -129,6 +129,7 @@ Game.Unit = {
 };
 
 game.Unit = function (options) {
+  this.id = options.id;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;
@@ -143,7 +144,7 @@ game.Unit = function (options) {
   }
 
   game.setToMenu = 'army';
-  game.setToSide = idParts[1] === 'Space' ? 'fleet' : idParts[1].toLocaleLowerCase();
+  game.setToSide = idParts[2] === 'Space' ? 'fleet' : idParts[2].toLocaleLowerCase();
 
   const newToLegacyUpgradeNames = {
     gammadrone: 'gammabetaalpha',
@@ -161,19 +162,21 @@ game.Unit = function (options) {
   }
   options.fleetup = newToLegacyUpgradeNames[options.engName];
 
-  this._requirements = options.requirements;
-  options.requirements = function () {
-    const requirements = this._requirements();
+  if (options.requirements) {
+    this._requirements = options.requirements;
+    options.requirements = function () {
+      const requirements = this._requirements();
 
-    requirements.forEach((requirement) => {
-      let [className, group, engName] = requirement[0].split('/');
-      if (Game.newToLegacyNames[engName]) {
-        engName = Game.newToLegacyNames[engName];
-      }
-      requirement[0] = Game[className].items[group.toLocaleLowerCase()][engName.toLocaleLowerCase()];
-    });
+      requirements.forEach((requirement) => {
+        let [className, group, engName] = requirement[0].split('/');
+        if (Game.newToLegacyNames[engName]) {
+          engName = Game.newToLegacyNames[engName];
+        }
+        requirement[0] = Game[className].items[group.toLocaleLowerCase()][engName.toLocaleLowerCase()];
+      });
 
-    return requirements;
+      return requirements;
+    }
   }
 
   this._targets = options.targets;
@@ -252,9 +255,13 @@ game.Unit = function (options) {
     return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
   };
 
+  this.getIcon = this.icon;
+
   this.image = function () {
     return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
   };
+
+  this.getImage = this.image;
 
   this.totalCount = function () {
     var armies = Game.Unit.Collection.find({
@@ -286,6 +293,7 @@ game.Unit = function (options) {
 game.extend(game.Unit, game.Item);
 
 game.ReptileUnit = function (options) {
+  this.id = options.id;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;
@@ -297,7 +305,7 @@ game.ReptileUnit = function (options) {
   }
 
   game.setToMenu = 'reptiles';
-  game.setToSide = idParts[1] === 'Space' ? 'fleet' : idParts[1].toLocaleLowerCase();
+  game.setToSide = idParts[2] === 'Space' ? 'fleet' : idParts[2].toLocaleLowerCase();
 
   this._targets = options.targets;
   options.targets = function () {
@@ -406,7 +414,7 @@ initUnitLib = function() {
 'use strict';
 
 initBattleLib();
-initUnitsContent();
+
 };
 
 const Unit = game.Unit;

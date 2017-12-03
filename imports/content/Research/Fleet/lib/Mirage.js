@@ -1,5 +1,3 @@
-import Mirage from '/imports/content/Unit/Human/Space/lib/Mirage';
-
 export default {
   id: 'Research/Fleet/Mirage',
   title: 'Усиление Миража',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Mirage.requirements,
+  requirements() {
+    return [
+      ['Building/Residential/SpacePort', 45],
+      ['Building/Military/Airfield', 45],
+      ['Research/Evolution/Nanotechnology', 20],
+    ];
+  },
 };

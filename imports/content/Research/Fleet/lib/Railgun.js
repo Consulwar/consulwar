@@ -1,5 +1,3 @@
-import Railgun from '/imports/content/Unit/Human/Space/lib/Railgun';
-
 export default {
   id: 'Research/Fleet/Railgun',
   title: 'Усиление Рейлгана',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Railgun.requirements,
+  requirements() {
+    return [
+      ['Building/Residential/Spaceport', 62],
+      ['Building/Military/Gates', 48],
+      ['Research/Evolution/Energy', 60],
+    ];
+  },
 };

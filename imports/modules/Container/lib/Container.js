@@ -30,23 +30,6 @@ class Container {
     if (this.engName == 'small') {
       this.engName = 'defaultContainer';
     }
-
-    if (this.drop) {
-      this._drop = this.drop;
-      this.drop = [];
-      this._drop.forEach((iDrop) => {
-        let profit = { units: { fleet: {} } };
-        _(iDrop.profit).keys().forEach((profitId) => {
-          const idParts = profitId.split('/');
-          let engName = idParts[idParts.length - 1].toLocaleLowerCase();
-          profit.units.fleet[engName] = iDrop.profit[profitId];
-        });
-        this.drop.push({
-          chance: iDrop.chance,
-          profit,
-        });
-      });
-    }
   }
 
   getPrice({ count = 1 } = {}) {
@@ -54,6 +37,12 @@ class Container {
       resources: _.clone(this.price),
       count,
     });
+
+    // For legacy compatibility
+    Object.defineProperty(price, 'base', {
+      value: _.clone(price),
+    });
+    //
 
     // TODO: pass userId / cached effects, etc.
     return Game.Effect.Price.applyTo({
@@ -82,16 +71,25 @@ class Container {
     return this.getCount(options) >= count;
   }
 
-  icon() {
+  getIcon() {
     return `/img/game/${this.id}/icon.png`;
   }
 
-  image() {
-    return `/img/game/${this.id}/transparent.jpg`;
+  getImage() {
+    return `/img/game/${this.id}/transparent.png`;
   }
 
-  card() {
+  getCard() {
     return `/img/game/${this.id}/card.jpg`;
+  }
+
+  // legacy
+  icon() {
+    return this.getIcon();
+  }
+
+  image() {
+    return this.getCard();
   }
 }
 

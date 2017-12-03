@@ -1,4 +1,5 @@
 import helpers from '/imports/client/ui/helpers';
+import allContainers from '/imports/content/Container/Fleet/client';
 
 UI.registerHelper('isNewLayout', function() {
   const newLayoutGroups = {
@@ -247,13 +248,9 @@ UI.registerHelper('formatProfit', function(profit) {
         }
         break;
       case 'containers':
-        for (var containerId in profit[type]) {
-          var container = Game.Building.special.Container.items[containerId];
-          if (container) {
-            result += 'Бесплатный контейнер: ';
-            result += parseInt(profit[type][containerId], 10) + ' ';
-          }
-        }
+        _(profit[type]).pairs().forEach(([id, count]) => {
+          result += `${allContainers[id].title}: ${count} `;
+        });
         break;
       case 'votePower':
         result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';

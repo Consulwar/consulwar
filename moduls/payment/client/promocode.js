@@ -103,18 +103,14 @@ Template.promocodeReward.helpers({
       return null;
     }
 
-    var containers = this.profit.containers;
-    var result = [];
+    const result = [];
 
-    for (var name in containers) {
-      var item = Game.Building.special.Container.items[name];
-      if (item) {
-        result.push({
-          engName: name,
-          amount: containers[name]
-        });
-      }
-    }
+    _(this.profit.containers).pairs().forEach(([id, count]) => {
+      result.push({
+        obj: allFleetContainers[id],
+        count,
+      });
+    });
 
     return result.length > 0 ? result : null;
   },

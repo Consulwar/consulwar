@@ -1,5 +1,3 @@
-import Carrier from '/imports/content/Unit/Human/Space/lib/Carrier';
-
 export default {
   id: 'Research/Fleet/Carrier',
   title: 'Усиление Авианосца',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Carrier.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 42],
+      ['Building/Military/Barracks', 45],
+      ['Research/Evolution/Ikea', 46],
+    ];
+  },
 };

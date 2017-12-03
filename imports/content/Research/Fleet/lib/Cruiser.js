@@ -1,5 +1,3 @@
-import Cruiser from '/imports/content/Unit/Human/Space/lib/Cruiser';
-
 export default {
   id: 'Research/Fleet/Cruiser',
   title: 'Усиление Крейсера',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Cruiser.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 30],
+      ['Building/Military/Barracks', 32],
+      ['Research/Evolution/Energy', 30],
+    ];
+  },
 };

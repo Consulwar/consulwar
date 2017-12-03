@@ -245,7 +245,7 @@ SyncedCron.add({
         user_id: users[i].user_id
       }, {
         $inc: {
-          'defaultContainer.amount': 1
+          'Container/Fleet/Green.count': 1
         }
       });
     }

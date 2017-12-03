@@ -1,0 +1,21 @@
+<template name="ContainerDrop">
+  <div class="cw--ContainerDrop">
+    {{#each item in drop}}
+      <div class="cw--ContainerDrop__item">
+        <img
+          class="cw--ContainerDrop__icon"
+          src="{{item.obj.getIcon}}"
+          alt="{{item.obj.title}}"
+        />
+        <div class="cw--ContainerDrop__info">
+          <div class="cw--ContainerDrop__count {{item.obj.color}}">
+            {{item.count}}
+          </div>
+          <div class="cw--ContainerDrop__chance">
+            {{item.chance}}%
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</template>

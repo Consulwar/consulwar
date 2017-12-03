@@ -1,9 +1,10 @@
-initArtefactsLib = function() {
-'use strict';
+import { default as Game, game } from '/moduls/game/lib/main.game';
 
 game.Artefact = function(options) {
-  // New-to-legacy
+  this.id = options.id;
+  this.title = options.title;
   const idParts = options.id.split('/');
+  // New-to-legacy
   options.name = options.title;
 
   options.group = idParts[2].toLocaleLowerCase();
@@ -17,6 +18,27 @@ game.Artefact = function(options) {
     options.group = Game.newToLegacyNames[options.group];
   }
   //
+  switch (idParts[2]) {
+    case 'Green':
+      this.color = 'cw--color_credits';
+      break;
+    case 'Blue':
+      this.color = 'cw--color_metal';
+      break;
+    case 'Purple':
+      this.color = 'cw--color_crystal';
+      break;
+    case 'Orange':
+      this.color = 'cw--color_human';
+      break;
+    case 'Red':
+      this.color = 'cw--color_honor';
+      break;
+
+    default:
+      this.color = 'cw--color_white';
+      break;
+  }
 
   this.group = options.group;
   this.engName = options.engName;
@@ -59,16 +81,31 @@ game.Artefact = function(options) {
     return '/img/game/artefact/' + this.group + '/i/' + this.engName + '.png';
   };
 
+  this.getIcon = this.icon;
+
   this.image = function() {
     return '/img/game/artefact/' + this.group + '/' + this.engName + '/item.jpg';
   };
 
+  this.getImage = this.image;
+
+  this.getCard = this.image;
+
   Game.Artefacts.items[options.engName] = this;
+
+  // new
+  this.add = ({ count, userId }) => {
+    Game.Resources.add({
+      [this.engName]: count,
+    }, userId);
+  };
+  //
 };
 
 Game.Artefacts = {
-  items: {}
+  items: {},
 };
 
-initArtefactsContent();
-};
+const Artifact = game.Artefact;
+
+export default Artifact;

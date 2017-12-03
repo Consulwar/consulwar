@@ -1,0 +1,33 @@
+<template name="ContainerRewardRoller">
+  <div 
+    class="
+      cw--ContainerRewardRoller
+      {{#if hasWinner}}cw--ContainerRewardRoller_hasWinner{{/if}}
+    "
+  >
+    {{#each reward in rewards}}
+      <div 
+        class="
+          cw--ContainerRewardRoller__reward
+          {{#if reward.isWinner}}cw--ContainerRewardRoller__reward_winner{{/if}}
+        "
+      >
+        <img 
+          class="cw--ContainerRewardRoller__rewardCard"
+          src="{{reward.obj.getCard}}"
+          alt="{{reward.obj.title}}"
+        />
+
+        {{#unless eq reward.count '1'}}
+          <div class="cw--ContainerRewardRoller__rewardCount {{reward.obj.color}}">
+            {{reward.count}}
+          </div>
+        {{/unless}}
+
+        <div class="cw--ContainerRewardRoller__rewardChance">
+          {{reward.chance}}%
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</template>

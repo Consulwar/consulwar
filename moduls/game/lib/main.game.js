@@ -729,22 +729,15 @@ Game = {
         if (artefact) {
           return artefact;
         } else {
-          const nameByRes = {
-            humans: 'Люди',
-            metals: 'Металл',
-            crystals: 'Кристалл',
-            honor: 'Честь',
-            credits: 'ГГК',
-          };
+          let allResources;
+          if (Meteor.isClient) {
+            allResources = require('/imports/content/Resource/client').default;
+          } else {
+            allResources = require('/imports/content/Resource/server').default;
+          }
 
           // TODO : remove resources hardcode
-          return {
-            engName,
-            name: nameByRes[engName],
-            type: 'resource',
-            icon: `/img/game/${engName}.png`,
-            image: `/img/game/${engName}.jpg`,
-          };
+          return allResources[engName];
         }
 
       case 'cards':
@@ -752,8 +745,15 @@ Game = {
         return Game.Cards.items.donate[engName];
 
       case 'containers':
+        let allContainers;
+        if (Meteor.isClient) {
+          allContainers = require('/imports/content/Container/client').default;
+        } else {
+          allContainers = require('/imports/content/Container/server').default;
+        }
+
         engName = _.keys(obj[type])[0];
-        return Game.Building.special.Container.items[engName];
+        return allContainers[engName];
 
       case 'votePower':
         return {
@@ -1323,8 +1323,7 @@ game.Function = function(options) {
 };
 
 Game.functions = {};
-
-initFunctionsContent();
+Meteor.startup(() => initFunctionsContent());
 
 Game.Helpers = {
   formatHours: function(timestamp, offset) {
@@ -1457,4 +1456,5 @@ Game.Helpers = {
   },
 };
 
+export { game };
 export default Game;

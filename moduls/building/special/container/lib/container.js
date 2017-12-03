@@ -4,6 +4,7 @@ initBuildingSpecialContainerLib = function() {
 'use strict';
 
 game.Container = function(options) {
+  this.id = options.id;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;
@@ -85,7 +86,5 @@ Game.Building.special.Container = {
     });
   }
 };
-
-initBuildingSpecialContainerContent();
 
 };

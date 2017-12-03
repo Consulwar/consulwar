@@ -130,6 +130,7 @@ Game.Unit = {
 
 game.Unit = function (options) {
   this.id = options.id;
+  this.title = options.title;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;
@@ -225,6 +226,8 @@ game.Unit = function (options) {
 
   Game.Unit.items.army[this.side][this.engName] = this;
 
+  this.color = 'cw--color_metal';
+
   this.star = function () {
     if (!options.fleetup || !Game.Research.items.fleetups[options.fleetup]) {
       return 0;
@@ -263,6 +266,8 @@ game.Unit = function (options) {
 
   this.getImage = this.image;
 
+  this.getCard = this.image;
+
   this.totalCount = function () {
     var armies = Game.Unit.Collection.find({
       user_id: Meteor.userId()
@@ -289,11 +294,22 @@ game.Unit = function (options) {
   this.side = 'army';
   this.battleEffects = options.battleEffects;
   this.maxCount = options.maxCount;
+
+  // new
+  this.add = ({ count, userId }) => (
+    Game.Unit.add({
+      engName: this.engName,
+      group: this.group,
+      count,
+    }, userId)
+  );
+  //
 };
 game.extend(game.Unit, game.Item);
 
 game.ReptileUnit = function (options) {
   this.id = options.id;
+  this.title = options.title;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;

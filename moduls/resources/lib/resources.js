@@ -134,6 +134,10 @@ Game.Resources = {
       return false;
     });
   },
+
+  multiplyResources({ resources, count }) {
+    return _.mapObject(resources, resource => resource * count);
+  },
 };
 
 };

@@ -7,11 +7,11 @@ export default {
       {
         textBefore: 'Уменьшает цену контейнера на ',
         textAfter: ' ГГК',
-        affect: 'credits',
-        priority: 1,
+        affect: ['credits', 'honor'],
+        priority: 2,
         condition: 'Unique/containerPrice',
         result(level = this.getCurrentLevel()) {
-          return level * 1;
+          return level * 0.5;
         },
       },
     ],

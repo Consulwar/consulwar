@@ -1,12 +1,13 @@
 import Log from '/imports/modules/Log/server/Log';
 import persons from '/imports/content/Person/server';
+import allContainers from '/imports/content/Container/server';
 import User from '/imports/modules/User/server/User';
+import content from '/imports/content/server';
 
 initResourcesServer = function() {
 'use strict';
 
 initResourcesLib();
-initArtefactsLib();
 
 Game.Resources.Collection._ensureIndex({
   user_id: 1
@@ -167,6 +168,15 @@ Game.Resources.rollProfit = function(drop) {
 };
 
 Game.Resources.addProfit = function(profit, uid = Meteor.userId()) {
+  // new !
+  _(profit)
+    .pairs()
+    .filter(([id]) => id.indexOf('/') !== -1)
+    .forEach(([id, count]) => {
+      content[id].add({ count, userId: uid });
+    });
+  //
+
   if (profit.resources) {
     Game.Resources.add(profit.resources, uid);
   }
@@ -197,7 +207,9 @@ Game.Resources.addProfit = function(profit, uid = Meteor.userId()) {
   }
 
   if (profit.containers) {
-    Game.Building.special.Container.add(profit.containers, uid);
+    _(profit.containers).pairs().forEach(([id, count]) => {
+      allContainers[id].add({ count, userId: uid });
+    });
   }
 
   if (profit.houseItems) {

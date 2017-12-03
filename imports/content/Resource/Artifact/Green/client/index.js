@@ -1,8 +1,8 @@
-import EmeraldPlasmoid from '../lib/EmeraldPlasmoid';
-import Batteries from '../lib/Batteries';
-import RotaryAmplifier from '../lib/RotaryAmplifier';
-import SecretTechnology from '../lib/SecretTechnology';
-import ReptileTechnology from '../lib/ReptileTechnology';
+import EmeraldPlasmoid from './EmeraldPlasmoid';
+import Batteries from './Batteries';
+import RotaryAmplifier from './RotaryAmplifier';
+import SecretTechnology from './SecretTechnology';
+import ReptileTechnology from './ReptileTechnology';
 
 export default {
   'Resource/Artifact/Green/EmeraldPlasmoid': EmeraldPlasmoid,

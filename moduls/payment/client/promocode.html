@@ -44,9 +44,14 @@
     </ul>
     {{/if}}
     {{#if containers}}
-    {{#each containers}}
-    <span class="containers">Бесплатный контейнер +{{this.amount}}</span>
-    {{/each}}
+      <ul class="containers">
+      {{#each containers}}
+        <li>
+          {{> ContainerCard container=this.obj}}
+          {{this.count}}
+        </li>
+      {{/each}}
+      </ul>
     {{/if}}
     {{#if profit.votePower}}
     <span class="votepower">Сила голоса +{{profit.votePower}}</span>

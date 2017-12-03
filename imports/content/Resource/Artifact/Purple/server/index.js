@@ -1,8 +1,8 @@
-import AmethystPlasmoid from '../lib/AmethystPlasmoid';
-import Garyoldmanium from '../lib/Garyoldmanium';
-import Keanureevesium from '../lib/Keanureevesium';
-import Nicolascagium from '../lib/Nicolascagium';
-import Jimcarrium from '../lib/Jimcarrium';
+import AmethystPlasmoid from './AmethystPlasmoid';
+import Garyoldmanium from './Garyoldmanium';
+import Keanureevesium from './Keanureevesium';
+import Nicolascagium from './Nicolascagium';
+import Jimcarrium from './Jimcarrium';
 
 export default {
   'Resource/Artifact/Purple/AmethystPlasmoid': AmethystPlasmoid,

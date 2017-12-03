@@ -26,10 +26,6 @@ class Container {
     const idParts = id.split('/');
     this.name = title;
     this.engName = idParts[idParts.length - 1].toLocaleLowerCase();
-
-    if (this.engName == 'small') {
-      this.engName = 'defaultContainer';
-    }
   }
 
   getPrice({ count = 1 } = {}) {

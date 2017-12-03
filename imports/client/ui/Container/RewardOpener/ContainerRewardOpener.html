@@ -1,0 +1,75 @@
+<template name="ContainerRewardOpener">
+  <div class="cw--ContainerRewardOpener">
+    <div class="cw--ContainerRewardOpener__title">
+      <div>
+        Открыто {{opened.get}} из {{count.get}}
+      </div>
+      <label class="cw--ContainerRewardOpener__option">
+        <input 
+          type="checkbox" 
+          onClick={{switchAutoOpen}}
+          checked={{autoOpen.get}}
+        />
+        Открывать автоматически
+      </label>
+      <label class="cw--ContainerRewardOpener__option">
+        <input 
+          type="checkbox"
+          onClick={{switchAutoGet}}
+          checked={{autoGet.get}}
+        />
+        Собирать автоматически
+      </label>
+    </div>
+    
+    {{> ContainerRewardRoller rewards=rewards}}
+
+    <div class="cw--ContainerRewardOpener__actions">
+      {{#if container.has}}
+        {{#if winner.get}}
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+            "
+            onClick={{get}}
+          >
+            Забрать
+          </button>
+        {{else}}
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_blue
+            "
+            onClick={{open}}
+          >
+            Открыть
+          </button>
+        {{/if}}
+      {{else}}
+        {{> InputNumber args
+          value=countToBuy
+          min=1
+          isShowZero=false
+          class="cw--ContainerRewardOpener__input"
+        }}
+
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_blue
+          "
+          onClick={{buy}}
+        >
+          Ещё попытки
+        </button>
+
+        {{> ResourceSingle resources=(getPrice countToBuy.get)}}
+      {{/if}}
+    </div>
+  </div>
+</template>

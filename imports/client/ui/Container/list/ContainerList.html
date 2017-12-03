@@ -1,0 +1,33 @@
+<template name="ContainerList">
+  <div class="cw--ContainerList">
+    {{#each container in containers}}
+      <div class="cw--ContainerList__item">
+        <div class="cw--ContainerList__image" onClick={{openContainer container}}>
+          {{> ContainerCard 
+            container=container 
+            class="cw--ContainerList__image"
+          }}
+        </div>
+
+        <div class="cw--ContainerList__info">
+          {{#if container.has}}
+            Доступно
+            <span class="{{container.color}}">
+              {{container.getCount}}
+            </span>
+          {{else}}
+            <div class="cw--ContainerList__options">
+              {{> InputNumber args
+                value=countToBuy
+                min=1
+                isShowZero=false
+                class="cw--ContainerList__input"
+              }}
+              {{> ResourceSingle resources=(getPrice container)}}
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</template>

@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
-import User from '/imports/modules/User/server/User';
 import allContainers from '/imports/content/Container/Fleet/server';
 import LibContainer from '../lib/Container';
 import collection from '../lib/collection';

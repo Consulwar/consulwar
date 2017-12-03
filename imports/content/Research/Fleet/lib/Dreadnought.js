@@ -1,5 +1,3 @@
-import Dreadnought from '/imports/content/Unit/Human/Space/lib/Dreadnought';
-
 export default {
   id: 'Research/Fleet/Dreadnought',
   title: 'Усиление Дредноута',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Dreadnought.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 47],
+      ['Building/Military/Factory', 45],
+      ['Research/Evolution/Engineering', 45],
+    ];
+  },
 };

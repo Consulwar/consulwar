@@ -1,4 +1,5 @@
 import persons from '/imports/content/Person/client';
+import allFleetContainers from '/imports/content/Container/Fleet/client';
 
 initPromoCodeClient = function() {
 'use strict';
@@ -187,7 +188,12 @@ Template.promocodeCreate.helpers({
 
     result.push({ name: '----------------------------------------' });
 
-    result.push({ id: 'containers.defaultContainer', name: 'Бесплатный контейнер' });
+    _(allFleetContainers).pairs().forEach(([id, container]) => {
+      result.push({
+        id: `containers.${id}`,
+        name: container.title,
+      });
+    });
 
     result.push({ name: '----------------------------------------' });
 

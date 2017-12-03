@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import allFleetContainers from '/imports/content/Container/Fleet/client';
 
 initEarthAdminClient = function() {
 'use strict';
@@ -35,7 +36,12 @@ Template.adminReptileChange.helpers({
 
     push({ name: '----------------------------------------' });
 
-    push({ id: 'containers.defaultContainer', name: 'Бесплатный контейнер' });
+    _(allFleetContainers).pairs().forEach(([id, container]) => {
+      result.push({
+        id: `containers.${id}`,
+        name: container.title,
+      });
+    });
 
     push({ name: '----------------------------------------' });
 

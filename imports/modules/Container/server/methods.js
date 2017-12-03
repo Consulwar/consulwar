@@ -14,7 +14,7 @@ Meteor.methods({
     check(count, Match.Integer);
 
     Log.method.call(this, {
-      description: 'Building/Residential/SpacePort.buyContainer',
+      name: 'Building/Residential/SpacePort.buyContainer',
       user,
     });
 
@@ -41,7 +41,7 @@ Meteor.methods({
     check(id, String);
 
     Log.method.call(this, {
-      description: 'Building/Residential/SpacePort.openContainer',
+      name: 'Building/Residential/SpacePort.openContainer',
       user,
     });
 

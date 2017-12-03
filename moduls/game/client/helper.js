@@ -1,8 +1,5 @@
 import helpers from '/imports/client/ui/helpers';
 
-Meteor.startup(function() {
-'use strict';
-
 UI.registerHelper('isNewLayout', function() {
   const newLayoutGroups = {
     planet: {
@@ -188,17 +185,7 @@ UI.registerHelper('lookup', function(obj) {
   return _.isFunction(result) ? result() : result;
 });
 
-UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {
-  return zeroForm + (
-    (/^(.*[0,2-9])?[1]$/.test(number))
-    ? singleForm
-    : (
-      (/^(.*[0,2-9])?[2-4]$/.test(number))
-      ? twoForm
-      : manyForm
-    )
-  );
-});
+UI.registerHelper('declension', helpers.declension);
 
 UI.registerHelper('formatYearMonthDay', function(dateString) {
   var date = new Date(dateString);
@@ -467,9 +454,10 @@ Tracker.autorun(function() {
   }
 });
 
-UI.registerHelper('priceTooltip', function(price, target) {
+const priceTooltip = function (price, target) {
   return getEffectsTooltip(price, price.effects, target, true, 'n', true);
-});
+};
+UI.registerHelper('priceTooltip', priceTooltip);
 
 UI.registerHelper('incomeTooltip', function(effects, target) {
   var income = {base: {}};
@@ -514,4 +502,6 @@ Template.tooltipTable.helpers({
   }
 });
 
-});
+export default {
+  priceTooltip,
+};

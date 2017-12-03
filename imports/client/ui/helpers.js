@@ -89,7 +89,21 @@ const formatNumberWithIso = function(num, limit = 5) {
 };
 
 
+const declension = function(number, zeroForm, singleForm, twoForm, manyForm) {
+  let ending = '';
+  if (/^(.*[0,2-9])?[1]$/.test(number)) {
+    ending = singleForm;
+  } else if (/^(.*[0,2-9])?[2-4]$/.test(number)) {
+    ending = twoForm;
+  } else {
+    ending = manyForm;
+  }
+  return `${zeroForm}${ending}`;
+};
+
+
 export default {
   formatNumber,
   formatNumberWithIso,
+  declension,
 };

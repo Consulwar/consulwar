@@ -2,16 +2,19 @@ import Game from '/moduls/game/lib/main.game';
 import FlightEvents from './flightEvents';
 import BattleEvents from './battleEvents';
 import Ship from './Ship';
+import BattleIcon from './BattleIcon';
 
 class Galaxy {
   constructor({
+    username,
     planets = Game.Planets.getAll().fetch(),
-    fleets = FlightEvents.getFleetsEvents().fetch(),
-    battleEvents = BattleEvents.getAllByUserId().fetch(),
+    isPopupLocked,
+    mapView,
   }) {
+    this.username = username;
     this.planets = planets;
-    this.fleets = fleets;
-    this.battleEvents = battleEvents;
+    this.isPopupLocked = isPopupLocked;
+    this.mapView = mapView;
   }
 
   render({
@@ -34,7 +37,9 @@ class Galaxy {
   }
 
   renderPlanets(planetsLayer, shipsLayer) {
-    planets.forEach((planet) => {
+    const offset = this.offset;
+
+    this.planets.forEach((planet) => {
       const color = (
         planet.status === Game.Planets.STATUS.HUMANS
           ? '#c6e84c'
@@ -54,19 +59,19 @@ class Galaxy {
         },
       ).addTo(planetsLayer);
 
-      circle.on('mouseover', function() {
-        if (!isPopupLocked.get()) {
+      circle.on('mouseover', () => {
+        if (!this.isPopupLocked.get()) {
           Game.Cosmos.showPlanetPopup(planet._id, false, offset);
         }
       });
 
-      circle.on('mouseout', function() {
-        if (!isPopupLocked.get()) {
+      circle.on('mouseout', () => {
+        if (!this.isPopupLocked.get()) {
           Game.Cosmos.hidePlanetPopup();
         }
       });
 
-      circle.on('click', function(event) {
+      circle.on('click', (event) => {
         Game.Cosmos.showPlanetInfo(planet._id, offset);
         L.DomEvent.stopPropagation(event);
       });
@@ -76,21 +81,13 @@ class Galaxy {
           isStatic: true,
           planet,
           planetRadius: radius,
-          mapView,
+          mapView: this.mapView,
           shipsLayer,
-          isPopupLocked,
+          isPopupLocked: this.isPopupLocked,
           origin: offset,
         });
       }
     });
-  }
-
-  renderFleets(shipsLayer) {
-
-  }
-
-  renderBattles(shipsLayer) {
-
   }
 }
 

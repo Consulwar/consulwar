@@ -2,6 +2,7 @@ import '/imports/modules/Person/server';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import initSpaceServer from '/imports/modules/Space/server/index';
+import initMutualSpaceServer from '/imports/modules/MutualSpace/server/index';
 import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import '/imports/modules/Person/server/methods';
@@ -100,6 +101,7 @@ Meteor.startup(function () {
 
   SyncedCron.start();
   initSpaceServer();
+  initMutualSpaceServer();
 });
 
 Router.route('/legal/:filename?', function() {

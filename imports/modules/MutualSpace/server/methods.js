@@ -19,7 +19,7 @@ Meteor.methods({
       throw new Meteor.Error('Недостаточно рейтинга.');
     }
 
-    const result = collection.upsert({
+    collection.upsert({
       username: { $exists: false },
     }, {
       $set: {
@@ -27,12 +27,7 @@ Meteor.methods({
       },
     });
 
-    if (result.insertedId) {
-      return {
-        hexes: collection.find({}).fetch(),
-        insertedId,
-      };
-    }
+    return collection.find({}).fetch();
   },
 
   'mutualSpace.getHexes'() {

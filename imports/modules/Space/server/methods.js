@@ -110,6 +110,8 @@ Meteor.methods({
       engineLevel,
       mission: null,
       armyId: newArmyId,
+      fromGalacticUsername: user.username,
+      toGalacticUsername: user.username,
     });
 
     // save statistic
@@ -206,6 +208,8 @@ Meteor.methods({
       engineLevel,
       isOneway,
       armyId: newArmyId,
+      fromGalacticUsername: user.username,
+      toGalacticUsername: user.username,
     };
 
     FlightEvents.add(data);

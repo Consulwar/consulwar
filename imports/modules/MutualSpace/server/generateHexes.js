@@ -23,13 +23,21 @@ const cubeNeighbor = function(cube, direction) {
   return cubeAdd(cube, cubeDirection(direction));
 };
 
+let allCount = 1;
+
 const cubeRing = function(center, radius) {
   const results = [];
   let cube = cubeAdd(center, cubeScale(cubeDirection(4), radius));
 
   for (let i = 0; i < 6; i += 1) {
     for (let j = 0; j < radius; j += 1) {
+      if (allCount % 5 === 0) {
+        cube.username = null;
+      }
+
       results.push(cube);
+      allCount += 1;
+
       cube = cubeNeighbor(cube, i);
     }
   }

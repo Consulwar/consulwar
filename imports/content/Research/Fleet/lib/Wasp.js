@@ -1,5 +1,3 @@
-import Wasp from '/imports/content/Unit/Human/Space/lib/Wasp';
-
 export default {
   id: 'Research/Fleet/Wasp',
   title: 'Усиление Осы',
@@ -34,5 +32,9 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Wasp.requirements,
+  requirements() {
+    return [
+      ['Building/Residential/Spaceport', 1],
+    ];
+  },
 };

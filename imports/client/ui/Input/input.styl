@@ -1,0 +1,16 @@
+@import '{}/imports/client/ui/colors.styl'
+
+.cw--input
+  height 27px
+  padding-left 5px
+  background-color: $cw--color_tableEven
+  border 1px solid $cw--color_science
+  border-image linear-gradient(to top, #132E56 0%, #4B78BB 100%) 40%
+  color $cw--color_description
+  font-family 'Roboto', Arial, sans-serif;
+  font-size 18px
+
+  &__disabled
+    cursor not-allowed !important
+    -webkit-filter grayscale(1) !important
+    filter grayscale(1) !important

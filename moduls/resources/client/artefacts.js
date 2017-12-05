@@ -1,8 +1,6 @@
 initResourcesClientArtefacts = function() {
 'use strict';
 
-initArtefactsLib();
-
 Game.Resources.showArtefactsPage = function() {
   var item = this.params.item;
 

@@ -1,4 +1,5 @@
 import '/imports/modules/Person/server';
+import '/imports/modules/Container/server';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import initSpaceServer from '/imports/modules/Space/server/index';

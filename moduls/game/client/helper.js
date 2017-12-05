@@ -1,5 +1,5 @@
-Meteor.startup(function() {
-'use strict';
+import helpers from '/imports/client/ui/helpers';
+import allContainers from '/imports/content/Container/Fleet/client';
 
 UI.registerHelper('isNewLayout', function() {
   const newLayoutGroups = {
@@ -186,17 +186,7 @@ UI.registerHelper('lookup', function(obj) {
   return _.isFunction(result) ? result() : result;
 });
 
-UI.registerHelper('declension', function(number, zeroForm, singleForm, twoForm, manyForm) {
-  return zeroForm + (
-    (/^(.*[0,2-9])?[1]$/.test(number))
-    ? singleForm
-    : (
-      (/^(.*[0,2-9])?[2-4]$/.test(number))
-      ? twoForm
-      : manyForm
-    )
-  );
-});
+UI.registerHelper('declension', helpers.declension);
 
 UI.registerHelper('formatYearMonthDay', function(dateString) {
   var date = new Date(dateString);
@@ -258,13 +248,9 @@ UI.registerHelper('formatProfit', function(profit) {
         }
         break;
       case 'containers':
-        for (var containerId in profit[type]) {
-          var container = Game.Building.special.Container.items[containerId];
-          if (container) {
-            result += 'Бесплатный контейнер: ';
-            result += parseInt(profit[type][containerId], 10) + ' ';
-          }
-        }
+        _(profit[type]).pairs().forEach(([id, count]) => {
+          result += `${allContainers[id].title}: ${count} `;
+        });
         break;
       case 'votePower':
         result += 'Сила голоса: +' + parseInt(profit[type], 10) + ' ';
@@ -293,67 +279,17 @@ var iso = {
   8: 'Y'
 };
 
-UI.registerHelper('formatNumberWithISO', function(price, limit) {
-  if (!_.isNumber(price)) {
-    return price;
-  }
+UI.registerHelper('formatNumberWithISO', (number, limit) => (
+  _.isNumber(limit)
+    ? helpers.formatNumberWithIso(number, limit)
+    : helpers.formatNumberWithIso(number)
+));
 
-  limit = (_.isNumber(limit) 
-    ? limit < 3
-      ? 3
-      : limit
-    : 5);
-
-  var exponent = 0;
-  var rest = 0;
-  while (price.toString().length > limit) {
-    rest = price % 1000;
-    price = Math.floor(price / 1000);
-    exponent++;
-  }
-
-  rest = ('00' + rest.toString()).substr(-3);
-  price = price.toString();
-
-  if (price.length <= limit - 2 && rest.substr(1, 1) !== '0') {
-    rest = '.' + rest.substr(0, 2);
-  } else if (price.length <= limit - 1 && rest.substr(0, 1) !== '0') {
-    rest = '.' + rest.substr(0, 1);
-  } else {
-    price = Math.round(price + '.' + rest).toString();
-    rest = '';
-  }
-
-  price = price.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-
-  if (iso[exponent] === undefined) {
-    return 'o_O ??';
-  }
-
-  return price + rest + iso[exponent];
-});
-
-var formatNumber = function (num, delimeter) {
-  delimeter = delimeter || '';
-
-  num = _.isObject(num) || _.isArray(num) ? num : [num];
-
-  return _.map(num, function(value) {
-    if (_.isNumber(value)) {
-      value = parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0], 10);
-      if (value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0].substr(-1) !== '0') {
-        value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
-      } else if (value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0].substr(-1) !== '0') {
-        value = value.toString().match(/^-?\d+(?:\.\d{0,1})?/)[0];
-      }
-    }
-    value = value.toString();
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  }).join(delimeter);
-};
-
-UI.registerHelper('formatNumber', formatNumber);
-
+UI.registerHelper('formatNumber', (number, delimeter) => (
+  _.isString(delimeter)
+    ? helpers.formatNumber(number, delimeter)
+    : helpers.formatNumber(number)
+));
 
 var getEffectsTooltip = function(price, effects, target, invert, side, isShowCurrent) {
   if (price.base === undefined) {
@@ -373,7 +309,7 @@ var getEffectsTooltip = function(price, effects, target, invert, side, isShowCur
     if (target == 'time') {
       return Game.Helpers.formatSeconds(value);
     } else {
-      return formatNumber(value, ' - ');
+      return helpers.formatNumber(value, ' - ');
     }
   };
 
@@ -515,9 +451,10 @@ Tracker.autorun(function() {
   }
 });
 
-UI.registerHelper('priceTooltip', function(price, target) {
+const priceTooltip = function (price, target) {
   return getEffectsTooltip(price, price.effects, target, true, 'n', true);
-});
+};
+UI.registerHelper('priceTooltip', priceTooltip);
 
 UI.registerHelper('incomeTooltip', function(effects, target) {
   var income = {base: {}};
@@ -562,4 +499,6 @@ Template.tooltipTable.helpers({
   }
 });
 
-});
+export default {
+  priceTooltip,
+};

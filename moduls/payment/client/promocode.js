@@ -1,4 +1,5 @@
 import persons from '/imports/content/Person/client';
+import allFleetContainers from '/imports/content/Container/Fleet/client';
 
 initPromoCodeClient = function() {
 'use strict';
@@ -102,18 +103,14 @@ Template.promocodeReward.helpers({
       return null;
     }
 
-    var containers = this.profit.containers;
-    var result = [];
+    const result = [];
 
-    for (var name in containers) {
-      var item = Game.Building.special.Container.items[name];
-      if (item) {
-        result.push({
-          engName: name,
-          amount: containers[name]
-        });
-      }
-    }
+    _(this.profit.containers).pairs().forEach(([id, count]) => {
+      result.push({
+        obj: allFleetContainers[id],
+        count,
+      });
+    });
 
     return result.length > 0 ? result : null;
   },
@@ -187,7 +184,12 @@ Template.promocodeCreate.helpers({
 
     result.push({ name: '----------------------------------------' });
 
-    result.push({ id: 'containers.defaultContainer', name: 'Бесплатный контейнер' });
+    _(allFleetContainers).pairs().forEach(([id, container]) => {
+      result.push({
+        id: `containers.${id}`,
+        name: container.title,
+      });
+    });
 
     result.push({ name: '----------------------------------------' });
 

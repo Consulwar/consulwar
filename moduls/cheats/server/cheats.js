@@ -38,76 +38,62 @@ if (process.env.NODE_ENV == 'development') {
         {
           'tester1': [
             {
-              "army": {
-                "fleet": {
-                  "gammadrone": {
-                    "count": 100,
-                    "weapon": {
-                      "damage": {
-                        "min": 552,
-                        "max": 575,
+              "army" : {
+                "fleet" : {
+                  "battleship" : {
+                    "count" : 3,
+                    "weapon" : {
+                      "damage" : {
+                        "min" : 51336,
+                        "max" : 62744
                       },
-                      "signature": 100,
+                      "signature" : 500
                     },
-                    "health": {
-                      "armor": 1008,
-                      "signature": 100,
-                    },
-                  },
-                },
-              },
+                    "health" : {
+                      "armor" : 247680,
+                      "signature" : 1000
+                    }
+                  }
+                }
+              }
             },
           ],
         },
         {
           'ai1': [
             {
-              "reptiles": {
-                "fleet": {
-                  "sphero": {
-                    "count": 7,
-                    "weapon": {
-                      "damage": {
-                        "min": 40,
-                        "max": 50,
+              "reptiles" : {
+                "fleet" : {
+                  "dragon" : {
+                    "count" : 4,
+                    "weapon" : {
+                      "damage" : {
+                        "min" : 6750,
+                        "max" : 8250
                       },
-                      "signature": 100,
+                      "signature" : 420
                     },
-                    "health": {
-                      "armor": 150,
-                      "signature": 100,
-                    },
+                    "health" : {
+                      "armor" : 16000,
+                      "signature" : 600
+                    }
                   },
-                  "blade": {
-                    "count": 2,
-                    "weapon": {
-                      "damage": {
-                        "min": 320,
-                        "max": 400,
+                  "hydra" : {
+                    "count" : 1,
+                    "weapon" : {
+                      "damage" : {
+                        "min" : 100000,
+                        "max" : 140000
                       },
-                      "signature": 100,
+                      "signature" : 300
                     },
-                    "health": {
-                      "armor": 700,
-                      "signature": 100,
-                    },
-                  },
-                  "trioniks": {
-                    "count": 2,
-                    "weapon": {
-                      "damage": {
-                        "min": 80,
-                        "max": 100,
-                      },
-                      "signature": 100,
-                    },
-                    "health": {
-                      "armor": 3500,
-                      "signature": 100,
-                    },
-                  },
-                },
-              },
+                    "health" : {
+                      "armor" : 90000,
+                      "signature" : 500
+                    }
+                  }
+                }
+              }
             },
           ],
         },
@@ -162,8 +148,10 @@ if (process.env.NODE_ENV == 'development') {
       // });
 
       let options = {
-        isEarth: true,
-        damageReduction: Game.Earth.DAMAGE_REDUCTION
+        isEarth: false,
+        // damageReduction: Game.Earth.DAMAGE_REDUCTION,
+        missionType: 'patrolfleet',
+        missionLevel: 2,
       };
 
       battle = Battle.fromDB(battle.id);
@@ -172,7 +160,7 @@ if (process.env.NODE_ENV == 'development') {
 
       let round = 1;
       do {
-        let roundResult = battle.performEarthRound(options);
+        let roundResult = battle.performSpaceRound(options);
         roundResults.push(roundResult);
         round++;
       } while (round <= count);

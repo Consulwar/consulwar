@@ -34,5 +34,9 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Frigate.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 1],
+    ];
+  },
 };

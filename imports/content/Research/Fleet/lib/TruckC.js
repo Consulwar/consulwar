@@ -1,5 +1,3 @@
-import TruckC from '/imports/content/Unit/Human/Space/lib/TruckC';
-
 export default {
   id: 'Research/Fleet/TruckC',
   title: 'Усиление Трака С',
@@ -76,5 +74,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: TruckC.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 20],
+      ['Building/Military/Airfield', 20],
+      ['Building/Military/Factory', 20],
+    ];
+  },
 };

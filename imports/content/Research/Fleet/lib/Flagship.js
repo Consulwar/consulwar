@@ -1,5 +1,3 @@
-import Flagship from '/imports/content/Unit/Human/Space/lib/Flagship';
-
 export default {
   id: 'Research/Fleet/Flagship',
   title: 'Усиление Флагмана',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Flagship.requirements,
+  requirements() {
+    return [
+      ['Building/Residential/Political', 25],
+      ['Building/Residential/Alliance', 25],
+      ['Building/Military/Storage', 25],
+    ];
+  },
 };

@@ -1,5 +1,3 @@
-import Battleship from '/imports/content/Unit/Human/Space/lib/Battleship';
-
 export default {
   id: 'Research/Fleet/Battleship',
   title: 'Усиление Линкора',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Battleship.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 35],
+      ['Research/Evolution/Alloy', 35],
+      ['Research/Evolution/Hyperdrive', 20],
+    ];
+  },
 };

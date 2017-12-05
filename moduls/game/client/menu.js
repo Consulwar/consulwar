@@ -192,7 +192,7 @@ var menu = {
   info: {
     name: 'Рептилии',
     routeName: ['reptileUnit'],
-    url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
+    url: firstItemUrl(Game.Unit.items.reptiles.fleet),
     items: {
       fleet: {
         name: 'Космический флот',

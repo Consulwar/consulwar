@@ -1,8 +1,8 @@
-import TopazPlasmoid from '../lib/TopazPlasmoid';
-import AncientArtifact from '../lib/AncientArtifact';
-import AncientTechnology from '../lib/AncientTechnology';
-import AncientKnowledge from '../lib/AncientKnowledge';
-import AncientScheme from '../lib/AncientScheme';
+import TopazPlasmoid from './TopazPlasmoid';
+import AncientArtifact from './AncientArtifact';
+import AncientTechnology from './AncientTechnology';
+import AncientKnowledge from './AncientKnowledge';
+import AncientScheme from './AncientScheme';
 
 export default {
   'Resource/Artifact/Orange/TopazPlasmoid': TopazPlasmoid,

@@ -1,0 +1,14 @@
+<template name="ResourceSingle">
+  <div class="cw--ResourceSingle {{resource.color}}" onMouseover={{showTooltip}}>
+    {{#if eq resource.id 'Resource/Base/Credit'}}
+      {{> iconCredits class="cw--ResourceSingle__image"}}
+    {{else}}
+      <img 
+        class="cw--ResourceSingle__image" 
+        src="{{resource.getIcon}}"
+        alt="{{resource.title}}"
+      />
+    {{/if}}
+    {{count}}
+  </div>
+</template>

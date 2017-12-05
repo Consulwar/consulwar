@@ -1,5 +1,3 @@
-import Gammadrone from '/imports/content/Unit/Human/Space/lib/Gammadrone';
-
 export default {
   id: 'Research/Fleet/Gammadrone',
   title: 'Усиление Гаммадрона',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Gammadrone.requirements,
+  requirements() {
+    return [
+      ['Building/Residential/SpacePort', 35],
+      ['Building/Military/DefenseComplex', 44],
+      ['Research/Evolution/Nanotechnology', 10],
+    ];
+  },
 };

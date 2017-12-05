@@ -1,5 +1,3 @@
-import Reaper from '/imports/content/Unit/Human/Space/lib/Reaper';
-
 export default {
   id: 'Research/Fleet/Reaper',
   title: 'Усиление Пожинателя',
@@ -34,5 +32,11 @@ export default {
     };
   },
   maxLevel: 100,
-  requirements: Reaper.requirements,
+  requirements() {
+    return [
+      ['Building/Military/Shipyard', 52],
+      ['Building/Military/Complex', 45],
+      ['Research/Evolution/Science', 58],
+    ];
+  },
 };

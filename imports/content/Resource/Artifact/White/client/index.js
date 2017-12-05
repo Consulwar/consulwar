@@ -1,8 +1,8 @@
-import SilverPlasmoid from '../lib/SilverPlasmoid';
-import ShipDetails from '../lib/ShipDetails';
-import MeteorFragments from '../lib/MeteorFragments';
-import WeaponParts from '../lib/WeaponParts';
-import CrystalFragments from '../lib/CrystalFragments';
+import SilverPlasmoid from './SilverPlasmoid';
+import ShipDetails from './ShipDetails';
+import MeteorFragments from './MeteorFragments';
+import WeaponParts from './WeaponParts';
+import CrystalFragments from './CrystalFragments';
 
 export default {
   'Resource/Artifact/White/SilverPlasmoid': SilverPlasmoid,

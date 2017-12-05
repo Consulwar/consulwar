@@ -1,5 +1,5 @@
-import RubyPlasmoid from '../lib/RubyPlasmoid';
+import RubyPlasmoid from './RubyPlasmoid';
 
 export default {
-  'Resource/Artifact/Purple/RubyPlasmoid': RubyPlasmoid,
+  'Resource/Artifact/Red/RubyPlasmoid': RubyPlasmoid,
 };

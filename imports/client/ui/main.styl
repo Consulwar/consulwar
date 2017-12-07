@@ -29,8 +29,8 @@ html, body
 .cw--color_human
   color $cw--color_human
 
-.cw--color_credits
-  color $cw--color_credits
+.cw--color_credit
+  color $cw--color_credit
 
 .cw--color_metal
   color $cw--color_metal
@@ -52,4 +52,25 @@ html, body
 
 
 @import './button/button.styl'
-  
+
+.cw--actions
+  display flex
+  flex-direction column
+  justify-content space-between
+  align-items center
+
+  &_row
+    display flex
+    flex-shrink 0
+    width 100%
+    flex-direction row
+    flex-wrap wrap
+    justify-content space-between
+    margin 4px 0
+
+    .cw--button
+      width 48%
+
+  > .cw--button
+    width 60%
+    margin 4px 0

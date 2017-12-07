@@ -15,7 +15,7 @@ class Container extends LibContainer {
         this.color = 'cw--color_white';
         break;
       case 'Green':
-        this.color = 'cw--color_credits';
+        this.color = 'cw--color_credit';
         break;
       case 'Blue':
         this.color = 'cw--color_metal';

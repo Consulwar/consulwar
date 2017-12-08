@@ -23,7 +23,7 @@ export default function reptileArrival(data) {
       if (job) {
         const battleId = job.data.battleId;
 
-        Battle.addGroup(battleId, Battle.ENEMY_SIDE, 'ai', enemyGroup);
+        Battle.addGroup(battleId, Battle.ENEMY_SIDE, Battle.aiName, enemyGroup);
       } else {
         let userArmy;
 

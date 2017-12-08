@@ -4,8 +4,10 @@ import Game from '/moduls/game/lib/main.game';
 import Utils from '/imports/modules/Space/lib/utils';
 
 import Space from './space';
+import Hex from '../../MutualSpace/lib/Hex';
 
 const {
+  calcDistance,
   calcDistanceByTime,
   calcFlyTime,
   calcTotalTimeByDistance,
@@ -93,10 +95,11 @@ class Ship {
     mapView,
     shipsLayer,
     isPopupLocked,
-    origin = [0, 0],
+    origin = { x: 0, y: 0 },
   }) {
     this.mapView = mapView;
     this.shipsLayer = shipsLayer;
+    this.origin = origin;
 
     if (isStatic) {
       this.size = 0.2;
@@ -104,7 +107,7 @@ class Ship {
         x: planet.x + (planetRadius * 0.2),
         y: planet.y - (planetRadius * 0.2),
       };
-      const offset = [origin[0] + -(planetRadius * 0.7), origin[1] + (planetRadius * 0.5)];
+      const offset = [origin.x + -(planetRadius * 0.7), origin.y + (planetRadius * 0.5)];
       const latlngs = createTriangle(planet.x, planet.y, offset, this.size);
 
       this.color = (planet.mission ? 'red' : 'green');
@@ -136,7 +139,7 @@ class Ship {
         spaceEvent: fleet,
         maxSpeed: calcMaxSpeed(fleet.data.engineLevel),
         acceleration: calcAcceleration(fleet.data.engineLevel),
-        totalFlyDistance: Game.Planets.calcDistance(
+        totalFlyDistance: calcDistance(
           fleet.data.startPosition,
           fleet.data.targetPosition,
         ),
@@ -208,15 +211,38 @@ class Ship {
       this.autorun.stop();
     }
 
+    let fromOffset = this.origin;
+    if (this.fleet.data.hex) {
+      fromOffset = new Hex(this.fleet.data.hex).center();
+    }
+    let toOffset = this.origin;
+    if (this.fleet.data.targetHex) {
+      toOffset = new Hex(this.fleet.data.targetHex).center();
+    } else if (this.fleet.data.hex) {
+      toOffset = fromOffset;
+    }
+
+    const maxSpeed = calcMaxSpeed(this.fleet.data.engineLevel);
+    const acceleration = calcAcceleration(this.fleet.data.engineLevel);
+
+    const startPosition = {
+      x: this.fleet.data.startPosition.x + fromOffset.x,
+      y: this.fleet.data.startPosition.y + fromOffset.y,
+    };
+
+    const targetPosition = {
+      x: this.fleet.data.targetPosition.x + toOffset.x,
+      y: this.fleet.data.targetPosition.y + toOffset.y,
+    };
+
+    const totalFlyDistance = calcDistance(startPosition, targetPosition);
+
     this.autorun = Tracker.autorun(() => {
       const pos = getFleetAnimation({
         spaceEvent: this.fleet,
-        maxSpeed: calcMaxSpeed(this.fleet.data.engineLevel),
-        acceleration: calcAcceleration(this.fleet.data.engineLevel),
-        totalFlyDistance: Game.Planets.calcDistance(
-          this.fleet.data.startPosition,
-          this.fleet.data.targetPosition,
-        ),
+        maxSpeed,
+        acceleration,
+        totalFlyDistance,
       }, this.mapView, this.path);
 
       const offset = [0, 0];

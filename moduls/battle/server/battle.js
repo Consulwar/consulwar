@@ -389,6 +389,46 @@ class Battle {
     return result;
   }
 
+  getUsersKilledUnits(targetUsername) {
+    const sideName = Battle.USER_SIDE;
+
+    const initialUnits = this.initialUnits;
+    const killed = {};
+
+    traverseSide(this.currentUnits, sideName, function(username, groupNum, group) {
+      if (username !== targetUsername) {
+        return;
+      }
+
+      traverseGroup(group, function(armyName, typeName, unitName, unit) {
+        const diff = (
+          initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count -
+          unit.count
+        );
+
+        if (diff === 0) {
+          return;
+        }
+
+        if (!killed[armyName]) {
+          killed[armyName] = {};
+        }
+
+        if (!killed[armyName][typeName]) {
+          killed[armyName][typeName] = {};
+        }
+
+        if (!killed[armyName][typeName][unitName]) {
+          killed[armyName][typeName][unitName] = 0;
+        }
+
+        killed[armyName][typeName][unitName] += diff;
+      });
+    });
+
+    return killed;
+  }
+
   traverse(callback) {
     traverseUnits(this.currentUnits, function(sideName, username, groupNum, group){
       traverseGroup(group, function(armyName, typeName, unitName, unit) {
@@ -409,6 +449,7 @@ class Battle {
 Battle.Status = Status;
 Battle.USER_SIDE = USER_SIDE;
 Battle.ENEMY_SIDE = ENEMY_SIDE;
+Battle.aiName = 'ai';
 
 const calculateTotalPower = function(armyPowers) {
   let totalPower = 0;

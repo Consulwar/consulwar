@@ -78,7 +78,6 @@ Game.Unit.complete = function(task) {
 
 Game.Unit.initialize = function(userId = Meteor.userId()) {
   const hangarArmy = Game.Unit.getHangarArmy(userId);
-
   if (hangarArmy === undefined) {
     Game.Unit.Collection.insert({
       user_id: userId,
@@ -96,7 +95,7 @@ Game.Unit.initialize = function(userId = Meteor.userId()) {
     });
 
     Game.Planets.Collection.update({
-      user_id: userId,
+      userId,
       isHome: true,
     }, {
       $set: {

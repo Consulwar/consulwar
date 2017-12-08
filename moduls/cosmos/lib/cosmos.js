@@ -47,44 +47,43 @@ Game.Planets = {
     ][count || Game.Planets.getExtraColoniesCount()];
   },
 
-  getAll: function (user_id = Meteor.userId()) {
+  getAll: function (userId = Meteor.userId()) {
     return Game.Planets.Collection.find({
-      user_id,
+      userId,
     });
   },
 
   getByArtefact: function (artefact) {
     var condition = {
-      user_id: Meteor.userId(),
+      userId: Meteor.userId(),
     };
     condition['artefacts.' + artefact] = { $gt: 0 };
     return Game.Planets.Collection.find(condition).fetch();
   },
 
-  getOne: function (id, user_id = Meteor.userId()) {
+  getOne: function (id) {
     return Game.Planets.Collection.findOne({
-      // user_id,
       _id: id,
     });
   },
 
-  getBase: function (user_id = Meteor.userId()) {
+  getBase: function (userId = Meteor.userId()) {
     return Game.Planets.Collection.findOne({
-      user_id,
+      userId,
       isHome: true,
     });
   },
 
   getColonies: function () {
     return Game.Planets.Collection.find({
-      user_id: Meteor.userId(),
+      userId: Meteor.userId(),
       status: Game.Planets.STATUS.HUMANS,
     }).fetch();
   },
 
   getPlanetsWithArmy(userId = Meteor.userId()) {
     return Game.Planets.Collection.find({
-      user_id: userId,
+      userId,
       armyId: { $exists: true, $ne: null },
     }).fetch();
   },

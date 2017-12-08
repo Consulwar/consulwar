@@ -52,9 +52,10 @@ const completeOnPlanetMission = function(data) {
 
 const completeOnEmptyPlanet = function(data) {
   const { planet, userId } = data;
+  const user = Meteor.users.findOne({ _id: userId });
 
   if (!planet.isDiscovered) {
-    Game.Planets.discover(planet._id, userId);
+    Game.Planets.discover(planet._id, user);
   }
 
   if (data.isOneway) {

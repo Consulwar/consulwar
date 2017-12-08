@@ -10,6 +10,8 @@ import FlightEvents from './flightEvents';
 import TriggerAttackEvents from './triggerAttackEvents';
 import Config from './config';
 import BattleEvents from './battleEvents';
+import mutualSpaceCollection from '../../MutualSpace/lib/collection';
+import Hex from '../../MutualSpace/lib/Hex';
 
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units, targetX, targetY) {
@@ -110,8 +112,8 @@ Meteor.methods({
       engineLevel,
       mission: null,
       armyId: newArmyId,
-      fromGalacticUsername: user.username,
-      toGalacticUsername: user.username,
+      fromGalaxyUsername: user.username,
+      toGalaxyUsername: user.username,
     });
 
     // save statistic
@@ -187,11 +189,28 @@ Meteor.methods({
       x: basePlanet.x,
       y: basePlanet.y,
     };
+    const startPositionWithOffset = { ...startPosition };
+
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: user.username });
+
+    if (fromGalaxy) {
+      const center = new Hex(fromGalaxy).center();
+      startPositionWithOffset.x += center.x;
+      startPositionWithOffset.y += center.y;
+    }
 
     const targetPosition = {
       x: target.x,
       y: target.y,
     };
+    const targetPositionWithOffset = { ...targetPosition };
+    const toGalaxy = mutualSpaceCollection.findOne({ username: target.username });
+
+    if (toGalaxy) {
+      const center = new Hex(toGalaxy).center();
+      targetPositionWithOffset.x += center.x;
+      targetPositionWithOffset.y += center.y;
+    }
 
     const engineLevel = Game.Planets.getEngineLevel();
 
@@ -204,13 +223,19 @@ Meteor.methods({
       startPlanetId: basePlanet._id,
       targetPosition,
       targetId: target._id,
-      flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
+      flyTime: Utils.calcFlyTime(startPositionWithOffset, targetPositionWithOffset, engineLevel),
       engineLevel,
       isOneway,
       armyId: newArmyId,
-      fromGalacticUsername: user.username,
-      toGalacticUsername: user.username,
     };
+
+    if (fromGalaxy) {
+      data.hex = new Hex(fromGalaxy);
+    }
+
+    if (toGalaxy) {
+      data.targetHex = new Hex(toGalaxy);
+    }
 
     FlightEvents.add(data);
 

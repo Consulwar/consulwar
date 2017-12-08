@@ -226,7 +226,7 @@ Meteor.methods({
 
       let planet = Game.Planets.getOne(options.planetId);
 
-      if (planet.user_id !== user._id) {
+      if (planet.userId !== user._id) {
         throw new Meteor.Error('В анус себе надемажь, пёс!');
       }
 

@@ -5,7 +5,7 @@ class BattleIcon {
     battleEventId,
     battleEvent,
     mapView,
-    origin = [0, 0],
+    origin = { x: 0, y: 0 },
     shipsLayer,
   }) {
     this.mapView = mapView;
@@ -16,7 +16,7 @@ class BattleIcon {
     });
     const position = battleEvent.data.targetPosition;
     this.marker = L.marker(
-      [origin[0] + position.x, origin[1] + position.y], { icon },
+      [origin.x + position.x, origin.y + position.y], { icon },
     ).addTo(shipsLayer);
 
     this.watchEvent(battleEventId);

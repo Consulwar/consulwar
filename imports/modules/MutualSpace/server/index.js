@@ -7,6 +7,11 @@ collection._ensureIndex({
   'username': 1,
 });
 
+collection._ensureIndex({
+  'x': 1,
+  'z': 1,
+});
+
 Meteor.publish('spaceHex', function() {
   if (this.userId) {
     const user = Meteor.users.findOne({ _id: this.userId });

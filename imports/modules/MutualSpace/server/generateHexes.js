@@ -1,10 +1,10 @@
-const Cube = function(x, y, z) {
-  return { x, y, z };
+const Cube = function(x, z) {
+  return { x, z };
 };
 
 const cubeDirections = [
-  Cube(0, -1, +1), Cube(-1, 0, +1), Cube(-1, +1, 0),
-  Cube(0, +1, -1), Cube(+1, 0, -1), Cube(+1, -1, 0),
+  Cube(0, +1), Cube(-1, +1), Cube(-1, 0),
+  Cube(0, -1), Cube(+1, -1), Cube(+1, 0),
 ];
 
 const cubeDirection = function(direction) {
@@ -12,11 +12,11 @@ const cubeDirection = function(direction) {
 };
 
 const cubeAdd = function(hex1, hex2) {
-  return Cube(hex1.x + hex2.x, hex1.y + hex2.y, hex1.z + hex2.z);
+  return Cube(hex1.x + hex2.x, hex1.z + hex2.z);
 };
 
 const cubeScale = function(dir, k) {
-  return Cube(dir.x * k, dir.y * k, dir.z * k);
+  return Cube(dir.x * k, dir.z * k);
 };
 
 const cubeNeighbor = function(cube, direction) {

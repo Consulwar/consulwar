@@ -3,15 +3,24 @@ import { _ } from 'meteor/underscore';
 const turf = require('@turf/turf');
 
 class PathView {
-  constructor(layer, startPoint, endPoint, color, eventId, pathViews, offset) {
+  constructor({
+    layer,
+    startPoint,
+    endPoint,
+    color,
+    eventId,
+    pathViews,
+    offsetStart,
+    offsetEnd = offsetStart,
+  }) {
     this.layer = layer;
     this.polyline = null;
     this.lineOptions = null;
     this.totalDistance = null;
 
     const points = [
-      [startPoint.x + offset[0], startPoint.y + offset[1]],
-      [endPoint.x + offset[0], endPoint.y + offset[1]],
+      [startPoint.x + offsetStart.x, startPoint.y + offsetStart.y],
+      [endPoint.x + offsetEnd.x, endPoint.y + offsetEnd.y],
     ];
     const polyline = new L.Polyline(
       points,

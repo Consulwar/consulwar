@@ -27,6 +27,8 @@ const flyBack = function(data) {
     targetPosition: data.returnDestination,
     targetId: data.returnPlanetId,
     targetType: Lib.TARGET.PLANET,
+    targetHex: data.hex,
+    hex: data.targetHex,
   });
 };
 

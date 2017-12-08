@@ -31,107 +31,107 @@ export default Space.jobs.processJobs(
     const roundResult = battle.performRound();
 
     if (battle.status === Battle.Status.finish) {
-      // Пока бои в локальном пространстве, игрок только один, хотя
-      // сами бои могут оперировать и несколькими игроками с одной стороны
-      const username = battle.userNames[0];
-      const user = Meteor.users.findOne({ username });
       const isUserVictory = (Battle.USER_SIDE in roundResult.left);
-      const army = roundResult.left[Battle[(isUserVictory ? 'USER_SIDE' : 'ENEMY_SIDE')]];
 
-      Game.Wrecks.addUnits({
-        units: battle.calculateTotalKilled(Battle.USER_SIDE),
-        userId: user._id,
-      });
+      battle.userNames.forEach((username) => {
+        const user = Meteor.users.findOne({ username });
+        const army = roundResult.leftByUsername[isUserVictory ? username : Battle.aiName];
 
-      if (planet && (data.isOneway || data.isHumans !== isUserVictory)) {
-        // Победитель остается на планете
-        const newArmyId = Game.Unit.createArmy(
-          army,
-          Game.Unit.location.SHIP,
-          user._id,
-        );
+        Game.Wrecks.addUnits({
+          units: battle.getUsersKilledUnits(username),
+          userId: user._id,
+        });
 
-        if (isUserVictory) {
-          planet.mission = null;
-          if (planet.isHome || planet.armyId) {
-            // merge army
-            const destArmyId = (planet.isHome)
-              ? Game.Unit.getHomeFleetArmy({ userId: user._id })._id
-              : planet.armyId;
-            Game.Unit.mergeArmy(newArmyId, destArmyId, user._id);
-          } else {
-            // move army
-            Game.Unit.moveArmy(newArmyId, Game.Unit.location.PLANET, user._id);
-            planet.armyId = newArmyId;
-          }
-        } else {
-          if (planet.status === Game.Planets.STATUS.HUMANS) {
-            planet.status = Game.Planets.STATUS.NOBODY;
-          }
-          planet.armyId = null;
-
-          if (planet.mission) {
-            // restore mission units
-            planet.mission.units = null;
-          } else {
-            // fill empty planet
-            planet.mission = {
-              type: data.mission.type === 'tradefleet' ? 'patrolfleet' : data.mission.type,
-              level: data.mission.level,
-              units: army.reptiles.fleet,
-            };
-          }
-        }
-      } else {
-        // Победитель возвращается
-        let newArmyId = null;
-        let returnPlanetId = data.returnPlanetId;
-
-        if (isUserVictory) {
-          newArmyId = Game.Unit.createArmy(
+        if (planet && (data.isOneway || data.isHumans !== isUserVictory)) {
+          // Победитель остается на планете
+          const newArmyId = Game.Unit.createArmy(
             army,
             Game.Unit.location.SHIP,
             user._id,
           );
 
-          if (battle.initialUnits[Battle.USER_SIDE][username].length > 1) {
-            // user battle with help
-            returnPlanetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
-          }
+          if (isUserVictory) {
+            planet.mission = null;
+            if (planet.isHome || planet.armyId) {
+              // merge army
+              const destArmyId = (planet.isHome)
+                ? Game.Unit.getHomeFleetArmy({ userId: user._id })._id
+                : planet.armyId;
+              Game.Unit.mergeArmy(newArmyId, destArmyId, user._id);
+            } else {
+              // move army
+              Game.Unit.moveArmy(newArmyId, Game.Unit.location.PLANET, user._id);
+              planet.armyId = newArmyId;
+            }
+          } else {
+            if (planet.status === Game.Planets.STATUS.HUMANS) {
+              planet.status = Game.Planets.STATUS.NOBODY;
+            }
+            planet.armyId = null;
 
-          // return humans ship
-          FlightEvents.flyBack({
-            ...data,
-            targetType: FlightEvents.TARGET.PLANET,
-            isHumans: isUserVictory,
-            returnPlanetId,
-            armyId: newArmyId,
-          });
+            if (planet.mission) {
+              // restore mission units
+              planet.mission.units = null;
+            } else {
+              // fill empty planet
+              planet.mission = {
+                type: data.mission.type === 'tradefleet' ? 'patrolfleet' : data.mission.type,
+                level: data.mission.level,
+                units: army.reptiles.fleet,
+              };
+            }
+          }
         } else {
-          const { reptileData } = data;
-          const startPosition = data.targetPosition;
-          const planet = Game.Planets.getOne(reptileData.targetId, user._id);
-          const targetPosition = {
-            x: planet.x,
-            y: planet.y,
-          };
+          // Победитель возвращается
+          let newArmyId = null;
+          let returnPlanetId = data.returnPlanetId;
 
-          // fly the old way
-          FlightEvents.add({
-            ...reptileData,
-            startPosition,
-            targetPosition,
-            flyTime: Utils.calcFlyTime(startPosition, targetPosition, 1),
-          });
-        }
+          if (isUserVictory) {
+            newArmyId = Game.Unit.createArmy(
+              army,
+              Game.Unit.location.SHIP,
+              user._id,
+            );
 
-        if (planet) {
-          planet.mission = null;
-          if (!isUserVictory && !planet.isHome) {
-            planet.status = Game.Planets.STATUS.NOBODY;
+            if (battle.initialUnits[Battle.USER_SIDE][username].length > 1) {
+              // user battle with help
+              returnPlanetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
+            }
+
+            // return humans ship
+            FlightEvents.flyBack({
+              ...data,
+              targetType: FlightEvents.TARGET.PLANET,
+              isHumans: isUserVictory,
+              returnPlanetId,
+              armyId: newArmyId,
+            });
+          } else {
+            const { reptileData } = data;
+            const startPosition = data.targetPosition;
+            const planet = Game.Planets.getOne(reptileData.targetId, user._id);
+            const targetPosition = {
+              x: planet.x,
+              y: planet.y,
+            };
+
+            // fly the old way
+            FlightEvents.add({
+              ...reptileData,
+              startPosition,
+              targetPosition,
+              flyTime: Utils.calcFlyTime(startPosition, targetPosition, 1),
+            });
+          }
+
+          if (planet) {
+            planet.mission = null;
+            if (!isUserVictory && !planet.isHome) {
+              planet.status = Game.Planets.STATUS.NOBODY;
+            }
           }
         }
-      }
+      });
 
       if (planet) {
         Game.Planets.update(planet);

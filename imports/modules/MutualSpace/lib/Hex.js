@@ -3,9 +3,8 @@ import MutualConfig from './config';
 const size = MutualConfig.GALACTIC_RADIUS;
 
 class Hex {
-  constructor({ x, y, z }) {
+  constructor({ x, z }) {
     this.x = x;
-    this.y = y;
     this.z = z;
   }
 

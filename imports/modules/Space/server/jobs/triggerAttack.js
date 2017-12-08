@@ -71,7 +71,7 @@ export default Space.jobs.processJobs(
     let minDistance = Number.MAX_VALUE;
     let curDistance = Number.MAX_VALUE;
     for (let i = 0; i < reptilePlanets.length; i += 1) {
-      curDistance = Game.Planets.calcDistance(reptilePlanets[i], planet);
+      curDistance = Utils.calcDistance(reptilePlanets[i], planet);
       if (!nearestPlanet || curDistance < minDistance) {
         nearestPlanet = reptilePlanets[i];
         minDistance = curDistance;
@@ -102,6 +102,8 @@ export default Space.jobs.processJobs(
       isOneway: false,
       engineLevel: 1,
       mission,
+      fromGalaxyUsername: user.username,
+      toGalaxyUsername: user.username,
     });
 
     return done();

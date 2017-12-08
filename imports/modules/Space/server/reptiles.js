@@ -13,7 +13,7 @@ const spawnTradeFleet = function(hand, segment) {
 
   // find planets inside hand
   const finishPlanets = Game.Planets.Collection.find({
-    user_id: user._id,
+    userId: user._id,
     hand,
     mission: { $ne: null },
   }).fetch();
@@ -71,6 +71,8 @@ const spawnTradeFleet = function(hand, segment) {
       mission,
       hand: startPlanet.hand,
       segment: startPlanet.segment,
+      fromGalaxyUsername: user.username,
+      toGalaxyUsername: user.username,
     });
   }
 };
@@ -233,6 +235,8 @@ const sendReptileFleetToPlanet = function({
       isOneway: false,
       engineLevel,
       mission,
+      fromGalaxyUsername: user.username,
+      toGalaxyUsername: user.username,
     });
   }
 };

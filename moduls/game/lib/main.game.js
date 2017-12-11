@@ -135,17 +135,10 @@ game.Item = function(options) {
       enumerable: true
     });
 
-    if (options.targets) {
-      //this.targets = options.targets;
-      Object.defineProperty(this, 'targets', {
-        get: function() {
-          //var characteristics = Game.Effect.Military.applyTo(this, options.characteristics, false);
-          //characteristics.base = options.characteristics;
+    this.getRequirements = (level = this.getCurrentLevel()) => options.requirements(level);
 
-          return options.targets;
-        },
-        enumerable: true
-      });
+    if (options.targets) {
+      this.targets = options.targets;
     }
     
     if (options.characteristics) {
@@ -186,25 +179,28 @@ game.Item = function(options) {
         enumerable: true
       });
 
+      const getCharacteristics = (additionalOptions = {}) => {
+        const characteristics = Game.Helpers.deepClone(options.characteristics);
+
+        const result = MilitaryEffect.applyTo({
+          ...additionalOptions,
+          target: this,
+          obj: characteristics,
+          hideEffects: false,
+        });
+        result.base = {
+          ...options.characteristics,
+          damage: options.characteristics.weapon.damage,
+          life: options.characteristics.health.armor,
+        };
+
+        return result;
+      };
       Object.defineProperty(this, 'characteristics', {
-        get: function() {
-          var characteristics = Game.Helpers.deepClone(options.characteristics);
-
-          var result = MilitaryEffect.applyTo({
-            target: this,
-            obj: characteristics,
-            hideEffects: false,
-          });
-          result.base = {
-            ...options.characteristics,
-            damage: options.characteristics.weapon.damage,
-            life: options.characteristics.health.armor,
-          };
-
-          return result;
-        },
-        enumerable: true
+        get: getCharacteristics,
+        enumerable: true,
       });
+      this.getCharacteristics = additionalOptions => getCharacteristics(additionalOptions);
 
       // TODO: Продумать и переделать эту хрень!
       //       Если битва идет на земле, то мы не можем использовать characteristics,

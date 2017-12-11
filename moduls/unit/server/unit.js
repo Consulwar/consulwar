@@ -455,6 +455,7 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
           var model = Game.Unit.items[side][group][name];
 
           // get characteristics once before battle
+          // TODO : use getCharacteristics({ userId }) and remove earthCharacteristics from all code
           var characteristics = (options && options.isEarth)
             ? model.earthCharacteristics
             : model.characteristics;

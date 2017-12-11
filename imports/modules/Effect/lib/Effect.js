@@ -278,9 +278,17 @@ class Effect {
   static getValue({
     obj = {},
     instantEffects = [],
-    effectsByPriority = this.getEffectsResultFor({ obj, instantEffects }),
     hideEffects = true,
+    ...options
   } = {}) {
+    let effectsByPriority = options.effectsByPriority;
+    if (!effectsByPriority) {
+      effectsByPriority = this.getEffectsResultFor({
+        ...options,
+        obj,
+        instantEffects,
+      });
+    }
     const result = {};
 
     Object.defineProperty(result, 'effects', {
@@ -319,12 +327,18 @@ class Effect {
     hideEffects = true,
     instantEffects = [],
     isOnlyMutual = false,
-    effectsByPriority = this.getEffectsResultFor({
-      obj: target,
-      instantEffects,
-      isOnlyMutual,
-    }),
+    ...options
   }) {
+    let effectsByPriority = options.effectsByPriority;
+    if (!effectsByPriority) {
+      effectsByPriority = this.getEffectsResultFor({
+        ...options,
+        obj: target,
+        instantEffects,
+        isOnlyMutual,
+      });
+    }
+
     Object.defineProperty(obj, 'effects', {
       value: effectsByPriority,
       configurable: true,

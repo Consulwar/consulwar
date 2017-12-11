@@ -37,8 +37,8 @@ game.Card = function(options) {
 
   Game.Cards.items[this.cardType][this.engName] = this;
 
-  this.amount = function() {
-    var cards = Game.Cards.getValue();
+  this.amount = function(options) {
+    var cards = Game.Cards.getValue(options);
     return (cards && cards[this.engName] && cards[this.engName].amount)
       ? cards[this.engName].amount
       : 0;
@@ -51,6 +51,8 @@ game.Card = function(options) {
   this.currentLevel = function() {
     return 0;
   };
+
+  this.getCurrentLevel = this.currentLevel;
 
   this.getActiveTask = function() {
     return Game.Queue.Collection.findOne({
@@ -77,8 +79,8 @@ game.Card = function(options) {
     return true;
   };
 
-  this.nextReloadTime = function() {
-    var cards = Game.Cards.getValue();
+  this.nextReloadTime = function(options) {
+    var cards = Game.Cards.getValue(options);
     if (cards && cards[this.engName] && cards[this.engName].nextReloadTime) {
       return cards[this.engName].nextReloadTime;
     }
@@ -116,15 +118,21 @@ Game.Cards = {
     instant: {}
   },
 
-  getValue: function(uid) {
+  getValue: function({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.Cards.Collection.findOne({
-      user_id: uid === undefined ? Meteor.userId() : uid
+      user_id: userId,
     });
   },
 
-  getActive: function() {
+  getActive: function ({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     var tasks = Game.Queue.Collection.find({
-      user_id: Meteor.userId(),
+      user_id: userId,
       status: Game.Queue.status.INCOMPLETE,
       type: 'card'
     }).fetch();
@@ -146,9 +154,9 @@ Game.Cards = {
     return result;
   },
 
-  hasTypeActive: function(type) {
+  hasTypeActive: function({ type, userId = Meteor.userId() }) {
     var tasks = Game.Queue.Collection.find({
-      user_id: Meteor.userId(),
+      user_id: userId,
       status: Game.Queue.status.INCOMPLETE,
       type: 'card'
     }).fetch();
@@ -176,12 +184,15 @@ Game.Cards = {
     return null;
   },
 
-  canUse: function(obj, user) {
-    for (let cardId in obj) {
-      if (obj.hasOwnProperty(cardId)) {
-        let count = obj[cardId];
+  canUse: function({
+    cards,
+    ...options,
+  }) {
+    for (let cardId in cards) {
+      if (cards.hasOwnProperty(cardId)) {
+        let count = cards[cardId];
         let card = Game.Cards.getItem(cardId);
-        if (count <= 0 || !card || card.amount() < count || !Game.Cards.canActivate(card, user)) {
+        if (count <= 0 || !card || card.amount(options) < count || !Game.Cards.canActivate({ ...options, card })) {
           return false;
         }
       }
@@ -190,13 +201,13 @@ Game.Cards = {
     return true;
   },
 
-  canActivate: function(item, user) {
-    if (!item || !user) {
+  canActivate: function({ card, user, ...options }) {
+    if (!card || !user) {
       return false;
     }
 
-    if (item.reloadTime) {
-      let nextReloadTime = item.nextReloadTime();
+    if (card.reloadTime) {
+      let nextReloadTime = card.nextReloadTime({ ...options, user });
       if (nextReloadTime > Game.getCurrentTime()) {
         return false;
       }

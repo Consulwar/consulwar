@@ -379,7 +379,11 @@ let checkCreator = function(user) {
     throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно рейтинга');
   }
 
-  if (!Game.Building.has('residential', 'alliance', Game.Alliance.CREATOR_BUILDING_LEVEL)) {
+  if (!Game.Building.has({
+    group: 'residential',
+    engName: 'alliance',
+    level: Game.Alliance.CREATOR_BUILDING_LEVEL,
+  })) {
     throw new Meteor.Error('Невозможно создать альянс', 'Недостаточный уровень системы связи');
   }
 

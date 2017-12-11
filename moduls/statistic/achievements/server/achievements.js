@@ -25,7 +25,7 @@ Meteor.methods({
           continue;
         }
 
-        var currentLevel = Game.Achievements.items[group][key].currentLevel(achievements);
+        var currentLevel = Game.Achievements.items[group][key].currentLevel({ achievements });
         var progressLevel = Game.Achievements.items[group][key].progressLevel(statistic);
 
         if (completed[group][key] == progressLevel && progressLevel > currentLevel) {

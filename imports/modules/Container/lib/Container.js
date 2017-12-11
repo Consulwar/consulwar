@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
 import Game from '/moduls/game/lib/main.game';
 import { _ } from 'meteor/underscore';
 import collection from './collection';
@@ -41,9 +42,13 @@ class Container {
     //
 
     // TODO: pass userId / cached effects, etc.
-    return Game.Effect.Price.applyTo({
-      engName: 'containerPrice',
-    }, price, true);
+    return PriceEffect.applyTo({
+      target: {
+        engName: 'containerPrice',
+      },
+      obj: price,
+      hideEffects: true,
+    });
   }
 
   isEnoughResources({ count = 1 } = {}) {

@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Defense',
         priority: 2,
         affect: 'damage',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.2;
         },
       },
@@ -20,7 +20,7 @@ export default {
         notImplemented: true,
         textBefore: 'Однократно +',
         textAfter: '',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [
             0,
             '100 мин',

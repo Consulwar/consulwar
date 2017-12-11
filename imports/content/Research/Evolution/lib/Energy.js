@@ -8,7 +8,7 @@ export default {
         notImplemented: true,
         textBefore: 'Бонусы палаты консула +',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: 'Дополнительный бонус ',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 20, 30, 40, 60][Math.floor(level / 20)];
         },
       },

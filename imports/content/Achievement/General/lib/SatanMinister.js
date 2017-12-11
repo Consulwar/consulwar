@@ -8,28 +8,28 @@ export default {
       {
         notImplemented: true,
         textAfter: ' рандомных синих итемов',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 50 : 0;
         },
       },
       {
         notImplemented: true,
         textAfter: ' фиолетовых итемов',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 30 : 0;
         },
       },
       {
         notImplemented: true,
         textAfter: ' оранжевых',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 10 : 0;
         },
       },
       {
         notImplemented: true,
         textAfter: ' рубиновый плазмоид',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 1 : 0;
         },
       },

@@ -156,7 +156,7 @@ Game.Planets = {
       } else if (planet.armyId || planet.isHome) {
          var army = (planet.isHome) 
             ? Game.Unit.getHomeArmy()
-            : Game.Unit.getArmy(planet.armyId);
+            : Game.Unit.getArmy({ id: planet.armyId });
          if (army && army.units && army.units.army) {
             return army.units.army.fleet;
          }
@@ -174,7 +174,7 @@ Game.Planets = {
       if (planet.armyId || planet.isHome) {
          var army = (planet.isHome) 
             ? Game.Unit.getHomeArmy()
-            : Game.Unit.getArmy(planet.armyId);
+            : Game.Unit.getArmy({ id: planet.armyId });
          if (army && army.units && army.units.army) {
             return army.units.army.defense;
          }
@@ -340,7 +340,10 @@ Game.Planets = {
    },
 
    getEngineLevel: function() {
-      return Game.Research.get('evolution', 'hyperdrive');
+      return Game.Research.get({
+        group: 'evolution', 
+        engName: 'hyperdrive',
+      });
    },
 
    calcDistanceByTime: function(currentTime, totalDistance, maxSpeed, acceleration) {
@@ -644,7 +647,7 @@ Game.SpaceEvents = {
             return _.clone(Game.Battle.items[info.mission.type].level[info.mission.level].enemies);
          }
       } else if (info.armyId) {
-         var army = Game.Unit.getArmy(info.armyId);
+         var army = Game.Unit.getArmy({ id: info.armyId });
          if (army && army.units && army.units.army) {
             return army.units.army.fleet;
          }

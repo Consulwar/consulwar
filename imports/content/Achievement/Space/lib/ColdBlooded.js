@@ -12,7 +12,7 @@ export default {
         condition: 'Unit/Human/Space',
         priority: 2,
         affect: 'life',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 5 : 0;
         },
       },

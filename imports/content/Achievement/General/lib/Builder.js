@@ -23,7 +23,7 @@ export default {
         textAfter: ' человек в час',
         priority: 1,
         affect: 'humans',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [1, 2.5, 5, 7.5, 10][level - 1];
         },
       },

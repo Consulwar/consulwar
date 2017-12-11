@@ -7,7 +7,7 @@ export default {
       {
         textBefore: '+',
         textAfter: '% увеличение ежедневного бонуса Консулов',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.5;
         },
       },
@@ -15,7 +15,7 @@ export default {
         notImplemented: true,
         textBefore: '20% шанс при расчёте бонуса получить ещё металл и кристалл эквивалентно ',
         textAfter: ' добычи',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [
             0,
             '1 часу',

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthServerMethods = function() {
@@ -44,7 +45,7 @@ Meteor.methods({
     if (cardsObject) {
       check(cardsObject, Object);
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -54,7 +55,11 @@ Meteor.methods({
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
-      let result = Game.Effect.Special.getValue(true, { engName: 'instantReinforcement' }, cardList);
+      let result = SpecialEffect.getValue({
+        hideEffects: true, 
+        obj: { engName: 'instantReinforcement' }, 
+        instantEffects: cardList,
+      });
 
       protectedHonor = result.protectedHonor;
 

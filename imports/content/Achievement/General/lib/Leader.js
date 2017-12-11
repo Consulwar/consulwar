@@ -10,7 +10,7 @@ export default {
       {
         notImplemented: true,
         textAfter: ' рандомный белый итем в день',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 1 : 0;
         },
       },

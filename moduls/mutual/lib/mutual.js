@@ -24,7 +24,10 @@ game.MutualItem = function(options) {
   };
 
   this.currentInvestments = function() {
-    return Game.Mutual.get(this.group, this.engName) || 0;
+    return Game.Mutual.get({
+      group: this.group, 
+      engName: this.engName,
+    }) || 0;
   };
 
   this.type = 'mutual';
@@ -48,24 +51,24 @@ game.extend(game.MutualResearch, game.MutualItem);
 Game.Mutual = {
   Collection: new Meteor.Collection('mutual'),
 
-  getValue: function(group) {
-    return Game.Mutual.Collection.findOne({group: group});
+  getValue: function({ group }) {
+    return Game.Mutual.Collection.findOne({ group });
   },
 
-  get: function(group, name) {
-    var item = Game.Mutual.getValue(group);
+  get: function({ group, engName }) {
+    var item = Game.Mutual.getValue({ group });
 
-    if (item && item[name]) {
-      return item[name];
+    if (item && item[engName]) {
+      return item[engName];
     } else {
       return 0;
     }
   },
 
-  has: function(group, name, level) {
+  has: function({ group, name, level, ...options }) {
     level = level || 1;
     if (Game.Mutual.items[group] && Game.Mutual.items[group][name]) {
-      return Game.Mutual.items[group][name].currentLevel() >= level;
+      return Game.Mutual.items[group][name].currentLevel(options) >= level;
     }
     return false;
   },
@@ -102,7 +105,7 @@ Game.Investments = {
   items: {}
 /*
   get: function(group, name) {
-    var item = Game.Mutual.getValue(group);
+    var item = Game.Mutual.getValue({ group });
 
     if (item && item[name]) {
       return item[name];
@@ -113,7 +116,7 @@ Game.Investments = {
 
   has: function(group, name, level) {
     level = level || 1;
-    return Game.Mutual.get(group, name) >= level;
+    return Game.Mutual.get({ group, engName: name }) >= level;
   }*/
 };
 

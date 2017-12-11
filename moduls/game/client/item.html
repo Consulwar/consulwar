@@ -23,9 +23,9 @@
         </div>
       {{/if}}
       {{#each item.effect}}
-        {{#if result}}
+        {{#if (result level)}}
           <div class="effect">
-            {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+            {{name}}{{pretext}}{{formatNumber (result level)}}{{aftertext}} 
             {{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
           </div>
         {{/if}}

@@ -10,7 +10,7 @@ export default {
         notImplemented: true,
         textBefore: 'Все донатные усиления включаются на ',
         textAfter: ' месяц',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 1 : 0;
         },
       },

@@ -13,7 +13,7 @@ export default {
         affect: 'tournamentsCooldownPeriod',
         priority: 2,
         condition: 'Unique/tournamentsCooldownBonus',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 10 : 0;
         },
       },

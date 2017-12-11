@@ -78,23 +78,25 @@ game.extend(game.Building, game.Item);
 Game.Building = {
   Collection: new Meteor.Collection('buildings'),
 
-  getValue: function() {
-    return Game.Building.Collection.findOne({user_id: Meteor.userId()});
+  getValue: function({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
+    return Game.Building.Collection.findOne({ user_id: userId });
   },
 
-  get: function(group, name) {
-    var buildings = Game.Building.getValue();
+  get: function({ group, engName, ...options } = {}) {
+    var buildings = Game.Building.getValue(options);
 
-    if (buildings && buildings[group] && buildings[group][name]) {
-      return buildings[group][name];
+    if (buildings && buildings[group] && buildings[group][engName]) {
+      return buildings[group][engName];
     } else {
       return 0;
     }
   },
 
-  has: function(group, name, level) {
-    level = level || 1;
-    return Game.Building.get(group, name) >= level;
+  has: function({ level = 1, ...options } = {}) {
+    return Game.Building.get(options) >= level;
   },
 
   items: {

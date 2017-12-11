@@ -10,7 +10,7 @@ export default {
         affect: ['credits', 'honor'],
         priority: 2,
         condition: 'Unique/containerPrice',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.5;
         },
       },

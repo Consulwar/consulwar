@@ -11,7 +11,7 @@ export default {
         textAfter: ' чести в час',
         priority: 1,
         affect: 'honor',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 10 : 0;
         },
       },

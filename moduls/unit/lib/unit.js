@@ -36,7 +36,7 @@ Game.Unit = {
     userId = Meteor.userId(),
     homePlanet = Game.Planets.getBase(userId),
   } = {}) {
-    return Game.Unit.getArmy(homePlanet.armyId, userId);
+    return Game.Unit.getArmy({ id: homePlanet.armyId, userId });
   },
 
   get: function({ group, engName, ...options }) {
@@ -54,8 +54,10 @@ Game.Unit = {
     }
   },
 
-  has: function ({ count = 1, ...options }) {
-    return Game.Unit.get(options) >= count;
+  has: function({ group, engName, count = 1 }) {
+    return Game.Unit.Collection.findOne({
+      [`units.army.${group}.${engName}`]: { $gte: count },
+    });
   },
 
   calculateUnitsPower: function(units, isEarth = false) {

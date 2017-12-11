@@ -8,7 +8,7 @@ export default {
         textBefore: 'Шанс добыть карту в бою +',
         notImplemented: true,
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.7;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: '',
         textAfter: ' в день',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [
             '2 карточки',
             '3 карточки',

@@ -10,7 +10,7 @@ export default {
         condition: 'Research',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level * 0.2) + [0, 5, 10, 15, 20, 25][Math.floor(level / 20)];
         },
       },

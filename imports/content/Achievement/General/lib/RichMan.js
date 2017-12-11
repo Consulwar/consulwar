@@ -11,7 +11,7 @@ export default {
         textAfter: ' ГГК в час',
         priority: 1,
         affect: 'credits',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 1 : 0;
         },
       },

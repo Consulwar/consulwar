@@ -8,7 +8,7 @@ export default {
         notImplemented: true,
         textBefore: 'Время временной карточки +',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.5;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: 'Дополнительный бонус ',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 20, 30, 40, 50][Math.floor(level / 20)];
         },
       },

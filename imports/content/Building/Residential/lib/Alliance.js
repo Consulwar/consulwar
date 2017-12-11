@@ -8,7 +8,7 @@ export default {
         notImplemented: true,
         textBefore: '',
         textAfter: '% альянсового бонуса',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 1;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: '',
         textAfter: '',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level === 0 ? '' : [
             'Можно вступить в альянс',
             'Можно создавать альянс до 10 человек',

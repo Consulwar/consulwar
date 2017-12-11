@@ -168,7 +168,7 @@ Game.Planets = {
     } else if (planet.armyId || planet.isHome) {
       var army = (planet.isHome)
         ? Game.Unit.getHomeFleetArmy({ userId })
-        : Game.Unit.getArmy(planet.armyId, userId);
+        : Game.Unit.getArmy({ id: planet.armyId });
       if (army && army.units && army.units.army) {
         return army.units.army.fleet;
       }
@@ -189,8 +189,11 @@ Game.Planets = {
 
   types: {},
 
-  getEngineLevel: function () {
-    return Game.Research.get('evolution', 'hyperdrive');
+  getEngineLevel: function() {
+    return Game.Research.get({
+      group: 'evolution',
+      engName: 'hyperdrive',
+    });
   },
 };
 

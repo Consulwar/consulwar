@@ -8,7 +8,7 @@ export default {
         notImplemented: true,
         textBefore: 'Удвоить плазмоиды преобразователем +',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.7;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: 'Дополнительный бонус ',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },

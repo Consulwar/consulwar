@@ -1,5 +1,3 @@
-import Frigate from '/imports/content/Unit/Human/Space/lib/Frigate';
-
 export default {
   id: 'Research/Fleet/Frigate',
   title: 'Усиление Фрегата',
@@ -12,7 +10,7 @@ export default {
         condition: 'Unit/Human/Space/Frigate',
         priority: 2,
         affect: 'damage',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },
@@ -22,7 +20,7 @@ export default {
         condition: 'Unit/Human/Space/Frigate',
         priority: 2,
         affect: 'life',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },

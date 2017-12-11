@@ -97,25 +97,28 @@ game.extend(game.Research, game.Item);
 Game.Research = {
   Collection: new Meteor.Collection('researches'),
 
-  getValue: function(uid) {
+  getValue: function({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.Research.Collection.findOne({
-      user_id: uid === undefined ? Meteor.userId() : uid
+      user_id: userId,
     });
   },
 
-  get: function(group, name) {
-    var researches = Game.Research.getValue();
+  get: function({ group, engName, ...options}) {
+    var researches = Game.Research.getValue(options);
 
-    if (researches && researches[group] && researches[group][name]) {
-      return researches[group][name];
+    if (researches && researches[group] && researches[group][engName]) {
+      return researches[group][engName];
     } else {
       return 0;
     }
   },
 
-  has: function(group, name, level) {
+  has: function({ level, ...options}) {
     level = level || 1;
-    return Game.Research.get(group, name) >= level;
+    return Game.Research.get(options) >= level;
   },
 
   items: {

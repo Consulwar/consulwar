@@ -58,7 +58,7 @@ var addBonus = function(building) {
       continue;
     }
 
-    var value = effects[i].result(building.level);
+    var value = effects[i].result({ level: building.level });
     if (value <= 0) {
       continue;
     }

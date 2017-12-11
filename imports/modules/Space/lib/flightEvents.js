@@ -31,7 +31,7 @@ const getFleetUnits = function(data) {
 
     return _.clone(Game.Battle.items[data.mission.type].level[data.mission.level].enemies);
   } else if (data.armyId) {
-    const army = Game.Unit.getArmy(data.armyId, data.userId);
+    const army = Game.Unit.getArmy({ id: data.armyId, userId: data.userId });
     if (army && army.units && army.units.army) {
       return army.units.army.fleet;
     }

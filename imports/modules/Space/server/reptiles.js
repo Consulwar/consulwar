@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import Space from '../lib/space';
 import FlightEvents from './flightEvents';
 import Utils from '../lib/utils';
@@ -290,8 +291,12 @@ const actualize = function() {
 const stealUserResources = function({ enemyArmy, userId, battle }) {
   const userResources = Game.Resources.getValue(userId);
   const stealCost = Game.Unit.calculateBaseArmyCost(enemyArmy);
-  // TODO: need to use userId
-  const bunker = Game.Effect.Special.getValue(true, { engName: 'bunker' });
+
+  const bunker = SpecialEffect.getValue({
+    hideEffects: true,
+    obj: { engName: 'bunker' },
+    userId,
+  });
 
   _(stealCost).pairs().forEach(([resName, value]) => {
     const stealAmount = Math.floor(value * 0.2); // 20%

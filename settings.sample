@@ -131,10 +131,6 @@
       "gameUrl": "https://consulwar.ru/"
     }
   },
-  "kadira": { 
-    "appId": "***", 
-    "appSecret": "***" 
-  },
   "mail": {
     "protocol": "smtp",
     "username": "***",

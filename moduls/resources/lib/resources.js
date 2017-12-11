@@ -1,3 +1,5 @@
+import IncomeEffect from '/imports/modules/Effect/lib/IncomeEffect';
+
 initResourcesLib = function() {
 'use strict';
 
@@ -6,8 +8,11 @@ Game.Resources = {
 
   bonusStorage: 6,
 
-  getValue: function(uid) {
-    return Game.Resources.Collection.findOne({user_id: uid !== undefined ? uid : Meteor.userId()});
+  getValue: function({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
+    return Game.Resources.Collection.findOne({ user_id: userId });
   },
 
   /**
@@ -15,7 +20,7 @@ Game.Resources = {
    * delta - количество секунд
    * uncountedSeconds - бонусные секунды
    */
-  calculateFinalAmount: function(baseAmount, income, delta, uncountedSeconds, bonus) {
+  calculateFinalAmount: function(baseAmount = 0, income = 0, delta = 0, uncountedSeconds = 0, bonus = false) {
     var result = Game.Resources.calculateProduction(income, delta, uncountedSeconds, bonus);
 
     result.amount += baseAmount;
@@ -26,7 +31,7 @@ Game.Resources = {
     return result;
   },
 
-  calculateProduction: function(income, delta, uncountedSeconds, halfToBonus) {
+  calculateProduction: function(income = 0, delta = 0, uncountedSeconds = 0, halfToBonus = false) {
     delta += uncountedSeconds ? uncountedSeconds : 0;
 
     var interval = 3600 * (halfToBonus ? 2 : 1);
@@ -76,8 +81,8 @@ Game.Resources = {
     }
   },
 
-  getIncome: function() {
-    return Game.Effect.Income.getValue();
+  getIncome: function(options) {
+    return IncomeEffect.getValue(options);
   },
 
   calculateRatingFromResources: function(resources) {
@@ -117,8 +122,9 @@ Game.Resources = {
 
   has({
     resources,
-    user = Meteor.user(),
-    availableResources = Game.Resources.getValue(user._id),
+    user,
+    userId = user ? user._id : Meteor.userId(),
+    availableResources = Game.Resources.getValue({ userId }),
   }) {
     if (!availableResources) {
       return false;

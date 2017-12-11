@@ -1,3 +1,7 @@
+import effectClasses from '/imports/modules/Effect/lib';
+import MilitaryEffect from '/imports/modules/Effect/lib/MilitaryEffect';
+import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
+
 game = {
   PRODUCTION_FACTOR: 1.48902803168182,
   PRICE_FACTOR: 1.1,
@@ -186,7 +190,11 @@ game.Item = function(options) {
         get: function() {
           var characteristics = Game.Helpers.deepClone(options.characteristics);
 
-          var result = Game.Effect.Military.applyTo(this, characteristics, false);
+          var result = MilitaryEffect.applyTo({
+            target: this,
+            obj: characteristics,
+            hideEffects: false,
+          });
           result.base = {
             ...options.characteristics,
             damage: options.characteristics.weapon.damage,
@@ -211,7 +219,12 @@ game.Item = function(options) {
           }
 
           // Выбираем только общие эффекты (последний аргумент = true)
-          var result = Game.Effect.Military.applyTo(this, characteristics, false, true);
+          var result = MilitaryEffect.applyTo({
+            target: this,
+            obj: characteristics,
+            hideEffects: false,
+            isOnlyMutual: true,
+          });
           result.base = options.characteristics;
 
           return result;
@@ -238,8 +251,12 @@ game.Item = function(options) {
     Game.Helpers.deepFreeze(this, ['requirements', 'targets', 'special', 'characteristics', 'earthCharacteristics']);
   };
 
-  this.currentLevel = function() {
-    return Game.getObjectByType(this.type).get(this.group, this.engName);
+  this.currentLevel = function(options) {
+    return Game.getObjectByType(this.type).get({
+      ...options,
+      group: this.group,
+      engName: this.engName,
+    });
   };
 
   // New-to-legacy
@@ -329,7 +346,11 @@ game.Item = function(options) {
       value: _.clone(curPrice)
     });
 
-    curPrice = Game.Effect.Price.applyTo(this, curPrice, undefined, null, getCardEffects(cards));
+    curPrice = PriceEffect.applyTo({
+      target: this,
+      obj: curPrice,
+      instantEffects: getCardEffects(cards),
+    });
 
     for (let name in curPrice) {
       if (curPrice.hasOwnProperty(name)) {
@@ -605,8 +626,8 @@ Game = {
               legacyEffect.condition.engName = Game.newToLegacyNames[engName] || engName;
             }
           }
-          
-          options.effect.push(new Game.Effect[effectType](legacyEffect));
+
+          options.effect.push(new effectClasses[effectType](legacyEffect));
         });
       });
     }
@@ -777,7 +798,7 @@ Game = {
   },
 
   hasPremium: function() {
-    return Game.Cards.hasTypeActive('donate');
+    return Game.Cards.hasTypeActive({ type: 'donate' });
   }
 };
 
@@ -798,492 +819,6 @@ Game.Random = {
     return arr[Game.Random.interval(0, arr.length - 1)];
   },
 };
-
-Game.Effect = function(options) {
-  this.constructor = function(options) {
-    this.name = options.name;
-    this.notImplemented = options.notImplemented;
-    this.pretext = options.pretext;
-    this.aftertext = options.aftertext;
-    this.condition = options.condition;
-    this.priority = options.priority;
-    //this.type = options.type;
-    this.affect = options.affect;
-    this.result = options.result;
-
-    Object.defineProperty(this, 'level', {
-      get: function() {
-        return this.provider.currentLevel();
-      },
-      enumerable: true
-    });
-
-    // New-to-legacy
-    this.getCurrentLevel = function() {
-      return this.provider.getCurrentLevel();
-    };
-  };
-
-  this.constructor(options);
-
-  this.deepFreeze = function() {
-    Game.Helpers.deepFreeze(this, ['level', 'provider']);
-  };
-
-  this.next = function(level) {
-    level = (level || this.level) + 1;
-
-    return {
-      name: this.name,
-      pretext: this.pretext,
-      aftertext: this.aftertext,
-      condition: this.condition,
-      priority: this.priority,
-      affect: this.affect,
-      
-      level: level,
-      result: this.result(level)
-    };
-  };
-
-  this.setProvider = function(provider) {
-    Object.defineProperty(this, 'provider', {
-      value: provider,
-      enumerable: false
-    });
-  };
-
-  this.register = function(obj) {
-    //this.provider = obj;
-    this.setProvider(obj);
-
-    if (this.condition && this.condition.type != 'all') {
-      // Если влияет только на конкретный объект
-      if (this.condition.engName) {
-        if (Game.effects[this.type][this.condition.engName] === undefined) {
-          Game.effects[this.type][this.condition.engName] = {list: []};
-        }
-
-        Game.effects[this.type][this.condition.engName].list.push(this);
-      } else {
-        if (Game.effects[this.type][this.condition.type] === undefined) {
-          Game.effects[this.type][this.condition.type] = {list: []};
-        }
-
-        if (this.condition.group) {
-          if (Game.effects[this.type][this.condition.type][this.condition.group] === undefined) {
-            Game.effects[this.type][this.condition.type][this.condition.group] = {list: []};
-          }
-
-          if (this.condition.special) {
-            if (Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] === undefined) {
-              Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special] = {list: []};
-            }
-            Game.effects[this.type][this.condition.type][this.condition.group][this.condition.special].list.push(this);
-          } else {
-            Game.effects[this.type][this.condition.type][this.condition.group].list.push(this);
-          }
-        } else {
-          Game.effects[this.type][this.condition.type].list.push(this);
-        }
-      }
-    } else {
-      if (Game.effects[this.type] === undefined) {
-        Game.effects[this.type] = {list: []};
-      }
-      Game.effects[this.type].list.push(this);
-    }
-  };
-};
-
-Game.Effect.getRelatedTo = function(obj, isOnlyMutual, instantEffects = []) {
-  var effects = {};
-  var i = 0;
-
-  // По имени
-  if (Game.effects[this.type][obj.engName]) {
-    for (i = 0; i < Game.effects[this.type][obj.engName].list.length; i++) {
-      if (effects[Game.effects[this.type][obj.engName].list[i].priority] === undefined) {
-        effects[Game.effects[this.type][obj.engName].list[i].priority] = [];
-      }
-
-      effects[Game.effects[this.type][obj.engName].list[i].priority].push(
-        Game.effects[this.type][obj.engName].list[i]
-      );
-    }
-  }
-
-  if (Game.effects[this.type][obj.type]) {
-    // По типу
-    if (Game.effects[this.type][obj.type].list) {
-      for (i = 0; i < Game.effects[this.type][obj.type].list.length; i++) {
-        if (effects[Game.effects[this.type][obj.type].list[i].priority] === undefined) {
-          effects[Game.effects[this.type][obj.type].list[i].priority] = [];
-        }
-
-        effects[Game.effects[this.type][obj.type].list[i].priority].push(
-          Game.effects[this.type][obj.type].list[i]
-        );
-      }
-    }
-
-    if (Game.effects[this.type][obj.type][obj.group]) {
-      // По группе
-      if (Game.effects[this.type][obj.type][obj.group].list) {
-        for (i = 0; i < Game.effects[this.type][obj.type][obj.group].list.length; i++) {
-          if (effects[Game.effects[this.type][obj.type][obj.group].list[i].priority] === undefined) {
-            effects[Game.effects[this.type][obj.type][obj.group].list[i].priority] = [];
-          }
-
-          effects[Game.effects[this.type][obj.type][obj.group].list[i].priority].push(
-            Game.effects[this.type][obj.type][obj.group].list[i]
-          );
-        }
-      }
-
-      // По особенности
-      if (
-          obj.special
-       && Game.effects[this.type][obj.type][obj.group][obj.special]
-       && Game.effects[this.type][obj.type][obj.group][obj.special].list
-      ) {
-        for (i = 0; i < Game.effects[this.type][obj.type][obj.group][obj.special].list.length; i++) {
-          if (effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] === undefined) {
-            effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority] = [];
-          }
-
-          effects[Game.effects[this.type][obj.type][obj.group][obj.special].list[i].priority].push(
-            Game.effects[this.type][obj.type][obj.group][obj.special].list[i]
-          );
-        }
-      }
-    }
-  }
-
-  for (let effect of instantEffects) {
-    let insertEffect = null;
-
-    if (effect.condition.type === 'all') {
-      insertEffect = effect;
-    } else if (effect.condition.engName === obj.engName) {
-      insertEffect = effect;
-    } else if (effect.condition.type === obj.type) {
-      if (!effect.condition.group || effect.condition.group === obj.group) {
-        if (!effect.condition.special || effect.condition.special === obj.special) {
-          insertEffect = effect;
-        }
-      }
-    }
-
-    if (insertEffect) {
-      if (effects[insertEffect.priority] === undefined) {
-        effects[insertEffect.priority] = [];
-      }
-
-      effects[insertEffect.priority].push(insertEffect);
-    }
-  }
-
-  // Общий
-  if (this.type != 'special') {
-    for (i = 0; i < Game.effects[this.type].list.length; i++) {
-      if (effects[Game.effects[this.type].list[i].priority] === undefined) {
-        effects[Game.effects[this.type].list[i].priority] = [];
-      }
-
-      effects[Game.effects[this.type].list[i].priority].push(Game.effects[this.type].list[i]);
-    }
-  }
-
-  // TODO: Убрать эту херню позже!
-  //       Смотри метод earthCharacteristics!
-  if (!isOnlyMutual) {
-
-    // Items, Cards, Achievements
-    var items = Game.House.getPlacedItems();
-
-    var cards = Game.Cards.getActive();
-    if (cards && cards.length > 0) {
-      items = items.concat(cards);
-    }
-
-    var achievements = Game.Achievements.getCompleted();
-    if (achievements && achievements.length > 0) {
-      items = items.concat(achievements);
-    }
-
-    for (i = 0; i < items.length; i++) {
-      if (!items[i].effect) {
-        continue;
-      }
-      
-      for (var k = 0; k < items[i].effect.length; k++) {
-        var effect = items[i].effect[k];
-
-        if (effect.type == this.type) {
-          if (effect.condition) {
-            if (effect.condition.engName && obj.engName != effect.condition.engName) {
-              continue;
-            }
-
-            if (effect.condition.type && obj.type != effect.condition.type) {
-              continue;
-            }
-
-            if (effect.condition.group && obj.group != effect.condition.group) {
-              continue;
-            }
-
-            if (effect.condition.special && obj.special != effect.condition.special) {
-              continue;
-            }
-          }
-
-          if (effects[effect.priority] === undefined) {
-            effects[effect.priority] = [];
-          }
-
-          effects[effect.priority].push(effect);
-        }
-      }  
-    }
-
-  }
-
-  var result = {};
-  var cache = {};
-  var value = null;
-  var provider = null;
-
-  for (var priority in effects) {
-    result[priority] = {};
-    for (i = 0; i < effects[priority].length; i++) {
-
-      // TODO: Убрать эту херню позже!
-      //       Смотри метод earthCharacteristics!
-      if (isOnlyMutual && effects[priority][i].provider.type != 'mutual') {
-        continue;
-      }
-
-      if (_.isArray(effects[priority][i].affect)) {
-
-        // Cache for building & research
-        if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
-          provider = effects[priority][i].provider;
-          if (cache[provider.type] === undefined) {
-            cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
-          }
-
-          value = effects[priority][i].result(
-            cache[provider.type] && cache[provider.type][provider.group] && cache[provider.type][provider.group][provider.engName]
-              ? cache[provider.type][provider.group][provider.engName]
-              : 0
-          );
-        } else {
-          value = effects[priority][i].result();
-        }
-
-        if (value && value !== undefined) {
-          for (var resource in effects[priority][i].affect) {
-            if (result[priority][effects[priority][i].affect[resource]] === undefined) {
-              result[priority][effects[priority][i].affect[resource]] = [];
-            }
-
-            result[priority][effects[priority][i].affect[resource]].push({
-              value: (Math.floor((value * 100)) / 100),
-              provider: effects[priority][i].provider,
-              type: effects[priority][i].type,
-              priority: effects[priority][i].priority
-            });
-          }
-        }
-      } else {
-        if (result[priority][effects[priority][i].affect] === undefined) {
-          result[priority][effects[priority][i].affect] = [];
-        }
-
-        // Cache for building & research
-        if (['building', 'research'].indexOf(effects[priority][i].provider.type) != -1) {
-          provider = effects[priority][i].provider;
-          if (cache[provider.type] === undefined) {
-            cache[provider.type] = Game.getObjectByType(provider.type).getValue() || {};
-          }
-
-          value = effects[priority][i].result(
-            cache[provider.type] && cache[provider.type][provider.group] && cache[provider.type][provider.group][provider.engName]
-              ? cache[provider.type][provider.group][provider.engName]
-              : 0
-          );
-        } else {
-          value = effects[priority][i].result();
-        }
-
-        if (value && value !== undefined) {
-          result[priority][effects[priority][i].affect].push({
-            value: (Math.floor((value * 100)) / 100),
-            provider: effects[priority][i].provider,
-            type: effects[priority][i].type,
-            priority: effects[priority][i].priority
-          });
-        }
-      }
-    }
-  }
-
-  return result;
-};
-
-Game.Effect.getAll = function() {
-  return this.getRelatedTo({});
-};
-
-Game.Effect.getValue = function(hideEffects, obj, cards = []) {
-  hideEffects = hideEffects === undefined ? true : hideEffects;
-  var effects = obj === undefined ? this.getAll() : this.getRelatedTo(obj, null, getCardEffects(cards));
-  var result = {};
-
-  Object.defineProperty(result, 'effects', {
-    value: effects,
-    configurable: true,
-    enumerable: !hideEffects
-  });
-
-  for (var priority in effects) {
-    for (var item in effects[priority]) {
-      var effect = 0;
-      for (var i = 0; i < effects[priority][item].length; i++) {
-        effect += effects[priority][item][i].value;
-      }
-
-      if (result[item] === undefined) {
-        result[item] = 0;
-      }
-
-      if (priority % 2 == 1) {
-        result[item] += effect;
-      } else {
-        result[item] = result[item] + Math.floor(result[item] * (0.01 * effect));
-      }
-    }
-  }
-
-  return result;
-};
-
-// reduce - true = скидка, т.е. вычитаем эффекты
-Game.Effect.applyTo = function(target, obj, hideEffects, isOnlyMutual, instantEffects = []) {
-  hideEffects = hideEffects === undefined ? true : hideEffects;
-  var effects = this.getRelatedTo(target, isOnlyMutual, instantEffects);
-
-  Object.defineProperty(obj, 'effects', {
-    value: effects,
-    configurable: true,
-    enumerable: !hideEffects
-  });
-
-  for (var priority in effects) {
-    for (var item in effects[priority]) {
-      var effect = 0;
-      for (var i = 0; i < effects[priority][item].length; i++) {
-        effect += effects[priority][item][i].value;
-      }
-
-      if (obj[item] === undefined) {
-        continue;
-      }
-
-      switch (item) {
-        case 'damage':
-          if (priority % 2 === 1) {
-            obj.weapon.damage.min += effect * (this.reduce ? -1 : 1);
-            obj.weapon.damage.max += effect * (this.reduce ? -1 : 1);
-          } else {
-            obj.weapon.damage.min = obj.weapon.damage.min +
-              (Math.floor(obj.weapon.damage.min * (0.01 * effect)) * (this.reduce ? -1 : 1));
-
-            obj.weapon.damage.max = obj.weapon.damage.max +
-              (Math.floor(obj.weapon.damage.max * (0.01 * effect)) * (this.reduce ? -1 : 1));
-          }
-          break;
-
-        case 'life':
-          if (priority % 2 === 1) {
-            obj.health.armor += effect * (this.reduce ? -1 : 1);
-          } else {
-            obj.health.armor = obj.health.armor +
-              (Math.floor(obj.health.armor * (0.01 * effect)) * (this.reduce ? -1 : 1));
-          }
-          break;
-
-        default:
-          if (priority % 2 == 1) {
-            obj[item] += effect * (this.reduce ? -1 : 1);
-          } else {
-            obj[item] = obj[item] + Math.floor(obj[item] * (0.01 * effect)) * (this.reduce ? -1 : 1);
-          }
-          break;
-      }
-    }
-  }
-
-  return obj;
-};
-
-Game.Effect.Income = function(options) {
-  Game.Effect.Income.superclass.constructor.apply(this, arguments);
-
-  if (!options.affect) {
-    throw new Meteor.Error('Не установлена цель эффекта');
-  }
-
-  this.type = 'income';
-  this.reduce = false;
-};
-extend(Game.Effect.Income, Game.Effect);
-Game.Effect.Income.type = 'income';
-Game.Effect.Income.reduce = false;
-
-Game.Effect.Price = function(options) {
-  Game.Effect.Price.superclass.constructor.apply(this, arguments);
-
-  this.type = 'price';
-  this.reduce = true;
-};
-extend(Game.Effect.Price, Game.Effect);
-Game.Effect.Price.type = 'price';
-Game.Effect.Price.reduce = true;
-
-
-Game.Effect.Military = function(options) {
-  Game.Effect.Military.superclass.constructor.apply(this, arguments);
-
-  this.type = 'military';
-  this.reduce = false;
-};
-extend(Game.Effect.Military, Game.Effect);
-Game.Effect.Military.type = 'military';
-Game.Effect.Military.reduce = false;
-
-Game.Effect.ProfitOnce = function(options) {
-  Game.Effect.ProfitOnce.superclass.constructor.apply(this, arguments);
-
-  this.type = 'profitOnce';
-  this.reduce = false;
-};
-extend(Game.Effect.ProfitOnce, Game.Effect);
-Game.Effect.ProfitOnce.type = 'profitOnce';
-Game.Effect.ProfitOnce.reduce = false;
-
-Game.Effect.Special = function(options) {
-  Game.Effect.Special.superclass.constructor.apply(this, arguments);
-
-  this.type = 'special';
-  this.reduce = false;
-};
-extend(Game.Effect.Special, Game.Effect);
-Game.Effect.Special.type = 'special';
-Game.Effect.Special.reduce = false;
-
 
 Game.Queue = {
   status: {

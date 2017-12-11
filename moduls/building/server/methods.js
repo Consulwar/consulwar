@@ -23,7 +23,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -100,7 +100,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 

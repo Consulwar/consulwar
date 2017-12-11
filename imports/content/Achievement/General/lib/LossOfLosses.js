@@ -8,7 +8,7 @@ export default {
       {
         notImplemented: true,
         textAfter: ' ГГК',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 250 : 0;
         },
       },

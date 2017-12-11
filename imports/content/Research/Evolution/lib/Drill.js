@@ -9,7 +9,7 @@ export default {
         textAfter: '%',
         priority: 2,
         affect: 'metals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.2;
         },
       },
@@ -18,7 +18,7 @@ export default {
         textAfter: '%',
         priority: 2,
         affect: 'metals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 25, 50, 65, 80][Math.floor(level / 20)];
         },
       },

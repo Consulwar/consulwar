@@ -8,7 +8,7 @@ export default {
       {
         notImplemented: true,
         textAfter: ' рубиновых плазмоидов',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 50 : 0;
         },
       },

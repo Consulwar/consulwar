@@ -1,4 +1,5 @@
 import User from '/imports/modules/User/server/User';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import legacyToNewBattle from '../../battle/server/legacyToNewBattle';
 
 initCosmosEventsServer = function() {
@@ -297,7 +298,7 @@ Game.SpaceEvents.completeTriggerAttack = function(event) {
   }
 
   // calculate user health
-  var userArmy = Game.Unit.getArmy(planet.armyId);
+  var userArmy = Game.Unit.getArmy({ id: planet.armyId });
   if (!userArmy || !userArmy.units) {
     console.log('Strange shit suddenly appeared! Space event id:', event._id);
     return null; // strange shit suddenly appeared
@@ -856,7 +857,7 @@ var completeReptilesArrival = function(event, planet) {
     // get user army
     var userArmyData = planet.isHome
       ? Game.Unit.getHomeArmy()
-      : Game.Unit.getArmy(planet.armyId);
+      : Game.Unit.getArmy({ id: planet.armyId });
 
     userArmy = (userArmyData) ? userArmyData.units : null;
 
@@ -918,7 +919,10 @@ var completeReptilesArrival = function(event, planet) {
       if (planet.isHome) {
         var userResources = Game.Resources.getValue();
         var stealCost = Game.Unit.calculateArmyCost(enemyArmy);
-        var bunker = Game.Effect.Special.getValue(true, { engName: 'bunker' });
+        var bunker = SpecialEffect.getValue({
+          hideEffects: true, 
+          obj: { engName: 'bunker' }
+        });
 
         for (var resName in stealCost) {
           var stealAmount = Math.floor(stealCost[resName] * 0.2); // 20%
@@ -1208,7 +1212,7 @@ Meteor.methods({
     var newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
 
     // update base planet
-    var baseArmy = Game.Unit.getArmy(basePlanet.armyId);
+    var baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
     if (!baseArmy) {
       basePlanet.armyId = null;
     }

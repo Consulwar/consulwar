@@ -1,3 +1,5 @@
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+
 initUnitServer = function() {
 'use strict';
 
@@ -46,7 +48,7 @@ Game.Unit.complete = function(task) {
 };
 
 Game.Unit.initialize = function(user_id = Meteor.userId()) {
-  var currentValue = Game.Unit.getHomeArmy(user_id);
+  var currentValue = Game.Unit.getHomeArmy({ userId: user_id });
 
   if (currentValue === undefined) {
     Game.Unit.Collection.insert({
@@ -75,7 +77,7 @@ Game.Unit.createArmy = function(units, location) {
 };
 
 Game.Unit.updateArmy = function(id, units) {
-  var army = Game.Unit.getArmy(id);
+  var army = Game.Unit.getArmy({ id });
   if (army) {
     army.units = units;
     Game.Unit.Collection.update({ _id: id }, army);
@@ -83,7 +85,7 @@ Game.Unit.updateArmy = function(id, units) {
 };
 
 Game.Unit.moveArmy = function (id, location) {
-  var army = Game.Unit.getArmy(id);
+  var army = Game.Unit.getArmy({ id });
   if (army) {
     army.location = location;
     Game.Unit.Collection.update({ _id: id }, army);
@@ -95,7 +97,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
     throw new Meteor.Error('Может существовать только одна локация HOME');
   }
 
-  var source = Game.Unit.getArmy(sourceId);
+  var source = Game.Unit.getArmy({ id: sourceId });
   if (!source || !source.units) {
     throw new Meteor.Error('Нет армии с таким id');
   }
@@ -163,8 +165,8 @@ Game.Unit.mergeArmy = function(sourceId, destId) {
     throw new Meteor.Error('Нельзя слить одну и ту же армию');
   }
 
-  var source = Game.Unit.getArmy(sourceId);
-  var dest = Game.Unit.getArmy(destId);
+  var source = Game.Unit.getArmy({ id: sourceId });
+  var dest = Game.Unit.getArmy({ id: destId });
 
   if (!source || !source.units || !dest || !dest.units) {
     throw new Meteor.Error('Армии с указанными id не найдены');
@@ -654,14 +656,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
     for (key in userUnits) {
       if (userUnits[key].characteristics.damage) {
-        damage = Game.Effect.Special.applyTo(
-          { engName: 'roundDamage' + round }, 
-          userUnits[key].characteristics,
-          true,
-          // TODO: Убрать эту херню позже!
-          //       Смотри метод earthCharacteristics!
-          options.isEarth
-        ).damage;
+        damage = SpecialEffect.applyTo({
+          target: { engName: 'roundDamage' + round }, 
+          obj: userUnits[key].characteristics,
+          hideEffects: true,
+          isOnlyMutual: options.isEarth,
+        }).damage;
         userUnits[key].damage = Math.floor(
           Game.Random.interval( damage.min, damage.max ) * 
           userUnits[key].count * options.damageReduction
@@ -937,9 +937,12 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
             if (today > endYear || today < startYear) {
               addCredits = true;
             } else {
-              let chance = Game.Effect.Special.applyTo({
-                engName: 'fleetBattleAddCreditsChance'
-              }, {chance: 0}).chance;
+              let chance = SpecialEffect.applyTo({
+                target: {
+                  engName: 'fleetBattleAddCreditsChance'
+                },
+                obj: { chance: 0 }
+              }).chance;
               addCredits = chance && chance >= Game.Random.interval(1, 100);
             }
 
@@ -954,7 +957,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
 
         // reward bonus
         if (options.missionType == 'tradefleet') {
-          reward = Game.Effect.Special.applyTo({ engName: 'tradefleetBonus' }, reward, true);
+          reward = SpecialEffect.applyTo({
+            target: { engName: 'tradefleetBonus' },
+            obj: reward,
+            hideEffects: true,
+          });
         }
 
         // truckc grab extra reward
@@ -968,7 +975,11 @@ Game.Unit.Battle = function(userArmy, enemyArmy, options) {
         }
 
         if (truckCount > 0) {
-          var truckCapacity = Game.Effect.Special.getValue(true, { engName: 'truckCapacity' });
+          var truckCapacity = SpecialEffect.getValue({
+            hideEffects: true, 
+            obj: { engName: 'truckCapacity' }
+          });
+
           reward.metals += Math.min(
             truckCount * truckCapacity.metals,
             Math.floor( killedCost.metals * 0.4 )

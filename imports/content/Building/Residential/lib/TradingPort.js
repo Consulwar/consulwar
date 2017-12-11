@@ -10,7 +10,7 @@ export default {
         priority: 2,
         condition: 'Unique/tradingBonus',
         affect: 'amount',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.5;
         },
       },
@@ -18,7 +18,7 @@ export default {
         textBefore: 'Максимальный бонус ресурсов +',
         textAfter: '%',
         notImplemented: true,
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 25, 50, 75, 100][Math.floor(level / 20)];
         },
       },

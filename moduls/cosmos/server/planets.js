@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 
 initCosmosPlanetsServer = function() {
 'use strict';
@@ -709,7 +710,7 @@ Meteor.methods({
 
     let cardsObject = {'planetDiscover1': 1};
 
-    if (!Game.Cards.canUse(cardsObject, user)) {
+    if (!Game.Cards.canUse({ cards: cardsObject, user })) {
       throw new Meteor.Error('Карточка недоступна для применения');
     }
 
@@ -751,7 +752,7 @@ Meteor.methods({
 
     check(cardsObject, Object);
 
-    if (!Game.Cards.canUse(cardsObject, user)) {
+    if (!Game.Cards.canUse({ cards: cardsObject, user })) {
       throw new Meteor.Error('Карточки недоступны для применения');
     }
 
@@ -761,7 +762,11 @@ Meteor.methods({
       throw new Meteor.Error('Карточки не выбраны');
     }
 
-    let result = Game.Effect.Special.getValue(true, { engName: 'instantCollectArtefacts' }, cardList);
+    let result = SpecialEffect.getValue({
+      hideEffects: true, 
+      obj: { engName: 'instantCollectArtefacts' }, 
+      instantEffects: cardList,
+    });
 
     let cycles = result.cycles;
 
@@ -844,7 +849,7 @@ Meteor.methods({
     var newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
 
     // update base planet
-    var baseArmy = Game.Unit.getArmy(basePlanet.armyId);
+    var baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
     if (!baseArmy) {
       basePlanet.armyId = null;
     }

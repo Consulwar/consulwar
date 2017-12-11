@@ -9,7 +9,7 @@ export default {
         textAfter: ' грязных галактических кредитов в час',
         priority: 1,
         affect: 'credits',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level * 0.5) / 24;
         },
       },
@@ -26,7 +26,7 @@ export default {
         textBefore: 'Единоразовый бонус ',
         textAfter: ' ГГК',
         affect: 'resources.credits',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           switch (level) {
             case 20:
               return 500;

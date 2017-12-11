@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 
 initQuestServer = function() {
 'use strict';
@@ -34,11 +35,11 @@ game.QuestLine = function(options, quests, isNew = true) {
             return Game.Quest.checkFinished(idParts[idParts.length - 1]);
           case 'Building':
           case 'Research':
-            return Game[idParts[0]].has(
-              Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
-              Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
-              condition[1]
-            );
+            return Game[idParts[0]].has({
+              group: Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
+              engName: Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
+              level: condition[1]
+            });
         }
         return false;
       });
@@ -211,7 +212,10 @@ Game.Quest.actualize = function() {
   }
 
   // refresh daily quest
-  var effect = Game.Effect.Special.getValue(true, { engName: 'dailyQuestCount' });
+  var effect = SpecialEffect.getValue({
+    hideEffects: true,
+    obj: { engName: 'dailyQuestCount' },
+  });
   var dailyQuestPeriod = 86400 / effect.count;
 
   if (!quests.daily
@@ -398,7 +402,11 @@ Meteor.methods({
         crystals: result == 'win' ? Math.floor( income.crystals ) : 0
       };
       
-      reward = Game.Effect.Special.applyTo({ engName: 'dailyQuestReward' }, reward, true);
+      reward = SpecialEffect.applyTo({
+        target: { engName: 'dailyQuestReward' },
+        obj: reward,
+        hideEffects: true,
+      });
 
       var set = {
         'daily.status': Game.Quest.status.FINISHED,

@@ -305,8 +305,12 @@ Template.achievements.helpers({
 
     for (var key in Game.Achievements.items[this.statisticGroup]) {
       var item = Game.Achievements.items[this.statisticGroup][key];
-      var level = item.currentLevel(user.achievements || null);
-      var nextLevel = item.nextLevel(user.achievements || null);
+      var level = item.currentLevel({
+        achievements: user.achievements || null,
+      });
+      var nextLevel = item.nextLevel({ 
+        achievements: user.achievements || null,
+      });
       
       if (item.group == this.statisticGroup) {
         result.push({

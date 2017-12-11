@@ -11,38 +11,44 @@ Game.Unit = {
 
   Collection: new Meteor.Collection('units'),
 
-  getArmy: function (id) {
+  getArmy: function ({
+    id,
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.Unit.Collection.findOne({
-      user_id: Meteor.userId(),
+      user_id: userId,
       _id: id
     });
   },
 
-  getHomeArmy: function (user_id = Meteor.userId()) {
+  getHomeArmy: function ({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.Unit.Collection.findOne({
-      user_id,
+      user_id: userId,
       location: Game.Unit.location.HOME
     });
   },
 
-  get: function (group, name) {
-    var record = Game.Unit.getHomeArmy();
+  get: function ({ group, engName, ...options }) {
+    var record = Game.Unit.getHomeArmy(options);
 
     if (record
       && record.units
       && record.units.army
       && record.units.army[group]
-      && record.units.army[group][name]
+      && record.units.army[group][engName]
     ) {
-      return record.units.army[group][name];
+      return record.units.army[group][engName];
     } else {
       return 0;
     }
   },
 
-  has: function (group, name, count) {
-    count = count || 1;
-    return Game.Unit.get(group, name) >= count;
+  has: function ({ count = 1, ...options }) {
+    return Game.Unit.get(options) >= count;
   },
 
   calculateUnitsPower: function (units, isEarth = false) {

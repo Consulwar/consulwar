@@ -1,4 +1,5 @@
 import Log from '/imports/modules/Log/server/Log';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import User from '/imports/modules/User/server/User';
 
 initUnitServerMethods = function() {
@@ -30,7 +31,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -115,7 +116,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -173,7 +174,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -184,7 +185,11 @@ Meteor.methods({
       throw new Meteor.Error('Карточки не выбраны');
     }
 
-    let result = Game.Effect.Special.getValue(true, { engName: 'instantDamage' }, cardList);
+    let result = SpecialEffect.getValue({
+      hideEffects: true,
+      obj: { engName: 'instantDamage' },
+      instantEffects: cardList,
+    });
 
     let userArmy = {};
 

@@ -1,3 +1,5 @@
+import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
+
 initChatLib = function() {
 'use strict';
 
@@ -31,7 +33,11 @@ Game.Chat.Messages = {
     var basePrice = { 
       crystals: Math.ceil(Math.max(Math.min(income, 100), 1))
     };
-    var price = Game.Effect.Price.applyTo({ engName: 'message' }, basePrice, true);
+    var price = PriceEffect.applyTo({
+      target: { engName: 'message' },
+      obj: basePrice,
+      hideEffects: true,
+    });
     if (!price || !price.crystals) {
       return null;
     }

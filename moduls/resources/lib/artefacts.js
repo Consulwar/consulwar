@@ -20,7 +20,7 @@ game.Artefact = function(options) {
   //
   switch (idParts[2]) {
     case 'Green':
-      this.color = 'cw--color_credits';
+      this.color = 'cw--color_credit';
       break;
     case 'Blue':
       this.color = 'cw--color_metal';

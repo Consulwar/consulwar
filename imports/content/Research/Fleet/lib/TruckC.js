@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Space/TruckC',
         priority: 2,
         affect: 'damage',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },
@@ -20,7 +20,7 @@ export default {
         condition: 'Unit/Human/Space/TruckC',
         priority: 2,
         affect: 'life',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },
@@ -35,7 +35,7 @@ export default {
         condition: 'Unique/truckCapacity',
         priority: 2,
         affect: 'metals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           if (level < 10) {
             return 20 + (level * 0.2);
           } else if (level < 50) {
@@ -54,7 +54,7 @@ export default {
         condition: 'Unique/truckCapacity',
         priority: 2,
         affect: 'crystals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           if (level < 10) {
             return 10 + (level * 0.1);
           } else if (level < 50) {

@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Defense',
         priority: 2,
         affect: 'life',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.1;
         },
       },
@@ -20,7 +20,7 @@ export default {
         condition: 'Unit/Human/Defense',
         priority: 2,
         affect: 'life',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },

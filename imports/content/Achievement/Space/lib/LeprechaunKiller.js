@@ -13,7 +13,7 @@ export default {
         priority: 2,
         condition: 'Unique/TradeFleetBonus',
         affect: ['crystals', 'metals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 10 : 0;
         },
       },

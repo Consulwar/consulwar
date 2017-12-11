@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Defense/OrbitalDefenseStation',
         priority: 2,
         affect: 'life',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.2;
         },
       },
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: '+',
         textAfter: '% шансу способности орбитальных станций',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 20, 40, 60, 80][Math.floor(level / 20)];
         },
       },

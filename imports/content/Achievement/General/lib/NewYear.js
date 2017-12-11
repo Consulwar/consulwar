@@ -10,7 +10,7 @@ export default {
         condition: 'Unique/fleetBattleAddCreditsChance',
         priority: 1,
         affect: 'chance',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 5 : 0;
         },
       },

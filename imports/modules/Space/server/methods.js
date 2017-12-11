@@ -91,7 +91,7 @@ Meteor.methods({
     const newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
 
     // update base planet
-    const baseArmy = Game.Unit.getArmy(basePlanet.armyId);
+    const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
     if (!baseArmy) {
       basePlanet.armyId = null;
     }
@@ -178,7 +178,7 @@ Meteor.methods({
     const newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
 
     // update base planet
-    const baseArmy = Game.Unit.getArmy(basePlanet.armyId);
+    const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
     if (!baseArmy) {
       basePlanet.armyId = null;
     }

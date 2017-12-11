@@ -10,7 +10,7 @@ export default {
         priority: 2,
         condition: 'Unique/message',
         affect: 'crystals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.1;
         },
       },
@@ -20,7 +20,7 @@ export default {
         priority: 2,
         condition: 'Unique/message',
         affect: 'crystals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
         },
       },

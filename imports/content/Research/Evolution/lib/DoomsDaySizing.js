@@ -8,7 +8,7 @@ export default {
         notImplemented: true,
         textBefore: 'Перезарядки ОСД -',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.3;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: 'Спецспособность ОСД +',
         textAfter: '%',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 5, 10, 15, 20, 30][Math.floor(level / 20)];
         },
       },

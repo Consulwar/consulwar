@@ -9,7 +9,7 @@ export default {
         textAfter: ' килограмм в час',
         priority: 1,
         affect: 'metals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [
             0,
             4, 8, 12, 16, 20,
@@ -47,7 +47,7 @@ export default {
         priority: 1,
         condition: 'Unique/bunker',
         affect: 'metals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [
             0,
             250,

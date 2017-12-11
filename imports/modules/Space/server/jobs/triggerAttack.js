@@ -42,7 +42,7 @@ export default Space.jobs.processJobs(
     }
 
     // calculate user health
-    const userArmy = Game.Unit.getArmy(planet.armyId, userId);
+    const userArmy = Game.Unit.getArmy({ id: planet.armyId, userId });
     if (!userArmy || !userArmy.units) {
       return done(); // strange shit suddenly appeared
     }

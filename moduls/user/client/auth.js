@@ -263,6 +263,6 @@ Template.register_window_step7.helpers({
 
 Template.register_window_step7.events({
   'click .positive': function(e, t) {
-    t.$('.close')[0].click()
+    $('.close')[0].click()
   }
 });

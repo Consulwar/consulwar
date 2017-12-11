@@ -10,7 +10,7 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.1;
         },
       },
@@ -20,7 +20,7 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 5, 10, 20, 30, 40][Math.floor(level / 20)];
         },
       },

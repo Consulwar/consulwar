@@ -121,25 +121,28 @@ game.extend(game.HouseItem, game.Item);
 Game.House = {
   Collection: new Meteor.Collection('houseItems'),
 
-  getValue: function() {
+  getValue: function ({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.House.Collection.findOne({
-      user_id: Meteor.userId()
+      user_id: userId,
     });
   },
 
-  get: function(group, id) {
-    var house = Game.House.getValue();
+  get: function({ group, engName, ...options }) {
+    var house = Game.House.getValue(options);
 
-    if (house && house.items && house.items[group] && house.items[group][id]) {
+    if (house && house.items && house.items[group] && house.items[group][engName]) {
       return 1;
     } else {
       return null;
     }
   },
 
-  getPlacedItems: function() {
+  getPlacedItems: function(options) {
     var placed = [];
-    var house = Game.House.getValue();
+    var house = Game.House.getValue(options);
     
     if (house) {
       for (var group in house.items) {

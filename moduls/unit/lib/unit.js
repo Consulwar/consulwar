@@ -14,9 +14,13 @@ Game.Unit = {
 
   Collection: new Meteor.Collection('units'),
 
-  getArmy: function (id, user_id = Meteor.userId()) {
+  getArmy: function ({
+    id,
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.Unit.Collection.findOne({
-      user_id,
+      user_id: userId,
       _id: id
     });
   },
@@ -32,27 +36,27 @@ Game.Unit = {
     userId = Meteor.userId(),
     homePlanet = Game.Planets.getBase(userId),
   } = {}) {
-    return Game.Unit.getArmy(homePlanet.armyId, userId);
+    return Game.Unit.getArmy({ id: homePlanet.armyId, userId });
   },
 
-  get: function(group, name) {
-    var record = Game.Unit.getHomeFleetArmy();
+  get: function({ group, engName, ...options }) {
+    var record = Game.Unit.getHomeFleetArmy(options);
 
     if (record
       && record.units
       && record.units.army
       && record.units.army[group]
-      && record.units.army[group][name]
+      && record.units.army[group][engName]
     ) {
-      return record.units.army[group][name];
+      return record.units.army[group][engName];
     } else {
       return 0;
     }
   },
 
-  has: function(group, name, count = 1) {
+  has: function({ group, engName, count = 1 }) {
     return Game.Unit.Collection.findOne({
-      [`units.army.${group}.${name}`]: { $gte: count },
+      [`units.army.${group}.${engName}`]: { $gte: count },
     });
   },
 

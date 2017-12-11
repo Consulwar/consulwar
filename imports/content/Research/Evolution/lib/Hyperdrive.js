@@ -8,7 +8,7 @@ export default {
         condition: 'Unique/spaceEngine',
         textBefore: '',
         textAfter: ' уровень движителей',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level;
         },
       },

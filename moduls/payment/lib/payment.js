@@ -121,6 +121,4 @@ new game.PaymentItem({
   cost: { rub: 200 },
   discount: { rub: 50 }
 });
-
-Game.Helpers.deepFreeze(Game.Payment.items);
 };

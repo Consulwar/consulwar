@@ -1,3 +1,5 @@
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+
 initBuildingSpecialMarketLib = function() {
 'use strict';
   
@@ -36,11 +38,11 @@ Game.Building.special.Market = {
   },
 
   getExchangeAmount: function(resourceFrom, resourceTo, amount) {
-    amount = Game.Effect.Special.applyTo(
-      { engName: 'tradingBonus' },
-      { amount: amount * Game.Building.special.Market.getExchangeRate(resourceFrom, resourceTo) },
-      true
-    ).amount;
+    amount = SpecialEffect.applyTo({
+      target: { engName: 'tradingBonus' },
+      obj: { amount: amount * Game.Building.special.Market.getExchangeRate(resourceFrom, resourceTo) },
+      hideEffects: true,
+    }).amount;
 
     return Math.floor(amount);
   }

@@ -19,7 +19,7 @@ Game.Mutual.add = function(item) {
 };
 
 Game.Mutual.initialize = function(group) {
-  var currentValue = Game.Mutual.getValue(group);
+  var currentValue = Game.Mutual.getValue({ group });
 
   if (currentValue === undefined) {
     Game.Mutual.Collection.insert({

@@ -13,7 +13,7 @@ export default {
         priority: 2,
         condition: 'Unique/roundDamage2',
         affect: 'damage',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 5 : 0;
         },
       },

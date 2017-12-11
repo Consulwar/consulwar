@@ -9,7 +9,7 @@ export default {
         textAfter: '%',
         priority: 2,
         affect: 'humans',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },
@@ -18,7 +18,7 @@ export default {
         textAfter: '%',
         priority: 2,
         affect: 'humans',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },

@@ -8,7 +8,7 @@ export default {
         notImplemented: true,
         textBefore: '+',
         textAfter: '% ресурсов за победы в космосе',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.1;
         },
       },
@@ -16,7 +16,7 @@ export default {
         notImplemented: true,
         textBefore: 'Дополнительные ',
         textAfter: '% в день',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 2, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },

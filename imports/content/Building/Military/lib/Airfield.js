@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Ground/Air',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.3;
         },
       },
@@ -20,7 +20,7 @@ export default {
         condition: 'Unit/Human/Ground/Air',
         priority: 2,
         affect: 'time',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 15, 25, 50, 70][Math.floor(level / 20)];
         },
       },

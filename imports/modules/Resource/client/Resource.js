@@ -19,7 +19,7 @@ class Resource extends LibResource {
         this.color = 'cw--color_honor';
         break;
       case 'Credit':
-        this.color = 'cw--color_credits';
+        this.color = 'cw--color_credit';
         break;
 
       default:

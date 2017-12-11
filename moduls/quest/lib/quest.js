@@ -21,11 +21,11 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
             return Game.Quest.checkFinished(idParts[idParts.length - 1]);
           case 'Building':
           case 'Research':
-            return Game[idParts[0]].has(
-              Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
-              Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
-              condition[1]
-            );
+            return Game[idParts[0]].has({
+              group: Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
+              engName: Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
+              level: condition[1],
+            });
         }
         return false;
       });

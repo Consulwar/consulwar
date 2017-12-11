@@ -16,16 +16,13 @@ Game.Unit = {
 
   getArmy: function ({
     id,
-    user,
-    userId = user ? user._id : Meteor.userId(),
   } = {}) {
     return Game.Unit.Collection.findOne({
-      user_id: userId,
       _id: id
     });
   },
 
-  getHangarArmy(userId = Meteor.userId()) {
+  getHangarArmy({ userId = Meteor.userId() }) {
     return Game.Unit.Collection.findOne({
       user_id: userId,
       location: Game.Unit.location.HOME,
@@ -33,14 +30,14 @@ Game.Unit = {
   },
 
   getHomeFleetArmy({
-    userId = Meteor.userId(),
-    homePlanet = Game.Planets.getBase(userId),
+    userId,
+    homePlanet = Game.Planets.getBase(userId || Meteor.userId()),
   } = {}) {
-    return Game.Unit.getArmy({ id: homePlanet.armyId, userId });
+    return Game.Unit.getArmy({ id: homePlanet.armyId });
   },
 
   get: function({ group, engName, ...options }) {
-    var record = Game.Unit.getHomeFleetArmy(options);
+    const record = Game.Unit.getHomeFleetArmy(options);
 
     if (record
       && record.units

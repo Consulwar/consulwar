@@ -264,7 +264,7 @@ Meteor.methods({
       throw new Meteor.Error('Перемещение флота недоступно.');
     }
 
-    const hangarArmy = Game.Unit.getHangarArmy(user._id);
+    const hangarArmy = Game.Unit.getHangarArmy({ userId: user._id });
     const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId: user._id });
 
     Game.Unit.mergeArmy(homeFleetArmy._id, hangarArmy._id, user._id);
@@ -287,7 +287,7 @@ Meteor.methods({
 
     check(army, Object);
 
-    const hangarArmy = Game.Unit.getHangarArmy(user._id);
+    const hangarArmy = Game.Unit.getHangarArmy({ userId: user._id });
 
     const destUnits = { army };
     const newArmyId = Game.Unit.sliceArmy(hangarArmy._id, destUnits, Game.Unit.location.PLANET);

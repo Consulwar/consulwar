@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import Space from '../lib/space';
 import Config from './config';
 import './methods';
@@ -54,7 +55,9 @@ Meteor.publish('mySpaceEvents', function() {
 });
 
 Meteor.publish('spaceEvents', function(hexes) {
-  if (this.userId) {
+  check(hexes, [Object]);
+
+  if (this.userId && hexes.length > 0) {
     return Space.collection.find({
       $or: [
         { 'data.hex': { $in: hexes } },

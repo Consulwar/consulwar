@@ -123,7 +123,7 @@ Game.Achievements = {
     communication: {}
   },
 
-  getValue: function(options) {
+  getValue: function(options = {}) {
     const userId = options.userId || (!options.user ? Meteor.userId() : null);
     const user = options.user || User.getById({ userId });
     return user && user.achievements;

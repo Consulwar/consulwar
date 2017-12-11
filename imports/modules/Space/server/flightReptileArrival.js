@@ -40,7 +40,7 @@ export default function reptileArrival(data) {
 
           userArmy = homeArmy.units;
         } else {
-          const planetArmy = Game.Unit.getArmy({ id: planet.armyId, userId });
+          const planetArmy = Game.Unit.getArmy({ id: planet.armyId });
           if (planetArmy) {
             userArmy = planetArmy.units;
           }

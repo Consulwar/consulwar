@@ -78,7 +78,7 @@ Game.Unit.complete = function(task) {
 };
 
 Game.Unit.initialize = function(userId = Meteor.userId()) {
-  const hangarArmy = Game.Unit.getHangarArmy(userId);
+  const hangarArmy = Game.Unit.getHangarArmy({ userId });
   if (hangarArmy === undefined) {
     Game.Unit.Collection.insert({
       user_id: userId,
@@ -109,7 +109,7 @@ Game.Unit.initialize = function(userId = Meteor.userId()) {
 Game.Unit.removeArmy = function(id, userId = Meteor.userId()) {
   if (
     Game.Unit.getHomeFleetArmy({ userId })._id === id ||
-    Game.Unit.getHangarArmy(userId)._id === id
+    Game.Unit.getHangarArmy({ userId })._id === id
   ) {
     Game.Unit.Collection.update({ _id: id }, { $set: { units: {} } });
   } else {

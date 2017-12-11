@@ -1,3 +1,5 @@
+import User from '/imports/modules/User/lib/User';
+
 initStatisticAchievementsLib = function() {
 'use strict';
 
@@ -121,9 +123,9 @@ Game.Achievements = {
     communication: {}
   },
 
-  getValue: function({
-    user = Meteor.user(),
-  } = {}) {
+  getValue: function(options) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
     return user && user.achievements;
   },
 

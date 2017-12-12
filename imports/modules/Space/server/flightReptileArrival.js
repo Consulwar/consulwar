@@ -16,7 +16,7 @@ export default function reptileArrival(data) {
     if (planet.armyId || planet.isHome) {
       const enemyFleet = FlightEvents.getFleetUnits(data);
       const enemyArmy = { reptiles: { fleet: enemyFleet } };
-      const enemyGroup = createGroup(enemyArmy);
+      const enemyGroup = createGroup({ army: enemyArmy, userId });
 
       const job = BattleEvents.findByPlanetId(planet._id);
 
@@ -40,7 +40,7 @@ export default function reptileArrival(data) {
 
           userArmy = homeArmy.units;
         } else {
-          const planetArmy = Game.Unit.getArmy({ id: planet.armyId, userId });
+          const planetArmy = Game.Unit.getArmy({ id: planet.armyId });
           if (planetArmy) {
             userArmy = planetArmy.units;
           }

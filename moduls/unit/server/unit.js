@@ -62,7 +62,7 @@ Game.Unit.complete = function(task) {
     const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
 
     if (battleEvent) {
-      const userGroup = createGroup(task);
+      const userGroup = createGroup({ army: task, userId: user._id });
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, user.username, userGroup);
       return;
     }
@@ -74,7 +74,7 @@ Game.Unit.complete = function(task) {
 };
 
 Game.Unit.initialize = function(userId = Meteor.userId()) {
-  const hangarArmy = Game.Unit.getHangarArmy(userId);
+  const hangarArmy = Game.Unit.getHangarArmy({ userId });
 
   if (hangarArmy === undefined) {
     Game.Unit.Collection.insert({
@@ -106,7 +106,7 @@ Game.Unit.initialize = function(userId = Meteor.userId()) {
 Game.Unit.removeArmy = function(id, userId = Meteor.userId()) {
   if (
     Game.Unit.getHomeFleetArmy({ userId })._id === id ||
-    Game.Unit.getHangarArmy(userId)._id === id
+    Game.Unit.getHangarArmy({ userId })._id === id
   ) {
     Game.Unit.Collection.update({ _id: id }, { $set: { units: {} } });
   } else {

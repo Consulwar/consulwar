@@ -22,8 +22,9 @@ export default {
     enemyArmy,
     data,
     mission,
-    userGroup = createGroup(userArmy),
-    enemyGroup = createGroup(enemyArmy),
+    userId = Meteor.users.findOne({ username })._id,
+    userGroup = createGroup({ army: userArmy, userId }),
+    enemyGroup = createGroup({ army: enemyArmy, userId }),
   }) {
     const options = {
       missionType: mission.type,

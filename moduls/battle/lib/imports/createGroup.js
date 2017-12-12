@@ -1,8 +1,13 @@
 import traverseGroup from './traverseGroup';
 
-const createUnit = function (armyName, typeName, unitName, count) {
-  // TODO: need to use user effects
-  const characteristics = Game.Unit.items[armyName][typeName][unitName].options.characteristics;
+const createUnit = function ({ armyName, typeName, unitName, count, userId }) {
+  let characteristics;
+
+  if (userId) {
+    characteristics = Game.Unit.items[armyName][typeName][unitName].getCharacteristics({ userId });
+  } else {
+    characteristics = Game.Unit.items[armyName][typeName][unitName].getBaseCharacteristics();
+  }
 
   return {
     count,
@@ -20,14 +25,14 @@ const createUnit = function (armyName, typeName, unitName, count) {
   };
 };
 
-export default function (army) {
+export default function ({ army, userId }) {
   const group = Game.Helpers.deepClone(army);
 
   traverseGroup(group, function (armyName, typeName, unitName, count) {
     const realCount = Game.Unit.rollCount(count);
 
     if (realCount > 0) {
-      const unit = createUnit(armyName, typeName, unitName, realCount);
+      const unit = createUnit({ armyName, typeName, unitName, count: realCount, userId});
       group[armyName][typeName][unitName] = unit;
     }
   });

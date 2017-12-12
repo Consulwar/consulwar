@@ -337,4 +337,5 @@ export default {
   spawnTradeFleet,
   sendReptileFleetToPlanet,
   actualize,
+  stealUserResources,
 };

@@ -29,6 +29,7 @@ initCosmosContentClient();
 
 Meteor.subscribe('planets');
 var spaceEventsSubscription = Meteor.subscribe('spaceEvents');
+Meteor.subscribe('battles');
 
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);

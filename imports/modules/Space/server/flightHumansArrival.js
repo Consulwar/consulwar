@@ -27,7 +27,7 @@ const completeOnPlanetMission = function(data) {
     },
   };
 
-  const userGroup = createGroup(userArmy);
+  const userGroup = createGroup({ army: userArmy, userId });
 
   const battleEvent = BattleEvents.findByPlanetId(planet._id);
 
@@ -99,7 +99,7 @@ const completeOnPlanet = function(data) {
         },
       };
 
-      const userGroup = createGroup(userArmy);
+      const userGroup = createGroup({ army: userArmy, userId: data.userId });
 
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
     } else {
@@ -171,7 +171,7 @@ const completeOnBattle = function(data) {
         fleet: FlightEvents.getFleetUnits(data),
       },
     };
-    const userGroup = createGroup(userArmy);
+    const userGroup = createGroup({ army: userArmy, userId: data.userId });
     Battle.addGroup(data.battleId, Battle.USER_SIDE, data.username, userGroup);
 
     Game.Unit.removeArmy(data.armyId, data.userId);

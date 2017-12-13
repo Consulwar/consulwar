@@ -50,7 +50,7 @@ Game.Unit.add = function({
     const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
 
     if (battleEvent) {
-      const userGroup = createGroup(unit);
+      const userGroup = createGroup({ army: unit, userId: user._id });
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, user.username, userGroup);
       return;
     }

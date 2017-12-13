@@ -69,7 +69,7 @@ Game.EarthUnits.incArmy = function (user, inc, zoneName, units) {
 
   const battleId = Game.EarthZones.getByName(zoneName).battleId;
   if (battleId) {
-    const userArmy = createGroup(units);
+    const userArmy = createGroup({ army: units, userId: user._id });
 
     Battle.addGroup(battleId, Battle.USER_SIDE, user.username, userArmy);
   }
@@ -225,7 +225,7 @@ Game.Earth.nextTurn = function() {
     if (zone.battleId) {
       if (movedUnitsTo[zone.name]) {
         movedUnitsTo[zone.name].forEach(function (moved) {
-          let userArmy = createGroup(moved.army);
+          let userArmy = createGroup({ army: moved.army, userId: moved.userId });
 
           Battle.addGroup(zone.battleId, Battle.USER_SIDE, moved.name, userArmy);
         });
@@ -242,7 +242,7 @@ Game.Earth.nextTurn = function() {
             reptileArmy.reptiles.ground[name] = count;
           });
 
-          const reptileGroup = createGroup(reptileArmy);
+          const reptileGroup = createGroup({ army: reptileArmy });
 
           Battle.addGroup(zone.battleId, Battle.ENEMY_SIDE, Battle.aiName, reptileGroup);
         });
@@ -250,7 +250,7 @@ Game.Earth.nextTurn = function() {
 
       battle = Battle.fromDB(zone.battleId);
     } else if (zone.enemyArmy && zone.userArmy) {
-      const enemyArmy = createGroup(zone.enemyArmy);
+      const enemyArmy = createGroup({ army: zone.enemyArmy });
       const options = {
         isEarth: true,
         damageReduction: Game.Earth.DAMAGE_REDUCTION,
@@ -499,6 +499,7 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
       movedUnitsTo[targetZoneName].push({
         name: earthUnits.username,
         army: earthUnits.userArmy,
+        userId: earthUnits.user_id,
       });
     }
 
@@ -508,7 +509,7 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
       earthUnitsByZone[targetZoneName] = {};
     }
 
-    let userArmy = createGroup(earthUnits.userArmy);
+    let userArmy = createGroup({ army: earthUnits.userArmy, userId: earthUnits.user_id });
 
     earthUnitsByZone[targetZoneName][earthUnits.username] = [userArmy];
   });

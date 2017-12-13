@@ -202,6 +202,8 @@ game.Item = function(options) {
       });
       this.getCharacteristics = additionalOptions => getCharacteristics(additionalOptions);
 
+      this.getBaseCharacteristics = () => Game.Helpers.deepClone(options.characteristics);
+
       // TODO: Продумать и переделать эту хрень!
       //       Если битва идет на земле, то мы не можем использовать characteristics,
       //       так как Meteor.userId() выкидывает исключение.

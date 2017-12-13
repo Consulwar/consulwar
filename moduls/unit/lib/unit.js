@@ -1,6 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { default as Game, game } from '/moduls/game/lib/main.game';
+import User from '/imports/modules/User/lib/User';
 
+import BattleCollection from '../../battle/lib/imports/collection';
+import Battle from '../../battle/lib/imports/battle';
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
 
@@ -14,15 +17,13 @@ Game.Unit = {
 
   Collection: new Meteor.Collection('units'),
 
-  getArmy: function ({
-    id,
-  } = {}) {
+  getArmy: function ({ id } = {}) {
     return Game.Unit.Collection.findOne({
       _id: id
     });
   },
 
-  getHangarArmy({ userId = Meteor.userId() }) {
+  getHangarArmy({ userId = Meteor.userId() } = {}) {
     return Game.Unit.Collection.findOne({
       user_id: userId,
       location: Game.Unit.location.HOME,
@@ -52,9 +53,7 @@ Game.Unit = {
   },
 
   has: function({ group, engName, count = 1 }) {
-    return Game.Unit.Collection.findOne({
-      [`units.army.${group}.${engName}`]: { $gte: count },
-    });
+    return Game.Unit.items.army[group][engName].totalCount() >= count;
   },
 
   calculateUnitsPower: function(units, isEarth = false) {
@@ -236,6 +235,26 @@ game.Unit = function (options) {
     throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
   }
 
+  this.getCount = ({from, ...options}) => {
+    let record;
+    if (from === 'hangar') {
+      record = Game.Unit.getHangarArmy(options);
+    } else {
+      record = Game.Unit.getHomeFleetArmy(options);
+    }
+
+    if (record
+      && record.units
+      && record.units.army
+      && record.units.army[this.group]
+      && record.units.army[this.group][this.engName]
+    ) {
+      return record.units.army[this.group][this.engName];
+    } else {
+      return 0;
+    }
+  };
+
   Game.Unit.items.army[this.side][this.engName] = this;
 
   this.color = 'cw--color_metal';
@@ -280,13 +299,17 @@ game.Unit = function (options) {
 
   this.getCard = this.image;
 
-  this.totalCount = function () {
-    var armies = Game.Unit.Collection.find({
-      user_id: Meteor.userId()
-    }).fetch();
+  this.totalCount = function (options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
 
-    var result = 0;
-    for (var i = 0; i < armies.length; i++) {
+    const armies = Game.Unit.Collection.find({
+      user_id: user._id
+    }).fetch() || [];
+
+    let result = 0;
+
+    for (let i = 0; i < armies.length; i++) {
       if (armies[i].units
         && armies[i].units.army
         && armies[i].units.army[this.group]
@@ -295,6 +318,22 @@ game.Unit = function (options) {
         result += parseInt(armies[i].units.army[this.group][this.engName]);
       }
     }
+
+    const battles = BattleCollection.find({
+      status: Battle.Status.progress,
+      userNames: user.username,
+    }).fetch() || [];
+
+    battles.forEach((battle) => {
+      battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+        traverseGroup(units, (armyName, group, engName, unit) => {
+          if (group === this.group && engName === this.engName) {
+            result += unit.count;
+          }
+        });
+      });
+    });
+
     return result;
   };
 

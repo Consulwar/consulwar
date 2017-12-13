@@ -42,6 +42,7 @@ initCosmosContentClient();
 
 Meteor.subscribe('planets');
 let spaceEventsSubscription = Meteor.subscribe('mySpaceEvents');
+Meteor.subscribe('battles');
 Meteor.subscribe('spaceHex');
 
 var isLoading = new ReactiveVar(false);

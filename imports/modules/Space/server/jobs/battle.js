@@ -7,6 +7,7 @@ import Space from '../../lib/space';
 import Lib from '../../lib/battle';
 import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
+import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
 
 export default Space.jobs.processJobs(
@@ -107,6 +108,14 @@ export default Space.jobs.processJobs(
               armyId: newArmyId,
             });
           } else {
+            if (planet.isHome) {
+              Reptiles.stealUserResources({
+                enemyArmy: army,
+                userId: user._id,
+                battle: battle,
+              });
+            }
+
             const { reptileData } = data;
             const startPosition = data.targetPosition;
             const planet = Game.Planets.getOne(reptileData.targetId, user._id);

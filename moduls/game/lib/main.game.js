@@ -203,33 +203,6 @@ game.Item = function(options) {
       this.getCharacteristics = additionalOptions => getCharacteristics(additionalOptions);
 
       this.getBaseCharacteristics = () => Game.Helpers.deepClone(options.characteristics);
-
-      // TODO: Продумать и переделать эту хрень!
-      //       Если битва идет на земле, то мы не можем использовать characteristics,
-      //       так как Meteor.userId() выкидывает исключение.
-      //       По этому был создан этот метод, чтобы применять эффекты только из
-      //       общих исследований.
-      Object.defineProperty(this, 'earthCharacteristics', {
-        get: function() {
-          var characteristics = _.clone(options.characteristics);
-          if (options.characteristics.damage) {
-            characteristics.damage = _.clone(options.characteristics.damage);
-          }
-
-          // Выбираем только общие эффекты (последний аргумент = true)
-          var result = MilitaryEffect.applyTo({
-            target: this,
-            obj: characteristics,
-            hideEffects: false,
-            isOnlyMutual: true,
-          });
-          result.base = options.characteristics;
-
-          return result;
-        },
-        enumerable: true
-      });
-      // --------------------------------------------------------------
     }
 
     this.triggers = options.triggers;
@@ -246,7 +219,7 @@ game.Item = function(options) {
   this.constructor(options);
 
   this.deepFreeze = function() {
-    Game.Helpers.deepFreeze(this, ['requirements', 'targets', 'special', 'characteristics', 'earthCharacteristics']);
+    Game.Helpers.deepFreeze(this, ['requirements', 'targets', 'special', 'characteristics']);
   };
 
   this.currentLevel = function(options) {

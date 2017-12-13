@@ -28,11 +28,6 @@ if (process.env.NODE_ENV == 'development') {
       }
     },
 
-    'cheats.performBattle': function(userArmy, enemyArmy, options) {
-      var result = Game.Unit.performBattle(userArmy, enemyArmy, options);
-      return result.log;
-    },
-
     'cheats.performBattleRounds': function(count) {
       let battle = Battle.create(
         {
@@ -286,7 +281,6 @@ if (process.env.NODE_ENV == 'development') {
 
   Meteor.methods({
     'cheats.setUnitCount': addCheater,
-    'cheats.performBattle': addCheater,
     'cheats.testMissionGenerate': addCheater,
     'cheats.spawnTradeFleet': addCheater,
     'cheats.sendReptileFleetToPlanet': addCheater,

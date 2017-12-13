@@ -97,6 +97,7 @@ Meteor.startup(function () {
   initCheatsServer();
   initDDPLimiter();
   initAllianceServer();
+  initWrecksServer();
 
   SyncedCron.start();
   initSpaceServer();
@@ -165,6 +166,7 @@ Meteor.methods({
     Reptiles.actualize();
     Game.Planets.actualize();
     Game.Quest.actualize();
+    Game.Wrecks.actualize();
 
     return true;
   },

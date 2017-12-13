@@ -3,6 +3,9 @@ import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import User from '/imports/modules/User/server/User';
 
 import FlightEvents from '/imports/modules/Space/server/flightEvents';
+import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import Game from '/moduls/game/lib/main.game';
 
 initUnitServerMethods = function() {
 'use strict';
@@ -160,6 +163,58 @@ Meteor.methods({
     }
 
     Game.Cards.spend(cardsObject);
+  },
+
+  'unit.repair'(group, engName) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'unit.repair', user });
+
+    check(group, String);
+    check(engName, String);
+
+    Game.Wrecks.actualize();
+
+    const wrecks = Game.Wrecks.Collection.findOne({ userId: user._id });
+
+    if (!wrecks || !wrecks.units.army[group] || !wrecks.units.army[group][engName]) {
+      throw new Meteor.Error('Нет юнитов для восстановления');
+    }
+
+    const count = wrecks.units.army[group][engName].count;
+    const unit = Game.Unit.items.army[group][engName];
+
+    // TODO: add effect(s) on PRICE_COEFFICIENT
+    const priceCoefficient = Game.Wrecks.PRICE_COEFFICIENT;
+
+    const price = Game.Resources.multiplyResources({
+      resources: _.clone(unit.getBasePrice(count).base),
+      count: priceCoefficient,
+    });
+
+    if (!Game.Resources.has({ resources: price })) {
+      throw new Meteor.Error('Недостаточно ресурсов');
+    }
+
+    Game.Unit.add({
+      unit: {
+        group,
+        engName,
+        count,
+      },
+      user,
+    });
+
+    Game.Wrecks.removeUnit(wrecks, group, engName);
+
+    Game.Resources.spend(price);
+
+    // save statistic
+    Game.Statistic.incrementUser(user._id, {
+      'units.repair.total': count,
+      [`units.repair.army.${group}.${engName}`]: count,
+    });
   },
 
   'battleHistory.getPage': function(page, count, isEarth) {

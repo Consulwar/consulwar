@@ -34,8 +34,31 @@ Game.Unit.set = function(unit, invertSign, uid = Meteor.userId(), location = Gam
   return inc;
 };
 
-Game.Unit.add = function(unit, uid, location) {
-  return Game.Unit.set(unit, false, uid, location);
+Game.Unit.add = function({
+  unit,
+  userId,
+  user = Meteor.users.findOne({ _id: (userId || Meteor.userId()) }),
+}) {
+  let location;
+  if (
+    unit.group === 'ground' ||
+    (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar)
+  ) {
+    location = Game.Unit.location.HOME;
+  } else {
+    const homePlanet = Game.Planets.getBase();
+    const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
+
+    if (battleEvent) {
+      const userGroup = createGroup({ army: unit, userId: user._id });
+      Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, user.username, userGroup);
+      return;
+    }
+
+    location = Game.Unit.location.PLANET;
+  }
+
+  Game.Unit.set(unit, false, user._id, location);
 };
 
 Game.Unit.remove = function(unit, uid) {
@@ -51,26 +74,7 @@ Game.Unit.complete = function(task) {
   increment['units.build.army.' + task.group + '.' + task.engName] = task.count;
   Game.Statistic.incrementUser(user._id, increment);
 
-  let location;
-  if (
-    task.group === 'ground' ||
-    (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar)
-  ) {
-    location = Game.Unit.location.HOME;
-  } else {
-    const homePlanet = Game.Planets.getBase();
-    const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
-
-    if (battleEvent) {
-      const userGroup = createGroup({ army: task, userId: user._id });
-      Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, user.username, userGroup);
-      return;
-    }
-
-    location = Game.Unit.location.PLANET;
-  }
-
-  Game.Unit.add(task, user._id, location);
+  Game.Unit.add({ unit: task, user });
 };
 
 Game.Unit.initialize = function(userId = Meteor.userId()) {

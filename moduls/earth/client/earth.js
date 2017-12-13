@@ -1,3 +1,4 @@
+import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthClient = function() {
@@ -186,7 +187,7 @@ Template.reserve.helpers({
     return _.map(Game.Unit.items.army.ground, function(val, key) {
       return {
         engName: key,
-        max: val.currentLevel()
+        max: val.getCount({ from: 'hangar' }),
       };
     });
   },
@@ -239,8 +240,8 @@ Template.reserve.events({
   },
 
   'click .btn-send': function(e, t) {
-    if (!Game.SpaceEvents.checkCanSendFleet()) {
-      return Notifications.info('Слишком много флотов уже отправлено');
+    if (!Reinforcement.canSendReinforcement()) {
+      return Notifications.info('Слишком много подкреплений уже отправлено');
     }
 
     var total = 0;
@@ -465,7 +466,7 @@ Template.earthZonePopup.helpers({
     if (army) {
       let armyZone = Game.EarthZones.getByName(army.zoneName);
 
-      if (armyZone && armyZone.battleID) {
+      if (armyZone && armyZone.battleId) {
         return false;
       }
     }
@@ -964,7 +965,7 @@ let showLines = function (army) {
   lineViews.length = 0;
 
   if (army) {
-    if (Game.EarthZones.getByName(army.zoneName).battleID) {
+    if (Game.EarthZones.getByName(army.zoneName).battleId) {
       return;
     }
 

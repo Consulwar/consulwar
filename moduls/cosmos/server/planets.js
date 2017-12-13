@@ -1,6 +1,18 @@
+import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import Game from '/moduls/game/lib/main.game';
+import Config from '/imports/modules/Space/server/config';
+import PlanetGeneration from '/imports/modules/Space/lib/planetGeneration';
+import Space from '/imports/modules/Space/lib/space';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+
+const {
+  calcSegmentRandomPoints,
+  calcSegmentPlanetsAmount,
+  calcSegmentCenter,
+} = PlanetGeneration;
 
 initCosmosPlanetsServer = function() {
 'use strict';
@@ -52,17 +64,17 @@ Game.Planets.actualize = function() {
       continue;
     }
 
-    if (planet.armyId) {
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
       // auto collect artefacts
       if (planet.timeArtefacts) {
         var delta = timeCurrent - planet.timeArtefacts;
-        var count = Math.floor( delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD );
+        var count = Math.floor(delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD);
         if (count > 0) {
           var artefacts = Game.Planets.getArtefacts(planet, count);
           if (artefacts) {
             Game.Resources.add(artefacts);
           }
-          planet.timeArtefacts += ( Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count );
+          planet.timeArtefacts += (Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count);
           Game.Planets.update(planet);
         }
       }
@@ -78,13 +90,14 @@ Game.Planets.actualize = function() {
             if (Game.Random.random() <= 0.5) {
               planet.mission = Game.Planets.generateMission(planet);
               sector.occupied += 1;
+              planet.status = Game.Planets.STATUS.REPTILES;
             }
           }
         } else if (planet.mission.units) {
           // restore previous
           planet.mission.units = null;
         }
-        planet.timeRespawn = timeCurrent + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
+        planet.timeRespawn = timeCurrent + Config.ENEMY_RESPAWN_PERIOD;
         Game.Planets.update(planet);
       }
     }
@@ -96,25 +109,27 @@ Game.Planets.update = function(planet) {
     return null;
   }
 
-  var data = _.omit(planet, '_id');
+  const data = _.omit(planet, '_id');
 
   Game.Planets.Collection.update({
-    _id: planet._id
+    _id: planet._id,
   }, {
-    $set: data
+    $set: data,
   });
-  
+
   return data;
 };
 
-Game.Planets.add = function(planet) {
-  planet.user_id = Meteor.userId();
-  return Game.Planets.Collection.insert(planet);
+Game.Planets.add = function(planet, userId = Meteor.userId()) {
+  return Game.Planets.Collection.insert({
+    ...planet,
+    user_id: userId,
+  });
 };
 
-Game.Planets.generateArtefacts = function(galactic, hand, segment, type) {
+Game.Planets.generateArtefacts = function(galactic, hand, segment, type, user_id = Meteor.userId()) {
   // get artefacts spread config by distance from home planet or center
-  var basePlanet = Game.Planets.getBase();
+  var basePlanet = Game.Planets.getBase(user_id);
   var distTotal = galactic.segments;
   var distCurrent = distTotal - segment;
 
@@ -260,7 +275,7 @@ Game.Planets.generateType = function() {
   return result;
 };
 
-Game.Planets.generateName = function() {
+Game.Planets.generateName = function(user_id = Meteor.userId()) {
   var letters = [
     'A', 'B', 'C', 'D', 'E', 'F',
     'G', 'H', 'I', 'J', 'K', 'L',
@@ -270,7 +285,7 @@ Game.Planets.generateName = function() {
     '4', '5', '6', '7', '8', '9'
   ];
 
-  var home = Meteor.user().planetName;
+  var home = Meteor.users.findOne({ _id: user_id }).planetName;
   var result = home;
 
   while (home == result) {
@@ -500,8 +515,8 @@ Game.Planets.getSectorsToDiscover = function(galactic, hand, segment) {
   return sectors;
 };
 
-Game.Planets.checkSectorDiscovered = function(hand, segment) {
-  var planets = Game.Planets.getAll().fetch();
+Game.Planets.checkSectorDiscovered = function(hand, segment, user_id = Meteor.userId()) {
+  var planets = Game.Planets.getAll(user_id).fetch();
   for (var i = 0; i < planets.length; i++) {
     if (planets[i].hand == hand
      && planets[i].segment == segment
@@ -512,21 +527,27 @@ Game.Planets.checkSectorDiscovered = function(hand, segment) {
   return false;
 };
 
-Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered) {
+Game.Planets.generateSector = function(
+  galactic,
+  hand,
+  segment,
+  isSkipDiscovered,
+  userId = Meteor.userId(),
+) {
   // check galactic bounds
   if (segment > galactic.segments || segment < 0) return;
   if (hand >= galactic.hands || hand < 0) return;
 
   // check sector already discovered
   if (isSkipDiscovered
-   && Game.Planets.checkSectorDiscovered(hand, segment)
+   && Game.Planets.checkSectorDiscovered(hand, segment, userId)
   ) {
     return;
   }
 
   // find near planets
   var nearPlanets = [];
-  var planets = Game.Planets.getAll().fetch();
+  var planets = Game.Planets.getAll(userId).fetch();
   var i = 0;
 
   for (i = 0; i < planets.length; i++) {
@@ -539,7 +560,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
   }
 
   // calc amount
-  var amount = Game.Planets.calcSegmentPlanetsAmount(
+  var amount = calcSegmentPlanetsAmount(
     hand,
     segment,
     galactic.hands,
@@ -549,7 +570,7 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
   );
 
   // find random points
-  var randSpots = Game.Planets.calcSegmentRandomPoints(
+  var randSpots = calcSegmentRandomPoints(
     amount,
     hand,
     segment,
@@ -586,14 +607,16 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
       galactic,
       hand,
       segment,
-      type
+      type,
+      userId,
     );
 
     var newPlanet = {
-      name: Game.Planets.generateName(),
+      name: Game.Planets.generateName(userId),
       type: type.engName,
       artefacts: artefacts,
       // state
+      status: Game.Planets.STATUS.NOBODY,
       armyId: null,
       mission: null,
       timeRespawn: 0,
@@ -606,14 +629,14 @@ Game.Planets.generateSector = function(galactic, hand, segment, isSkipDiscovered
       size: size
     };
 
-    Game.Planets.add(newPlanet);
+    Game.Planets.add(newPlanet, userId);
     freeSpots.splice(n, 1);
   }
 };
 
-Game.Planets.discover = function(planetId) {
+Game.Planets.discover = function(planetId, userId = Meteor.userId()) {
   // get discovered planet
-  let planet = Game.Planets.getOne(planetId);
+  let planet = Game.Planets.getOne(planetId, userId);
   if (planet.isDiscovered) {
     return;
   }
@@ -622,17 +645,19 @@ Game.Planets.discover = function(planetId) {
   Game.Planets.update(planet);
 
   // get base planet
-  let basePlanet = Game.Planets.getBase();
+  let basePlanet = Game.Planets.getBase(userId);
   if (!basePlanet) {
     return;
   }
 
   // find sectors to discover
-  let sectors = Game.Planets.getSectorsToDiscover(basePlanet.galactic, planet.hand, planet.segment);
+  let sectors = Game.Planets.getSectorsToDiscover(basePlanet.galactic,
+    planet.hand, planet.segment);
 
   // discover
   for (let i = 0; i < sectors.length; i++) {
-    Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand, sectors[i].segment, true);
+    Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand,
+      sectors[i].segment, true, userId);
   }
 };
 
@@ -665,7 +690,7 @@ Meteor.methods({
 
       var hand = Game.Random.interval(0, galactic.hands - 1);
       var segment = galactic.segments - 3;
-      var center = Game.Planets.calcSegmentCenter(
+      var center = calcSegmentCenter(
         hand,
         segment,
         galactic.hands,
@@ -678,6 +703,7 @@ Meteor.methods({
       var planetId = Game.Planets.add({
         name: user.planetName,
         isHome: true,
+        status: Game.Planets.STATUS.HUMANS,
         type: 'terran',
         // generation
         hand: hand,
@@ -741,9 +767,13 @@ Meteor.methods({
 
     check(planetId, String);
 
-    let planet = Game.Planets.getOne(planetId);
+    const planet = Game.Planets.getOne(planetId);
     if (!planet || planet.isHome || !planet.armyId) {
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+    }
+
+    if (planet.status !== Game.Planets.STATUS.HUMANS) {
+      throw new Meteor.Error('На планете не ведется добыча артефактов');
     }
 
     if (!cardsObject) {
@@ -763,8 +793,8 @@ Meteor.methods({
     }
 
     let result = SpecialEffect.getValue({
-      hideEffects: true, 
-      obj: { engName: 'instantCollectArtefacts' }, 
+      hideEffects: true,
+      obj: { engName: 'instantCollectArtefacts' },
       instantEffects: cardList,
     });
 
@@ -787,118 +817,6 @@ Meteor.methods({
     Game.Cards.spend(cardsObject);
 
     return artefacts;
-  },
-
-  'planet.sendFleet': function(baseId, targetId, units, isOneway) {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'planet.sendFleet', user });
-
-    if (!Game.SpaceEvents.checkCanSendFleet()) {
-      throw new Meteor.Error('Слишком много флотов уже отправлено');
-    }
-
-    if (baseId == targetId) {
-      throw new Meteor.Error('Стартовая планета и конечная должны быть разными');
-    }
-
-    var targetPlanet = Game.Planets.getOne(targetId);
-    if (!targetPlanet) {
-      throw new Meteor.Error('Не найдена конечная планета');
-    }
-
-    var basePlanet = Game.Planets.getOne(baseId);
-    if (!basePlanet) {
-      throw new Meteor.Error('Не найдена стартовая планета');
-    }
-
-    // check is new colony
-    var isLeavingBase = false;
-    var isNewColony = false;
-
-    if (isOneway && !targetPlanet.armyId && !targetPlanet.isHome) {
-      isNewColony = true;
-
-      if (!basePlanet.isHome && units) {
-        // base planet is not our home, so we can leave it
-        isLeavingBase = true;
-        // test selected units vs available units
-        var baseUnits = Game.Planets.getFleetUnits(baseId);
-        for (var name in baseUnits) {
-          if (baseUnits[name] > 0 && (!units[name] || baseUnits[name] > units[name])) {
-            // not all selected, so we don't leaving base
-            isLeavingBase = false;
-            break;
-          }
-        }
-      }
-    }
-
-    if (isNewColony && !Game.Planets.checkCanHaveMoreColonies(baseId, isLeavingBase, targetId)) {
-      throw new Meteor.Error('Уже слишком много колоний');
-    }
-
-    // slice units
-    var sourceArmyId = basePlanet.armyId;
-    if (basePlanet.isHome) {
-      sourceArmyId = Game.Unit.getHomeArmy()._id;
-    }
-
-    var destUnits = { army: { fleet: units } };
-    var newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
-
-    // update base planet
-    var baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
-    if (!baseArmy) {
-      basePlanet.armyId = null;
-    }
-    basePlanet.timeRespawn = Game.getCurrentTime() + Game.Cosmos.ENEMY_RESPAWN_PERIOD;
-    Game.Planets.update(basePlanet);
-
-    var startPosition = {
-      x: basePlanet.x,
-      y: basePlanet.y
-    };
-
-    var targetPosition = {
-      x: targetPlanet.x,
-      y: targetPlanet.y
-    };
-
-    var engineLevel = Game.Planets.getEngineLevel();
-
-    var shipOptions = {
-      startPosition:  startPosition,
-      startPlanetId:  basePlanet._id,
-      targetPosition: targetPosition,
-      targetType:     Game.SpaceEvents.target.PLANET,
-      targetId:       targetPlanet._id,
-      startTime:      Game.getCurrentTime(),
-      flyTime:        Game.Planets.calcFlyTime(startPosition, targetPosition, engineLevel),
-      engineLevel:    engineLevel,
-      isHumans:       true,
-      isOneway:       isOneway,
-      mission:        null,
-      armyId:         newArmyId,
-    };
-
-    Game.SpaceEvents.sendShip(shipOptions);
-
-    // if planet is colony
-    if (!basePlanet.isHome && basePlanet.armyId) {
-      // add reptiles attack trigger
-      Game.SpaceEvents.addTriggerAttack({
-        startTime: Game.getCurrentTime(),
-        delayTime: Game.Cosmos.TRIGGER_ATTACK_DELAY,
-        targetPlanet: basePlanet._id
-      });
-    }
-
-    // save statistic
-    Game.Statistic.incrementUser(user._id, {
-      'cosmos.fleets.sent': 1
-    });
   },
 
   'planet.changeName': function(planetId, name) {
@@ -978,7 +896,53 @@ Meteor.methods({
     });
 
     Game.Payment.Expense.log(price, 'planetBuy');
-  }
+  },
+
+  'planet.startMining'(planetId) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'planet.startMining', user });
+
+    check(planetId, String);
+
+    const planet = Game.Planets.getOne(planetId);
+    if (!planet || planet.isHome || !planet.armyId) {
+      throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+    }
+
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
+      throw new Meteor.Error('На планете уже ведется добыча артефактов');
+    } else if (planet.status === Game.Planets.STATUS.REPTILES) {
+      const artefacts = Game.Planets.getArtefacts(planet, 1);
+      if (artefacts) {
+        Game.Resources.add(artefacts);
+      }
+    }
+
+    planet.timeArtefacts = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+    planet.status = Game.Planets.STATUS.HUMANS;
+
+    Game.Planets.update(planet);
+  },
+
+  'planet.stopMining'(planetId) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'planet.stopMining', user });
+
+    check(planetId, String);
+
+    const planet = Game.Planets.getOne(planetId);
+    if (!planet || planet.isHome || planet.status !== Game.Planets.STATUS.HUMANS) {
+      throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+    }
+
+    planet.status = Game.Planets.STATUS.NOBODY;
+
+    Game.Planets.update(planet);
+  },
 });
 
 Meteor.publish('planets', function () {
@@ -1029,8 +993,7 @@ Game.Planets.debugCalcArtefactsChances = function() {
 Game.Planets.debugImportCosmos = function(userId, planets, spaceEvents) {
   // clear cosmos + queue
   Game.Planets.Collection.remove({user_id: userId});
-  Game.Queue.Collection.remove({user_id: userId});
-  Game.SpaceEvents.Collection.remove({user_id: userId});
+  Space.collection.remove({ user_id: userId });
 
   // import planets
   var i = 0;
@@ -1059,7 +1022,7 @@ Game.Planets.debugImportCosmos = function(userId, planets, spaceEvents) {
     event.timeStart += deltaTime;
     event.timeEnd += deltaTime;
     event.user_id = userId;
-    Game.SpaceEvents.Collection.insert(event);
+    Space.collection.insert(event);
   }
 };
 

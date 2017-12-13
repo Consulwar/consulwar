@@ -1,660 +1,200 @@
+import FlightEvents from '/imports/modules/Space/lib/flightEvents';
+
 initCosmosLib = function() {
 'use strict';
 
 game.PlanetType = function(options) {
-   if (Game.Planets.types[options.engName]) {
-      throw new Meteor.Error('Ошибка в контенте', 'Дублируется тип планеты ' + options.engName);
-   }
-   Game.Planets.types[options.engName] = options;
+  if (Game.Planets.types[options.engName]) {
+    throw new Meteor.Error('Ошибка в контенте', 'Дублируется тип планеты ' + options.engName);
+  }
+  Game.Planets.types[options.engName] = options;
 };
 
 Game.Cosmos = {};
 
 Game.Planets = {
 
-   Collection: new Meteor.Collection('planets'),
+  Collection: new Meteor.Collection('planets'),
 
-   RENAME_PLANET_PRICE: 200,
-   MAX_EXTRA_COLONIES: 10,
+  STATUS: {
+    NOBODY: 1,
+    HUMANS: 2,
+    REPTILES: 3,
+  },
 
-   getExtraColoniesCount: function() {
-      var basePlanet = Game.Planets.getBase();
-      return (basePlanet && basePlanet.extraColoniesCount)
-         ? basePlanet.extraColoniesCount
-         : 0;
-   },
+  RENAME_PLANET_PRICE: 200,
+  MAX_EXTRA_COLONIES: 10,
 
-   getExtraColonyPrice: function(count) {
-      return [
-         500,  // 1
-         1110, // 2
-         1830, // 3
-         2660, // 4
-         3600, // 5
-         4650, // 6
-         5810, // 7
-         7080, // 8
-         8460, // 9
-         9950  // 10
-      ][count || Game.Planets.getExtraColoniesCount()];
-   },
+  getExtraColoniesCount: function () {
+    var basePlanet = Game.Planets.getBase();
+    return (basePlanet && basePlanet.extraColoniesCount)
+      ? basePlanet.extraColoniesCount
+      : 0;
+  },
 
-   getAll: function() {
-      return Game.Planets.Collection.find({
-         user_id: Meteor.userId()
-      });
-   },
+  getExtraColonyPrice: function (count) {
+    return [
+      500,  // 1
+      1110, // 2
+      1830, // 3
+      2660, // 4
+      3600, // 5
+      4650, // 6
+      5810, // 7
+      7080, // 8
+      8460, // 9
+      9950  // 10
+    ][count || Game.Planets.getExtraColoniesCount()];
+  },
 
-   getByArtefact: function(artefact) {
-      var condition = {
-         user_id: Meteor.userId()
-      };
-      condition['artefacts.' + artefact] = { $gt: 0 };
-      return Game.Planets.Collection.find(condition).fetch();
-   },
+  getAll: function (user_id = Meteor.userId()) {
+    return Game.Planets.Collection.find({
+      user_id,
+    });
+  },
 
-   getOne: function(id) {
-      return Game.Planets.Collection.findOne({
-         user_id: Meteor.userId(),
-         _id: id
-      });
-   },
+  getByArtefact: function (artefact) {
+    var condition = {
+      user_id: Meteor.userId(),
+    };
+    condition['artefacts.' + artefact] = { $gt: 0 };
+    return Game.Planets.Collection.find(condition).fetch();
+  },
 
-   getBase: function() {
-      return Game.Planets.Collection.findOne({
-         user_id: Meteor.userId(),
-         isHome: true
-      });
-   },
+  getOne: function (id, user_id = Meteor.userId()) {
+    return Game.Planets.Collection.findOne({
+      user_id,
+      _id: id,
+    });
+  },
 
-   getColonies: function() {
-      return Game.Planets.Collection.find({
-         user_id: Meteor.userId(),
-         $or: [
-            { isHome: true },
-            { armyId: { $ne: null } }
-         ]
-      }).fetch();
-   },
+  getBase: function (user_id = Meteor.userId()) {
+    return Game.Planets.Collection.findOne({
+      user_id,
+      isHome: true,
+    });
+  },
 
-   getMaxColoniesCount: function() {
-      return 3 + Game.User.getLevel() + Game.Planets.getExtraColoniesCount();
-   },
+  getColonies: function () {
+    return Game.Planets.Collection.find({
+      user_id: Meteor.userId(),
+      status: Game.Planets.STATUS.HUMANS,
+    }).fetch();
+  },
 
-   getColoniesCount: function() {
-      return Game.Planets.getColonies().length;
-   },
+  getPlanetsWithArmy(userId = Meteor.userId()) {
+    return Game.Planets.Collection.find({
+      user_id: userId,
+      armyId: { $exists: true },
+    }).fetch();
+  },
 
-   checkCanHaveMoreColonies: function(baseId, isLeavingBase, targetId) {
-      // count already targeted planets
-      var targets = [];
-      var isTargetInList = false;
-      var fleets = Game.SpaceEvents.getFleets().fetch();
-      var id = null;
+  getMaxColoniesCount: function () {
+    return 3 + Game.User.getLevel() + Game.Planets.getExtraColoniesCount();
+  },
 
-      for (var i = 0; i < fleets.length; i++) {
-         var fleet = fleets[i];
+  getColoniesCount: function () {
+    return Game.Planets.getColonies().length;
+  },
 
-         if (!fleet.info.isHumans) {
-            continue;
-         }
+  checkCanHaveMoreColonies: function (baseId, isLeavingBase, targetId) {
+    // count already targeted planets
+    var targets = [];
+    var isTargetInList = false;
+    var fleets = FlightEvents.getFleetsEvents().fetch();
+    var id = null;
 
-         id = fleet.info.isOneway
-            ? fleet.info.targetId
-            : fleet.info.startPlanetId;
+    for (var i = 0; i < fleets.length; i++) {
+      var fleet = fleets[i];
 
-         if (targets.indexOf(id) == -1) {
-            targets.push(id);
-         }
-
-         // base is target of another fleet, so we can't leave base
-         if (id == baseId) {
-            isLeavingBase = false;
-         }
-
-         // target planet in list, so we can send more
-         if (id == targetId) {
-            isTargetInList = true;
-         }
+      if (!fleet.data.isHumans) {
+        continue;
       }
 
-      // add current colonies
-      var colonies = Game.Planets.getColonies();
-      for (var n = 0; n < colonies.length; n++) {
-         id = colonies[n]._id;
-         if (targets.indexOf(id) == -1) {
-            targets.push(id);
-         }
+      id = fleet.data.isOneway
+        ? fleet.data.targetId
+        : fleet.data.startPlanetId;
+
+      if (targets.indexOf(id) == -1) {
+        targets.push(id);
       }
 
-      // finaly count and check
-      var current = targets.length;
-
-      if (isLeavingBase) {
-         current--;
+      // base is target of another fleet, so we can't leave base
+      if (id == baseId) {
+        isLeavingBase = false;
       }
 
-      if (isTargetInList) {
-         current--;
+      // target planet in list, so we can send more
+      if (id == targetId) {
+        isTargetInList = true;
       }
+    }
 
-      return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
-   },
-
-   getFleetUnits: function(planetId) {
-      var planet = Game.Planets.getOne(planetId);
-      if (!planet) {
-         return null;
+    // add current colonies
+    var colonies = Game.Planets.getColonies();
+    for (var n = 0; n < colonies.length; n++) {
+      id = colonies[n]._id;
+      if (targets.indexOf(id) == -1) {
+        targets.push(id);
       }
+    }
 
-      if (planet.mission) {
-         if (planet.mission.units) {
-            return planet.mission.units;
-         } else {
-            return _.clone(Game.Battle.items[planet.mission.type].level[planet.mission.level].enemies);
-         }
-      } else if (planet.armyId || planet.isHome) {
-         var army = (planet.isHome) 
-            ? Game.Unit.getHomeArmy()
-            : Game.Unit.getArmy({ id: planet.armyId });
-         if (army && army.units && army.units.army) {
-            return army.units.army.fleet;
-         }
-      }
+    // finaly count and check
+    var current = targets.length;
 
+    if (isLeavingBase) {
+      current--;
+    }
+
+    if (isTargetInList) {
+      current--;
+    }
+
+    return (current < Game.Planets.getMaxColoniesCount()) ? true : false;
+  },
+
+  getFleetUnits: function (planetId, userId = Meteor.userId()) {
+    var planet = Game.Planets.getOne(planetId, userId);
+    if (!planet) {
       return null;
-   },
+    }
 
-   getDefenseUnits: function(planetId) {
-      var planet = Game.Planets.getOne(planetId);
-      if (!planet) {
-         return null;
-      }
-
-      if (planet.armyId || planet.isHome) {
-         var army = (planet.isHome) 
-            ? Game.Unit.getHomeArmy()
-            : Game.Unit.getArmy({ id: planet.armyId });
-         if (army && army.units && army.units.army) {
-            return army.units.army.defense;
-         }
-      }
-
-      return null;
-   },
-
-   calcDistance: function(start, end) {
-      return Math.sqrt( Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2) );
-   },
-
-   calcAngle: function(start, end) {
-      return Math.atan2(end.y - start.y, end.x - start.x);
-   },
-
-   // ------------------------------------------------------------------------
-   // Planets generation
-   // ------------------------------------------------------------------------
-
-   MIN_PLANET_DISTANCE: 1,
-
-   types: {},
-
-   calcSegmentCenter: function(hand, segment, maxHands, maxSegments, rotationFactor, maxRadius, galacticAngle) {
-      // central sector
-      if (segment === 0)  {  
-         return {
-            x: 0,
-            y: 0
-         };
-      }
-
-      // hand segment
-      var distance = maxRadius * (segment + 0.5) / maxSegments;
-      var angle = galacticAngle + hand * (Math.PI * 2 / maxHands) + distance * rotationFactor;
-      return {
-         x: distance * Math.cos(angle),
-         y: distance * Math.sin(angle)
-      };
-   },
-
-   calcSegmentPlanetsAmount: function(hand, segment, maxHands, maxSegments, minPlanets, maxPlanets) {
-      var kCenter = 0.1; // center = 10% of all planets
-      var kHand = (1 - kCenter) / maxHands;
-
-      var min = 0;
-      var max = 0;
-
-      if (segment === 0) {
-         min = minPlanets * kCenter;
-         max = maxPlanets * kCenter;
+    if (planet.mission) {
+      if (planet.mission.units) {
+        return planet.mission.units;
       } else {
-         var k = (maxSegments + 1 - segment) / maxSegments;
-         min = (minPlanets * kHand) / (maxSegments + 1) * 2 * k;
-         max = (maxPlanets * kHand) / (maxSegments + 1) * 2 * k;
+        return _.clone(Game.Battle.items[planet.mission.type].level[planet.mission.level].enemies);
       }
-
-      var amount = Game.Random.interval(min, max);
-      return (amount >= 1) ? amount : 0;
-   },
-
-   calcSegmentRandomPoints: function(amount, hand, segment, maxHands, maxSegments, rotationFactor, narrowFactor, maxRadius, galacticAngle) {
-      var result = [];
-      var angle = 0;
-      var distance = 0;
-
-      // central sector
-      if (segment <= 0) {
-         var radius = maxRadius / maxSegments * 0.9;
-
-         while (amount-- > 0) {
-            distance = Game.Random.random() * radius;
-            angle = Game.Random.random() * Math.PI * 2;
-
-            result.push({
-               x: distance * Math.cos(angle),
-               y: distance * Math.sin(angle)
-            });
-         }
-
-         return result;
+    } else if (planet.armyId || planet.isHome) {
+      var army = (planet.isHome)
+        ? Game.Unit.getHomeFleetArmy({ userId })
+        : Game.Unit.getArmy({ id: planet.armyId });
+      if (army && army.units && army.units.army) {
+        return army.units.army.fleet;
       }
+    }
 
-      // hand segment
-      var handAngle = Math.PI * 2 / maxHands;
-      var handAngleOffset = handAngle * 2;
-      var startAngle = hand * handAngle + galacticAngle;
+    return null;
+  },
 
-      var startDistance = maxRadius * segment / maxSegments;
-      var endDistance = maxRadius * (segment + 1) / maxSegments;
+  calcDistance: function (start, end) {
+    return Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+  },
 
-      var delta = endDistance - startDistance;
-      startDistance += delta * 0.2;
-      endDistance -= delta * 0.2;
+  // ------------------------------------------------------------------------
+  // Planets generation
+  // ------------------------------------------------------------------------
 
-      while (amount-- > 0) {
-         distance = startDistance + Game.Random.random() * (endDistance - startDistance);
+  MIN_PLANET_DISTANCE: 1,
 
-         var rotation = distance * rotationFactor;
+  types: {},
 
-         var offset = Game.Random.random() * handAngleOffset - handAngleOffset / 2;
-         offset = offset * (narrowFactor / distance);
-         if (offset < 0) {
-            offset = Math.pow(offset, 2) * -1;
-         } else {
-            offset = Math.pow(offset, 2);
-         }
-         
-         if (Math.abs(offset) >= handAngle / 2) {
-            offset = Game.Random.random() * (handAngle * 0.8) - (handAngle * 0.8) / 2;
-         }
-
-         angle = startAngle + offset + rotation;
-
-         result.push({
-            x: distance * Math.cos(angle),
-            y: distance * Math.sin(angle)
-         });
-      }
-
-      return result;
-   },
-
-   // ------------------------------------------------------------------------
-   // Travel speed & time calculations
-   // ------------------------------------------------------------------------
-   
-   _speedKCached: 0,
-   _speedLevelCached: 0,
-
-   calcSpeedK: function(level) {
-      if (level != Game.Planets._speedLevelCached) {
-
-         var config = Game.Cosmos.SPEED_CONFIG;
-         var k = 0;
-
-         if (level >= 100) {
-            k = 100;
-         } else if (level >= 1) {
-            var i = Math.floor( level / 10 );
-            var j = level % 10;
-            k = config[i] + (config[i + 1] - config[i]) / 10 * j;
-         }
-
-         Game.Planets._speedLevelCached = level;
-         Game.Planets._speedKCached = k / 100;
-      }
-
-      return Game.Planets._speedKCached;
-   },
-
-   calcMaxSpeed: function(level) {
-      var min = Game.Cosmos.MIN_SPEED;
-      var max = Game.Cosmos.MAX_SPEED;
-      return min + (max - min) * Game.Planets.calcSpeedK(level);
-   },
-
-   calcAcceleration: function(level) {
-      var min = Game.Cosmos.MIN_ACC;
-      var max = Game.Cosmos.MAX_ACC;
-      return min + (max - min) * Game.Planets.calcSpeedK(level);
-   },
-
-   getEngineLevel: function() {
-      return Game.Research.get({
-        group: 'evolution', 
-        engName: 'hyperdrive',
-      });
-   },
-
-   calcDistanceByTime: function(currentTime, totalDistance, maxSpeed, acceleration) {
-      totalDistance *= 50;
-
-      let incSpeedTime = maxSpeed / acceleration;
-      let incSpeedDist = incSpeedTime * maxSpeed / 2;
-
-      let traveledDistance = 0;
-
-      if (totalDistance < incSpeedDist * 2) {
-         let shortDistAccTime = Math.sqrt(totalDistance / acceleration);
-         let shortDistMaxSpeed = shortDistAccTime * acceleration;
-
-         let maxTime = shortDistAccTime * 2;
-
-         if (currentTime <= shortDistAccTime) {
-            traveledDistance = acceleration * currentTime * currentTime / 2;
-         } else if (currentTime < maxTime) {
-            let currentSpeed = shortDistMaxSpeed - (currentTime - shortDistAccTime) * acceleration;
-            traveledDistance = acceleration * shortDistAccTime * shortDistAccTime / 2 +
-               (shortDistMaxSpeed + currentSpeed) * (currentTime - shortDistAccTime) / 2;
-         } else {
-            traveledDistance = totalDistance;
-         }
-      } else {
-         let stableSpeedDist = totalDistance - incSpeedDist * 2;
-         let stableSpeedTime = stableSpeedDist / maxSpeed;
-
-         let maxTime = incSpeedTime * 2 + stableSpeedDist / maxSpeed;
-
-         if (currentTime < incSpeedTime) {
-            traveledDistance = acceleration * currentTime * currentTime / 2;
-         } else if (currentTime <= (incSpeedTime + stableSpeedTime)) {
-            traveledDistance = incSpeedDist + (currentTime - incSpeedTime) * maxSpeed;
-         } else if (currentTime <= maxTime) {
-            let slowingTime = currentTime - incSpeedTime - stableSpeedTime;
-            traveledDistance = incSpeedDist + stableSpeedDist + (maxSpeed * 2 - acceleration * slowingTime) * slowingTime / 2;
-         } else {
-            traveledDistance = totalDistance;
-         }
-      }
-      return traveledDistance / 50;
-   },
-
-   calcTimeByDistance: function(currentDistance, totalDistance, maxSpeed, acceleration) {
-      currentDistance *= 50;
-      totalDistance *= 50;
-
-      let incSpeedTime = maxSpeed / acceleration;
-      let incSpeedDist = incSpeedTime * maxSpeed / 2;
-
-      let stableSpeedDist = totalDistance - incSpeedDist * 2;
-
-      let time;
-
-      if (currentDistance < incSpeedDist) {
-         time = Math.sqrt(2 * currentDistance / acceleration);
-      } else if (currentDistance < (incSpeedDist + stableSpeedDist) ) {
-         let stableSpeedCurrent = currentDistance - incSpeedDist;
-         time = incSpeedTime + (stableSpeedCurrent / maxSpeed);
-      } else if (currentDistance < totalDistance) {
-         let stableSpeedDist = totalDistance - incSpeedDist * 2;
-         let stableSpeedTime = stableSpeedDist / maxSpeed;
-
-         let decSpeedDist = currentDistance - (incSpeedDist + stableSpeedDist);
-
-         // Решаем квадратное уравнение: (a*t^2)/2 - V0 * t + S = 0
-         // дискриминант (b2 - 4ac) = V0^2 - 2 * a * S
-         // корней получается 2, т.е. точек пересечения 2 (ближняя и через возврат с положительным ускорением),
-         // поэтому берем корень с трицательным дискриминантом, это будет ближняя точка
-
-         let decSpeedTime = ( maxSpeed - Math.sqrt(Math.pow(maxSpeed, 2) - 2 * acceleration * decSpeedDist) ) / acceleration;
-
-         time = incSpeedTime + stableSpeedTime + decSpeedTime;
-      } else {
-         time = Game.Planets.calcTotalTimeByDistance(totalDistance, maxSpeed, acceleration);
-      }
-
-      return Math.round(time);
-   },
-
-   calcTotalTimeByDistance: function(distance, maxSpeed, acceleration) {
-      distance *= 50;
-
-      let incSpeedTime = maxSpeed / acceleration;
-      let incSpeedDist = incSpeedTime * maxSpeed / 2;
-
-      let totalTime;
-
-      if (distance < incSpeedDist * 2) {
-         let shortDistAccTime = Math.sqrt(distance / acceleration);
-
-         totalTime = shortDistAccTime * 2;
-      } else {
-         let stableSpeedDist = distance - incSpeedDist * 2;
-         let stableSpeedTime = stableSpeedDist / maxSpeed;
-
-         totalTime = stableSpeedTime + incSpeedTime * 2;
-      }
-
-      return Math.round(totalTime);
-   },
-
-   calcFlyTime: function(startPoint, endPoint, engineLevel) {
-      var distance = Game.Planets.calcDistance(startPoint, endPoint);
-      var maxSpeed = Game.Planets.calcMaxSpeed(engineLevel);
-      var acceleration = Game.Planets.calcAcceleration(engineLevel);
-
-      return Game.Planets.calcTotalTimeByDistance(distance, maxSpeed, acceleration);
-   },
-
-   calcAttackOptions: function(attackerPlanet, attackerEngineLevel, targetShip, timeCurrent) {
-      var angle = Game.Planets.calcAngle(
-         targetShip.info.startPosition,
-         targetShip.info.targetPosition
-      );
-      var totalDistance = Game.Planets.calcDistance(
-         targetShip.info.startPosition,
-         targetShip.info.targetPosition
-      );
-
-      var startPoint = {
-         x: targetShip.info.startPosition.x,
-         y: targetShip.info.startPosition.y,
-      };
-
-      var targetShipTime = timeCurrent - targetShip.timeStart;
-      var targetShipSpeed = Game.Planets.calcMaxSpeed(targetShip.info.engineLevel);
-      var targetShipAcc = Game.Planets.calcAcceleration(targetShip.info.engineLevel);
-
-      var targetDistance = Game.Planets.calcDistanceByTime(
-         targetShipTime,
-         totalDistance,
-         targetShipSpeed,
-         targetShipAcc
-      );
-
-      var check = function(distance) {
-         // target time
-         var timeToPoint = Game.Planets.calcTimeByDistance(
-            distance,
-            totalDistance,
-            targetShipSpeed,
-            targetShipAcc
-         );
-         
-         var timeLeft = timeToPoint - targetShipTime;
-
-         // attack time
-         var attackPoint = {
-            x: startPoint.x + distance * Math.cos(angle),
-            y: startPoint.y + distance * Math.sin(angle)
-         };
-
-         var timeAttack = Game.Planets.calcFlyTime(attackerPlanet, attackPoint, attackerEngineLevel);
-
-         // check
-         if (timeAttack >= timeLeft) {
-            return null;
-         } else {
-            return timeAttack;
-         }
-      };
-
-      if (targetDistance >= totalDistance - 0.1) {
-         return null;
-      }
-
-      if (!check(totalDistance - 0.1)) {
-         return null;
-      }
-
-      var left = targetDistance;
-      var right = totalDistance - 0.1;
-      var resultDistance = totalDistance - 0.1;
-
-      while (Math.abs(right - left) >= 0.05) {
-         var cur = left + (right - left) / 2;
-         var checkResult = check(cur);
-
-         if (checkResult) {
-            right = cur;
-            resultDistance = cur;
-         } else {
-            left = cur;
-         }
-      }
-
-      return {
-         k: resultDistance / totalDistance,
-         time: check(resultDistance)
-      };
-   }
-
-};
-
-Game.SpaceEvents = {
-
-   // event status
-   status: {
-      STARTED: 1,
-      FINISHED: 2
-   },
-
-   // event type
-   type: {
-      SHIP: 1,
-      REINFORCEMENT: 2,
-      TRIGGER_ATTACK: 3
-   },
-
-   // event target
-   target: {
-      SHIP: 1,
-      PLANET: 2
-   },
-
-   Collection: new Meteor.Collection('spaceEvents'),
-
-   getAll: function() {
-      return Game.SpaceEvents.Collection.find({
-         user_id: Meteor.userId()
-      }, {
-         sort: {
-            timeEnd: 1
-         }
-      });
-   },
-
-   getOne: function(id) {
-      return Game.SpaceEvents.Collection.findOne({
-         user_id: Meteor.userId(),
-         _id: id
-      });
-   },
-
-   getFleets: function () {
-      return Game.SpaceEvents.Collection.find({
-         user_id: Meteor.userId(),
-         type: Game.SpaceEvents.type.SHIP,
-         status: Game.SpaceEvents.status.STARTED
-      }, {
-         sort: {
-            timeEnd: 1
-         }
-      });
-   },
-
-   getReinforcements: function() {
-      return Game.SpaceEvents.Collection.find({
-         user_id: Meteor.userId(),
-         type: Game.SpaceEvents.type.REINFORCEMENT,
-         status: Game.SpaceEvents.status.STARTED
-      }, {
-         sort: {
-            timeEnd: 1
-         }
-      });
-   },
-
-   getCurrentFleetsCount: function() {
-      var inSpace = Game.SpaceEvents.Collection.find({
-         user_id: Meteor.userId(),
-         type: Game.SpaceEvents.type.SHIP,
-         status: Game.SpaceEvents.status.STARTED,
-         'info.isHumans': true
-      }).count();
-
-      var toEarth = Game.SpaceEvents.Collection.find({
-         user_id: Meteor.userId(),
-         type: Game.SpaceEvents.type.REINFORCEMENT,
-         status: Game.SpaceEvents.status.STARTED
-      }).count();
-
-      return inSpace + toEarth;
-   },
-   
-   getMaxFleetsCount: function() {
-      return Game.Planets.getMaxColoniesCount() * 2;
-   },
-
-   checkCanSendFleet: function() {
-      if (Game.SpaceEvents.getCurrentFleetsCount() < Game.SpaceEvents.getMaxFleetsCount()) {
-         return true;
-      }
-      return false;
-   },
-
-   getFleetUnits: function(ship) {
-      if (!ship || ship.type != Game.SpaceEvents.type.SHIP) {
-         return null;
-      }
-
-      var info = ship.info;
-
-      if (info.mission) {
-         if (info.mission.units) {
-            return info.mission.units;
-         } else {
-            return _.clone(Game.Battle.items[info.mission.type].level[info.mission.level].enemies);
-         }
-      } else if (info.armyId) {
-         var army = Game.Unit.getArmy({ id: info.armyId });
-         if (army && army.units && army.units.army) {
-            return army.units.army.fleet;
-         }
-      }
-
-      return null;
-   }
+  getEngineLevel: function() {
+    return Game.Research.get({
+      group: 'evolution',
+      engName: 'hyperdrive',
+    });
+  },
 };
 
 initCosmosConfigLib();

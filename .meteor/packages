@@ -58,3 +58,4 @@ jparker:crypto-base64
 shell-server@0.3.0
 dynamic-import@0.2.0
 peerlibrary:blaze-components
+vsivsi:job-collection

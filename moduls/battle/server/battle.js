@@ -1,79 +1,112 @@
+import { Meteor } from 'meteor/meteor';
+
+import { _ } from 'meteor/underscore';
+import Game from '/moduls/game/lib/main.game';
+import User from '/imports/modules/User/lib/User';
+
 import performRound from './performRound';
 import calculateGroupPower from '../lib/imports/calculateGroupPower';
 import traverseGroup from '../lib/imports/traverseGroup';
 
-let Collection = new Meteor.Collection('battle');
+import Collection from '../lib/imports/collection';
+import Lib from '../lib/imports/battle';
 
-const Status = {
-  progress: 1,
-  finish: 2
-};
+const {
+  Status,
+  USER_SIDE,
+  ENEMY_SIDE,
+} = Lib;
 
-const USER_SIDE = '1';
-const ENEMY_SIDE = '2';
+Collection._ensureIndex({
+  userNames: 1,
+  status: 1,
+});
+
+Meteor.publish('battles', function () {
+  if (this.userId) {
+    const user = User.getById({ userId: this.userId });
+    return Collection.find({
+      userNames: user.username,
+      status: Status.progress,
+    });
+  }
+  return null;
+});
 
 class Battle {
-  static create(userArmies, enemyArmies) {
-    let round = 1;
+  static create(options, userArmies, enemyArmies) {
+    const round = 0;
 
-    let initialUnits = {
+    const initialUnits = {
       [USER_SIDE]: userArmies,
-      [ENEMY_SIDE]: enemyArmies
+      [ENEMY_SIDE]: enemyArmies,
     };
 
-    let armyPowers = {};
+    const armyPowers = {};
 
     _.pairs(userArmies).forEach(function ([name, army]) {
       armyPowers[name] = calculateGroupPower(army[0]);
     });
 
-    let currentUnits = deepClone(initialUnits);
-    let battleUnits = {};
-    let status = Status.progress;
+    const currentUnits = Game.Helpers.deepClone(initialUnits);
+    const battleUnits = {};
+    const status = Status.progress;
+    const userNames = _.keys(userArmies);
 
-    let id = Collection.insert({
-      status: status,
+    const id = Collection.insert({
+      options,
+      status,
       timeStart: new Date(),
-      round: round,
-      userNames: _.keys(userArmies),
+      round,
+      userNames,
       initialUnits,
       armyPowers,
       currentUnits,
-      battleUnits
+      battleUnits,
     });
 
-    return new Battle({_id: id, initialUnits, armyPowers, currentUnits, battleUnits, round, status});
+    return new Battle({
+      _id: id,
+      options,
+      initialUnits,
+      armyPowers,
+      currentUnits,
+      battleUnits,
+      round,
+      userNames,
+      status,
+    });
   }
 
   static fromDB(id) {
-    let battle = Collection.findOne({_id: id});
+    const battle = Collection.findOne({ _id: id });
 
     return new Battle(battle);
   }
 
   static addGroup(id, side, username, group) {
-    let key = `${side}.${username}`;
+    const key = `${side}.${username}`;
 
-    let groupPower = calculateGroupPower(group);
+    const groupPower = calculateGroupPower(group);
 
-    let modifier = {
+    const modifier = {
       $push: {
         [`initialUnits.${key}`]: group,
-        [`currentUnits.${key}`]: group
-      }
+        [`currentUnits.${key}`]: group,
+      },
     };
 
     if (side === USER_SIDE) {
       modifier.$addToSet = {
-        userNames: username
+        userNames: username,
       };
 
       modifier.$inc = {
-        [`armyPowers.${username}`]: groupPower
+        [`armyPowers.${username}`]: groupPower,
       };
     }
 
-    Collection.update({_id: id}, modifier);
+    Collection.update({ _id: id }, modifier);
   }
 
   static removeUserArmy(id, username) {
@@ -84,43 +117,42 @@ class Battle {
         [`initialUnits.${key}`]: 1,
         [`currentUnits.${key}`]: 1,
         [`armyPowers.${username}`]: 1,
-      }
+      },
     };
 
-    Collection.update({_id: id}, modifier);
+    Collection.update({ _id: id }, modifier);
   }
 
-  constructor({_id, initialUnits, armyPowers, currentUnits, battleUnits, round, status}) {
+  constructor({
+    _id,
+    initialUnits,
+    armyPowers,
+    currentUnits,
+    battleUnits,
+    round,
+    status,
+    options,
+    userNames,
+  }) {
     this.id = _id;
 
+    this.options = options;
     this.status = status;
     this.initialUnits = initialUnits;
     this.armyPowers = armyPowers;
     this.currentUnits = currentUnits;
     this.battleUnits = battleUnits;
     this.round = round;
+    this.userNames = userNames;
   }
 
-  performSpaceRound(options) {
-    let roundResult = this.performRound(options);
+  performRound() {
+    const roundResult = performRound(this, this.options.damageReduction);
 
-    roundResult.honors = this.giveHonor(roundResult, options);
-
-    return roundResult;
-  }
-
-  performEarthRound(options) {
-    options.isEarth = true;
-    return this.performRound(options);
-  }
-
-  performRound(options) {
-    let roundResult = performRound(this, options.damageReduction);
-
-    let modifier = {
+    const modifier = {
       $set: {
-        battleUnits: this.battleUnits
-      }
+        battleUnits: this.battleUnits,
+      },
     };
 
     if (_.keys(roundResult.decrement).length !== 0) {
@@ -129,60 +161,59 @@ class Battle {
 
     this.update(modifier);
 
-    let userArmyRest = USER_SIDE in roundResult.left;
-    let enemyArmyRest = ENEMY_SIDE in roundResult.left;
+    const userArmyRest = USER_SIDE in roundResult.left;
+    const enemyArmyRest = ENEMY_SIDE in roundResult.left;
 
-    if (!options.isEarth) {
+    if (!this.options.isEarth) {
       this.saveRoundStatistic(roundResult);
+      this.giveHonor(roundResult);
     }
 
+    this.update({
+      $inc: {
+        round: 1,
+      },
+    });
+
     if (!userArmyRest || !enemyArmyRest) {
-      this.finishBattle(userArmyRest, enemyArmyRest, options);
-    } else {
-      this.update({
-        $inc: {
-          round: 1
-        }
-      });
+      this.finishBattle(userArmyRest, enemyArmyRest);
     }
 
     return roundResult;
   }
 
   update(modifier) {
-    return Collection.update({_id: this.id}, modifier);
+    return Collection.update({ _id: this.id }, modifier);
   }
 
-  giveHonor(roundResult, options) {
-    let honors = {};
-
-    let killedCost = Game.Unit.calculateArmyCost(roundResult.killed[ENEMY_SIDE]);
-    let mission = Game.Battle.items[ options.missionType ];
-    let totalHonor = Game.Resources.calculateHonorFromResources(killedCost, true) * (mission.honor * 0.01);
+  giveHonor(roundResult) {
+    const killedCost = Game.Unit.calculateBaseArmyCost(roundResult.killed[ENEMY_SIDE]);
+    const mission = Game.Battle.items[this.options.missionType];
+    const totalHonor = Game.Resources.calculateHonorFromResources(killedCost, true) *
+      (mission.honor * 0.01);
 
     if (totalHonor > 0) {
-      let armyPowers = this.armyPowers;
-      let totalPower = calculateTotalPower(armyPowers);
+      const armyPowers = this.armyPowers;
+      const totalPower = calculateTotalPower(armyPowers);
 
-      let dividedHonor = totalHonor / totalPower;
+      const dividedHonor = totalHonor / totalPower;
+      const inc = {};
 
-      for (let username in armyPowers) {
-        if (armyPowers.hasOwnProperty(username)) {
-          let honor = Math.floor(dividedHonor * armyPowers[username]);
-          let user = Meteor.users.findOne({username});
+      _(armyPowers).pairs().forEach(([username, armyPower]) => {
+        const honor = Math.floor(dividedHonor * armyPower);
+        const user = Meteor.users.findOne({ username });
 
-          Game.Resources.add({honor}, user._id);
+        Game.Resources.add({ honor }, user._id);
 
-          honors[username] = honor;
-        }
-      }
+        inc[`reward.${username}.honor`] = honor;
+      });
+
+      this.update({ $inc: inc });
     }
-
-    return honors;
   }
 
   saveRoundStatistic(roundResult) {
-    if (_.keys(this.currentUnits[USER_SIDE]).length === 1) {
+    if (this.userNames.length === 1) {
       this.saveSingleUserStatistic(roundResult);
     } else {
       this.saveMultiUsersStatistic(roundResult);
@@ -190,9 +221,9 @@ class Battle {
   }
 
   saveSingleUserStatistic(roundResult) {
-    let increment = {};
+    const increment = {};
 
-    let userUnits = roundResult.killed[USER_SIDE];
+    const userUnits = roundResult.killed[USER_SIDE];
     let totalLost = 0;
 
     traverseGroup(userUnits, function(armyName, typeName, unitName, count) {
@@ -202,7 +233,7 @@ class Battle {
 
     increment['units.lost.total'] = totalLost;
 
-    let enemyUnits = roundResult.killed[ENEMY_SIDE];
+    const enemyUnits = roundResult.killed[ENEMY_SIDE];
     totalLost = 0;
 
     traverseGroup(enemyUnits, function(armyName, typeName, unitName, count) {
@@ -212,21 +243,21 @@ class Battle {
 
     increment['reptiles.killed.total'] = totalLost;
 
-    Game.Statistic.incrementUser(Meteor.userId(), increment);
+    const user = Meteor.users.findOne({ username: this.userNames[0] });
+    Game.Statistic.incrementUser(user._id, increment);
   }
 
   saveMultiUsersStatistic(roundResult) {
     let increment = {};
-    let userNames = _.keys(this.currentUnits[USER_SIDE]);
 
     console.log('multiUsers', increment);
-    //todo Game.Statistic.incrementGroupUserNames(userNames, increment);
+    // TODO: Game.Statistic.incrementGroupUserNames(this.userNames, increment);
   }
 
-  finishBattle(userArmyRest, enemyArmyRest, options) {
+  finishBattle(userArmyRest, enemyArmyRest) {
     this.status = Status.finish;
 
-    if (options.isOnlyDamage) {
+    if (this.options.isOnlyDamage) {
       if (enemyArmyRest) {
         this.result = Game.Battle.result.damage;
       } else {
@@ -242,129 +273,111 @@ class Battle {
       }
     }
 
-    if (!options.isEarth) {
-      this.giveReward(userArmyRest, enemyArmyRest, options);
-      this.saveBattleStatistic(this.result, options);
+    if (!this.options.isEarth) {
+      this.giveReward(userArmyRest, enemyArmyRest);
+      this.saveBattleStatistic(this.result);
     }
 
     this.update({
       $set: {
-        status: this.status
-      }
+        status: this.status,
+      },
     });
   }
 
-  giveReward(userArmyRest, enemyArmyRest, options) {
-    this.rewards = {};
+  giveReward(userArmyRest, enemyArmyRest) {
     this.cards = null;
 
     if (!userArmyRest || enemyArmyRest) {
       return;
     }
 
-    let totalReward = {};
-    let mission = Game.Battle.items[ options.missionType ].level[ options.missionLevel ];
+    const totalReward = {};
+    const mission = Game.Battle.items[this.options.missionType].level[this.options.missionLevel];
 
     if (mission.reward) {
       totalReward.metals = mission.reward.metals;
       totalReward.crystals = mission.reward.crystals;
     } else {
-      let killedArmy = this.calculateTotalKilled(ENEMY_SIDE);
-      let killedCost = Game.Unit.calculateArmyCost(killedArmy);
+      const killedArmy = this.calculateTotalKilled(ENEMY_SIDE);
+      const killedCost = Game.Unit.calculateBaseArmyCost(killedArmy);
 
-      totalReward.metals = Math.floor( killedCost.metals * 0.1 );
-      totalReward.crystals = Math.floor( killedCost.crystals * 0.1 );
+      totalReward.metals = Math.floor(killedCost.metals * 0.1);
+      totalReward.crystals = Math.floor(killedCost.crystals * 0.1);
     }
 
-    let armyPowers = this.armyPowers;
-    let totalPower = calculateTotalPower(armyPowers);
+    const armyPowers = this.armyPowers;
+    const totalPower = calculateTotalPower(armyPowers);
 
-    let dividedReward = {
+    const dividedReward = {
       metals: totalReward.metals / totalPower,
-      crystals: totalReward.crystals / totalPower
+      crystals: totalReward.crystals / totalPower,
     };
 
-    for (let username in armyPowers) {
-      if (armyPowers.hasOwnProperty(username)) {
-        let groupPower = armyPowers[username];
+    const inc = {};
 
-        let reward = {
-          metals: Math.floor(dividedReward.metals * groupPower),
-          crystals: Math.floor(dividedReward.crystals * groupPower)
-        };
+    _(armyPowers).pairs().forEach(([username, armyPower]) => {
+      const reward = {
+        metals: Math.floor(dividedReward.metals * armyPower),
+        crystals: Math.floor(dividedReward.crystals * armyPower),
+      };
 
-        let user = Meteor.users.findOne({username});
-        Game.Resources.add(reward, user._id);
+      const user = Meteor.users.findOne({ username });
+      Game.Resources.add(reward, user._id);
 
-        this.rewards[username] = reward;
-      }
-    }
+      inc[`reward.${username}.metals`] = reward.metals;
+      inc[`reward.${username}.crystals`] = reward.crystals;
+    });
 
-    let names = _.keys(armyPowers);
-
-    if (options.artefacts) {
-      let artefacts = [];
-      for (let artefactName in options.artefacts) {
-        if (options.artefacts.hasOwnProperty(artefactName)) {
-          let count = options.artefacts[artefactName];
-          _.times(count, () => artefacts.push(artefactName));
-        }
-      }
-
-      for (let artefactName of artefacts) {
-        let username = names[Game.Random.interval(0, names.length - 1)];
-        let user = Meteor.users.findOne({username});
-
-        Game.Resources.add({[artefactName]: 1}, user._id);
-      }
-    }
+    const names = this.userNames;
 
     if (mission.cards) {
-      let missionCards = mission.cards;
-      for (let cardName in missionCards) {
-        if (missionCards.hasOwnProperty(cardName)) {
-          if (Game.Random.chance( missionCards[cardName] )) {
-            let username = names[Game.Random.interval(0, names.length - 1)];
-            let user = Meteor.users.findOne({username});
+      const missionCards = mission.cards;
+      _(missionCards).pairs().forEach(([cardName, chance]) => {
+        if (Game.Random.chance(chance)) {
+          const username = names[Game.Random.interval(0, names.length - 1)];
+          const user = Meteor.users.findOne({ username });
 
-            Game.Cards.add({[cardName]: 1}, user._id);
-          }
+          Game.Cards.add({ [cardName]: 1 }, user._id);
+
+          inc[`reward.${username}.card.${cardName}`] = 1;
         }
-      }
+      });
+
       this.cards = missionCards;
     }
+
+    this.update({ $inc: inc });
   }
 
-  saveBattleStatistic(result, options) {
-    let userNames = _.keys(this.currentUnits[USER_SIDE]);
+  saveBattleStatistic(result) {
+    const fieldName = (this.userNames.length === 1) ? 'battle' : 'multiUsersBattle';
 
-    let fieldName = (userNames.length === 1) ? 'battle' : 'multiUsersBattle';
-
-    let increment = {};
+    const increment = {};
 
     increment[`${fieldName}.total`] = 1;
 
-    let resultName = Game.Battle.resultNames[result];
+    const resultName = Game.Battle.resultNames[result];
     increment[`${fieldName}.${resultName}`] = 1;
 
-    if (options.missionType && options.missionLevel) {
-      increment[`${fieldName}.${options.missionType}.total`] = 1;
-      increment[`${fieldName}.${options.missionType}.${options.missionLevel}.total`] = 1;
+    if (this.options.missionType && this.options.missionLevel) {
+      increment[`${fieldName}.${this.options.missionType}.total`] = 1;
+      increment[`${fieldName}.${this.options.missionType}.${this.options.missionLevel}.total`] = 1;
 
-      increment[`${fieldName}.${options.missionType}.${resultName}`] = 1;
-      increment[`${fieldName}.${options.missionType}.${options.missionLevel}.${resultName}`] = 1;
+      increment[`${fieldName}.${this.options.missionType}.${resultName}`] = 1;
+      increment[`${fieldName}.${this.options.missionType}.${this.options.missionLevel}.${resultName}`] = 1;
     }
 
-    Game.Statistic.incrementGroupUserNames(userNames, increment);
+    Game.Statistic.incrementGroupUserNames(this.userNames, increment);
   }
 
   calculateTotalKilled(sideName) {
-    let initialUnits = this.initialUnits;
-    let result = {};
+    const initialUnits = this.initialUnits;
+    const result = {};
 
     traverseSide(this.currentUnits, sideName, function(username, groupNum, group) {
       traverseGroup(group, function(armyName, typeName, unitName, unit) {
-        let diff = initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count - unit.count;
+        const diff = initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count - unit.count;
 
         if (!result[armyName]) {
           result[armyName] = {};
@@ -395,7 +408,7 @@ class Battle {
           groupNum,
           armyName,
           typeName,
-          unitName
+          unitName,
         });
       });
     });
@@ -406,69 +419,34 @@ Battle.Status = Status;
 Battle.USER_SIDE = USER_SIDE;
 Battle.ENEMY_SIDE = ENEMY_SIDE;
 
-let calculateTotalPower = function(armyPowers) {
+const calculateTotalPower = function(armyPowers) {
   let totalPower = 0;
 
-  for (let username in armyPowers) {
-    if (armyPowers.hasOwnProperty(username)) {
-      totalPower += armyPowers[username];
-    }
-  }
+  _(armyPowers).values().forEach((armyPower) => {
+    totalPower += armyPower;
+  });
 
   return totalPower;
 };
 
-let traverseUnits = function(units, callback) {
-  for (let sideName in units) {
-    if (!units.hasOwnProperty(sideName)) {
-      continue;
-    }
+const traverseSide = function(units, sideName, callback) {
+  const side = units[sideName];
 
-    traverseSide(units, sideName, function(username, groupNum, group) {
-      callback(sideName, username, groupNum, group);
-    });
-  }
-};
-
-let traverseSide = function(units, sideName, callback) {
-  let side = units[sideName];
-
-  for (let username in side) {
-    if (!side.hasOwnProperty(username)) {
-      continue;
-    }
-    let groups = side[username];
-
-    for (let groupNum = 0; groupNum < groups.length; groupNum++) {
-      let group = groups[groupNum];
+  _(side).pairs().forEach(([username, groups]) => {
+    for (let groupNum = 0; groupNum < groups.length; groupNum += 1) {
+      const group = groups[groupNum];
 
       callback(username, groupNum, group);
     }
-  }
-};
-
-let getPoints = function(resources) {
-  let points = 0;
-  for (let res in resources) {
-    if (resources.hasOwnProperty(res)) {
-      if (res !== 'time') {
-        points += resources[res] * (res === 'crystals' ? 3 : res === 'humans' ? 4 : 1);
-      }
-    }
-  }
-  return points;
-};
-
-let deepClone = function(object) {
-  let clone = _.clone(object);
-
-  _.each(clone, function(value, key) {
-    if (_.isObject(value)) {
-      clone[key] = deepClone(value);
-    }
   });
+};
 
-  return clone;
+const traverseUnits = function(units, callback) {
+  _(units).keys().forEach((sideName) => {
+    traverseSide(units, sideName, function(username, groupNum, group) {
+      callback(sideName, username, groupNum, group);
+    });
+  });
 };
 
 export default Battle;

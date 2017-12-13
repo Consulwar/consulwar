@@ -1,3 +1,6 @@
+import Reinforcement from '/imports/modules/Space/client/reinforcement';
+import FlightEvents from '/imports/modules/Space/client/flightEvents';
+
 Blaze._allowJavascriptUrls();
 
 buzz.defaults.preload = 'none';
@@ -316,6 +319,10 @@ Deps.autorun(function(){
   }
 });*/
 
+const dateToTime = function (date) {
+  return Math.floor(new Date(date).getTime() / 1000);
+};
+
 var helpers = {
   currentRouteName: function() { return Router.current().route.getName(); },
   information: function() {
@@ -366,8 +373,8 @@ var helpers = {
   },
 
   fleetInfo: function() {
-    var reinforcements = Game.SpaceEvents.getReinforcements().fetch();
-    var fleets = Game.SpaceEvents.getFleets().fetch();
+    var reinforcements = Reinforcement.getAllByUserId().fetch();
+    var fleets = FlightEvents.getFleetsEvents().fetch();
     
     if (reinforcements.length === 0 && fleets.length === 0) {
       return null;
@@ -384,33 +391,34 @@ var helpers = {
     var attackTime = null;
 
     for (var i = 0; i < fleets.length; i++) {
-      if (fleets[i].info.isHumans) {
+      const after = dateToTime(fleets[i].after);
+      if (fleets[i].data.isHumans) {
         consul++;
-        if (consulTime > fleets[i].timeEnd) {
-          consulTime = fleets[i].timeEnd;
+        if (consulTime > after) {
+          consulTime = after;
           consulId = fleets[i]._id;
         }
       } else {
         reptile++;
-        if (reptileTime > fleets[i].timeEnd) {
-          reptileTime = fleets[i].timeEnd;
+        if (reptileTime > after) {
+          reptileTime = after;
           reptileId = fleets[i]._id;
         }
         // check attack
         if (!isWaitingAttack) {
-          if (fleets[i].info.targetType == Game.SpaceEvents.target.SHIP) {
+          if (fleets[i].data.targetType === FlightEvents.TARGET.SHIP) {
             // check ship
-            var ship = Game.SpaceEvents.getOne(fleets[i].info.targetId);
-            if (ship && ship.info.isHumans) {
+            var ship = FlightEvents.getOne(fleets[i].data.targetId);
+            if (ship && ship.data.isHumans) {
               isWaitingAttack = true;
             }
-          } else if (fleets[i].info.targetType == Game.SpaceEvents.target.PLANET) {
+          } else if (fleets[i].data.targetType === FlightEvents.TARGET.PLANET) {
             // check planet
-            var planet = Game.Planets.getOne(fleets[i].info.targetId);
-            if (planet && (planet.isHome || planet.armyId) && fleets[i].timeEnd > attackTime) {
+            var planet = Game.Planets.getOne(fleets[i].data.targetId);
+            if (planet && (planet.isHome || planet.armyId) && after > attackTime) {
               isWaitingAttack = true;
               attackId = fleets[i]._id;
-              attackTime = fleets[i].timeEnd;
+              attackTime = after;
             }
           }
         }
@@ -419,7 +427,7 @@ var helpers = {
 
     return {
       reinforcements: reinforcements.length,
-      reinforcementsTime: reinforcements.length > 0 ? reinforcements[0].timeEnd : 0,
+      reinforcementsTime: reinforcements.length > 0 ? dateToTime(reinforcements[0].after) : 0,
       reinforcementsId: reinforcements.length > 0 ? reinforcements[0]._id : null,
       consul: consul,
       consulTime: consulTime,

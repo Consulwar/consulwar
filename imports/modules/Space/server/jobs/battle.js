@@ -7,6 +7,7 @@ import Space from '../../lib/space';
 import Lib from '../../lib/battle';
 import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
+import Reptiles from '../reptiles';
 
 export default Space.jobs.processJobs(
   Lib.EVENT_TYPE,
@@ -97,6 +98,12 @@ export default Space.jobs.processJobs(
             // user battle with help
             returnPlanetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
           }
+        } else if (planet.isHome) {
+          Reptiles.stealUserResources({
+            enemyArmy: army,
+            userId: user._id,
+            battle: battle,
+          });
         }
 
         if (planet) {

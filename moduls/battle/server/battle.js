@@ -2,20 +2,36 @@ import { Meteor } from 'meteor/meteor';
 
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
+import User from '/imports/modules/User/lib/User';
 
 import performRound from './performRound';
 import calculateGroupPower from '../lib/imports/calculateGroupPower';
 import traverseGroup from '../lib/imports/traverseGroup';
 
-const Collection = new Meteor.Collection('battle');
+import Collection from '../lib/imports/collection';
+import Lib from '../lib/imports/battle';
 
-const Status = {
-  progress: 1,
-  finish: 2,
-};
+const {
+  Status,
+  USER_SIDE,
+  ENEMY_SIDE,
+} = Lib;
 
-const USER_SIDE = '1';
-const ENEMY_SIDE = '2';
+Collection._ensureIndex({
+  userNames: 1,
+  status: 1,
+});
+
+Meteor.publish('battles', function () {
+  if (this.userId) {
+    const user = User.getById({ userId: this.userId });
+    return Collection.find({
+      userNames: user.username,
+      status: Status.progress,
+    });
+  }
+  return null;
+});
 
 class Battle {
   static create(options, userArmies, enemyArmies) {

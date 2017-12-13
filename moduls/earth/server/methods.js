@@ -80,7 +80,7 @@ Meteor.methods({
         const count = units[name];
         const unit = Game.Unit.items.army.ground[name];
 
-        if (!unit || unit.type === 'mutual' || unit.currentLevel() < count || count <= 0) {
+        if (!unit || unit.type === 'mutual' || unit.getCount({ from: 'hangar' }) < count || count <= 0) {
           throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
         }
 
@@ -102,7 +102,7 @@ Meteor.methods({
 
     // send reinforcements to current point
     ReinforcementEvents.add({
-      user_id: user._id,
+      userId: user._id,
       units: { army: { ground: units } },
       protectAllHonor: protectedHonor > 0,
       targetZoneName,

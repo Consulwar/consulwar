@@ -187,7 +187,7 @@ Template.reserve.helpers({
     return _.map(Game.Unit.items.army.ground, function(val, key) {
       return {
         engName: key,
-        max: val.currentLevel()
+        max: val.getCount({ from: 'hangar' }),
       };
     });
   },

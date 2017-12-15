@@ -102,7 +102,7 @@ var showNotificationFromSpaceEvent = function(event) {
     }
   }
   
-  if (!event.data.mission && event.status === 'completed') {
+  if (!event.data.mission && !event.data.battleId && event.status === 'completed') {
     options.path = Router.path(
       'cosmos', 
       {group: 'cosmos'}, 
@@ -1509,15 +1509,12 @@ Template.cosmosAttackMenu.events({
         return;
       }
 
-      var attackPoint = pathView.getPointAlongDistanceByCoef(attack.k);
       isFleetSended.set(true);
       Meteor.call(
         'space.attackReptileFleet',
         basePlanet._id,
         targetId,
         units,
-        attackPoint.x, 
-        attackPoint.y,
         function(err) {
           isFleetSended.set(false);
           
@@ -1808,12 +1805,18 @@ const showSpaceEvent = function(id, event, offset) {
       origin: fromOffset,
     });
   } else if (event.type === BattleEvents.EVENT_TYPE) {
-    const galaxy = galaxyByUsername[event.data.username];
+    let toOffset = offset;
+    if (event.data.targetHex) {
+      toOffset = new Hex(event.data.targetHex).center();
+    } else if (event.data.hex) {
+      toOffset = new Hex(event.data.hex).center();
+    }
+
     new BattleIcon({
       battleEventId: id,
       battleEvent: event,
       mapView,
-      origin: galaxy.offset,
+      origin: toOffset,
       shipsLayer,
     });
   }
@@ -1868,7 +1871,7 @@ const initGalaxy = function() {
 };
 
 // Paths
-const createPath = function(id, event, offsetStart, offsetEnd = offsetStart) {
+const createPath = function(id, event, offsetStart, offsetEnd) {
   if (!mapView || pathViews[id]) {
     return;
   }

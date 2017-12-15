@@ -50,6 +50,46 @@ const completeOnPlanetMission = function(data) {
   Game.Unit.removeArmy(data.armyId, userId);
 };
 
+const completeOnEmptySelfPlanet = function(data) {
+  const { planet, userId } = data;
+
+  if (planet.isHome || planet.armyId) {
+    // merge army
+    const destArmyId = (planet.isHome)
+      ? Game.Unit.getHomeFleetArmy({ userId })._id
+      : planet.armyId;
+    Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
+  } else {
+    // move army
+    Game.Planets.update({
+      ...planet,
+      armyId: data.armyId,
+    });
+    Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
+
+    // add reptiles attack trigger
+    TriggerAttackEvents.add({
+      targetPlanet: planet._id,
+      userId,
+    });
+  }
+};
+
+const completeOnEmptyOtherPlanet = function(data) {
+  const { planet } = data;
+
+  if (planet.armyId) {
+    FlightEvents.flyBack(data);
+  } else {
+    // move army
+    Game.Planets.update({
+      ...planet,
+      armyId: data.armyId,
+    });
+    Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
+  }
+};
+
 const completeOnEmptyPlanet = function(data) {
   const { planet, userId } = data;
   const user = Meteor.users.findOne({ _id: userId });
@@ -59,34 +99,18 @@ const completeOnEmptyPlanet = function(data) {
   }
 
   if (data.isOneway) {
-    if (planet.isHome || planet.armyId) {
-      // merge army
-      const destArmyId = (planet.isHome)
-        ? Game.Unit.getHomeFleetArmy({ userId })._id
-        : planet.armyId;
-      Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
+    if (planet.username === data.username) {
+      completeOnEmptySelfPlanet(data);
     } else {
-      // move army
-      Game.Planets.update({
-        ...planet,
-        armyId: data.armyId,
-      });
-      Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET, userId);
-
-      // add reptiles attack trigger
-      TriggerAttackEvents.add({
-        targetPlanet: planet._id,
-        userId,
-      });
+      completeOnEmptyOtherPlanet(data);
     }
   } else {
-    // fly back
     FlightEvents.flyBack(data);
   }
 };
 
 const completeOnPlanet = function(data) {
-  const planet = Game.Planets.getOne(data.targetId, data.userId);
+  const planet = Game.Planets.getOne(data.targetId);
   if (planet.mission) {
     completeOnPlanetMission({ ...data, planet });
   } else {

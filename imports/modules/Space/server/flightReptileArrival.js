@@ -10,7 +10,7 @@ import BattleEvents from './battleEvents';
 export default function reptileArrival(data) {
   const { userId, username } = data;
 
-  const planet = Game.Planets.getOne(data.targetId, userId);
+  const planet = Game.Planets.getOne(data.targetId);
 
   if (!planet.mission) {
     if (planet.armyId || planet.isHome) {

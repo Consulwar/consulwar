@@ -6,6 +6,8 @@ import FlightEvents from '../flightEvents';
 import Utils from '../../lib/utils';
 import Config from '../config';
 import Lib from '../../lib/triggerAttack';
+import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
+import Hex from '../../../MutualSpace/lib/Hex';
 
 export default Space.jobs.processJobs(
   Lib.EVENT_TYPE,
@@ -24,7 +26,7 @@ export default Space.jobs.processJobs(
     const data = job.data;
     const userId = data.userId;
 
-    const planet = Game.Planets.getOne(data.targetPlanet, userId);
+    const planet = Game.Planets.getOne(data.targetPlanet);
 
     const reptilePlanets = [];
     const planets = Game.Planets.getAll(userId).fetch();
@@ -89,7 +91,7 @@ export default Space.jobs.processJobs(
       y: planet.y,
     };
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
       userId,
       username: data.username,
@@ -102,9 +104,14 @@ export default Space.jobs.processJobs(
       isOneway: false,
       engineLevel: 1,
       mission,
-      fromGalaxyUsername: user.username,
-      toGalaxyUsername: user.username,
-    });
+    };
+
+    const galaxy = mutualSpaceCollection.findOne({ username: data.username });
+    if (galaxy) {
+      flightData.hex = flightData.targetHex = new Hex(galaxy);
+    }
+
+    FlightEvents.add(flightData);
 
     return done();
   },

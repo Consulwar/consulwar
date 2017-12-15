@@ -6,6 +6,8 @@ import Space from '../lib/space';
 import FlightEvents from './flightEvents';
 import Utils from '../lib/utils';
 import Config from './config';
+import Hex from '../../MutualSpace/lib/Hex';
+import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 
 const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
 
@@ -57,7 +59,7 @@ const spawnTradeFleet = function(hand, segment) {
     const engineLevel = 0;
     const flyTime = Utils.calcFlyTime(startPosition, targetPosition, engineLevel);
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
       userId: user._id,
       username: user.username,
@@ -72,9 +74,14 @@ const spawnTradeFleet = function(hand, segment) {
       mission,
       hand: startPlanet.hand,
       segment: startPlanet.segment,
-      fromGalaxyUsername: user.username,
-      toGalaxyUsername: user.username,
-    });
+    };
+
+    const galaxy = mutualSpaceCollection.findOne({ username: user.username });
+    if (galaxy) {
+      flightData.hex = flightData.targetHex = new Hex(galaxy);
+    }
+
+    FlightEvents.add(flightData);
   }
 };
 
@@ -223,7 +230,7 @@ const sendReptileFleetToPlanet = function({
 
     const user = Meteor.user();
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
       userId: user._id,
       username: user.username,
@@ -236,9 +243,14 @@ const sendReptileFleetToPlanet = function({
       isOneway: false,
       engineLevel,
       mission,
-      fromGalaxyUsername: user.username,
-      toGalaxyUsername: user.username,
-    });
+    };
+
+    const galaxy = mutualSpaceCollection.findOne({ username: user.username });
+    if (galaxy) {
+      flightData.hex = flightData.targetHex = new Hex(galaxy);
+    }
+
+    FlightEvents.add(flightData);
   }
 };
 
@@ -292,7 +304,7 @@ const actualize = function() {
 };
 
 const stealUserResources = function({ enemyArmy, userId, battle }) {
-  const userResources = Game.Resources.getValue(userId);
+  const userResources = Game.Resources.getValue({ userId });
   const stealCost = Game.Unit.calculateBaseArmyCost(enemyArmy);
 
   const bunker = SpecialEffect.getValue({

@@ -11,7 +11,7 @@ class PathView {
     eventId,
     pathViews,
     offsetStart,
-    offsetEnd = offsetStart,
+    offsetEnd,
   }) {
     this.layer = layer;
     this.polyline = null;

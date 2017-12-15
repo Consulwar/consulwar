@@ -22,6 +22,10 @@ Game.Planets.Collection._ensureIndex({
   isHome: 1
 });
 
+Game.Planets.Collection._ensureIndex({
+  ownerName: 1,
+});
+
 Game.Planets.actualize = function() {
   var planets = Game.Planets.getAll().fetch();
   if (!planets) {
@@ -53,6 +57,25 @@ Game.Planets.actualize = function() {
     sectors[planet.hand][planet.segment].total += 1;
   }
 
+  const ownedPlanets = Game.Planets.getAllByOwner();
+  ownedPlanets.forEach((planet) => {
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
+      // auto collect artefacts
+      if (planet.timeArtefacts) {
+        const delta = timeCurrent - planet.timeArtefacts;
+        const count = Math.floor(delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD);
+        if (count > 0) {
+          const artefacts = Game.Planets.getArtefacts(planet, count);
+          if (artefacts) {
+            Game.Resources.add(artefacts);
+          }
+          planet.timeArtefacts += (Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count);
+          Game.Planets.update(planet);
+        }
+      }
+    }
+  });
+
   // update planets
   var timeCurrent = Game.getCurrentTime();
 
@@ -64,21 +87,7 @@ Game.Planets.actualize = function() {
       continue;
     }
 
-    if (planet.status === Game.Planets.STATUS.HUMANS) {
-      // auto collect artefacts
-      if (planet.timeArtefacts) {
-        var delta = timeCurrent - planet.timeArtefacts;
-        var count = Math.floor(delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD);
-        if (count > 0) {
-          var artefacts = Game.Planets.getArtefacts(planet, count);
-          if (artefacts) {
-            Game.Resources.add(artefacts);
-          }
-          planet.timeArtefacts += (Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count);
-          Game.Planets.update(planet);
-        }
-      }
-    } else {
+    if (planet.status !== Game.Planets.STATUS.HUMANS) {
       // spawn enemies
       if (planet.timeRespawn <= timeCurrent) {
         if (!planet.mission) {
@@ -637,7 +646,7 @@ Game.Planets.generateSector = function(
 
 Game.Planets.discover = function(planetId, user = Meteor.user()) {
   // get discovered planet
-  let planet = Game.Planets.getOne(planetId, user._id);
+  let planet = Game.Planets.getOne(planetId);
   if (planet.isDiscovered) {
     return;
   }
@@ -910,7 +919,12 @@ Meteor.methods({
     check(planetId, String);
 
     const planet = Game.Planets.getOne(planetId);
-    if (!planet || planet.isHome || !planet.armyId) {
+    if (
+         !planet
+      || planet.isHome
+      || !planet.armyId
+      || Game.Unit.getArmy({ id: planet.armyId }).user_id !== user._id
+    ) {
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
     }
 
@@ -925,6 +939,7 @@ Meteor.methods({
 
     planet.timeArtefacts = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
     planet.status = Game.Planets.STATUS.HUMANS;
+    planet.ownerName = user.username;
 
     Game.Planets.update(planet);
   },
@@ -938,11 +953,17 @@ Meteor.methods({
     check(planetId, String);
 
     const planet = Game.Planets.getOne(planetId);
-    if (!planet || planet.isHome || planet.status !== Game.Planets.STATUS.HUMANS) {
+    if (
+         !planet
+      || planet.isHome
+      || planet.status !== Game.Planets.STATUS.HUMANS
+      || planet.ownerName !== user.username
+    ) {
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
     }
 
     planet.status = Game.Planets.STATUS.NOBODY;
+    planet.ownerName = null;
 
     Game.Planets.update(planet);
   },

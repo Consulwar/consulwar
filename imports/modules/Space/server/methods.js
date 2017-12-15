@@ -14,7 +14,7 @@ import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 import Hex from '../../MutualSpace/lib/Hex';
 
 Meteor.methods({
-  'space.attackReptileFleet'(baseId, targetId, units, targetX, targetY) {
+  'space.attackReptileFleet'(baseId, targetId, units) {
     const user = User.getById();
     User.checkAuth({ user });
 
@@ -23,8 +23,6 @@ Meteor.methods({
     check(baseId, String);
     check(targetId, String);
     check(units, Object);
-    check(targetX, Number);
-    check(targetY, Number);
 
     if (!Game.User.haveVerifiedEmail()) {
       throw new Meteor.Error('Сперва нужно верифицировать Email');
@@ -58,18 +56,14 @@ Meteor.methods({
       x: basePlanet.x,
       y: basePlanet.y,
     };
-
-    const targetPosition = {
-      x: targetX,
-      y: targetY,
-    };
+    const startPositionWithOffset = { ...startPosition };
 
     // check time
     const timeCurrent = Game.getCurrentTime();
     const timeLeft = Game.dateToTime(enemyShip.after) - timeCurrent;
 
     const attackOptions = calcAttackOptions({
-      attackerPlanet: basePlanet,
+      attackerPlanet: startPositionWithOffset,
       attackerEngineLevel: engineLevel,
       targetShip: enemyShip,
       timeCurrent,
@@ -80,6 +74,55 @@ Meteor.methods({
     }
 
     const timeAttack = attackOptions.time;
+
+    let k = attackOptions.k;
+    if (k > 1) {
+      k = 1;
+    } else if (k < 0) {
+      k = 0;
+    }
+
+    const enemyShipTargetPosition = enemyShip.data.targetPosition;
+
+    let targetX;
+    let targetY;
+
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: user.username });
+    if (fromGalaxy) {
+      const hex = new Hex(fromGalaxy);
+      const center = hex.center();
+      startPositionWithOffset.x += center.x;
+      startPositionWithOffset.y += center.y;
+
+      const toHex = new Hex(enemyShip.data.hex || hex);
+      const targetCenter = toHex.center();
+
+      const enemyShipTargetPositionWithOffset = {
+        x: enemyShipTargetPosition.x + targetCenter.x,
+        y: enemyShipTargetPosition.y + targetCenter.y,
+      };
+
+      const vector = {
+        x: enemyShipTargetPositionWithOffset.x - startPositionWithOffset.x,
+        y: enemyShipTargetPositionWithOffset.y - startPositionWithOffset.y,
+      };
+
+      targetX = startPositionWithOffset.x + (vector.x * k) - enemyShipTargetPositionWithOffset.x;
+      targetY = startPositionWithOffset.y + (vector.y * k) - enemyShipTargetPositionWithOffset.y;
+    } else {
+      const vector = {
+        x: enemyShipTargetPosition.x - startPosition.x,
+        y: enemyShipTargetPosition.y - startPosition.y,
+      };
+
+      targetX = startPosition.x + (vector.x * k);
+      targetY = startPosition.y + (vector.y * k);
+    }
+
+    const targetPosition = {
+      x: targetX,
+      y: targetY,
+    };
 
     // check and slice units
     let sourceArmyId = basePlanet.armyId;
@@ -98,7 +141,7 @@ Meteor.methods({
 
     Game.Planets.update(basePlanet);
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.SHIP,
       userId: user._id,
       username: user.username,
@@ -112,9 +155,15 @@ Meteor.methods({
       engineLevel,
       mission: null,
       armyId: newArmyId,
-      fromGalaxyUsername: user.username,
-      toGalaxyUsername: user.username,
-    });
+    };
+
+    if (fromGalaxy) {
+      const fromHex = new Hex(fromGalaxy);
+      flightData.hex = fromHex;
+      flightData.targetHex = enemyShip.data.hex || fromHex;
+    }
+
+    FlightEvents.add(flightData);
 
     // save statistic
     Game.Statistic.incrementUser(user._id, {
@@ -214,7 +263,7 @@ Meteor.methods({
 
     const engineLevel = Game.Planets.getEngineLevel();
 
-    const data = {
+    const flightData = {
       userId: user._id,
       username: user.username,
       targetType,
@@ -230,14 +279,14 @@ Meteor.methods({
     };
 
     if (fromGalaxy) {
-      data.hex = new Hex(fromGalaxy);
+      flightData.hex = new Hex(fromGalaxy);
     }
 
     if (toGalaxy) {
-      data.targetHex = new Hex(toGalaxy);
+      flightData.targetHex = new Hex(toGalaxy);
     }
 
-    FlightEvents.add(data);
+    FlightEvents.add(flightData);
 
     // if planet is colony
     if (!basePlanet.isHome && basePlanet.armyId) {

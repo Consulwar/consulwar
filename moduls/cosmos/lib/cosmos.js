@@ -53,6 +53,12 @@ Game.Planets = {
     });
   },
 
+  getAllByOwner(user = Meteor.user()) {
+    return Game.Planets.Collection.find({
+      ownerName: user.username,
+    });
+  },
+
   getByArtefact: function (artefact) {
     var condition = {
       userId: Meteor.userId(),
@@ -153,7 +159,7 @@ Game.Planets = {
   },
 
   getFleetUnits: function (planetId, userId = Meteor.userId()) {
-    var planet = Game.Planets.getOne(planetId, userId);
+    var planet = Game.Planets.getOne(planetId);
     if (!planet) {
       return null;
     }

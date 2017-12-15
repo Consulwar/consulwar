@@ -1,5 +1,6 @@
 import Game from '/moduls/game/lib/main.game';
 import Utils from './utils';
+import Hex from '../../MutualSpace/lib/Hex';
 
 const {
   calcAngle,
@@ -12,18 +13,24 @@ const {
 } = Utils;
 
 export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeCurrent }) {
-  const angle = calcAngle(
-    targetShip.data.startPosition,
-    targetShip.data.targetPosition,
-  );
-  const totalDistance = calcDistance(
-    targetShip.data.startPosition,
-    targetShip.data.targetPosition,
-  );
+  const startPosition = { ...targetShip.data.startPosition };
+  const targetPosition = { ...targetShip.data.targetPosition };
+  if (targetShip.data.hex) {
+    const center = new Hex(targetShip.data.hex).center();
+
+    startPosition.x += center.x;
+    startPosition.y += center.y;
+
+    targetPosition.x += center.x;
+    targetPosition.y += center.y;
+  }
+
+  const angle = calcAngle(startPosition, targetPosition);
+  const totalDistance = calcDistance(startPosition, targetPosition);
 
   const startPoint = {
-    x: targetShip.data.startPosition.x,
-    y: targetShip.data.startPosition.y,
+    x: startPosition.x,
+    y: startPosition.y,
   };
 
   const targetShipTime = timeCurrent - Game.dateToTime(targetShip.created);

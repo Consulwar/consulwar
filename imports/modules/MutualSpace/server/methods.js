@@ -6,6 +6,7 @@ import collection from '../lib/collection';
 import Config from '../lib/config';
 import Hex from '../lib/Hex';
 import Space from '../../Space/lib/space';
+import SpaceConfig from '../../Space/server/config'
 
 Meteor.methods({
   'mutualSpace.access'() {
@@ -20,6 +21,10 @@ Meteor.methods({
 
     if (user.rating < Config.ACCESS_RATING) {
       throw new Meteor.Error('Недостаточно рейтинга.');
+    }
+
+    if (Game.Planets.getLastFunTime() + (30 * SpaceConfig.FUN_PERIOD) > Game.getCurrentTime()) {
+      throw new Meteor.Error('Ты не готов!');
     }
 
     const homePlanet = Game.Planets.getBase();

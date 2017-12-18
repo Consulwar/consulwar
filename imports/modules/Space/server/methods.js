@@ -11,6 +11,7 @@ import TriggerAttackEvents from './triggerAttackEvents';
 import Config from './config';
 import BattleEvents from './battleEvents';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
+import mutualSpaceConfig from '../../MutualSpace/lib/config';
 import Hex from '../../MutualSpace/lib/Hex';
 
 Meteor.methods({
@@ -82,6 +83,10 @@ Meteor.methods({
     }
 
     const timeAttack = attackOptions.time;
+
+    if (timeAttack > mutualSpaceConfig.MAX_FLY_TIME) {
+      throw new Meteor.Error('Слишком долгий перелет');
+    }
 
     let k = attackOptions.k;
     if (k > 1) {
@@ -242,6 +247,16 @@ Meteor.methods({
 
     const engineLevel = Game.Planets.getEngineLevel();
 
+    const flyTime = Utils.calcFlyTime(
+      startPositionWithOffset,
+      targetPositionWithOffset,
+      engineLevel,
+    );
+
+    if (flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
+      throw new Meteor.Error('Слишком долгий перелет');
+    }
+
     const flightData = {
       userId: user._id,
       username: user.username,
@@ -251,7 +266,7 @@ Meteor.methods({
       startPlanetId: basePlanet._id,
       targetPosition,
       targetId: target._id,
-      flyTime: Utils.calcFlyTime(startPositionWithOffset, targetPositionWithOffset, engineLevel),
+      flyTime,
       engineLevel,
       isOneway,
       armyId: newArmyId,

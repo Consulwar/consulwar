@@ -108,7 +108,8 @@
     },
     "mutualSpace": {
       "galacticRadius": 52,
-      "accessRating": 10000
+      "accessRating": 10000,
+      "maxFlyTime": 86400
     }
   },
   "helprace": {

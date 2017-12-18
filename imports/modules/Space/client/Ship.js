@@ -9,8 +9,6 @@ import Hex from '../../MutualSpace/lib/Hex';
 const {
   calcDistance,
   calcDistanceByTime,
-  calcFlyTime,
-  calcTotalTimeByDistance,
   calcMaxSpeed,
   calcAcceleration,
 } = Utils;
@@ -24,21 +22,19 @@ const xy = function(x, y) {
   return yx(y, x);  // When doing xy(x, y);
 };
 
-const createTriangle_ = function(x, y, offset, size) {
-  return [
-    [(x + offset[0]) - size, y + offset[1]],
-    [x + offset[0], y + offset[1] + (size / 2)],
-    [(x + offset[0]) - size, y + offset[1] + size],
+const createTriangle = function(x, y, offset, size, angle = 0) {
+  const basePoints = [
+    [size, 0],
+    [-size, +size],
+    [-(size / 2), 0],
+    [-size, -size],
   ];
-};
 
-const createTriangle = function(x, y, offset, size) {
-  return [
-    [(x + offset[0]) + size, (y + offset[1])],
-    [(x + offset[0]) - size, (y + offset[1]) + size],
-    [(x + offset[0]) - (size / 2), (y + offset[1])],
-    [(x + offset[0]) - size, (y + offset[1]) - size],
-  ];
+  // rotate by angle
+  return basePoints.map(([px, py]) => [
+    ((px * Math.cos(angle)) - (py * Math.sin(angle))) + offset[0] + x,
+    ((px * Math.sin(angle)) + (py * Math.cos(angle))) + offset[1] + y,
+  ]);
 };
 
 const getFleetAnimation = function(fleet, mapView, path) {
@@ -81,6 +77,7 @@ const getFleetAnimation = function(fleet, mapView, path) {
     x: coords.x,
     y: coords.y,
     angle: angleDeg,
+    angleRad,
   };
 };
 
@@ -108,7 +105,12 @@ class Ship {
         y: planet.y - (planetRadius * 0.2),
       };
       const offset = [origin.x + -(planetRadius * 0.7), origin.y + (planetRadius * 0.5)];
-      const latlngs = createTriangle(planet.x, planet.y, offset, this.size);
+      const latlngs = createTriangle(
+        planet.x,
+        planet.y,
+        offset,
+        this.size,
+      );
 
       this.color = (planet.mission ? 'red' : 'green');
 
@@ -147,7 +149,7 @@ class Ship {
 
       this.size = 0.4;
       const offset = [0, 0];
-      const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size);
+      const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size, pos.angleRad);
 
       this.color = (fleet.data.mission ? 'red' : 'green');
 
@@ -155,7 +157,7 @@ class Ship {
 
       this.polygon.on('mouseover', function() {
         if (!isPopupLocked.get()) {
-          Game.Cosmos.showShipInfo.call({spaceEvent: fleet}, eventId);
+          Game.Cosmos.showShipInfo.call({ spaceEvent: fleet }, eventId);
         }
       });
 
@@ -166,7 +168,7 @@ class Ship {
       });
 
       this.polygon.on('click', function(event) {
-        Game.Cosmos.showShipInfo.call({spaceEvent: fleet}, eventId, true);
+        Game.Cosmos.showShipInfo.call({ spaceEvent: fleet }, eventId, true);
         L.DomEvent.stopPropagation(event);
       });
 
@@ -246,7 +248,7 @@ class Ship {
       }, this.mapView, this.path);
 
       const offset = [0, 0];
-      const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size);
+      const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size, pos.angleRad);
 
       this.polygon.setLatLngs(latlngs);
     });

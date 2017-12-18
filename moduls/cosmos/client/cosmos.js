@@ -1097,7 +1097,7 @@ var timeAttack = function(id) {
   var targetShip = FlightEvents.getOne(targetId);
   if (targetShip) {
     var result = calcAttackOptions({
-      attackerPlanet: basePosition,
+      attackerPosition: basePosition,
       attackerEngineLevel: engineLevel,
       targetShip,
       timeCurrent: Session.get('serverTime'),
@@ -1497,8 +1497,14 @@ Template.cosmosAttackMenu.events({
       var pathView = pathViews[ship._id];
       var engineLevel = Game.Planets.getEngineLevel();
 
+      const baseGalaxy = galaxyByUsername[basePlanet.username];
+      const basePosition = {
+        x: basePlanet.x + baseGalaxy.offset.x,
+        y: basePlanet.y + baseGalaxy.offset.y,
+      };
+
       var attack = calcAttackOptions({
-        attackerPlanet: basePlanet,
+        attackerPosition: basePosition,
         attackerEngineLevel: engineLevel,
         targetShip: ship,
         timeCurrent: Session.get('serverTime'),

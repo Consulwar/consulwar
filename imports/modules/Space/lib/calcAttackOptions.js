@@ -12,17 +12,17 @@ const {
   calcFlyTime,
 } = Utils;
 
-export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeCurrent }) {
+export default function({ attackerPosition, attackerEngineLevel, targetShip, timeCurrent }) {
   const startPosition = { ...targetShip.data.startPosition };
   const targetPosition = { ...targetShip.data.targetPosition };
   if (targetShip.data.hex) {
     const center = new Hex(targetShip.data.hex).center();
-
     startPosition.x += center.x;
     startPosition.y += center.y;
 
-    targetPosition.x += center.x;
-    targetPosition.y += center.y;
+    const targetHexCenter = new Hex(targetShip.data.targetHex).center();
+    targetPosition.x += targetHexCenter.x;
+    targetPosition.y += targetHexCenter.y;
   }
 
   const angle = calcAngle(startPosition, targetPosition);
@@ -61,7 +61,7 @@ export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeC
       y: startPoint.y + (distance * Math.sin(angle)),
     };
 
-    const timeAttack = calcFlyTime(attackerPlanet, attackPoint, attackerEngineLevel);
+    const timeAttack = calcFlyTime(attackerPosition, attackPoint, attackerEngineLevel);
 
     // check
     if (timeAttack >= timeLeft) {

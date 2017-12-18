@@ -62,8 +62,16 @@ Meteor.methods({
     const timeCurrent = Game.getCurrentTime();
     const timeLeft = Game.dateToTime(enemyShip.after) - timeCurrent;
 
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: user.username });
+    if (fromGalaxy) {
+      const hex = new Hex(fromGalaxy);
+      const center = hex.center();
+      startPositionWithOffset.x += center.x;
+      startPositionWithOffset.y += center.y;
+    }
+
     const attackOptions = calcAttackOptions({
-      attackerPlanet: startPositionWithOffset,
+      attackerPosition: startPositionWithOffset,
       attackerEngineLevel: engineLevel,
       targetShip: enemyShip,
       timeCurrent,
@@ -82,42 +90,13 @@ Meteor.methods({
       k = 0;
     }
 
-    const enemyShipTargetPosition = enemyShip.data.targetPosition;
+    const vector = {
+      x: enemyShip.data.targetPosition.x - enemyShip.data.startPosition.x,
+      y: enemyShip.data.targetPosition.y - enemyShip.data.startPosition.y,
+    };
 
-    let targetX;
-    let targetY;
-
-    const fromGalaxy = mutualSpaceCollection.findOne({ username: user.username });
-    if (fromGalaxy) {
-      const hex = new Hex(fromGalaxy);
-      const center = hex.center();
-      startPositionWithOffset.x += center.x;
-      startPositionWithOffset.y += center.y;
-
-      const toHex = new Hex(enemyShip.data.hex || hex);
-      const targetCenter = toHex.center();
-
-      const enemyShipTargetPositionWithOffset = {
-        x: enemyShipTargetPosition.x + targetCenter.x,
-        y: enemyShipTargetPosition.y + targetCenter.y,
-      };
-
-      const vector = {
-        x: enemyShipTargetPositionWithOffset.x - startPositionWithOffset.x,
-        y: enemyShipTargetPositionWithOffset.y - startPositionWithOffset.y,
-      };
-
-      targetX = startPositionWithOffset.x + (vector.x * k) - enemyShipTargetPositionWithOffset.x;
-      targetY = startPositionWithOffset.y + (vector.y * k) - enemyShipTargetPositionWithOffset.y;
-    } else {
-      const vector = {
-        x: enemyShipTargetPosition.x - startPosition.x,
-        y: enemyShipTargetPosition.y - startPosition.y,
-      };
-
-      targetX = startPosition.x + (vector.x * k);
-      targetY = startPosition.y + (vector.y * k);
-    }
+    const targetX = enemyShip.data.startPosition.x + (vector.x * k);
+    const targetY = enemyShip.data.startPosition.y + (vector.y * k);
 
     const targetPosition = {
       x: targetX,
@@ -160,7 +139,7 @@ Meteor.methods({
     if (fromGalaxy) {
       const fromHex = new Hex(fromGalaxy);
       flightData.hex = fromHex;
-      flightData.targetHex = enemyShip.data.hex || fromHex;
+      flightData.targetHex = enemyShip.data.targetHex || fromHex;
     }
 
     FlightEvents.add(flightData);

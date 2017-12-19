@@ -21,14 +21,21 @@ class Galaxy {
     this.shipsLayer = shipsLayer;
     this.offset = offset;
     this.myAllies = myAllies;
+    this.circles = {};
 
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
-        planet._id = id;
-        this.showPlanet(planet);
+        this.showPlanet(id, planet);
       },
 
       changed: (id, fields) => {
+        if (fields.status !== undefined) {
+          const planet = Game.Planets.getOne(id);
+          this.circles[id].setStyle({
+            color: this.getColor(planet),
+          });
+        }
+
         if (
           (fields.mission !== undefined && fields.mission !== null)
           || (fields.armyId !== undefined && fields.armyId !== null)
@@ -38,48 +45,36 @@ class Galaxy {
           const ship = new Ship({
             isStatic: true,
             planet,
+            planetId: id,
             planetRadius: radius,
             mapView,
             shipsLayer,
             isPopupLocked,
             origin: this.offset,
+            user,
+            myAllies: this.myAllies,
           });
         }
       },
     });
   }
 
-  showPlanet(planet) {
+  showPlanet(id, planet) {
     const offset = this.offset;
-
-    let color;
-    if (planet.status === Game.Planets.STATUS.HUMANS) {
-      if (planet.username === this.user.username) {
-        color = Config.colors.user;
-      } else if (this.myAllies.indexOf(planet.username) !== -1) {
-        color = Config.colors.ally;
-      } else {
-        color = Config.colors.other;
-      }
-    } else if (planet.status === Game.Planets.STATUS.REPTILES) {
-      color = Config.colors.enemy;
-    } else {
-      color = Config.colors.empty;
-    }
 
     const radius = 0.01 + (planet.size / 20);
     const circle = L.circle(
       [planet.x + offset.x, planet.y + offset.y],
       {
         radius,
-        color,
+        color: this.getColor(planet),
         fillOpacity: 0.8,
       },
     ).addTo(this.planetsLayer);
 
     circle.on('mouseover', () => {
       if (!this.isPopupLocked.get()) {
-        Game.Cosmos.showPlanetPopup(planet._id, false, offset);
+        Game.Cosmos.showPlanetPopup(id, false, offset);
       }
     });
 
@@ -90,7 +85,7 @@ class Galaxy {
     });
 
     circle.on('click', (event) => {
-      Game.Cosmos.showPlanetInfo(planet._id, offset);
+      Game.Cosmos.showPlanetInfo(id, offset);
       L.DomEvent.stopPropagation(event);
     });
 
@@ -98,21 +93,40 @@ class Galaxy {
       const ship = new Ship({
         isStatic: true,
         planet,
+        planetId: id,
         planetRadius: radius,
         mapView: this.mapView,
         shipsLayer: this.shipsLayer,
         isPopupLocked: this.isPopupLocked,
         origin: offset,
+        user: this.user,
+        myAllies: this.myAllies,
       });
     }
+
+    this.circles[id] = circle;
   }
 
   reRender(offset) {
     this.offset = offset;
 
     Game.Planets.Collection.find({ username: this.username }).fetch().forEach((planet) => {
-      this.showPlanet(planet);
+      this.showPlanet(planet._id, planet);
     });
+  }
+
+  getColor(planet) {
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
+      if (planet.ownerName === this.user.username) {
+        return Config.colors.user;
+      } else if (this.myAllies.indexOf(planet.ownerName) !== -1) {
+        return Config.colors.ally;
+      }
+      return Config.colors.other;
+    } else if (planet.status === Game.Planets.STATUS.REPTILES) {
+      return Config.colors.enemy;
+    }
+    return Config.colors.empty;
   }
 }
 

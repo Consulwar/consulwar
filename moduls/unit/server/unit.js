@@ -4,6 +4,7 @@ import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import BattleEvents from '/imports/modules/Space/server/battleEvents';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
+import User from '/imports/modules/User/lib/User';
 
 initUnitServer = function() {
 'use strict';
@@ -101,6 +102,7 @@ Game.Unit.initialize = function(userId = Meteor.userId()) {
     }, {
       $set: {
         armyId: fleetArmyId,
+        armyUsername: User.getById({ userId }).username,
       },
     });
   }

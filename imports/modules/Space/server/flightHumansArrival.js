@@ -64,6 +64,7 @@ const completeOnEmptySelfPlanet = function(data) {
     Game.Planets.update({
       ...planet,
       armyId: data.armyId,
+      armyUsername: data.username,
     });
     Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
 
@@ -85,6 +86,7 @@ const completeOnEmptyOtherPlanet = function(data) {
     Game.Planets.update({
       ...planet,
       armyId: data.armyId,
+      armyUsername: data.username,
     });
     Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
   }

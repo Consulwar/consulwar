@@ -66,11 +66,6 @@ var selectedUnits = new ReactiveVar(null);
 let planetsLayer = null;
 let pathsLayer = null;
 let shipsLayer = null;
-let hexesLayer1 = null;
-let hexesLayer2 = null;
-let hexesLayer3 = null;
-let hexesLayer4 = null;
-let hexesLayer5 = null;
 let galaxyByUsername = {};
 const showedHexes = [];
 const usernameTooltips = [];
@@ -1792,7 +1787,7 @@ Template.cosmosObjects.helpers({
 // Main
 // ----------------------------------------------------------------------------
 
-const showSpaceEvent = function(id, event, offset) {
+const showSpaceEvent = function(id, event, offset, user) {
   if (event.type === FlightEvents.EVENT_TYPE) {
     let fromOffset = offset;
     if (event.data.hex) {
@@ -1805,7 +1800,7 @@ const showSpaceEvent = function(id, event, offset) {
       toOffset = fromOffset;
     }
 
-    createPath(id, event, fromOffset, toOffset);
+    createPath(id, event, fromOffset, toOffset, user);
     const ship = new Ship({
       isStatic: false,
       eventId: id,
@@ -1815,6 +1810,8 @@ const showSpaceEvent = function(id, event, offset) {
       path: pathViews[id],
       isPopupLocked,
       origin: fromOffset,
+      user,
+      myAllies,
     });
   } else if (event.type === BattleEvents.EVENT_TYPE) {
     let toOffset = offset;
@@ -1868,7 +1865,7 @@ const initGalaxy = function() {
 
   observerSpaceEvents = Space.collection.find({}).observeChanges({
     added: function(id, event) {
-      showSpaceEvent(id, event, center);
+      showSpaceEvent(id, event, center, user);
     },
 
     removed: function(id) {
@@ -1890,7 +1887,7 @@ const initGalaxy = function() {
 };
 
 // Paths
-const createPath = function(id, event, offsetStart, offsetEnd) {
+const createPath = function(id, event, offsetStart, offsetEnd, user) {
   if (!mapView || pathViews[id]) {
     return;
   }
@@ -1900,7 +1897,7 @@ const createPath = function(id, event, offsetStart, offsetEnd) {
     layer: pathsLayer,
     startPoint: event.data.startPosition,
     endPoint: event.data.targetPosition,
-    color: (event.data.isHumans ? Config.colors.user : Config.colors.enemy),
+    color: Ship.getColor(event.data, user, myAllies),
     eventId: id,
     pathViews,
     offsetStart,
@@ -1940,12 +1937,6 @@ Template.cosmos.onRendered(function() {
   mapView.createPane('hexesLayer3').style.zIndex = 397;
   mapView.createPane('hexesLayer2').style.zIndex = 398;
   mapView.createPane('hexesLayer1').style.zIndex = 399;
-
-  // hexesLayer5 = L.layerGroup({ pane: 'hexesLayer5' }).addTo(mapView);
-  // hexesLayer4 = L.layerGroup({ pane: 'hexesLayer4' }).addTo(mapView);
-  // hexesLayer3 = L.layerGroup({ pane: 'hexesLayer3' }).addTo(mapView);
-  // hexesLayer2 = L.layerGroup({ pane: 'hexesLayer2' }).addTo(mapView);
-  // hexesLayer1 = L.layerGroup({ pane: 'hexesLayer1' }).addTo(mapView);
 
   zoom.set(mapView.getZoom());
   let prevZoom = mapView.getZoom();
@@ -2043,31 +2034,32 @@ const showHexes = function(hexes) {
     );
 
     let color;
-    let hexesLayer;
+    let pane;
 
     if (hexInfo.username === user.username) {
       color = Config.colors.user;
-      hexesLayer = 'hexesLayer1';
+      pane = 'hexesLayer1';
     } else if (hexInfo.username === null) {
       color = Config.colors.enemy;
-      hexesLayer = 'hexesLayer4';
+      pane = 'hexesLayer4';
     } else if (hexInfo.username === undefined) {
       color = Config.colors.empty;
-      hexesLayer = 'hexesLayer5';
+      pane = 'hexesLayer5';
     } else if (myAllies.indexOf(hexInfo.username) !== -1) {
       color = Config.colors.ally;
-      hexesLayer = 'hexesLayer2';
+      pane = 'hexesLayer2';
     } else {
       color = Config.colors.other;
-      hexesLayer = 'hexesLayer3';
+      pane = 'hexesLayer3';
     }
 
     const hex = new Hex(hexInfo);
 
     const hexPoly = L.polygon(hex.corners(), {
-      fill: true,
+      fill: (hexInfo.username !== user.username),
       color,
-      pane: hexesLayer,
+      pane,
+      interactive: needLoad,
     }).addTo(mapView);
 
     if (needLoad) {
@@ -2216,7 +2208,12 @@ Template.cosmos.events({
         planetsLayer.clearLayers();
         pathsLayer.clearLayers();
         shipsLayer.clearLayers();
-        hexesLayer.clearLayers(); // TODO: fix
+
+        L.DomUtil.empty(mapView.getPane('hexesLayer1'));
+        L.DomUtil.empty(mapView.getPane('hexesLayer2'));
+        L.DomUtil.empty(mapView.getPane('hexesLayer3'));
+        L.DomUtil.empty(mapView.getPane('hexesLayer4'));
+        L.DomUtil.empty(mapView.getPane('hexesLayer5'));
 
         const user = Meteor.user();
         const galaxy = galaxyByUsername[user.username];
@@ -2227,7 +2224,7 @@ Template.cosmos.events({
 
         Space.collection.find({}).fetch().forEach((event) => {
           removePath(event._id);
-          showSpaceEvent(event._id, event, center);
+          showSpaceEvent(event._id, event, center, user);
         });
 
         showHexes(hexes);

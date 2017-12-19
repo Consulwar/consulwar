@@ -121,6 +121,7 @@ Meteor.methods({
     const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
     if (!baseArmy) {
       basePlanet.armyId = null;
+      basePlanet.armyUsername = null;
     }
 
     Game.Planets.update(basePlanet);
@@ -214,6 +215,7 @@ Meteor.methods({
     const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
     if (!baseArmy) {
       basePlanet.armyId = null;
+      basePlanet.armyUsername = null;
     }
     basePlanet.timeRespawn = Game.getCurrentTime() + Config.ENEMY_RESPAWN_PERIOD;
     Game.Planets.update(basePlanet);

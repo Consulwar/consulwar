@@ -13,6 +13,7 @@ import Utils from '../../lib/utils';
 const reptilesWin = function({ battle, roundResult, users, planet, data }) {
   if (planet && planet.status === Game.Planets.STATUS.HUMANS) {
     planet.status = Game.Planets.STATUS.NOBODY;
+    planet.ownerName = null;
   }
 
   const army = roundResult.left[Battle.ENEMY_SIDE];
@@ -21,6 +22,7 @@ const reptilesWin = function({ battle, roundResult, users, planet, data }) {
     if (data.isOneway && !data.isHumans) {
       // Остаются на планете
       planet.armyId = null;
+      planet.armyUsername = null;
 
       if (planet.mission) {
         // restore mission units
@@ -77,9 +79,12 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
       user._id,
     );
 
+    if (planet) {
+      planet.mission = null;
+    }
+
     if (planet && data.isOneway && user._id === data.userId) {
       // Остаемся на планете
-      planet.mission = null;
       if (planet.isHome || planet.armyId) {
         // merge army
         const destArmyId = (planet.isHome)
@@ -90,6 +95,7 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
         // move army
         Game.Unit.moveArmy(newArmyId, Game.Unit.location.PLANET);
         planet.armyId = newArmyId;
+        planet.armyUsername = user.username;
       }
     } else {
       // Возвращаемся

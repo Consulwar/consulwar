@@ -713,6 +713,7 @@ Meteor.methods({
       Game.Planets.add({
         name: user.planetName,
         isHome: true,
+        ownerName: user.username,
         status: Game.Planets.STATUS.HUMANS,
         type: 'terran',
         // generation

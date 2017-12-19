@@ -47,6 +47,7 @@ export default function reptileArrival(data) {
 
           Game.Unit.removeArmy(planet.armyId, userId);
           planet.armyId = null;
+          planet.armyUsername = null;
         }
 
         BattleEvents.createBattleAndAdd({
@@ -64,6 +65,7 @@ export default function reptileArrival(data) {
     } else {
       if (planet.status === Game.Planets.STATUS.HUMANS) {
         planet.status = Game.Planets.STATUS.NOBODY;
+        planet.ownerName = null;
       }
 
       if (data.isOneway) {

@@ -89,15 +89,20 @@ class Ship {
     path,
     isStatic = false,
     planet,
+    planetId,
     planetRadius,
     mapView,
     shipsLayer,
     isPopupLocked,
     origin = { x: 0, y: 0 },
+    user,
+    myAllies,
   }) {
     this.mapView = mapView;
     this.shipsLayer = shipsLayer;
     this.origin = origin;
+    this.user = user;
+    this.myAllies = myAllies;
 
     if (isStatic) {
       this.size = 0.2;
@@ -113,13 +118,21 @@ class Ship {
         this.size,
       );
 
-      this.color = (planet.mission ? Config.colors.enemy : Config.colors.user);
+      if (planet.mission) {
+        this.color = Config.colors.enemy;
+      } else if (planet.armyUsername === user.username) {
+        this.color = Config.colors.user;
+      } else if (this.myAllies.indexOf(planet.armyUsername) !== -1) {
+        this.color = Config.colors.ally;
+      } else {
+        this.color = Config.colors.other;
+      }
 
       this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
 
       this.polygon.on('mouseover', function() {
         if (!isPopupLocked.get()) {
-          Game.Cosmos.showPlanetPopup(planet._id, false, origin);
+          Game.Cosmos.showPlanetPopup(planetId, false, origin);
         }
       });
 
@@ -130,11 +143,11 @@ class Ship {
       });
 
       this.polygon.on('click', function(event) {
-        Game.Cosmos.showPlanetInfo(planet._id, origin);
+        Game.Cosmos.showPlanetInfo(planetId, origin);
         L.DomEvent.stopPropagation(event);
       });
 
-      this.watchPlanet(planet._id, planet.mission ? 'mission' : 'armyId');
+      this.watchPlanet(planetId, planet.mission ? 'mission' : 'armyId');
     } else {
       this.path = path;
       this.fleet = fleet;
@@ -152,7 +165,7 @@ class Ship {
       const offset = [0, 0];
       const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size, pos.angleRad);
 
-      this.color = (fleet.data.mission ? Config.colors.enemy : Config.colors.user);
+      this.color = this.getColor(fleet.data);
 
       this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
 
@@ -178,6 +191,10 @@ class Ship {
     }
 
     this.addToMap();
+  }
+
+  getColor(fleetData) {
+    return Ship.getColor(fleetData, this.user, this.myAllies);
   }
 
   watchEvent(eventId) {
@@ -269,6 +286,20 @@ class Ship {
 
   setPosition(latlngs) {
     this.polygon.setLatLngs(latlngs);
+  }
+
+  static getColor(fleetData, user, myAllies) {
+    if (fleetData.mission) {
+      return Config.colors.enemy;
+    }
+
+    if (fleetData.username === user.username) {
+      return Config.colors.user;
+    } else if (myAllies.indexOf(fleetData.username) !== -1) {
+      return Config.colors.ally;
+    }
+
+    return Config.colors.other;
   }
 }
 

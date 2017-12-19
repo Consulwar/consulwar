@@ -68,9 +68,9 @@ Meteor.methods({
       $set: {
         'data.hex': hex,
         'data.targetHex': hex,
-      }
+      },
     }, {
-      multi: true
+      multi: true,
     });
 
     return collection.find({}).fetch();

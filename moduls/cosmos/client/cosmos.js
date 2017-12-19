@@ -15,6 +15,7 @@ import Ship from '/imports/modules/Space/client/Ship';
 import BattleIcon from '/imports/modules/Space/client/BattleIcon';
 import Galaxy from '/imports/modules/Space/client/Galaxy';
 import Hex from '/imports/modules/MutualSpace/lib/Hex';
+import Config from '/imports/modules/Space/client/config';
 
 import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 
@@ -65,10 +66,15 @@ var selectedUnits = new ReactiveVar(null);
 let planetsLayer = null;
 let pathsLayer = null;
 let shipsLayer = null;
-let hexesLayer = null;
+let hexesLayer1 = null;
+let hexesLayer2 = null;
+let hexesLayer3 = null;
+let hexesLayer4 = null;
+let hexesLayer5 = null;
 let galaxyByUsername = {};
 const showedHexes = [];
 const usernameTooltips = [];
+let myAllies = [];
 
 Space.collection.find({}).observe({
   added: function(event) {
@@ -1831,6 +1837,11 @@ const showSpaceEvent = function(id, event, offset) {
 const initGalaxy = function() {
   const user = Meteor.user();
 
+  const myAlliance = Game.Alliance.Collection.find({ name: user.alliance }).fetch();
+  if (myAlliance.length !== 0) {
+    myAllies = myAlliance.participants;
+  }
+
   const galaxyHex = mutualSpaceCollection.findOne({ username: user.username });
 
   let center = { x: 0, y: 0 };
@@ -1843,12 +1854,14 @@ const initGalaxy = function() {
   }
 
   const galaxy = new Galaxy({
+    user,
     username: user.username,
     isPopupLocked,
     mapView,
     planetsLayer,
     shipsLayer,
     offset: center,
+    myAllies,
   });
 
   galaxyByUsername[user.username] = galaxy;
@@ -1887,7 +1900,7 @@ const createPath = function(id, event, offsetStart, offsetEnd) {
     layer: pathsLayer,
     startPoint: event.data.startPosition,
     endPoint: event.data.targetPosition,
-    color: (event.data.isHumans ? '#c6e84c' : '#ff7566'),
+    color: (event.data.isHumans ? Config.colors.user : Config.colors.enemy),
     eventId: id,
     pathViews,
     offsetStart,
@@ -1921,7 +1934,18 @@ Template.cosmos.onRendered(function() {
   planetsLayer = L.layerGroup().addTo(mapView);
   pathsLayer = L.layerGroup().addTo(mapView);
   shipsLayer = L.layerGroup().addTo(mapView);
-  hexesLayer = L.layerGroup().addTo(mapView);
+
+  mapView.createPane('hexesLayer5').style.zIndex = 395;
+  mapView.createPane('hexesLayer4').style.zIndex = 396;
+  mapView.createPane('hexesLayer3').style.zIndex = 397;
+  mapView.createPane('hexesLayer2').style.zIndex = 398;
+  mapView.createPane('hexesLayer1').style.zIndex = 399;
+
+  // hexesLayer5 = L.layerGroup({ pane: 'hexesLayer5' }).addTo(mapView);
+  // hexesLayer4 = L.layerGroup({ pane: 'hexesLayer4' }).addTo(mapView);
+  // hexesLayer3 = L.layerGroup({ pane: 'hexesLayer3' }).addTo(mapView);
+  // hexesLayer2 = L.layerGroup({ pane: 'hexesLayer2' }).addTo(mapView);
+  // hexesLayer1 = L.layerGroup({ pane: 'hexesLayer1' }).addTo(mapView);
 
   zoom.set(mapView.getZoom());
   let prevZoom = mapView.getZoom();
@@ -1941,7 +1965,7 @@ Template.cosmos.onRendered(function() {
         })
           .setLatLng([center.x, center.y])
           .setContent(galaxy.username)
-          .addTo(hexesLayer);
+          .addTo(mapView);
 
         usernameTooltips.push(usernameTooltip);
       });
@@ -2008,18 +2032,43 @@ const showHexes = function(hexes) {
   const user = Meteor.user();
 
   hexes.forEach((hexInfo) => {
+    // if (hexInfo.username === undefined) {
+    //   return;
+    // }
+
     const needLoad = (
       hexInfo.username
       && hexInfo.username !== null
       && hexInfo.username !== user.username
     );
 
+    let color;
+    let hexesLayer;
+
+    if (hexInfo.username === user.username) {
+      color = Config.colors.user;
+      hexesLayer = 'hexesLayer1';
+    } else if (hexInfo.username === null) {
+      color = Config.colors.enemy;
+      hexesLayer = 'hexesLayer4';
+    } else if (hexInfo.username === undefined) {
+      color = Config.colors.empty;
+      hexesLayer = 'hexesLayer5';
+    } else if (myAllies.indexOf(hexInfo.username) !== -1) {
+      color = Config.colors.ally;
+      hexesLayer = 'hexesLayer2';
+    } else {
+      color = Config.colors.other;
+      hexesLayer = 'hexesLayer3';
+    }
+
     const hex = new Hex(hexInfo);
 
     const hexPoly = L.polygon(hex.corners(), {
-      fill: needLoad,
-      color: 'blue',
-    }).addTo(hexesLayer);
+      fill: true,
+      color,
+      pane: hexesLayer,
+    }).addTo(mapView);
 
     if (needLoad) {
       const center = hex.center();
@@ -2031,16 +2080,18 @@ const showHexes = function(hexes) {
       })
         .setLatLng([center.x, center.y])
         .setContent(hexInfo.username)
-        .addTo(hexesLayer);
+        .addTo(mapView);
 
       hexPoly.on('click', () => {
         const galaxy = new Galaxy({
+          user,
           username: hexInfo.username,
           isPopupLocked,
           mapView,
           planetsLayer,
           shipsLayer,
           offset: center,
+          myAllies,
         });
 
         showedHexes.push(hex);
@@ -2165,7 +2216,7 @@ Template.cosmos.events({
         planetsLayer.clearLayers();
         pathsLayer.clearLayers();
         shipsLayer.clearLayers();
-        hexesLayer.clearLayers();
+        hexesLayer.clearLayers(); // TODO: fix
 
         const user = Meteor.user();
         const galaxy = galaxyByUsername[user.username];

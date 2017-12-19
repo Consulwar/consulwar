@@ -1,21 +1,26 @@
 import Game from '/moduls/game/lib/main.game';
 import Ship from './Ship';
+import Config from './config';
 
 class Galaxy {
   constructor({
+    user,
     username,
     isPopupLocked,
     mapView,
     planetsLayer,
     shipsLayer,
     offset,
+    myAllies,
   }) {
+    this.user = user;
     this.username = username;
     this.isPopupLocked = isPopupLocked;
     this.mapView = mapView;
     this.planetsLayer = planetsLayer;
     this.shipsLayer = shipsLayer;
     this.offset = offset;
+    this.myAllies = myAllies;
 
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
@@ -47,15 +52,21 @@ class Galaxy {
   showPlanet(planet) {
     const offset = this.offset;
 
-    const color = (
-      planet.status === Game.Planets.STATUS.HUMANS
-        ? '#c6e84c'
-        : (
-          planet.status === Game.Planets.STATUS.REPTILES
-            ? '#dc6257'
-            : '#ffffff'
-        )
-    );
+    let color;
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
+      if (planet.username === this.user.username) {
+        color = Config.colors.user;
+      } else if (this.myAllies.indexOf(planet.username) !== -1) {
+        color = Config.colors.ally;
+      } else {
+        color = Config.colors.other;
+      }
+    } else if (planet.status === Game.Planets.STATUS.REPTILES) {
+      color = Config.colors.enemy;
+    } else {
+      color = Config.colors.empty;
+    }
+
     const radius = 0.01 + (planet.size / 20);
     const circle = L.circle(
       [planet.x + offset.x, planet.y + offset.y],

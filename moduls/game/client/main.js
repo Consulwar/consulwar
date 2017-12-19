@@ -34,6 +34,7 @@ initCheatsClient();
 initPopupClient();
 initPleerClient();
 initEntranceRewardClient();
+initAllianceClient();
 
 
 /*
@@ -117,6 +118,7 @@ Template.index.events({
 
 Meteor.subscribe('game');
 Meteor.subscribe('queue');
+Meteor.subscribe('myAlliance');
 
 
 Game.Queue.Collection.find({}).observe({ 

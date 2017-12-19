@@ -4,6 +4,7 @@ import Game from '/moduls/game/lib/main.game';
 import Utils from '/imports/modules/Space/lib/utils';
 
 import Space from './space';
+import Config from './config';
 import Hex from '../../MutualSpace/lib/Hex';
 
 const {
@@ -112,7 +113,7 @@ class Ship {
         this.size,
       );
 
-      this.color = (planet.mission ? 'red' : 'green');
+      this.color = (planet.mission ? Config.colors.enemy : Config.colors.user);
 
       this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
 
@@ -151,7 +152,7 @@ class Ship {
       const offset = [0, 0];
       const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size, pos.angleRad);
 
-      this.color = (fleet.data.mission ? 'red' : 'green');
+      this.color = (fleet.data.mission ? Config.colors.enemy : Config.colors.user);
 
       this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
 

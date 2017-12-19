@@ -30,37 +30,6 @@ class PathView {
       },
     ).addTo(layer);
 
-    polyline.on('mouseover', function() {
-      polyline.setStyle({
-        // color: 'purple',
-        weight: 3,
-      });
-      polyline.bringToFront();
-
-      $(`.map-fleet:not([data-id="${eventId}"])`).addClass('blur');
-
-      _(pathViews).keys().forEach((id) => {
-        if (id !== eventId) {
-          pathViews[id].polyline.setStyle({ opacity: 0.4 });
-        }
-      });
-    });
-
-    polyline.on('mouseout', function() {
-      polyline.setStyle({
-        weight: 2,
-      });
-      polyline.bringToBack();
-
-      $('.map-fleet').removeClass('blur');
-
-      _(pathViews).keys().forEach((id) => {
-        if (id !== eventId) {
-          pathViews[id].polyline.setStyle({ opacity: 1 });
-        }
-      });
-    });
-
     this.polyline = polyline;
 
     this.lineOptions = {

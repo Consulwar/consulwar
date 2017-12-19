@@ -237,6 +237,23 @@ Game.Alliance.giveCardsForParticipants = function() {
   }
 };
 
+Meteor.publish('myAlliance', function () {
+  if (this.userId) {
+    const user = Meteor.users.findOne({ _id: this.userId });
+    if (user.alliance) {
+      return Game.Alliance.Collection.find({
+        name: user.alliance,
+      }, {
+        fields: {
+          participants: 1,
+        },
+      });
+    }
+  }
+
+  this.ready();
+});
+
 SyncedCron.add({
   name: 'Расчет рейтинга альянсов и выдача карточек',
   schedule: function(parser) {

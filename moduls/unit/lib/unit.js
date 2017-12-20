@@ -102,7 +102,7 @@ Game.Unit = {
     return calculateGroupPower(group);
   },
 
-  calcUnitsHealth: function(units) {
+  calcUnitsHealth: function(units, userId = Meteor.userId()) {
     if (!units) {
       return 0;
     }
@@ -111,7 +111,7 @@ Game.Unit = {
     for (var side in units) {
       for (var group in units[side]) {
         for (var name in units[side][group]) {
-          var life = Game.Unit.items[side][group][name].characteristics.health.armor;
+          var life = Game.Unit.items[side][group][name].getCharacteristics({ userId }).health.armor;
           var count = units[side][group][name];
           if (life && count) {
             power += (life * count);

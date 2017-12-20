@@ -49,7 +49,7 @@ export default Space.jobs.processJobs(
       return done(); // strange shit suddenly appeared
     }
 
-    const userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
+    const userHealth = Game.Unit.calcUnitsHealth(userArmy.units, userId);
 
     // generate appropriate mission and calculate enemy health
     const mission = Game.Planets.generateMission(planet);
@@ -61,7 +61,7 @@ export default Space.jobs.processJobs(
       reptiles: {
         fleet: enemyFleet,
       },
-    });
+    }, userId);
 
     // check attack possibility
     if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {

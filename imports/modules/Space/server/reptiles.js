@@ -336,7 +336,7 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
     }
   });
 
-  Game.Resources.steal(stealCost);
+  Game.Resources.steal(stealCost, userId);
 
   // save history
   if (battle) {

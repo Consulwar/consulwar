@@ -1834,8 +1834,8 @@ const showSpaceEvent = function(id, event, offset, user) {
 const initGalaxy = function() {
   const user = Meteor.user();
 
-  const myAlliance = Game.Alliance.Collection.find({ name: user.alliance }).fetch();
-  if (myAlliance.length !== 0) {
+  const myAlliance = Game.Alliance.Collection.findOne({ name: user.alliance });
+  if (myAlliance) {
     myAllies = myAlliance.participants;
   }
 

@@ -1,4 +1,6 @@
 import FlightEvents from '/imports/modules/Space/lib/flightEvents';
+import { Meteor } from "meteor/meteor";
+import User from '../../../imports/modules/User/lib/User';
 
 initCosmosLib = function() {
 'use strict';
@@ -55,7 +57,7 @@ Game.Planets = {
 
   getAllByOwner(user = Meteor.user()) {
     return Game.Planets.Collection.find({
-      ownerName: user.username,
+      minerUsername: user.username,
     });
   },
 
@@ -80,10 +82,12 @@ Game.Planets = {
     });
   },
 
-  getColonies: function () {
+  getColonies: function (options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
+
     return Game.Planets.Collection.find({
-      userId: Meteor.userId(),
-      status: Game.Planets.STATUS.HUMANS,
+      minerUsername: user.username,
     }).fetch();
   },
 

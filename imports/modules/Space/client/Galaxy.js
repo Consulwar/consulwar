@@ -117,9 +117,9 @@ class Galaxy {
 
   getColor(planet) {
     if (planet.status === Game.Planets.STATUS.HUMANS) {
-      if (planet.ownerName === this.user.username) {
+      if (planet.minerUsername === this.user.username) {
         return Config.colors.user;
-      } else if (this.myAllies.indexOf(planet.ownerName) !== -1) {
+      } else if (this.myAllies.indexOf(planet.minerUsername) !== -1) {
         return Config.colors.ally;
       }
       return Config.colors.other;

@@ -65,7 +65,7 @@ export default function reptileArrival(data) {
     } else {
       if (planet.status === Game.Planets.STATUS.HUMANS) {
         planet.status = Game.Planets.STATUS.NOBODY;
-        planet.ownerName = null;
+        planet.minerUsername = null;
       }
 
       if (data.isOneway) {

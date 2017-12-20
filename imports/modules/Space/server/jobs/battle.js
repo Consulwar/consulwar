@@ -13,7 +13,7 @@ import Utils from '../../lib/utils';
 const reptilesWin = function({ battle, roundResult, users, planet, data }) {
   if (planet && planet.status === Game.Planets.STATUS.HUMANS) {
     planet.status = Game.Planets.STATUS.NOBODY;
-    planet.ownerName = null;
+    planet.minerUsername = null;
   }
 
   const army = roundResult.left[Battle.ENEMY_SIDE];

@@ -144,7 +144,7 @@
         {{/each}}
       </ul>
       
-      <div class="planets">
+      <div class="planets scrollbar-inner">
         {{#each colonies}}
           {{#if this.canBuy}}
             {{> cosmos_planet_item planet=this}}
@@ -295,13 +295,7 @@
       class="
         map-planet-marker
         {{planet.type}} 
-        {{#if or planet.isHome planet.armyId}}
-          map-planet-border-human
-        {{else}}{{#if planet.mission}}
-          map-planet-border-reptile
-        {{else}}
-          map-planet-border-empty
-        {{/if}}{{/if}}
+        map-planet-border-{{statusName}}
         {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
         {{owner}}
         " 

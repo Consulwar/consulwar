@@ -128,7 +128,7 @@ class Ship {
         this.color = Config.colors.other;
       }
 
-      this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
+      this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 0.8 });
 
       this.polygon.on('mouseover', function() {
         if (!isPopupLocked.get()) {
@@ -167,7 +167,7 @@ class Ship {
 
       this.color = this.getColor(fleet.data);
 
-      this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 1 });
+      this.polygon = L.polygon(latlngs, { color: this.color, fillOpacity: 0.8 });
 
       this.polygon.on('mouseover', function() {
         if (!isPopupLocked.get()) {

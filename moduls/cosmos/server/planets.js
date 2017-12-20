@@ -23,7 +23,11 @@ Game.Planets.Collection._ensureIndex({
 });
 
 Game.Planets.Collection._ensureIndex({
-  ownerName: 1,
+  minerUsername: 1,
+});
+
+Game.Planets.Collection._ensureIndex({
+  status: 1,
 });
 
 Game.Planets.actualize = function() {
@@ -87,7 +91,7 @@ Game.Planets.actualize = function() {
       continue;
     }
 
-    if (planet.status !== Game.Planets.STATUS.HUMANS) {
+    if (planet.status !== Game.Planets.STATUS.HUMANS && !planet.armyId) {
       // spawn enemies
       if (planet.timeRespawn <= timeCurrent) {
         if (!planet.mission) {
@@ -713,7 +717,7 @@ Meteor.methods({
       Game.Planets.add({
         name: user.planetName,
         isHome: true,
-        ownerName: user.username,
+        minerUsername: user.username,
         status: Game.Planets.STATUS.HUMANS,
         type: 'terran',
         // generation
@@ -940,7 +944,7 @@ Meteor.methods({
 
     planet.timeArtefacts = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
     planet.status = Game.Planets.STATUS.HUMANS;
-    planet.ownerName = user.username;
+    planet.minerUsername = user.username;
 
     Game.Planets.update(planet);
   },
@@ -958,13 +962,13 @@ Meteor.methods({
          !planet
       || planet.isHome
       || planet.status !== Game.Planets.STATUS.HUMANS
-      || planet.ownerName !== user.username
+      || planet.minerUsername !== user.username
     ) {
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
     }
 
     planet.status = Game.Planets.STATUS.NOBODY;
-    planet.ownerName = null;
+    planet.minerUsername = null;
 
     Game.Planets.update(planet);
   },

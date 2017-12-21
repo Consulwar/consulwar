@@ -76,7 +76,17 @@
         {{/if}}
         {{#if allowActions}}
           {{#if canMine}}
-            <button class="cw--button cw--button_type_secondary cw--button_type_secondary_metal mine" data-id="{{planet.id}}">Захватить</button>
+            <button
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_blue
+                mine
+              "
+              data-id="{{planet.id}}"
+            >
+              Захватить
+            </button>
           {{else}}{{#if canUnMine}}
             <button class="cw--button cw--button_type_secondary cw--button_type_secondary_metal unmine" data-id="{{planet.id}}">Освободить</button>
           {{/if}}{{/if}}
@@ -272,7 +282,7 @@
   <a 
     class="
       planet 
-      {{owner}} 
+      cw--color_{{color}}
       {{#if planet.isEmpty}}empty{{/if}}
       {{#if planet.notAvaliable}}notAvaliable{{/if}}
       {{#if planet.canBuy}}canBuy{{/if}}
@@ -306,7 +316,7 @@
         {{planet.type}} 
         map-planet-border-{{statusName}}
         {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
-        {{owner}}
+        cw--color_{{color}}
         " 
       style="
         width: {{multiply (sum planet.size 3) 4}}px;
@@ -389,10 +399,10 @@
 
 <template name="cosmosFleetsInfo">
   {{#if userFleets}}
-    {{> cosmosFleetsInfo_table fleets=userFleets owner='humans'}}
+    {{> cosmosFleetsInfo_table fleets=userFleets color='human'}}
   {{/if}}
   {{#if reptileFleets}}
-    {{> cosmosFleetsInfo_table fleets=reptileFleets owner='reptiles'}}
+    {{> cosmosFleetsInfo_table fleets=reptileFleets color='honor'}}
   {{/if}}
   {{#if and (not userFleets) (not reptileFleets)}}
     <h2>Нет передвижений флота</h2>
@@ -461,7 +471,7 @@
         {{#if lt zoom 7}}zoom-lt-7{{/if}}
         {{#if lt zoom 5}}zoom-lt-5{{/if}}
         {{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}
-        {{owner}}" 
+        cw--color_{{color}}"
       tabindex="0" 
       style="
         margin-left: {{position.marginLeft}}px;

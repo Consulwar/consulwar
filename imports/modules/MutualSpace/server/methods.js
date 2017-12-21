@@ -77,6 +77,33 @@ Meteor.methods({
   },
 
   'mutualSpace.getHexes'() {
+    const user = User.getById();
+    User.checkAuth({ user });
+
     return collection.find({}).fetch();
+  },
+
+  'mutualSpace.getVisibleHexes'() {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    const units = Game.Unit.Collection.find({
+      user_id: user._id,
+      location: Game.Unit.location.PLANET,
+    }).fetch();
+
+    const planets = Game.Planets.Collection.find({
+      armyId: {
+        $in: units.map(unit => unit._id),
+      },
+    }).fetch();
+
+    const usernames = _.uniq(planets.map(planet => planet.username));
+
+    return collection.find({
+      username: {
+        $in: usernames,
+      },
+    }).fetch();
   },
 });

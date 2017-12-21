@@ -226,7 +226,7 @@ Meteor.methods({
     };
     const startPositionWithOffset = { ...startPosition };
 
-    const fromGalaxy = mutualSpaceCollection.findOne({ username: user.username });
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: basePlanet.username });
 
     if (fromGalaxy) {
       const center = new Hex(fromGalaxy).center();

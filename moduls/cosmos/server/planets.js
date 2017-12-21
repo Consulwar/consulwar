@@ -23,6 +23,14 @@ Game.Planets.Collection._ensureIndex({
 });
 
 Game.Planets.Collection._ensureIndex({
+  username: 1,
+});
+
+Game.Planets.Collection._ensureIndex({
+  armyUsername: 1,
+});
+
+Game.Planets.Collection._ensureIndex({
   minerUsername: 1,
 });
 
@@ -988,6 +996,18 @@ Meteor.publish('planets', function(usernames = []) {
     }
     return Game.Planets.Collection.find({
       username: { $in: usernames }
+    });
+  }
+});
+
+Meteor.publish('relatedToUserPlanets', function() {
+  if (this.userId) {
+    const username = Meteor.users.findOne({ _id: this.userId }).username;
+    return Game.Planets.Collection.find({
+      $or: [
+        { armyUsername: username },
+        { minerUsername: username },
+      ],
     });
   }
 });

@@ -43,6 +43,7 @@ initCosmosPathView();
 initCosmosContentClient();
 
 Meteor.subscribe('planets');
+Meteor.subscribe('relatedToUserPlanets');
 let spaceEventsSubscription = Meteor.subscribe('mySpaceEvents');
 Meteor.subscribe('battles');
 Meteor.subscribe('spaceHex');
@@ -458,7 +459,22 @@ Template.cosmosFleetsInfo_table.events({
 
 Template.cosmos_planet_item.helpers({
   owner: function() {
-    return statusName(this.planet.status);
+    return (this.planet.mission
+        ? 'reptiles'
+        : this.planet.armyId || this.planet.isHome
+          ? 'human'
+          : null
+    );
+    //return statusName(this.planet.status);
+  },
+
+  color() {
+    return (this.planet.mission
+        ? 'honor'
+        : this.planet.armyId || this.planet.isHome
+          ? 'human'
+          : null
+    );
   },
 
   statusName() {
@@ -1763,6 +1779,15 @@ Template.cosmosObjects.helpers({
     );
   },
 
+  color() {
+    return (this.planet.mission
+      ? 'honor'
+      : this.planet.armyId || this.planet.isHome
+        ? 'human'
+        : null
+    );
+  },
+
   statusName() {
     return statusName(this.planet.status);
   },
@@ -2036,22 +2061,28 @@ Template.cosmos.onRendered(function() {
 
 const loadHexes = function() {
   Meteor.call('mutualSpace.getHexes', (err, hexes) => {
-    showHexes(hexes);
+    const user = Meteor.user();
+    const planets = Game.Planets.Collection.find({}).fetch();
+
+    const usernames = _.uniq(planets.map(planet => planet.username));
+    const visibleUsernames = {};
+    usernames.forEach((username) => {
+      visibleUsernames[username] = true;
+    });
+
+    showHexes({ user, hexes, visibleUsernames });
   });
 };
 
-const showHexes = function(hexes) {
-  const user = Meteor.user();
-
+const showHexes = function({ user, hexes, visibleUsernames }) {
   hexes.forEach((hexInfo) => {
-    // if (hexInfo.username === undefined) {
-    //   return;
-    // }
+    const visibleHex = visibleUsernames[hexInfo.username];
 
-    const needLoad = (
+    const isClickable = (
       hexInfo.username
       && hexInfo.username !== null
       && hexInfo.username !== user.username
+      && !visibleHex
     );
 
     let color;
@@ -2077,15 +2108,38 @@ const showHexes = function(hexes) {
     const hex = new Hex(hexInfo);
 
     const hexPoly = L.polygon(hex.corners(), {
-      fill: (hexInfo.username !== user.username),
+      fill: !visibleHex,
       color,
       pane,
-      interactive: needLoad,
+      interactive: isClickable,
     }).addTo(mapView);
 
-    if (needLoad) {
-      const center = hex.center();
+    const center = hex.center();
 
+    const loadHex = function() {
+      const galaxy = new Galaxy({
+        user,
+        username: hexInfo.username,
+        isPopupLocked,
+        mapView,
+        planetsLayer,
+        shipsLayer,
+        offset: center,
+        myAllies,
+      });
+
+      showedHexes.push(hex);
+      Meteor.subscribe('spaceEvents', showedHexes);
+
+      galaxyByUsername[hexInfo.username] = galaxy;
+
+      const usernames = _(galaxyByUsername).keys();
+      Meteor.subscribe('planets', usernames);
+    };
+
+    if (visibleHex) {
+      loadHex();
+    } else if (isClickable) {
       const usernameTooltip = L.tooltip({
         direction: 'center',
         className: 'usernameTooltip',
@@ -2096,24 +2150,7 @@ const showHexes = function(hexes) {
         .addTo(mapView);
 
       hexPoly.on('click', () => {
-        const galaxy = new Galaxy({
-          user,
-          username: hexInfo.username,
-          isPopupLocked,
-          mapView,
-          planetsLayer,
-          shipsLayer,
-          offset: center,
-          myAllies,
-        });
-
-        showedHexes.push(hex);
-        Meteor.subscribe('spaceEvents', showedHexes);
-
-        galaxyByUsername[hexInfo.username] = galaxy;
-
-        const usernames = _(galaxyByUsername).keys();
-        Meteor.subscribe('planets', usernames);
+        loadHex();
 
         hexPoly.setStyle({ fill: false });
 

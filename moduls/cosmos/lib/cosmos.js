@@ -91,10 +91,12 @@ Game.Planets = {
     }).fetch();
   },
 
-  getPlanetsWithArmy(userId = Meteor.userId()) {
+  getPlanetsWithArmy(options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
+
     return Game.Planets.Collection.find({
-      userId,
-      armyId: { $exists: true, $ne: null },
+      armyUsername: user.username,
     }).fetch();
   },
 

@@ -714,6 +714,23 @@ Template.cosmosPlanetPopup.helpers({
   },
   reptilesFleetPower: function() {
     return reptilesFleetPower(Game.Cosmos.getPlanetInfo(this.planet).units);
+  },
+  canMine() {
+    if (this.planet.status === Game.Planets.STATUS.HUMANS || !this.planet.armyId) {
+      return false;
+    }
+    const army = Game.Unit.getArmy({ id: this.planet.armyId });
+    const user = Meteor.user();
+
+    return army && army.user_id === user._id;
+  },
+  canUnMine() {
+    const planet = this.planet;
+    const user = Meteor.user();
+
+    return !planet.isHome &&
+      planet.status === Game.Planets.STATUS.HUMANS &&
+      planet.minerUsername === user.username;
   }
 });
 
@@ -726,6 +743,20 @@ Template.cosmosPlanetPopup.events({
     var id = $(e.currentTarget).attr("data-id");
     if (id) {
       Game.Cosmos.showAttackMenu(id);
+    }
+  },
+
+  'click .mine'(e, t) {
+    const planetId = $(e.currentTarget).attr('data-id');
+    if (planetId) {
+      Meteor.call('planet.startMining', planetId);
+    }
+  },
+
+  'click .unmine'(e, t) {
+    const planetId = $(e.currentTarget).attr('data-id');
+    if (planetId) {
+      Meteor.call('planet.stopMining', planetId);
     }
   },
 

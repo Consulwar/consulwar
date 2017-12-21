@@ -70,9 +70,18 @@
 
       {{> cosmosUnitsBlock units=planet.units isReptiles=planet.mission}}
 
-      {{#if and (and allowActions planet.canSend) (not disableSend)}}
-        <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
-      {{/if}}
+      <div style="display: flex; flex-wrap: wrap">
+        {{#if and (and allowActions planet.canSend) (not disableSend)}}
+          <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
+        {{/if}}
+        {{#if allowActions}}
+          {{#if canMine}}
+            <button class="cw--button cw--button_type_secondary cw--button_type_secondary_metal mine" data-id="{{planet.id}}">Захватить</button>
+          {{else}}{{#if canUnMine}}
+            <button class="cw--button cw--button_type_secondary cw--button_type_secondary_metal unmine" data-id="{{planet.id}}">Освободить</button>
+          {{/if}}{{/if}}
+        {{/if}}
+      </div>
     {{/let}}
   </div>
 </template>

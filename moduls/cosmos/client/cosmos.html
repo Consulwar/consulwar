@@ -88,11 +88,29 @@
               Захватить
             </button>
           {{else}}{{#if canUnMine}}
-            <button class="cw--button cw--button_type_secondary cw--button_type_secondary_metal unmine" data-id="{{planet.id}}">Освободить</button>
+            <button
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_blue
+                unmine
+              "
+              data-id="{{planet.id}}">Освободить</button>
           {{/if}}{{/if}}
         {{/if}}
       </div>
     {{/let}}
+  </div>
+</template>
+
+<template name="cosmosBattlePopup">
+  <div
+      class="map-planet-popup"
+      style="left: {{position.x}}px; top: {{position.y}}px;"
+  >
+
+    <button class="button-attack open" data-id="{{battleId}}">Отправить</button>
+
   </div>
 </template>
 
@@ -261,6 +279,12 @@
             {{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
           </button>
         {{/if}}
+      {{else}}{{#if battle}}
+        {{#if timeAttackBattle}}
+          <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
+
+          <button class="btn-attack help">Отправить</button>
+        {{/if}}
       {{else}}
         {{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo ship) spaceEvent=ship}}
 
@@ -271,7 +295,7 @@
         {{/if}}
 
         <button class="btn-attack return" disabled={{isFleetSended}}>Перехватить</button>
-      {{/if}}
+      {{/if}}{{/if}}
     </div>
 
     <button class="btn-close"></button>
@@ -282,7 +306,7 @@
   <a 
     class="
       planet 
-      cw--color_{{color}}
+      {{owner}}
       {{#if planet.isEmpty}}empty{{/if}}
       {{#if planet.notAvaliable}}notAvaliable{{/if}}
       {{#if planet.canBuy}}canBuy{{/if}}
@@ -291,7 +315,7 @@
       {{#if isTopTime}}topTime{{/if}}
     " 
     data-id="{{planet._id}}"
-    href="{{pathFor 'cosmos' hash=planet._id}}" 
+    href="{{pathFor 'cosmos' hash=planet._id}}"
     data-tooltip="true"
     data-tooltip-direction="e"
   >
@@ -316,7 +340,7 @@
         {{planet.type}} 
         map-planet-border-{{statusName}}
         {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
-        cw--color_{{color}}
+        {{owner}}
         " 
       style="
         width: {{multiply (sum planet.size 3) 4}}px;
@@ -399,12 +423,22 @@
 
 <template name="cosmosFleetsInfo">
   {{#if userFleets}}
-    {{> cosmosFleetsInfo_table fleets=userFleets color='human'}}
+    {{> cosmosFleetsInfo_table fleets=userFleets owner='humans'}}
   {{/if}}
   {{#if reptileFleets}}
-    {{> cosmosFleetsInfo_table fleets=reptileFleets color='honor'}}
+    {{> cosmosFleetsInfo_table fleets=reptileFleets owner='reptiles'}}
   {{/if}}
-  {{#if and (not userFleets) (not reptileFleets)}}
+  {{#if battles}}
+    {{#each battles}}
+      <div>
+        <a href="{{pathFor 'cosmos' hash=this.id}}">
+          <img src="/img/game/battle/battleIcon.svg" width="30" height="30">
+        </a>
+        Сражение
+      </div>
+    {{/each}}
+  {{/if}}
+  {{#if and (and (not userFleets) (not reptileFleets)) (not battles)}}
     <h2>Нет передвижений флота</h2>
   {{/if}}
 </template>
@@ -471,7 +505,7 @@
         {{#if lt zoom 7}}zoom-lt-7{{/if}}
         {{#if lt zoom 5}}zoom-lt-5{{/if}}
         {{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}
-        cw--color_{{color}}"
+        {{owner}}"
       tabindex="0" 
       style="
         margin-left: {{position.marginLeft}}px;

@@ -1,5 +1,7 @@
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
+import Battle from '../../battle/lib/imports/battle';
+import BattleCollection from '../../battle/lib/imports/collection';
 
 Blaze._allowJavascriptUrls();
 
@@ -373,8 +375,12 @@ var helpers = {
   fleetInfo: function() {
     var reinforcements = Reinforcement.getAllByUserId().fetch();
     var fleets = FlightEvents.getFleetsEvents().fetch();
-    
-    if (reinforcements.length === 0 && fleets.length === 0) {
+    const battles = BattleCollection.find({
+      status: Battle.Status.progress,
+      userNames: Meteor.user().username,
+    }).fetch();
+
+    if (reinforcements.length === 0 && fleets.length === 0 && battles.length === 0) {
       return null;
     }
 
@@ -435,7 +441,8 @@ var helpers = {
       reptileId: reptileId,
       isWaitingAttack: isWaitingAttack,
       attackId: attackId,
-      attackTime: attackTime
+      attackTime: attackTime,
+      battles: battles.length,
     };
   },
 

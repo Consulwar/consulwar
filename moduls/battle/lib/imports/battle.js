@@ -10,4 +10,4 @@ export default {
   Status,
   USER_SIDE,
   ENEMY_SIDE,
-}
+};

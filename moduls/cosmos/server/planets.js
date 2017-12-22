@@ -941,6 +941,10 @@ Meteor.methods({
       throw new Meteor.Error('Ты втираешь мне какую-то дичь');
     }
 
+    if (Game.Planets.getColoniesCount() >= Game.Planets.getMaxColoniesCount()) {
+      throw new Meteor.Error('Достигнуто максимальное количество колоний');
+    }
+
     if (planet.status === Game.Planets.STATUS.HUMANS) {
       throw new Meteor.Error('На планете уже ведется добыча артефактов');
     } else if (planet.status === Game.Planets.STATUS.REPTILES) {

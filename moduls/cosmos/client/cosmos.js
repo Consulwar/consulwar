@@ -19,6 +19,8 @@ import Hex from '/imports/modules/MutualSpace/lib/Hex';
 import Config from '/imports/modules/Space/client/config';
 
 import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
+import Battle from '../../battle/lib/imports/battle';
+import BattleCollection from '../../battle/lib/imports/collection';
 
 const {
   calcDistance,
@@ -104,12 +106,12 @@ var showNotificationFromSpaceEvent = function(event) {
       }
     }
   }
-  
+
   if (!event.data.mission && !event.data.battleId && event.status === 'completed') {
     options.path = Router.path(
-      'cosmos', 
-      {group: 'cosmos'}, 
-      {hash: (targetPlanet._id || event._id)}
+      'cosmos',
+      { group: 'cosmos' },
+      { hash: ((targetPlanet && targetPlanet._id) || event._id) },
     );
 
     Game.showDesktopNotification('Консул, ваш флот долетел!', options);
@@ -377,6 +379,17 @@ const scrollMapToPlanet = function(id) {
   }
 };
 
+const scrollMapToBattle = function(id) {
+  const battleEvent = BattleEvents.findByBattleId(id);
+  if (battleEvent) {
+    const offset = galaxyByUsername[battleEvent.data.username].offset;
+    mapView.setView([
+      offset.x + battleEvent.data.targetPosition.x,
+      offset.y + battleEvent.data.targetPosition.y,
+    ], 7);
+  }
+};
+
 var scrollMapToFleet = function(id) {
   var path = pathViews[id];
   var spaceEvent = FlightEvents.getOne(id);
@@ -462,17 +475,7 @@ Template.cosmos_planet_item.helpers({
     return (this.planet.mission
         ? 'reptiles'
         : this.planet.armyId || this.planet.isHome
-          ? 'human'
-          : null
-    );
-    //return statusName(this.planet.status);
-  },
-
-  color() {
-    return (this.planet.mission
-        ? 'honor'
-        : this.planet.armyId || this.planet.isHome
-          ? 'human'
+          ? 'humans'
           : null
     );
   },
@@ -567,6 +570,8 @@ Template.cosmosFleetsInfo.helpers({
             + ' ' + data.finish.mission.level
           );
         }
+      } else if (fleets[i].data.targetType === FlightEvents.TARGET.BATTLE) {
+        data.name = 'Подкрепление';
       } else {
         data.name = 'Перехват';
         var target = FlightEvents.getOne(fleets[i].data.targetId);
@@ -634,7 +639,24 @@ Template.cosmosFleetsInfo.helpers({
       result.push(data);
     }
     return (result.length > 0) ? result : null;
-  }
+  },
+
+  battles() {
+    const result = [];
+
+    const battles = BattleCollection.find({
+      status: Battle.Status.progress,
+      userNames: Meteor.user().username,
+    }).fetch();
+
+    battles.forEach((battle) => {
+      result.push({
+        id: battle._id,
+      });
+    });
+
+    return (result.length > 0) ? result : null;
+  },
 });
 
 // ----------------------------------------------------------------------------
@@ -722,6 +744,15 @@ var reptilesFleetPower = function(units) {
     return units;
   }, {reptiles: {fleet: {}}}));
 };
+
+Template.cosmosBattlePopup.events({
+  'click .open'(e, t) {
+    const id = $(e.currentTarget).attr("data-id");
+    if (id) {
+      Game.Cosmos.showAttackMenu(id);
+    }
+  },
+});
 
 Template.cosmosPlanetPopup.helpers({
   getTimeNextDrop: function(timeCollected) {
@@ -892,6 +923,43 @@ Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
       }
     },
     $('.leaflet-popup-pane')[0]
+  );
+};
+
+Game.Cosmos.showBattlePopup = function(battleId, isLock, offset = { x: 0, y: 0 }) {
+  if (!mapView) {
+    return;
+  }
+
+  const battleEvent = BattleEvents.findByBattleId(battleId);
+  if (!battleEvent) {
+    return;
+  }
+
+  Game.Cosmos.hidePlanetPopup();
+
+  if (isLock) {
+    isPopupLocked.set(true);
+  }
+
+  cosmosPopupView = Blaze.renderWithData(
+    Template.cosmosBattlePopup, {
+      battleId,
+      position: function() {
+        const k = Math.pow(2, (zoom.get() - 7));
+        const iconSize = 6;
+        const position = mapView.latLngToLayerPoint(
+          new L.latLng(
+            offset.x + battleEvent.data.targetPosition.x,
+            offset.y + battleEvent.data.targetPosition.y,
+          ),
+        );
+        position.x += 24 + 10 + Math.round((iconSize * k) / 2);
+        // position.y -= 85;
+        return position;
+      },
+    },
+    $('.leaflet-popup-pane')[0],
   );
 };
 
@@ -1160,6 +1228,34 @@ var timeAttack = function(id) {
   return null;
 };
 
+const timeAttackBattle = function(id) {
+  const baseId = id || Template.instance().data.activeColonyId.get();
+  const basePlanet = Game.Planets.getOne(baseId);
+  if (!basePlanet) {
+    return null;
+  }
+  const baseGalaxy = galaxyByUsername[basePlanet.username];
+  const basePosition = {
+    x: basePlanet.x + baseGalaxy.offset.x,
+    y: basePlanet.y + baseGalaxy.offset.y,
+  };
+
+  const targetId = Template.instance().data.id;
+  const engineLevel = Game.Planets.getEngineLevel();
+
+  const targetBattle = BattleEvents.findByBattleId(targetId);
+  if (targetBattle) {
+    const targetGalaxy = galaxyByUsername[targetBattle.data.username];
+    const targetPosition = {
+      x: targetBattle.data.targetPosition.x + targetGalaxy.offset.x,
+      y: targetBattle.data.targetPosition.y + targetGalaxy.offset.y,
+    };
+    return calcFlyTime(basePosition, targetPosition, engineLevel);
+  }
+
+  return null;
+};
+
 Template.cosmosAttackMenu.onRendered(function() {
   setTimeout(function() {
     $('.content .attack-menu .scrollbar-inner').perfectScrollbar();
@@ -1171,6 +1267,10 @@ Template.cosmosAttackMenu.helpers({
     return isFleetSended.get();
   },
 
+  battle() {
+    return BattleEvents.findByBattleId(this.id);
+  },
+
   ship: function() {
     return FlightEvents.getOne(this.id);
   },
@@ -1180,6 +1280,8 @@ Template.cosmosAttackMenu.helpers({
   },
 
   timeAttack: timeAttack,
+
+  timeAttackBattle: timeAttackBattle,
 
   timeLeft: function() {
     var targetId = this.id;
@@ -1506,8 +1608,9 @@ Template.cosmosAttackMenu.events({
     var targetId = t.data.id;
     var planet = Game.Planets.getOne(targetId);
     var ship = FlightEvents.getOne(targetId);
+    const battle = BattleEvents.findByBattleId(targetId);
 
-    if (!planet && !ship) {
+    if (!planet && !ship && !battle) {
       Notifications.info('Не выбрана цель');
       return;
     }
@@ -1534,7 +1637,28 @@ Template.cosmosAttackMenu.events({
           }
         }
       );
+    } else if (battle) {
+      // Send to battle
+      isFleetSended.set(true);
+      Meteor.call(
+        'space.sendFleet',
+        basePlanet._id,
+        FlightEvents.TARGET.BATTLE,
+        targetId,
+        units,
+        isOneway,
+        function(err) {
+          isFleetSended.set(false);
 
+          if (err) {
+            Notifications.error('Не удалось отправить флот', err.error);
+          } else {
+            Notifications.success('Флот отправлен');
+            Game.Cosmos.hideAttackMenu();
+            resetColonyId();
+          }
+        },
+      );
     } else if (ship) {
       // Attack ship
       var pathView = pathViews[ship._id];
@@ -1779,15 +1903,6 @@ Template.cosmosObjects.helpers({
     );
   },
 
-  color() {
-    return (this.planet.mission
-      ? 'honor'
-      : this.planet.armyId || this.planet.isHome
-        ? 'human'
-        : null
-    );
-  },
-
   statusName() {
     return statusName(this.planet.status);
   },
@@ -1893,21 +2008,7 @@ const initGalaxy = function() {
     center = hex.center();
 
     showedHexes.push(hex);
-    Meteor.subscribe('spaceEvents', showedHexes);
   }
-
-  const galaxy = new Galaxy({
-    user,
-    username: user.username,
-    isPopupLocked,
-    mapView,
-    planetsLayer,
-    shipsLayer,
-    offset: center,
-    myAllies,
-  });
-
-  galaxyByUsername[user.username] = galaxy;
 
   observerSpaceEvents = Space.collection.find({}).observeChanges({
     added: function(id, event) {
@@ -1921,6 +2022,8 @@ const initGalaxy = function() {
 
   if (galaxyHex) {
     loadHexes();
+  } else {
+    isLoading.set(false);
   }
 
   const homePlanet = Game.Planets.getBase();
@@ -1929,7 +2032,6 @@ const initGalaxy = function() {
       center.x + homePlanet.x, center.y + homePlanet.y
     ], 7);
   }
-  isLoading.set(false);
 };
 
 // Paths
@@ -2040,17 +2142,18 @@ Template.cosmos.onRendered(function() {
     if (hash) {
       zoom.dep.changed();
       Tracker.nonreactive(function() {
-        // highlight planets by artefact
         if (Game.Artefacts.items[hash]) {
+          // highlight planets by artefact
           selectedArtefact.set(hash);
-        }
-        // select planet
-        else if (Game.Planets.getOne(hash)) {
+        } else if (Game.Planets.getOne(hash)) {
+          // select planet
           Game.Cosmos.showPlanetInfo(hash);
           scrollMapToPlanet(hash);
-        }
-        // select ship
-        else {
+        } else if (BattleEvents.findByBattleId(hash)) {
+          // select battle
+          scrollMapToBattle(hash);
+        } else {
+          // select ship
           Game.Cosmos.showShipInfo(hash, true);
           scrollMapToFleet(hash);
         }
@@ -2070,13 +2173,25 @@ const loadHexes = function() {
       visibleUsernames[username] = true;
     });
 
-    showHexes({ user, hexes, visibleUsernames });
+    const battleEvents = BattleEvents.getAllByUserId(user._id).fetch();
+    const visibleHexes = {};
+    battleEvents.forEach((battleEvent) => {
+      const hex = battleEvent.data.targetHex || battleEvent.data.hex;
+      visibleHexes[`${hex.x}|${hex.z}`] = true;
+    });
+
+    showHexes({ user, hexes, visibleUsernames, visibleHexes });
+
+    isLoading.set(false);
   });
 };
 
-const showHexes = function({ user, hexes, visibleUsernames }) {
+const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = {} }) {
   hexes.forEach((hexInfo) => {
-    const visibleHex = visibleUsernames[hexInfo.username];
+    const visibleHex = (
+      visibleUsernames[hexInfo.username] ||
+      visibleHexes[`${hexInfo.x}|${hexInfo.z}`]
+    );
 
     const isClickable = (
       hexInfo.username
@@ -2129,12 +2244,7 @@ const showHexes = function({ user, hexes, visibleUsernames }) {
       });
 
       showedHexes.push(hex);
-      Meteor.subscribe('spaceEvents', showedHexes);
-
       galaxyByUsername[hexInfo.username] = galaxy;
-
-      const usernames = _(galaxyByUsername).keys();
-      Meteor.subscribe('planets', usernames);
     };
 
     if (visibleHex) {
@@ -2151,6 +2261,8 @@ const showHexes = function({ user, hexes, visibleUsernames }) {
 
       hexPoly.on('click', () => {
         loadHex();
+        Meteor.subscribe('spaceEvents', showedHexes);
+        Meteor.subscribe('planets', _(galaxyByUsername).keys());
 
         hexPoly.setStyle({ fill: false });
 
@@ -2158,6 +2270,9 @@ const showHexes = function({ user, hexes, visibleUsernames }) {
       });
     }
   });
+
+  Meteor.subscribe('spaceEvents', showedHexes);
+  Meteor.subscribe('planets', _(galaxyByUsername).keys());
 };
 
 Template.cosmos.onDestroyed(function() {
@@ -2285,7 +2400,7 @@ Template.cosmos.events({
           showSpaceEvent(event._id, event, center, user);
         });
 
-        showHexes(hexes);
+        showHexes({ user, hexes });
 
         mapView.setView([center.x, center.y], 2);
       });

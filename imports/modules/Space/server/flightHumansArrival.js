@@ -189,7 +189,7 @@ const completeOnShip = function(data) {
 };
 
 const completeOnBattle = function(data) {
-  const battle = Battle.fromDB(data.battleId);
+  const battle = Battle.fromDB(data.targetId);
 
   if (battle) {
     const userArmy = {
@@ -198,7 +198,7 @@ const completeOnBattle = function(data) {
       },
     };
     const userGroup = createGroup({ army: userArmy, userId: data.userId });
-    Battle.addGroup(data.battleId, Battle.USER_SIDE, data.username, userGroup);
+    Battle.addGroup(data.targetId, Battle.USER_SIDE, data.username, userGroup);
 
     Game.Unit.removeArmy(data.armyId, data.userId);
   } else {

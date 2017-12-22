@@ -6,6 +6,7 @@ import Battle from '/moduls/battle/server/battle';
 import FlightEvents from './flightEvents';
 
 import BattleEvents from './battleEvents';
+import Reptiles from './reptiles';
 
 export default function reptileArrival(data) {
   const { userId, username } = data;
@@ -36,6 +37,14 @@ export default function reptileArrival(data) {
             } else {
               Game.Unit.removeArmy(homeArmy._id, userId);
             }
+          } else {
+            Reptiles.stealUserResources({
+              enemyArmy,
+              userId,
+            });
+
+            FlightEvents.flyBack(data);
+            return;
           }
 
           userArmy = homeArmy.units;

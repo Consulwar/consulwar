@@ -192,7 +192,12 @@ Meteor.methods({
         throw new Meteor.Error('Не найдено сражение');
       }
 
-      target = battleEvent;
+      target = {
+        _id: targetId,
+        x: battleEvent.data.targetPosition.x,
+        y: battleEvent.data.targetPosition.y,
+        username: battleEvent.data.username,
+      };
     } else {
       throw new Meteor.Error('Неверный параметр типа цели.');
     }

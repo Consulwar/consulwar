@@ -1,4 +1,5 @@
 import Space from './space';
+import Game from '../../../../moduls/game/lib/main.game';
 
 class BattleIcon {
   constructor({
@@ -18,6 +19,11 @@ class BattleIcon {
     this.marker = L.marker(
       [origin.x + position.x, origin.y + position.y], { icon },
     ).addTo(shipsLayer);
+
+    this.marker.on('click', function(event) {
+      Game.Cosmos.showBattlePopup(battleEvent.data.battleId, true, origin);
+      L.DomEvent.stopPropagation(event);
+    });
 
     this.watchEvent(battleEventId);
   }

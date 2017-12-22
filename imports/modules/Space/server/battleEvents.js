@@ -16,6 +16,8 @@ const add = function({ userArmy, enemyArmy, data }) {
 };
 
 export default {
+  ...Lib,
+
   createBattleAndAdd({
     username,
     userArmy,

@@ -1992,6 +1992,23 @@ const showSpaceEvent = function(id, event, offset, user) {
   }
 };
 
+const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 } }) {
+  const galaxy = new Galaxy({
+    user,
+    username,
+    isPopupLocked,
+    mapView,
+    planetsLayer,
+    shipsLayer,
+    offset,
+    myAllies,
+  });
+
+  galaxyByUsername[username] = galaxy;
+
+  return galaxy;
+};
+
 const initGalaxy = function() {
   const user = Meteor.user();
 
@@ -2006,8 +2023,6 @@ const initGalaxy = function() {
   if (galaxyHex) {
     const hex = new Hex(galaxyHex);
     center = hex.center();
-
-    showedHexes.push(hex);
   }
 
   observerSpaceEvents = Space.collection.find({}).observeChanges({
@@ -2023,6 +2038,7 @@ const initGalaxy = function() {
   if (galaxyHex) {
     loadHexes();
   } else {
+    viewGalaxy({ user });
     isLoading.set(false);
   }
 
@@ -2232,19 +2248,13 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
     const center = hex.center();
 
     const loadHex = function() {
-      const galaxy = new Galaxy({
+      viewGalaxy({
         user,
         username: hexInfo.username,
-        isPopupLocked,
-        mapView,
-        planetsLayer,
-        shipsLayer,
         offset: center,
-        myAllies,
       });
 
       showedHexes.push(hex);
-      galaxyByUsername[hexInfo.username] = galaxy;
     };
 
     if (visibleHex) {
@@ -2400,7 +2410,13 @@ Template.cosmos.events({
           showSpaceEvent(event._id, event, center, user);
         });
 
-        showHexes({ user, hexes });
+        showHexes({
+          user,
+          hexes,
+          visibleUsernames: {
+            [user.username]: true,
+          },
+        });
 
         mapView.setView([center.x, center.y], 2);
       });

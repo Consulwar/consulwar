@@ -65,15 +65,15 @@ const cubeSpiral = function(center, count, initialRadius = 0) {
   return hexes;
 };
 
-// export default function generateHexes(collection, count) {
-//   const hexes = cubeSpiral(Cube(0, 0, 0), count);
+export default function generateHexes(collection, count) {
+  const hexes = cubeSpiral(Cube(0, 0, 0), count);
+
+  hexes.forEach((hex) => {
+    collection.insert(hex);
+  });
+}
+
+// const needCount = parseInt(process.argv[2], 10);
+// const initialRadius = parseInt(process.argv[3], 10) || 0;
 //
-//   hexes.forEach((hex) => {
-//     collection.insert(hex);
-//   });
-// }
-
-const needCount = parseInt(process.argv[2], 10);
-const initialRadius = parseInt(process.argv[3], 10) || 0;
-
-console.log(JSON.stringify(cubeSpiral(Cube(0, 0, 0), needCount, initialRadius)));
+// console.log(JSON.stringify(cubeSpiral(Cube(0, 0, 0), needCount, initialRadius)));

@@ -176,10 +176,16 @@ initEarthServerImportHex = function () {
   const generateNames = function (hexes) {
     const allNames = {};
 
-    hexes.forEach(({ feature }) => {
-      const centroid = turf.centroid(feature);
-      createRequest(feature, centroid.geometry.coordinates, allNames);
-    });
+    if (process.env.NODE_ENV === 'development') {
+      hexes.forEach(({ feature }) => {
+        feature.properties.name = generateName();
+      });
+    } else {
+      hexes.forEach(({ feature }) => {
+        const centroid = turf.centroid(feature);
+        createRequest(feature, centroid.geometry.coordinates, allNames);
+      });
+    }
   };
 
 

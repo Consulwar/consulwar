@@ -23,7 +23,8 @@ const cubeNeighbor = function(cube, direction) {
   return cubeAdd(cube, cubeDirection(direction));
 };
 
-let allCount = 1;
+let allCount;
+let skipCount;
 
 const cubeRing = function(center, radius) {
   const results = [];
@@ -31,7 +32,7 @@ const cubeRing = function(center, radius) {
 
   for (let i = 0; i < 6; i += 1) {
     for (let j = 0; j < radius; j += 1) {
-      if (allCount % 5 === 0) {
+      if (allCount % skipCount === 0) {
         cube.username = null;
       }
 
@@ -65,7 +66,10 @@ const cubeSpiral = function(center, count, initialRadius = 0) {
   return hexes;
 };
 
-export default function generateHexes(collection, count) {
+export default function generateHexes(collection, count, startCount = 1, skip = 5) {
+  allCount = startCount;
+  skipCount = skip;
+
   const hexes = cubeSpiral(Cube(0, 0, 0), count);
 
   hexes.forEach((hex) => {

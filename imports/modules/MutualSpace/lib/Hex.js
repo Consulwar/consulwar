@@ -3,6 +3,15 @@ import MutualConfig from './config';
 const size = MutualConfig.GALACTIC_RADIUS;
 
 class Hex {
+  static corner(center, i) {
+    const angleDeg = 60 * i;
+    const angleRad = (Math.PI / 180) * angleDeg;
+    return [
+      center.x + (size * Math.sin(angleRad)),
+      center.y + (size * Math.cos(angleRad)),
+    ];
+  }
+
   constructor({ x, z }) {
     this.x = x;
     this.z = z;
@@ -23,15 +32,6 @@ class Hex {
     const x = -(size * Math.sqrt(3) * (this.z + (this.x / 2)));
     const y = ((size * 3) / 2) * this.x;
     return { x, y };
-  }
-
-  static corner(center, i) {
-    const angleDeg = 60 * i;
-    const angleRad = (Math.PI / 180) * angleDeg;
-    return [
-      center.x + (size * Math.sin(angleRad)),
-      center.y + (size * Math.cos(angleRad)),
-    ];
   }
 }
 

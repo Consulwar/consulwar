@@ -83,7 +83,7 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
       planet.mission = null;
     }
 
-    if (planet && data.isOneway && user._id === data.userId) {
+    if (planet && (data.isOneway || data.mission) && user._id === data.userId) {
       // Остаемся на планете
       if (planet.isHome || planet.armyId) {
         // merge army

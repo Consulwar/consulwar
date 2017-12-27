@@ -52,7 +52,7 @@ export default Space.jobs.processJobs(
     const userHealth = Game.Unit.calcUnitsHealth(userArmy.units, userId);
 
     // generate appropriate mission and calculate enemy health
-    const mission = Game.Planets.generateMission(planet);
+    const mission = Game.Planets.generateMission(planet, userId);
 
     const enemyFleet = _.clone(Game.Battle.items[mission.type].level[mission.level].enemies);
     _(enemyFleet).mapObject((val, name) => Game.Unit.rollCount(enemyFleet[name]));

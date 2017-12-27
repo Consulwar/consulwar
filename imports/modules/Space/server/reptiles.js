@@ -48,7 +48,7 @@ const spawnTradeFleet = function(hand, segment) {
       y: targetPlanet.y,
     };
 
-    let mission = Game.Planets.generateMission(startPlanet);
+    let mission = Game.Planets.generateMission(startPlanet, user._id);
     if (!mission) {
       mission = {
         level: Game.Random.interval(1, 10),

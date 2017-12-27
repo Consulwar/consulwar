@@ -10,8 +10,8 @@ import battleDelay from '../battleDelay';
 import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
 
-const reptilesWin = function({ battle, roundResult, users, planet, data }) {
-  if (planet && planet.status === Game.Planets.STATUS.HUMANS) {
+const reptilesWin = function({ battle, roundResult, planet, data }) {
+  if (planet && !planet.isHome && planet.status === Game.Planets.STATUS.HUMANS) {
     planet.status = Game.Planets.STATUS.NOBODY;
     planet.minerUsername = null;
   }
@@ -48,7 +48,7 @@ const reptilesWin = function({ battle, roundResult, users, planet, data }) {
         planet.mission.units = null;
       }
 
-      FlightEvents.flyBack(data.reptileData);
+      FlightEvents.flyBack(data.reptileData || data);
     }
   } else {
     // Продолжают прерванный боем полет

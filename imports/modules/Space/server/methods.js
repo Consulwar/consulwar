@@ -29,13 +29,19 @@ Meteor.methods({
       throw new Meteor.Error('Сперва нужно верифицировать Email');
     }
 
-    if (!Space.canSendFleet()) {
-      throw new Meteor.Error('Слишком много флотов уже отправлено');
-    }
-
     const basePlanet = Game.Planets.getOne(baseId);
     if (!basePlanet) {
-      throw new Meteor.Error('Плаента не существует');
+      throw new Meteor.Error('Планета не существует');
+    }
+
+    const { canSend, needSliceArmy } = Space.checkSendFleet({
+      planet: basePlanet,
+      units,
+      userId: user._id,
+    });
+
+    if (!canSend) {
+      throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
     const enemyShip = FlightEvents.getOne(targetId);
@@ -114,17 +120,19 @@ Meteor.methods({
       sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
     }
 
-    const destUnits = { army: { fleet: units } };
-    const newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    let newArmyId;
 
-    // update base planet
-    const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
-    if (!baseArmy) {
+    if (needSliceArmy) {
+      const destUnits = { army: { fleet: units } };
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    } else {
+      newArmyId = sourceArmyId;
+      Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
+
       basePlanet.armyId = null;
       basePlanet.armyUsername = null;
+      Game.Planets.update(basePlanet);
     }
-
-    Game.Planets.update(basePlanet);
 
     const flightData = {
       targetType: FlightEvents.TARGET.SHIP,
@@ -168,10 +176,6 @@ Meteor.methods({
     check(units, Object);
     check(isOneway, Boolean);
 
-    if (!Space.canSendFleet()) {
-      throw new Meteor.Error('Слишком много флотов уже отправлено');
-    }
-
     let target;
 
     if (targetType === FlightEvents.TARGET.PLANET) {
@@ -207,21 +211,35 @@ Meteor.methods({
       throw new Meteor.Error('Не найдена стартовая планета');
     }
 
+    const { canSend, needSliceArmy } = Space.checkSendFleet({
+      planet: basePlanet,
+      units,
+      userId: user._id,
+    });
+
+    if (!canSend) {
+      throw new Meteor.Error('Слишком много флотов уже отправлено');
+    }
+
     // slice units
     let sourceArmyId = basePlanet.armyId;
     if (basePlanet.isHome) {
       sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
     }
 
-    const destUnits = { army: { fleet: units } };
-    const newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    let newArmyId;
 
-    // update base planet
-    const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
-    if (!baseArmy) {
+    if (needSliceArmy) {
+      const destUnits = { army: { fleet: units } };
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    } else {
+      newArmyId = sourceArmyId;
+      Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
+
       basePlanet.armyId = null;
       basePlanet.armyUsername = null;
     }
+
     basePlanet.timeRespawn = Game.getCurrentTime() + Config.ENEMY_RESPAWN_PERIOD;
     Game.Planets.update(basePlanet);
 

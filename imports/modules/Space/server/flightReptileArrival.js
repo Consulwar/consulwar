@@ -9,12 +9,13 @@ import BattleEvents from './battleEvents';
 import Reptiles from './reptiles';
 
 export default function reptileArrival(data) {
-  const { userId, username } = data;
-
   const planet = Game.Planets.getOne(data.targetId);
 
   if (!planet.mission) {
     if (planet.armyId || planet.isHome) {
+      const username = planet.armyUsername;
+      const userId = Game.Unit.getArmy({ id: planet.armyId }).user_id;
+
       const enemyFleet = FlightEvents.getFleetUnits(data);
       const enemyArmy = { reptiles: { fleet: enemyFleet } };
       const enemyGroup = createGroup({ army: enemyArmy, userId });

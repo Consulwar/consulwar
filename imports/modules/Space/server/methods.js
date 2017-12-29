@@ -69,7 +69,7 @@ Meteor.methods({
     const timeCurrent = Game.getCurrentTime();
     const timeLeft = Game.dateToTime(enemyShip.after) - timeCurrent;
 
-    const fromGalaxy = mutualSpaceCollection.findOne({ username: user.username });
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: basePlanet.username });
     if (fromGalaxy) {
       const hex = new Hex(fromGalaxy);
       const center = hex.center();

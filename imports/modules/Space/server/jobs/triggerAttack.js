@@ -55,7 +55,7 @@ export default Space.jobs.processJobs(
     const mission = Game.Planets.generateMission(planet, userId);
 
     const enemyFleet = _.clone(Game.Battle.items[mission.type].level[mission.level].enemies);
-    _(enemyFleet).mapObject((val, name) => Game.Unit.rollCount(enemyFleet[name]));
+    _.mapObject(enemyFleet, (val, name) => Game.Unit.rollCount(enemyFleet[name]));
 
     const enemyHealth = Game.Unit.calcUnitsHealth({
       reptiles: {

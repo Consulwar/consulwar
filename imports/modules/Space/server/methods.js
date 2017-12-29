@@ -313,6 +313,7 @@ Meteor.methods({
       TriggerAttackEvents.add({
         targetPlanet: basePlanet._id,
         userId: user._id,
+        username: user.username,
       });
     }
 

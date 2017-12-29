@@ -51,7 +51,7 @@ const completeOnPlanetMission = function(data) {
 };
 
 const completeOnEmptySelfPlanet = function(data) {
-  const { planet, userId } = data;
+  const { planet, userId, username } = data;
 
   if (planet.isHome || planet.armyId) {
     // merge army
@@ -64,7 +64,7 @@ const completeOnEmptySelfPlanet = function(data) {
     Game.Planets.update({
       ...planet,
       armyId: data.armyId,
-      armyUsername: data.username,
+      armyUsername: username,
     });
     Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
 
@@ -72,6 +72,7 @@ const completeOnEmptySelfPlanet = function(data) {
     TriggerAttackEvents.add({
       targetPlanet: planet._id,
       userId,
+      username,
     });
   }
 };

@@ -102,7 +102,7 @@ const completeOnEmptyPlanet = function(data) {
   }
 
   if (data.isOneway) {
-    if (planet.username === data.username) {
+    if (planet.armyUsername === data.username) {
       completeOnEmptySelfPlanet(data);
     } else {
       completeOnEmptyOtherPlanet(data);

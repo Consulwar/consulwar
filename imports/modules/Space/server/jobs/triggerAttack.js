@@ -29,7 +29,7 @@ export default Space.jobs.processJobs(
     const planet = Game.Planets.getOne(data.targetPlanet);
 
     const reptilePlanets = [];
-    const planets = Game.Planets.getAll(userId).fetch();
+    const planets = Game.Planets.getAll(planet.userId).fetch();
     for (let n = 0; n < planets.length; n += 1) {
       if (planets[n].hand === planet.hand
         && planets[n].segment === planet.segment
@@ -106,7 +106,7 @@ export default Space.jobs.processJobs(
       mission,
     };
 
-    const galaxy = mutualSpaceCollection.findOne({ username: data.username });
+    const galaxy = mutualSpaceCollection.findOne({ username: planet.username });
     if (galaxy) {
       flightData.hex = flightData.targetHex = new Hex(galaxy);
     }

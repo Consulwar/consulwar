@@ -6,6 +6,8 @@ import FlightEvents from '../flightEvents';
 import Utils from '../../lib/utils';
 import Config from '../config';
 import Lib from '../../lib/triggerAttack';
+import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
+import Hex from '../../../MutualSpace/lib/Hex';
 
 export default Space.jobs.processJobs(
   Lib.EVENT_TYPE,
@@ -24,10 +26,10 @@ export default Space.jobs.processJobs(
     const data = job.data;
     const userId = data.userId;
 
-    const planet = Game.Planets.getOne(data.targetPlanet, userId);
+    const planet = Game.Planets.getOne(data.targetPlanet);
 
     const reptilePlanets = [];
-    const planets = Game.Planets.getAll(userId).fetch();
+    const planets = Game.Planets.getAll(planet.userId).fetch();
     for (let n = 0; n < planets.length; n += 1) {
       if (planets[n].hand === planet.hand
         && planets[n].segment === planet.segment
@@ -47,19 +49,19 @@ export default Space.jobs.processJobs(
       return done(); // strange shit suddenly appeared
     }
 
-    const userHealth = Game.Unit.calcUnitsHealth(userArmy.units);
+    const userHealth = Game.Unit.calcUnitsHealth(userArmy.units, userId);
 
     // generate appropriate mission and calculate enemy health
-    const mission = Game.Planets.generateMission(planet);
+    const mission = Game.Planets.generateMission(planet, userId);
 
     const enemyFleet = _.clone(Game.Battle.items[mission.type].level[mission.level].enemies);
-    _(enemyFleet).mapObject((val, name) => Game.Unit.rollCount(enemyFleet[name]));
+    _.mapObject(enemyFleet, (val, name) => Game.Unit.rollCount(enemyFleet[name]));
 
     const enemyHealth = Game.Unit.calcUnitsHealth({
       reptiles: {
         fleet: enemyFleet,
       },
-    });
+    }, userId);
 
     // check attack possibility
     if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {
@@ -71,7 +73,7 @@ export default Space.jobs.processJobs(
     let minDistance = Number.MAX_VALUE;
     let curDistance = Number.MAX_VALUE;
     for (let i = 0; i < reptilePlanets.length; i += 1) {
-      curDistance = Game.Planets.calcDistance(reptilePlanets[i], planet);
+      curDistance = Utils.calcDistance(reptilePlanets[i], planet);
       if (!nearestPlanet || curDistance < minDistance) {
         nearestPlanet = reptilePlanets[i];
         minDistance = curDistance;
@@ -89,7 +91,7 @@ export default Space.jobs.processJobs(
       y: planet.y,
     };
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
       userId,
       username: data.username,
@@ -102,7 +104,14 @@ export default Space.jobs.processJobs(
       isOneway: false,
       engineLevel: 1,
       mission,
-    });
+    };
+
+    const galaxy = mutualSpaceCollection.findOne({ username: planet.username });
+    if (galaxy) {
+      flightData.hex = flightData.targetHex = new Hex(galaxy);
+    }
+
+    FlightEvents.add(flightData);
 
     return done();
   },

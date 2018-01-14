@@ -244,7 +244,7 @@ Game.Earth.nextTurn = function() {
 
           const reptileGroup = createGroup({ army: reptileArmy });
 
-          Battle.addGroup(zone.battleId, Battle.ENEMY_SIDE, 'ai', reptileGroup);
+          Battle.addGroup(zone.battleId, Battle.ENEMY_SIDE, Battle.aiName, reptileGroup);
         });
       }
 

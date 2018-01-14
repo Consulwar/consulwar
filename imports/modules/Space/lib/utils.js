@@ -127,8 +127,8 @@ const calcTimeByDistance = function(currentDistance, totalDistance, maxSpeed, ac
     // возврат с положительным ускорением),
     // поэтому берем корень с трицательным дискриминантом, это будет ближняя точка
 
-    const decSpeedTime = (maxSpeed - Math.sqrt(((maxSpeed ** 2) - 2) *
-      acceleration * decSpeedDist)) / acceleration;
+    const decSpeedTime = (maxSpeed - Math.sqrt((maxSpeed ** 2) - (2 *
+      acceleration * decSpeedDist))) / acceleration;
 
     time = incSpeedTime + stableSpeedTime + decSpeedTime;
   } else {

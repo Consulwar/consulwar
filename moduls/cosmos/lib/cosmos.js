@@ -1,4 +1,6 @@
 import FlightEvents from '/imports/modules/Space/lib/flightEvents';
+import { Meteor } from "meteor/meteor";
+import User from '../../../imports/modules/User/lib/User';
 
 initCosmosLib = function() {
 'use strict';
@@ -47,45 +49,54 @@ Game.Planets = {
     ][count || Game.Planets.getExtraColoniesCount()];
   },
 
-  getAll: function (user_id = Meteor.userId()) {
+  getAll: function (userId = Meteor.userId()) {
     return Game.Planets.Collection.find({
-      user_id,
+      userId,
+    });
+  },
+
+  getAllByOwner(user = Meteor.user()) {
+    return Game.Planets.Collection.find({
+      minerUsername: user.username,
     });
   },
 
   getByArtefact: function (artefact) {
     var condition = {
-      user_id: Meteor.userId(),
+      userId: Meteor.userId(),
     };
     condition['artefacts.' + artefact] = { $gt: 0 };
     return Game.Planets.Collection.find(condition).fetch();
   },
 
-  getOne: function (id, user_id = Meteor.userId()) {
+  getOne: function (id) {
     return Game.Planets.Collection.findOne({
-      user_id,
       _id: id,
     });
   },
 
-  getBase: function (user_id = Meteor.userId()) {
+  getBase: function (userId = Meteor.userId()) {
     return Game.Planets.Collection.findOne({
-      user_id,
+      userId,
       isHome: true,
     });
   },
 
-  getColonies: function () {
+  getColonies: function (options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
+
     return Game.Planets.Collection.find({
-      user_id: Meteor.userId(),
-      status: Game.Planets.STATUS.HUMANS,
+      minerUsername: user.username,
     }).fetch();
   },
 
-  getPlanetsWithArmy(userId = Meteor.userId()) {
+  getPlanetsWithArmy(options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
+
     return Game.Planets.Collection.find({
-      user_id: userId,
-      armyId: { $exists: true },
+      armyUsername: user.username,
     }).fetch();
   },
 
@@ -154,7 +165,7 @@ Game.Planets = {
   },
 
   getFleetUnits: function (planetId, userId = Meteor.userId()) {
-    var planet = Game.Planets.getOne(planetId, userId);
+    var planet = Game.Planets.getOne(planetId);
     if (!planet) {
       return null;
     }

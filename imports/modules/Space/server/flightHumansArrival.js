@@ -4,6 +4,7 @@ import Game from '/moduls/game/lib/main.game';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
 
+import Space from '../lib/space';
 import FlightEvents from './flightEvents';
 
 import TriggerAttackEvents from './triggerAttackEvents';
@@ -49,42 +50,70 @@ const completeOnPlanetMission = function(data) {
   Game.Unit.removeArmy(data.armyId, userId);
 };
 
+const completeOnEmptySelfPlanet = function(data) {
+  const { planet, userId, username } = data;
+
+  if (planet.isHome || planet.armyId) {
+    // merge army
+    const destArmyId = (planet.isHome)
+      ? Game.Unit.getHomeFleetArmy({ userId })._id
+      : planet.armyId;
+    Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
+  } else {
+    // move army
+    Game.Planets.update({
+      ...planet,
+      armyId: data.armyId,
+      armyUsername: username,
+    });
+    Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
+
+    // add reptiles attack trigger
+    TriggerAttackEvents.add({
+      targetPlanet: planet._id,
+      userId,
+      username,
+    });
+  }
+};
+
+const completeOnEmptyOtherPlanet = function(data) {
+  const { planet } = data;
+
+  if (planet.armyId) {
+    FlightEvents.flyBack(data);
+  } else {
+    // move army
+    Game.Planets.update({
+      ...planet,
+      armyId: data.armyId,
+      armyUsername: data.username,
+    });
+    Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
+  }
+};
+
 const completeOnEmptyPlanet = function(data) {
   const { planet, userId } = data;
+  const user = Meteor.users.findOne({ _id: userId });
 
   if (!planet.isDiscovered) {
-    Game.Planets.discover(planet._id, userId);
+    Game.Planets.discover(planet._id, user);
   }
 
   if (data.isOneway) {
-    if (planet.isHome || planet.armyId) {
-      // merge army
-      const destArmyId = (planet.isHome)
-        ? Game.Unit.getHomeFleetArmy({ userId })._id
-        : planet.armyId;
-      Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
+    if (planet.armyUsername === data.username) {
+      completeOnEmptySelfPlanet(data);
     } else {
-      // move army
-      Game.Planets.update({
-        ...planet,
-        armyId: data.armyId,
-      });
-      Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET, userId);
-
-      // add reptiles attack trigger
-      TriggerAttackEvents.add({
-        targetPlanet: planet._id,
-        userId,
-      });
+      completeOnEmptyOtherPlanet(data);
     }
   } else {
-    // fly back
     FlightEvents.flyBack(data);
   }
 };
 
 const completeOnPlanet = function(data) {
-  const planet = Game.Planets.getOne(data.targetId, data.userId);
+  const planet = Game.Planets.getOne(data.targetId);
   if (planet.mission) {
     completeOnPlanetMission({ ...data, planet });
   } else {
@@ -110,8 +139,8 @@ const completeOnShip = function(data) {
   const targetShip = FlightEvents.getOne(data.targetId);
 
   if (targetShip) {
-    const job = FlightEvents.jobs.getJob(targetShip._id);
-    job.done();
+    const job = Space.jobs.getJob(targetShip._id);
+    job.cancel();
 
     // Create battle
     const enemyArmy = {
@@ -134,6 +163,7 @@ const completeOnShip = function(data) {
       data: {
         ...data,
         fleetId: data.targetId,
+        reptileData: targetShip.data,
       },
     });
 
@@ -160,7 +190,7 @@ const completeOnShip = function(data) {
 };
 
 const completeOnBattle = function(data) {
-  const battle = Battle.fromDB(data.battleId);
+  const battle = Battle.fromDB(data.targetId);
 
   if (battle) {
     const userArmy = {
@@ -169,7 +199,7 @@ const completeOnBattle = function(data) {
       },
     };
     const userGroup = createGroup({ army: userArmy, userId: data.userId });
-    Battle.addGroup(data.battleId, Battle.USER_SIDE, data.username, userGroup);
+    Battle.addGroup(data.targetId, Battle.USER_SIDE, data.username, userGroup);
 
     Game.Unit.removeArmy(data.armyId, data.userId);
   } else {

@@ -2,7 +2,7 @@ import Game from '/moduls/game/lib/main.game';
 import Config from './config';
 import Reptiles from './reptiles';
 
-export default function () {
+export default function ({ userId = Meteor.userId() } = {}) {
   if (Game.Planets.getLastFunTime() + Config.FUN_PERIOD > Game.getCurrentTime()) {
     return false;
   }
@@ -19,7 +19,9 @@ export default function () {
     const planet = colonies[i];
     const fleets = planet.isHome ? 3 : 1;
     for (let j = 0; j < fleets; j += 1) {
-      Reptiles.sendReptileFleetToPlanet({ planetId: planet._id, mission });
+      if (planet.userId === userId) {
+        Reptiles.sendReptileFleetToPlanet({ planetId: planet._id, mission });
+      }
     }
   }
 

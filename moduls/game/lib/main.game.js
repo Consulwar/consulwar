@@ -663,6 +663,10 @@ Game = {
     return Math.floor(new Date().valueOf() / 1000);
   },
 
+  dateToTime(date) {
+    return Math.floor(new Date(date).getTime() / 1000);
+  },
+
   getCurrentServerTime: function() {
     if (Meteor.isClient) {
       return Session.get('serverTime');

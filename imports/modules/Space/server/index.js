@@ -1,4 +1,7 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import datadog from '/imports/modules/Log/server/datadog';
+import { Job } from '/moduls/game/lib/jobs';
 import Space from '../lib/space';
 import Config from './config';
 import './methods';
@@ -43,11 +46,26 @@ Space.collection._ensureIndex({
   status: 1,
 });
 
-Meteor.publish('spaceEvents', function () {
+Meteor.publish('mySpaceEvents', function() {
   if (this.userId) {
     return Space.collection.find({
       'data.userId': this.userId,
-      status: { $ne: 'completed' },
+      status: Space.filterActive,
+    });
+  }
+  return null;
+});
+
+Meteor.publish('spaceEvents', function(hexes) {
+  check(hexes, [Object]);
+
+  if (this.userId && hexes.length > 0) {
+    return Space.collection.find({
+      $or: [
+        { 'data.hex': { $in: hexes } },
+        { 'data.targetHex': { $in: hexes } },
+      ],
+      status: Space.filterActive,
     });
   }
   return null;
@@ -57,6 +75,44 @@ export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
 
   Space.jobs.startJobServer();
+
+  if (datadog.gauge) {
+    const job = new Job(Space.jobs, 'datadog', {});
+    job
+      .repeat({
+        wait: 1000,
+      })
+      .save();
+
+    Space.jobs.processJobs(
+      'datadog',
+      {
+        concurrency: Config.JOBS.concurrency,
+        payload: Config.JOBS.payload,
+        pollInterval: Config.JOBS.pollInterval,
+        prefetch: Config.JOBS.prefetch,
+      },
+      (job, cb) => {
+        datadog.gauge(
+          'jobs.ready',
+          Space.collection.find({ status: 'ready' }).count(),
+        );
+
+        datadog.gauge(
+          'jobs.failed',
+          Space.collection.find({ status: 'failed' }).count(),
+        );
+
+        datadog.gauge(
+          'jobs.waiting',
+          Space.collection.find({ status: 'waiting' }).count(),
+        );
+
+        job.done();
+        cb();
+      },
+    );
+  }
 
   process.on('SIGINT', function() {
     let i = 0;

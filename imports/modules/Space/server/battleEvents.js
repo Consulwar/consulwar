@@ -16,6 +16,8 @@ const add = function({ userArmy, enemyArmy, data }) {
 };
 
 export default {
+  ...Lib,
+
   createBattleAndAdd({
     username,
     userArmy,
@@ -54,7 +56,7 @@ export default {
     return Space.collection.findOne({
       type: Lib.EVENT_TYPE,
       'data.planetId': planetId,
-      status: { $ne: 'completed' },
+      status: Space.filterActive,
     });
   },
 
@@ -62,7 +64,7 @@ export default {
     return Space.collection.findOne({
       type: Lib.EVENT_TYPE,
       'data.fleetId': fleetId,
-      status: { $ne: 'completed' },
+      status: Space.filterActive,
     });
   },
 };

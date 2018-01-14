@@ -4,6 +4,7 @@ import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import BattleEvents from '/imports/modules/Space/server/battleEvents';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
+import User from '/imports/modules/User/lib/User';
 
 initUnitServer = function() {
 'use strict';
@@ -79,7 +80,6 @@ Game.Unit.complete = function(task) {
 
 Game.Unit.initialize = function(userId = Meteor.userId()) {
   const hangarArmy = Game.Unit.getHangarArmy({ userId });
-
   if (hangarArmy === undefined) {
     Game.Unit.Collection.insert({
       user_id: userId,
@@ -97,11 +97,12 @@ Game.Unit.initialize = function(userId = Meteor.userId()) {
     });
 
     Game.Planets.Collection.update({
-      user_id: userId,
+      userId,
       isHome: true,
     }, {
       $set: {
         armyId: fleetArmyId,
+        armyUsername: User.getById({ userId }).username,
       },
     });
   }

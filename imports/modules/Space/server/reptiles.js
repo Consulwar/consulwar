@@ -6,6 +6,8 @@ import Space from '../lib/space';
 import FlightEvents from './flightEvents';
 import Utils from '../lib/utils';
 import Config from './config';
+import Hex from '../../MutualSpace/lib/Hex';
+import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 
 const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
 
@@ -14,7 +16,7 @@ const spawnTradeFleet = function(hand, segment) {
 
   // find planets inside hand
   const finishPlanets = Game.Planets.Collection.find({
-    user_id: user._id,
+    userId: user._id,
     hand,
     mission: { $ne: null },
   }).fetch();
@@ -46,7 +48,7 @@ const spawnTradeFleet = function(hand, segment) {
       y: targetPlanet.y,
     };
 
-    let mission = Game.Planets.generateMission(startPlanet);
+    let mission = Game.Planets.generateMission(startPlanet, user._id);
     if (!mission) {
       mission = {
         level: Game.Random.interval(1, 10),
@@ -57,7 +59,7 @@ const spawnTradeFleet = function(hand, segment) {
     const engineLevel = 0;
     const flyTime = Utils.calcFlyTime(startPosition, targetPosition, engineLevel);
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
       userId: user._id,
       username: user.username,
@@ -72,7 +74,14 @@ const spawnTradeFleet = function(hand, segment) {
       mission,
       hand: startPlanet.hand,
       segment: startPlanet.segment,
-    });
+    };
+
+    const galaxy = mutualSpaceCollection.findOne({ username: user.username });
+    if (galaxy) {
+      flightData.hex = flightData.targetHex = new Hex(galaxy);
+    }
+
+    FlightEvents.add(flightData);
   }
 };
 
@@ -80,7 +89,7 @@ const actualizeTradeFleets = function() {
   // find fleets and group by sector
   Space.collection.find({
     'data.userId': Meteor.userId(),
-    status: { $ne: 'completed' },
+    status: Space.filterActive,
   });
 
   const fleets = Space.collection.find({
@@ -221,7 +230,7 @@ const sendReptileFleetToPlanet = function({
 
     const user = Meteor.user();
 
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
       userId: user._id,
       username: user.username,
@@ -229,13 +238,19 @@ const sendReptileFleetToPlanet = function({
       startPlanetId: startPlanet._id,
       targetPosition,
       targetId: targetPlanet._id,
-      startTime: timeCurrent,
       flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
       isHumans: false,
       isOneway: false,
       engineLevel,
       mission,
-    });
+    };
+
+    const galaxy = mutualSpaceCollection.findOne({ username: user.username });
+    if (galaxy) {
+      flightData.hex = flightData.targetHex = new Hex(galaxy);
+    }
+
+    FlightEvents.add(flightData);
   }
 };
 
@@ -289,7 +304,7 @@ const actualize = function() {
 };
 
 const stealUserResources = function({ enemyArmy, userId, battle }) {
-  const userResources = Game.Resources.getValue(userId);
+  const userResources = Game.Resources.getValue({ userId });
   const stealCost = Game.Unit.calculateBaseArmyCost(enemyArmy);
 
   const bunker = SpecialEffect.getValue({
@@ -321,7 +336,7 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
     }
   });
 
-  Game.Resources.steal(stealCost);
+  Game.Resources.steal(stealCost, userId);
 
   // save history
   if (battle) {

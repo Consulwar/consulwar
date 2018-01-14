@@ -31,14 +31,14 @@ Game.Unit = {
   },
 
   getHomeFleetArmy({
-    userId = Meteor.userId(),
-    homePlanet = Game.Planets.getBase(userId),
+    userId,
+    homePlanet = Game.Planets.getBase(userId || Meteor.userId()),
   } = {}) {
     return Game.Unit.getArmy({ id: homePlanet.armyId });
   },
 
   get: function({ group, engName, ...options }) {
-    var record = Game.Unit.getHomeFleetArmy(options);
+    const record = Game.Unit.getHomeFleetArmy(options);
 
     if (record
       && record.units
@@ -102,7 +102,7 @@ Game.Unit = {
     return calculateGroupPower(group);
   },
 
-  calcUnitsHealth: function(units) {
+  calcUnitsHealth: function(units, userId = Meteor.userId()) {
     if (!units) {
       return 0;
     }
@@ -111,7 +111,7 @@ Game.Unit = {
     for (var side in units) {
       for (var group in units[side]) {
         for (var name in units[side][group]) {
-          var life = Game.Unit.items[side][group][name].characteristics.health.armor;
+          var life = Game.Unit.items[side][group][name].getCharacteristics({ userId }).health.armor;
           var count = units[side][group][name];
           if (life && count) {
             power += (life * count);

@@ -61,6 +61,11 @@
                   {{formatSeconds (fleetTime attackTime)}}
                 </a>
               {{/if}}
+              {{#if battles}}
+                <a class="battles" href="">
+                  Сражений({{battles}})
+                </a>
+              {{/if}}
             {{/with}}
           {{else}}
             <a>Нет передвижений флота</a>

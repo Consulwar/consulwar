@@ -105,6 +105,7 @@ let recalculateCurrentCounts = function(battle) {
 
   let killedObj = {};
   let leftObj = {};
+  const leftByUsername = {};
   let decrement = {};
 
   battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
@@ -136,6 +137,12 @@ let recalculateCurrentCounts = function(battle) {
 
     if (left > 0) {
       incToObj(leftObj, [sideName, armyName, typeName, unitName], left);
+
+      if (!leftByUsername[username]) {
+        leftByUsername[username] = {};
+      }
+
+      incToObj(leftByUsername[username], [armyName, typeName, unitName], left);
     }
 
     incToObj(killedObj, [sideName, armyName, typeName, unitName], killed);
@@ -145,6 +152,7 @@ let recalculateCurrentCounts = function(battle) {
 
   return {
     left: leftObj,
+    leftByUsername,
     killed: killedObj,
     decrement: decrement
   };

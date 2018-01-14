@@ -253,7 +253,7 @@ Meteor.methods({
     });
 
     Game.Planets.Collection.update({
-      user_id: Meteor.userId(),
+      userId: Meteor.userId(),
       isHome: true
     }, {
       $set: {

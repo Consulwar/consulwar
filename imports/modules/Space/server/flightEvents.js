@@ -24,9 +24,12 @@ const flyBack = function(data) {
     isOneway: true,
     isBack: true,
     startPosition: data.targetPosition,
+    startPlanetId: data.targetId,
     targetPosition: data.returnDestination,
     targetId: data.returnPlanetId,
     targetType: Lib.TARGET.PLANET,
+    targetHex: data.hex,
+    hex: data.targetHex,
   });
 };
 

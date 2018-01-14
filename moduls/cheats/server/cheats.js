@@ -181,7 +181,7 @@ if (process.env.NODE_ENV == 'development') {
     'cheats.generateAllPlanets': function() {
       var galactic = Game.Planets.getBase().galactic;
       for (var i = 0; i < galactic.hands; i++) {
-        for (var j = 0; j < galactic.segments; j++) {
+        for (var j = 0; j <= galactic.segments; j++) {
           Game.Planets.generateSector(galactic, i, j, true);
         }
       }

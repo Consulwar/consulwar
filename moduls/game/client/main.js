@@ -1,5 +1,7 @@
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
+import Battle from '../../battle/lib/imports/battle';
+import BattleCollection from '../../battle/lib/imports/collection';
 
 Blaze._allowJavascriptUrls();
 
@@ -34,6 +36,7 @@ initCheatsClient();
 initPopupClient();
 initPleerClient();
 initEntranceRewardClient();
+initAllianceClient();
 
 
 /*
@@ -117,6 +120,7 @@ Template.index.events({
 
 Meteor.subscribe('game');
 Meteor.subscribe('queue');
+Meteor.subscribe('myAlliance');
 
 
 Game.Queue.Collection.find({}).observe({ 
@@ -319,10 +323,6 @@ Deps.autorun(function(){
   }
 });*/
 
-const dateToTime = function (date) {
-  return Math.floor(new Date(date).getTime() / 1000);
-};
-
 var helpers = {
   currentRouteName: function() { return Router.current().route.getName(); },
   information: function() {
@@ -375,8 +375,12 @@ var helpers = {
   fleetInfo: function() {
     var reinforcements = Reinforcement.getAllByUserId().fetch();
     var fleets = FlightEvents.getFleetsEvents().fetch();
-    
-    if (reinforcements.length === 0 && fleets.length === 0) {
+    const battles = BattleCollection.find({
+      status: Battle.Status.progress,
+      userNames: Meteor.user().username,
+    }).fetch();
+
+    if (reinforcements.length === 0 && fleets.length === 0 && battles.length === 0) {
       return null;
     }
 
@@ -391,7 +395,7 @@ var helpers = {
     var attackTime = null;
 
     for (var i = 0; i < fleets.length; i++) {
-      const after = dateToTime(fleets[i].after);
+      const after = Game.dateToTime(fleets[i].after);
       if (fleets[i].data.isHumans) {
         consul++;
         if (consulTime > after) {
@@ -427,7 +431,7 @@ var helpers = {
 
     return {
       reinforcements: reinforcements.length,
-      reinforcementsTime: reinforcements.length > 0 ? dateToTime(reinforcements[0].after) : 0,
+      reinforcementsTime: reinforcements.length > 0 ? Game.dateToTime(reinforcements[0].after) : 0,
       reinforcementsId: reinforcements.length > 0 ? reinforcements[0]._id : null,
       consul: consul,
       consulTime: consulTime,
@@ -437,7 +441,8 @@ var helpers = {
       reptileId: reptileId,
       isWaitingAttack: isWaitingAttack,
       attackId: attackId,
-      attackTime: attackTime
+      attackTime: attackTime,
+      battles: battles.length,
     };
   },
 

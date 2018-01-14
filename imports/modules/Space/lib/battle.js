@@ -7,7 +7,7 @@ const getAllByUserId = function(userId = Meteor.userId()) {
   return Space.collection.find({
     type: EVENT_TYPE,
     'data.userId': userId,
-    status: { $ne: 'completed' },
+    status: Space.filterActive,
   }, {
     sort: {
       after: 1,
@@ -19,7 +19,7 @@ const findByBattleId = function(battleId) {
   return Space.collection.findOne({
     type: EVENT_TYPE,
     'data.battleId': battleId,
-    status: { $ne: 'completed' },
+    status: Space.filterActive,
   });
 };
 

@@ -1,4 +1,6 @@
+import Game from '/moduls/game/lib/main.game';
 import Utils from './utils';
+import Hex from '../../MutualSpace/lib/Hex';
 
 const {
   calcAngle,
@@ -10,22 +12,28 @@ const {
   calcFlyTime,
 } = Utils;
 
-export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeCurrent }) {
-  const angle = calcAngle(
-    targetShip.data.startPosition,
-    targetShip.data.targetPosition,
-  );
-  const totalDistance = calcDistance(
-    targetShip.data.startPosition,
-    targetShip.data.targetPosition,
-  );
+export default function({ attackerPosition, attackerEngineLevel, targetShip, timeCurrent }) {
+  const startPosition = { ...targetShip.data.startPosition };
+  const targetPosition = { ...targetShip.data.targetPosition };
+  if (targetShip.data.hex) {
+    const center = new Hex(targetShip.data.hex).center();
+    startPosition.x += center.x;
+    startPosition.y += center.y;
+
+    const targetHexCenter = new Hex(targetShip.data.targetHex).center();
+    targetPosition.x += targetHexCenter.x;
+    targetPosition.y += targetHexCenter.y;
+  }
+
+  const angle = calcAngle(startPosition, targetPosition);
+  const totalDistance = calcDistance(startPosition, targetPosition);
 
   const startPoint = {
-    x: targetShip.data.startPosition.x,
-    y: targetShip.data.startPosition.y,
+    x: startPosition.x,
+    y: startPosition.y,
   };
 
-  const targetShipTime = timeCurrent - targetShip.created;
+  const targetShipTime = timeCurrent - Game.dateToTime(targetShip.created);
   const targetShipSpeed = calcMaxSpeed(targetShip.data.engineLevel);
   const targetShipAcc = calcAcceleration(targetShip.data.engineLevel);
 
@@ -53,7 +61,7 @@ export default function({ attackerPlanet, attackerEngineLevel, targetShip, timeC
       y: startPoint.y + (distance * Math.sin(angle)),
     };
 
-    const timeAttack = calcFlyTime(attackerPlanet, attackPoint, attackerEngineLevel);
+    const timeAttack = calcFlyTime(attackerPosition, attackPoint, attackerEngineLevel);
 
     // check
     if (timeAttack >= timeLeft) {

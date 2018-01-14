@@ -10,9 +10,12 @@ import FlightEvents from './flightEvents';
 import TriggerAttackEvents from './triggerAttackEvents';
 import Config from './config';
 import BattleEvents from './battleEvents';
+import mutualSpaceCollection from '../../MutualSpace/lib/collection';
+import mutualSpaceConfig from '../../MutualSpace/lib/config';
+import Hex from '../../MutualSpace/lib/Hex';
 
 Meteor.methods({
-  'space.attackReptileFleet'(baseId, targetId, units, targetX, targetY) {
+  'space.attackReptileFleet'(baseId, targetId, units) {
     const user = User.getById();
     User.checkAuth({ user });
 
@@ -21,20 +24,24 @@ Meteor.methods({
     check(baseId, String);
     check(targetId, String);
     check(units, Object);
-    check(targetX, Number);
-    check(targetY, Number);
 
     if (!Game.User.haveVerifiedEmail()) {
       throw new Meteor.Error('Сперва нужно верифицировать Email');
     }
 
-    if (!Space.canSendFleet()) {
-      throw new Meteor.Error('Слишком много флотов уже отправлено');
-    }
-
     const basePlanet = Game.Planets.getOne(baseId);
     if (!basePlanet) {
-      throw new Meteor.Error('Плаента не существует');
+      throw new Meteor.Error('Планета не существует');
+    }
+
+    const { canSend, needSliceArmy } = Space.checkSendFleet({
+      planet: basePlanet,
+      units,
+      userId: user._id,
+    });
+
+    if (!canSend) {
+      throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
     const enemyShip = FlightEvents.getOne(targetId);
@@ -56,18 +63,22 @@ Meteor.methods({
       x: basePlanet.x,
       y: basePlanet.y,
     };
-
-    const targetPosition = {
-      x: targetX,
-      y: targetY,
-    };
+    const startPositionWithOffset = { ...startPosition };
 
     // check time
-    const timeCurrent = Game.getCurrentTime() * 1000;
-    const timeLeft = enemyShip.after - timeCurrent;
+    const timeCurrent = Game.getCurrentTime();
+    const timeLeft = Game.dateToTime(enemyShip.after) - timeCurrent;
+
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: basePlanet.username });
+    if (fromGalaxy) {
+      const hex = new Hex(fromGalaxy);
+      const center = hex.center();
+      startPositionWithOffset.x += center.x;
+      startPositionWithOffset.y += center.y;
+    }
 
     const attackOptions = calcAttackOptions({
-      attackerPlanet: basePlanet,
+      attackerPosition: startPositionWithOffset,
       attackerEngineLevel: engineLevel,
       targetShip: enemyShip,
       timeCurrent,
@@ -79,24 +90,51 @@ Meteor.methods({
 
     const timeAttack = attackOptions.time;
 
+    if (timeAttack > mutualSpaceConfig.MAX_FLY_TIME) {
+      throw new Meteor.Error('Слишком долгий перелет');
+    }
+
+    let k = attackOptions.k;
+    if (k > 1) {
+      k = 1;
+    } else if (k < 0) {
+      k = 0;
+    }
+
+    const vector = {
+      x: enemyShip.data.targetPosition.x - enemyShip.data.startPosition.x,
+      y: enemyShip.data.targetPosition.y - enemyShip.data.startPosition.y,
+    };
+
+    const targetX = enemyShip.data.startPosition.x + (vector.x * k);
+    const targetY = enemyShip.data.startPosition.y + (vector.y * k);
+
+    const targetPosition = {
+      x: targetX,
+      y: targetY,
+    };
+
     // check and slice units
     let sourceArmyId = basePlanet.armyId;
     if (basePlanet.isHome) {
       sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
     }
 
-    const destUnits = { army: { fleet: units } };
-    const newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    let newArmyId;
 
-    // update base planet
-    const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
-    if (!baseArmy) {
+    if (needSliceArmy) {
+      const destUnits = { army: { fleet: units } };
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    } else {
+      newArmyId = sourceArmyId;
+      Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
+
       basePlanet.armyId = null;
+      basePlanet.armyUsername = null;
+      Game.Planets.update(basePlanet);
     }
 
-    Game.Planets.update(basePlanet);
-
-    FlightEvents.add({
+    const flightData = {
       targetType: FlightEvents.TARGET.SHIP,
       userId: user._id,
       username: user.username,
@@ -104,14 +142,21 @@ Meteor.methods({
       startPlanetId: basePlanet._id,
       targetPosition,
       targetId: enemyShip._id,
-      startTime: timeCurrent,
       flyTime: timeAttack,
       isHumans: true,
       isOneway: false,
       engineLevel,
       mission: null,
       armyId: newArmyId,
-    });
+    };
+
+    if (fromGalaxy) {
+      const fromHex = new Hex(fromGalaxy);
+      flightData.hex = fromHex;
+      flightData.targetHex = enemyShip.data.targetHex || fromHex;
+    }
+
+    FlightEvents.add(flightData);
 
     // save statistic
     Game.Statistic.incrementUser(user._id, {
@@ -130,10 +175,6 @@ Meteor.methods({
     check(targetId, String);
     check(units, Object);
     check(isOneway, Boolean);
-
-    if (!Space.canSendFleet()) {
-      throw new Meteor.Error('Слишком много флотов уже отправлено');
-    }
 
     let target;
 
@@ -155,7 +196,12 @@ Meteor.methods({
         throw new Meteor.Error('Не найдено сражение');
       }
 
-      target = battleEvent;
+      target = {
+        _id: targetId,
+        x: battleEvent.data.targetPosition.x,
+        y: battleEvent.data.targetPosition.y,
+        username: battleEvent.data.username,
+      };
     } else {
       throw new Meteor.Error('Неверный параметр типа цели.');
     }
@@ -165,20 +211,35 @@ Meteor.methods({
       throw new Meteor.Error('Не найдена стартовая планета');
     }
 
+    const { canSend, needSliceArmy } = Space.checkSendFleet({
+      planet: basePlanet,
+      units,
+      userId: user._id,
+    });
+
+    if (!canSend) {
+      throw new Meteor.Error('Слишком много флотов уже отправлено');
+    }
+
     // slice units
     let sourceArmyId = basePlanet.armyId;
     if (basePlanet.isHome) {
       sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
     }
 
-    const destUnits = { army: { fleet: units } };
-    const newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    let newArmyId;
 
-    // update base planet
-    const baseArmy = Game.Unit.getArmy({ id: basePlanet.armyId });
-    if (!baseArmy) {
+    if (needSliceArmy) {
+      const destUnits = { army: { fleet: units } };
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    } else {
+      newArmyId = sourceArmyId;
+      Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
+
       basePlanet.armyId = null;
+      basePlanet.armyUsername = null;
     }
+
     basePlanet.timeRespawn = Game.getCurrentTime() + Config.ENEMY_RESPAWN_PERIOD;
     Game.Planets.update(basePlanet);
 
@@ -186,15 +247,42 @@ Meteor.methods({
       x: basePlanet.x,
       y: basePlanet.y,
     };
+    const startPositionWithOffset = { ...startPosition };
+
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: basePlanet.username });
+
+    if (fromGalaxy) {
+      const center = new Hex(fromGalaxy).center();
+      startPositionWithOffset.x += center.x;
+      startPositionWithOffset.y += center.y;
+    }
 
     const targetPosition = {
       x: target.x,
       y: target.y,
     };
+    const targetPositionWithOffset = { ...targetPosition };
+    const toGalaxy = mutualSpaceCollection.findOne({ username: target.username });
+
+    if (toGalaxy) {
+      const center = new Hex(toGalaxy).center();
+      targetPositionWithOffset.x += center.x;
+      targetPositionWithOffset.y += center.y;
+    }
 
     const engineLevel = Game.Planets.getEngineLevel();
 
-    const data = {
+    const flyTime = Utils.calcFlyTime(
+      startPositionWithOffset,
+      targetPositionWithOffset,
+      engineLevel,
+    );
+
+    if (flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
+      throw new Meteor.Error('Слишком долгий перелет');
+    }
+
+    const flightData = {
       userId: user._id,
       username: user.username,
       targetType,
@@ -203,13 +291,21 @@ Meteor.methods({
       startPlanetId: basePlanet._id,
       targetPosition,
       targetId: target._id,
-      flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
+      flyTime,
       engineLevel,
       isOneway,
       armyId: newArmyId,
     };
 
-    FlightEvents.add(data);
+    if (fromGalaxy) {
+      flightData.hex = new Hex(fromGalaxy);
+    }
+
+    if (toGalaxy) {
+      flightData.targetHex = new Hex(toGalaxy);
+    }
+
+    FlightEvents.add(flightData);
 
     // if planet is colony
     if (!basePlanet.isHome && basePlanet.armyId) {
@@ -217,6 +313,7 @@ Meteor.methods({
       TriggerAttackEvents.add({
         targetPlanet: basePlanet._id,
         userId: user._id,
+        username: user.username,
       });
     }
 

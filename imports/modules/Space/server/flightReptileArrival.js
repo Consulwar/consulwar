@@ -6,14 +6,16 @@ import Battle from '/moduls/battle/server/battle';
 import FlightEvents from './flightEvents';
 
 import BattleEvents from './battleEvents';
+import Reptiles from './reptiles';
 
 export default function reptileArrival(data) {
-  const { userId, username } = data;
-
-  const planet = Game.Planets.getOne(data.targetId, userId);
+  const planet = Game.Planets.getOne(data.targetId);
 
   if (!planet.mission) {
     if (planet.armyId || planet.isHome) {
+      const username = planet.armyUsername;
+      const userId = Game.Unit.getArmy({ id: planet.armyId }).user_id;
+
       const enemyFleet = FlightEvents.getFleetUnits(data);
       const enemyArmy = { reptiles: { fleet: enemyFleet } };
       const enemyGroup = createGroup({ army: enemyArmy, userId });
@@ -23,7 +25,7 @@ export default function reptileArrival(data) {
       if (job) {
         const battleId = job.data.battleId;
 
-        Battle.addGroup(battleId, Battle.ENEMY_SIDE, 'ai', enemyGroup);
+        Battle.addGroup(battleId, Battle.ENEMY_SIDE, Battle.aiName, enemyGroup);
       } else {
         let userArmy;
 
@@ -36,6 +38,14 @@ export default function reptileArrival(data) {
             } else {
               Game.Unit.removeArmy(homeArmy._id, userId);
             }
+          } else {
+            Reptiles.stealUserResources({
+              enemyArmy,
+              userId,
+            });
+
+            FlightEvents.flyBack(data);
+            return;
           }
 
           userArmy = homeArmy.units;
@@ -47,6 +57,7 @@ export default function reptileArrival(data) {
 
           Game.Unit.removeArmy(planet.armyId, userId);
           planet.armyId = null;
+          planet.armyUsername = null;
         }
 
         BattleEvents.createBattleAndAdd({
@@ -64,6 +75,7 @@ export default function reptileArrival(data) {
     } else {
       if (planet.status === Game.Planets.STATUS.HUMANS) {
         planet.status = Game.Planets.STATUS.NOBODY;
+        planet.minerUsername = null;
       }
 
       if (data.isOneway) {

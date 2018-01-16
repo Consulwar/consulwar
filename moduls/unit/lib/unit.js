@@ -349,10 +349,13 @@ game.Unit = function (options) {
   // new
   this.add = ({ count, userId }) => (
     Game.Unit.add({
-      engName: this.engName,
-      group: this.group,
-      count,
-    }, userId)
+      unit: {
+        engName: this.engName,
+        group: this.group,
+        count,
+      },
+      userId,
+    })
   );
   //
 };

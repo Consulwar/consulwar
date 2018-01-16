@@ -1421,7 +1421,9 @@ Template.cosmosAttackMenu.helpers({
     let requiredRank = Game.User.getLevel();
 
     for (let i = result.length; i < 20; i += 1) {
-      requiredRank += 1;
+      if (buyPlanetNumber >= possibleBuyPlanets) {
+        requiredRank += 1;
+      }
       result.push({
         notAvaliable: true,
         canBuy: buyPlanetNumber < possibleBuyPlanets,

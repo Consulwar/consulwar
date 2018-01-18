@@ -954,7 +954,7 @@ Meteor.methods({
       }
     }
 
-    planet.timeArtefacts = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+    planet.timeArtefacts = Game.getCurrentTime();
     planet.status = Game.Planets.STATUS.HUMANS;
     planet.minerUsername = user.username;
 

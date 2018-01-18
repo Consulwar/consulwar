@@ -78,7 +78,7 @@ export default function reptileArrival(data) {
         planet.minerUsername = null;
       }
 
-      if (data.isOneway) {
+      if (!data.isOneway) {
         FlightEvents.flyBack(data);
       } else {
         planet.mission = {

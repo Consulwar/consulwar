@@ -11,6 +11,8 @@ import TriggerAttackEvents from './triggerAttackEvents';
 
 import BattleEvents from './battleEvents';
 import Utils from '../lib/utils';
+import mutualSpaceCollection from '../../MutualSpace/lib/collection';
+import Hex from '../../MutualSpace/lib/Hex';
 
 const completeOnPlanetMission = function(data) {
   const { planet, userId, username } = data;
@@ -50,51 +52,8 @@ const completeOnPlanetMission = function(data) {
   Game.Unit.removeArmy(data.armyId, userId);
 };
 
-const completeOnEmptySelfPlanet = function(data) {
+const completeOnPeacefulPlanet = function(data) {
   const { planet, userId, username } = data;
-
-  if (planet.isHome || planet.armyId) {
-    // merge army
-    const destArmyId = (planet.isHome)
-      ? Game.Unit.getHomeFleetArmy({ userId })._id
-      : planet.armyId;
-    Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
-  } else {
-    // move army
-    Game.Planets.update({
-      ...planet,
-      armyId: data.armyId,
-      armyUsername: username,
-    });
-    Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
-
-    // add reptiles attack trigger
-    TriggerAttackEvents.add({
-      targetPlanet: planet._id,
-      userId,
-      username,
-    });
-  }
-};
-
-const completeOnEmptyOtherPlanet = function(data) {
-  const { planet } = data;
-
-  if (planet.armyId) {
-    FlightEvents.flyBack(data);
-  } else {
-    // move army
-    Game.Planets.update({
-      ...planet,
-      armyId: data.armyId,
-      armyUsername: data.username,
-    });
-    Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
-  }
-};
-
-const completeOnEmptyPlanet = function(data) {
-  const { planet, userId } = data;
   const user = Meteor.users.findOne({ _id: userId });
 
   if (!planet.isDiscovered) {
@@ -102,10 +61,67 @@ const completeOnEmptyPlanet = function(data) {
   }
 
   if (data.isOneway) {
-    if (planet.armyUsername === data.username) {
-      completeOnEmptySelfPlanet(data);
+    if (planet.armyId) {
+      if (planet.isHome || planet.armyUsername === username) {
+        const destArmyId = (planet.isHome)
+          ? Game.Unit.getHomeFleetArmy({ userId })._id
+          : planet.armyId;
+        Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
+
+        TriggerAttackEvents.add({ targetPlanet: planet._id, userId, username });
+      } else {
+        // if planet has army but it isn't our army
+        // fly to home planet
+        const homePlanet = Game.Planets.getBase(userId);
+
+        const startPosition = {
+          x: planet.x,
+          y: planet.y,
+        };
+
+        const targetPosition = {
+          x: homePlanet.x,
+          y: homePlanet.y,
+        };
+
+        const startPositionWithOffset = { ...startPosition };
+        const targetPositionWithOffset = { ...targetPosition };
+        const targetHex = mutualSpaceCollection.findOne({ username });
+
+        let center = new Hex(data.targetHex).center();
+        startPositionWithOffset.x += center.x;
+        startPositionWithOffset.y += center.y;
+
+        center = new Hex(data.targetHex).center();
+        targetPositionWithOffset.x += center.x;
+        targetPositionWithOffset.y += center.y;
+
+        const flyTime = Utils.calcFlyTime(startPositionWithOffset,
+          targetPositionWithOffset, data.engineLevel);
+
+        FlightEvents.add({
+          ...data,
+          startPosition,
+          startPlanetId: planet._id,
+          targetPosition,
+          targetId: homePlanet._id,
+          targetType: FlightEvents.TARGET.PLANET,
+          flyTime,
+          isOneway: true,
+          isBack: true,
+          hex: data.targetHex,
+          targetHex,
+        });
+      }
     } else {
-      completeOnEmptyOtherPlanet(data);
+      Game.Planets.update({
+        ...planet,
+        armyId: data.armyId,
+        armyUsername: username,
+      });
+      Game.Unit.moveArmy(data.armyId, Game.Unit.location.PLANET);
+
+      TriggerAttackEvents.add({ targetPlanet: planet._id, userId, username });
     }
   } else {
     FlightEvents.flyBack(data);
@@ -130,7 +146,7 @@ const completeOnPlanet = function(data) {
 
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
     } else {
-      completeOnEmptyPlanet({ ...data, planet });
+      completeOnPeacefulPlanet({ ...data, planet });
     }
   }
 };
@@ -173,8 +189,21 @@ const completeOnShip = function(data) {
 
     if (battleEvent) {
       // go to new battle position
-      const flyTime = Utils.calcFlyTime(data.startPosition,
-        battleEvent.data.targetPosition, data.engineLevel);
+      const startPositionWithOffset = { ...data.startPosition };
+      const targetPositionWithOffset = { ...battleEvent.data.targetPosition };
+
+      if (data.hex) {
+        let center = new Hex(data.hex).center();
+        startPositionWithOffset.x += center.x;
+        startPositionWithOffset.y += center.y;
+
+        center = new Hex(data.targetHex).center();
+        targetPositionWithOffset.x += center.x;
+        targetPositionWithOffset.y += center.y;
+      }
+
+      const flyTime = Utils.calcFlyTime(startPositionWithOffset,
+        targetPositionWithOffset, data.engineLevel);
 
       FlightEvents.add({
         ...data,

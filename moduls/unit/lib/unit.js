@@ -34,7 +34,11 @@ Game.Unit = {
     userId,
     homePlanet = Game.Planets.getBase(userId || Meteor.userId()),
   } = {}) {
-    return Game.Unit.getArmy({ id: homePlanet.armyId });
+    if (homePlanet) {
+      return Game.Unit.getArmy({ id: homePlanet.armyId });
+    }
+
+    return null;
   },
 
   get: function({ group, engName, ...options }) {

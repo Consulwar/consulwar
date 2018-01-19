@@ -9,6 +9,7 @@ import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
 import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
+import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
 
 const reptilesWin = function({ battle, roundResult, planet, data }) {
   if (planet && !planet.isHome && planet.status === Game.Planets.STATUS.HUMANS) {
@@ -70,6 +71,10 @@ const reptilesWin = function({ battle, roundResult, planet, data }) {
 };
 
 const humansWin = function({ battle, roundResult, users, planet, data }) {
+  if (planet) {
+    planet.mission = null;
+  }
+
   users.forEach((user) => {
     const army = roundResult.leftByUsername[user.username];
 
@@ -78,10 +83,6 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
       Game.Unit.location.SHIP,
       user._id,
     );
-
-    if (planet) {
-      planet.mission = null;
-    }
 
     if (planet && (!data.isHumans || (data.isOneway && user._id === data.userId))) {
       // Остаемся на планете
@@ -104,6 +105,8 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
         targetType: FlightEvents.TARGET.PLANET,
         isHumans: true,
         armyId: newArmyId,
+        userId: user._id,
+        username: user.username,
       };
 
       if (
@@ -111,7 +114,17 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
         || battle.initialUnits[Battle.USER_SIDE][user.username].length > 1
       ) {
         // Если было несколько флотов, то все они возвращаются на свои домашние планеты
-        flightData.returnPlanetId = Game.Planets.Collection.findOne({ name: user.planetName })._id;
+        const returnPlanet = Game.Planets.getBase(user._id);
+        flightData.returnPlanetId = returnPlanet._id;
+        flightData.returnDestination = {
+          x: returnPlanet.x,
+          y: returnPlanet.y,
+        };
+
+        const userHex = mutualSpaceCollection.findOne({ username: user.username });
+        if (userHex) {
+          flightData.hex = userHex;
+        }
       }
 
       FlightEvents.flyBack(flightData);

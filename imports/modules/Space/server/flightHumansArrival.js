@@ -14,8 +14,8 @@ import Utils from '../lib/utils';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 import Hex from '../../MutualSpace/lib/Hex';
 
-const completeOnPlanetMission = function(data) {
-  const { planet, userId, username } = data;
+const completeOnPlanetMission = function(data, planet) {
+  const { userId, username } = data;
 
   const enemyArmy = {
     reptiles: {
@@ -52,8 +52,8 @@ const completeOnPlanetMission = function(data) {
   Game.Unit.removeArmy(data.armyId, userId);
 };
 
-const completeOnPeacefulPlanet = function(data) {
-  const { planet, userId, username } = data;
+const completeOnPeacefulPlanet = function(data, planet) {
+  const { userId, username } = data;
   const user = Meteor.users.findOne({ _id: userId });
 
   if (!planet.isDiscovered) {
@@ -131,7 +131,7 @@ const completeOnPeacefulPlanet = function(data) {
 const completeOnPlanet = function(data) {
   const planet = Game.Planets.getOne(data.targetId);
   if (planet.mission) {
-    completeOnPlanetMission({ ...data, planet });
+    completeOnPlanetMission(data, planet);
   } else {
     const battleEvent = BattleEvents.findByPlanetId(planet._id);
 
@@ -146,7 +146,7 @@ const completeOnPlanet = function(data) {
 
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
     } else {
-      completeOnPeacefulPlanet({ ...data, planet });
+      completeOnPeacefulPlanet(data, planet);
     }
   }
 };
@@ -219,9 +219,9 @@ const completeOnShip = function(data) {
 };
 
 const completeOnBattle = function(data) {
-  const battle = Battle.fromDB(data.targetId);
+  const battleEvent = BattleEvents.findByBattleId(data.targetId);
 
-  if (battle) {
+  if (battleEvent) {
     const userArmy = {
       army: {
         fleet: FlightEvents.getFleetUnits(data),

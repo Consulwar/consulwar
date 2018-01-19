@@ -43,11 +43,12 @@ Game.Unit.add = function({
   let location;
   if (
     unit.group === 'ground' ||
-    (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar)
+    (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar) ||
+    (!Game.Planets.getBase(userId))
   ) {
     location = Game.Unit.location.HOME;
   } else {
-    const homePlanet = Game.Planets.getBase();
+    const homePlanet = Game.Planets.getBase(userId);
     const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
 
     if (battleEvent) {
@@ -89,7 +90,7 @@ Game.Unit.initialize = function(userId = Meteor.userId()) {
   }
 
   const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId });
-  if (homeFleetArmy === undefined) {
+  if (homeFleetArmy === undefined && Game.Planets.getBase(userId)) {
     const fleetArmyId = Game.Unit.Collection.insert({
       user_id: userId,
       location: Game.Unit.location.PLANET,

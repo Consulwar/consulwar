@@ -69,6 +69,8 @@ Game.Planets.actualize = function() {
     sectors[planet.hand][planet.segment].total += 1;
   }
 
+  const timeCurrent = Game.getCurrentTime();
+
   const ownedPlanets = Game.Planets.getAllByOwner();
   ownedPlanets.forEach((planet) => {
     if (planet.status === Game.Planets.STATUS.HUMANS) {
@@ -89,7 +91,6 @@ Game.Planets.actualize = function() {
   });
 
   // update planets
-  var timeCurrent = Game.getCurrentTime();
 
   for (i = 0; i < planets.length; i++) {
     planet = planets[i];

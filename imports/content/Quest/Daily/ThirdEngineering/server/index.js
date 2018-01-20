@@ -22,6 +22,7 @@ import YourMother from './YourMother';
 import UnexpectedGuest from './UnexpectedGuest';
 import CrumblingHouses from './CrumblingHouses';
 import EmergencyStore from './EmergencyStore';
+import StateOfEmergency from './StateOfEmergency';
 
 export default {
   'Quest/Daily/NatalyVerlen/Mortar': Mortar,
@@ -48,4 +49,5 @@ export default {
   'Quest/Daily/NatalyVerlen/UnexpectedGuest': UnexpectedGuest,
   'Quest/Daily/NatalyVerlen/CrumblingHouses': CrumblingHouses,
   'Quest/Daily/NatalyVerlen/EmergencyStore': EmergencyStore,
+  'Quest/Daily/NatalyVerlen/StateOfEmergency': StateOfEmergency,
 };

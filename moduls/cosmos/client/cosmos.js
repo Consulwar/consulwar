@@ -1245,10 +1245,14 @@ const timeAttackBattle = function(id) {
 
   const targetBattle = BattleEvents.findByBattleId(targetId);
   if (targetBattle) {
-    const targetGalaxy = galaxyByUsername[targetBattle.data.username];
+    let targetOffset = { x: 0, y: 0 };
+    if (targetBattle.data.targetHex) {
+      const targetHex = new Hex(targetBattle.data.targetHex);
+      targetOffset = targetHex.center();
+    }
     const targetPosition = {
-      x: targetBattle.data.targetPosition.x + targetGalaxy.offset.x,
-      y: targetBattle.data.targetPosition.y + targetGalaxy.offset.y,
+      x: targetBattle.data.targetPosition.x + targetOffset.x,
+      y: targetBattle.data.targetPosition.y + targetOffset.y,
     };
     return calcFlyTime(basePosition, targetPosition, engineLevel);
   }

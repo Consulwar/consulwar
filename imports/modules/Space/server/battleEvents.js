@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Job } from '/moduls/game/lib/jobs';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';

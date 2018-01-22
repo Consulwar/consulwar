@@ -177,6 +177,7 @@ Meteor.methods({
     check(isOneway, Boolean);
 
     let target;
+    let targetHex;
 
     if (targetType === FlightEvents.TARGET.PLANET) {
       if (baseId === targetId) {
@@ -189,6 +190,12 @@ Meteor.methods({
       }
 
       target = targetPlanet;
+
+      const toGalaxy = mutualSpaceCollection.findOne({ username: target.username });
+
+      if (toGalaxy) {
+        targetHex = new Hex(toGalaxy);
+      }
     } else if (targetType === FlightEvents.TARGET.BATTLE) {
       const battleEvent = BattleEvents.findByBattleId(targetId);
 
@@ -200,8 +207,9 @@ Meteor.methods({
         _id: targetId,
         x: battleEvent.data.targetPosition.x,
         y: battleEvent.data.targetPosition.y,
-        username: battleEvent.data.username,
       };
+
+      targetHex = battleEvent.data.targetHex;
     } else {
       throw new Meteor.Error('Неверный параметр типа цели.');
     }
@@ -262,10 +270,9 @@ Meteor.methods({
       y: target.y,
     };
     const targetPositionWithOffset = { ...targetPosition };
-    const toGalaxy = mutualSpaceCollection.findOne({ username: target.username });
 
-    if (toGalaxy) {
-      const center = new Hex(toGalaxy).center();
+    if (targetHex) {
+      const center = new Hex(targetHex).center();
       targetPositionWithOffset.x += center.x;
       targetPositionWithOffset.y += center.y;
     }
@@ -301,9 +308,7 @@ Meteor.methods({
       flightData.hex = new Hex(fromGalaxy);
     }
 
-    if (toGalaxy) {
-      flightData.targetHex = new Hex(toGalaxy);
-    }
+    flightData.targetHex = targetHex || flightData.hex;
 
     FlightEvents.add(flightData);
 

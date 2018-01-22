@@ -574,11 +574,13 @@ Template.cosmosFleetsInfo.helpers({
         data.name = 'Подкрепление';
       } else {
         data.name = 'Перехват';
-        var target = FlightEvents.getOne(fleets[i].data.targetId);
-        data.name += (
-          ' ' + Game.Battle.items[target.data.mission.type].name
-          + ' ' + target.data.mission.level
-        );
+        const target = FlightEvents.getOne(fleets[i].data.targetId);
+        if (target) {
+          data.name += (
+            ' ' + Game.Battle.items[target.data.mission.type].name
+            + ' ' + target.data.mission.level
+          );
+        }
       }
 
       result.push(data);
@@ -990,22 +992,36 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
       ship: Game.Cosmos.getShipInfo(spaceEvent),
       allowActions: isLock,
       position: function() {
-        var pos = getFleetAnimation({
+        const startPosition = this.spaceEvent.data.startPosition;
+        const targetPosition = this.spaceEvent.data.targetPosition;
+        const startPositionWithOffset = { ...startPosition };
+        const targetPositionWithOffset = { ...targetPosition };
+        if (this.spaceEvent.data.hex) {
+          let center = new Hex(this.spaceEvent.data.hex).center();
+          startPositionWithOffset.x += center.x;
+          startPositionWithOffset.y += center.y;
+
+          center = new Hex(this.spaceEvent.data.targetHex).center();
+          targetPositionWithOffset.x += center.x;
+          targetPositionWithOffset.y += center.y;
+        }
+
+        const pos = getFleetAnimation({
           spaceEvent: this.spaceEvent,
-          maxSpeed: calcMaxSpeed( this.spaceEvent.data.engineLevel ),
-          acceleration: calcAcceleration( this.spaceEvent.data.engineLevel ),
+          maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
+          acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
           totalFlyDistance: calcDistance(
-            this.spaceEvent.data.startPosition,
-            this.spaceEvent.data.targetPosition
-          )
+            startPositionWithOffset,
+            targetPositionWithOffset,
+          ),
         });
         return {
           x: pos.x + 50,
-          y: pos.y - 50
+          y: pos.y - 50,
         };
-      }
+      },
     },
-    $('.leaflet-popup-pane')[0]
+    $('.leaflet-popup-pane')[0],
   );
 };
 
@@ -1245,10 +1261,14 @@ const timeAttackBattle = function(id) {
 
   const targetBattle = BattleEvents.findByBattleId(targetId);
   if (targetBattle) {
-    const targetGalaxy = galaxyByUsername[targetBattle.data.username];
+    let targetOffset = { x: 0, y: 0 };
+    if (targetBattle.data.targetHex) {
+      const targetHex = new Hex(targetBattle.data.targetHex);
+      targetOffset = targetHex.center();
+    }
     const targetPosition = {
-      x: targetBattle.data.targetPosition.x + targetGalaxy.offset.x,
-      y: targetBattle.data.targetPosition.y + targetGalaxy.offset.y,
+      x: targetBattle.data.targetPosition.x + targetOffset.x,
+      y: targetBattle.data.targetPosition.y + targetOffset.y,
     };
     return calcFlyTime(basePosition, targetPosition, engineLevel);
   }
@@ -1826,6 +1846,11 @@ var getFleetAnimation = function(fleet) {
   var curPoint = path.getPointAlongDistanceByCoef(k);
 
   var nextPoint = fleet.spaceEvent.data.targetPosition;
+  if (fleet.spaceEvent.data.targetHex) {
+    const center = new Hex(fleet.spaceEvent.data.targetHex).center();
+    nextPoint.x += center.x;
+    nextPoint.y += center.y;
+  }
   if (k < 0.99) {
     nextPoint = path.getPointAlongDistanceByCoef(k + 0.01);
   }

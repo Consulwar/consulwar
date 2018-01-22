@@ -41,14 +41,15 @@ Game.Unit.add = function({
   user = Meteor.users.findOne({ _id: (userId || Meteor.userId()) }),
 }) {
   let location;
+  const homePlanet = Game.Planets.getBase(userId);
+
   if (
     unit.group === 'ground' ||
     (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar) ||
-    (!Game.Planets.getBase(userId))
+    (!homePlanet)
   ) {
     location = Game.Unit.location.HOME;
   } else {
-    const homePlanet = Game.Planets.getBase(userId);
     const battleEvent = BattleEvents.findByPlanetId(homePlanet._id);
 
     if (battleEvent) {

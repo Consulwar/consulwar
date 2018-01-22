@@ -189,15 +189,18 @@ const completeOnShip = function(data) {
 
     if (battleEvent) {
       // go to new battle position
-      const startPositionWithOffset = { ...data.startPosition };
-      const targetPositionWithOffset = { ...battleEvent.data.targetPosition };
+      const startPosition = { ...data.targetPosition };
+      const targetPosition = { ...battleEvent.data.targetPosition };
+
+      const startPositionWithOffset = { ...startPosition };
+      const targetPositionWithOffset = { ...targetPosition };
 
       if (data.hex) {
-        let center = new Hex(data.hex).center();
+        let center = new Hex(data.targetHex).center();
         startPositionWithOffset.x += center.x;
         startPositionWithOffset.y += center.y;
 
-        center = new Hex(data.targetHex).center();
+        center = new Hex(battleEvent.data.targetHex).center();
         targetPositionWithOffset.x += center.x;
         targetPositionWithOffset.y += center.y;
       }
@@ -207,6 +210,8 @@ const completeOnShip = function(data) {
 
       FlightEvents.add({
         ...data,
+        startPosition,
+        targetPosition,
         targetId: battleEvent._id,
         targetType: FlightEvents.TARGET.BATTLE,
         flyTime,

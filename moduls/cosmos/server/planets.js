@@ -982,6 +982,7 @@ Meteor.methods({
 
     planet.status = Game.Planets.STATUS.NOBODY;
     planet.minerUsername = null;
+    planet.timeArtefacts = null;
 
     Game.Planets.update(planet);
   },

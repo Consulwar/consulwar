@@ -94,11 +94,21 @@ Meteor.methods({
       });
     }
 
+    const rating = Game.Resources.calculateRatingFromResources(price);
+
+    if (rating > 100000) {
+      if (item.group == 'ground') {
+        Game.Broadcast.add(user.username, `начал подготовку «${item.name}» в количестве ${options.count} штук`);
+      } else {
+        Game.Broadcast.add(user.username, `отправил на верфь ${options.count} кораблей «${item.name}»`);
+      }
+    }
+
     Meteor.users.update({
       _id: user._id
     }, {
       $inc: {
-        rating: Game.Resources.calculateRatingFromResources(price)
+        rating
       }
     });
   },

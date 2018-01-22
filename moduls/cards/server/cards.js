@@ -128,6 +128,10 @@ Game.Cards.activate = function(item, user) {
     task.time += currentCard.finishTime - Game.getCurrentTime();
   }
 
+  if (item.engName === 'Crazy') {
+    Game.Broadcast.add(user.username, `Совет, кажется, ебанулся.`);
+  }
+
   // activate card
   return Game.Queue.add(task);
 };

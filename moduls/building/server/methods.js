@@ -73,6 +73,10 @@ Meteor.methods({
       });
     }
 
+    if (set.level > 40) {
+      Game.Broadcast.add(user.username, `начал строительство «${item.name}» ${set.level} уровня`);
+    }
+
     Meteor.users.update({
       _id: user._id
     }, {

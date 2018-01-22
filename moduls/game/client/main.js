@@ -123,6 +123,25 @@ Meteor.subscribe('queue');
 Meteor.subscribe('myAlliance');
 
 
+const broadcastSubscribe = Meteor.subscribe('broadcast');
+
+Game.Broadcast.Collection.find({}).observe({ 
+  added: function(message) {
+    if (!broadcastSubscribe.ready()) {
+      return;
+    }
+    const user = Meteor.user();
+    if (
+      !user
+      || !user.settings
+      || !user.settings.options
+      || !user.settings.options.disableBroadcast
+    ) {
+      Notifications.info(message.username, message.text);
+    }
+  }
+});
+
 Game.Queue.Collection.find({}).observe({ 
   removed: function(task) {
     showNotificationFromTask(task);

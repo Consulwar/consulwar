@@ -212,7 +212,7 @@ const completeOnShip = function(data) {
         ...data,
         startPosition,
         targetPosition,
-        targetId: battleEvent._id,
+        targetId: battleEvent.data.battleId,
         targetType: FlightEvents.TARGET.BATTLE,
         flyTime,
       });

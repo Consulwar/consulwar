@@ -224,6 +224,7 @@ Game.Unit.mergeArmy = function(sourceId, destId, user_id = Meteor.userId()) {
   var dest = Game.Unit.getArmy({ id: destId });
 
   if (!source || !source.units || !dest || !dest.units) {
+    console.log(source, source.units, dest, dest.units, sourceId, destId); // TODO remove after tests
     throw new Meteor.Error('Армии с указанными id не найдены');
   }
 

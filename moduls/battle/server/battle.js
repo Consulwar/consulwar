@@ -44,9 +44,15 @@ class Battle {
 
     const armyPowers = {};
 
-    _.pairs(userArmies).forEach(function ([name, army]) {
-      armyPowers[name] = calculateGroupPower(army[0]);
-    });
+    // TODO remove after tests
+    try {
+      _.pairs(userArmies).forEach(function([name, army]) {
+        armyPowers[name] = calculateGroupPower(army[0]);
+      });
+    } catch (e) {
+      console.log(userArmies, enemyArmies);
+      throw e;
+    }
 
     const currentUnits = Game.Helpers.deepClone(initialUnits);
     const battleUnits = {};

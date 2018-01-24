@@ -684,11 +684,7 @@ Game.Cosmos.getPlanetInfo = function(planet) {
     info.isHumans = true;
     info.isHome = true;
     info.title = (planet.isHome) ? 'Планета Консула' : 'Колония';
-    if (Game.Planets.getColonies().length <= 1) {
-      info.canSend = false;
-    } else {
-      info.canSend = true;
-    }
+    info.canSend = true;
 
     if (planet.artefacts) {
       info.timeArtefacts = planet.timeArtefacts;

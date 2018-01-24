@@ -291,122 +291,120 @@ UI.registerHelper('formatNumber', (number, delimeter) => (
     : helpers.formatNumber(number)
 ));
 
-var getEffectsTooltip = function(price, effects, target, invert, side, isShowCurrent) {
-  if (price.base === undefined) {
+const getEffectsTooltip = function({
+  obj,
+  target,
+  effectsByPriority = [],
+  invert = false,
+  side = 's',
+  isShowCurrent,
+}) {
+  if (obj.base === undefined) {
     return 'disabled';
   }
 
-  var baseValue = price.base[target];
-
-  var isMultiValue = !!(_.isObject(baseValue) || _.isArray(baseValue));
-
-  var currentValue = baseValue
-    , nextValue = 100; // %
-
-  var effectsValues = [];
-
-  var formatValue = function(value) {
-    if (target == 'time') {
+  const formatValue = function(value) {
+    if (target === 'time') {
       return Game.Helpers.formatSeconds(value);
-    } else {
-      return helpers.formatNumber(value, ' - ');
     }
+
+    return helpers.formatNumber(value, ' - ');
   };
 
-  if (isMultiValue || currentValue > 0) {
-    effectsValues.push({ initial: formatValue(currentValue) });
+  const baseValue = obj.base[target];
+  const isMultiValue = !!(_.isObject(baseValue) || _.isArray(baseValue));
+
+  // {
+  //   sign, // + / -
+  //   negative, // Boolean
+  //   value,
+  //   percent, // optional
+  //   source, // String
+  // }
+  const effectsValues = [];
+
+  if (isMultiValue || baseValue > 0) {
+    effectsValues.push({ initial: formatValue(baseValue) });
   }
 
-  var totalValue = _.clone(baseValue);
+  const modifier = invert ? -1 : 1;
 
-  var priorities = _.keys(effects);
-  var prevPriority = priorities.length > 0 && priorities[0];
+  let totalValue = _.clone(baseValue);
 
-  if (prevPriority % 2 !== 0) {
-    nextValue = 0;
-  } else {
-    nextValue = 100;
-  }
-
-  for (var priority in effects) {
-    if (prevPriority % 2 !== 0 ) {
-      currentValue = isMultiValue 
-        ? _.mapObject(currentValue, function(value) { return value + nextValue; })
-        : currentValue + nextValue;
-    } else {
-      currentValue = isMultiValue 
-        ? _.mapObject(currentValue, function(value) { 
-          return Math.floor(value * (nextValue * 0.01));
-          })
-        : Math.floor(currentValue * (nextValue * 0.01));
+  _(effectsByPriority).pairs().forEach(([priority, effects]) => {
+    if (!effects[target]) {
+      return;
     }
 
-    if (priority % 2 !== 0) {
-      nextValue = 0;
-    } else {
-      nextValue = 100;
-    }
-    
-    if (effects[priority][target] && effects[priority][target].length > 0) {
-      for (var i = 0; i < effects[priority][target].length; i++) {
-        var effect = effects[priority][target][i];
+    let sumEffect = 0;
+    effects[target].forEach((effect) => {
+      sumEffect += effect.value;
 
-        var result = {};
+      const result = {};
 
-        if ((effect.value > 0 && !invert) || (effect.value < 0 && invert)) {
-          result.sign = '+';
-          result.negative = invert;
-        } else {
-          result.sign = '–';
-          result.negative = !invert;
-        }
-        
-        if (priority % 2 !== 0 ) {
-          if (isMultiValue) {
-            totalValue = _.mapObject(totalValue, function(value) {
-              return value + effect.value * (invert ? -1 : 1);
-            });
-          } else {
-            totalValue += effect.value * (invert ? -1 : 1);
-          }
-          
-          result.value = formatValue(Math.abs(effect.value));
-        } else {
-          if (isMultiValue) {
-            totalValue = _.mapObject(currentValue, function(value, key) {
-              return totalValue[key] + Math.floor(value * (effect.value * 0.01)) * (invert ? -1 : 1);
-            });
-            result.value = _.toArray(
-              _.mapObject(currentValue, function(value) { 
-                return Math.abs(Math.floor(value * (effect.value * 0.01)));
-              })
-            ).join(' - ');
-          } else {
-            totalValue += Math.floor(currentValue * (effect.value * 0.01)) * (invert ? -1 : 1);
-            result.value = formatValue( Math.abs(Math.floor(currentValue * (effect.value * 0.01))) );
-          }
-          result.percent = Math.abs(effect.value);
-        }
-        nextValue += effect.value;
-
-        result.source = effect.provider.name;
-
-        effectsValues.push(result);
-      }
-
-      if (effects[priority][target].length > 0) {
-        effectsValues.push({ total: formatValue(totalValue) });
-      }
-    } else {
-      if (priority % 2 !== 0) {
-        nextValue = 0;
+      if ((effect.value > 0 && !invert) || (effect.value < 0 && invert)) {
+        result.sign = '+';
+        result.negative = invert;
       } else {
-        nextValue = 100;
+        result.sign = '–';
+        result.negative = !invert;
       }
+
+      result.source = effect.provider.name;
+
+      if (priority % 2 === 1) {
+        result.value = formatValue(Math.abs(effect.value));
+      } else if (target === 'time') {
+        result.percent = Math.abs(effect.value);
+        const resultedValue = (Math.abs(effect.value) + 100) * 0.01;
+
+        if ((invert && effect.value >= 0) || (!invert && effect.value < 0)) {
+          result.value = formatValue(Math.ceil(totalValue / resultedValue));
+        } else {
+          result.value = formatValue(Math.ceil(totalValue * resultedValue));
+        }
+      } else {
+        result.percent = Math.abs(effect.value);
+        if (isMultiValue) {
+          result.value = _(_.mapObject(totalValue, value => (
+            Math.abs(Math.floor(value * (effect.value * 0.01)))
+          )))
+            .toArray()
+            .join(' - ');
+        } else {
+          result.value = formatValue(
+            Math.abs(Math.floor(totalValue * (effect.value * 0.01))),
+          );
+        }
+      }
+
+      effectsValues.push(result);
+    });
+
+    if (priority % 2 === 1) {
+      if (isMultiValue) {
+        totalValue = _.mapObject(totalValue, value => value + (sumEffect * modifier));
+      } else {
+        totalValue += sumEffect * modifier;
+      }
+    } else if (target === 'time') {
+      const resultedValue = (Math.abs(sumEffect) + 100) * 0.01;
+
+      if ((invert && sumEffect >= 0) || (!invert && sumEffect < 0)) {
+        totalValue = Math.ceil(totalValue / resultedValue);
+      } else {
+        totalValue = Math.ceil(totalValue * resultedValue);
+      }
+    } else if (isMultiValue) {
+      totalValue = _.mapObject(totalValue, value => (
+        value + (value * sumEffect * 0.01 * modifier)
+      ));
+    } else {
+      totalValue += Math.floor(totalValue * (sumEffect * 0.01)) * modifier;
     }
 
-    prevPriority = priority;
-  }
+    effectsValues.push({ total: formatValue(totalValue) });
+  });
 
   if (effectsValues.length && effectsValues[effectsValues.length - 1].total) {
     effectsValues[effectsValues.length - 1].final = true;
@@ -414,14 +412,14 @@ var getEffectsTooltip = function(price, effects, target, invert, side, isShowCur
 
   return {
     'data-tooltip': Blaze.toHTMLWithData(Template.tooltipTable, {
-      isShowCurrent: isShowCurrent,
-      target: target,
-      price: invert ? price[target] : null,
-      values: effectsValues
+      isShowCurrent,
+      target,
+      price: invert ? obj[target] : null,
+      values: effectsValues,
     }),
-    'data-tooltip-direction': side || 's'
+    'data-tooltip-direction': side,
   };
-};
+}
 
 Tracker.autorun(function() {
   var currentTooltip = Tooltips.get();
@@ -452,18 +450,42 @@ Tracker.autorun(function() {
 });
 
 const priceTooltip = function (price, target) {
-  return getEffectsTooltip(price, price.effects, target, true, 'n', true);
+  return getEffectsTooltip({
+    obj: price,
+    target,
+    effectsByPriority: price.effects,
+    invert: true,
+    side: 'n',
+    isShowCurrent: true,
+  });
+  //return getEffectsTooltip(price, price.effects, target, true, 'n', true);
 };
 UI.registerHelper('priceTooltip', priceTooltip);
 
 UI.registerHelper('incomeTooltip', function(effects, target) {
   var income = {base: {}};
   income.base[target] = 0;
-  return getEffectsTooltip(income, effects, target, false, 's', true);
+  return getEffectsTooltip({
+    obj: income,
+    target,
+    effectsByPriority: effects,
+    invert: false,
+    side: 's',
+    isShowCurrent: true,
+  });
+  // return getEffectsTooltip(income, effects, target, false, 's', true);
 });
 
 UI.registerHelper('militaryTooltip', function(characteristics, target) {
-  return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w', false);
+  return getEffectsTooltip({
+    obj: characteristics,
+    target,
+    effectsByPriority: characteristics.effects,
+    invert: false,
+    side: 'w',
+    isShowCurrent: false,
+  });
+  //return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w', false);
 });
 
 Template.tooltipTable.helpers({

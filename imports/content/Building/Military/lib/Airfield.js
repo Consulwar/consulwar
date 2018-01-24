@@ -21,7 +21,7 @@ export default {
         priority: 2,
         affect: 'time',
         result(level) {
-          return [0, 10, 15, 25, 50, 70][Math.floor(level / 20)];
+          return [0, 10, 17, 33, 100, 233][Math.floor(level / 20)];
         },
       },
     ],

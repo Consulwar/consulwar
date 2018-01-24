@@ -11,7 +11,7 @@ export default {
         priority: 2,
         affect: 'time',
         result(level) {
-          return level * 0.1;
+          return level * 0.2;
         },
       },
       {

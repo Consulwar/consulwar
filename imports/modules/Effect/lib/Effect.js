@@ -377,6 +377,16 @@ class Effect {
         } else if (priority % 2 === 1) {
           // eslint-disable-next-line no-param-reassign
           obj[affect] += effectValue * modifier;
+        } else if (affect === 'time') {
+          const resultedValue = (Math.abs(effectValue) + 100) * 0.01;
+
+          if ((this.isReduce && effectValue >= 0) || (!this.isReduce && effectValue < 0)) {
+            // eslint-disable-next-line no-param-reassign
+            obj[affect] = Math.ceil(obj[affect] / resultedValue);
+          } else {
+            // eslint-disable-next-line no-param-reassign
+            obj[affect] = Math.ceil(obj[affect] * resultedValue);
+          }
         } else {
           // eslint-disable-next-line no-param-reassign
           obj[affect] += Math.floor(obj[affect] * (0.01 * effectValue)) * modifier;

@@ -10,8 +10,8 @@ export default {
         condition: 'Research',
         priority: 2,
         affect: 'time',
-        result(level = this.getCurrentLevel()) {
-          return (level * 0.2) + [0, 10, 20, 30, 40, 50][Math.floor(level / 20)];
+        result(level) {
+          return (level) + [0, 10, 25, 42, 66, 100][Math.floor(level / 20)];
         },
       },
     ],

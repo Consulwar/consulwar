@@ -18,7 +18,8 @@
       "minAcc": 0.4,
       "maxAcc": 2,
       "speedFactor": 0.016666,
-      "collectArtefactsPeriod": 120
+      "collectArtefactsPeriod": 120,
+      "fromSpaceToHangarPeriod": 86400000
     },
     "earth": {
       "schedule": "at 4:00 pm",
@@ -101,6 +102,14 @@
         "9": {"price": {"honor": 800000, "credits": 8000}},
         "10": {"price": {"honor": 900000, "credits": 9000}}
       }
+    },
+    "wrecks": {
+      "priceCoefficient": 0.9
+    },
+    "mutualSpace": {
+      "galacticRadius": 52,
+      "accessRating": 10000,
+      "maxFlyTime": 86400
     }
   },
   "helprace": {
@@ -126,10 +135,6 @@
       "theme": "light",
       "gameUrl": "https://consulwar.ru/"
     }
-  },
-  "kadira": { 
-    "appId": "***", 
-    "appSecret": "***" 
   },
   "mail": {
     "protocol": "smtp",
@@ -177,12 +182,25 @@
         [25.13671875, -30.29701788337204]
       ]
     }},
-  "cosmos": {
+  "space": {
     "enemyRespawnPeriod": 120,
     "tradeFleetPeriod": 120,
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
-    "funPeriod": 86400
+    "funPeriod": 86400,
+
+    "jobs": {
+      "concurrency": 10,
+      "payload": 1,
+      "pollInterval": 1000,
+      "prefetch": 1,
+      "promote": 500,
+      "retry": {
+        "retries": 1,
+        "wait": 120000
+      },
+      "battleDelay": 5000
+    }
   },
   "ddplimiter": {
     "isEnabled": true,

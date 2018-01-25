@@ -10,8 +10,8 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: 'time',
-        result(level = this.getCurrentLevel()) {
-          return level * 0.1;
+        result(level) {
+          return level * 0.2;
         },
       },
       {
@@ -20,7 +20,7 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: 'time',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },

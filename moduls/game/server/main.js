@@ -2,6 +2,11 @@ import '/imports/modules/Person/server';
 import '/imports/modules/Container/server';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import initSpaceServer from '/imports/modules/Space/server/index';
+import initMutualSpaceServer from '/imports/modules/MutualSpace/server/index';
+import Reptiles from '/imports/modules/Space/server/reptiles';
+
+import '/imports/modules/Person/server/methods';
 
 //BrowserPolicy.framing.allowAll();
 
@@ -93,8 +98,11 @@ Meteor.startup(function () {
   initCheatsServer();
   initDDPLimiter();
   initAllianceServer();
+  initWrecksServer();
 
   SyncedCron.start();
+  initSpaceServer();
+  initMutualSpaceServer();
 });
 
 Router.route('/legal/:filename?', function() {
@@ -157,9 +165,10 @@ Meteor.methods({
       Game.Queue.checkAll();
     }
 
-    Game.SpaceEvents.actualize();
+    Reptiles.actualize({ user });
     Game.Planets.actualize();
     Game.Quest.actualize();
+    Game.Wrecks.actualize();
 
     return true;
   },

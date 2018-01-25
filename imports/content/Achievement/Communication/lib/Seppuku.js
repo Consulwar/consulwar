@@ -20,7 +20,7 @@ export default {
         priority: 2,
         condition: 'Unique/message',
         affect: 'crystals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [10, 20, 30][level - 1];
         },
       },

@@ -31,6 +31,8 @@ import FightingSpirit from './FightingSpirit';
 import ComputerVirus from './ComputerVirus';
 import SophisticationDesign from './SophisticationDesign';
 import GoodJob from './GoodJob';
+import Epidemy from './Epidemy';
+import Future from './Future';
 
 export default {
   'Quest/Daily/NatalyVerlen/Crystals': Crystals,
@@ -66,4 +68,6 @@ export default {
   'Quest/Daily/NatalyVerlen/ComputerVirus': ComputerVirus,
   'Quest/Daily/NatalyVerlen/SophisticationDesign': SophisticationDesign,
   'Quest/Daily/NatalyVerlen/GoodJob': GoodJob,
+  'Quest/Daily/NatalyVerlen/Epidemy': Epidemy,
+  'Quest/Daily/NatalyVerlen/Future': Future,
 };

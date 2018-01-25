@@ -1,3 +1,5 @@
+import { Meteor } from "meteor/meteor";
+
 initEarthLib = function() {
 'use strict';
 
@@ -16,17 +18,17 @@ Game.EarthZones = {
     });
   },
 
-  calcMaxHealth: function() {
+  calcMaxHealth: function(userId = Meteor.userId()) {
     var max = 0;
     var zones = Game.EarthZones.getAll().fetch();
     for (var i = 0; i < zones.length; i++) {
       // calc user army
-      var userHealth = Game.Unit.calcUnitsHealth( zones[i].userArmy );
+      var userHealth = Game.Unit.calcUnitsHealth(zones[i].userArmy, userId);
       if (userHealth > max) {
         max = userHealth;
       }
       // calc enemy army
-      var enemyHealth = Game.Unit.calcUnitsHealth( zones[i].enemyArmy );
+      var enemyHealth = Game.Unit.calcUnitsHealth(zones[i].enemyArmy, userId);
       if (enemyHealth > max) {
         max = enemyHealth;
       }
@@ -38,10 +40,8 @@ Game.EarthZones = {
 Game.EarthUnits = {
   Collection: new Meteor.Collection('earthUnits'),
 
-  get: function () {
-    return Game.EarthUnits.Collection.findOne({
-      user_id: Meteor.userId()
-    });
+  get: function(user_id = Meteor.userId()) {
+    return Game.EarthUnits.Collection.findOne({ user_id });
   }
 };
 

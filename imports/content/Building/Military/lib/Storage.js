@@ -10,7 +10,7 @@ export default {
         priority: 2,
         condition: 'Unique/dailyQuestReward',
         affect: ['crystals', 'metals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.5;
         },
       },
@@ -20,7 +20,7 @@ export default {
         priority: 1,
         condition: 'Unique/dailyQuestCount',
         affect: 'count',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [1, 2, 3, 4, 5, 6][Math.floor(level / 20)];
         },
       },

@@ -1,3 +1,5 @@
+import User from '/imports/modules/User/lib/User';
+
 initStatisticAchievementsLib = function() {
 'use strict';
 
@@ -52,9 +54,9 @@ game.Achievement = function(options) {
     return i;
   }).bind(this);
 
-  this.currentLevel = (function(achievements) {
+  this.currentLevel = (function({ achievements, ...options } = {}) {
     if (achievements === undefined) {
-      achievements = Game.Achievements.getValue();
+      achievements = Game.Achievements.getValue(options);
     }
     if (achievements
      && achievements[this.group]
@@ -69,8 +71,8 @@ game.Achievement = function(options) {
   // New-to-legacy
   this.getCurrentLevel = this.currentLevel; 
   
-  this.nextLevel = (function (achievements) {
-    var currentLevel = this.currentLevel(achievements);
+  this.nextLevel = (function (options) {
+    var currentLevel = this.currentLevel(options);
     if (currentLevel < this.maxLevel()) {
       return currentLevel + 1;
     }
@@ -121,14 +123,15 @@ Game.Achievements = {
     communication: {}
   },
 
-  getValue: function() {
-    var user = Meteor.user();
+  getValue: function(options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
     return user && user.achievements;
   },
 
-  getCompleted: function() {
+  getCompleted: function(options) {
     var result = [];
-    var value = Game.Achievements.getValue();
+    var value = Game.Achievements.getValue(options);
 
     for (var group in value) {
       for (var key in value[group]) {

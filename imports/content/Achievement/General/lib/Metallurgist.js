@@ -11,7 +11,7 @@ export default {
         textAfter: ' металла в час',
         priority: 1,
         affect: 'metals',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return (level > 0) ? 25 : 0;
         },
       },

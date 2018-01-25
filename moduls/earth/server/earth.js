@@ -1,4 +1,5 @@
-import traverseGroup from '../../battle/lib/imports/traverseGroup';
+import { Meteor } from 'meteor/meteor';
+import createGroup from '../../battle/lib/imports/createGroup';
 import Battle from '../../battle/server/battle';
 import Generals from './generals';
 
@@ -66,16 +67,11 @@ Game.EarthUnits.incArmy = function (user, inc, zoneName, units) {
     },
   });
 
-  const battleID = Game.EarthZones.getByName(zoneName).battleID;
-  if (battleID) {
-    let userArmy = deepClone(units);
+  const battleId = Game.EarthZones.getByName(zoneName).battleId;
+  if (battleId) {
+    const userArmy = createGroup({ army: units, userId: user._id });
 
-    traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
-      const unit = createUnit(armyName, typeName, unitName, count);
-      userArmy[armyName][typeName][unitName] = unit;
-    });
-
-    Battle.addGroup(battleID, Battle.USER_SIDE, user.username, userArmy);
+    Battle.addGroup(battleId, Battle.USER_SIDE, user.username, userArmy);
   }
 };
 
@@ -85,8 +81,8 @@ if (Game.EarthZones.Collection.find().count() === 0) {
   Game.Earth.generateZones();
 }
 
-Game.Earth.addReinforcement = function(units, targetZoneName) {
-  let army = Game.EarthUnits.get();
+Game.Earth.addReinforcement = function(units, targetZoneName, user = Meteor.user()) {
+  let army = Game.EarthUnits.get(user._id);
   let zoneName;
   if (army) {
     zoneName = army.zoneName;
@@ -105,7 +101,7 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
         var count = parseInt( units[side][group][name], 10 );
         if (count > 0) {
           honor += Game.Resources.calculateHonorFromReinforcement(
-            Game.Unit.items[side][group][name].price(count)
+            Game.Unit.items[side][group][name].getBasePrice(count),
           );
           inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
           stats['reinforcements.arrived.' + side + '.' + group + '.' + name] = count;
@@ -116,13 +112,11 @@ Game.Earth.addReinforcement = function(units, targetZoneName) {
   }
 
   if (stats['reinforcements.arrived.total'] > 0) {
-    let user = Meteor.user();
-
     Game.Statistic.incrementUser(user._id, stats);
 
     Game.Resources.add({
-      honor: honor
-    });
+      honor: honor,
+    }, user._id);
 
     Game.EarthUnits.incArmy(user, inc, zoneName, units);
   }
@@ -228,57 +222,48 @@ Game.Earth.nextTurn = function() {
   Game.EarthZones.getAll().forEach(function (zone) {
     let battle;
 
-    if (zone.battleID) {
+    if (zone.battleId) {
       if (movedUnitsTo[zone.name]) {
         movedUnitsTo[zone.name].forEach(function (moved) {
-          let userArmy = deepClone(moved.army);
+          let userArmy = createGroup({ army: moved.army, userId: moved.userId });
 
-          traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
-            const unit = createUnit(armyName, typeName, unitName, count);
-            userArmy[armyName][typeName][unitName] = unit;
-          });
-
-          Battle.addGroup(zone.battleID, Battle.USER_SIDE, moved.name, userArmy);
+          Battle.addGroup(zone.battleId, Battle.USER_SIDE, moved.name, userArmy);
         });
       }
 
       if (moveReptileTo[zone.name]) {
         moveReptileTo[zone.name].forEach(function (movedArmy) {
-          let reptileArmy = {
+          const reptileArmy = {
             reptiles: {
-              ground: {}
-            }
+              ground: {},
+            },
           };
           _.pairs(movedArmy).forEach(function ([name, count]) {
             reptileArmy.reptiles.ground[name] = count;
           });
 
-          traverseGroup(reptileArmy, function(armyName, typeName, unitName, count) {
-            const unit = createUnit(armyName, typeName, unitName, count);
-            reptileArmy[armyName][typeName][unitName] = unit;
-          });
+          const reptileGroup = createGroup({ army: reptileArmy });
 
-          Battle.addGroup(zone.battleID, Battle.ENEMY_SIDE, 'ai', reptileArmy);
+          Battle.addGroup(zone.battleId, Battle.ENEMY_SIDE, Battle.aiName, reptileGroup);
         });
       }
 
-      battle = Battle.fromDB(zone.battleID);
+      battle = Battle.fromDB(zone.battleId);
     } else if (zone.enemyArmy && zone.userArmy) {
-      let enemyArmy = deepClone(zone.enemyArmy);
+      const enemyArmy = createGroup({ army: zone.enemyArmy });
+      const options = {
+        isEarth: true,
+        damageReduction: Game.Earth.DAMAGE_REDUCTION,
+      };
 
-      traverseGroup(enemyArmy, function(armyName, typeName, unitName, count) {
-        const unit = createUnit(armyName, typeName, unitName, count);
-        enemyArmy[armyName][typeName][unitName] = unit;
-      });
-
-      battle = Battle.create(earthUnitsByZone[zone.name], {
-        'ai': [enemyArmy]
+      battle = Battle.create(options, earthUnitsByZone[zone.name], {
+        ai: [enemyArmy],
       });
 
       Game.EarthZones.Collection.update({
         _id: zone._id,
       }, {
-        $set: { battleID: battle.id },
+        $set: { battleId: battle.id },
       });
     } else if (zone.enemyArmy && !zone.isEnemy) {
       Game.EarthZones.Collection.update({
@@ -301,12 +286,10 @@ Game.Earth.nextTurn = function() {
     };
 
     if (battle) {
-      const roundResult = battle.performEarthRound({
-        damageReduction: Game.Earth.DAMAGE_REDUCTION
-      });
+      const roundResult = battle.performRound();
 
       if (battle.status === Battle.Status.finish) {
-        modifier.$unset = { battleID: 1 };
+        modifier.$unset = { battleId: 1 };
 
         if (Battle.USER_SIDE in roundResult.left) {
           Game.Earth.observeZone(zone.name);
@@ -516,6 +499,7 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
       movedUnitsTo[targetZoneName].push({
         name: earthUnits.username,
         army: earthUnits.userArmy,
+        userId: earthUnits.user_id,
       });
     }
 
@@ -525,12 +509,7 @@ const moveUserArmies = function (earthUnitsByZone, movedUnitsTo) {
       earthUnitsByZone[targetZoneName] = {};
     }
 
-    let userArmy = deepClone(earthUnits.userArmy);
-
-    traverseGroup(userArmy, function(armyName, typeName, unitName, count) {
-      const unit = createUnit(armyName, typeName, unitName, count);
-      userArmy[armyName][typeName][unitName] = unit;
-    });
+    let userArmy = createGroup({ army: earthUnits.userArmy, userId: earthUnits.user_id });
 
     earthUnitsByZone[targetZoneName][earthUnits.username] = [userArmy];
   });
@@ -680,34 +659,6 @@ const moveArmy = function (army, targetZoneName) {
   }, {
     $inc: inc
   });
-};
-
-const createUnit = function(armyName, typeName, unitName, count) {
-  let characteristics = Game.Unit.items[armyName][typeName][unitName].options.characteristics;
-
-  return {
-    count: Game.Unit.rollCount(count),
-    weapon: {
-      damage: {min: characteristics.weapon.damage.min, max: characteristics.weapon.damage.max},
-      signature: characteristics.weapon.signature
-    },
-    health: {
-      armor: characteristics.health.armor,
-      signature: characteristics.health.signature
-    }
-  };
-};
-
-const deepClone = function(object) {
-  let clone = _.clone(object);
-
-  _.each(clone, function(value, key) {
-    if (_.isObject(value)) {
-      clone[key] = deepClone(value);
-    }
-  });
-
-  return clone;
 };
 
 SyncedCron.add({

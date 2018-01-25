@@ -2,6 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+import ReinforcementEvents from '/imports/modules/Space/server/reinforcementEvents';
+
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthServerMethods = function() {
@@ -16,11 +19,11 @@ Meteor.methods({
 
     const currentTime = Game.getCurrentTime();
 
-    if (!Game.SpaceEvents.checkCanSendFleet()) {
+    if (!ReinforcementEvents.canSendReinforcement()) {
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
-    let army = Game.EarthUnits.get();
+    const army = Game.EarthUnits.get();
     let targetZoneName;
 
     if (army) {
@@ -28,7 +31,7 @@ Meteor.methods({
     } else {
       check(zoneName, String);
 
-      let zone = Game.EarthZones.getByName(zoneName);
+      const zone = Game.EarthZones.getByName(zoneName);
       if (!zone) {
         throw new Meteor.Error('Не существует указанная зона отправки.');
       }
@@ -44,7 +47,7 @@ Meteor.methods({
     if (cardsObject) {
       check(cardsObject, Object);
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -54,7 +57,11 @@ Meteor.methods({
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
-      let result = Game.Effect.Special.getValue(true, { engName: 'instantReinforcement' }, cardList);
+      let result = SpecialEffect.getValue({
+        hideEffects: true,
+        obj: { engName: 'instantReinforcement' },
+        instantEffects: cardList,
+      });
 
       protectedHonor = result.protectedHonor;
 
@@ -73,7 +80,7 @@ Meteor.methods({
         const count = units[name];
         const unit = Game.Unit.items.army.ground[name];
 
-        if (!unit || unit.type === 'mutual' || unit.currentLevel() < count || count <= 0) {
+        if (!unit || unit.type === 'mutual' || unit.getCount({ from: 'hangar' }) < count || count <= 0) {
           throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
         }
 
@@ -94,12 +101,11 @@ Meteor.methods({
     }
 
     // send reinforcements to current point
-    Game.SpaceEvents.sendReinforcement({
-      startTime: currentTime,
-      durationTime: Game.Earth.REINFORCEMENTS_DELAY,
+    ReinforcementEvents.add({
+      userId: user._id,
       units: { army: { ground: units } },
       protectAllHonor: protectedHonor > 0,
-      targetZoneName
+      targetZoneName,
     });
 
     if (cardList.length !== 0) {
@@ -160,7 +166,7 @@ Meteor.methods({
       throw new Meteor.Error('У указанной зоны перемещения нет соединения с текущей.');
     }
 
-    if (armyZone.battleID) {
+    if (armyZone.battleId) {
       throw new Meteor.Error('Невозможно перемещение армий во время боя.');
     }
 
@@ -246,7 +252,7 @@ Meteor.methods({
       throw new Meteor.Error('Ишь чего удумал.');
     }
 
-    if (zone.battleID) {
+    if (zone.battleId) {
       throw new Meteor.Error('Невозможна отдача приказов во время боя.');
     }
 

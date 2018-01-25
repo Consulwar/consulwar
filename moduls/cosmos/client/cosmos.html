@@ -8,6 +8,9 @@
     {{#if isSelection}}
       <a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
     {{/if}}
+    {{#if and (gte user.rating 100000) (not isMutualSpace)}}
+      <a class="btn-mutual-space">Общий космос</a>
+    {{/if}}
     
     {{#if isLoading}}
       {{> loading}}
@@ -53,7 +56,16 @@
       {{/if}}
       
       {{#if planet.isHumans}}
-        <h2 class="humans">{{planet.status}}</h2>
+        <h2 class="humans">
+          {{planet.title}}
+          {{#if planet.owner}}
+            <a href="{{pathFor 'statistics' hash=planet.owner}}">{{planet.owner}}</a>
+          {{/if}}
+        </h2>
+        
+        {{#if planet.fleetOwner}}
+          <br>Флот <a href="{{pathFor 'statistics' hash=planet.fleetOwner}}">{{planet.fleetOwner}}</a>
+        {{/if}}
       {{else}}{{#if planet.mission}}
         <h2 class="reptiles">
           {{planet.mission.name}}
@@ -67,10 +79,51 @@
 
       {{> cosmosUnitsBlock units=planet.units isReptiles=planet.mission}}
 
-      {{#if and (and allowActions planet.canSend) (not disableSend)}}
-        <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
-      {{/if}}
+      <div style="display: flex; flex-wrap: wrap">
+        {{#if and (and allowActions planet.canSend) (not disableSend)}}
+          <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
+        {{/if}}
+        {{#if allowActions}}
+          {{#if canMine}}
+            <button
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_blue
+                mine
+              "
+              data-id="{{planet.id}}"
+            >
+              Захватить
+            </button>
+          {{else}}{{#if canUnMine}}
+            <button
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_blue
+                unmine
+              "
+              data-id="{{planet.id}}">Освободить</button>
+          {{/if}}{{/if}}
+        {{/if}}
+      </div>
     {{/let}}
+  </div>
+</template>
+
+<template name="cosmosBattlePopup">
+  <div
+      class="map-planet-popup"
+      style="left: {{position.x}}px; top: {{position.y}}px;"
+  >
+    Идёт бой<br/>
+    {{#with info}}
+      Раунд {{round}}<br/>
+      {{formatSeconds secondsLeft}}
+    {{/with}}
+    <button class="button-attack open" data-id="{{battleId}}">Отправить</button>
+
   </div>
 </template>
 
@@ -141,7 +194,7 @@
         {{/each}}
       </ul>
       
-      <div class="planets">
+      <div class="planets scrollbar-inner">
         {{#each colonies}}
           {{#if this.canBuy}}
             {{> cosmos_planet_item planet=this}}
@@ -239,6 +292,12 @@
             {{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
           </button>
         {{/if}}
+      {{else}}{{#if battle}}
+        {{#if timeAttackBattle}}
+          <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
+
+          <button class="btn-attack help">Отправить</button>
+        {{/if}}
       {{else}}
         {{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo ship) spaceEvent=ship}}
 
@@ -249,7 +308,7 @@
         {{/if}}
 
         <button class="btn-attack return" disabled={{isFleetSended}}>Перехватить</button>
-      {{/if}}
+      {{/if}}{{/if}}
     </div>
 
     <button class="btn-close"></button>
@@ -260,7 +319,7 @@
   <a 
     class="
       planet 
-      {{owner}} 
+      {{owner}}
       {{#if planet.isEmpty}}empty{{/if}}
       {{#if planet.notAvaliable}}notAvaliable{{/if}}
       {{#if planet.canBuy}}canBuy{{/if}}
@@ -269,7 +328,7 @@
       {{#if isTopTime}}topTime{{/if}}
     " 
     data-id="{{planet._id}}"
-    href="{{pathFor 'cosmos' hash=planet._id}}" 
+    href="{{pathFor 'cosmos' hash=planet._id}}"
     data-tooltip="true"
     data-tooltip-direction="e"
   >
@@ -292,13 +351,7 @@
       class="
         map-planet-marker
         {{planet.type}} 
-        {{#if or planet.isHome planet.armyId}}
-          map-planet-border-human
-        {{else}}{{#if planet.mission}}
-          map-planet-border-reptile
-        {{else}}
-          map-planet-border-empty
-        {{/if}}{{/if}}
+        map-planet-border-{{statusName}}
         {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
         {{owner}}
         " 
@@ -388,7 +441,18 @@
   {{#if reptileFleets}}
     {{> cosmosFleetsInfo_table fleets=reptileFleets owner='reptiles'}}
   {{/if}}
-  {{#if and (not userFleets) (not reptileFleets)}}
+  {{#if battles}}
+    {{#each battles}}
+      <div>
+        <a href="{{pathFor 'cosmos' hash=this.id}}">
+          <img src="/img/game/battle/battleIcon.svg" width="30" height="30">
+        </a>
+        Сражение<br/>
+        Раунд {{round}}
+      </div>
+    {{/each}}
+  {{/if}}
+  {{#if and (and (not userFleets) (not reptileFleets)) (not battles)}}
     <h2>Нет передвижений флота</h2>
   {{/if}}
 </template>
@@ -401,7 +465,10 @@
     {{#if ship}}
       {{#if ship.isHumans}}
         <h2 class="humans">
-          {{ship.status}}
+          {{ship.status}} 
+          {{#if ship.owner}}
+            <a href="{{pathFor 'statistics' hash=ship.owner}}">{{ship.owner}}</a>
+          {{/if}}
         </h2>
       {{/if}}
       {{#if ship.mission}}
@@ -448,20 +515,14 @@
         {{#if isHighlighted this.planet}}highlighted{{/if}}
         {{this.planet.type}} 
         leaflet-zoom-hide 
-        leaflet-interactive 
-        {{#if or this.planet.isHome this.planet.armyId}}
-          map-planet-border-human
-        {{else}}{{#if this.planet.mission}}
-          map-planet-border-reptile
-        {{else}}
-          map-planet-border-empty
-        {{/if}}{{/if}}
+        leaflet-interactive
+        map-planet-border-{{statusName}}
         {{#if and (gt zoom 5) (options.rotatePlanets)}}map-planet-marker-animated{{/if}}
         {{#if lt zoom 9}}zoom-lt-9{{/if}}
         {{#if lt zoom 7}}zoom-lt-7{{/if}}
         {{#if lt zoom 5}}zoom-lt-5{{/if}}
         {{#if isHidden this.planet.x this.planet.y}}map-planet-marker-hidden{{/if}}
-        {{owner}}" 
+        {{owner}}"
       tabindex="0" 
       style="
         margin-left: {{position.marginLeft}}px;

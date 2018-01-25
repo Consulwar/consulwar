@@ -1,3 +1,5 @@
+import Reptiles from '/imports/modules/Space/server/reptiles';
+
 import Battle from '../../battle/server/battle';
 
 initCheatsServer = function() {
@@ -24,11 +26,6 @@ if (process.env.NODE_ENV == 'development') {
         homePlanet.timeRespawn = Math.floor( new Date().valueOf() / 1000 );
         Game.Planets.update(homePlanet);
       }
-    },
-
-    'cheats.performBattle': function(userArmy, enemyArmy, options) {
-      var result = Game.Unit.performBattle(userArmy, enemyArmy, options);
-      return result.log;
     },
 
     'cheats.performBattleRounds': function(count) {
@@ -174,17 +171,17 @@ if (process.env.NODE_ENV == 'development') {
     },
 
     'cheats.spawnTradeFleet': function(hand, segment) {
-      Game.SpaceEvents.spawnTradeFleet(hand, segment);
+      Reptiles.spawnTradeFleet(hand, segment);
     },
 
     'cheats.sendReptileFleetToPlanet': function(planetId) {
-      Game.SpaceEvents.sendReptileFleetToPlanet(planetId);
+      Reptiles.sendReptileFleetToPlanet({ planetId });
     },
 
     'cheats.generateAllPlanets': function() {
       var galactic = Game.Planets.getBase().galactic;
       for (var i = 0; i < galactic.hands; i++) {
-        for (var j = 0; j < galactic.segments; j++) {
+        for (var j = 0; j <= galactic.segments; j++) {
           Game.Planets.generateSector(galactic, i, j, true);
         }
       }
@@ -284,7 +281,6 @@ if (process.env.NODE_ENV == 'development') {
 
   Meteor.methods({
     'cheats.setUnitCount': addCheater,
-    'cheats.performBattle': addCheater,
     'cheats.testMissionGenerate': addCheater,
     'cheats.spawnTradeFleet': addCheater,
     'cheats.sendReptileFleetToPlanet': addCheater,

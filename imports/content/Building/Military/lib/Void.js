@@ -9,7 +9,7 @@ export default {
         textAfter: '%',
         priority: 2,
         affect: 'humans',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level === 0 || level === 100 ? 0 : ((level - 1) * 0.1) - 10;
         },
       },
@@ -21,7 +21,7 @@ export default {
         condition: 'Unit/Human/Ground/Infantry/Lost',
         priority: 2,
         affect: 'humans',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [0, 10, 20, 30, 40, 50][Math.floor(level / 20)];
         },
       },

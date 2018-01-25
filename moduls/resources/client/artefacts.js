@@ -49,8 +49,10 @@ Template.item_artefact.helpers({
   },
 
   userPlanets: function() {
+    const user = Meteor.user();
+
     var planets = _.filter(getPlanetsByArtefact(this.item.engName), function(planet) {
-      return planet.armyId;
+      return planet.minerUsername === user.username;
     });
 
     return planets.length && {

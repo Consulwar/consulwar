@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Ground/Enginery',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return level * 0.4;
         },
       },
@@ -20,8 +20,8 @@ export default {
         condition: 'Unit/Human/Ground/Enginery',
         priority: 2,
         affect: 'time',
-        result(level = this.getCurrentLevel()) {
-          return [0, 10, 20, 40, 60, 80][Math.floor(level / 20)];
+        result(level) {
+          return [0, 10, 25, 66, 150, 400][Math.floor(level / 20)];
         },
       },
     ],

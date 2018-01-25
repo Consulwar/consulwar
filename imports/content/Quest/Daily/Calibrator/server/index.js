@@ -19,6 +19,9 @@ import BrutalRequests from './BrutalRequests';
 import NewModel from './NewModel';
 import Fiber from './Fiber';
 import Vocabulary from './Vocabulary';
+import Archive from './Archive';
+import Memories from './Memories';
+import StatueOfGod from './StatueOfGod';
 
 export default {
   'Quest/Daily/NatalyVerlen/Processor': Processor,
@@ -42,4 +45,7 @@ export default {
   'Quest/Daily/NatalyVerlen/NewModel': NewModel,
   'Quest/Daily/NatalyVerlen/Fiber': Fiber,
   'Quest/Daily/NatalyVerlen/Vocabulary': Vocabulary,
+  'Quest/Daily/NatalyVerlen/Archive': Archive,
+  'Quest/Daily/NatalyVerlen/Memories': Memories,
+  'Quest/Daily/NatalyVerlen/StatueOfGod': StatueOfGod,
 };

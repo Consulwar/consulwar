@@ -1,8 +1,14 @@
+import { Meteor } from 'meteor/meteor';
 import { default as Game, game } from '/moduls/game/lib/main.game';
+import User from '/imports/modules/User/lib/User';
+
+import BattleCollection from '../../battle/lib/imports/collection';
+import Battle from '../../battle/lib/imports/battle';
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
 
 Game.Unit = {
+
   location: {
     HOME: 1,
     PLANET: 2,
@@ -11,44 +17,69 @@ Game.Unit = {
 
   Collection: new Meteor.Collection('units'),
 
-  getArmy: function (id) {
+  getArmy: function ({ id } = {}) {
     return Game.Unit.Collection.findOne({
-      user_id: Meteor.userId(),
       _id: id
     });
   },
 
-  getHomeArmy: function (user_id = Meteor.userId()) {
+  getHangarArmy({ userId = Meteor.userId() } = {}) {
     return Game.Unit.Collection.findOne({
-      user_id,
-      location: Game.Unit.location.HOME
+      user_id: userId,
+      location: Game.Unit.location.HOME,
     });
   },
 
-  get: function (group, name) {
-    var record = Game.Unit.getHomeArmy();
+  getHomeFleetArmy({
+    userId,
+    homePlanet = Game.Planets.getBase(userId || Meteor.userId()),
+  } = {}) {
+    if (homePlanet) {
+      return Game.Unit.getArmy({ id: homePlanet.armyId });
+    }
 
-    if (record
-      && record.units
-      && record.units.army
-      && record.units.army[group]
-      && record.units.army[group][name]
-    ) {
-      return record.units.army[group][name];
+    return null;
+  },
+
+  get: function({ group, engName, ...options }) {
+    // Temporary fix! TODO : remove this after frontend work
+    if (group === 'ground') {
+      const record = Game.Unit.getHangarArmy(options);
+
+      if (record
+        && record.units
+        && record.units.army
+        && record.units.army[group]
+        && record.units.army[group][engName]
+      ) {
+        return record.units.army[group][engName];
+      } else {
+        return 0;
+      }
     } else {
-      return 0;
+      const record = Game.Unit.getHomeFleetArmy(options);
+
+      if (record
+        && record.units
+        && record.units.army
+        && record.units.army[group]
+        && record.units.army[group][engName]
+      ) {
+        return record.units.army[group][engName];
+      } else {
+        return 0;
+      }
     }
   },
 
-  has: function (group, name, count) {
-    count = count || 1;
-    return Game.Unit.get(group, name) >= count;
+  has: function({ group, engName, count = 1 }) {
+    return Game.Unit.items.army[group][engName].totalCount() >= count;
   },
 
-  calculateUnitsPower: function (units, isEarth = false) {
+  calculateUnitsPower: function(units, isEarth = false) {
     let group = {};
 
-    traverseGroup(units, function (armyName, typeName, unitName, count) {
+    traverseGroup(units, function(armyName, typeName, unitName, count) {
       let unit = Game.Unit.items[armyName][typeName][unitName];
       let characteristics;
       if (isEarth) {
@@ -91,7 +122,7 @@ Game.Unit = {
     return calculateGroupPower(group);
   },
 
-  calcUnitsHealth: function (units) {
+  calcUnitsHealth: function(units, userId = Meteor.userId()) {
     if (!units) {
       return 0;
     }
@@ -100,7 +131,7 @@ Game.Unit = {
     for (var side in units) {
       for (var group in units[side]) {
         for (var name in units[side][group]) {
-          var life = Game.Unit.items[side][group][name].characteristics.health.armor;
+          var life = Game.Unit.items[side][group][name].getCharacteristics({ userId }).health.armor;
           var count = units[side][group][name];
           if (life && count) {
             power += (life * count);
@@ -224,6 +255,26 @@ game.Unit = function (options) {
     throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
   }
 
+  this.getCount = ({from, ...options}) => {
+    let record;
+    if (from === 'hangar') {
+      record = Game.Unit.getHangarArmy(options);
+    } else {
+      record = Game.Unit.getHomeFleetArmy(options);
+    }
+
+    if (record
+      && record.units
+      && record.units.army
+      && record.units.army[this.group]
+      && record.units.army[this.group][this.engName]
+    ) {
+      return record.units.army[this.group][this.engName];
+    } else {
+      return 0;
+    }
+  };
+
   Game.Unit.items.army[this.side][this.engName] = this;
 
   this.color = 'cw--color_metal';
@@ -268,13 +319,17 @@ game.Unit = function (options) {
 
   this.getCard = this.image;
 
-  this.totalCount = function () {
-    var armies = Game.Unit.Collection.find({
-      user_id: Meteor.userId()
-    }).fetch();
+  this.totalCount = function (options = {}) {
+    const userId = options.userId || (!options.user ? Meteor.userId() : null);
+    const user = options.user || User.getById({ userId });
 
-    var result = 0;
-    for (var i = 0; i < armies.length; i++) {
+    const armies = Game.Unit.Collection.find({
+      user_id: user._id
+    }).fetch() || [];
+
+    let result = 0;
+
+    for (let i = 0; i < armies.length; i++) {
       if (armies[i].units
         && armies[i].units.army
         && armies[i].units.army[this.group]
@@ -283,6 +338,22 @@ game.Unit = function (options) {
         result += parseInt(armies[i].units.army[this.group][this.engName]);
       }
     }
+
+    const battles = BattleCollection.find({
+      status: Battle.Status.progress,
+      userNames: user.username,
+    }).fetch() || [];
+
+    battles.forEach((battle) => {
+      battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+        traverseGroup(units, (armyName, group, engName, unit) => {
+          if (group === this.group && engName === this.engName) {
+            result += unit.count;
+          }
+        });
+      });
+    });
+
     return result;
   };
 
@@ -298,10 +369,13 @@ game.Unit = function (options) {
   // new
   this.add = ({ count, userId }) => (
     Game.Unit.add({
-      engName: this.engName,
-      group: this.group,
-      count,
-    }, userId)
+      unit: {
+        engName: this.engName,
+        group: this.group,
+        count,
+      },
+      userId,
+    })
   );
   //
 };

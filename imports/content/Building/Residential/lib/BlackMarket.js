@@ -8,7 +8,7 @@ export default {
         textBefore: 'Единоразовый бонус: ',
         notImplemented: true,
         textAfter: '',
-        result(level = this.getCurrentLevel()) {
+        result(level) {
           return [
             0,
             '1 рейлган',

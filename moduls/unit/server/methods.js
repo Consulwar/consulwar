@@ -1,5 +1,11 @@
 import Log from '/imports/modules/Log/server/Log';
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import User from '/imports/modules/User/server/User';
+
+import FlightEvents from '/imports/modules/Space/server/flightEvents';
+import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import Game from '/moduls/game/lib/main.game';
 
 initUnitServerMethods = function() {
 'use strict';
@@ -30,7 +36,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -115,7 +121,7 @@ Meteor.methods({
 
       cardsObject = options.cards;
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
+      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
         throw new Meteor.Error('Карточки недоступны для применения');
       }
 
@@ -159,208 +165,56 @@ Meteor.methods({
     Game.Cards.spend(cardsObject);
   },
 
-  'unit.instantDamage': function(options) {
+  'unit.repair'(group, engName) {
     const user = User.getById();
     User.checkAuth({ user });
 
-    Log.method.call(this, { name: 'unit.instantDamage', user });
+    Log.method.call(this, { name: 'unit.repair', user });
 
-    let cardsObject = {};
-    let cardList = [];
+    check(group, String);
+    check(engName, String);
 
-    if (options.cards) {
-      check(options.cards, Object);
+    Game.Wrecks.actualize();
 
-      cardsObject = options.cards;
+    const wrecks = Game.Wrecks.Collection.findOne({ userId: user._id });
 
-      if (!Game.Cards.canUse(cardsObject, user)) {
-        throw new Meteor.Error('Карточки недоступны для применения');
-      }
-
-      cardList = Game.Cards.objectToList(cardsObject);
+    if (!wrecks || !wrecks.units.army[group] || !wrecks.units.army[group][engName]) {
+      throw new Meteor.Error('Нет юнитов для восстановления');
     }
 
-    if (cardList.length === 0) {
-      throw new Meteor.Error('Карточки не выбраны');
+    const count = wrecks.units.army[group][engName].count;
+    const unit = Game.Unit.items.army[group][engName];
+
+    // TODO: add effect(s) on PRICE_COEFFICIENT
+    const priceCoefficient = Game.Wrecks.PRICE_COEFFICIENT;
+
+    const price = Game.Resources.multiplyResources({
+      resources: _.clone(unit.getBasePrice(count).base),
+      count: priceCoefficient,
+    });
+
+    if (!Game.Resources.has({ resources: price })) {
+      throw new Meteor.Error('Недостаточно ресурсов');
     }
 
-    let result = Game.Effect.Special.getValue(true, { engName: 'instantDamage' }, cardList);
+    Game.Unit.add({
+      unit: {
+        group,
+        engName,
+        count,
+      },
+      user,
+    });
 
-    let userArmy = {};
+    Game.Wrecks.removeUnit(wrecks, group, engName);
 
-    for (let unitInfo in result) {
-      if (result.hasOwnProperty(unitInfo)) {
-        let count = result[unitInfo];
+    Game.Resources.spend(price);
 
-        if (!_.isNumber(count) || count <= 0) {
-          throw new Meteor.Error('Карточки недоступны для применения');
-        }
-
-        let [type, group, engName] = unitInfo.split('.');
-
-        if (!userArmy[type]) {
-          userArmy[type] = {};
-        }
-
-        if (!userArmy[type][group]) {
-          userArmy[type][group] = {};
-        }
-
-        if (!userArmy[type][group][engName]) {
-          userArmy[type][group][engName] = 0;
-        }
-
-        userArmy[type][group][engName] += count;
-      }
-    }
-
-    let battleResult;
-
-    if (options.planetId) {
-      check(options.planetId, String);
-
-      let planet = Game.Planets.getOne(options.planetId);
-
-      if (planet.user_id !== user._id) {
-        throw new Meteor.Error('В анус себе надемажь, пёс!');
-      }
-
-      if (!planet.mission) {
-        throw new Meteor.Error('Враги отсутствуют.');
-      }
-
-      let enemyFleet = Game.Planets.getFleetUnits(planet._id);
-      let enemyArmy = { reptiles: { fleet: enemyFleet } };
-
-      let battleOptions = {
-        missionType: planet.mission.type,
-        missionLevel: planet.mission.level,
-        location: planet._id,
-        userLocation: null,
-        enemyLocation: planet._id,
-        isOnlyDamage: true
-      };
-
-      battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
-
-      let resultEnemyArmy = battleResult.enemyArmy;
-
-      if (resultEnemyArmy) {
-        planet.mission.units = resultEnemyArmy.reptiles.fleet;
-      } else {
-        planet.mission = null;
-      }
-
-      Game.Planets.update(planet);
-
-    } else if (options.targetId) {
-      check(options.targetId, String);
-      check(options.targetX, Number);
-      check(options.targetY, Number);
-
-      let enemyShip = Game.SpaceEvents.getOne(options.targetId);
-      if (!enemyShip) {
-        throw new Meteor.Error('Корабль не существует');
-      }
-
-      if (!enemyShip.info || !enemyShip.info.mission) {
-        throw new Meteor.Error('Данные корабля испорчены');
-      }
-
-      if (enemyShip.info.isHumans) {
-        throw new Meteor.Error('Нельзя перехватить свой корабль');
-      }
-
-      let enemyFleet = Game.SpaceEvents.getFleetUnits(enemyShip);
-      let enemyArmy = { reptiles: { fleet: enemyFleet } };
-
-      let targetPosition = {
-        x: options.targetX,
-        y: options.targetY
-      };
-
-      let battleOptions = {
-        missionType: enemyShip.info.mission.type,
-        missionLevel: enemyShip.info.mission.level,
-        location: targetPosition,
-        userLocation: null,
-        enemyLocation: targetPosition,
-        isOnlyDamage: true
-      };
-
-      battleResult = Game.Unit.performBattle(userArmy, enemyArmy, battleOptions);
-
-      let resultEnemyArmy = battleResult.enemyArmy;
-
-      if (resultEnemyArmy) {
-        enemyShip.info.mission.units = resultEnemyArmy.reptiles.fleet;
-      } else {
-        enemyShip.info.mission = null;
-      }
-
-      Game.SpaceEvents.Collection.update({ _id: enemyShip._id }, enemyShip);
-    } else if (options.zoneId) {
-      check(options.zoneId, String);
-
-      let zone = Game.EarthZones.Collection.findOne({
-        _id: options.zoneId
-      });
-
-      if (!zone) {
-        throw new Meteor.Error('Зоны не существует');
-      }
-
-      let enemyArmy = zone.enemyArmy;
-
-      let battleOptions = {
-        isEarth: true,
-        moveType: 'fight',
-        location: zone.name,
-        userLocation: zone.name,
-        enemyLocation: zone.name,
-        missionType: 'patrolfleet',
-        missionLevel: 1,
-        isOnlyDamage: true
-      };
-
-      let battle = new Game.Unit.Battle(userArmy, enemyArmy, battleOptions);
-
-      battleResult = battle.results;
-
-      let resultEnemyArmy = battleResult.enemyArmy;
-
-      let update = {};
-
-      if (resultEnemyArmy) {
-        update.$set = {
-          enemyArmy: battleResult.enemyArmy
-        };
-      } else {
-        update.$unset = {
-          enemyArmy: 1
-        };
-      }
-
-      Game.EarthZones.Collection.update({ name: zone.name }, update);
-    }
-
-    if (!battleResult) {
-      throw new Meteor.Error('Не выбрана цель.');
-    }
-
-    if (battleResult.reward && battleResult.reward.honor > 0) {
-      Game.Resources.add({
-        honor: battleResult.reward.honor
-      });
-    }
-
-    for (let card of cardList) {
-      Game.Cards.activate(card, user);
-    }
-
-    Game.Cards.spend(cardsObject);
-
-    return battleResult;
+    // save statistic
+    Game.Statistic.incrementUser(user._id, {
+      'units.repair.total': count,
+      [`units.repair.army.${group}.${engName}`]: count,
+    });
   },
 
   'battleHistory.getPage': function(page, count, isEarth) {

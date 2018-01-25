@@ -19,6 +19,7 @@ import Bootlegging from './Bootlegging';
 import TurretProtection from './TurretProtection';
 import Abnormal from './Abnormal';
 import BusinessExpansion from './BusinessExpansion';
+import Bullshitting from './Bullshitting';
 
 export default {
   'Quest/Daily/NatalyVerlen/Fishing': Fishing,
@@ -42,4 +43,5 @@ export default {
   'Quest/Daily/NatalyVerlen/TurretProtection': TurretProtection,
   'Quest/Daily/NatalyVerlen/Abnormal': Abnormal,
   'Quest/Daily/NatalyVerlen/BusinessExpansion': BusinessExpansion,
+  'Quest/Daily/NatalyVerlen/Bullshitting': Bullshitting,
 };

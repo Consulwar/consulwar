@@ -1,3 +1,4 @@
+import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
 import containerCollection from '/imports/modules/Container/lib/collection';
 
 initBuildingSpecialContainerLib = function() {
@@ -45,7 +46,11 @@ game.Container = function(options) {
   this.drop = options.drop;
 
   this.getPrice = function() {
-    return Game.Effect.Price.applyTo({ engName: 'containerPrice' }, _.clone(options.price), true);
+    return PriceEffect.applyTo({
+      target: { engName: 'containerPrice' },
+      obj: _.clone(options.price),
+      hideEffects: true,
+    });
   };
 
   this.checkPrice = function() {

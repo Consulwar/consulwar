@@ -192,7 +192,7 @@ UI.registerHelper('formatYearMonthDay', function(dateString) {
   var date = new Date(dateString);
   var day = date.getDate();
   day = (day < 10) ? '0' + day : day;
-  var month = date.getMonth();
+  var month = date.getMonth() + 1;
   month = (month < 10) ? '0' + month : month;
   return day + "." + month + "." + date.getFullYear();
 }); 

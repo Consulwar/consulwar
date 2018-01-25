@@ -42,17 +42,33 @@ Game.Unit = {
   },
 
   get: function({ group, engName, ...options }) {
-    const record = Game.Unit.getHomeFleetArmy(options);
+    // Temporary fix! TODO : remove this after frontend work
+    if (group === 'ground') {
+      const record = Game.Unit.getHangarArmy(options);
 
-    if (record
-      && record.units
-      && record.units.army
-      && record.units.army[group]
-      && record.units.army[group][engName]
-    ) {
-      return record.units.army[group][engName];
+      if (record
+        && record.units
+        && record.units.army
+        && record.units.army[group]
+        && record.units.army[group][engName]
+      ) {
+        return record.units.army[group][engName];
+      } else {
+        return 0;
+      }
     } else {
-      return 0;
+      const record = Game.Unit.getHomeFleetArmy(options);
+
+      if (record
+        && record.units
+        && record.units.army
+        && record.units.army[group]
+        && record.units.army[group][engName]
+      ) {
+        return record.units.army[group][engName];
+      } else {
+        return 0;
+      }
     }
   },
 

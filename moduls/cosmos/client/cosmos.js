@@ -206,7 +206,7 @@ Template.cosmosHistory.onRendered(function() {
       historyBattles.clear();
       isHistoryLoading.set(true);
 
-      Meteor.call('battleHistory.getPage', pageNumber, historyCountPerPage, false, function(err, data) {
+      Meteor.call('battle.getPage', pageNumber, historyCountPerPage, false, function(err, data) {
         isHistoryLoading.set(false);
         if (err) {
           Notifications.error('Не удалось получить историю боёв', err.error);
@@ -293,78 +293,95 @@ var getArmyInfo = function(units, rest) {
   return result.length > 0 ? result : null;
 };
 
-var getBattleInfo = function(item) {
-  item.planet = null;
-  if (_.isString(item.location)) {
-    var planet = Game.Planets.getOne(item.location);
-    if (planet) {
-      item.planet = planet;
-    }
+const getBattleInfo = function(battle) {
+  const user = Meteor.user();
+  const result = {};
+  // Распарсить место
+  // planet
+
+  // Время
+  result.timestamp = Math.floor(battle.timeStart.valueOf() / 1000);
+
+  // Распарсить ресурсы, потерянные при грабеже нашего дома
+  if (battle.lostResources) {
+    result.lostResources = _.mapObject(battle.lostResources, count => count * -1);
   }
 
-  for (let res in item.lostResources) {
-    item.lostResources[res] *= -1;
+  // Распарсить награду
+  if (battle.reward && !_.isEmpty(battle.reward[user.username])) {
+    result.reward = battle.reward[user.username];
+  } else {
+    result.reward = result.lostResources;
   }
-
-  item.reward = (!_.isEmpty(item.reward) ? item.reward : item.lostResources);
-
-  for (let art in item.artefacts) {
-    item.reward[art] = item.artefacts[art];
-  }
-
-  item.artefacts = _.map(item.artefacts, function(value, key) {
-    return {
-      engName: key,
-      name: Game.Artefacts.items[key].name,
-      amount: value
-    };
+  
+  // Распарсить армии
+  const userUnits = { army: { fleet: {} } };
+  battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+    _(units.army.fleet).pairs().forEach(([unit, { count }]) => {
+      userUnits.army.fleet[unit] = (userUnits.army.fleet[unit] || 0) + count;
+    });
   });
 
-  item.cards = _.map(item.cards, function(value, key) {
-    return {
-      engName: key,
-      name: Game.Cards.items.general[key].name,
-      amount: value
-    };
+  const userUnitsLeft = { army: { fleet: {} } };
+  battle.currentUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+    _(units.army.fleet).pairs().forEach(([unit, { count }]) => {
+      userUnitsLeft.army.fleet[unit] = (userUnitsLeft.army.fleet[unit] || 0) + count;
+    });
   });
 
-  item.userUnits = getArmyInfo( item.userArmy, item.userArmyRest );
-  item.enemyUnits =  getArmyInfo( item.enemyArmy, item.enemyArmyRest );
+  const enemyUnits = { reptiles: { fleet: {} } };
+  battle.initialUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
+    _(units.reptiles.fleet).pairs().forEach(([unit, { count }]) => {
+      enemyUnits.reptiles.fleet[unit] = (enemyUnits.reptiles.fleet[unit] || 0) + count;
+    });
+  });
 
-  if (item.userUnits) {
-    item.lostUnitsPrice = {
+  const enemyUnitsLeft = { reptiles: { fleet: {} } };
+  battle.currentUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
+    _(units.reptiles.fleet).pairs().forEach(([unit, { count }]) => {
+      enemyUnitsLeft.reptiles.fleet[unit] = (enemyUnitsLeft.reptiles.fleet[unit] || 0) + count;
+    });
+  });
+  
+  
+  result.userUnits = getArmyInfo(userUnits, userUnitsLeft);
+  result.enemyUnits = getArmyInfo(enemyUnits, enemyUnitsLeft);
+
+  // Считаем потери
+  if (result.userUnits) {
+    result.lostUnitsPrice = {
       humans: 0,
       metals: 0,
-      crystals: 0
+      crystals: 0,
     };
 
-    item.lostUnitsCount = 0;
+    result.lostUnitsCount = 0;
 
-    for (let unit in item.userUnits) {
-      let lostCount = item.userUnits[unit].start - item.userUnits[unit].end;
-      item.lostUnitsCount += lostCount;
+    _(result.userUnits).forEach((unit) => {
+      const lostCount = unit.start - unit.end;
+      result.lostUnitsCount += lostCount;
 
       if (lostCount) {
-        if (item.userUnits[unit].resourcesLost.metals) {
-          item.lostUnitsPrice.metals += item.userUnits[unit].resourcesLost.metals;
+        if (unit.resourcesLost.metals) {
+          result.lostUnitsPrice.metals += unit.resourcesLost.metals;
         }
-        if (item.userUnits[unit].resourcesLost.crystals) {
-          item.lostUnitsPrice.crystals += item.userUnits[unit].resourcesLost.crystals;
+        if (unit.resourcesLost.crystals) {
+          result.lostUnitsPrice.crystals += unit.resourcesLost.crystals;
         }
-        if (item.userUnits[unit].resourcesLost.humans) {
-          item.lostUnitsPrice.humans += item.userUnits[unit].resourcesLost.humans;
+        if (unit.resourcesLost.humans) {
+          result.lostUnitsPrice.humans += unit.resourcesLost.humans;
         }
       }
-    }
+    });
 
-    item.lostUnitsPrice = {
-      [item.lostUnitsPrice.humans   ? 'humans'   : 'empty'] : item.lostUnitsPrice.humans   || ' ',
-      [item.lostUnitsPrice.metals   ? 'metals'   : 'empty'] : item.lostUnitsPrice.metals   || ' ',
-      [item.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : item.lostUnitsPrice.crystals || ' ',
+    result.lostUnitsPrice = {
+      [result.lostUnitsPrice.humans   ? 'humans'   : 'empty'] : result.lostUnitsPrice.humans   || ' ',
+      [result.lostUnitsPrice.metals   ? 'metals'   : 'empty'] : result.lostUnitsPrice.metals   || ' ',
+      [result.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : result.lostUnitsPrice.crystals || ' ',
     };
   }
 
-  return item;
+  return result;
 };
 
 // ----------------------------------------------------------------------------
@@ -652,8 +669,14 @@ Template.cosmosFleetsInfo.helpers({
     }).fetch();
 
     battles.forEach((battle) => {
+      const battleEvent = Space.collection.findOne({
+        'data.battleId': battle._id
+      });
+
       result.push({
         id: battle._id,
+        round: battleEvent.repeated + 1,
+        secondsLeft: battleEvent,
       });
     });
 
@@ -680,10 +703,34 @@ Game.Cosmos.getPlanetInfo = function(planet) {
   info.name = planet.name;
   info.type = Game.Planets.types[planet.type].name;
 
-  if (planet.isHome || planet.armyId) {
+  if (planet.isHome || planet.armyId || planet.status === Game.Planets.STATUS.HUMANS) {
     info.isHumans = true;
     info.isHome = true;
-    info.title = (planet.isHome) ? 'Планета Консула' : 'Колония';
+    const user = Meteor.user();
+    
+    switch (planet.status) {
+      case Game.Planets.STATUS.NOBODY:
+        info.title = 'Свободная планета';
+        break;
+      case Game.Planets.STATUS.HUMANS:
+        if (user.username !== planet.minerUsername) {
+          info.title = (planet.isHome) ? 'Планета консула' : 'Колония консула';
+        } else {
+          info.title = (planet.isHome) ? 'Наша планета' : 'Наша колония';
+        }
+        break;
+      case Game.Planets.STATUS.REPTILES:
+        info.title = 'Планета рептилий';
+        break;
+    }
+
+    if (user.username !== planet.minerUsername) {
+      info.owner = planet.minerUsername;
+    }
+    
+    if (user.username !== planet.armyUsername && planet.armyUsername !== planet.minerUsername) {
+      info.fleetOwner = planet.armyUsername;
+    }
     info.canSend = true;
 
     if (planet.artefacts) {
@@ -752,6 +799,19 @@ Template.cosmosBattlePopup.events({
   },
 });
 
+Template.cosmosBattlePopup.helpers({
+  info() {
+    const battleEvent = Space.collection.findOne({
+      'data.battleId': this.battleId
+    });
+
+    return battleEvent && {
+      round: battleEvent.repeated + 1,
+      secondsLeft: Math.ceil((battleEvent.after - Session.get('serverTime') * 1000) / 1000),
+    };
+  }
+});
+
 Template.cosmosPlanetPopup.helpers({
   getTimeNextDrop: function(timeCollected) {
     var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
@@ -761,13 +821,8 @@ Template.cosmosPlanetPopup.helpers({
     return reptilesFleetPower(Game.Cosmos.getPlanetInfo(this.planet).units);
   },
   canMine() {
-    if (this.planet.status === Game.Planets.STATUS.HUMANS || !this.planet.armyId) {
-      return false;
-    }
-    const army = Game.Unit.getArmy({ id: this.planet.armyId });
     const user = Meteor.user();
-
-    return army && army.user_id === user._id;
+    return this.planet.armyUsername === user.username && this.planet.minerUsername !== user.username;
   },
   canUnMine() {
     const planet = this.planet;
@@ -1035,6 +1090,9 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
     info.isHumans = true;
     info.canSend = false;
     info.status = 'Флот Консула';
+    if (Meteor.user().username !== spaceEvent.data.username) {
+      info.owner = spaceEvent.data.username;
+    }
   } else {
     info.isHumans = false;
     info.canSend = true;

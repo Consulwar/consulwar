@@ -5,6 +5,9 @@ export default {
     underwear: {
       isUnique: true,
     },
+    santa: {
+      isUnique: true,
+    },
     assassin: {
       price: {
         credits: 2500,

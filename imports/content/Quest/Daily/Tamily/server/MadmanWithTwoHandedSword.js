@@ -1,5 +1,5 @@
 export default {
-  id: 'Quest/Daily/Tamily/MadmanWithTwo-HandedSword',
+  id: 'Quest/Daily/Tamily/MadmanWithTwoHandedSword',
   title: 'Псих с двуручником',
   author: 'DiamondDust',
   text: 'Консул, у нас проблемы! Тут на площади какой-то псих рахмахивает двуручником и орёт что-то про какого-то Груффита. Что нам делать? Он уже порубил в капусту двух потерянных, почему-то называя их апостолами!',

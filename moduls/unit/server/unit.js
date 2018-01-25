@@ -148,6 +148,8 @@ Game.Unit.moveArmy = function (id, location) {
 };
 
 Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
+  const copyDestUnits = { ...destUnits };
+
   if (destLocation == Game.Unit.location.HOME) {
     throw new Meteor.Error('Может существовать только одна локация HOME');
   }
@@ -161,16 +163,17 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
   var totalCount = 0;
   var restCount = 0;
 
-  for (let side in destUnits) {
-    for (let group in destUnits[side]) {
-      for (let name in destUnits[side][group]) {
+  for (let side in copyDestUnits) {
+    for (let group in copyDestUnits[side]) {
+      for (let name in copyDestUnits[side][group]) {
         if (!(
              sourceUnits[side]
           && sourceUnits[side][group]
           && sourceUnits[side][group][name]
           )
         ) {
-          throw new Meteor.Error('Неправильные входные данные');
+          console.log(JSON.stringify(sourceUnits), side, group, name);
+          throw new Meteor.Error('Неправильные входные данные.');
         }
       }
     }
@@ -180,20 +183,22 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
     for (let group in sourceUnits[side]) {
       for (let name in sourceUnits[side][group]) {
         // subtract destination units 
-        if (destUnits[side]
-         && destUnits[side][group]
-         && destUnits[side][group][name]
+        if (copyDestUnits[side]
+         && copyDestUnits[side][group]
+         && copyDestUnits[side][group][name]
         ) {
-          var count = parseInt( destUnits[side][group][name], 10 );
+          var count = parseInt( copyDestUnits[side][group][name], 10 );
           if (count > sourceUnits[side][group][name]) {
             count = sourceUnits[side][group][name];
           }
 
-          destUnits[side][group][name] = count;
+          copyDestUnits[side][group][name] = count;
           sourceUnits[side][group][name] -= count;
           totalCount += count;
+        } else {
+          delete copyDestUnits[side][group][name];
         }
-        
+
         // calculate rest units
         restCount += sourceUnits[side][group][name];
       }
@@ -201,7 +206,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
   }
 
   if (totalCount <= 0) {
-    throw new Meteor.Error('Неправильные входные данные');
+    throw new Meteor.Error('Неправильные входные данные..');
   }
 
   // update source
@@ -212,7 +217,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
   }
 
   // insert new slice
-  return Game.Unit.createArmy(destUnits, destLocation);
+  return Game.Unit.createArmy(copyDestUnits, destLocation);
 };
 
 Game.Unit.mergeArmy = function(sourceId, destId, user_id = Meteor.userId()) {
@@ -224,7 +229,6 @@ Game.Unit.mergeArmy = function(sourceId, destId, user_id = Meteor.userId()) {
   var dest = Game.Unit.getArmy({ id: destId });
 
   if (!source || !source.units || !dest || !dest.units) {
-    console.log(source, source.units, dest, dest.units, sourceId, destId); // TODO remove after tests
     throw new Meteor.Error('Армии с указанными id не найдены');
   }
 

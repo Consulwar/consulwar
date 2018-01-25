@@ -100,6 +100,20 @@ Game.Planets = {
     }).fetch();
   },
 
+  getHumanPlanetsByUsername(username) {
+    return Game.Planets.Collection.find({
+      username,
+      $or: [
+        {
+          status: Game.Planets.STATUS.HUMANS,
+        },
+        {
+          armyId: { $exists: true, $ne: null },
+        },
+      ],
+    }).fetch();
+  },
+
   getMaxColoniesCount: function () {
     return 3 + Game.User.getLevel() + Game.Planets.getExtraColoniesCount();
   },

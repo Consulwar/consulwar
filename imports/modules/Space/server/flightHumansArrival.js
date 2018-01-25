@@ -156,7 +156,9 @@ const completeOnShip = function(data) {
 
   if (targetShip) {
     const job = Space.jobs.getJob(targetShip._id);
-    job.cancel();
+    if (job) {
+      job.cancel();
+    }
 
     // Create battle
     const enemyArmy = {
@@ -196,7 +198,7 @@ const completeOnShip = function(data) {
       const targetPositionWithOffset = { ...targetPosition };
 
       if (data.hex) {
-        let center = new Hex(data.targetHex).center();
+        let center = new Hex(battleEvent.data.targetHex).center();
         startPositionWithOffset.x += center.x;
         startPositionWithOffset.y += center.y;
 

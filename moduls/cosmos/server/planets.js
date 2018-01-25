@@ -35,7 +35,9 @@ Game.Planets.Collection._ensureIndex({
 });
 
 Game.Planets.Collection._ensureIndex({
+  username: 1,
   status: 1,
+  armyId: 1,
 });
 
 Game.Planets.actualize = function() {

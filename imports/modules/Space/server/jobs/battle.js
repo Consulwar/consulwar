@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import Battle from '/moduls/battle/server/battle';
@@ -42,14 +43,17 @@ const reptilesWin = function({ battle, roundResult, planet, data }) {
         Reptiles.stealUserResources({
           enemyArmy: army,
           userId: data.userId,
-          battle: battle,
+          battle,
         });
       } else if (planet.mission) {
         // restore mission units
         planet.mission.units = null;
       }
 
-      FlightEvents.flyBack(data.reptileData || data);
+      const backData = data.reptileData || data;
+      backData.mission.units = army.reptiles.fleet;
+
+      FlightEvents.flyBack(backData);
     }
   } else {
     // Продолжают прерванный боем полет
@@ -138,7 +142,7 @@ const wreakUnits = function(battle, users) {
       units: battle.getUsersKilledUnits(user.username),
       userId: user._id,
     });
-  })
+  });
 };
 
 export default Space.jobs.processJobs(

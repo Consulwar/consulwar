@@ -92,7 +92,7 @@ export default function initSpaceServer() {
         pollInterval: Config.JOBS.pollInterval,
         prefetch: Config.JOBS.prefetch,
       },
-      (job, cb) => {
+      (spaceJob, cb) => {
         datadog.gauge(
           'jobs.ready',
           Space.collection.find({ status: 'ready' }).count(),
@@ -108,7 +108,7 @@ export default function initSpaceServer() {
           Space.collection.find({ status: 'waiting' }).count(),
         );
 
-        job.done();
+        spaceJob.done();
         cb();
       },
     );

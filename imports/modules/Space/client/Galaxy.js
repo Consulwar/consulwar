@@ -1,3 +1,4 @@
+import { L } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import Ship from './Ship';
 import Config from './config';
@@ -42,7 +43,8 @@ class Galaxy {
         ) {
           const planet = Game.Planets.getOne(id);
           const radius = 0.01 + (planet.size / 20);
-          const ship = new Ship({
+          // eslint-disable-next-line no-new
+          new Ship({
             isStatic: true,
             planet,
             planetId: id,
@@ -90,7 +92,8 @@ class Galaxy {
     });
 
     if (planet.mission || planet.armyId) {
-      const ship = new Ship({
+      // eslint-disable-next-line no-new
+      new Ship({
         isStatic: true,
         planet,
         planetId: id,

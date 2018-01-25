@@ -1,4 +1,4 @@
-import { _ } from 'meteor/underscore';
+import { L } from '/moduls/game/lib/importCompability';
 
 const turf = require('@turf/turf');
 
@@ -8,8 +8,6 @@ class PathView {
     startPoint,
     endPoint,
     color,
-    eventId,
-    pathViews,
     offsetStart,
     offsetEnd,
   }) {
@@ -22,15 +20,14 @@ class PathView {
       [startPoint.x + offsetStart.x, startPoint.y + offsetStart.y],
       [endPoint.x + offsetEnd.x, endPoint.y + offsetEnd.y],
     ];
-    const polyline = new L.Polyline(
+
+    this.polyline = new L.Polyline(
       points,
       {
         color,
         weight: 2,
       },
     ).addTo(layer);
-
-    this.polyline = polyline;
 
     this.lineOptions = {
       type: 'Feature',

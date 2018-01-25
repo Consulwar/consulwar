@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import Config from './config';
 import Reptiles from './reptiles';

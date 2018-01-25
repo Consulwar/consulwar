@@ -214,8 +214,6 @@ const sendReptileFleetToPlanet = function({
     const startPlanet = planets[rand];
 
     // send ship
-    const timeCurrent = Game.getCurrentTime();
-
     const startPosition = {
       x: startPlanet.x,
       y: startPlanet.y,
@@ -254,7 +252,7 @@ const sendReptileFleetToPlanet = function({
   }
 };
 
-const actualize = function() {
+const actualize = function({ user }) {
   const timeCurrent = Game.getCurrentTime();
 
   // Try to attack player
@@ -271,7 +269,7 @@ const actualize = function() {
         targetPlanet = Game.Planets.getBase();
       } else if (chances.colony >= Game.Random.interval(0, 100)) {
         // choose from planets with army, exclude base planet
-        const planets = Game.Planets.getPlanetsWithArmy();
+        const planets = Game.Planets.getHumanPlanetsByUsername(user.username);
         let n = planets.length;
         while (n > 0) {
           n -= 1;

@@ -58,7 +58,7 @@ const cubeSpiral = function(center, count, initialRadius = 0) {
   }
 
   while (hexes.length < count) {
-    hexes.push.apply(hexes, cubeRing(center, radius));
+    hexes.push(...cubeRing(center, radius));
 
     radius += 1;
   }

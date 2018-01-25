@@ -4,12 +4,12 @@ import './methods';
 import generateHexes from './generateHexes';
 
 collection._ensureIndex({
-  'username': 1,
+  username: 1,
 });
 
 collection._ensureIndex({
-  'x': 1,
-  'z': 1,
+  x: 1,
+  z: 1,
 });
 
 Meteor.publish('spaceHex', function() {
@@ -25,6 +25,7 @@ export default function initMutualSpaceServer() {
     // TODO: fix for calling on single process only
     if (collection.find({}).count() === 0) {
       generateHexes(collection, 5000);
+      // eslint-disable-next-line no-console
       console.log('MutualSpace hexes are generated.');
     }
   }

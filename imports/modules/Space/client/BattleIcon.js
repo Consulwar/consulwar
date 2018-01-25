@@ -1,3 +1,4 @@
+import { L } from '/moduls/game/lib/importCompability';
 import Space from './space';
 import Game from '../../../../moduls/game/lib/main.game';
 

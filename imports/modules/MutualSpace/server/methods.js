@@ -6,7 +6,7 @@ import collection from '../lib/collection';
 import Config from '../lib/config';
 import Hex from '../lib/Hex';
 import Space from '../../Space/lib/space';
-import SpaceConfig from '../../Space/server/config'
+import SpaceConfig from '../../Space/server/config';
 
 Meteor.methods({
   'mutualSpace.access'() {
@@ -47,7 +47,7 @@ Meteor.methods({
       }
     });
 
-    if ( allCount !== ((galactic.hands * galactic.segments) + 1) ) {
+    if (allCount !== ((galactic.hands * galactic.segments) + 1)) {
       throw new Meteor.Error('Перед выходом в общий космос необходимо разведать все планеты.');
     }
 

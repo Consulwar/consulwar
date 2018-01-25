@@ -34,6 +34,16 @@ export default {
       missionLevel: mission.level,
     };
 
+    if (data.planetId) {
+      options.planetId = data.planetId;
+    } else if (data.fleetId) {
+      options.fleetId = data.fleetId;
+    }
+
+    if (data.targetHex) {
+      options.hex = data.targetHex;
+    }
+
     const battle = Battle.create(options,
       {
         [username]: [userGroup],

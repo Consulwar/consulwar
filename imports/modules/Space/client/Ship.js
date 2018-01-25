@@ -1,5 +1,6 @@
 import { Tracker } from 'meteor/tracker';
-import { _ } from 'meteor/underscore';
+import { Session } from 'meteor/session';
+import { L } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import Utils from '/imports/modules/Space/lib/utils';
 
@@ -13,15 +14,6 @@ const {
   calcMaxSpeed,
   calcAcceleration,
 } = Utils;
-
-const yx = L.latLng;
-
-const xy = function(x, y) {
-  if (_(x).isArray()) {    // When doing xy([x, y]);
-    return yx(x[1], x[0]);
-  }
-  return yx(y, x);  // When doing xy(x, y);
-};
 
 const createTriangle = function(x, y, offset, size, angle = 0) {
   const basePoints = [
@@ -39,6 +31,7 @@ const createTriangle = function(x, y, offset, size, angle = 0) {
 };
 
 const getFleetAnimation = function(fleet, mapView, path) {
+  // eslint-disable-next-line meteor/no-session
   const currentTime = Session.get('serverTime');
 
   if (!path) {
@@ -70,7 +63,7 @@ const getFleetAnimation = function(fleet, mapView, path) {
     angleDeg += 180;
   }
 
-  const coords = mapView.latLngToLayerPoint(new L.latLng(curPoint.x, curPoint.y));
+  const coords = mapView.latLngToLayerPoint(new L.LatLng(curPoint.x, curPoint.y));
 
   return {
     lat: curPoint.x,

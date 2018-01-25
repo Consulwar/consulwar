@@ -2143,8 +2143,6 @@ const createPath = function(id, event, offsetStart, offsetEnd, user) {
     startPoint: event.data.startPosition,
     endPoint: event.data.targetPosition,
     color: Ship.getColor(event.data, user, myAllies),
-    eventId: id,
-    pathViews,
     offsetStart,
     offsetEnd,
   });

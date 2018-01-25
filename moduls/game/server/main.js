@@ -165,7 +165,7 @@ Meteor.methods({
       Game.Queue.checkAll();
     }
 
-    Reptiles.actualize();
+    Reptiles.actualize({ user });
     Game.Planets.actualize();
     Game.Quest.actualize();
     Game.Wrecks.actualize();

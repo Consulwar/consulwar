@@ -56,6 +56,11 @@ import SamuraiPicket from './SamuraiPicket';
 import Traitors from './Traitors';
 import Visitors from './Visitors';
 import Cortege from './Cortege';
+import Spleen from './Spleen';
+import TrickyQuestion from './TrickyQuestion';
+import Deer from './Deer';
+import LostSon from './LostSon';
+import MadmanWithTwoHandedSword from './MadmanWithTwoHandedSword';
 
 export default {
   'Quest/Daily/Tamily/UnknownShip': UnknownShip,
@@ -116,4 +121,9 @@ export default {
   'Quest/Daily/Tamily/Traitors': Traitors,
   'Quest/Daily/Tamily/Visitors': Visitors,
   'Quest/Daily/Tamily/Cortege': Cortege,
+  'Quest/Daily/Tamily/Spleen': Spleen,
+  'Quest/Daily/Tamily/TrickyQuestion': TrickyQuestion,
+  'Quest/Daily/Tamily/Deer': Deer,
+  'Quest/Daily/Tamily/LostSon': LostSon,
+  'Quest/Daily/Tamily/MadmanWithTwoHandedSword': MadmanWithTwoHandedSword,
 };

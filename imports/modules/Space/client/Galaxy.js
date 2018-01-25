@@ -29,7 +29,7 @@ class Galaxy {
       },
 
       changed: (id, fields) => {
-        if (fields.status !== undefined) {
+        if (fields.status !== undefined || fields.minerUsername !== undefined) {
           const planet = Game.Planets.getOne(id);
           this.circles[id].setStyle({
             color: this.getColor(planet),

@@ -946,7 +946,7 @@ Meteor.methods({
       throw new Meteor.Error('Достигнуто максимальное количество колоний');
     }
 
-    if (planet.status === Game.Planets.STATUS.HUMANS) {
+    if (planet.status === Game.Planets.STATUS.HUMANS && planet.minerUsername === user.username) {
       throw new Meteor.Error('На планете уже ведется добыча артефактов');
     } else if (planet.status === Game.Planets.STATUS.REPTILES) {
       const artefacts = Game.Planets.getArtefacts(planet, 1);

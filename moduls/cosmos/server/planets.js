@@ -1006,17 +1006,10 @@ Meteor.publish('planets', function(usernames = []) {
     if (usernames.length === 0) {
       usernames.push(Meteor.users.findOne({ _id: this.userId }).username);
     }
-    return Game.Planets.Collection.find({
-      username: { $in: usernames }
-    });
-  }
-});
-
-Meteor.publish('relatedToUserPlanets', function() {
-  if (this.userId) {
     const username = Meteor.users.findOne({ _id: this.userId }).username;
     return Game.Planets.Collection.find({
       $or: [
+        { username: { $in: usernames } },
         { armyUsername: username },
         { minerUsername: username },
       ],

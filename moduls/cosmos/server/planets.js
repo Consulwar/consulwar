@@ -998,6 +998,10 @@ Meteor.methods({
 });
 
 Meteor.publish('planets', function(usernames = []) {
+  if (Config.DISABLE_MERGEBOX) {
+    this.disableMergebox();
+  }
+
   if (this.userId) {
     if (usernames.length === 0) {
       usernames.push(Meteor.users.findOne({ _id: this.userId }).username);

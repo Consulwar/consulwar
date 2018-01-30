@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import collection from '../lib/collection';
 import './methods';
+import './adminMethods';
 import generateHexes from './generateHexes';
 
 collection._ensureIndex({

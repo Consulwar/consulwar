@@ -26,13 +26,17 @@ const createUnit = function ({ armyName, typeName, unitName, count, userId }) {
 };
 
 export default function ({ army, userId }) {
-  const group = Game.Helpers.deepClone(army);
+  const group = {};
 
-  traverseGroup(group, function (armyName, typeName, unitName, count) {
+  traverseGroup(army, function (armyName, typeName, unitName, count) {
     const realCount = Game.Unit.rollCount(count);
 
     if (realCount > 0) {
-      const unit = createUnit({ armyName, typeName, unitName, count: realCount, userId});
+      const unit = createUnit({ armyName, typeName, unitName, count: realCount, userId });
+
+      group[armyName] = group[armyName] || {};
+      group[armyName][typeName] = group[armyName][typeName] || {};
+
       group[armyName][typeName][unitName] = unit;
     }
   });

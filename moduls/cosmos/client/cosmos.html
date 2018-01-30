@@ -5,6 +5,9 @@
     </div>
     <button class="map-control-home"></button>
     <a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боёв</a>
+    {{#if possibleDesync}}
+      <div class="possibleDesync">Возможен рассинхрон. Обновите страницу.</div>
+    {{/if}}
     {{#if isSelection}}
       <a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
     {{/if}}

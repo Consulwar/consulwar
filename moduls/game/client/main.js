@@ -118,8 +118,6 @@ Template.index.events({
   }
 });
 
-Meteor.subscribe('game');
-Meteor.subscribe('queue');
 Meteor.subscribe('myAlliance');
 
 
@@ -250,10 +248,12 @@ Game.syncServerTime();
 var retryIntervalId = null;
 var retryTime = null;
 
+Session.set('possibleDesync', false);
 Tracker.autorun(function() {
   if (Meteor.status().status === "waiting") {
     retryTime = Math.floor( Meteor.status().retryTime / 1000 );
     if (!retryIntervalId) {
+      Session.set('possibleDesync', true);
       retryIntervalId = Meteor.setInterval(function() {
         var time = retryTime - Math.floor(new Date().valueOf() / 1000);
         Session.set('reconnectTime', (time > 0 ? time : null));

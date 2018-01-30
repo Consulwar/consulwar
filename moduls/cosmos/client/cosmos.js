@@ -45,7 +45,6 @@ initCosmosPathView();
 initCosmosContentClient();
 
 Meteor.subscribe('planets');
-Meteor.subscribe('relatedToUserPlanets');
 let spaceEventsSubscription = Meteor.subscribe('mySpaceEvents');
 Meteor.subscribe('battles');
 Meteor.subscribe('spaceHex');

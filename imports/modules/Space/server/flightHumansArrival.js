@@ -67,8 +67,6 @@ const completeOnPeacefulPlanet = function(data, planet) {
           ? Game.Unit.getHomeFleetArmy({ userId })._id
           : planet.armyId;
         Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
-
-        TriggerAttackEvents.add({ targetPlanet: planet._id, userId, username });
       } else {
         // if planet has army but it isn't our army
         // fly to home planet

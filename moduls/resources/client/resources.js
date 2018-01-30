@@ -4,8 +4,6 @@ initResourcesClient = function() {
 initResourcesLib();
 initResourcesClientArtefacts();
 
-Meteor.subscribe('resources');
-
 Game.Resources.currentValue = new ReactiveVar(Game.Resources.getValue());
 
 Tracker.autorun(function(){

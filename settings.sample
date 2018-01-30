@@ -188,6 +188,7 @@
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
     "funPeriod": 86400,
+    "disableMergebox": true,
 
     "jobs": {
       "concurrency": 10,

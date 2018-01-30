@@ -43,11 +43,18 @@ initCosmosLib();
 initCosmosPathView();
 
 initCosmosContentClient();
-
-Meteor.subscribe('planets');
 let spaceEventsSubscription = Meteor.subscribe('mySpaceEvents');
+Meteor.subscribe('myPlanets');
 Meteor.subscribe('battles');
 Meteor.subscribe('spaceHex');
+
+const userPlanetsTracker = Tracker.autorun(() => {
+  const user = Meteor.user();
+  if (user) {
+    userPlanetsTracker.stop();
+    Meteor.setTimeout(() => Meteor.subscribe('planets', user.username));
+  }
+});
 
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
@@ -2072,7 +2079,15 @@ const showSpaceEvent = function(id, event, offset, user) {
   }
 };
 
-const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 } }) {
+const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 }, hex }) {
+  if (Meteor.user().username !== username) {
+    Meteor.subscribe('planets', username)
+  }
+
+  if (hex) {
+    Meteor.subscribe('spaceEvents', hex);
+  }
+
   const galaxy = new Galaxy({
     user,
     username,
@@ -2330,12 +2345,17 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
         user,
         username: hexInfo.username,
         offset: center,
+        hex: {
+          x: hex.x,
+          z: hex.z,
+        },
       });
 
       showedHexes.push(hex);
+      hexPoly.setStyle({ fill: false });
     };
 
-    if (visibleHex) {
+    if (visibleHex || hexInfo.username === user.username) {
       loadHex();
     } else if (isClickable) {
       const usernameTooltip = L.tooltip({
@@ -2349,18 +2369,11 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
 
       hexPoly.on('click', () => {
         loadHex();
-        Meteor.subscribe('spaceEvents', showedHexes);
-        Meteor.subscribe('planets', _(galaxyByUsername).keys());
-
-        hexPoly.setStyle({ fill: false });
 
         usernameTooltip.remove();
       });
     }
   });
-
-  Meteor.subscribe('spaceEvents', showedHexes);
-  Meteor.subscribe('planets', _(galaxyByUsername).keys());
 };
 
 Template.cosmos.onDestroyed(function() {
@@ -2391,6 +2404,8 @@ Template.cosmos.onDestroyed(function() {
 });
 
 Template.cosmos.helpers({
+  possibleDesync: () => Session.get('possibleDesync'),
+
   isLoading: function() {
     return isLoading.get();
   },

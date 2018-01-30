@@ -4,7 +4,6 @@ initUnitClient = function() {
 initUnitLib();
 initSquadLib();
 
-Meteor.subscribe('units');
 Meteor.subscribe('squad');
 
 Game.Unit.showPage = function() {

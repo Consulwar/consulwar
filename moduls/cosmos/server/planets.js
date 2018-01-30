@@ -997,23 +997,103 @@ Meteor.methods({
   },
 });
 
-Meteor.publish('planets', function(usernames = []) {
+Meteor.publish('planets', function(username) {
   if (Config.DISABLE_MERGEBOX) {
-    this.disableMergebox();
+    this.disableMergebox(); 
+  }
+
+  check(username, String);
+
+  if (this.userId) {
+    const currentUsername = Meteor.users.findOne({ _id: this.userId }).username;
+
+    return Game.Planets.Collection.find(
+      {
+        $or: [
+          { username },
+        ],
+      }, 
+      {
+        transform: null,
+        fields: {
+          name: 1,
+          isHome: 1,
+          status: 1,
+          type: 1,
+          hand: 1,
+          segment: 1,
+          x: 1,
+          y: 1,
+          size: 1,
+          galactic: 1,
+          mission: 1,
+          artefacts: 1,
+          userId: 1,
+          username: 1,
+          armyId: 1,
+          armyUsername: 1,
+          minerUsername: 1,
+        }
+      }
+    );
+  } else {
+    this.ready();
+  }
+});
+
+Meteor.publish('myPlanets', function() {
+  const self = this;
+  if (Config.DISABLE_MERGEBOX) {
+    this.disableMergebox(); 
   }
 
   if (this.userId) {
-    if (usernames.length === 0) {
-      usernames.push(Meteor.users.findOne({ _id: this.userId }).username);
-    }
-    const username = Meteor.users.findOne({ _id: this.userId }).username;
-    return Game.Planets.Collection.find({
-      $or: [
-        { username: { $in: usernames } },
-        { armyUsername: username },
-        { minerUsername: username },
-      ],
+    const currentUsername = Meteor.users.findOne({ _id: this.userId }).username;
+
+    var handle = Game.Planets.Collection.find(
+      {
+        $or: [
+          { armyUsername: currentUsername },
+          { minerUsername: currentUsername },
+        ],
+      }, 
+      {
+        transform: null,
+        fields: {
+          name: 1,
+          isHome: 1,
+          status: 1,
+          type: 1,
+          hand: 1,
+          segment: 1,
+          x: 1,
+          y: 1,
+          size: 1,
+          galactic: 1,
+          mission: 1,
+          artefacts: 1,
+          userId: 1,
+          username: 1,
+          armyId: 1,
+          armyUsername: 1,
+          minerUsername: 1,
+        }
+      }
+    ).observeChanges({
+      added: function (id, fields) {
+        self.added('planets', id, fields);
+      },
+  
+      changed: function (id, fields) {
+        self.changed('planets', id, fields);
+      },
     });
+  
+    self.onStop(function () {
+      handle.stop()
+    });
+  } else {
+    self.ready();
   }
 });
 

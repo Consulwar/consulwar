@@ -47,6 +47,10 @@ Space.collection._ensureIndex({
 });
 
 Meteor.publish('mySpaceEvents', function() {
+  if (Config.DISABLE_MERGEBOX) {
+    this.disableMergebox();
+  }
+
   if (this.userId) {
     return Space.collection.find({
       'data.userId': this.userId,
@@ -56,16 +60,28 @@ Meteor.publish('mySpaceEvents', function() {
   return null;
 });
 
-Meteor.publish('spaceEvents', function(hexes) {
-  check(hexes, [Object]);
+Meteor.publish('spaceEvents', function(hex) {
+  if (Config.DISABLE_MERGEBOX) {
+    this.disableMergebox();
+  }
 
-  if (this.userId && hexes.length > 0) {
+  check(hex, Object);
+
+  if (this.userId) {
     return Space.collection.find({
       $or: [
-        { 'data.hex': { $in: hexes } },
-        { 'data.targetHex': { $in: hexes } },
+        { 'data.hex': hex },
+        { 'data.targetHex': hex },
       ],
       status: Space.filterActive,
+    }, {
+      fields: {
+        type: 1,
+        data: 1,
+        status: 1,
+        created: 1,
+        after: 1,
+      },
     });
   }
   return null;

@@ -47,6 +47,8 @@ export default function reptileArrival(data) {
           Game.Unit.removeArmy(homeArmy._id, userId);
         }
       } else {
+        // Т.к. боя не было, то ресурсы спишутся, но информация о грабеже
+        // никуда не сохранится
         Reptiles.stealUserResources({
           enemyArmy,
           userId,

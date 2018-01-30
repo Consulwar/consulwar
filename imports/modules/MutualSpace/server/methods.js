@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import Game from '/moduls/game/lib/main.game';
@@ -8,7 +7,6 @@ import Config from '../lib/config';
 import Hex from '../lib/Hex';
 import Space from '../../Space/lib/space';
 import SpaceConfig from '../../Space/server/config';
-import FlightEvents from '../../Space/lib/flightEvents';
 
 Meteor.methods({
   'mutualSpace.access'() {
@@ -84,56 +82,5 @@ Meteor.methods({
     User.checkAuth({ user });
 
     return collection.find({}).fetch();
-  },
-
-  'mutualSpace.comeBack'(username) {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'mutualSpace.comeBack', user });
-
-    const isAdmin = user && ['admin', 'helper'].indexOf(user.role) >= 0;
-
-    if (!isAdmin) {
-      return;
-    }
-
-    check(username, String);
-
-    const targetUser = Meteor.users.findOne({ username });
-
-    if (!targetUser) {
-      throw new Meteor.Error('Игрок не найден');
-    }
-
-    const hex = collection.findOne({ username });
-    if (!hex) {
-      throw new Meteor.Error('Игрок не в общем космосе.');
-    }
-
-    Game.Planets.Collection.find({
-      userId: targetUser._id,
-      armyUsername: {
-        $ne: targetUser.username,
-      },
-    }).fetch().forEach((planet) => {
-      const unit = Game.Unit.getArmy(planet.armyId);
-
-      // TODO sendFleetHome?
-    });
-
-    Space.collection.find({
-      'data.userId': targetUser._id,
-      status: Space.filterActive,
-    }).fetch().forEach((event) => {
-      switch (event.type) {
-        case FlightEvents.EVENT_TYPE:
-          // TODO flyBack
-          break;
-
-        default:
-          break;
-      }
-    });
   },
 });

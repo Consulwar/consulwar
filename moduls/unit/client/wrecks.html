@@ -1,0 +1,24 @@
+<template name="repairWrecks">
+  <div class="repairWrecks">
+    <h1>Починка кораблей</h1>
+    <p>
+      Часть кораблей пострадала после прошлого сражения. Нкоторые из них можно Восстановить.
+    </p>
+    <div class="icon">
+      <img src="{{unit.getIcon}}" alt="{{unit.title}}"/>
+      <span class="count">{{formatNumber count}}</span>
+    </div>
+    {{> item_price price=price }}
+    <button
+      class="
+        cw--button
+        cw--button_type_secondary
+        cw--button_type_secondary_metal
+        repair
+      "
+      disabled={{eq count 0}}
+    >
+      Восстановить
+    </button>
+  </div>
+</template>

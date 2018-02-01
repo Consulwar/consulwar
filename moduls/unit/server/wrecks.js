@@ -7,7 +7,6 @@ initWrecksServer = function() {
 'use strict';
 
 initWrecksLib();
-initWrecksConfigLib();
 
 Game.Wrecks.Collection._ensureIndex({
   userId: 1,
@@ -61,18 +60,23 @@ Game.Wrecks.addUnits = function({ units, userId = Meteor.userId() }) {
 
   _(units.army).pairs().forEach(([groupName, group]) => {
     _(group).pairs().forEach(([engName, count]) => {
-      $inc[`units.army.${groupName}.${engName}.count`] = count;
+      // Do not add flagship to wrecks
+      if (engName !== 'flagship') {
+        $inc[`units.army.${groupName}.${engName}.count`] = count;
+      }
     });
   });
 
-  Game.Wrecks.Collection.upsert({
-    userId,
-  }, {
-    $inc,
-    $setOnInsert: {
-      updated: new Date(),
-    },
-  });
+  if (_($inc).keys().length > 0) {
+    Game.Wrecks.Collection.upsert({
+      userId,
+    }, {
+      $inc,
+      $setOnInsert: {
+        updated: new Date(),
+      },
+    });
+  }
 };
 
 Game.Wrecks.removeUnit = function(wrecks, group, engName) {
@@ -84,4 +88,19 @@ Game.Wrecks.removeUnit = function(wrecks, group, engName) {
     },
   });
 };
+
+Meteor.publish('wrecks', function () {
+  if (this.userId) {
+    return Game.Wrecks.Collection.find({
+      userId: this.userId,
+    }, {
+      fields: {
+        userId: 1,
+        units: 1,
+      },
+    });
+  }
+  return null;
+});
+
 };

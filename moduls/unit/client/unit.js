@@ -139,7 +139,13 @@ Template.unit.events({
       var options = Meteor.user().settings && Meteor.user().settings.options;
       Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
     });
-  }
+  },
+
+  'click .repair'(event, templateInstance) {
+    Game.Wrecks.showPopup(templateInstance.data.unit);
+  },
 });
+
+initUnitClientWrecks();
 
 };

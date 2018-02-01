@@ -37,6 +37,14 @@
         {{> item_price price=(unit.price count undefined)}}
 
         <div class="actions">
+          {{#unless eq unit.group 'ground'}}
+            <div class="action">
+              <button class="additional_action repair">
+                Ремонтировать
+              </button>
+            </div>
+          {{/unless}}
+
           <div class="action">
             <button 
               class="max" 

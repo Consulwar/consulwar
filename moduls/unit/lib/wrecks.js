@@ -31,4 +31,6 @@ Game.Wrecks = {
     };
   },
 };
+
+initWrecksConfigLib();
 };

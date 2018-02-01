@@ -774,7 +774,9 @@ Game = {
           engName: 'personSkin',
           type: 'personSkin',
           icon: Game.Persons[personId].getIcon(),
-          image: Game.Persons[personId].getImage(skinId)
+          getIcon: Game.Persons[personId].getIcon(),
+          image: Game.Persons[personId].getImage(skinId),
+          getImage: Game.Persons[personId].getImage(skinId),
         };
     }
   },
@@ -972,6 +974,10 @@ Game.Helpers = {
     return clone;
   },
 };
+
+Game.Broadcast = {
+  Collection: new Meteor.Collection('broadcast'),
+}
 
 export { game };
 export default Game;

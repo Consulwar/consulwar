@@ -359,8 +359,8 @@ Game.Planets.setLastTradeFleetTime = function(time) {
   }
 };
 
-Game.Planets.getLastFunTime = function() {
-  var home = Game.Planets.getBase();
+Game.Planets.getLastFunTime = function({ userId = Meteor.userId() } = {}) {
+  var home = Game.Planets.getBase(userId);
   if (home && home.timeLastFun) {
     return home.timeLastFun;
   }
@@ -1033,6 +1033,7 @@ Meteor.publish('planets', function(username) {
           armyId: 1,
           armyUsername: 1,
           minerUsername: 1,
+          extraColoniesCount: 1,
         }
       }
     );

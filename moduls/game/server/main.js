@@ -205,3 +205,31 @@ Meteor.publish('game', function () {
     });
   }
 });
+
+Game.Broadcast.add = function(username, text) {
+  Game.Broadcast.Collection.insert({
+    text,
+    username,
+    date: new Date(),
+  });
+};
+
+Meteor.methods({
+  broadcast: function(username, message) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    if (user.role !== 'admin') {
+      throw Meteor.Error('Хех :-) Не');
+    }
+
+    check(username, String);
+    check(message, String);
+
+    Game.Broadcast.add(username, message);
+  }
+});
+
+Meteor.publish('broadcast', function() {
+  return Game.Broadcast.Collection.find({}, { sort: { date: -1 }, limit: 5 });
+});

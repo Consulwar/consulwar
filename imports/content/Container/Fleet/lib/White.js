@@ -3,7 +3,7 @@ export default {
   title: 'Белый контейнер',
   description: '',
   price: {
-    honor: 100,
+    honor: 200,
   },
   drop: [
     {
@@ -27,20 +27,12 @@ export default {
       profit: { 'Resource/Artifact/White/CrystalFragments': 1 },
     },
     {
-      chance: 20,
+      chance: 40,
       profit: { 'Resource/Base/Metal': 100 },
     },
     {
-      chance: 20,
+      chance: 40,
       profit: { 'Resource/Base/Crystal': 100 },
-    },
-    {
-      chance: 20,
-      profit: { 'Resource/Base/Human': 100 },
-    },
-    {
-      chance: 20,
-      profit: { 'Resource/Base/Honor': 100 },
     },
   ],
 };

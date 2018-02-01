@@ -84,9 +84,9 @@ Meteor.methods({
           throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
         }
 
-        if (protectedHonor) {
+        // if (protectedHonor) {
           honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
-        }
+        // }
 
         totalCount += count;
       }
@@ -98,6 +98,10 @@ Meteor.methods({
 
     if (protectedHonor && honor > protectedHonor) {
       throw new Meteor.Error('Карточки нельзя применить');
+    }
+
+    if (honor > 50000) {
+      Game.Broadcast.add(user.username, `Отправил подкрепление на землю на «${honor}» чести`);
     }
 
     // send reinforcements to current point
@@ -320,6 +324,8 @@ Meteor.methods({
     }
 
     if (isAccept) {
+      Game.Broadcast.add(user.username, `Принял приказ генерала на «${earthUnits.zoneName}»`);
+
       Game.EarthUnits.Collection.update({
         _id: earthUnits._id,
       }, {

@@ -399,6 +399,7 @@ Meteor.methods({
           };
           set.message = ' думает, что готов. Наивный.';
           stats['chat.notprepared'] = 1;
+          Game.Broadcast.add(user.username, 'Думал что он готов. Хах.');
         } else {
           throw new Meteor.Error('Ты не готов!');
         }
@@ -415,9 +416,19 @@ Meteor.methods({
           set.message = ' признался, что поддерживает Рептилоидов. Совет Галактики в шоке.';
 
           stats['chat.lovereptiles'] = 1;
+
+          Game.Broadcast.add(user.username, 'признался, что поддерживает Рептилоидов. Совет Галактики в шоке.');
         } else {
           throw new Meteor.Error('Совет Галактики всё ещё в шоке!');
         }
+      } else if (message.indexOf('/broadcast') === 0) {
+        price = {credits: 1000};
+        userPayAnyway = true;
+        if ( userResources.credits.amount < price.credits ) {
+          throw new Meteor.Error(`Бродкаст стоит ${price.credits}ггк. У вас их нет`);
+        }
+        Game.Broadcast.add(user.username, message.substr(10).trim());
+        Game.Payment.Expense.log(price.credits, 'broadcast');
       } else {
         throw new Meteor.Error('Неправильная команда, введите /help для помощи');
       }
@@ -440,7 +451,9 @@ Meteor.methods({
     }
 
     // insert message
-    if (message.indexOf('/motd') === 0) {
+    if (message.indexOf('/broadcast') === 0) {
+      // Do not send message
+    } else if (message.indexOf('/motd') === 0) {
       Game.Chat.Room.Collection.update({
         _id: room._id
       }, {

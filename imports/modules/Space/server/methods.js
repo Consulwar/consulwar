@@ -370,5 +370,24 @@ Meteor.methods({
 
     Game.Unit.mergeArmy(newArmyId, homeFleetArmy._id, user._id);
   },
+
+  'space.cancelAndRestartJob'(id) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    check(id, String);
+
+    Log.method.call(this, { name: 'space.cancelAndRestartJob', user });
+
+    if (user.role !== 'admin') {
+      throw new Meteor.Error('Админамана нада!');
+    }
+
+    const job = Space.jobs.getJob(id);
+    if (job) {
+      job.cancel();
+      job.restart();
+    }
+  },
 });
 

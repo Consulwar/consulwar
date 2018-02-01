@@ -8,6 +8,13 @@ class User {
   } = {}) {
     return user;
   }
+
+  static getByUsername({
+    username,
+    user = collection.findOne({ username }),
+  } = {}) {
+    return user;
+  }
 }
 
 export default User;

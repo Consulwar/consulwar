@@ -30,6 +30,7 @@ Game.Settings = {
     textUnits: [true, false],
     moveCompletedUnitToHangar: [true, false],
     isMultiSkinEnabled: [false, true],
+    disableBroadcast: [true, false],
   },
 
   getOption({

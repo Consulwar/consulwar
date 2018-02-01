@@ -246,7 +246,7 @@ SyncedCron.add({
       console.log('Give to ', users[i].user_id);
 
       Game.Building.special.Container.Collection.upsert({
-        user_id: users[i].user_id
+        userId: users[i].user_id
       }, {
         $inc: {
           'Container/Fleet/Green.count': 1

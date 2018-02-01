@@ -80,6 +80,7 @@ Meteor.publish('spaceEvents', function(hex) {
         data: 1,
         status: 1,
         created: 1,
+        repeated: 1,
         after: 1,
       },
     });
@@ -91,8 +92,9 @@ export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
 
   Space.jobs.startJobServer();
+  //Space.jobs.setLogStream(process.stdout);
 
-  if (datadog.gauge) {
+  if (datadog.gauge && Meteor.settings.last) {
     const job = new Job(Space.jobs, 'datadog', {});
     job
       .repeat({

@@ -1071,7 +1071,7 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
             startPositionWithOffset,
             targetPositionWithOffset,
           ),
-        });
+        }, mapView, pathViews[this.spaceEvent._id]);
         return {
           x: pos.x + 50,
           y: pos.y - 50,
@@ -1443,6 +1443,13 @@ Template.cosmosAttackMenu.helpers({
     }
 
     return Game.Planets.checkCanHaveMoreColonies(baseId, isLeavingBase, targetId);
+  },
+
+  canSendFleet() {
+    return Space.checkSendFleet({
+      planet: Game.Planets.getOne(activeColonyId.get()),
+      units: selectedUnits.get(),
+    })
   },
 
   extraColonyPrice: function() {
@@ -1882,16 +1889,15 @@ Template.cosmosAttackMenu.events({
 // Cosmos map content
 // ----------------------------------------------------------------------------
 
-var getFleetAnimation = function(fleet) {
-  var currentZoom = zoom.get();
-  var currentTime = Session.get('serverTime');
-  
-  var path = pathViews[ fleet.spaceEvent._id ];
+const getFleetAnimation = function(fleet, mapView, path) {
+  // eslint-disable-next-line meteor/no-session
+  const currentTime = Session.get('serverTime');
+
   if (!path) {
     return {
       x: 0,
       y: 0,
-      angle: 0
+      angle: 0,
     };
   }
 
@@ -1902,33 +1908,29 @@ var getFleetAnimation = function(fleet) {
     fleet.acceleration,
   );
 
-  var k = currentDistance / fleet.totalFlyDistance;
-  var curPoint = path.getPointAlongDistanceByCoef(k);
+  const k = currentDistance / fleet.totalFlyDistance;
+  const curPoint = path.getPointAlongDistanceByCoef(k);
 
-  var nextPoint = fleet.spaceEvent.data.targetPosition;
-  if (fleet.spaceEvent.data.targetHex) {
-    const center = new Hex(fleet.spaceEvent.data.targetHex).center();
-    nextPoint.x += center.x;
-    nextPoint.y += center.y;
-  }
+  let nextPoint = fleet.spaceEvent.data.targetPosition;
   if (k < 0.99) {
     nextPoint = path.getPointAlongDistanceByCoef(k + 0.01);
   }
-  var angleRad = Math.atan2(nextPoint.y - curPoint.y, nextPoint.x - curPoint.x);
+  const angleRad = Math.atan2(nextPoint.y - curPoint.y, nextPoint.x - curPoint.x);
 
-  var angleDeg = Math.floor( angleRad * 180 / Math.PI );
+  let angleDeg = Math.floor((angleRad * 180) / Math.PI);
   if (fleet.spaceEvent.data.isHumans) {
     angleDeg += 180;
   }
 
-  var coords =  mapView.latLngToLayerPoint(new L.latLng(curPoint.x, curPoint.y));
+  const coords = mapView.latLngToLayerPoint(new L.LatLng(curPoint.x, curPoint.y));
 
   return {
     lat: curPoint.x,
     lng: curPoint.y,
     x: coords.x,
     y: coords.y,
-    angle: angleDeg
+    angle: angleDeg,
+    angleRad,
   };
 };
 
@@ -2184,6 +2186,7 @@ Template.cosmos.onRendered(function() {
     minZoom: -10,
     maxZoom: 10,
   });
+  window.mapView = mapView;
 
   planetsLayer = L.layerGroup().addTo(mapView);
   pathsLayer = L.layerGroup().addTo(mapView);

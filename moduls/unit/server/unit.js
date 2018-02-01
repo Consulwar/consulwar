@@ -17,7 +17,7 @@ Game.Unit.Collection._ensureIndex({
   user_id: 1
 });
 
-Game.Unit.set = function(unit, invertSign, uid = Meteor.userId(), location = Game.Unit.location.HOME) {
+Game.Unit.set = function(unit, invertSign, uid = Meteor.userId(), location = Game.Unit.location.HOME, armyId) {
   invertSign = invertSign === true ? -1 : 1;
 
   Game.Unit.initialize(uid);
@@ -25,10 +25,15 @@ Game.Unit.set = function(unit, invertSign, uid = Meteor.userId(), location = Gam
   var inc = {};
   inc['units.army.' + unit.group + '.' + unit.engName] = parseInt(unit.count * invertSign);
 
-  Game.Unit.Collection.update({
+  let query = {
     user_id: uid,
     location,
-  }, {
+  };
+  if (armyId) {
+    query = { _id: armyId };
+  }
+
+  Game.Unit.Collection.update(query, {
     $inc: inc
   });
 
@@ -41,6 +46,7 @@ Game.Unit.add = function({
   user = Meteor.users.findOne({ _id: (userId || Meteor.userId()) }),
 }) {
   let location;
+  let armyId;
   const homePlanet = Game.Planets.getBase(userId);
 
   if (
@@ -57,11 +63,12 @@ Game.Unit.add = function({
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, user.username, userGroup);
       return;
     }
+    armyId = homePlanet.armyId;
 
     location = Game.Unit.location.PLANET;
   }
 
-  Game.Unit.set(unit, false, user._id, location);
+  Game.Unit.set(unit, false, user._id, location, armyId);
 };
 
 Game.Unit.remove = function(unit, uid) {
@@ -148,7 +155,7 @@ Game.Unit.moveArmy = function (id, location) {
 };
 
 Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
-  const copyDestUnits = { ...destUnits };
+  const copyDestUnits = {};
 
   if (destLocation == Game.Unit.location.HOME) {
     throw new Meteor.Error('Может существовать только одна локация HOME');
@@ -163,9 +170,9 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
   var totalCount = 0;
   var restCount = 0;
 
-  for (let side in copyDestUnits) {
-    for (let group in copyDestUnits[side]) {
-      for (let name in copyDestUnits[side][group]) {
+  for (let side in destUnits) {
+    for (let group in destUnits[side]) {
+      for (let name in destUnits[side][group]) {
         if (!(
              sourceUnits[side]
           && sourceUnits[side][group]
@@ -183,20 +190,23 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
     for (let group in sourceUnits[side]) {
       for (let name in sourceUnits[side][group]) {
         // subtract destination units 
-        if (copyDestUnits[side]
-         && copyDestUnits[side][group]
-         && copyDestUnits[side][group][name]
+        if (destUnits[side]
+         && destUnits[side][group]
+         && destUnits[side][group][name]
         ) {
-          var count = parseInt( copyDestUnits[side][group][name], 10 );
+          var count = parseInt( destUnits[side][group][name], 10 );
           if (count > sourceUnits[side][group][name]) {
             count = sourceUnits[side][group][name];
           }
 
-          copyDestUnits[side][group][name] = count;
-          sourceUnits[side][group][name] -= count;
-          totalCount += count;
-        } else {
-          delete copyDestUnits[side][group][name];
+          if (count > 0) {
+            copyDestUnits[side] = copyDestUnits[side] || {};
+            copyDestUnits[side][group] = copyDestUnits[side][group] || {};
+            copyDestUnits[side][group][name] = count;
+
+            sourceUnits[side][group][name] -= count;
+            totalCount += count;
+          }
         }
 
         // calculate rest units
@@ -246,18 +256,20 @@ Game.Unit.mergeArmy = function(sourceId, destId, user_id = Meteor.userId()) {
 
         var count = parseInt( sourceUnits[side][group][name], 10 );
 
-        if (!destUnits[side]) {
-          destUnits[side] = {};
-        }
-        if (!destUnits[side][group]) {
-          destUnits[side][group] = {};
-        }
-        if (!destUnits[side][group][name]) {
-          destUnits[side][group][name] = 0;
-        }
+        if (count > 0) {
+          if (!destUnits[side]) {
+            destUnits[side] = {};
+          }
+          if (!destUnits[side][group]) {
+            destUnits[side][group] = {};
+          }
+          if (!destUnits[side][group][name]) {
+            destUnits[side][group][name] = 0;
+          }
 
-        destUnits[side][group][name] += count;
-        mergeCount += count;
+          destUnits[side][group][name] += count;
+          mergeCount += count;
+        }
       }
     }
   }

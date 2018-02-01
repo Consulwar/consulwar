@@ -109,6 +109,12 @@ Router.route('/api/payment/teko/success', processRequest( function(user, data, p
     console.log('merchant transaction id:', data.partner_tx.id);
     console.log('-------------------------------------');
 
+    if (paymentItem.cost.rub < 1000) {
+      Game.Broadcast.add(user.username, `Хороший Консул. Спасибо.`);
+    } else {
+      Game.Broadcast.add(user.username, `Очень хороший Консул. Так держать.`);
+    }
+
     return data.partner_tx.id;
   } else {
     throw new PaymentError(getTransactionErrorCode(user, data));

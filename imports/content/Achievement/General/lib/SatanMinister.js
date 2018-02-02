@@ -1,34 +1,17 @@
 export default {
-  notImplemented: true,
   id: 'Achievement/General/SatanMinister',
+  field: 'Colosseum/Tournaments/BloodyMess',
+  levels: [100],
   title: 'Служитель Сатаны',
-  description: '100 раз устраивал турнир Кровавое Месиво и больше никаких других турниров',
+  description: '100 раз устраивал турнир Кровавое Месиво',
   effects: {
-    ProfitOnce: [
+    Military: [
       {
-        notImplemented: true,
-        textAfter: ' рандомных синих итемов',
-        result(level) {
-          return (level > 0) ? 50 : 0;
-        },
-      },
-      {
-        notImplemented: true,
-        textAfter: ' фиолетовых итемов',
-        result(level) {
-          return (level > 0) ? 30 : 0;
-        },
-      },
-      {
-        notImplemented: true,
-        textAfter: ' оранжевых',
-        result(level) {
-          return (level > 0) ? 10 : 0;
-        },
-      },
-      {
-        notImplemented: true,
-        textAfter: ' рубиновый плазмоид',
+        textBefore: 'Урон флота +',
+        textAfter: '%',
+        condition: 'Unit/Human/Space',
+        priority: 2,
+        affect: 'damage',
         result(level) {
           return (level > 0) ? 1 : 0;
         },

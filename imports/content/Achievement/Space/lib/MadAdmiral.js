@@ -5,16 +5,14 @@ export default {
   title: 'Безбашенный адмирал',
   description: 'Победить боевой флот 7 уровня',
   effects: {
-    Special: [
+    Military: [
       {
-        notImplemented: true,
-        textBefore: 'Урон на первой атаке +',
-        textAfter: '%',
-        priority: 2,
-        condition: 'Unique/roundDamage1',
+        textBefore: 'Урон Флагмана +',
+        condition: 'Unit/Human/Space/Flagship',
+        priority: 1,
         affect: 'damage',
         result(level) {
-          return (level > 0) ? 5 : 0;
+          return (level > 0) ? 50000 : 0;
         },
       },
     ],

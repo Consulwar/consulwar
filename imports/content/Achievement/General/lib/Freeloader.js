@@ -5,13 +5,14 @@ export default {
   title: 'Халявщик',
   description: 'Набивал карманы казённым золотом',
   effects: {
-    ProfitOnce: [
+    Income: [
       {
-        notImplemented: true,
-        textBefore: 'Все донатные усиления включаются на ',
-        textAfter: ' месяц',
+        textBefore: '+',
+        textAfter: ' ГГК в час',
+        priority: 1,
+        affect: 'credits',
         result(level) {
-          return (level > 0) ? 1 : 0;
+          return (level > 0) ? 0.02 : 0;
         },
       },
     ],

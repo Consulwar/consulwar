@@ -1,15 +1,19 @@
 export default {
-  notImplemented: true,
   id: 'Achievement/General/LossOfLosses',
+  field: 'Quests/Daily/Fail',
+  levels: [200],
   title: 'Потеря потерь',
-  description: 'Загнать любой ресурс в минус 100 000 или больший минус',
+  description: 'Зафейлить 200 ежедневных заданий',
   effects: {
-    ProfitOnce: [
+    Special: [
       {
-        notImplemented: true,
-        textAfter: ' ГГК',
+        textBefore: 'Поставка ресурсов за ежедневные задания +',
+        textAfter: '%',
+        priority: 2,
+        condition: 'Unique/dailyQuestReward',
+        affect: ['crystals', 'metals'],
         result(level) {
-          return (level > 0) ? 250 : 0;
+          return level * 10;
         },
       },
     ],

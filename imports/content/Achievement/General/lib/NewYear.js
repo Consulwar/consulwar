@@ -1,17 +1,24 @@
 export default {
   id: 'Achievement/General/NewYear',
-  title: 'В новую эру',
-  description: 'Провёл новый год в Консулах',
+  levels: [100, 250, 500, 750, 1000],
+  title: [
+    'В новую эру',
+    'В новую эру 2',
+    'В новую эру 3',
+  ],
+  description: [
+    'Провёл новый год в Консулах',
+    'Провёл 2 новых года в Консулах',
+    'Провёл 3 новых года в Консулах',
+  ],
   effects: {
     Special: [
       {
-        textBefore: 'С ',
-        textAfter: '% шансом каждый караван становится новогодним',
-        condition: 'Unique/fleetBattleAddCreditsChance',
+        textBefore: 'Член длиннее на ',
+        textAfter: 'см',
         priority: 1,
-        affect: 'chance',
         result(level) {
-          return (level > 0) ? 5 : 0;
+          return level;
         },
       },
     ],

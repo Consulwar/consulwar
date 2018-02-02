@@ -5,16 +5,14 @@ export default {
   title: 'Смелый капитан',
   description: 'Победить оборону 7 уровня',
   effects: {
-    Special: [
+    Military: [
       {
-        notImplemented: true,
-        textBefore: 'Урон на второй атаке +',
-        textAfter: '%',
-        priority: 2,
-        condition: 'Unique/roundDamage2',
+        textBefore: 'Урон Флагмана +',
+        condition: 'Unit/Human/Space/Flagship',
+        priority: 1,
         affect: 'damage',
         result(level) {
-          return (level > 0) ? 5 : 0;
+          return (level > 0) ? 30000 : 0;
         },
       },
     ],

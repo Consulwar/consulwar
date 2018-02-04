@@ -404,6 +404,7 @@ class Effect {
     priority,
     affect,
     result,
+    hide = false,
     notImplemented = false,
   }) {
     // TODO : accept condition as id path / array
@@ -412,6 +413,7 @@ class Effect {
     this.condition = condition;
     this.priority = priority;
     this.affect = affect;
+    this.hide = hide;
 
     // Provide (level) argument to result function
     this.result = (options = this.getCurrentLevel()) => {

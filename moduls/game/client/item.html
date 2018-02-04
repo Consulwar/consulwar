@@ -23,7 +23,7 @@
         </div>
       {{/if}}
       {{#each item.effect}}
-        {{#if (result level)}}
+        {{#if and (result level) (not hide)}}
           <div class="effect">
             {{name}}{{pretext}}{{formatNumber (result level)}}{{aftertext}} 
             {{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
@@ -40,14 +40,16 @@
           {{/with}}
         </div>
         {{#each item.effect}}
-          {{#with this.next}}
-            {{#if and result (not (eq ../result result))}}
-              <div class="effect">
-                {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
-                {{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
-              </div>
-            {{/if}}
-          {{/with}}
+          {{#unless hide}}
+            {{#with this.next}}
+              {{#if and result (not (eq ../result result))}}
+                <div class="effect">
+                  {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
+                  {{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
+                </div>
+              {{/if}}
+            {{/with}}
+          {{/unless}}
         {{/each}}
       </div>
     {{/if}}

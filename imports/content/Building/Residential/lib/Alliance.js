@@ -56,32 +56,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Research/Evolution/Energy', 10],
+        ['Building/Military/PowerStation', 25],
       ];
     } else if (level < 40) {
       return [
-        ['Research/Evolution/Energy', 25],
-        ['Research/Evolution/Alloy', 20],
+        ['Building/Military/PowerStation', 40],
+        ['Research/Evolution/AnimalWorld', 30],
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Energy', 40],
-        ['Research/Evolution/Alloy', 40],
-        ['Building/Military/Storage', 10],
+        ['Building/Military/PowerStation', 55],
+        ['Research/Evolution/AnimalWorld', 40],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Energy', 60],
-        ['Research/Evolution/Alloy', 60],
-        ['Building/Military/Storage', 30],
-        ['Research/Evolution/Nanotechnology', 25],
+        ['Building/Military/PowerStation', 70],
+        ['Research/Evolution/AnimalWorld', 50],
+        ['Building/Military/Storage', 54],
       ];
     }
     return [
-      ['Research/Evolution/Energy', 85],
-      ['Research/Evolution/Alloy', 80],
-      ['Building/Military/Storage', 60],
-      ['Research/Evolution/Nanotechnology', 55],
+      ['Building/Military/PowerStation', 90],
+      ['Research/Evolution/AnimalWorld', 60],
+      ['Building/Military/Storage', 68],
     ];
   },
 };

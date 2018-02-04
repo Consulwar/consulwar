@@ -52,32 +52,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Research/Evolution/Alloy', 25],
+        ['Building/Residential/Entertainment', 25],
       ];
     } else if (level < 40) {
       return [
-        ['Research/Evolution/Alloy', 45],
-        ['Building/Military/Barracks', 35],
+        ['Building/Residential/Entertainment', 45],
+        ['Building/Residential/Metal', 42],
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Alloy', 65],
-        ['Building/Military/Barracks', 55],
-        ['Building/Military/Void', 20],
+        ['Building/Residential/Entertainment', 64],
+        ['Building/Residential/Metal', 64],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Alloy', 85],
-        ['Building/Military/Barracks', 75],
-        ['Building/Military/Void', 35],
-        ['Research/Evolution/Converter', 25],
+        ['Building/Residential/Entertainment', 85],
+        ['Building/Residential/Metal', 80],
+        ['Building/Residential/Crystal', 80],
       ];
     }
     return [
-      ['Research/Evolution/Alloy', 100],
-      ['Building/Military/Barracks', 85],
-      ['Building/Military/Void', 55],
-      ['Research/Evolution/Converter', 55],
+      ['Building/Residential/Entertainment', 95],
+      ['Building/Residential/Metal', 100],
+      ['Building/Residential/Crystal', 100],
     ];
   },
 };

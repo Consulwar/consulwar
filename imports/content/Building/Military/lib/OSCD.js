@@ -52,32 +52,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 80],
+        ['Building/Military/Complex', 35],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 85],
-        ['Building/Military/Complex', 60],
+        ['Building/Military/Complex', 45],
+        ['Building/Military/Shipyard', 18],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 90],
-        ['Building/Military/Complex', 70],
-        ['Research/Evolution/Energy', 70],
+        ['Building/Military/Complex', 58],
+        ['Building/Military/Shipyard', 27],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 95],
-        ['Building/Military/Complex', 80],
-        ['Research/Evolution/Energy', 80],
-        ['Building/Residential/BlackMarket', 60],
+        ['Building/Military/Complex', 75],
+        ['Building/Military/Shipyard', 36],
+        ['Research/Evolution/DoomsDaySizing', 60],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 100],
-      ['Building/Military/Complex', 90],
-      ['Research/Evolution/Energy', 90],
-      ['Building/Residential/BlackMarket', 70],
+      ['Building/Military/Complex', 85],
+      ['Building/Military/Shipyard', 45],
+      ['Research/Evolution/DoomsDaySizing', 80],
     ];
   },
 };

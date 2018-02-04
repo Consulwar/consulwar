@@ -59,19 +59,25 @@ export default {
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Gates', 25],
+        ['Building/Military/Gates', 21],
+        ['Building/Residential/Statue', 28],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Gates', 50],
+        ['Building/Military/Gates', 41],
+        ['Building/Residential/Statue', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Gates', 75],
+        ['Building/Military/Gates', 61],
+        ['Building/Residential/Statue', 45],
+        ['Research/Evolution/Converter', 52],
       ];
     }
     return [
-      ['Building/Military/Gates', 100],
+      ['Building/Military/Gates', 81],
+      ['Building/Residential/Statue', 60],
+      ['Research/Evolution/Converter', 70],
     ];
   },
 };

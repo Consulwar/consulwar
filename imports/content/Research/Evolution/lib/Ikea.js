@@ -55,19 +55,25 @@ export default {
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Laboratory', 30],
+        ['Building/Military/Laboratory', 39],
+        ['Research/Evolution/Alloy', 18],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Laboratory', 40],
+        ['Building/Military/Laboratory', 59],
+        ['Research/Evolution/Alloy', 32],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Laboratory', 50],
+        ['Building/Military/Laboratory', 69],
+        ['Research/Evolution/Alloy', 51],
+        ['Research/Evolution/AnimalWorld', 38],
       ];
     }
     return [
-      ['Building/Military/Laboratory', 60],
+      ['Building/Military/Laboratory', 85],
+      ['Research/Evolution/Alloy', 80],
+      ['Research/Evolution/AnimalWorld', 54],
     ];
   },
 };

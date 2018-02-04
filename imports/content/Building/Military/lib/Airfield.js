@@ -53,32 +53,30 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 20],
+        ['Building/Military/PowerStation', 9],
+        ['Building/Residential/Crystal', 10],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 35],
-        ['Building/Residential/Spaceport', 5],
+        ['Building/Military/PowerStation', 27],
+        ['Building/Residential/Crystal', 28],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 45],
-        ['Building/Residential/Spaceport', 20],
-        ['Building/Residential/Alliance', 20],
+        ['Building/Military/PowerStation', 37],
+        ['Building/Residential/Crystal', 46],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 55],
-        ['Building/Residential/Spaceport', 45],
-        ['Building/Residential/Alliance', 40],
-        ['Building/Military/Shipyard', 35],
+        ['Building/Military/PowerStation', 47],
+        ['Building/Residential/Crystal', 66],
+        ['Research/Evolution/DoomsDaySizing', 50],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 65],
-      ['Building/Residential/Spaceport', 65],
-      ['Building/Residential/Alliance', 60],
-      ['Building/Military/Shipyard', 55],
+      ['Building/Military/PowerStation', 57],
+      ['Building/Residential/Crystal', 88],
+      ['Research/Evolution/DoomsDaySizing', 70],
     ];
   },
 };

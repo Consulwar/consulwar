@@ -49,30 +49,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 55],
+        ['Research/Evolution/Science', 26],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 65],
-        ['Research/Evolution/Nanotechnology', 30],
+        ['Research/Evolution/Science', 38],
+        ['Research/Evolution/DoomsDaySizing', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 75],
-        ['Research/Evolution/Nanotechnology', 45],
-        ['Research/Evolution/Converter', 1],
+        ['Research/Evolution/Science', 50],
+        ['Research/Evolution/DoomsDaySizing', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 85],
-        ['Research/Evolution/Nanotechnology', 60],
-        ['Research/Evolution/Converter', 35],
+        ['Research/Evolution/Science', 74],
+        ['Research/Evolution/DoomsDaySizing', 55],
+        ['Building/Residential/Alliance', 53],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 95],
-      ['Research/Evolution/Nanotechnology', 75],
-      ['Research/Evolution/Converter', 60],
+      ['Research/Evolution/Science', 82],
+      ['Research/Evolution/DoomsDaySizing', 75],
+      ['Building/Residential/Alliance', 72],
     ];
   },
 };

@@ -53,32 +53,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Residential/Spaceport', 10],
+        ['Building/Residential/House', 15],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Residential/Spaceport', 20],
-        ['Research/Evolution/Science', 15],
+        ['Building/Residential/House', 30],
+        ['Research/Evolution/AnimalWorld', 18],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Residential/Spaceport', 30],
-        ['Research/Evolution/Science', 30],
-        ['Building/Military/Barracks', 30],
+        ['Building/Residential/House', 50],
+        ['Research/Evolution/AnimalWorld', 32],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Residential/Spaceport', 40],
-        ['Research/Evolution/Science', 40],
-        ['Building/Military/Barracks', 40],
-        ['Research/Evolution/AnimalWorld', 30],
+        ['Building/Residential/House', 72],
+        ['Research/Evolution/AnimalWorld', 46],
+        ['Research/Evolution/Crystallization', 60],
       ];
     }
     return [
-      ['Building/Residential/Spaceport', 50],
-      ['Research/Evolution/Science', 50],
-      ['Building/Military/Barracks', 50],
-      ['Research/Evolution/AnimalWorld', 40],
+      ['Building/Residential/House', 92],
+      ['Research/Evolution/AnimalWorld', 80],
+      ['Research/Evolution/Crystallization', 75],
     ];
   },
 };

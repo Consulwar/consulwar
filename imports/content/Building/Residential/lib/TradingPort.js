@@ -51,32 +51,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Research/Evolution/Alloy', 20],
+        ['Building/Residential/SpacePort', 15],
       ];
     } else if (level < 40) {
       return [
-        ['Research/Evolution/Alloy', 35],
-        ['Building/Military/Shipyard', 30],
+        ['Building/Residential/SpacePort', 24],
+        ['Building/Military/Storage', 20],
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Alloy', 65],
-        ['Building/Military/Shipyard', 50],
-        ['Building/Military/Storage', 40],
+        ['Building/Residential/SpacePort', 38],
+        ['Building/Military/Storage', 30],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Alloy', 80],
-        ['Building/Military/Shipyard', 70],
-        ['Building/Military/Storage', 60],
-        ['Research/Evolution/Nanotechnology', 70],
+        ['Building/Residential/SpacePort', 38],
+        ['Building/Military/Storage', 30],
+        ['Research/Evolution/Hyperdrive', 52],
       ];
     }
     return [
-      ['Research/Evolution/Alloy', 90],
-      ['Building/Military/Shipyard', 90],
-      ['Building/Military/Storage', 80],
-      ['Research/Evolution/Nanotechnology', 90],
+      ['Building/Residential/SpacePort', 68],
+      ['Building/Military/Storage', 50],
+      ['Research/Evolution/Hyperdrive', 67],
     ];
   },
 };

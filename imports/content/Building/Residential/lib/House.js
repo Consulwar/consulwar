@@ -94,21 +94,20 @@ export default {
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Alloy', 25],
-        ['Research/Evolution/Energy', 20],
+        ['Research/Evolution/Alloy', 24],
+        ['Research/Evolution/Energy', 18],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Alloy', 50],
+        ['Research/Evolution/Alloy', 42],
         ['Research/Evolution/Energy', 45],
         ['Research/Evolution/Ikea', 30],
       ];
     }
     return [
-      ['Research/Evolution/Alloy', 75],
-      ['Research/Evolution/Energy', 70],
+      ['Research/Evolution/Alloy', 72],
+      ['Research/Evolution/Energy', 65],
       ['Research/Evolution/Ikea', 60],
-      ['Research/Evolution/Nanotechnology', 55],
     ];
   },
 };

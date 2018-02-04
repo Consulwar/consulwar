@@ -53,32 +53,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 25],
+        ['Building/Residential/Alliance', 1],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 40],
-        ['Building/Military/Airfield', 30],
+        ['Building/Residential/Alliance', 22],
+        ['Research/Evolution/Hyperdrive', 10],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 50],
-        ['Building/Military/Airfield', 40],
-        ['Building/Military/DefenseComplex', 20],
+        ['Building/Residential/Alliance', 44],
+        ['Research/Evolution/Hyperdrive', 30],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 60],
-        ['Building/Military/Airfield', 50],
-        ['Building/Military/DefenseComplex', 35],
-        ['Research/Evolution/Ikea', 40],
+        ['Building/Residential/Alliance', 62],
+        ['Research/Evolution/Hyperdrive', 50],
+        ['Building/Military/Complex', 50],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 75],
-      ['Building/Military/Airfield', 60],
-      ['Building/Military/DefenseComplex', 60],
-      ['Research/Evolution/Ikea', 70],
+      ['Building/Residential/Alliance', 80],
+      ['Research/Evolution/Hyperdrive', 70],
+      ['Building/Military/Complex', 70],
     ];
   },
 };

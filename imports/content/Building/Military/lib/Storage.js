@@ -53,32 +53,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/DefenseComplex', 20],
+        ['Building/Residential/PulseCatcher', 10],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/DefenseComplex', 30],
-        ['Research/Evolution/Drill', 25],
+        ['Building/Residential/PulseCatcher', 25],
+        ['Research/Evolution/Ikea', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/DefenseComplex', 40],
-        ['Research/Evolution/Drill', 35],
-        ['Research/Evolution/Crystallization', 35],
+        ['Building/Residential/PulseCatcher', 45],
+        ['Research/Evolution/Ikea', 25],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/DefenseComplex', 50],
-        ['Research/Evolution/Drill', 45],
-        ['Research/Evolution/Crystallization', 45],
-        ['Research/Evolution/Engineering', 45],
+        ['Building/Residential/PulseCatcher', 55],
+        ['Research/Evolution/Ikea', 44],
+        ['Research/Evolution/AnimalWorld', 48],
       ];
     }
     return [
-      ['Building/Military/DefenseComplex', 60],
-      ['Research/Evolution/Drill', 55],
-      ['Research/Evolution/Crystallization', 55],
-      ['Research/Evolution/Engineering', 55],
+      ['Building/Residential/PulseCatcher', 72],
+      ['Research/Evolution/Ikea', 65],
+      ['Research/Evolution/AnimalWorld', 66],
     ];
   },
 };

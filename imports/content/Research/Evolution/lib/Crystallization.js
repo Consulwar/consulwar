@@ -51,27 +51,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/Laboratory', 30],
+        ['Building/Military/Laboratory', 6],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Laboratory', 40],
+        ['Building/Military/Laboratory', 16],
         ['Building/Residential/Crystal', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Laboratory', 50],
+        ['Building/Military/Laboratory', 36],
         ['Building/Residential/Crystal', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Laboratory', 60],
+        ['Building/Military/Laboratory', 46],
         ['Building/Residential/Crystal', 55],
+        ['Research/Evolution/Alloy', 56],
       ];
     }
     return [
-      ['Building/Military/Laboratory', 70],
+      ['Building/Military/Laboratory', 56],
       ['Building/Residential/Crystal', 75],
+      ['Research/Evolution/Alloy', 65],
     ];
   },
 };

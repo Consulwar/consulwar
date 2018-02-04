@@ -53,23 +53,25 @@ export default {
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Laboratory', 25],
-        ['Research/Evolution/Ikea', 20],
+        ['Building/Military/Laboratory', 35],
+        ['Research/Evolution/Energy', 32],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Laboratory', 35],
-        ['Research/Evolution/Ikea', 40],
+        ['Building/Military/Laboratory', 55],
+        ['Research/Evolution/Energy', 52],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Laboratory', 45],
-        ['Research/Evolution/Ikea', 60],
+        ['Building/Military/Laboratory', 75],
+        ['Research/Evolution/Energy', 72],
+        ['Research/Evolution/Crystallization', 70],
       ];
     }
     return [
-      ['Building/Military/Laboratory', 55],
-      ['Research/Evolution/Ikea', 70],
+      ['Building/Military/Laboratory', 95],
+      ['Research/Evolution/Energy', 90],
+      ['Research/Evolution/Crystallization', 90],
     ];
   },
 };

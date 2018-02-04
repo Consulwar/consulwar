@@ -53,32 +53,30 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 15],
+        ['Building/Military/PowerStation', 6],
+        ['Building/Residential/Metal', 10],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 25],
-        ['Building/Military/Barracks', 20],
+        ['Building/Military/PowerStation', 22],
+        ['Building/Residential/Metal', 28],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 40],
-        ['Building/Military/Barracks', 30],
-        ['Building/Military/Airfield', 30],
+        ['Building/Military/PowerStation', 32],
+        ['Building/Residential/Metal', 48],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 65],
-        ['Building/Military/Barracks', 40],
-        ['Building/Military/Airfield', 40],
-        ['Building/Military/Shipyard', 45],
+        ['Building/Military/PowerStation', 42],
+        ['Building/Residential/Metal', 68],
+        ['Research/Evolution/Engineering', 46],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 75],
-      ['Building/Military/Barracks', 50],
-      ['Building/Military/Airfield', 50],
-      ['Building/Military/Shipyard', 60],
+      ['Building/Military/PowerStation', 52],
+      ['Building/Residential/Metal', 85],
+      ['Research/Evolution/Engineering', 62],
     ];
   },
 };

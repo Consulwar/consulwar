@@ -48,32 +48,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Residential/Political', 25],
+        ['Building/Residential/TradingPort', 15],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Residential/Political', 35],
-        ['Building/Residential/Spaceport', 40],
+        ['Building/Residential/TradingPort', 30],
+        ['Research/Evolution/AnimalWorld', 36],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Residential/Political', 50],
-        ['Building/Residential/Spaceport', 55],
-        ['Building/Military/Shipyard', 45],
+        ['Building/Residential/TradingPort', 45],
+        ['Research/Evolution/AnimalWorld', 44],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Residential/Political', 65],
-        ['Building/Residential/Spaceport', 80],
-        ['Building/Military/Shipyard', 65],
-        ['Building/Military/Complex', 70],
+        ['Building/Residential/TradingPort', 60],
+        ['Research/Evolution/AnimalWorld', 70],
+        ['Research/Evolution/Ikea', 70],
       ];
     }
     return [
-      ['Building/Residential/Political', 75],
-      ['Building/Residential/Spaceport', 95],
-      ['Building/Military/Shipyard', 85],
-      ['Building/Military/Complex', 85],
+      ['Building/Residential/TradingPort', 75],
+      ['Research/Evolution/AnimalWorld', 62],
+      ['Research/Evolution/Ikea', 90],
     ];
   },
 };

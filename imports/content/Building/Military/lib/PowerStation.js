@@ -43,28 +43,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
+        ['Building/Residential/House', 5],
       ];
     } else if (level < 40) {
       return [
         ['Building/Residential/House', 20],
+        ['Research/Evolution/Energy', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Residential/House', 35],
-        ['Building/Residential/Metal', 35],
+        ['Building/Residential/House', 33],
+        ['Research/Evolution/Energy', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Residential/House', 50],
-        ['Building/Residential/Metal', 50],
-        ['Building/Residential/Crystal', 50],
+        ['Building/Residential/House', 42],
+        ['Research/Evolution/Energy', 55],
+        ['Research/Evolution/Converter', 46],
       ];
     }
     return [
-      ['Building/Residential/House', 65],
-      ['Building/Residential/Metal', 65],
-      ['Building/Residential/Crystal', 65],
-      ['Research/Evolution/Energy', 80],
+      ['Building/Residential/House', 51],
+      ['Research/Evolution/Energy', 75],
+      ['Research/Evolution/Converter', 66],
     ];
   },
 };

@@ -43,32 +43,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 5],
+        ['Building/Military/PowerStation', 3],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 15],
-        ['Building/Residential/Spaceport', 1],
+        ['Building/Military/PowerStation', 23],
+        ['Research/Evolution/Science', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 30],
-        ['Building/Residential/Spaceport', 20],
-        ['Building/Military/Barracks', 20],
+        ['Building/Military/PowerStation', 43],
+        ['Research/Evolution/Science', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 45],
-        ['Building/Residential/Spaceport', 35],
-        ['Building/Military/Barracks', 30],
-        ['Research/Evolution/Science', 60],
+        ['Building/Military/PowerStation', 63],
+        ['Research/Evolution/Science', 55],
+        ['Building/Residential/Entertainment', 55],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 65],
-      ['Building/Residential/Spaceport', 50],
-      ['Building/Military/Barracks', 45],
-      ['Research/Evolution/Science', 80],
+      ['Building/Military/PowerStation', 82],
+      ['Research/Evolution/Science', 75],
+      ['Building/Residential/Entertainment', 75],
     ];
   },
 };

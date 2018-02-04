@@ -72,32 +72,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Residential/Colosseum', 20],
+        ['Research/Evolution/AnimalWorld', 9],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Residential/Colosseum', 30],
-        ['Research/Evolution/AnimalWorld', 25],
+        ['Research/Evolution/AnimalWorld', 27],
+        ['Building/Residential/Entertainment', 30],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Residential/Colosseum', 40],
-        ['Research/Evolution/AnimalWorld', 45],
-        ['Research/Evolution/Ikea', 50],
+        ['Research/Evolution/AnimalWorld', 42],
+        ['Building/Residential/Entertainment', 48],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Residential/Colosseum', 50],
-        ['Research/Evolution/AnimalWorld', 65],
-        ['Research/Evolution/Ikea', 75],
-        ['Building/Military/OSCD', 35],
+        ['Research/Evolution/AnimalWorld', 70],
+        ['Building/Residential/Entertainment', 72],
+        ['Research/Evolution/Ikea', 80],
       ];
     }
     return [
-      ['Building/Residential/Colosseum', 75],
-      ['Research/Evolution/AnimalWorld', 85],
-      ['Research/Evolution/Ikea', 100],
-      ['Building/Military/OSCD', 55],
+      ['Research/Evolution/AnimalWorld', 90],
+      ['Building/Residential/Entertainment', 90],
+      ['Research/Evolution/Ikea', 95],
     ];
   },
 };

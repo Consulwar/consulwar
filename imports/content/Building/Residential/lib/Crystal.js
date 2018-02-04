@@ -87,28 +87,30 @@ export default {
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
-      return [];
+      return [
+        ['Research/Evolution/Crystallization', 1],
+      ];
     } else if (level < 40) {
       return [
-        ['Research/Evolution/Energy', 10],
+        ['Research/Evolution/Crystallization', 25],
+        ['Research/Evolution/Energy', 14],
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Energy', 25],
-        ['Research/Evolution/Alloy', 15],
+        ['Research/Evolution/Crystallization', 45],
+        ['Research/Evolution/Energy', 28],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Energy', 55],
-        ['Research/Evolution/Alloy', 25],
-        ['Research/Evolution/Science', 35],
+        ['Research/Evolution/Crystallization', 65],
+        ['Research/Evolution/Energy', 44],
+        ['Research/Evolution/Science', 45],
       ];
     }
     return [
-      ['Research/Evolution/Energy', 75],
-      ['Research/Evolution/Alloy', 50],
-      ['Research/Evolution/Science', 60],
-      ['Research/Evolution/Crystallization', 40],
+      ['Research/Evolution/Crystallization', 85],
+      ['Research/Evolution/Energy', 68],
+      ['Research/Evolution/Science', 65],
     ];
   },
 };

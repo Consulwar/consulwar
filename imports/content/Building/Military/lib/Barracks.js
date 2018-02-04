@@ -53,32 +53,29 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 10],
+        ['Building/Residential/House', 12],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 20],
-        ['Building/Military/Laboratory', 20],
+        ['Building/Residential/House', 28],
+        ['Building/Residential/Entertainment', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 35],
-        ['Building/Military/Laboratory', 40],
-        ['Building/Residential/House', 30],
+        ['Building/Residential/House', 48],
+        ['Building/Residential/Entertainment', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 60],
-        ['Building/Military/Laboratory', 60],
-        ['Building/Residential/House', 50],
-        ['Building/Residential/Alliance', 40],
+        ['Building/Residential/House', 68],
+        ['Building/Residential/Entertainment', 52],
+        ['Research/Evolution/Nanotechnology', 44],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 70],
-      ['Building/Military/Laboratory', 80],
-      ['Building/Residential/House', 65],
-      ['Building/Residential/Alliance', 60],
+      ['Building/Residential/House', 88],
+      ['Building/Residential/Entertainment', 68],
+      ['Research/Evolution/Nanotechnology', 64],
     ];
   },
 };

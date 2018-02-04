@@ -8,6 +8,7 @@
       "id": 123
     },
     "mapbox": {
+      "on": false,
       "id": "***",
       "accessToken": "***"
     },

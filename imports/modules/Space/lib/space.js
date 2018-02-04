@@ -38,6 +38,9 @@ const checkSendFleet = function({ planet, units, userId = Meteor.userId() }) {
   if (!planet.isHome && units) {
     // test selected units vs available units
     const baseUnits = Game.Planets.getFleetUnits(planet._id, userId);
+    if (!baseUnits) {
+      throw new Error('Какая то херня произошла с юнитами на планете', 'их нет');
+    }
     needSliceArmy = _(baseUnits)
       .pairs()
       .some(([name, count]) => count > 0 && (!units[name] || count > units[name]));

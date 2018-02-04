@@ -219,6 +219,10 @@ Meteor.methods({
       throw new Meteor.Error('Не найдена стартовая планета');
     }
 
+    if (!basePlanet.armyId) {
+      throw new Meteor.Error('Не найдена армия на планете');
+    }
+
     const { canSend, needSliceArmy } = Space.checkSendFleet({
       planet: basePlanet,
       units,

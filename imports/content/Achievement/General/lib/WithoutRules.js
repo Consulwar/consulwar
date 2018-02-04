@@ -5,16 +5,14 @@ export default {
   title: 'Без правил',
   description: 'Провести 250 турниров в колизее',
   effects: {
-    Special: [
+    Income: [
       {
-        notImplemented: true,
-        textBefore: 'Уменьшает время подготовки турнира на ',
-        textAfter: '%',
-        affect: 'tournamentsCooldownPeriod',
-        priority: 2,
-        condition: 'Unique/tournamentsCooldownBonus',
+        textBefore: '+',
+        textAfter: ' ГГК в час',
+        priority: 1,
+        affect: 'credits',
         result(level) {
-          return (level > 0) ? 10 : 0;
+          return (level > 0) ? 0.01 : 0;
         },
       },
     ],

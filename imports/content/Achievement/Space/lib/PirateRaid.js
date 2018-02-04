@@ -5,16 +5,14 @@ export default {
   title: 'Пиратский рейд',
   description: 'Победить патруль 7 уровня',
   effects: {
-    Special: [
+    Military: [
       {
-        notImplemented: true,
-        textBefore: 'Урон на третьей атаке +',
-        textAfter: '%',
-        priority: 2,
-        condition: 'Unique/roundDamage3',
+        textBefore: 'Урон Флагмана +',
+        condition: 'Unit/Human/Space/Flagship',
+        priority: 1,
         affect: 'damage',
         result(level) {
-          return (level > 0) ? 5 : 0;
+          return (level > 0) ? 20000 : 0;
         },
       },
     ],

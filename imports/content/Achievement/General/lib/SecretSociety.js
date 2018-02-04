@@ -1,15 +1,18 @@
 export default {
-  notImplemented: true,
   id: 'Achievement/General/SecretSociety',
+  field: 'Chat/Dice',
+  levels: [1000],
   title: 'Тайное общество',
   description: 'Знает то, чего не знают другие',
   effects: {
-    ProfitOnce: [
+    Income: [
       {
-        notImplemented: true,
-        textAfter: ' рубиновых плазмоидов',
+        textBefore: '+',
+        textAfter: ' ГГК в час',
+        priority: 1,
+        affect: 'credits',
         result(level) {
-          return (level > 0) ? 50 : 0;
+          return (level > 0) ? 0.02 : 0;
         },
       },
     ],

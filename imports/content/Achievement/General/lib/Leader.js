@@ -1,17 +1,18 @@
 export default {
-  notImplemented: true,
   id: 'Achievement/General/Leader',
-  // field: 'statue.gained.honor',
-  levels: [100000],
+  field: 'Resources/Gained/Honor',
+  levels: [100000000],
   title: 'Вождь',
-  description: 'Заработать 100 000 чести от статуи консула',
+  description: 'Заработать 100 000 000 чести',
   effects: {
-    Special: [
+    Income: [
       {
-        notImplemented: true,
-        textAfter: ' рандомный белый итем в день',
+        textBefore: '+',
+        textAfter: ' чести в час',
+        priority: 1,
+        affect: 'honor',
         result(level) {
-          return (level > 0) ? 1 : 0;
+          return (level > 0) ? 20 : 0;
         },
       },
     ],

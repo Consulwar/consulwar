@@ -5,16 +5,14 @@ export default {
   title: 'Убийца леприконов',
   description: '10 раз уничтожить караван',
   effects: {
-    Special: [
+    Military: [
       {
-        notImplemented: true,
-        textBefore: 'Награда за уничтожение каравана +',
-        textAfter: '%',
-        priority: 2,
-        condition: 'Unique/TradeFleetBonus',
-        affect: ['crystals', 'metals'],
+        textBefore: 'Броня Флагмана +',
+        condition: 'Unit/Human/Space/Flagship',
+        priority: 1,
+        affect: 'life',
         result(level) {
-          return (level > 0) ? 10 : 0;
+          return (level > 0) ? 50000 : 0;
         },
       },
     ],

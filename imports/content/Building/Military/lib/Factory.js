@@ -1,3 +1,5 @@
+import { tier1, tier2, tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Factory',
   title: 'Военный завод',
@@ -6,23 +8,27 @@ export default {
     Price: [
       {
         textBefore: 'Строительство техники на ',
-        textAfter: '% дешевле',
-        condition: 'Unit/Human/Ground/Enginery',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return level * 0.4;
-        },
-      },
-      {
-        textBefore: 'Строительство техники на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Ground/Enginery',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return [0, 10, 25, 66, 150, 400][Math.floor(level / 20)];
-        },
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Траков C быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/TruckC',
+        priority: 6,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Дредноутов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Dreadnought',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

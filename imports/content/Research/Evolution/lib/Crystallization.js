@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Crystallization',
   title: 'Кристаллизация',
@@ -10,17 +12,42 @@ export default {
         priority: 2,
         affect: 'crystals',
         result(level) {
-          return level * 0.2;
+          return (level * 0.2) + [0, 10, 25, 50, 65, 80][Math.floor(level / 20)];
         },
       },
+    ],
+    Price: [
       {
-        textBefore: 'Дополнительный бонус ',
+        textBefore: 'Подготовка Псиоников быстрее на ',
         textAfter: '%',
-        priority: 2,
-        affect: 'crystals',
-        result(level) {
-          return [0, 10, 25, 50, 65, 80][Math.floor(level / 20)];
-        },
+        condition: 'Unit/Human/Ground/Infantry/Psiman',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Плазменных убийц на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/PlasmaKiller',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Жидкоплазменных Тиранов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/Tyrant',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство XYNлётов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Air/Xynlet',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

@@ -29,14 +29,7 @@ const getWrecksCount = function(unit) {
 
 Template.repairWrecks.helpers({
   price() {
-    const count = getWrecksCount(this.unit);
-    let price = Game.Resources.multiplyResources({
-      resources: this.unit.getBasePrice(count).base,
-      count: Game.Wrecks.PRICE_COEFFICIENT,
-    });
-    delete price.time;
-
-    return price;
+    return Game.Wrecks.getPrice(this.unit, getWrecksCount(this.unit));
   },
 
   count() {

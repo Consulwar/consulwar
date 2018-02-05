@@ -14,14 +14,6 @@ export default {
           return level * 0.5;
         },
       },
-      {
-        textBefore: 'Максимальный бонус ресурсов +',
-        textAfter: '%',
-        notImplemented: true,
-        result(level) {
-          return [0, 10, 25, 50, 75, 100][Math.floor(level / 20)];
-        },
-      },
     ],
   },
   basePrice(level = this.getCurrentLevel()) {

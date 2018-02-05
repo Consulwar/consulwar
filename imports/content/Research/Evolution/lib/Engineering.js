@@ -1,3 +1,5 @@
+import { tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Engineering',
   title: 'Оборонная инженерия',
@@ -5,24 +7,64 @@ export default {
   effects: {
     Military: [
       {
-        textBefore: 'Броня оборонных сооружений +',
+        textBefore: 'Урон оборонных сооружений +',
         textAfter: '%',
         condition: 'Unit/Human/Defense',
         priority: 2,
-        affect: 'life',
+        affect: 'damage',
         result(level) {
-          return level * 0.1;
+          return level * 0.2;
         },
       },
+    ],
+    Price: [
       {
-        textBefore: 'Дополнительный бонус ',
+        textBefore: 'Строительство Дредноутов быстрее на ',
         textAfter: '%',
-        condition: 'Unit/Human/Defense',
-        priority: 2,
-        affect: 'life',
-        result(level) {
-          return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
-        },
+        condition: 'Unit/Human/Space/Dreadnought',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Кристалл-Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/CrystalGun',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Доставка Трилинейных Кристал-Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/TripleCrystalGun',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство ОБЧР на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Enginery/HBHR',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Бабочек на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Air/Butterfly',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Орбитальных Станций Обороны на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/OrbitalDefenseStation',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
       },
     ],
   },

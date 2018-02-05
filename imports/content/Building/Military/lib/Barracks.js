@@ -1,3 +1,5 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Barracks',
   title: 'Казармы',
@@ -6,23 +8,27 @@ export default {
     Price: [
       {
         textBefore: 'Подготовка пехоты на ',
-        textAfter: '% дешевле',
-        condition: 'Unit/Human/Ground/Infantry',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return level * 0.5;
-        },
-      },
-      {
-        textBefore: 'Подготовка пехоты на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Ground/Infantry',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return [0, 10, 42, 100, 233, 1000][Math.floor(level / 20)];
-        },
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Крейсеров быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Cruiser',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Авианосцев быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Carrier',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

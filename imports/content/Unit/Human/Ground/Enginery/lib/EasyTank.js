@@ -6,7 +6,6 @@ export default {
     humans: 50,
     metals: 16000,
     crystals: 1250,
-    time: 4500 * 5,
   },
   characteristics: {
     weapon: {
@@ -25,8 +24,8 @@ export default {
   ],
   requirements() {
     return [
-      ['Research/Evolution/Drill', 38],
       ['Building/Military/Factory', 40],
+      ['Research/Evolution/Drill', 38],
     ];
   },
 };

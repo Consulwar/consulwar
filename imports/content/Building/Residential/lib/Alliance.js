@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Residential/Alliance',
   title: 'Система связи',
@@ -5,20 +7,25 @@ export default {
   effects: {
     Special: [
       {
-        notImplemented: true,
-        textBefore: '',
-        textAfter: '% альянсового бонуса',
-        result(level) {
-          return level * 1;
-        },
-      },
-      {
-        notImplemented: true,
         textBefore: '',
         textAfter: '',
         result(level) {
           return level === 0 ? '' : [
-            'Можно вступить в альянс',
+            'Можно вступить в альянс 1 уровня',
+            'Можно вступить в альянс 2 уровня',
+            'Можно вступить в альянс 3 уровня',
+            'Можно вступить в альянс 4 уровня',
+            'Можно вступить в альянс 5 уровня',
+            'Можно вступить в альянс 5 уровня',
+          ][Math.floor(level / 20)];
+        },
+      },
+      {
+        textBefore: '',
+        textAfter: '',
+        result(level) {
+          return level === 0 ? '' : [
+            '',
             'Можно создавать альянс до 10 человек',
             'Можно создавать альянс до 20 человек',
             'Можно создавать альянс до 30 человек',
@@ -26,6 +33,16 @@ export default {
             'Можно создавать альянс до 50 человек',
           ][Math.floor(level / 20)];
         },
+      },
+    ],
+    Price: [
+      {
+        textBefore: 'Строительство Орбитальных Станций Обороны на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/OrbitalDefenseStation',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

@@ -1,24 +1,36 @@
+import { tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Science',
   title: 'Научный отдел',
   description: 'Любая достаточно развитая технология неотличима от магии. И для подобной магии вовсе не обязательно воздерживаться до тридцати лет, достаточно просто быть довольно умным, начитанным и пытливым сукиным сыном в белом халате. Более того, во времена нынешнего научного прогресса стало возможным создавать учёных из просто умных ребят путём изменения их кода ДНК, что впоследствии добавляет им ещё несколько пунктов IQ. Ну, или они умирают в страшных мучениях… Но что же поделать, это наука, детка. Хочешь быть гением — рискни! Редкое изобретение работает с первого раза, особенно это касается генетики. Но не стоит расстраиваться. Через тернии к звёздам, Консул.',
   effects: {
-    Special: [
+    Price: [
       {
-        notImplemented: true,
-        textBefore: 'Время временной карточки +',
-        textAfter: '%',
+        textBefore: 'Исследования на ',
+        textAfter: '% быстрее',
+        condition: 'Research',
+        priority: 2,
+        affect: 'time',
         result(level) {
-          return level * 0.5;
+          return (level * 0.2) + [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },
       {
-        notImplemented: true,
-        textBefore: 'Дополнительный бонус ',
+        textBefore: 'Строительство Пожинателей быстрее на ',
         textAfter: '%',
-        result(level) {
-          return [0, 10, 20, 30, 40, 50][Math.floor(level / 20)];
-        },
+        condition: 'Unit/Human/Space/Reaper',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Подготовка Псиоников быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground/Infantry/Psiman',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
       },
     ],
   },

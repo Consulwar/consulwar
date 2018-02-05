@@ -5,23 +5,12 @@ export default {
   effects: {
     Price: [
       {
-        textBefore: 'Снижает стоимость всех строений на ',
-        textAfter: '%',
-        condition: 'Building',
+        textBefore: 'Всё требует на ',
+        textAfter: '% меньше людей',
         priority: 2,
-        affect: ['metals', 'crystals'],
+        affect: 'humans',
         result(level) {
-          return level * 0.1;
-        },
-      },
-      {
-        textBefore: 'Дополнительно снижает стоимость строений на ',
-        textAfter: '%',
-        condition: 'Building',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return [0, 5, 10, 20, 30, 40][Math.floor(level / 20)];
+          return level * 0.2;
         },
       },
     ],

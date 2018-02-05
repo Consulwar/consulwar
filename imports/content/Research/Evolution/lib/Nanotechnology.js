@@ -1,30 +1,54 @@
+import { tier1, tier2, tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Nanotechnology',
   title: 'Нанотехнологии',
   description: 'Вопреки расхожему мнению, нанотехнологии представляют собой не рой милипиздрических роботов, а специальные технологии, позволяющие создавать крайне точные, мелкие и чрезвычайно удобные микросхемы, которые в свою очередь вставляются во всё подряд. Вооружение, танки, броня, системы защиты, щиты, умная броня, очень умная броня, здания, мой тостер, Консул, ваш тостер… Нанотехнологии везде. Несомненно, самое важное место их применения — это боевой космический флот. Возможность крайне быстро рассчитать движение противника и максимально точно нацелить на него орудия, учитывая все необходимые условия, позволит вашему флоту, Консул, действовать намного эффективнее.',
   effects: {
-    Special: [
+    Military: [
       {
-        textBefore: 'Шанс добыть карту в бою +',
-        notImplemented: true,
+        textBefore: 'Броня наземных войск +',
         textAfter: '%',
+        condition: 'Unit/Human/Ground',
+        priority: 2,
+        affect: 'life',
         result(level) {
-          return level * 0.7;
+          return level * 0.2;
         },
       },
+    ],
+    Price: [
       {
-        notImplemented: true,
-        textBefore: '',
-        textAfter: ' в день',
-        result(level) {
-          return [
-            '2 карточки',
-            '3 карточки',
-            '4 карточки',
-            '5 карточек',
-            '6 карточек',
-          ][Math.floor(level / 20)];
-        },
+        textBefore: 'Строительство Гаммадронов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Gammadrone',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Миражей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Mirage',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Доставка Ионных Мин на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/IonMine',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство XYNлётов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Air/Xynlet',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
       },
     ],
   },

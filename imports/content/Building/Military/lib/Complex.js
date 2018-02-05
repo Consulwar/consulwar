@@ -1,35 +1,36 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Complex',
   title: 'Инженерный комплекс',
   description: 'В условиях военного времени инженеры — очень важные ребята. Их пытливый ум и тяга к созданию чего-то колоссального — как по своим размерам, так и по возможностям — несомненно, пригодится при создании новых видов вооружения и боевой техники. Конечно, основное, над чем будут работать инженеры — это Оборонный комплекс, который поможет удержать позиции на Земле и не позволит Рептилоидам перехватить инициативу. В то же время разработки Инженерного комплекса могут пригодиться и в других сферах. Не стоит недооценивать возможности технических наук, Консул.',
   effects: {
-    Military: [
+    Price: [
       {
-        textBefore: 'Урон оборонительных сооружений +',
+        textBefore: 'Ремонт юнитов ',
         textAfter: '%',
-        condition: 'Unit/Human/Defense',
+        condition: 'Unique/Repair',
         priority: 2,
-        affect: 'damage',
+        affect: ['metals', 'crystals', 'credits'],
         result(level) {
-          return level * 0.2;
+          return level * 0.3;
         },
       },
-    ],
-    Special: [
       {
-        notImplemented: true,
-        textBefore: 'Однократно +',
-        textAfter: '',
-        result(level) {
-          return [
-            0,
-            '100 мин',
-            '100 турелей',
-            '100 снайпер-ганов',
-            '100 плазменных убийц',
-            '100 кристалл-ганов',
-          ][Math.floor(level / 20)];
-        },
+        textBefore: 'Строительство Пожинателей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Reaper',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство ОБЧР на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Enginery/HBHR',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

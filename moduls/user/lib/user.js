@@ -1,3 +1,5 @@
+import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+
 Meteor.startup(function () {
 'use strict';
 
@@ -6,8 +8,15 @@ Game.User = {
     user = user || Meteor.user();
     var bonus = user.votePowerBonus || 0;
     var level = Game.User.getLevel( user.rating );
+
+    const power = SpecialEffect.applyTo({
+      target: { engName: 'VotePower' },
+      obj: { power: level + bonus },
+      hideEffects: true,
+      userId: user._id,
+    }).power;
     
-    return level + bonus;
+    return power;
   },
 
   iconPath: function(user) {

@@ -1,18 +1,59 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Residential/SpacePort',
   title: 'Космопорт',
   description: 'Гражданский Космопорт – это удобное и полезное здание для связи с внешним миром; что-то вроде аэропорта, только используется для гражданских рейсов на далёкие дистанции. Именно через Космопорт к вам на планету сможет попасть больше людей, Консул. Космопорт также служит системой мониторинга космоса, этакая диспетчерская радиорубка галактики на вашей планете.',
   effects: {
+    Special: [
+      {
+        textBefore: 'Строительство лёгких кораблей быстрее на ',
+        textAfter: '%',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+    ],
     Price: [
       {
-        textBefore: 'Уменьшает цену контейнера на ',
-        textAfter: ' ГГК',
-        affect: ['credits', 'honor'],
+        textBefore: 'Строительство Гаммадронов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Gammadrone',
         priority: 2,
-        condition: 'Unique/containerPrice',
-        result(level) {
-          return level * 0.5;
-        },
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Ос быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Wasp',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Миражей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Mirage',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Рейлганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Railgun',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Турелей на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/Turret',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Storage',
   title: 'Склад Cовета',
@@ -23,6 +25,16 @@ export default {
         result(level) {
           return [1, 2, 3, 4, 5, 6][Math.floor(level / 20)];
         },
+      },
+    ],
+    Price: [
+      {
+        textBefore: 'Доставка Трилинейных Кристал-Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/TripleCrystalGun',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

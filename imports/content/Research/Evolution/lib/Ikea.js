@@ -1,3 +1,5 @@
+import { tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Ikea',
   title: 'Мебель из Икеа',
@@ -10,17 +12,26 @@ export default {
         priority: 2,
         affect: 'humans',
         result(level) {
-          return level * 0.4;
+          return (level * 0.4) + [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },
+    ],
+    Price: [
       {
-        textBefore: 'Дополнительный бонус ',
+        textBefore: 'Строительство Авианосцев быстрее на ',
         textAfter: '%',
-        priority: 2,
-        affect: 'humans',
-        result(level) {
-          return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
-        },
+        condition: 'Unit/Human/Space/Carrier',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Танков Мамка 2.0 на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Enginery/MotherTank',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
       },
     ],
   },

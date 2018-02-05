@@ -194,14 +194,8 @@ Meteor.methods({
 
     const count = wrecks.units.army[group][engName].count;
     const unit = Game.Unit.items.army[group][engName];
-
-    // TODO: add effect(s) on PRICE_COEFFICIENT
-    const priceCoefficient = Game.Wrecks.PRICE_COEFFICIENT;
-
-    const price = Game.Resources.multiplyResources({
-      resources: _.clone(unit.getBasePrice(count).base),
-      count: priceCoefficient,
-    });
+    
+    const price = Game.Wrecks.getPrice(unit, count);
 
     if (!Game.Resources.has({ resources: price })) {
       throw new Meteor.Error('Недостаточно ресурсов');

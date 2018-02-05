@@ -10,16 +10,7 @@ export default {
         priority: 1,
         affect: 'honor',
         result(level) {
-          return level * 1;
-        },
-      },
-      {
-        textBefore: 'дополнительно +',
-        textAfter: ' чести в час',
-        priority: 1,
-        affect: 'honor',
-        result(level) {
-          return [0, 1, 3, 5, 10, 25][Math.floor(level / 20)];
+          return level + [0, 1, 3, 5, 10, 25][Math.floor(level / 20)];
         },
       },
     ],

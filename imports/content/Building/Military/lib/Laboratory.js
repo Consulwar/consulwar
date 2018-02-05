@@ -5,13 +5,13 @@ export default {
   effects: {
     Price: [
       {
-        textBefore: 'Исследования на ',
-        textAfter: '% быстрее',
+        textBefore: 'Исследования дешевле на ',
+        textAfter: '%',
         condition: 'Research',
         priority: 2,
-        affect: 'time',
+        affect: ['metals', 'crystals'],
         result(level) {
-          return (level) + [0, 10, 25, 42, 66, 100][Math.floor(level / 20)];
+          return level * 0.5;
         },
       },
     ],

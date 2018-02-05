@@ -1,3 +1,5 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/OSCD',
   title: 'Фабрика ОСКО',
@@ -5,9 +7,9 @@ export default {
   effects: {
     Military: [
       {
-        textBefore: 'Броня космических станций +',
+        textBefore: 'Броня обороны +',
         textAfter: '%',
-        condition: 'Unit/Human/Defense/OrbitalDefenseStation',
+        condition: 'Unit/Human/Defense',
         priority: 2,
         affect: 'life',
         result(level) {
@@ -15,13 +17,22 @@ export default {
         },
       },
     ],
-    Special: [
+    Price: [
       {
-        textBefore: '+',
-        textAfter: '% шансу способности орбитальных станций',
-        result(level) {
-          return [0, 10, 20, 40, 60, 80][Math.floor(level / 20)];
-        },
+        textBefore: 'Строительство Орбитальных Станций Обороны на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/OrbitalDefenseStation',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Бабочек на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Air/Butterfly',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

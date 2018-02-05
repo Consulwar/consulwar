@@ -1,29 +1,28 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Void',
   title: 'Бездна',
   description: 'Если верно настроить Врата, то можно установить связь с ближайшими мирами. Один из таких миров учёные прозвали Бездной. Дело в том, что все события, происходящие в этом мире, по каким-то причинам крайне негативны, отвратны и жестоки. Этот мир находится вне нашего понимания, и его населяют отнюдь не самые приятные существа. И всё же… На что не пойдёшь ради науки или спасения своей жизни. Люди этой вселенной настолько утомлены изматывающей войной с Рептилиями, что готовы пойти даже на такой рискованный шаг. Поддержите ли вы их, Консул? Откроете ли вы врата… В Бездну…',
   effects: {
-    Income: [
-      {
-        textBefore: 'Приток населения ',
-        textAfter: '%',
-        priority: 2,
-        affect: 'humans',
-        result(level) {
-          return level === 0 || level === 100 ? 0 : ((level - 1) * 0.1) - 10;
-        },
-      },
-    ],
     Price: [
       {
-        textBefore: 'Потерянные требуют на ',
-        textAfter: '% меньше людей',
+        textBefore: 'Потерянные дешевле на ',
+        textAfter: '%',
         condition: 'Unit/Human/Ground/Infantry/Lost',
         priority: 2,
-        affect: 'humans',
+        affect: ['metals', 'crystals'],
         result(level) {
-          return [0, 10, 20, 30, 40, 50][Math.floor(level / 20)];
+          return level * 0.2;
         },
+      },
+      {
+        textBefore: 'Вызов Потерянных быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground/Infantry/Lost',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

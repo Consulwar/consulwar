@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Residential/House',
   title: 'Жилой комплекс',
@@ -58,6 +60,24 @@ export default {
             40000,
           ][Math.floor(level / 20)];
         },
+      },
+    ],
+    Price: [
+      {
+        textBefore: 'Подготовка Папань быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground/Infantry/Father',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Лазерных Турелей на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/LaserTurret',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

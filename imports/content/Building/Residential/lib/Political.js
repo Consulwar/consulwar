@@ -1,47 +1,62 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Residential/Political',
   title: 'Политический центр',
   description: 'Ох, политика, политика… Казалось бы, кому нужны политики, когда есть единый правитель, император, его величество Консул! Однако же в мире столько вопросов, требующих внимания, а у великого правителя так мало времени. Не лучше ли, чтобы этим занимались маленькие никчёмные людишки в костюмах? Сидели там себе в кабинетах и спорили о том, в каком районе города установить новый светофор, пока вы, Консул, будете решать, в каком районе Земли высаживать войска для битвы с Рептилоидами. Тем не менее при всей своей никчёмности политики – довольно хитрые задницы, и могут приносить реальную пользу вашему делу путём добычи небольшого количества Грязных Галактических Кредитов. А вот это уже кое-что. Согласитесь, Консул.',
   effects: {
-    Income: [
+    Special: [
       {
-        textBefore: 'Приносит ',
-        textAfter: ' грязных галактических кредитов в час',
+        textBefore: '+',
+        textAfter: ' к силе голоса',
+        condition: 'Unique/VotePower',
+        affect: 'power',
         priority: 1,
-        affect: 'credits',
         result(level) {
-          return (level * 0.5) / 24;
+          return Math.floor(level / 10);
         },
       },
     ],
-    ProfitOnce: [
+    Price: [
       {
-        // Пример заполнения единоразового бонуса
-        // Сейчас существуют три варианта поля affect
-        // ------------------------------------------
-        // resources.название
-        // units.группа.название
-        // votePower
-        // ------------------------------------------
-        textBefore: 'Единоразовый бонус ',
-        textAfter: ' ГГК',
-        affect: 'resources.credits',
-        result(level) {
-          switch (level) {
-            case 20:
-              return 500;
-            case 40:
-              return 1000;
-            case 60:
-              return 1500;
-            case 80:
-              return 2000;
-            case 100:
-              return 2500;
-            default:
-              return 0;
-          }
-        },
+        textBefore: 'Доставка Ионных мин на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/IonMine',
+        priority: 2,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Лазерных Турелей на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/LaserTurret',
+        priority: 2,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Рельсовых Пушек на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/RailCannon',
+        priority: 2,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Жидкоплазменных Тиранов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/Tyrant',
+        priority: 2,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Трилинейных Кристал-Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/TripleCrystalGun',
+        priority: 2,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

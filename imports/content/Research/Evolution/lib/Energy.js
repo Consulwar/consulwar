@@ -1,3 +1,5 @@
+import { tier1, tier2, tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Energy',
   title: 'Энергетика',
@@ -5,20 +7,40 @@ export default {
   effects: {
     Special: [
       {
-        notImplemented: true,
         textBefore: 'Бонусы палаты консула +',
         textAfter: '%',
+        condition: 'Unique/EnchantHouse',
+        priority: 2,
+        affect: 'result',
         result(level) {
-          return level * 0.4;
+          return (level * 0.4) + [0, 10, 20, 30, 40, 60][Math.floor(level / 20)];
         },
       },
+    ],
+    Price: [
       {
-        notImplemented: true,
-        textBefore: 'Дополнительный бонус ',
+        textBefore: 'Строительство Крейсеров быстрее на ',
         textAfter: '%',
-        result(level) {
-          return [0, 10, 20, 30, 40, 60][Math.floor(level / 20)];
-        },
+        condition: 'Unit/Human/Space/Cruiser',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Рейлганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Railgun',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Мин быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/Mine',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

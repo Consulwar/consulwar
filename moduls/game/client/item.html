@@ -22,14 +22,12 @@
           {{/with}}
         </div>
       {{/if}}
-      {{#each item.effect}}
-        {{#if and (result level) (not hide)}}
-          <div class="effect">
-            {{name}}{{pretext}}{{formatNumber (result level)}}{{aftertext}} 
-            {{#if notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
-          </div>
-        {{/if}}
-      {{/each}}
+      {{> EffectList args
+        effects=item.effect
+        level=item.effect.[0].level
+        hideAdditional=true
+        additionalClass="cw--color_metal"
+      }}
     </div>
 
     {{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
@@ -39,18 +37,12 @@
             Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
           {{/with}}
         </div>
-        {{#each item.effect}}
-          {{#unless hide}}
-            {{#with this.next}}
-              {{#if and result (not (eq ../result result))}}
-                <div class="effect">
-                  {{name}}{{pretext}}{{formatNumber result}}{{aftertext}} 
-                  {{#if ../notImplemented}}<span class="notImplemented">В разработке!</span>{{/if}}
-                </div>
-              {{/if}}
-            {{/with}}
-          {{/unless}}
-        {{/each}}
+        {{> EffectList args
+          effects=item.effect
+          level=item.effect.[0].next.level
+          hideAdditional=true
+          additionalClass="cw--color_credit"
+        }}
       </div>
     {{/if}}
   {{/if}}

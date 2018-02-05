@@ -1,3 +1,5 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Alloy',
   title: 'Особые сплавы',
@@ -10,19 +12,31 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return level * 0.2;
-        },
+        result: tier1,
       },
       {
-        textBefore: 'Дополнительное ускорение ',
+        textBefore: 'Строительство Линкоров быстрее на ',
         textAfter: '%',
-        condition: 'Building',
-        priority: 2,
+        condition: 'Unit/Human/Space/Battleship',
+        priority: 4,
         affect: 'time',
-        result(level) {
-          return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
-        },
+        result: tier2,
+      },
+      {
+        textBefore: 'Подготовка Турникмэнов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground/Infantry/Horizontalbarman',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Танков Мамка 2.0 на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Enginery/MotherTank',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

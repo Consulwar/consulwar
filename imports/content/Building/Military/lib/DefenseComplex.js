@@ -1,28 +1,67 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/DefenseComplex',
   title: 'Оборонный комплекс',
   description: 'Оборонный комплекс занимается разработкой новых видов вооружения, которое сможет отбивать нападения Рептилоидов на вашу планету или на другие ваши колонии. От минных полей — до гигантских пушек, способных за несколько залпов ломать самые мощные корабли. Пусть ваш народ почувствует себя в безопасности. Застройтесь к чертям собачьим турелями и наблюдайте, как корабли Рептилий сыпятся с неба.',
   effects: {
-    Price: [
+    Special: [
       {
-        textBefore: 'Строительство обороны на ',
-        textAfter: '% дешевле',
-        condition: 'Unit/Human/Defense',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return level * 0.3;
-        },
-      },
-      {
-        textBefore: 'Строительство обороны на ',
-        textAfter: '% быстрее',
-        condition: 'Unit/Human/Defense',
+        textBefore: 'Строительство обороны быстрее на ',
+        textAfter: '%',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return [0, 10, 17, 33, 54, 100][Math.floor(level / 20)];
-        },
+        result: tier1,
+      },
+    ],
+    Price: [
+      {
+        textBefore: 'Строительство Мин быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/Mine',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Турелей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/Turret',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Снайпер Ганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/SniperGun',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Плазменных убийц быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/PlasmaKiller',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Кристал-Ганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/CrystalGun',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Гаммадронов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Gammadrone',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

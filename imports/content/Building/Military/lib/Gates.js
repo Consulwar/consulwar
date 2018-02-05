@@ -1,24 +1,38 @@
+import { tier1, tier2, tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Gates',
   title: 'Врата',
   description: 'Врата — это экспериментальный объект, военное здание нового поколения, которое использует самые передовые достижения в области квантовой физики и механики. Существует теория, что таким же образом, каким была налажена связь с Консулами из нашего мира, есть возможность открыть напрямую портал и установить более чёткую связь с мирами, что находятся ближе. И, возможно, даже путешествовать по другим вселенным. Кто знает… Тем не менее, Врата — передовое научное здание, и множество открытий, совершённых в этих стенах, можно ставить на поток и использовать в войне.',
   effects: {
-    Special: [
+    Military: [
       {
-        notImplemented: true,
-        textBefore: '+',
-        textAfter: '% ресурсов за победы в космосе',
+        textBefore: 'Урон наземных войск +',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground',
+        priority: 2,
+        affect: 'damage',
         result(level) {
-          return level * 0.1;
+          return level * 0.2;
         },
       },
+    ],
+    Price: [
       {
-        notImplemented: true,
-        textBefore: 'Дополнительные ',
-        textAfter: '% в день',
-        result(level) {
-          return [0, 2, 5, 8, 10, 15][Math.floor(level / 20)];
-        },
+        textBefore: 'Строительство Рейлганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Railgun',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Кристалл-Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/CrystalGun',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Drill',
   title: 'Бурильный бур',
@@ -10,17 +12,42 @@ export default {
         priority: 2,
         affect: 'metals',
         result(level) {
-          return level * 0.2;
+          return (level * 0.2) + [0, 10, 25, 50, 65, 80][Math.floor(level / 20)];
         },
       },
+    ],
+    Price: [
       {
-        textBefore: 'Дополнительный бонус ',
-        textAfter: '%',
-        priority: 2,
-        affect: 'metals',
-        result(level) {
-          return [0, 10, 25, 50, 65, 80][Math.floor(level / 20)];
-        },
+        textBefore: 'Строительство Снайпер Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/SniperGun',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Рельсовых Пушек на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/RailCannon',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Танков Изи на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Enginery/EasyTank',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Бабуль на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Air/Grandmother',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },

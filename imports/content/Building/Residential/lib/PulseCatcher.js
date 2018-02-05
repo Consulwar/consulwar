@@ -11,21 +11,6 @@ export default {
           return level * 0.5;
         },
       },
-      {
-        notImplemented: true,
-        textBefore: '20% шанс при расчёте бонуса получить ещё металл и кристалл эквивалентно ',
-        textAfter: ' добычи',
-        result(level) {
-          return [
-            0,
-            '1 часу',
-            '2 часам',
-            '3 часам',
-            '4 часам',
-            '5 часам',
-          ][Math.floor(level / 20)];
-        },
-      },
     ],
   },
   basePrice(level = this.getCurrentLevel()) {

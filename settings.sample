@@ -111,7 +111,8 @@
       "galacticRadius": 52,
       "accessRating": 10000,
       "maxFlyTime": 86400
-    }
+    },
+	"reduceBuildingSpeed": 1
   },
   "helprace": {
     "secret": "xxx"

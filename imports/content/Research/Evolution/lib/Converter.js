@@ -3,21 +3,15 @@ export default {
   title: 'Преобразователь плазмоидов',
   description: 'Технология преобразования плазмоидов — это, что называется, технология нового времени. Учёные только начинают разбираться в этой новой области. И пока ещё не совсем понятно, как работают сами плазмоиды, однако же это крайне важные элементы, которые помогают нам в развитии науки, техники и всего остального. Думаю, не стоит скупиться на такие полезные технологии, Консул. А вы как считаете?',
   effects: {
-    Special: [
+    Price: [
       {
-        notImplemented: true,
-        textBefore: 'Удвоить плазмоиды преобразователем +',
-        textAfter: '%',
+        textBefore: 'Флот стоит на ',
+        textAfter: '% дешевле',
+        condition: 'Unit/Human',
+        priority: 2,
+        affect: ['metals', 'crystals'],
         result(level) {
-          return level * 0.7;
-        },
-      },
-      {
-        notImplemented: true,
-        textBefore: 'Дополнительный бонус ',
-        textAfter: '%',
-        result(level) {
-          return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
+          return (level * 0.2);
         },
       },
     ],

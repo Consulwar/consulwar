@@ -11,17 +11,7 @@ export default {
         condition: 'Unique/message',
         affect: 'crystals',
         result(level) {
-          return level * 0.1;
-        },
-      },
-      {
-        textBefore: 'Дополнительный бонус ',
-        textAfter: '%',
-        priority: 2,
-        condition: 'Unique/message',
-        affect: 'crystals',
-        result(level) {
-          return [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
+          return (level * 0.1) + [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
         },
       },
     ],

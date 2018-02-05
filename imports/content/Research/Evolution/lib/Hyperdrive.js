@@ -1,3 +1,5 @@
+import { tier3 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Hyperdrive',
   title: 'Гипердвигатели',
@@ -11,6 +13,32 @@ export default {
         result(level) {
           return level;
         },
+      },
+    ],
+    Price: [
+      {
+        textBefore: 'Строительство Линкоров быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Battleship',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Строительство Плазменных убийц на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/PlasmaKiller',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
+      },
+      {
+        textBefore: 'Доставка Жидкоплазменных Тиранов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/Tyrant',
+        priority: 6,
+        affect: 'time',
+        result: tier3,
       },
     ],
   },

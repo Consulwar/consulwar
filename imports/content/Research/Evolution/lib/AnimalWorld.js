@@ -11,69 +11,46 @@ export default {
         condition: 'Unique/message',
         affect: 'crystals',
         result(level) {
-          return level * 0.1;
-        },
-      },
-      {
-        textBefore: 'Дополнительный бонус ',
-        textAfter: '%',
-        priority: 2,
-        condition: 'Unique/message',
-        affect: 'crystals',
-        result(level) {
-          return [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
+          return (level * 0.1) + [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
         },
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [1, 'slowExponentialGrow', 0],
-      crystals: [1, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [20, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [5, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.nanoWires = [6, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.nicolascagium = [5, 'slowLinearGrow', 60];
-    } else {
-      price.AncientScheme = [3, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'politic',
+    tier: 1,
+    humans: 1,
+    metals: 2,
+    crystals: 2,
+    honor: 7,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/Laboratory', 40],
+        ['Research/Evolution/Ikea', 8],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Laboratory', 50],
-        ['Research/Evolution/Ikea', 25],
+        ['Research/Evolution/Ikea', 18],
+        ['Building/Residential/Crystal', 32],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Laboratory', 60],
-        ['Research/Evolution/Ikea', 45],
+        ['Research/Evolution/Ikea', 26],
+        ['Building/Residential/Crystal', 50],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Laboratory', 70],
-        ['Research/Evolution/Ikea', 65],
+        ['Research/Evolution/Ikea', 37],
+        ['Building/Residential/Crystal', 70],
+        ['Building/Residential/Colosseum', 50],
       ];
     }
     return [
-      ['Building/Military/Laboratory', 80],
-      ['Research/Evolution/Ikea', 75],
+      ['Research/Evolution/Ikea', 51],
+      ['Building/Residential/Crystal', 90],
+      ['Building/Residential/Colosseum', 70],
     ];
   },
 };

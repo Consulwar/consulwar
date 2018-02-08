@@ -27,59 +27,41 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [10, 'slowExponentialGrow', 0],
-      crystals: [7.5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [5, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [5, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.quadCooler = [6, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.garyoldmanium = [5, 'slowLinearGrow', 60];
-    } else {
-      price.AncientScheme = [3, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'special',
+    tier: 4,
+    humans: 100,
+    metals: 220,
+    crystals: 160,
+    honor: 130,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Research/Evolution/Alloy', 30],
+        ['Building/Residential/Statue', 10],
       ];
     } else if (level < 40) {
       return [
-        ['Research/Evolution/Alloy', 45],
-        ['Building/Military/Factory', 25],
+        ['Building/Residential/Statue', 24],
+        ['Building/Military/Barracks', 24],
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Alloy', 65],
-        ['Building/Military/Factory', 40],
-        ['Research/Evolution/Crystallization', 35],
+        ['Building/Residential/Statue', 40],
+        ['Building/Military/Barracks', 38],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Alloy', 85],
-        ['Building/Military/Factory', 55],
-        ['Research/Evolution/Crystallization', 55],
-        ['Building/Residential/Statue', 45],
+        ['Building/Residential/Statue', 50],
+        ['Building/Military/Barracks', 52],
+        ['Building/Residential/BlackMarket', 60],
       ];
     }
     return [
-      ['Research/Evolution/Alloy', 100],
-      ['Building/Military/Factory', 80],
-      ['Research/Evolution/Crystallization', 75],
-      ['Building/Residential/Statue', 75],
+      ['Building/Residential/Statue', 65],
+      ['Building/Military/Barracks', 80],
+      ['Building/Residential/BlackMarket', 80],
     ];
   },
 };

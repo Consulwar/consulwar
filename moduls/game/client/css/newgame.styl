@@ -604,7 +604,7 @@ body.game
       .actions
         display flex
         flex-shrink 0
-        justify-content flex-end
+        justify-content flex-start
         padding 25px 0 10px
         
         .action
@@ -614,6 +614,12 @@ body.game
           align-items flex-end
           padding 0 7.5px
           width 50%
+
+          &:first-child
+            padding-left 0
+
+          button
+            width 100%
           
           .notImplemented
             flex-wrap nowrap
@@ -818,6 +824,7 @@ body.game
         .scrollbar-inner
           height 100%
           overflow-y auto
+          padding-right 15px
           
       .additional_info
         width 230px

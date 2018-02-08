@@ -110,6 +110,7 @@ Meteor.methods({
       units: { army: { ground: units } },
       protectAllHonor: protectedHonor > 0,
       targetZoneName,
+      rating: user.rating,
     });
 
     if (cardList.length !== 0) {

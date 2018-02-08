@@ -38,7 +38,9 @@ Game.Unit = {
       return Game.Unit.getArmy({ id: homePlanet.armyId });
     }
 
-    throw new Meteor.Error('Куда армия пропала то?', userId);
+    if (Meteor.isServer) {
+      throw new Meteor.Error('Куда армия пропала то?', userId);
+    }
     return null;
   },
 

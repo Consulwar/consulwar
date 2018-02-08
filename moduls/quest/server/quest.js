@@ -32,6 +32,9 @@ game.QuestLine = function(options, quests, isNew = true) {
 
         switch(idParts[0]) {
           case 'Quest':
+            if (idParts[idParts.length - 1] === 'Tutorial') {
+              return true;
+            }
             return Game.Quest.checkFinished(idParts[idParts.length - 1]);
           case 'Building':
           case 'Research':

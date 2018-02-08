@@ -5,7 +5,6 @@ export default {
   basePrice: {
     metals: 62,
     crystals: 16,
-    time: 5 * 60 * 3,
   },
   characteristics: {
     weapon: {

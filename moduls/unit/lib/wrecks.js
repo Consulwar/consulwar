@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
 
 initWrecksLib = function() {
 'use strict';
@@ -29,6 +30,26 @@ Game.Wrecks = {
       count,
       bonusSeconds: secondsLeft,
     };
+  },
+
+  getPrice(unit, count) {
+    let price = Game.Resources.multiplyResources({
+      resources: _.clone(unit.getBasePrice(count).base),
+      count: Game.Wrecks.PRICE_COEFFICIENT,
+    });
+
+    delete price.time;
+
+    Object.defineProperty(price, 'base', {
+      value: _.clone(price),
+    });
+
+    price = PriceEffect.applyTo({
+      target: { engName: 'Repair' },
+      obj: price,
+    });
+
+    return price;
   },
 };
 

@@ -82,6 +82,10 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
   users.forEach((user) => {
     const army = roundResult.leftByUsername[user.username];
 
+    if (!army) {
+      return;
+    }
+
     const newArmyId = Game.Unit.createArmy(
       army,
       Game.Unit.location.SHIP,

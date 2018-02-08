@@ -90,10 +90,11 @@ Game.Resources = {
 
     rating += ((resources.metals) || 0);
     rating += ((resources.crystals * 3) || 0);
-    rating += ((resources.humans * 2) || 0);
+    rating += ((resources.humans * 4) || 0);
     rating += ((resources.honor * 0.5) || 0);
+    rating += ((resources.credits * 1) || 0);
 
-    return Math.floor(rating);
+    return Math.floor(rating / 2);
   },
 
   calculateHonorFromResources: function(resources, notBase = false) {

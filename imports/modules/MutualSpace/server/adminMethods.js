@@ -125,7 +125,7 @@ const sendPlanetFleetToHome = function(planet, fromHex, hex) {
   targetPositionWithOffset.x += center.x;
   targetPositionWithOffset.y += center.y;
 
-  const engineLevel = Game.Planets.getEngineLevel();
+  const engineLevel = Game.Planets.getEngineLevel(Meteor.user());
 
   const flyTime = Utils.calcFlyTime(
     startPositionWithOffset,

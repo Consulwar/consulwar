@@ -1,74 +1,97 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Residential/SpacePort',
   title: 'Космопорт',
   description: 'Гражданский Космопорт – это удобное и полезное здание для связи с внешним миром; что-то вроде аэропорта, только используется для гражданских рейсов на далёкие дистанции. Именно через Космопорт к вам на планету сможет попасть больше людей, Консул. Космопорт также служит системой мониторинга космоса, этакая диспетчерская радиорубка галактики на вашей планете.',
   effects: {
+    Special: [
+      {
+        textBefore: 'Строительство лёгких кораблей быстрее на ',
+        textAfter: '%',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+    ],
     Price: [
       {
-        textBefore: 'Уменьшает цену контейнера на ',
-        textAfter: ' ГГК',
-        affect: ['credits', 'honor'],
+        textBefore: 'Строительство Гаммадронов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Gammadrone',
         priority: 2,
-        condition: 'Unique/containerPrice',
-        result(level) {
-          return level * 0.5;
-        },
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Ос быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Wasp',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Миражей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Mirage',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Рейлганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Railgun',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Турелей на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/Turret',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [3.75, 'slowExponentialGrow', 0],
-      crystals: [1.95, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [100, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [8, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.ShipDetails = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.ReptileTechnology = [4, 'slowLinearGrow', 60];
-    } else {
-      price.chip = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'aviation',
+    tier: 2,
+    humans: 4,
+    metals: 12,
+    crystals: 4,
+    honor: 20,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Residential/House', 20],
+        ['Building/Residential/House', 8],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Residential/House', 30],
-        ['Research/Evolution/Alloy', 15],
+        ['Building/Residential/House', 25],
+        ['Research/Evolution/Alloy', 16],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Residential/House', 40],
-        ['Research/Evolution/Alloy', 25],
-        ['Research/Evolution/Energy', 30],
+        ['Building/Residential/House', 35],
+        ['Research/Evolution/Alloy', 26],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Residential/House', 50],
-        ['Research/Evolution/Alloy', 35],
-        ['Research/Evolution/Energy', 50],
-        ['Building/Military/Airfield', 40],
+        ['Building/Residential/House', 45],
+        ['Research/Evolution/Alloy', 36],
+        ['Research/Evolution/Hyperdrive', 55],
       ];
     }
     return [
-      ['Building/Residential/House', 70],
-      ['Research/Evolution/Alloy', 45],
-      ['Research/Evolution/Energy', 70],
-      ['Building/Military/Airfield', 70],
+      ['Building/Residential/House', 55],
+      ['Research/Evolution/Alloy', 46],
+      ['Research/Evolution/Hyperdrive', 65],
     ];
   },
 };

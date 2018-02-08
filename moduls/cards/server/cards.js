@@ -138,8 +138,10 @@ Game.Cards.activate = function(item, user) {
 
 Meteor.methods({
   'cards.buyAndActivate': function (id) {
-    Meteor.call('cards.buy', id);
-    Meteor.call('cards.activate', id);
+    const buy = Meteor.call('cards.buy', id);
+    if (buy) {
+      Meteor.call('cards.activate', id);
+    }
   },
 
   'cards.buy': function(id) {

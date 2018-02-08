@@ -1,6 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 
+let SpecialEffect;
+Meteor.defer(() => {
+  // eslint-disable-next-line global-require
+  SpecialEffect = require('./SpecialEffect').default;
+});
+
 let Game;
 Meteor.startup(() => {
   // Temporary hack to avoid circular dependency
@@ -228,6 +234,15 @@ class Effect {
           );
 
           value = effect.result({ ...options, level });
+        } else if (effect.provider.type === 'house') {
+          value = SpecialEffect.applyTo({
+            ...options,
+            target: {
+              engName: 'EnchantHouse',
+            },
+            obj: { result: effect.result(options) },
+            hideEffects: true,
+          }).result;
         } else {
           value = effect.result(options);
         }
@@ -404,6 +419,7 @@ class Effect {
     priority,
     affect,
     result,
+    hide = false,
     notImplemented = false,
   }) {
     // TODO : accept condition as id path / array
@@ -412,6 +428,7 @@ class Effect {
     this.condition = condition;
     this.priority = priority;
     this.affect = affect;
+    this.hide = hide;
 
     // Provide (level) argument to result function
     this.result = (options = this.getCurrentLevel()) => {

@@ -164,7 +164,9 @@ Router.route('/game/chat/alliance/:room', {
   name: 'chatAlliance',
   controller: 'GameRouteController',
   before: function() {
-    this.params.room = 'alliance/' + this.params.room;
+    if (this.params.room.indexOf('alliance/') === -1) {
+      this.params.room = 'alliance/' + this.params.room;
+    }
     this.group = 'chat';
     this.next();
   },

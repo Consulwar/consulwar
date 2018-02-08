@@ -5,80 +5,51 @@ export default {
   effects: {
     Price: [
       {
-        textBefore: 'Снижает стоимость всех строений на ',
-        textAfter: '%',
-        condition: 'Building',
+        textBefore: 'Всё требует на ',
+        textAfter: '% меньше людей',
         priority: 2,
-        affect: ['metals', 'crystals'],
+        affect: 'humans',
         result(level) {
-          return level * 0.1;
-        },
-      },
-      {
-        textBefore: 'Дополнительно снижает стоимость строений на ',
-        textAfter: '%',
-        condition: 'Building',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return [0, 5, 10, 20, 30, 40][Math.floor(level / 20)];
+          return level * 0.2;
         },
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [3, 'slowExponentialGrow', 0],
-      crystals: [4, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [70, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [5, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.CrystalFragments = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.batteries = [5, 'slowLinearGrow', 60];
-    } else {
-      price.PlasmaTransistors = [5, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'aviation',
+    tier: 2,
+    humans: 3,
+    metals: 3,
+    crystals: 10,
+    honor: 15,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Residential/Spaceport', 10],
+        ['Building/Residential/House', 15],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Residential/Spaceport', 20],
-        ['Research/Evolution/Science', 15],
+        ['Building/Residential/House', 30],
+        ['Research/Evolution/AnimalWorld', 18],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Residential/Spaceport', 30],
-        ['Research/Evolution/Science', 30],
-        ['Building/Military/Barracks', 30],
+        ['Building/Residential/House', 50],
+        ['Research/Evolution/AnimalWorld', 32],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Residential/Spaceport', 40],
-        ['Research/Evolution/Science', 40],
-        ['Building/Military/Barracks', 40],
-        ['Research/Evolution/AnimalWorld', 30],
+        ['Building/Residential/House', 72],
+        ['Research/Evolution/AnimalWorld', 46],
+        ['Research/Evolution/Crystallization', 60],
       ];
     }
     return [
-      ['Building/Residential/Spaceport', 50],
-      ['Research/Evolution/Science', 50],
-      ['Building/Military/Barracks', 50],
-      ['Research/Evolution/AnimalWorld', 40],
+      ['Building/Residential/House', 92],
+      ['Research/Evolution/AnimalWorld', 80],
+      ['Research/Evolution/Crystallization', 75],
     ];
   },
 };

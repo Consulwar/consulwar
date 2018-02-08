@@ -359,9 +359,9 @@ const getEffectsTooltip = function({
         const resultedValue = (Math.abs(effect.value) + 100) * 0.01;
 
         if ((invert && effect.value >= 0) || (!invert && effect.value < 0)) {
-          result.value = formatValue(Math.ceil(totalValue / resultedValue));
+          result.value = formatValue(Math.ceil(totalValue - (totalValue / resultedValue)));
         } else {
-          result.value = formatValue(Math.ceil(totalValue * resultedValue));
+          result.value = formatValue(totalValue - (Math.ceil(totalValue * resultedValue)));
         }
       } else {
         result.percent = Math.abs(effect.value);

@@ -44,28 +44,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [0.1, 'slowExponentialGrow', 0],
-      crystals: [0.2, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [10, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [1, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.silverPlasmoid = [3, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.batteries = [5, 'slowLinearGrow', 60];
-    } else {
-      price.sapphirePlasmoid = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'politic',
+    tier: 2,
+    humans: 3,
+    metals: 4,
+    crystals: 8,
+    honor: 15,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

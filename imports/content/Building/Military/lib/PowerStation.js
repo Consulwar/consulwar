@@ -16,28 +16,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [0.5, 'slowExponentialGrow', 0],
-      crystals: [0.3, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [6, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [2, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.SilverPlasmoid = [3, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.EmeraldPlasmoid = [4, 'slowLinearGrow', 60];
-    } else {
-      price.SapphirePlasmoid = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'fleet',
+    tier: 1,
+    humans: 0.5,
+    metals: 10,
+    crystals: 1,
+    honor: 6,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

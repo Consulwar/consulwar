@@ -16,28 +16,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [5, 'slowExponentialGrow', 0],
-      crystals: [5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [20, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [20, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.weaponParts = [3, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.nanoWires = [6, 'slowLinearGrow', 60];
-    } else {
-      price.ancientKnowledge = [4, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'fleet',
+    tier: 2,
+    humans: 12,
+    metals: 2,
+    crystals: 1.5,
+    honor: 16,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

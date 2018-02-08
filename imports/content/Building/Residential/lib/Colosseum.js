@@ -27,28 +27,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [10, 'slowExponentialGrow', 0],
-      crystals: [7.5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [5, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [5, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.quadCooler = [6, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.garyoldmanium = [5, 'slowLinearGrow', 60];
-    } else {
-      price.AncientScheme = [3, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'special',
+    tier: 4,
+    humans: 100,
+    metals: 220,
+    crystals: 160,
+    honor: 130,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

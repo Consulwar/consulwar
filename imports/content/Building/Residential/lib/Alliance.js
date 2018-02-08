@@ -46,28 +46,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [5, 'slowExponentialGrow', 0],
-      crystals: [5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [15, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [15, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.chip = [6, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.nicolascagium = [5, 'slowLinearGrow', 60];
-    } else {
-      price.AncientTechnology = [3, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'politic',
+    tier: 2,
+    humans: 5.5,
+    metals: 14,
+    crystals: 5,
+    honor: 18,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

@@ -36,28 +36,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [8, 'slowExponentialGrow', 0],
-      crystals: [9, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [120, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [50, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.QuadCooler = [6, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.nicolascagium = [5, 'slowLinearGrow', 60];
-    } else {
-      price.AncientScheme = [3, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'progress',
+    tier: 4,
+    humans: 60,
+    metals: 110,
+    crystals: 250,
+    honor: 125,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

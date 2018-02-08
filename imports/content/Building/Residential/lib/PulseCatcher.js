@@ -13,28 +13,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [4.5, 'slowExponentialGrow', 0],
-      crystals: [3, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [10, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [10, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.SecretTechnology = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.nanoWires = [6, 'slowLinearGrow', 60];
-    } else {
-      price.jimcarrium = [4, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'special',
+    tier: 3,
+    humans: 10,
+    metals: 20,
+    crystals: 15,
+    honor: 30,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

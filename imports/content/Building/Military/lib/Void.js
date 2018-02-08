@@ -26,29 +26,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [10, 'slowExponentialGrow', 0],
-      crystals: [10, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [100, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [13, 'slowLinearGrow', 0];
-      price.EmeraldPlasmoid = [4, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      price.SapphirePlasmoid = [6, 'slowLinearGrow', 20];
-    } else if (level < 60) {
-      price.AmethystPlasmoid = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.TopazPlasmoid = [3, 'slowLinearGrow', 60];
-    } else {
-      price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'enginery',
+    tier: 4,
+    humans: 10,
+    metals: 1110,
+    crystals: 100,
+    honor: 130,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

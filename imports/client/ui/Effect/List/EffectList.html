@@ -10,7 +10,7 @@
         </div>
       {{/if}}
     {{/each}}
-    {{#if hideAdditional}}
+    {{#if and (gt level 0) hideAdditional}}
       <div
         class="
           cw--EffectList__item 

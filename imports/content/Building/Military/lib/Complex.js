@@ -7,7 +7,7 @@ export default {
   effects: {
     Price: [
       {
-        textBefore: 'Ремонт юнитов ',
+        textBefore: 'Ремонт юнитов дешевле на ',
         textAfter: '%',
         condition: 'Unique/Repair',
         priority: 2,
@@ -34,28 +34,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [5, 'slowExponentialGrow', 0],
-      crystals: [0.3, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [50, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [4, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.garyoldmanium = [5, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.AncientTechnology = [3, 'slowLinearGrow', 60];
-    } else {
-      price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'enginery',
+    tier: 4,
+    humans: 140,
+    metals: 500,
+    crystals: 145,
+    honor: 150,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

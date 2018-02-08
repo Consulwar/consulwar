@@ -61,28 +61,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [1.4, 'slowExponentialGrow', 0],
-      crystals: [0.75, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [20, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [2, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.CrystalFragments = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.RotaryAmplifier = [5, 'slowLinearGrow', 60];
-    } else {
-      price.nanoWires = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'progress',
+    tier: 1,
+    humans: 2,
+    metals: 1.2,
+    crystals: 1.6,
+    honor: 8,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

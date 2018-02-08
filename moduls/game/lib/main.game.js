@@ -1,6 +1,7 @@
 import effectClasses from '/imports/modules/Effect/lib';
 import MilitaryEffect from '/imports/modules/Effect/lib/MilitaryEffect';
 import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
+import { priceT1, priceT2, priceT3, priceT4 } from '/imports/content/formula';
 
 game = {
   PRODUCTION_FACTOR: 1.48902803168182,
@@ -300,14 +301,45 @@ game.Item = function(options) {
       // является ценой подъема с нулевого до первого
       level = level ? level - 1 : this.currentLevel();
 
-      var basePrice = this.basePrice(level);
-      for (name in basePrice) {
-        curPrice[name] = basePrice[name][1].call(
-          this,
-          level,
-          basePrice[name][0],
-          basePrice[name][2]
-        );
+      let basePrice;
+      if (_(this.basePrice).isFunction()) {
+        basePrice = this.basePrice(level);
+        for (name in basePrice) {
+          curPrice[name] = basePrice[name][1].call(
+            this,
+            level,
+            basePrice[name][0],
+            basePrice[name][2]
+          );
+        }
+      } else {
+        switch (this.basePrice.tier) {
+          case 1:
+            basePrice = priceT1.call(this, level, this.basePrice.group);
+            break;
+          case 2:
+            basePrice = priceT2.call(this, level, this.basePrice.group);
+            break;
+          case 3:
+            basePrice = priceT3.call(this, level, this.basePrice.group);
+            break;
+          default:
+            basePrice = priceT4.call(this, level, this.basePrice.group);
+            break;
+        }
+        for (var resourceName in basePrice) {
+          const idParts = resourceName.split('/');
+          let realName = idParts[idParts.length - 1].toLocaleLowerCase();
+          if (Game.newToLegacyNames[realName]) {
+            realName = Game.newToLegacyNames[realName];
+          }
+          curPrice[realName] = Game.functions[basePrice[resourceName][1]].call(
+            this,
+            level,
+            basePrice[resourceName][0],
+            basePrice[resourceName][2],
+          );
+        }
       }
     } else {
       level = level ? level : 1;

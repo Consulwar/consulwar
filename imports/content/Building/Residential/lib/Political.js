@@ -60,28 +60,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [25, 'slowExponentialGrow', 0],
-      crystals: [30, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [8, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [100, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.keanureevesium = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.AncientArtifact = [3, 'slowLinearGrow', 60];
-    } else {
-      price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'politic',
+    tier: 2,
+    humans: 8,
+    metals: 7,
+    crystals: 4,
+    honor: 17,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

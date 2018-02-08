@@ -36,28 +36,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [10, 'slowExponentialGrow', 0],
-      crystals: [5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [7, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [10, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.jimcarrium = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.AncientKnowledge = [4, 'slowLinearGrow', 60];
-    } else {
-      price.RubyPlasmoid = [8, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'progress',
+    tier: 4,
+    humans: 120,
+    metals: 400,
+    crystals: 200,
+    honor: 155,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

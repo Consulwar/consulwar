@@ -32,28 +32,13 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [4.5, 'slowExponentialGrow', 0],
-      crystals: [3.9, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [35, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [6, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.SecretTechnology = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.QuadCooler = [6, 'slowLinearGrow', 60];
-    } else {
-      price.keanureevesium = [4, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'aviation',
+    tier: 2,
+    humans: 6,
+    metals: 8,
+    crystals: 9,
+    honor: 20,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {

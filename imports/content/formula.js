@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-//const reduceSpeed = Meteor.settings.public.reduceBuildingSpeed || 1;
-const reduceSpeed = 1;
+const reduceSpeed = Meteor.settings.public.reduceBuildingSpeed || 1;
 
 
 const every10x2 = level => (

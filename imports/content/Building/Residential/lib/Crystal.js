@@ -61,54 +61,41 @@ export default {
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [1.4, 'slowExponentialGrow', 0],
-      crystals: [0.75, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [20, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [2, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.CrystalFragments = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.RotaryAmplifier = [5, 'slowLinearGrow', 60];
-    } else {
-      price.nanoWires = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'progress',
+    tier: 1,
+    humans: 2,
+    metals: 1.2,
+    crystals: 1.6,
+    honor: 8,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
-      return [];
+      return [
+        ['Research/Evolution/Crystallization', 1],
+      ];
     } else if (level < 40) {
       return [
-        ['Research/Evolution/Energy', 10],
+        ['Research/Evolution/Crystallization', 25],
+        ['Research/Evolution/Energy', 14],
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Energy', 25],
-        ['Research/Evolution/Alloy', 15],
+        ['Research/Evolution/Crystallization', 45],
+        ['Research/Evolution/Energy', 28],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Energy', 55],
-        ['Research/Evolution/Alloy', 25],
-        ['Research/Evolution/Science', 35],
+        ['Research/Evolution/Crystallization', 65],
+        ['Research/Evolution/Energy', 44],
+        ['Research/Evolution/Science', 45],
       ];
     }
     return [
-      ['Research/Evolution/Energy', 75],
-      ['Research/Evolution/Alloy', 50],
-      ['Research/Evolution/Science', 60],
-      ['Research/Evolution/Crystallization', 40],
+      ['Research/Evolution/Crystallization', 85],
+      ['Research/Evolution/Energy', 68],
+      ['Research/Evolution/Science', 65],
     ];
   },
 };

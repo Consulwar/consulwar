@@ -1278,7 +1278,7 @@ var timeAttack = function(id) {
   };
 
   var targetId = Template.instance().data.id;
-  var engineLevel = Game.Planets.getEngineLevel();
+  var engineLevel = Game.Planets.getEngineLevel(Meteor.user());
 
   var targetPlanet = Game.Planets.getOne(targetId);
   if (targetPlanet) {
@@ -1317,7 +1317,7 @@ const timeAttackBattle = function(id) {
   };
 
   const targetId = Template.instance().data.id;
-  const engineLevel = Game.Planets.getEngineLevel();
+  const engineLevel = Game.Planets.getEngineLevel(Meteor.user());
 
   const targetBattle = BattleEvents.findByBattleId(targetId);
   if (targetBattle) {
@@ -1751,7 +1751,7 @@ Template.cosmosAttackMenu.events({
     } else if (ship) {
       // Attack ship
       var pathView = pathViews[ship._id];
-      var engineLevel = Game.Planets.getEngineLevel();
+      var engineLevel = Game.Planets.getEngineLevel(Meteor.user());
 
       const baseGalaxy = galaxyByUsername[basePlanet.username];
       const basePosition = {

@@ -1,0 +1,25 @@
+<template name="EffectList">
+  <div class="cw--EffectList {{additionalClass}}">
+    {{#each effect in effects}}
+      {{#if and (effect.result level) (not effect.hide)}}
+        <div class="cw--EffectList__item">
+          {{effect.name}}{{effect.pretext}}{{formatNumber (effect.result level)}}{{effect.aftertext}} 
+          {{#if effect.notImplemented}}
+            <span class="cw--EffectList__notImplemented">В разработке!</span>
+          {{/if}}
+        </div>
+      {{/if}}
+    {{/each}}
+    {{#if and (gt level 0) hideAdditional}}
+      <div
+        class="
+          cw--EffectList__item 
+          cw--EffectList__item_withHover
+        " 
+        onMouseover={{generateTooltip}}
+      >
+        Дополнительные эффекты
+      </div>
+    {{/if}}
+  </div>
+</template>

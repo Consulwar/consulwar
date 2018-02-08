@@ -45,6 +45,24 @@
         {{/if}}
 
         <div class="actions">
+          {{#if gt building.maxLevel building.currentLevel}}
+            <div class="action">
+              <div 
+                class="notImplemented"
+                data-tooltip="В разработке…"
+                data-tooltip-direction="s"
+              >
+                <button 
+                  class="max" 
+                  {{notPremiumDisabled}}
+                  data-tooltip="Ввести максимум"
+                  data-tooltip-direction="s"
+                  {{premiumTitle}}></button>
+                <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
+              </div>
+              <button class="main_action build" disabled="{{not building.canBuild}}">Отдать приказ</button>
+            </div>
+          {{/if}}
           <div class="action">
             {{#if eq building.engName 'metal'}}
                 <progress class="bonus metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
@@ -82,25 +100,6 @@
               </a>
             {{/if}}
           </div>
-
-          {{#if gt building.maxLevel building.currentLevel}}
-            <div class="action">
-              <div 
-                class="notImplemented"
-                data-tooltip="В разработке…"
-                data-tooltip-direction="s"
-              >
-                <button 
-                  class="max" 
-                  {{notPremiumDisabled}}
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  {{premiumTitle}}></button>
-                <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
-              </div>
-              <button class="main_action build" disabled="{{not building.canBuild}}">Отдать приказ</button>
-            </div>
-          {{/if}}
         </div>
       </div> 
     </div>

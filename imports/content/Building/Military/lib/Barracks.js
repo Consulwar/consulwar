@@ -1,3 +1,5 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Barracks',
   title: 'Казармы',
@@ -6,79 +8,65 @@ export default {
     Price: [
       {
         textBefore: 'Подготовка пехоты на ',
-        textAfter: '% дешевле',
-        condition: 'Unit/Human/Ground/Infantry',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return level * 0.5;
-        },
-      },
-      {
-        textBefore: 'Подготовка пехоты на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Ground/Infantry',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return [0, 10, 42, 100, 233, 1000][Math.floor(level / 20)];
-        },
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Крейсеров быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Cruiser',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Авианосцев быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Carrier',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [1.5, 'slowExponentialGrow', 0],
-      crystals: [0.1, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [5, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [1, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.WeaponParts = [3, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.ReptileTechnology = [4, 'slowLinearGrow', 60];
-    } else {
-      price.SapphirePlasmoid = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'infantry',
+    tier: 2,
+    humans: 4,
+    metals: 30,
+    crystals: 2,
+    honor: 16,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 10],
+        ['Building/Residential/House', 12],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 20],
-        ['Building/Military/Laboratory', 20],
+        ['Building/Residential/House', 28],
+        ['Building/Residential/Entertainment', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 35],
-        ['Building/Military/Laboratory', 40],
-        ['Building/Residential/House', 30],
+        ['Building/Residential/House', 48],
+        ['Building/Residential/Entertainment', 35],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 60],
-        ['Building/Military/Laboratory', 60],
-        ['Building/Residential/House', 50],
-        ['Building/Residential/Alliance', 40],
+        ['Building/Residential/House', 68],
+        ['Building/Residential/Entertainment', 52],
+        ['Research/Evolution/Nanotechnology', 44],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 70],
-      ['Building/Military/Laboratory', 80],
-      ['Building/Residential/House', 65],
-      ['Building/Residential/Alliance', 60],
+      ['Building/Residential/House', 88],
+      ['Building/Residential/Entertainment', 68],
+      ['Research/Evolution/Nanotechnology', 64],
     ];
   },
 };

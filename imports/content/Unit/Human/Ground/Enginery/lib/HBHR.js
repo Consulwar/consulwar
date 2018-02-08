@@ -6,7 +6,6 @@ export default {
     humans: 6000,
     metals: 218000,
     crystals: 84000,
-    time: 100000 * 5,
   },
   characteristics: {
     weapon: {

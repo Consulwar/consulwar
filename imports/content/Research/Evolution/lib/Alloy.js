@@ -1,3 +1,5 @@
+import { every10x2, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Research/Evolution/Alloy',
   title: 'Особые сплавы',
@@ -10,71 +12,69 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return level * 0.2;
-        },
+        result: every10x2,
       },
       {
-        textBefore: 'Дополнительное ускорение ',
+        textBefore: 'Строительство Линкоров быстрее на ',
         textAfter: '%',
-        condition: 'Building',
-        priority: 2,
+        condition: 'Unit/Human/Space/Battleship',
+        priority: 4,
         affect: 'time',
-        result(level) {
-          return [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
-        },
+        result: tier2,
+      },
+      {
+        textBefore: 'Подготовка Турникмэнов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground/Infantry/Horizontalbarman',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Танков Мамка 2.0 на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Ground/Enginery/MotherTank',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [0.2, 'slowExponentialGrow', 0],
-      crystals: [0.1, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [11, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [1, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.MeteorFragments = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.ReptileTechnology = [4, 'slowLinearGrow', 60];
-    } else {
-      price.PlasmaTransistors = [5, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'infantry',
+    tier: 1,
+    humans: 1.5,
+    metals: 5,
+    crystals: 1,
+    honor: 5,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/Laboratory', 10],
+        ['Building/Military/Laboratory', 12],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Laboratory', 20],
-        ['Research/Evolution/Science', 10],
+        ['Building/Military/Laboratory', 24],
+        ['Building/Residential/Crystal', 24],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Laboratory', 30],
-        ['Research/Evolution/Science', 20],
+        ['Building/Military/Laboratory', 37],
+        ['Building/Residential/Crystal', 48],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Laboratory', 40],
-        ['Research/Evolution/Science', 40],
+        ['Building/Military/Laboratory', 50],
+        ['Building/Residential/Crystal', 72],
+        ['Research/Evolution/Drill', 67],
       ];
     }
     return [
-      ['Building/Military/Laboratory', 50],
-      ['Research/Evolution/Science', 50],
-      ['Research/Evolution/Nanotechnology', 20],
+      ['Building/Military/Laboratory', 70],
+      ['Building/Residential/Crystal', 84],
+      ['Research/Evolution/Drill', 88],
     ];
   },
 };

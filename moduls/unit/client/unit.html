@@ -37,14 +37,6 @@
         {{> item_price price=(unit.price count undefined)}}
 
         <div class="actions">
-          {{#unless eq unit.group 'ground'}}
-            <div class="action">
-              <button class="additional_action repair">
-                Ремонтировать
-              </button>
-            </div>
-          {{/unless}}
-
           <div class="action">
             <button 
               class="max" 
@@ -55,6 +47,14 @@
             <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
             <button class="main_action build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
           </div>
+          
+          {{#unless eq unit.group 'ground'}}
+            <div class="action">
+              <button class="additional_action repair">
+                Ремонтировать
+              </button>
+            </div>
+          {{/unless}}
         </div>
       </div>
     {{/unless}}

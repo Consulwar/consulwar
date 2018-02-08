@@ -1,82 +1,105 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/DefenseComplex',
   title: 'Оборонный комплекс',
   description: 'Оборонный комплекс занимается разработкой новых видов вооружения, которое сможет отбивать нападения Рептилоидов на вашу планету или на другие ваши колонии. От минных полей — до гигантских пушек, способных за несколько залпов ломать самые мощные корабли. Пусть ваш народ почувствует себя в безопасности. Застройтесь к чертям собачьим турелями и наблюдайте, как корабли Рептилий сыпятся с неба.',
   effects: {
-    Price: [
+    Special: [
       {
-        textBefore: 'Строительство обороны на ',
-        textAfter: '% дешевле',
-        condition: 'Unit/Human/Defense',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return level * 0.3;
-        },
-      },
-      {
-        textBefore: 'Строительство обороны на ',
-        textAfter: '% быстрее',
-        condition: 'Unit/Human/Defense',
+        textBefore: 'Строительство обороны быстрее на ',
+        textAfter: '%',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return [0, 10, 17, 33, 54, 100][Math.floor(level / 20)];
-        },
+        result: tier1,
+      },
+    ],
+    Price: [
+      {
+        textBefore: 'Строительство Мин быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/Mine',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Турелей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/Turret',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Снайпер Ганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/SniperGun',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Плазменных убийц быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/PlasmaKiller',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Кристал-Ганов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/CrystalGun',
+        priority: 2,
+        affect: 'time',
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Гаммадронов быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Gammadrone',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [5, 'slowExponentialGrow', 0],
-      crystals: [5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [60, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [10, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.SecretTechnology = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.chip = [6, 'slowLinearGrow', 60];
-    } else {
-      price.AmethystPlasmoid = [4, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'fleet',
+    tier: 2,
+    humans: 5,
+    metals: 20,
+    crystals: 4,
+    honor: 22,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 35],
+        ['Building/Military/PowerStation', 20],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 45],
-        ['Research/Evolution/Engineering', 1],
+        ['Building/Military/PowerStation', 30],
+        ['Research/Evolution/Engineering', 10],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 55],
-        ['Research/Evolution/Engineering', 20],
-        ['Building/Residential/PulseCatcher', 20],
+        ['Building/Military/PowerStation', 45],
+        ['Research/Evolution/Engineering', 30],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 65],
-        ['Research/Evolution/Engineering', 40],
-        ['Building/Residential/PulseCatcher', 40],
+        ['Building/Military/PowerStation', 60],
+        ['Research/Evolution/Engineering', 50],
+        ['Research/Evolution/Nanotechnology', 48],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 80],
-      ['Research/Evolution/Engineering', 65],
-      ['Building/Residential/PulseCatcher', 60],
+      ['Building/Military/PowerStation', 75],
+      ['Research/Evolution/Engineering', 70],
+      ['Research/Evolution/Nanotechnology', 68],
     ];
   },
 };

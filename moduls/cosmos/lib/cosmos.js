@@ -214,11 +214,24 @@ Game.Planets = {
 
   types: {},
 
-  getEngineLevel: function() {
-    return Game.Research.get({
+  getEngineLevel: function(user = Meteor.user()) {
+    let minEngine = 0;
+    switch (Game.User.getLevel(user.rating)) {
+      case 0:
+        minEngine = 40;
+        break;
+      case 1:
+        minEngine = 20;
+        break;
+      default:
+        minEngine = 0;
+        break;
+    }
+
+    return Math.max(Game.Research.get({
       group: 'evolution',
       engName: 'hyperdrive',
-    });
+    }), minEngine);
   },
 };
 

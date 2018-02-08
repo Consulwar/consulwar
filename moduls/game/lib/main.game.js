@@ -1,6 +1,7 @@
 import effectClasses from '/imports/modules/Effect/lib';
 import MilitaryEffect from '/imports/modules/Effect/lib/MilitaryEffect';
 import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
+import { priceT1, priceT2, priceT3, priceT4 } from '/imports/content/formula';
 
 game = {
   PRODUCTION_FACTOR: 1.48902803168182,
@@ -300,20 +301,45 @@ game.Item = function(options) {
       // является ценой подъема с нулевого до первого
       level = level ? level - 1 : this.currentLevel();
 
-      var basePrice = this.basePrice(level);
-      var sum = 0;
-      for (name in basePrice) {
-        curPrice[name] = basePrice[name][1].call(
-          this,
-          level,
-          basePrice[name][0],
-          basePrice[name][2]
-        );
-        sum += curPrice[name];
-      }
-
-      if (!curPrice.time) {
-        curPrice.time = Math.max( Math.floor(sum / 0.12), 5 );
+      let basePrice;
+      if (_(this.basePrice).isFunction()) {
+        basePrice = this.basePrice(level);
+        for (name in basePrice) {
+          curPrice[name] = basePrice[name][1].call(
+            this,
+            level,
+            basePrice[name][0],
+            basePrice[name][2]
+          );
+        }
+      } else {
+        switch (this.basePrice.tier) {
+          case 1:
+            basePrice = priceT1.call(this, level, this.basePrice.group);
+            break;
+          case 2:
+            basePrice = priceT2.call(this, level, this.basePrice.group);
+            break;
+          case 3:
+            basePrice = priceT3.call(this, level, this.basePrice.group);
+            break;
+          default:
+            basePrice = priceT4.call(this, level, this.basePrice.group);
+            break;
+        }
+        for (var resourceName in basePrice) {
+          const idParts = resourceName.split('/');
+          let realName = idParts[idParts.length - 1].toLocaleLowerCase();
+          if (Game.newToLegacyNames[realName]) {
+            realName = Game.newToLegacyNames[realName];
+          }
+          curPrice[realName] = Game.functions[basePrice[resourceName][1]].call(
+            this,
+            level,
+            basePrice[resourceName][0],
+            basePrice[resourceName][2],
+          );
+        }
       }
     } else {
       level = level ? level : 1;
@@ -321,6 +347,11 @@ game.Item = function(options) {
       for (name in this.basePrice) {
         curPrice[name] = Math.ceil(this.basePrice[name] * level);
       }
+    }
+
+    if (!curPrice.time) {
+      const rating = Game.Resources.calculateRatingFromResources(curPrice, true);
+      curPrice.time = Math.max( Math.floor(rating / 0.12), 2 );
     }
 
     Object.defineProperty(curPrice, 'base', {
@@ -881,15 +912,31 @@ Game.Helpers = {
     if (seconds < 0) {
       return '…';
     }
+    var days = Math.floor(seconds / 86400);
+    seconds -= days * 86400;
+    var fDays = `${days} ${Game.Helpers.getNumeralEnding(days, ['дней', 'день', 'дня'])} `;
 
     var hours = Math.floor(seconds / 3600);
     seconds -= hours * 3600;
+    var fHours = `${(hours > 99 ? hours : ('0' + hours).slice(-2))}ч `;
+
     var minutes = Math.floor(seconds / 60);
     seconds -= minutes * 60;
+    var fMinutes = `${('0' + minutes).slice(-2)}м `;
 
-    return (hours > 99 ? hours : ('0' + hours).slice(-2)) + ':'
-      + ('0' + minutes).slice(-2) + ':'
-      + ('0' + seconds).slice(-2);
+    var fSeconds = `${('0' + seconds).slice(-2)}с`;
+
+    if (days === 0) {
+      fDays = '';
+      if (hours === 0) {
+        fHours = '';
+        if (minutes === 0) {
+          fMinutes = '';
+        }
+      }
+    }
+
+    return `${fDays}${fHours}${fMinutes}${fSeconds}`;
   },
 
   getNumeralEnding: function (num, endings) {

@@ -1,3 +1,5 @@
+import '/imports/client/ui/Effect/List/EffectList';
+
 initItemClient = function() {
 'use strict';
 

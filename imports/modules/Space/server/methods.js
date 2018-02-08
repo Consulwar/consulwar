@@ -57,7 +57,7 @@ Meteor.methods({
       throw new Meteor.Error('Нельзя перехватить свой корабль');
     }
 
-    const engineLevel = Game.Planets.getEngineLevel();
+    const engineLevel = Game.Planets.getEngineLevel(user);
 
     const startPosition = {
       x: basePlanet.x,
@@ -233,28 +233,6 @@ Meteor.methods({
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
-    // slice units
-    let sourceArmyId = basePlanet.armyId;
-    if (basePlanet.isHome) {
-      sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
-    }
-
-    let newArmyId;
-
-    if (needSliceArmy) {
-      const destUnits = { army: { fleet: units } };
-      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
-    } else {
-      newArmyId = sourceArmyId;
-      Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
-
-      basePlanet.armyId = null;
-      basePlanet.armyUsername = null;
-    }
-
-    basePlanet.timeRespawn = Game.getCurrentTime() + Config.ENEMY_RESPAWN_PERIOD;
-    Game.Planets.update(basePlanet);
-
     const startPosition = {
       x: basePlanet.x,
       y: basePlanet.y,
@@ -281,7 +259,7 @@ Meteor.methods({
       targetPositionWithOffset.y += center.y;
     }
 
-    const engineLevel = Game.Planets.getEngineLevel();
+    const engineLevel = Game.Planets.getEngineLevel(user);
 
     const flyTime = Utils.calcFlyTime(
       startPositionWithOffset,
@@ -292,6 +270,28 @@ Meteor.methods({
     if (flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
       throw new Meteor.Error('Слишком долгий перелет');
     }
+
+    // slice units
+    let sourceArmyId = basePlanet.armyId;
+    if (basePlanet.isHome) {
+      sourceArmyId = Game.Unit.getHomeFleetArmy()._id;
+    }
+
+    let newArmyId;
+
+    if (needSliceArmy) {
+      const destUnits = { army: { fleet: units } };
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+    } else {
+      newArmyId = sourceArmyId;
+      Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
+
+      basePlanet.armyId = null;
+      basePlanet.armyUsername = null;
+    }
+
+    basePlanet.timeRespawn = Game.getCurrentTime() + Config.ENEMY_RESPAWN_PERIOD;
+    Game.Planets.update(basePlanet);
 
     const flightData = {
       userId: user._id,

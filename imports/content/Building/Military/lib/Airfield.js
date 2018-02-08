@@ -1,3 +1,5 @@
+import { tier1, tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Airfield',
   title: 'Военный аэродром',
@@ -6,79 +8,66 @@ export default {
     Price: [
       {
         textBefore: 'Строительство авиации на ',
-        textAfter: '% дешевле',
-        condition: 'Unit/Human/Ground/Air',
-        priority: 2,
-        affect: ['metals', 'crystals'],
-        result(level) {
-          return level * 0.3;
-        },
-      },
-      {
-        textBefore: 'Строительство авиации на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Ground/Air',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return [0, 10, 17, 33, 100, 233][Math.floor(level / 20)];
-        },
+        result: tier1,
+      },
+      {
+        textBefore: 'Строительство Миражей быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/Mirage',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Строительство Траков C быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Space/TruckC',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
       },
     ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [4.5, 'slowExponentialGrow', 0],
-      crystals: [3.9, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [35, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [6, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.SecretTechnology = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.QuadCooler = [6, 'slowLinearGrow', 60];
-    } else {
-      price.keanureevesium = [4, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'aviation',
+    tier: 2,
+    humans: 6,
+    metals: 8,
+    crystals: 9,
+    honor: 20,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/PowerStation', 20],
+        ['Building/Military/PowerStation', 9],
+        ['Building/Residential/Crystal', 10],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/PowerStation', 35],
-        ['Building/Residential/Spaceport', 5],
+        ['Building/Military/PowerStation', 27],
+        ['Building/Residential/Crystal', 28],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/PowerStation', 45],
-        ['Building/Residential/Spaceport', 20],
-        ['Building/Residential/Alliance', 20],
+        ['Building/Military/PowerStation', 37],
+        ['Building/Residential/Crystal', 46],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/PowerStation', 55],
-        ['Building/Residential/Spaceport', 45],
-        ['Building/Residential/Alliance', 40],
-        ['Building/Military/Shipyard', 35],
+        ['Building/Military/PowerStation', 47],
+        ['Building/Residential/Crystal', 66],
+        ['Research/Evolution/DoomsDaySizing', 50],
       ];
     }
     return [
-      ['Building/Military/PowerStation', 65],
-      ['Building/Residential/Spaceport', 65],
-      ['Building/Residential/Alliance', 60],
-      ['Building/Military/Shipyard', 55],
+      ['Building/Military/PowerStation', 57],
+      ['Building/Residential/Crystal', 88],
+      ['Research/Evolution/DoomsDaySizing', 70],
     ];
   },
 };

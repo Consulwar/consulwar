@@ -31,22 +31,24 @@ game.Research = function(options){
 
   Game.newToLegacyEffects(options);
 
-  this._basePrice = options.basePrice;
-  options.basePrice = function(level = this.currentLevel()) {
-    const price = this._basePrice(level);
-    const realPrice = {};
-    _(price).keys().forEach((resourceName) => {
-      let realName = resourceName.toLocaleLowerCase();
-      if (Game.newToLegacyNames[realName]) {
-        realName = Game.newToLegacyNames[realName];
-      }
-      realPrice[realName] = [
-        price[resourceName][0],
-        Game.functions[price[resourceName][1]],
-        price[resourceName][2],
-      ];
-    });
-    return realPrice;
+  if (_(options.basePrice).isFunction()) {
+    this._basePrice = options.basePrice;
+    options.basePrice = function(level = this.currentLevel()) {
+      const price = this._basePrice(level);
+      const realPrice = {};
+      _(price).keys().forEach((resourceName) => {
+        let realName = resourceName.toLocaleLowerCase();
+        if (Game.newToLegacyNames[realName]) {
+          realName = Game.newToLegacyNames[realName];
+        }
+        realPrice[realName] = [
+          price[resourceName][0],
+          Game.functions[price[resourceName][1]],
+          price[resourceName][2],
+        ];
+      });
+      return realPrice;
+    }
   }
 
   this._requirements = options.requirements;

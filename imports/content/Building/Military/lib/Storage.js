@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Military/Storage',
   title: 'Склад Cовета',
@@ -25,60 +27,52 @@ export default {
         },
       },
     ],
+    Price: [
+      {
+        textBefore: 'Доставка Трилинейных Кристал-Ганов на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/TripleCrystalGun',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+    ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [7.5, 'slowExponentialGrow', 0],
-      crystals: [7.5, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [100, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [25, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.ReptileTechnology = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.PlasmaTransistors = [5, 'slowLinearGrow', 60];
-    } else {
-      price.garyoldmanium = [5, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'politic',
+    tier: 3,
+    humans: 20,
+    metals: 100,
+    crystals: 25,
+    honor: 60,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/DefenseComplex', 20],
+        ['Building/Residential/PulseCatcher', 10],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/DefenseComplex', 30],
-        ['Research/Evolution/Drill', 25],
+        ['Building/Residential/PulseCatcher', 25],
+        ['Research/Evolution/Ikea', 15],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/DefenseComplex', 40],
-        ['Research/Evolution/Drill', 35],
-        ['Research/Evolution/Crystallization', 35],
+        ['Building/Residential/PulseCatcher', 45],
+        ['Research/Evolution/Ikea', 25],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/DefenseComplex', 50],
-        ['Research/Evolution/Drill', 45],
-        ['Research/Evolution/Crystallization', 45],
-        ['Research/Evolution/Engineering', 45],
+        ['Building/Residential/PulseCatcher', 55],
+        ['Research/Evolution/Ikea', 44],
+        ['Research/Evolution/AnimalWorld', 48],
       ];
     }
     return [
-      ['Building/Military/DefenseComplex', 60],
-      ['Research/Evolution/Drill', 55],
-      ['Research/Evolution/Crystallization', 55],
-      ['Research/Evolution/Engineering', 55],
+      ['Building/Residential/PulseCatcher', 72],
+      ['Research/Evolution/Ikea', 65],
+      ['Research/Evolution/AnimalWorld', 66],
     ];
   },
 };

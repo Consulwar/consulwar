@@ -1,3 +1,5 @@
+import { tier2 } from '/imports/content/formula';
+
 export default {
   id: 'Building/Residential/House',
   title: 'Жилой комплекс',
@@ -60,29 +62,32 @@ export default {
         },
       },
     ],
+    Price: [
+      {
+        textBefore: 'Подготовка Папань быстрее на ',
+        textAfter: '%',
+        condition: 'Unit/Human/Ground/Infantry/Father',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+      {
+        textBefore: 'Доставка Лазерных Турелей на ',
+        textAfter: '% быстрее',
+        condition: 'Unit/Human/Defense/LaserTurret',
+        priority: 4,
+        affect: 'time',
+        result: tier2,
+      },
+    ],
   },
-  basePrice(level = this.getCurrentLevel()) {
-    const price = {
-      metals: [0.2, 'slowExponentialGrow', 0],
-      crystals: [0.1, 'slowExponentialGrow', 0],
-    };
-
-    if (level > 19) {
-      price.honor = [4, 'slowLinearGrow', 20];
-    }
-
-    if (level < 20) {
-      price.humans = [1, 'slowLinearGrow', 0];
-    } else if (level < 40) {
-      // no changes
-    } else if (level < 60) {
-      price.meteorFragments = [4, 'slowLinearGrow', 40];
-    } else if (level < 80) {
-      price.batteries = [5, 'slowLinearGrow', 60];
-    } else {
-      price.quadCooler = [6, 'slowLinearGrow', 80];
-    }
-    return price;
+  basePrice: {
+    group: 'progress',
+    tier: 1,
+    humans: 1,
+    metals: 1.6,
+    crystals: 0.8,
+    honor: 5,
   },
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
@@ -94,21 +99,20 @@ export default {
       ];
     } else if (level < 60) {
       return [
-        ['Research/Evolution/Alloy', 25],
-        ['Research/Evolution/Energy', 20],
+        ['Research/Evolution/Alloy', 24],
+        ['Research/Evolution/Energy', 18],
       ];
     } else if (level < 80) {
       return [
-        ['Research/Evolution/Alloy', 50],
+        ['Research/Evolution/Alloy', 42],
         ['Research/Evolution/Energy', 45],
         ['Research/Evolution/Ikea', 30],
       ];
     }
     return [
-      ['Research/Evolution/Alloy', 75],
-      ['Research/Evolution/Energy', 70],
+      ['Research/Evolution/Alloy', 72],
+      ['Research/Evolution/Energy', 65],
       ['Research/Evolution/Ikea', 60],
-      ['Research/Evolution/Nanotechnology', 55],
     ];
   },
 };

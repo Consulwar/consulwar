@@ -29,12 +29,12 @@ Game.User = {
   levels: [
     { rating: 0, name: 'Новичок' },
     { rating: 25000, name: 'Консул' },
-    { rating: 100000, name: 'Правитель' },
-    { rating: 500000, name: 'Император' },
-    { rating: 2500000, name: 'Великий' },
-    { rating: 10000000, name: 'Высший' },
-    { rating: 25000000, name: 'Непогрешимый' },
-    { rating: 50000000, name: 'Лик всемогущего' }
+    { rating: 150000, name: 'Правитель' },
+    { rating: 750000, name: 'Император' },
+    { rating: 5000000, name: 'Великий' },
+    { rating: 40000000, name: 'Высший' },
+    { rating: 200000000, name: 'Непогрешимый' },
+    { rating: 1000000000, name: 'Лик всемогущего' }
   ],
 
   getLevel: function(rating) {

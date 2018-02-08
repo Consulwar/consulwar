@@ -1,4 +1,4 @@
-import { tier3 } from '/imports/content/formula';
+import { every10x2, tier3 } from '/imports/content/formula';
 
 export default {
   id: 'Research/Evolution/Science',
@@ -12,9 +12,7 @@ export default {
         condition: 'Research',
         priority: 2,
         affect: 'time',
-        result(level) {
-          return (level * 0.2) + [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
-        },
+        result: every10x2,
       },
       {
         textBefore: 'Строительство Пожинателей быстрее на ',

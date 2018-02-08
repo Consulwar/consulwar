@@ -1,4 +1,4 @@
-import { tier1, tier2 } from '/imports/content/formula';
+import { every10x2, tier2 } from '/imports/content/formula';
 
 export default {
   id: 'Research/Evolution/Alloy',
@@ -12,7 +12,7 @@ export default {
         condition: 'Building',
         priority: 2,
         affect: 'time',
-        result: tier1,
+        result: every10x2,
       },
       {
         textBefore: 'Строительство Линкоров быстрее на ',

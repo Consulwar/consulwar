@@ -1,17 +1,39 @@
 import { Meteor } from 'meteor/meteor';
 
-const reduceSpeed = Meteor.settings.public.reduceBuildingSpeed || 1;
+//const reduceSpeed = Meteor.settings.public.reduceBuildingSpeed || 1;
+const reduceSpeed = 1;
 
-const tier1 = level => (
+
+const every10x2 = level => (
   (
     level
-    + (level >= 20 ? (Math.ceil(1.6265 ** (Math.floor(level / 20) - 1)) * 100) : 0)
+    + (level >= 10 ? (Math.ceil(2 ** (Math.floor(level / 10) - 1)) * 100) : 0)
   ) / reduceSpeed
 );
 
-const tier2 = level => (level * 4) / reduceSpeed;
+// 1.62658 ^ 4 = 700
+const tier1 = level => (
+  (
+    level
+    + (level >= 20 ? (Math.ceil(1.62658 ** (Math.floor(level / 20) - 1)) * 100) : 0)
+  ) / reduceSpeed
+);
 
-const tier3 = level => (level * 2) / reduceSpeed;
+// 1.31607 ^ 4 = 300
+const tier2 = level => (
+  (
+    level
+    + (level >= 20 ? (Math.ceil(1.31607 ** (Math.floor(level / 20) - 1)) * 100) : 0)
+  ) / reduceSpeed
+);
+
+// 1.10668 ^ 4 = 150
+const tier3 = level => (
+  (
+    (level * 0.5)
+    + (level >= 20 ? (Math.ceil(1.10668 ** (Math.floor(level / 20) - 1)) * 100) : 0)
+  ) / reduceSpeed
+);
 
 const artifact = {
   progress: [
@@ -191,6 +213,7 @@ const priceT4 = function(level, group) {
 };
 
 export {
+  every10x2,
   tier1,
   tier2,
   tier3,

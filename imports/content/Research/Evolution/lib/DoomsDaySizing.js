@@ -8,7 +8,7 @@ export default {
     Military: [
       {
         textBefore: '+',
-        textAfter: '% к урону флагмана',
+        textAfter: '% к урону Флагмана',
         condition: 'Unit/Human/Space/Flagship',
         priority: 2,
         affect: 'damage',

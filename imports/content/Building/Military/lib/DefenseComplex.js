@@ -40,7 +40,7 @@ export default {
         result: tier1,
       },
       {
-        textBefore: 'Строительство Плазменных убийц быстрее на ',
+        textBefore: 'Строительство Плазменных Убийц быстрее на ',
         textAfter: '%',
         condition: 'Unit/Human/Defense/PlasmaKiller',
         priority: 2,
@@ -48,7 +48,7 @@ export default {
         result: tier1,
       },
       {
-        textBefore: 'Строительство Кристал-Ганов быстрее на ',
+        textBefore: 'Строительство Кристалл-Ганов быстрее на ',
         textAfter: '%',
         condition: 'Unit/Human/Defense/CrystalGun',
         priority: 2,

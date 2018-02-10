@@ -29,7 +29,7 @@ export default {
     ],
     Price: [
       {
-        textBefore: 'Доставка Трилинейных Кристал-Ганов на ',
+        textBefore: 'Доставка Трилинейных Кристалл-Ганов на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Defense/TripleCrystalGun',
         priority: 4,

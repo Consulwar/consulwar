@@ -7,6 +7,7 @@ export default {
     metals: 150000,
     crystals: 30000,
   },
+  decayTime: 10 * 24 * 60 * 60,
   characteristics: {
     weapon: {
       damage: { min: 36000, max: 44000 },

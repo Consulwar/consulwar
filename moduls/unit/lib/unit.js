@@ -165,6 +165,7 @@ Game.Unit = {
 game.Unit = function (options) {
   this.id = options.id;
   this.title = options.title;
+  this.decayTime = options.decayTime;
   // New-to-legacy
   const idParts = options.id.split('/');
   options.name = options.title;

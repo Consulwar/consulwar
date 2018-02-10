@@ -5,6 +5,7 @@ export default {
   basePrice: {
     credits: 1,
   },
+  decayTime: 60,
   characteristics: {
     weapon: {
       damage: { min: 10, max: 10 },

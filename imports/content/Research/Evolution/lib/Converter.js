@@ -7,7 +7,7 @@ export default {
       {
         textBefore: 'Флот стоит на ',
         textAfter: '% дешевле',
-        condition: 'Unit/Human',
+        condition: 'Unit/Human/Space',
         priority: 2,
         affect: ['metals', 'crystals'],
         result(level) {

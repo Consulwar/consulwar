@@ -1,0 +1,93 @@
+@import '{}/imports/client/ui/colors.styl'
+
+$cw--font-size_register = 16px
+
+// => to /button/button.styl
+.cw--button_flat
+  color $cw--color_metal
+  background-color $cw--color_black
+  border solid 1px #2B6D92
+  border-image linear-gradient(0deg, #56BBF3, #2B6D92) 1
+  padding 10px
+  font-size $cw--font-size_register
+  box-sizing border-box
+  display inline-block
+  cursor pointer
+
+  &:hover
+  &:focus
+    outline none
+    border-image linear-gradient(0deg, #56BBF3, lighten(#2B6D92,30%)) 1
+// ***
+
+
+.cw--UserRegister
+  display flex
+  width 90%
+  max-width 1200px !important
+  background-color alpha($cw--color_black, .9)
+  font-size $cw--font-size_register
+
+  &__person
+    flex 0 auto
+    user-select none
+
+  &__content
+    flex 1 1 auto
+    display flex
+    flex-direction column
+    box-sizing border-box
+    padding 30px 50px 30px
+
+  &__intro
+    flex 0 auto
+    color $cw--color_metal
+
+  &__form
+    flex 1 0 auto
+
+  &__switch
+    flex 0 auto
+    color $cw--color_metal
+  &__switchHead
+    margin-bottom 10px
+
+
+.cw--RegisterForm
+
+  &__title
+    display block
+    margin 30px 0 15px 
+    font-weight bold
+    color $cw--color_honor
+
+  &__form
+    display flex
+    flex-direction row
+    margin-bottom 10px
+
+  &__inputs
+    flex 0 405px
+    display flex
+    flex-direction column
+    flex-wrap wrap
+    height 74px
+    margin-bottom -10px
+  
+  &__input
+    flex 0 auto
+    width 184px
+    height 25px
+    margin 0 10px 10px 0
+
+  &__submit
+    flex 0 auto
+    width 42px
+    padding 0
+
+
+.cw--labeledCheckbox
+  color $cw--color_metal
+
+  &__input
+    vertical-align middle

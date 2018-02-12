@@ -15,10 +15,10 @@
           placeholder="Введите Никнейм"
         />
         <div class="cw--UserWelcome__chose">
-          <a class="cw--UserWelcome__login">
+          <a class="cw--UserWelcome__login" onClick={{showRegisterPopup}}>
             вход
           </a>
-          <a class="cw--UserWelcome__register">
+          <a class="cw--UserWelcome__register" onClick={{showRegisterPopup}}>
             регистрация
           </a>
         </div>
@@ -29,7 +29,7 @@
             cw--button_type_primary
             cw--button_type_primary_orange
           "
-         
+          onClick={{showRegisterPopup}}
         >
           Продолжить
         </button>

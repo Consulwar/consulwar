@@ -1,0 +1,67 @@
+<template name="UserRegister">
+  <div class="cw--UserRegister">
+    <div class="cw--UserRegister__person">
+      {{> PersonImage person=Tamily showChangeOption=false}}
+    </div>
+    <div class="cw--UserRegister__content">
+      <div class="cw--UserRegister__intro">
+        Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
+        к каналу связи или же вы уже имеете Аккаунт Связи со вселенной 42?
+      </div>
+      <div class="
+        cw--UserRegister__form
+        cw--RegisterForm
+        ">
+        <div class="cw--RegisterForm__title">
+          Регистрация
+        </div>
+        <div class="cw--RegisterForm__form">
+          <div class="cw--RegisterForm__inputs">
+            <input
+              type="text"
+              name="username"
+              class="cw--input cw--RegisterForm__input"
+              placeholder="Введите Никнейм"
+            />
+            <input
+              type="text"
+              name="email"
+              class="cw--input cw--RegisterForm__input"
+              placeholder="Введите Емейл"
+            />
+            <input
+              type="password"
+              name="password"
+              class="cw--input cw--RegisterForm__input"
+              placeholder="Введите Пароль"
+            />
+            <input
+              type="password"
+              name="passwordr"
+              class="cw--input cw--RegisterForm__input"
+              placeholder="Повторите Пароль"
+            />
+          </div>
+          <input
+            type="button"
+            class="cw--button_flat cw--RegisterForm__submit"
+          />
+        </div>
+        
+        <div class="cw--RegisterForm__rules">
+          <label class="cw--labeledCheckbox">
+            <input class="cw--labeledCheckbox__input" type="checkbox" name="rules" />
+            С правилами ознакомлен и согласен
+          </label>
+        </div>
+        <div class="cw--RegisterForm__captcha">
+          {{> reCAPTCHA}}
+        </div>
+      </div>
+      <div class="cw--UserRegister__switch">
+        <div class="cw--UserRegister__switchHead">У вас уже есть аккаунт? Желаете войти в него?</div>
+        <button class="cw--button_flat cw--UserRegister__switchButton">Войти в игру</button>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,8 +1,6 @@
-import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
-import { ReactiveVar } from 'meteor/reactive-var';
-import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
+import UserRegister from '/imports/client/ui/blocks/UserRegister/UserRegister';
 import '/imports/client/ui/Input/input.styl';
 import '/imports/client/ui/button/button.styl';
 import './UserWelcome.html';
@@ -18,6 +16,12 @@ class UserWelcome extends BlazeComponent {
   }
 
   onRendered() {
+  }
+
+  showRegisterPopup() {
+    Game.Popup.show({
+      template: UserRegister.renderComponent(),
+    });
   }
 
 }

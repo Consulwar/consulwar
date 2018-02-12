@@ -1,0 +1,106 @@
+@import '{}/imports/client/ui/colors.styl'
+
+.cw--LayoutMain
+  font-size 16px
+  display flex
+  flex-direction column
+  height 100%
+  min-height 100wh
+  background-image url('/img/game/bg/pageIndex.jpg')
+  background-size cover
+
+
+// Content section
+
+.cw--MainContent
+  flex 1 1 auto
+  padding 40px 50px
+
+
+// Header section
+
+.cw--MainHeader
+  flex 0 0 auto
+  display flex
+  flex-direction row
+  height 60px
+  padding 5px 50px
+  box-sizing border-box
+  background alpha($cw--color_black, 50%)
+
+  &__logo
+    flex 200px
+    margin auto
+
+  &__menu
+    flex auto
+    margin auto
+    display flex
+    flex-direction row
+    justify-content center
+    &-item
+      flex 0 auto
+      margin auto 15px
+      text-decoration none
+      font-weight bold
+      transition all .15s ease
+      &:hover
+        color $cw--color_honor
+  
+  &__playButton
+    flex 0 auto
+    margin auto 5px
+    cursor pointer
+    padding-left 30px
+    padding-right 30px
+    text-transform uppercase
+
+  &__stats
+    flex 200px
+    margin auto
+    display flex
+    justify-content flex-end
+    &-item
+      margin-left 30px
+      flex 0 auto
+      white-space nowrap
+    &-count
+      color $cw--color_human
+
+
+// Footer section
+
+.cw--MainFooter
+  flex 0 1 auto
+  display flex
+  height 50px
+  padding 10px 50px
+  box-sizing border-box
+  background alpha($cw--color_black, 25%)
+
+  &__copyright
+    flex 0 1 20%
+    margin auto
+  
+  &__menu
+    flex 1 1 auto
+    margin auto
+    text-align center
+    &-item
+      display inline-block
+      margin 0 12px
+      text-decoration none
+      &:hover
+      &:active
+        text-decoration underline
+
+  &__license
+    flex 0 1 20%
+    margin auto
+    text-align right
+    white-space nowrap
+    &-link
+      text-decoration none
+      &:hover
+      &:active
+        text-decoration underline

@@ -1,0 +1,79 @@
+<template name="LayoutMain">
+  <div class="cw--LayoutMain">
+
+    <header class="cw--MainHeader">
+      <a href="#" class="cw--MainHeader__logo">
+        <img class="cw--MainHeader__logoImg" src="/img/logo_small.png" alt="Consulwar" />
+      </a>
+      <nav class="cw--MainHeader__menu">
+        <a href="#" class="cw--MainHeader__menu-item">
+          Картинки
+        </a>
+        <button
+          class="
+            cw--MainHeader__playButton
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+          "
+        >
+          Начать игру
+        </button>
+
+        <a href="#" class="cw--MainHeader__menu-item">
+          Про игру
+        </a>
+      </nav>
+
+      <div class="cw--MainHeader__stats">
+        <div class="cw--MainHeader__stats-item">
+          Консулов:
+          <span class="cw--MainHeader__stats-count">
+            {{registered.get}}
+          </span>
+        </div>
+        <div class="cw--MainHeader__stats-item">
+          Онлайн:
+          <span class="cw--MainHeader__stats-count">
+            {{online.get}}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <main class="cw--MainContent">
+      {{> yield }}
+    </main>
+
+    <footer class="cw--MainFooter">
+      <div class="cw--MainFooter__copyright">
+        Morula, 2019
+      </div>
+
+      <nav class="cw--MainFooter__menu">
+        <a class="cw--MainFooter__menu-item" href="#">
+          Техническая поддержка
+        </a>
+        <a href="#" class="cw--MainFooter__menu-item">
+          Вопрос
+        </a>
+        <a href="#" class="cw--MainFooter__menu-item">
+          Ошибка
+        </a>
+        <a href="#" class="cw--MainFooter__menu-item">
+          Идея
+        </a>
+        <span class="cw--MainFooter__switchLang">
+          FLAG::RU
+        </span>
+      </nav>
+
+      <div class="cw--MainFooter__license">
+        <a class="cw--MainFooter__license-link" href="/">
+          Лицензионное соглашение
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</template>

@@ -4,6 +4,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
+import UserWelcome from '/imports/client/ui/blocks/UserWelcome/UserWelcome';
 import '/imports/client/ui/button/button.styl';
 import './LayoutMain.html';
 import './LayoutMain.styl';
@@ -32,6 +33,12 @@ class LayoutMain extends BlazeComponent {
 
   onRendered() {
     $(this.find('.scrollbar-inner')).perfectScrollbar();
+  }
+
+  showWelcomePopup() {
+    Game.Popup.show({
+      template: UserWelcome.renderComponent(),
+    });
   }
 
   currentRouteName() {

@@ -108,6 +108,15 @@ let recalculateCurrentCounts = function(battle) {
   const leftByUsername = {};
   let decrement = {};
 
+  const isBattle1x1 = !(_(battle.initialUnits)
+    .values()
+    .some(side => _(side).keys().length > 1 || (
+      _(side)
+        .values()
+        .some(player => player.length > 1)
+    ))
+  );
+
   battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
     if (unit.count === 0) {
       return;
@@ -122,8 +131,6 @@ let recalculateCurrentCounts = function(battle) {
     let floatCurrentAlive = (unit.count / battleUnit.count) * alive;
 
     let left;
-
-    const isBattle1x1 = !_(battle.initialUnits).values().some(side => _(side).keys().length > 1);
 
     if (isBattle1x1) {
       left = Math.ceil(floatCurrentAlive);

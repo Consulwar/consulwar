@@ -1,8 +1,10 @@
 <template name="UserLogin">
   <div class="cw--UserLogin">
-    <div class="cw--UserLogin__person">
-      {{> PersonImage person=Tamily showChangeOption=false}}
-    </div>
+    {{> PersonImage
+      person=Tamily
+      showChangeOption=false
+      class="cw--UserLogin__person"
+    }}
     <div class="cw--UserLogin__content">
       <div class="cw--UserLogin__intro">
         Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
@@ -11,7 +13,8 @@
       <div class="
         cw--UserLogin__form
         cw--LoginForm
-      ">
+        "
+      >
         <div class="cw--LoginForm__title">
           Вход
         </div>

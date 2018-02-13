@@ -1,8 +1,10 @@
 <template name="UserRegister">
   <div class="cw--UserRegister">
-    <div class="cw--UserRegister__person">
-      {{> PersonImage person=Tamily showChangeOption=false}}
-    </div>
+    {{> PersonImage
+      person=Tamily
+      showChangeOption=false
+      class="cw--UserRegister__person"
+    }}
     <div class="cw--UserRegister__content">
       <div class="cw--UserRegister__intro">
         Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
@@ -24,7 +26,7 @@
               placeholder="Введите Никнейм"
             />
             <input
-              type="text"
+              type="email"
               name="email"
               class="cw--input cw--RegisterForm__input"
               placeholder="Введите Емейл"

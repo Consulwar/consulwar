@@ -5,16 +5,10 @@ import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
 import UserWelcome from '/imports/client/ui/blocks/UserWelcome/UserWelcome';
+import License from '/imports/client/ui/blocks/License/License';
 import '/imports/client/ui/button/button.styl';
 import './LayoutMain.html';
 import './LayoutMain.styl';
-
-if (!Meteor.settings.public.isInviteRequired) {
-  reCAPTCHA.config({
-    publickey: Meteor.settings.public.recaptcha.publickey,
-    hl: 'ru',
-  });
-}
 
 class LayoutMain extends BlazeComponent {
   template() {
@@ -33,11 +27,17 @@ class LayoutMain extends BlazeComponent {
 
   onRendered() {
     $(this.find('.scrollbar-inner')).perfectScrollbar();
+    $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>');
   }
 
   showWelcomePopup() {
     Game.Popup.show({
       template: UserWelcome.renderComponent(),
+    });
+  }
+  showLicense() {
+    Game.Popup.show({
+      template: License.renderComponent(),
     });
   }
 

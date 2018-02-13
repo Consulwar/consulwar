@@ -13,7 +13,8 @@
       <div class="
         cw--UserRegister__form
         cw--RegisterForm
-        ">
+        "
+      >
         <div class="cw--RegisterForm__title">
           Регистрация
         </div>
@@ -56,8 +57,18 @@
             С правилами ознакомлен и согласен
           </label>
         </div>
-        <div class="cw--RegisterForm__captcha">
-          {{> reCAPTCHA}}
+        <div class="cw--RegisterForm__code">
+          {{#if isInviteRequired}}
+            <input
+              type="text"
+              name="code"
+              class="cw--input {{#if err_code}}err{{/if}}"
+              placeholder="Код приглашения"
+              />
+            <span class="error_text">{{{err_code}}}</span>
+          {{else}}
+            {{> reCAPTCHA}}
+          {{/if}}
         </div>
       </div>
       <div class="cw--UserRegister__switch">

@@ -16,10 +16,8 @@ class UserLogin extends BlazeComponent {
     this.Tamily = Tamily;
   }
 
-  onRendered() {
-  }
-
   showRegisterPopup() {
+    this.removeComponent();
     Game.Popup.show({
       template: UserRegister.renderComponent(),
     });

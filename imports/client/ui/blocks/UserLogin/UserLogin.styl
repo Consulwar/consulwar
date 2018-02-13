@@ -1,13 +1,11 @@
+@import '{}/imports/client/ui/config.styl'
 @import '{}/imports/client/ui/colors.styl'
-
-$cw--font-size_register = 16px
 
 .cw--UserLogin
   display flex
-  width 90%
-  max-width 1200px !important
+  width 900px
   background-color alpha($cw--color_black, .9)
-  font-size $cw--font-size_register
+  font-size $cw--fontSize_main
 
   &__person
     flex 0 auto
@@ -48,11 +46,11 @@ $cw--font-size_register = 16px
     margin-bottom 10px
 
   &__inputs
-    flex 0 404px
+    flex 0 388px
     display flex
     flex-direction row
     flex-wrap wrap
-    height 74px
+    height 70px
     margin-bottom -10px
   
   &__input
@@ -60,11 +58,11 @@ $cw--font-size_register = 16px
   &__remember
     box-sizing border-box
     flex 0 auto
-    width 190px
+    width 184px
     height 25px
     margin 0 10px 10px 0
   
-  &__remind-link
+  &__remindLink
     text-decoration none
 
   &__submit

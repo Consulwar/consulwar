@@ -1,6 +1,6 @@
+@import '{}/imports/client/ui/config.styl'
 @import '{}/imports/client/ui/colors.styl'
 
-$cw--font-size_register = 16px
 
 // => to /button/button.styl
 .cw--button_flat
@@ -9,7 +9,7 @@ $cw--font-size_register = 16px
   border solid 1px #2B6D92
   border-image linear-gradient(0deg, #56BBF3, #2B6D92) 1
   padding 10px
-  font-size $cw--font-size_register
+  font-size $cw--fontSize_main
   box-sizing border-box
   display inline-block
   cursor pointer
@@ -23,10 +23,9 @@ $cw--font-size_register = 16px
 
 .cw--UserRegister
   display flex
-  width 90%
-  max-width 1200px !important
+  width 900px
   background-color alpha($cw--color_black, .9)
-  font-size $cw--font-size_register
+  font-size $cw--fontSize_main
 
   &__person
     flex 0 auto
@@ -67,17 +66,18 @@ $cw--font-size_register = 16px
     margin-bottom 10px
 
   &__inputs
-    flex 0 405px
+    flex 0 388px
     display flex
     flex-direction column
     flex-wrap wrap
-    height 74px
+    height 70px
     margin-bottom -10px
   
   &__input
     flex 0 auto
     width 184px
     height 25px
+    box-sizing border-box
     margin 0 10px 10px 0
 
   &__submit
@@ -87,7 +87,10 @@ $cw--font-size_register = 16px
     background-image url(/img/arrow_login.svg)
     background-repeat no-repeat
     background-position center center
-
+  
+  &__rules
+  &__code
+    margin 15px 0
 
 .cw--labeledCheckbox
   color $cw--color_metal

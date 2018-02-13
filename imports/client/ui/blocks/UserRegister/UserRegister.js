@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
 import Tamily from '/imports/content/Person/client/Tamily';
@@ -15,11 +16,17 @@ class UserRegister extends BlazeComponent {
   onCreated() {
     super.onCreated();
     this.Tamily = Tamily;
-  }
-  onRendered() {
+    this.isInviteRequired = Meteor.settings.public.isInviteRequired;
+    if (!this.isInviteRequired) {
+      reCAPTCHA.config({
+        publickey: Meteor.settings.public.recaptcha.publickey,
+        hl: 'ru',
+      });
+    }
   }
 
   showLoginPopup() {
+    this.removeComponent();
     Game.Popup.show({
       template: UserLogin.renderComponent(),
     });

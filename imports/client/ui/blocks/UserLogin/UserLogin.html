@@ -1,0 +1,68 @@
+<template name="UserLogin">
+  <div class="cw--UserLogin">
+    <div class="cw--UserLogin__person">
+      {{> PersonImage person=Tamily showChangeOption=false}}
+    </div>
+    <div class="cw--UserLogin__content">
+      <div class="cw--UserLogin__intro">
+        Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
+        к каналу связи или же вы уже имеете Аккаунт Связи со вселенной 42?
+      </div>
+      <div class="
+        cw--UserLogin__form
+        cw--LoginForm
+      ">
+        <div class="cw--LoginForm__title">
+          Вход
+        </div>
+        <div class="cw--LoginForm__form">
+          <div class="cw--LoginForm__inputs">
+            <input
+              type="text"
+              name="username"
+              class="cw--input cw--LoginForm__input"
+              placeholder="Введите Никнейм"
+            />
+            <input
+              type="password"
+              name="password"
+              class="cw--input cw--LoginForm__input"
+              placeholder="Введите Пароль"
+            />
+            <label class="cw--labeledCheckbox cw--LoginForm__remember">
+              <input class="cw--labeledCheckbox__input" type="checkbox" name="remember" />
+              Запомнить меня
+            </label>
+            <div class="cw--LoginForm__remind">
+              <a href="#" class="cw--LoginForm__remind-link">забыл пароль</a>
+            </div>
+          </div>
+          <input
+            type="button"
+            class="cw--button_flat cw--LoginForm__submit"
+          />
+        </div>
+        <div class="cw--LoginForm__info">
+          Если вы давно не заходили в Игру, ваша колония была передана
+          в управление Совету Галактики, однако же, ваши исследования
+          и прочие улучшения сохранились. Вы сможете быстро догнать
+          развитие других Консулов, если пожелаете.
+        </div>
+      </div>
+      <div class="cw--UserRegister__switch">
+        <div class="cw--UserRegister__switchHead">
+          У вас нету аккаунта? Желаете зарегистрировать новый?
+        </div>
+        <button
+          class="
+            cw--button_flat
+            cw--UserRegister__switchButton
+          "
+          onClick={{showRegisterPopup}}
+        >
+          Регистрация
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

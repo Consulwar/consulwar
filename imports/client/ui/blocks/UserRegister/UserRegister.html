@@ -42,10 +42,10 @@
               placeholder="Повторите Пароль"
             />
           </div>
-          <input
-            type="button"
+          <button
             class="cw--button_flat cw--RegisterForm__submit"
-          />
+          >
+          </button>
         </div>
         
         <div class="cw--RegisterForm__rules">
@@ -59,8 +59,18 @@
         </div>
       </div>
       <div class="cw--UserRegister__switch">
-        <div class="cw--UserRegister__switchHead">У вас уже есть аккаунт? Желаете войти в него?</div>
-        <button class="cw--button_flat cw--UserRegister__switchButton">Войти в игру</button>
+        <div class="cw--UserRegister__switchHead">
+          У вас уже есть аккаунт? Желаете войти в него?
+        </div>
+        <button
+          class="
+            cw--button_flat
+            cw--UserRegister__switchButton
+          "
+          onClick={{showLoginPopup}}
+        >
+          Войти в игру
+        </button>
       </div>
     </div>
   </div>

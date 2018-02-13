@@ -1,6 +1,7 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
-import { $ } from 'meteor/jquery';
+import Game from '/moduls/game/lib/main.game';
 import Tamily from '/imports/content/Person/client/Tamily';
+import UserLogin from '/imports/client/ui/blocks/UserLogin/UserLogin';
 import '/imports/client/ui/Person/image/PersonImage';
 import '/imports/client/ui/Input/input.styl';
 import './UserRegister.html';
@@ -16,7 +17,12 @@ class UserRegister extends BlazeComponent {
     this.Tamily = Tamily;
   }
   onRendered() {
-    $(this.find('.content.scrollbar-inner')).perfectScrollbar();
+  }
+
+  showLoginPopup() {
+    Game.Popup.show({
+      template: UserLogin.renderComponent(),
+    });
   }
 }
 

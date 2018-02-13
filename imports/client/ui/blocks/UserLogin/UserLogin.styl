@@ -2,26 +2,7 @@
 
 $cw--font-size_register = 16px
 
-// => to /button/button.styl
-.cw--button_flat
-  color $cw--color_metal
-  background-color $cw--color_black
-  border solid 1px #2B6D92
-  border-image linear-gradient(0deg, #56BBF3, #2B6D92) 1
-  padding 10px
-  font-size $cw--font-size_register
-  box-sizing border-box
-  display inline-block
-  cursor pointer
-
-  &:hover
-  &:focus
-    outline none
-    border-image linear-gradient(0deg, #56BBF3, lighten(#2B6D92,30%)) 1
-// ***
-
-
-.cw--UserRegister
+.cw--UserLogin
   display flex
   width 90%
   max-width 1200px !important
@@ -53,7 +34,7 @@ $cw--font-size_register = 16px
     margin-bottom 10px
 
 
-.cw--RegisterForm
+.cw--LoginForm
 
   &__title
     display block
@@ -67,18 +48,24 @@ $cw--font-size_register = 16px
     margin-bottom 10px
 
   &__inputs
-    flex 0 405px
+    flex 0 404px
     display flex
-    flex-direction column
+    flex-direction row
     flex-wrap wrap
     height 74px
     margin-bottom -10px
   
   &__input
+  &__remind
+  &__remember
+    box-sizing border-box
     flex 0 auto
-    width 184px
+    width 190px
     height 25px
     margin 0 10px 10px 0
+  
+  &__remind-link
+    text-decoration none
 
   &__submit
     flex 0 auto
@@ -88,9 +75,6 @@ $cw--font-size_register = 16px
     background-repeat no-repeat
     background-position center center
 
-
-.cw--labeledCheckbox
-  color $cw--color_metal
-
-  &__input
-    vertical-align middle
+  &__info
+    color $cw--color_metal
+    margin-top 20px

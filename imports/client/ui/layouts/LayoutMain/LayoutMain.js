@@ -35,10 +35,15 @@ class LayoutMain extends BlazeComponent {
       template: UserWelcome.renderComponent(),
     });
   }
+
   showLicense() {
     Game.Popup.show({
       template: License.renderComponent(),
     });
+  }
+
+  showFeedback(e, theme) {
+    ChdFeedbackWidget.show(theme);
   }
 
   currentRouteName() {

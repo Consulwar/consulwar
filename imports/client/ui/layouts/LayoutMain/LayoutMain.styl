@@ -1,12 +1,14 @@
-@import '{}/imports/client/ui/config.styl'
-@import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+@import '{}/imports/client/ui/colors'
 
 .cw--LayoutMain
   font-size $cw--fontSize_main
   display flex
   flex-direction column
-  height 100%
+  height auto
   min-height 100vh
+  min-width $cw--size_xxs
   background-image url(/img/game/bg/militaryDistrict.jpg)
   background-size cover
   background-position center
@@ -18,25 +20,51 @@
   flex 1 1 auto
   padding 40px 50px
 
+  +media(null,$cw--size_xs)
+    padding 20px
+
 
 // Header section
 
 .cw--MainHeader
-  flex 0 0 auto
+  flex-basis 60px
+  flex-grow 0
   display flex
   flex-direction row
-  height 60px
   padding 5px 50px
   box-sizing border-box
   background alpha($cw--color_black, 50%)
 
+  +media($cw--size_xs,$cw--size_l)
+    flex-basis 130px
+    flex-wrap wrap
+    padding 5px 30px
+
+  +media(null,$cw--size_xs)
+    flex-direction column
+    flex-basis 220px
+    padding 5px 10px
+
   &__logo
-    flex 200px
+    flex-basis 200px
+    flex-grow 1
     margin auto
     display flex
+
+    +media(null, $cw--size_xs)
+      flex-basis 50%
+
+  &__logoLink
+    display block
+    margin-top auto
+    margin-bottom auto
+
   &__logoImg
+    display block
     width 200px
-    height 20px
+    +media(null,$cw--size_xs)
+      width 80%
+      margin auto
 
   &__menu
     flex auto
@@ -44,15 +72,21 @@
     display flex
     flex-direction row
     justify-content center
-    &-item
-      flex 0 auto
-      margin auto 15px
-      text-decoration none
-      font-weight bold
-      transition all .15s ease
-      &:hover
-        color $cw--color_honor
-  
+
+    +media(null, $cw--size_l)
+      order 3
+    +media(null, $cw--size_xs)
+      flex-wrap wrap
+
+  &__menuItem
+    flex 0 auto
+    margin auto 15px
+    text-decoration none
+    font-weight bold
+    transition all .15s ease
+    &:hover
+      color $cw--color_honor
+
   &__playButton
     flex 0 auto
     margin auto 5px
@@ -60,18 +94,39 @@
     padding-left 30px
     padding-right 30px
     text-transform uppercase
+    
+    +media(null, $cw--size_xs)
+      order 10
+      flex-basis 200px
 
   &__stats
-    flex 200px
+    flex-basis 200px
+    flex-grow 1
     margin auto
     display flex
     justify-content flex-end
-    &-item
-      margin-left 30px
-      flex 0 auto
-      white-space nowrap
-    &-count
-      color $cw--color_human
+
+    +media($cw--size_s, $cw--size_l)
+      flex-basis 50%
+    +media($cw--size_xs, $cw--size_s)
+      flex-basis 30%
+      flex-direction column
+      align-items flex-end
+    +media(null, $cw--size_xs)
+      flex-basis auto
+ 
+  &__statsItem
+    margin-left 30px
+    flex 0 auto
+    white-space nowrap
+    +media($cw--size_xs, $cw--size_s)
+      margin 0
+    +media(null, $cw--size_xs)
+      margin auto 15px
+
+
+  &__statsCount
+    color $cw--color_human
 
 
 // Footer section
@@ -84,29 +139,71 @@
   box-sizing border-box
   background alpha($cw--color_black, 25%)
 
+  +media(null, $cw--size_l)
+    padding 10px
+    flex-direction column
+    height auto
+  +media(null, $cw--size_xs)
+    padding 10px 10px 10px 50px
+
   &__copyright
     flex 0 1 20%
     margin auto
-  
+
+    +media(null, $cw--size_l)
+      order 1
+    +media($cw--size_xs, $cw--size_l)
+      margin 0 auto 10px auto
+    +media(null,$cw--size_xs)
+      margin 0 0 5px 0
+      text-align left
+
   &__menu
     flex 1 1 auto
     margin auto
     text-align center
-    &-item
-      display inline-block
-      margin 0 12px
-      text-decoration none
-      &:hover
-      &:active
-        text-decoration underline
+    display flex
+    flex-wrap wrap
+    justify-content center
+
+    +media(null, $cw--size_l)
+      order 3
+
+    +media(null, $cw--size_xs)
+      flex-wrap nowrap
+      flex-direction column
+      margin 0
+
+  &__menuItem
+    display inline-block
+    margin 0 12px
+    text-decoration none
+    white-space nowrap
+
+    +media(null, $cw--size_xs)
+      text-align left
+      margin 5px 0
+
+    &:hover
+    &:active
+      text-decoration underline
 
   &__license
     flex 0 1 20%
     margin auto
     text-align right
     white-space nowrap
-    &-link
-      text-decoration none
-      &:hover
-      &:active
-        text-decoration underline
+
+    +media(null, $cw--size_l)
+      order 2
+    +media($cw--size_xs, $cw--size_l)
+      margin 5px auto
+    +media(null,$cw--size_xs)
+      margin 5px 0
+      text-align left
+
+  &__licenseLink
+    text-decoration none
+    &:hover
+    &:active
+      text-decoration underline

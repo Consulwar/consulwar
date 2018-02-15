@@ -20,7 +20,7 @@
   flex 1 1 auto
   padding 40px 50px
 
-  +media(null,$cw--size_xs)
+  +media(null, $cw--size_xs)
     padding 20px
 
 
@@ -35,12 +35,12 @@
   box-sizing border-box
   background alpha($cw--color_black, 50%)
 
-  +media($cw--size_xs,$cw--size_l)
+  +media($cw--size_xs, $cw--size_l)
     flex-basis 130px
     flex-wrap wrap
     padding 5px 30px
 
-  +media(null,$cw--size_xs)
+  +media(null, $cw--size_xs)
     flex-direction column
     flex-basis 220px
     padding 5px 10px
@@ -62,7 +62,7 @@
   &__logoImg
     display block
     width 200px
-    +media(null,$cw--size_xs)
+    +media(null, $cw--size_xs)
       width 80%
       margin auto
 
@@ -144,7 +144,7 @@
     flex-direction column
     height auto
   +media(null, $cw--size_xs)
-    padding 10px 10px 10px 50px
+    padding 10px 50px
 
   &__copyright
     flex 0 1 20%
@@ -170,9 +170,11 @@
       order 3
 
     +media(null, $cw--size_xs)
-      flex-wrap nowrap
-      flex-direction column
+      flex-wrap wrap
+      flex-direction row
       margin 0
+      // align-items flex-start
+      justify-content flex-start
 
   &__menuItem
     display inline-block
@@ -182,7 +184,7 @@
 
     +media(null, $cw--size_xs)
       text-align left
-      margin 5px 0
+      margin 5px 15px 5px 0
 
     &:hover
     &:active
@@ -198,7 +200,7 @@
       order 2
     +media($cw--size_xs, $cw--size_l)
       margin 5px auto
-    +media(null,$cw--size_xs)
+    +media(null, $cw--size_xs)
       margin 5px 0
       text-align left
 

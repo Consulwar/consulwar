@@ -1,5 +1,6 @@
-@import '{}/imports/client/ui/config.styl'
-@import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+@import '{}/imports/client/ui/colors'
 
 
 // => to /button/button.styl
@@ -59,6 +60,7 @@
     margin 30px 0 15px 
     font-weight bold
     color $cw--color_honor
+    font-size $cw--fontSize_smallHead
 
   &__form
     display flex
@@ -66,19 +68,25 @@
     margin-bottom 10px
 
   &__inputs
-    flex 0 388px
+    flex-basis 300px
+    flex-grow 0
+    flex-shrink 0
+    display flex
+    flex-direction row
+    height 62px
+  
+  &__inputsGroup
     display flex
     flex-direction column
-    flex-wrap wrap
-    height 70px
-    margin-bottom -10px
-  
+    flex-basis auto
+    justify-content space-between
+    margin-right 12px
+
   &__input
     flex 0 auto
     width 184px
     height 25px
     box-sizing border-box
-    margin 0 10px 10px 0
 
   &__submit
     flex 0 auto

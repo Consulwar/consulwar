@@ -23,32 +23,36 @@
           class="cw--RegisterForm__form"
         >
           <div class="cw--RegisterForm__inputs">
-            {{> InputString args
-              name="username"
-              value=username
-              errors=errors
-              validators=usernameValidators
-              className="cw--RegisterForm__input"
-              placeholder="Введите Никнейм"
-            }}
-            <input
-              type="email"
-              name="email"
-              class="cw--input cw--RegisterForm__input"
-              placeholder="Введите Емейл"
-            />
-            <input
-              type="password"
-              name="password"
-              class="cw--input cw--RegisterForm__input"
-              placeholder="Введите Пароль"
-            />
-            <input
-              type="password"
-              name="passwordr"
-              class="cw--input cw--RegisterForm__input"
-              placeholder="Повторите Пароль"
-            />
+            <div class="cw--RegisterForm__inputsGroup">
+              {{> InputString args
+                name="username"
+                value=username
+                errors=errors
+                validators=usernameValidators
+                className="cw--RegisterForm__input"
+                placeholder="Введите Никнейм"
+              }}
+              <input
+                type="email"
+                name="email"
+                class="cw--input cw--RegisterForm__input"
+                placeholder="Введите Емейл"
+              />
+            </div>
+            <div class="cw--RegisterForm__inputsGroup">
+              <input
+                type="password"
+                name="password"
+                class="cw--input cw--RegisterForm__input"
+                placeholder="Введите Пароль"
+              />
+              <input
+                type="password"
+                name="passwordr"
+                class="cw--input cw--RegisterForm__input"
+                placeholder="Повторите Пароль"
+              />
+            </div>
           </div>
           <button
             class="cw--button_flat cw--RegisterForm__submit"

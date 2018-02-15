@@ -1,5 +1,6 @@
-@import '{}/imports/client/ui/config.styl'
-@import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+@import '{}/imports/client/ui/colors'
 
 .cw--UserLogin
   display flex
@@ -39,6 +40,7 @@
     margin 30px 0 15px 
     font-weight bold
     color $cw--color_honor
+    font-size $cw--fontSize_smallHead
 
   &__form
     display flex
@@ -46,21 +48,27 @@
     margin-bottom 10px
 
   &__inputs
-    flex 0 388px
+    flex-basis 300px
+    flex-grow 0
+    flex-shrink 0
     display flex
     flex-direction row
-    flex-wrap wrap
-    height 70px
-    margin-bottom -10px
+    height 62px
+  
+  &__inputsGroup
+    display flex
+    flex-direction column
+    flex-basis auto
+    justify-content space-between
+    margin-right 12px
   
   &__input
   &__remind
   &__remember
     box-sizing border-box
-    flex 0 auto
     width 184px
     height 25px
-    margin 0 10px 10px 0
+    flex 0 auto
   
   &__remindLink
     text-decoration none

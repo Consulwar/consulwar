@@ -18,14 +18,19 @@
         <div class="cw--RegisterForm__title">
           Регистрация
         </div>
-        <div class="cw--RegisterForm__form">
+        <form
+          onSubmit={{register}}
+          class="cw--RegisterForm__form"
+        >
           <div class="cw--RegisterForm__inputs">
-            <input
-              type="text"
+            {{> InputString args
               name="username"
-              class="cw--input cw--RegisterForm__input"
+              value=username
+              errors=errors
+              validators=usernameValidators
+              className="cw--RegisterForm__input"
               placeholder="Введите Никнейм"
-            />
+            }}
             <input
               type="email"
               name="email"
@@ -49,7 +54,7 @@
             class="cw--button_flat cw--RegisterForm__submit"
           >
           </button>
-        </div>
+        </form>
         
         <div class="cw--RegisterForm__rules">
           <label class="cw--labeledCheckbox">
@@ -64,7 +69,7 @@
               name="code"
               class="cw--input {{#if err_code}}err{{/if}}"
               placeholder="Код приглашения"
-              />
+            />
             <span class="error_text">{{{err_code}}}</span>
           {{else}}
             {{> reCAPTCHA}}

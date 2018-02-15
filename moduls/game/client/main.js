@@ -68,6 +68,13 @@ Meteor.Spinner.options = {
 
 Notifications.defaultOptions.timeout = 5000;
 
+if (!Meteor.settings.public.isInviteRequired) {
+  reCAPTCHA.config({
+    publickey: Meteor.settings.public.recaptcha.publickey,
+    hl: 'ru',
+  });
+}
+
 Router.configure({
   loadingTemplate: 'loading'
 });

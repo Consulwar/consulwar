@@ -1,3 +1,5 @@
+import content from '/imports/content/server';
+
 Meteor.startup(function() {
 'use strict';
 
@@ -77,6 +79,10 @@ Game.Queue.add = function(item) {
     select.engName = item.engName;
   }
 
+  if (item.itemId) {
+    set.itemId = item.itemId;
+  }
+
   if (item.level) {
     set.level = item.level;
     select.level = item.level;
@@ -147,23 +153,27 @@ var completeItems = function(items, needResourcesUpdate) {
     if (needResourcesUpdate && !item.dontNeedResourcesUpdate) {
       Game.Resources.updateWithIncome( item.finishTime );
     }
-    // Применить результат
-    var newTask = Game.getObjectByType( item.type ).complete( item );
-    // Если в результате получено новое задание, вставить его в массив
-    if (newTask
-     && newTask.finishTime
-     && newTask.finishTime < Game.getCurrentTime()
-    ) {
-      var isInserted = false;
-      for (var i = 0; i < items.length; i++) {
-        if (newTask.finishTime <= items[i].finishTime) {
-          items.splice(i, 0, newTask);
-          isInserted = true;
-          break;
+    if (item.itemId) {
+      content[item.itemId].complete(item);
+    } else {
+      // Применить результат
+      var newTask = Game.getObjectByType( item.type ).complete( item );
+      // Если в результате получено новое задание, вставить его в массив
+      if (newTask
+      && newTask.finishTime
+      && newTask.finishTime < Game.getCurrentTime()
+      ) {
+        var isInserted = false;
+        for (var i = 0; i < items.length; i++) {
+          if (newTask.finishTime <= items[i].finishTime) {
+            items.splice(i, 0, newTask);
+            isInserted = true;
+            break;
+          }
         }
-      }
-      if (!isInserted) {
-        items.push(newTask);
+        if (!isInserted) {
+          items.push(newTask);
+        }
       }
     }
     // Отметить текущее задание как обработанное

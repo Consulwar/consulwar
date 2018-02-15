@@ -1,3 +1,10 @@
+import residentialBuildings from '/imports/content/Building/Residential/client';
+import militaryBuildings from '/imports/content/Building/Military/client';
+import content from '/imports/content/client';
+
+import evolutionResearches from '/imports/content/Research/Evolution/client';
+import fleetResearches from '/imports/content/Research/Fleet/client';
+
 initMenuClient = function() {
 'use strict';
 
@@ -15,40 +22,40 @@ var menu = {
   planet: {
     name: 'Планета',
     routeName: ['building'],
-    url: firstItemGroupURL(Game.Building.items.residential),
+    url: '/game/planet/Residential',
     items: {
-      residential: {
+      Residential: {
         name: 'Жилой район',
         additionalArea: 'tamily',
-        url: firstItemGroupURL(Game.Building.items.residential),
-        items: Game.Building.items.residential
+        url: '/game/planet/Residential',
+        items: residentialBuildings,
       },
-      military: {
+      Military: {
         name: 'Военный район',
         additionalArea: 'thirdenginery',
-        url: firstItemGroupURL(Game.Building.items.military),
-        items: Game.Building.items.military
-      }
-    }
-  }, 
+        url: '/game/planet/Military',
+        items: militaryBuildings,
+      },
+    },
+  },
   research: {
     name: 'Исследования',
     routeName: ['research'],
-    url: firstItemGroupURL(Game.Research.items.evolution),
+    url: '/game/research/Evolution',
     items: {
-      evolution: {
+      Evolution: {
         name: 'Эволюционные исследования',
         additionalArea: 'nataly',
-        url: firstItemGroupURL(Game.Research.items.evolution),
-        items: Game.Research.items.evolution
-      }, 
-      fleetups: {
+        url: '/game/research/Evolution',
+        items: evolutionResearches,
+      },
+      Fleet: {
         name: 'Улучшения флота',
         additionalArea: 'mechanic',
-        url: firstItemGroupURL(Game.Research.items.fleetups),
-        items: Game.Research.items.fleetups
-      }
-    }
+        url: '/game/research/Fleet/Gammadrone',
+        items: fleetResearches,
+      },
+    },
   },
   army: {
     name: 'Войска',
@@ -432,17 +439,31 @@ var helpers = {
   },
   item: function() {
     var route = Router.current();
-    return (   
-         menu[route.group]
-      && menu[route.group].items
-      && (   ( menu[route.group].directItems && menu[route.group].items[route.params.item])
-        || (  route.params.group 
-           && menu[route.group].items[route.params.group]
-           && menu[route.group].items[route.params.group].items
-           && menu[route.group].items[route.params.group].items[route.params.item]
+    let item;
+    if (['planet', 'research'].indexOf(route.group) !== -1 && route.params.item) {
+      let type = route.group[0].toUpperCase() + route.group.slice(1);
+      const group = route.params.group[0].toUpperCase() + route.params.group.slice(1);
+      const engName = route.params.item[0].toUpperCase() + route.params.item.slice(1);
+      if (type === 'Planet') {
+        type = 'Building';
+      }
+      const id = `${type}/${group}/${engName}`;
+      item = content[id];
+    } else {
+      item =(   
+           menu[route.group]
+        && menu[route.group].items
+        && (  ( menu[route.group].directItems && menu[route.group].items[route.params.item])
+          || (  route.params.group 
+              && menu[route.group].items[route.params.group]
+              && menu[route.group].items[route.params.group].items
+              && menu[route.group].items[route.params.group].items[route.params.item]
+          )
         )
-      )
-    );
+      );
+    }
+
+    return item;
   },
 
   bonusStorage: function() { 

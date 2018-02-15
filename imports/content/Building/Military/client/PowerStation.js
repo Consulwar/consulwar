@@ -1,6 +1,7 @@
+import Building from '/imports/modules/Building/client/Building';
 import PowerStation from '../lib/PowerStation';
 
-export default {
+export default new Building({
   ...PowerStation,
   overlay: {
     x: 78,
@@ -9,4 +10,4 @@ export default {
     levels: [1, 20, 40, 60, 80, 100],
     own: 'item',
   },
-};
+});

@@ -20,7 +20,6 @@ game.Achievement = function(options) {
   if (Game.newToLegacyNames[options.group]) {
     options.group = Game.newToLegacyNames[options.group];
   }
-  Game.newToLegacyEffects(options);
 
   if (options.field) {
     options.field = (options.field

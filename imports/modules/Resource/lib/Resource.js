@@ -13,23 +13,9 @@ class Resource {
     this.legacyName = legacyName;
     this.engName = legacyName;
     this.type = 'resource';
-  }
 
-  getIcon() {
-    return `/img/game/${this.id}/icon.png`;
-  }
-
-  getCard() {
-    return `/img/game/${this.id}/card.jpg`;
-  }
-
-  // legacy
-  icon() {
-    return this.getIcon();
-  }
-
-  image() {
-    return this.getCard();
+    this.icon = `/img/game/${this.id}/icon.png`;
+    this.card = `/img/game/${this.id}/card.jpg`
   }
 }
 

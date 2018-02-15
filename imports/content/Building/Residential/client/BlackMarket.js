@@ -1,6 +1,7 @@
+import Building from '/imports/modules/Building/client/Building';
 import BlackMarket from '../lib/BlackMarket';
 
-export default {
+export default new Building({
   ...BlackMarket,
   overlay: {
     x: 1187,
@@ -8,4 +9,4 @@ export default {
     z: 3,
     levels: [1, 20, 40, 60, 80, 100],
   },
-};
+});

@@ -3,9 +3,13 @@
   <div class="additional_info requirements">
     <span class="title">Необходимые технологии:</span>
     {{#each requirements}}
-    <a class="{{this.[0].engName}}-icon {{#if this.[0].has this.[1]}}has{{/if}}" href="{{this.[0].url}}">
+    <a 
+      class="{{#if this.[0].has this.[1]}}has{{/if}}"
+      style="background-image: url({{this.[0].requirementIcon}});"
+      href="{{this.[0].url}}"
+    >
       {{#if gt this.[1] 1}}{{this.[1]}} уровень{{/if}}
-      <div class="{{this.[0].type}}">{{this.[0].name}}</div>
+      <div class="{{this.[0].type}}">{{this.[0].title}}</div>
     </a>
     {{/each}}
   </div>
@@ -13,33 +17,33 @@
 </template>
 
 <template name="item_effect">
-  {{#if item.effect}}
+  {{#if item.effects}}
     <div class="currentLevel">
       {{#if item.maxLevel}}
         <div class="title">
-          {{#with item.effect.[0]}}
+          {{#with item.effects.[0]}}
             Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
           {{/with}}
         </div>
       {{/if}}
       {{> EffectList args
-        effects=item.effect
-        level=item.effect.[0].level
+        effects=item.effects
+        level=item.effects.[0].level
         hideAdditional=true
         additionalClass="cw--color_metal"
       }}
     </div>
 
-    {{#if and item.maxLevel (not (eq item.maxLevel item.effect.[0].level))}}
+    {{#if and item.maxLevel (not (eq item.maxLevel item.effects.[0].level))}}
       <div class="nextLevel">
         <div class="title">
-          {{#with item.effect.[0].next}}
+          {{#with item.effects.[0].next}}
             Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
           {{/with}}
         </div>
         {{> EffectList args
-          effects=item.effect
-          level=item.effect.[0].next.level
+          effects=item.effects
+          level=item.effects.[0].next.level
           hideAdditional=true
           additionalClass="cw--color_credit"
         }}

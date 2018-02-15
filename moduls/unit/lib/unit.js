@@ -7,6 +7,18 @@ import Battle from '../../battle/lib/imports/battle';
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
 
+let content;
+let fleetUps;
+Meteor.startup(() => {
+  if (Meteor.isClient) {
+    content = require('/imports/content/client').default;
+    fleetUps = require('/imports/content/Research/Fleet/client').default;
+  } else {
+    content = require('/imports/content/server').default;
+    fleetUps = require('/imports/content/Research/Fleet/server').default;
+  }
+});
+
 Game.Unit = {
 
   location: {
@@ -182,33 +194,13 @@ game.Unit = function (options) {
   game.setToMenu = 'army';
   game.setToSide = idParts[2] === 'Space' ? 'fleet' : idParts[2].toLocaleLowerCase();
 
-  const newToLegacyUpgradeNames = {
-    gammadrone: 'gammabetaalpha',
-    wasp: 'royalwasphornet',
-    mirage: 'mirageghostphantom',
-    frigate: 'frigatesupportbattle',
-    truckc: 'truckctruckbtrucka',
-    cruiser: 'cruiserlinearnonlinear',
-    battleship: 'battleshipquadhex',
-    carrier: 'carrierbaseprojectx',
-    dreadnought: 'dreadnoughtbeamplasma',
-    railgun: 'railgunsniperartillery',
-    reaper: 'reaperancientmythical',
-    flagship: 'flagshiproyalimperial',
-  }
-  options.fleetup = newToLegacyUpgradeNames[options.engName];
-
   if (options.requirements) {
     this._requirements = options.requirements;
     options.requirements = function () {
       const requirements = this._requirements();
 
       requirements.forEach((requirement) => {
-        let [className, group, engName] = requirement[0].split('/');
-        if (Game.newToLegacyNames[engName]) {
-          engName = Game.newToLegacyNames[engName];
-        }
-        requirement[0] = Game[className].items[group.toLocaleLowerCase()][engName.toLocaleLowerCase()];
+        requirement[0] = content[requirement[0]];
       });
 
       return requirements;
@@ -284,11 +276,11 @@ game.Unit = function (options) {
   this.color = 'cw--color_metal';
 
   this.star = function () {
-    if (!options.fleetup || !Game.Research.items.fleetups[options.fleetup]) {
+    if (!fleetUps[`Research/Fleet/${this.engName}`]) {
       return 0;
     }
 
-    var level = Game.Research.items.fleetups[options.fleetup].currentLevel();
+    const level = fleetUps[`Research/Fleet/${this.engName}`].getCurrentLevel();
     if (level < 10) {
       return 0;
     } else if (level < 50) {
@@ -309,19 +301,12 @@ game.Unit = function (options) {
     return Router.routes[this.type].path(options);
   };
 
-  this.icon = function () {
-    return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
-  };
 
-  this.getIcon = this.icon;
+  this.path = '/img/game/unit/';
 
-  this.image = function () {
-    return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
-  };
-
-  this.getImage = this.image;
-
-  this.getCard = this.image;
+  this.icon = `${this.path}army/${this.group}/i/${this.engName.toLocaleLowerCase()}.png`;
+  this.card = `${this.path}army/${this.group}/${this.engName.toLocaleLowerCase()}.jpg`;
+  this.overlayOwn = `${this.path}${this.group}/${this.engName.toLocaleLowerCase()}/item.png`;
 
   this.totalCount = function (options = {}) {
     const userId = options.userId || (!options.user ? Meteor.userId() : null);
@@ -455,27 +440,21 @@ game.ReptileUnit = function (options) {
     return Router.routes[this.type].path(options);
   };
 
-  this.getOverlayOwn = function () {
-    return `/img/game/unit/reptiles/${this.group}/${this.engName}.jpg`;
-  };
+  this.path = '/img/game/unit/reptiles/';
 
-  this.icon = function () {
-    return '/img/game/unit/' + this.side + '/' + this.group + '/i/' + this.engName + '.png';
-  };
-
-  this.getIcon = this.icon;
-
-  this.image = function () {
-    return '/img/game/unit/' + this.side + '/' + this.group + '/' + this.engName + '.jpg';
-  };
-
-  this.getImage = this.image;
+  this.icon = `${this.path}${this.group}/i/${this.engName.toLocaleLowerCase()}.png`;
+  this.card = `${this.path}${this.group}/${this.engName.toLocaleLowerCase()}.jpg`;
+  this.overlayOwn = this.card;
 
   this.canBuild = function () {
     return false;
   };
 
   this.currentLevel = function () {
+    return 0;
+  };
+
+  this.getCurrentLevel = function () {
     return 0;
   };
 

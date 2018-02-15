@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import PulseCatcher from '/imports/content/Building/Residential/server/PulseCatcher';
 
 initBuildingSpecialPulsecatcherServer = function() {
 'use strict';
@@ -60,7 +61,7 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'pulsecatcher.voteBonus', user });
 
-    if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
+    if (PulseCatcher.getCurrentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');
     }
 
@@ -78,7 +79,7 @@ Meteor.methods({
     
     Log.method.call(this, { name: 'pulsecatcher.activateBonus', user });
 
-    if (Game.Building.items.residential.pulsecatcher.currentLevel() < 1) {
+    if (PulseCatcher.getCurrentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');
     }
 

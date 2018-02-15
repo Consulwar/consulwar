@@ -100,7 +100,22 @@ game.Item = function(options) {
     this.name = options.name;
     this.engName = options.engName;
 
-    if (options.effect) {
+    if (options.effects) {
+      this.effects = [];
+      this.effect = this.effects;
+      _(options.effects).pairs().forEach(([type, effectList]) => {
+        effectList.forEach((effect) => {
+          const effectObject = new effectClasses[type](effect);
+          this.effects.push(effectObject);
+  
+          if (!this.doNotRegisterEffect) {
+            effectObject.register(this);
+          } else {
+            effectObject.setProvider(this);
+          }
+        });
+      });
+    } else if (options.effect) {
       if (!_.isArray(options.effect)) {
         options.effect = [options.effect];
       }
@@ -114,12 +129,10 @@ game.Item = function(options) {
           }
         }
       }
-    } 
-
-    this.effect = options.effect;
-    if (options.effect && options.effect.result) {
-      this.effect.result = options.effect.result.bind(this);
+      this.effect = options.effect;
+      this.effects = this.effect;
     }
+
     this.description = options.description;
     this.basePrice = options.basePrice;
     this.maxLevel = options.maxLevel;
@@ -245,7 +258,7 @@ game.Item = function(options) {
     var level = _.max(fitLevels);
 
     if (level != -Infinity) {
-      return [this.type, this.group, this.engName, level].join('/') + '.' + (this.overlay.type || 'png');
+      return '/img/game/' + [this.type, this.group, this.engName, level].join('/') + '.' + (this.overlay.type || 'png');
     }
     return null;
   };
@@ -401,6 +414,8 @@ game.Item = function(options) {
     }
   };
 
+  this.getQueue = this.progress;
+
   this.isEnoughResources = function(count, currency) {
     if (count === undefined) {
       if (this.type == 'unit' || this.type == 'mutual') {
@@ -443,7 +458,7 @@ game.Item = function(options) {
   this.meetRequirements = function() {
     if (this.requirements) {
       for (var key in this.requirements) {
-        if (!this.requirements[key][0].has(this.requirements[key][1])) {
+        if (!this.requirements[key][0].has({ level: this.requirements[key][1] })) {
           return false;
         }
       }
@@ -567,82 +582,6 @@ Game = {
     renexis: 'renexis',
     tonerenek: 'general',
     psm: 'psm',
-  },
-
-  newToLegacyEffects(options) {
-    options.effect = [];
-    if (options.effects) {
-      _(options.effects).keys().forEach((effectType) => {
-        options.effects[effectType].forEach((effect) => {
-          const legacyEffect = { 
-            ...effect,
-            pretext: effect.textBefore,
-            aftertext: effect.textAfter,
-          };
-  
-          if (legacyEffect.condition) {
-            const conditionIdParts = legacyEffect.condition.split('/');
-            let type;
-            let group;
-            let special;
-            let side;
-            let engName;
-  
-            switch(conditionIdParts[0]) {
-              case 'Unique':
-                engName = conditionIdParts[1];
-                break;
-              case 'Building':
-              case 'Research':
-                [type, group, engName] = conditionIdParts;
-                break;
-              case 'Unit':
-                if (conditionIdParts.length == 1) {
-                  type = 'Unit';
-                } else {
-                  if (conditionIdParts[2] === 'Ground') {
-                    [type, side, group, special, engName] = conditionIdParts;
-                  } else {
-                    [type, side, group, engName] = conditionIdParts;
-                  }
-                }
-                break;
-              default:
-                throw Meteor.Error('Неизвестное условие');
-                break;
-            }
-            
-            if (type || group || special || engName) {
-              legacyEffect.condition = {};
-            }
-  
-            if (type) {
-              type = type.toLocaleLowerCase();
-              legacyEffect.condition.type = Game.newToLegacyNames[type] || type;
-            }
-            
-            if (group) {
-              group = group.toLocaleLowerCase();
-              legacyEffect.condition.group = Game.newToLegacyNames[group] || group;
-            }
-  
-            if (special && special !== '*') {
-              special = special.toLocaleLowerCase();
-              legacyEffect.condition.special = Game.newToLegacyNames[special] || special;
-            }
-  
-            if (engName) {
-              if (conditionIdParts[0] !== 'Unique') {
-                engName = engName.toLocaleLowerCase();
-              }
-              legacyEffect.condition.engName = Game.newToLegacyNames[engName] || engName;
-            }
-          }
-
-          options.effect.push(new effectClasses[effectType](legacyEffect));
-        });
-      });
-    }
   },
 
   PRODUCTION_FACTOR: 1.48902803168182,
@@ -849,6 +788,14 @@ Game.Queue = {
       user_id: Meteor.userId(),
       status: Game.Queue.status.INCOMPLETE
     }).fetch();
+  },
+
+  getByItemId(itemId) {
+    return Game.Queue.Collection.findOne({
+      user_id: Meteor.userId(),
+      status: Game.Queue.status.INCOMPLETE,
+      itemId,
+    });
   },
 
   getGroup: function(group) {

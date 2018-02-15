@@ -27,6 +27,10 @@ class Container {
     const idParts = id.split('/');
     this.name = title;
     this.engName = idParts[idParts.length - 1].toLocaleLowerCase();
+
+    this.icon = `/img/game/${this.id}/icon.png`;
+    this.image = `/img/game/${this.id}/transparent.png`;
+    this.card = `/img/game/${this.id}/card.jpg`;
   }
 
   getPrice({ count = 1 } = {}) {
@@ -70,27 +74,6 @@ class Container {
 
   has({ count = 1, ...options } = {}) {
     return this.getCount(options) >= count;
-  }
-
-  getIcon() {
-    return `/img/game/${this.id}/icon.png`;
-  }
-
-  getImage() {
-    return `/img/game/${this.id}/transparent.png`;
-  }
-
-  getCard() {
-    return `/img/game/${this.id}/card.jpg`;
-  }
-
-  // legacy
-  icon() {
-    return this.getIcon();
-  }
-
-  image() {
-    return this.getCard();
   }
 }
 

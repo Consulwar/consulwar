@@ -1,6 +1,7 @@
+import Research from '/imports/modules/Research/client/Research';
 import Engineering from '../lib/Engineering';
 
-export default {
+export default new Research({
   ...Engineering,
   overlay: {
     x: 527,
@@ -8,4 +9,4 @@ export default {
     z: 7,
     levels: [1, 20, 40, 60, 80, 100],
   },
-};
+});

@@ -24,6 +24,13 @@ const createArr = function(obj, name) {
   }
 };
 
+const createList = function(obj, name) {
+  if (obj[name] === undefined) {
+    // eslint-disable-next-line no-param-reassign
+    obj[name] = { list: [] };
+  }
+};
+
 // Push newEffects to proper place in effects object
 const extendEffects = function(effects, newEffects) {
   if (newEffects) {
@@ -36,43 +43,23 @@ const extendEffects = function(effects, newEffects) {
   }
 };
 
-// Filter unrelevant to obj newEffects and push relevant to effects
-// Must be called with .call(this) from Effect object
-const pushRelativeEffects = function(obj, effects, newEffects) {
-  newEffects.forEach((effect) => {
-    // Check that effect type equals to effect we want to receive
-    if (effect.type !== this.type) {
-      return;
-    }
-
-    // Check that effect is relevant to obj
-    if (effect.condition) {
-      const { type, engName, group, special } = effect.condition;
-
-      if (engName && engName !== obj.engName) {
-        return;
+const extendEffectsByPath = function(effects, newEffects, path) {
+  if (_(newEffects).keys().length === 0) {
+    return;
+  }
+  let currentPath = newEffects[this.type];
+  extendEffects(effects, currentPath.list);
+  if (path) {
+    const parts = path.split('/');
+    parts.every((part) => {
+      if (!currentPath[part]) {
+        return false;
       }
-      if (type && type !== obj.type) {
-        return;
-      }
-      if (group && group !== obj.group) {
-        return;
-      }
-      if (special && special !== obj.special) {
-        return;
-      }
-    }
+      currentPath = currentPath[part];
+      extendEffects(effects, currentPath.list);
 
-    createArr(effects, effect.priority);
-
-    effects[effect.priority].push(effect);
-  });
-};
-
-const createList = function(obj, name) {
-  if (obj[name] === undefined) {
-    // eslint-disable-next-line no-param-reassign
-    obj[name] = { list: [] };
+      return true;
+    });
   }
 };
 
@@ -81,36 +68,36 @@ const putEffect = function(effects, effect) {
   const { condition } = effect;
 
   createList(effects, effect.type);
+  let currentPath = effects[effect.type];
+  if (condition) {
+    const conditionParts = condition.split('/');
 
-  const typeEffects = effects[effect.type];
+    conditionParts.forEach((part, index) => {
+      createList(currentPath, part);
+      currentPath = currentPath[part];
 
-  if (condition && condition.type !== 'all') {
-    const { type, group, special } = condition;
-    const engName = condition.engName;
-    // Если влияет только на конкретный объект
-    if (engName) {
-      createList(typeEffects, engName);
-      typeEffects[engName].list.push(effect);
-    } else {
-      createList(typeEffects, type);
-      const groupEffects = typeEffects[type];
-
-      if (group) {
-        createList(groupEffects, group);
-        const specialEffects = groupEffects[group];
-        if (special) {
-          createList(specialEffects, special);
-          specialEffects[special].list.push(effect);
-        } else {
-          specialEffects.list.push(effect);
-        }
-      } else {
-        groupEffects.list.push(effect);
+      if (index === conditionParts.length - 1) {
+        currentPath.list.push(effect);
       }
-    }
+    });
   } else {
-    typeEffects.list.push(effect);
+    currentPath.list.push(effect);
   }
+};
+
+// Filter unrelevant to obj newEffects and push relevant to effects
+// Must be called with .call(this) from Effect object
+const pushRelativeEffects = function(obj, effects, newEffects) {
+  const temporaryEffects = {};
+  newEffects.forEach((effect) => {
+    // Check that effect type equals to effect we want to receive
+    if (effect.type !== this.type) {
+      return;
+    }
+
+    putEffect(temporaryEffects, effect);
+  });
+  extendEffectsByPath.call(this, effects, temporaryEffects, obj.id);
 };
 
 // Handle all effects
@@ -137,30 +124,23 @@ class Effect {
   } = {}) {
     const effects = {};
 
-    const {
-      [obj.engName]: { list: objectEffects = [] } = {},
-      [obj.type]: { list: typeEffects = [] } = {},
-      [obj.type]: {
-        [obj.group]: { list: groupEffects = [] } = {},
-        [obj.group]: {
-          [obj.special]: { list: specialEffects = [] } = {},
-        } = {},
-      } = {},
-    } = allEffects[this.type];
+    let currentPath = allEffects[this.type];
+    extendEffects(effects, currentPath.list);
 
-    extendEffects(effects, [
-      ...objectEffects,
-      ...typeEffects,
-      ...groupEffects,
-      ...specialEffects,
-    ]);
+    if (obj.id) {
+      const idParts = obj.id.split('/');
+      idParts.every((part) => {
+        if (!currentPath[part]) {
+          return false;
+        }
+        currentPath = currentPath[part];
+        extendEffects(effects, currentPath.list);
+
+        return true;
+      });
+    }
 
     pushRelativeEffects.call(this, obj, effects, instantEffects);
-
-
-    if (this.type !== 'special') {
-      extendEffects(effects, allEffects[this.type].list);
-    }
 
     if (!isOnlyMutual) {
       // Items, Cards, Achievements
@@ -176,7 +156,7 @@ class Effect {
         effects,
         _(items)
           .chain()
-          .map(item => item.effect)
+          .map(item => item.effects)
           .flatten(true)
           .filter(effect => typeof effect !== 'undefined')
           .value(),
@@ -221,17 +201,10 @@ class Effect {
         if (['building', 'research'].indexOf(effect.provider.type) !== -1) {
           const provider = effect.provider;
           if (cache[provider.type] === undefined) {
-            const providerClass = Game.getObjectByType(provider.type);
-            cache[provider.type] = providerClass.getValue(options) || {};
+            cache[provider.type] = provider.constructor.getAllLevels(options) || {};
           }
 
-          const level = (
-               cache[provider.type]
-            && cache[provider.type][provider.group]
-            && cache[provider.type][provider.group][provider.engName]
-              ? cache[provider.type][provider.group][provider.engName]
-              : 0
-          );
+          const level = cache[provider.type][provider.id] || 0;
 
           value = effect.result({ ...options, level });
         } else if (effect.provider.type === 'house') {

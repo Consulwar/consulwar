@@ -1,3 +1,4 @@
+import Building from '/imports/modules/Building/server/Building';
 import OSCD from '../lib/OSCD';
 
-export default OSCD;
+export default new Building(OSCD);

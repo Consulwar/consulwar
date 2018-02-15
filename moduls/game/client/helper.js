@@ -4,11 +4,12 @@ import allContainers from '/imports/content/Container/Fleet/client';
 UI.registerHelper('isNewLayout', function() {
   const newLayoutGroups = {
     planet: {
-      residential: true,
-      military: true,
+      Residential: true,
+      Military: true,
     },
     research: {
-      evolution: true,
+      Evolution: true,
+      Fleet: true,
     },
     cosmos: true,
     army: {
@@ -350,7 +351,7 @@ const getEffectsTooltip = function({
         result.negative = !invert;
       }
 
-      result.source = effect.provider.name;
+      result.source = effect.provider.name || effect.provider.title;
 
       if (priority % 2 === 1) {
         result.value = formatValue(Math.abs(effect.value));

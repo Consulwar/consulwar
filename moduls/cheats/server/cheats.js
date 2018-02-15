@@ -1,5 +1,8 @@
 import Reptiles from '/imports/modules/Space/server/reptiles';
 
+import buildings from '/imports/content/Building/server';
+import researches from '/imports/content/Research/server';
+
 import Battle from '../../battle/server/battle';
 
 initCheatsServer = function() {
@@ -211,18 +214,14 @@ if (process.env.NODE_ENV == 'development') {
       Game.Cards.spend(cards);
     },
 
-    'cheats.setBuildingLevel': function(group, name, level) {
-      Game.Building.add({
-        group: group,
-        engName: name,
+    'cheats.setBuildingLevel': function(id, level) {
+      buildings[id].setLevel({
         level: level
       });
     },
     
-    'cheats.setResearchLevel': function(group, name, level) {
-      Game.Research.add({
-        group: group,
-        engName: name,
+    'cheats.setResearchLevel': function(id, level) {
+      researches[id].setLevel({
         level: level
       });
     },

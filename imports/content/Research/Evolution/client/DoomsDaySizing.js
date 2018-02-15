@@ -1,6 +1,7 @@
+import Research from '/imports/modules/Research/client/Research';
 import DoomsDaySizing from '../lib/DoomsDaySizing';
 
-export default {
+export default new Research({
   ...DoomsDaySizing,
   overlay: {
     x: 960,
@@ -8,4 +9,4 @@ export default {
     z: 9,
     levels: [1, 20, 40, 60, 80, 100],
   },
-};
+});

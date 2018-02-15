@@ -17,7 +17,6 @@ game.HouseItem = function(options) {
   }
   options.group = options.subgroup;
 
-  Game.newToLegacyEffects(options);
   //
   this.doNotRegisterEffect = true;
 

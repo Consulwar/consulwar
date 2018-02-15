@@ -1,6 +1,7 @@
+import Building from '/imports/modules/Building/client/Building';
 import Metal from '../lib/Metal';
 
-export default {
+export default new Building({
   ...Metal,
   overlay: {
     x: 1002,
@@ -8,4 +9,4 @@ export default {
     z: 11,
     levels: [1, 20, 40, 60, 80, 100],
   },
-};
+});

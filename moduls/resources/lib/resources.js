@@ -85,6 +85,11 @@ Game.Resources = {
     return IncomeEffect.getValue(options);
   },
 
+  calculateTimeFromResources(resources) {
+    const rating = Game.Resources.calculateRatingFromResources(resources);
+    return Math.max(Math.floor(rating / 0.12), 2);
+  },
+
   calculateRatingFromResources: function(resources) {
     var rating = 0;
 

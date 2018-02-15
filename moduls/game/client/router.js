@@ -57,7 +57,7 @@ window.GameRouteController = RouteController.extend({
 
 var gameRoutes = {
   planet: {
-    building: 'planet/:group(residential|military)/:item?/:menu?'
+    building: 'planet/:group(Residential|Military)/:item?/:menu?'
   },
 
   house: {
@@ -85,7 +85,7 @@ var gameRoutes = {
   },
 
   research: {
-    research: 'research/:group(evolution|fleetups)/:item?'
+    research: 'research/:group(Evolution|Fleet)/:item?'
   },
 
   earth: {
@@ -182,7 +182,7 @@ Router.route('/game/chat/alliance/:room', {
 Router.route('/game', {
   name: 'game',
   action: function() {
-    Router.go('building', {group: 'residential'});
+    Router.go('building', {group: 'Residential'});
   }
 });
 

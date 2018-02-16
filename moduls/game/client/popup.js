@@ -17,22 +17,16 @@ Game.Popup = {
     const popup = Blaze.renderWithData(Template.popup, {
       zIndex: this.zIndex,
     }, $('.over')[0]);
-
     const subtemplate = Blaze.renderWithData(
       template,
       data,
-      $(popup.firstNode())[0],
+      $(popup.firstNode()).find('.cw--popup__wrapper')[0],
     );
 
     subtemplate.onViewDestroyed(function() {
       Game.Popup.zIndex -= 1;
       Blaze.remove(popup);
     });
-
-    $(subtemplate.firstNode())
-      .parent()
-      .find('>*:first-child')
-      .append('<button class="close"></button>');
   },
 };
 

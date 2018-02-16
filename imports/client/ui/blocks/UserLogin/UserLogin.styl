@@ -4,31 +4,60 @@
 
 .cw--UserLogin
   display flex
-  width 900px
+  width auto
+  max-width 900px
   background-color alpha($cw--color_black, .9)
   font-size $cw--fontSize_main
 
+  +media(null, $cw--size_s)
+    flex-direction column
+    max-width 330px
+    padding-bottom 50px
+    overflow-x hidden
+
   &__person
-    flex 0 auto
+    flex-basis auto
+    flex-grow 0
+    flex-shrink 1
     user-select none
 
+    +media($cw--size_m, $cw--size_l)
+      overflow hidden
+
   &__content
-    flex 1 1 auto
+    flex-basis auto
+    flex-shrink 11
+    flex-grow 1
     display flex
     flex-direction column
     box-sizing border-box
     padding 30px 50px 30px
 
+    +media(null, $cw--size_s)
+      flex-grow 0
+      flex-shrink 0
+
+    +media(null, $cw--size_l)
+      padding 30px
+
   &__intro
-    flex 0 auto
+    flex-basis auto
+    flex-shrink 0
+    flex-grow 0
     color $cw--color_metal
 
   &__form
-    flex 1 0 auto
+    flex-shrink 0
+    flex-grow 1
+    flex-basis auto
+
 
   &__switch
-    flex 0 auto
+    margin-top 12px
+    flex-basis auto
+    flex-grow 0
     color $cw--color_metal
+
   &__switchHead
     margin-bottom 10px
 
@@ -48,12 +77,17 @@
     margin-bottom 10px
 
   &__inputs
-    flex-basis 300px
+    flex-basis 180px
     flex-grow 0
     flex-shrink 0
     display flex
     flex-direction row
     height 62px
+
+    +media(null, $cw--size_m)
+      flex-direction column
+      height 145px
+      justify-content space-between
   
   &__inputsGroup
     display flex
@@ -61,6 +95,9 @@
     flex-basis auto
     justify-content space-between
     margin-right 12px
+
+    +media(null, $cw--size_m)
+    	flex-basis: 62px;
   
   &__input
   &__remind
@@ -68,13 +105,15 @@
     box-sizing border-box
     width 184px
     height 25px
-    flex 0 auto
+    flex-shrink 0
+    flex-basis auto
   
   &__remindLink
     text-decoration none
 
   &__submit
-    flex 0 auto
+    flex-basis auto
+    flex-shrink 0
     width 42px
     padding 0
     background-image url(/img/arrow_login.svg)

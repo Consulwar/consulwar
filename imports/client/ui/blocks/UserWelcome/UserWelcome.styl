@@ -1,24 +1,33 @@
+@import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/responsive'
 
 .cw--UserWelcome
   display flex
-  width 90%
-  max-width 500px !important
-  height 90%
-  max-height 500px !important
+  width 100vw
+  height 100vh
+  max-width 500px
+  max-height 500px
   background-color alpha($cw--color_black, .8)
-  font-size 18px
+  font-size $cw--fontSize_main
+  +media(null, $cw--size_xs)
+    max-height none
 
   &__content
     padding 40px
     display flex
     flex-direction column
+    +media(null, $cw--size_xs)
+      padding 40px 30px
   
   &__logo
     flex 0 auto
-    display block
+    display flex
     height 50px
-    background url(/img/logo.png) no-repeat center
+
+  &__logoImg
+    margin auto
+    max-width 90%
 
   &__form
     width 220px
@@ -58,4 +67,4 @@
 
   &__short
     color $cw--color_lightGrey
-    font-size 16px
+    font-size $cw--fontSize_small

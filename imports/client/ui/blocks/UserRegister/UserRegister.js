@@ -20,47 +20,58 @@ class UserRegister extends BlazeComponent {
 
   constructor() {
     super();
+
     this.username = new ReactiveVar();
+    this.email = new ReactiveVar();
+    this.password = new ReactiveVar();
+    this.passwordr = new ReactiveVar();
+
     this.errors = new ReactiveDict();
+
     this.usernameValidators = [
-      (value, error) => {
+      (value, errorBack) => {
         if (value.length > 16) {
-          error('Максимум 16 символов');
+          errorBack('Максимум 16 символов');
         } else {
-          error(false);
+          errorBack(false);
         }
       },
-      (value, error) => {
+      (value, errorBack) => {
         if (value.length === 0) {
-          error('Логин должен быть');
+          errorBack('Логин должен быть');
         } else {
-          error(false);
+          errorBack(false);
         }
       },
-      _((username, error) => {
+      _((username, errorBack) => {
         Meteor.call('user.checkPlainnameExists', username, (err, exists) => {
           if (err) {
             Notifications.error('Не удалось проверить юзернейм', err.error);
           } else if (exists) {
-            error('Такой логин уже используется');
+            errorBack('Такой логин уже используется');
           } else {
-            error(false);
+            errorBack(false);
           }
         });
       }).debounce(1000),
     ];
 
-    Tracker.autorun(() => {
+    this.Tamily = Tamily;
+    this.isInviteRequired = Meteor.settings.public.isInviteRequired;
+  }
+
+  onRendered() {
+    super.onRendered();
+    this.autorun(() => {
       const errors = _(this.errors.all()).values().filter(val => val);
       if (errors.length) {
+        // has Errors
         _(errors).flatten().forEach(text => console.log(text));
       } else {
+        // no Errors
         console.log('Ошибок нет');
       }
     });
-
-    this.Tamily = Tamily;
-    this.isInviteRequired = Meteor.settings.public.isInviteRequired;
   }
 
   register(event) {

@@ -13,43 +13,60 @@
       <div class="
         cw--UserLogin__form
         cw--LoginForm
-        reorgonize
         "
       >
         <div class="cw--LoginForm__title">
           Вход
         </div>
-        <div class="cw--LoginForm__form">
+        <form class="cw--LoginForm__form" onSubmit={{login}}>
           <div class="cw--LoginForm__inputs">
             <div class="cw--LoginForm__inputsGroup">
-              <input
-                type="text"
+              {{> InputString args
                 name="username"
-                class="cw--input cw--LoginForm__input"
+                value=username
+                validators=usernameValidators
+                errors=errors
+                required=true
+                className="cw--LoginForm__input"
                 placeholder="Введите Никнейм"
-              />
+              }}
               <label class="cw--labeledCheckbox cw--LoginForm__remember">
-                <input class="cw--labeledCheckbox__input" type="checkbox" name="remember" />
+                <input
+                  class="cw--labeledCheckbox__input"
+                  type="checkbox"
+                  name="remember"
+                  onChange={{rememberMe}}
+                />
                 Запомнить меня
               </label>
             </div>
             <div class="cw--LoginForm__inputsGroup">
-              <input
-                type="password"
+              {{> InputPassword args
                 name="password"
-                class="cw--input cw--LoginForm__input"
+                value=password
+                validators=passwordValidators
+                errors=errors
+                required=true
+                className="cw--LoginForm__input"
                 placeholder="Введите Пароль"
-              />
+              }}
               <div class="cw--LoginForm__remind">
-                <a href="#" class="cw--LoginForm__remindLink">забыл пароль</a>
+                <a
+                  href="#"
+                  onClick={{remindPassword}}
+                  class="cw--LoginForm__remindLink"
+                >
+                  забыл пароль
+                </a>
               </div>
             </div>
           </div>
           <input
-            type="button"
-            class="cw--button_flat cw--LoginForm__submit"
+            type="submit"
+            value=""
+            class="cw--button cw--button_flat cw--LoginForm__submit"
           />
-        </div>
+        </form>
         <div class="cw--LoginForm__info">
           Если вы давно не заходили в Игру, ваша колония была передана
           в управление Совету Галактики, однако же, ваши исследования
@@ -63,6 +80,7 @@
         </div>
         <button
           class="
+            cw--button
             cw--button_flat
             cw--UserLogin__switchButton
           "

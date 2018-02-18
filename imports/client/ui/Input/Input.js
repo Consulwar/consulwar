@@ -1,9 +1,7 @@
-import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { ReactiveDict } from 'meteor/reactive-dict';
-import { $ } from 'meteor/jquery';
 import './input.styl';
 // TODO: Input rename
 
@@ -12,9 +10,12 @@ class Input extends BlazeComponent {
     name,
     value,
     errors,
+    required,
     validators = [],
     className,
     placeholder,
+    minlength,
+    maxlength,
   } }) {
     super();
 
@@ -31,18 +32,35 @@ class Input extends BlazeComponent {
     this.validators = validators;
     this.className = className;
     this.placeholder = placeholder;
+
+    if (required) {
+      this.required = 'required';
+      this.validators.push(
+        (fieldValue, errorBack) => {
+          if (fieldValue.length === 0) {
+            errorBack('Empty field');
+          } else {
+            errorBack(false);
+          }
+        },
+      );
+    }
+    if (minlength) {
+      this.minlength = () => ({ minlength: minlength });
+    }
+    if (maxlength) {
+      this.maxlength = () => ({ maxlength: maxlength });
+    }
   }
 
   setErrors(errors) {
     this.errors.set(this.name, errors);
   }
 
-  onInput({ currentTarget }) {
-    const newVal = currentTarget.value;
-
+  validate() {
     const errors = [];
     this.validators.forEach((validator) => {
-      validator(newVal, (error) => {
+      validator(this.value.get(), (error) => {
         if (error) {
           errors.push(error);
         }
@@ -53,6 +71,12 @@ class Input extends BlazeComponent {
         }
       });
     });
+  }
+
+  onInput({ currentTarget }) {
+    const newVal = currentTarget.value;
+    this.value.set(newVal);
+    this.validate();
   }
 }
 

@@ -1,16 +1,15 @@
-<template name="InputString">
-  <input 
+<template name="InputEmail">
+  <input
     name={{name}}
-    type="text" 
+    type="email"
+    value={{value.get}}
     class="
       cw--input
       {{className}}
     "
-    value={{value.get}}
     placeholder={{placeholder}}
     onInput={{onInput}}
+    invalid={{onInvalid}}
     {{required}}
-    {{minlength}}
-    {{maxlength}}
   />
 </template>

@@ -1,9 +1,11 @@
-import Input from '../Input';
-import './InputPassword.html';
+import InputString from '../String/InputString';
 
-class InputPassword extends Input {
+class InputPassword extends InputString {
   template() {
-    return 'InputPassword';
+    return 'InputString';
+  }
+  onCreated() {
+    this.type = 'password';
   }
 }
 

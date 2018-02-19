@@ -1,12 +1,13 @@
-import Input from '../Input';
-import './InputEmail.html';
+import InputString from '../String/InputString';
 
-class InputEmail extends Input {
+class InputEmail extends InputString {
   template() {
-    return 'InputEmail';
+    return 'InputString';
   }
 
   onCreated() {
+    this.type = 'email';
+
     // TODO: удалить тест локального валидатора
     const localValidator = [
       (value, errorBack) => {
@@ -17,7 +18,9 @@ class InputEmail extends Input {
         }
       },
     ];
-    localValidator.forEach(singleValidator => this.validators.push(singleValidator));
+    localValidator.forEach(
+      singleValidator => this.validators.push(singleValidator),
+    );
   }
 
 }

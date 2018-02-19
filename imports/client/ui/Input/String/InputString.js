@@ -5,6 +5,9 @@ class InputString extends Input {
   template() {
     return 'InputString';
   }
+  onCreated() {
+    this.type = 'text';
+  }
 }
 
 InputString.register('InputString');

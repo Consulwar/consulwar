@@ -7,10 +7,6 @@ class License extends BlazeComponent {
     return 'License';
   }
 
-  onCreated () {
-    super.onCreated();
-  }
-
   closeLicense () {
     this.removeComponent();
   }

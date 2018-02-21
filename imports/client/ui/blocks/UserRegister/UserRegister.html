@@ -10,82 +10,94 @@
         Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
         к каналу связи или же вы уже имеете Аккаунт Связи со вселенной 42?
       </div>
-      <div class="
-        cw--UserRegister__form
-        cw--RegisterForm
-        "
+      <form
+        onSubmit={{register}}
+        class="cw--UserRegister__formSection"
       >
-        <div class="cw--RegisterForm__title">
+        <div class="cw--UserRegister__formTitle">
           Регистрация
         </div>
-        <form
-          onSubmit={{register}}
-          class="cw--RegisterForm__form"
-        >
-          <div class="cw--RegisterForm__inputs">
-            <div class="cw--RegisterForm__inputsGroup">
+        <div class="cw--UserRegister__form">
+          <div class="cw--UserRegister__inputs">
+            <div class="cw--UserRegister__inputsGroup">
               {{> InputString args
                 name="username"
                 value=username
                 errors=errors
                 validators=usernameValidators
-                className="cw--RegisterForm__input"
+                className="cw--UserRegister__input"
                 placeholder="Введите Никнейм"
+                required=true
+                stopTyping=usernameTyping
               }}
-              <input
-                type="email"
+              {{> InputEmail args
                 name="email"
-                class="cw--input cw--RegisterForm__input"
+                value=email
+                errors=errors
+                validators=emailValidators
+                className="cw--UserRegister__input"
                 placeholder="Введите Емейл"
-              />
+                required=true
+              }}
             </div>
-            <div class="cw--RegisterForm__inputsGroup">
-              <input
-                type="password"
+            <div class="cw--UserRegister__inputsGroup">
+              {{> InputPassword args
                 name="password"
-                class="cw--input cw--RegisterForm__input"
+                value=password
+                errors=errors
+                className="cw--UserRegister__input"
                 placeholder="Введите Пароль"
-              />
-              <input
-                type="password"
-                name="passwordr"
-                class="cw--input cw--RegisterForm__input"
+                required=true
+              }}
+              {{> InputPassword args
+                name="password_repeat"
+                value=passwordRepeat
+                errors=errors
+                validators=passwordRepeatValidators
+                className="cw--UserRegister__input"
                 placeholder="Повторите Пароль"
-              />
+                required=true
+              }}
             </div>
           </div>
           <button
-            class="cw--button_flat cw--RegisterForm__submit"
+            class="cw--button cw--button_flat cw--UserRegister__submit"
           >
           </button>
-        </form>
+        </div>
         
-        <div class="cw--RegisterForm__rules">
-          <label class="cw--labeledCheckbox">
-            <input class="cw--labeledCheckbox__input" type="checkbox" name="rules" />
-            С правилами ознакомлен и согласен
+        <div class="cw--UserRegister__rules">
+          <label class="cw--UserRegister__rulesLabel">
+            <input
+              class="cw--UserRegister__rulesInput"
+              type="checkbox"
+              required="required"
+              name="rules"
+            />
+            С <a href="/" class="cw--UserRegister__rulesLink" onClick={{showLicense}}>правилами</a> ознакомлен и согласен
           </label>
         </div>
-        <div class="cw--RegisterForm__code">
+        <div class="cw--UserRegister__code">
           {{#if isInviteRequired}}
-            <input
-              type="text"
+            {{> InputString args
               name="code"
-              class="cw--input {{#if err_code}}err{{/if}}"
+              value=code
+              errors=errors
+              required=true
               placeholder="Код приглашения"
-            />
-            <span class="error_text">{{{err_code}}}</span>
+            }}
           {{else}}
             {{> reCAPTCHA}}
           {{/if}}
         </div>
-      </div>
+      </form>
       <div class="cw--UserRegister__switch">
         <div class="cw--UserRegister__switchHead">
           У вас уже есть аккаунт? Желаете войти в него?
         </div>
         <button
           class="
+            cw--button
             cw--button_flat
             cw--UserRegister__switchButton
           "

@@ -3,6 +3,7 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Router } from 'meteor/iron:router';
+import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Tamily from '/imports/content/Person/client/Tamily';
@@ -11,6 +12,7 @@ import UserRegister from '/imports/client/ui/blocks/UserRegister/UserRegister';
 import '/imports/client/ui/Person/image/PersonImage';
 import '/imports/client/ui/Input/String/InputString';
 import '/imports/client/ui/Input/Password/InputPassword';
+import '/imports/client/ui/button/button.styl';
 import './UserLogin.html';
 import './UserLogin.styl';
 
@@ -24,6 +26,7 @@ class UserLogin extends BlazeComponent {
 
     this.username = new ReactiveVar();
     this.password = new ReactiveVar();
+    this.isRememberMe = new ReactiveVar();
     this.errors = new ReactiveDict();
 
     this.usernameValidators = [
@@ -39,7 +42,7 @@ class UserLogin extends BlazeComponent {
     this.passwordValidators = [
       (value, errorBack) => {
         if (value.length < 6) {
-          errorBack('С паролем что-то не так');
+          errorBack('Пароль не может быть короче 6 символов');
         } else {
           errorBack(false);
         }
@@ -56,40 +59,61 @@ class UserLogin extends BlazeComponent {
     inputs.forEach(input => input.validate());
 
     if (_(this.errors.all()).values().some(val => val !== null)) {
-      Notifications.error('Не получилось', _(this.errors.all()).values().filter(val => val).join('<br/>'));
+      Notifications.error(
+        'Не получилось',
+        _(this.errors.all()).values().filter(val => val).join('<br/>'),
+      );
     } else {
-      Meteor.loginWithPassword(this.username.get(), this.password.get(), (err) => {
-        if (err) {
-          Notifications.error('Авторизация не удалась', err.error === 400 || err.error === 403 ? 'Неверный логин и/или пароль' : err.error);
-        } else {
-          Router.go('game');
-          this.removeComponent();
-        }
-      });
+      Meteor.loginWithPassword(
+        this.username.get(),
+        this.password.get(),
+        (err) => {
+          if (err) {
+            let errorText;
+            if (err.error === 400 || err.error === 403) {
+              errorText = 'Неверный логин и/или пароль';
+            } else {
+              errorText = err.error;
+            }
+            Notifications.error('Авторизация не удалась', errorText);
+          } else {
+            Router.go('game');
+            this.removeComponent();
+          }
+        },
+      );
     }
   }
 
   remindPassword() {
-    Game.showInputWindow('Укажите email', '', function(email) {
-      if (email) {
+    Game.showInputWindow('Укажите email', '', function(userMail) {
+      if (userMail) {
         Accounts.forgotPassword({
-          email: email
+          email: userMail,
         }, function(err) {
           if (err) {
-            Notifications.error('Восстановление пароля не удалось', err.error);
+            Notifications.error(
+              'Восстановление пароля не удалось',
+              err.error,
+            );
           } else {
-            Notifications.success('Способ восстановления кодов доступа отправлен на почту');
+            Notifications.success(
+              'Способ восстановления кодов доступа отправлен на почту',
+            );
           }
         });
       }
     });
   }
 
-  rememberMe({ currentTarget }) {
-    if (currentTarget.checked) {
+  rememberMe() {
+    if (this.isRememberMe.get() === true) {
       Notifications.success('Я не забуду Вас, консул!');
     } else {
-      Notifications.error('Это не поможет, Консул', 'Штука ничего не делает, она просто была в макете');
+      Notifications.error(
+        'Это не поможет, Консул',
+        'Штука ничего не делает, она просто была в макете',
+      );
     }
   }
 

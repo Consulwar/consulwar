@@ -46,7 +46,7 @@
     flex-grow 0
     color $cw--color_metal
 
-  &__form
+  &__formSection
     flex-grow 1
     flex-shrink 0
     flex-basis auto
@@ -59,10 +59,7 @@
   &__switchHead
     margin-bottom 10px
 
-
-.cw--RegisterForm
-
-  &__title
+  &__formTitle
     display block
     margin 30px 0 15px 
     font-weight bold
@@ -102,6 +99,11 @@
     width 184px
     height 25px
     box-sizing border-box
+    font-sze $cw--fontSize_main
+  
+  &__rulesLabel
+  &__rulesLink
+    color $cw--color_metal
 
   &__submit
     flex 0 auto
@@ -114,9 +116,3 @@
   &__rules
   &__code
     margin 15px 0
-
-.cw--labeledCheckbox
-  color $cw--color_metal
-
-  &__input
-    vertical-align middle

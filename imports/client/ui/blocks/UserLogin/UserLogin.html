@@ -10,51 +10,45 @@
         Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
         к каналу связи или же вы уже имеете Аккаунт Связи со вселенной 42?
       </div>
-      <div class="
-        cw--UserLogin__form
-        cw--LoginForm
-        "
-      >
-        <div class="cw--LoginForm__title">
+      <div class="cw--UserLogin__formSection">
+        <div class="cw--UserLogin__formTitle">
           Вход
         </div>
-        <form class="cw--LoginForm__form" onSubmit={{login}}>
-          <div class="cw--LoginForm__inputs">
-            <div class="cw--LoginForm__inputsGroup">
+        <form class="cw--UserLogin__form" onSubmit={{login}}>
+          <div class="cw--UserLogin__inputs">
+            <div class="cw--UserLogin__inputsGroup">
               {{> InputString args
                 name="username"
                 value=username
                 validators=usernameValidators
                 errors=errors
                 required=true
-                className="cw--LoginForm__input"
+                className="cw--UserLogin__input"
                 placeholder="Введите Никнейм"
               }}
-              <label class="cw--labeledCheckbox cw--LoginForm__remember">
-                <input
-                  class="cw--labeledCheckbox__input"
-                  type="checkbox"
-                  name="remember"
-                  onChange={{rememberMe}}
-                />
-                Запомнить меня
-              </label>
+              {{> InputCheckbox args
+                name="remember"
+                errors=errors
+                className="cw--UserLogin__remember"
+                checked=isRememberMe
+                label="Запомнить меня"
+              }}
             </div>
-            <div class="cw--LoginForm__inputsGroup">
+            <div class="cw--UserLogin__inputsGroup">
               {{> InputPassword args
                 name="password"
                 value=password
                 validators=passwordValidators
                 errors=errors
                 required=true
-                className="cw--LoginForm__input"
+                className="cw--UserLogin__input"
                 placeholder="Введите Пароль"
               }}
-              <div class="cw--LoginForm__remind">
+              <div class="cw--UserLogin__remind">
                 <a
                   href="#"
                   onClick={{remindPassword}}
-                  class="cw--LoginForm__remindLink"
+                  class="cw--UserLogin__remindLink"
                 >
                   забыл пароль
                 </a>
@@ -64,10 +58,10 @@
           <input
             type="submit"
             value=""
-            class="cw--button cw--button_flat cw--LoginForm__submit"
+            class="cw--button cw--button_flat cw--UserLogin__submit"
           />
         </form>
-        <div class="cw--LoginForm__info">
+        <div class="cw--UserLogin__info">
           Если вы давно не заходили в Игру, ваша колония была передана
           в управление Совету Галактики, однако же, ваши исследования
           и прочие улучшения сохранились. Вы сможете быстро догнать

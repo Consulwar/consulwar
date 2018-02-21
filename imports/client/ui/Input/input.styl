@@ -9,6 +9,7 @@
   color $cw--color_description
   font-family 'Roboto', Arial, sans-serif;
   font-size 18px
+  transition all .15s ease
 
   &__disabled
     cursor not-allowed !important
@@ -17,14 +18,15 @@
   
   &::placeholder
     color $cw--color_lightGrey
-    transition color .15s ease
 
   &:hover
-    border-color #2D5591
-    border-image linear-gradient(to top, #2D5591, $cw--color_science) 1
+    filter brightness(1.2)
     &::placeholder
       color $cw--color_nearWhite
   
   &:focus
     outline none
     background linear-gradient(0deg, #303945, #101317)
+
+  &_errored
+    border solid 1px $cw--color_honor

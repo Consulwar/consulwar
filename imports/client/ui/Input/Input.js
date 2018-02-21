@@ -11,7 +11,6 @@ class Input extends BlazeComponent {
     value,
     errors,
     required,
-    stopTyping,
     validators = [],
     className,
     placeholder,
@@ -32,13 +31,6 @@ class Input extends BlazeComponent {
     this.validators = validators;
     this.className = className;
     this.placeholder = placeholder;
-
-    if (stopTyping) {
-      check(stopTyping, ReactiveVar);
-      this.isStopTyping = stopTyping;
-      this.isStopTyping.set(false);
-      this.typingTimer = null;
-    }
 
     if (required) {
       this.required = 'required';
@@ -77,28 +69,10 @@ class Input extends BlazeComponent {
     });
   }
 
-  startTyping() {
-    if (this.typingTimer !== null) {
-      clearTimeout(this.typingTimer);
-    }
-    this.typingTimer = setTimeout(() => {
-      this.stopTyping();
-    }, 2000);
-    this.isStopTyping.set(false);
-  }
-  stopTyping() {
-    this.typingTimer = null;
-    this.isStopTyping.set(true);
-  }
-
   onInput({ currentTarget }) {
     const newVal = currentTarget.value;
     this.value.set(newVal);
     this.validate();
-
-    if (this.isStopTyping) {
-      this.startTyping();
-    }
   }
 }
 

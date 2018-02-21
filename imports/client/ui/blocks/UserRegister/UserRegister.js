@@ -24,11 +24,12 @@ class UserRegister extends BlazeComponent {
     return 'UserRegister';
   }
 
-  constructor() {
+  constructor({ hash: {
+    username = '',
+  } } = { hash: {} }) {
     super();
 
-    this.username = new ReactiveVar();
-    this.usernameTyping = new ReactiveVar();
+    this.username = new ReactiveVar(username);
     this.email = new ReactiveVar();
     this.password = new ReactiveVar();
     this.passwordRepeat = new ReactiveVar();
@@ -94,23 +95,16 @@ class UserRegister extends BlazeComponent {
 
   onRendered() {
     super.onRendered();
+    const checkUser = _(username => this.checkUsername(username)).debounce(2000);
     this.autorun(() => {
-      // const errors = _(this.errors.all()).values().filter(val => val);
-      // if (errors.length) {
-      //   // has Errors
-      //   _(errors).flatten().forEach(text => console.log(text));
-      // } else {
-      //   // no Errors
-      //   console.log('Ошибок нет');
-      // }
-      if (this.usernameTyping.get() === true) {
-        this.checkUsername();
+      if (this.username.get()) {
+        checkUser(this.username.get());
       }
     });
   }
 
-  checkUsername() {
-    Meteor.call('user.checkPlainnameExists', this.username.get(), (err, exists) => {
+  checkUsername(username) {
+    Meteor.call('user.checkPlainnameExists', username, (err, exists) => {
       const usernameEl = this.childComponentsWith({ name: 'username' })[0].find('input');
       if (err) {
         usernameEl.classList.add('cw--input_errored');
@@ -179,7 +173,9 @@ class UserRegister extends BlazeComponent {
   showLoginPopup() {
     this.removeComponent();
     Game.Popup.show({
-      template: UserLogin.renderComponent(),
+      template: (new UserLogin({ hash: {
+        username: this.username.get(),
+      } })).renderComponent(),
     });
   }
 }

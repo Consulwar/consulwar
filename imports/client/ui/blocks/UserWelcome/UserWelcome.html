@@ -13,7 +13,6 @@
           value=username
           className="cw--UserWelcome__input"
           placeholder="Введите Никнейм"
-          stopTyping=usernameTyping
         }}
         <div class="cw--UserWelcome__chose">
           <a class="cw--UserWelcome__login" onClick={{showLoginPopup}}>
@@ -30,7 +29,7 @@
             cw--button_type_primary
             cw--button_type_primary_orange
           "
-          onClick={{showRegisterPopup}}
+          onClick={{goNext}}
         >
           Продолжить
         </button>

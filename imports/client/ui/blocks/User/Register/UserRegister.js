@@ -55,7 +55,7 @@ class UserRegister extends BlazeComponent {
       },
       (value, errorBack) => {
         if (!value.match(/^[a-zA-Zа-яА-Я0-9_\- ]+$/)) {
-          errorBack('В логине допускаются символы английские и русские буквы, пробел, подчеркивание и дефис');
+          errorBack('В логине допускаются английские и русские буквы, пробел, подчеркивание и дефис');
         } else {
           errorBack(false);
         }

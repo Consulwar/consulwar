@@ -1,5 +1,6 @@
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/PageIndex/PageIndex';
+import PageAbout from '/imports/client/ui/pages/PageAbout/PageAbout';
 
 initRouterClient = function() {
 'use strict';
@@ -204,6 +205,16 @@ Router.route('/about', function() {
 Router.route('/', function() {
   this.layout(LayoutMain.renderComponent());
   this.render(PageIndex.renderComponent());
+
+  const user = Meteor.user();
+  if (user) {
+    if (user.blocked === true) {
+      Meteor.logout();
+      this.redirect('index');
+    } else {
+      Router.go('game');
+    }
+  }
 
   if (window.Metrica !== undefined) {
     Metrica.hit(window.location.href, 'Index', document.referrer);

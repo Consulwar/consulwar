@@ -2,10 +2,10 @@
   <div class="cw--PersonImage {{class}}">
     <img class="cw--PersonImage__avatar" src="{{person.getImage}}"/>
     <div class="cw--PersonImage__title">{{person.title}}</div>
-    {{#if gt person.skinCount 1}}
+    {{#if and showChangeOption (gt person.skinCount 1)}}
       <button class="cw--PersonImage__change" onClick={{changeAvatar}}>
-        <img 
-          class="cw--PersonImage__icon" 
+        <img
+          class="cw--PersonImage__icon"
           alt="Сменить аватар"
           src="{{person.getIcon}}"
         />

@@ -59,3 +59,4 @@ dynamic-import@0.2.0
 peerlibrary:blaze-components
 vsivsi:job-collection
 peerlibrary:control-mergebox
+reactive-dict

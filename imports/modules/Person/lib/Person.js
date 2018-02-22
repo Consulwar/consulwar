@@ -41,7 +41,8 @@ class Person {
 
   getAvailableSkins({ user = Meteor.user() } = {}) {
     const skins = (
-      user.Person
+      user
+      && user.Person
       && user.Person[this.id]
       && user.Person[this.id].has
     );
@@ -53,7 +54,8 @@ class Person {
 
   getActiveSkins({ user = Meteor.user() } = {}) {
     return (
-      user.Person
+      user
+      && user.Person
       && user.Person[this.id]
       && user.Person[this.id].active
     ) || ['default'];

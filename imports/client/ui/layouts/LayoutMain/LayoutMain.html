@@ -1,0 +1,91 @@
+<template name="LayoutMain">
+  <div class="cw--LayoutMain">
+
+    <header class="cw--MainHeader">
+      <div class="cw--MainHeader__logo">
+        <a href="/" class="cw--MainHeader__logoLink">
+          <img
+            class="cw--MainHeader__logoImg"
+            src="/img/logo.png"
+            alt="Consulwar"
+          />
+        </a>
+      </div>
+      <nav class="cw--MainHeader__menu">
+        <button
+          class="
+            cw--MainHeader__playButton
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+          "
+          onClick={{showWelcomePopup}}
+        >
+          Начать игру
+        </button>
+      </nav>
+
+      <div class="cw--MainHeader__stats">
+        <div class="cw--MainHeader__statsItem">
+          Консулов:
+          <span class="cw--MainHeader__statsCount">
+            {{registered.get}}
+          </span>
+        </div>
+        <div class="cw--MainHeader__statsItem">
+          Онлайн:
+          <span class="cw--MainHeader__statsCount">
+            {{online.get}}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <main class="cw--MainContent">
+      {{> yield }}
+    </main>
+
+    <footer class="cw--MainFooter">
+      <div class="cw--MainFooter__copyright">
+        Morula, 2019
+      </div>
+
+      <nav class="cw--MainFooter__menu">
+        <a class="cw--MainFooter__menuItem" href="http://info.consulwar.ru/">
+          Техническая поддержка
+        </a>
+        <a
+          onClick={{showFeedback 'questions'}}
+          class="cw--MainFooter__menuItem"
+        >
+          Вопрос
+        </a>
+        <a
+          onClick={{showFeedback 'problems'}}
+          class="cw--MainFooter__menuItem"
+        >
+          Ошибка
+        </a>
+        <a
+          onClick={{showFeedback 'ideas'}}
+          class="cw--MainFooter__menuItem"
+        >
+          Идея
+        </a>
+      </nav>
+
+      <div class="cw--MainFooter__license">
+        <a
+          class="cw--MainFooter__licenseLink"
+          onClick={{showLicense}}
+          href="/legal/agreement"
+        >
+          Лицензионное соглашение
+        </a>
+      </div>
+    </footer>
+
+  </div>
+  
+  {{> notifications}}
+</template>

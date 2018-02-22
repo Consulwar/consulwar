@@ -3,11 +3,11 @@ import './License.html';
 import './License.styl';
 
 class License extends BlazeComponent {
-  template () {
+  template() {
     return 'License';
   }
 
-  closeLicense () {
+  closeLicense() {
     this.removeComponent();
   }
 }

@@ -4,8 +4,8 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
-import UserRegister from '/imports/client/ui/blocks/UserRegister/UserRegister';
-import UserLogin from '/imports/client/ui/blocks/UserLogin/UserLogin';
+import UserRegister from '/imports/client/ui/blocks/User/Register/UserRegister';
+import UserLogin from '/imports/client/ui/blocks/User/Login/UserLogin';
 import '/imports/client/ui/Input/input.styl';
 import '/imports/client/ui/button/button.styl';
 import './UserWelcome.html';
@@ -25,7 +25,7 @@ class UserWelcome extends BlazeComponent {
 
   onRendered() {
     super.onRendered();
-    const checkUser = _(username => this.checkUsername(username)).debounce(2000);
+    const checkUser = _(username => this.checkUsername(username)).debounce(1000);
     this.autorun(() => {
       if (this.username.get()) {
         checkUser(this.username.get());

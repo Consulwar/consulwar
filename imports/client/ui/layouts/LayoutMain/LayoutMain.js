@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
+import { ChdFeedbackWidget } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
-import UserWelcome from '/imports/client/ui/blocks/UserWelcome/UserWelcome';
+import UserWelcome from '/imports/client/ui/blocks/User/Welcome/UserWelcome';
 import License from '/imports/client/ui/blocks/License/License';
 import '/imports/client/ui/button/button.styl';
 import './LayoutMain.html';
@@ -43,10 +43,6 @@ class LayoutMain extends BlazeComponent {
 
   showFeedback(e, theme) {
     ChdFeedbackWidget.show(theme);
-  }
-
-  currentRouteName() {
-    return Router.current().route.getName();
   }
 }
 

@@ -8,7 +8,7 @@ import { _ } from 'meteor/underscore';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Tamily from '/imports/content/Person/client/Tamily';
 import Game from '/moduls/game/lib/main.game';
-import UserRegister from '/imports/client/ui/blocks/UserRegister/UserRegister';
+import UserRegister from '/imports/client/ui/blocks/User/Register/UserRegister';
 import '/imports/client/ui/Person/image/PersonImage';
 import '/imports/client/ui/Input/String/InputString';
 import '/imports/client/ui/Input/Password/InputPassword';

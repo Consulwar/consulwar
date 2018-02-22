@@ -1,6 +1,5 @@
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/PageIndex/PageIndex';
-import PageAbout from '/imports/client/ui/pages/PageAbout/PageAbout';
 
 initRouterClient = function() {
 'use strict';

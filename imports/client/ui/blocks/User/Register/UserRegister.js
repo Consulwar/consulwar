@@ -72,9 +72,9 @@ class UserRegister extends BlazeComponent {
       },
     ];
 
-    this.passwordRepeatValidators = [
+    this.passwordValidators = [
       (value, errorBack) => {
-        if (this.password.get() !== value) {
+        if (this.passwordRepeat.get() !== this.password.get()) {
           errorBack('Пароли не совпадают');
         } else {
           errorBack(false);

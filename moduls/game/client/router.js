@@ -1,3 +1,6 @@
+import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
+import PageIndex from '/imports/client/ui/pages/PageIndex/PageIndex';
+
 initRouterClient = function() {
 'use strict';
 
@@ -184,6 +187,28 @@ Router.route('/logout', function () {
   Meteor.logout();
   this.redirect('index');
 });
+
+Router.configure({
+  loadingTemplate: 'loading',
+});
+
+Router.route('/about', function() {
+  this.layout(LayoutMain.renderComponent());
+  this.render(PageAbout.renderComponent());
+
+  if (window.Metrica !== undefined) {
+    Metrica.hit(window.location.href, 'About', document.referrer);
+  }
+}, { name: 'about' });
+
+Router.route('/', function() {
+  this.layout(LayoutMain.renderComponent());
+  this.render(PageIndex.renderComponent());
+
+  if (window.Metrica !== undefined) {
+    Metrica.hit(window.location.href, 'Index', document.referrer);
+  }
+}, { name: 'index' });
 
 Router.route('pageNotFound', {
   path: '/(.+)',

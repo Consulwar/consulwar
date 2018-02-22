@@ -4,6 +4,7 @@
     type={{type}} 
     class="
       cw--input
+      {{#if hasErrors}}cw--input_errored{{/if}}
       {{className}}
     "
     value={{value.get}}

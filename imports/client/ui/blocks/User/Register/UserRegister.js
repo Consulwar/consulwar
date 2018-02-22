@@ -53,6 +53,13 @@ class UserRegister extends BlazeComponent {
           errorBack(false);
         }
       },
+      (value, errorBack) => {
+        if (!value.match(/^[a-zA-Zа-яА-Я0-9_\- ]+$/)) {
+          errorBack('В логине допускаются символы английские и русские буквы, пробел, подчеркивание и дефис');
+        } else {
+          errorBack(false);
+        }
+      },
     ];
 
     this.emailValidators = [
@@ -107,20 +114,20 @@ class UserRegister extends BlazeComponent {
     Meteor.call('user.checkPlainnameExists', username, (err, exists) => {
       const usernameEl = this.childComponentsWith({ name: 'username' })[0];
       if (usernameEl) {
+        usernameEl.removeError('Такой логин уже используется');
+        usernameEl.removeError('Не удалось проверить юзернейм');
         if (err) {
-          usernameEl.addError();
+          usernameEl.addError('Не удалось проверить юзернейм');
           Notifications.error(
             'Не удалось проверить юзернейм',
             err.error,
           );
         } else if (exists) {
-          usernameEl.addError();
+          usernameEl.addError('Такой логин уже используется');
           Notifications.error(
             'Выберите другой логин',
             'Такой логин уже используется',
           );
-        } else {
-          usernameEl.removeError();
         }
       }
     });
@@ -143,6 +150,15 @@ class UserRegister extends BlazeComponent {
     } else {
       this.createAccount();
     }
+  }
+
+  getErrors() {
+    return _(this.errors.all()).chain()
+      .values()
+      .filter(val => val)
+      .flatten()
+      .uniq()
+      .value();
   }
 
   createAccount() {

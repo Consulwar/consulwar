@@ -10,15 +10,17 @@ class Input extends BlazeComponent {
   constructor({ hash: {
     name,
     value,
-    errors,
     required,
     disabled,
+    errors = new ReactiveDict(),
     validators = [],
     className,
     placeholder,
     minLength,
   } }) {
     super();
+
+    this.externalError = [];
 
     check(name, String);
     this.name = name;
@@ -59,15 +61,28 @@ class Input extends BlazeComponent {
     this.errors.set(this.name, errors);
   }
 
-  addError() {
-    this.find('input').classList.add('cw--input_errored');
+  hasErrors() {
+    const errors = this.errors.get(this.name);
+    return errors && _(errors).values().some(val => val !== null);
   }
-  removeError() {
-    this.find('input').classList.remove('cw--input_errored');
+
+  addError(text) {
+    if (this.externalError.indexOf(text) === -1) {
+      this.externalError.push(text);
+      this.validate();
+    }
+  }
+
+  removeError(text) {
+    const index = this.externalError.indexOf(text);
+    if (index !== -1) {
+      this.externalError.splice(index, 1);
+      this.validate();
+    }
   }
 
   validate() {
-    const errors = [];
+    const errors = _.clone(this.externalError);
     this.validators.forEach((validator) => {
       let fieldData;
       if (this.value) {

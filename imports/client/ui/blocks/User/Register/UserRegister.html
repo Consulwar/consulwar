@@ -17,6 +17,7 @@
         <div class="cw--UserRegister__formTitle">
           Регистрация
         </div>
+
         <div class="cw--UserRegister__form">
           <div class="cw--UserRegister__inputs">
             <div class="cw--UserRegister__inputsGroup">
@@ -99,6 +100,13 @@
           {{/if}}
         </div>
       </form>
+      {{#if getErrors}}
+        <div class="cw--UserRegister__errors">
+          {{#each error in getErrors}}
+            {{error}}<br/>
+          {{/each}}
+        </div>
+      {{/if}}
       <div class="cw--UserRegister__switch">
         <div class="cw--UserRegister__switchHead">
           У вас уже есть аккаунт? Желаете войти в него?

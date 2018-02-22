@@ -41,7 +41,7 @@ class LayoutMain extends BlazeComponent {
     });
   }
 
-  showFeedback(e, theme) {
+  showFeedback(event, theme) {
     ChdFeedbackWidget.show(theme);
   }
 }

@@ -6,21 +6,9 @@ class InputEmail extends InputString {
   }
 
   onCreated() {
-    this.type = 'email';
+    super.onCreated();
 
-    // TODO: удалить тест локального валидатора
-    const localValidator = [
-      (value, errorBack) => {
-        if (value.length < 3) {
-          errorBack('Минимум 3 символа');
-        } else {
-          errorBack(false);
-        }
-      },
-    ];
-    localValidator.forEach(
-      singleValidator => this.validators.push(singleValidator),
-    );
+    this.type = 'email';
   }
 
 }

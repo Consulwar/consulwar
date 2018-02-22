@@ -5,6 +5,8 @@ class InputPassword extends InputString {
     return 'InputString';
   }
   onCreated() {
+    super.onCreated();
+
     this.type = 'password';
   }
 }

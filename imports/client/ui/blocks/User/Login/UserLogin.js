@@ -28,7 +28,7 @@ class UserLogin extends BlazeComponent {
 
     this.username = new ReactiveVar(username);
     this.password = new ReactiveVar();
-    this.isRememberMe = new ReactiveVar();
+    this.isRememberMe = new ReactiveVar(true);
     this.errors = new ReactiveDict();
 
     this.usernameValidators = [
@@ -106,17 +106,6 @@ class UserLogin extends BlazeComponent {
         });
       }
     });
-  }
-
-  rememberMe() {
-    if (this.isRememberMe.get() === true) {
-      Notifications.success('Я не забуду Вас, консул!');
-    } else {
-      Notifications.error(
-        'Это не поможет, Консул',
-        'Штука ничего не делает, она просто была в макете',
-      );
-    }
   }
 
   showRegisterPopup() {

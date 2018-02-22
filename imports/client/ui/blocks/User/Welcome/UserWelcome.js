@@ -35,23 +35,25 @@ class UserWelcome extends BlazeComponent {
 
   checkUsername(username) {
     Meteor.call('user.checkPlainnameExists', username, (err, exists) => {
-      const usernameEl = this.childComponentsWith({ name: 'username' })[0].find('input');
-      if (err) {
-        usernameEl.classList.add('cw--input_errored');
-        Notifications.error(
-          'Не удалось проверить юзернейм',
-          err.error,
-        );
-      } else if (exists) {
-        this.userExists = true;
-        usernameEl.classList.add('cw--input_errored');
-        Notifications.error(
-          'Этот логин используется',
-          `Если Вы <b>${this.username.get()}</b><br/> - нажмите продолжить, чтобы войти`,
-        );
-      } else {
-        this.userExists = false;
-        usernameEl.classList.remove('cw--input_errored');
+      const usernameEl = this.childComponentsWith({ name: 'username' })[0];
+      if (usernameEl) {
+        if (err) {
+          usernameEl.addError();
+          Notifications.error(
+            'Не удалось проверить юзернейм',
+            err.error,
+          );
+        } else if (exists) {
+          this.userExists = true;
+          usernameEl.addError();
+          Notifications.error(
+            'Этот логин используется',
+            `Если Вы <b>${this.username.get()}</b><br/> - нажмите продолжить, чтобы войти`,
+          );
+        } else {
+          this.userExists = false;
+          usernameEl.removeError();
+        }
       }
     });
   }

@@ -6,6 +6,8 @@
       name={{name}}
       class="cw--labeledCheckbox__input"
       onChange={{onChange}}
+      {{isChecked}}
+      {{isDisabled}}
     />
     {{label}}
   </label>
@@ -17,6 +19,8 @@
       cw--Checkbox
       {{className}}
     "
+    {{isChecked}}
+    {{isDisabled}}
   />
 {{/if}}
 </template>

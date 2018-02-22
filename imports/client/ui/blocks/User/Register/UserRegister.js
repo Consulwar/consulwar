@@ -105,22 +105,23 @@ class UserRegister extends BlazeComponent {
 
   checkUsername(username) {
     Meteor.call('user.checkPlainnameExists', username, (err, exists) => {
-      const usernameEl = this.childComponentsWith({ name: 'username' })[0].find('input');
-      if (err) {
-        usernameEl.classList.add('cw--input_errored');
-
-        Notifications.error(
-          'Не удалось проверить юзернейм',
-          err.error,
-        );
-      } else if (exists) {
-        usernameEl.classList.add('cw--input_errored');
-        Notifications.error(
-          'Выберите другой логин',
-          'Такой логин уже используется',
-        );
-      } else {
-        usernameEl.classList.remove('cw--input_errored');
+      const usernameEl = this.childComponentsWith({ name: 'username' })[0];
+      if (usernameEl) {
+        if (err) {
+          usernameEl.addError();
+          Notifications.error(
+            'Не удалось проверить юзернейм',
+            err.error,
+          );
+        } else if (exists) {
+          usernameEl.addError();
+          Notifications.error(
+            'Выберите другой логин',
+            'Такой логин уже используется',
+          );
+        } else {
+          usernameEl.removeError();
+        }
       }
     });
   }

@@ -16,7 +16,7 @@ export default {
     ],
     Price: [
       {
-        textBefore: 'Строительство Фригатов быстрее на ',
+        textBefore: 'Строительство Фрегатов быстрее на ',
         textAfter: '%',
         condition: 'Unit/Human/Space/Frigate',
         priority: 2,

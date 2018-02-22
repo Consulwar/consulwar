@@ -1,0 +1,130 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+@import '{}/imports/client/ui/colors'
+
+.cw--UserRegister
+  display flex
+  width 900px
+  max-width 100%
+  background-color alpha($cw--color_black, .9)
+  font-size $cw--fontSize_main
+
+  +media(null, $cw--size_s)
+    flex-direction column
+    max-width 330px
+    padding-bottom 50px
+    overflow-x hidden
+
+  &__person
+    flex-basis auto
+    flex-grow 0
+    flex-shrink 1
+    user-select none
+
+    +media($cw--size_m, $cw--size_l)
+      overflow hidden
+
+  &__content
+    flex-basis auto
+    flex-shrink 11
+    flex-grow 1
+    display flex
+    flex-direction column
+    box-sizing border-box
+    padding 30px 50px 30px
+
+    +media(null, $cw--size_s)
+      flex-grow 0
+      flex-shrink 0
+
+    +media(null, $cw--size_l)
+      padding 30px
+
+  &__intro
+    flex-basis auto
+    flex-shrink 0
+    flex-grow 0
+    color $cw--color_metal
+
+  &__formSection
+    flex-grow 1
+    flex-shrink 0
+    flex-basis auto
+
+  &__switch
+    margin-top 12px
+    flex-basis auto
+    flex-grow 0
+    color $cw--color_metal
+    +media(null, $cw--size_s)
+      order -1
+      margin-bottom 20px
+
+  &__switchHead
+    margin-bottom 10px
+
+  &__formTitle
+    display block
+    margin 30px 0 15px 
+    font-weight bold
+    color $cw--color_honor
+    font-size $cw--fontSize_smallHead
+
+  &__form
+    display flex
+    flex-direction row
+    margin-bottom 10px
+
+  &__inputs
+    flex-basis 180px
+    flex-grow 0
+    flex-shrink 0
+    display flex
+    flex-direction row
+    height 62px
+
+    +media(null, $cw--size_m)
+      flex-direction column
+      height 145px
+      justify-content space-between
+  
+  &__inputsGroup
+    display flex
+    flex-direction column
+    flex-basis auto
+    justify-content space-between
+    margin-right 12px
+
+    +media(null, $cw--size_m)
+    	flex-basis: 62px;
+
+  &__input
+    flex 0 auto
+    width 184px
+    height 25px
+    box-sizing border-box
+    font-sze $cw--fontSize_main
+  
+  &__rulesLabel
+  &__rulesLink
+    color $cw--color_metal
+
+  &__submit
+    flex 0 auto
+    width 42px
+    padding 0
+    background-image url(/img/arrow_login.svg)
+    background-repeat no-repeat
+    background-position center center
+
+  
+  &__rules
+  &__code
+    margin 15px 0
+
+  &__errors
+    border solid 1px $cw--color_honor
+    color $cw--color_honor
+    font-size $cw--fontSize_small
+    padding 10px
+    

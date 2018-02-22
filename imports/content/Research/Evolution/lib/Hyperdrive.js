@@ -25,7 +25,7 @@ export default {
         result: tier3,
       },
       {
-        textBefore: 'Строительство Плазменных убийц на ',
+        textBefore: 'Строительство Плазменных Убийц на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Defense/PlasmaKiller',
         priority: 6,

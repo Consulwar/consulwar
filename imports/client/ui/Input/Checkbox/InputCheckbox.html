@@ -1,0 +1,26 @@
+<template name="InputCheckbox">
+{{#if label}}
+  <label class="cw--labeledCheckbox {{className}}">
+    <input
+      type="checkbox"
+      name={{name}}
+      class="cw--labeledCheckbox__input"
+      onChange={{onChange}}
+      {{isChecked}}
+      {{isDisabled}}
+    />
+    {{label}}
+  </label>
+{{else}}
+  <input
+    type="checkbox"
+    name={{name}}
+    class="
+      cw--Checkbox
+      {{className}}
+    "
+    {{isChecked}}
+    {{isDisabled}}
+  />
+{{/if}}
+</template>

@@ -19,7 +19,7 @@ export default {
     ],
     Price: [
       {
-        textBefore: 'Доставка Ионных мин на ',
+        textBefore: 'Доставка Ионных Мин на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Defense/IonMine',
         priority: 2,
@@ -51,7 +51,7 @@ export default {
         result: tier2,
       },
       {
-        textBefore: 'Доставка Трилинейных Кристал-Ганов на ',
+        textBefore: 'Доставка Трилинейных Кристалл-Ганов на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human/Defense/TripleCrystalGun',
         priority: 2,

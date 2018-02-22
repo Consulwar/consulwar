@@ -3,14 +3,30 @@
 .cw--input
   height 27px
   padding-left 5px
-  background-color: $cw--color_tableEven
+  background-color $cw--color_tableEven
   border 1px solid $cw--color_science
-  border-image linear-gradient(to top, #132E56 0%, #4B78BB 100%) 40%
+  border-image linear-gradient(to top, #2B4A78 0%, $cw--color_science 100%) 1
   color $cw--color_description
   font-family 'Roboto', Arial, sans-serif;
   font-size 18px
+  transition all .15s ease
 
   &__disabled
     cursor not-allowed !important
     -webkit-filter grayscale(1) !important
     filter grayscale(1) !important
+  
+  &::placeholder
+    color $cw--color_lightGrey
+
+  &:hover
+    filter brightness(1.2)
+    &::placeholder
+      color $cw--color_nearWhite
+  
+  &:focus
+    outline none
+    background linear-gradient(0deg, #303945, #101317)
+
+  &_errored
+    border solid 1px $cw--color_honor

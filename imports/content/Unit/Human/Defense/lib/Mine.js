@@ -5,6 +5,7 @@ export default {
   basePrice: {
     metals: 20,
   },
+  decayTime: 20,
   characteristics: {
     weapon: {
       damage: { min: 5, max: 5 },

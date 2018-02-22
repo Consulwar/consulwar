@@ -83,6 +83,13 @@ class Input extends BlazeComponent {
 
   validate() {
     const errors = _.clone(this.externalError);
+    if (this.validators.length === 0) {
+      if (errors.length > 0) {
+        this.setErrors(errors);
+      } else {
+        this.setErrors(null);
+      }
+    }
     this.validators.forEach((validator) => {
       let fieldData;
       if (this.value) {

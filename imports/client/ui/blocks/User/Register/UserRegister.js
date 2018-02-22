@@ -81,15 +81,17 @@ class UserRegister extends BlazeComponent {
 
     this.passwordValidators = [
       (value, errorBack) => {
-        if (this.passwordRepeat.get() !== this.password.get()) {
-          errorBack('Пароли не совпадают');
+        if (value.length < 6) {
+          errorBack('Пароль не может быть короче 6 символов');
         } else {
           errorBack(false);
         }
       },
+    ];
+    this.passwordRepeatValidators = [
       (value, errorBack) => {
-        if (value.length < 6) {
-          errorBack('Пароль не может быть короче 6 символов');
+        if (this.passwordRepeat.get() !== this.password.get()) {
+          errorBack('Пароли не совпадают');
         } else {
           errorBack(false);
         }

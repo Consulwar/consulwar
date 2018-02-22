@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { ReactiveDict } from 'meteor/reactive-dict';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
@@ -20,12 +21,13 @@ class UserWelcome extends BlazeComponent {
     super();
 
     this.username = new ReactiveVar();
+    this.errors = new ReactiveDict();
     this.userExists = false;
   }
 
   onRendered() {
     super.onRendered();
-    const checkUser = _(username => this.checkUsername(username)).debounce(1000);
+    const checkUser = _(username => this.checkUsername(username)).debounce(300);
     this.autorun(() => {
       if (this.username.get()) {
         checkUser(this.username.get());
@@ -48,10 +50,6 @@ class UserWelcome extends BlazeComponent {
         } else if (exists) {
           this.userExists = true;
           usernameEl.addError('Такой логин уже используется');
-          Notifications.error(
-            'Этот логин используется',
-            `Если Вы <b>${this.username.get()}</b><br/> - нажмите продолжить, чтобы войти`,
-          );
         } else {
           this.userExists = false;
         }

@@ -1,4 +1,5 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
+import '/imports/client/ui/button/button.styl';
 import './License.html';
 import './License.styl';
 

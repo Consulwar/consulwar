@@ -2,8 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
-import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
-import PageIndex from '/imports/client/ui/pages/PageIndex/PageIndex';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
 
@@ -74,31 +72,6 @@ if (!Meteor.settings.public.isInviteRequired) {
     hl: 'ru',
   });
 }
-
-Router.configure({
-  loadingTemplate: 'loading',
-});
-
-Router.route('/', function() {
-  this.layout(LayoutMain.renderComponent());
-  this.render(PageIndex.renderComponent());
-}, { name: 'index' });
-
-Template.index.helpers({
-  totalUsersCount: function() { return Session.get('totalUsersCount'); },
-  onlineUsersCount: function() { return Session.get('onlineUsersCount'); }
-});
-
-Template.index.events({
-  'click .fancybox': function(e, t) {
-    e.preventDefault();
-  },
-
-  'click .start_registration': function(e, t) {
-    e.preventDefault();
-    Game.Popup.show({ templateName: 'register_window' });
-  }
-});
 
 Meteor.subscribe('myAlliance');
 

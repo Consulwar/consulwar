@@ -205,6 +205,16 @@ Router.route('/', function() {
   this.layout(LayoutMain.renderComponent());
   this.render(PageIndex.renderComponent());
 
+  const user = Meteor.user();
+  if (user) {
+    if (user.blocked === true) {
+      Meteor.logout();
+      this.redirect('index');
+    } else {
+      Router.go('game');
+    }
+  }
+
   if (window.Metrica !== undefined) {
     Metrica.hit(window.location.href, 'Index', document.referrer);
   }

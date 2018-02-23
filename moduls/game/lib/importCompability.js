@@ -1,1 +1,1 @@
-export { Notifications, L, ChdFeedbackWidget, reCAPTCHA };
+export { Notifications, L, ChdFeedbackWidget, grecaptcha, reCAPTCHA };

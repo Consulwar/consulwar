@@ -169,7 +169,11 @@ class UserRegister extends BlazeComponent {
       email: this.email.get(),
       password: this.passwordRepeat.get(),
       code: this.code.get() || '',
+      captcha: grecaptcha.getResponse() || '',
     };
+    if (!Meteor.settings.public.isInviteRequired) {
+      grecaptcha.reset();
+    }
     Accounts.createUser(options, (err) => {
       if (err) {
         Notifications.error(

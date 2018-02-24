@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import Game from '/moduls/game/lib/main.game';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import spaceport from '/imports/content/Building/Residential/server/SpacePort';

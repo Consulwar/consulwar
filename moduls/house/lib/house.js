@@ -70,6 +70,8 @@ game.HouseItem = function(options) {
     return '/img/game/house/' + this.subgroup + '/i/' + this.engName + '.jpg';
   };
 
+  this.card = this.image;
+
   this.getPrice = function() {
     return options.price;
   };

@@ -3,6 +3,15 @@ import MilitaryEffect from '/imports/modules/Effect/lib/MilitaryEffect';
 import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
 import { priceT1, priceT2, priceT3, priceT4 } from '/imports/content/formula';
 
+let content;
+Meteor.startup(() => {
+  if (Meteor.isClient) {
+    content = require('/imports/content/client').default;
+  } else {
+    content = require('/imports/content/server').default;
+  }
+});
+
 game = {
   PRODUCTION_FACTOR: 1.48902803168182,
   PRICE_FACTOR: 1.1,
@@ -733,7 +742,8 @@ Game = {
           engName: 'votePower',
           type: 'votePower',
           icon: '/img/game/votepower.png',
-          image: '/img/game/votepower.jpg'
+          image: '/img/game/votepower.jpg',
+          card: '/img/game/votepower.jpg',
         };
 
       case 'personSkin':
@@ -747,7 +757,11 @@ Game = {
           getIcon: Game.Persons[personId].getIcon(),
           image: Game.Persons[personId].getImage(skinId),
           getImage: Game.Persons[personId].getImage(skinId),
+          card: Game.Persons[personId].getImage(skinId),
         };
+
+      default:
+        return content[obj.id];
     }
   },
 

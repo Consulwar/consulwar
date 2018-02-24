@@ -43,7 +43,7 @@ class AbstractItem {
     doNotRegisterEffects = false,
     notImplemented = false,
     basePrice = {},
-    requirements = () => [],
+    requirements = [],
   }) {
     if (new.target === AbstractItem) {
       throw new Meteor.Error(

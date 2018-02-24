@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { default as Game, game } from '/moduls/game/lib/main.game';
 import User from '/imports/modules/User/lib/User';
 
+import UnitCollection from '/imports/modules/Unit/lib/UnitCollection';
+
 import BattleCollection from '../../battle/lib/imports/collection';
 import Battle from '../../battle/lib/imports/battle';
 import traverseGroup from '../../battle/lib/imports/traverseGroup';
@@ -27,7 +29,7 @@ Game.Unit = {
     SHIP: 3
   },
 
-  Collection: new Meteor.Collection('units'),
+  Collection: UnitCollection,
 
   getArmy: function ({ id } = {}) {
     return Game.Unit.Collection.findOne({
@@ -302,11 +304,11 @@ game.Unit = function (options) {
   };
 
 
-  this.path = '/img/game/unit/';
+  this.path = `/img/game/${this.id}/`;
 
-  this.icon = `${this.path}army/${this.group}/i/${this.engName.toLocaleLowerCase()}.png`;
-  this.card = `${this.path}army/${this.group}/${this.engName.toLocaleLowerCase()}.jpg`;
-  this.overlayOwn = `${this.path}${this.group}/${this.engName.toLocaleLowerCase()}/item.png`;
+  this.icon = `${this.path}icon.png`;
+  this.card = `${this.path}card.jpg`;
+  this.overlayOwn = `${this.path}item.png`;
 
   this.totalCount = function (options = {}) {
     const userId = options.userId || (!options.user ? Meteor.userId() : null);
@@ -440,10 +442,10 @@ game.ReptileUnit = function (options) {
     return Router.routes[this.type].path(options);
   };
 
-  this.path = '/img/game/unit/reptiles/';
+  this.path = `/img/game/${this.id}/`;
 
-  this.icon = `${this.path}${this.group}/i/${this.engName.toLocaleLowerCase()}.png`;
-  this.card = `${this.path}${this.group}/${this.engName.toLocaleLowerCase()}.jpg`;
+  this.icon = `${this.path}icon.png`;
+  this.card = `${this.path}card.jpg`;
   this.overlayOwn = this.card;
 
   this.canBuild = function () {

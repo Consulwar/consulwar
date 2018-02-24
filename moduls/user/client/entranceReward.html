@@ -26,7 +26,7 @@
                   {{reward.type}} 
                   {{#if and (eq selectedReward.state 'current') (eq winner reward)}}winner{{/if}}
                 " 
-                style="background-image: url({{reward.image}});" 
+                style="background-image: url({{reward.card}});" 
                 data-count="{{formatNumber (getAmount profit)}}"
                 data-chance="{{formatNumber chance}}%"
               >
@@ -37,7 +37,7 @@
       {{else}}
         <div 
           class="reward {{selectedReward.obj.type}}" 
-          style="background-image: url({{selectedReward.obj.image}});" 
+          style="background-image: url({{selectedReward.obj.card}});" 
           data-count="{{formatNumber (getAmount selectedReward.profit)}}"
         >
         </div>

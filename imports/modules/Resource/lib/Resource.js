@@ -15,7 +15,7 @@ class Resource {
     this.type = 'resource';
 
     this.icon = `/img/game/${this.id}/icon.png`;
-    this.card = `/img/game/${this.id}/card.jpg`
+    this.card = `/img/game/${this.id}/card.jpg`;
   }
 }
 

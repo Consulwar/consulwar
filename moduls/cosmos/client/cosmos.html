@@ -151,7 +151,8 @@
       <div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
         {{#each units}}
           <a 
-            class="{{this.unit.engName}}-icon {{#unless this.count}}disabled{{/unless}}" 
+            class="{{#unless this.count}}disabled{{/unless}}"
+            style="background-image: url({{this.unit.icon}});"
             href="{{this.unit.url}}"
           >
             <div
@@ -178,7 +179,7 @@
             data-id="{{this.engName}}"
             data-max="{{this.max}}"
           >
-            <a class="{{this.engName}}-icon"></a>
+            <a style="background-image: url({{this.icon}});"></a>
             <div class="max">{{formatNumberWithISO this.max}}</div>
 
             <div class="count">

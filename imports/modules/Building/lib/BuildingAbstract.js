@@ -28,7 +28,7 @@ class BuildingAbstract extends AbstractUniqueItem {
     return (buildings && buildings[this.id]) || 0;
   }
 
-  has({ level, ...options }) {
+  has({ level = 1, ...options } = {}) {
     return this.getLevel(options) >= level;
   }
 }

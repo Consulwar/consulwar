@@ -1399,6 +1399,7 @@ Template.cosmosAttackMenu.helpers({
       units.push({
         engName: key,
         name: Game.Unit.items.army.fleet[key].name,
+        icon: Game.Unit.items.army.fleet[key].icon,
         max: max,
         count: (selected && selected[key]) || 0
       });

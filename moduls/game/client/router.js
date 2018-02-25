@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
-import PageIndex from '/imports/client/ui/pages/PageIndex/PageIndex';
-import PageAbout from '/imports/client/ui/pages/PageAbout/PageAbout';
+import PageIndex from '/imports/client/ui/pages/Index/PageIndex';
+import PageAbout from '/imports/client/ui/pages/About/PageAbout';
 
 initRouterClient = function() {
 'use strict';

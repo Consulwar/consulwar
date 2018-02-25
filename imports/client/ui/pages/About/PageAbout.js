@@ -3,7 +3,6 @@ import './PageAbout.html';
 import './PageAbout.styl';
 
 class PageAbout extends BlazeComponent {
-
   template() {
     return 'PageAbout';
   }

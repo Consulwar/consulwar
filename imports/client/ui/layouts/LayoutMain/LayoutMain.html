@@ -15,7 +15,15 @@
         </a>
       </div>
       <nav class="cw--MainHeader__menu">
-        <a href="" class="cw--MainHeader__menuItem">Картинки</a>
+        <a
+          href="{{pathFor route='screenshots'}}"
+          class="
+            cw--MainHeader__menuItem
+            {{#if isRouterName "screenshots"}}cw--MainHeader__menuItem_active{{/if}}
+          "
+        >
+          Картинки
+        </a>
         <button
           class="
             cw--MainHeader__playButton
@@ -27,7 +35,15 @@
         >
           Начать игру
         </button>
-        <a href="{{pathFor route='about'}}" class="cw--MainHeader__menuItem">Про игру</a>
+        <a
+          href="{{pathFor route='about'}}"
+          class="
+            cw--MainHeader__menuItem
+            {{#if isRouterName "about"}}cw--MainHeader__menuItem_active{{/if}}
+          "
+        >
+          Про игру
+        </a>
       </nav>
 
       <div class="cw--MainHeader__stats">
@@ -52,7 +68,7 @@
 
     <footer class="cw--MainFooter">
       <div class="cw--MainFooter__copyright">
-        Morula, 2018
+        &copy; Morula, 2018
       </div>
 
       <nav class="cw--MainFooter__menu">

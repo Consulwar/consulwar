@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import { ChdFeedbackWidget } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
@@ -43,6 +44,10 @@ class LayoutMain extends BlazeComponent {
 
   showFeedback(event, theme) {
     ChdFeedbackWidget.show(theme);
+  }
+
+  isRouterName(routeName) {
+    return Router.current().route.getName() === routeName;
   }
 }
 

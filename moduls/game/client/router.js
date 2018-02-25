@@ -190,9 +190,28 @@ Router.route('/logout', function () {
   this.redirect('index');
 });
 
-Router.configure({
-  loadingTemplate: 'loading',
-});
+  Router.configure({
+    loadingTemplate: 'loading',
+  });
+
+  Router.route('/', function() {
+    this.layout(LayoutMain.renderComponent());
+    this.render(PageIndex.renderComponent());
+
+    const user = Meteor.user();
+    if (user) {
+      if (user.blocked === true) {
+        Meteor.logout();
+        this.redirect('index');
+      } else {
+        Router.go('game');
+      }
+    }
+
+    if (window.Metrica !== undefined) {
+      Metrica.hit(window.location.href, 'Index', document.referrer);
+    }
+  }, { name: 'index' });
 
   Router.route('/about', function() {
     this.layout(LayoutMain.renderComponent(), { data: { hasShadow: true } });
@@ -203,33 +222,24 @@ Router.configure({
     }
   }, { name: 'about' });
 
-Router.route('/', function() {
-  this.layout(LayoutMain.renderComponent());
-  this.render(PageIndex.renderComponent());
+  Router.route('/screenshots', function() {
+    this.layout(LayoutMain.renderComponent(), { data: { hasShadow: true } });
+    this.render(PageAbout.renderComponent());
 
-  const user = Meteor.user();
-  if (user) {
-    if (user.blocked === true) {
-      Meteor.logout();
-      this.redirect('index');
-    } else {
-      Router.go('game');
+    if (window.Metrica !== undefined) {
+      Metrica.hit(window.location.href, 'Screenshots', document.referrer);
     }
-  }
+  }, { name: 'screenshots' });
 
-  if (window.Metrica !== undefined) {
-    Metrica.hit(window.location.href, 'Index', document.referrer);
-  }
-}, { name: 'index' });
 
-Router.route('pageNotFound', {
-  path: '/(.+)',
-  action: function() {
-    if (Meteor.user()) {
-      return this.redirect('game');
-    }
-    return this.redirect('index');
-  }
-});
+  Router.route('pageNotFound', {
+    path: '/(.+)',
+    action: function() {
+      if (Meteor.user()) {
+        return this.redirect('game');
+      }
+      return this.redirect('index');
+    },
+  });
 
 };

@@ -1,5 +1,9 @@
+import { Meteor } from 'meteor/meteor';
+import { Router } from 'meteor/iron:router';
+import { $ } from 'meteor/jquery';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/PageIndex/PageIndex';
+import PageAbout from '/imports/client/ui/pages/PageAbout/PageAbout';
 
 initRouterClient = function() {
 'use strict';
@@ -50,8 +54,6 @@ window.GameRouteController = RouteController.extend({
   }
 });
 
-
-
 var gameRoutes = {
   planet: {
     building: 'planet/:group(residential|military)/:item?/:menu?'
@@ -100,16 +102,16 @@ var gameRoutes = {
   chat: {
     chat: 'chat/:room',
     mail: 'mail/:page',
-    mailAdmin: 'mailadmin/:page'
+    mailAdmin: 'mailadmin/:page',
   },
 
   cosmos: {
     cosmos: 'cosmos',
-    cosmosHistory: 'cosmos/history/:page'
+    cosmosHistory: 'cosmos/history/:page',
   },
 
   settings: {
-    settings: 'settings'
+    settings: 'settings',
   }
 };
 
@@ -192,14 +194,14 @@ Router.configure({
   loadingTemplate: 'loading',
 });
 
-Router.route('/about', function() {
-  this.layout(LayoutMain.renderComponent());
-  this.render(PageAbout.renderComponent());
+  Router.route('/about', function() {
+    this.layout(LayoutMain.renderComponent(), { data: { hasShadow: true } });
+    this.render(PageAbout.renderComponent());
 
-  if (window.Metrica !== undefined) {
-    Metrica.hit(window.location.href, 'About', document.referrer);
-  }
-}, { name: 'about' });
+    if (window.Metrica !== undefined) {
+      Metrica.hit(window.location.href, 'About', document.referrer);
+    }
+  }, { name: 'about' });
 
 Router.route('/', function() {
   this.layout(LayoutMain.renderComponent());
@@ -223,11 +225,10 @@ Router.route('/', function() {
 Router.route('pageNotFound', {
   path: '/(.+)',
   action: function() {
-    if(Meteor.user()){
+    if (Meteor.user()) {
       return this.redirect('game');
-    } else {
-      return this.redirect('index');
     }
+    return this.redirect('index');
   }
 });
 

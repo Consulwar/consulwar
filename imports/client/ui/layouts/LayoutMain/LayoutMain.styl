@@ -12,12 +12,28 @@
   background-image url(/img/game/bg/militaryDistrict.jpg)
   background-size cover
   background-position center
+  position relative
+
+  &_shadow
+    background-image url(/img/game/bg/chamberOfConsul.jpg)
+    
+    &:before
+      content ''
+      position absolute
+      left 0
+      top 0
+      width 100%
+      height 100%
+      background-color alpha($cw--color_black, .4)
 
 
 // Content section
 
 .cw--MainContent
-  flex 1 1 auto
+  position relative
+  flex-grow 1
+  flex-shrink 1
+  flex-basis auto
   padding 40px 50px
 
   +media(null, $cw--size_xs)
@@ -27,6 +43,7 @@
 // Header section
 
 .cw--MainHeader
+  position relative
   flex-basis 60px
   flex-grow 0
   display flex
@@ -132,6 +149,7 @@
 // Footer section
 
 .cw--MainFooter
+  position relative
   flex 0 1 auto
   display flex
   height 50px

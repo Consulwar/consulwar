@@ -20,10 +20,7 @@ const getWrecksCount = function(unit) {
   return (
        wrecks
     && wrecks.units
-    && wrecks.units.army
-    && wrecks.units.army[unit.group]
-    && wrecks.units.army[unit.group][unit.engName]
-    && wrecks.units.army[unit.group][unit.engName].count
+    && wrecks.units[unit.id].count
   ) || 0;
 };
 

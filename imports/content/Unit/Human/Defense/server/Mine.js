@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Mine from '../lib/Mine';
 
-export default new Unit(Mine);
+export default new UnitHuman(Mine);

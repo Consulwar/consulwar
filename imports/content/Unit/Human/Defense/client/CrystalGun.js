@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/client/Unit';
+import UnitHuman from '/imports/modules/Unit/client/UnitHuman';
 import CrystalGun from '../lib/CrystalGun';
 
-export default new Unit(CrystalGun);
+export default new UnitHuman(CrystalGun);

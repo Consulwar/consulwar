@@ -55,10 +55,10 @@
 <template name="item_characteristic">
   {{#if item.characteristics}}
     <div class="characteristics">
-      {{#if item.targets}}
+      {{#if item.getTargets}}
         Приоритеты атаки:
         <ol class="targets">
-          {{#each item.targets}}
+          {{#each item.getTargets}}
             <li><a href="{{this.url}}">{{this.name}}</a></li>
           {{/each}}
         </ol>
@@ -66,25 +66,15 @@
       {{#each item.triggers.battle}}
       {{this.name}}
       {{/each}}
-
-      {{#if eq item.characteristics.special 'air'}}
-        *Воздушная единица<br/>
-      {{/if}}
-
-      {{#each item.characteristics.notAttack}}
-      {{#if eq this 'air'}}
-        *Не атакует воздушные цели
-      {{/if}}
-      {{/each}}
       
-      {{#if item.characteristics.damage}}
-        <span class="damage" {{militaryTooltip item.characteristics 'damage'}}>
-          {{formatNumberWithISO item.characteristics.damage.min}} —
-          {{formatNumberWithISO item.characteristics.damage.max}}
+      {{#if item.getCharacteristics.weapon.damage}}
+        <span class="damage" {{militaryTooltip item.getCharacteristics 'damage'}}>
+          {{formatNumberWithISO item.getCharacteristics.weapon.damage.min}} —
+          {{formatNumberWithISO item.getCharacteristics.weapon.damage.max}}
         </span>
       {{/if}} 
-      <span class="life" {{militaryTooltip item.characteristics 'life'}}>
-        {{formatNumberWithISO item.characteristics.life}}
+      <span class="life" {{militaryTooltip item.getCharacteristics 'life'}}>
+        {{formatNumberWithISO item.getCharacteristics.health.armor}}
       </span>
     </div>
   {{/if}}

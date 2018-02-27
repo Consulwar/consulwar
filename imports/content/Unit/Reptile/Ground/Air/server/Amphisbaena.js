@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Amphisbaena from '../lib/Amphisbaena';
 
-export default new ReptileUnit(Amphisbaena);
+export default new UnitReptile(Amphisbaena);

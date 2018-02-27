@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Wasp from '../lib/Wasp';
 
-export default new Unit(Wasp);
+export default new UnitHuman(Wasp);

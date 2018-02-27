@@ -4,6 +4,8 @@ import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import ReinforcementEvents from '/imports/modules/Space/server/reinforcementEvents';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
+import humanGroundUnits from '/imports/content/Unit/Human/Ground/server';
 
 import { Command, ResponseToGeneral } from '../lib/generals';
 
@@ -73,24 +75,21 @@ Meteor.methods({
     let totalCount = 0;
     let honor = 0;
 
-    for (let name in units) {
-      if (units.hasOwnProperty(name)) {
-        units[name] = parseInt( units[name], 10 );
-
-        const count = units[name];
-        const unit = Game.Unit.items.army.ground[name];
-
-        if (!unit || unit.type === 'mutual' || unit.getCount({ from: 'hangar' }) < count || count <= 0) {
-          throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
-        }
-
-        // if (protectedHonor) {
-          honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
-        // }
-
-        totalCount += count;
+    _(units).pairs().forEach(([id, count]) => {
+      count = parseInt(count, 10);
+  
+      const unit = humanGroundUnits[id];
+  
+      if (!unit || unit.type === 'mutual' || unit.getCount({ from: 'hangar' }) < count || count <= 0) {
+        throw new Meteor.Error('Ишь ты, чего задумал, шакал.');
       }
-    }
+  
+      // if (protectedHonor) {
+        honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
+      // }
+  
+      totalCount += count;
+    });
 
     if (totalCount === 0) {
       throw new Meteor.Error('Войска для отправки не выбраны');
@@ -107,7 +106,7 @@ Meteor.methods({
     // send reinforcements to current point
     ReinforcementEvents.add({
       userId: user._id,
-      units: { army: { ground: units } },
+      units,
       protectAllHonor: protectedHonor > 0,
       targetZoneName,
       rating: user.rating,
@@ -125,18 +124,15 @@ Meteor.methods({
     const stats = {};
     stats['reinforcements.sent.total'] = 0;
 
-    for (let name in units) {
-      if (units.hasOwnProperty(name)) {
-        Game.Unit.remove({
-          group: 'ground',
-          engName: name,
-          count: units[name]
-        });
+    _(units).pairs().forEach(([id, count]) => {
+      UnitHuman.remove({
+        id,
+        count,
+      });
 
-        stats['reinforcements.sent.army.ground.' + name] = units[name];
-        stats['reinforcements.sent.total'] += units[name];
-      }
-    }
+      stats[`reinforcements.sent.${id}`] = count;
+      stats['reinforcements.sent.total'] += count;
+    });
 
     // save statistic
     Game.Statistic.incrementUser(user._id, stats);

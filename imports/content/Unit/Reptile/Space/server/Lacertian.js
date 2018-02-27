@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Lacertian from '../lib/Lacertian';
 
-export default new ReptileUnit(Lacertian);
+export default new UnitReptile(Lacertian);

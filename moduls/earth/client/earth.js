@@ -1,3 +1,5 @@
+import unitItems from '/imports/content/Unit/client';
+import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
@@ -115,40 +117,33 @@ Template.earthHistoryItem.helpers({
   },
 
   getArmyInfo: function(units, rest) {
-    var result = [];
-    var wasBattle = (this.battle.result === undefined) ? false : true;
+    const result = [];
+    const wasBattle = (this.battle.result === undefined) ? false : true;
 
-    for (var side in units) {
-      for (var group in units[side]) {
-        for (var name in units[side][group]) {
-
-          var countStart = units[side][group][name];
-          if (_.isString( countStart )) {
-            countStart = game.Battle.count[ countStart ];
-          }
-
-          if (countStart <= 0) {
-            continue;
-          }
-
-          var countAfter = 0;
-          if (rest
-           && rest[side]
-           && rest[side][group]
-           && rest[side][group][name]
-          ) {
-            countAfter = rest[side][group][name];
-          }
-
-          result.push({
-            name: Game.Unit.items[side][group][name].name,
-            order: Game.Unit.items[side][group][name].order,
-            start: countStart,
-            end: wasBattle ? countAfter : countStart
-          });
-        }
+    _(units).pairs().forEach(([id, countStart]) => {
+      const unit = unitItems[id];
+      if (_.isString(countStart)) {
+        countStart = game.Battle.count[countStart];
       }
-    }
+
+      if (countStart <= 0) {
+        return;
+      }
+
+      let countAfter = 0;
+      if (rest
+       && rest[id]
+      ) {
+        countAfter = rest[id];
+      }
+
+      result.push({
+        title: unit.title,
+        order: unit.order,
+        start: countStart,
+        end: wasBattle ? countAfter : countStart,
+      });
+    });
 
     result = _.sortBy(result, function(item) { return item.order; });
 
@@ -183,13 +178,11 @@ Game.Earth.showReserve = function() {
 };
 
 Template.reserve.helpers({
-  units: function() {
-    return _.map(Game.Unit.items.army.ground, function(val, key) {
-      return {
-        engName: key,
-        max: val.getCount({ from: 'hangar' }),
-      };
-    });
+  units() {
+    return _(humanGroundUnits).map(([unit, id]) => ({
+      id,
+      max: unit.getCurrentCount({ from: 'hangar' }),
+    }));
   },
 
   honor: function() {
@@ -231,7 +224,7 @@ Template.reserve.events({
 
       if (count > 0) {
         honor += Game.Resources.calculateHonorFromReinforcement(
-          Game.Unit.items.army.ground[id].price(count)
+          humanGroundUnits[id].price(count)
         );
       }
     });
@@ -316,30 +309,21 @@ Template.earthZoneInfo.helpers({
     var group = null;
     var name = null;
 
-    var userArmy = (zone.userArmy) ? [] : null;
-    for (side in zone.userArmy) {
-      for (group in zone.userArmy[side]) {
-        for (name in zone.userArmy[side][group]) {
-          userArmy.push({
-            name: Game.Unit.items[side][group][name].name,
-            count: zone.userArmy[side][group][name],
-            userUnitsCount: (userUnitsArmy[side] && userUnitsArmy[side][group]) ?
-              userUnitsArmy[side][group][name] : null,
-          });
-        }
-      }
+    let userArmy = null;
+    if (zone.userArmy) {
+      userArmy = _(zone.userArmy).map((count, id) => ({
+        title: unitItems[id].title,
+        count,
+        userUnitsCount: userUnitsArmy[id] ? userUnitsArmy[id] : null,
+      }));
     }
 
-    var enemyArmy = (zone.enemyArmy) ? [] : null;
-    for (side in zone.enemyArmy) {
-      for (group in zone.enemyArmy[side]) {
-        for (name in zone.enemyArmy[side][group]) {
-          enemyArmy.push({
-            name: Game.Unit.items[side][group][name].name,
-            count: zone.enemyArmy[side][group][name]
-          });
-        }
-      }
+    let enemyArmy = null;
+    if (zone.enemyArmy) {
+      enemyArmy = _(zone.enemyArmy).map((count, id) => ({
+        title: unitItems[id].title,
+        count,
+      }));
     }
 
     var userCount = 0;

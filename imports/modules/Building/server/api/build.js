@@ -33,7 +33,7 @@ Meteor.methods({
 
     const building = buildings[id];
 
-    if (!building || !building.canBuild()) {
+    if (!building || !building.canBuild(null, cards)) {
       throw new Meteor.Error('Строительство невозможно');
     }
 

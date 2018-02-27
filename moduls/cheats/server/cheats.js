@@ -11,9 +11,9 @@ initCheatsServer = function() {
 if (process.env.NODE_ENV == 'development') {
 
   Meteor.methods({
-    'cheats.setUnitCount': function(group, name, count) {
+    'cheats.setUnitCount': function(id, count) {
       var set = {};
-      set['units.army.' + group + '.' + name] = count; 
+      set[`units.${id}`] = count;
 
       Game.Unit.initialize();
       Game.Unit.Collection.update({

@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Blade from '../lib/Blade';
 
-export default new ReptileUnit(Blade);
+export default new UnitReptile(Blade);

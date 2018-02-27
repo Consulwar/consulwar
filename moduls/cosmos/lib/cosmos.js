@@ -1,5 +1,6 @@
 import FlightEvents from '/imports/modules/Space/lib/flightEvents';
 import { Meteor } from 'meteor/meteor';
+import { _ } from 'lodash';
 import User from '../../../imports/modules/User/lib/User';
 
 let Hyperdrive;
@@ -201,8 +202,8 @@ Game.Planets = {
       var army = (planet.isHome)
         ? Game.Unit.getHomeFleetArmy({ userId })
         : Game.Unit.getArmy({ id: planet.armyId });
-      if (army && army.units && army.units.army) {
-        return army.units.army.fleet;
+      if (army && army.units) {
+        return _.pickBy(army.units, (unit, id) => id.indexOf('/Space/') !== -1) || null;
       }
     }
 

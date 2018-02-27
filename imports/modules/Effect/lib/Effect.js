@@ -342,7 +342,15 @@ class Effect {
           0,
         );
 
-        if (obj[affect] === undefined) {
+        if (affect === 'damage') {
+          if (!(obj.weapon && obj.weapon.damage)) {
+            return;
+          }
+        } else if (affect === 'life') {
+          if (!(obj.health && obj.health.armor)) {
+            return;
+          }
+        } else if (obj[affect] === undefined) {
           return;
         }
 

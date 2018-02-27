@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import MotherTank from '../lib/MotherTank';
 
-export default new Unit(MotherTank);
+export default new UnitHuman(MotherTank);

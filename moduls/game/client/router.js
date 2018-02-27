@@ -77,11 +77,11 @@ var gameRoutes = {
   },
 
   army: {
-    unit: 'army/:group(fleet|defense|ground)/:item?',
+    unit: 'army/:group(Space|Defense|Ground)/:subgroup(Infantry|Enginery|Air)?/:item?',
   },
 
   info: {
-    reptileUnit: 'info/reptiles/:group(fleet|ground)/:item?',
+    reptileUnit: 'info/:group(Space|Ground)/:subgroup(Infantry|Enginery|Air)?/:item?',
   },
 
   research: {

@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Gecko from '../lib/Gecko';
 
-export default new ReptileUnit(Gecko);
+export default new UnitReptile(Gecko);

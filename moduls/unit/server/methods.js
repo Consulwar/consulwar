@@ -1,6 +1,7 @@
 import Log from '/imports/modules/Log/server/Log';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import User from '/imports/modules/User/server/User';
+import humanUnits from '/imports/content/Unit/Human/server';
 
 import FlightEvents from '/imports/modules/Space/server/flightEvents';
 import { Meteor } from 'meteor/meteor';
@@ -11,108 +12,6 @@ initUnitServerMethods = function() {
 'use strict';
 
 Meteor.methods({
-  'unit.build': function(options) {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'unit.build', user });
-
-    check(options, Object);
-    check(options.group, String);
-    check(options.engName, String);
-    check(options.count, Number);
-
-    options.count = parseInt(options.count, 10);
-
-    if (options.count < 1 || _.isNaN(options.count)) {
-      throw new Meteor.Error('Не умничай');
-    }
-
-    let cardsObject = {};
-    let cardList = [];
-
-    if (options.cards) {
-      check(options.cards, Object);
-
-      cardsObject = options.cards;
-
-      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
-        throw new Meteor.Error('Карточки недоступны для применения');
-      }
-
-      cardList = Game.Cards.objectToList(cardsObject);
-    }
-
-    Meteor.call('actualizeGameInfo');
-
-    var item = Game.Unit.items.army[options.group] && Game.Unit.items.army[options.group][options.engName];
-
-    if (!item || !item.canBuild(options.count)) {
-      throw new Meteor.Error('Недостаточно ресурсов');
-    }
-
-    if (item.maxCount !== undefined) {
-      var countDelta = item.maxCount - item.totalCount();
-      if (countDelta < 1) {
-        throw new Meteor.Error('Достигнуто максимальное количество юнитов данного типа');  
-      }
-
-      if (countDelta < options.count) {
-        options.count = countDelta;
-      }
-    }
-
-    var set = {
-      type: item.type,
-      group: item.group,
-      engName: item.engName,
-      count: options.count,
-      dontNeedResourcesUpdate: true
-    };
-
-    let price = item.price(options.count, cardList);
-    set.time = price.time;
-
-    var isTaskInserted = Game.Queue.add(set);
-    if (!isTaskInserted) {
-      throw new Meteor.Error('Не удалось начать подготовку юнитов');
-    }
-
-    for (let card of cardList) {
-      Game.Cards.activate(card, user);
-    }
-
-    Game.Cards.spend(cardsObject);
-
-    Game.Resources.spend(price);
-    
-    if (price.credits) {
-      Game.Payment.Expense.log(price.credits, 'unitBuild', {
-        group: set.group,
-        name: set.engName,
-        count: set.count
-      });
-    }
-
-    const rating = Game.Resources.calculateRatingFromResources(price);
-
-    if (rating > 100000) {
-      if (item.group == 'ground') {
-        Game.Broadcast.add(user.username, `начал подготовку «${item.name}» в количестве ${options.count} штук`);
-      } else {
-        Game.Broadcast.add(user.username, `отправил на верфь ${options.count} кораблей «${item.name}»`);
-      }
-    }
-
-    Meteor.users.update({
-      _id: user._id
-    }, {
-      $inc: {
-        rating
-      }
-    });
-  },
-
   'unit.speedup': function(options) {
     const user = User.getById();
     User.checkAuth({ user });
@@ -175,25 +74,24 @@ Meteor.methods({
     Game.Cards.spend(cardsObject);
   },
 
-  'unit.repair'(group, engName) {
+  'unit.repair'(id) {
     const user = User.getById();
     User.checkAuth({ user });
 
     Log.method.call(this, { name: 'unit.repair', user });
 
-    check(group, String);
-    check(engName, String);
+    check(id, String);
 
     Game.Wrecks.actualize();
 
     const wrecks = Game.Wrecks.Collection.findOne({ userId: user._id });
 
-    if (!wrecks || !wrecks.units.army[group] || !wrecks.units.army[group][engName]) {
+    if (!wrecks || !wrecks.units[id]) {
       throw new Meteor.Error('Нет юнитов для восстановления');
     }
 
-    const count = wrecks.units.army[group][engName].count;
-    const unit = Game.Unit.items.army[group][engName];
+    const count = wrecks.units[id].count;
+    const unit = humanUnits[id];
     
     const price = Game.Wrecks.getPrice(unit, count);
 
@@ -203,21 +101,20 @@ Meteor.methods({
 
     Game.Unit.add({
       unit: {
-        group,
-        engName,
+        id,
         count,
       },
       user,
     });
 
-    Game.Wrecks.removeUnit(wrecks, group, engName);
+    Game.Wrecks.removeUnit(wrecks, id);
 
     Game.Resources.spend(price);
 
     // save statistic
     Game.Statistic.incrementUser(user._id, {
       'units.repair.total': count,
-      [`units.repair.army.${group}.${engName}`]: count,
+      [`units.repair.${id}`]: count,
     });
   },
 

@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import OrbitalDefenseStation from '../lib/OrbitalDefenseStation';
 
-export default new Unit(OrbitalDefenseStation);
+export default new UnitHuman(OrbitalDefenseStation);

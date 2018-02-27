@@ -107,8 +107,6 @@ const showNotificationFromTask = function(task) {
   let item;
   if (task.itemId) {
     item = content[task.itemId];
-  } else if (task.type == 'unit') {
-    item = Game.Unit.items.army[task.group][task.engName]; 
   }
 
   if (item) {

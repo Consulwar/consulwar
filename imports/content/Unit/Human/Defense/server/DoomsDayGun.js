@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import DoomsDayGun from '../lib/DoomsDayGun';
 
-export default new Unit(DoomsDayGun);
+export default new UnitHuman(DoomsDayGun);

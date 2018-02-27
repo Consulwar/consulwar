@@ -105,8 +105,12 @@
               data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
             >
               {{#if this.getCurrentLevel}}
-                <span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
-                  {{formatNumberWithISO this.getCurrentLevel 3}}
+                <span class="level">
+                  {{formatNumberWithISO currentValue 3}}
+                </span>
+              {{else if currentValue}}
+                <span class="count">
+                  {{formatNumberWithISO currentValue 3}}
                 </span>
               {{/if}}
             </a>
@@ -150,7 +154,7 @@
 
                 <!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->
   {{else}}
-    <div class="overlay {{menuGroup}} {{itemGroup}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
+    <div class="overlay halo {{menuGroup}} {{itemGroup}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
       {{#each overlayItems}}
         {{#if this.overlay}}
           {{#let overlay=this.getOverlay}}

@@ -6,18 +6,14 @@ import UnitCollection from '/imports/modules/Unit/lib/UnitCollection';
 
 import BattleCollection from '../../battle/lib/imports/collection';
 import Battle from '../../battle/lib/imports/battle';
-import traverseGroup from '../../battle/lib/imports/traverseGroup';
 import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
 
-let content;
-let fleetUps;
+let unitItems;
 Meteor.startup(() => {
   if (Meteor.isClient) {
-    content = require('/imports/content/client').default;
-    fleetUps = require('/imports/content/Research/Fleet/client').default;
+    unitItems = require('/imports/content/Unit/client').default;
   } else {
-    content = require('/imports/content/server').default;
-    fleetUps = require('/imports/content/Research/Fleet/server').default;
+    unitItems = require('/imports/content/Unit/server').default;
   }
 });
 
@@ -58,82 +54,58 @@ Game.Unit = {
     return null;
   },
 
-  get: function({ group, engName, ...options }) {
-    // Temporary fix! TODO : remove this after frontend work
-    if (group === 'ground') {
-      const record = Game.Unit.getHangarArmy(options);
+  get({ id, ...options }) {
+    let record;
 
-      if (record
-        && record.units
-        && record.units.army
-        && record.units.army[group]
-        && record.units.army[group][engName]
-      ) {
-        return record.units.army[group][engName];
-      } else {
-        return 0;
-      }
+    if (id.indexOf('Unit/Human/Ground') !== -1) {
+      record = Game.Unit.getHangarArmy(options);
     } else {
-      const record = Game.Unit.getHomeFleetArmy(options);
-
-      if (record
-        && record.units
-        && record.units.army
-        && record.units.army[group]
-        && record.units.army[group][engName]
-      ) {
-        return record.units.army[group][engName];
-      } else {
-        return 0;
-      }
+      record = Game.Unit.getHomeFleetArmy(options);
     }
+
+    if (record && record.units && record.units[id]) {
+      return record.units[id];
+    }
+    return 0;
   },
 
-  has: function({ group, engName, count = 1 }) {
-    return Game.Unit.items.army[group][engName].totalCount() >= count;
+  has({ id, count = 1 }) {
+    return unitItems[id].totalCount() >= count;
   },
 
   calculateUnitsPower: function(units, isEarth = false) {
-    let group = {};
+    const group = {};
 
-    traverseGroup(units, function(armyName, typeName, unitName, count) {
-      let unit = Game.Unit.items[armyName][typeName][unitName];
+    _(units).pairs().forEach(([id, count]) => {
+      const unit = unitItems[id];
       let characteristics;
       if (isEarth) {
         characteristics = unit.options.characteristics;
       } else {
-        characteristics = unit.characteristics;
+        characteristics = unit.getCharacteristics();
       }
 
       let insertedUnit;
       if (_.isNumber(unit.power)) {
         insertedUnit = {
           power: unit.power,
-          count: count
+          count,
         };
       } else {
         insertedUnit = {
           weapon: {
             damage: {
-              max: characteristics.weapon.damage.max
-            }
+              max: characteristics.weapon.damage.max,
+            },
           },
           health: {
-            armor: characteristics.health.armor
+            armor: characteristics.health.armor,
           },
-          count: count
+          count,
         };
       }
 
-      if (!group[armyName]) {
-        group[armyName] = {};
-      }
-
-      if (!group[armyName][typeName]) {
-        group[armyName][typeName] = {};
-      }
-
-      group[armyName][typeName][unitName] = insertedUnit;
+      group[id] = insertedUnit;
     });
 
     return calculateGroupPower(group);
@@ -144,18 +116,14 @@ Game.Unit = {
       return 0;
     }
 
-    var power = 0;
-    for (var side in units) {
-      for (var group in units[side]) {
-        for (var name in units[side][group]) {
-          var life = Game.Unit.items[side][group][name].getCharacteristics({ userId }).health.armor;
-          var count = units[side][group][name];
-          if (life && count) {
-            power += (life * count);
-          }
-        }
+    let power = 0;
+    _(units).pairs().forEach(([id, count]) => {
+      const life = unitItems[id].getCharacteristics({ userId }).health.armor;
+      if (life && count) {
+        power += (life * count);
       }
-    }
+    });
+    
     return power;
   },
 
@@ -176,323 +144,9 @@ Game.Unit = {
   battleEffects: {}
 };
 
-game.Unit = function (options) {
-  this.id = options.id;
-  this.title = options.title;
-  this.decayTime = options.decayTime;
-  // New-to-legacy
-  const idParts = options.id.split('/');
-  options.name = options.title;
-  options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
-
-  if (Game.newToLegacyNames[options.engName]) {
-    options.engName = Game.newToLegacyNames[options.engName];
-  }
-
-  if (idParts[2] === 'Ground') {
-    options.characteristics.special = idParts[3].toLocaleLowerCase();
-  }
-
-  game.setToMenu = 'army';
-  game.setToSide = idParts[2] === 'Space' ? 'fleet' : idParts[2].toLocaleLowerCase();
-
-  if (options.requirements) {
-    this._requirements = options.requirements;
-    options.requirements = function () {
-      const requirements = this._requirements();
-
-      requirements.forEach((requirement) => {
-        requirement[0] = content[requirement[0]];
-      });
-
-      return requirements;
-    }
-  }
-
-  this._targets = options.targets;
-  options.targets = function () {
-    if (idParts[2] === 'Ground') {
-      return this._targets.map((target) => {
-        let [, side, type, group, engName] = target.split('/');
-        engName = engName.toLocaleLowerCase();
-        if (Game.newToLegacyNames[engName]) {
-          engName = Game.newToLegacyNames[engName];
-        }
-        side = (side === 'Human' ? 'army' : 'reptiles');
-        return Game.Unit.items[side].ground[engName.toLocaleLowerCase()];
-      });
-    } else {
-      return this._targets.map((target) => {
-        let [, side, type, engName] = target.split('/');
-        engName = engName.toLocaleLowerCase();
-        if (Game.newToLegacyNames[engName]) {
-          engName = Game.newToLegacyNames[engName];
-        }
-        side = (side === 'Human' ? 'army' : 'reptiles');
-        return Game.Unit.items[side].fleet[engName.toLocaleLowerCase()];
-      });
-    }
-  }
-
-  if (options.basePrice) {
-    this._basePrice = options.basePrice;
-    options.basePrice = {};
-    _(this._basePrice).keys().forEach((resourceName) => {
-      let realName = resourceName.toLocaleLowerCase();
-      if (Game.newToLegacyNames[realName]) {
-        realName = Game.newToLegacyNames[realName];
-      }
-      options.basePrice[realName] = this._basePrice[resourceName];
-    });
-  }
-  //
-
-  game.Unit.superclass.constructor.apply(this, arguments);
-
-  if (Game.Unit.items.army[this.side][this.engName]) {
-    throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит army ' + this.side + ' ' + this.engName);
-  }
-
-  this.getCount = ({from, ...options}) => {
-    let record;
-    if (from === 'hangar') {
-      record = Game.Unit.getHangarArmy(options);
-    } else {
-      record = Game.Unit.getHomeFleetArmy(options);
-    }
-
-    if (record
-      && record.units
-      && record.units.army
-      && record.units.army[this.group]
-      && record.units.army[this.group][this.engName]
-    ) {
-      return record.units.army[this.group][this.engName];
-    } else {
-      return 0;
-    }
-  };
-
-  Game.Unit.items.army[this.side][this.engName] = this;
-
-  this.color = 'cw--color_metal';
-
-  this.star = function () {
-    if (!fleetUps[`Research/Fleet/${this.engName}`]) {
-      return 0;
-    }
-
-    const level = fleetUps[`Research/Fleet/${this.engName}`].getCurrentLevel();
-    if (level < 10) {
-      return 0;
-    } else if (level < 50) {
-      return 1;
-    } else if (level < 100) {
-      return 2;
-    } else {
-      return 3;
-    }
-  };
-
-  this.url = function (options) {
-    options = options || {
-      group: this.group,
-      item: this.engName
-    };
-
-    return Router.routes[this.type].path(options);
-  };
-
-
-  this.path = `/img/game/${this.id}/`;
-
-  this.icon = `${this.path}icon.png`;
-  this.card = `${this.path}card.jpg`;
-  this.overlayOwn = `${this.path}item.png`;
-
-  this.totalCount = function (options = {}) {
-    const userId = options.userId || (!options.user ? Meteor.userId() : null);
-    const user = options.user || User.getById({ userId });
-
-    const armies = Game.Unit.Collection.find({
-      user_id: user._id
-    }).fetch() || [];
-
-    let result = 0;
-
-    for (let i = 0; i < armies.length; i++) {
-      if (armies[i].units
-        && armies[i].units.army
-        && armies[i].units.army[this.group]
-        && armies[i].units.army[this.group][this.engName]
-      ) {
-        result += parseInt(armies[i].units.army[this.group][this.engName]);
-      }
-    }
-
-    const battles = BattleCollection.find({
-      status: Battle.Status.progress,
-      userNames: user.username,
-    }).fetch() || [];
-
-    battles.forEach((battle) => {
-      battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-        traverseGroup(units, (armyName, group, engName, unit) => {
-          if (group === this.group && engName === this.engName) {
-            result += unit.count;
-          }
-        });
-      });
-    });
-
-    return result;
-  };
-
-  if (options.power !== undefined) {
-    this.power = options.power;
-  }
-
-  this.type = 'unit';
-  this.side = 'army';
-  this.battleEffects = options.battleEffects;
-  this.maxCount = options.maxCount;
-
-  // new
-  this.add = ({ count, userId }) => (
-    Game.Unit.add({
-      unit: {
-        engName: this.engName,
-        group: this.group,
-        count,
-      },
-      userId,
-    })
-  );
-  //
-};
-game.extend(game.Unit, game.Item);
-
-game.ReptileUnit = function (options) {
-  this.id = options.id;
-  this.title = options.title;
-  // New-to-legacy
-  const idParts = options.id.split('/');
-  options.name = options.title;
-  options.engName = idParts[idParts.length - 1].toLocaleLowerCase();
-  options.fleetup = options.upgrade;
-
-  if (Game.newToLegacyNames[options.engName]) {
-    options.engName = Game.newToLegacyNames[options.engName];
-  }
-
-  game.setToMenu = 'reptiles';
-  game.setToSide = idParts[2] === 'Space' ? 'fleet' : idParts[2].toLocaleLowerCase();
-
-  this._targets = options.targets;
-  options.targets = function () {
-    if (idParts[2] === 'Ground') {
-      return this._targets.map((target) => {
-        let [, side, type, group, engName] = target.split('/');
-        engName = engName.toLocaleLowerCase();
-        if (Game.newToLegacyNames[engName]) {
-          engName = Game.newToLegacyNames[engName];
-        }
-        side = (side === 'Human' ? 'army' : 'reptiles');
-        return Game.Unit.items[side].ground[engName.toLocaleLowerCase()];
-      });
-    } else {
-      return this._targets.map((target) => {
-        let [, side, type, engName] = target.split('/');
-        engName = engName.toLocaleLowerCase();
-        if (Game.newToLegacyNames[engName]) {
-          engName = Game.newToLegacyNames[engName];
-        }
-        side = (side === 'Human' ? 'army' : 'reptiles');
-        return Game.Unit.items[side].fleet[engName.toLocaleLowerCase()];
-      });
-    }
-  }
-
-  if (options.basePrice) {
-    this._basePrice = options.basePrice;
-    options.basePrice = {};
-    _(this._basePrice).keys().forEach((resourceName) => {
-      let realName = resourceName.toLocaleLowerCase();
-      if (Game.newToLegacyNames[realName]) {
-        realName = Game.newToLegacyNames[realName];
-      }
-      options.basePrice[realName] = this._basePrice[resourceName];
-    });
-  }
-  //
-  game.ReptileUnit.superclass.constructor.apply(this, arguments);
-
-  if (Game.Unit.items.reptiles[this.group][this.engName]) {
-    throw new Meteor.Error('Ошибка в контенте', 'Дублируется юнит reptiles ' + this.group + ' ' + this.engName);
-  }
-
-  Game.Unit.items.reptiles[this.group][this.engName] = this;
-
-  this.url = function (options) {
-    options = options || {
-      group: this.group,
-      item: this.engName
-    };
-
-    return Router.routes[this.type].path(options);
-  };
-
-  this.path = `/img/game/${this.id}/`;
-
-  this.icon = `${this.path}icon.png`;
-  this.card = `${this.path}card.jpg`;
-  this.overlayOwn = this.card;
-
-  this.canBuild = function () {
-    return false;
-  };
-
-  this.currentLevel = function () {
-    return 0;
-  };
-
-  this.getCurrentLevel = function () {
-    return 0;
-  };
-
-  this.isEnoughResources = function () {
-    return true;
-  };
-
-  if (options.power) {
-    this.power = options.power;
-  }
-
-  this.type = 'reptileUnit';
-  this.side = 'reptiles';
-  this.battleEffects = options.battleEffects;
-};
-game.extend(game.ReptileUnit, game.Item);
-
-game.ReptileHero = function (options) {
-  game.ReptileHero.superclass.constructor.apply(this, arguments);
-
-  this.type = 'reptileHero';
-};
-game.extend(game.ReptileHero, game.ReptileUnit);
-
-game.BattleEffect = function (options) {
-  Game.Unit.battleEffects[options.key] = options.func;
-};
-
 initUnitLib = function() {
 'use strict';
 
 initBattleLib();
 
 };
-
-const Unit = game.Unit;
-const ReptileUnit = game.ReptileUnit;
-
-export { Unit, ReptileUnit };

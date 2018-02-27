@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Cruiser from '../lib/Cruiser';
 
-export default new Unit(Cruiser);
+export default new UnitHuman(Cruiser);

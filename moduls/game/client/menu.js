@@ -2,6 +2,12 @@ import residentialBuildings from '/imports/content/Building/Residential/client';
 import militaryBuildings from '/imports/content/Building/Military/client';
 import content from '/imports/content/client';
 
+import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
+import humanDefenseUnits from '/imports/content/Unit/Human/Defense/client';
+import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
+import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
+import reptileGroundUnits from '/imports/content/Unit/Reptile/Ground/client';
+
 import evolutionResearches from '/imports/content/Research/Evolution/client';
 import fleetResearches from '/imports/content/Research/Fleet/client';
 
@@ -60,27 +66,27 @@ var menu = {
   army: {
     name: 'Войска',
     routeName: ['unit'],
-    url: firstItemUrl(Game.Unit.items.army.fleet),
+    url: firstItemUrl(humanSpaceUnits),
     items: {
-      fleet: {
+      Space: {
         name: 'Космический флот',
         additionalArea: 'bolz',
-        url: firstItemUrl(Game.Unit.items.army.fleet),
-        items: Game.Unit.items.army.fleet
-      }, 
-      defense: {
+        url: firstItemUrl(humanSpaceUnits),
+        items: humanSpaceUnits,
+      },
+      Defense: {
         name: 'Планетарная оборона',
         additionalArea: 'vaha',
-        url: firstItemUrl(Game.Unit.items.army.defense),
-        items: Game.Unit.items.army.defense
-      }, 
-      ground: {
+        url: firstItemUrl(humanDefenseUnits),
+        items: humanDefenseUnits,
+      },
+      Ground: {
         name: 'Армия',
         additionalArea: 'tilps',
-        url: firstItemUrl(Game.Unit.items.army.ground),
-        items: Game.Unit.items.army.ground
-      }
-    }
+        url: firstItemUrl(humanGroundUnits),
+        items: humanGroundUnits,
+      },
+    },
   },
   galaxy: {
     name: 'Космос',
@@ -199,19 +205,19 @@ var menu = {
   info: {
     name: 'Рептилии',
     routeName: ['reptileUnit'],
-    url: firstItemUrl(Game.Unit.items.reptiles.fleet),
+    url: firstItemUrl(reptileSpaceUnits),
     items: {
-      fleet: {
+      Space: {
         name: 'Космический флот',
-        url: firstItemGroupURL(Game.Unit.items.reptiles.fleet),
-        items: Game.Unit.items.reptiles.fleet
+        url: firstItemUrl(reptileSpaceUnits),
+        items: reptileSpaceUnits,
       },
-      ground: {
+      Ground: {
         name: 'Армия',
-        url: firstItemGroupURL(Game.Unit.items.reptiles.ground),
-        items: Game.Unit.items.reptiles.ground
-      }
-    }
+        url: firstItemUrl(reptileGroundUnits),
+        items: reptileGroundUnits,
+      },
+    },
   },
   artefacts: {
     name: 'Артефакты',
@@ -403,6 +409,16 @@ var helpers = {
     return menuItems ? _.toArray(menuItems) : [];
   },
 
+  currentValue() {
+    if (this.getCurrentLevel) {
+      return this.getCurrentLevel();
+    }
+    if (this.group === 'Ground') {
+      return this.getCurrentCount({ from: 'hangar' });
+    }
+    return this.getCurrentCount();
+  },
+
   overlayItems: function() {
     let group = Router.current().group;
     if (menu[group] && menu[group].overlayItems) {
@@ -440,13 +456,21 @@ var helpers = {
   item: function() {
     var route = Router.current();
     let item;
-    if (['planet', 'research'].indexOf(route.group) !== -1 && route.params.item) {
+    if (['planet', 'army', 'info', 'research'].indexOf(route.group) !== -1 && route.params.item) {
       let type = route.group[0].toUpperCase() + route.group.slice(1);
-      const group = route.params.group[0].toUpperCase() + route.params.group.slice(1);
+      let group = route.params.group[0].toUpperCase() + route.params.group.slice(1);
       const engName = route.params.item[0].toUpperCase() + route.params.item.slice(1);
       if (type === 'Planet') {
         type = 'Building';
+      } else if (type === 'Army') {
+        type = 'Unit/Human';
+      } else if (type === 'Info') {
+        type = 'Unit/Reptile';
       }
+      if (route.params.subgroup) {
+        group += `/${route.params.subgroup}`;
+      }
+
       const id = `${type}/${group}/${engName}`;
       item = content[id];
     } else {

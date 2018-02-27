@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Shadow from '../lib/Shadow';
 
-export default new ReptileUnit(Shadow);
+export default new UnitReptile(Shadow);

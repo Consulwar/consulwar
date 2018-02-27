@@ -65,34 +65,6 @@ game = {
 
   setToMenu: '',
   setToSide: '',
-
-  hasArmy: function() {
-    var army = Game.Unit.getValue();
-
-    if (army && army.ground) {
-
-      for (var name in army.ground) {
-        if (army.ground[name] > 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  },
-
-  hasFleet: function() {
-    var army = Game.Unit.getValue();
-
-    if (army && army.fleet) {
-
-      for (var name in army.fleet) {
-        if (army.fleet[name] > 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 };
 
 var itemCurrentOrder = 0;
@@ -694,11 +666,6 @@ Game = {
     let group = '';
     let engName = '';
     switch(type) {
-      case 'units':
-        group = _.keys(obj[type])[0];
-        engName = _.keys(obj[type][group])[0];
-        return Game.Unit.items.army[group][engName];
-
       case 'houseItems':
         group = _.keys(obj[type])[0];
         engName = _.keys(obj[type][group])[0];

@@ -29,29 +29,36 @@ class AbstractCountableItem extends AbstractItem {
     return _.mapObject(this.basePrice, value => value * count);
   }
 
-  getPrice({ count = 1, cards = [] }) {
-    return this.applyPriceEffects({
-      price: this.getBasePrice(count),
+  getPrice(count = 1, cards = []) {
+    const basePrice = this.getBasePrice(count);
+
+    const curPrice = {};
+    _(basePrice).pairs().forEach(([resourceName, value]) => {
+      const idParts = resourceName.split('/');
+      let realName = idParts[idParts.length - 1].toLocaleLowerCase();
+      if (Game.newToLegacyNames[realName]) {
+        realName = Game.newToLegacyNames[realName];
+      }
+      curPrice[realName] = value;
+    });
+
+    const price = this.applyPriceEffects({
+      price: curPrice,
       cards,
     });
+
+    return price;
   }
 
-  getRequirements() {
-    return this.requirements.map(([id, level]) => (
-      [AbstractItem.getObject({ id }), level]
-    ));
-  }
-
-  canBuild({
+  canBuild(
     count,
-    counts,
-    ...options
-  }) {
-    return super.canBuild({
-      value: count,
-      values: counts,
-      ...options,
+    cards,
+  ) {
+    const hasResources = Game.Resources.has({
+      resources: this.getPrice(count, cards),
     });
+    const hasTechnologies = this.meetRequirements();
+    return hasResources && hasTechnologies && !this.isQueueBusy();
   }
 }
 

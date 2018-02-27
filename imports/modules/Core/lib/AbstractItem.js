@@ -34,7 +34,6 @@ class AbstractItem {
   }
 
   constructor({
-    // CLASSNAME/GROUP/SOME/PATH/NAME
     id,
     title,
     description,
@@ -43,7 +42,7 @@ class AbstractItem {
     doNotRegisterEffects = false,
     notImplemented = false,
     basePrice = {},
-    requirements = [],
+    requirements = () => [],
   }) {
     if (new.target === AbstractItem) {
       throw new Meteor.Error(
@@ -95,6 +94,12 @@ class AbstractItem {
       ...options,
       resources: this.getPrice(options),
     });
+  }
+
+  getRequirements() {
+    return this.requirements().map(([id, level]) => (
+      [AbstractItem.getObject({ id }), level]
+    ));
   }
 
   meetRequirements(options = {}) {

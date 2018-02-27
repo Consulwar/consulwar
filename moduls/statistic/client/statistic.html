@@ -388,7 +388,7 @@
         data=this.data.units.lost.army.fleet
       )
     )
-    items=(toArray Game.Unit.items.army.fleet)
+    items=(toArray humanSpaceUnits)
   }}
 
   {{> statisticDetailTable 
@@ -403,7 +403,7 @@
         data=this.data.units.lost.army.defense
       )
     )
-    items=(toArray Game.Unit.items.army.defense)
+    items=(toArray humanDefenseUnits)
   }}
 </template>
 
@@ -424,7 +424,7 @@
         data=this.data.reinforcements.arrived.army.ground
       )
     )
-    items=(toArray Game.Unit.items.army.ground)
+    items=(toArray humanGroundUnits)
   }}
 
   {{> statisticDetailTable 
@@ -435,7 +435,7 @@
         data=this.data.reptiles.killed.reptiles.fleet
       )
     )
-    items=(toArray Game.Unit.items.reptiles.fleet)
+    items=(toArray reptileSpaceUnits)
   }}
 
   {{> statisticDetailTable 

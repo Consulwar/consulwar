@@ -61,10 +61,6 @@
               }}
             </div>
           </div>
-          <button
-            class="cw--button cw--button_flat cw--UserRegister__submit"
-          >
-          </button>
         </div>
         
         <div class="cw--UserRegister__rules">
@@ -99,14 +95,26 @@
             {{> reCAPTCHA}}
           {{/if}}
         </div>
+
+        {{#if getErrors}}
+          <div class="cw--UserRegister__errors">
+            {{#each error in getErrors}}
+              {{error}}<br/>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        <button
+          class="
+            cw--UserLogin__submit
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_green
+          "
+        >
+          Войти в игру
+        </button>
       </form>
-      {{#if getErrors}}
-        <div class="cw--UserRegister__errors">
-          {{#each error in getErrors}}
-            {{error}}<br/>
-          {{/each}}
-        </div>
-      {{/if}}
       <div class="cw--UserRegister__switch">
         <div class="cw--UserRegister__switchHead">
           У вас уже есть аккаунт? Желаете войти в него?
@@ -119,7 +127,7 @@
           "
           onClick={{showLoginPopup}}
         >
-          Войти в игру
+          Уже есть аккаунт
         </button>
       </div>
     </div>

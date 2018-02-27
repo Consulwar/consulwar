@@ -31,20 +31,21 @@
     display flex
     flex-direction column
     box-sizing border-box
-    padding 30px 50px 30px
+    padding 30px 50px 15px
+
+    +media($cw--size_s, $cw--size_l)
+      padding 30px 30px 15px
 
     +media(null, $cw--size_s)
+      padding 30px 30px 15px
       flex-grow 0
       flex-shrink 0
-
-    +media(null, $cw--size_l)
-      padding 30px
 
   &__intro
     flex-basis auto
     flex-shrink 0
     flex-grow 0
-    color $cw--color_metal
+    color $cw--color_lightGrey
 
   &__formSection
     flex-shrink 0
@@ -53,17 +54,27 @@
 
 
   &__switch
-    margin-top 12px
+    padding-top 12px
     flex-basis auto
     flex-grow 0
-    color $cw--color_metal
-    +media(null, $cw--size_s)
-      order -1
-      margin-bottom 20px
-
+    color $cw--color_lightGrey
   &__switchHead
-    margin-bottom 10px
-    
+    padding-bottom 10px
+  &__switchButton
+    cursor pointer
+    background none
+    border none
+    font-weight bold
+    color $cw--color_metal
+    font-size 18px
+    padding 0
+    text-decoration underline
+    &:hover
+    &:active
+    &:focus
+      outline none
+      text-decoration none
+      color $cw--color_white
 
   &__formTitle
     display block
@@ -73,17 +84,13 @@
     font-size $cw--fontSize_smallHead
 
   &__form
-    display flex
-    flex-direction row
     margin-bottom 10px
 
   &__inputs
-    flex-basis 180px
-    flex-grow 0
-    flex-shrink 0
     display flex
     flex-direction row
     height 62px
+    margin-bottom 10px
 
     +media(null, $cw--size_m)
       flex-direction column
@@ -110,17 +117,17 @@
     flex-basis auto
   
   &__remindLink
-    text-decoration none
-
+    color $cw--color_metal
+    text-decoration underline
+    &:hover
+    &:active
+      color $cw--color_white
+      text-decoration none
+  
   &__submit
-    flex-basis auto
-    flex-shrink 0
-    width 42px
-    padding 0
-    background-image url(/img/arrow_login.svg)
-    background-repeat no-repeat
-    background-position center center
+    padding-left 20px
+    padding-right 20px
 
   &__info
-    color $cw--color_metal
+    color $cw--color_lightGrey
     margin-top 20px

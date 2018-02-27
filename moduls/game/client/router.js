@@ -4,6 +4,7 @@ import { $ } from 'meteor/jquery';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/Index/PageIndex';
 import PageAbout from '/imports/client/ui/pages/About/PageAbout';
+import PageScreens from '/imports/client/ui/pages/Screens/PageScreens';
 
 initRouterClient = function() {
 'use strict';
@@ -224,7 +225,7 @@ Router.route('/logout', function () {
 
   Router.route('/screenshots', function() {
     this.layout(LayoutMain.renderComponent(), { data: { hasShadow: true } });
-    this.render(PageAbout.renderComponent());
+    this.render(PageScreens.renderComponent());
 
     if (window.Metrica !== undefined) {
       Metrica.hit(window.location.href, 'Screenshots', document.referrer);

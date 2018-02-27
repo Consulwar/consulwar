@@ -1,0 +1,27 @@
+<template name="PageScreens">
+  <div class="cw--PageScreens">
+    <div class="cw--PageScreens__theater">
+      <button class="cw--PageScreens__goBack" onClick={{goBack}}></button>
+      <img class="cw--PageScreens__fullImg" src="{{currentImgUrl.get}}" />
+      <button class="cw--PageScreens__goNext" onClick={{goNext}}></button>
+      <button class="cw--PageScreens__close" onClick={{closeScreen}}></button>
+    </div>
+    <div class="cw--PageScreens__thumbs">
+      {{#each image in images}}
+        <div
+          onClick={{setImg image.img}}
+          class="cw--PageScreens__thumb"
+        >     
+          <img
+            alt={{image.title}}
+            class="
+              cw--PageScreens__thumbImg
+              {{#if isCurrent image.img}}cw--PageScreens__current{{/if}}
+            "
+            src={{image.thumb}}
+          />
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>

@@ -31,14 +31,15 @@
     display flex
     flex-direction column
     box-sizing border-box
-    padding 30px 50px 30px
+    padding 30px 50px 15px
+
+    +media($cw--size_s, $cw--size_l)
+      padding 30px 30px 15px
 
     +media(null, $cw--size_s)
+      padding 30px
       flex-grow 0
       flex-shrink 0
-
-    +media(null, $cw--size_l)
-      padding 30px
 
   &__intro
     flex-basis auto
@@ -53,7 +54,7 @@
 
 
   &__switch
-    margin-top 12px
+    padding-top 12px
     flex-basis auto
     flex-grow 0
     color $cw--color_metal
@@ -72,10 +73,6 @@
       outline none
       text-decoration none
       color $cw--color_white
-
-  &__switchHead
-    margin-bottom 10px
-
 
   &__formTitle
     display block

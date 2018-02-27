@@ -59,12 +59,13 @@
           <button
             type="submit"
             class="
+              cw--UserLogin__submit
               cw--button
-              cw--button_flat
-              cw--button_flat_green
+              cw--button_type_primary
+              cw--button_type_primary_green
             "
           >
-            Войти
+            Войти в игру
           </button>
         </form>
         <div class="cw--UserLogin__info">
@@ -75,7 +76,9 @@
         </div>
       </div>
       <div class="cw--UserLogin__switch">
-        У вас нету аккаунта?
+        <div class="cw--UserLogin__switchHead">
+          У вас нету аккаунта? Желаете зарегистрировать новый?
+        </div>
         <button
           class="cw--UserLogin__switchButton"
           onClick={{showRegisterPopup}}

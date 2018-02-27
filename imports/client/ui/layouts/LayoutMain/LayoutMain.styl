@@ -6,25 +6,26 @@
   font-size $cw--fontSize_main
   display flex
   flex-direction column
-  height auto
   min-height 100vh
   min-width $cw--size_xxs
   background-image url(/img/game/bg/militaryDistrict.jpg)
   background-size cover
   background-position center
   position relative
+  // Костыль для хрома
+  +media($cw--size_xl)
+    height 320px
+
 
   &_shadow
-    background-image url(/img/game/bg/chamberOfConsul.jpg)
-    
+    background-image url(/img/game/house/room/cruel/1.jpg)
+
     &:before
       content ''
       position absolute
-      left 0
-      top 0
       width 100%
       height 100%
-      background-color alpha($cw--color_black, .4)
+      background-color alpha($cw--color_black, .9)
 
 
 // Content section
@@ -32,9 +33,9 @@
 .cw--MainContent
   position relative
   flex-grow 1
-  flex-shrink 1
-  flex-basis auto
-  padding 40px 50px
+  flex-shrink 0
+  flex-basis 70%
+  padding 40px 50px 20px
 
   +media(null, $cw--size_xs)
     padding 20px
@@ -102,6 +103,8 @@
     font-weight bold
     transition all .15s ease
     &:hover
+    &:active
+    &_active
       color $cw--color_honor
 
   &__playButton

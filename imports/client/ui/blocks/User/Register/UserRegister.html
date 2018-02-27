@@ -61,10 +61,6 @@
               }}
             </div>
           </div>
-          <button
-            class="cw--button cw--button_flat cw--UserRegister__submit"
-          >
-          </button>
         </div>
         
         <div class="cw--UserRegister__rules">
@@ -99,14 +95,25 @@
             {{> reCAPTCHA}}
           {{/if}}
         </div>
+        
+        {{#if getErrors}}
+          <div class="cw--UserRegister__errors">
+            {{#each error in getErrors}}
+              {{error}}<br/>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        <button
+          class="
+            cw--button
+            cw--button_flat
+            cw--button_flat_green
+          "
+        >
+        Регистрация
+        </button>
       </form>
-      {{#if getErrors}}
-        <div class="cw--UserRegister__errors">
-          {{#each error in getErrors}}
-            {{error}}<br/>
-          {{/each}}
-        </div>
-      {{/if}}
       <div class="cw--UserRegister__switch">
         <div class="cw--UserRegister__switchHead">
           У вас уже есть аккаунт? Желаете войти в него?

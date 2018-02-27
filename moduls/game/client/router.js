@@ -233,14 +233,14 @@ Router.route('/logout', function () {
   }, { name: 'screenshots' });
 
 
-  Router.route('pageNotFound', {
-    path: '/(.+)',
-    action: function() {
-      if (Meteor.user()) {
-        return this.redirect('game');
-      }
-      return this.redirect('index');
-    },
-  });
+Router.route('pageNotFound', {
+  path: '/(.+)',
+  action: function() {
+    if (Meteor.user()) {
+      return this.redirect('game');
+    }
+    return this.redirect('index');
+  },
+});
 
 };

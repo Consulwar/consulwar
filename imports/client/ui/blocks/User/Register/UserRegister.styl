@@ -56,9 +56,21 @@
     flex-basis auto
     flex-grow 0
     color $cw--color_metal
-    +media(null, $cw--size_s)
-      order -1
-      margin-bottom 20px
+  &__switchButton
+    cursor pointer
+    background none
+    border none
+    font-weight bold
+    color $cw--color_metal
+    font-size $cw--fontSize_main
+    padding 0
+    text-decoration underline
+    &:hover
+    &:active
+    &:focus
+      outline none
+      text-decoration none
+      color $cw--color_white
 
   &__switchHead
     margin-bottom 10px
@@ -71,14 +83,9 @@
     font-size $cw--fontSize_smallHead
 
   &__form
-    display flex
-    flex-direction row
     margin-bottom 10px
 
   &__inputs
-    flex-basis 180px
-    flex-grow 0
-    flex-shrink 0
     display flex
     flex-direction row
     height 62px
@@ -113,25 +120,15 @@
     &:hover
       color $cw--color_white
       text-decoration none
-
-  &__submit
-    flex 0 auto
-    width 42px
-    padding 0
-    background-image url(/img/arrow_login.svg)
-    background-repeat no-repeat
-    background-position center center
-    &:hover
-      background-image url(/img/arrow_login_white.svg)
-
   
   &__rules
   &__code
     margin 15px 0
 
   &__errors
-    border solid 1px $cw--color_honor
+    border solid 1px darken($cw--color_honor, 30)
     color $cw--color_honor
     font-size $cw--fontSize_small
     padding 10px
+    margin-bottom 10px
     

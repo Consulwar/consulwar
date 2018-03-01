@@ -15,7 +15,7 @@ class Building extends BuildingAbstract {
   }
 
   url() {
-    return Router.routes[this.constructor.name.toLocaleLowerCase()].path({
+    return Router.routes.building.path({
       group: this.group,
       item: this.engName,
     });

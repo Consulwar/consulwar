@@ -99,7 +99,7 @@ Game.Earth.addReinforcement = function(units, targetZoneName, user = Meteor.user
   _(units).pairs().forEach(([id, count]) => {
     if (count > 0) {
       honor += Game.Resources.calculateHonorFromReinforcement(
-        unitItems.getBasePrice(count),
+        unitItems[id].getBasePrice(count),
       );
       inc[`userArmy.${id}`] = count;
       stats[`reinforcements.arrived.${id}`] = count;
@@ -225,11 +225,7 @@ Game.Earth.nextTurn = function() {
 
       if (moveReptileTo[zone.name]) {
         moveReptileTo[zone.name].forEach(function (movedArmy) {
-          const reptileArmy = {
-            reptiles: {
-              ground: {},
-            },
-          };
+          const reptileArmy = {};
           _.pairs(movedArmy).forEach(function ([id, count]) {
             reptileArmy[id] = count;
           });

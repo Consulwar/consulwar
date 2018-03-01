@@ -49,7 +49,7 @@ Game.Unit = {
     }
 
     if (Meteor.isServer) {
-      throw new Meteor.Error('Куда армия пропала то?', userId);
+      throw new Meteor.Error('Сперва нужно открыть космос', userId);
     }
     return null;
   },
@@ -80,7 +80,7 @@ Game.Unit = {
       const unit = unitItems[id];
       let characteristics;
       if (isEarth) {
-        characteristics = unit.options.characteristics;
+        characteristics = unit.getBaseCharacteristics();
       } else {
         characteristics = unit.getCharacteristics();
       }

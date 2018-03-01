@@ -57,11 +57,7 @@ export default Space.jobs.processJobs(
     let enemyFleet = _.clone(Game.Battle.items[mission.type].level[mission.level].enemies);
     enemyFleet = _.mapObject(enemyFleet, (val, name) => Game.Unit.rollCount(enemyFleet[name]));
 
-    const enemyHealth = Game.Unit.calcUnitsHealth({
-      reptiles: {
-        fleet: enemyFleet,
-      },
-    }, userId);
+    const enemyHealth = Game.Unit.calcUnitsHealth(enemyFleet, userId);
 
     // check attack possibility
     if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {

@@ -205,15 +205,15 @@ Game.Unit.calculateBaseArmyCost = function(army) {
     }
 
     const price = unitItems[id].getBasePrice(count);
-    if (price && price.base) {
-      if (price.base.metals) {
-        cost.metals += price.base.metals;
+    if (price) {
+      if (price.metals) {
+        cost.metals += price.metals;
       }
-      if (price.base.crystals) {
-        cost.crystals += price.base.crystals;
+      if (price.crystals) {
+        cost.crystals += price.crystals;
       }
-      if (price.base.humans) {
-        cost.humans += price.base.humans;
+      if (price.humans) {
+        cost.humans += price.humans;
       }
     }
   });

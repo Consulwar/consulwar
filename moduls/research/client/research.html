@@ -32,7 +32,7 @@
     </div>
 
     <div class="bottom">
-      {{#if gt research.maxLevel research.currentLevel}}
+      {{#if gt research.maxLevel research.getCurrentLevel}}
         {{#if research.progress}}
           {{> item_price price=(research.getPrice (sum research.getCurrentLevel 1))}}
         {{else}}

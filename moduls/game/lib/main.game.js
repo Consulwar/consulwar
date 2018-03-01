@@ -726,6 +726,8 @@ Game = {
           getImage: Game.Persons[personId].getImage(skinId),
           card: Game.Persons[personId].getImage(skinId),
         };
+      case 'units':
+        return content[_.keys(obj.units)[0]];
 
       default:
         return content[obj.id];

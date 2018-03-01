@@ -19,7 +19,7 @@ class Research extends ResearchAbstract {
   }
 
   url() {
-    return Router.routes[this.constructor.name.toLocaleLowerCase()].path({
+    return Router.routes.research.path({
       group: this.group,
       item: this.engName,
     });

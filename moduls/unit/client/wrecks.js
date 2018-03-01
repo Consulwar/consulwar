@@ -37,7 +37,7 @@ Template.repairWrecks.helpers({
 Template.repairWrecks.events({
   'click .repair'(event, templateInstance) {
     const unit = templateInstance.data.unit;
-    Meteor.call('unit.repair', unit.group, unit.engName, (error) => {
+    Meteor.call('unit.repair', unit.id, (error) => {
       if (error) {
         Notifications.error('Невозможно восстановить юнитов', error.error);
       } else {

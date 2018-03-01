@@ -179,8 +179,9 @@ Game.Earth.showReserve = function() {
 
 Template.reserve.helpers({
   units() {
-    return _(humanGroundUnits).map(([unit, id]) => ({
+    return _(humanGroundUnits).map((unit, id) => ({
       id,
+      icon: unit.icon,
       max: unit.getCurrentCount({ from: 'hangar' }),
     }));
   },
@@ -224,7 +225,7 @@ Template.reserve.events({
 
       if (count > 0) {
         honor += Game.Resources.calculateHonorFromReinforcement(
-          humanGroundUnits[id].price(count)
+          humanGroundUnits[id].getBasePrice(count)
         );
       }
     });

@@ -77,12 +77,12 @@ Game.Wrecks.addUnits = function({ units, userId = Meteor.userId() }) {
   }
 };
 
-Game.Wrecks.removeUnit = function(wrecks, group, engName) {
+Game.Wrecks.removeUnit = function(wrecks, id) {
   Game.Wrecks.Collection.update({
     _id: wrecks._id,
   }, {
     $unset: {
-      [`units.${group}.${engName}`]: 1,
+      [`units.${id}`]: 1,
     },
   });
 };

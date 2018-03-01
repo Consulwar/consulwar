@@ -85,7 +85,7 @@ Meteor.methods({
       }
   
       // if (protectedHonor) {
-        honor += Game.Resources.calculateHonorFromReinforcement( unit.price(count) );
+        honor += Game.Resources.calculateHonorFromReinforcement( unit.getPrice(count) );
       // }
   
       totalCount += count;
@@ -202,8 +202,8 @@ Meteor.methods({
     if (isOnTurn) {
       const inc = {};
 
-      _.pairs(units).forEach(function ([unitName, count]) {
-        inc[`army.${unitName}`] = count;
+      _.pairs(units).forEach(function ([id, count]) {
+        inc[`army.${id}`] = count;
       });
 
       Game.Earth.ReptileTurn.Collection.upsert(

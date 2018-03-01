@@ -99,7 +99,7 @@ Meteor.methods({
       throw new Meteor.Error('Недостаточно ресурсов');
     }
 
-    Game.Unit.add({
+    unit.add({
       unit: {
         id,
         count,

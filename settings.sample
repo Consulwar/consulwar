@@ -146,7 +146,7 @@
       "Unit/Reptile/Ground/Enginery/Gecko": 30,
       "Unit/Reptile/Ground/Enginery/Chipping": 10,
       "Unit/Reptile/Ground/Enginery/Patron": 10,
-      "Unit/Reptile/Ground/Air/Amphibaena": 200,
+      "Unit/Reptile/Ground/Air/Amphisbaena": 200,
       "Unit/Reptile/Ground/Air/Amphibian": 140
     },
   "generating": {

@@ -280,12 +280,12 @@ var getArmyInfo = function(units, rest) {
     }
 
     result.push({
-      name: unit.name,
+      title: unit.title,
       order: unit.order,
       start: countStart,
       end: countAfter,
       resourcesLost: (countStart - countAfter > 0
-        ? unit.price(countStart - countAfter)
+        ? unit.getPrice(countStart - countAfter)
         : null
       ),
     });

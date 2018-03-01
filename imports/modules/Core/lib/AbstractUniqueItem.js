@@ -50,45 +50,44 @@ class AbstractUniqueItem extends AbstractItem {
     const toLevel = level ? level - 1 : this.getCurrentLevel();
 
     let basePrice;
-    if (_(this.basePrice).isFunction()) {
-      basePrice = this.basePrice(toLevel);
-    } else {
-      switch (this.basePrice.tier) {
-        case 1:
-          basePrice = priceT1.call(this, toLevel, this.basePrice.group);
-          break;
-        case 2:
-          basePrice = priceT2.call(this, toLevel, this.basePrice.group);
-          break;
-        case 3:
-          basePrice = priceT3.call(this, toLevel, this.basePrice.group);
-          break;
-        default:
-          basePrice = priceT4.call(this, toLevel, this.basePrice.group);
-          break;
-      }
-
-      _(basePrice).pairs().forEach(([
-        resourceName,
-        [
-          startValue,
-          funcName,
-          from,
-        ],
-      ]) => {
-        const idParts = resourceName.split('/');
-        let realName = idParts[idParts.length - 1].toLocaleLowerCase();
-        if (Game.newToLegacyNames[realName]) {
-          realName = Game.newToLegacyNames[realName];
-        }
-        curPrice[realName] = Game.functions[funcName].call(
-          this,
-          toLevel,
-          startValue,
-          from,
-        );
-      });
+    switch (this.basePrice.tier) {
+      case 1:
+        basePrice = priceT1.call(this, toLevel, this.basePrice.group);
+        break;
+      case 2:
+        basePrice = priceT2.call(this, toLevel, this.basePrice.group);
+        break;
+      case 3:
+        basePrice = priceT3.call(this, toLevel, this.basePrice.group);
+        break;
+      case 4:
+        basePrice = priceT4.call(this, toLevel, this.basePrice.group);
+        break;
+      default:
+        basePrice = this.basePrice(level);
+        break;
     }
+
+    _(basePrice).pairs().forEach(([
+      resourceName,
+      [
+        startValue,
+        funcName,
+        from,
+      ],
+    ]) => {
+      const idParts = resourceName.split('/');
+      let realName = idParts[idParts.length - 1].toLocaleLowerCase();
+      if (Game.newToLegacyNames[realName]) {
+        realName = Game.newToLegacyNames[realName];
+      }
+      curPrice[realName] = Game.functions[funcName].call(
+        this,
+        toLevel,
+        startValue,
+        from,
+      );
+    });
 
     return curPrice;
   }

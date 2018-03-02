@@ -1,3 +1,8 @@
+import { Meteor } from 'meteor/meteor';
+import { Router } from 'meteor/iron:router';
+import { Notifications } from '/moduls/game/lib/importCompability';
+import Game from '/moduls/game/lib/main.game';
+import Building from '/imports/client/ui/blocks/Building/Building';
 import buildings from '/imports/content/Building/client';
 import residentialBuildings from '/imports/content/Building/Residential/client';
 import militaryBuildings from '/imports/content/Building/Military/client';
@@ -35,7 +40,7 @@ Game.Building.showPage = function() {
   );
   
   if (item) {
-    this.render('item_building', { 
+    this.render(Building.renderComponent(), { 
       to: 'content',
       data: {
         building: item,
@@ -57,9 +62,6 @@ Game.Building.showPage = function() {
     this.render('empty', { to: 'content' });
   }
 };
-
-Template.item_building.onRendered(function() {
-});
 
 var bonusEvents = {
   'click .collectBonus.metals, click button.metal': function(e, t) {
@@ -100,56 +102,6 @@ Template.item_building.helpers({
     return this.building.getRequirements({ level: this.level.get() });
   },
 });
-
-Template.item_building.events({
-  'click button.build': function(e, t) {
-    var item = t.data.building;
-
-    Meteor.call('building.build', {
-        id: item.id,
-        level: this.level.get(),
-      },
-      function(error, message) {
-        if (error) {
-          Notifications.error('Невозможно начать строительство', error.error);
-        } else {
-          Notifications.success('Строительство запущено');
-        }
-      }
-    );
-
-    if (item.getCurrentLevel() === 0) {
-      Router.go(item.url({group: item.group}));
-    }
-  },
-
-  'click button.max': function(e, t) {
-    const item = t.data.building;
-    let currentLevel = item.getCurrentLevel() + 1;
-
-    while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
-      currentLevel += 1;
-    }
-
-    this.level.set(currentLevel);
-  },
-
-  'click button.market': function(e, t) {
-    Game.Building.special.Market.showWindow();
-  },
-
-  'click button.containers': function(e, t) {
-    Game.Building.special.Container.showWindow();
-  },
-
-  'click .toggle_description': function(e, t) {
-    $(t.find('.description')).slideToggle(function() {
-      var options = Meteor.user().settings && Meteor.user().settings.options;
-      Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
-    });
-  }
-});
-
 
 initBuildingSpecialMarketClient();
 initBuildingSpecialColosseumClient();

@@ -89,7 +89,7 @@ body.game
   max-height 1080px
   margin 0 auto
   
-  button
+  button:not(.cw--button_max)
     background-color transparent
     border 0
     cursor pointer
@@ -563,7 +563,7 @@ body.game
       -webkit-filter brightness(1.2)
       filter brightness(1.2)
   
-  button:not(.cw--button), a:not(.cw--Menu__item)
+  button:not(.cw--button):not(.cw--button_max), a:not(.cw--button):not(.cw--Menu__item)
     outline none
 
   &.new  

@@ -17,14 +17,14 @@
       <!-- quest link here -->
       <div class="cw--Building__headerControls">
         {{#if not submenu}}
-        <span
-          onClick={{toggleDescription}}
-          class="
-            cw--Building__headerIcon
-            cw--button_description
-            {{#if options.hideDescription}}cw--button_notActive{{/if}}
-          "
-        ></span>
+          <span
+            onClick={{toggleDescription}}
+            class="
+              cw--Building__headerIcon
+              cw--button_description
+              {{#if options.hideDescription}}cw--button_notActive{{/if}}
+            "
+          ></span>
         {{/if}}
         <a href="{{backToGroupLink}}" class="
           cw--Building__headerIcon
@@ -67,6 +67,8 @@
             {{else}}
               {{> ResourcePrice price=building.price}}
             {{/if}}
+          {{else}}
+            BOOOOOSST
           {{/if}}
         </div>
 
@@ -75,20 +77,24 @@
         <div class="cw--Building__actions">
           {{#if gt building.maxLevel building.currentLevel}}
             <div class="cw--Building__action">
-              <div 
-                class="notImplemented"
-                data-tooltip="В разработке…"
-                data-tooltip-direction="s"
-              >
+              <div class="cw--Building__actionAmount">
                 <button 
-                  class="max" 
+                  class="cw--button_max cw--Building__actionSetMax"
                   {{notPremiumDisabled}}
                   data-tooltip="Ввести максимум"
                   data-tooltip-direction="s"
-                  {{premiumTitle}}></button>
-                <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
+                  {{premiumTitle}}
+                ></button>
+                <input class="cw--Building__actionAmountCount" type="number" placeholder="Количество" value="{{count}}"/>
               </div>
-              <button class="main_action build" onClick={{Build}} disabled="{{not building.canBuild}}">
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                onClick={{Build}}
+                disabled="{{not building.canBuild}}"
+              >
                 {{#if building.currentLevel}}
                   Улучшить
                 {{else}}
@@ -99,35 +105,123 @@
           {{/if}}
           <div class="cw--Building__action">
             {{#if eq building.engName 'metal'}}
-                <progress class="bonus metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
-                <button class="additional_action metal" disabled="{{lt building.currentLevel 1}}">Собрать</button>
+                <div class="cw--Building__bonus">
+                  <div class="
+                      cw--Building__bonusIcon
+                      cw--Building__bonusIcon_metal
+                    "
+                  ></div>
+                  <progress
+                    class="
+                      cw--Building__bonusBar
+                      cw--Building__bonusBar_metal
+                      {{#with multiply income.metals 0.25}}
+                        {{#if gt resources.metals.bonus this}}
+                          cw--Building__bonusBar_active
+                        {{/if}}
+                      {{/with}}
+                    "
+                    max="{{multiply income.metals bonusStorage}}"
+                    value="{{or resources.metals.bonus '0'}}"
+                  ></progress>
+                </div>
+                <button
+                  class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_blue
+                  "
+                  onClick={{pickBonusMetal}}
+                  disabled="{{lt building.currentLevel 1}}"
+                >
+                  Собрать
+                </button>
             {{/if}}
 
             {{#if eq building.engName 'crystal'}}
-                <progress class="bonus crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
-                <button class="additional_action crystal" disabled="{{lt building.currentLevel 1}}">Собрать</button>
+                <div class="cw--Building__bonus">
+                  <div class="
+                      cw--Building__bonusIcon
+                      cw--Building__bonusIcon_crystal
+                    "
+                  ></div>
+                  <progress
+                    class="
+                      cw--Building__bonusBar
+                      cw--Building__bonusBar_crystal
+                      {{#with multiply income.crystals 0.25}}
+                        {{#if gt resources.crystals.bonus this}}
+                          cw--Building__bonusBar_active
+                        {{/if}}
+                      {{/with}}
+                    "
+                    max="{{multiply income.crystals bonusStorage}}"
+                    value="{{or resources.crystals.bonus '0'}}"
+                  ></progress>
+                </div>
+                <button
+                  class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_blue
+                  "
+                  onClick={{pickBonusCrystal}}
+                  disabled="{{lt building.currentLevel 1}}"
+                >
+                  Собрать
+                </button>
             {{/if}}
 
             {{#if eq building.engName 'tradingport'}}
-              <button class="additional_action market" disabled="{{lt building.currentLevel 1}}" onClick={{market}}>Торговать</button>
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                "
+                disabled="{{lt building.currentLevel 1}}"
+                onClick={{showMarket}}
+              >
+                Торговать
+              </button>
             {{/if}}
 
             {{#if eq building.engName 'spaceport'}}
-              <button class="additional_action containers" disabled="{{lt building.currentLevel 1}}" onClick={{containers}}>Контейнер</button>
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                "
+                disabled="{{lt building.currentLevel 1}}"
+                onClick={{showContainers}}
+              >
+                Контейнер
+              </button>
             {{/if}}
 
             {{#if eq building.engName 'colosseum'}}
-              <a
-                class="additional_action tournament {{#if lt building.currentLevel 1}}disabled{{/if}}"
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                  {{#if lt building.currentLevel 1}}disabled{{/if}}
+                "
                 href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
               >
                 Турнир
-              </a>
+              </button>
             {{/if}}
 
             {{#if eq building.engName 'pulsecatcher'}}
               <a
-                class="additional_action pulsecatcher {{#if lt building.currentLevel 1}}disabled{{/if}}"
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                  {{#if lt building.currentLevel 1}}disabled{{/if}}
+                "
                 href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
               >
                 Бонус

@@ -15,7 +15,7 @@ class ResourcePrice extends BlazeComponent {
 
   getResources(priceObj) {
     const result = [];
-    _(priceObj).keys().forEach((name) => {
+    Object.keys(priceObj).forEach((name) => {
       const item = {
         engName: name,
         amount: priceObj[name],
@@ -32,8 +32,9 @@ class ResourcePrice extends BlazeComponent {
     return result;
   }
 
-  isArtefact(key) {
-    return Game.Artefacts.items[key] !== null;
+  isArtefact(resourceName) {
+    // return _.has(Game.Artefacts.items, resourceName);
+    return Object.keys(Game.Artefacts.items).includes(resourceName);
   }
 
   showCredits() {
@@ -41,20 +42,17 @@ class ResourcePrice extends BlazeComponent {
     Game.Payment.showWindow();
   }
 
-  showArtefacts(event) {
-    Router.go('artefacts', {
-      // 'click .resources .artefact'
-      item: event.currentTarget.dataset.id,
-    });
+  showArtefacts(event, name) {
+    if (this.isArtefact(name)) {
+      Router.go('artefacts', {
+        item: event.currentTarget.dataset.id,
+      });
+    }
   }
-
-  showResource(event) {
-    // 'mouseover .resources > div'
+  // Game.Resources.currentValue.get()['humans'].amount
+  showResource(event, name, price) {
     const target = $(event.currentTarget);
-    const tooltip = Blaze._globalHelpers.priceTooltip(
-      this.price,
-      this.engName,
-    );
+    const tooltip = Blaze._globalHelpers.priceTooltip(price, name);
     target.attr('data-tooltip', tooltip['data-tooltip']);
   }
 }

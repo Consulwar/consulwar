@@ -1,0 +1,34 @@
+@import '{}/imports/client/ui/colors'
+
+.cw--ResourcePrice
+  display flex
+  flex-direction row
+  flex-wrap wrap
+  
+  &__time
+    color $cw--color_lightGrey
+    flex-basis 100%
+    padding-bottom 6px
+  &__timeCount
+    color $cw--color_white
+  &__item
+    width 70px
+    padding-top 48px
+    margin-right 12px
+    text-align center
+    font-size 12px
+
+resources(name, folder, fontColor)
+  &_{name}
+    background-image url(pathjoin('/img/game/Resource/Base/',folder,'/icon.svg'))
+    background-repeat no-repeat
+    background-position top center
+    color fontColor
+    
+.cw--Resource
+  resources('humans','Human',$cw--color_human)
+  resources('metals','Metal',$cw--color_metal)
+  resources('crystals', 'Crystal',$cw--color_crystal)
+  resources('honor', 'Honor',$cw--color_honor)
+  resources('credits','Credit',$cw--color_credit)
+

@@ -32,6 +32,7 @@
 
   &__headerLevel
     color $cw--color_description
+    white-space nowrap
 
   &__headerTitle
     flex-basis 60%
@@ -78,7 +79,7 @@
 
   &__mainField
     flex-grow 1
-    flex-basis 370px
+    flex-basis 380px
     display flex
     flex-direction row
   &__panel
@@ -87,19 +88,29 @@
     flex-grow 0
     display flex
     flex-direction column
+    font-weight bold
 
   &__effects
-    padding-bottom 14px
+    padding-bottom 6px
+  &__effectsHead
+    color $cw--color_human
+    padding-bottom 4px
     
   &__price
     flex-basis 120px
-    padding 14px 0
+    padding 6px 0
     border-top solid 1px $cw--color_grey
+    margin-top auto
+    box-sizing border-box
+  &__priceHead
+    color $cw--color_human
+    padding-bottom 4px
 
   &__actions
-    padding-top 14px
+    flex-basis 80px
+    padding-top 6px
     border-top solid 1px $cw--color_grey
-    margin auto 0 0
+    margin 0
     flex-shrink 0
     display flex
   &__action
@@ -109,6 +120,72 @@
     flex-direction column
     justify-content flex-end
     margin auto 15px 0 0
+  
+  &__actionAmount
+  &__bonus
+    display flex
+    padding-bottom 8px
+    justify-content space-between
+
+  &__actionSetMax
+    flex-grow 0
+    flex-shrink 0
+  
+  &__actionAmountCount
+    flex-basis auto
+    flex-grow 1
+    margin-left 6px
+    width 100%
+    box-sizing border-box
+
+  &__bonusIcon
+    flex-shrink 0
+    width 25px
+    height 25px
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+    &_metal
+      background-image url(/img/game/Resource/Base/Metal/icon.svg)
+    &_crystal
+      background-image url(/img/game/Resource/Base/Crystal/icon.svg)
+  &__bonusBar
+    flex-basis auto
+    margin-left 6px
+    height 25px
+    position relative
+    &
+    &::-webkit-progress-bar
+    &[role][aria-valuenow]
+      background-color #000
+
+    &:before
+      content: attr(value) ' / ' attr(max);
+      cw--fontFamily_cond()
+      font-weight bold
+      color $cw--color_white
+      position absolute
+      left 50%
+      top 50%
+      transform translate(-50%,-50%)
+
+    &_metal
+      border solid 1px $cw--color_metal
+      &::-moz-progress-bar
+        background-color $cw--color_metal
+      &::-webkit-progress-value
+        background-color $cw--color_metal
+      &[aria-valuenow]:before
+        background-color $cw--color_metal
+
+    &_crystal
+      border solid 1px $cw--color_crystal
+      &::-moz-progress-bar
+        background-color $cw--color_crystal
+      &::-webkit-progress-value
+        background-color $cw--color_crystal
+      &[aria-valuenow]:before
+        background-color $cw--color_crystal
 
   &__require
     flex-basis 260px

@@ -307,7 +307,7 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
 
   const bunker = SpecialEffect.getValue({
     hideEffects: true,
-    obj: { engName: 'bunker' },
+    obj: { id: 'Unique/bunker' },
     userId,
   });
 

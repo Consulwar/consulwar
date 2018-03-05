@@ -211,7 +211,7 @@ class Effect {
           value = SpecialEffect.applyTo({
             ...options,
             target: {
-              engName: 'EnchantHouse',
+              id: 'Unique/EnchantHouse',
             },
             obj: { result: effect.result(options) },
             hideEffects: true,

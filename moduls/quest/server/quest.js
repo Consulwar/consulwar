@@ -215,7 +215,7 @@ Game.Quest.actualize = function() {
   // refresh daily quest
   var effect = SpecialEffect.getValue({
     hideEffects: true,
-    obj: { engName: 'dailyQuestCount' },
+    obj: { id: 'Unique/dailyQuestCount' },
   });
   var dailyQuestPeriod = 86400 / effect.count;
 
@@ -404,7 +404,7 @@ Meteor.methods({
       };
       
       reward = SpecialEffect.applyTo({
-        target: { engName: 'dailyQuestReward' },
+        target: { id: 'Unique/dailyQuestReward' },
         obj: reward,
         hideEffects: true,
       });

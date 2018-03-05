@@ -90,12 +90,12 @@ Meteor.methods({
       if (item.group === 'Ground') {
         Game.Broadcast.add(
           user.username,
-          `начал подготовку «${item.name}» в количестве ${setCount} штук`,
+          `начал подготовку «${item.title}» в количестве ${setCount} штук`,
         );
       } else {
         Game.Broadcast.add(
           user.username,
-          `отправил на верфь ${setCount} кораблей «${item.name}»`,
+          `отправил на верфь ${setCount} кораблей «${item.title}»`,
         );
       }
     }

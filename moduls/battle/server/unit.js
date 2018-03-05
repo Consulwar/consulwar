@@ -1,10 +1,10 @@
-class Unit {
-  constructor(side, group, name, weapon, health, count) {
-    this.side = side;
-    this.group = group;
-    this.name = name;
+import units from '/imports/content/Unit/server';
 
-    this.model = Game.Unit.items[side][group][name];
+class Unit {
+  constructor(id, weapon, health, count) {
+    this.id = id;
+
+    this.model = units[id];
 
     this.weapon = weapon;
     this.health = health;
@@ -13,12 +13,12 @@ class Unit {
   }
 
   getTotalDamage() {
-    let damage = this.weapon.damage;
+    const damage = this.weapon.damage;
     return Game.Random.interval(damage.min * this.count, damage.max * this.count);
   }
 
   isEqualsToModel(unit) {
-    return this.name === unit.engName && this.group === unit.group && this.side === unit.side;
+    return this.id === unit.id;
   }
 
   // Получение damage от unit
@@ -26,8 +26,8 @@ class Unit {
   receiveDamage(unit, damage) {
     let restHP;
 
-    let eHPModifier = Math.max(1, (unit.weapon.signature / this.health.signature));
-    let eHP = Math.floor(eHPModifier * this.health.total);
+    const eHPModifier = Math.max(1, (unit.weapon.signature / this.health.signature));
+    const eHP = Math.floor(eHPModifier * this.health.total);
 
     if (eHP > damage) {
       this.health.total -= Math.floor(damage / eHPModifier);

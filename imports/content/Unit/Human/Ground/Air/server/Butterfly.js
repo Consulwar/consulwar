@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Butterfly from '../lib/Butterfly';
 
-export default new Unit(Butterfly);
+export default new UnitHuman(Butterfly);

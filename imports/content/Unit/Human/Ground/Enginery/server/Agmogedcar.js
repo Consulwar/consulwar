@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Agmogedcar from '../lib/Agmogedcar';
 
-export default new Unit(Agmogedcar);
+export default new UnitHuman(Agmogedcar);

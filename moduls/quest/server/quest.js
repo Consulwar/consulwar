@@ -1,6 +1,8 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+import content from '/imports/content/server';
+
 
 initQuestServer = function() {
 'use strict';
@@ -38,11 +40,7 @@ game.QuestLine = function(options, quests, isNew = true) {
             return Game.Quest.checkFinished(idParts[idParts.length - 1]);
           case 'Building':
           case 'Research':
-            return Game[idParts[0]].has({
-              group: Game.newToLegacyNames[idParts[1].toLocaleLowerCase()] || idParts[1].toLocaleLowerCase(),
-              engName: Game.newToLegacyNames[idParts[2].toLocaleLowerCase()] || idParts[2].toLocaleLowerCase(),
-              level: condition[1]
-            });
+            return content[condition[0]].has({ level: condition[1] });
         }
         return false;
       });

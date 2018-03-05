@@ -17,7 +17,7 @@ export default {
   },
   targets: [
     'Unit/Human/Ground/Enginery/HBHR',
-    'Unit/Human/Ground/Enginery/Grandmother',
+    'Unit/Human/Ground/Air/Grandmother',
     'Unit/Human/Ground/Enginery/EasyTank',
   ],
 };

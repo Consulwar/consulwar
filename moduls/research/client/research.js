@@ -1,10 +1,18 @@
+import researches from '/imports/content/Research/client';
+
 initResearchClient = function() {
 'use strict';
 
 initResearchLib();
 
 Game.Research.showPage = function() {
-  var item = Game.Research.items[this.params.group][this.params.item];
+  let item;
+  if (this.params.item) {
+    const group = this.params.group[0].toUpperCase() + this.params.group.slice(1);
+    const engName = this.params.item[0].toUpperCase() + this.params.item.slice(1);
+    const id = `Research/${group}/${engName}`;
+    item = researches[id];
+  }
 
   if (item) {
     this.render('item_research', {to: 'content', data: {research: item}});
@@ -17,9 +25,10 @@ Template.item_research.events({
   'click button.build': function(e, t) {
     var item = t.data.research;
 
-    Meteor.call('research.start', {
-        group: item.group,
-        engName: item.engName
+    Meteor.call(
+      'research.start',
+      {
+        id: item.id,
       },
       function(error, message) {
         if (error) {
@@ -27,10 +36,10 @@ Template.item_research.events({
         } else {
           Notifications.success('Исследование запущено');
         }
-      }
+      },
     );
 
-    if (item.currentLevel() === 0) {
+    if (item.getCurrentLevel() === 0) {
       Router.go(item.url({group: item.group}));
     }
   },

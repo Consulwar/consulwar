@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Prism from '../lib/Prism';
 
-export default new ReptileUnit(Prism);
+export default new UnitReptile(Prism);

@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Lost from '../lib/Lost';
 
-export default new Unit(Lost);
+export default new UnitHuman(Lost);

@@ -1,20 +1,25 @@
 import helpers from '/imports/client/ui/helpers';
+import unitItems from '/imports/content/Unit/client';
 import allContainers from '/imports/content/Container/Fleet/client';
 
 UI.registerHelper('isNewLayout', function() {
   const newLayoutGroups = {
     planet: {
-      residential: true,
-      military: true,
+      Residential: true,
+      Military: true,
     },
     research: {
-      evolution: true,
+      Evolution: true,
+      Fleet: true,
     },
     cosmos: true,
     army: {
-      fleet: true,
-      ground: true,
-      defense: true,
+      Space: true,
+      Ground: true,
+      Infantry: true,
+      Enginery: true,
+      Air: true,
+      Defense: true,
     },
     artefacts: true,
     house: true,
@@ -223,12 +228,9 @@ UI.registerHelper('formatProfit', function(profit) {
         }
         break;
       case 'units':
-        for (var unitGroup in profit[type]) {
-          for (var unitName in profit[type][unitGroup]) {
-            result += Game.Unit.items.army[unitGroup][unitName].name + ': ';
-            result += parseInt(profit[type][unitGroup][unitName], 10) + ' ';
-          }
-        }
+        _(profit.units).pairs().forEach(([id, count]) => {
+          result += `${unitItems[id].title}: ${parseInt(count, 10)}`;
+        });
         break;
       case 'cards':
         for (var cardId in profit[type]) {
@@ -311,7 +313,15 @@ const getEffectsTooltip = function({
     return helpers.formatNumber(value, ' - ');
   };
 
-  const baseValue = obj.base[target];
+  let baseValue = obj.base[target];
+  if (target === 'damage') {
+    baseValue = obj.base.weapon.damage;
+  } else if (target === 'life') {
+    baseValue = obj.base.health.armor;
+  } else {
+    baseValue = obj.base[target];
+  }
+
   const isMultiValue = !!(_.isObject(baseValue) || _.isArray(baseValue));
 
   // {
@@ -350,7 +360,7 @@ const getEffectsTooltip = function({
         result.negative = !invert;
       }
 
-      result.source = effect.provider.name;
+      result.source = effect.provider.name || effect.provider.title;
 
       if (priority % 2 === 1) {
         result.value = formatValue(Math.abs(effect.value));

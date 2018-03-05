@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Crusher from '../lib/Crusher';
 
-export default new ReptileUnit(Crusher);
+export default new UnitReptile(Crusher);

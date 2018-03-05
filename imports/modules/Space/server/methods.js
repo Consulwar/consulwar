@@ -123,8 +123,7 @@ Meteor.methods({
     let newArmyId;
 
     if (needSliceArmy) {
-      const destUnits = { army: { fleet: units } };
-      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, units, Game.Unit.location.SHIP);
     } else {
       newArmyId = sourceArmyId;
       Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);
@@ -280,8 +279,7 @@ Meteor.methods({
     let newArmyId;
 
     if (needSliceArmy) {
-      const destUnits = { army: { fleet: units } };
-      newArmyId = Game.Unit.sliceArmy(sourceArmyId, destUnits, Game.Unit.location.SHIP);
+      newArmyId = Game.Unit.sliceArmy(sourceArmyId, units, Game.Unit.location.SHIP);
     } else {
       newArmyId = sourceArmyId;
       Game.Unit.moveArmy(newArmyId, Game.Unit.location.SHIP);

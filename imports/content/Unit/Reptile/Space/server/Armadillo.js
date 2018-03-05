@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Armadillo from '../lib/Armadillo';
 
-export default new ReptileUnit(Armadillo);
+export default new UnitReptile(Armadillo);

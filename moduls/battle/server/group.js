@@ -1,3 +1,4 @@
+import { _ } from 'meteor/underscore';
 import Unit from './unit';
 
 const priorityDamageCoef = [0.4, 0.3, 0.2];
@@ -6,32 +7,11 @@ const restCoef = 1;
 
 class Group {
   static fromObject(group) {
-    let units = [];
+    const units = [];
 
-    for (let sideName in group) {
-      if (!group.hasOwnProperty(sideName)) {
-        continue;
-      }
-      let side = group[sideName];
-
-      for (let groupName in side) {
-        if (!side.hasOwnProperty(groupName)) {
-          continue;
-        }
-
-        let group = side[groupName];
-
-        for (let unitName in group) {
-          if (!group.hasOwnProperty(unitName)) {
-            continue;
-          }
-
-          let unit = group[unitName];
-
-          units.push(new Unit(sideName, groupName, unitName, unit.weapon, unit.health, unit.count));
-        }
-      }
-    }
+    _(group).pairs().forEach(([id, unit]) => {
+      units.push(new Unit(id, unit.weapon, unit.health, unit.count));
+    });
 
     return new Group(units);
   }
@@ -89,7 +69,7 @@ class Group {
   }
 
   fillTargetDamages(unit, allDamage) {
-    let priorityTargets = unit.model.targets();
+    let priorityTargets = unit.model.getTargets();
     let targetDamages = [];
 
     if (priorityTargets) {

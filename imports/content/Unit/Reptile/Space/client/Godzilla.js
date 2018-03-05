@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Godzilla from '../lib/Godzilla';
 
-export default new ReptileUnit(Godzilla);
+export default new UnitReptile(Godzilla);

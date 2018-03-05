@@ -1,3 +1,10 @@
+let Colosseum;
+if (Meteor.isClient) {
+  Colosseum = require('/imports/content/Building/Residential/client/Colosseum').default;
+} else {
+  Colosseum = require('/imports/content/Building/Residential/server/Colosseum').default;
+}
+
 initBuildingSpecialColosseumLib = function() {
 'use strict';
 
@@ -48,7 +55,7 @@ game.ColosseumTournament = function(options) {
   this.drop = options.drop;
 
   this.checkLevel = function() {
-    return Game.Building.items.residential.colosseum.currentLevel() >= this.level;
+    return Colosseum.getCurrentLevel() >= this.level;
   };
 
   this.checkPrice = function() {
@@ -71,7 +78,7 @@ Game.Building.special.Colosseum = {
 
   checkCanStart: function() {
     var user = Meteor.user();
-    var level = Game.Building.items.residential.colosseum.currentLevel();
+    var level = Colosseum.getCurrentLevel();
 
     if (!level
      ||  (user

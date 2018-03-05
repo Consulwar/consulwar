@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Horizontalbarman from '../lib/Horizontalbarman';
 
-export default new Unit(Horizontalbarman);
+export default new UnitHuman(Horizontalbarman);

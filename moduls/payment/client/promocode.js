@@ -1,5 +1,6 @@
 import persons from '/imports/content/Person/client';
 import allFleetContainers from '/imports/content/Container/Fleet/client';
+import humanUnits from '/imports/content/Unit/Human/client';
 
 initPromoCodeClient = function() {
 'use strict';
@@ -64,14 +65,12 @@ Template.promocodeReward.helpers({
     var units = this.profit.units;
     var result = [];
 
-    for (var group in units) {
-      for (var name in units[group]) {
-        result.push({
-          engName: name,
-          amount: units[group][name]
-        });
-      }
-    }
+    _(units).pairs().forEach(([id, count]) => {
+      result.push({
+        icon: humanUnits[id].icon,
+        amount: count,
+      });
+    });
 
     return result.length > 0 ? result : null;
   },
@@ -210,14 +209,12 @@ Template.promocodeCreate.helpers({
 
     result.push({ name: '----------------------------------------' });
 
-    for (var unitGroup in Game.Unit.items.army) {
-      for (var unitName in Game.Unit.items.army[unitGroup]) {
-        result.push({
-          id: 'units.' + unitGroup + '.' + unitName,
-          name: Game.Unit.items.army[unitGroup][unitName].name
-        });
-      }
-    }
+    _(humanUnits).pairs().forEach(([id, unit]) => {
+      result.push({
+        id: `units.${id}`,
+        name: unit.title,
+      });
+    });
 
     result.push({ name: '----------------------------------------' });
 

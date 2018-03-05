@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Slider from '../lib/Slider';
 
-export default new ReptileUnit(Slider);
+export default new UnitReptile(Slider);

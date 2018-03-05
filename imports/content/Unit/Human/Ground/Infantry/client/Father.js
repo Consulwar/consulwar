@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/client/Unit';
+import UnitHuman from '/imports/modules/Unit/client/UnitHuman';
 import Father from '../lib/Father';
 
-export default new Unit(Father);
+export default new UnitHuman(Father);

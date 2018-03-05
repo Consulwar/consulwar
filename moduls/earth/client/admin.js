@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+import { _ } from 'meteor/underscore';
 import allFleetContainers from '/imports/content/Container/Fleet/client';
+import reptileGroundUnits from '/imports/content/Unit/Reptile/Ground/client';
+import humanUnits from '/imports/content/Unit/Human/client';
 
 initEarthAdminClient = function() {
 'use strict';
@@ -7,14 +10,12 @@ initEarthAdminClient = function() {
 Template.adminReptileChange.helpers({
   army() {
     const zone = Game.EarthZones.getByName(this.zoneName);
-    const zoneArmy = zone.enemyArmy ? zone.enemyArmy.reptiles.ground : {};
+    const zoneArmy = zone.enemyArmy ? zone.enemyArmy : {};
 
-    const groundUnits = Game.Unit.items.reptiles.ground;
-
-    return _(groundUnits).keys().map(unitName => ({
-      engName: unitName,
-      name: groundUnits[unitName].name,
-      count: zoneArmy[unitName] || 0,
+    return _(reptileGroundUnits).pairs().map(([id, unit]) => ({
+      id,
+      title: unit.title,
+      count: zoneArmy[id] || 0,
     }));
   },
 
@@ -62,12 +63,10 @@ Template.adminReptileChange.helpers({
 
     push({ name: '----------------------------------------' });
 
-    _(Game.Unit.items.army).keys().forEach((unitGroup) => {
-      _(Game.Unit.items.army[unitGroup]).keys().forEach((unitName) => {
-        push({
-          id: `units.${unitGroup}.${unitName}`,
-          name: Game.Unit.items.army[unitGroup][unitName].name,
-        });
+    _(humanUnits).pairs().forEach(([id, unit]) => {
+      push({
+        id: `units.${id}`,
+        name: unit.title,
       });
     });
 
@@ -113,7 +112,7 @@ const getInfoFromForm = function (elements) {
     const id = $element.attr('data-id');
     const count = parseInt($element.find('input').val(), 10);
 
-    modifier[`enemyArmy.reptiles.ground.${id}`] = Math.max(0, count);
+    modifier[`enemyArmy.${id}`] = Math.max(0, count);
 
     if (count !== 0) {
       units[id] = count;

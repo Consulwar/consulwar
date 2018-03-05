@@ -34,7 +34,7 @@ const reptilesWin = function({ battle, roundResult, planet, data }) {
         planet.mission = {
           type: data.mission.type === 'tradefleet' ? 'patrolfleet' : data.mission.type,
           level: data.mission.level,
-          units: army.reptiles.fleet,
+          units: army,
         };
       }
     } else if (!data.isHumans) {
@@ -51,7 +51,7 @@ const reptilesWin = function({ battle, roundResult, planet, data }) {
       }
 
       const backData = data.reptileData || data;
-      backData.mission.units = army.reptiles.fleet;
+      backData.mission.units = army;
 
       FlightEvents.flyBack(backData);
     }

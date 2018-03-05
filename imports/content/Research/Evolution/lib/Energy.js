@@ -1,4 +1,4 @@
-import { tier1, tier2, tier3 } from '/imports/content/formula';
+import { tier2, tier3 } from '/imports/content/formula';
 
 export default {
   id: 'Research/Evolution/Energy',

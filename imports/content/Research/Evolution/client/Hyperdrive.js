@@ -1,6 +1,7 @@
+import Research from '/imports/modules/Research/client/Research';
 import Hyperdrive from '../lib/Hyperdrive';
 
-export default {
+export default new Research({
   ...Hyperdrive,
   overlay: {
     x: 506,
@@ -8,4 +9,4 @@ export default {
     z: 3,
     levels: [1, 20, 40, 60, 80, 100],
   },
-};
+});

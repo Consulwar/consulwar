@@ -1,5 +1,12 @@
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 
+let tradingPortBuilding;
+if (Meteor.isClient) {
+  tradingPortBuilding = require('/imports/content/Building/Residential/client/TradingPort').default;
+} else {
+  tradingPortBuilding = require('/imports/content/Building/Residential/server/TradingPort').default;
+}
+
 initBuildingSpecialMarketLib = function() {
 'use strict';
   
@@ -26,9 +33,7 @@ Game.Building.special.Market = {
       return 0;
     }
 
-    var level = Game.Building.items.residential.tradingport
-      ? Game.Building.items.residential.tradingport.currentLevel()
-      : 0;
+    var level = tradingPortBuilding.getCurrentLevel();
     
     if (level === 0) {
       return 0; // can't change if no tradingport

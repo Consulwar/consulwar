@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Patron from '../lib/Patron';
 
-export default new ReptileUnit(Patron);
+export default new UnitReptile(Patron);

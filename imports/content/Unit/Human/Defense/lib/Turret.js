@@ -24,7 +24,7 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Residential/Spaceport', 10],
+      ['Building/Residential/SpacePort', 10],
     ];
   },
 };

@@ -20,10 +20,7 @@ const getWrecksCount = function(unit) {
   return (
        wrecks
     && wrecks.units
-    && wrecks.units.army
-    && wrecks.units.army[unit.group]
-    && wrecks.units.army[unit.group][unit.engName]
-    && wrecks.units.army[unit.group][unit.engName].count
+    && wrecks.units[unit.id].count
   ) || 0;
 };
 
@@ -40,7 +37,7 @@ Template.repairWrecks.helpers({
 Template.repairWrecks.events({
   'click .repair'(event, templateInstance) {
     const unit = templateInstance.data.unit;
-    Meteor.call('unit.repair', unit.group, unit.engName, (error) => {
+    Meteor.call('unit.repair', unit.id, (error) => {
       if (error) {
         Notifications.error('Невозможно восстановить юнитов', error.error);
       } else {

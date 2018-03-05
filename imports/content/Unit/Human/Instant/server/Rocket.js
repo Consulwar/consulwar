@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Rocket from '../lib/Rocket';
 
-export default new Unit(Rocket);
+export default new UnitHuman(Rocket);

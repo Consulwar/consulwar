@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { _ } from 'meteor/underscore';
+import { _ } from 'lodash';
 import Game from '/moduls/game/lib/main.game';
 import Space from './space';
 
@@ -32,8 +32,8 @@ const getFleetUnits = function(data) {
     return _.clone(Game.Battle.items[data.mission.type].level[data.mission.level].enemies);
   } else if (data.armyId) {
     const army = Game.Unit.getArmy({ id: data.armyId });
-    if (army && army.units && army.units.army) {
-      return army.units.army.fleet;
+    if (army && army.units) {
+      return _.pickBy(army.units, (unit, id) => id.indexOf('/Space/') !== -1) || null;
     }
   }
 

@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Horror from '../lib/Horror';
 
-export default new ReptileUnit(Horror);
+export default new UnitReptile(Horror);

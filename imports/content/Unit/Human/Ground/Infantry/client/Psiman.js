@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/client/Unit';
+import UnitHuman from '/imports/modules/Unit/client/UnitHuman';
 import Psiman from '../lib/Psiman';
 
-export default new Unit(Psiman);
+export default new UnitHuman(Psiman);

@@ -271,30 +271,6 @@ Template.mail.helpers({
 
     return null;
   },
-
-  army: function(start, result) {
-    return _.map(start, function(value, key) {
-      return {
-        name: Game.Unit.items.army.ground[key].name,
-        engName: key,
-        startCount: value,
-        count: result[key],
-        object: Game.Unit.items.army.ground[key]
-      };
-    });
-  },
-
-  reptiles: function(start, result) {
-    return _.map(start, function(value, key) {
-      return {
-        name: Game.Unit.items.reptiles.rground[key].name,
-        engName: key,
-        startCount: value,
-        count: result[key],
-        object: Game.Unit.items.reptiles.rground[key]
-      };
-    });
-  }
 });
 
 Template.mail.events({

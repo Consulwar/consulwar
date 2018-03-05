@@ -183,18 +183,11 @@ Game.Resources.addProfit = function(profit, uid = Meteor.userId()) {
 
   if (profit.units) {
     var units = profit.units;
-    for (var group in units) {
-      for (var engName in units[group]) {
-        Game.Unit.add({
-          unit: {
-            engName,
-            group,
-            count: parseInt(units[group][engName], 10),
-          },
-          userId: uid,
-        });
-      }
-    }
+
+    _(units).pairs().forEach(([id, count]) => content[id].add({
+      count: parseInt(count, 10),
+      userId: uid,
+    }));
   }
 
   if (profit.votePower) {

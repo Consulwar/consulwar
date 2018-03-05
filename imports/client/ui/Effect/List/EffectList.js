@@ -1,6 +1,5 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
-import { ReactiveVar } from 'meteor/reactive-var';
 import './EffectList.html';
 import './EffectList.styl';
 

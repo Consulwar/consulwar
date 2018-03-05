@@ -1,3 +1,5 @@
+import pulseCatcherBuilding from '/imports/content/Building/Residential/client/PulseCatcher';
+
 initBuildingSpecialPulsecatcherClient = function() {
 'use strict';
 
@@ -37,7 +39,7 @@ Template.pulsecatcher.helpers({
   },
 
   building: function() {
-    return Game.Building.items.residential.pulsecatcher;
+    return pulseCatcherBuilding;
   }
 });
 

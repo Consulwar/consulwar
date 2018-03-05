@@ -105,7 +105,7 @@
               <span>{{this.count}}
                 {{#if this.userUnitsCount}} ({{this.userUnitsCount}}) {{/if}}
               </span>
-              {{this.name}}
+              {{this.title}}
             </li>
           {{/each}}
         </ul>
@@ -115,7 +115,7 @@
         <ul>
           {{#each info.enemyArmy}}
             <li>
-              <span>{{this.count}}</span> {{this.name}}
+              <span>{{this.count}}</span> {{this.title}}
             </li>
           {{/each}}
         </ul>
@@ -136,10 +136,10 @@
         {{#each units}}
           <li 
             class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}"
-            data-id="{{this.engName}}"
+            data-id="{{this.id}}"
             data-max="{{this.max}}"
           >
-            <a class="{{this.engName}}-icon"></a>
+            <a style="background-image: url({{this.icon}})"></a>
             <div class="max">{{formatNumberWithISO this.max}}</div>
             <input class="count" type="number" placeholder="Количество"  value="0">
           </li>

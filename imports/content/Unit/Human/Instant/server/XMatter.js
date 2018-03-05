@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import XMatter from '../lib/XMatter';
 
-export default new Unit(XMatter);
+export default new UnitHuman(XMatter);

@@ -1,3 +1,4 @@
+import Research from '/imports/modules/Research/client/Research';
 import Mirage from '../lib/Mirage';
 
-export default Mirage;
+export default new Research(Mirage);

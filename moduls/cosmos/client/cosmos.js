@@ -18,6 +18,10 @@ import Galaxy from '/imports/modules/Space/client/Galaxy';
 import Hex from '/imports/modules/MutualSpace/lib/Hex';
 import Config from '/imports/modules/Space/client/config';
 
+import unitItems from '/imports/content/Unit/client';
+import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
+import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
+
 import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
@@ -256,43 +260,36 @@ Template.cosmosHistory.events({
 });
 
 var getArmyInfo = function(units, rest) {
-  var result = [];
+  const result = [];
 
-  for (var side in units) {
-    for (var group in units[side]) {
-      for (var name in units[side][group]) {
-
-        var countStart = units[side][group][name];
-        if (_.isString( countStart )) {
-          countStart = game.Battle.count[ countStart ];
-        }
-
-        if (countStart <= 0) {
-          continue;
-        }
-
-        var countAfter = 0;
-        if (rest
-         && rest[side]
-         && rest[side][group]
-         && rest[side][group][name]
-        ) {
-          countAfter = rest[side][group][name];
-        }
-
-        result.push({
-          name: Game.Unit.items[side][group][name].name,
-          order: Game.Unit.items[side][group][name].order,
-          start: countStart,
-          end: countAfter,
-          resourcesLost: (countStart - countAfter > 0
-            ? Game.Unit.items[side][group][name].price(countStart - countAfter)
-            : null
-          )
-        });
-      }
+  _(units).pairs().forEach(([id, countStart]) => {
+    const unit = unitItems[id];
+    if (_.isString(countStart)) {
+      countStart = game.Battle.count[ countStart ];
     }
-  }
+
+    if (countStart <= 0) {
+      return;
+    }
+
+    let countAfter = 0;
+    if (rest
+     && rest[id]
+    ) {
+      countAfter = rest[id];
+    }
+
+    result.push({
+      title: unit.title,
+      order: unit.order,
+      start: countStart,
+      end: countAfter,
+      resourcesLost: (countStart - countAfter > 0
+        ? unit.getPrice(countStart - countAfter)
+        : null
+      ),
+    });
+  });
 
   result = _.sortBy(result, function(item) { return item.order; });
 
@@ -321,31 +318,31 @@ const getBattleInfo = function(battle) {
   }
   
   // Распарсить армии
-  const userUnits = { army: { fleet: {} } };
+  const userUnits = {};
   battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-    _(units.army.fleet).pairs().forEach(([unit, { count }]) => {
-      userUnits.army.fleet[unit] = (userUnits.army.fleet[unit] || 0) + count;
+    _(units).pairs().forEach(([id, { count }]) => {
+      userUnits[id] = (userUnits[id] || 0) + count;
     });
   });
 
-  const userUnitsLeft = { army: { fleet: {} } };
+  const userUnitsLeft = {};
   battle.currentUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-    _(units.army.fleet).pairs().forEach(([unit, { count }]) => {
-      userUnitsLeft.army.fleet[unit] = (userUnitsLeft.army.fleet[unit] || 0) + count;
+    _(units).pairs().forEach(([id, { count }]) => {
+      userUnitsLeft[id] = (userUnitsLeft[id] || 0) + count;
     });
   });
 
-  const enemyUnits = { reptiles: { fleet: {} } };
+  const enemyUnits = {};
   battle.initialUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
-    _(units.reptiles.fleet).pairs().forEach(([unit, { count }]) => {
-      enemyUnits.reptiles.fleet[unit] = (enemyUnits.reptiles.fleet[unit] || 0) + count;
+    _(units).pairs().forEach(([id, { count }]) => {
+      enemyUnits[id] = (enemyUnits[id] || 0) + count;
     });
   });
 
-  const enemyUnitsLeft = { reptiles: { fleet: {} } };
+  const enemyUnitsLeft = {};
   battle.currentUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
-    _(units.reptiles.fleet).pairs().forEach(([unit, { count }]) => {
-      enemyUnitsLeft.reptiles.fleet[unit] = (enemyUnitsLeft.reptiles.fleet[unit] || 0) + count;
+    _(units).pairs().forEach(([id, { count }]) => {
+      enemyUnitsLeft[id] = (enemyUnitsLeft[id] || 0) + count;
     });
   });
   
@@ -679,11 +676,13 @@ Template.cosmosFleetsInfo.helpers({
         'data.battleId': battle._id
       });
 
-      result.push({
-        id: battle._id,
-        round: battleEvent.repeated + 1,
-        secondsLeft: battleEvent,
-      });
+      if (battleEvent) {
+        result.push({
+          id: battle._id,
+          round: battleEvent.repeated + 1,
+          secondsLeft: battleEvent,
+        });
+      }
     });
 
     return (result.length > 0) ? result : null;
@@ -759,21 +758,19 @@ Game.Cosmos.getPlanetInfo = function(planet) {
   if (planet.isHome || planet.armyId || planet.mission) {
     var units = Game.Planets.getFleetUnits(planet._id) ;
     if (units) {
-      var side = (planet.mission) ? 'reptiles' : 'army';
+      const sideUnits = (planet.mission) ? reptileSpaceUnits : humanSpaceUnits;
       info.units = [];
-
-      for (let engName in Game.Unit.items[side].fleet) {
-        let unit = Game.Unit.items[side].fleet[engName];
-
+      
+      _(sideUnits).pairs().forEach(([id, unit]) => {
         info.units.push({
-          engName: engName,
-          unit: unit,
-          count: _.isString( units[engName] )
-            ? game.Battle.count[ units[engName] ]
-            : units[engName] || 0,
-          countId: units[engName]
+          id,
+          unit,
+          count: _.isString( units[id] )
+            ? game.Battle.count[ units[id] ]
+            : units[id] || 0,
+          countId: units[id]
         });
-      }
+      });
     }
   }
 
@@ -789,11 +786,11 @@ var reptilesFleetPower = function(units) {
     );
 
     if (count > 0) {
-      units.reptiles.fleet[unit.engName] = count;
+      units[unit.id] = count;
     }
     
     return units;
-  }, {reptiles: {fleet: {}}}));
+  }, {}));
 };
 
 Template.cosmosBattlePopup.events({
@@ -1112,21 +1109,19 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 
   var units = FlightEvents.getFleetUnits(spaceEvent.data);
   if (units) {
-    var side = (spaceEvent.data.isHumans) ? 'army' : 'reptiles';
+    const sideUnits = (spaceEvent.data.isHumans) ? humanSpaceUnits : reptileSpaceUnits;
     info.units = [];
-
-    for (let engName in Game.Unit.items[side].fleet) {
-      let unit = Game.Unit.items[side].fleet[engName];
-
+    
+    _(sideUnits).pairs().forEach(([id, unit]) => {
       info.units.push({
-        engName: engName,
+        id,
         unit,
-        count: _.isString( units[engName] )
-          ? game.Battle.count[ units[engName] ]
-          : units[engName] || 0,
-        countId: units[engName]
+        count: _.isString( units[id] )
+          ? game.Battle.count[ units[id] ]
+          : units[id] || 0,
+        countId: units[id]
       });
-    }
+    });
   }
 
   return info;
@@ -1145,16 +1140,16 @@ Game.Cosmos.getReinforcementInfo = function(spaceEvent) {
   info.canSend = false;
   info.status = 'Подкрепление';
 
-  var units = spaceEvent.data.units.army.ground;
+  var units = spaceEvent.data.units;
   if (units) {
     info.units = [];
-    for (var key in units) {
+    _(units).pairs().forEach(([id, count]) => {
       info.units.push({
-        engName: key,
-        name: Game.Unit.items.army.ground[key].name,
-        count: units[key]
+        id,
+        title: unitItems[id].title,
+        count,
       });
-    }
+    });
   }
 
   return info;
@@ -1245,13 +1240,13 @@ var isAllSelected = function() {
 var resetSelectedUnits = function() {
   var units = {};
   var squad = activeSquad.get();
-  for(let engName in Game.Unit.items.army.fleet) {
-    if (squad && squad.units && squad.units[engName]) {
-      units[engName] = squad.units[engName];
+  _(humanSpaceUnits).keys().forEach((id) => {
+    if (squad && squad.units && squad.units[id]) {
+      units[id] = squad.units[id];
     } else {
-      units[engName] = 0;
+      units[id] = 0;
     }
-  }
+  });
   selectedUnits.set(units);
 };
 resetSelectedUnits();
@@ -1259,9 +1254,9 @@ resetSelectedUnits();
 var selectAllAvaliableUnits = function() {
   var army = Game.Planets.getFleetUnits(activeColonyId.get());
   var units = {};
-  for(let engName in Game.Unit.items.army.fleet) {
-    units[engName] = (army && army[engName]) || 0;
-  }
+  _(humanSpaceUnits).keys().forEach((id) => {
+    units[id] = (army && army[id]) || 0;
+  });
   selectedUnits.set(units);
 };
 
@@ -1390,19 +1385,20 @@ Template.cosmosAttackMenu.helpers({
 
     var units = [];
 
-    for (var key in Game.Unit.items.army.fleet) {
+    _(humanSpaceUnits).pairs().forEach(([id, unit]) => {
       var max = 0;
-      if (army[key] && army[key] > 0) {
-        max = army[key];
+      if (army[id] && army[id] > 0) {
+        max = army[id];
       }
       
       units.push({
-        engName: key,
-        name: Game.Unit.items.army.fleet[key].name,
+        id,
+        title: unit.title,
+        icon: unit.icon,
         max: max,
-        count: (selected && selected[key]) || 0
+        count: (selected && selected[id]) || 0
       });
-    }
+    });
 
     return units;
   },
@@ -1410,14 +1406,14 @@ Template.cosmosAttackMenu.helpers({
   selectedFleetPower: function() {
     var units = selectedUnits.get();
 
-    return Game.Unit.calculateUnitsPower(_.reduce(_.keys(units), function(resultUnits, unitName) {
-      let count = units[unitName];
+    return Game.Unit.calculateUnitsPower(_.reduce(_.keys(units), function(resultUnits, id) {
+      let count = units[id];
       if (count > 0) {
-        resultUnits.army.fleet[unitName] = count;
+        resultUnits[id] = count;
       }
       
       return resultUnits;
-    }, {army: {fleet: {}}}));
+    }, {}));
   },
 
   canHaveMoreColonies: function() {

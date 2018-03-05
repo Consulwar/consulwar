@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/client/Unit';
+import UnitHuman from '/imports/modules/Unit/client/UnitHuman';
 import TruckC from '../lib/TruckC';
 
-export default new Unit(TruckC);
+export default new UnitHuman(TruckC);

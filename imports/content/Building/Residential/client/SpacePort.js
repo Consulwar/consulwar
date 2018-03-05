@@ -1,6 +1,7 @@
+import Building from '/imports/modules/Building/client/Building';
 import SpacePort from '../lib/SpacePort';
 
-export default {
+export default new Building({
   ...SpacePort,
   overlay: {
     x: 339,
@@ -8,4 +9,4 @@ export default {
     z: 5,
     levels: [1, 20, 40, 60, 80, 100],
   },
-};
+});

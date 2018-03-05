@@ -1,6 +1,14 @@
 import FlightEvents from '/imports/modules/Space/lib/flightEvents';
-import { Meteor } from "meteor/meteor";
+import { Meteor } from 'meteor/meteor';
+import { _ } from 'lodash';
 import User from '../../../imports/modules/User/lib/User';
+
+let Hyperdrive;
+if (Meteor.isClient) {
+  Hyperdrive = require('/imports/content/Research/Evolution/client/Hyperdrive').default;
+} else {
+  Hyperdrive = require('/imports/content/Research/Evolution/server/Hyperdrive').default;
+}
 
 initCosmosLib = function() {
 'use strict';
@@ -194,8 +202,8 @@ Game.Planets = {
       var army = (planet.isHome)
         ? Game.Unit.getHomeFleetArmy({ userId })
         : Game.Unit.getArmy({ id: planet.armyId });
-      if (army && army.units && army.units.army) {
-        return army.units.army.fleet;
+      if (army && army.units) {
+        return _.pickBy(army.units, (unit, id) => id.indexOf('/Space/') !== -1) || null;
       }
     }
 
@@ -228,10 +236,7 @@ Game.Planets = {
         break;
     }
 
-    return Math.max(Game.Research.get({
-      group: 'evolution',
-      engName: 'hyperdrive',
-    }), minEngine);
+    return Math.max(Hyperdrive.getCurrentLevel({ user }), minEngine);
   },
 };
 

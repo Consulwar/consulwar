@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
+import content from '/imports/content/client';
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import Battle from '../../battle/lib/imports/battle';
@@ -102,27 +103,34 @@ Game.Queue.Collection.find({}).observe({
 });
 
 
-var showNotificationFromTask = function(task) {
-  var options = {};
-  if (['building', 'research', 'unit'].indexOf(task.type) != -1) {
-    options.path = Router.routes[task.type].path({group: task.group, item: task.engName});
+const showNotificationFromTask = function(task) {
+  let item;
+  if (task.itemId) {
+    item = content[task.itemId];
   }
-  if (task.type == 'building') {
+
+  if (item) {
+    const options = {};
+    options.path = Router.routes[item.type].path({
+      group: item.group,
+      item: item.engName,
+    });
+
+    let text;
+    if (item.type == 'building') {
+      text = `Здание «${item.title}» построено!`;
+    } else if (item.type == 'research') {
+      text = `Исследование «${item.title}» завершено!`;
+    } else if (item.type == 'unit') {
+      text = `Строительство юнита «${item.title}» завершено!`;
+    }
+
     Game.showDesktopNotification(
-      'Здание «' + Game.Building.items[task.group][task.engName].name + '» построено!', 
-      options
-    );
-  } else if (task.type == 'research') {
-    Game.showDesktopNotification(
-      'Исследование «' + Game.Research.items[task.group][task.engName].name + '» завершено!', 
-      options
-    );
-  } else if (task.type == 'unit') {
-    Game.showDesktopNotification(
-      'Строительство юнита «' + Game.Unit.items.army[task.group][task.engName].name + '» завершено!', 
-      options
+      text,
+      options,
     );
   }
+
 };
 
 

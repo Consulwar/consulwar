@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Turret from '../lib/Turret';
 
-export default new Unit(Turret);
+export default new UnitHuman(Turret);

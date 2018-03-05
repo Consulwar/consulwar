@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Frigate from '../lib/Frigate';
 
-export default new Unit(Frigate);
+export default new UnitHuman(Frigate);

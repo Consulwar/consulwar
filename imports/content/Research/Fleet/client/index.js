@@ -12,16 +12,16 @@ import Reaper from './Reaper';
 import Flagship from './Flagship';
 
 export default {
-  'Research/Evolution/Gammadrone': Gammadrone,
-  'Research/Evolution/Wasp': Wasp,
-  'Research/Evolution/Mirage': Mirage,
-  'Research/Evolution/Frigate': Frigate,
-  'Research/Evolution/TruckC': TruckC,
-  'Research/Evolution/Cruiser': Cruiser,
-  'Research/Evolution/Battleship': Battleship,
-  'Research/Evolution/Carrier': Carrier,
-  'Research/Evolution/Dreadnought': Dreadnought,
-  'Research/Evolution/Railgun': Railgun,
-  'Research/Evolution/Reaper': Reaper,
-  'Research/Evolution/Flagship': Flagship,
+  'Research/Fleet/Gammadrone': Gammadrone,
+  'Research/Fleet/Wasp': Wasp,
+  'Research/Fleet/Mirage': Mirage,
+  'Research/Fleet/Frigate': Frigate,
+  'Research/Fleet/TruckC': TruckC,
+  'Research/Fleet/Cruiser': Cruiser,
+  'Research/Fleet/Battleship': Battleship,
+  'Research/Fleet/Carrier': Carrier,
+  'Research/Fleet/Dreadnought': Dreadnought,
+  'Research/Fleet/Railgun': Railgun,
+  'Research/Fleet/Reaper': Reaper,
+  'Research/Fleet/Flagship': Flagship,
 };

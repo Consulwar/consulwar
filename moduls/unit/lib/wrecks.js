@@ -34,7 +34,7 @@ Game.Wrecks = {
 
   getPrice(unit, count) {
     let price = Game.Resources.multiplyResources({
-      resources: _.clone(unit.getBasePrice(count).base),
+      resources: _.clone(unit.getBasePrice(count)),
       count: Game.Wrecks.PRICE_COEFFICIENT,
     });
 

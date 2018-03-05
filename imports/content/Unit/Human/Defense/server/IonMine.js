@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import IonMine from '../lib/IonMine';
 
-export default new Unit(IonMine);
+export default new UnitHuman(IonMine);

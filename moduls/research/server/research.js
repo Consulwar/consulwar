@@ -1,51 +1,20 @@
+import '/imports/modules/Research/server/api';
+import ResearchCollection from '/imports/modules/Research/lib/ResearchCollection';
+
 initResearchServer = function() {
 'use strict';
 
 initResearchLib();
-initResearchServerMethods();
 
-Game.Research.Collection._ensureIndex({
-  user_id: 1
+ResearchCollection._ensureIndex({
+  user_id: 1,
 });
 
-Game.Research.add = function(research) {
-  Game.Research.initialize();
-
-  var set = {};
-  set[research.group + '.' + research.engName] = research.level;
-
-  Game.Research.Collection.update({
-    user_id: Meteor.userId()
-  }, {
-    $set: set
-  });
-
-  return set;
-};
-
-Game.Research.complete = function(task) {
-  Game.Research.add(task);
-
-  Game.Statistic.incrementUser(Meteor.userId(), {
-    'research.total': 1
-  });
-};
-
-Game.Research.initialize = function(user) {
-  user = user || Meteor.user();
-  var currentValue = Game.Research.getValue({ user });
-
-  if (currentValue === undefined) {
-    Game.Research.Collection.insert({
-      'user_id': user._id
-    });
-  }
-};
-
-Meteor.publish('researches', function () {
+Meteor.publish('researches', function() {
   if (this.userId) {
-    return Game.Research.Collection.find({user_id: this.userId});
+    return ResearchCollection.find({ user_id: this.userId });
   }
+  return null;
 });
 
 };

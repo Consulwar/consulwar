@@ -1,3 +1,6 @@
+import humanUnits from '/imports/content/Unit/Human/client';
+import reptileUnits from '/imports/content/Unit/Reptile/client';
+
 initUnitClient = function() {
 'use strict';
 
@@ -7,7 +10,16 @@ initSquadLib();
 Meteor.subscribe('squad');
 
 Game.Unit.showPage = function() {
-  var item = Game.Unit.items[this.group][this.params.group][this.params.item];
+  let item;
+  if (this.params.item) {
+    let group = this.params.group;
+    const engName = this.params.item;
+    if (group === 'Ground') {
+      group = `Ground/${this.params.subgroup}`;
+    }
+    const id = `Unit/Human/${group}/${engName}`;
+    item = humanUnits[id];
+  }
   
   if (item) {
     this.render('unit', {
@@ -18,13 +30,22 @@ Game.Unit.showPage = function() {
       }
     });
   } else {
-    this.render('empty', {to: 'content'});
+    this.render('empty', { to: 'content' });
   }
 };
 
 Game.Unit.showReptilePage = function() {
-  var item = Game.Unit.items.reptiles[this.params.group][this.params.item];
-  
+  let item;
+  if (this.params.item) {
+    let group = this.params.group;
+    const engName = this.params.item;
+    if (group === 'Ground') {
+      group = `Ground/${this.params.subgroup}`;
+    }
+    const id = `Unit/Reptile/${group}/${engName}`;
+    item = reptileUnits[id];
+  }
+
   if (item) {
     this.render('unit', {
       to: 'content', 
@@ -41,7 +62,14 @@ Game.Unit.showReptilePage = function() {
 Template.unit.helpers({
   count: function() {
     return this.count.get();
-  }
+  },
+
+  currentValue(unit) {
+    if (unit.group === 'Ground') {
+      return unit.getCurrentCount({ from: 'hangar' });
+    }
+    return unit.getCurrentCount();
+  },
 });
 
 Template.unit.onRendered(function() {
@@ -53,7 +81,7 @@ Template.unitCharacteristics.events({
     let target = $(e.currentTarget);
     let currentCharachteristic = target.parent().attr('class') == 'weapon' ? 'damage' : 'life';
     let tooltip = Blaze._globalHelpers.militaryTooltip(
-      this.unit.characteristics, 
+      this.unit.getCharacteristics(), 
       currentCharachteristic
     )
     target.attr('data-tooltip', tooltip['data-tooltip']);
@@ -73,8 +101,8 @@ Template.unitCharacteristics.events({
 // и необходимость пересчитать дополнительно
 var getMax = function(item, accumulator) {
   accumulator = accumulator || 0;
-  var price = item.price();
-  var alreadySpended = accumulator ? item.price(accumulator) : null;
+  var price = item.getPrice();
+  var alreadySpended = accumulator ? item.getPrice(accumulator) : null;
   var avalialbeResources = Game.Resources.currentValue.get();
 
   var minAmount = Infinity;
@@ -120,9 +148,8 @@ Template.unit.events({
     var item = t.data.unit;
 
     Meteor.call('unit.build', {
-        group: item.group,
-        engName: item.engName,
-        count: this.count.get()
+        id: item.id,
+        count: this.count.get(),
       },
       function(error, message) {
         if (error) {

@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Chipping from '../lib/Chipping';
 
-export default new ReptileUnit(Chipping);
+export default new UnitReptile(Chipping);

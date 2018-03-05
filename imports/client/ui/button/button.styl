@@ -1,16 +1,21 @@
 @import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
 
 .cw--button
+  cw--fontFamily_normal()
+  font-size $cw--fontSize_l
+  font-weight normal
+  text-decoration none
   display flex
   align-items center
   justify-content center
-  font-size 18px
   cursor pointer
 
   &_type
     &_primary
       border 0
       padding 12px
+      color $cw--color_black
       outline 2px solid $cw--color_black
       outline-offset -5px
 

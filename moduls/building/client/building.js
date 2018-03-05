@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import Building from '/imports/client/ui/blocks/Building/Building';
@@ -64,7 +63,7 @@ Game.Building.showPage = function() {
 };
 
 var bonusEvents = {
-  'click .collectBonus.metals, click button.metal': function(e, t) {
+  'click .collectBonus.metals': function(e, t) {
     Meteor.call('getBonusResources', 'metals', function(error, result) {
       if (error) {
         Notifications.error('Нельзя получить бонусный металл', error.error);
@@ -74,7 +73,7 @@ var bonusEvents = {
     });
   },
 
-  'click .collectBonus.crystals, click button.crystal': function(e, t) {
+  'click .collectBonus.crystals': function(e, t) {
     Meteor.call('getBonusResources', 'crystals', function(error, result) {
       if (error) {
         Notifications.error('Нельзя получить бонусный кристалл', error.error);
@@ -85,7 +84,9 @@ var bonusEvents = {
   }
 };
 
+// TODO: Удалить — Хелперы и эвенты для шаблона строительства
 Template.overlay_menu.events(bonusEvents);
+
 Template.item_building.events(bonusEvents);
 
 Template.item_building.helpers({

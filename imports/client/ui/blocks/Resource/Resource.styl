@@ -1,0 +1,31 @@
+@import '{}/imports/client/ui/colors'
+
+// congif
+$iconRatio = 65%
+
+// mixin
+resources($name, $folder, $fontColor)
+  &_{$name}
+    background-image url(/img/game/Resource/Base/$folder/icon.svg)
+    background-repeat no-repeat
+    background-position top center
+    color $fontColor
+
+.cw--Resource
+  &_icon
+    background-repeat no-repeat
+    background-size $iconRatio
+    background-position center top
+    text-align center
+    &::before
+      content ''
+      display block
+      width $iconRatio
+      margin 0 auto
+      padding-top @width
+      padding-bottom 3px
+    resources('humans','Human',$cw--color_human)
+    resources('metals','Metal',$cw--color_metal)
+    resources('crystals', 'Crystal',$cw--color_crystal)
+    resources('honor', 'Honor',$cw--color_honor)
+    resources('credits','Credit',$cw--color_credit)

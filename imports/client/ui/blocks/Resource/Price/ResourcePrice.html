@@ -16,7 +16,17 @@
       {{else}}
         <div
           onMouseOver={{showResource this.engName this.price}}
-          class="cw--ResourcePrice__item cw--Resource cw--Resource_{{this.engName}} {{#if (isArtefact this.engName)}}cw--Artefact_{{this.group}}{{/if}}"
+          class="
+            cw--ResourcePrice__item
+            {{#if (isArtefact this.engName)}}
+              cw--Artefact_icon
+              cw--Artefact_icon_{{this.group}}
+              cw--Artefact_icon_{{this.engName}}
+            {{else}}
+              cw--Resource_icon
+              cw--Resource_icon_{{this.engName}}
+            {{/if}}
+          "
           onClick={{showArtefacts this.engName}}
           data-tooltip="true" data-tooltip-direction="n"
           data-id="{{this.engName}}"

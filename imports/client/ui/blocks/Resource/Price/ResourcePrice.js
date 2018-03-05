@@ -2,8 +2,9 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
 import { Blaze } from 'meteor/blaze';
 import { Router } from 'meteor/iron:router';
-import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/blocks/Resource/Artefact.styl';
+import '/imports/client/ui/blocks/Resource/Resource.styl';
 import './ResourcePrice.html';
 import './ResourcePrice.styl';
 
@@ -33,7 +34,6 @@ class ResourcePrice extends BlazeComponent {
   }
 
   isArtefact(resourceName) {
-    // return _.has(Game.Artefacts.items, resourceName);
     return Object.keys(Game.Artefacts.items).includes(resourceName);
   }
 

@@ -52,7 +52,7 @@ Meteor.subscribe('myPlanets');
 Meteor.subscribe('battles');
 Meteor.subscribe('spaceHex');
 
-const userPlanetsTracker = Tracker.autorun(() => {
+Tracker.autorun((userPlanetsTracker) => {
   const user = Meteor.user();
   if (user) {
     userPlanetsTracker.stop();

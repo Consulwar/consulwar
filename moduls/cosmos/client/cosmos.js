@@ -59,7 +59,7 @@ const userPlanetsTracker = Tracker.autorun(() => {
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
 var bounds = new ReactiveVar(null);
-var fleetSendInProgress = new ReactiveVar(false);
+var isFleetSendInProgress = new ReactiveVar(false);
 var updated = new ReactiveVar(null);
 
 var mapView = null;
@@ -1445,7 +1445,7 @@ Template.cosmosAttackMenu.helpers({
     return Space.checkSendFleet({
       planet: Game.Planets.getOne(activeColonyId.get()),
       units: selectedUnits.get(),
-    }) && !fleetSendInProgress.get();
+    }) && !isFleetSendInProgress.get();
   },
 
   extraColonyPrice: function() {
@@ -1702,7 +1702,7 @@ Template.cosmosAttackMenu.events({
 
     if (planet) {
       // Send to planet
-      fleetSendInProgress.set(true);
+      isFleetSendInProgress.set(true);
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
@@ -1711,7 +1711,7 @@ Template.cosmosAttackMenu.events({
         units,
         isOneway,
         function(err) {
-          fleetSendInProgress.set(false);
+          isFleetSendInProgress.set(false);
 
           if (err) {
             Notifications.error('Не удалось отправить флот', err.error);
@@ -1724,7 +1724,7 @@ Template.cosmosAttackMenu.events({
       );
     } else if (battle) {
       // Send to battle
-      fleetSendInProgress.set(true);
+      isFleetSendInProgress.set(true);
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
@@ -1733,7 +1733,7 @@ Template.cosmosAttackMenu.events({
         units,
         isOneway,
         function(err) {
-          fleetSendInProgress.set(false);
+          isFleetSendInProgress.set(false);
 
           if (err) {
             Notifications.error('Не удалось отправить флот', err.error);
@@ -1767,14 +1767,14 @@ Template.cosmosAttackMenu.events({
         return;
       }
 
-      fleetSendInProgress.set(true);
+      isFleetSendInProgress.set(true);
       Meteor.call(
         'space.attackReptileFleet',
         basePlanet._id,
         targetId,
         units,
         function(err) {
-          fleetSendInProgress.set(false);
+          isFleetSendInProgress.set(false);
           
           if (err) {
             Notifications.error('Не удалось отправить флот', err.error);

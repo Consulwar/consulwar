@@ -6,7 +6,6 @@ import User from '/imports/modules/User/lib/User';
 
 import performRound from './performRound';
 import calculateGroupPower from '../lib/imports/calculateGroupPower';
-import traverseGroup from '../lib/imports/traverseGroup';
 
 import Collection from '../lib/imports/collection';
 import Lib from '../lib/imports/battle';
@@ -226,8 +225,8 @@ class Battle {
     const userUnits = roundResult.killed[USER_SIDE];
     let totalLost = 0;
 
-    traverseGroup(userUnits, function(armyName, typeName, unitName, count) {
-      increment[`units.lost.${armyName}.${typeName}.${unitName}`] = count;
+    _(userUnits).pairs().forEach(([id, count]) => {
+      increment[`units.lost.${id}`] = count;
       totalLost += count;
     });
 
@@ -236,8 +235,8 @@ class Battle {
     const enemyUnits = roundResult.killed[ENEMY_SIDE];
     totalLost = 0;
 
-    traverseGroup(enemyUnits, function(armyName, typeName, unitName, count) {
-      increment[`reptiles.killed.${armyName}.${typeName}.${unitName}`] = count;
+    _(enemyUnits).pairs().forEach(([id, count]) => {
+      increment[`reptiles.killed.${id}`] = count;
       totalLost += count;
     });
 
@@ -373,33 +372,22 @@ class Battle {
   }
 
   calculateTotalKilled(sideName) {
-    const initialUnits = this.initialUnits;
     const result = {};
 
-    traverseSide(this.currentUnits, sideName, function(username, groupNum, group) {
-      traverseGroup(group, function(armyName, typeName, unitName, unit) {
-        const diff = (
-          initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count -
-          unit.count
-        );
+    _(this.currentUnits[sideName]).pairs().forEach(([username, group]) => {
+      group.forEach((units, groupNum) => {
+        _(units).pairs().forEach(([id, unit]) => {
+          const diff = (
+            this.initialUnits[sideName][username][groupNum][id].count -
+            unit.count
+          );
 
-        if (diff === 0) {
-          return;
-        }
+          if (diff === 0) {
+            return;
+          }
 
-        if (!result[armyName]) {
-          result[armyName] = {};
-        }
-
-        if (!result[armyName][typeName]) {
-          result[armyName][typeName] = {};
-        }
-
-        if (!result[armyName][typeName][unitName]) {
-          result[armyName][typeName][unitName] = 0;
-        }
-
-        result[armyName][typeName][unitName] += diff;
+          result[id] = (result[id] || 0) + diff;
+        });
       });
     });
 
@@ -409,54 +397,45 @@ class Battle {
   getUsersKilledUnits(targetUsername) {
     const sideName = Battle.USER_SIDE;
 
-    const initialUnits = this.initialUnits;
     const killed = {};
 
-    traverseSide(this.currentUnits, sideName, function(username, groupNum, group) {
+    _(this.currentUnits[sideName]).pairs().forEach(([username, group]) => {
       if (username !== targetUsername) {
         return;
       }
 
-      traverseGroup(group, function(armyName, typeName, unitName, unit) {
-        const diff = (
-          initialUnits[sideName][username][groupNum][armyName][typeName][unitName].count -
-          unit.count
-        );
+      group.forEach((units, groupNum) => {
+        _(units).pairs().forEach(([id, unit]) => {
+          const diff = (
+            this.initialUnits[sideName][username][groupNum][id].count -
+            unit.count
+          );
 
-        if (diff === 0) {
-          return;
-        }
+          if (diff === 0) {
+            return;
+          }
 
-        if (!killed[armyName]) {
-          killed[armyName] = {};
-        }
-
-        if (!killed[armyName][typeName]) {
-          killed[armyName][typeName] = {};
-        }
-
-        if (!killed[armyName][typeName][unitName]) {
-          killed[armyName][typeName][unitName] = 0;
-        }
-
-        killed[armyName][typeName][unitName] += diff;
+          killed[id] = (killed[id] || 0) + diff;
+        });
       });
     });
 
     return killed;
   }
 
-  traverse(callback) {
-    traverseUnits(this.currentUnits, function(sideName, username, groupNum, group){
-      traverseGroup(group, function(armyName, typeName, unitName, unit) {
-        callback({
-          unit,
-          sideName,
-          username,
-          groupNum,
-          armyName,
-          typeName,
-          unitName,
+  everyCurrentUnit(callback) {
+    _(this.currentUnits).pairs().forEach(([sideName, participants]) => {
+      _(participants).pairs().forEach(([username, group]) => {
+        group.forEach((units, groupNum) => {
+          _(units).pairs().forEach(([id, unit]) => {
+            callback({
+              unit,
+              sideName,
+              username,
+              groupNum,
+              id,
+            });
+          });
         });
       });
     });
@@ -476,26 +455,6 @@ const calculateTotalPower = function(armyPowers) {
   });
 
   return totalPower;
-};
-
-const traverseSide = function(units, sideName, callback) {
-  const side = units[sideName];
-
-  _(side).pairs().forEach(([username, groups]) => {
-    for (let groupNum = 0; groupNum < groups.length; groupNum += 1) {
-      const group = groups[groupNum];
-
-      callback(username, groupNum, group);
-    }
-  });
-};
-
-const traverseUnits = function(units, callback) {
-  _(units).keys().forEach((sideName) => {
-    traverseSide(units, sideName, function(username, groupNum, group) {
-      callback(sideName, username, groupNum, group);
-    });
-  });
 };
 
 export default Battle;

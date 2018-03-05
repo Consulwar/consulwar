@@ -66,6 +66,13 @@ game.Artefact = function(options) {
     return true;
   };
 
+
+  this.path = '/img/game/artefact/';
+
+  this.icon = `${this.path}icon.png`;
+  this.card = `${this.path}${this.group}/${this.engName}/item.jpg`;
+  this.overlayOwn = this.card;
+
   this.url = function(options) {
     options = options || {
       item: this.engName
@@ -89,7 +96,7 @@ game.Artefact = function(options) {
 
   this.getImage = this.image;
 
-  this.getCard = this.image;
+  this.card = this.image;
 
   Game.Artefacts.items[options.engName] = this;
 

@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Xynlet from '../lib/Xynlet';
 
-export default new Unit(Xynlet);
+export default new UnitHuman(Xynlet);

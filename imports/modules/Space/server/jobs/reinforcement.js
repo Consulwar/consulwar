@@ -27,30 +27,18 @@ export default Space.jobs.processJobs(
 
     let arrived = null;
 
-    _(units).pairs().forEach(([sideName, side]) => {
-      _(side).pairs().forEach(([groupName, group]) => {
-        _(group).pairs().forEach(([unitName, countStr]) => {
-          const count = parseInt(countStr, 10);
-
-          let result = Math.floor(count * k);
-          if (Game.Random.random() < (count * k) % 1) {
-            result += 1;
-          }
-          // save result
-          if (result > 0) {
-            if (!arrived) {
-              arrived = {};
-            }
-            if (!arrived[sideName]) {
-              arrived[sideName] = {};
-            }
-            if (!arrived[sideName][groupName]) {
-              arrived[sideName][groupName] = {};
-            }
-            arrived[sideName][groupName][unitName] = result;
-          }
-        });
-      });
+    _(units).pairs().forEach(([id, count]) => {
+      let result = Math.floor(count * k);
+      if (Game.Random.random() < (count * k) % 1) {
+        result += 1;
+      }
+      // save result
+      if (result > 0) {
+        if (!arrived) {
+          arrived = {};
+        }
+        arrived[id] = result;
+      }
     });
 
     // save reinforcements

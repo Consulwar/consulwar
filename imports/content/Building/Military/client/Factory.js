@@ -1,6 +1,7 @@
+import Building from '/imports/modules/Building/client/Building';
 import Factory from '../lib/Factory';
 
-export default {
+export default new Building({
   ...Factory,
   overlay: {
     x: 0,
@@ -9,4 +10,4 @@ export default {
     levels: [1, 20, 40, 60, 80, 100],
     own: 'item',
   },
-};
+});

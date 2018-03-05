@@ -17,7 +17,7 @@ export default {
   },
   targets: [
     'Unit/Human/Ground/Infantry/Psiman',
-    'Unit/Human/Ground/Infantry/Fathers',
+    'Unit/Human/Ground/Infantry/Father',
     'Unit/Human/Ground/Infantry/Lost',
   ],
 };

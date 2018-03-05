@@ -33,43 +33,32 @@ let fire = function(damageList, target) {
 };
 
 let mergeGroups = function(battle) {
-  let battleUnits = battle.battleUnits;
+  const battleUnits = battle.battleUnits;
 
-  battle.traverse(function({unit, sideName, armyName, typeName, unitName}) {
+  battle.everyCurrentUnit(function({ unit, sideName, id }) {
     if (unit.count === 0) {
       return;
     }
 
-    if (!battleUnits[sideName]) {
-      battleUnits[sideName] = {};
-    }
-
-    if (!battleUnits[sideName][armyName]) {
-      battleUnits[sideName][armyName] = {};
-    }
-
-    if (!battleUnits[sideName][armyName][typeName]) {
-      battleUnits[sideName][armyName][typeName] = {};
-    }
-
-    if (!battleUnits[sideName][armyName][typeName][unitName]) {
-      battleUnits[sideName][armyName][typeName][unitName] = {
+    battleUnits[sideName] = battleUnits[sideName] || {};
+    if (!battleUnits[sideName][id]) {
+      battleUnits[sideName][id] = {
         count: unit.count,
         weapon: {
           damage: {
             min: unit.weapon.damage.min,
-            max: unit.weapon.damage.max
+            max: unit.weapon.damage.max,
           },
-          signature: unit.weapon.signature
+          signature: unit.weapon.signature,
         },
         health: {
           armor: unit.health.armor,
           signature: unit.health.signature,
-          total: unit.health.armor * unit.count
-        }
+          total: unit.health.armor * unit.count,
+        },
       };
     } else {
-      let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
+      const battleUnit = battleUnits[sideName][id];
 
       mergeParam(battleUnit, unit, ['weapon', 'damage', 'min']);
       mergeParam(battleUnit, unit, ['weapon', 'damage', 'max']);
@@ -108,22 +97,29 @@ let recalculateCurrentCounts = function(battle) {
   const leftByUsername = {};
   let decrement = {};
 
-  battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
+  const isBattle1x1 = !(_(battle.initialUnits)
+    .values()
+    .some(side => _(side).keys().length > 1 || (
+      _(side)
+        .values()
+        .some(player => player.length > 1)
+    ))
+  );
+
+  battle.everyCurrentUnit(({ unit, sideName, username, groupNum, id }) => {
     if (unit.count === 0) {
       return;
     }
 
-    let sideBattleUnits = battleUnits[sideName];
+    const sideBattleUnits = battleUnits[sideName];
 
-    let battleUnit = sideBattleUnits[armyName][typeName][unitName];
+    const battleUnit = sideBattleUnits[id];
 
-    let alive = battleUnit.health.total / battleUnit.health.armor;
+    const alive = battleUnit.health.total / battleUnit.health.armor;
 
-    let floatCurrentAlive = (unit.count / battleUnit.count) * alive;
+    const floatCurrentAlive = (unit.count / battleUnit.count) * alive;
 
     let left;
-
-    const isBattle1x1 = !_(battle.initialUnits).values().some(side => _(side).keys().length > 1);
 
     if (isBattle1x1) {
       left = Math.ceil(floatCurrentAlive);
@@ -131,30 +127,30 @@ let recalculateCurrentCounts = function(battle) {
       left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);
     }
 
-    let killed = unit.count - left;
+    const killed = unit.count - left;
 
     unit.count = left;
 
     if (left > 0) {
-      incToObj(leftObj, [sideName, armyName, typeName, unitName], left);
+      incToObj(leftObj, [sideName, id], left);
 
       if (!leftByUsername[username]) {
         leftByUsername[username] = {};
       }
 
-      incToObj(leftByUsername[username], [armyName, typeName, unitName], left);
+      incToObj(leftByUsername[username], [id], left);
     }
 
-    incToObj(killedObj, [sideName, armyName, typeName, unitName], killed);
+    incToObj(killedObj, [sideName, id], killed);
 
-    decrement[`currentUnits.${sideName}.${username}.${groupNum}.${armyName}.${typeName}.${unitName}.count`] = -killed;
+    decrement[`currentUnits.${sideName}.${username}.${groupNum}.${id}.count`] = -killed;
   });
 
   return {
     left: leftObj,
     leftByUsername,
     killed: killedObj,
-    decrement: decrement
+    decrement,
   };
 };
 
@@ -175,54 +171,30 @@ let incToObj = function(obj, fields, value) {
   }
 };
 
-let calcBattleHealth = function({battleUnits}) {
-  for (let sideName in battleUnits) {
-    if (!battleUnits.hasOwnProperty(sideName)) {
-      continue;
-    }
+let calcBattleHealth = function({ battleUnits }) {
+  _(battleUnits).keys().forEach((sideName) => {
+    const units = battleUnits[sideName];
 
-    let group = battleUnits[sideName];
+    _(units).pairs().forEach(([id, unit]) => {
+      const battleUnit = battleUnits[sideName][id];
 
-    for (let armyName in group) {
-      if (!group.hasOwnProperty(armyName)) {
-        continue;
+      if (battleUnit.count === 0) {
+        battleUnit.health.total = 0;
+      } else {
+        const totalHP = battleUnit.health.armor * battleUnit.count;
+        const killed = (totalHP - battleUnit.health.total) / battleUnit.health.armor;
+        battleUnit.health.total = -(totalHP - Math.floor(killed) * unit.health.armor - battleUnit.health.total);
       }
-      let army = group[armyName];
 
-      for (let typeName in army) {
-        if (!army.hasOwnProperty(typeName)) {
-          continue;
-        }
-        let units = army[typeName];
+      battleUnit.weapon.damage = { min: 0, max: 0 };
+      battleUnit.weapon.signature = 0;
 
-        for (let unitName in units) {
-          if (!units.hasOwnProperty(unitName)) {
-            continue;
-          }
+      battleUnit.health.armor = 0;
+      battleUnit.health.signature = 0;
 
-          let unit = units[unitName];
-
-          let battleUnit = battleUnits[sideName][armyName][typeName][unitName];
-
-          if (battleUnit.count === 0) {
-            battleUnit.health.total = 0;
-          } else {
-            let totalHP = battleUnit.health.armor * battleUnit.count;
-            let killed = (totalHP - battleUnit.health.total) / battleUnit.health.armor;
-            battleUnit.health.total = -(totalHP - Math.floor(killed) * unit.health.armor - battleUnit.health.total);
-          }
-
-          battleUnit.weapon.damage = {min: 0, max: 0};
-          battleUnit.weapon.signature = 0;
-
-          battleUnit.health.armor = 0;
-          battleUnit.health.signature = 0;
-
-          battleUnit.count = 0;
-        }
-      }
-    }
-  }
+      battleUnit.count = 0;
+    });
+  });
 };
 
 export default performRound;

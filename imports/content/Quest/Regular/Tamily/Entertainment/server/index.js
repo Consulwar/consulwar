@@ -22,7 +22,7 @@ export default {
   id: 'Quest/Regular/Tamily/Entertainment',
   condition: [
     ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/Spaceport', 10],
+    ['Building/Residential/SpacePort', 10],
   ],
   finalText: 'Поздравляем! Центр Развлечений достиг максимального уровня. Слава Великому Консулу!',
   quests: [

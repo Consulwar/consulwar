@@ -1,11 +1,19 @@
+import buildings from '/imports/content/Building/client';
+
 initBuildingClient = function() {
 'use strict';
 
 initBuildingLib();
 
 Game.Building.showPage = function() {
-  var item = Game.Building.items[this.params.group][this.params.item];
   var menu = this.params.menu;
+  let item;
+  if (this.params.item) {
+    const group = this.params.group[0].toUpperCase() + this.params.group.slice(1);
+    const engName = this.params.item[0].toUpperCase() + this.params.item.slice(1);
+    const id = `Building/${group}/${engName}`;
+    item = buildings[id];
+  }
   
   if (item) {
     this.render('item_building', {to: 'content', data: { building: item, submenu: menu } });
@@ -69,8 +77,7 @@ Template.item_building.events({
     var item = t.data.building;
 
     Meteor.call('building.build', {
-        group: item.group,
-        engName: item.engName
+        id: item.id,
       },
       function(error, message) {
         if (error) {
@@ -81,7 +88,7 @@ Template.item_building.events({
       }
     );
 
-    if (item.currentLevel() === 0) {
+    if (item.getCurrentLevel() === 0) {
       Router.go(item.url({group: item.group}));
     }
   },

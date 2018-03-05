@@ -1,16 +1,16 @@
 <template name="unit">
   <div class="header">
     <div class="level">
-      {{#if unit.currentLevel}}
-        <span>{{formatNumber unit.currentLevel}} </span>
-        {{declension unit.currentLevel 'единиц' 'а' 'ы' ''}} 
+      {{#if (currentValue unit)}}
+        <span>{{formatNumber (currentValue unit)}} </span>
+        {{declension (currentValue unit) 'единиц' 'а' 'ы' ''}} 
       {{else}}
         Не построено
       {{/if}}
     </div>
 
-    <div class="name {{#if unit.star}}star{{unit.star}}{{/if}}">
-      {{unit.name}}
+    <div class="name {{#if unit.getStar}}star{{unit.getStar}}{{/if}}">
+      {{unit.title}}
     </div>
 
     <button 
@@ -32,9 +32,9 @@
 
     {{> unitCharacteristics unit=unit}}
 
-    {{#unless eq unit.side 'reptiles'}}
+    {{#unless eq unit.type 'reptileUnit'}}
       <div class="bottom">
-        {{> item_price price=(unit.price count undefined)}}
+        {{> item_price price=(unit.getPrice count undefined)}}
 
         <div class="actions">
           <div class="action">
@@ -45,10 +45,10 @@
               data-tooltip-direction="s"
               {{premiumTitle}}></button>
             <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
-            <button class="main_action build" disabled="{{not (unit.canBuild count)}}">Отдать приказ</button>
+            <button class="main_action build" disabled="{{not (unit.canBuild count undefined)}}">Отдать приказ</button>
           </div>
           
-          {{#unless eq unit.group 'ground'}}
+          {{#unless eq unit.group 'Ground'}}
             <div class="action">
               <button class="additional_action repair">
                 Ремонтировать
@@ -59,7 +59,7 @@
       </div>
     {{/unless}}
   </div>
-  {{> item_requirements requirements=unit.requirements}}
+  {{> item_requirements requirements=unit.getRequirements}}
 </template>
 
 <template name="unitCharacteristics">
@@ -67,44 +67,44 @@
     <div class="unit">
       {{#if addTitle}}
         <div class="title">
-          {{unit.name}}
+          {{unit.title}}
         </div>
       {{/if}}
 
       <div class="characteristics">
         <div class="weapon">
           <div class="damage" data-tooltip="true" data-tooltip-direction="w">
-            {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 4}}
+            {{formatNumberWithISO (div (sum unit.getCharacteristics.weapon.damage.min unit.getCharacteristics.weapon.damage.max) 2) 4}}
           </div>
 
           <div class="damage_signature">
-            {{formatNumberWithISO unit.characteristics.weapon.signature 4}}
+            {{formatNumberWithISO unit.getCharacteristics.weapon.signature 4}}
           </div>
         </div>
 
         <div class="life">
           <div class="armor" data-tooltip="true" data-tooltip-direction="w">
-            {{formatNumberWithISO unit.characteristics.health.armor 4}}
+            {{formatNumberWithISO unit.getCharacteristics.health.armor 4}}
           </div>
 
           <div class="armor_signature">
-            {{formatNumberWithISO unit.characteristics.health.signature 4}}
+            {{formatNumberWithISO unit.getCharacteristics.health.signature 4}}
           </div>
         </div>
       </div>
 
-      {{#if unit.targets}}
+      {{#if unit.getTargets}}
         <div class="targets_title">Приоритеты атаки:</div>
         <ol class="targets">
-          {{#each unit.targets}}
+          {{#each unit.getTargets}}
             <li 
               class="enough_resources {{this.type}}" 
               data-tooltip="true"
               data-tooltip-direction="s"
             >
               <a 
-                class="{{this.engName}}-icon" 
                 href="{{this.url}}"
+                style="background-image: url({{this.icon}});"
               ></a>
             </li>
           {{/each}}
@@ -114,7 +114,7 @@
       <div class="effects">
         {{#if unit.maxCount}}
           <div class="limit">
-            Всего юнитов {{formatNumber unit.totalCount}} из {{formatNumber unit.maxCount}}
+            Всего юнитов {{formatNumber unit.getTotalCount}} из {{formatNumber unit.maxCount}}
           </div>
         {{/if}}
       </div>

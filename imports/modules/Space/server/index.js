@@ -92,8 +92,6 @@ export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
 
   Space.jobs.startJobServer();
-  //Space.jobs.setLogStream(process.stdout);
-
   if (datadog.gauge && Meteor.settings.last) {
     const job = new Job(Space.jobs, 'datadog', {});
     job

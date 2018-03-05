@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/client/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/client/UnitReptile';
 import Ripper from '../lib/Ripper';
 
-export default new ReptileUnit(Ripper);
+export default new UnitReptile(Ripper);

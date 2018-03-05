@@ -1,3 +1,8 @@
+import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
+import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
+import humanDefenseUnits from '/imports/content/Unit/Human/Defense/client';
+import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
+
 initStatisticClient = function() {
 'use strict';
 
@@ -242,6 +247,13 @@ Game.Statistic.redirectToUser = function(options) {
     }
   });
 };
+
+Template.developmentDetailStatisticPage.helpers({
+  humanSpaceUnits,
+  humanDefenseUnits,
+  humanGroundUnits,
+  reptileSpaceUnits,
+});
 
 Template.rating.helpers({
   isLoading: function() {

@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/client/Unit';
+import UnitHuman from '/imports/modules/Unit/client/UnitHuman';
 import Laser from '../lib/Laser';
 
-export default new Unit(Laser);
+export default new UnitHuman(Laser);

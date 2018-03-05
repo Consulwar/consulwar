@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/client/Unit';
+import UnitHuman from '/imports/modules/Unit/client/UnitHuman';
 import Carrier from '../lib/Carrier';
 
-export default new Unit(Carrier);
+export default new UnitHuman(Carrier);

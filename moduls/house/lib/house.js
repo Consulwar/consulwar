@@ -17,7 +17,6 @@ game.HouseItem = function(options) {
   }
   options.group = options.subgroup;
 
-  Game.newToLegacyEffects(options);
   //
   this.doNotRegisterEffect = true;
 
@@ -70,6 +69,8 @@ game.HouseItem = function(options) {
   this.image = function() {
     return '/img/game/house/' + this.subgroup + '/i/' + this.engName + '.jpg';
   };
+
+  this.card = this.image;
 
   this.getPrice = function() {
     return options.price;

@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import SniperGun from '../lib/SniperGun';
 
-export default new Unit(SniperGun);
+export default new UnitHuman(SniperGun);

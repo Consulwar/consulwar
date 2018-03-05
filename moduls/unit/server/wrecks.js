@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import traverseGroup from '/moduls/battle/lib/imports/traverseGroup';
 import Game from '/moduls/game/lib/main.game';
 import { _ } from 'meteor/underscore';
+import unitItems from '/imports/content/Unit/server';
 
 initWrecksServer = function() {
 'use strict';
@@ -27,12 +27,12 @@ Game.Wrecks.actualize = function(userId = Meteor.userId()) {
     },
   };
 
-  traverseGroup(wrecks.units, (sideName, typeName, unitName, info) => {
-    const unit = Game.Unit.items[sideName][typeName][unitName];
+  _(wrecks.units).pairs().forEach(([id, info]) => {
+    const unit = unitItems[id];
 
     const result = Game.Wrecks.decay(unit, delta, info.bonusSeconds);
 
-    const key = `units.${sideName}.${typeName}.${unitName}`;
+    const key = `units.${id}`;
 
     if (result.count >= info.count) {
       if (!modifier.$unset) {
@@ -52,19 +52,17 @@ Game.Wrecks.actualize = function(userId = Meteor.userId()) {
 };
 
 Game.Wrecks.addUnits = function({ units, userId = Meteor.userId() }) {
-  if (!units.army) {
+  if (!units) {
     return;
   }
 
   const $inc = {};
 
-  _(units.army).pairs().forEach(([groupName, group]) => {
-    _(group).pairs().forEach(([engName, count]) => {
-      // Do not add flagship to wrecks
-      if (engName !== 'flagship') {
-        $inc[`units.army.${groupName}.${engName}.count`] = count;
-      }
-    });
+  _(units).pairs().forEach(([id, count]) => {
+    // Do not add flagship to wrecks
+    if (id !== 'Unit/Human/Space/Flagship') {
+      $inc[`units.${id}.count`] = count;
+    }
   });
 
   if (_($inc).keys().length > 0) {
@@ -79,12 +77,12 @@ Game.Wrecks.addUnits = function({ units, userId = Meteor.userId() }) {
   }
 };
 
-Game.Wrecks.removeUnit = function(wrecks, group, engName) {
+Game.Wrecks.removeUnit = function(wrecks, id) {
   Game.Wrecks.Collection.update({
     _id: wrecks._id,
   }, {
     $unset: {
-      [`units.army.${group}.${engName}`]: 1,
+      [`units.${id}`]: 1,
     },
   });
 };

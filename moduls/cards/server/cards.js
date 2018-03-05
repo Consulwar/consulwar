@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import containerCollection from '/imports/modules/Container/lib/collection';
 
 initCardsServer = function() {
 'use strict';
@@ -247,7 +248,7 @@ SyncedCron.add({
     for (var i = 0; i < users.length; i++) {
       console.log('Give to ', users[i].user_id);
 
-      Game.Building.special.Container.Collection.upsert({
+      containerCollection.upsert({
         userId: users[i].user_id
       }, {
         $inc: {

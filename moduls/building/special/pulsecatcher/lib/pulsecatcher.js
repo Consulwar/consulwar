@@ -1,3 +1,10 @@
+let PulseCatcher;
+if (Meteor.isClient) {
+  PulseCatcher = require('/imports/content/Building/Residential/client/PulseCatcher').default;
+} else {
+  PulseCatcher = require('/imports/content/Building/Residential/server/PulseCatcher').default;
+}
+
 initBuildingSpecialPulsecatcherLib = function() {
 'use strict';
 
@@ -27,7 +34,7 @@ Game.Building.special.Pulsecatcher = {
   },
 
   canActivate: function() {
-    var level = Game.Building.items.residential.pulsecatcher.currentLevel();
+    var level = PulseCatcher.getCurrentLevel();
 
     if (!level) {
       return false;

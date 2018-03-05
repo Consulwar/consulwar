@@ -21,7 +21,9 @@
     {{#if units}}
     <ul class="units">
       {{#each units}}
-      <li class="{{this.engName}}-icon">
+      <li 
+        style="background-image: url({{this.icon}})"
+      >
         {{formatNumber this.amount}}
       </li>
       {{/each}}

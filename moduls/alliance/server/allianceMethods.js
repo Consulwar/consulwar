@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import allianceBuilding from '/imports/content/Building/Residential/server/Alliance';
 
 initAllianceServerMethods = function() {
 'use strict';
@@ -379,10 +380,9 @@ let checkCreator = function(user) {
     throw new Meteor.Error('Невозможно создать альянс', 'Недостаточно рейтинга');
   }
 
-  if (!Game.Building.has({
-    group: 'residential',
-    engName: 'alliance',
+  if (!allianceBuilding.has({
     level: Game.Alliance.CREATOR_BUILDING_LEVEL,
+    user,
   })) {
     throw new Meteor.Error('Невозможно создать альянс', 'Недостаточный уровень системы связи');
   }

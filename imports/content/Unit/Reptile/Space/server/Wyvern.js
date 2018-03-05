@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Wyvern from '../lib/Wyvern';
 
-export default new ReptileUnit(Wyvern);
+export default new UnitReptile(Wyvern);

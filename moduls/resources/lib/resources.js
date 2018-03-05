@@ -85,6 +85,11 @@ Game.Resources = {
     return IncomeEffect.getValue(options);
   },
 
+  calculateTimeFromResources(resources) {
+    const rating = Game.Resources.calculateRatingFromResources(resources);
+    return Math.max(Math.floor(rating / 0.12), 2);
+  },
+
   calculateRatingFromResources: function(resources) {
     var rating = 0;
 
@@ -97,18 +102,12 @@ Game.Resources = {
     return Math.floor(rating / 2);
   },
 
-  calculateHonorFromResources: function(resources, notBase = false) {
+  calculateHonorFromResources: function(resources) {
     var honor = 0;
 
-    if (notBase) {
-      honor += ((resources.metals) || 0) * 10;
-      honor += ((resources.crystals * 3) || 0) * 10;
-      honor += ((resources.humans * 4) || 0) * 5;
-    } else if (resources.base) {
-      honor += ((resources.base.metals) || 0) * 10;
-      honor += ((resources.base.crystals * 3) || 0) * 10;
-      honor += ((resources.base.humans * 4) || 0) * 5;
-    }
+    honor += ((resources.metals) || 0) * 10;
+    honor += ((resources.crystals * 3) || 0) * 10;
+    honor += ((resources.humans * 4) || 0) * 5;
 
     return Math.floor(honor / 150);
   },

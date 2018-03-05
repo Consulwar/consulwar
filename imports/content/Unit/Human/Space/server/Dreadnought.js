@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Dreadnought from '../lib/Dreadnought';
 
-export default new Unit(Dreadnought);
+export default new UnitHuman(Dreadnought);

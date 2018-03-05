@@ -151,7 +151,8 @@
       <div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
         {{#each units}}
           <a 
-            class="{{this.unit.engName}}-icon {{#unless this.count}}disabled{{/unless}}" 
+            class="{{#unless this.count}}disabled{{/unless}}"
+            style="background-image: url({{this.unit.icon}});"
             href="{{this.unit.url}}"
           >
             <div
@@ -175,10 +176,10 @@
         {{#each availableFleet}}
           <li 
             class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}" 
-            data-id="{{this.engName}}"
+            data-id="{{this.id}}"
             data-max="{{this.max}}"
           >
-            <a class="{{this.engName}}-icon"></a>
+            <a style="background-image: url({{this.icon}});"></a>
             <div class="max">{{formatNumberWithISO this.max}}</div>
 
             <div class="count">
@@ -640,7 +641,7 @@
                     </tr>
                     {{#each this.userUnits}}
                       <tr>
-                        <td class="name humans">{{this.name}}</td>
+                        <td class="name humans">{{this.title}}</td>
                         <td class="count">{{formatNumberWithISO this.start}}</td>
                         <td class="count">{{formatNumberWithISO this.end}}</td>
                       </tr>
@@ -675,7 +676,7 @@
                     </tr>
                     {{#each this.enemyUnits}}
                       <tr>
-                        <td class="name reptiles">{{formatNumberWithISO this.name}}</td>
+                        <td class="name reptiles">{{formatNumberWithISO this.title}}</td>
                         <td class="count">{{formatNumberWithISO this.start}}</td>
                         <td class="count">{{this.end}}</td>
                       </tr>

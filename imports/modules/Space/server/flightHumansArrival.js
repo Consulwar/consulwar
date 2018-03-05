@@ -17,17 +17,9 @@ import Hex from '../../MutualSpace/lib/Hex';
 const completeOnPlanetMission = function(data, planet) {
   const { userId, username } = data;
 
-  const enemyArmy = {
-    reptiles: {
-      fleet: Game.Planets.getFleetUnits(planet._id, userId),
-    },
-  };
+  const enemyArmy = Game.Planets.getFleetUnits(planet._id, userId);
 
-  const userArmy = {
-    army: {
-      fleet: FlightEvents.getFleetUnits(data),
-    },
-  };
+  const userArmy = FlightEvents.getFleetUnits(data);
 
   const userGroup = createGroup({ army: userArmy, userId });
 
@@ -134,11 +126,7 @@ const completeOnPlanet = function(data) {
     const battleEvent = BattleEvents.findByPlanetId(planet._id);
 
     if (battleEvent) {
-      const userArmy = {
-        army: {
-          fleet: FlightEvents.getFleetUnits(data),
-        },
-      };
+      const userArmy = FlightEvents.getFleetUnits(data);
 
       const userGroup = createGroup({ army: userArmy, userId: data.userId });
 
@@ -159,17 +147,9 @@ const completeOnShip = function(data) {
     }
 
     // Create battle
-    const enemyArmy = {
-      reptiles: {
-        fleet: FlightEvents.getFleetUnits(targetShip.data),
-      },
-    };
+    const enemyArmy = FlightEvents.getFleetUnits(targetShip.data);
 
-    const userArmy = {
-      army: {
-        fleet: FlightEvents.getFleetUnits(data),
-      },
-    };
+    const userArmy = FlightEvents.getFleetUnits(data);
 
     BattleEvents.createBattleAndAdd({
       username: data.username,
@@ -227,11 +207,7 @@ const completeOnBattle = function(data) {
   const battleEvent = BattleEvents.findByBattleId(data.targetId);
 
   if (battleEvent) {
-    const userArmy = {
-      army: {
-        fleet: FlightEvents.getFleetUnits(data),
-      },
-    };
+    const userArmy = FlightEvents.getFleetUnits(data);
     const userGroup = createGroup({ army: userArmy, userId: data.userId });
     Battle.addGroup(data.targetId, Battle.USER_SIDE, data.username, userGroup);
 

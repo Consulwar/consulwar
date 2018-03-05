@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import unitItems from '/imports/content/Unit/server';
 import createGroup from '../../battle/lib/imports/createGroup';
 import Battle from '../../battle/server/battle';
 import Generals from './generals';
@@ -95,21 +96,16 @@ Game.Earth.addReinforcement = function(units, targetZoneName, user = Meteor.user
   var stats = {};
   stats['reinforcements.arrived.total'] = 0;
 
-  for (var side in units) {
-    for (var group in units[side]) {
-      for (var name in units[side][group]) {
-        var count = parseInt( units[side][group][name], 10 );
-        if (count > 0) {
-          honor += Game.Resources.calculateHonorFromReinforcement(
-            Game.Unit.items[side][group][name].getBasePrice(count),
-          );
-          inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
-          stats['reinforcements.arrived.' + side + '.' + group + '.' + name] = count;
-          stats['reinforcements.arrived.total'] += count;
-        }
-      }
+  _(units).pairs().forEach(([id, count]) => {
+    if (count > 0) {
+      honor += Game.Resources.calculateHonorFromReinforcement(
+        unitItems[id].getBasePrice(count),
+      );
+      inc[`userArmy.${id}`] = count;
+      stats[`reinforcements.arrived.${id}`] = count;
+      stats['reinforcements.arrived.total'] += count;
     }
-  }
+  });
 
   if (stats['reinforcements.arrived.total'] > 0) {
     Game.Statistic.incrementUser(user._id, stats);
@@ -133,15 +129,11 @@ Game.Earth.generateEnemyArmy = function(level) {
   // count difficulty modifier
   var difficulty = Math.pow(1.5, level);
 
-  var enemies = {
-    reptiles: {
-      ground: {}
-    }
-  };
+  var enemies = {};
 
-  for (var name in Game.Earth.SPAWN) {
-    enemies.reptiles.ground[name] = Math.floor(
-      Game.Earth.SPAWN[name] * players * difficulty * Game.Earth.SPAWN_COEFFICIENT
+  for (const id in Game.Earth.SPAWN) {
+    enemies[id] = Math.floor(
+      Game.Earth.SPAWN[id] * players * difficulty * Game.Earth.SPAWN_COEFFICIENT
     );
   }
   // generate units
@@ -233,13 +225,9 @@ Game.Earth.nextTurn = function() {
 
       if (moveReptileTo[zone.name]) {
         moveReptileTo[zone.name].forEach(function (movedArmy) {
-          const reptileArmy = {
-            reptiles: {
-              ground: {},
-            },
-          };
-          _.pairs(movedArmy).forEach(function ([name, count]) {
-            reptileArmy.reptiles.ground[name] = count;
+          const reptileArmy = {};
+          _.pairs(movedArmy).forEach(function ([id, count]) {
+            reptileArmy[id] = count;
           });
 
           const reptileGroup = createGroup({ army: reptileArmy });
@@ -324,28 +312,13 @@ Game.Earth.nextTurn = function() {
         unsetEarthUnits[name] = true;
       });
 
-      battle.traverse(function({unit, sideName, username, groupNum, armyName, typeName, unitName}) {
+      battle.everyCurrentUnit(({ unit, sideName, username, id }) => {
         if (sideName === Battle.ENEMY_SIDE || unit.count === 0) {
           return;
         }
 
-        if (!leftArmies[username]) {
-          leftArmies[username] = {};
-        }
-
-        if (!leftArmies[username][armyName]) {
-          leftArmies[username][armyName] = {};
-        }
-
-        if (!leftArmies[username][armyName][typeName]) {
-          leftArmies[username][armyName][typeName] = {};
-        }
-
-        if (!leftArmies[username][armyName][typeName][unitName]) {
-          leftArmies[username][armyName][typeName][unitName] = 0;
-        }
-
-        leftArmies[username][armyName][typeName][unitName] += unit.count;
+        leftArmies[username] = leftArmies[username] || {};
+        leftArmies[username][id] = (leftArmies[username][id] || 0) + unit.count;
 
         if (unsetEarthUnits[username]) {
           delete unsetEarthUnits[username];
@@ -583,8 +556,8 @@ const moveReptileArmies = function (moveReptileTo) {
     moveReptileTo[info.targetZone].push(info.army);
 
     const inc = {};
-    _.pairs(info.army).forEach(function ([name, count]) {
-      inc[`enemyArmy.reptiles.ground.${name}`] = count;
+    _.pairs(info.army).forEach(function ([id, count]) {
+      inc[`enemyArmy.${id}`] = count;
     });
 
     Game.EarthZones.Collection.update({
@@ -601,40 +574,25 @@ const moveArmy = function (army, targetZoneName) {
   let units = army.userArmy;
   let inc = {};
 
-  for (let side in units) {
-    for (let group in units[side]) {
-      for (let name in units[side][group]) {
-        let count = Number(units[side][group][name]);
-        inc['userArmy' + '.' + side + '.' + group + '.' + name ] = count;
-      }
-    }
-  }
+  _(units).pairs().forEach(([id, count]) => {
+    inc[`userArmy.${id}`] = parseInt(count, 10);
+  });
 
   let sourceZone = Game.EarthZones.getByName(army.zoneName);
   let sourceArmy = sourceZone.userArmy;
   let restArmy = {};
 
-  for (let side in sourceArmy) {
-    for (let group in sourceArmy[side]) {
-      for (let name in sourceArmy[side][group]) {
-        let curCount = Number(sourceArmy[side][group][name]);
+  _(sourceArmy).pairs().forEach(([id, count]) => {
+    let curCount = parseInt(count, 10);
 
-        if (units[side] && units[side][group] && units[side][group][name]) {
-          curCount -= Number(units[side][group][name]);
-        }
-
-        if (curCount > 0) {
-          if (!restArmy[side]) {
-            restArmy[side] = {};
-          }
-          if (!restArmy[side][group]) {
-            restArmy[side][group] = {};
-          }
-          restArmy[side][group][name] = curCount;
-        }
-      }
+    if (units[id]) {
+      curCount -= parseInt(units[id], 10);
     }
-  }
+
+    if (curCount > 0) {
+      restArmy[id] = curCount;
+    }
+  });
 
   if (_.keys(restArmy).length === 0) {
     Game.EarthZones.Collection.update({

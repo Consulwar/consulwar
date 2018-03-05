@@ -92,20 +92,25 @@
   <ul class="bottom_menu items {{#if isArtefactsPage}} artefacts{{/if}}">
     {{#if not isArtefactsPage}}
       {{#each items}}
-        {{#let progress=this.progress}}
+        {{#let progress=this.getQueue}}
           <li 
             class="{{#if isPartOfUrl currentUrl this.url}}active{{/if}}{{#if progress}} progress{{/if}}{{#unless this.meetRequirements}} disabled{{/unless}}{{#if this.isEnoughResources}} enough_resources{{/if}} {{this.type}} {{#if and this.star (not isNewLayout)}}star{{this.star}}{{/if}}" 
             data-tooltip="{{this.name}}"
             data-tooltip-direction="n"
           >
             <a 
-              class="{{this.engName}}-icon" 
+              class="{{this.engName}}-icon"
+              style="{{#if this.icon}}background-image: url({{this.icon}}){{/if}}"
               href="{{this.url}}"
               data-remaining="{{#if progress}}{{formatSeconds (substract progress.finishTime serverTime)}}{{/if}}"
             >
-              {{#if this.currentLevel}}
-                <span class="{{#if eq this.type 'unit'}}count{{else}}level{{/if}}">
-                  {{formatNumberWithISO this.currentLevel 3}}
+              {{#if this.getCurrentLevel}}
+                <span class="level">
+                  {{formatNumberWithISO currentValue 3}}
+                </span>
+              {{else if currentValue}}
+                <span class="count">
+                  {{formatNumberWithISO currentValue 3}}
                 </span>
               {{/if}}
             </a>
@@ -144,12 +149,12 @@
     <div class="overlay {{menuGroup}} {{itemGroup}} item {{item.group}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
       <div 
         class="item" 
-        style="background-image: url({{item.getOverlayOwn}})"></div>
+        style="background-image: url({{item.overlayOwn}})"></div>
     </div>
 
                 <!--class="{{#if and item (not (eq this.engName item.engName))}}blur{{/if}}"-->
   {{else}}
-    <div class="overlay {{menuGroup}} {{itemGroup}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
+    <div class="overlay halo {{menuGroup}} {{itemGroup}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
       {{#each overlayItems}}
         {{#if this.overlay}}
           {{#let overlay=this.getOverlay}}
@@ -165,12 +170,12 @@
                 >
 
                 {{#if overlay.img}}
-                  <img src="/img/game/{{overlay.img}}" alt=""/>
+                  <img src="{{overlay.img}}" alt=""/>
                 {{/if}}
 
                 {{#if and overlay.progress (not (eq overlay.img overlay.progress.img))}}
                   <img 
-                    src="/img/game/{{overlay.progress.img}}" 
+                    src="{{overlay.progress.img}}" 
                     progress="{{percentRound10 overlay.progress}}" 
                     alt=""/>
                 {{/if}}
@@ -190,7 +195,7 @@
         {{/if}}
       {{/each}}
       
-      {{#if eq currentUrl (pathFor route='building' group='residential')}}
+      {{#if eq currentUrl (pathFor route='building' group='Residential')}}
         <div 
           class="
             collectBonus 
@@ -223,7 +228,7 @@
             colosseum
             {{#if Game.Building.special.Colosseum.checkCanStart}}active{{/if}}
           "
-          href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}" 
+          href="{{pathFor 'building' group='Residential' item='colosseum' menu='tournaments'}}" 
         >
         </a>
 
@@ -233,7 +238,7 @@
             pulsecatcher
             {{#if Game.Building.special.Pulsecatcher.canActivate}}active{{/if}}
           "
-          href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}" 
+          href="{{pathFor 'building' group='Residential' item='pulsecatcher' menu='bonus'}}" 
         >
         </a>
       {{/if}}

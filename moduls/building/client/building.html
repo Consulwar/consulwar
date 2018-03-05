@@ -1,14 +1,14 @@
 <template name="item_building">
   <div class="header">
     <div class="level">
-      {{#if building.currentLevel}}
-        <span>{{building.currentLevel}}</span> уровень 
+      {{#if building.getCurrentLevel}}
+        <span>{{building.getCurrentLevel}}</span> уровень 
       {{else}}
         Не построено
       {{/if}}
     </div>
     <div class="name">
-      {{building.name}}
+      {{building.title}}
     </div>
     <!-- quest link here -->
     <button 
@@ -23,7 +23,6 @@
   {{#if submenu}}
     {{>yield region="item_submenu"}}
   {{else}}
-
     <div 
       class="description" 
       style="{{#if options.hideDescription}}display: none;{{/if}}">
@@ -36,16 +35,16 @@
       </div>
 
       <div class="bottom">
-        {{#if gt building.maxLevel building.currentLevel}}
+        {{#if gt building.maxLevel building.getCurrentLevel}}
           {{#if building.progress}}
-            {{> item_price price=building.next.price}}
+            {{> item_price price=(building.getPrice (sum building.getCurrentLevel 1))}}
           {{else}}
-            {{> item_price price=building.price}}
+            {{> item_price price=building.getPrice}}
           {{/if}}
         {{/if}}
 
         <div class="actions">
-          {{#if gt building.maxLevel building.currentLevel}}
+          {{#if gt building.maxLevel building.getCurrentLevel}}
             <div class="action">
               <div 
                 class="notImplemented"
@@ -64,37 +63,37 @@
             </div>
           {{/if}}
           <div class="action">
-            {{#if eq building.engName 'metal'}}
+            {{#if eq building.engName 'Metal'}}
                 <progress class="bonus metals {{#with multiply income.metals 0.25}}{{#if gt resources.metals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.metals bonusStorage}}" value="{{or resources.metals.bonus '0'}}"></progress>
-                <button class="additional_action metal" disabled="{{lt building.currentLevel 1}}">Собрать</button>
+                <button class="additional_action metal" disabled="{{lt building.getCurrentLevel 1}}">Собрать</button>
             {{/if}}
 
-            {{#if eq building.engName 'crystal'}}
+            {{#if eq building.engName 'Crystal'}}
                 <progress class="bonus crystals {{#with multiply income.crystals 0.25}}{{#if gt resources.crystals.bonus this}}active{{/if}}{{/with}}" max="{{multiply income.crystals bonusStorage}}" value="{{or resources.crystals.bonus '0'}}"></progress>
-                <button class="additional_action crystal" disabled="{{lt building.currentLevel 1}}">Собрать</button>
+                <button class="additional_action crystal" disabled="{{lt building.getCurrentLevel 1}}">Собрать</button>
             {{/if}}
 
-            {{#if eq building.engName 'tradingport'}}
-              <button class="additional_action market" disabled="{{lt building.currentLevel 1}}">Торговать</button>
+            {{#if eq building.engName 'TradingPort'}}
+              <button class="additional_action market" disabled="{{lt building.getCurrentLevel 1}}">Торговать</button>
             {{/if}}
 
-            {{#if eq building.engName 'spaceport'}}
-              <button class="additional_action containers" disabled="{{lt building.currentLevel 1}}">Контейнер</button>
+            {{#if eq building.engName 'SpacePort'}}
+              <button class="additional_action containers" disabled="{{lt building.getCurrentLevel 1}}">Контейнер</button>
             {{/if}}
 
-            {{#if eq building.engName 'colosseum'}}
+            {{#if eq building.engName 'Colosseum'}}
               <a
-                class="additional_action tournament {{#if lt building.currentLevel 1}}disabled{{/if}}"
-                href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
+                class="additional_action tournament {{#if lt building.getCurrentLevel 1}}disabled{{/if}}"
+                href="{{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}"
               >
                 Турнир
               </a>
             {{/if}}
 
-            {{#if eq building.engName 'pulsecatcher'}}
+            {{#if eq building.engName 'PulseCatcher'}}
               <a
-                class="additional_action pulsecatcher {{#if lt building.currentLevel 1}}disabled{{/if}}"
-                href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
+                class="additional_action PulseCatcher {{#if lt building.getCurrentLevel 1}}disabled{{/if}}"
+                href="{{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}"
               >
                 Бонус
               </a>
@@ -103,6 +102,6 @@
         </div>
       </div> 
     </div>
-    {{> item_requirements requirements=building.requirements}}
+    {{> item_requirements requirements=building.getRequirements}}
   {{/if}}
 </template>

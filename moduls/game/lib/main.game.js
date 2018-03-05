@@ -3,6 +3,15 @@ import MilitaryEffect from '/imports/modules/Effect/lib/MilitaryEffect';
 import PriceEffect from '/imports/modules/Effect/lib/PriceEffect';
 import { priceT1, priceT2, priceT3, priceT4 } from '/imports/content/formula';
 
+let content;
+Meteor.startup(() => {
+  if (Meteor.isClient) {
+    content = require('/imports/content/client').default;
+  } else {
+    content = require('/imports/content/server').default;
+  }
+});
+
 game = {
   PRODUCTION_FACTOR: 1.48902803168182,
   PRICE_FACTOR: 1.1,
@@ -56,34 +65,6 @@ game = {
 
   setToMenu: '',
   setToSide: '',
-
-  hasArmy: function() {
-    var army = Game.Unit.getValue();
-
-    if (army && army.ground) {
-
-      for (var name in army.ground) {
-        if (army.ground[name] > 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  },
-
-  hasFleet: function() {
-    var army = Game.Unit.getValue();
-
-    if (army && army.fleet) {
-
-      for (var name in army.fleet) {
-        if (army.fleet[name] > 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 };
 
 var itemCurrentOrder = 0;
@@ -100,7 +81,22 @@ game.Item = function(options) {
     this.name = options.name;
     this.engName = options.engName;
 
-    if (options.effect) {
+    if (options.effects) {
+      this.effects = [];
+      this.effect = this.effects;
+      _(options.effects).pairs().forEach(([type, effectList]) => {
+        effectList.forEach((effect) => {
+          const effectObject = new effectClasses[type](effect);
+          this.effects.push(effectObject);
+  
+          if (!this.doNotRegisterEffect) {
+            effectObject.register(this);
+          } else {
+            effectObject.setProvider(this);
+          }
+        });
+      });
+    } else if (options.effect) {
       if (!_.isArray(options.effect)) {
         options.effect = [options.effect];
       }
@@ -114,12 +110,10 @@ game.Item = function(options) {
           }
         }
       }
-    } 
-
-    this.effect = options.effect;
-    if (options.effect && options.effect.result) {
-      this.effect.result = options.effect.result.bind(this);
+      this.effect = options.effect;
+      this.effects = this.effect;
     }
+
     this.description = options.description;
     this.basePrice = options.basePrice;
     this.maxLevel = options.maxLevel;
@@ -245,7 +239,7 @@ game.Item = function(options) {
     var level = _.max(fitLevels);
 
     if (level != -Infinity) {
-      return [this.type, this.group, this.engName, level].join('/') + '.' + (this.overlay.type || 'png');
+      return '/img/game/' + [this.type, this.group, this.engName, level].join('/') + '.' + (this.overlay.type || 'png');
     }
     return null;
   };
@@ -401,6 +395,8 @@ game.Item = function(options) {
     }
   };
 
+  this.getQueue = this.progress;
+
   this.isEnoughResources = function(count, currency) {
     if (count === undefined) {
       if (this.type == 'unit' || this.type == 'mutual') {
@@ -443,7 +439,7 @@ game.Item = function(options) {
   this.meetRequirements = function() {
     if (this.requirements) {
       for (var key in this.requirements) {
-        if (!this.requirements[key][0].has(this.requirements[key][1])) {
+        if (!this.requirements[key][0].has({ level: this.requirements[key][1] })) {
           return false;
         }
       }
@@ -569,82 +565,6 @@ Game = {
     psm: 'psm',
   },
 
-  newToLegacyEffects(options) {
-    options.effect = [];
-    if (options.effects) {
-      _(options.effects).keys().forEach((effectType) => {
-        options.effects[effectType].forEach((effect) => {
-          const legacyEffect = { 
-            ...effect,
-            pretext: effect.textBefore,
-            aftertext: effect.textAfter,
-          };
-  
-          if (legacyEffect.condition) {
-            const conditionIdParts = legacyEffect.condition.split('/');
-            let type;
-            let group;
-            let special;
-            let side;
-            let engName;
-  
-            switch(conditionIdParts[0]) {
-              case 'Unique':
-                engName = conditionIdParts[1];
-                break;
-              case 'Building':
-              case 'Research':
-                [type, group, engName] = conditionIdParts;
-                break;
-              case 'Unit':
-                if (conditionIdParts.length == 1) {
-                  type = 'Unit';
-                } else {
-                  if (conditionIdParts[2] === 'Ground') {
-                    [type, side, group, special, engName] = conditionIdParts;
-                  } else {
-                    [type, side, group, engName] = conditionIdParts;
-                  }
-                }
-                break;
-              default:
-                throw Meteor.Error('Неизвестное условие');
-                break;
-            }
-            
-            if (type || group || special || engName) {
-              legacyEffect.condition = {};
-            }
-  
-            if (type) {
-              type = type.toLocaleLowerCase();
-              legacyEffect.condition.type = Game.newToLegacyNames[type] || type;
-            }
-            
-            if (group) {
-              group = group.toLocaleLowerCase();
-              legacyEffect.condition.group = Game.newToLegacyNames[group] || group;
-            }
-  
-            if (special && special !== '*') {
-              special = special.toLocaleLowerCase();
-              legacyEffect.condition.special = Game.newToLegacyNames[special] || special;
-            }
-  
-            if (engName) {
-              if (conditionIdParts[0] !== 'Unique') {
-                engName = engName.toLocaleLowerCase();
-              }
-              legacyEffect.condition.engName = Game.newToLegacyNames[engName] || engName;
-            }
-          }
-
-          options.effect.push(new effectClasses[effectType](legacyEffect));
-        });
-      });
-    }
-  },
-
   PRODUCTION_FACTOR: 1.48902803168182,
   PRICE_FACTOR: 1.568803194,
 
@@ -746,11 +666,6 @@ Game = {
     let group = '';
     let engName = '';
     switch(type) {
-      case 'units':
-        group = _.keys(obj[type])[0];
-        engName = _.keys(obj[type][group])[0];
-        return Game.Unit.items.army[group][engName];
-
       case 'houseItems':
         group = _.keys(obj[type])[0];
         engName = _.keys(obj[type][group])[0];
@@ -794,7 +709,8 @@ Game = {
           engName: 'votePower',
           type: 'votePower',
           icon: '/img/game/votepower.png',
-          image: '/img/game/votepower.jpg'
+          image: '/img/game/votepower.jpg',
+          card: '/img/game/votepower.jpg',
         };
 
       case 'personSkin':
@@ -808,7 +724,13 @@ Game = {
           getIcon: Game.Persons[personId].getIcon(),
           image: Game.Persons[personId].getImage(skinId),
           getImage: Game.Persons[personId].getImage(skinId),
+          card: Game.Persons[personId].getImage(skinId),
         };
+      case 'units':
+        return content[_.keys(obj.units)[0]];
+
+      default:
+        return content[obj.id];
     }
   },
 
@@ -849,6 +771,14 @@ Game.Queue = {
       user_id: Meteor.userId(),
       status: Game.Queue.status.INCOMPLETE
     }).fetch();
+  },
+
+  getByItemId(itemId) {
+    return Game.Queue.Collection.findOne({
+      user_id: Meteor.userId(),
+      status: Game.Queue.status.INCOMPLETE,
+      itemId,
+    });
   },
 
   getGroup: function(group) {

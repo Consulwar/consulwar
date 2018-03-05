@@ -1,3 +1,5 @@
+import Colosseum from '/imports/content/Building/Residential/client/Colosseum';
+
 initBuildingSpecialColosseumClient = function() {
 'use strict';
 
@@ -14,13 +16,13 @@ Template.colosseum.helpers({
 
   timeCooldown: function() {
     var user = Meteor.user();
-    var level = Game.Building.items.residential.colosseum.currentLevel();
+    var level = Colosseum.getCurrentLevel();
     var timeLeft = user.timeLastTournament - Session.get('serverTime') + Game.Building.special.Colosseum.getCooldownPeriod(level);
     return timeLeft > 0 ? timeLeft : null;
   },
 
   building: function() {
-    return Game.Building.items.residential.colosseum;
+    return Colosseum;
   },
 
   selected: function() {

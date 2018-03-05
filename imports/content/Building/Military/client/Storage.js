@@ -1,6 +1,7 @@
+import Building from '/imports/modules/Building/client/Building';
 import Storage from '../lib/Storage';
 
-export default {
+export default new Building({
   ...Storage,
   overlay: {
     x: 636,
@@ -9,4 +10,4 @@ export default {
     levels: [1, 20, 40, 60, 80, 100],
     own: 'item',
   },
-};
+});

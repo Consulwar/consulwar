@@ -1,4 +1,4 @@
-import ReptileUnit from '/imports/modules/Unit/server/ReptileUnit';
+import UnitReptile from '/imports/modules/Unit/server/UnitReptile';
 import Sphero from '../lib/Sphero';
 
-export default new ReptileUnit(Sphero);
+export default new UnitReptile(Sphero);

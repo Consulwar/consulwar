@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
-import Game from '/moduls/game/lib/main.game';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import spaceport from '/imports/content/Building/Residential/server/SpacePort';
 import fleetContainers from '/imports/content/Container/Fleet/server';
 
 Meteor.methods({
@@ -18,7 +18,7 @@ Meteor.methods({
       user,
     });
 
-    if (!Game.Building.items.residential.spaceport.has()) {
+    if (!spaceport.has({ level: 1, user })) {
       throw new Meteor.Error('Нужно построить Космопорт');
     }
 

@@ -1,3 +1,4 @@
+import humanSpaceUnits from '/imports/content/Unit/Human/Space/server';
 import User from '/imports/modules/User/server/User';
 
 initUnitServerSquad = function() {
@@ -125,12 +126,12 @@ Meteor.methods({
         }
       }),
       units: Match.Where(function(units) {
-        var possibleUnits = _.keys(Game.Unit.items.army.fleet);
-        for (let engName in units) {
-          if (possibleUnits.indexOf(engName) == -1) {
+        const possibleUnits = _(humanSpaceUnits).keys();
+        for (const id in units) {
+          if (possibleUnits.indexOf(id) == -1) {
             throw new Match.Error('Ну и что вот ты пытался сделать? Вот честно.');
           }
-          check(units[engName], Match.Integer);
+          check(units[id], Match.Integer);
         }
         return true;
       })

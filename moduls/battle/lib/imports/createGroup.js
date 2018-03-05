@@ -1,12 +1,21 @@
-import traverseGroup from './traverseGroup';
+import { Meteor } from 'meteor/meteor';
 
-const createUnit = function ({ armyName, typeName, unitName, count, userId }) {
+let unitItems;
+Meteor.startup(() => {
+  if (Meteor.isClient) {
+    unitItems = require('/imports/content/Unit/client').default;
+  } else {
+    unitItems = require('/imports/content/Unit/server').default;
+  }
+});
+
+const createUnit = function ({ id, count, userId }) {
   let characteristics;
 
   if (userId) {
-    characteristics = Game.Unit.items[armyName][typeName][unitName].getCharacteristics({ userId });
+    characteristics = unitItems[id].getCharacteristics({ userId });
   } else {
-    characteristics = Game.Unit.items[armyName][typeName][unitName].getBaseCharacteristics();
+    characteristics = unitItems[id].getBaseCharacteristics();
   }
 
   return {
@@ -28,16 +37,13 @@ const createUnit = function ({ armyName, typeName, unitName, count, userId }) {
 export default function ({ army, userId }) {
   const group = {};
 
-  traverseGroup(army, function (armyName, typeName, unitName, count) {
+  _(army).pairs().forEach(([id, count]) => {
     const realCount = Game.Unit.rollCount(count);
 
     if (realCount > 0) {
-      const unit = createUnit({ armyName, typeName, unitName, count: realCount, userId });
+      const unit = createUnit({ id, count: realCount, userId });
 
-      group[armyName] = group[armyName] || {};
-      group[armyName][typeName] = group[armyName][typeName] || {};
-
-      group[armyName][typeName][unitName] = unit;
+      group[id] = unit;
     }
   });
 

@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Grandmother from '../lib/Grandmother';
 
-export default new Unit(Grandmother);
+export default new UnitHuman(Grandmother);

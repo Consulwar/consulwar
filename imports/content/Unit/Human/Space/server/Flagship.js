@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Flagship from '../lib/Flagship';
 
-export default new Unit(Flagship);
+export default new UnitHuman(Flagship);

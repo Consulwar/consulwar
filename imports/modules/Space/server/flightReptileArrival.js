@@ -14,8 +14,7 @@ export default function reptileArrival(data) {
   const job = BattleEvents.findByPlanetId(planet._id);
 
   if (job) {
-    const enemyFleet = FlightEvents.getFleetUnits(data);
-    const enemyArmy = { reptiles: { fleet: enemyFleet } };
+    const enemyArmy = FlightEvents.getFleetUnits(data);
     const enemyGroup = createGroup({ army: enemyArmy });
 
     const battleId = job.data.battleId;
@@ -31,21 +30,15 @@ export default function reptileArrival(data) {
     const username = planet.armyUsername;
     const userId = Game.Unit.getArmy({ id: planet.armyId }).user_id;
 
-    const enemyFleet = FlightEvents.getFleetUnits(data);
-    const enemyArmy = { reptiles: { fleet: enemyFleet } };
+    const enemyArmy = FlightEvents.getFleetUnits(data);
     const enemyGroup = createGroup({ army: enemyArmy, userId });
 
     let userArmy;
 
     if (planet.isHome) {
       const homeArmy = Game.Unit.getHomeFleetArmy({ userId });
-      if (homeArmy && homeArmy.units && homeArmy.units.army) {
-        if (homeArmy.units.army.ground) {
-          Game.Unit.updateArmy(homeArmy._id, homeArmy.units.army.ground, userId);
-          delete homeArmy.units.army.ground;
-        } else {
-          Game.Unit.removeArmy(homeArmy._id, userId);
-        }
+      if (homeArmy && homeArmy.units) {
+        Game.Unit.removeArmy(homeArmy._id, userId);
       } else {
         // Т.к. боя не было, то ресурсы спишутся, но информация о грабеже
         // никуда не сохранится

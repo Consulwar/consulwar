@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import Fast from '../lib/Fast';
 
-export default new Unit(Fast);
+export default new UnitHuman(Fast);

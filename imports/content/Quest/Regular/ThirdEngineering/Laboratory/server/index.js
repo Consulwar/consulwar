@@ -19,7 +19,7 @@ export default {
   id: 'Quest/Regular/ThirdEngineering/Laboratory',
   condition: [
     ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/Spaceport', 1],
+    ['Building/Residential/SpacePort', 1],
     ['Building/Military/PowerStation', 15],
   ],
   finalText: 'Поздравляем! Врата достигли максимального уровня. Слава Великому Консулу!',

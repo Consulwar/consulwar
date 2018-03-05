@@ -1,4 +1,4 @@
-import Unit from '/imports/modules/Unit/server/Unit';
+import UnitHuman from '/imports/modules/Unit/server/UnitHuman';
 import RailCannon from '../lib/RailCannon';
 
-export default new Unit(RailCannon);
+export default new UnitHuman(RailCannon);

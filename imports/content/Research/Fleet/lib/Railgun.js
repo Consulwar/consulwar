@@ -34,7 +34,7 @@ export default {
   maxLevel: 100,
   requirements() {
     return [
-      ['Building/Residential/Spaceport', 62],
+      ['Building/Residential/SpacePort', 62],
       ['Building/Military/Gates', 48],
       ['Research/Evolution/Energy', 60],
     ];

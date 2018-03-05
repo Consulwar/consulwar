@@ -1,0 +1,16 @@
+<template name="InputString">
+  <input
+    name={{name}}
+    type={{type}} 
+    class="
+      cw--input
+      {{#if hasErrors}}cw--input_errored{{/if}}
+      {{className}}
+    "
+    value={{value.get}}
+    placeholder={{placeholder}}
+    onInput={{onInput}}
+    {{required}}
+    {{minLength}}
+  />
+</template>

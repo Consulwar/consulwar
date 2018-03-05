@@ -1,0 +1,40 @@
+<template name="UserWelcome">
+  <div class="cw--UserWelcome">
+    <div class="cw--UserWelcome__content">
+      <div class="cw--UserWelcome__logo">
+        <img class="cw--UserWelcome__logoImg" src="/img/logo.png" alt="Consulwar"/>
+      </div>
+      <form class="cw--UserWelcome__form">
+        <label class="cw--UserWelcome__label">
+          Введите Никнейм
+        </label>
+        {{> InputString args
+          name="username"
+          errors=errors
+          value=username
+          className="cw--UserWelcome__input"
+          placeholder="Введите Никнейм"
+        }}
+        <div class="cw--UserWelcome__chose">
+          <a class="cw--UserWelcome__login" onClick={{showLoginPopup}}>
+            вход
+          </a>
+          <a class="cw--UserWelcome__register" onClick={{showRegisterPopup}}>
+            регистрация
+          </a>
+        </div>
+        <button
+          class="
+            cw--UserWelcome__playButton
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+          "
+          onClick={{goNext}}
+        >
+          Продолжить
+        </button>
+      </form>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,70 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/responsive'
+
+.cw--UserWelcome
+  display flex
+  width 100vw
+  height 100vh
+  max-width 500px
+  max-height 500px
+  background-color alpha($cw--color_black, .8)
+  font-size $cw--fontSize_main
+  +media(null, $cw--size_xs)
+    max-height none
+
+  &__content
+    padding 40px
+    display flex
+    flex-direction column
+    +media(null, $cw--size_xs)
+      padding 40px 30px
+  
+  &__logo
+    flex 0 auto
+    display flex
+    height 50px
+
+  &__logoImg
+    margin auto
+    max-width 90%
+
+  &__form
+    width 220px
+    margin auto
+
+  &__label
+  &__input
+  &__playButton
+    display block
+    width 100%
+    box-sizing border-box
+
+  &__label
+    color $cw--color_human
+
+  &__input
+    margin 10px 0
+    height 40px
+
+  &__chose
+    display flex
+    justify-content space-between
+    height 25px
+    margin 10px 0
+
+  &__login
+  &__register
+    flex 0 auto
+    margin auto 0
+    color $cw--color_metal
+    cursor pointer
+    &:hover
+      color $cw--color_white
+
+  &__playButton
+    cursor pointer
+
+  &__short
+    color $cw--color_lightGrey
+    font-size $cw--fontSize_small

@@ -1,0 +1,133 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+@import '{}/imports/client/ui/colors'
+
+.cw--UserLogin
+  display flex
+  width 900px
+  max-width 100%
+  background-color alpha($cw--color_black, .9)
+  font-size $cw--fontSize_main
+
+  +media(null, $cw--size_s)
+    flex-direction column
+    max-width 330px
+    padding-bottom 50px
+    overflow-x hidden
+
+  &__person
+    flex-basis auto
+    flex-grow 0
+    flex-shrink 1
+    user-select none
+
+    +media($cw--size_m, $cw--size_l)
+      overflow hidden
+
+  &__content
+    flex-basis auto
+    flex-shrink 11
+    flex-grow 1
+    display flex
+    flex-direction column
+    box-sizing border-box
+    padding 30px 50px 15px
+
+    +media($cw--size_s, $cw--size_l)
+      padding 30px 30px 15px
+
+    +media(null, $cw--size_s)
+      padding 30px 30px 15px
+      flex-grow 0
+      flex-shrink 0
+
+  &__intro
+    flex-basis auto
+    flex-shrink 0
+    flex-grow 0
+    color $cw--color_lightGrey
+
+  &__formSection
+    flex-shrink 0
+    flex-grow 1
+    flex-basis auto
+
+
+  &__switch
+    padding-top 12px
+    flex-basis auto
+    flex-grow 0
+    color $cw--color_lightGrey
+  &__switchHead
+    padding-bottom 10px
+  &__switchButton
+    cursor pointer
+    background none
+    border none
+    font-weight bold
+    color $cw--color_metal
+    font-size 18px
+    padding 0
+    text-decoration underline
+    &:hover
+    &:active
+    &:focus
+      outline none
+      text-decoration none
+      color $cw--color_white
+
+  &__formTitle
+    display block
+    margin 30px 0 15px 
+    font-weight bold
+    color $cw--color_honor
+    font-size $cw--fontSize_smallHead
+
+  &__form
+    margin-bottom 10px
+
+  &__inputs
+    display flex
+    flex-direction row
+    height 62px
+    margin-bottom 10px
+
+    +media(null, $cw--size_m)
+      flex-direction column
+      height 145px
+      justify-content space-between
+  
+  &__inputsGroup
+    display flex
+    flex-direction column
+    flex-basis auto
+    justify-content space-between
+    margin-right 12px
+
+    +media(null, $cw--size_m)
+    	flex-basis 62px
+  
+  &__input
+  &__remind
+  &__remember
+    box-sizing border-box
+    width 184px
+    height 25px
+    flex-shrink 0
+    flex-basis auto
+  
+  &__remindLink
+    color $cw--color_metal
+    text-decoration underline
+    &:hover
+    &:active
+      color $cw--color_white
+      text-decoration none
+  
+  &__submit
+    padding-left 20px
+    padding-right 20px
+
+  &__info
+    color $cw--color_lightGrey
+    margin-top 20px

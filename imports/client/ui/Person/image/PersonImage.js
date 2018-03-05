@@ -11,8 +11,10 @@ class PersonImage extends BlazeComponent {
 
   onCreated() {
     super.onCreated();
-
     this.person = this.data('person');
+    this.showChangeOption = this.data('showChangeOption') === undefined
+      ? true
+      : this.data('showChangeOption');
   }
 
   changeAvatar() {

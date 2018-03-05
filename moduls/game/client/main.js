@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+import { Router } from 'meteor/iron:router';
 import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import Battle from '../../battle/lib/imports/battle';
@@ -64,59 +66,12 @@ Meteor.Spinner.options = {
 
 Notifications.defaultOptions.timeout = 5000;
 
-Router.configure({
-  loadingTemplate: 'loading'
-});
-
-Router.route('/', function () {
-  Session.set('totalUsersCount', '…');
-  Session.set('onlineUsersCount', '…');
-  
-  this.layout('index');
-
-  var user = Meteor.user();
-  if (user) {
-    if (user.blocked === true) {
-      Meteor.logout();
-      this.redirect('index');
-      alert('Аккаунт заблокирован');
-    } else {
-      Router.go('game');
-    }
-  }
-
-  this.render('empty', {to: 'modal'});
-
-  Meteor.call('totalUsersCount', function(err, result) {
-    Session.set('totalUsersCount', result);
+if (!Meteor.settings.public.isInviteRequired) {
+  reCAPTCHA.config({
+    publickey: Meteor.settings.public.recaptcha.publickey,
+    hl: 'ru',
   });
-
-  Meteor.call('onlineUsersCount', function(err, result) {
-    Session.set('onlineUsersCount', result);
-  });
-
-  if (window.Metrica !== undefined) {
-    Metrica.hit(window.location.href, 'Index', document.referrer);
-  }
-
-  $('.fancybox').fancybox();
-}, {name: 'index'});
-
-Template.index.helpers({
-  totalUsersCount: function() { return Session.get('totalUsersCount'); },
-  onlineUsersCount: function() { return Session.get('onlineUsersCount'); }
-});
-
-Template.index.events({
-  'click .fancybox': function(e, t) {
-    e.preventDefault();
-  },
-
-  'click .start_registration': function(e, t) {
-    e.preventDefault();
-    Game.Popup.show({ templateName: 'register_window' });
-  }
-});
+}
 
 Meteor.subscribe('myAlliance');
 

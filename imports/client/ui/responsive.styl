@@ -1,0 +1,20 @@
+// Mixin Media
+
+media($min-width, $max-width = null)
+  min-width = $min-width != null ? 'and (min-width: $min-width) ' : ''
+  max-width = $max-width != null ? 'and (max-width: $max-width - 1)' : ''
+  media = 'all '+ min-width + max-width
+  @media media
+    {block}
+
+
+/* Usage:
++media($cw--size_xxs,$cw--size_m) <- min-width, max-width
+  .block
+
++media(null,$cw--size_s) <- only max-width
+  .block
+
++media($cw--size_xs,null) <- only min-width
+  .block
+*/

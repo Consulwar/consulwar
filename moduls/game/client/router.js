@@ -1,3 +1,11 @@
+import { Meteor } from 'meteor/meteor';
+import { Router } from 'meteor/iron:router';
+import { $ } from 'meteor/jquery';
+import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
+import PageIndex from '/imports/client/ui/pages/Index/PageIndex';
+import PageAbout from '/imports/client/ui/pages/About/PageAbout';
+import PageScreens from '/imports/client/ui/pages/Screens/PageScreens';
+
 initRouterClient = function() {
 'use strict';
 
@@ -47,8 +55,6 @@ window.GameRouteController = RouteController.extend({
   }
 });
 
-
-
 var gameRoutes = {
   planet: {
     building: 'planet/:group(residential|military)/:item?/:menu?'
@@ -97,16 +103,16 @@ var gameRoutes = {
   chat: {
     chat: 'chat/:room',
     mail: 'mail/:page',
-    mailAdmin: 'mailadmin/:page'
+    mailAdmin: 'mailadmin/:page',
   },
 
   cosmos: {
     cosmos: 'cosmos',
-    cosmosHistory: 'cosmos/history/:page'
+    cosmosHistory: 'cosmos/history/:page',
   },
 
   settings: {
-    settings: 'settings'
+    settings: 'settings',
   }
 };
 
@@ -185,15 +191,56 @@ Router.route('/logout', function () {
   this.redirect('index');
 });
 
+  Router.configure({
+    loadingTemplate: 'loading',
+  });
+
+  Router.route('/', function() {
+    this.layout(LayoutMain.renderComponent());
+    this.render(PageIndex.renderComponent());
+
+    const user = Meteor.user();
+    if (user) {
+      if (user.blocked === true) {
+        Meteor.logout();
+        this.redirect('index');
+      } else {
+        Router.go('game');
+      }
+    }
+
+    if (window.Metrica !== undefined) {
+      Metrica.hit(window.location.href, 'Index', document.referrer);
+    }
+  }, { name: 'index' });
+
+  Router.route('/about', function() {
+    this.layout(LayoutMain.renderComponent(), { data: { hasShadow: true } });
+    this.render(PageAbout.renderComponent());
+
+    if (window.Metrica !== undefined) {
+      Metrica.hit(window.location.href, 'About', document.referrer);
+    }
+  }, { name: 'about' });
+
+  Router.route('/screenshots', function() {
+    this.layout(LayoutMain.renderComponent(), { data: { hasShadow: true } });
+    this.render(PageScreens.renderComponent());
+
+    if (window.Metrica !== undefined) {
+      Metrica.hit(window.location.href, 'Screenshots', document.referrer);
+    }
+  }, { name: 'screenshots' });
+
+
 Router.route('pageNotFound', {
   path: '/(.+)',
   action: function() {
-    if(Meteor.user()){
+    if (Meteor.user()) {
       return this.redirect('game');
-    } else {
-      return this.redirect('index');
     }
-  }
+    return this.redirect('index');
+  },
 });
 
 };

@@ -78,10 +78,10 @@
               <div class="cw--Building__actionAmount">
                 <button 
                   class="cw--button_max cw--Building__actionSetMax"
-                  {{notPremiumDisabled}}
                   data-tooltip="Ввести максимум"
                   data-tooltip-direction="s"
                   {{premiumTitle}}
+                  onClick={{setMaximum}}
                 ></button>
                 <input class="cw--Building__actionAmountCount" type="number" placeholder="Количество" value="{{count}}"/>
               </div>
@@ -95,7 +95,7 @@
                   {{/unless}}
                 "
                 onClick={{Build}}
-                disabled="{{not building.canBuild}}"
+                disabled="{{not canBuild.get}}"
               >
                 {{#if building.progress}}
                   Ускорить

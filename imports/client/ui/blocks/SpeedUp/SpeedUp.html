@@ -1,0 +1,38 @@
+<template name="SpeedUp">
+  <div class="cw--SpeedUp">
+    <h3 class="cw--SpeedUp__head">Ускорение строительства</h3>
+    <div class="cw--SpeedUp__description">
+      Рабский труд, подкуп чиновников, лучшие работники галактики и даже сын маминой подруги, всё это поможет вам ускорить строительство в разы, но придётся платить. Либо бесплатными минутами с карточек ускорения времени, либо Галактическими кредитами.
+    </div>
+    <div class="cw--SpeedUp__actions">
+      <div class="cw--SpeedUp__action">
+        <div class="cw--SpeedUp__actionHead">Моментальное Улучшение:</div>
+        <div class="cw--SpeedUp__actionPrice">
+          500
+        </div>
+        <button
+          class="
+            cw--SpeedUp__button
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_green
+          "
+        >
+          Ускорить 100%
+        </button>
+      </div>
+      <div class="cw--SpeedUp__action cw--SpeedUp__action_skip">
+        <button
+          class="
+            cw--SpeedUp__skip
+            cw--button
+            cw--button_flat
+          "
+          onClick={{closeWindow}}
+        >
+          Отмена
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

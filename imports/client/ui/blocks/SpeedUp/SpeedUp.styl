@@ -1,0 +1,55 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--SpeedUp
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  display block
+  width 500px
+  height auto
+  border solid 1px $cw--color_metal
+  border-image linear-gradient(0deg, #2b6d92, $cw--color_metal) 1
+  background-color $cw--color_black
+  padding 7px 10px 14px 10px
+  &__head
+    color $cw--color_human
+    font-size $cw--fontSize_l
+    padding-bottom 12px
+    font-weight bold
+  &__description
+    border-bottom solid 1px $cw--color_grey
+    padding-bottom 6px
+    color $cw--color_nearWhite
+  &__actions
+    padding-top 10px
+    display flex
+    align-items flex-end
+  &__action
+    flex-basis auto
+    display flex
+    flex-wrap wrap
+    &_skip
+      flex-basis 160px
+      margin-left auto
+
+  &__actionHead
+    flex-basis 100%
+    font-weight bold
+    color $cw--color_human
+    padding-bottom 10px
+  &__actionPrice
+    padding-left 55px
+    min-height 45px
+    background-image url(/img/game/Resource/Base/Credit/icon.svg)
+    background-size 45px
+    background-repeat no-repeat
+    background-position left center
+    padding-right 20px
+    color $cw--color_credit
+    font-size 24px
+    font-weight bold
+    line-height 45px
+  &__button
+    flex-basis 160px
+  &__skip
+    flex-grow 1

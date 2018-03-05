@@ -44,7 +44,7 @@ Game.Building.special.Market = {
 
   getExchangeAmount: function(resourceFrom, resourceTo, amount) {
     amount = SpecialEffect.applyTo({
-      target: { engName: 'tradingBonus' },
+      target: { id: 'Unique/tradingBonus' },
       obj: { amount: amount * Game.Building.special.Market.getExchangeRate(resourceFrom, resourceTo) },
       hideEffects: true,
     }).amount;

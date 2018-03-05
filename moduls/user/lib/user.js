@@ -10,7 +10,7 @@ Game.User = {
     var level = Game.User.getLevel( user.rating );
 
     const power = SpecialEffect.applyTo({
-      target: { engName: 'VotePower' },
+      target: { id: 'Unique/VotePower' },
       obj: { power: level + bonus },
       hideEffects: true,
       userId: user._id,

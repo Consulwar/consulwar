@@ -45,7 +45,7 @@ Game.Wrecks = {
     });
 
     price = PriceEffect.applyTo({
-      target: { engName: 'Repair' },
+      target: { id: 'Unique/Repair' },
       obj: price,
     });
 

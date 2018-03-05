@@ -211,8 +211,8 @@ Template.promocodeCreate.helpers({
 
     _(humanUnits).pairs().forEach(([id, unit]) => {
       result.push({
-        id,
-        name: humanUnits.title,
+        id: `units.${id}`,
+        name: unit.title,
       });
     });
 

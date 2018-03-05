@@ -63,7 +63,7 @@ const userPlanetsTracker = Tracker.autorun(() => {
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
 var bounds = new ReactiveVar(null);
-var isFleetSended = new ReactiveVar(false);
+var isFleetSendInProgress = new ReactiveVar(false);
 var updated = new ReactiveVar(null);
 
 var mapView = null;
@@ -1338,10 +1338,6 @@ Template.cosmosAttackMenu.onRendered(function() {
 });
 
 Template.cosmosAttackMenu.helpers({
-  isFleetSended: function() {
-    return isFleetSended.get();
-  },
-
   battle() {
     return BattleEvents.findByBattleId(this.id);
   },
@@ -1445,7 +1441,7 @@ Template.cosmosAttackMenu.helpers({
     return Space.checkSendFleet({
       planet: Game.Planets.getOne(activeColonyId.get()),
       units: selectedUnits.get(),
-    })
+    }) && !isFleetSendInProgress.get();
   },
 
   extraColonyPrice: function() {
@@ -1702,7 +1698,7 @@ Template.cosmosAttackMenu.events({
 
     if (planet) {
       // Send to planet
-      isFleetSended.set(true);
+      isFleetSendInProgress.set(true);
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
@@ -1711,7 +1707,7 @@ Template.cosmosAttackMenu.events({
         units,
         isOneway,
         function(err) {
-          isFleetSended.set(false);
+          isFleetSendInProgress.set(false);
 
           if (err) {
             Notifications.error('Не удалось отправить флот', err.error);
@@ -1724,7 +1720,7 @@ Template.cosmosAttackMenu.events({
       );
     } else if (battle) {
       // Send to battle
-      isFleetSended.set(true);
+      isFleetSendInProgress.set(true);
       Meteor.call(
         'space.sendFleet',
         basePlanet._id,
@@ -1733,7 +1729,7 @@ Template.cosmosAttackMenu.events({
         units,
         isOneway,
         function(err) {
-          isFleetSended.set(false);
+          isFleetSendInProgress.set(false);
 
           if (err) {
             Notifications.error('Не удалось отправить флот', err.error);
@@ -1767,14 +1763,14 @@ Template.cosmosAttackMenu.events({
         return;
       }
 
-      isFleetSended.set(true);
+      isFleetSendInProgress.set(true);
       Meteor.call(
         'space.attackReptileFleet',
         basePlanet._id,
         targetId,
         units,
         function(err) {
-          isFleetSended.set(false);
+          isFleetSendInProgress.set(false);
           
           if (err) {
             Notifications.error('Не удалось отправить флот', err.error);

@@ -1,3 +1,4 @@
+import Research from '/imports/client/ui/blocks/Research/Research';
 import researches from '/imports/content/Research/client';
 import evolutionResearches from '/imports/content/Research/Evolution/client';
 import fleetResearches from '/imports/content/Research/Fleet/client';
@@ -34,7 +35,7 @@ Game.Research.showPage = function() {
   );
 
   if (item) {
-    this.render('item_research', {
+    this.render(Research.renderComponent(), {
       to: 'content',
       data: {
         research: item,
@@ -45,54 +46,4 @@ Game.Research.showPage = function() {
     this.render('empty', {to: 'content'});
   }
 };
-
-Template.item_research.helpers({
-  getRequirements() {
-    return this.research.getRequirements({ level: this.level.get() });
-  },
-});
-
-Template.item_research.events({
-  'click button.build': function(e, t) {
-    var item = t.data.research;
-
-    Meteor.call(
-      'research.start',
-      {
-        id: item.id,
-        level: this.level.get(),
-      },
-      function(error, message) {
-        if (error) {
-          Notifications.error('Невозможно начать исследование', error.error);
-        } else {
-          Notifications.success('Исследование запущено');
-        }
-      },
-    );
-
-    if (item.getCurrentLevel() === 0) {
-      Router.go(item.url({group: item.group}));
-    }
-  },
-
-  'click button.max': function(e, t) {
-    const item = t.data.research;
-    let currentLevel = item.getCurrentLevel() + 1;
-
-    while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
-      currentLevel += 1;
-    }
-
-    this.level.set(currentLevel);
-  },
-
-  'click .toggle_description': function(e, t) {
-    $(t.find('.description')).slideToggle(function() {
-      var options = Meteor.user().settings && Meteor.user().settings.options;
-      Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
-    });
-  }
-});
-
 };

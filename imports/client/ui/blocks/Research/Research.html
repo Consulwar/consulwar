@@ -1,0 +1,115 @@
+<template name="Research">
+  <div class="cw--Research">
+    <div class="cw--Research__header">
+      <div class="cw--Research__headerLevel">
+        {{#if research.currentLevel}}
+          <span class="cw--Research__levelCount">
+            {{research.currentLevel}}
+          </span>
+          уровень 
+        {{else}}
+          Не построено
+        {{/if}}
+      </div>
+      <div class="cw--Research__headerTitle">
+        {{research.name}}
+      </div>
+      <!-- quest link here -->
+      <div class="cw--Research__headerControls">
+        <span
+          onClick={{toggleDescription}}
+          class="
+            cw--Research__headerIcon
+            cw--button_description
+            {{#if options.hideDescription}}cw--button_notActive{{/if}}
+          "
+        ></span>
+        <a href="{{backToGroupLink}}" class="
+          cw--Research__headerIcon
+          cw--button_close
+          "
+        ></a>
+      </div>
+    </div>
+    <div class="
+        cw--Research__info
+        {{#if options.hideDescription}}cw--Research__info_hidden{{/if}}
+      "
+    >
+      <div class="cw--Research__infoWrap">
+        <div class="cw--Research__mainPic">
+          <img class="cw--Research__mainPicImage" src="{{research.icon}}" />
+        </div>
+        <div class="cw--Research__description scrollbar-inner">
+          {{research.description}}
+        </div>
+      </div>
+    </div>
+    <div class="cw--Research__mainField">
+      <div class="cw--Research__panel">
+        <div class="cw--Research__effects">
+          <div class="cw--Research__effectsHead">
+            Бонусные эффекты:
+          </div>
+          {{> Effect item=research}}
+        </div>
+        <div class="cw--Research__price">
+          <div class="cw--Research__priceHead">
+            Стоимость{{#if research.currentLevel}} улучшения{{/if}}:
+          </div>
+          {{#if gt research.maxLevel research.currentLevel}}
+            {{#if research.progress}}
+              {{> ResourcePrice price=research.next.price}}
+            {{else}}
+              {{> ResourcePrice price=research.price}}
+            {{/if}}
+          {{else}}
+            BOOOOOSST
+          {{/if}}
+        </div>
+        <div class="cw--Research__actions">
+          {{#if gt research.maxLevel research.currentLevel}}
+            <div class="cw--Research__action">
+              <div class="cw--Research__actionAmount">
+                <button 
+                  class="cw--button_max cw--Research__actionSetMax"
+                  data-tooltip="Ввести максимум"
+                  data-tooltip-direction="s"
+                  {{premiumTitle}}
+                  onClick={{setMaximum}}
+                ></button>
+                <input class="cw--Research__actionAmountCount" type="number" placeholder="Количество" value="{{count}}"/>
+              </div>
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  {{#unless research.progress}}
+                  cw--button_type_primary_orange
+                  {{else}}
+                  cw--button_type_primary_green
+                  {{/unless}}
+                "
+                onClick={{Build}}
+                disabled="{{not canBuild.get}}"
+              >
+                {{#if research.progress}}
+                  Ускорить
+                {{else}}
+                  {{#if research.currentLevel}}
+                    Улучшить
+                  {{else}}
+                    Исследовать
+                  {{/if}}
+                {{/if}}
+              </button>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+      {{> Requirements
+        requirements=research.requirements
+        class="cw--Research__require"
+      }}
+    </div>
+  </div>
+</template>

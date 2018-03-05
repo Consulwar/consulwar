@@ -2,7 +2,6 @@
 @import '{}/imports/client/ui/colors'
 
 .cw--Building
-  cw--fontFamily_cond()
   font-size 14px
   width 720px
   // min-height 500px
@@ -12,6 +11,7 @@
   // background-color alpha($cw--color_black, .7)
   
   &__header
+    cw--fontFamily_cond()
     font-size $cw--fontSize_l
     background-color $cw--color_black
     padding-left 14px
@@ -50,10 +50,11 @@
     color $cw--color_metal
 
   &__info
+    cw--fontFamily_cond()
     display block
     height 100px
     overflow hidden
-    background-color alpha($cw--color_black, .1)
+    background-color alpha($cw--color_black, .4)
   &__infoWrap
     height 100px
     display flex
@@ -83,6 +84,7 @@
     display flex
     flex-direction row
   &__panel
+    cw--fontFamily_cond()
     padding 14px
     flex-basis 460px
     flex-grow 0
@@ -107,7 +109,8 @@
     padding-bottom 4px
 
   &__actions
-    flex-basis 80px
+    // flex-basis 80px
+    flex-basis auto
     padding-top 6px
     border-top solid 1px $cw--color_grey
     margin 0
@@ -149,6 +152,7 @@
       background-image url(/img/game/Resource/Base/Metal/icon.svg)
     &_crystal
       background-image url(/img/game/Resource/Base/Crystal/icon.svg)
+
   &__bonusBar
     flex-basis auto
     margin-left 6px
@@ -162,12 +166,15 @@
     &:before
       content: attr(value) ' / ' attr(max);
       cw--fontFamily_cond()
+      font-size 16px
       font-weight bold
       color $cw--color_white
+      text-align center
       position absolute
-      left 50%
+      left 0
       top 50%
-      transform translate(-50%,-50%)
+      transform translate(0,-50%)
+      width 100%
 
     &_metal
       border solid 1px $cw--color_metal
@@ -188,5 +195,6 @@
         background-color $cw--color_crystal
 
   &__require
+    background-color alpha($cw--color_black, .7)
     flex-basis 260px
     flex-grow 0

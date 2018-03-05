@@ -1,0 +1,113 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+requirements-icon($menu, $sub, $name)
+  &_{$name}
+    // background-image url(/img/game/$menu/$sub/r/$name.jpg)
+    background-image url(/img/game/$menu/$sub/i/$name.png)
+
+.cw--Requirements
+  cw--fontFamily_cond()
+  padding 10px
+
+  &__head
+    font-size $cw--fontSize_m
+    font-weight bold
+    color $cw--color_metal
+    padding-bottom 5px
+
+  &__item
+    display block
+    padding 5px 10px
+    margin 0 -10px
+    box-sizing border-box
+    border solid 1px transparent
+    text-decoration none
+    font-weight bold
+    font-size $cw--fontSize_s
+    &:hover
+      background-color alpha($cw--color_metal, .15)
+      border solid 1px $cw--color_metal
+      border-image linear-gradient(0deg, #2A6C91, #56BBF3) 1
+
+  &__itemTitle
+    display block
+    &_research
+      color $cw--color_metal
+    &_building
+      color $cw--color_human
+
+  &__levelHas
+  &__levelNeed
+    display block
+
+  &__currentLevel
+    color $cw--color_credit
+
+  &__currentLevel_need
+    color $cw--color_honor
+  
+  // &__icon
+  //   flex-grow 0
+  //   width 50px
+  //   height 50px
+  //   background-size 100%
+  //   background-position center center
+
+  &__item
+    background-size 50px
+    background-repeat no-repeat
+    background-position 10px 6px
+    padding-left 70px
+
+    requirements-icon('building', 'residential', 'house')
+    requirements-icon('building', 'residential', 'metal')
+    requirements-icon('building', 'residential', 'crystal')
+    requirements-icon('building', 'residential', 'spaceport')
+    requirements-icon('building', 'residential', 'entertainment')
+    requirements-icon('building', 'residential', 'alliance')
+    requirements-icon('building', 'residential', 'tradingport')
+    requirements-icon('building', 'residential', 'pulsecatcher')
+    requirements-icon('building', 'residential', 'statue')
+    requirements-icon('building', 'residential', 'colosseum')
+    requirements-icon('building', 'residential', 'political')
+    requirements-icon('building', 'residential', 'blackmarket')
+
+    requirements-icon('building', 'military', 'powerstation')
+    requirements-icon('building', 'military', 'laboratory')
+    requirements-icon('building', 'military', 'barracks')
+    requirements-icon('building', 'military', 'factory')
+    requirements-icon('building', 'military', 'airfield')
+    requirements-icon('building', 'military', 'shipyard')
+    requirements-icon('building', 'military', 'defensecomplex')
+    requirements-icon('building', 'military', 'storage')
+    requirements-icon('building', 'military', 'gates')
+    requirements-icon('building', 'military', 'void')
+    requirements-icon('building', 'military', 'complex')
+    requirements-icon('building', 'military', 'oscd')
+
+    requirements-icon('research', 'evolution', 'energy')
+    requirements-icon('research', 'evolution', 'alloy')
+    requirements-icon('research', 'evolution', 'science')
+    requirements-icon('research', 'evolution', 'ikea')
+    requirements-icon('research', 'evolution', 'drill')
+    requirements-icon('research', 'evolution', 'crystallization')
+    requirements-icon('research', 'evolution', 'engineering')
+    requirements-icon('research', 'evolution', 'animalworld')
+    requirements-icon('research', 'evolution', 'hyperdrive')
+    requirements-icon('research', 'evolution', 'nanotechnology')
+    requirements-icon('research', 'evolution', 'converter')
+    requirements-icon('research', 'evolution', 'doomsdaysizing')
+
+    // TODO: Выяснить что это такое и зачем оно
+    requirements-icon('mutual', 'research', 'reccons')
+    requirements-icon('mutual', 'research', 'training')
+    requirements-icon('mutual', 'research', 'lubricant')
+    requirements-icon('mutual', 'research', 'psieffect')
+    requirements-icon('mutual', 'research', 'weapons')
+    requirements-icon('mutual', 'research', 'defense')
+    requirements-icon('mutual', 'research', 'viagra')
+    requirements-icon('mutual', 'research', 'dickcharge')
+    requirements-icon('mutual', 'research', 'flash')
+    requirements-icon('mutual', 'research', 'unity')
+    requirements-icon('mutual', 'research', 'vottakvot')

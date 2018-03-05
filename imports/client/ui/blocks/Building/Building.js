@@ -6,6 +6,7 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/blocks/Effect/Effect';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
+import '/imports/client/ui/blocks/Requirements/Requirements';
 import '/imports/client/ui/button/button.styl';
 import './Building.html';
 import './Building.styl';

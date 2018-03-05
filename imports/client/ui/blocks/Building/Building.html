@@ -72,8 +72,6 @@
           {{/if}}
         </div>
 
-    <!-- actions -->
-
         <div class="cw--Building__actions">
           {{#if gt building.maxLevel building.currentLevel}}
             <div class="cw--Building__action">
@@ -90,15 +88,23 @@
               <button class="
                   cw--button
                   cw--button_type_primary
+                  {{#unless building.progress}}
                   cw--button_type_primary_orange
+                  {{else}}
+                  cw--button_type_primary_green
+                  {{/unless}}
                 "
                 onClick={{Build}}
                 disabled="{{not building.canBuild}}"
               >
-                {{#if building.currentLevel}}
-                  Улучшить
+                {{#if building.progress}}
+                  Ускорить
                 {{else}}
-                  Построить
+                  {{#if building.currentLevel}}
+                    Улучшить
+                  {{else}}
+                    Построить
+                  {{/if}}
                 {{/if}}
               </button>
             </div>
@@ -201,7 +207,7 @@
             {{/if}}
 
             {{#if eq building.engName 'colosseum'}}
-              <button
+              <a
                 class="
                   cw--button
                   cw--button_type_primary
@@ -211,7 +217,7 @@
                 href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
               >
                 Турнир
-              </button>
+              </a>
             {{/if}}
 
             {{#if eq building.engName 'pulsecatcher'}}
@@ -230,12 +236,11 @@
           </div>
         </div>
 
-      <!-- actions -->
-
       </div>
-      <div class="cw--Building__require">
-        {{> item_requirements requirements=building.requirements}}
-      </div>
+      {{> Requirements
+        requirements=building.requirements
+        class="cw--Building__require"
+      }}
     </div>
   {{/if}}
   </div>

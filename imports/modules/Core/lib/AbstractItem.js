@@ -46,9 +46,7 @@ class AbstractItem {
     requirements = () => [],
   }) {
     if (new.target === AbstractItem) {
-      throw new Meteor.Error(
-        'Попытка создания экземпляра абстрактного класса',
-      );
+      throw new Meteor.Error('Попытка создания экземпляра абстрактного класса');
     }
 
     this.order = order;

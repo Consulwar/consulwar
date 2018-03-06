@@ -12,7 +12,12 @@ import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
 import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
 
-const reptilesWin = function({ battle, roundResult, planet, data }) {
+const reptilesWin = function({
+  battle,
+  roundResult,
+  planet,
+  data,
+}) {
   if (planet && !planet.isHome && planet.status === Game.Planets.STATUS.HUMANS) {
     planet.status = Game.Planets.STATUS.NOBODY;
     planet.minerUsername = null;
@@ -74,7 +79,13 @@ const reptilesWin = function({ battle, roundResult, planet, data }) {
   }
 };
 
-const humansWin = function({ battle, roundResult, users, planet, data }) {
+const humansWin = function({
+  battle,
+  roundResult,
+  users,
+  planet,
+  data,
+}) {
   if (planet) {
     planet.mission = null;
   }
@@ -118,7 +129,7 @@ const humansWin = function({ battle, roundResult, users, planet, data }) {
       };
 
       if (
-           users.length > 1
+        users.length > 1
         || battle.initialUnits[Battle.USER_SIDE][user.username].length > 1
       ) {
         // Если было несколько флотов, то все они возвращаются на свои домашние планеты
@@ -156,9 +167,10 @@ export default Space.jobs.processJobs(
     payload: Config.JOBS.payload,
     pollInterval: Config.JOBS.pollInterval,
     prefetch: Config.JOBS.prefetch,
+    workTimeout: Config.JOBS.workTimeout,
   },
   (job, cb) => {
-    const data = job.data;
+    const { data } = job;
     const { battleId, planetId } = data;
 
     let planet = null;
@@ -177,7 +189,13 @@ export default Space.jobs.processJobs(
 
       wreakUnits(battle, users);
 
-      const options = { battle, roundResult, users, planet, data };
+      const options = {
+        battle,
+        roundResult,
+        users,
+        planet,
+        data,
+      };
 
       if (isUserVictory) {
         humansWin(options);

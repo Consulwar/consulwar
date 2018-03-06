@@ -55,8 +55,8 @@ class UnitHuman extends UnitHumanAbstract {
     user = Meteor.users.findOne({ _id: (userId || Meteor.userId()) }),
   }) {
     let location;
-    let armyId;
     const homePlanet = Game.Planets.getBase(userId);
+    const { armyId } = homePlanet;
 
     if (
       unit.group === 'Ground' ||
@@ -82,7 +82,6 @@ class UnitHuman extends UnitHumanAbstract {
         );
         return;
       }
-      armyId = homePlanet.armyId;
 
       location = Game.Unit.location.PLANET;
     }

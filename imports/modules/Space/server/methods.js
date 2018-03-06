@@ -94,7 +94,7 @@ Meteor.methods({
       throw new Meteor.Error('Слишком долгий перелет');
     }
 
-    let k = attackOptions.k;
+    let { k } = attackOptions;
     if (k > 1) {
       k = 1;
     } else if (k < 0) {
@@ -208,7 +208,7 @@ Meteor.methods({
         y: battleEvent.data.targetPosition.y,
       };
 
-      targetHex = battleEvent.data.targetHex;
+      ({ targetHex } = battleEvent.data);
     } else {
       throw new Meteor.Error('Неверный параметр типа цели.');
     }

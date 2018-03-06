@@ -46,5 +46,10 @@ Meteor.methods({
     Game.Resources.spend(price);
 
     Game.Queue.spendTime(task._id, spendTime);
+
+    Game.Payment.Expense.log(price.credits, 'buildingSpeedup', {
+      itemId: id,
+      time: spendTime,
+    });
   },
 });

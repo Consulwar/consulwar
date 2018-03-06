@@ -7,6 +7,7 @@ import TradingPort from '../TradingPort/server';
 import PulseCatcher from '../PulseCatcher/server';
 import Colosseum from '../Colosseum/server';
 import BlackMarket from '../BlackMarket/server';
+import Political from '../Political/server';
 
 export default {
   'Quest/Regular/Tamily/House': House,
@@ -18,4 +19,5 @@ export default {
   'Quest/Regular/Tamily/PulseCatcher': PulseCatcher,
   'Quest/Regular/Tamily/Colosseum': Colosseum,
   'Quest/Regular/Tamily/BlackMarket': BlackMarket,
+  'Quest/Regular/Tamily/Political': Political,
 };

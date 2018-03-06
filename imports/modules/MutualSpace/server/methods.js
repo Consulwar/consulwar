@@ -32,7 +32,7 @@ Meteor.methods({
       throw new Meteor.Error('Перед выходом в общий космос необходимо разведать все планеты.');
     }
 
-    const galactic = homePlanet.galactic;
+    const { galactic } = homePlanet;
     const planets = Game.Planets.getAll().fetch();
     const hands = {};
     let allCount = 0;

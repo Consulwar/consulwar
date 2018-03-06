@@ -50,8 +50,11 @@ const flyBack = function(data) {
     targetPositionWithOffset.y += center.y;
   }
 
-  flyBackData.flyTime = Utils.calcFlyTime(startPositionWithOffset,
-    targetPositionWithOffset, flyBackData.engineLevel);
+  flyBackData.flyTime = Utils.calcFlyTime(
+    startPositionWithOffset,
+    targetPositionWithOffset,
+    flyBackData.engineLevel,
+  );
 
   add(flyBackData);
 };

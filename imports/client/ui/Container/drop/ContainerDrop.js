@@ -23,7 +23,6 @@ class ContainerDrop extends BlazeComponent {
       };
     });
   }
-
 }
 
 ContainerDrop.register('ContainerDrop');

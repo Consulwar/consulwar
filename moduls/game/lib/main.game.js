@@ -794,7 +794,18 @@ Game.Queue = {
       return Game.Queue.getGroup(group);  
     }
     return false;
-  }
+  },
+
+  getSpeedupPrice(item, task) {
+    const spendTime = task.finishTime - Game.getCurrentTime() - 2;
+    const price = { credits: 1 + (300 * ((spendTime / 3600) ** 0.7513)) };
+
+    if (['building', 'research'].indexOf(item.type) && task.level <= 20) {
+      price.credits = 0; 
+    }
+
+    return price;
+  },
 };
 
 

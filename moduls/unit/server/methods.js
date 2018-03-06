@@ -12,68 +12,6 @@ initUnitServerMethods = function() {
 'use strict';
 
 Meteor.methods({
-  'unit.speedup': function(options) {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'unit.speedup', user });
-
-    check(options, Object);
-    check(options.group, String);
-    check(options.engName, String);
-
-    let cardsObject = {};
-    let cardList = [];
-
-    if (options.cards) {
-      check(options.cards, Object);
-
-      cardsObject = options.cards;
-
-      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
-        throw new Meteor.Error('Карточки недоступны для применения');
-      }
-
-      cardList = Game.Cards.objectToList(cardsObject);
-    }
-
-    if (cardList.length === 0) {
-      throw new Meteor.Error('Карточки не выбраны');
-    }
-
-    Meteor.call('actualizeGameInfo');
-
-    let item = Game.Unit.items.army[options.group] && Game.Unit.items.army[options.group][options.engName];
-
-    if (!item) {
-      throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
-    }
-
-    let task = Game.Queue.getGroup(item.group);
-    if (!task || task.engName !== options.engName) {
-      throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
-    }
-
-    let maxSpendTime = task.finishTime - Game.getCurrentTime() - 2;
-
-    let priceWithoutCards = item.price(task.count);
-    let priceWithCards = item.price(task.count, cardList);
-
-    let spendTime = Math.min(priceWithoutCards.time - priceWithCards.time, maxSpendTime);
-
-    if (_.isNaN(spendTime) || spendTime <= 0) {
-      throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
-    }
-
-    Game.Queue.spendTime(task._id, spendTime);
-
-    for (let card of cardList) {
-      Game.Cards.activate(card, user);
-    }
-
-    Game.Cards.spend(cardsObject);
-  },
-
   'unit.repair'(id) {
     const user = User.getById();
     User.checkAuth({ user });

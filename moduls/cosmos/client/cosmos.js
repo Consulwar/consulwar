@@ -3,7 +3,6 @@ import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 
 import Space from '/imports/modules/Space/client/space';
-import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import Utils from '/imports/modules/Space/lib/utils';
 import calcAttackOptions from '/imports/modules/Space/lib/calcAttackOptions';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
@@ -603,19 +602,6 @@ Template.cosmosFleetsInfo.helpers({
         }
       }
 
-      result.push(data);
-    }
-    
-    var reinforcements = Reinforcement.getAllByUserId().fetch();
-    for (i = 0; i < reinforcements.length; i++) {
-      data = {
-        isReinforcement: true,
-        id: reinforcements[i]._id,
-        start: Game.Planets.getBase(),
-        timeEnd: Game.dateToTime(reinforcements[i].after),
-      };
-      data.start.owner = 'humans';
-      data.name = 'Подкрепление';
       result.push(data);
     }
 

@@ -7,6 +7,7 @@ export default {
     metals: 120,
     crystals: 30,
   },
+  queue: 'Space/Heavy',
   decayTime: 60 * 60,
   characteristics: {
     weapon: {

@@ -5,6 +5,7 @@ export default {
   basePrice: {
     metals: 20,
   },
+  queue: 'Defense/Regular',
   decayTime: 20,
   characteristics: {
     weapon: {

@@ -5,6 +5,7 @@ export default {
   basePrice: {
     'Resource/Artifact/Red/RubyPlasmoid': 500,
   },
+  queue: 'Defense/Ultimate',
   characteristics: {
     weapon: {
       damage: { min: 1000000000, max: 1000000000 },

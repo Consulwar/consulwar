@@ -8,6 +8,7 @@ export default {
     crystals: 100000,
     time: 24 * 60 * 60 * 3,
   },
+  queue: 'Space/Council',
   characteristics: {
     weapon: {
       damage: { min: 900000, max: 1100000 },

@@ -38,6 +38,7 @@ class AbstractItem {
     title,
     description,
     effects,
+    queue,
     color = 'cw--color_metal',
     doNotRegisterEffects = false,
     notImplemented = false,
@@ -58,6 +59,8 @@ class AbstractItem {
 
     this.title = title;
     this.description = description;
+
+    this.queue = queue;
 
     this.color = color;
     this.doNotRegisterEffects = doNotRegisterEffects;
@@ -113,7 +116,7 @@ class AbstractItem {
   }
 
   isQueueBusy() {
-    return Game.Queue.isBusy(this.group);
+    return Game.Queue.isBusy(this.queue || this.group);
   }
 
   applyPriceEffects({ price, cards = [] }) {

@@ -46,7 +46,7 @@ Meteor.methods({
     }
 
     if (item.maxCount !== undefined) {
-      const countDelta = item.maxCount - item.totalCount();
+      const countDelta = item.maxCount - item.getTotalCount();
       if (countDelta < 1) {
         throw new Meteor.Error('Достигнуто максимальное количество юнитов данного типа');
       }

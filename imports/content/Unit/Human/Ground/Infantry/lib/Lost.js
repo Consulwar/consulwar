@@ -7,6 +7,7 @@ export default {
     metals: 170000,
     crystals: 18666,
   },
+  queue: 'Ground/Infantry',
   characteristics: {
     weapon: {
       damage: { min: 15000, max: 20000 },

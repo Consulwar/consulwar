@@ -34,7 +34,7 @@ Game.Chat.Messages = {
       crystals: Math.ceil(Math.max(Math.min(income, 100), 1))
     };
     var price = PriceEffect.applyTo({
-      target: { engName: 'message' },
+      target: { id: 'Unique/message' },
       obj: basePrice,
       hideEffects: true,
     });

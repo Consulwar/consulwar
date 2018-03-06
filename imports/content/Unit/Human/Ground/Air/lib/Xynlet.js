@@ -7,6 +7,7 @@ export default {
     metals: 27250,
     crystals: 17500,
   },
+  queue: 'Ground/Air',
   characteristics: {
     weapon: {
       damage: { min: 3200, max: 3600 },

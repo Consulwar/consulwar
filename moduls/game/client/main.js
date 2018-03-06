@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
 import content from '/imports/content/client';
-import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
@@ -355,14 +354,13 @@ var helpers = {
   },
 
   fleetInfo: function() {
-    var reinforcements = Reinforcement.getAllByUserId().fetch();
     var fleets = FlightEvents.getFleetsEvents().fetch();
     const battles = BattleCollection.find({
       status: Battle.Status.progress,
       userNames: Meteor.user().username,
     }).fetch();
 
-    if (reinforcements.length === 0 && fleets.length === 0 && battles.length === 0) {
+    if (fleets.length === 0 && battles.length === 0) {
       return null;
     }
 
@@ -412,9 +410,6 @@ var helpers = {
     }
 
     return {
-      reinforcements: reinforcements.length,
-      reinforcementsTime: reinforcements.length > 0 ? Game.dateToTime(reinforcements[0].after) : 0,
-      reinforcementsId: reinforcements.length > 0 ? reinforcements[0]._id : null,
       consul: consul,
       consulTime: consulTime,
       consulId: consulId,

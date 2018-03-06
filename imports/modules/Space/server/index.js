@@ -6,7 +6,6 @@ import Space from '../lib/space';
 import Config from './config';
 import './methods';
 import FlightQueue from './jobs/flight';
-import ReinforcementQueue from './jobs/reinforcement';
 import BattleQueue from './jobs/battle';
 import TriggerAttackQueue from './jobs/triggerAttack';
 
@@ -135,13 +134,12 @@ export default function initSpaceServer() {
 
     const done = function() {
       i += 1;
-      if (i >= 4) {
+      if (i >= 3) {
         process.exit(0);
       }
     };
 
     FlightQueue.shutdown({ level: 'soft' }, done);
-    ReinforcementQueue.shutdown({ level: 'soft' }, done);
     BattleQueue.shutdown({ level: 'soft' }, done);
     TriggerAttackQueue.shutdown({ level: 'soft' }, done);
   });

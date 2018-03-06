@@ -1,6 +1,5 @@
 import unitItems from '/imports/content/Unit/client';
 import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
-import Reinforcement from '/imports/modules/Space/client/reinforcement';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthClient = function() {
@@ -234,10 +233,6 @@ Template.reserve.events({
   },
 
   'click .btn-send': function(e, t) {
-    if (!Reinforcement.canSendReinforcement()) {
-      return Notifications.info('Слишком много подкреплений уже отправлено');
-    }
-
     var total = 0;
     var units = {};
 
@@ -260,7 +255,7 @@ Template.reserve.events({
       return Notifications.info('Выберите войска для отправки');
     }
 
-    Meteor.call('earth.sendReinforcement', units, null, t.data.name, function(err) {
+    Meteor.call('earth.sendReinforcement', units, t.data.name, function(err) {
       if (err) {
         Notifications.error('Не удалось отправить войска', err.error);
       } else {

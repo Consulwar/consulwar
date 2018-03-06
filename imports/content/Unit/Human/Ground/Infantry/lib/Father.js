@@ -6,6 +6,7 @@ export default {
     humans: 1,
     metals: 95,
   },
+  queue: 'Ground/Infantry',
   characteristics: {
     weapon: {
       damage: { min: 2, max: 3 },

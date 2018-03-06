@@ -57,7 +57,7 @@ Meteor.methods({
     }
 
     const set = {
-      group: item.group,
+      group: item.queue || item.group,
       itemId: item.id,
       count: setCount,
       dontNeedResourcesUpdate: true,

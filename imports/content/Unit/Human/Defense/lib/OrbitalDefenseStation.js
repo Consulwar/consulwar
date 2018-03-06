@@ -7,6 +7,7 @@ export default {
     metals: 20000000,
     crystals: 20000000,
   },
+  queue: 'Defense/Ultimate',
   characteristics: {
     weapon: {
       damage: { min: 20000000, max: 20000000 },

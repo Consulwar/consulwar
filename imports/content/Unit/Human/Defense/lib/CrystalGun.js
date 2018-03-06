@@ -7,6 +7,7 @@ export default {
     crystals: 300000,
   },
   decayTime: 10 * 24 * 60 * 60,
+  queue: 'Defense/Regular',
   characteristics: {
     weapon: {
       damage: { min: 720000, max: 880000 },

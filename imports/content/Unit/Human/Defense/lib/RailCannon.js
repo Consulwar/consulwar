@@ -5,6 +5,7 @@ export default {
   basePrice: {
     credits: 250,
   },
+  queue: 'Defense/Donate',
   decayTime: 24 * 60 * 60,
   characteristics: {
     weapon: {

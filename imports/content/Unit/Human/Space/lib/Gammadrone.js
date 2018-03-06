@@ -6,6 +6,7 @@ export default {
     metals: 62,
     crystals: 16,
   },
+  queue: 'Space/Light',
   decayTime: 15 * 60,
   characteristics: {
     weapon: {

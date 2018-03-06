@@ -106,6 +106,7 @@ export default function initSpaceServer() {
         payload: Config.JOBS.payload,
         pollInterval: Config.JOBS.pollInterval,
         prefetch: Config.JOBS.prefetch,
+        workTimeout: Config.JOBS.workTimeout,
       },
       (spaceJob, cb) => {
         datadog.gauge(

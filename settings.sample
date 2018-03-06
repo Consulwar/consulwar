@@ -175,6 +175,7 @@
       "payload": 1,
       "pollInterval": 1000,
       "prefetch": 1,
+      "workTimeout": 60000,
       "promote": 500,
       "retry": {
         "retries": 1,

@@ -12,6 +12,7 @@ export default Space.jobs.processJobs(
     payload: Config.JOBS.payload,
     pollInterval: Config.JOBS.pollInterval,
     prefetch: Config.JOBS.prefetch,
+    workTimeout: Config.JOBS.workTimeout,
   },
   (job, cb) => {
     const { data } = job;

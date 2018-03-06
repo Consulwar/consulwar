@@ -12,6 +12,7 @@ if (!Meteor.settings.space
   || !Meteor.settings.space.jobs.payload
   || !Meteor.settings.space.jobs.pollInterval
   || !Meteor.settings.space.jobs.prefetch
+  || !Meteor.settings.space.jobs.workTimeout
   || !Meteor.settings.space.jobs.promote
   || !Meteor.settings.space.jobs.battleDelay
 ) {

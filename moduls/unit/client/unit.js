@@ -1,3 +1,7 @@
+import { Meteor } from 'meteor/meteor';
+import { ReactiveVar } from 'meteor/reactive-var';
+import Game from '/moduls/game/lib/main.game';
+import Unit from '/imports/client/ui/blocks/Unit/Unit';
 import humanUnits from '/imports/content/Unit/Human/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import humanDefenseUnits from '/imports/content/Unit/Human/Defense/client';
@@ -48,12 +52,11 @@ Game.Unit.showPage = function() {
   );
   
   if (item) {
-    this.render('unit', {
+    this.render(Unit.renderComponent(), {
       to: 'content', 
       data: {
         unit: item,
-        count: new ReactiveVar(1)
-      }
+      },
     });
   } else {
     this.render('empty', { to: 'content' });

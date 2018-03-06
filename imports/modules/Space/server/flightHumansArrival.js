@@ -86,8 +86,11 @@ const completeOnPeacefulPlanet = function(data, planet) {
         targetPositionWithOffset.x += center.x;
         targetPositionWithOffset.y += center.y;
 
-        const flyTime = Utils.calcFlyTime(startPositionWithOffset,
-          targetPositionWithOffset, data.engineLevel);
+        const flyTime = Utils.calcFlyTime(
+          startPositionWithOffset,
+          targetPositionWithOffset,
+          data.engineLevel,
+        );
 
         FlightEvents.add({
           ...data,
@@ -185,8 +188,11 @@ const completeOnShip = function(data) {
         targetPositionWithOffset.y += center.y;
       }
 
-      const flyTime = Utils.calcFlyTime(startPositionWithOffset,
-        targetPositionWithOffset, data.engineLevel);
+      const flyTime = Utils.calcFlyTime(
+        startPositionWithOffset,
+        targetPositionWithOffset,
+        data.engineLevel,
+      );
 
       FlightEvents.add({
         ...data,

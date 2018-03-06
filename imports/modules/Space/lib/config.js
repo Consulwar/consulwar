@@ -13,7 +13,7 @@ if (!Meteor.settings.public.cosmos
   throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры космоса (см. settings.sample public.cosmos)');
 }
 
-const speedFactor = Meteor.settings.public.cosmos.speedFactor;
+const { speedFactor } = Meteor.settings.public.cosmos;
 
 export default {
   SPEED_CONFIG: Meteor.settings.public.cosmos.speedConfig,

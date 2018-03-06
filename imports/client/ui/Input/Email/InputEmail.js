@@ -10,7 +10,6 @@ class InputEmail extends InputString {
 
     this.type = 'email';
   }
-
 }
 
 InputEmail.register('InputEmail');

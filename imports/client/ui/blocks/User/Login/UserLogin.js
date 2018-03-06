@@ -21,9 +21,11 @@ class UserLogin extends BlazeComponent {
     return 'UserLogin';
   }
 
-  constructor({ hash: {
-    username = '',
-  } } = { hash: {} }) {
+  constructor({
+    hash: {
+      username = '',
+    },
+  } = { hash: {} }) {
     super();
 
     this.username = new ReactiveVar(username);
@@ -99,9 +101,7 @@ class UserLogin extends BlazeComponent {
               err.error,
             );
           } else {
-            Notifications.success(
-              'Способ восстановления кодов доступа отправлен на почту',
-            );
+            Notifications.success('Способ восстановления кодов доступа отправлен на почту');
           }
         });
       }
@@ -111,12 +111,13 @@ class UserLogin extends BlazeComponent {
   showRegisterPopup() {
     this.removeComponent();
     Game.Popup.show({
-      template: (new UserRegister({ hash: {
-        username: this.username.get(),
-      } })).renderComponent(),
+      template: (new UserRegister({
+        hash: {
+          username: this.username.get(),
+        },
+      })).renderComponent(),
     });
   }
-
 }
 
 UserLogin.register('UserLogin');

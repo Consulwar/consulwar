@@ -17,7 +17,7 @@ export default function reptileArrival(data) {
     const enemyArmy = FlightEvents.getFleetUnits(data);
     const enemyGroup = createGroup({ army: enemyArmy });
 
-    const battleId = job.data.battleId;
+    const { battleId } = job.data;
     Battle.addGroup(battleId, Battle.ENEMY_SIDE, Battle.aiName, enemyGroup);
   } else if (planet.mission) {
     if (!data.isOneway) {

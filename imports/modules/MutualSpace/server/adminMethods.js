@@ -74,8 +74,11 @@ const calcBackToPlanetData = function(event, planet, hex) {
   newTargetPositionWithOffset.x += center.x;
   newTargetPositionWithOffset.y += center.y;
 
-  const flyTime = Utils.calcFlyTime(currentPosition,
-    newTargetPositionWithOffset, data.engineLevel);
+  const flyTime = Utils.calcFlyTime(
+    currentPosition,
+    newTargetPositionWithOffset,
+    data.engineLevel,
+  );
 
   return {
     ...data,
@@ -305,7 +308,7 @@ Meteor.methods({
       throw new Meteor.Error('Перед выходом в общий космос необходимо разведать все планеты.');
     }
 
-    const galactic = homePlanet.galactic;
+    const { galactic } = homePlanet;
     const planets = Game.Planets.getAll(targetUser._id).fetch();
     const hands = {};
     let allCount = 0;

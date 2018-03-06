@@ -7,17 +7,19 @@ import './input.styl';
 // TODO: Input rename
 
 class Input extends BlazeComponent {
-  constructor({ hash: {
-    name,
-    value,
-    required,
-    disabled,
-    errors = new ReactiveDict(),
-    validators = [],
-    className,
-    placeholder,
-    minLength,
-  } }) {
+  constructor({
+    hash: {
+      name,
+      value,
+      required,
+      disabled,
+      errors = new ReactiveDict(),
+      validators = [],
+      className,
+      placeholder,
+      minLength,
+    },
+  }) {
     super();
 
     this.externalError = [];
@@ -39,15 +41,13 @@ class Input extends BlazeComponent {
 
     if (required) {
       this.required = 'required';
-      this.validators.push(
-        (fieldValue, errorBack) => {
-          if (!fieldValue || fieldValue.length === 0 || fieldValue === false) {
-            errorBack(`${this.placeholder} - обязательно для заполнения`);
-          } else {
-            errorBack(false);
-          }
-        },
-      );
+      this.validators.push((fieldValue, errorBack) => {
+        if (!fieldValue || fieldValue.length === 0 || fieldValue === false) {
+          errorBack(`${this.placeholder} - обязательно для заполнения`);
+        } else {
+          errorBack(false);
+        }
+      });
     }
     if (minLength) {
       this.minLength = ({ minlength: minLength });

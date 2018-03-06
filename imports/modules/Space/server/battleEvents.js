@@ -44,7 +44,8 @@ export default {
       options.hex = data.targetHex;
     }
 
-    const battle = Battle.create(options,
+    const battle = Battle.create(
+      options,
       {
         [username]: [userGroup],
       },

@@ -12,7 +12,12 @@ const {
   calcFlyTime,
 } = Utils;
 
-export default function({ attackerPosition, attackerEngineLevel, targetShip, timeCurrent }) {
+export default function({
+  attackerPosition,
+  attackerEngineLevel,
+  targetShip,
+  timeCurrent,
+}) {
   const startPosition = { ...targetShip.data.startPosition };
   const targetPosition = { ...targetShip.data.targetPosition };
   if (targetShip.data.hex) {

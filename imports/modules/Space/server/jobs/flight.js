@@ -14,7 +14,7 @@ export default Space.jobs.processJobs(
     prefetch: Config.JOBS.prefetch,
   },
   (job, cb) => {
-    const data = job.data;
+    const { data } = job;
 
     if (data.isHumans) {
       humansArrival(data);

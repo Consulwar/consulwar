@@ -24,9 +24,11 @@ class UserRegister extends BlazeComponent {
     return 'UserRegister';
   }
 
-  constructor({ hash: {
-    username = '',
-  } } = { hash: {} }) {
+  constructor({
+    hash: {
+      username = '',
+    },
+  } = { hash: {} }) {
     super();
 
     this.username = new ReactiveVar(username);
@@ -197,9 +199,11 @@ class UserRegister extends BlazeComponent {
   showLoginPopup() {
     this.removeComponent();
     Game.Popup.show({
-      template: (new UserLogin({ hash: {
-        username: this.username.get(),
-      } })).renderComponent(),
+      template: (new UserLogin({
+        hash: {
+          username: this.username.get(),
+        },
+      })).renderComponent(),
     });
   }
 }

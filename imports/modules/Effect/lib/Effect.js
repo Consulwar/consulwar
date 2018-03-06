@@ -35,7 +35,7 @@ const createList = function(obj, name) {
 const extendEffects = function(effects, newEffects) {
   if (newEffects) {
     newEffects.forEach((effect) => {
-      const priority = effect.priority;
+      const { priority } = effect;
       createArr(effects, priority);
 
       effects[priority].push(effect);
@@ -199,7 +199,7 @@ class Effect {
 
         // Cache for building & research
         if (['building', 'research'].indexOf(effect.provider.type) !== -1) {
-          const provider = effect.provider;
+          const { provider } = effect;
           if (cache[provider.type] === undefined) {
             cache[provider.type] = provider.constructor.getAllLevels(options) || {};
           }
@@ -269,7 +269,7 @@ class Effect {
     hideEffects = true,
     ...options
   } = {}) {
-    let effectsByPriority = options.effectsByPriority;
+    let { effectsByPriority } = options;
     if (!effectsByPriority) {
       effectsByPriority = this.getEffectsResultFor({
         ...options,
@@ -317,7 +317,7 @@ class Effect {
     isOnlyMutual = false,
     ...options
   }) {
-    let effectsByPriority = options.effectsByPriority;
+    let { effectsByPriority } = options;
     if (!effectsByPriority) {
       effectsByPriority = this.getEffectsResultFor({
         ...options,
@@ -355,7 +355,7 @@ class Effect {
         }
 
         if (affect === 'damage') {
-          const damage = obj.weapon.damage;
+          const { damage } = obj.weapon;
           if (priority % 2 === 1) {
             damage.min += effectValue * modifier;
             damage.max += effectValue * modifier;
@@ -364,7 +364,7 @@ class Effect {
             damage.max += Math.floor(damage.max * (0.01 * effectValue)) * modifier;
           }
         } else if (affect === 'life') {
-          const health = obj.health;
+          const { health } = obj;
           if (priority % 2 === 1) {
             health.armor += effectValue * modifier;
           } else {

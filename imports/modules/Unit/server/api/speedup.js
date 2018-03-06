@@ -4,37 +4,37 @@ import { _ } from 'meteor/underscore';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
-import researches from '/imports/content/Research/server';
+import humanUnits from '/imports/content/Unit/Human/server';
 
 Meteor.methods({
-  'research.speedup'({ id }) {
+  'unit.speedup'({ id }) {
     const user = User.getById();
     User.checkAuth({ user });
 
-    Log.method.call(this, { name: 'research.speedup', user });
+    Log.method.call(this, { name: 'unit.speedup', user });
 
     check(id, String);
 
     Meteor.call('actualizeGameInfo');
 
-    const research = researches[id];
+    const unit = humanUnits[id];
 
-    if (!research) {
-      throw new Meteor.Error('Ускорение исследования невозможно');
+    if (!unit) {
+      throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
     }
 
-    const task = Game.Queue.getGroup(research.group);
+    const task = Game.Queue.getGroup(unit.queue || unit.group);
     if (!task || task.itemId !== id) {
-      throw new Meteor.Error('Ускорение исследования невозможно');
+      throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
     }
 
     const spendTime = task.finishTime - Game.getCurrentTime() - 2;
 
     if (_.isNaN(spendTime) || spendTime <= 0) {
-      throw new Meteor.Error('Ускорение исследования невозможно');
+      throw new Meteor.Error('Ускорение подготовки юнитов невозможно');
     }
 
-    const price = Game.Queue.getSpeedupPrice(research, task);
+    const price = Game.Queue.getSpeedupPrice(unit, task);
 
     if (!Game.Resources.has({
       resources: price,

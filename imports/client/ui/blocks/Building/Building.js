@@ -15,18 +15,20 @@ import './Building.html';
 import './Building.styl';
 
 class Building extends BlazeComponent {
-
   template() {
     return 'Building';
   }
 
   onCreated() {
     super.onCreated();
+
+    this.count = new ReactiveVar();
+
     this.canBuild = new ReactiveVar();
 
     this.autorun(() => {
       let youCan = false;
-      if (!this.data().building.progress()) {
+      if (!this.data().building.getQueue()) {
         youCan = this.data().building.canBuild();
       } else {
         youCan = true;
@@ -39,13 +41,12 @@ class Building extends BlazeComponent {
   }
 
   Build() {
-    if (!this.data().building.progress()) {
+    if (!this.data().building.getQueue()) {
       const item = this.data().building;
       Meteor.call(
         'building.build',
         {
-          group: item.group,
-          engName: item.engName,
+          id: item.id,
         },
         function(error) {
           if (error) {
@@ -55,7 +56,7 @@ class Building extends BlazeComponent {
           }
         },
       );
-      if (item.currentLevel() === 0) {
+      if (item.getCurrentLevel() === 0) {
         Router.go(item.url({ group: item.group }));
       }
     } else {

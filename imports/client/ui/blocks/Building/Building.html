@@ -2,9 +2,9 @@
   <div class="cw--Building">
     <div class="cw--Building__header">
       <div class="cw--Building__headerLevel">
-        {{#if building.currentLevel}}
+        {{#if building.getCurrentLevel}}
           <span class="cw--Building__levelCount">
-            {{building.currentLevel}}
+            {{building.getCurrentLevel}}
           </span>
           уровень 
         {{else}}
@@ -12,7 +12,7 @@
         {{/if}}
       </div>
       <div class="cw--Building__headerTitle">
-        {{building.name}}
+        {{building.title}}
       </div>
       <!-- quest link here -->
       <div class="cw--Building__headerControls">
@@ -59,13 +59,13 @@
         </div>
         <div class="cw--Building__price">
           <div class="cw--Building__priceHead">
-            Стоимость{{#if building.currentLevel}} улучшения{{/if}}:
+            Стоимость{{#if building.getCurrentLevel}} улучшения{{/if}}:
           </div>
-          {{#if gt building.maxLevel building.currentLevel}}
-            {{#if building.progress}}
-              {{> ResourcePrice price=building.next.price}}
+          {{#if gt building.maxLevel building.getCurrentLevel}}
+            {{#if building.getQueue}}
+              {{> ResourcePrice price=building.getPrice}}
             {{else}}
-              {{> ResourcePrice price=building.price}}
+              {{> ResourcePrice price=building.getPrice}}
             {{/if}}
           {{else}}
             BOOOOOSST
@@ -73,8 +73,13 @@
         </div>
 
         <div class="cw--Building__actions">
-          {{#if gt building.maxLevel building.currentLevel}}
+          {{#if gt building.maxLevel building.getCurrentLevel}}
             <div class="cw--Building__action">
+              {{#if building.getQueue}}
+              <div class="cw--Building__actionStatus">
+                Идет строительство
+              </div>
+              {{else}}
               <div class="cw--Building__actionAmount">
                 <button 
                   class="cw--button_max cw--Building__actionSetMax"
@@ -83,12 +88,17 @@
                   {{premiumTitle}}
                   onClick={{setMaximum}}
                 ></button>
-                <input class="cw--Building__actionAmountCount" type="number" placeholder="Количество" value="{{count}}"/>
+                {{> InputNumber args
+                  value=count
+                  placeholder="количество"
+                  class="cw--Building__actionAmountCount"
+                }}
               </div>
+              {{/if}}
               <button class="
                   cw--button
                   cw--button_type_primary
-                  {{#unless building.progress}}
+                  {{#unless building.getQueue}}
                   cw--button_type_primary_orange
                   {{else}}
                   cw--button_type_primary_green
@@ -97,10 +107,10 @@
                 onClick={{Build}}
                 disabled="{{not canBuild.get}}"
               >
-                {{#if building.progress}}
+                {{#if building.getQueue}}
                   Ускорить
                 {{else}}
-                  {{#if building.currentLevel}}
+                  {{#if building.getCurrentLevel}}
                     Улучшить
                   {{else}}
                     Построить
@@ -110,7 +120,7 @@
             </div>
           {{/if}}
           <div class="cw--Building__action">
-            {{#if eq building.engName 'metal'}}
+            {{#if eq building.engName 'Metal'}}
                 <div class="cw--Building__bonus">
                   <div class="
                       cw--Building__bonusIcon
@@ -138,13 +148,13 @@
                     cw--button_type_primary_blue
                   "
                   onClick={{pickBonusMetal}}
-                  disabled="{{lt building.currentLevel 1}}"
+                  disabled="{{lt building.getCurrentLevel 1}}"
                 >
                   Собрать
                 </button>
             {{/if}}
 
-            {{#if eq building.engName 'crystal'}}
+            {{#if eq building.engName 'Crystal'}}
                 <div class="cw--Building__bonus">
                   <div class="
                       cw--Building__bonusIcon
@@ -172,63 +182,63 @@
                     cw--button_type_primary_blue
                   "
                   onClick={{pickBonusCrystal}}
-                  disabled="{{lt building.currentLevel 1}}"
+                  disabled="{{lt building.getCurrentLevel 1}}"
                 >
                   Собрать
                 </button>
             {{/if}}
 
-            {{#if eq building.engName 'tradingport'}}
+            {{#if eq building.engName 'TradingPort'}}
               <button
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
                 "
-                disabled="{{lt building.currentLevel 1}}"
+                disabled="{{lt building.getCurrentLevel 1}}"
                 onClick={{showMarket}}
               >
                 Торговать
               </button>
             {{/if}}
 
-            {{#if eq building.engName 'spaceport'}}
+            {{#if eq building.engName 'SpacePort'}}
               <button
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
                 "
-                disabled="{{lt building.currentLevel 1}}"
+                disabled="{{lt building.getCurrentLevel 1}}"
                 onClick={{showContainers}}
               >
                 Контейнер
               </button>
             {{/if}}
 
-            {{#if eq building.engName 'colosseum'}}
+            {{#if eq building.engName 'Colosseum'}}
               <a
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
-                  {{#if lt building.currentLevel 1}}disabled{{/if}}
+                  {{#if lt building.getCurrentLevel 1}}disabled{{/if}}
                 "
-                href="{{pathFor 'building' group='residential' item='colosseum' menu='tournaments'}}"
+                href="{{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}"
               >
                 Турнир
               </a>
             {{/if}}
 
-            {{#if eq building.engName 'pulsecatcher'}}
+            {{#if eq building.engName 'PulseCatcher'}}
               <a
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
-                  {{#if lt building.currentLevel 1}}disabled{{/if}}
+                  {{#if lt building.getCurrentLevel 1}}disabled{{/if}}
                 "
-                href="{{pathFor 'building' group='residential' item='pulsecatcher' menu='bonus'}}"
+                href="{{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}"
               >
                 Бонус
               </a>
@@ -238,7 +248,7 @@
 
       </div>
       {{> Requirements
-        requirements=building.requirements
+        requirements=building.getRequirements
         class="cw--Building__require"
       }}
     </div>

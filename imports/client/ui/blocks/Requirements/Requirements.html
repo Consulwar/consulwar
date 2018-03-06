@@ -8,9 +8,9 @@
       <a
         class="
           cw--Requirements__item
-          cw--Requirements__item_{{this.[0].engName}}
           {{#if this.[0].has this.[1]}}has{{/if}}
         "
+        style="background-image: url({{this.[0].icon}});"
         href="{{this.[0].url}}"
       >
         <div class="
@@ -18,21 +18,21 @@
             cw--Requirements__itemTitle_{{this.[0].type}}
           "
         >
-          {{this.[0].name}}
+          {{this.[0].title}}
         </div>
         <div class="cw--Requirements__levelHas">
-          Требование: {{#if gt this.[1] 1}}{{this.[1]}} уровень{{/if}}
+          Требование: {{this.[1]}} уровень
         </div>
         <div class="cw--Requirements__levelNeed">
           Имеется:
             <span class="
               cw--Requirements__currentLevel
-              {{#if gt this.[1] this.[0].currentLevel}}
+              {{#if gt this.[1] this.[0].getLevel}}
                 cw--Requirements__currentLevel_need
               {{/if}}
               "
             >
-              {{this.[0].currentLevel}} уровень
+              {{this.[0].getLevel}} уровень
             </span>
         </div>
       </a>

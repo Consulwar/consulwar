@@ -3,7 +3,7 @@
     <div class="cw--UnitCharacterisctics">
       {{#if addTitle}}
         <div class="cw--UnitCharacterisctics__head">
-          {{unit.name}}
+          {{unit.title}}
         </div>
       {{/if}}
         <div class="cw--UnitCharacterisctics__title">
@@ -17,7 +17,7 @@
             data-tooltip="true"
             data-tooltip-direction="w"
           >
-            {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 4}}
+            {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 3}}
           </div>
           <div
             class="cw--UnitCharacterisctics__armor"
@@ -26,28 +26,25 @@
             data-tooltip="true"
             data-tooltip-direction="w"
           >
-            {{formatNumberWithISO unit.characteristics.health.armor 4}}
+            {{formatNumberWithISO unit.characteristics.health.armor 3}}
           </div>
           <div class="cw--UnitCharacterisctics__damage_signature">
-            {{formatNumberWithISO unit.characteristics.weapon.signature 4}}
+            {{formatNumberWithISO unit.characteristics.weapon.signature 3}}
           </div>
           <div class="cw--UnitCharacterisctics__armor_signature">
-            {{formatNumberWithISO unit.characteristics.health.signature 4}}
+            {{formatNumberWithISO unit.characteristics.health.signature 3}}
           </div>
         </div>
-      {{#if unit.targets}}
+      {{#if unit.getTargets}}
         <div class="cw--UnitCharacterisctics__title">Приоритеты атаки:</div>
         <div class="cw--UnitCharacterisctics__targets">
-          {{#each unit.targets}}
+          {{#each unit.getTargets}}
               <a
                 onMouseOver={{showUnitTooltip this}}
-                {{!-- class="enough_resources {{this.type}}" --}}
                 data-tooltip="true"
                 data-tooltip-direction="s"
-                class="
-                  cw--UnitCharacterisctics__target
-                  cw--UnitIcon_{{this.engName}}
-                "
+                class="cw--UnitCharacterisctics__target"
+                style="background-image:url({{this.icon}})"
                 href="{{this.url}}"
               ></a>
           {{/each}}

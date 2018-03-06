@@ -78,6 +78,8 @@ UI.registerHelper('premiumTitle', function() {
 
 UI.registerHelper('hasPremium', Game.hasPremium);
 
+// TODO: Проверить где используется и удалить
+
 UI.registerHelper('notPremiumDisabled', function() {
   return (Game.hasPremium()
     ? ''
@@ -468,7 +470,6 @@ const priceTooltip = function (price, target) {
     side: 'n',
     isShowCurrent: true,
   });
-  //return getEffectsTooltip(price, price.effects, target, true, 'n', true);
 };
 UI.registerHelper('priceTooltip', priceTooltip);
 
@@ -486,7 +487,7 @@ UI.registerHelper('incomeTooltip', function(effects, target) {
   // return getEffectsTooltip(income, effects, target, false, 's', true);
 });
 
-UI.registerHelper('militaryTooltip', function(characteristics, target) {
+const militaryTooltip = function(characteristics, target) {
   return getEffectsTooltip({
     obj: characteristics,
     target,
@@ -495,8 +496,8 @@ UI.registerHelper('militaryTooltip', function(characteristics, target) {
     side: 'w',
     isShowCurrent: false,
   });
-  //return getEffectsTooltip(characteristics, characteristics.effects, target, false, 'w', false);
-});
+};
+UI.registerHelper('militaryTooltip', militaryTooltip);
 
 Template.tooltipTable.helpers({
   current: function() {
@@ -531,6 +532,7 @@ Template.tooltipTable.helpers({
   }
 });
 
-export default {
+export {
   priceTooltip,
+  militaryTooltip,
 };

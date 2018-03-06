@@ -3,7 +3,6 @@ import './Effect.html';
 import './Effect.styl';
 
 class Effect extends BlazeComponent {
-
   template() {
     return 'Effect';
   }

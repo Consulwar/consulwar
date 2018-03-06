@@ -1,7 +1,7 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
-import { Blaze } from 'meteor/blaze';
 import { Router } from 'meteor/iron:router';
+import { priceTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/blocks/Resource/Artefact.styl';
 import '/imports/client/ui/blocks/Resource/Resource.styl';
@@ -9,19 +9,27 @@ import './ResourcePrice.html';
 import './ResourcePrice.styl';
 
 class ResourcePrice extends BlazeComponent {
-
   template() {
     return 'ResourcePrice';
   }
 
   getResources(priceObj) {
     const result = [];
+    const UserResources = Game.Resources.getValue();
     Object.keys(priceObj).forEach((name) => {
       const item = {
         engName: name,
         amount: priceObj[name],
         price: priceObj,
+        has: 0,
       };
+      if (name !== 'time' && UserResources[name]) {
+        let userHas = UserResources[name].amount;
+        if (userHas > priceObj[name]) {
+          userHas = priceObj[name];
+        }
+        item.has = userHas;
+      }
       if (priceObj[name]) {
         if (name === 'time') {
           result.unshift(item);
@@ -38,7 +46,6 @@ class ResourcePrice extends BlazeComponent {
   }
 
   showCredits() {
-    // 'click .resources .credits'
     Game.Payment.showWindow();
   }
 
@@ -49,10 +56,10 @@ class ResourcePrice extends BlazeComponent {
       });
     }
   }
-  // Game.Resources.currentValue.get()['humans'].amount
+
   showResource(event, name, price) {
     const target = $(event.currentTarget);
-    const tooltip = Blaze._globalHelpers.priceTooltip(price, name);
+    const tooltip = priceTooltip(price, name);
     target.attr('data-tooltip', tooltip['data-tooltip']);
   }
 }

@@ -31,7 +31,7 @@
           data-tooltip="true" data-tooltip-direction="n"
           data-id="{{this.engName}}"
         >
-          {{formatNumberWithISO this.amount 5}}
+          {{formatNumberWithISO this.has 3}} / {{formatNumberWithISO this.amount 3}}
         </div>
       {{/if}}
     {{/each}}

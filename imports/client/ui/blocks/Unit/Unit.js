@@ -17,7 +17,6 @@ import './Unit.html';
 import './Unit.styl';
 
 class Unit extends BlazeComponent {
-
   template() {
     return 'Unit';
   }
@@ -31,7 +30,7 @@ class Unit extends BlazeComponent {
 
     this.autorun(() => {
       let youCan = false;
-      if (!this.data().unit.progress()) {
+      if (!this.data().unit.getQueue()) {
         youCan = this.data().unit.canBuild();
       } else {
         youCan = true;
@@ -45,13 +44,12 @@ class Unit extends BlazeComponent {
   }
 
   Build() {
-    if (!this.data().unit.progress()) {
+    if (!this.data().unit.getQueue()) {
       const item = this.data().unit;
       Meteor.call(
         'unit.build',
         {
-          group: item.group,
-          engName: item.engName,
+          id: item.id,
           count: this.count.get(),
         },
         function(error) {
@@ -62,7 +60,7 @@ class Unit extends BlazeComponent {
           }
         },
       );
-      if (item.currentLevel() === 0) {
+      if (item.getTotalCount() === 0) {
         Router.go(item.url({ group: item.group }));
       }
     } else {
@@ -113,10 +111,8 @@ class Unit extends BlazeComponent {
       if (res !== 'time') {
         let max;
         if (avalialbeResources[res]) {
-          max = Math.floor(
-            (avalialbeResources[res].amount - (
-              accumulator ? alreadySpended[res] : 0
-            )) / price[res]);
+          const tempVar = accumulator ? alreadySpended[res] : 0;
+          max = Math.floor((avalialbeResources[res].amount - tempVar) / price[res]);
         } else {
           max = 0;
         }

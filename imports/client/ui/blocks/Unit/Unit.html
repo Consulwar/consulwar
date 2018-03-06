@@ -2,17 +2,17 @@
   <div class="cw--Unit">
     <div class="cw--Unit__header">
       <div class="cw--Unit__headerLevel">
-        {{#if unit.currentLevel}}
+        {{#if unit.getTotalCount}}
           <span class="cw--Unit__levelCount">
-            {{formatNumber unit.currentLevel}}
+            {{formatNumber unit.getTotalCount}}
           </span>
-          {{declension unit.currentLevel 'единиц' 'а' 'ы' ''}}
+          {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
         {{else}}
           Не построено
         {{/if}}
       </div>
       <div class="cw--Unit__headerTitle">
-        {{unit.name}}
+        {{unit.title}}
       </div>
       <!-- quest link here -->
       <div class="cw--Unit__headerControls">
@@ -54,38 +54,44 @@
             <div class="cw--Unit__priceHead">
               Стоимость:
             </div>
-            {{> ResourcePrice price=(unit.price count.get undefined)}}
+            {{> ResourcePrice price=(unit.getPrice count.get undefined)}}
           </div>
           <div class="cw--Unit__actions">
 
             <div class="cw--Unit__action">
-              <div class="cw--Unit__actionAmount">
-                <button 
-                  class="cw--button_max cw--Unit__actionSetMax"
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  {{premiumTitle}}
-                  onClick={{setMaximum}}
-                ></button>
-                {{> InputNumber args
-                  value=count
-                  placeholder="Количество"
-                  class="cw--Unit__actionAmountCount"
-                }}
-              </div>
+              {{#if unit.getQueue}}
+                <div class="cw--Unit__actionStatus">
+                  Идет строительство
+                </div>
+              {{else}}
+                <div class="cw--Unit__actionAmount">
+                  <button 
+                    class="cw--button_max cw--Unit__actionSetMax"
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    {{premiumTitle}}
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=count
+                    placeholder="Количество"
+                    class="cw--Unit__actionAmountCount"
+                  }}
+                </div>
+              {{/if}}
               <button class="
                   cw--button
                   cw--button_type_primary
-                  {{#unless unit.progress}}
-                  cw--button_type_primary_orange
+                  {{#unless unit.getQueue}}
+                    cw--button_type_primary_orange
                   {{else}}
-                  cw--button_type_primary_green
+                    cw--button_type_primary_green
                   {{/unless}}
                 "
                 onClick={{Build}}
                 disabled="{{not canBuild.get}}"
               >
-                {{#if unit.progress}}
+                {{#if unit.getQueue}}
                   Ускорить
                 {{else}}
                   Построить
@@ -93,7 +99,7 @@
               </button>
             </div>
 
-            {{#unless eq unit.group 'ground'}}
+            {{#unless eq unit.group 'Ground'}}
               <div class="cw--Unit__action">
                 <button class="
                     cw--button
@@ -110,7 +116,7 @@
         {{/unless}}
       </div>
       {{> Requirements
-        requirements=unit.requirements
+        requirements=unit.getRequirements
         class="cw--Unit__require"
       }}
     </div>

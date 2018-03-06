@@ -2,9 +2,9 @@
   <div class="cw--Research">
     <div class="cw--Research__header">
       <div class="cw--Research__headerLevel">
-        {{#if research.currentLevel}}
+        {{#if research.getCurrentLevel}}
           <span class="cw--Research__levelCount">
-            {{research.currentLevel}}
+            {{research.getCurrentLevel}}
           </span>
           уровень 
         {{else}}
@@ -12,7 +12,7 @@
         {{/if}}
       </div>
       <div class="cw--Research__headerTitle">
-        {{research.name}}
+        {{research.title}}
       </div>
       <!-- quest link here -->
       <div class="cw--Research__headerControls">
@@ -55,35 +55,45 @@
         </div>
         <div class="cw--Research__price">
           <div class="cw--Research__priceHead">
-            Стоимость{{#if research.currentLevel}} улучшения{{/if}}:
+            Стоимость{{#if research.getCurrentLevel}} улучшения{{/if}}:
           </div>
-          {{#if gt research.maxLevel research.currentLevel}}
-            {{#if research.progress}}
-              {{> ResourcePrice price=research.next.price}}
+          {{#if gt research.maxLevel research.getCurrentLevel}}
+            {{#if research.getQueue}}
+              {{> ResourcePrice price=research.getPrice}}
             {{else}}
-              {{> ResourcePrice price=research.price}}
+              {{> ResourcePrice price=research.getPrice}}
             {{/if}}
           {{else}}
             BOOOOOSST
           {{/if}}
         </div>
         <div class="cw--Research__actions">
-          {{#if gt research.maxLevel research.currentLevel}}
+          {{#if gt research.maxLevel research.getCurrentLevel}}
             <div class="cw--Research__action">
-              <div class="cw--Research__actionAmount">
-                <button 
-                  class="cw--button_max cw--Research__actionSetMax"
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  {{premiumTitle}}
-                  onClick={{setMaximum}}
-                ></button>
-                <input class="cw--Research__actionAmountCount" type="number" placeholder="Количество" value="{{count}}"/>
-              </div>
+              {{#if research.getQueue}}
+                <div class="cw--Research__actionStatus">
+                  Идет исследование
+                </div>
+              {{else}}
+                <div class="cw--Research__actionAmount">
+                  <button 
+                    class="cw--button_max cw--Research__actionSetMax"
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    {{premiumTitle}}
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=count
+                    placeholder="количество"
+                    class="cw--Research__actionAmountCount"
+                  }}
+                </div>
+              {{/if}}
               <button class="
                   cw--button
                   cw--button_type_primary
-                  {{#unless research.progress}}
+                  {{#unless research.getQueue}}
                   cw--button_type_primary_orange
                   {{else}}
                   cw--button_type_primary_green
@@ -92,10 +102,10 @@
                 onClick={{Build}}
                 disabled="{{not canBuild.get}}"
               >
-                {{#if research.progress}}
+                {{#if research.getQueue}}
                   Ускорить
                 {{else}}
-                  {{#if research.currentLevel}}
+                  {{#if research.getCurrentLevel}}
                     Улучшить
                   {{else}}
                     Исследовать
@@ -107,7 +117,7 @@
         </div>
       </div>
       {{> Requirements
-        requirements=research.requirements
+        requirements=research.getRequirements
         class="cw--Research__require"
       }}
     </div>

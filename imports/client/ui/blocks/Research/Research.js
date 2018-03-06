@@ -15,18 +15,20 @@ import './Research.html';
 import './Research.styl';
 
 class Research extends BlazeComponent {
-
   template() {
     return 'Research';
   }
 
   onCreated() {
     super.onCreated();
+
+    this.count = new ReactiveVar();
+
     this.canBuild = new ReactiveVar();
 
     this.autorun(() => {
       let youCan = false;
-      if (!this.data().research.progress()) {
+      if (!this.data().research.getQueue()) {
         youCan = this.data().research.canBuild();
       } else {
         youCan = true;
@@ -39,14 +41,10 @@ class Research extends BlazeComponent {
   }
 
   Build() {
-    if (!this.data().research.progress()) {
+    if (!this.data().research.getQueue()) {
       const item = this.data().research;
       Meteor.call(
-        'research.start',
-        {
-          group: item.group,
-          engName: item.engName,
-        },
+        'research.start', { id: item.id },
         function(error) {
           if (error) {
             Notifications.error('Невозможно начать исследование', error.error);
@@ -55,7 +53,7 @@ class Research extends BlazeComponent {
           }
         },
       );
-      if (item.currentLevel() === 0) {
+      if (item.getCurrentLevel() === 0) {
         Router.go(item.url({ group: item.group }));
       }
     } else {
@@ -89,7 +87,6 @@ class Research extends BlazeComponent {
       template: SpeedUp.renderComponent(),
     });
   }
-
 }
 
 Research.register('Research');

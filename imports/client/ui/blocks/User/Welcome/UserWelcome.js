@@ -67,22 +67,25 @@ class UserWelcome extends BlazeComponent {
 
   showLoginPopup() {
     Game.Popup.show({
-      template: (new UserLogin({ hash: {
-        username: this.username.get(),
-      } })).renderComponent(),
+      template: (new UserLogin({
+        hash: {
+          username: this.username.get(),
+        },
+      })).renderComponent(),
     });
     this.removeComponent();
   }
 
   showRegisterPopup() {
     Game.Popup.show({
-      template: (new UserRegister({ hash: {
-        username: this.username.get(),
-      } })).renderComponent(),
+      template: (new UserRegister({
+        hash: {
+          username: this.username.get(),
+        },
+      })).renderComponent(),
     });
     this.removeComponent();
   }
-
 }
 
 UserWelcome.register('UserWelcome');

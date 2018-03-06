@@ -23,8 +23,8 @@ export default Space.jobs.processJobs(
       cb();
     };
 
-    const data = job.data;
-    const userId = data.userId;
+    const { data } = job;
+    const { userId } = data;
 
     const planet = Game.Planets.getOne(data.targetPlanet);
 
@@ -104,7 +104,8 @@ export default Space.jobs.processJobs(
 
     const galaxy = mutualSpaceCollection.findOne({ username: planet.username });
     if (galaxy) {
-      flightData.hex = flightData.targetHex = new Hex(galaxy);
+      flightData.hex = new Hex(galaxy);
+      flightData.targetHex = flightData.hex;
     }
 
     FlightEvents.add(flightData);

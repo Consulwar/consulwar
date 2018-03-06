@@ -8,12 +8,14 @@ class EffectList extends BlazeComponent {
     return 'EffectList';
   }
 
-  constructor({ hash: {
-    level,
-    effects,
-    hideAdditional = false,
-    additionalClass = '',
-  } }) {
+  constructor({
+    hash: {
+      level,
+      effects,
+      hideAdditional = false,
+      additionalClass = '',
+    },
+  }) {
     super();
 
     this.level = level;
@@ -35,12 +37,14 @@ class EffectList extends BlazeComponent {
   }
 
   generateTooltip(event) {
-    const tooltip = new EffectList({ hash: {
-      effects: this.allEffects,
-      hideAdditional: false,
-      level: this.level,
-      additionalClass: this.additionalClass,
-    } });
+    const tooltip = new EffectList({
+      hash: {
+        effects: this.allEffects,
+        hideAdditional: false,
+        level: this.level,
+        additionalClass: this.additionalClass,
+      },
+    });
 
     $(event.currentTarget).attr({
       'data-tooltip': tooltip.renderComponentToHTML(),

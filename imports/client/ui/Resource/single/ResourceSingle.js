@@ -16,15 +16,13 @@ class ResourceSingle extends BlazeComponent {
   onCreated() {
     super.onCreated();
 
-    this.resourceName = _(this.data('resources')).keys()[0];
+    [this.resourceName] = _(this.data('resources')).keys();
 
     this.resource = resources[this.resourceName];
   }
 
   count() {
-    return helpers.formatNumberWithIso(
-      this.data('resources')[this.resourceName],
-    );
+    return helpers.formatNumberWithIso(this.data('resources')[this.resourceName]);
   }
 
   showTooltip(event) {

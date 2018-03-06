@@ -5,11 +5,13 @@ import './InputCheckbox.html';
 import './InputCheckbox.styl';
 
 class InputCheckbox extends Input {
-  constructor({ hash: {
-    checked,
-    label,
-    ...options
-  } }) {
+  constructor({
+    hash: {
+      checked,
+      label,
+      ...options
+    },
+  }) {
     super({ hash: options });
 
     this.label = label;

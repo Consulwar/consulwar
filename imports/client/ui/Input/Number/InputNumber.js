@@ -13,7 +13,12 @@ class InputNumber extends BlazeComponent {
 
   constructor({ hash }) {
     super();
-    const { value, isShowZero = true, min = 1, max } = hash;
+    const {
+      value,
+      isShowZero = true,
+      min = 1,
+      max,
+    } = hash;
 
     check(value, ReactiveVar);
 

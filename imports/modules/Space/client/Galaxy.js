@@ -62,7 +62,7 @@ class Galaxy {
   }
 
   showPlanet(id, planet) {
-    const offset = this.offset;
+    const { offset } = this;
 
     const radius = 0.01 + (planet.size / 20);
     const circle = L.circle(

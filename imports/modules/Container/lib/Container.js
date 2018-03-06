@@ -66,7 +66,7 @@ class Container {
     containers = Container.getAll({ userId }),
   } = {}) {
     return (
-         containers
+      containers
       && containers[this.id]
       && containers[this.id].count
     ) || 0;

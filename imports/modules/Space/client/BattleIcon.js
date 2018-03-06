@@ -18,7 +18,8 @@ class BattleIcon {
     });
     const position = battleEvent.data.targetPosition;
     this.marker = L.marker(
-      [origin.x + position.x, origin.y + position.y], { icon },
+      [origin.x + position.x, origin.y + position.y],
+      { icon },
     ).addTo(shipsLayer);
 
     this.marker.on('click', function(event) {

@@ -28,12 +28,12 @@
 
   <div class="item_info">
     <div class="effects">
-      {{> item_effect item=research nextLevel=toLevel.get}}
+      {{> item_effect item=research nextLevel=level.get}}
     </div>
 
     <div class="bottom">
       {{#if gt research.maxLevel research.getCurrentLevel}}
-        {{> item_price price=(research.getPrice toLevel.get)}}
+        {{> item_price price=(research.getPrice level.get)}}
       {{/if}}
 
       <div class="actions">
@@ -47,14 +47,14 @@
               {{premiumTitle}}
             ></button>
             {{> InputNumber args
-              value=toLevel
+              value=level
               min=(sum research.getCurrentLevel 1)
               max=research.maxLevel
               isShowZero=false
               placeholder="Уровень"
               class="count"
             }}
-            <button class="main_action build" disabled="{{not (research.canBuild toLevel.get)}}">Отдать приказ</button>
+            <button class="main_action build" disabled="{{not (research.canBuild level.get)}}">Отдать приказ</button>
           </div>
         {{/if}}
       </div>

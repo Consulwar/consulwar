@@ -43,27 +43,27 @@ class AbstractUniqueItem extends AbstractItem {
 
   getBasePrice({
     fromLevel = this.getCurrentLevel(),
-    toLevel = fromLevel + 1,
+    level = fromLevel + 1,
   } = {}) {
     const curPrice = {};
 
-    for (let level = fromLevel; level < toLevel; level += 1) {
+    for (let iLevel = fromLevel; iLevel < level; iLevel += 1) {
       let levelPrice;
       switch (this.basePrice.tier) {
         case 1:
-          levelPrice = priceT1.call(this, level, this.basePrice.group);
+          levelPrice = priceT1.call(this, iLevel, this.basePrice.group);
           break;
         case 2:
-          levelPrice = priceT2.call(this, level, this.basePrice.group);
+          levelPrice = priceT2.call(this, iLevel, this.basePrice.group);
           break;
         case 3:
-          levelPrice = priceT3.call(this, level, this.basePrice.group);
+          levelPrice = priceT3.call(this, iLevel, this.basePrice.group);
           break;
         case 4:
-          levelPrice = priceT4.call(this, level, this.basePrice.group);
+          levelPrice = priceT4.call(this, iLevel, this.basePrice.group);
           break;
         default:
-          levelPrice = this.basePrice(level);
+          levelPrice = this.basePrice(iLevel);
           break;
       }
 
@@ -84,7 +84,7 @@ class AbstractUniqueItem extends AbstractItem {
         curPrice[realName] = (curPrice[realName] || 0);
         curPrice[realName] += Game.functions[funcName].call(
           this,
-          level,
+          iLevel,
           startValue,
           from,
         );
@@ -96,7 +96,7 @@ class AbstractUniqueItem extends AbstractItem {
 
   getPrice(level) {
     return this.applyPriceEffects({
-      price: this.getBasePrice({ toLevel: level }),
+      price: this.getBasePrice({ level }),
     });
   }
 

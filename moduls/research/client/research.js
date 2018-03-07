@@ -19,7 +19,7 @@ Game.Research.showPage = function() {
       to: 'content',
       data: {
         research: item,
-        toLevel: new ReactiveVar(item.getCurrentLevel() + 1),
+        level: new ReactiveVar(item.getCurrentLevel() + 1),
       }
     });
   } else {
@@ -29,7 +29,7 @@ Game.Research.showPage = function() {
 
 Template.item_research.helpers({
   getRequirements() {
-    return this.research.getRequirements({ level: this.toLevel.get() });
+    return this.research.getRequirements({ level: this.level.get() });
   },
 });
 
@@ -41,7 +41,7 @@ Template.item_research.events({
       'research.start',
       {
         id: item.id,
-        level: this.toLevel.get(),
+        level: this.level.get(),
       },
       function(error, message) {
         if (error) {

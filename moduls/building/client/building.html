@@ -31,12 +31,12 @@
 
     <div class="item_info">
       <div class="effects">
-        {{> item_effect item=building nextLevel=toLevel.get}}
+        {{> item_effect item=building nextLevel=level.get}}
       </div>
 
       <div class="bottom">
         {{#if gt building.maxLevel building.getCurrentLevel}}
-          {{> item_price price=(building.getPrice toLevel.get)}}
+          {{> item_price price=(building.getPrice level.get)}}
         {{/if}}
 
         <div class="actions">
@@ -50,14 +50,14 @@
                 {{premiumTitle}}
               ></button>
               {{> InputNumber args
-                value=toLevel
+                value=level
                 min=(sum building.getCurrentLevel 1)
                 max=building.maxLevel
                 isShowZero=false
                 placeholder="Уровень"
                 class="count"
               }}
-              <button class="main_action build" disabled="{{not (building.canBuild toLevel.get)}}">Отдать приказ</button>
+              <button class="main_action build" disabled="{{not (building.canBuild level.get)}}">Отдать приказ</button>
             </div>
           {{/if}}
           <div class="action">

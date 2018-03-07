@@ -21,7 +21,7 @@ Game.Building.showPage = function() {
       data: {
         building: item,
         submenu: menu,
-        toLevel: new ReactiveVar(item.getCurrentLevel() + 1),
+        level: new ReactiveVar(item.getCurrentLevel() + 1),
       },
     });
     this.render('empty', {to: 'item_submenu'});
@@ -78,7 +78,7 @@ Template.item_building.helpers({
     return Game.Resources.bonusStorage;
   },
   getRequirements() {
-    return this.building.getRequirements({ level: this.toLevel.get() });
+    return this.building.getRequirements({ level: this.level.get() });
   },
 });
 
@@ -88,7 +88,7 @@ Template.item_building.events({
 
     Meteor.call('building.build', {
         id: item.id,
-        level: this.toLevel.get(),
+        level: this.level.get(),
       },
       function(error, message) {
         if (error) {

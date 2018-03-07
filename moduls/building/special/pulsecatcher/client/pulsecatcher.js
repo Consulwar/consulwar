@@ -117,12 +117,12 @@ var _updateCharts = _.debounce(function(selector) {
 
 var updateCharts = function() {
   Meteor.setTimeout(function() {
-    _updateCharts('.result');
+    _updateCharts('.pulsecatcherVote .result');
   });
 };
 
 Template.pulsecatcherVote.onRendered(function() {
-  Tracker.autorun(function() {
+  this.quizComputation = Tracker.autorun(() => {
     var quiz = Game.Quiz.Collection.find({
       type: 'pulsecatcher'
     }, {
@@ -130,11 +130,11 @@ Template.pulsecatcherVote.onRendered(function() {
     });
 
     quiz.observeChanges({
-      added: function(id) {
+      added: (id) => {
         Meteor.subscribe('pulsecatcherQuizAnswer', id);
-        updateCharts('.result');
+        updateCharts();
       },
-      changed: updateCharts
+      changed: updateCharts,
     });
 
     if (quiz.fetch().length) {
@@ -146,7 +146,11 @@ Template.pulsecatcherVote.onRendered(function() {
         changed: updateCharts
       });
     }
-  });  
+  });
+});
+
+Template.pulsecatcherVote.onDestroyed(function() {
+  this.quizComputation.stop();
 });
 
 Template.pulsecatcherVote.events({

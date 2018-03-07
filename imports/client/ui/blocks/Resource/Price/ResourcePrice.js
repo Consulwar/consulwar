@@ -42,26 +42,14 @@ class ResourcePrice extends BlazeComponent {
     return result;
   }
 
-  isArtefact(resourceName) {
-    return Object.keys(Game.Artefacts.items).includes(resourceName);
-  }
-
   showCredits() {
     Game.Payment.showWindow();
   }
 
-  showArtefacts(name) {
+  showArtefacts(event, resourceName) {
     Router.go('artefacts', {
-      item: event.currentTarget.dataset.id,
+      item: resourceName,
     });
-  }
-
-  onClick(event, name) {
-    if (this.isArtefact(name)) {
-      this.showArtefacts(name);
-    } else if (name === 'credits') {
-      this.showCredits();
-    }
   }
 
   showResource(event, name, price) {

@@ -4,35 +4,32 @@
     <div class="cw--Requirements__head">
       Необходимые технологии:
     </div>
-    {{#each requirements}}
+    {{#each requirement in requirements}}
       <a
-        class="
-          cw--Requirements__item
-          {{#if this.[0].has this.[1]}}has{{/if}}
-        "
-        style="background-image: url({{this.[0].icon}});"
-        href="{{this.[0].url}}"
+        class="cw--Requirements__item"
+        style="background-image: url({{requirement.[0].icon}});"
+        href="{{requirement.[0].url}}"
       >
         <div class="
             cw--Requirements__itemTitle
-            cw--Requirements__itemTitle_{{this.[0].type}}
+            cw--Requirements__itemTitle_{{requirement.[0].type}}
           "
         >
-          {{this.[0].title}}
+          {{requirement.[0].title}}
         </div>
         <div class="cw--Requirements__levelHas">
-          Требование: {{this.[1]}} уровень
+          Требование: {{requirement.[1]}} уровень
         </div>
         <div class="cw--Requirements__levelNeed">
           Имеется:
             <span class="
               cw--Requirements__currentLevel
-              {{#if gt this.[1] this.[0].getLevel}}
+              {{#if gt requirement.[1] requirement.[0].getCurrentLevel}}
                 cw--Requirements__currentLevel_need
               {{/if}}
               "
             >
-              {{this.[0].getLevel}} уровень
+              {{requirement.[0].getCurrentLevel}} уровень
             </span>
         </div>
       </a>

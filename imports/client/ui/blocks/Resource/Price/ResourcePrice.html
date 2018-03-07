@@ -22,14 +22,25 @@
               cw--ResourcePrice__item
               cw--Artefact_icon
             "
-            onClick={{onClick resource.obj.engName}}
+            onClick={{showCredits}}
             data-id="{{resource.obj.engName}}"
           >
             {{formatNumberWithISO resource.has 3}} / {{formatNumberWithISO resource.amount 3}}
           </div>
         {{else}}
-          {{#if eq resource.obj.id 'Resource/Base/Credits'}}
-            {{> iconCredits }}
+          {{#if eq resource.obj.id 'Resource/Base/Credit'}}
+            <div
+              onMouseOver={{showResource resource.obj.engName resource.price}}
+              style="background-image: url({{resource.obj.icon}})"
+              class="
+                {{resource.obj.color}}
+                cw--ResourcePrice__item
+                cw--Resource_icon
+              "
+              data-id="{{resource.obj.engName}}"
+            >
+              {{formatNumberWithISO resource.has 3}} / {{formatNumberWithISO resource.amount 3}}
+            </div>
           {{else}}
             <div
               onMouseOver={{showResource resource.obj.engName resource.price}}

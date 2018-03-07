@@ -122,7 +122,7 @@ var updateCharts = function() {
 };
 
 Template.pulsecatcherVote.onRendered(function() {
-  this.quizComputation = Tracker.autorun(() => {
+  this.autorun(() => {
     var quiz = Game.Quiz.Collection.find({
       type: 'pulsecatcher'
     }, {
@@ -137,10 +137,6 @@ Template.pulsecatcherVote.onRendered(function() {
       changed: updateCharts,
     });
   });
-});
-
-Template.pulsecatcherVote.onDestroyed(function() {
-  this.quizComputation.stop();
 });
 
 Template.pulsecatcherVote.events({

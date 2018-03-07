@@ -5,6 +5,7 @@ import { priceTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/blocks/Resource/Artefact.styl';
 import '/imports/client/ui/blocks/Resource/Resource.styl';
+import resources from '/imports/content/Resource/client';
 import './ResourcePrice.html';
 import './ResourcePrice.styl';
 
@@ -18,7 +19,7 @@ class ResourcePrice extends BlazeComponent {
     const UserResources = Game.Resources.getValue();
     Object.keys(priceObj).forEach((name) => {
       const item = {
-        engName: name,
+        obj: resources[name] || Game.Artefacts.items[name],
         amount: priceObj[name],
         price: priceObj,
         has: 0,
@@ -49,11 +50,17 @@ class ResourcePrice extends BlazeComponent {
     Game.Payment.showWindow();
   }
 
-  showArtefacts(event, name) {
+  showArtefacts(name) {
+    Router.go('artefacts', {
+      item: event.currentTarget.dataset.id,
+    });
+  }
+
+  onClick(event, name) {
     if (this.isArtefact(name)) {
-      Router.go('artefacts', {
-        item: event.currentTarget.dataset.id,
-      });
+      this.showArtefacts(name);
+    } else if (name === 'credits') {
+      this.showCredits();
     }
   }
 

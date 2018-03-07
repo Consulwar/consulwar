@@ -16,7 +16,14 @@ Game.Building.showPage = function() {
   }
   
   if (item) {
-    this.render('item_building', {to: 'content', data: { building: item, submenu: menu } });
+    this.render('item_building', { 
+      to: 'content',
+      data: {
+        building: item,
+        submenu: menu,
+        toLevel: new ReactiveVar(item.getCurrentLevel() + 1),
+      },
+    });
     this.render('empty', {to: 'item_submenu'});
 
     switch (menu) {
@@ -69,7 +76,10 @@ Template.item_building.helpers({
   },
   bonusStorage: function() { 
     return Game.Resources.bonusStorage;
-  }
+  },
+  getRequirements() {
+    return this.building.getRequirements({ level: this.toLevel.get() });
+  },
 });
 
 Template.item_building.events({
@@ -78,6 +88,7 @@ Template.item_building.events({
 
     Meteor.call('building.build', {
         id: item.id,
+        level: this.toLevel.get(),
       },
       function(error, message) {
         if (error) {

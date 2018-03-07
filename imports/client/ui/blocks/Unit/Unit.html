@@ -74,6 +74,7 @@
                   ></button>
                   {{> InputNumber args
                     value=count
+                    max=unit.maxCount
                     placeholder="Количество"
                     class="cw--Unit__actionAmountCount"
                   }}
@@ -101,6 +102,12 @@
 
             {{#unless eq unit.group 'Ground'}}
               <div class="cw--Unit__action">
+                {{#if unit.maxCount}}
+                  <div class="cw--Unit__actionCount">
+                    Всего юнитов {{formatNumber unit.getTotalCount}}
+                    из {{formatNumber unit.maxCount}}
+                  </div>
+                {{/if}}
                 <button class="
                     cw--button
                     cw--button_type_primary

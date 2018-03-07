@@ -15,11 +15,23 @@ Game.Research.showPage = function() {
   }
 
   if (item) {
-    this.render('item_research', {to: 'content', data: {research: item}});
+    this.render('item_research', {
+      to: 'content',
+      data: {
+        research: item,
+        level: new ReactiveVar(item.getCurrentLevel() + 1),
+      }
+    });
   } else {
     this.render('empty', {to: 'content'});
   }
 };
+
+Template.item_research.helpers({
+  getRequirements() {
+    return this.research.getRequirements({ level: this.level.get() });
+  },
+});
 
 Template.item_research.events({
   'click button.build': function(e, t) {
@@ -29,6 +41,7 @@ Template.item_research.events({
       'research.start',
       {
         id: item.id,
+        level: this.level.get(),
       },
       function(error, message) {
         if (error) {
@@ -42,6 +55,17 @@ Template.item_research.events({
     if (item.getCurrentLevel() === 0) {
       Router.go(item.url({group: item.group}));
     }
+  },
+
+  'click button.max': function(e, t) {
+    const item = t.data.research;
+    let currentLevel = item.getCurrentLevel() + 1;
+
+    while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+      currentLevel += 1;
+    }
+
+    this.level.set(currentLevel);
   },
 
   'click .toggle_description': function(e, t) {

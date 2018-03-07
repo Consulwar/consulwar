@@ -28,9 +28,9 @@ class AbstractUniqueItem extends AbstractItem {
     }
   }
 
-  getRequirements({ itemLevel = this.getCurrentLevel() } = {}) {
-    return this.requirements(itemLevel).map(([id, level]) => (
-      [AbstractItem.getObject({ id }), level]
+  getRequirements({ level = this.getCurrentLevel() } = {}) {
+    return this.requirements(level).map(([id, reqLevel]) => (
+      [AbstractItem.getObject({ id }), reqLevel]
     ));
   }
 
@@ -41,69 +41,70 @@ class AbstractUniqueItem extends AbstractItem {
     });
   }
 
-  getBasePrice(level) {
+  getBasePrice({
+    fromLevel = this.getCurrentLevel(),
+    level = fromLevel + 1,
+  } = {}) {
     const curPrice = {};
 
-    // Цена идет на подъем ДО указаного уровня с предыдущего
-    // т.к. начальный уровень нулевой, то цена для первого уровня
-    // является ценой подъема с нулевого до первого
-    const toLevel = level ? level - 1 : this.getCurrentLevel();
-
-    let basePrice;
-    switch (this.basePrice.tier) {
-      case 1:
-        basePrice = priceT1.call(this, toLevel, this.basePrice.group);
-        break;
-      case 2:
-        basePrice = priceT2.call(this, toLevel, this.basePrice.group);
-        break;
-      case 3:
-        basePrice = priceT3.call(this, toLevel, this.basePrice.group);
-        break;
-      case 4:
-        basePrice = priceT4.call(this, toLevel, this.basePrice.group);
-        break;
-      default:
-        basePrice = this.basePrice(level);
-        break;
-    }
-
-    _(basePrice).pairs().forEach(([
-      resourceName,
-      [
-        startValue,
-        funcName,
-        from,
-      ],
-    ]) => {
-      const idParts = resourceName.split('/');
-      let realName = idParts[idParts.length - 1].toLocaleLowerCase();
-      if (Game.newToLegacyNames[realName]) {
-        realName = Game.newToLegacyNames[realName];
+    for (let iLevel = fromLevel; iLevel < level; iLevel += 1) {
+      let levelPrice;
+      switch (this.basePrice.tier) {
+        case 1:
+          levelPrice = priceT1.call(this, iLevel, this.basePrice.group);
+          break;
+        case 2:
+          levelPrice = priceT2.call(this, iLevel, this.basePrice.group);
+          break;
+        case 3:
+          levelPrice = priceT3.call(this, iLevel, this.basePrice.group);
+          break;
+        case 4:
+          levelPrice = priceT4.call(this, iLevel, this.basePrice.group);
+          break;
+        default:
+          levelPrice = this.basePrice(iLevel);
+          break;
       }
-      curPrice[realName] = Game.functions[funcName].call(
-        this,
-        toLevel,
-        startValue,
-        from,
-      );
-    });
+
+      // eslint-disable-next-line no-loop-func
+      _(levelPrice).pairs().forEach(([
+        resourceName,
+        [
+          startValue,
+          funcName,
+          from,
+        ],
+      ]) => {
+        const idParts = resourceName.split('/');
+        let realName = idParts[idParts.length - 1].toLocaleLowerCase();
+        if (Game.newToLegacyNames[realName]) {
+          realName = Game.newToLegacyNames[realName];
+        }
+        curPrice[realName] = (curPrice[realName] || 0);
+        curPrice[realName] += Game.functions[funcName].call(
+          this,
+          iLevel,
+          startValue,
+          from,
+        );
+      });
+    }
 
     return curPrice;
   }
 
-  getPrice(level, cards = []) {
+  getPrice(level) {
     return this.applyPriceEffects({
-      price: this.getBasePrice(level),
-      cards,
+      price: this.getBasePrice({ level }),
     });
   }
 
-  canBuild(level, cards = []) {
+  canBuild(level) {
     const hasResources = Game.Resources.has({
-      resources: this.getPrice(level, cards),
+      resources: this.getPrice(level),
     });
-    const hasTechnologies = this.meetRequirements();
+    const hasTechnologies = this.meetRequirements({ level });
     return hasResources && hasTechnologies && !this.isQueueBusy();
   }
 }

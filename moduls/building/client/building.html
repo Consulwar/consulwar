@@ -31,35 +31,33 @@
 
     <div class="item_info">
       <div class="effects">
-        {{> item_effect item=building}}
+        {{> item_effect item=building nextLevel=level.get}}
       </div>
 
       <div class="bottom">
         {{#if gt building.maxLevel building.getCurrentLevel}}
-          {{#if building.progress}}
-            {{> item_price price=(building.getPrice (sum building.getCurrentLevel 1))}}
-          {{else}}
-            {{> item_price price=building.getPrice}}
-          {{/if}}
+          {{> item_price price=(building.getPrice level.get)}}
         {{/if}}
 
         <div class="actions">
           {{#if gt building.maxLevel building.getCurrentLevel}}
             <div class="action">
-              <div 
-                class="notImplemented"
-                data-tooltip="В разработке…"
+              <button 
+                class="max" 
+                {{notPremiumDisabled}}
+                data-tooltip="Ввести максимум"
                 data-tooltip-direction="s"
-              >
-                <button 
-                  class="max" 
-                  {{notPremiumDisabled}}
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  {{premiumTitle}}></button>
-                <input class="count" type="number" placeholder="Количество" value="{{count}}"/>
-              </div>
-              <button class="main_action build" disabled="{{not building.canBuild}}">Отдать приказ</button>
+                {{premiumTitle}}
+              ></button>
+              {{> InputNumber args
+                value=level
+                min=(sum building.getCurrentLevel 1)
+                max=building.maxLevel
+                isShowZero=false
+                placeholder="Уровень"
+                class="count"
+              }}
+              <button class="main_action build" disabled="{{not (building.canBuild level.get)}}">Отдать приказ</button>
             </div>
           {{/if}}
           <div class="action">
@@ -102,6 +100,6 @@
         </div>
       </div> 
     </div>
-    {{> item_requirements requirements=building.getRequirements}}
+    {{> item_requirements requirements=getRequirements}}
   {{/if}}
 </template>

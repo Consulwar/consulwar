@@ -103,7 +103,7 @@
       filter brightness(1.2)
 
   &_max
-    cursor pointer
+    display inline-block
     width 55px
     height 25px
     border solid 1px #56BAF2
@@ -141,3 +141,7 @@
       &:hover
         color #D5F075
         border-image linear-gradient(0deg, #82992E, #D7F07D) 1
+
+  &:disabled
+    filter grayscale(100%) brightness(60%)
+    cursor not-allowed

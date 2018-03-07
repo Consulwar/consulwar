@@ -136,16 +136,6 @@ Template.pulsecatcherVote.onRendered(function() {
       },
       changed: updateCharts,
     });
-
-    if (quiz.fetch().length) {
-      Game.Quiz.Answer.Collection.find({
-        user_id: Meteor.user()._id,
-        quiz_id: quiz.fetch()[0]._id
-      }).observeChanges({
-        added: updateCharts,
-        changed: updateCharts
-      });
-    }
   });
 });
 

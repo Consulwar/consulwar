@@ -57,6 +57,17 @@ Template.item_research.events({
     }
   },
 
+  'click button.max': function(e, t) {
+    const item = t.data.research;
+    let currentLevel = item.getCurrentLevel() + 1;
+
+    while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+      currentLevel += 1;
+    }
+
+    this.level.set(currentLevel);
+  },
+
   'click .toggle_description': function(e, t) {
     $(t.find('.description')).slideToggle(function() {
       var options = Meteor.user().settings && Meteor.user().settings.options;

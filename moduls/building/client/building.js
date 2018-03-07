@@ -104,6 +104,17 @@ Template.item_building.events({
     }
   },
 
+  'click button.max': function(e, t) {
+    const item = t.data.building;
+    let currentLevel = item.getCurrentLevel() + 1;
+
+    while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+      currentLevel += 1;
+    }
+
+    this.level.set(currentLevel);
+  },
+
   'click button.market': function(e, t) {
     Game.Building.special.Market.showWindow();
   },

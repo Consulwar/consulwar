@@ -39,7 +39,7 @@ Game.Building.showPage = function() {
   );
   
   if (item) {
-    this.render(Building.renderComponent(), { 
+    this.render(Building.renderComponent(), {
       to: 'content',
       data: {
         building: item,

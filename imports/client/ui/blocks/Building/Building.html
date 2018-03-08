@@ -55,18 +55,14 @@
           <div class="cw--Building__effectsHead">
             Бонусные эффекты:
           </div>
-          {{> Effect item=building}}
+          {{> Effect item=building nextLevel=level.get}}
         </div>
         <div class="cw--Building__price">
           <div class="cw--Building__priceHead">
             Стоимость{{#if building.getCurrentLevel}} улучшения{{/if}}:
           </div>
           {{#if gt building.maxLevel building.getCurrentLevel}}
-            {{#if building.getQueue}}
-              {{> ResourcePrice price=building.getPrice}}
-            {{else}}
-              {{> ResourcePrice price=building.getPrice}}
-            {{/if}}
+            {{> ResourcePrice price=(building.getPrice level.get)}}
           {{else}}
             BOOOOOSST
           {{/if}}
@@ -76,47 +72,58 @@
           {{#if gt building.maxLevel building.getCurrentLevel}}
             <div class="cw--Building__action">
               {{#if building.getQueue}}
-              <div class="cw--Building__actionStatus">
-                Идет строительство
-              </div>
+                <div class="cw--Building__actionStatus">
+                  Идет строительство
+                </div>
               {{else}}
-              <div class="cw--Building__actionAmount">
-                <button 
-                  class="cw--button_max cw--Building__actionSetMax"
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  {{premiumTitle}}
-                  onClick={{setMaximum}}
-                ></button>
-                {{> InputNumber args
-                  value=count
-                  placeholder="количество"
-                  class="cw--Building__actionAmountCount"
-                }}
-              </div>
+                <div class="cw--Building__actionAmount">
+                  <button 
+                    class="
+                      cw--button
+                      cw--button_max
+                      cw--Building__actionSetMax
+                    "
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    {{premiumTitle}}
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=level
+                    min=(sum building.getCurrentLevel 1)
+                    max=building.maxLevel
+                    isShowZero=false
+                    placeholder="Уровень"
+                    class="cw--Building__actionAmountCount"
+                  }}
+                </div>
               {{/if}}
-              <button class="
-                  cw--button
-                  cw--button_type_primary
-                  {{#unless building.getQueue}}
-                  cw--button_type_primary_orange
-                  {{else}}
-                  cw--button_type_primary_green
-                  {{/unless}}
-                "
-                onClick={{Build}}
-                disabled="{{not canBuild.get}}"
-              >
-                {{#if building.getQueue}}
+              {{#if building.getQueue}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_green
+                  "
+                  onClick={{showSpeedUp}}
+                >
                   Ускорить
-                {{else}}
+                </button>
+              {{else}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_orange
+                  "
+                  onClick={{Build}}
+                  disabled="{{not (building.canBuild level.get)}}"
+                >
                   {{#if building.getCurrentLevel}}
                     Улучшить
                   {{else}}
                     Построить
                   {{/if}}
-                {{/if}}
-              </button>
+                </button>
+              {{/if}}
             </div>
           {{/if}}
           <div class="cw--Building__action">
@@ -248,7 +255,7 @@
 
       </div>
       {{> Requirements
-        requirements=building.getRequirements
+        requirements=getRequirements
         class="cw--Building__require"
       }}
     </div>

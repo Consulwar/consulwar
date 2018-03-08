@@ -19,48 +19,28 @@ class Building extends BlazeComponent {
     return 'Building';
   }
 
-  onCreated() {
-    super.onCreated();
-
-    this.count = new ReactiveVar();
-
-    this.canBuild = new ReactiveVar();
-
-    this.autorun(() => {
-      let youCan = false;
-      if (!this.data().building.getQueue()) {
-        youCan = this.data().building.canBuild();
-      } else {
-        youCan = true;
-      }
-      this.canBuild.set(youCan);
-    });
-  }
   onRendered() {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
   Build() {
-    if (!this.data().building.getQueue()) {
-      const item = this.data().building;
-      Meteor.call(
-        'building.build',
-        {
-          id: item.id,
-        },
-        function(error) {
-          if (error) {
-            Notifications.error('Невозможно начать строительство', error.error);
-          } else {
-            Notifications.success('Строительство запущено');
-          }
-        },
-      );
-      if (item.getCurrentLevel() === 0) {
-        Router.go(item.url({ group: item.group }));
-      }
-    } else {
-      this.showSpeedUp();
+    const item = this.data().building;
+    Meteor.call(
+      'building.build',
+      {
+        id: item.id,
+        level: this.data().level.get(),
+      },
+      function(error) {
+        if (error) {
+          Notifications.error('Невозможно начать строительство', error.error);
+        } else {
+          Notifications.success('Строительство запущено');
+        }
+      },
+    );
+    if (item.getCurrentLevel() === 0) {
+      Router.go(item.url({ group: item.group }));
     }
   }
 
@@ -97,7 +77,12 @@ class Building extends BlazeComponent {
 
   setMaximum() {
     if (Game.hasPremium()) {
-      // DO nothing
+      const item = this.data().building;
+      let currentLevel = item.getCurrentLevel() + 1;
+      while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+        currentLevel += 1;
+      }
+      this.data().level.set(currentLevel);
     } else {
       Game.Popup.show({
         template: Maximum.renderComponent(),
@@ -108,6 +93,7 @@ class Building extends BlazeComponent {
   showSpeedUp() {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
+      data: { item: this.data().building },
     });
   }
 
@@ -129,6 +115,9 @@ class Building extends BlazeComponent {
 
   bonusStorage() {
     return Game.Resources.bonusStorage;
+  }
+  getRequirements() {
+    return this.data().building.getRequirements({ level: this.data().level.get() });
   }
 }
 

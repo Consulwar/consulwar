@@ -97,6 +97,7 @@ class Unit extends BlazeComponent {
   showSpeedUp() {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
+      data: { item: this.data().unit },
     });
   }
 

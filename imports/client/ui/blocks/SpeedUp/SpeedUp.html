@@ -7,9 +7,7 @@
     <div class="cw--SpeedUp__actions">
       <div class="cw--SpeedUp__action">
         <div class="cw--SpeedUp__actionHead">Моментальное Улучшение:</div>
-        <div class="cw--SpeedUp__actionPrice">
-          500
-        </div>
+        {{> ResourceSingle resources=getPrice className="cw--SpeedUp__actionPrice"}}
         <button
           class="
             cw--SpeedUp__button
@@ -17,8 +15,10 @@
             cw--button_type_primary
             cw--button_type_primary_green
           "
+          onClick={{SpeedUp}}
+          disabled={{isDone.get}}
         >
-          Ускорить 100%
+          Ускорить 100% {{Price.get}}
         </button>
       </div>
       <div class="cw--SpeedUp__action cw--SpeedUp__action_skip">

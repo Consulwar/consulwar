@@ -20,13 +20,11 @@
       {{#if and item.maxLevel (not (eq item.maxLevel item.effects.[0].level))}}
         <div class="cw--Effect__nextLevel">
           <div class="title">
-            {{#with item.effects.[0].next}}
-              Следующий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-            {{/with}}
+            Следующий уровень: {{nextLevel}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
           </div>
           {{> EffectList args
             effects=item.effects
-            level=item.effects.[0].next.level
+            level=nextLevel
             hideAdditional=true
             additionalClass="cw--color_credit"
           }}

@@ -51,18 +51,14 @@
           <div class="cw--Research__effectsHead">
             Бонусные эффекты:
           </div>
-          {{> Effect item=research}}
+          {{> Effect item=research nextLevel=level.get}}
         </div>
         <div class="cw--Research__price">
           <div class="cw--Research__priceHead">
             Стоимость{{#if research.getCurrentLevel}} улучшения{{/if}}:
           </div>
           {{#if gt research.maxLevel research.getCurrentLevel}}
-            {{#if research.getQueue}}
-              {{> ResourcePrice price=research.getPrice}}
-            {{else}}
-              {{> ResourcePrice price=research.getPrice}}
-            {{/if}}
+              {{> ResourcePrice price=(research.getPrice level.get)}}
           {{else}}
             BOOOOOSST
           {{/if}}
@@ -77,47 +73,59 @@
               {{else}}
                 <div class="cw--Research__actionAmount">
                   <button 
-                    class="cw--button_max cw--Research__actionSetMax"
+                    class="
+                      cw--button
+                      cw--button_max
+                      cw--Research__actionSetMax
+                    "
                     data-tooltip="Ввести максимум"
                     data-tooltip-direction="s"
                     {{premiumTitle}}
                     onClick={{setMaximum}}
                   ></button>
                   {{> InputNumber args
-                    value=count
-                    placeholder="количество"
+                    value=level
+                    min=(sum research.getCurrentLevel 1)
+                    max=research.maxLevel
+                    isShowZero=false
+                    placeholder="Уровень"
                     class="cw--Research__actionAmountCount"
                   }}
                 </div>
               {{/if}}
-              <button class="
-                  cw--button
-                  cw--button_type_primary
-                  {{#unless research.getQueue}}
-                  cw--button_type_primary_orange
-                  {{else}}
-                  cw--button_type_primary_green
-                  {{/unless}}
-                "
-                onClick={{Build}}
-                disabled="{{not canBuild.get}}"
-              >
-                {{#if research.getQueue}}
+              {{#if research.getQueue}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_green
+                  "
+                  onClick={{showSpeedUp}}
+                >
                   Ускорить
-                {{else}}
+                </button>
+              {{else}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_orange
+                  "
+                  onClick={{Build}}
+                  disabled="{{not (research.canBuild level.get)}}"
+                >
                   {{#if research.getCurrentLevel}}
                     Улучшить
                   {{else}}
                     Исследовать
                   {{/if}}
-                {{/if}}
-              </button>
+                </button>
+              {{/if}}
+
             </div>
           {{/if}}
         </div>
       </div>
       {{> Requirements
-        requirements=research.getRequirements
+        requirements=getRequirements
         class="cw--Research__require"
       }}
     </div>

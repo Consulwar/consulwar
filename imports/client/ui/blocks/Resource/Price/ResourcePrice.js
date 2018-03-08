@@ -3,6 +3,7 @@ import { $ } from 'meteor/jquery';
 import { Router } from 'meteor/iron:router';
 import { priceTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/blocks/Resource/Single/ResourceSingle';
 import '/imports/client/ui/blocks/Resource/Artefact.styl';
 import '/imports/client/ui/blocks/Resource/Resource.styl';
 import resources from '/imports/content/Resource/client';
@@ -12,6 +13,21 @@ import './ResourcePrice.styl';
 class ResourcePrice extends BlazeComponent {
   template() {
     return 'ResourcePrice';
+  }
+
+
+  getResourcesPairs(priceObj) {
+    const result = [];
+    Object.keys(priceObj).forEach((name) => {
+      const item = {};
+      item[name] = priceObj[name];
+      if (priceObj[name]) {
+        if (name !== 'time') {
+          result.push(item);
+        }
+      }
+    });
+    return result;
   }
 
   getResources(priceObj) {

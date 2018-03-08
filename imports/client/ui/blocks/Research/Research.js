@@ -19,45 +19,28 @@ class Research extends BlazeComponent {
     return 'Research';
   }
 
-  onCreated() {
-    super.onCreated();
-
-    this.count = new ReactiveVar();
-
-    this.canBuild = new ReactiveVar();
-
-    this.autorun(() => {
-      let youCan = false;
-      if (!this.data().research.getQueue()) {
-        youCan = this.data().research.canBuild();
-      } else {
-        youCan = true;
-      }
-      this.canBuild.set(youCan);
-    });
-  }
   onRendered() {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
   Build() {
-    if (!this.data().research.getQueue()) {
-      const item = this.data().research;
-      Meteor.call(
-        'research.start', { id: item.id },
-        function(error) {
-          if (error) {
-            Notifications.error('Невозможно начать исследование', error.error);
-          } else {
-            Notifications.success('Исследование запущено');
-          }
-        },
-      );
-      if (item.getCurrentLevel() === 0) {
-        Router.go(item.url({ group: item.group }));
-      }
-    } else {
-      this.showSpeedUp();
+    const item = this.data().research;
+    Meteor.call(
+      'research.start',
+      {
+        id: item.id,
+        level: this.data().level.get(),
+      },
+      function(error) {
+        if (error) {
+          Notifications.error('Невозможно начать исследование', error.error);
+        } else {
+          Notifications.success('Исследование запущено');
+        }
+      },
+    );
+    if (item.getCurrentLevel() === 0) {
+      Router.go(item.url({ group: item.group }));
     }
   }
 
@@ -74,7 +57,14 @@ class Research extends BlazeComponent {
 
   setMaximum() {
     if (Game.hasPremium()) {
-      // DO nothing
+      const item = this.data().research;
+      let currentLevel = item.getCurrentLevel() + 1;
+
+      while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+        currentLevel += 1;
+      }
+
+      this.data().level.set(currentLevel);
     } else {
       Game.Popup.show({
         template: Maximum.renderComponent(),
@@ -85,7 +75,12 @@ class Research extends BlazeComponent {
   showSpeedUp() {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
+      data: { item: this.data().research },
     });
+  }
+
+  getRequirements() {
+    return this.data().research.getRequirements({ level: this.data().level.get() });
   }
 }
 

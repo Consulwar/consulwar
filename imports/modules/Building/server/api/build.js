@@ -1,63 +1,55 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
 import buildings from '/imports/content/Building/server';
 
 Meteor.methods({
-  'building.build'({ id, cards }) {
+  'building.build'({ id, level }) {
     const user = User.getById();
     User.checkAuth({ user });
 
     Log.method.call(this, { name: 'building.build', user });
 
     check(id, String);
-
-    let cardsObject = {};
-    let cardList = [];
-
-    if (cards) {
-      check(cards, Object);
-
-      cardsObject = cards;
-
-      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
-        throw new Meteor.Error('Карточки недоступны для применения');
-      }
-
-      cardList = Game.Cards.objectToList(cardsObject);
-    }
+    check(level, Match.Integer);
 
     Meteor.call('actualizeGameInfo');
 
     const building = buildings[id];
 
-    if (!building || !building.canBuild(null, cards)) {
+    if (!building) {
+      throw new Meteor.Error('Что-то не то вы строить собрались, дядя Фёдор');
+    }
+
+    if (level > building.maxLevel) {
+      throw new Meteor.Error('Нельзя построить выше максимального уровня');
+    }
+
+    const currentLevel = building.getCurrentLevel();
+
+    if (level <= currentLevel) {
+      throw new Meteor.Error('Колонисты не рады попытке сноса строения');
+    }
+
+    if (!building.canBuild(level)) {
       throw new Meteor.Error('Строительство невозможно');
     }
 
     const set = {
       group: building.group,
       itemId: building.id,
-      level: building.getCurrentLevel() + 1,
+      level,
     };
 
-    if (set.level > building.maxLevel) {
-      throw new Meteor.Error('Здание уже максимального уровня');
-    }
-
-    const price = building.getPrice(set.level, cardList);
+    const price = building.getPrice(level);
     set.time = price.time;
 
     const isTaskInserted = Game.Queue.add(set);
     if (!isTaskInserted) {
       throw new Meteor.Error('Не удалось начать строительство');
     }
-
-    cardList.forEach(card => Game.Cards.activate(card, user));
-
-    Game.Cards.spend(cardsObject);
 
     Game.Resources.spend(price);
 

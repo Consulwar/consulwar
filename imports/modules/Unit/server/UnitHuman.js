@@ -56,7 +56,7 @@ class UnitHuman extends UnitHumanAbstract {
   }) {
     let location;
     const homePlanet = Game.Planets.getBase(userId);
-    const { armyId } = homePlanet;
+    let armyId;
 
     if (
       unit.group === 'Ground' ||
@@ -82,6 +82,7 @@ class UnitHuman extends UnitHumanAbstract {
         );
         return;
       }
+      ({ armyId } = homePlanet);
 
       location = Game.Unit.location.PLANET;
     }

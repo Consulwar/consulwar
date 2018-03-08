@@ -58,70 +58,76 @@
             Стоимость{{#if research.getCurrentLevel}} улучшения{{/if}}:
           </div>
           {{#if gt research.maxLevel research.getCurrentLevel}}
-              {{> ResourcePrice price=(research.getPrice level.get)}}
+            {{> ResourcePrice args price=(research.getPrice level.get)}}
           {{else}}
-            BOOOOOSST
+            В разработке
           {{/if}}
         </div>
         <div class="cw--Research__actions">
-          {{#if gt research.maxLevel research.getCurrentLevel}}
-            <div class="cw--Research__action">
-              {{#if research.getQueue}}
-                <div class="cw--Research__actionStatus">
-                  Идет исследование
-                </div>
-              {{else}}
-                <div class="cw--Research__actionAmount">
-                  <button 
-                    class="
-                      cw--button
-                      cw--button_max
-                      cw--Research__actionSetMax
-                    "
-                    data-tooltip="Ввести максимум"
-                    data-tooltip-direction="s"
-                    {{premiumTitle}}
-                    onClick={{setMaximum}}
-                  ></button>
-                  {{> InputNumber args
-                    value=level
-                    min=(sum research.getCurrentLevel 1)
-                    max=research.maxLevel
-                    isShowZero=false
-                    placeholder="Уровень"
-                    class="cw--Research__actionAmountCount"
-                  }}
-                </div>
-              {{/if}}
-              {{#if research.getQueue}}
-                <button class="
+          <div class="cw--Research__action">
+            {{#if research.getQueue}}
+              <div class="cw--Research__actionStatus">
+                Идет исследование
+              </div>
+            {{else if lte research.maxLevel research.getCurrentLevel}}
+              <div class="cw--Research__actionStatus">
+                Требуется красный плазмоид
+              </div>
+            {{else}}
+              <div class="cw--Research__actionAmount">
+                <button 
+                  class="
                     cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_green
+                    cw--button_max
+                    cw--Research__actionSetMax
                   "
-                  onClick={{showSpeedUp}}
-                >
-                  Ускорить
-                </button>
-              {{else}}
-                <button class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_orange
-                  "
-                  onClick={{Build}}
-                  disabled="{{not (research.canBuild level.get)}}"
-                >
-                  {{#if research.getCurrentLevel}}
-                    Улучшить
-                  {{else}}
-                    Исследовать
-                  {{/if}}
-                </button>
-              {{/if}}
-
-            </div>
-          {{/if}}
+                  data-tooltip="Ввести максимум"
+                  data-tooltip-direction="s"
+                  {{premiumTitle}}
+                  onClick={{setMaximum}}
+                ></button>
+                {{> InputNumber args
+                  value=level
+                  min=(sum research.getCurrentLevel 1)
+                  max=research.maxLevel
+                  isShowZero=false
+                  placeholder="Уровень"
+                  class="cw--Research__actionAmountCount"
+                }}
+              </div>
+            {{/if}}
+            {{#if research.getQueue}}
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_green
+                "
+                disabled={{lt timeLeft.get 5}}
+                onClick={{showSpeedUp}}
+              >
+                {{#if lt timeLeft.get 5}}
+                  {{formatSeconds timeLeft.get}}
+                {{else}}
+                  Ускорить 
+                {{/if}}
+              </button>
+            {{else}}
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                onClick={{Build}}
+                disabled={{not (research.canBuild level.get)}}
+              >
+                {{#if research.getCurrentLevel}}
+                  Улучшить
+                {{else}}
+                  Исследовать
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
         </div>
       </div>
       {{> Requirements

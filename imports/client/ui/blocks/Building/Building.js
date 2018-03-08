@@ -19,17 +19,45 @@ class Building extends BlazeComponent {
     return 'Building';
   }
 
+  constructor({
+    hash: {
+      building,
+      level,
+      submenu,
+    },
+  }) {
+    super();
+    this.building = building;
+    this.level = level;
+    this.submenu = submenu;
+    this.timeLeft = new ReactiveVar(null);
+  }
+
+  onCreated() {
+    super.onCreated();
+    if (this.building.maxLevel <= this.level.get()) {
+      this.level.set(120);
+    }
+    this.autorun(() => {
+      const queue = this.building.getQueue();
+      if (queue) {
+        this.timeLeft.set(queue.finishTime - Game.getCurrentServerTime());
+      } else {
+        this.timeLeft.set(null);
+      }
+    });
+  }
+
   onRendered() {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
   Build() {
-    const item = this.data().building;
     Meteor.call(
       'building.build',
       {
-        id: item.id,
-        level: this.data().level.get(),
+        id: this.building.id,
+        level: this.level.get(),
       },
       function(error) {
         if (error) {
@@ -39,8 +67,8 @@ class Building extends BlazeComponent {
         }
       },
     );
-    if (item.getCurrentLevel() === 0) {
-      Router.go(item.url({ group: item.group }));
+    if (this.building.getCurrentLevel() === 0) {
+      Router.go(this.building.url({ group: this.building.group }));
     }
   }
 
@@ -77,12 +105,11 @@ class Building extends BlazeComponent {
 
   setMaximum() {
     if (Game.hasPremium()) {
-      const item = this.data().building;
-      let currentLevel = item.getCurrentLevel() + 1;
-      while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+      let currentLevel = this.building.getCurrentLevel() + 1;
+      while ((currentLevel + 1) <= this.building.maxLevel && this.building.canBuild(currentLevel + 1)) {
         currentLevel += 1;
       }
-      this.data().level.set(currentLevel);
+      this.level.set(currentLevel);
     } else {
       Game.Popup.show({
         template: Maximum.renderComponent(),
@@ -93,7 +120,7 @@ class Building extends BlazeComponent {
   showSpeedUp() {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
-      data: { item: this.data().building },
+      data: { item: this.building },
     });
   }
 
@@ -117,7 +144,7 @@ class Building extends BlazeComponent {
     return Game.Resources.bonusStorage;
   }
   getRequirements() {
-    return this.data().building.getRequirements({ level: this.data().level.get() });
+    return this.building.getRequirements({ level: this.level.get() });
   }
 }
 

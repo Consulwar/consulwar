@@ -54,15 +54,33 @@
             <div class="cw--Unit__priceHead">
               Стоимость:
             </div>
-            {{> ResourcePrice price=(unit.getPrice count.get undefined)}}
+            {{> ResourcePrice args price=(unit.getPrice count.get)}}
           </div>
           <div class="cw--Unit__actions">
 
             <div class="cw--Unit__action">
               {{#if unit.getQueue}}
                 <div class="cw--Unit__actionStatus">
-                  Идет строительство
+                  Идёт строительство
                 </div>
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    {{#unless unit.getQueue}}
+                      cw--button_type_primary_orange
+                    {{else}}
+                      cw--button_type_primary_green
+                    {{/unless}}
+                  "
+                  onClick={{showSpeedUp}}
+                  disabled={{lt timeLeft.get 5}}
+                >
+                  {{#if lt timeLeft.get 5}}
+                    {{formatSeconds timeLeft.get}}
+                  {{else}}
+                    Ускорить 
+                  {{/if}}
+                </button>
               {{else}}
                 <div class="cw--Unit__actionAmount">
                   <button 
@@ -79,25 +97,21 @@
                     class="cw--Unit__actionAmountCount"
                   }}
                 </div>
-              {{/if}}
-              <button class="
-                  cw--button
-                  cw--button_type_primary
-                  {{#unless unit.getQueue}}
-                    cw--button_type_primary_orange
-                  {{else}}
-                    cw--button_type_primary_green
-                  {{/unless}}
-                "
-                onClick={{Build}}
-                disabled="{{not canBuild.get}}"
-              >
-                {{#if unit.getQueue}}
-                  Ускорить
-                {{else}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    {{#unless unit.getQueue}}
+                      cw--button_type_primary_orange
+                    {{else}}
+                      cw--button_type_primary_green
+                    {{/unless}}
+                  "
+                  onClick={{Build}}
+                  disabled={{not unit.canBuild}}
+                >
                   Построить
-                {{/if}}
-              </button>
+                </button>
+              {{/if}}
             </div>
 
             {{#unless eq unit.group 'Ground'}}

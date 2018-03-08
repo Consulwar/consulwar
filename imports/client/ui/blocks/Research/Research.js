@@ -19,17 +19,44 @@ class Research extends BlazeComponent {
     return 'Research';
   }
 
+  constructor({
+    hash: {
+      research,
+      level,
+    },
+  }) {
+    super();
+    this.research = research;
+    this.level = level;
+    this.timeLeft = new ReactiveVar(null);
+  }
+
+  onCreated() {
+    super.onCreated();
+    if (this.research.maxLevel <= this.level.get()) {
+      this.level.set(120);
+    }
+    this.autorun(() => {
+      const queue = this.research.getQueue();
+      if (queue) {
+        this.timeLeft.set(queue.finishTime - Game.getCurrentServerTime());
+      } else {
+        this.timeLeft.set(null);
+      }
+    });
+  }
+
   onRendered() {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
   Build() {
-    const item = this.data().research;
+    const item = this.research;
     Meteor.call(
       'research.start',
       {
         id: item.id,
-        level: this.data().level.get(),
+        level: this.level.get(),
       },
       function(error) {
         if (error) {
@@ -57,14 +84,15 @@ class Research extends BlazeComponent {
 
   setMaximum() {
     if (Game.hasPremium()) {
-      const item = this.data().research;
-      let currentLevel = item.getCurrentLevel() + 1;
-
-      while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
+      let currentLevel = this.research.getCurrentLevel() + 1;
+      while (
+        (currentLevel + 1) <= this.research.maxLevel
+        && this.research.canBuild(currentLevel + 1)
+      ) {
         currentLevel += 1;
       }
 
-      this.data().level.set(currentLevel);
+      this.level.set(currentLevel);
     } else {
       Game.Popup.show({
         template: Maximum.renderComponent(),
@@ -75,12 +103,12 @@ class Research extends BlazeComponent {
   showSpeedUp() {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
-      data: { item: this.data().research },
+      data: { item: this.research },
     });
   }
 
   getRequirements() {
-    return this.data().research.getRequirements({ level: this.data().level.get() });
+    return this.research.getRequirements({ level: this.level.get() });
   }
 }
 

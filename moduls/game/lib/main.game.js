@@ -797,10 +797,10 @@ Game.Queue = {
   },
 
   getSpeedupPrice(item, task) {
-    const spendTime = task.finishTime - Game.getCurrentTime() - 2;
+    const spendTime = task.finishTime - Game.getCurrentServerTime() - 2;
     const price = { credits: 1 + (300 * ((spendTime / 3600) ** 0.7513)) };
 
-    if (['building', 'research'].indexOf(item.type) && task.level <= 20) {
+    if (['building', 'research'].indexOf(item.type) !== -1 && task.level <= 20) {
       price.credits = 0; 
     }
 

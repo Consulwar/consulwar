@@ -5,7 +5,7 @@
         {{#if item.maxLevel}}
           <div class="title">
             {{#with item.effects.[0]}}
-              Текущий уровень: {{level}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
+              Текущий уровень: {{level}}<br/>
             {{/with}}
           </div>
         {{/if}}
@@ -17,19 +17,17 @@
         }}
       </div>
 
-      {{#if and item.maxLevel (not (eq item.maxLevel item.effects.[0].level))}}
-        <div class="cw--Effect__nextLevel">
-          <div class="title">
-            Следующий уровень: {{nextLevel}} {{#if eq item.maxLevel level}}(Максимальный){{/if}}<br/>
-          </div>
-          {{> EffectList args
-            effects=item.effects
-            level=nextLevel
-            hideAdditional=true
-            additionalClass="cw--color_credit"
-          }}
+      <div class="cw--Effect__nextLevel">
+        <div class="title">
+          Следующий уровень: {{nextLevel}}<br/>
         </div>
-      {{/if}}
+        {{> EffectList args
+          effects=item.effects
+          level=nextLevel
+          hideAdditional=true
+          additionalClass="cw--color_credit"
+        }}
+      </div>
     </div>
   {{/if}}
 </template>

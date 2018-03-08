@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
-import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
@@ -21,21 +20,28 @@ class Unit extends BlazeComponent {
     return 'Unit';
   }
 
+  constructor({
+    hash: {
+      unit,
+    },
+  }) {
+    super();
+    this.unit = unit;
+    this.timeLeft = new ReactiveVar(null);
+  }
+
   onCreated() {
     super.onCreated();
 
     this.count = new ReactiveVar(1);
 
-    this.canBuild = new ReactiveVar();
-
     this.autorun(() => {
-      let youCan = false;
-      if (!this.data().unit.getQueue()) {
-        youCan = this.data().unit.canBuild();
+      const queue = this.unit.getQueue();
+      if (queue) {
+        this.timeLeft.set(queue.finishTime - Game.getCurrentServerTime());
       } else {
-        youCan = true;
+        this.timeLeft.set(null);
       }
-      this.canBuild.set(youCan);
     });
   }
 
@@ -44,32 +50,24 @@ class Unit extends BlazeComponent {
   }
 
   Build() {
-    if (!this.data().unit.getQueue()) {
-      const item = this.data().unit;
-      Meteor.call(
-        'unit.build',
-        {
-          id: item.id,
-          count: this.count.get(),
-        },
-        function(error) {
-          if (error) {
-            Notifications.error('Невозможно подготовить юнитов', error.error);
-          } else {
-            Notifications.success('Строительство юнитов запущено');
-          }
-        },
-      );
-      if (item.getTotalCount() === 0) {
-        Router.go(item.url({ group: item.group }));
-      }
-    } else {
-      this.showSpeedUp();
-    }
+    Meteor.call(
+      'unit.build',
+      {
+        id: this.unit.id,
+        count: this.count.get(),
+      },
+      function(error) {
+        if (error) {
+          Notifications.error('Невозможно подготовить юнитов', error.error);
+        } else {
+          Notifications.success('Строительство юнитов запущено');
+        }
+      },
+    );
   }
 
   Repair() {
-    Game.Wrecks.showPopup(this.data().unit);
+    Game.Wrecks.showPopup(this.unit);
   }
 
   toggleDescription() {
@@ -85,8 +83,7 @@ class Unit extends BlazeComponent {
 
   setMaximum() {
     if (Game.hasPremium()) {
-      const item = this.data().unit;
-      this.count.set(this.getMax(item));
+      this.count.set(this.getMax(this.unit));
     } else {
       Game.Popup.show({
         template: Maximum.renderComponent(),
@@ -97,7 +94,7 @@ class Unit extends BlazeComponent {
   showSpeedUp() {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
-      data: { item: this.data().unit },
+      data: { item: this.unit },
     });
   }
 

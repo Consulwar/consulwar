@@ -40,9 +40,11 @@ class Container extends LibContainer {
     count = 1,
     onSuccess = () => Notifications.success('Контейнера приобретены'),
   }) {
-    const price = ResourceSingle.renderComponentToHTML(null, null, {
-      resources: this.getPrice({ count }),
-    });
+    const price = new ResourceSingle({
+      hash: {
+        resources: this.getPrice({ count }),
+      },
+    }).renderComponentToHTML();
 
     const word = helpers.declension(count, 'контейнер', '', 'а', 'ов');
 

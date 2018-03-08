@@ -39,14 +39,17 @@ Game.Building.showPage = function() {
   );
   
   if (item) {
-    this.render(Building.renderComponent(), {
-      to: 'content',
-      data: {
-        building: item,
-        submenu: menu,
-        level: new ReactiveVar(item.getCurrentLevel() + 1),
-      },
-    });
+    const queue = item.getQueue();
+    this.render(
+      new Building({
+        hash: {
+          building: item,
+          submenu: menu,
+          level: new ReactiveVar(queue ? queue.level : item.getCurrentLevel() + 1),
+        }
+      }).renderComponent(), 
+      { to: 'content' }
+    );
     this.render('empty', {to: 'item_submenu'});
 
     switch (menu) {
@@ -86,23 +89,6 @@ var bonusEvents = {
 
 // TODO: Удалить — Хелперы и эвенты для шаблона строительства
 Template.overlay_menu.events(bonusEvents);
-
-Template.item_building.events(bonusEvents);
-
-Template.item_building.helpers({
-  resources: function() {
-    return Game.Resources.currentValue.get();
-  },
-  income: function() {
-    return Game.Resources.getIncome();
-  },
-  bonusStorage: function() { 
-    return Game.Resources.bonusStorage;
-  },
-  getRequirements() {
-    return this.building.getRequirements({ level: this.level.get() });
-  },
-});
 
 initBuildingSpecialMarketClient();
 initBuildingSpecialColosseumClient();

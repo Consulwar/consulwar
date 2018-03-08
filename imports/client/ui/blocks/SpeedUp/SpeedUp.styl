@@ -14,14 +14,16 @@
   &__head
     color $cw--color_human
     font-size $cw--fontSize_l
-    padding-bottom 12px
+    padding-bottom 6px
+    padding-top 12px
     font-weight bold
   &__description
     border-bottom solid 1px $cw--color_grey
     padding-bottom 6px
+    padding-top 6px
     color $cw--color_nearWhite
   &__actions
-    padding-top 10px
+    padding-top 15px
     display flex
     align-items flex-end
   &__action
@@ -31,6 +33,15 @@
     &_skip
       flex-basis 160px
       margin-left auto
+  &__annotation
+    padding-top 3px
+    color $cw--color_nearWhite
+    & > p
+      padding-bottom 3px
+
+  &__value
+    font-weight bold
+    color $cw--color_white
 
   &__actionHead
     flex-basis 100%

@@ -62,70 +62,78 @@
             Стоимость{{#if building.getCurrentLevel}} улучшения{{/if}}:
           </div>
           {{#if gt building.maxLevel building.getCurrentLevel}}
-            {{> ResourcePrice price=(building.getPrice level.get)}}
+            {{> ResourcePrice args price=(building.getPrice level.get)}}
           {{else}}
-            BOOOOOSST
+            В разработке
           {{/if}}
         </div>
 
         <div class="cw--Building__actions">
-          {{#if gt building.maxLevel building.getCurrentLevel}}
-            <div class="cw--Building__action">
-              {{#if building.getQueue}}
-                <div class="cw--Building__actionStatus">
-                  Идет строительство
-                </div>
-              {{else}}
-                <div class="cw--Building__actionAmount">
-                  <button 
-                    class="
-                      cw--button
-                      cw--button_max
-                      cw--Building__actionSetMax
-                    "
-                    data-tooltip="Ввести максимум"
-                    data-tooltip-direction="s"
-                    {{premiumTitle}}
-                    onClick={{setMaximum}}
-                  ></button>
-                  {{> InputNumber args
-                    value=level
-                    min=(sum building.getCurrentLevel 1)
-                    max=building.maxLevel
-                    isShowZero=false
-                    placeholder="Уровень"
-                    class="cw--Building__actionAmountCount"
-                  }}
-                </div>
-              {{/if}}
-              {{#if building.getQueue}}
-                <button class="
+          
+          <div class="cw--Building__action">
+            {{#if building.getQueue}}
+              <div class="cw--Building__actionStatus">
+                Идет строительство
+              </div>
+            {{else if lte building.maxLevel building.getCurrentLevel}}
+              <div class="cw--Building__actionStatus">
+                Требуется красный плазмоид
+              </div>
+            {{else}}
+              <div class="cw--Building__actionAmount">
+                <button 
+                  class="
                     cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_green
+                    cw--button_max
+                    cw--Building__actionSetMax
                   "
-                  onClick={{showSpeedUp}}
-                >
-                  Ускорить
-                </button>
-              {{else}}
-                <button class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_orange
-                  "
-                  onClick={{Build}}
-                  disabled="{{not (building.canBuild level.get)}}"
-                >
-                  {{#if building.getCurrentLevel}}
-                    Улучшить
-                  {{else}}
-                    Построить
-                  {{/if}}
-                </button>
-              {{/if}}
-            </div>
-          {{/if}}
+                  data-tooltip="Ввести максимум"
+                  data-tooltip-direction="s"
+                  {{premiumTitle}}
+                  onClick={{setMaximum}}
+                ></button>
+                {{> InputNumber args
+                  value=level
+                  min=(sum building.getCurrentLevel 1)
+                  max=building.maxLevel
+                  isShowZero=false
+                  placeholder="Уровень"
+                  class="cw--Building__actionAmountCount"
+                }}
+              </div>
+            {{/if}}
+            {{#if building.getQueue}}
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_green
+                "
+                disabled={{lt timeLeft.get 5}}
+                onClick={{showSpeedUp}}
+              >
+                {{#if lt timeLeft.get 5}}
+                  {{formatSeconds timeLeft.get}}
+                {{else}}
+                  Ускорить 
+                {{/if}}
+              </button>
+            {{else}}
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                onClick={{Build}}
+                disabled={{not (building.canBuild level.get)}}
+              >
+                {{#if building.getCurrentLevel}}
+                  Улучшить
+                {{else}}
+                  Построить
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
           <div class="cw--Building__action">
             {{#if eq building.engName 'Metal'}}
                 <div class="cw--Building__bonus">
@@ -155,7 +163,7 @@
                     cw--button_type_primary_blue
                   "
                   onClick={{pickBonusMetal}}
-                  disabled="{{lt building.getCurrentLevel 1}}"
+                  disabled={{lt building.getCurrentLevel 1}}
                 >
                   Собрать
                 </button>
@@ -189,7 +197,7 @@
                     cw--button_type_primary_blue
                   "
                   onClick={{pickBonusCrystal}}
-                  disabled="{{lt building.getCurrentLevel 1}}"
+                  disabled={{lt building.getCurrentLevel 1}}
                 >
                   Собрать
                 </button>
@@ -202,7 +210,7 @@
                   cw--button_type_primary
                   cw--button_type_primary_blue
                 "
-                disabled="{{lt building.getCurrentLevel 1}}"
+                disabled={{lt building.getCurrentLevel 1}}
                 onClick={{showMarket}}
               >
                 Торговать
@@ -216,7 +224,7 @@
                   cw--button_type_primary
                   cw--button_type_primary_blue
                 "
-                disabled="{{lt building.getCurrentLevel 1}}"
+                disabled={{lt building.getCurrentLevel 1}}
                 onClick={{showContainers}}
               >
                 Контейнер

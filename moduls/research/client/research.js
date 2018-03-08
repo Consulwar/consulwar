@@ -35,13 +35,16 @@ Game.Research.showPage = function() {
   );
 
   if (item) {
-    this.render(Research.renderComponent(), {
-      to: 'content',
-      data: {
-        research: item,
-        level: new ReactiveVar(item.getCurrentLevel() + 1),
-      }
-    });
+    const queue = item.getQueue();
+    this.render(
+      new Research({
+        hash: {
+          research: item,
+          level: new ReactiveVar(queue ? queue.level : item.getCurrentLevel() + 1),
+        },
+      }).renderComponent(),
+      { to: 'content' }
+    );
   } else {
     this.render('empty', {to: 'content'});
   }

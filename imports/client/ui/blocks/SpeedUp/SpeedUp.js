@@ -10,6 +10,7 @@ class SpeedUp extends BlazeComponent {
   template() {
     return 'SpeedUp';
   }
+
   onCreated() {
     super.onCreated();
     this.autorun(() => {
@@ -18,12 +19,16 @@ class SpeedUp extends BlazeComponent {
       }
     });
     this.SpeedUpPrice = this.getPrice();
-    this.isDone = new ReactiveVar(false);
-    this.Price = new ReactiveVar(Game.Queue.getSpeedupPrice(this.data().item, this.data().item.getQueue())['credits']);
   }
+
+  timeLeft() {
+    return this.data().item.getQueue().finishTime - Game.getCurrentServerTime();
+  }
+
   getPrice() {
     return Game.Queue.getSpeedupPrice(this.data().item, this.data().item.getQueue());
   }
+
   SpeedUp() {
     Meteor.call(
       `${this.data().item.type}.speedup`,
@@ -34,12 +39,13 @@ class SpeedUp extends BlazeComponent {
         if (error) {
           Notifications.error('Невозможно ускорить', error.error);
         } else {
-          this.isDone.set(true);
+          this.closeWindow();
           Notifications.success('Ускорение запущено');
         }
       },
     );
   }
+
   closeWindow() {
     this.removeComponent();
   }

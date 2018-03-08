@@ -1,5 +1,11 @@
 import humanUnits from '/imports/content/Unit/Human/client';
+import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
+import humanDefenseUnits from '/imports/content/Unit/Human/Defense/client';
+import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
 import reptileUnits from '/imports/content/Unit/Reptile/client';
+import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
+import reptileGroundUnits from '/imports/content/Unit/Reptile/Ground/client';
+import MenuUnits from '/imports/client/ui/blocks/Menu/Units/MenuUnits';
 
 initUnitClient = function() {
 'use strict';
@@ -11,8 +17,18 @@ Meteor.subscribe('squad');
 
 Game.Unit.showPage = function() {
   let item;
+  let group = this.params.group;
+
+  let menuItems;
+  if (group === 'Space') {
+    menuItems = humanSpaceUnits;
+  } else if (group === 'Defense') {
+    menuItems = humanDefenseUnits;
+  } else {
+    menuItems = humanGroundUnits;
+  }
+
   if (this.params.item) {
-    let group = this.params.group;
     const engName = this.params.item;
     if (group === 'Ground') {
       group = `Ground/${this.params.subgroup}`;
@@ -20,6 +36,16 @@ Game.Unit.showPage = function() {
     const id = `Unit/Human/${group}/${engName}`;
     item = humanUnits[id];
   }
+
+  this.render(
+    (new MenuUnits({
+      hash: {
+        items: menuItems,
+        selected: item,
+      },
+    })).renderComponent(),
+    { to: 'bottomMenu' }
+  );
   
   if (item) {
     this.render('unit', {
@@ -36,8 +62,16 @@ Game.Unit.showPage = function() {
 
 Game.Unit.showReptilePage = function() {
   let item;
+  let group = this.params.group;
+  let menuItems;
+
+  if (group === 'Space') {
+    menuItems = reptileSpaceUnits;
+  } else {
+    menuItems = reptileGroundUnits;
+  }
+  
   if (this.params.item) {
-    let group = this.params.group;
     const engName = this.params.item;
     if (group === 'Ground') {
       group = `Ground/${this.params.subgroup}`;
@@ -45,6 +79,16 @@ Game.Unit.showReptilePage = function() {
     const id = `Unit/Reptile/${group}/${engName}`;
     item = reptileUnits[id];
   }
+
+  this.render(
+    (new MenuUnits({
+      hash: {
+        items: menuItems,
+        selected: item,
+      },
+    })).renderComponent(),
+    { to: 'bottomMenu' }
+  );
 
   if (item) {
     this.render('unit', {

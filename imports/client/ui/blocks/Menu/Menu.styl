@@ -1,0 +1,105 @@
+@import '{}/imports/client/ui/colors.styl'
+
+.cw--Menu
+  display flex
+  width 100%
+  height auto
+  flex-direction row
+  flex-shrink 0
+  justify-content center
+  align-items flex-end
+  flex-wrap wrap
+
+  &__group
+    display flex
+    margin 5px 10px 20px
+    flex-direction row
+    flex-shrink 0
+    flex-wrap nowrap
+
+  &__item
+    position relative
+    display flex
+    flex-direction column
+    align-items flex-end
+    box-sizing border-box
+    flex-grow 0
+    width 110px
+    margin 0 5px
+    border 0
+    outline 0
+    transition border .1s, filter .1s, outline .1s
+
+    // Hack for 1:1 aspect ratio
+    &:before
+      content ''
+      display block
+      padding-top 100%
+
+    &:hover,
+    &_selected
+      outline 3px solid $cw--color_metal
+      & > .cw--Menu__itemIcon
+        filter grayscale(0)
+
+    &_has > .cw--Menu__itemIcon
+      filter grayscale(0)
+
+    &:after
+      content ""
+      position absolute
+      bottom 0
+      left 0
+      width 100%
+      height 5px
+
+    &_notEnoughResources:after
+      background-color $cw--color_human
+
+    &_canBuild:after,
+    &_canUpgrade:after
+      background-color $cw--color_credit
+    
+  &__itemIcon
+    position absolute
+    top 0
+    left 0
+    width 100%
+    height 100%
+    filter grayscale(1)
+    background-size 100%
+
+  &__itemStatus
+    position absolute
+    top 3px
+    right 5px
+    width 25px
+    height 25px
+    background-size 100%
+
+    &_canBuild
+      background-image url(/img/game/add.svg)
+
+    &_canUpgrade
+      background-image url(/img/game/canUpgrade.svg)
+
+    &_noTechnologies
+      background-image url(/img/game/noTechlogies.svg)
+
+    &_inProgress
+      background-image url(/img/game/inProgress.svg)
+
+    &_queueBusy
+      background-image url(/img/game/queueBusy.svg)
+
+  &__time
+    position absolute
+    bottom 0
+    left 0
+    display flex
+    align-items center
+    justify-content center
+    height 22px
+    width 100%
+    font-size 18px
+    background-color alpha($cw--color_black, .5)

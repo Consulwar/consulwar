@@ -1,0 +1,49 @@
+<template name="MenuArtifacts">
+  <div class="cw--Menu cw--MenuArtifacts">
+    {{#each group in items}}
+      <div class="cw--Menu__group">
+        {{#each item in group}}
+          <a
+            href={{item.url}}
+            class="
+              cw--Menu__item
+              cw--MenuArtifacts__item
+              {{#if item.isSelected}}
+                cw--Menu__item_selected
+              {{/if}}
+            "
+          >
+            <img
+              class="cw--Menu__itemIcon cw--MenuArtifacts__itemIcon"
+              src={{item.icon}} 
+              alt={{item.title}}
+              data-tooltip={{item.title}}
+              data-tooltip-direction="n"
+            />
+
+            {{#if gt item.count 0}}
+              <span
+                class="cw--MenuArtifacts__itemCount"
+                data-tooltip="Текущее количество"
+                data-tooltip-direction="n"
+              >
+                {{formatNumberWithISO item.count 3}}
+              </span>
+            {{/if}}
+          </a>
+        {{/each}}
+      </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="MenuArtifacts__itemStatus">
+  <span
+    class="
+      cw--Menu__itemStatus
+      cw--Menu__itemStatus_{{status}}
+    "
+    data-tooltip={{text}}
+    data-tooltip-direction="n"
+  ></span>
+</template>

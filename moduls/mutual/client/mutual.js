@@ -7,6 +7,7 @@ Meteor.subscribe('mutualResearch');
 
 Game.Mutual.showPage = function() {
   var item = Game.Mutual.items[this.params.group][this.params.item];
+  this.render('empty', { to: 'bottomMenu' });
   
   if (item) {
     this.render('item_mutual', {

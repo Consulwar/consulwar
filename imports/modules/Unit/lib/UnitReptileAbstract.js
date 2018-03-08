@@ -17,6 +17,11 @@ class UnitReptileAbstract extends UnitAbstract {
   getCount() {
     return null;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  getTotalCount() {
+    return null;
+  }
 }
 
 export default UnitReptileAbstract;

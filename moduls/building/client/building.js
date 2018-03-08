@@ -1,4 +1,7 @@
 import buildings from '/imports/content/Building/client';
+import residentialBuildings from '/imports/content/Building/Residential/client';
+import militaryBuildings from '/imports/content/Building/Military/client';
+import MenuUnique from '/imports/client/ui/blocks/Menu/Unique/MenuUnique';
 
 initBuildingClient = function() {
 'use strict';
@@ -8,12 +11,28 @@ initBuildingLib();
 Game.Building.showPage = function() {
   var menu = this.params.menu;
   let item;
+  const group = this.params.group[0].toUpperCase() + this.params.group.slice(1);
+  let menuItems;
+  if (group === 'Residential') {
+    menuItems = residentialBuildings;
+  } else {
+    menuItems = militaryBuildings;
+  }
   if (this.params.item) {
-    const group = this.params.group[0].toUpperCase() + this.params.group.slice(1);
     const engName = this.params.item[0].toUpperCase() + this.params.item.slice(1);
     const id = `Building/${group}/${engName}`;
     item = buildings[id];
   }
+
+  this.render(
+    (new MenuUnique({
+      hash: {
+        items: menuItems,
+        selected: item,
+      },
+    })).renderComponent(),
+    { to: 'bottomMenu' }
+  );
   
   if (item) {
     this.render('item_building', { 

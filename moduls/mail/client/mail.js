@@ -25,6 +25,7 @@ Game.Mail.showPage = function() {
   var hash = this.params.hash;
   var page = parseInt( this.params.page, 10 );
   var count = 20;
+  this.render('empty', { to: 'bottomMenu' });
 
   if (page && page > 0) {
     isLoading.set(true);

@@ -29,7 +29,10 @@ class UnitHumanAbstract extends UnitAbstract {
     this.maxCount = maxCount;
   }
 
-  getCount({ from, ...options }) {
+  getCount({
+    from = (this.group === 'Ground' ? 'hangar' : 'space'),
+    ...options
+  }) {
     let record;
     if (from === 'hangar') {
       record = Game.Unit.getHangarArmy(options);

@@ -61,6 +61,10 @@ class UnitAbstract extends AbstractCountableItem {
   getTargets() {
     return this.targets.map(id => this.constructor.getObject({ id }));
   }
+
+  has({ count = 1, ...options } = {}) {
+    return this.getCount(options) >= count;
+  }
 }
 
 export default UnitAbstract;

@@ -1,0 +1,96 @@
+<template name="MenuUnique">
+  <div class="cw--Menu cw--MenuUnique">
+    <div class="cw--Menu__group">
+      {{#each item in items}}
+        <a
+          href={{item.url}}
+          class="
+            cw--Menu__item
+            {{#if item.isSelected}}
+              cw--Menu__item_selected
+            {{/if}}
+            {{#if item.has}}
+              cw--Menu__item_has
+            {{/if}}
+            {{#if and (not item.isMaxLevel) (not item.isEnoughResources)}}
+              cw--Menu__item_notEnoughResources
+            {{else}}
+              {{#if and item.has item.сanBuild}}
+                cw--Menu__item_canBuild
+              {{else if item.сanBuild}}
+                cw--Menu__item_canUpgrade
+              {{/if}}
+            {{/if}}
+          "
+        >
+          <img
+            class="cw--Menu__itemIcon"
+            src={{item.icon}} 
+            alt={{item.title}}
+            data-tooltip={{item.title}}
+            data-tooltip-direction="n"
+          />
+          {{#if and item.has item.сanBuild}}
+            {{> MenuUnique__itemStatus status='canUpgrade' text="Можно улучшить"}}
+          {{else if item.сanBuild}}
+            {{> MenuUnique__itemStatus status='canBuild' text="Можно построить"}}
+          {{/if}}
+          {{#unless item.isMaxLevel}}
+            {{#if item.inProgress}}
+              {{> MenuUnique__itemStatus status='inProgress' text="Идёт строительство"}}
+            {{else if item.isQueueBusy}}
+              {{> MenuUnique__itemStatus status='queueBusy' text="Очередь занята"}}
+            {{/if}}
+            {{#unless item.meetRequirements}}
+              {{> MenuUnique__itemStatus status='noTechnologies' text="Не хватает технологий"}}
+            {{/unless}}
+          {{/unless}}
+
+          {{#if item.nextLevel}}
+            <span
+              class="
+                cw--MenuUnique__itemLevel
+                cw--MenuUnique__itemLevel_progress
+              "
+              data-tooltip="Текущий → Конечный уровни"
+              data-tooltip-direction="n"
+            >
+              {{formatNumberWithISO item.level 3}}
+              → 
+              {{formatNumberWithISO item.nextLevel 3}}
+            </span>
+          {{else if gt item.level 0}}
+            <span
+              class="cw--MenuUnique__itemLevel"
+              data-tooltip="Текущий уровень"
+              data-tooltip-direction="n"
+            >
+              {{formatNumberWithISO item.level 3}}
+            </span>
+          {{/if}}
+
+          {{#if item.time}}
+            <time
+              class="cw--Menu__time"
+              data-tooltip="До конца строительтва осталось:"
+              data-tooltip-direction="n"
+            >
+              {{formatSeconds item.time}}
+            </time>
+          {{/if}}
+        </a>
+      {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="MenuUnique__itemStatus">
+  <span
+    class="
+      cw--Menu__itemStatus
+      cw--Menu__itemStatus_{{status}}
+    "
+    data-tooltip={{text}}
+    data-tooltip-direction="n"
+  ></span>
+</template>

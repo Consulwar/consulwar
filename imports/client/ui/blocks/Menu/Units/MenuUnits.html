@@ -1,0 +1,102 @@
+<template name="MenuUnits">
+  <div class="cw--Menu cw--MenuUnits">
+    {{#each group in items}}
+      <div class="cw--Menu__group">
+        {{#each item in group}}
+          <a
+            href={{item.url}}
+            class="
+              cw--Menu__item
+              {{#if item.isSelected}}
+                cw--Menu__item_selected
+              {{/if}}
+              {{#if item.has}}
+                cw--Menu__item_has
+              {{/if}}
+              {{#if not item.isEnoughResources}}
+                cw--Menu__item_notEnoughResources
+              {{else if item.сanBuild}}
+                cw--Menu__item_canBuild
+              {{/if}}
+            "
+          >
+            <img
+              class="cw--Menu__itemIcon"
+              src={{item.icon}} 
+              alt={{item.title}}
+              data-tooltip={{item.title}}
+              data-tooltip-direction="n"
+            />
+            {{#if item.сanBuild}}
+              {{> MenuUnits__itemStatus status='canBuild' text="Можно построить"}}
+            {{/if}}
+            {{#if item.inProgress}}
+              {{> MenuUnits__itemStatus status='inProgress' text="Идёт строительство"}}
+            {{else if item.isQueueBusy}}
+              {{> MenuUnits__itemStatus status='queueBusy' text="Очередь занята"}}
+            {{/if}}
+            {{#unless item.meetRequirements}}
+              {{> MenuUnits__itemStatus status='noTechnologies' text="Не хватает технологий"}}
+            {{/unless}}
+
+            {{#if item.addCount}}
+              <span
+                class="
+                  cw--MenuUnits__itemCount
+                  cw--MenuUnits__itemCount_progress
+                "
+                data-tooltip="
+                  Текущее количество + в строительстве
+                  {{#if gt item.totalCount 0}}
+                    <br/>Всего: 
+                    {{formatNumberWithISO item.totalCount 3}}
+                  {{/if}}
+                "
+                data-tooltip-direction="n"
+              >
+                {{formatNumberWithISO item.count 3}}
+                + 
+                {{formatNumberWithISO item.addCount 3}}
+              </span>
+            {{else if gt item.count 0}}
+              <span
+                class="cw--MenuUnits__itemCount"
+                data-tooltip="
+                  Текущее количество
+                  {{#if gt item.totalCount 0}}
+                    <br/>Всего: 
+                    {{formatNumberWithISO item.totalCount 3}}
+                  {{/if}}
+                "
+                data-tooltip-direction="n"
+              >
+                {{formatNumberWithISO item.count 3}}
+              </span>
+            {{/if}}
+
+            {{#if item.time}}
+              <time
+                class="cw--Menu__time"
+                data-tooltip="До конца строительтва осталось:"
+                data-tooltip-direction="n"
+              >
+                {{formatSeconds item.time}}
+              </time>
+            {{/if}}
+          </a>
+        {{/each}}
+      </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="MenuUnits__itemStatus">
+  <span
+    class="
+      cw--Menu__itemStatus
+      cw--Menu__itemStatus_{{status}}
+    "
+    data-tooltip={{text}}
+    data-tooltip-direction="n"
+  ></span>
+</template>

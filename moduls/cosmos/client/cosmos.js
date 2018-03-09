@@ -1193,7 +1193,7 @@ var resetColonyId = function(targetPlanetId) {
     }
     return (a.name < b.name) ? -1 : 1;
   });
-  
+
   const ids = {};
   colonies.forEach((colony) => {
     ids[colony._id] = true;

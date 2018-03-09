@@ -96,13 +96,14 @@ Game.Unit.showReptilePage = function() {
   );
 
   if (item) {
-    this.render('unit', {
-      to: 'content', 
-      data: {
-        unit: item,
-        count: new ReactiveVar(1)
-      }
-    });
+    this.render(
+      new Unit({ 
+        hash: {
+          unit: item,
+        },
+      }).renderComponent(),
+      { to: 'content' }
+    );
   } else {
     this.render('empty', {to: 'content'});
   }

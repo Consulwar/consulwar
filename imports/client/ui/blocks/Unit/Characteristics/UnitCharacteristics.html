@@ -17,7 +17,7 @@
             data-tooltip="true"
             data-tooltip-direction="w"
           >
-            {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 3}}
+            {{formatNumberWithISO (div (sum unit.getCharacteristics.weapon.damage.min unit.getCharacteristics.weapon.damage.max) 2) 3}}
           </div>
           <div
             class="cw--UnitCharacterisctics__armor"
@@ -26,13 +26,13 @@
             data-tooltip="true"
             data-tooltip-direction="w"
           >
-            {{formatNumberWithISO unit.characteristics.health.armor 3}}
+            {{formatNumberWithISO unit.getCharacteristics.health.armor 3}}
           </div>
           <div class="cw--UnitCharacterisctics__damage_signature">
-            {{formatNumberWithISO unit.characteristics.weapon.signature 3}}
+            {{formatNumberWithISO unit.getCharacteristics.weapon.signature 3}}
           </div>
           <div class="cw--UnitCharacterisctics__armor_signature">
-            {{formatNumberWithISO unit.characteristics.health.signature 3}}
+            {{formatNumberWithISO unit.getCharacteristics.health.signature 3}}
           </div>
         </div>
       {{#if unit.getTargets}}

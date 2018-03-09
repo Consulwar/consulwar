@@ -1,0 +1,89 @@
+<template name="ResourcePrice">
+  <div class="cw--ResourcePrice {{class}}">
+    {{#if time}}
+      <div
+        onMouseOver={{showTooltip 'time' price}}
+        class="cw--ResourcePrice__time"
+        data-tooltip-direction="n"
+      >
+        Время строительства: 
+        <time class="cw--ResourcePrice__timeCount">
+          {{formatSeconds time}}
+        </time>
+      </div>
+    {{/if}}
+
+    {{#each resource in resources}}
+      {{#if eq resource.obj.id 'Resource/Base/Credit'}}
+        <div
+          onMouseOver={{showTooltip resource.obj.engName price}}
+          onClick={{showCredits}}
+          style="background-image: url({{resource.obj.icon}})"
+          class="
+            {{resource.obj.color}}
+            cw--ResourcePrice__item
+            cw--ResourcePrice__itemCredit
+            cw--Resource_icon
+          "
+        >
+          {{formatNumberWithISO resource.value 3}}
+        </div>
+      {{else}}
+        <a
+          onMouseOver={{showTooltip resource.obj.engName price}}
+          style="background-image: url({{resource.obj.icon}})"
+          class="
+            {{resource.obj.color}}
+            cw--ResourcePrice__item
+            cw--Resource_icon
+          "
+          href={{resource.obj.url}}
+        >
+          {{formatNumberWithISO
+            (availableResources resource.obj.engName resource.value) 3
+          }}
+           / 
+          {{formatNumberWithISO resource.value 3}}
+        </a>
+      {{/if}}
+    {{/each}}
+
+    {{#if artifacts}}
+      <div
+        class="
+          {{resource.obj.color}}
+          cw--ResourcePrice__item
+          cw--Resource_icon
+          cw--ResourcePrice__itemArtifact
+        "
+        data-tooltip-trigger="click"
+        data-tooltip-direction="s"
+        onMouseOver={{showArtifactTooltip}}
+      >
+        {{availableArtifacts}}
+          / 
+        {{artifactsCount}}
+      </div>
+    {{/if}}
+
+    {{!-- {{#each resource in getResource)}}
+      {{#if eq resource.obj.type 'artefact'}}
+        <div
+          onMouseOver={{showTooltip resource.obj.engName resource.price}}
+          style="background-image: url({{resource.obj.icon}})"
+          class="
+            {{resource.obj.color}}
+            cw--ResourcePrice__item
+            cw--Artefact_icon
+          "
+          onClick={{showCredits}}
+          data-id="{{resource.obj.engName}}"
+        >
+          {{formatNumberWithISO resource.availableResources 3}} / {{formatNumberWithISO resource.amount 3}}
+        </div>
+      {{else}}
+
+      {{/if}}
+    {{/each}} --}}
+  </div>
+</template>

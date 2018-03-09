@@ -26,6 +26,10 @@ class Resource extends LibResource {
         this.color = 'cw--color_white';
         break;
     }
+
+    const path = `/img/game/${this.id}/`;
+    this.icon = `${path}icon.svg`;
+    this.card = `${path}card.jpg`;
   }
 }
 

@@ -1,3 +1,7 @@
+import { Meteor } from 'meteor/meteor';
+import { Notifications } from '/moduls/game/lib/importCompability';
+import Game from '/moduls/game/lib/main.game';
+import Building from '/imports/client/ui/blocks/Building/Building';
 import buildings from '/imports/content/Building/client';
 import residentialBuildings from '/imports/content/Building/Residential/client';
 import militaryBuildings from '/imports/content/Building/Military/client';
@@ -35,14 +39,17 @@ Game.Building.showPage = function() {
   );
   
   if (item) {
-    this.render('item_building', { 
-      to: 'content',
-      data: {
-        building: item,
-        submenu: menu,
-        level: new ReactiveVar(item.getCurrentLevel() + 1),
-      },
-    });
+    const queue = item.getQueue();
+    this.render(
+      new Building({
+        hash: {
+          building: item,
+          submenu: menu,
+          level: new ReactiveVar(queue ? queue.level : item.getCurrentLevel() + 1),
+        }
+      }).renderComponent(), 
+      { to: 'content' }
+    );
     this.render('empty', {to: 'item_submenu'});
 
     switch (menu) {
@@ -58,11 +65,8 @@ Game.Building.showPage = function() {
   }
 };
 
-Template.item_building.onRendered(function() {
-});
-
 var bonusEvents = {
-  'click .collectBonus.metals, click button.metal': function(e, t) {
+  'click .collectBonus.metals': function(e, t) {
     Meteor.call('getBonusResources', 'metals', function(error, result) {
       if (error) {
         Notifications.error('Нельзя получить бонусный металл', error.error);
@@ -72,7 +76,7 @@ var bonusEvents = {
     });
   },
 
-  'click .collectBonus.crystals, click button.crystal': function(e, t) {
+  'click .collectBonus.crystals': function(e, t) {
     Meteor.call('getBonusResources', 'crystals', function(error, result) {
       if (error) {
         Notifications.error('Нельзя получить бонусный кристалл', error.error);
@@ -83,73 +87,8 @@ var bonusEvents = {
   }
 };
 
+// TODO: Удалить — Хелперы и эвенты для шаблона строительства
 Template.overlay_menu.events(bonusEvents);
-Template.item_building.events(bonusEvents);
-
-Template.item_building.helpers({
-  resources: function() {
-    return Game.Resources.currentValue.get();
-  },
-  income: function() {
-    return Game.Resources.getIncome();
-  },
-  bonusStorage: function() { 
-    return Game.Resources.bonusStorage;
-  },
-  getRequirements() {
-    return this.building.getRequirements({ level: this.level.get() });
-  },
-});
-
-Template.item_building.events({
-  'click button.build': function(e, t) {
-    var item = t.data.building;
-
-    Meteor.call('building.build', {
-        id: item.id,
-        level: this.level.get(),
-      },
-      function(error, message) {
-        if (error) {
-          Notifications.error('Невозможно начать строительство', error.error);
-        } else {
-          Notifications.success('Строительство запущено');
-        }
-      }
-    );
-
-    if (item.getCurrentLevel() === 0) {
-      Router.go(item.url({group: item.group}));
-    }
-  },
-
-  'click button.max': function(e, t) {
-    const item = t.data.building;
-    let currentLevel = item.getCurrentLevel() + 1;
-
-    while ((currentLevel + 1) <= item.maxLevel && item.canBuild(currentLevel + 1)) {
-      currentLevel += 1;
-    }
-
-    this.level.set(currentLevel);
-  },
-
-  'click button.market': function(e, t) {
-    Game.Building.special.Market.showWindow();
-  },
-
-  'click button.containers': function(e, t) {
-    Game.Building.special.Container.showWindow();
-  },
-
-  'click .toggle_description': function(e, t) {
-    $(t.find('.description')).slideToggle(function() {
-      var options = Meteor.user().settings && Meteor.user().settings.options;
-      Meteor.call('settings.setOption', 'hideDescription', !(options && options.hideDescription));
-    });
-  }
-});
-
 
 initBuildingSpecialMarketClient();
 initBuildingSpecialColosseumClient();

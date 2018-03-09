@@ -53,12 +53,19 @@
       width 100%
       height 5px
 
+    &_notEnoughResources:after,
+    &_canBuild:after,
+    &_canUpgrade:after
+      border-top 2px solid alpha($cw--color_black, .7)
+
     &_notEnoughResources:after
       background-color $cw--color_human
 
     &_canBuild:after,
     &_canUpgrade:after
       background-color $cw--color_credit
+
+
     
   &__itemIcon
     position absolute
@@ -85,6 +92,7 @@
 
     &_noTechnologies
       background-image url(/img/game/noTechlogies.svg)
+      opacity 0.8
 
     &_inProgress
       background-image url(/img/game/inProgress.svg)

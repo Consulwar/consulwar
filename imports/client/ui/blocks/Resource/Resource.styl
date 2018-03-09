@@ -1,0 +1,20 @@
+@import '{}/imports/client/ui/colors'
+
+// congif
+$iconRatio = 75%
+
+.cw--Resource
+  &_icon
+    background-repeat no-repeat
+    background-size $iconRatio
+    background-position center top
+    text-align center
+    &::before
+      content ''
+      display block
+      width $iconRatio
+      margin 0 auto
+      padding-top @width
+      padding-bottom 3px
+    &_credits
+      cursor pointer

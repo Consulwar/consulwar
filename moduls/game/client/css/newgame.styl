@@ -90,8 +90,8 @@ body.game
   margin 0 auto
   
   button
-    background-color transparent
-    border 0
+    // background-color transparent
+    // border 0
     cursor pointer
             
     &:hover
@@ -563,7 +563,7 @@ body.game
       -webkit-filter brightness(1.2)
       filter brightness(1.2)
   
-  button:not(.cw--button), a:not(.cw--Menu__item)
+  button:not(.cw--button):not(.cw--button_max), a:not(.cw--button):not(.cw--Menu__item)
     outline none
 
   &.new  
@@ -744,7 +744,7 @@ body.game
           
         .attack-menu
           display flex
-            
+      // TODO: Проверить и удалить (Header для строительства)
       div.header
         display flex
         flex-shrink 0

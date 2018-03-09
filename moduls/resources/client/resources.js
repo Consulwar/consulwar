@@ -73,6 +73,7 @@ Template.current_resources.helpers({
 });
 
 
+// TODO: Удалить (events & helpers для цены постройки)
 Template.item_price.events({
   'click .resources .credits': function(e, t) {
     Game.Payment.showWindow();

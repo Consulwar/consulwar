@@ -1,0 +1,145 @@
+<template name="Unit">
+  <div class="cw--Unit">
+    <div class="cw--Unit__header">
+      <div class="cw--Unit__headerLevel">
+        {{#if unit.getTotalCount}}
+          <span class="cw--Unit__levelCount">
+            {{formatNumber unit.getTotalCount}}
+          </span>
+          {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
+        {{else}}
+          Не построено
+        {{/if}}
+      </div>
+      <div class="cw--Unit__headerTitle">
+        {{unit.title}}
+      </div>
+      <!-- quest link here -->
+      <div class="cw--Unit__headerControls">
+        {{#if not submenu}}
+          <span
+            onClick={{toggleDescription}}
+            class="
+              cw--Unit__headerIcon
+              cw--button_description
+              {{#if options.hideDescription}}cw--button_notActive{{/if}}
+            "
+          ></span>
+        {{/if}}
+        <a href="{{backToGroupLink}}" class="
+          cw--Unit__headerIcon
+          cw--button_close
+          "
+        ></a>
+      </div>
+    </div>
+    <div class="cw--Unit__info
+      {{#if options.hideDescription}}cw--Unit__info_hidden{{/if}}
+    ">
+      <div class="cw--Unit__infoWrap">
+        <div class="cw--Unit__mainPic">
+          <img class="cw--Unit__mainPicImage" src="{{unit.icon}}" />
+        </div>
+        <div class="cw--Unit__description scrollbar-inner">
+          {{unit.description}}
+        </div>
+      </div>
+    </div>
+    <div class="cw--Unit__mainField">
+      <div class="cw--Unit__panel">
+        {{> UnitCharacteristics unit=unit}}
+
+        {{#unless eq unit.side 'reptiles'}}
+          <div class="cw--Unit__price">
+            <div class="cw--Unit__priceHead">
+              Стоимость:
+            </div>
+            {{> ResourcePrice args price=(unit.getPrice count.get)}}
+          </div>
+          <div class="cw--Unit__actions">
+
+            <div class="cw--Unit__action">
+              {{#if unit.getQueue}}
+                <div class="cw--Unit__actionStatus">
+                  Идёт строительство
+                </div>
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    {{#unless unit.getQueue}}
+                      cw--button_type_primary_orange
+                    {{else}}
+                      cw--button_type_primary_green
+                    {{/unless}}
+                  "
+                  onClick={{showSpeedUp}}
+                  disabled={{lt timeLeft.get 5}}
+                >
+                  {{#if lt timeLeft.get 5}}
+                    {{formatSeconds timeLeft.get}}
+                  {{else}}
+                    Ускорить 
+                  {{/if}}
+                </button>
+              {{else}}
+                <div class="cw--Unit__actionAmount">
+                  <button 
+                    class="cw--button_max cw--Unit__actionSetMax"
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    {{premiumTitle}}
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=count
+                    max=unit.maxCount
+                    placeholder="Количество"
+                    class="cw--Unit__actionAmountCount"
+                  }}
+                </div>
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    {{#unless unit.getQueue}}
+                      cw--button_type_primary_orange
+                    {{else}}
+                      cw--button_type_primary_green
+                    {{/unless}}
+                  "
+                  onClick={{Build}}
+                  disabled={{not unit.canBuild}}
+                >
+                  Построить
+                </button>
+              {{/if}}
+            </div>
+
+            {{#unless eq unit.group 'Ground'}}
+              <div class="cw--Unit__action">
+                {{#if unit.maxCount}}
+                  <div class="cw--Unit__actionCount">
+                    Всего юнитов {{formatNumber unit.getTotalCount}}
+                    из {{formatNumber unit.maxCount}}
+                  </div>
+                {{/if}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_blue
+                  "
+                  onClick={{Repair}}
+                >
+                  Ремонтировать
+                </button>
+              </div>
+            {{/unless}}
+          </div>
+        {{/unless}}
+      </div>
+      {{> Requirements
+        requirements=unit.getRequirements
+        class="cw--Unit__require"
+      }}
+    </div>
+  </div>
+</template>

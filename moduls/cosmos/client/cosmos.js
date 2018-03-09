@@ -1179,14 +1179,49 @@ Template.cosmosShipInfo.events({
 // ----------------------------------------------------------------------------
 var activeColonyId = new ReactiveVar(null);
 
-var resetColonyId = function() {
+var resetColonyId = function(targetPlanetId) {
+  const colonies = Game.Planets.getColonies().filter(planet => planet.armyUsername === Meteor.user().username);
+  const result = [...colonies];
+
+  // sort colonies by name, but home planet always first
+  result.sort(function(a, b) {
+    if (a.isHome) {
+      return -1;
+    }
+    if (b.isHome) {
+      return 1;
+    }
+    return (a.name < b.name) ? -1 : 1;
+  });
+  
+  const ids = {};
+  colonies.forEach((colony) => {
+    ids[colony._id] = true;
+  });
+  const planetsWithFleet = Game.Planets.getPlanetsWithArmy();
+  planetsWithFleet.filter(planet => ids[planet._id]);
+  planetsWithFleet.sort(function(a, b) {
+    return (a.name < b.name) ? -1 : 1;
+  });
+  result.push(...planetsWithFleet);
+
+  if (result.length > 1) {
+    for (let i = 0; i < result.length; i++) {
+      // Change selected colony if it is selected
+      if (result[i]._id === targetPlanetId && targetPlanetId === activeColonyId.get()) {
+        activeColonyId.set( result[i > 0 ? i - 1 : i + 1]._id );
+        break;
+      }
+    }
+  }
+
   if(!Game.Planets.getFleetUnits(activeColonyId.get())) {
     activeColonyId.set(Game.Planets.getBase()._id);
   }
 };
 
 Game.Cosmos.showAttackMenu = function(id) {
-  resetColonyId();
+  resetColonyId(id);
 
   Router.current().render('cosmosAttackMenu', {
     to: 'cosmosAttackMenu',
@@ -1462,16 +1497,6 @@ Template.cosmosAttackMenu.helpers({
       }
       return (a.name < b.name) ? -1 : 1;
     });
-
-    if (result.length > 1) {
-      for (let i = 0; i < result.length; i++) {
-        // Change selected colony if it is selected
-        if (result[i]._id === this.id && this.id === this.activeColonyId.get()) {
-          this.activeColonyId.set( result[i > 0 ? i - 1 : i + 1]._id );
-          break;
-        }
-      }
-    }
 
     for (let i = result.length; i < maxCount; i += 1) {
       result.push({

@@ -18,10 +18,8 @@
     flex-wrap nowrap
 
   &__item
+    display block
     position relative
-    display flex
-    flex-direction column
-    align-items flex-end
     box-sizing border-box
     flex-grow 0
     width 110px
@@ -71,7 +69,7 @@
     position absolute
     top 0
     left 0
-    width 110px
+    width 100%
     height @width
     filter grayscale(1)
     background-size 100%

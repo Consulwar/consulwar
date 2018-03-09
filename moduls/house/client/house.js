@@ -12,6 +12,7 @@ Game.House.showPage = function() {
   if (subgroup && !item) {
     item = _.keys(Game.House.items[subgroup])[0];
   }
+  this.render('empty', { to: 'bottomMenu' });
 
   if (subgroup && item) {
     // show item menu

@@ -1,63 +1,55 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
 import researches from '/imports/content/Research/server';
 
 Meteor.methods({
-  'research.start'({ id, cards }) {
+  'research.start'({ id, level }) {
     const user = User.getById();
     User.checkAuth({ user });
 
     Log.method.call(this, { name: 'research.start', user });
 
     check(id, String);
-
-    let cardsObject = {};
-    let cardList = [];
-
-    if (cards) {
-      check(cards, Object);
-
-      cardsObject = cards;
-
-      if (!Game.Cards.canUse({ cards: cardsObject, user })) {
-        throw new Meteor.Error('Карточки недоступны для применения');
-      }
-
-      cardList = Game.Cards.objectToList(cardsObject);
-    }
+    check(level, Match.Integer);
 
     Meteor.call('actualizeGameInfo');
 
     const research = researches[id];
 
-    if (!research || !research.canBuild()) {
+    if (!research) {
+      throw new Meteor.Error('Что-то не то вы исследовать собрались, дядя Фёдор');
+    }
+
+    if (level > research.maxLevel) {
+      throw new Meteor.Error('Нельзя исследовать выше максимального уровня');
+    }
+
+    const currentLevel = research.getCurrentLevel();
+
+    if (level <= currentLevel) {
+      throw new Meteor.Error('Нельзя разучиться');
+    }
+
+    if (!research.canBuild(level)) {
       throw new Meteor.Error('Исследование невозможно');
     }
 
     const set = {
       group: research.group,
       itemId: research.id,
-      level: research.getCurrentLevel() + 1,
+      level,
     };
 
-    if (set.level > research.maxLevel) {
-      throw new Meteor.Error('Исследование уже максимального уровня');
-    }
-
-    const price = research.getPrice(set.level, cardList);
+    const price = research.getPrice(level);
     set.time = price.time;
 
     const isTaskInserted = Game.Queue.add(set);
     if (!isTaskInserted) {
       throw new Meteor.Error('Не удалось начать исследование');
     }
-
-    cardList.forEach(card => Game.Cards.activate(card, user));
-
-    Game.Cards.spend(cardsObject);
 
     Game.Resources.spend(price);
 

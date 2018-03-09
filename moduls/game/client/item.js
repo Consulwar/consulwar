@@ -1,4 +1,7 @@
-import '/imports/client/ui/Effect/List/EffectList';
+import { Meteor } from 'meteor/meteor';
+import { ReactiveVar } from 'meteor/reactive-var';
+import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/blocks/Effect/List/EffectList';
 
 initItemClient = function() {
 'use strict';

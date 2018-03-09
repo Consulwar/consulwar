@@ -1,0 +1,33 @@
+<svg width="57" height="57" viewBox="0 0 57 57" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>&#208;&#158;&#208;&#177;&#209;&#139;&#209;&#135;&#208;&#189;&#208;&#190;&#208;&#181;</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(138 1912)">
+<g id="&#208;&#158;&#208;&#177;&#209;&#139;&#209;&#135;&#208;&#189;&#208;&#190;&#208;&#181;">
+<g id="Ellipse">
+<use xlink:href="#path0_fill" transform="translate(-138 -1912)"/>
+<mask id="mask0_outline_ins">
+<use xlink:href="#path0_fill" fill="white" transform="translate(-138 -1912)"/>
+</mask>
+<g mask="url(#mask0_outline_ins)">
+<use xlink:href="#path1_stroke_2x" transform="translate(-138 -1912)" fill="url(#paint1_linear)"/>
+</g>
+</g>
+<g id="&#208;&#154;&#208;&#176;&#209;&#128;&#209;&#130;&#208;&#190;&#209;&#135;&#208;&#186;&#208;&#176;">
+<g id="Union">
+<use xlink:href="#path2_fill" transform="translate(-121 -1900)" fill="#56F2E9"/>
+<use xlink:href="#path3_fill" transform="translate(-121 -1900)" fill="#56F2E9"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint1_linear" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(3.49024e-15 57 -57 3.49024e-15 57 -3.49024e-15)">
+<stop offset="0" stop-color="#56F2B0"/>
+<stop offset="1" stop-color="#1F8057"/>
+</linearGradient>
+<path id="path0_fill" d="M 57 28.5C 57 44.2401 44.2401 57 28.5 57C 12.7599 57 0 44.2401 0 28.5C 0 12.7599 12.7599 0 28.5 0C 44.2401 0 57 12.7599 57 28.5Z"/>
+<path id="path1_stroke_2x" d="M 55 28.5C 55 43.1355 43.1355 55 28.5 55L 28.5 59C 45.3447 59 59 45.3447 59 28.5L 55 28.5ZM 28.5 55C 13.8645 55 2 43.1355 2 28.5L -2 28.5C -2 45.3447 11.6553 59 28.5 59L 28.5 55ZM 2 28.5C 2 13.8645 13.8645 2 28.5 2L 28.5 -2C 11.6553 -2 -2 11.6553 -2 28.5L 2 28.5ZM 28.5 2C 43.1355 2 55 13.8645 55 28.5L 59 28.5C 59 11.6553 45.3447 -2 28.5 -2L 28.5 2Z"/>
+<path id="path2_fill" d="M 13.1839 14.1824L 11.5 9L 9.81615 14.1824L 4.36707 14.1824L 8.77547 17.3853L 7.09161 22.5676L 11.5 19.3647L 15.9084 22.5676L 14.2245 17.3853L 18.6329 14.1824L 13.1839 14.1824Z"/>
+<path id="path3_fill" fill-rule="evenodd" d="M 0 2C 0 0.895386 0.895432 0 2 0L 21 0C 22.1046 0 23 0.895386 23 2L 23 30C 23 31.1046 22.1046 32 21 32L 2 32C 0.895432 32 0 31.1046 0 30L 0 2ZM 2 1L 21 1C 21.5523 1 22 1.44775 22 2L 22 30C 22 30.5522 21.5523 31 21 31L 2 31C 1.44772 31 1 30.5522 1 30L 1 2C 1 1.44775 1.44772 1 2 1Z"/>
+</defs>
+</svg>

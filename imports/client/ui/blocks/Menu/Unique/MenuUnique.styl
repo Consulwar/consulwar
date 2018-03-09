@@ -1,0 +1,26 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/colors'
+
+.cw--MenuUnique
+  &__itemLevel
+    position absolute
+    display flex
+    align-items center
+    justify-content center
+    box-sizing border-box
+    top 2px
+    left 2px
+    width 33px
+    height 33px
+    border-radius 50%
+    font-size 18px
+    color $cw--color_white
+    background-color alpha($cw--color_black, 0.8)
+
+    &_progress
+      top 6px
+      left 3px
+      height 22px
+      width auto
+      padding 0 4px
+      border-radius 0

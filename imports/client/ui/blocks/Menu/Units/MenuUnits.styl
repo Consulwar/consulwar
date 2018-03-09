@@ -1,0 +1,23 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/colors'
+
+.cw--MenuUnits
+  &__itemCount
+    position absolute
+    display flex
+    align-items center
+    justify-content center
+    box-sizing border-box
+    top 6px
+    left 0px
+    padding 5px
+    font-size 18px
+    text-align right
+    color $cw--color_white
+    background linear-gradient(to right, $cw--color_black 0%, alpha($cw--color_black, 0) 60%)
+
+    &_progress
+      top 6px
+      left 0px
+      width auto
+      border-radius 0

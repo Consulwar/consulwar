@@ -1,14 +1,27 @@
+import artifacts from '/imports/content/Resource/Artifact/client';
+import MenuArtifacts from '/imports/client/ui/blocks/Menu/Artifacts/MenuArtifacts';
+
 initResourcesClientArtefacts = function() {
 'use strict';
 
 Game.Resources.showArtefactsPage = function() {
-  var item = this.params.item;
+  var item = Game.Artefacts.items[this.params.item];
+  
+  this.render(
+    (new MenuArtifacts({
+      hash: {
+        items: artifacts,
+        selected: item,
+      },
+    })).renderComponent(),
+    { to: 'bottomMenu' }
+  );
 
   this.render('item_artefact', {
     to: 'content',
     data: {
       subgroup: 'artefacts',
-      item: Game.Artefacts.items[item]
+      item,
     }
   });
 };

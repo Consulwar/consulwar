@@ -1,0 +1,55 @@
+<template name="UnitCharacteristics">
+  {{#if unit.characteristics}}
+    <div class="cw--UnitCharacterisctics">
+      {{#if addTitle}}
+        <div class="cw--UnitCharacterisctics__head">
+          {{unit.title}}
+        </div>
+      {{/if}}
+        <div class="cw--UnitCharacterisctics__title">
+          Характеристики:
+        </div>
+        <div class="cw--UnitCharacterisctics__characteristics">
+          <div
+            class="cw--UnitCharacterisctics__damage"
+            onMouseOver={{showWeaponTooltip}}
+            data-type="weapon"
+            data-tooltip="true"
+            data-tooltip-direction="w"
+          >
+            {{formatNumberWithISO (div (sum unit.characteristics.weapon.damage.min unit.characteristics.weapon.damage.max) 2) 3}}
+          </div>
+          <div
+            class="cw--UnitCharacterisctics__armor"
+            onMouseOver={{showWeaponTooltip}}
+            data-type="life"
+            data-tooltip="true"
+            data-tooltip-direction="w"
+          >
+            {{formatNumberWithISO unit.characteristics.health.armor 3}}
+          </div>
+          <div class="cw--UnitCharacterisctics__damage_signature">
+            {{formatNumberWithISO unit.characteristics.weapon.signature 3}}
+          </div>
+          <div class="cw--UnitCharacterisctics__armor_signature">
+            {{formatNumberWithISO unit.characteristics.health.signature 3}}
+          </div>
+        </div>
+      {{#if unit.getTargets}}
+        <div class="cw--UnitCharacterisctics__title">Приоритеты атаки:</div>
+        <div class="cw--UnitCharacterisctics__targets">
+          {{#each unit.getTargets}}
+              <a
+                onMouseOver={{showUnitTooltip this}}
+                data-tooltip="true"
+                data-tooltip-direction="s"
+                class="cw--UnitCharacterisctics__target"
+                style="background-image:url({{this.icon}})"
+                href="{{this.url}}"
+              ></a>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+</template>

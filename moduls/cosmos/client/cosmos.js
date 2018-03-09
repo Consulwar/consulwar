@@ -130,6 +130,7 @@ var showNotificationFromSpaceEvent = function(event) {
 Game.Cosmos.showPage = function() {
   // clear content
   this.render('empty', { to: 'content' });
+  this.render('empty', { to: 'bottomMenu' });
   // show permanent content div
   $('.permanent').show();
   // render cosmos map once

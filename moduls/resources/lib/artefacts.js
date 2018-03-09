@@ -54,6 +54,12 @@ game.Artefact = function(options) {
       : 0;
   };
 
+  this.getCurrentCount = this.amount;
+
+  this.has = ({ count = 1, ...options } = {}) => {
+    return this.getCurrentCount(options) >= count;
+  }
+
   if (Game.Artefacts.items[options.engName]) {
     throw new Meteor.Error('Ошибка в контенте', 'Дублируется артефакт ' + options.engName);
   }
@@ -69,7 +75,7 @@ game.Artefact = function(options) {
 
   this.path = '/img/game/artefact/';
 
-  this.icon = `${this.path}icon.png`;
+  this.icon = `${this.path}${this.group}/i/${this.engName}.png`;
   this.card = `${this.path}${this.group}/${this.engName}/item.jpg`;
   this.overlayOwn = this.card;
 
@@ -79,24 +85,6 @@ game.Artefact = function(options) {
     };
     return Router.routes.artefacts.path(options);
   };
-  
-  this.getOverlayOwn = function() {
-    return `/img/game/${this.type}/${this.group}/${this.engName}/item.jpg`;
-  };
-
-  this.icon = function() {
-    return '/img/game/artefact/' + this.group + '/i/' + this.engName + '.png';
-  };
-
-  this.getIcon = this.icon;
-
-  this.image = function() {
-    return '/img/game/artefact/' + this.group + '/' + this.engName + '/item.jpg';
-  };
-
-  this.getImage = this.image;
-
-  this.card = this.image;
 
   Game.Artefacts.items[options.engName] = this;
 

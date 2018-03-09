@@ -25,6 +25,7 @@ Game.Rating.showPage = function() {
   if (!selectedUser) {
     this.render('loading', { to: 'content' });
   }
+  this.render('empty', { to: 'bottomMenu' });
   var countPerPage = Game.Statistic.COUNT_PER_PAGE;
   var user = Meteor.user(); 
   var self = this;

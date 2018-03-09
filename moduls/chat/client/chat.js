@@ -151,6 +151,7 @@ Game.Chat.Room.Collection.find({}).observeChanges({
 
 Game.Chat.showPage = function() {
    this.render('empty', { to: 'content' });
+   this.render('empty', { to: 'bottomMenu' });
    if (!currentRoomName) {
       this.render('chat', { to: 'permanent_chat' });
    }

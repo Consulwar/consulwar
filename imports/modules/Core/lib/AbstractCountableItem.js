@@ -29,7 +29,7 @@ class AbstractCountableItem extends AbstractItem {
     return _.mapObject(this.basePrice, value => value * count);
   }
 
-  getPrice(count = 1, cards = []) {
+  getPrice(count = 1) {
     const basePrice = this.getBasePrice(count);
 
     const curPrice = {};
@@ -44,18 +44,14 @@ class AbstractCountableItem extends AbstractItem {
 
     const price = this.applyPriceEffects({
       price: curPrice,
-      cards,
     });
 
     return price;
   }
 
-  canBuild(
-    count,
-    cards,
-  ) {
+  canBuild(count = 1) {
     const hasResources = Game.Resources.has({
-      resources: this.getPrice(count, cards),
+      resources: this.getPrice(count),
     });
     const hasTechnologies = this.meetRequirements();
     return hasResources && hasTechnologies && !this.isQueueBusy();

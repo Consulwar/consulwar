@@ -18,6 +18,7 @@ class InputNumber extends BlazeComponent {
       isShowZero = true,
       min = 1,
       max,
+      placeholder,
     } = hash;
 
     check(value, ReactiveVar);
@@ -27,6 +28,7 @@ class InputNumber extends BlazeComponent {
     this.max = max;
     this.isShowZero = isShowZero;
     this.class = hash.class;
+    this.placeholder = placeholder;
   }
 
   onInput({ currentTarget }) {

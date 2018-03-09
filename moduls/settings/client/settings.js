@@ -7,6 +7,7 @@ initSettingsLib();
 
 Game.Settings.showPage = function() {
   this.render('settings', { to: 'content' });
+  this.render('empty', { to: 'bottomMenu' });
 };
 
 Game.Settings.invertOption = function({

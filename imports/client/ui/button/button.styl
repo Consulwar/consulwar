@@ -1,15 +1,21 @@
 @import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
 
 .cw--button
+  cw--fontFamily_normal()
+  font-size $cw--fontSize_l
+  font-weight normal
+  text-decoration none
   display flex
   align-items center
   justify-content center
-  font-size 18px
+  cursor pointer
 
   &_type
     &_primary
       border 0
       padding 12px
+      color $cw--color_black
       outline 2px solid $cw--color_black
       outline-offset -5px
 
@@ -64,21 +70,53 @@
     filter brightness(1.2)
 
   &_close
-    border 0
-    display block
-    width 22px
-    height 22px
-    padding 7px
-    background-image url(/img/game/close_new.png)
-    background-repeat no-repeat
-    background-position center center
-    -webkit-filter grayscale(0.5)
-    filter grayscale(0.5)
     cursor pointer
-    
+    width 25px
+    height 25px
+    border solid 1px #D65F52
+    border-image linear-gradient(0deg, #812920, #D65F52) 1
+    background-image url(/img/close.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+    box-sizing border-box
     &:hover
-      -webkit-filter grayscale(0)
-      filter grayscale(0)
+    &:active
+      background-color $cw--color_honor
+      border none
+      background-image url(/img/close_black.svg)
+
+  &_description
+    cursor pointer
+    width 25px
+    height 25px
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+    box-sizing border-box
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
+  &_max
+    display inline-block
+    width 55px
+    height 25px
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/arrow_max.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+    box-sizing border-box
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
 
   &_flat
     color $cw--color_metal
@@ -103,3 +141,7 @@
       &:hover
         color #D5F075
         border-image linear-gradient(0deg, #82992E, #D7F07D) 1
+
+  &:disabled
+    filter grayscale(100%) brightness(60%)
+    cursor not-allowed

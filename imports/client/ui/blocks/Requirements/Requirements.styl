@@ -1,0 +1,50 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--Requirements
+  cw--fontFamily_cond()
+  padding 10px
+
+  &__head
+    font-size $cw--fontSize_m
+    font-weight bold
+    color $cw--color_metal
+    padding-bottom 5px
+
+  &__item
+    display block
+    min-height 64px
+    padding 5px 10px
+    margin 0 -10px
+    box-sizing border-box
+    border solid 1px transparent
+    text-decoration none
+    font-weight bold
+    font-size $cw--fontSize_s
+    &:hover
+      background-color alpha($cw--color_metal, .15)
+      border solid 1px $cw--color_metal
+      border-image linear-gradient(0deg, #2A6C91, #56BBF3) 1
+
+  &__itemTitle
+    display block
+    &_research
+      color $cw--color_metal
+    &_building
+      color $cw--color_human
+
+  &__levelHas
+  &__levelNeed
+    display block
+
+  &__currentLevel
+    color $cw--color_credit
+
+  &__currentLevel_need
+    color $cw--color_honor
+
+  &__item
+    background-size 50px
+    background-repeat no-repeat
+    background-position 10px 6px
+    padding-left 70px

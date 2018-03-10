@@ -1,5 +1,5 @@
 <template name="ResourcePrice">
-  <div class="cw--ResourcePrice {{class}}">
+  <div class="cw--ResourcePrice {{className}}">
     {{#if time}}
       <div
         onMouseOver={{showTooltip 'time' price}}
@@ -26,7 +26,7 @@
             cw--Resource_icon
           "
         >
-          {{formatNumberWithISO resource.value 3}}
+          {{formatNumberWithISO resource.value 4}}
         </div>
       {{else}}
         <a
@@ -39,11 +39,13 @@
           "
           href={{resource.obj.url}}
         >
-          {{formatNumberWithISO
-            (availableResources resource.obj.engName resource.value) 3
-          }}
-           / 
-          {{formatNumberWithISO resource.value 3}}
+          {{#if isShowDiff}}
+            {{formatNumberWithISO
+              (availableResources resource.obj.engName resource.value) 4
+            }}
+            / 
+          {{/if}}
+          {{formatNumberWithISO resource.value 4}}
         </a>
       {{/if}}
     {{/each}}
@@ -60,30 +62,12 @@
         data-tooltip-direction="s"
         onMouseOver={{showArtifactTooltip}}
       >
-        {{availableArtifacts}}
-          / 
+        {{#if isShowDiff}}
+          {{availableArtifacts}}
+            / 
+        {{/if}}
         {{artifactsCount}}
       </div>
     {{/if}}
-
-    {{!-- {{#each resource in getResource)}}
-      {{#if eq resource.obj.type 'artefact'}}
-        <div
-          onMouseOver={{showTooltip resource.obj.engName resource.price}}
-          style="background-image: url({{resource.obj.icon}})"
-          class="
-            {{resource.obj.color}}
-            cw--ResourcePrice__item
-            cw--Artefact_icon
-          "
-          onClick={{showCredits}}
-          data-id="{{resource.obj.engName}}"
-        >
-          {{formatNumberWithISO resource.availableResources 3}} / {{formatNumberWithISO resource.amount 3}}
-        </div>
-      {{else}}
-
-      {{/if}}
-    {{/each}} --}}
   </div>
 </template>

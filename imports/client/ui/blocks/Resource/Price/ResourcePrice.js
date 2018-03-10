@@ -2,13 +2,12 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { $ } from 'meteor/jquery';
 import { _ } from 'lodash';
-import { Router } from 'meteor/iron:router';
 import { priceTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
+import resourceItems from '/imports/content/Resource/client';
 import '/imports/client/ui/blocks/Resource/Single/ResourceSingle';
 import '/imports/client/ui/blocks/Resource/Artefact.styl';
 import '/imports/client/ui/blocks/Resource/Resource.styl';
-import resourceItems from '/imports/content/Resource/client';
 import './ResourcePrice.html';
 import './ResourcePrice.styl';
 
@@ -22,15 +21,21 @@ class ResourcePrice extends BlazeComponent {
       time = null,
       artifacts = [],
       resources = [],
+      isShowDiff = true,
       artifactsToResources = false,
+      className,
     },
   }) {
     super();
     this.price = price;
 
+    this.className = className;
+
     this.time = time;
     this.artifacts = artifacts;
     this.resources = resources;
+
+    this.isShowDiff = isShowDiff;
 
     _.toPairs(price).forEach(([id, value]) => {
       if (!value) {

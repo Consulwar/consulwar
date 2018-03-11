@@ -473,7 +473,7 @@ const priceTooltip = function (price, target) {
 };
 UI.registerHelper('priceTooltip', priceTooltip);
 
-UI.registerHelper('incomeTooltip', function(effects, target) {
+const incomeTooltip = function(effects, target) {
   var income = {base: {}};
   income.base[target] = 0;
   return getEffectsTooltip({
@@ -484,8 +484,8 @@ UI.registerHelper('incomeTooltip', function(effects, target) {
     side: 's',
     isShowCurrent: true,
   });
-  // return getEffectsTooltip(income, effects, target, false, 's', true);
-});
+}
+UI.registerHelper('incomeTooltip', incomeTooltip);
 
 const militaryTooltip = function(characteristics, target) {
   return getEffectsTooltip({
@@ -534,5 +534,6 @@ Template.tooltipTable.helpers({
 
 export {
   priceTooltip,
+  incomeTooltip,
   militaryTooltip,
 };

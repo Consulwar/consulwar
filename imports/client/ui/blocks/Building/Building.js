@@ -106,7 +106,10 @@ class Building extends BlazeComponent {
   setMaximum() {
     if (Game.hasPremium()) {
       let currentLevel = this.building.getCurrentLevel() + 1;
-      while ((currentLevel + 1) <= this.building.maxLevel && this.building.canBuild(currentLevel + 1)) {
+      while (
+        (currentLevel + 1) <= this.building.maxLevel
+        && this.building.canBuild(currentLevel + 1)
+      ) {
         currentLevel += 1;
       }
       this.level.set(currentLevel);

@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
-import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
 import './SpeedUp.html';
 import './SpeedUp.styl';

@@ -1,6 +1,7 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
 import { $ } from 'meteor/jquery';
+import { incomeTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
 import resourceItems from '/imports/content/Resource/client';
 import './ResourceCurrent.html';
@@ -37,7 +38,7 @@ class ResourceCurrent extends BlazeComponent {
 
   showResourceTooltip(event) {
     const target = $(event.currentTarget);
-    const tooltip = Blaze._globalHelpers.incomeTooltip(
+    const tooltip = incomeTooltip(
       Game.Resources.getIncome().effects,
       target.attr('data-type'),
     );

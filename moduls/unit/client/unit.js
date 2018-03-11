@@ -16,8 +16,10 @@ initUnitClient = function() {
 
 initUnitLib();
 initSquadLib();
+initWrecksLib();
 
 Meteor.subscribe('squad');
+Meteor.subscribe('wrecks');
 
 Game.Unit.showPage = function() {
   let item;
@@ -108,7 +110,4 @@ Game.Unit.showReptilePage = function() {
     this.render('empty', {to: 'content'});
   }
 };
-
-initUnitClientWrecks();
-
 };

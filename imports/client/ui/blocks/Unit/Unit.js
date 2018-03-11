@@ -6,6 +6,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
 import Maximum from '/imports/client/ui/blocks/Maximum/Maximum';
 import SpeedUp from '/imports/client/ui/blocks/SpeedUp/SpeedUp';
+import UnitRepair from '/imports/client/ui/blocks/Unit/Repair/UnitRepair';
 import '/imports/client/ui/blocks/Effect/Effect';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Requirements/Requirements';
@@ -68,7 +69,13 @@ class Unit extends BlazeComponent {
   }
 
   Repair() {
-    Game.Wrecks.showPopup(this.unit);
+    Game.Popup.show({
+      template: (new UnitRepair({
+        hash: {
+          unit: this.unit,
+        },
+      })).renderComponent(),
+    });
   }
 
   toggleDescription() {

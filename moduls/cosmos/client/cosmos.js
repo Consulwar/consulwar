@@ -1179,14 +1179,95 @@ Template.cosmosShipInfo.events({
 // ----------------------------------------------------------------------------
 var activeColonyId = new ReactiveVar(null);
 
-var resetColonyId = function() {
+var getSourcePlanets = function() {
+  const maxCount = Game.Planets.getMaxColoniesCount();
+  const colonies = Game.Planets.getColonies();
+  const planetsWithFleet = Game.Planets.getPlanetsWithArmy();
+  const result = [...colonies];
+
+  const ids = {};
+  colonies.forEach((colony) => {
+    ids[colony._id] = true;
+  });
+
+  // sort colonies by name, but home planet always first
+  result.sort(function(a, b) {
+    if (a.isHome) {
+      return -1;
+    }
+    if (b.isHome) {
+      return 1;
+    }
+    return (a.name < b.name) ? -1 : 1;
+  });
+
+  for (let i = result.length; i < maxCount; i += 1) {
+    result.push({
+      isEmpty: true,
+      size: Game.Random.interval(2, 5),
+      type: _.sample(_.toArray(Game.Planets.types)).engName,
+    });
+  }
+
+  const possibleBuyPlanets = Game.Planets.MAX_EXTRA_COLONIES - Game.Planets.getExtraColoniesCount();
+  let buyPlanetNumber = 0;
+  const purchasedPlanets = Game.Planets.getExtraColoniesCount();
+  let requiredRank = Game.User.getLevel();
+
+  for (let i = result.length; i < 20; i += 1) {
+    if (buyPlanetNumber >= possibleBuyPlanets) {
+      requiredRank += 1;
+    }
+    result.push({
+      notAvaliable: true,
+      canBuy: buyPlanetNumber < possibleBuyPlanets,
+      requiredRank: buyPlanetNumber >= possibleBuyPlanets
+        ? requiredRank
+        : null,
+      price: buyPlanetNumber < possibleBuyPlanets
+        ? Game.Planets.getExtraColonyPrice(
+          purchasedPlanets + buyPlanetNumber,
+        )
+        : null,
+      size: Game.Random.interval(2, 5),
+      type: _.sample(_.toArray(Game.Planets.types)).engName
+    });
+    buyPlanetNumber += 1;
+  }
+
+  planetsWithFleet.sort(function(a, b) {
+    return (a.name < b.name) ? -1 : 1;
+  });
+
+  planetsWithFleet.forEach((planet) => {
+    if (!ids[planet._id]) {
+      result.push(planet);
+    }
+  });
+
+  return result;
+}
+
+var resetColonyId = function(targetPlanetId) {
+  const sourcePlanetsWithArmy = getSourcePlanets().filter(planet => planet.armyUsername === Meteor.user().username);
+
+  if (sourcePlanetsWithArmy.length > 1) {
+    for (let i = 0; i < sourcePlanetsWithArmy.length; i++) {
+      // Change selected colony if it is selected
+      if (sourcePlanetsWithArmy[i]._id === targetPlanetId && targetPlanetId === activeColonyId.get()) {
+        activeColonyId.set( sourcePlanetsWithArmy[i > 0 ? i - 1 : i + 1]._id );
+        break;
+      }
+    }
+  }
+
   if(!Game.Planets.getFleetUnits(activeColonyId.get())) {
     activeColonyId.set(Game.Planets.getBase()._id);
   }
 };
 
 Game.Cosmos.showAttackMenu = function(id) {
-  resetColonyId();
+  resetColonyId(id);
 
   Router.current().render('cosmosAttackMenu', {
     to: 'cosmosAttackMenu',
@@ -1442,80 +1523,7 @@ Template.cosmosAttackMenu.helpers({
   isAllSelected,
 
   colonies: function() {
-    const maxCount = Game.Planets.getMaxColoniesCount();
-    const colonies = Game.Planets.getColonies();
-    const planetsWithFleet = Game.Planets.getPlanetsWithArmy();
-    const result = [...colonies];
-
-    const ids = {};
-    colonies.forEach((colony) => {
-      ids[colony._id] = true;
-    });
-
-    // sort colonies by name, but home planet always first
-    result.sort(function(a, b) {
-      if (a.isHome) {
-        return -1;
-      }
-      if (b.isHome) {
-        return 1;
-      }
-      return (a.name < b.name) ? -1 : 1;
-    });
-
-    if (result.length > 1) {
-      for (let i = 0; i < result.length; i++) {
-        // Change selected colony if it is selected
-        if (result[i]._id === this.id && this.id === this.activeColonyId.get()) {
-          this.activeColonyId.set( result[i > 0 ? i - 1 : i + 1]._id );
-          break;
-        }
-      }
-    }
-
-    for (let i = result.length; i < maxCount; i += 1) {
-      result.push({
-        isEmpty: true,
-        size: Game.Random.interval(2, 5),
-        type: _.sample(_.toArray(Game.Planets.types)).engName,
-      });
-    }
-
-    const possibleBuyPlanets = Game.Planets.MAX_EXTRA_COLONIES - Game.Planets.getExtraColoniesCount();
-    let buyPlanetNumber = 0;
-    const purchasedPlanets = Game.Planets.getExtraColoniesCount();
-    let requiredRank = Game.User.getLevel();
-
-    for (let i = result.length; i < 20; i += 1) {
-      if (buyPlanetNumber >= possibleBuyPlanets) {
-        requiredRank += 1;
-      }
-      result.push({
-        notAvaliable: true,
-        canBuy: buyPlanetNumber < possibleBuyPlanets,
-        requiredRank: buyPlanetNumber >= possibleBuyPlanets
-          ? requiredRank
-          : null,
-        price: buyPlanetNumber < possibleBuyPlanets
-          ? Game.Planets.getExtraColonyPrice(
-            purchasedPlanets + buyPlanetNumber,
-          )
-          : null,
-        size: Game.Random.interval(2, 5),
-        type: _.sample(_.toArray(Game.Planets.types)).engName
-      });
-      buyPlanetNumber += 1;
-    }
-
-    planetsWithFleet.sort(function(a, b) {
-      return (a.name < b.name) ? -1 : 1;
-    });
-
-    planetsWithFleet.forEach((planet) => {
-      if (!ids[planet._id]) {
-        result.push(planet);
-      }
-    });
+    const result = getSourcePlanets();
 
     for (let i = 0; i < result.length; i += 1) {
       result[i].timeAttack = timeAttack(result[i]._id);

@@ -54,25 +54,6 @@ Tracker.autorun(function(){
   }
 });
 
-Template.current_resources.events({
-  'click .resources .credits': function(e, t) {
-    Game.Payment.showWindow();
-  },
-  'mouseover .resources > div:not(.artefacts)': function(e, t) {
-    let target = $(e.currentTarget);
-    let tooltip = Blaze._globalHelpers.incomeTooltip(
-      Game.Resources.getIncome().effects, 
-      target.attr('class')
-    )
-    target.attr('data-tooltip', tooltip['data-tooltip']);
-  }
-});
-
-Template.current_resources.helpers({
-  resources: function() { return Game.Resources.currentValue.get(); }
-});
-
-
 // TODO: Удалить (events & helpers для цены постройки)
 Template.item_price.events({
   'click .resources .credits': function(e, t) {

@@ -1,0 +1,51 @@
+<template name="ResourceCurrent">
+  <div class="cw--ResourceCurrent">
+    {{#each resource in getResources}}
+      {{#if eq resource.obj.id 'Resource/Base/Credit'}}
+        <div
+          onClick={{showCredits}}
+          onMouseOver={{showResourceTooltip}}
+          class="
+            {{resource.obj.color}}
+            cw--ResourceCurrent__resource
+            cw--ResourceCurrent__resource_credits
+          "
+          data-type={{resource.obj.engName}}
+        >
+          <img
+            class="
+              cw--ResourceCurrent__icon
+              cw--ResourceCurrent__icon_credits
+            "
+            src={{resource.obj.icon}}
+            alt={{resource.obj.title}}
+          />
+          {{formatNumberWithISO resource.count 5}}
+        </div>
+      {{else}}
+        <div
+          class="
+            {{resource.obj.color}}
+            cw--ResourceCurrent__resource
+          "
+          onMouseOver={{showResourceTooltip}}
+          data-type={{resource.obj.engName}}
+        >
+          <img
+            class="cw--ResourceCurrent__icon"
+            src={{resource.obj.icon}}
+            alt={{resource.obj.title}}
+          />
+          {{formatNumberWithISO resource.count 5}}
+        </div>
+      {{/if}}
+    {{/each}}
+    <a
+      class="cw--ResourceCurrent__artifacts"
+      data-tooltip="Артефакты"
+      data-tooltip-direction="s"
+      href={{pathFor route='artefacts' item='silver_plasmoid'}}
+    >
+    </a>
+  </div>
+</template>

@@ -69,23 +69,8 @@ UI.registerHelper('currentRouteName', function() {
   return Router.current().route.name;
 });
 
-UI.registerHelper('premiumTitle', function() {
-  return (Game.hasPremium()
-    ? {title: 'Только для премиум аккаунтов'}
-    : ''
-  );
-});
-
 UI.registerHelper('hasPremium', Game.hasPremium);
 
-// TODO: Проверить где используется и удалить
-
-UI.registerHelper('notPremiumDisabled', function() {
-  return (Game.hasPremium()
-    ? ''
-    : {disabled: true}
-  );
-});
 
 UI.registerHelper('battleCountNumber', function(name) {
   var count = game.Battle.countNumber[name];

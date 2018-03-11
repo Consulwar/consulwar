@@ -46,6 +46,7 @@ class Unit extends BlazeComponent {
   }
 
   onRendered() {
+    super.onRendered();
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 

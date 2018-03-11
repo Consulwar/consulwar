@@ -4,6 +4,7 @@
       <div class="cw--Unit__headerLevel">
         {{#if unit.getTotalCount}}
           <span class="cw--Unit__levelCount">
+            {{formatNumber unit.getTotalCount}}-
             {{formatNumber unit.getTotalCount}}
           </span>
           {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
@@ -14,18 +15,15 @@
       <div class="cw--Unit__headerTitle">
         {{unit.title}}
       </div>
-      <!-- quest link here -->
       <div class="cw--Unit__headerControls">
-        {{#if not submenu}}
-          <span
-            onClick={{toggleDescription}}
-            class="
-              cw--Unit__headerIcon
-              cw--button_description
-              {{#if options.hideDescription}}cw--button_notActive{{/if}}
-            "
-          ></span>
-        {{/if}}
+        <span
+          onClick={{toggleDescription}}
+          class="
+            cw--Unit__headerIcon
+            cw--button_description
+            {{#if options.hideDescription}}cw--button_notActive{{/if}}
+          "
+        ></span>
         <a href="{{backToGroupLink}}" class="
           cw--Unit__headerIcon
           cw--button_close
@@ -33,12 +31,19 @@
         ></a>
       </div>
     </div>
-    <div class="cw--Unit__info
-      {{#if options.hideDescription}}cw--Unit__info_hidden{{/if}}
-    ">
+    <div
+      class="
+        cw--Unit__info
+        {{#if options.hideDescription}}cw--Unit__info_hidden{{/if}}
+      "
+    >
       <div class="cw--Unit__infoWrap">
         <div class="cw--Unit__mainPic">
-          <img class="cw--Unit__mainPicImage" src="{{unit.icon}}" />
+          <img
+            class="cw--Unit__mainPicImage"
+            src="{{unit.icon}}"
+            alt="{{unit.title}}"
+          />
         </div>
         <div class="cw--Unit__description scrollbar-inner">
           {{unit.description}}
@@ -63,14 +68,11 @@
                 <div class="cw--Unit__actionStatus">
                   Идёт строительство
                 </div>
-                <button class="
+                <button
+                  class="
                     cw--button
                     cw--button_type_primary
-                    {{#unless unit.getQueue}}
-                      cw--button_type_primary_orange
-                    {{else}}
-                      cw--button_type_primary_green
-                    {{/unless}}
+                    cw--button_type_primary_green
                   "
                   onClick={{showSpeedUp}}
                   disabled={{lt timeLeft.get 5}}
@@ -84,10 +86,13 @@
               {{else}}
                 <div class="cw--Unit__actionAmount">
                   <button 
-                    class="cw--button_max cw--Unit__actionSetMax"
+                    class="
+                      cw--button
+                      cw--button_max
+                      cw--Unit__actionSetMax
+                    "
                     data-tooltip="Ввести максимум"
                     data-tooltip-direction="s"
-                    {{premiumTitle}}
                     onClick={{setMaximum}}
                   ></button>
                   {{> InputNumber args
@@ -97,14 +102,11 @@
                     class="cw--Unit__actionAmountCount"
                   }}
                 </div>
-                <button class="
+                <button
+                  class="
                     cw--button
                     cw--button_type_primary
-                    {{#unless unit.getQueue}}
-                      cw--button_type_primary_orange
-                    {{else}}
-                      cw--button_type_primary_green
-                    {{/unless}}
+                    cw--button_type_primary_orange
                   "
                   onClick={{Build}}
                   disabled={{not unit.canBuild}}
@@ -122,7 +124,8 @@
                     из {{formatNumber unit.maxCount}}
                   </div>
                 {{/if}}
-                <button class="
+                <button
+                  class="
                     cw--button
                     cw--button_type_primary
                     cw--button_type_primary_blue

@@ -2,15 +2,16 @@
   <div class="cw--Unit">
     <div class="cw--Unit__header">
       <div class="cw--Unit__headerLevel">
-        {{#if unit.getTotalCount}}
-          <span class="cw--Unit__levelCount">
-            {{formatNumber unit.getTotalCount}}-
-            {{formatNumber unit.getTotalCount}}
-          </span>
-          {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
-        {{else}}
-          Не построено
-        {{/if}}
+        {{#unless eq unit.type 'reptileUnit'}}
+          {{#if unit.getTotalCount}}
+            <span class="cw--Unit__levelCount">
+              {{formatNumber unit.getCount}}
+            </span>
+            {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
+          {{else}}
+            Не построено
+          {{/if}}
+        {{/unless}}
       </div>
       <div class="cw--Unit__headerTitle">
         {{unit.title}}

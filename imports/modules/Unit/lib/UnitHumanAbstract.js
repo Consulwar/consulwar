@@ -32,7 +32,7 @@ class UnitHumanAbstract extends UnitAbstract {
   getCount({
     from = (this.group === 'Ground' ? 'hangar' : 'space'),
     ...options
-  }) {
+  } = {}) {
     let record;
     if (from === 'hangar') {
       record = Game.Unit.getHangarArmy(options);

@@ -26,17 +26,13 @@ Game.Resources.showArtefactsPage = function() {
   });
 };
 
-var getPlanetsByArtefact = function(artefactId) {
-  var basePlanet = Game.Planets.getBase();
-  var planets = Game.Planets.getByArtefact(artefactId);
-
-  for (let i = 0; i < planets.length; i++) {
-    planets[i].distance = Game.Planets.calcDistance(planets[i], basePlanet);
-    planets[i].chance = planets[i].artefacts[artefactId];
-  }
-
-  return planets;
-};
+const calculatePlanetDistance = function(planet) {
+  const basePlanet = Game.Planets.getBase();
+  planet.distance = Game.Planets.calcDistance(planet, basePlanet);
+}
+const fillPlanetChance = function(artefactId, planet) {
+  planet.chance = planet.artefacts[artefactId];
+}
 
 Template.item_artefact.onRendered(function() {
   $('.content .scrollbar-inner').perfectScrollbar();
@@ -50,23 +46,28 @@ Template.item_artefact.helpers({
   },
 
   topPlanets: function(limit = 4) {
-    return _.sortBy(getPlanetsByArtefact(this.item.engName), function(planet) {
+    const planets = Game.Planets.getByArtefact(this.item.engName);
+    planets.forEach(fillPlanetChance.bind(this, this.item.engName));
+    planets.forEach(calculatePlanetDistance)
+    return _(planets).sortBy(function(planet) {
       return planet.chance;
-    }).reverse().splice(0, limit);
+    })
+    .reverse()
+    .splice(0, limit);
   },
 
   nearestPlanets: function(limit = 4) {
-    return _.sortBy(getPlanetsByArtefact(this.item.engName), function(planet) {
+    const planets = Game.Planets.getByArtefact(this.item.engName);
+    planets.forEach(fillPlanetChance.bind(this, this.item.engName));
+    planets.forEach(calculatePlanetDistance);
+    return _(planets).sortBy(function(planet) {
       return planet.distance;
     }).splice(0, limit);
   },
 
   userPlanets: function() {
-    const user = Meteor.user();
-
-    var planets = _.filter(getPlanetsByArtefact(this.item.engName), function(planet) {
-      return planet.minerUsername === user.username;
-    });
+    const planets = Game.Planets.getByArtefact(this.item.engName, Meteor.user().username);
+    planets.forEach(fillPlanetChance.bind(this, this.item.engName));
 
     return planets.length && {
       planets: planets.length,

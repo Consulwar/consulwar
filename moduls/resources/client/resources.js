@@ -55,6 +55,7 @@ Tracker.autorun(function(){
 });
 
 // TODO: Удалить (events & helpers для цены постройки)
+// Используются в наградах до переделки не удалять
 Template.item_price.events({
   'click .resources .credits': function(e, t) {
     Game.Payment.showWindow();

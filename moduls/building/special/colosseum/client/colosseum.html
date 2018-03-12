@@ -25,7 +25,7 @@
           <time>{{formatSeconds timeCooldown}}</time>
         </div>
       {{else}}
-        {{> item_price price=selected.price}}
+        {{> ResourcePrice args price=selected.price}}
         <div class="result">
           <div class="name">{{selected.name}}</div>
           <div class="description">{{selected.description}}</div>
@@ -42,7 +42,7 @@
 <template name="colosseumReward">
   <div class="modal {{#if artefact}}artefact{{else}}reward{{/if}}">
     <h2>Удача!</h2>
-    {{> item_price price=reward}}
+    {{> ResourcePrice args price=reward isShowDiff=false}}
     <span class="take">Награда</span>
   </div>
 </template>

@@ -6,7 +6,6 @@ import { priceTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
 import resourceItems from '/imports/content/Resource/client';
 import '/imports/client/ui/blocks/Resource/Single/ResourceSingle';
-import '/imports/client/ui/blocks/Resource/Artefact.styl';
 import '/imports/client/ui/blocks/Resource/Resource.styl';
 import './ResourcePrice.html';
 import './ResourcePrice.styl';

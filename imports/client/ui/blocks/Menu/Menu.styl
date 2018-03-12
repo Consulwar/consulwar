@@ -75,25 +75,26 @@
     position absolute
     top 3px
     right 5px
-    width 25px
-    height 25px
+    width 26px
+    height 26px
     background-size 100%
+    background-repeat no-repeat
 
     &_canBuild
-      background-image url(/img/game/add.svg)
+      background-image url(/img/game/status_canAdd.svg)
 
     &_canUpgrade
-      background-image url(/img/game/canUpgrade.svg)
+      background-image url(/img/game/status_canUpgrade.svg)
 
     &_noTechnologies
-      background-image url(/img/game/noTechlogies.svg)
+      background-image url(/img/game/status_noTechlogies.svg)
       opacity 0.8
 
     &_inProgress
-      background-image url(/img/game/inProgress.svg)
+      background-image url(/img/game/status_inProgress.svg)
 
     &_queueBusy
-      background-image url(/img/game/queueBusy.svg)
+      background-image url(/img/game/status_queueBusy.svg)
 
   &__time
     position absolute
@@ -101,9 +102,13 @@
     left 0
     z-index 1
     display flex
-    align-items center
     justify-content center
     height 22px
     width 100%
+    overflow hidden
+    padding 2px 5px
+    box-sizing border-box
+    text-align center
+    cw--fontFamily_cond()
     font-size $cw--fontSize_m
     background-color alpha($cw--color_black, .5)

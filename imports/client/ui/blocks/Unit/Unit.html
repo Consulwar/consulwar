@@ -2,16 +2,23 @@
   <div class="cw--Unit">
     <div class="cw--Unit__header">
       <div class="cw--Unit__headerLevel">
-        {{#unless eq unit.type 'reptileUnit'}}
-          {{#if unit.getTotalCount}}
-            <span class="cw--Unit__levelCount">
-              {{formatNumber unit.getCount}}
-            </span>
-            {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
-          {{else}}
-            Не построено
-          {{/if}}
-        {{/unless}}
+        {{#if unit.getCount}}
+          <span class="cw--Unit__levelCount">
+            {{formatNumber unit.getCount}}
+          </span>
+          {{declension unit.getCount 'единиц' 'а' 'ы' ''}}
+        {{else}}
+          На планете отсутствуют
+        {{/if}}
+
+        {{#if gt unit.getTotalCount unit.getCount}}
+          (всего 
+          <span class="cw--Unit__levelCount">
+            {{formatNumber unit.getTotalCount}}
+          </span>
+          {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
+          )
+        {{/if}}
       </div>
       <div class="cw--Unit__headerTitle">
         {{unit.title}}

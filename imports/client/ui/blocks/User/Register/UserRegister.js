@@ -5,7 +5,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 import { Router } from 'meteor/iron:router';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
-import { Notifications, grecaptcha } from '/moduls/game/lib/importCompability';
+import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import Tamily from '/imports/content/Person/client/Tamily';
 import UserLogin from '/imports/client/ui/blocks/User/Login/UserLogin';
@@ -174,8 +174,8 @@ class UserRegister extends BlazeComponent {
     if (Meteor.settings.public.isInviteRequired) {
       options.code = this.code.get() || '';
     } else {
-      options.captcha = grecaptcha.getResponse() || '';
-      grecaptcha.reset();
+      options.captcha = window.grecaptcha.getResponse() || '';
+      window.grecaptcha.reset();
     }
     Accounts.createUser(options, (err) => {
       if (err) {

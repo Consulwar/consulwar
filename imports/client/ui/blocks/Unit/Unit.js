@@ -106,8 +106,8 @@ class Unit extends BlazeComponent {
   }
 
   getMax(item, accumulator = 0) {
-    const price = item.price();
-    const alreadySpended = accumulator ? item.price(accumulator) : null;
+    const price = item.getPrice();
+    const alreadySpended = accumulator ? item.getPrice(accumulator) : null;
     const avalialbeResources = Game.Resources.currentValue.get();
 
     let minAmount = Infinity;

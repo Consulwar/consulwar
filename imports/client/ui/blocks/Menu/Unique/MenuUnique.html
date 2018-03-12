@@ -14,7 +14,7 @@
             {{/if}}
             {{#if and (not item.isMaxLevel) (not item.isEnoughResources)}}
               cw--Menu__item_notEnoughResources
-            {{else}}
+            {{else if (not item.isMaxLevel)}}
               {{#if and item.has item.сanBuild}}
                 cw--Menu__item_canBuild
               {{else if item.сanBuild}}

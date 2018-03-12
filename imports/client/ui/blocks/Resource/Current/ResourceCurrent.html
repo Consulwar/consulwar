@@ -4,13 +4,12 @@
       {{#if eq resource.obj.id 'Resource/Base/Credit'}}
         <div
           onClick={{showCredits}}
-          onMouseOver={{showResourceTooltip}}
+          onMouseOver={{showResourceTooltip resource.obj}}
           class="
             {{resource.obj.color}}
             cw--ResourceCurrent__resource
             cw--ResourceCurrent__resource_credits
           "
-          data-type={{resource.obj.engName}}
         >
           <img
             class="
@@ -24,12 +23,11 @@
         </div>
       {{else}}
         <div
+          onMouseOver={{showResourceTooltip resource.obj}}
           class="
             {{resource.obj.color}}
             cw--ResourceCurrent__resource
           "
-          onMouseOver={{showResourceTooltip}}
-          data-type={{resource.obj.engName}}
         >
           <img
             class="cw--ResourceCurrent__icon"

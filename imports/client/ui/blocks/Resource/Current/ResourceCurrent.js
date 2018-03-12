@@ -14,20 +14,14 @@ class ResourceCurrent extends BlazeComponent {
 
   getResources() {
     const resourceArray = [];
-    _.toPairs(Game.Resources.getValue()).forEach(([id, value]) => {
-      const showingResources = [
-        'humans',
-        'metals',
-        'crystals',
-        'honor',
-        'credits',
-      ];
-      if (showingResources.includes(id)) {
-        resourceArray.push({
-          obj: resourceItems[id],
-          count: value.amount,
-        });
-      }
+    _.toPairs(_.pick(
+      Game.Resources.getValue(),
+      ['humans', 'metals', 'crystals', 'honor', 'credits'],
+    )).forEach(([id, value]) => {
+      resourceArray.push({
+        obj: resourceItems[id],
+        count: value.amount,
+      });
     });
     return resourceArray;
   }
@@ -36,14 +30,16 @@ class ResourceCurrent extends BlazeComponent {
     Game.Payment.showWindow();
   }
 
-  showResourceTooltip(event) {
+  showResourceTooltip(event, resource) {
     const target = $(event.currentTarget);
     const tooltip = incomeTooltip(
       Game.Resources.getIncome().effects,
-      target.attr('data-type'),
+      resource.engName,
     );
-    target.attr('data-tooltip-direction', 's');
-    target.attr('data-tooltip', tooltip['data-tooltip']);
+    target.attr({
+      'data-tooltip-direction': 's',
+      'data-tooltip': tooltip['data-tooltip'],
+    });
   }
 }
 

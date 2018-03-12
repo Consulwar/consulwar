@@ -4,7 +4,6 @@
       <div
         onMouseOver={{showTooltip 'time' price}}
         class="cw--ResourcePrice__time"
-        data-tooltip-direction="n"
       >
         Время строительства: 
         <time class="cw--ResourcePrice__timeCount">
@@ -27,7 +26,7 @@
             cw--Resource_credits
           "
         >
-          {{formatNumberWithISO resource.value 4}}
+          {{formatNumberWithISO resource.value 6}}
         </div>
       {{else}}
         <a
@@ -60,8 +59,6 @@
           cw--Resource_artifact
           cw--ResourcePrice__itemArtifact
         "
-        data-tooltip-trigger="click"
-        data-tooltip-direction="s"
         onMouseOver={{showArtifactTooltip}}
       >
         {{#if isShowDiff}}

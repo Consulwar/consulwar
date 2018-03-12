@@ -102,18 +102,25 @@ class ResourcePrice extends BlazeComponent {
   showArtifactTooltip(event) {
     const target = $(event.currentTarget);
 
-    target.attr('data-tooltip', (new ResourcePrice({
-      hash: {
-        artifacts: this.artifacts,
-        artifactsToResources: true,
-      },
-    }).renderComponentToHTML()));
+    target.attr({
+      'data-tooltip': (new ResourcePrice({
+        hash: {
+          artifacts: this.artifacts,
+          artifactsToResources: true,
+        },
+      }).renderComponentToHTML()),
+      'data-tooltip-trigger': 'click',
+      'data-tooltip-direction': 's',
+    });
   }
 
   showTooltip(event, name, price) {
     const target = $(event.currentTarget);
     const tooltip = priceTooltip(price, name);
-    target.attr('data-tooltip', tooltip['data-tooltip']);
+    target.attr({
+      'data-tooltip': tooltip['data-tooltip'],
+      'data-tooltip-direction': 'n',
+    });
   }
 }
 

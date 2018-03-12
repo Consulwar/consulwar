@@ -2,7 +2,7 @@ import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { priceTooltip } from '/moduls/game/client/helper';
-import resources from '/imports/content/Resource/client';
+import resourceItems from '/imports/content/Resource/client';
 import helpers from '/imports/client/ui/helpers';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/icon/credits/iconCredits';
@@ -14,16 +14,28 @@ class ResourceSingle extends BlazeComponent {
     return 'ResourceSingle';
   }
 
+  constructor({
+    hash: {
+      resources,
+      isShowDiff = false,
+      className,
+    },
+  }) {
+    super();
+    this.resources = resources;
+    this.isShowDiff = isShowDiff;
+    this.className = className;
+  }
+
   onCreated() {
     super.onCreated();
 
-    [this.resourceName] = _(this.data('resources')).keys();
-    this.resource = resources[this.resourceName] || Game.Artefacts.items[this.resourceName];
-    this.isShowDiff = this.data().isShowDiff;
+    [this.resourceName] = _(this.resources).keys();
+    this.resource = resourceItems[this.resourceName] || Game.Artefacts.items[this.resourceName];
   }
 
   count() {
-    this.weight = this.data('resources')[this.resourceName];
+    this.weight = this.resources[this.resourceName];
     if (this.isShowDiff) {
       const UserResources = Game.Resources.getValue();
       let userHas = 0;
@@ -47,7 +59,7 @@ class ResourceSingle extends BlazeComponent {
 
   showTooltip(event) {
     const target = $(event.currentTarget);
-    const tooltip = priceTooltip(this.data('resources'), this.resourceName);
+    const tooltip = priceTooltip(this.resources, this.resourceName);
     target.attr('data-tooltip', tooltip['data-tooltip']);
   }
 }

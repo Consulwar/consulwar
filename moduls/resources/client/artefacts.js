@@ -47,44 +47,36 @@ Template.item_artefact.helpers({
 
   topPlanets: function(limit = 4) {
     const planets = Game.Planets.getByArtefact(this.item.engName);
-    planets.forEach(fillPlanetChance.bind(this, this.item.engName));
-    planets.forEach(calculatePlanetDistance)
-    return _(planets).sortBy(function(planet) {
-      return planet.chance;
-    })
+    planets.forEach(planet => {
+      fillPlanetChance(this.item.engName, planet);
+      calculatePlanetDistance(planet);
+    });
+    return _(planets).sortBy(planet => planet.chance)
     .reverse()
     .splice(0, limit);
   },
 
   nearestPlanets: function(limit = 4) {
     const planets = Game.Planets.getByArtefact(this.item.engName);
-    planets.forEach(fillPlanetChance.bind(this, this.item.engName));
-    planets.forEach(calculatePlanetDistance);
-    return _(planets).sortBy(function(planet) {
-      return planet.distance;
-    }).splice(0, limit);
+    planets.forEach(planet => {
+      fillPlanetChance(this.item.engName, planet);
+      calculatePlanetDistance(planet);
+    });
+    return _(planets).sortBy(planet => planet.distance).splice(0, limit);
   },
 
   userPlanets: function() {
     const planets = Game.Planets.getByArtefact(this.item.engName, Meteor.user().username);
-    planets.forEach(fillPlanetChance.bind(this, this.item.engName));
+    planets.forEach(planet => fillPlanetChance(this.item.engName, planet));
 
     return planets.length && {
       planets: planets.length,
       chance: {
-        min: _.min(planets, function(planet) {
-          return planet.chance;
-        }).chance,
-        max: _.max(planets, function(planet) {
-          return planet.chance;
-        }).chance,
-        total: _.reduce(planets, function(memo, planet) { 
-          return memo + planet.chance; 
-        }, 0) * (86400 / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD) / 100
+        min: _.min(planets, planet => planet.chance).chance,
+        max: _.max(planets, planet => planet.chance).chance,
+        total: _.reduce(planets, (memo, planet) => memo + planet.chance, 0) * (86400 / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD) / 100
       },
-      collection: _.min(planets, function(planet) {
-        return planet.timeArtefacts;
-      }).timeArtefacts
+      collection: _.min(planets, planet => planet.timeArtefacts).timeArtefacts
     };
   },
 

@@ -12,41 +12,43 @@
         <div class="cw--UnitCharacterisctics__characteristics">
           <div
             class="cw--UnitCharacterisctics__damage"
-            onMouseOver={{showWeaponTooltip}}
+            onMouseOver={{showCharacteristicsTooltip}}
             data-type="weapon"
-            data-tooltip="true"
-            data-tooltip-direction="w"
           >
-            {{formatNumberWithISO (div (sum unit.getCharacteristics.weapon.damage.min unit.getCharacteristics.weapon.damage.max) 2) 3}}
+            {{formatNumberWithISO (getUnitChars 'weapon.damage') 3}}
           </div>
           <div
             class="cw--UnitCharacterisctics__armor"
-            onMouseOver={{showWeaponTooltip}}
+            onMouseOver={{showCharacteristicsTooltip}}
             data-type="life"
-            data-tooltip="true"
-            data-tooltip-direction="w"
           >
-            {{formatNumberWithISO unit.getCharacteristics.health.armor 3}}
+            {{formatNumberWithISO (getUnitChars 'health.armor') 3}}
           </div>
-          <div class="cw--UnitCharacterisctics__damage_signature">
-            {{formatNumberWithISO unit.getCharacteristics.weapon.signature 3}}
+          <div
+            class="cw--UnitCharacterisctics__damage_signature"
+            data-tooltip="Радиус поражения"
+            data-tooltip-direction="s"
+          >
+            {{formatNumberWithISO (getUnitChars 'weapon.signature') 3}}
           </div>
-          <div class="cw--UnitCharacterisctics__armor_signature">
-            {{formatNumberWithISO unit.getCharacteristics.health.signature 3}}
+          <div
+            class="cw--UnitCharacterisctics__armor_signature"
+            data-tooltip="Размер защитного поля"
+            data-tooltip-direction="s"
+          >
+            {{formatNumberWithISO (getUnitChars 'health.signature') 3}}
           </div>
         </div>
       {{#if unit.getTargets}}
         <div class="cw--UnitCharacterisctics__title">Приоритеты атаки:</div>
         <div class="cw--UnitCharacterisctics__targets">
-          {{#each unit.getTargets}}
-              <a
-                onMouseOver={{showUnitTooltip this}}
-                data-tooltip="true"
-                data-tooltip-direction="s"
-                class="cw--UnitCharacterisctics__target"
-                style="background-image:url({{this.icon}})"
-                href="{{this.url}}"
-              ></a>
+          {{#each target in unit.getTargets}}
+            <a
+              onMouseOver={{showUnitTooltip target}}
+              class="cw--UnitCharacterisctics__target"
+              style="background-image:url({{target.icon}})"
+              href="{{target.url}}"
+            ></a>
           {{/each}}
         </div>
       {{/if}}

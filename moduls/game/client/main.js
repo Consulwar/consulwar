@@ -5,6 +5,8 @@ import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
 
+import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
+
 Blaze._allowJavascriptUrls();
 
 buzz.defaults.preload = 'none';

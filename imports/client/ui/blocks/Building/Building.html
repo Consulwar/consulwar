@@ -14,7 +14,6 @@
       <div class="cw--Building__headerTitle">
         {{building.title}}
       </div>
-      <!-- quest link here -->
       <div class="cw--Building__headerControls">
         {{#if not submenu}}
           <span
@@ -26,23 +25,29 @@
             "
           ></span>
         {{/if}}
-        <a href="{{backToGroupLink}}" class="
-          cw--Building__headerIcon
-          cw--button_close
+        <a
+          href={{backToGroupLink}}
+          class="
+            cw--Building__headerIcon
+            cw--button_close
           "
         ></a>
       </div>
     </div>
 
   {{#if submenu}}
-    {{>yield region="item_submenu"}}
+    {{> yield region="item_submenu"}}
   {{else}}
     <div class="cw--Building__info
       {{#if options.hideDescription}}cw--Building__info_hidden{{/if}}
     ">
       <div class="cw--Building__infoWrap">
         <div class="cw--Building__mainPic">
-          <img class="cw--Building__mainPicImage" src="{{building.icon}}" />
+          <img
+            class="cw--Building__mainPicImage"
+            alt={{building.title}}
+            src={{building.icon}}
+          />
         </div>
         <div class="cw--Building__description scrollbar-inner">
           {{building.description}}
@@ -55,7 +60,7 @@
           <div class="cw--Building__effectsHead">
             Бонусные эффекты:
           </div>
-          {{> Effect item=building nextLevel=level.get}}
+          {{> EffectLevels item=building nextLevel=level.get}}
         </div>
         <div class="cw--Building__price">
           <div class="cw--Building__priceHead">
@@ -75,34 +80,6 @@
               <div class="cw--Building__actionStatus">
                 Идет строительство
               </div>
-            {{else if lte building.maxLevel building.getCurrentLevel}}
-              <div class="cw--Building__actionStatus">
-                Требуется красный плазмоид
-              </div>
-            {{else}}
-              <div class="cw--Building__actionAmount">
-                <button 
-                  class="
-                    cw--button
-                    cw--button_max
-                    cw--Building__actionSetMax
-                  "
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  {{premiumTitle}}
-                  onClick={{setMaximum}}
-                ></button>
-                {{> InputNumber args
-                  value=level
-                  min=(sum building.getCurrentLevel 1)
-                  max=building.maxLevel
-                  isShowZero=false
-                  placeholder="Уровень"
-                  class="cw--Building__actionAmountCount"
-                }}
-              </div>
-            {{/if}}
-            {{#if building.getQueue}}
               <button class="
                   cw--button
                   cw--button_type_primary
@@ -118,7 +95,34 @@
                 {{/if}}
               </button>
             {{else}}
-              <button class="
+              {{#if gt building.maxLevel building.getCurrentLevel}}
+                <div class="cw--Building__actionAmount">
+                  <button 
+                    class="
+                      cw--button
+                      cw--button_max
+                      cw--Building__actionSetMax
+                    "
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=level
+                    min=(sum building.getCurrentLevel 1)
+                    max=building.maxLevel
+                    isShowZero=false
+                    placeholder="Уровень"
+                    class="cw--Building__actionAmountCount"
+                  }}
+                </div>
+              {{else}}
+                <div class="cw--Building__actionStatus">
+                  Требуется красный плазмоид
+                </div>
+              {{/if}}
+              <button
+                class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_orange
@@ -137,7 +141,8 @@
           <div class="cw--Building__action">
             {{#if eq building.engName 'Metal'}}
                 <div class="cw--Building__bonus">
-                  <div class="
+                  <div
+                    class="
                       cw--Building__bonusIcon
                       cw--Building__bonusIcon_metal
                     "
@@ -152,8 +157,8 @@
                         {{/if}}
                       {{/with}}
                     "
-                    max="{{multiply income.metals bonusStorage}}"
-                    value="{{or resources.metals.bonus '0'}}"
+                    max={{multiply income.metals bonusStorage}}
+                    value={{or resources.metals.bonus '0'}}
                   ></progress>
                 </div>
                 <button
@@ -171,7 +176,8 @@
 
             {{#if eq building.engName 'Crystal'}}
                 <div class="cw--Building__bonus">
-                  <div class="
+                  <div
+                    class="
                       cw--Building__bonusIcon
                       cw--Building__bonusIcon_crystal
                     "
@@ -186,8 +192,8 @@
                         {{/if}}
                       {{/with}}
                     "
-                    max="{{multiply income.crystals bonusStorage}}"
-                    value="{{or resources.crystals.bonus '0'}}"
+                    max={{multiply income.crystals bonusStorage}}
+                    value={{or resources.crystals.bonus '0'}}
                   ></progress>
                 </div>
                 <button
@@ -233,13 +239,13 @@
 
             {{#if eq building.engName 'Colosseum'}}
               <a
+                href={{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
                   {{#if lt building.getCurrentLevel 1}}disabled{{/if}}
                 "
-                href="{{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}"
               >
                 Турнир
               </a>
@@ -247,13 +253,13 @@
 
             {{#if eq building.engName 'PulseCatcher'}}
               <a
+                href={{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
                   {{#if lt building.getCurrentLevel 1}}disabled{{/if}}
                 "
-                href="{{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}"
               >
                 Бонус
               </a>

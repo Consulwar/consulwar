@@ -1,3 +1,4 @@
+@import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors.styl'
 
 .cw--input
@@ -8,7 +9,7 @@
   border-image linear-gradient(to top, #2B4A78 0%, $cw--color_science 100%) 1
   color $cw--color_description
   font-family 'Roboto', Arial, sans-serif;
-  font-size 18px
+  font-size $cw--fontSize_l
 
   &__disabled
     cursor not-allowed !important

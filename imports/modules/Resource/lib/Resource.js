@@ -13,9 +13,6 @@ class Resource {
     this.legacyName = legacyName;
     this.engName = legacyName;
     this.type = 'resource';
-
-    this.icon = `/img/game/${this.id}/icon.png`;
-    this.card = `/img/game/${this.id}/card.jpg`;
   }
 }
 

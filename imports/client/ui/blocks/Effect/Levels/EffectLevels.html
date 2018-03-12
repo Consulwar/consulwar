@@ -1,7 +1,7 @@
-<template name="Effect">
+<template name="EffectLevels">
   {{#if item.effects}}
-    <div class="cw--Effect">
-      <div class="cw--Effect__currentLevel">
+    <div class="cw--EffectLevels">
+      <div class="cw--EffectLevels__currentLevel">
         {{#if item.maxLevel}}
           <div class="title">
             {{#with item.effects.[0]}}
@@ -17,7 +17,7 @@
         }}
       </div>
 
-      <div class="cw--Effect__nextLevel">
+      <div class="cw--EffectLevels__nextLevel">
         <div class="title">
           Следующий уровень: {{nextLevel}}<br/>
         </div>

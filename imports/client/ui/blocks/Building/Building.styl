@@ -139,7 +139,7 @@
     flex-basis auto
     flex-grow 1
     margin-left 6px
-    width 107px
+    width 100px
     box-sizing border-box
     height 25px
     font-size $cw--fontSize_m
@@ -169,10 +169,11 @@
     margin-left 6px
     height 25px
     position relative
-    &
+    background-color $cw--color_black
     &::-webkit-progress-bar
+      background-color $cw--color_black
     &[role][aria-valuenow]
-      background-color #000
+      background-color $cw--color_black
 
     &:before
       content: attr(value) ' / ' attr(max);

@@ -87,7 +87,6 @@ var bonusEvents = {
   }
 };
 
-// TODO: Удалить — Хелперы и эвенты для шаблона строительства
 Template.overlay_menu.events(bonusEvents);
 
 initBuildingSpecialMarketClient();

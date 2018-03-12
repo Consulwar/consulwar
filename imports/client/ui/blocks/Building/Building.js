@@ -7,7 +7,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
 import Maximum from '/imports/client/ui/blocks/Maximum/Maximum';
 import SpeedUp from '/imports/client/ui/blocks/SpeedUp/SpeedUp';
-import '/imports/client/ui/blocks/Effect/Effect';
+import '/imports/client/ui/blocks/Effect/Levels/EffectLevels';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Requirements/Requirements';
 import '/imports/client/ui/button/button.styl';
@@ -35,7 +35,7 @@ class Building extends BlazeComponent {
 
   onCreated() {
     super.onCreated();
-    if (this.building.maxLevel <= this.level.get()) {
+    if (this.building.maxLevel < this.level.get()) {
       this.level.set(120);
     }
     this.autorun(() => {
@@ -106,7 +106,10 @@ class Building extends BlazeComponent {
   setMaximum() {
     if (Game.hasPremium()) {
       let currentLevel = this.building.getCurrentLevel() + 1;
-      while ((currentLevel + 1) <= this.building.maxLevel && this.building.canBuild(currentLevel + 1)) {
+      while (
+        (currentLevel + 1) <= this.building.maxLevel
+        && this.building.canBuild(currentLevel + 1)
+      ) {
         currentLevel += 1;
       }
       this.level.set(currentLevel);

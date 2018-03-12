@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
-import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
 import './SpeedUp.html';
 import './SpeedUp.styl';
@@ -30,20 +29,24 @@ class SpeedUp extends BlazeComponent {
   }
 
   SpeedUp() {
-    Meteor.call(
-      `${this.data().item.type}.speedup`,
-      {
-        id: this.data().item.id,
-      },
-      (error) => {
-        if (error) {
-          Notifications.error('Невозможно ускорить', error.error);
-        } else {
-          this.closeWindow();
-          Notifications.success('Ускорение запущено');
-        }
-      },
-    );
+    if (Game.Resources.getValue().credits.amount >= this.getPrice().credits) {
+      Meteor.call(
+        `${this.data().item.type}.speedup`,
+        {
+          id: this.data().item.id,
+        },
+        (error) => {
+          if (error) {
+            Notifications.error('Невозможно ускорить', error.error);
+          } else {
+            this.closeWindow();
+            Notifications.success('Ускорение запущено');
+          }
+        },
+      );
+    } else {
+      Game.Payment.showWindow();
+    }
   }
 
   closeWindow() {

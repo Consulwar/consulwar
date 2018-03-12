@@ -51,9 +51,10 @@ Template.item_artefact.helpers({
       fillPlanetChance(this.item.engName, planet);
       calculatePlanetDistance(planet);
     });
-    return _(planets).sortBy(planet => planet.chance)
-    .reverse()
-    .splice(0, limit);
+    return (_(planets).sortBy(planet => planet.chance)
+      .reverse()
+      .splice(0, limit)
+    );
   },
 
   nearestPlanets: function(limit = 4) {

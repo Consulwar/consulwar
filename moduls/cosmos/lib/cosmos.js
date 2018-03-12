@@ -69,10 +69,11 @@ Game.Planets = {
     });
   },
 
-  getByArtefact: function (artefact) {
-    var condition = {
-      userId: Meteor.userId(),
-    };
+  getByArtefact: function (artefact, minerUsername) {
+    var condition = {};
+    if (minerUsername) {
+      condition.minerUsername = minerUsername;
+    }
     condition['artefacts.' + artefact] = { $gt: 0 };
     return Game.Planets.Collection.find(condition).fetch();
   },

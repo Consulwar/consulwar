@@ -70,9 +70,7 @@ Game.Planets = {
   },
 
   getByArtefact: function (artefact) {
-    var condition = {
-      userId: Meteor.userId(),
-    };
+    var condition = {};
     condition['artefacts.' + artefact] = { $gt: 0 };
     return Game.Planets.Collection.find(condition).fetch();
   },

@@ -114,7 +114,7 @@ var showNotificationFromSpaceEvent = function(event) {
     if (event.data.mission.type == 'tradefleet') {
       debounceDesktopNotification('Консул, смотрите, караван!', options);
     } else {
-      if (!targetPlanet.mission && (targetPlanet.userId === Meteor.userId() || targetPlanet.username === Meteor.user().username)) {
+      if (!targetPlanet.mission && (targetPlanet.userId === Meteor.userId() || targetPlanet.minerUsername === Meteor.user().username)) {
         Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
       }
     }

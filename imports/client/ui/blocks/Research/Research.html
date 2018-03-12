@@ -8,13 +8,12 @@
           </span>
           уровень 
         {{else}}
-          Не построено
+          Не исследовано
         {{/if}}
       </div>
       <div class="cw--Research__headerTitle">
         {{research.title}}
       </div>
-      <!-- quest link here -->
       <div class="cw--Research__headerControls">
         <span
           onClick={{toggleDescription}}
@@ -24,21 +23,28 @@
             {{#if options.hideDescription}}cw--button_notActive{{/if}}
           "
         ></span>
-        <a href="{{backToGroupLink}}" class="
-          cw--Research__headerIcon
-          cw--button_close
+        <a
+          href={{backToGroupLink}}
+          class="
+            cw--Research__headerIcon
+            cw--button_close
           "
         ></a>
       </div>
     </div>
-    <div class="
+    <div
+      class="
         cw--Research__info
         {{#if options.hideDescription}}cw--Research__info_hidden{{/if}}
       "
     >
       <div class="cw--Research__infoWrap">
         <div class="cw--Research__mainPic">
-          <img class="cw--Research__mainPicImage" src="{{research.icon}}" />
+          <img
+            class="cw--Research__mainPicImage"
+            alt={{research.title}}
+            src={{research.icon}}
+          />
         </div>
         <div class="cw--Research__description scrollbar-inner">
           {{research.description}}
@@ -51,7 +57,7 @@
           <div class="cw--Research__effectsHead">
             Бонусные эффекты:
           </div>
-          {{> Effect item=research nextLevel=level.get}}
+          {{> EffectLevels item=research nextLevel=level.get}}
         </div>
         <div class="cw--Research__price">
           <div class="cw--Research__priceHead">
@@ -69,34 +75,8 @@
               <div class="cw--Research__actionStatus">
                 Идет исследование
               </div>
-            {{else if lte research.maxLevel research.getCurrentLevel}}
-              <div class="cw--Research__actionStatus">
-                Требуется красный плазмоид
-              </div>
-            {{else}}
-              <div class="cw--Research__actionAmount">
-                <button 
-                  class="
-                    cw--button
-                    cw--button_max
-                    cw--Research__actionSetMax
-                  "
-                  data-tooltip="Ввести максимум"
-                  data-tooltip-direction="s"
-                  onClick={{setMaximum}}
-                ></button>
-                {{> InputNumber args
-                  value=level
-                  min=(sum research.getCurrentLevel 1)
-                  max=research.maxLevel
-                  isShowZero=false
-                  placeholder="Уровень"
-                  class="cw--Research__actionAmountCount"
-                }}
-              </div>
-            {{/if}}
-            {{#if research.getQueue}}
-              <button class="
+              <button
+                class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_green
@@ -111,7 +91,34 @@
                 {{/if}}
               </button>
             {{else}}
-              <button class="
+              {{#if gt research.maxLevel research.getCurrentLevel}}
+                <div class="cw--Research__actionAmount">
+                  <button 
+                    class="
+                      cw--button
+                      cw--button_max
+                      cw--Research__actionSetMax
+                    "
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=level
+                    min=(sum research.getCurrentLevel 1)
+                    max=research.maxLevel
+                    isShowZero=false
+                    placeholder="Уровень"
+                    class="cw--Research__actionAmountCount"
+                  }}
+                </div>
+              {{else}}
+                <div class="cw--Research__actionStatus">
+                  Требуется красный плазмоид
+                </div>
+              {{/if}}
+              <button
+                class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_orange

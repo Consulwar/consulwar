@@ -65,18 +65,18 @@ class ResourcePrice extends BlazeComponent {
       );
     }
 
-    this.UserResources = new ReactiveVar(Game.Resources.getValue());
+    this.userResources = new ReactiveVar(Game.Resources.getValue());
   }
 
   onCreated() {
     super.onCreated();
     this.autorun(() => {
-      this.UserResources.set(Game.Resources.getValue());
+      this.userResources.set(Game.Resources.getValue());
     });
   }
 
   availableResources(id, value) {
-    const resource = this.UserResources.get()[id];
+    const resource = this.userResources.get()[id];
     let userHas = (resource && resource.amount) || 0;
     if (userHas > value) {
       userHas = value;
@@ -85,7 +85,7 @@ class ResourcePrice extends BlazeComponent {
   }
 
   availableArtifacts() {
-    const resource = this.UserResources.get();
+    const resource = this.userResources.get();
     return this.artifacts.reduce((total, artifact) => {
       let userHas = (resource[artifact.obj.engName] && resource[artifact.obj.engName].amount) || 0;
       if (userHas > artifact.value) {

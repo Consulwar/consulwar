@@ -97,6 +97,10 @@ Space.collection.find({}).observe({
   }
 });
 
+var debounceDesktopNotification = _.debounce(function () {
+  Game.showDesktopNotification(...arguments);
+}, 1000, true);
+
 var showNotificationFromSpaceEvent = function(event) {
   if (!event || !event.data) {
     return;
@@ -108,9 +112,9 @@ var showNotificationFromSpaceEvent = function(event) {
     options.path = Router.path('cosmos', {group: 'cosmos'}, {hash: event._id});
 
     if (event.data.mission.type == 'tradefleet') {
-      Game.showDesktopNotification('Консул, смотрите, караван!', options);
+      debounceDesktopNotification('Консул, смотрите, караван!', options);
     } else {
-      if (!targetPlanet.mission) {
+      if (!targetPlanet.mission && (targetPlanet.userId === Meteor.userId() || targetPlanet.username === Meteor.user().username)) {
         Game.showDesktopNotification('Консул, вашу колонию атакуют!', options);
       }
     }

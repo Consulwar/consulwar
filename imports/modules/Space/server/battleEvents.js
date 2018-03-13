@@ -11,7 +11,10 @@ import Config from './config';
 const add = function({ userArmy, enemyArmy, data }) {
   const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
   job
-    .retry(Config.JOBS.retries)
+    .retry({
+      retries: Config.JOBS.retry.retries,
+      wait: Config.JOBS.retry.wait,
+    })
     .delay(battleDelay({ userArmy, enemyArmy }))
     .save();
 };

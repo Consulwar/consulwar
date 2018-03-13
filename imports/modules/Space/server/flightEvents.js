@@ -15,7 +15,10 @@ const add = function(data) {
 
   const job = new Job(Space.jobs, Lib.EVENT_TYPE, savedData);
   job
-    .retry(Config.JOBS.retries)
+    .retry({
+      retries: Config.JOBS.retry.retries,
+      wait: Config.JOBS.retry.wait,
+    })
     .delay(data.flyTime * 1000)
     .save();
 };

@@ -37,6 +37,8 @@ class InputNumber extends BlazeComponent {
     if (newVal !== null) {
       if (this.max && newVal > this.max) {
         newVal = this.max;
+      } else if (this.min >= 0 && newVal < 0) {
+        newVal = '';
       }
       this.value.set(newVal > this.min ? newVal : this.min);
     } else {

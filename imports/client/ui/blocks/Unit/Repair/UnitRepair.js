@@ -19,10 +19,6 @@ class UnitRepair extends BlazeComponent {
     super();
 
     this.unit = unit;
-  }
-
-  onCreated() {
-    super.onCreated();
     this.unitsCount = this.getWrecksCount(this.unit);
   }
 

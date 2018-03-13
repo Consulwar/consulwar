@@ -68,7 +68,7 @@
         </div>
         <div class="cw--Building__price">
           <div class="cw--Building__priceHead">
-            Стоимость{{#if building.getCurrentLevel}} улучшения{{/if}}:
+            Стоимость{{#if building.getCurrentLevel}} улучшения{{else}} строительства{{/if}}:
           </div>
           {{#if gt building.maxLevel building.getCurrentLevel}}
             {{> ResourcePrice args price=(building.getPrice level.get)}}

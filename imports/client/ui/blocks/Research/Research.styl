@@ -44,6 +44,23 @@
   &__headerIcon
     margin auto 6px
 
+  &__buttonDescription
+    width 25px
+    height 25px
+    box-sizing border-box
+
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
   &__levelCount
     color $cw--color_metal
 
@@ -128,8 +145,24 @@
     justify-content space-between
 
   &__actionSetMax
+    display inline-block
     flex-grow 0
     flex-shrink 0
+    width 55px
+    height 25px
+    box-sizing border-box
+  
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/arrow_max.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+  
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
   
   &__actionAmountCount
     flex-basis auto

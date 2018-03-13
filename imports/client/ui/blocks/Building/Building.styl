@@ -4,21 +4,19 @@
 .cw--Building
   font-size 14px
   width 720px
-  // min-height 500px
   display flex
   flex-direction column
   margin auto
-  // background-color alpha($cw--color_black, .7)
   
   &__header
-    cw--fontFamily_cond()
-    font-size $cw--fontSize_l
-    background-color $cw--color_black
+    display flex
     padding-left 14px
     flex-grow 0
     flex-basis 33px
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_l
     font-weight bold
-    display flex
+    background-color $cw--color_black
 
   &__headerLevel
   &__headerControls
@@ -36,8 +34,8 @@
 
   &__headerTitle
     flex-basis 60%
-    text-align center
     flex-grow 1
+    text-align center
 
   &__headerControls
     display flex
@@ -46,15 +44,34 @@
   &__headerIcon
     margin auto 6px
 
+  &__buttonDescription
+    width 25px
+    height 25px
+    box-sizing border-box
+
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
   &__levelCount
     color $cw--color_metal
 
   &__info
-    cw--fontFamily_cond()
     display block
     height 100px
     overflow hidden
+
+    cw--fontFamily_cond()
     background-color alpha($cw--color_black, .4)
+
   &__infoWrap
     height 100px
     display flex
@@ -110,17 +127,17 @@
     padding-bottom 4px
 
   &__actions
-    // flex-basis 80px
-    flex-basis auto
+    display flex
     padding-top 6px
-    border-top solid 1px $cw--color_grey
     margin 0
+    flex-basis auto
     flex-shrink 0
-    display flex
+    border-top solid 1px $cw--color_grey
+
   &__action
-    flex-basis 170px
-    width 170px
     display flex
+    width 170px
+    flex-basis 170px
     flex-direction column
     justify-content flex-end
     margin auto 15px 0 0
@@ -132,9 +149,25 @@
     justify-content space-between
 
   &__actionSetMax
+    display inline-block
     flex-grow 0
     flex-shrink 0
+    width 55px
+    height 25px
+    box-sizing border-box
   
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/arrow_max.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+  
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
   &__actionAmountCount
     flex-basis auto
     flex-grow 1

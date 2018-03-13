@@ -29,7 +29,9 @@ class SpeedUp extends BlazeComponent {
   }
 
   SpeedUp() {
-    if (Game.Resources.getValue().credits.amount >= this.getPrice().credits) {
+    if (Game.Resources.has({
+      resources: this.getPrice(),
+    })) {
       Meteor.call(
         `${this.data().item.type}.speedup`,
         {

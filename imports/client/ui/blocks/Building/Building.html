@@ -60,7 +60,10 @@
           <div class="cw--Building__effectsHead">
             Бонусные эффекты:
           </div>
-          {{> EffectLevels item=building nextLevel=level.get}}
+          {{> EffectLevels args
+            item=building
+            nextLevel=level.get
+          }}
         </div>
         <div class="cw--Building__price">
           <div class="cw--Building__priceHead">

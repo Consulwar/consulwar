@@ -57,7 +57,10 @@
           <div class="cw--Research__effectsHead">
             Бонусные эффекты:
           </div>
-          {{> EffectLevels item=research nextLevel=level.get}}
+          {{> EffectLevels args
+            item=research
+            nextLevel=level.get
+          }}
         </div>
         <div class="cw--Research__price">
           <div class="cw--Research__priceHead">

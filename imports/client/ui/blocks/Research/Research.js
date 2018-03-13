@@ -50,7 +50,7 @@ class Research extends BlazeComponent {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
-  Build() {
+  build() {
     const item = this.research;
     Meteor.call(
       'research.start',

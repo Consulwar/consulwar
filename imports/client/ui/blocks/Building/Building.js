@@ -52,7 +52,7 @@ class Building extends BlazeComponent {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
-  Build() {
+  build() {
     Meteor.call(
       'building.build',
       {

@@ -50,7 +50,7 @@ class Unit extends BlazeComponent {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
-  Build() {
+  build() {
     Meteor.call(
       'unit.build',
       {
@@ -67,7 +67,7 @@ class Unit extends BlazeComponent {
     );
   }
 
-  Repair() {
+  repair() {
     Game.Popup.show({
       template: (new UnitRepair({
         hash: {

@@ -1,9 +1,9 @@
-<template name="Research">
-  <div class="cw--Research">
-    <div class="cw--Research__header">
-      <div class="cw--Research__headerLevel">
+<template name="BuildResearch">
+  <div class="cw--BuildResearch">
+    <div class="cw--BuildResearch__header">
+      <div class="cw--BuildResearch__headerLevel">
         {{#if research.getCurrentLevel}}
-          <span class="cw--Research__levelCount">
+          <span class="cw--BuildResearch__levelCount">
             {{research.getCurrentLevel}}
           </span>
           уровень 
@@ -11,15 +11,15 @@
           Не исследовано
         {{/if}}
       </div>
-      <div class="cw--Research__headerTitle">
+      <div class="cw--BuildResearch__headerTitle">
         {{research.title}}
       </div>
-      <div class="cw--Research__headerControls">
+      <div class="cw--BuildResearch__headerControls">
         <span
           onClick={{toggleDescription}}
           class="
-            cw--Research__headerIcon
-            cw--Research__buttonDescription
+            cw--BuildResearch__headerIcon
+            cw--BuildResearch__buttonDescription
             cw--button
             {{#if options.hideDescription}}cw--button_notActive{{/if}}
           "
@@ -27,7 +27,7 @@
         <a
           href={{backToGroupLink}}
           class="
-            cw--Research__headerIcon
+            cw--BuildResearch__headerIcon
             cw--button_close
           "
         ></a>
@@ -35,27 +35,27 @@
     </div>
     <div
       class="
-        cw--Research__info
-        {{#if options.hideDescription}}cw--Research__info_hidden{{/if}}
+        cw--BuildResearch__info
+        {{#if options.hideDescription}}cw--BuildResearch__info_hidden{{/if}}
       "
     >
-      <div class="cw--Research__infoWrap">
-        <div class="cw--Research__mainPic">
+      <div class="cw--BuildResearch__infoWrap">
+        <div class="cw--BuildResearch__mainPic">
           <img
-            class="cw--Research__mainPicImage"
+            class="cw--BuildResearch__mainPicImage"
             alt={{research.title}}
             src={{research.icon}}
           />
         </div>
-        <div class="cw--Research__description scrollbar-inner">
+        <div class="cw--BuildResearch__description scrollbar-inner">
           {{research.description}}
         </div>
       </div>
     </div>
-    <div class="cw--Research__mainField">
-      <div class="cw--Research__panel">
-        <div class="cw--Research__effects">
-          <div class="cw--Research__effectsHead">
+    <div class="cw--BuildResearch__mainField">
+      <div class="cw--BuildResearch__panel">
+        <div class="cw--BuildResearch__effects">
+          <div class="cw--BuildResearch__effectsHead">
             Бонусные эффекты:
           </div>
           {{> EffectLevels args
@@ -63,8 +63,8 @@
             nextLevel=level.get
           }}
         </div>
-        <div class="cw--Research__price">
-          <div class="cw--Research__priceHead">
+        <div class="cw--BuildResearch__price">
+          <div class="cw--BuildResearch__priceHead">
             Стоимость{{#if research.getCurrentLevel}} улучшения{{else}} исследования{{/if}}:
           </div>
           {{#if gt research.maxLevel research.getCurrentLevel}}
@@ -73,10 +73,10 @@
             В разработке
           {{/if}}
         </div>
-        <div class="cw--Research__actions">
-          <div class="cw--Research__action">
+        <div class="cw--BuildResearch__actions">
+          <div class="cw--BuildResearch__action">
             {{#if research.getQueue}}
-              <div class="cw--Research__actionStatus">
+              <div class="cw--BuildResearch__actionStatus">
                 Идет исследование
               </div>
               <button
@@ -96,11 +96,11 @@
               </button>
             {{else}}
               {{#if gt research.maxLevel research.getCurrentLevel}}
-                <div class="cw--Research__actionAmount">
+                <div class="cw--BuildResearch__actionAmount">
                   <button 
                     class="
                       cw--button
-                      cw--Research__actionSetMax
+                      cw--BuildResearch__actionSetMax
                     "
                     data-tooltip="Ввести максимум"
                     data-tooltip-direction="s"
@@ -112,11 +112,11 @@
                     max=research.maxLevel
                     isShowZero=false
                     placeholder="Уровень"
-                    class="cw--Research__actionAmountCount"
+                    class="cw--BuildResearch__actionAmountCount"
                   }}
                 </div>
               {{else}}
-                <div class="cw--Research__actionStatus">
+                <div class="cw--BuildResearch__actionStatus">
                   Требуется красный плазмоид
                 </div>
               {{/if}}
@@ -141,7 +141,7 @@
       </div>
       {{> Requirements args
         requirements=getRequirements
-        className="cw--Research__require"
+        className="cw--BuildResearch__require"
       }}
     </div>
   </div>

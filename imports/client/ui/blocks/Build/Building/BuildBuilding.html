@@ -1,9 +1,9 @@
-<template name="Building">
-  <div class="cw--Building">
-    <div class="cw--Building__header">
-      <div class="cw--Building__headerLevel">
+<template name="BuildBuilding">
+  <div class="cw--BuildBuilding">
+    <div class="cw--BuildBuilding__header">
+      <div class="cw--BuildBuilding__headerLevel">
         {{#if building.getCurrentLevel}}
-          <span class="cw--Building__levelCount">
+          <span class="cw--BuildBuilding__levelCount">
             {{building.getCurrentLevel}}
           </span>
           уровень 
@@ -11,16 +11,16 @@
           Не построено
         {{/if}}
       </div>
-      <div class="cw--Building__headerTitle">
+      <div class="cw--BuildBuilding__headerTitle">
         {{building.title}}
       </div>
-      <div class="cw--Building__headerControls">
+      <div class="cw--BuildBuilding__headerControls">
         {{#if not submenu}}
           <span
             onClick={{toggleDescription}}
             class="
-              cw--Building__headerIcon
-              cw--Building__buttonDescription
+              cw--BuildBuilding__headerIcon
+              cw--BuildBuilding__buttonDescription
               cw--button
               {{#if options.hideDescription}}cw--button_notActive{{/if}}
             "
@@ -29,7 +29,7 @@
         <a
           href={{backToGroupLink}}
           class="
-            cw--Building__headerIcon
+            cw--BuildBuilding__headerIcon
             cw--button_close
           "
         ></a>
@@ -39,26 +39,26 @@
   {{#if submenu}}
     {{> yield region="item_submenu"}}
   {{else}}
-    <div class="cw--Building__info
-      {{#if options.hideDescription}}cw--Building__info_hidden{{/if}}
+    <div class="cw--BuildBuilding__info
+      {{#if options.hideDescription}}cw--BuildBuilding__info_hidden{{/if}}
     ">
-      <div class="cw--Building__infoWrap">
-        <div class="cw--Building__mainPic">
+      <div class="cw--BuildBuilding__infoWrap">
+        <div class="cw--BuildBuilding__mainPic">
           <img
-            class="cw--Building__mainPicImage"
+            class="cw--BuildBuilding__mainPicImage"
             alt={{building.title}}
             src={{building.icon}}
           />
         </div>
-        <div class="cw--Building__description scrollbar-inner">
+        <div class="cw--BuildBuilding__description scrollbar-inner">
           {{building.description}}
         </div>
       </div>
     </div>
-    <div class="cw--Building__mainField">
-      <div class="cw--Building__panel">
-        <div class="cw--Building__effects">
-          <div class="cw--Building__effectsHead">
+    <div class="cw--BuildBuilding__mainField">
+      <div class="cw--BuildBuilding__panel">
+        <div class="cw--BuildBuilding__effects">
+          <div class="cw--BuildBuilding__effectsHead">
             Бонусные эффекты:
           </div>
           {{> EffectLevels args
@@ -66,8 +66,8 @@
             nextLevel=level.get
           }}
         </div>
-        <div class="cw--Building__price">
-          <div class="cw--Building__priceHead">
+        <div class="cw--BuildBuilding__price">
+          <div class="cw--BuildBuilding__priceHead">
             Стоимость{{#if building.getCurrentLevel}} улучшения{{else}} строительства{{/if}}:
           </div>
           {{#if gt building.maxLevel building.getCurrentLevel}}
@@ -77,11 +77,11 @@
           {{/if}}
         </div>
 
-        <div class="cw--Building__actions">
+        <div class="cw--BuildBuilding__actions">
           
-          <div class="cw--Building__action">
+          <div class="cw--BuildBuilding__action">
             {{#if building.getQueue}}
-              <div class="cw--Building__actionStatus">
+              <div class="cw--BuildBuilding__actionStatus">
                 Идет строительство
               </div>
               <button class="
@@ -100,11 +100,11 @@
               </button>
             {{else}}
               {{#if gt building.maxLevel building.getCurrentLevel}}
-                <div class="cw--Building__actionAmount">
+                <div class="cw--BuildBuilding__actionAmount">
                   <button 
                     class="
                       cw--button
-                      cw--Building__actionSetMax
+                      cw--BuildBuilding__actionSetMax
                     "
                     data-tooltip="Ввести максимум"
                     data-tooltip-direction="s"
@@ -116,11 +116,11 @@
                     max=building.maxLevel
                     isShowZero=false
                     placeholder="Уровень"
-                    class="cw--Building__actionAmountCount"
+                    class="cw--BuildBuilding__actionAmountCount"
                   }}
                 </div>
               {{else}}
-                <div class="cw--Building__actionStatus">
+                <div class="cw--BuildBuilding__actionStatus">
                   Требуется красный плазмоид
                 </div>
               {{/if}}
@@ -142,22 +142,22 @@
             {{/if}}
           </div>
 
-          <div class="cw--Building__action">
+          <div class="cw--BuildBuilding__action">
             {{#if isShowProgress}}
-              <div class="cw--Building__bonus">
+              <div class="cw--BuildBuilding__bonus">
                 <div
                   class="
-                    cw--Building__bonusIcon
-                    cw--Building__bonusIcon_{{building.engName}}
+                    cw--BuildBuilding__bonusIcon
+                    cw--BuildBuilding__bonusIcon_{{building.engName}}
                   "
                 ></div>
                 <progress
                   class="
-                    cw--Building__bonusBar
-                    cw--Building__bonusBar_{{building.engName}}
+                    cw--BuildBuilding__bonusBar
+                    cw--BuildBuilding__bonusBar_{{building.engName}}
                     {{#with multiply income 0.25}}
                       {{#if gt resourcesBonus this}}
-                        cw--Building__bonusBar_active
+                        cw--BuildBuilding__bonusBar_active
                       {{/if}}
                     {{/with}}
                   "
@@ -186,7 +186,7 @@
       </div>
       {{> Requirements args
         requirements=getRequirements
-        className="cw--Building__require"
+        className="cw--BuildBuilding__require"
       }}
     </div>
   {{/if}}

@@ -1,7 +1,7 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
 
-.cw--Unit
+.cw--BuildResearch
   font-size 14px
   width 720px
   display flex
@@ -70,12 +70,10 @@
     height 100px
     overflow hidden
     background-color alpha($cw--color_black, .4)
-
   &__infoWrap
     height 100px
     display flex
     padding-left 14px
-
   &__info_hidden
     display none
 
@@ -84,27 +82,23 @@
     flex-grow 0
     margin auto
     padding-right 8px
-
   &__mainPicImage
-    display block
     width 75px
     height auto
-
+    display block
   &__description
+    color $cw--color_description
     padding-right 20px
     height 85px
     margin auto
-    overflow hidden
-
     text-align justify
-    color $cw--color_description
+    overflow hidden
 
   &__mainField
     flex-grow 1
     flex-basis 380px
     display flex
     flex-direction row
-
   &__panel
     cw--fontFamily_cond()
     padding 14px
@@ -113,6 +107,12 @@
     display flex
     flex-direction column
     font-weight bold
+
+  &__effects
+    padding-bottom 6px
+  &__effectsHead
+    color $cw--color_human
+    padding-bottom 4px
     
   &__price
     flex-basis 120px
@@ -120,7 +120,6 @@
     border-top solid 1px $cw--color_grey
     margin-top auto
     box-sizing border-box
-
   &__priceHead
     color $cw--color_human
     padding-bottom 4px
@@ -132,7 +131,6 @@
     margin 0
     flex-shrink 0
     display flex
-
   &__action
     flex-basis 170px
     width 170px
@@ -143,8 +141,8 @@
   
   &__actionAmount
     display flex
-    justify-content space-between
     padding-bottom 8px
+    justify-content space-between
 
   &__actionSetMax
     display inline-block
@@ -180,13 +178,6 @@
     padding-top 3px
     padding-bottom 8px
     color $cw--color_human
-    font-size $cw--fontSize_m
-
-  &__actionCount
-    height 22px
-    padding-top 3px
-    padding-bottom 8px
-    color $cw--color_white
     font-size $cw--fontSize_m
 
   &__require

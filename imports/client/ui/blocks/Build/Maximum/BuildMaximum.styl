@@ -1,7 +1,7 @@
 @import '{}/imports/client/ui/colors'
 @import '{}/imports/client/ui/config'
 
-.cw--Maximum
+.cw--BuildMaximum
   cw--fontFamily_cond()
   font-size $cw--fontSize_l
   display block
@@ -21,6 +21,17 @@
   &__shortButton
     display inline-block
     vertical-align middle
+    width 55px
+    height 25px
+    box-sizing border-box
+  
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/arrow_max.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
   &__description
     padding 20px 0
     color $cw--color_nearWhite
@@ -36,4 +47,3 @@
     flex-basis 160px
     flex-grow 0
     margin-left 10px
-

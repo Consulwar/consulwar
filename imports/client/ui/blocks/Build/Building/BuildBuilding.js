@@ -5,18 +5,18 @@ import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
-import Maximum from '/imports/client/ui/blocks/Maximum/Maximum';
-import SpeedUp from '/imports/client/ui/blocks/SpeedUp/SpeedUp';
+import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
+import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
 import '/imports/client/ui/blocks/Effect/Levels/EffectLevels';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Requirements/Requirements';
 import '/imports/client/ui/button/button.styl';
-import './Building.html';
-import './Building.styl';
+import './BuildBuilding.html';
+import './BuildBuilding.styl';
 
-class Building extends BlazeComponent {
+class BuildBuilding extends BlazeComponent {
   template() {
-    return 'Building';
+    return 'BuildBuilding';
   }
 
   constructor({
@@ -79,7 +79,7 @@ class Building extends BlazeComponent {
 
   toggleDescription() {
     const options = Meteor.user().settings && Meteor.user().settings.options;
-    $(this.find('.cw--Building__info')).slideToggle(function() {
+    $(this.find('.cw--BuildBuilding__info')).slideToggle(function() {
       Meteor.call(
         'settings.setOption',
         'hideDescription',
@@ -88,7 +88,7 @@ class Building extends BlazeComponent {
     });
   }
 
-  pickBonus(event, id = this.buildingId) {
+  pickBonus(event, id = this.building.id) {
     let resource = '';
     let resourceRu = '';
     if (id === 'Building/Residential/Crystal') {
@@ -117,28 +117,27 @@ class Building extends BlazeComponent {
   getButton(id = this.building.id) {
     if (id === 'Building/Residential/Metal' || id === 'Building/Residential/Crystal') {
       return {
-        buildingId: id,
-        action: this.pickBonus,
+        action: () => this.pickBonus(),
         text: 'Собрать',
       };
     } else if (id === 'Building/Residential/SpacePort') {
       return {
-        action: this.showContainers,
+        action: () => this.showContainers(),
         text: 'Контейнер',
       };
     } else if (id === 'Building/Residential/TradingPort') {
       return {
-        action: this.showMarket,
+        action: () => this.showMarket(),
         text: 'Торговать',
       };
     } else if (id === 'Building/Residential/Colosseum') {
       return {
-        action: this.showTournament,
+        action: () => this.showTournament(),
         text: 'Турнир',
       };
     } else if (id === 'Building/Residential/PulseCatcher') {
       return {
-        action: this.showBonus,
+        action: () => this.showBonus(),
         text: 'Бонус',
       };
     }
@@ -216,6 +215,6 @@ class Building extends BlazeComponent {
   }
 }
 
-Building.register('Building');
+BuildBuilding.register('BuildBuilding');
 
-export default Building;
+export default BuildBuilding;

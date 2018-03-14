@@ -5,18 +5,18 @@ import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
-import Maximum from '/imports/client/ui/blocks/Maximum/Maximum';
-import SpeedUp from '/imports/client/ui/blocks/SpeedUp/SpeedUp';
+import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
+import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
 import '/imports/client/ui/blocks/Effect/Levels/EffectLevels';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Requirements/Requirements';
 import '/imports/client/ui/button/button.styl';
-import './Research.html';
-import './Research.styl';
+import './BuildResearch.html';
+import './BuildResearch.styl';
 
-class Research extends BlazeComponent {
+class BuildResearch extends BlazeComponent {
   template() {
-    return 'Research';
+    return 'BuildResearch';
   }
 
   constructor({
@@ -73,7 +73,7 @@ class Research extends BlazeComponent {
 
   toggleDescription() {
     const options = Meteor.user().settings && Meteor.user().settings.options;
-    $(this.find('.cw--Research__info')).slideToggle(function() {
+    $(this.find('.cw--BuildResearch__info')).slideToggle(function() {
       Meteor.call(
         'settings.setOption',
         'hideDescription',
@@ -112,6 +112,6 @@ class Research extends BlazeComponent {
   }
 }
 
-Research.register('Research');
+BuildResearch.register('BuildResearch');
 
-export default Research;
+export default BuildResearch;

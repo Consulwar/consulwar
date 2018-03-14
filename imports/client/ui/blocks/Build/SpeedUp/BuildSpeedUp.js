@@ -2,12 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
-import './SpeedUp.html';
-import './SpeedUp.styl';
+import './BuildSpeedUp.html';
+import './BuildSpeedUp.styl';
 
-class SpeedUp extends BlazeComponent {
+class BuildSpeedUp extends BlazeComponent {
   template() {
-    return 'SpeedUp';
+    return 'BuildSpeedUp';
   }
 
   onCreated() {
@@ -17,7 +17,6 @@ class SpeedUp extends BlazeComponent {
         this.closeWindow();
       }
     });
-    this.SpeedUpPrice = this.getPrice();
   }
 
   timeLeft() {
@@ -28,7 +27,7 @@ class SpeedUp extends BlazeComponent {
     return Game.Queue.getSpeedupPrice(this.data().item, this.data().item.getQueue());
   }
 
-  SpeedUp() {
+  speedUp() {
     if (Game.Resources.has({
       resources: this.getPrice(),
     })) {
@@ -56,6 +55,6 @@ class SpeedUp extends BlazeComponent {
   }
 }
 
-SpeedUp.register('SpeedUp');
+BuildSpeedUp.register('BuildSpeedUp');
 
-export default SpeedUp;
+export default BuildSpeedUp;

@@ -53,6 +53,7 @@ game.ColosseumTournament = function(options) {
   this.level = options.level;
   this.price = options.price;
   this.drop = options.drop;
+  this.icon = `/img/game/colosseum/${options.engName}.jpg`;
 
   this.checkLevel = function() {
     return Colosseum.getCurrentLevel() >= this.level;

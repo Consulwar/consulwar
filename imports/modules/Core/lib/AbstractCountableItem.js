@@ -54,7 +54,7 @@ class AbstractCountableItem extends AbstractItem {
       resources: this.getPrice(count),
     });
     const hasTechnologies = this.meetRequirements();
-    const limitExceeded = this.maxCount && (this.getTotalCount() >= (this.maxCount + count));
+    const limitExceeded = this.maxCount && ((this.getTotalCount() + count) > this.maxCount);
     return hasResources && hasTechnologies && !limitExceeded && !this.isQueueBusy();
   }
 }

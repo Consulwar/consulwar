@@ -141,132 +141,45 @@
               </button>
             {{/if}}
           </div>
+
           <div class="cw--Building__action">
-            {{#if eq building.engName 'Metal'}}
-                <div class="cw--Building__bonus">
-                  <div
-                    class="
-                      cw--Building__bonusIcon
-                      cw--Building__bonusIcon_metal
-                    "
-                  ></div>
-                  <progress
-                    class="
-                      cw--Building__bonusBar
-                      cw--Building__bonusBar_metal
-                      {{#with multiply income.metals 0.25}}
-                        {{#if gt resources.metals.bonus this}}
-                          cw--Building__bonusBar_active
-                        {{/if}}
-                      {{/with}}
-                    "
-                    max={{multiply income.metals bonusStorage}}
-                    value={{or resources.metals.bonus '0'}}
-                  ></progress>
-                </div>
-                <button
+            {{#if isShowProgress}}
+              <div class="cw--Building__bonus">
+                <div
                   class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_blue
+                    cw--Building__bonusIcon
+                    cw--Building__bonusIcon_{{building.engName}}
                   "
-                  onClick={{pickBonusMetal}}
-                  disabled={{lt building.getCurrentLevel 1}}
-                >
-                  Собрать
-                </button>
+                ></div>
+                <progress
+                  class="
+                    cw--Building__bonusBar
+                    cw--Building__bonusBar_{{building.engName}}
+                    {{#with multiply income 0.25}}
+                      {{#if gt resourcesBonus this}}
+                        cw--Building__bonusBar_active
+                      {{/if}}
+                    {{/with}}
+                  "
+                  max={{multiply income bonusStorage}}
+                  value={{or resourcesBonus '0'}}
+                ></progress>
+              </div>
             {{/if}}
 
-            {{#if eq building.engName 'Crystal'}}
-                <div class="cw--Building__bonus">
-                  <div
-                    class="
-                      cw--Building__bonusIcon
-                      cw--Building__bonusIcon_crystal
-                    "
-                  ></div>
-                  <progress
-                    class="
-                      cw--Building__bonusBar
-                      cw--Building__bonusBar_crystal
-                      {{#with multiply income.crystals 0.25}}
-                        {{#if gt resources.crystals.bonus this}}
-                          cw--Building__bonusBar_active
-                        {{/if}}
-                      {{/with}}
-                    "
-                    max={{multiply income.crystals bonusStorage}}
-                    value={{or resources.crystals.bonus '0'}}
-                  ></progress>
-                </div>
-                <button
-                  class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_blue
-                  "
-                  onClick={{pickBonusCrystal}}
-                  disabled={{lt building.getCurrentLevel 1}}
-                >
-                  Собрать
-                </button>
-            {{/if}}
-
-            {{#if eq building.engName 'TradingPort'}}
+            {{#with getButton}}
               <button
                 class="
                   cw--button
                   cw--button_type_primary
                   cw--button_type_primary_blue
                 "
+                onClick={{action}}
                 disabled={{lt building.getCurrentLevel 1}}
-                onClick={{showMarket}}
               >
-                Торговать
+                {{text}}
               </button>
-            {{/if}}
-
-            {{#if eq building.engName 'SpacePort'}}
-              <button
-                class="
-                  cw--button
-                  cw--button_type_primary
-                  cw--button_type_primary_blue
-                "
-                disabled={{lt building.getCurrentLevel 1}}
-                onClick={{showContainers}}
-              >
-                Контейнер
-              </button>
-            {{/if}}
-
-            {{#if eq building.engName 'Colosseum'}}
-              <a
-                href={{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}
-                class="
-                  cw--button
-                  cw--button_type_primary
-                  cw--button_type_primary_blue
-                  {{#if lt building.getCurrentLevel 1}}disabled{{/if}}
-                "
-              >
-                Турнир
-              </a>
-            {{/if}}
-
-            {{#if eq building.engName 'PulseCatcher'}}
-              <a
-                href={{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}
-                class="
-                  cw--button
-                  cw--button_type_primary
-                  cw--button_type_primary_blue
-                  {{#if lt building.getCurrentLevel 1}}disabled{{/if}}
-                "
-              >
-                Бонус
-              </a>
-            {{/if}}
+            {{/with}}
           </div>
         </div>
 

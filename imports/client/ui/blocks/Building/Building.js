@@ -49,7 +49,12 @@ class Building extends BlazeComponent {
   }
 
   onRendered() {
+    super.onRendered();
     $('.scrollbar-inner').perfectScrollbar('update');
+  }
+
+  getRequirements() {
+    return this.building.getRequirements({ level: this.level.get() });
   }
 
   build() {
@@ -83,24 +88,61 @@ class Building extends BlazeComponent {
     });
   }
 
-  pickBonusMetal() {
-    Meteor.call('getBonusResources', 'metals', function(error, result) {
+  pickBonus(event, id = this.buildingId) {
+    let resource = '';
+    let resourceRu = '';
+    if (id === 'Building/Residential/Crystal') {
+      resource = 'crystals';
+      resourceRu = 'кристалл';
+    } else if (id === 'Building/Residential/Metal') {
+      resource = 'metals';
+      resourceRu = 'металл';
+    }
+    Meteor.call('getBonusResources', resource, (error, result) => {
       if (error) {
-        Notifications.error('Нельзя получить бонусный металл', error.error);
+        Notifications.error(`Нельзя получить бонусный ${resourceRu}`, error.error);
       } else {
-        Notifications.success('Бонусный металл получен', `+ ${result}`);
+        Notifications.success(`Бонусный ${resourceRu} получен`, `+ ${result}`);
       }
     });
   }
 
-  pickBonusCrystal() {
-    Meteor.call('getBonusResources', 'crystals', function(error, result) {
-      if (error) {
-        Notifications.error('Нельзя получить бонусный кристалл', error.error);
-      } else {
-        Notifications.success('Бонусный кристалл получен', `+ ${result}`);
-      }
-    });
+  isShowProgress(id = this.building.id) {
+    if (id === 'Building/Residential/Crystal' || id === 'Building/Residential/Metal') {
+      return true;
+    }
+    return false;
+  }
+
+  getButton(id = this.building.id) {
+    if (id === 'Building/Residential/Metal' || id === 'Building/Residential/Crystal') {
+      return {
+        buildingId: id,
+        action: this.pickBonus,
+        text: 'Собрать',
+      };
+    } else if (id === 'Building/Residential/SpacePort') {
+      return {
+        action: this.showContainers,
+        text: 'Контейнер',
+      };
+    } else if (id === 'Building/Residential/TradingPort') {
+      return {
+        action: this.showMarket,
+        text: 'Торговать',
+      };
+    } else if (id === 'Building/Residential/Colosseum') {
+      return {
+        action: this.showTournament,
+        text: 'Турнир',
+      };
+    } else if (id === 'Building/Residential/PulseCatcher') {
+      return {
+        action: this.showBonus,
+        text: 'Бонус',
+      };
+    }
+    return false;
   }
 
   setMaximum() {
@@ -135,19 +177,42 @@ class Building extends BlazeComponent {
     Game.Building.special.Market.showWindow();
   }
 
-  resources() {
-    return Game.Resources.currentValue.get();
+  showTournament() {
+    Router.go('building', {
+      group: 'Residential',
+      item: 'Colosseum',
+      menu: 'tournaments',
+    });
   }
 
-  income() {
-    return Game.Resources.getIncome();
+  showBonus() {
+    Router.go('building', {
+      group: 'Residential',
+      item: 'PulseCatcher',
+      menu: 'bonus',
+    });
+  }
+
+  resourcesBonus(id = this.building.id) {
+    if (id === 'Building/Residential/Crystal') {
+      return Game.Resources.currentValue.get().crystals.bonus;
+    } else if (id === 'Building/Residential/Metal') {
+      return Game.Resources.currentValue.get().metals.bonus;
+    }
+    return false;
+  }
+
+  income(id = this.building.id) {
+    if (id === 'Building/Residential/Crystal') {
+      return Game.Resources.getIncome().crystals;
+    } else if (id === 'Building/Residential/Metal') {
+      return Game.Resources.getIncome().metals;
+    }
+    return false;
   }
 
   bonusStorage() {
     return Game.Resources.bonusStorage;
-  }
-  getRequirements() {
-    return this.building.getRequirements({ level: this.level.get() });
   }
 }
 

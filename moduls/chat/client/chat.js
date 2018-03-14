@@ -46,7 +46,7 @@ var addMessage = function(message, previousMessage) {
       message.showProfile = true;
    }
    messages.upsert(message._id, message);
-   Meteor.setTimeout(() => updateScrollbar());
+   Meteor.defer(updateScrollbar);
 };
 
 var addMessagesAfter = function(newMessages, message) {

@@ -1,16 +1,16 @@
-<template name="SpeedUp">
-  <div class="cw--SpeedUp">
-    <h3 class="cw--SpeedUp__head">Ускорение строительства</h3>
-    <div class="cw--SpeedUp__description">
+<template name="BuildSpeedUp">
+  <div class="cw--BuildSpeedUp">
+    <h3 class="cw--BuildSpeedUp__head">Ускорение строительства</h3>
+    <div class="cw--BuildSpeedUp__description">
       Рабский труд, подкуп чиновников, лучшие работники галактики и даже сын маминой подруги – всё это поможет вам ускорить строительство в разы, но придётся платить. Либо бесплатными минутами с карточек ускорения времени, либо Галактическими Кредитами.
     </div>
-    <div class="cw--SpeedUp__head">
+    <div class="cw--BuildSpeedUp__head">
       Данные Ускорения:
     </div>
-    <div class="cw--SpeedUp__annotation">
+    <div class="cw--BuildSpeedUp__annotation">
       <p>
         {{item.title}} 
-        <span class="cw--SpeedUp__value">
+        <span class="cw--BuildSpeedUp__value">
           {{#if eq item.type 'unit'}}
             +{{item.getQueue.count}}
           {{else}}
@@ -20,35 +20,35 @@
       </p>
       <p>
         Время строительства
-        <span class="cw--SpeedUp__value">
+        <span class="cw--BuildSpeedUp__value">
           {{formatSeconds timeLeft}} 
         </span>
       </p>
 
     </div>
 
-    <div class="cw--SpeedUp__actions">
-      <div class="cw--SpeedUp__action">
-        <div class="cw--SpeedUp__actionHead">Моментальное Улучшение:</div>
+    <div class="cw--BuildSpeedUp__actions">
+      <div class="cw--BuildSpeedUp__action">
+        <div class="cw--BuildSpeedUp__actionHead">Моментальное Улучшение:</div>
         {{#if getPrice.credits}}
-          {{> ResourceSingle args resources=getPrice className="cw--SpeedUp__actionPrice"}}
+          {{> ResourceSingle args resources=getPrice className="cw--BuildSpeedUp__actionPrice"}}
         {{/if}}
         <button
           class="
-            cw--SpeedUp__button
+            cw--BuildSpeedUp__button
             cw--button
             cw--button_type_primary
             cw--button_type_primary_green
           "
-          onClick={{SpeedUp}}
+          onClick={{speedUp}}
         >
           Ускорить 100%
         </button>
       </div>
-      <div class="cw--SpeedUp__action cw--SpeedUp__action_skip">
+      <div class="cw--BuildSpeedUp__action cw--BuildSpeedUp__action_skip">
         <button
           class="
-            cw--SpeedUp__skip
+            cw--BuildSpeedUp__skip
             cw--button
             cw--button_flat
           "

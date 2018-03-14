@@ -1,9 +1,9 @@
-<template name="Unit">
-  <div class="cw--Unit">
-    <div class="cw--Unit__header">
-      <div class="cw--Unit__headerLevel">
+<template name="BuildUnit">
+  <div class="cw--BuildUnit">
+    <div class="cw--BuildUnit__header">
+      <div class="cw--BuildUnit__headerLevel">
         {{#if unit.getCount}}
-          <span class="cw--Unit__levelCount">
+          <span class="cw--BuildUnit__levelCount">
             {{formatNumber unit.getCount}}
           </span>
           {{declension unit.getCount 'единиц' 'а' 'ы' ''}}
@@ -13,67 +13,70 @@
 
         {{#if gt unit.getTotalCount unit.getCount}}
           (всего 
-          <span class="cw--Unit__levelCount">
+          <span class="cw--BuildUnit__levelCount">
             {{formatNumber unit.getTotalCount}}
           </span>
           {{declension unit.getTotalCount 'единиц' 'а' 'ы' ''}}
           )
         {{/if}}
       </div>
-      <div class="cw--Unit__headerTitle">
+      <div class="cw--BuildUnit__headerTitle">
         {{unit.title}}
       </div>
-      <div class="cw--Unit__headerControls">
+      <div class="cw--BuildUnit__headerControls">
         <span
           onClick={{toggleDescription}}
           class="
-            cw--Unit__headerIcon
-            cw--button_description
+            cw--BuildUnit__headerIcon
+            cw--BuildUnit__buttonDescription
+            cw--button
             {{#if options.hideDescription}}cw--button_notActive{{/if}}
           "
         ></span>
-        <a href="{{backToGroupLink}}" class="
-          cw--Unit__headerIcon
-          cw--button_close
+        <a
+          href={{backToGroupLink}}
+          class="
+            cw--BuildUnit__headerIcon
+            cw--button_close
           "
         ></a>
       </div>
     </div>
     <div
       class="
-        cw--Unit__info
-        {{#if options.hideDescription}}cw--Unit__info_hidden{{/if}}
+        cw--BuildUnit__info
+        {{#if options.hideDescription}}cw--BuildUnit__info_hidden{{/if}}
       "
     >
-      <div class="cw--Unit__infoWrap">
-        <div class="cw--Unit__mainPic">
+      <div class="cw--BuildUnit__infoWrap">
+        <div class="cw--BuildUnit__mainPic">
           <img
-            class="cw--Unit__mainPicImage"
-            src="{{unit.icon}}"
-            alt="{{unit.title}}"
+            class="cw--BuildUnit__mainPicImage"
+            src={{unit.icon}}
+            alt={{unit.title}}
           />
         </div>
-        <div class="cw--Unit__description scrollbar-inner">
+        <div class="cw--BuildUnit__description scrollbar-inner">
           {{unit.description}}
         </div>
       </div>
     </div>
-    <div class="cw--Unit__mainField">
-      <div class="cw--Unit__panel">
+    <div class="cw--BuildUnit__mainField">
+      <div class="cw--BuildUnit__panel">
         {{> UnitCharacteristics args unit=unit}}
 
         {{#unless eq unit.type 'reptileUnit'}}
-          <div class="cw--Unit__price">
-            <div class="cw--Unit__priceHead">
+          <div class="cw--BuildUnit__price">
+            <div class="cw--BuildUnit__priceHead">
               Стоимость:
             </div>
             {{> ResourcePrice args price=(unit.getPrice count.get)}}
           </div>
-          <div class="cw--Unit__actions">
+          <div class="cw--BuildUnit__actions">
 
-            <div class="cw--Unit__action">
+            <div class="cw--BuildUnit__action">
               {{#if unit.getQueue}}
-                <div class="cw--Unit__actionStatus">
+                <div class="cw--BuildUnit__actionStatus">
                   Идёт строительство
                 </div>
                 <button
@@ -92,12 +95,11 @@
                   {{/if}}
                 </button>
               {{else}}
-                <div class="cw--Unit__actionAmount">
+                <div class="cw--BuildUnit__actionAmount">
                   <button 
                     class="
                       cw--button
-                      cw--button_max
-                      cw--Unit__actionSetMax
+                      cw--BuildUnit__actionSetMax
                     "
                     data-tooltip="Ввести максимум"
                     data-tooltip-direction="s"
@@ -107,7 +109,7 @@
                     value=count
                     max=unit.maxCount
                     placeholder="Количество"
-                    class="cw--Unit__actionAmountCount"
+                    class="cw--BuildUnit__actionAmountCount"
                   }}
                 </div>
                 <button
@@ -116,7 +118,7 @@
                     cw--button_type_primary
                     cw--button_type_primary_orange
                   "
-                  onClick={{Build}}
+                  onClick={{build}}
                   disabled={{not unit.canBuild}}
                 >
                   Построить
@@ -125,9 +127,9 @@
             </div>
 
             {{#unless eq unit.group 'Ground'}}
-              <div class="cw--Unit__action">
+              <div class="cw--BuildUnit__action">
                 {{#if unit.maxCount}}
-                  <div class="cw--Unit__actionCount">
+                  <div class="cw--BuildUnit__actionCount">
                     Всего юнитов {{formatNumber unit.getTotalCount}}
                     из {{formatNumber unit.maxCount}}
                   </div>
@@ -138,7 +140,7 @@
                     cw--button_type_primary
                     cw--button_type_primary_blue
                   "
-                  onClick={{Repair}}
+                  onClick={{repair}}
                 >
                   Ремонтировать
                 </button>
@@ -147,9 +149,9 @@
           </div>
         {{/unless}}
       </div>
-      {{> Requirements
+      {{> Requirements args
         requirements=unit.getRequirements
-        class="cw--Unit__require"
+        className="cw--BuildUnit__require"
       }}
     </div>
   </div>

@@ -1,39 +1,40 @@
 <template name="Requirements">
   {{#if requirements}}
-  <div class="cw--Requirements {{class}}">
-    <div class="cw--Requirements__head">
-      Необходимые технологии:
-    </div>
-    {{#each requirement in requirements}}
-      <a
-        class="cw--Requirements__item"
-        style="background-image: url({{requirement.[0].icon}});"
-        href="{{requirement.[0].url}}"
-      >
-        <div class="
-            cw--Requirements__itemTitle
-            cw--Requirements__itemTitle_{{requirement.[0].type}}
-          "
+    <div class="cw--Requirements {{className}}">
+      <div class="cw--Requirements__head">
+        Необходимые технологии:
+      </div>
+      {{#each requirement in getRequirements}}
+        <a
+          class="cw--Requirements__item"
+          style="background-image: url({{requirement.icon}});"
+          href={{requirement.url}}
         >
-          {{requirement.[0].title}}
-        </div>
-        <div class="cw--Requirements__levelHas">
-          Требование: {{requirement.[1]}} уровень
-        </div>
-        <div class="cw--Requirements__levelNeed">
-          Имеется:
-            <span class="
-              cw--Requirements__currentLevel
-              {{#if gt requirement.[1] requirement.[0].getCurrentLevel}}
-                cw--Requirements__currentLevel_need
-              {{/if}}
-              "
-            >
-              {{requirement.[0].getCurrentLevel}} уровень
-            </span>
-        </div>
-      </a>
-    {{/each}}
-  </div>
+          <div class="
+              cw--Requirements__itemTitle
+              cw--Requirements__itemTitle_{{requirement.type}}
+            "
+          >
+            {{requirement.title}}
+          </div>
+          <div class="cw--Requirements__levelHas">
+            Требование: {{requirement.needLevel}} уровень
+          </div>
+          <div class="cw--Requirements__levelNeed">
+            Имеется:
+              <span
+                class="
+                  cw--Requirements__currentLevel
+                  {{#if gt requirement.needLevel requirement.currentLevel}}
+                    cw--Requirements__currentLevel_need
+                  {{/if}}
+                "
+              >
+                {{requirement.currentLevel}} уровень
+              </span>
+          </div>
+        </a>
+      {{/each}}
+    </div>
   {{/if}}
 </template>

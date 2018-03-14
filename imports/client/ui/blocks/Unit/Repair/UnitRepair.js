@@ -19,10 +19,6 @@ class UnitRepair extends BlazeComponent {
     super();
 
     this.unit = unit;
-  }
-
-  onCreated() {
-    super.onCreated();
     this.unitsCount = this.getWrecksCount(this.unit);
   }
 
@@ -43,7 +39,7 @@ class UnitRepair extends BlazeComponent {
     return Game.Wrecks.getPrice(this.unit, this.unitsCount);
   }
 
-  Repair() {
+  repair() {
     Meteor.call('unit.repair', this.unit.id, (error) => {
       if (error) {
         Notifications.error('Невозможно восстановить юнитов', error.error);

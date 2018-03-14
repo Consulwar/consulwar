@@ -1,7 +1,7 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
 
-.cw--Unit
+.cw--BuildUnit
   font-size 14px
   width 720px
   display flex
@@ -44,6 +44,23 @@
   &__headerIcon
     margin auto 6px
 
+  &__buttonDescription
+    width 25px
+    height 25px
+    box-sizing border-box
+
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
   &__levelCount
     color $cw--color_metal
 
@@ -53,10 +70,12 @@
     height 100px
     overflow hidden
     background-color alpha($cw--color_black, .4)
+
   &__infoWrap
     height 100px
     display flex
     padding-left 14px
+
   &__info_hidden
     display none
 
@@ -65,23 +84,27 @@
     flex-grow 0
     margin auto
     padding-right 8px
+
   &__mainPicImage
+    display block
     width 75px
     height auto
-    display block
+
   &__description
-    color $cw--color_description
     padding-right 20px
     height 85px
     margin auto
-    text-align justify
     overflow hidden
+
+    text-align justify
+    color $cw--color_description
 
   &__mainField
     flex-grow 1
     flex-basis 380px
     display flex
     flex-direction row
+
   &__panel
     cw--fontFamily_cond()
     padding 14px
@@ -97,6 +120,7 @@
     border-top solid 1px $cw--color_grey
     margin-top auto
     box-sizing border-box
+
   &__priceHead
     color $cw--color_human
     padding-bottom 4px
@@ -108,6 +132,7 @@
     margin 0
     flex-shrink 0
     display flex
+
   &__action
     flex-basis 170px
     width 170px
@@ -118,12 +143,28 @@
   
   &__actionAmount
     display flex
-    padding-bottom 8px
     justify-content space-between
+    padding-bottom 8px
 
   &__actionSetMax
+    display inline-block
     flex-grow 0
     flex-shrink 0
+    width 55px
+    height 25px
+    box-sizing border-box
+  
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/arrow_max.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+  
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
   
   &__actionAmountCount
     flex-basis auto

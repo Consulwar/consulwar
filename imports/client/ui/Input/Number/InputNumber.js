@@ -37,8 +37,8 @@ class InputNumber extends BlazeComponent {
     if (newVal !== null) {
       if (this.max && newVal > this.max) {
         newVal = this.max;
-      } else if (newVal < this.min) {
-        newVal = this.min;
+      } else if (this.min >= 0 && newVal < 0) {
+        newVal = '';
       }
       this.value.set(newVal > this.min ? newVal : this.min);
     } else {
@@ -49,6 +49,11 @@ class InputNumber extends BlazeComponent {
     // newVal equal to previous one, but not equal to one in input
     // happens when multiple input try above max (or below min) value
     $(currentTarget).val(this.isShowZero && newVal === null ? '' : newVal);
+  }
+  onFocus({ currentTarget }) {
+    if (currentTarget.value === '1') {
+      $(currentTarget).val('');
+    }
   }
 
   isDisabled() {

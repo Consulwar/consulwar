@@ -2,12 +2,12 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { Router } from 'meteor/iron:router';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/button/button.styl';
-import './Maximum.html';
-import './Maximum.styl';
+import './BuildMaximum.html';
+import './BuildMaximum.styl';
 
-class Maximum extends BlazeComponent {
+class BuildMaximum extends BlazeComponent {
   template() {
-    return 'Maximum';
+    return 'BuildMaximum';
   }
 
   closeWindow() {
@@ -20,6 +20,6 @@ class Maximum extends BlazeComponent {
   }
 }
 
-Maximum.register('Maximum');
+BuildMaximum.register('BuildMaximum');
 
-export default Maximum;
+export default BuildMaximum;

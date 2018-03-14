@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
-import Unit from '/imports/client/ui/blocks/Unit/Unit';
+import Unit from '/imports/client/ui/blocks/Build/Unit/BuildUnit';
 import humanUnits from '/imports/content/Unit/Human/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import humanDefenseUnits from '/imports/content/Unit/Human/Defense/client';

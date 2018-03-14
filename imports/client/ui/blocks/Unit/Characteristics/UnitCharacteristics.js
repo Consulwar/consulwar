@@ -19,14 +19,15 @@ class UnitCharacteristics extends BlazeComponent {
     super();
     this.unit = unit;
     this.addTitle = addTitle;
+    this.unitChars = unit.getCharacteristics();
   }
 
   showCharacteristicsTooltip(event) {
     const target = $(event.currentTarget);
-    const currentCharachteristic = target.attr('data-type') === 'weapon' ? 'damage' : 'life';
+    const currentCharacteristic = target.attr('data-type') === 'weapon' ? 'damage' : 'life';
     const tooltip = militaryTooltip(
       this.unit.getCharacteristics(),
-      currentCharachteristic,
+      currentCharacteristic,
     );
     target.attr({
       'data-tooltip-direction': 'w',
@@ -48,12 +49,11 @@ class UnitCharacteristics extends BlazeComponent {
   }
 
   getUnitChars(charsList) {
-    const unitChars = this.unit.getCharacteristics();
     if (charsList === 'weapon.damage') {
-      return (unitChars.weapon.damage.max + unitChars.weapon.damage.min) / 2;
+      return (this.unitChars.weapon.damage.max + this.unitChars.weapon.damage.min) / 2;
     }
     const chars = charsList.split('.');
-    return unitChars[chars[0]][chars[1]];
+    return this.unitChars[chars[0]][chars[1]];
   }
 }
 

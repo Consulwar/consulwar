@@ -1,14 +1,12 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
 
-.cw--Building
+.cw--BuildResearch
   font-size 14px
   width 720px
-  // min-height 500px
   display flex
   flex-direction column
   margin auto
-  // background-color alpha($cw--color_black, .7)
   
   &__header
     cw--fontFamily_cond()
@@ -45,6 +43,23 @@
 
   &__headerIcon
     margin auto 6px
+
+  &__buttonDescription
+    width 25px
+    height 25px
+    box-sizing border-box
+
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
 
   &__levelCount
     color $cw--color_metal
@@ -110,7 +125,6 @@
     padding-bottom 4px
 
   &__actions
-    // flex-basis 80px
     flex-basis auto
     padding-top 6px
     border-top solid 1px $cw--color_grey
@@ -126,14 +140,29 @@
     margin auto 15px 0 0
   
   &__actionAmount
-  &__bonus
     display flex
     padding-bottom 8px
     justify-content space-between
 
   &__actionSetMax
+    display inline-block
     flex-grow 0
     flex-shrink 0
+    width 55px
+    height 25px
+    box-sizing border-box
+  
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/arrow_max.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+  
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
   
   &__actionAmountCount
     flex-basis auto
@@ -143,68 +172,13 @@
     box-sizing border-box
     height 25px
     font-size $cw--fontSize_m
-  
+
   &__actionStatus
     height 22px
     padding-top 3px
     padding-bottom 8px
     color $cw--color_human
     font-size $cw--fontSize_m
-    white-space nowrap
-
-  &__bonusIcon
-    flex-shrink 0
-    width 25px
-    height 25px
-    background-repeat no-repeat
-    background-position center
-    background-size 100%
-    &_metal
-      background-image url(/img/game/Resource/Base/Metal/icon.svg)
-    &_crystal
-      background-image url(/img/game/Resource/Base/Crystal/icon.svg)
-
-  &__bonusBar
-    flex-basis auto
-    margin-left 6px
-    height 25px
-    position relative
-    background-color $cw--color_black
-    &::-webkit-progress-bar
-      background-color $cw--color_black
-    &[role][aria-valuenow]
-      background-color $cw--color_black
-
-    &:before
-      content: attr(value) ' / ' attr(max);
-      cw--fontFamily_cond()
-      font-size 16px
-      font-weight bold
-      color $cw--color_white
-      text-align center
-      position absolute
-      left 0
-      top 50%
-      transform translate(0,-50%)
-      width 100%
-
-    &_metal
-      border solid 1px $cw--color_metal
-      &::-moz-progress-bar
-        background-color $cw--color_metal
-      &::-webkit-progress-value
-        background-color $cw--color_metal
-      &[aria-valuenow]:before
-        background-color $cw--color_metal
-
-    &_crystal
-      border solid 1px $cw--color_crystal
-      &::-moz-progress-bar
-        background-color $cw--color_crystal
-      &::-webkit-progress-value
-        background-color $cw--color_crystal
-      &[aria-valuenow]:before
-        background-color $cw--color_crystal
 
   &__require
     background-color alpha($cw--color_black, .7)

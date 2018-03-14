@@ -25,36 +25,21 @@ class ResourceSingle extends BlazeComponent {
     this.resources = resources;
     this.isShowDiff = isShowDiff;
     this.className = className;
-  }
-
-  onCreated() {
-    super.onCreated();
-
     [this.resourceName] = _(this.resources).keys();
-    this.resource = resourceItems[this.resourceName] || Game.Artefacts.items[this.resourceName];
+    this.resource = resourceItems[this.resourceName]
+      || Game.Artefacts.items[this.resourceName];
   }
 
   count() {
-    this.weight = this.resources[this.resourceName];
+    const weight = this.resources[this.resourceName];
+    const weightFormated = helpers.formatNumberWithIso(weight);
     if (this.isShowDiff) {
-      const UserResources = Game.Resources.getValue();
-      let userHas = 0;
-      if (UserResources[this.resourceName]) {
-        userHas = UserResources[this.resourceName].amount;
-        if (userHas > this.weight) {
-          userHas = this.weight;
-        }
-      }
-      const weight = helpers.formatNumberWithIso(this.weight);
-      const has = helpers.formatNumberWithIso(userHas);
+      const userResource = Game.Resources.getAvailable(this.resourceName, weight);
+      const userResourceFormated = helpers.formatNumberWithIso(userResource);
 
-      return `${has} / ${weight}`;
+      return `${userResourceFormated} / ${weightFormated}`;
     }
-    return helpers.formatNumberWithIso(this.weight);
-  }
-
-  buyCredits() {
-    Game.Payment.showWindow();
+    return weightFormated;
   }
 
   showTooltip(event) {

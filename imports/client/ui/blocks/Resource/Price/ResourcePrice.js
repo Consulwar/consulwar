@@ -1,5 +1,4 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
-import { ReactiveVar } from 'meteor/reactive-var';
 import { $ } from 'meteor/jquery';
 import { _ } from 'lodash';
 import { priceTooltip } from '/moduls/game/client/helper';
@@ -64,34 +63,16 @@ class ResourcePrice extends BlazeComponent {
         0,
       );
     }
-
-    this.userResources = new ReactiveVar(Game.Resources.getValue());
-  }
-
-  onCreated() {
-    super.onCreated();
-    this.autorun(() => {
-      this.userResources.set(Game.Resources.getValue());
-    });
   }
 
   availableResources(id, value) {
-    const resource = this.userResources.get()[id];
-    let userHas = (resource && resource.amount) || 0;
-    if (userHas > value) {
-      userHas = value;
-    }
-    return userHas;
+    return Game.Resources.getAvailable(id, value);
   }
 
   availableArtifacts() {
-    const resource = this.userResources.get();
     return this.artifacts.reduce((total, artifact) => {
-      let userHas = (resource[artifact.obj.engName] && resource[artifact.obj.engName].amount) || 0;
-      if (userHas > artifact.value) {
-        userHas = artifact.value;
-      }
-      return total + userHas;
+      const available = Game.Resources.getAvailable(artifact.obj.engName, artifact.value);
+      return total + available;
     }, 0);
   }
 

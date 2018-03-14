@@ -4,20 +4,20 @@ import { $ } from 'meteor/jquery';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
-import Maximum from '/imports/client/ui/blocks/Maximum/Maximum';
-import SpeedUp from '/imports/client/ui/blocks/SpeedUp/SpeedUp';
+import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
+import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
 import UnitRepair from '/imports/client/ui/blocks/Unit/Repair/UnitRepair';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Requirements/Requirements';
 import '/imports/client/ui/button/button.styl';
 import '/imports/client/ui/Input/Number/InputNumber';
 import '/imports/client/ui/blocks/Unit/Characteristics/UnitCharacteristics';
-import './Unit.html';
-import './Unit.styl';
+import './BuildUnit.html';
+import './BuildUnit.styl';
 
-class Unit extends BlazeComponent {
+class BuildUnit extends BlazeComponent {
   template() {
-    return 'Unit';
+    return 'BuildUnit';
   }
 
   constructor({
@@ -50,7 +50,7 @@ class Unit extends BlazeComponent {
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 
-  Build() {
+  build() {
     Meteor.call(
       'unit.build',
       {
@@ -67,7 +67,7 @@ class Unit extends BlazeComponent {
     );
   }
 
-  Repair() {
+  repair() {
     Game.Popup.show({
       template: (new UnitRepair({
         hash: {
@@ -79,7 +79,7 @@ class Unit extends BlazeComponent {
 
   toggleDescription() {
     const options = Meteor.user().settings && Meteor.user().settings.options;
-    $(this.find('.cw--Unit__info')).slideToggle(function() {
+    $(this.find('.cw--BuildUnit__info')).slideToggle(function() {
       Meteor.call(
         'settings.setOption',
         'hideDescription',
@@ -136,6 +136,6 @@ class Unit extends BlazeComponent {
   }
 }
 
-Unit.register('Unit');
+BuildUnit.register('BuildUnit');
 
-export default Unit;
+export default BuildUnit;

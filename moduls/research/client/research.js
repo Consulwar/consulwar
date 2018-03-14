@@ -1,4 +1,4 @@
-import Research from '/imports/client/ui/blocks/Research/Research';
+import Research from '/imports/client/ui/blocks/Build/Research/BuildResearch';
 import researches from '/imports/content/Research/client';
 import evolutionResearches from '/imports/content/Research/Evolution/client';
 import fleetResearches from '/imports/content/Research/Fleet/client';

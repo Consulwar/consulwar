@@ -2,14 +2,16 @@
 @import '{}/imports/client/ui/config'
 
 .cw--Requirements
-  cw--fontFamily_cond()
   padding 10px
+  cw--fontFamily_cond()
 
   &__head
+    padding-bottom 5px
+
     font-size $cw--fontSize_m
     font-weight bold
+
     color $cw--color_metal
-    padding-bottom 5px
 
   &__item
     display block
@@ -17,10 +19,13 @@
     padding 5px 10px
     margin 0 -10px
     box-sizing border-box
-    border solid 1px transparent
+
     text-decoration none
     font-weight bold
     font-size $cw--fontSize_s
+
+    border solid 1px transparent
+
     &:hover
       background-color alpha($cw--color_metal, .15)
       border solid 1px $cw--color_metal
@@ -28,8 +33,10 @@
 
   &__itemTitle
     display block
+
     &_research
       color $cw--color_metal
+
     &_building
       color $cw--color_human
 
@@ -44,7 +51,8 @@
     color $cw--color_honor
 
   &__item
+    padding-left 70px
+
     background-size 50px
     background-repeat no-repeat
     background-position 10px 6px
-    padding-left 70px

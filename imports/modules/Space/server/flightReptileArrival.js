@@ -37,7 +37,7 @@ export default function reptileArrival(data) {
 
     if (planet.isHome) {
       const homeArmy = Game.Unit.getHomeFleetArmy({ userId });
-      if (homeArmy && homeArmy.units) {
+      if (homeArmy && homeArmy.units && _.keys(homeArmy.units).length > 0) {
         Game.Unit.removeArmy(homeArmy._id, userId);
       } else {
         // Т.к. боя не было, то ресурсы спишутся, но информация о грабеже

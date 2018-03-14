@@ -144,6 +144,19 @@ Game.Resources = {
   multiplyResources({ resources, count }) {
     return _.mapObject(resources, resource => resource * count);
   },
+
+  getAvailable(id, value) {
+    if (id === 'time') {
+      return;
+    }
+    const availableResource = Game.Resources.getValue()[id]
+      && Game.Resources.getValue()[id].amount
+      || 0;
+    if (value && value <= availableResource) {
+      return value;
+    }
+    return availableResource;
+  }
 };
 
 };

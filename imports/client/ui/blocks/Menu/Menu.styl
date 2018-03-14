@@ -1,4 +1,5 @@
 @import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
 
 .cw--Menu
   display flex
@@ -13,28 +14,22 @@
   &__group
     display flex
     margin 5px 10px 20px
+    max-width 100%
     flex-direction row
     flex-shrink 0
     flex-wrap nowrap
 
   &__item
+    display block
     position relative
-    display flex
-    flex-direction column
-    align-items flex-end
     box-sizing border-box
     flex-grow 0
     width 110px
+    height 110px
     margin 0 5px
     border 0
     outline 0
     transition border .1s, filter .1s, outline .1s
-
-    // Hack for 1:1 aspect ratio
-    &:before
-      content ''
-      display block
-      padding-top 100%
 
     &:hover,
     &_selected
@@ -72,7 +67,7 @@
     top 0
     left 0
     width 100%
-    height 100%
+    height @width
     filter grayscale(1)
     background-size 100%
 
@@ -80,34 +75,40 @@
     position absolute
     top 3px
     right 5px
-    width 25px
-    height 25px
+    width 26px
+    height 26px
     background-size 100%
+    background-repeat no-repeat
 
     &_canBuild
-      background-image url(/img/game/add.svg)
+      background-image url(/img/game/status_canAdd.svg)
 
     &_canUpgrade
-      background-image url(/img/game/canUpgrade.svg)
+      background-image url(/img/game/status_canUpgrade.svg)
 
     &_noTechnologies
-      background-image url(/img/game/noTechlogies.svg)
+      background-image url(/img/game/status_noTechlogies.svg)
       opacity 0.8
 
     &_inProgress
-      background-image url(/img/game/inProgress.svg)
+      background-image url(/img/game/status_inProgress.svg)
 
     &_queueBusy
-      background-image url(/img/game/queueBusy.svg)
+      background-image url(/img/game/status_queueBusy.svg)
 
   &__time
     position absolute
     bottom 0
     left 0
+    z-index 1
     display flex
-    align-items center
     justify-content center
     height 22px
     width 100%
-    font-size 18px
+    overflow hidden
+    padding 2px 5px
+    box-sizing border-box
+    text-align center
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_m
     background-color alpha($cw--color_black, .5)

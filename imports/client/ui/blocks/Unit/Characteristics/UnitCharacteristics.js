@@ -10,27 +10,50 @@ class UnitCharacteristics extends BlazeComponent {
     return 'UnitCharacteristics';
   }
 
-  showWeaponTooltip(event) {
+  constructor({
+    hash: {
+      unit,
+      addTitle = false,
+    },
+  }) {
+    super();
+    this.unit = unit;
+    this.addTitle = addTitle;
+    this.unitChars = unit.getCharacteristics();
+  }
+
+  showCharacteristicsTooltip(event) {
     const target = $(event.currentTarget);
-    const currentCharachteristic = target.attr('data-type') === 'weapon' ? 'damage' : 'life';
+    const currentCharacteristic = target.attr('data-type') === 'weapon' ? 'damage' : 'life';
     const tooltip = militaryTooltip(
-      this.data().unit.getCharacteristics(),
-      currentCharachteristic,
+      this.unit.getCharacteristics(),
+      currentCharacteristic,
     );
-    target.attr('data-tooltip', tooltip['data-tooltip']);
+    target.attr({
+      'data-tooltip-direction': 'w',
+      'data-tooltip': tooltip['data-tooltip'],
+    });
   }
 
   showUnitTooltip(event, unitEl) {
-    $(event.currentTarget).attr(
-      'data-tooltip',
-      Blaze.toHTMLWithData(
-        UnitCharacteristics.renderComponent(),
-        {
+    $(event.currentTarget).attr({
+      'data-tooltip':
+      (new UnitCharacteristics({
+        hash: {
           unit: unitEl,
           addTitle: true,
         },
-      ),
-    );
+      }).renderComponentToHTML()),
+      'data-tooltip-direction': 's',
+    });
+  }
+
+  getUnitChars(charsList) {
+    if (charsList === 'weapon.damage') {
+      return (this.unitChars.weapon.damage.max + this.unitChars.weapon.damage.min) / 2;
+    }
+    const chars = charsList.split('.');
+    return this.unitChars[chars[0]][chars[1]];
   }
 }
 

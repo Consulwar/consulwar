@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
-import Building from '/imports/client/ui/blocks/Building/Building';
+import Building from '/imports/client/ui/blocks/Build/Building/BuildBuilding';
 import buildings from '/imports/content/Building/client';
 import residentialBuildings from '/imports/content/Building/Residential/client';
 import militaryBuildings from '/imports/content/Building/Military/client';
@@ -87,7 +87,6 @@ var bonusEvents = {
   }
 };
 
-// TODO: Удалить — Хелперы и эвенты для шаблона строительства
 Template.overlay_menu.events(bonusEvents);
 
 initBuildingSpecialMarketClient();

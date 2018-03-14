@@ -170,55 +170,60 @@ export default Space.jobs.processJobs(
     workTimeout: Config.JOBS.workTimeout,
   },
   (job, cb) => {
-    const { data } = job;
-    const { battleId, planetId } = data;
+    try {
+      const { data } = job;
+      const { battleId, planetId } = data;
 
-    let planet = null;
-    if (planetId) {
-      planet = Game.Planets.Collection.findOne({ _id: planetId });
-    }
+      let planet = null;
+      if (planetId) {
+        planet = Game.Planets.Collection.findOne({ _id: planetId });
+      }
 
-    const battle = Battle.fromDB(battleId);
+      const battle = Battle.fromDB(battleId);
 
-    const roundResult = battle.performRound();
+      const roundResult = battle.performRound();
 
-    if (battle.status === Battle.Status.finish) {
-      const isUserVictory = (Battle.USER_SIDE in roundResult.left);
+      if (battle.status === Battle.Status.finish) {
+        const isUserVictory = (Battle.USER_SIDE in roundResult.left);
 
-      const users = Meteor.users.find({ username: { $in: battle.userNames } }).fetch();
+        const users = Meteor.users.find({ username: { $in: battle.userNames } }).fetch();
 
-      wreakUnits(battle, users);
+        wreakUnits(battle, users);
 
-      const options = {
-        battle,
-        roundResult,
-        users,
-        planet,
-        data,
-      };
+        const options = {
+          battle,
+          roundResult,
+          users,
+          planet,
+          data,
+        };
 
-      if (isUserVictory) {
-        humansWin(options);
+        if (isUserVictory) {
+          humansWin(options);
+        } else {
+          reptilesWin(options);
+        }
+
+        if (planet) {
+          Game.Planets.update(planet);
+        }
+
+        job.done();
       } else {
-        reptilesWin(options);
+        job.done();
+
+        job.rerun({
+          wait: battleDelay({
+            userArmy: roundResult.left[Battle.USER_SIDE],
+            enemyArmy: roundResult.left[Battle.ENEMY_SIDE],
+          }),
+        });
       }
 
-      if (planet) {
-        Game.Planets.update(planet);
-      }
-
-      job.done();
-    } else {
-      job.done();
-
-      job.rerun({
-        wait: battleDelay({
-          userArmy: roundResult.left[Battle.USER_SIDE],
-          enemyArmy: roundResult.left[Battle.ENEMY_SIDE],
-        }),
-      });
+      cb();
+    } catch (err) {
+      job.fail(err.stack);
+      cb(err.stack);
     }
-
-    cb();
   },
 );

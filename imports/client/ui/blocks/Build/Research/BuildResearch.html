@@ -1,0 +1,148 @@
+<template name="BuildResearch">
+  <div class="cw--BuildResearch">
+    <div class="cw--BuildResearch__header">
+      <div class="cw--BuildResearch__headerLevel">
+        {{#if research.getCurrentLevel}}
+          <span class="cw--BuildResearch__levelCount">
+            {{research.getCurrentLevel}}
+          </span>
+          уровень 
+        {{else}}
+          Не исследовано
+        {{/if}}
+      </div>
+      <div class="cw--BuildResearch__headerTitle">
+        {{research.title}}
+      </div>
+      <div class="cw--BuildResearch__headerControls">
+        <span
+          onClick={{toggleDescription}}
+          class="
+            cw--BuildResearch__headerIcon
+            cw--BuildResearch__buttonDescription
+            cw--button
+            {{#if options.hideDescription}}cw--button_notActive{{/if}}
+          "
+        ></span>
+        <a
+          href={{backToGroupLink}}
+          class="
+            cw--BuildResearch__headerIcon
+            cw--button_close
+          "
+        ></a>
+      </div>
+    </div>
+    <div
+      class="
+        cw--BuildResearch__info
+        {{#if options.hideDescription}}cw--BuildResearch__info_hidden{{/if}}
+      "
+    >
+      <div class="cw--BuildResearch__infoWrap">
+        <div class="cw--BuildResearch__mainPic">
+          <img
+            class="cw--BuildResearch__mainPicImage"
+            alt={{research.title}}
+            src={{research.icon}}
+          />
+        </div>
+        <div class="cw--BuildResearch__description scrollbar-inner">
+          {{research.description}}
+        </div>
+      </div>
+    </div>
+    <div class="cw--BuildResearch__mainField">
+      <div class="cw--BuildResearch__panel">
+        <div class="cw--BuildResearch__effects">
+          <div class="cw--BuildResearch__effectsHead">
+            Бонусные эффекты:
+          </div>
+          {{> EffectLevels args
+            item=research
+            nextLevel=level.get
+          }}
+        </div>
+        <div class="cw--BuildResearch__price">
+          <div class="cw--BuildResearch__priceHead">
+            Стоимость{{#if research.getCurrentLevel}} улучшения{{else}} исследования{{/if}}:
+          </div>
+          {{#if gt research.maxLevel research.getCurrentLevel}}
+            {{> ResourcePrice args price=(research.getPrice level.get)}}
+          {{else}}
+            В разработке
+          {{/if}}
+        </div>
+        <div class="cw--BuildResearch__actions">
+          <div class="cw--BuildResearch__action">
+            {{#if research.getQueue}}
+              <div class="cw--BuildResearch__actionStatus">
+                Идет исследование
+              </div>
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_green
+                "
+                disabled={{lt timeLeft.get 5}}
+                onClick={{showSpeedUp}}
+              >
+                {{#if lt timeLeft.get 5}}
+                  {{formatSeconds timeLeft.get}}
+                {{else}}
+                  Ускорить 
+                {{/if}}
+              </button>
+            {{else}}
+              {{#if gt research.maxLevel research.getCurrentLevel}}
+                <div class="cw--BuildResearch__actionAmount">
+                  <button 
+                    class="
+                      cw--button
+                      cw--BuildResearch__actionSetMax
+                    "
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=level
+                    min=(sum research.getCurrentLevel 1)
+                    max=research.maxLevel
+                    isShowZero=false
+                    placeholder="Уровень"
+                    class="cw--BuildResearch__actionAmountCount"
+                  }}
+                </div>
+              {{else}}
+                <div class="cw--BuildResearch__actionStatus">
+                  Требуется красный плазмоид
+                </div>
+              {{/if}}
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                onClick={{build}}
+                disabled={{not (research.canBuild level.get)}}
+              >
+                {{#if research.getCurrentLevel}}
+                  Улучшить
+                {{else}}
+                  Исследовать
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+      {{> Requirements args
+        requirements=getRequirements
+        className="cw--BuildResearch__require"
+      }}
+    </div>
+  </div>
+</template>

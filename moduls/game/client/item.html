@@ -50,34 +50,6 @@
   {{/if}}
 </template>
 
-<template name="item_characteristic">
-  {{#if item.characteristics}}
-    <div class="characteristics">
-      {{#if item.getTargets}}
-        Приоритеты атаки:
-        <ol class="targets">
-          {{#each item.getTargets}}
-            <li><a href="{{this.url}}">{{this.name}}</a></li>
-          {{/each}}
-        </ol>
-      {{/if}}
-      {{#each item.triggers.battle}}
-      {{this.name}}
-      {{/each}}
-      
-      {{#if item.getCharacteristics.weapon.damage}}
-        <span class="damage" {{militaryTooltip item.getCharacteristics 'damage'}}>
-          {{formatNumberWithISO item.getCharacteristics.weapon.damage.min}} —
-          {{formatNumberWithISO item.getCharacteristics.weapon.damage.max}}
-        </span>
-      {{/if}} 
-      <span class="life" {{militaryTooltip item.getCharacteristics 'life'}}>
-        {{formatNumberWithISO item.getCharacteristics.health.armor}}
-      </span>
-    </div>
-  {{/if}}
-</template>
-
 <template name="tooltipTable">
   <table>
     {{#each values}}

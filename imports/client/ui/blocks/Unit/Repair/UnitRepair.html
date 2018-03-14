@@ -1,0 +1,38 @@
+<template name="UnitRepair">
+  <div class="cw--UnitRepair">
+    <h1 class="cw--UnitRepair__header">Починка кораблей</h1>
+    <div class="cw--UnitRepair__description">
+      Часть кораблей пострадала после прошлого сражения. Некоторые из них можно восстановить.
+    </div>
+    <div class="cw--UnitRepair__content">
+      <div class="cw--UnitRepair__icon">
+        <img
+          class="cw--UnitRepair__iconImage"
+          src="{{unit.icon}}"
+          alt="{{unit.title}}"
+        />
+        <span class="cw--UnitRepair__count">
+          {{formatNumber unitsCount}}
+        </span>
+      </div>
+      <div class="cw--UnitRepair__details">
+        {{> ResourcePrice args
+          price=getPrice
+          className='cw--UnitRepair__price'
+        }}
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            cw--UnitRepair__repair
+          "
+          onClick={{repair}}
+          disabled={{eq unitsCount 0}}
+        >
+          Восстановить
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

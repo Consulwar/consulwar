@@ -48,27 +48,27 @@ export default {
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {
       return [
-        ['Building/Military/Complex', 35],
+        ['Building/Military/DefenseComplex', 35],
       ];
     } else if (level < 40) {
       return [
-        ['Building/Military/Complex', 45],
+        ['Building/Military/DefenseComplex', 45],
         ['Building/Military/Shipyard', 18],
       ];
     } else if (level < 60) {
       return [
-        ['Building/Military/Complex', 58],
+        ['Building/Military/DefenseComplex', 58],
         ['Building/Military/Shipyard', 27],
       ];
     } else if (level < 80) {
       return [
-        ['Building/Military/Complex', 75],
+        ['Building/Military/DefenseComplex', 75],
         ['Building/Military/Shipyard', 36],
         ['Research/Evolution/DoomsDaySizing', 60],
       ];
     }
     return [
-      ['Building/Military/Complex', 85],
+      ['Building/Military/DefenseComplex', 85],
       ['Building/Military/Shipyard', 45],
       ['Research/Evolution/DoomsDaySizing', 80],
     ];

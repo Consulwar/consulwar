@@ -1,0 +1,59 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--BuildSpeedUp
+  display block
+  width 500px
+  height auto
+  padding 7px 10px 14px 10px
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  border solid 1px $cw--color_metal
+  border-image linear-gradient(0deg, #2b6d92, $cw--color_metal) 1
+  background-color $cw--color_black
+  &__head
+    padding-bottom 6px
+    padding-top 3px
+    font-size $cw--fontSize_l
+    font-weight bold
+    color $cw--color_human
+  &__description
+    padding-bottom 6px
+    padding-top 6px
+    margin-bottom 6px
+    border-bottom solid 1px $cw--color_grey
+    color $cw--color_nearWhite
+  &__actions
+    padding-top 15px
+    display flex
+    align-items flex-end
+  &__action
+    flex-basis auto
+    display flex
+    flex-wrap wrap
+    &_skip
+      flex-basis 160px
+      margin-left auto
+  &__annotation
+    padding-top 3px
+    color $cw--color_nearWhite
+    & > p
+      padding-bottom 3px
+
+  &__value
+    font-weight bold
+    color $cw--color_white
+
+  &__actionHead
+    flex-basis 100%
+    font-weight bold
+    color $cw--color_human
+    padding-bottom 10px
+  &__actionPrice
+    min-height 45px
+    padding-right 20px
+    line-height 45px
+  &__button
+    flex-basis 160px
+  &__skip
+    flex-grow 1

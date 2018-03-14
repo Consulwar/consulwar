@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
-import Unit from '/imports/client/ui/blocks/Unit/Unit';
+import Unit from '/imports/client/ui/blocks/Build/Unit/BuildUnit';
 import humanUnits from '/imports/content/Unit/Human/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import humanDefenseUnits from '/imports/content/Unit/Human/Defense/client';
@@ -16,8 +16,10 @@ initUnitClient = function() {
 
 initUnitLib();
 initSquadLib();
+initWrecksLib();
 
 Meteor.subscribe('squad');
+Meteor.subscribe('wrecks');
 
 Game.Unit.showPage = function() {
   let item;
@@ -96,18 +98,16 @@ Game.Unit.showReptilePage = function() {
   );
 
   if (item) {
-    this.render('unit', {
-      to: 'content', 
-      data: {
-        unit: item,
-        count: new ReactiveVar(1)
-      }
-    });
+    this.render(
+      new Unit({ 
+        hash: {
+          unit: item,
+        },
+      }).renderComponent(),
+      { to: 'content' }
+    );
   } else {
     this.render('empty', {to: 'content'});
   }
 };
-
-initUnitClientWrecks();
-
 };

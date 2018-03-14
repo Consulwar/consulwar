@@ -1,0 +1,51 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--ResourceCurrent
+  cw--fontFamily_cond()
+  font-size 14px
+  font-weight bold
+  line-height 14px
+  background $cw--color_black
+  display flex
+  flex-direction row
+  padding 6px
+  border solid 1px #3B6F8C
+  border-left none
+  border-radius 0 100px 100px 0
+
+  &__resource
+    width 60px
+    margin-bottom -3px
+    text-align center
+    line-height 14px
+
+    &_credits
+      cursor pointer
+      order 6
+
+  &__icon
+    display block
+    margin auto
+    width 40px
+    height 40px
+    margin-bottom 5px
+    &_credits:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+
+  &__artifacts
+    order 7
+    display block
+    width 57px
+    height 57px
+    padding 0
+    cursor pointer
+    background-size 100%
+    background-image url(/img/game/Resource/Artifacts.svg)
+    background-repeat no-repeat
+    &:hover
+      -webkit-filter brightness(1.4)
+      filter brightness(1.4)
+      background-image url(/img/game/Resource/Artifacts_active.svg)
+    

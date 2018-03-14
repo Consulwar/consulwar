@@ -28,8 +28,8 @@ class AbstractUniqueItem extends AbstractItem {
     }
   }
 
-  getRequirements({ level = this.getCurrentLevel() } = {}) {
-    return this.requirements(level).map(([id, reqLevel]) => (
+  getRequirements({ level = this.getCurrentLevel() + 1 } = {}) {
+    return this.requirements(level - 1).map(([id, reqLevel]) => (
       [AbstractItem.getObject({ id }), reqLevel]
     ));
   }
@@ -105,7 +105,8 @@ class AbstractUniqueItem extends AbstractItem {
       resources: this.getPrice(level),
     });
     const hasTechnologies = this.meetRequirements({ level });
-    return hasResources && hasTechnologies && !this.isQueueBusy();
+    const limitExceeded = this.maxLevel && level >= this.maxLevel;
+    return hasResources && hasTechnologies && !limitExceeded && !this.isQueueBusy();
   }
 }
 

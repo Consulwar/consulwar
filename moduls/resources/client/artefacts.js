@@ -26,17 +26,13 @@ Game.Resources.showArtefactsPage = function() {
   });
 };
 
-var getPlanetsByArtefact = function(artefactId) {
-  var basePlanet = Game.Planets.getBase();
-  var planets = Game.Planets.getByArtefact(artefactId);
-
-  for (let i = 0; i < planets.length; i++) {
-    planets[i].distance = Game.Planets.calcDistance(planets[i], basePlanet);
-    planets[i].chance = planets[i].artefacts[artefactId];
-  }
-
-  return planets;
-};
+const calculatePlanetDistance = function(planet) {
+  const basePlanet = Game.Planets.getBase();
+  planet.distance = Game.Planets.calcDistance(planet, basePlanet);
+}
+const fillPlanetChance = function(artefactId, planet) {
+  planet.chance = planet.artefacts[artefactId];
+}
 
 Template.item_artefact.onRendered(function() {
   $('.content .scrollbar-inner').perfectScrollbar();
@@ -50,40 +46,38 @@ Template.item_artefact.helpers({
   },
 
   topPlanets: function(limit = 4) {
-    return _.sortBy(getPlanetsByArtefact(this.item.engName), function(planet) {
-      return planet.chance;
-    }).reverse().splice(0, limit);
+    const planets = Game.Planets.getByArtefact(this.item.engName);
+    planets.forEach(planet => {
+      fillPlanetChance(this.item.engName, planet);
+      calculatePlanetDistance(planet);
+    });
+    return (_(planets).sortBy(planet => planet.chance)
+      .reverse()
+      .splice(0, limit)
+    );
   },
 
   nearestPlanets: function(limit = 4) {
-    return _.sortBy(getPlanetsByArtefact(this.item.engName), function(planet) {
-      return planet.distance;
-    }).splice(0, limit);
+    const planets = Game.Planets.getByArtefact(this.item.engName);
+    planets.forEach(planet => {
+      fillPlanetChance(this.item.engName, planet);
+      calculatePlanetDistance(planet);
+    });
+    return _(planets).sortBy(planet => planet.distance).splice(0, limit);
   },
 
   userPlanets: function() {
-    const user = Meteor.user();
-
-    var planets = _.filter(getPlanetsByArtefact(this.item.engName), function(planet) {
-      return planet.minerUsername === user.username;
-    });
+    const planets = Game.Planets.getByArtefact(this.item.engName, Meteor.user().username);
+    planets.forEach(planet => fillPlanetChance(this.item.engName, planet));
 
     return planets.length && {
       planets: planets.length,
       chance: {
-        min: _.min(planets, function(planet) {
-          return planet.chance;
-        }).chance,
-        max: _.max(planets, function(planet) {
-          return planet.chance;
-        }).chance,
-        total: _.reduce(planets, function(memo, planet) { 
-          return memo + planet.chance; 
-        }, 0) * (86400 / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD) / 100
+        min: _.min(planets, planet => planet.chance).chance,
+        max: _.max(planets, planet => planet.chance).chance,
+        total: _.reduce(planets, (memo, planet) => memo + planet.chance, 0) * (86400 / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD) / 100
       },
-      collection: _.min(planets, function(planet) {
-        return planet.timeArtefacts;
-      }).timeArtefacts
+      collection: _.min(planets, planet => planet.timeArtefacts).timeArtefacts
     };
   },
 

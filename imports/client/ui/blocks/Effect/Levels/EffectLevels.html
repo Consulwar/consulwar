@@ -1,0 +1,29 @@
+<template name="EffectLevels">
+  {{#if effects}}
+    <div class="cw--EffectLevels">
+      <div class="cw--EffectLevels__currentLevel">
+        <div class="title">
+          Текущий уровень: {{currentLevel}}<br/>
+        </div>
+        {{> EffectList args
+          effects=effects
+          level=currentLevel
+          hideAdditional=true
+          additionalClass='cw--color_metal'
+        }}
+      </div>
+
+      <div class="cw--EffectLevels__nextLevel">
+        <div class="title">
+          Следующий уровень: {{nextLevel}}<br/>
+        </div>
+        {{> EffectList args
+          effects=effects
+          level=nextLevel
+          hideAdditional=true
+          additionalClass='cw--color_credit'
+        }}
+      </div>
+    </div>
+  {{/if}}
+</template>

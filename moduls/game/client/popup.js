@@ -2,6 +2,7 @@ import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/button/button.styl';
 
 initPopupClient = function() {
 Game.Popup = {
@@ -36,7 +37,7 @@ Game.Popup = {
 };
 
 Template.popup.events({
-  'click .close'(event, templateInstance) {
+  'click .cw--popup__close'(event, templateInstance) {
     Blaze.remove(templateInstance.view);
   },
   'keyup'(event, templateInstance) {

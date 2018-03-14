@@ -1,0 +1,194 @@
+<template name="BuildBuilding">
+  <div class="cw--BuildBuilding">
+    <div class="cw--BuildBuilding__header">
+      <div class="cw--BuildBuilding__headerLevel">
+        {{#if building.getCurrentLevel}}
+          <span class="cw--BuildBuilding__levelCount">
+            {{building.getCurrentLevel}}
+          </span>
+          уровень 
+        {{else}}
+          Не построено
+        {{/if}}
+      </div>
+      <div class="cw--BuildBuilding__headerTitle">
+        {{building.title}}
+      </div>
+      <div class="cw--BuildBuilding__headerControls">
+        {{#if not submenu}}
+          <span
+            onClick={{toggleDescription}}
+            class="
+              cw--BuildBuilding__headerIcon
+              cw--BuildBuilding__buttonDescription
+              cw--button
+              {{#if options.hideDescription}}cw--button_notActive{{/if}}
+            "
+          ></span>
+        {{/if}}
+        <a
+          href={{backToGroupLink}}
+          class="
+            cw--BuildBuilding__headerIcon
+            cw--button_close
+          "
+        ></a>
+      </div>
+    </div>
+
+  {{#if submenu}}
+    {{> yield region="item_submenu"}}
+  {{else}}
+    <div class="cw--BuildBuilding__info
+      {{#if options.hideDescription}}cw--BuildBuilding__info_hidden{{/if}}
+    ">
+      <div class="cw--BuildBuilding__infoWrap">
+        <div class="cw--BuildBuilding__mainPic">
+          <img
+            class="cw--BuildBuilding__mainPicImage"
+            alt={{building.title}}
+            src={{building.icon}}
+          />
+        </div>
+        <div class="cw--BuildBuilding__description scrollbar-inner">
+          {{building.description}}
+        </div>
+      </div>
+    </div>
+    <div class="cw--BuildBuilding__mainField">
+      <div class="cw--BuildBuilding__panel">
+        <div class="cw--BuildBuilding__effects">
+          <div class="cw--BuildBuilding__effectsHead">
+            Бонусные эффекты:
+          </div>
+          {{> EffectLevels args
+            item=building
+            nextLevel=level.get
+          }}
+        </div>
+        <div class="cw--BuildBuilding__price">
+          <div class="cw--BuildBuilding__priceHead">
+            Стоимость{{#if building.getCurrentLevel}} улучшения{{else}} строительства{{/if}}:
+          </div>
+          {{#if gt building.maxLevel building.getCurrentLevel}}
+            {{> ResourcePrice args price=(building.getPrice level.get)}}
+          {{else}}
+            В разработке
+          {{/if}}
+        </div>
+
+        <div class="cw--BuildBuilding__actions">
+          
+          <div class="cw--BuildBuilding__action">
+            {{#if building.getQueue}}
+              <div class="cw--BuildBuilding__actionStatus">
+                Идет строительство
+              </div>
+              <button class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_green
+                "
+                disabled={{lt timeLeft.get 5}}
+                onClick={{showSpeedUp}}
+              >
+                {{#if lt timeLeft.get 5}}
+                  {{formatSeconds timeLeft.get}}
+                {{else}}
+                  Ускорить 
+                {{/if}}
+              </button>
+            {{else}}
+              {{#if gt building.maxLevel building.getCurrentLevel}}
+                <div class="cw--BuildBuilding__actionAmount">
+                  <button 
+                    class="
+                      cw--button
+                      cw--BuildBuilding__actionSetMax
+                    "
+                    data-tooltip="Ввести максимум"
+                    data-tooltip-direction="s"
+                    onClick={{setMaximum}}
+                  ></button>
+                  {{> InputNumber args
+                    value=level
+                    min=(sum building.getCurrentLevel 1)
+                    max=building.maxLevel
+                    isShowZero=false
+                    placeholder="Уровень"
+                    class="cw--BuildBuilding__actionAmountCount"
+                  }}
+                </div>
+              {{else}}
+                <div class="cw--BuildBuilding__actionStatus">
+                  Требуется красный плазмоид
+                </div>
+              {{/if}}
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                onClick={{build}}
+                disabled={{not (building.canBuild level.get)}}
+              >
+                {{#if building.getCurrentLevel}}
+                  Улучшить
+                {{else}}
+                  Построить
+                {{/if}}
+              </button>
+            {{/if}}
+          </div>
+
+          <div class="cw--BuildBuilding__action">
+            {{#if isShowProgress}}
+              <div class="cw--BuildBuilding__bonus">
+                <div
+                  class="
+                    cw--BuildBuilding__bonusIcon
+                    cw--BuildBuilding__bonusIcon_{{building.engName}}
+                  "
+                ></div>
+                <progress
+                  class="
+                    cw--BuildBuilding__bonusBar
+                    cw--BuildBuilding__bonusBar_{{building.engName}}
+                    {{#with multiply income 0.25}}
+                      {{#if gt resourcesBonus this}}
+                        cw--BuildBuilding__bonusBar_active
+                      {{/if}}
+                    {{/with}}
+                  "
+                  max={{multiply income bonusStorage}}
+                  value={{or resourcesBonus '0'}}
+                ></progress>
+              </div>
+            {{/if}}
+
+            {{#with getButton}}
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                "
+                onClick={{action}}
+                disabled={{lt building.getCurrentLevel 1}}
+              >
+                {{text}}
+              </button>
+            {{/with}}
+          </div>
+        </div>
+
+      </div>
+      {{> Requirements args
+        requirements=getRequirements
+        className="cw--BuildBuilding__require"
+      }}
+    </div>
+  {{/if}}
+  </div>
+</template>

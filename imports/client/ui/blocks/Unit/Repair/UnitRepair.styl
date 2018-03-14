@@ -1,0 +1,57 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--UnitRepair
+  background alpha($cw--color_black, .8)
+  max-width 450px
+  padding 12px
+  box-sizing border-box
+  font-size $cw--fontSize_m
+
+  &__header
+    color $cw--color_human
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_l
+    font-weight bold
+    padding-bottom 12px
+  
+  &__description
+    color $cw--color_nearWhite
+    padding-bottom 12px
+
+  &__content
+    display flex
+
+  &__icon
+    position relative
+    width 140px
+    height 140px
+  
+  &__iconImage
+    width 100%
+    height auto
+  
+  &__count
+    position absolute
+    left 0px
+    top 7%
+    display block
+    padding 6px 8px
+    background linear-gradient(90deg, #000 0%, rgba(0,0,0,0) 60%)
+
+  &__details
+    flex-grow 1
+    padding-left 20px
+    display flex
+    flex-direction column
+    justify-content flex-end
+
+  &__price
+    flex-grow 1
+    justify-content center
+    align-items center
+    padding-bottom 10px
+
+  &__repair
+    width 170px
+    margin-left auto

@@ -8,7 +8,7 @@
   display flex
   flex-direction column
   margin auto
-  +media(null,$cw--size_m)
+  +media(null, $cw--size_m)
     width 100%
     margin 0
     padding-bottom 70px
@@ -106,9 +106,9 @@
     flex-basis 380px
     display flex
     flex-direction row
-    +media(null,$cw--size_s)
-      flex-direction: column;
-      flex-basis: auto;
+    +media(null, $cw--size_s)
+      flex-direction column
+      flex-basis auto
 
   &__panel
     cw--fontFamily_cond()
@@ -118,7 +118,7 @@
     display flex
     flex-direction column
     font-weight bold
-    +media(null,$cw--size_s)
+    +media(null, $cw--size_s)
       flex-basis auto
 
   &__effects
@@ -148,7 +148,7 @@
     flex-basis auto
     flex-shrink 0
     border-top solid 1px $cw--color_grey
-    +media(null,$cw--size_xs)
+    +media(null, $cw--size_xs)
       flex-wrap wrap
       justify-content center
 
@@ -159,7 +159,7 @@
     flex-direction column
     justify-content flex-end
     margin auto 15px 0 0
-    +media(null,$cw--size_s)
+    +media(null, $cw--size_s)
       margin-bottom 15px
 
   &__actionAmount

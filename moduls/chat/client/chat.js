@@ -33,6 +33,8 @@ var sortMessages = function(messages) {
    });
 };
 
+var updateScrollbar = _.debounce(() => $('.scrollbar-inner').perfectScrollbar('update'), 10);
+
 var addMessage = function(message, previousMessage) {
    if (!previousMessage
     || previousMessage.isMotd
@@ -44,9 +46,7 @@ var addMessage = function(message, previousMessage) {
       message.showProfile = true;
    }
    messages.upsert(message._id, message);
-   Meteor.setTimeout(function() {
-      $('.scrollbar-inner').perfectScrollbar('update');
-   });
+   Meteor.setTimeout(() => updateScrollbar());
 };
 
 var addMessagesAfter = function(newMessages, message) {

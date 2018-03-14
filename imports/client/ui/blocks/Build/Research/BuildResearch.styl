@@ -1,5 +1,6 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/responsive'
 
 .cw--BuildResearch
   font-size 14px
@@ -7,6 +8,10 @@
   display flex
   flex-direction column
   margin auto
+  +media(null, $cw--size_m)
+    width 100%
+    margin 0
+    padding-bottom 70px
   
   &__header
     cw--fontFamily_cond()
@@ -99,6 +104,9 @@
     flex-basis 380px
     display flex
     flex-direction row
+    +media(null, $cw--size_s)
+      flex-direction column
+      flex-basis auto
   &__panel
     cw--fontFamily_cond()
     padding 14px
@@ -107,6 +115,8 @@
     display flex
     flex-direction column
     font-weight bold
+    +media(null, $cw--size_s)
+      flex-basis auto
 
   &__effects
     padding-bottom 6px
@@ -124,6 +134,10 @@
     color $cw--color_human
     padding-bottom 4px
 
+  &__resources
+    +media(null, $cw--size_xs)
+      justify-content center
+
   &__actions
     flex-basis auto
     padding-top 6px
@@ -131,6 +145,7 @@
     margin 0
     flex-shrink 0
     display flex
+
   &__action
     flex-basis 170px
     width 170px
@@ -184,3 +199,6 @@
     background-color alpha($cw--color_black, .7)
     flex-basis 260px
     flex-grow 0
+    +media(null, $cw--size_s)
+      order -1
+      flex-basis auto

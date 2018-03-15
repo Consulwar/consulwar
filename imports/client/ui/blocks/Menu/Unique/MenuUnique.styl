@@ -1,7 +1,13 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/responsive'
 
 .cw--MenuUnique
+  &__item
+    +media(null, $cw--size_s)
+      flex-basis 23%
+      margin 2px 1%
+
   &__itemLevel
     position absolute
     display flex

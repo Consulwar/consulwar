@@ -1,12 +1,18 @@
 <template name="MenuUnits">
   <div class="cw--Menu cw--MenuUnits">
     {{#each group in items}}
-      <div class="cw--Menu__group">
+      <div
+        class="
+          cw--Menu__group
+          cw--MenuUnits__group
+        "
+      >
         {{#each item in group}}
           <a
             href={{item.url}}
             class="
               cw--Menu__item
+              cw--MenuUnits__item
               {{#if item.isSelected}}
                 cw--Menu__item_selected
               {{/if}}

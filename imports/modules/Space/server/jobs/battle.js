@@ -88,6 +88,10 @@ const humansWin = function({
 }) {
   if (planet) {
     planet.mission = null;
+    if (!planet.isDiscovered) {
+      const user = Meteor.users.findOne({ _id: planet.userId });
+      Game.Planets.discover(planet._id, user);
+    }
   }
 
   users.forEach((user) => {

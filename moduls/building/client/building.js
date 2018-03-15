@@ -6,6 +6,7 @@ import buildings from '/imports/content/Building/client';
 import residentialBuildings from '/imports/content/Building/Residential/client';
 import militaryBuildings from '/imports/content/Building/Military/client';
 import MenuUnique from '/imports/client/ui/blocks/Menu/Unique/MenuUnique';
+import ColosseumTournament from '/imports/client/ui/blocks/Colosseum/Tournament/ColosseumTournament';
 
 initBuildingClient = function() {
 'use strict';
@@ -54,7 +55,10 @@ Game.Building.showPage = function() {
 
     switch (menu) {
       case 'tournaments':
-        this.render('colosseum', { to: 'item_submenu' });
+        this.render(
+          new ColosseumTournament().renderComponent(),
+          { to: 'item_submenu' }
+        );
         break;
       case 'bonus':
         this.render('pulsecatcher', {to: 'item_submenu'});
@@ -90,7 +94,7 @@ var bonusEvents = {
 Template.overlay_menu.events(bonusEvents);
 
 initBuildingSpecialMarketClient();
-initBuildingSpecialColosseumClient();
+initBuildingSpecialColosseumLib();
 initBuildingSpecialContainerClient();
 initBuildingSpecialPulsecatcherClient();
 

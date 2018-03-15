@@ -14,7 +14,7 @@
   justify-content space-between
   align-items flex-end
   
-  +media(null, $cw--size_l)
+  +media(null, $cw--size_s)
     height auto
     padding-bottom 50px
 
@@ -74,12 +74,17 @@
       flex-basis auto
       order -1
       margin-right auto
+      height 100%
     +media(null, $cw--size_xs)
       margin 10px 0
 
   &__next
     display flex
+    padding 0 5px
     flex-direction row
+    flex-wrap wrap
+    align-items center
+    justify-content center
 
   &__timer
     margin-left 4px

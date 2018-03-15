@@ -366,23 +366,25 @@ Template.mail.events({
 
   // Complain letter
   'click button.complain': function(e, t) {
-    var letter = t.data.letter.get();
-    if (letter) {
-      // mark current as complaint
-      letter.complaint = true;
-      t.data.letter.set(letter);
-      // send request
-      Meteor.call('mail.complainLetter', letter._id, function(err, data) {
-        if (err) {
-          Notifications.error('Невозможно отправить жалобу', err.error);
-          // request failed, so mark as not complaint
-          letter.complaint = false;
-          t.data.letter.set(letter);
-        } else {
-          Notifications.success('Жалоба отправлена');
-        }
-      });
-    }
+    Game.showAcceptWindow('Вы уверены, что хотите пожаловаться?', function () {
+      var letter = t.data.letter.get();
+      if (letter) {
+        // mark current as complaint
+        letter.complaint = true;
+        t.data.letter.set(letter);
+        // send request
+        Meteor.call('mail.complainLetter', letter._id, function(err, data) {
+          if (err) {
+            Notifications.error('Невозможно отправить жалобу', err.error);
+            // request failed, so mark as not complaint
+            letter.complaint = false;
+            t.data.letter.set(letter);
+          } else {
+            Notifications.success('Жалоба отправлена');
+          }
+        });
+      }
+    });
   },
 
   // Send letter

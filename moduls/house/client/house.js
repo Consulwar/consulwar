@@ -53,6 +53,7 @@ var houseItems = new ReactiveVar(null);
 Template.consulHouse.onRendered(function() {
   this.autorun(function() {
     var username = Router.current().getParams().hash;
+    username = username && decodeURIComponent(username);
     if (!username || username == Meteor.user().username) {
       houseItems.set( Game.House.getPlacedItems() );
     } else {
@@ -86,6 +87,7 @@ Template.consulHouse.helpers({
   items: function() { return houseItems.get(); },
   consulName: function() {
     var hash = Router.current().getParams().hash;
+    hash = hash && decodeURIComponent(hash);
     return (hash && hash != Meteor.user().username) ? hash : null;
   }
 });

@@ -1,0 +1,73 @@
+<template name="ColosseumTournament">
+  <div class="cw--ColosseumTournament">
+
+    {{#each tournament in tournaments}}
+      <div
+        onClick={{selectTournament tournament}}
+        class="
+          cw--ColosseumTournament__tournament
+          {{#if or (not tournament.checkLevel) (gt timeCooldown 0)}}
+            cw--ColosseumTournament__tournament_disabled
+          {{/if}}
+          {{#if eq tournament.engName selected.engName}}
+            cw--ColosseumTournament__tournament_active
+          {{/if}}
+        "
+      >
+        <img
+          class="cw--ColosseumTournament__tournamentImg"
+          src={{tournament.icon}}
+          alt={{tournament.name}}
+        />
+      </div>
+    {{/each}}
+
+    <div class="cw--ColosseumTournament__actions">
+      <button
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_orange
+          cw--ColosseumTournament__start
+        "
+        onClick={{start}}
+        disabled={{or timeCooldown (not selected.checkPrice)}}
+      >
+        Провести турнир
+      </button>
+
+      <div class="cw--ColosseumTournament__status">
+        {{#if timeCooldown}}
+          <div class="cw--ColosseumTournament__next">
+            Следующий турнир через:
+            <time class="cw--ColosseumTournament__timer">
+              {{formatSeconds timeCooldown}}
+            </time>
+          </div>
+        {{else}}
+          {{> ResourcePrice args price=selected.price}}
+          <div class="cw--ColosseumTournament__info">
+            <div class="cw--ColosseumTournament__name">
+              {{selected.name}}
+            </div>
+            <div class="cw--ColosseumTournament__description">
+              {{selected.description}}
+            </div>
+          </div>
+        {{/if}}
+      </div>
+
+      <button
+        class="
+          cw--button
+          cw--button_flat
+          cw--ColosseumTournament__back
+        "
+        onClick={{goBack}}
+      >
+        Назад
+      </button>
+    </div>
+
+  </div>
+</template>

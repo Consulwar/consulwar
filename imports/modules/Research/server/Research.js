@@ -31,10 +31,11 @@ class Research extends ResearchAbstract {
     user,
     userId = user ? user._id : Meteor.userId(),
   }) {
+    const oldLevel = this.getLevel();
     this.setLevel({ level, userId });
 
     Game.Statistic.incrementUser(userId, {
-      'research.total': 1,
+      'research.total': level - oldLevel,
     });
   }
 }

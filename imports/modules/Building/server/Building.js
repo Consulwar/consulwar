@@ -31,10 +31,11 @@ class Building extends BuildingAbstract {
     user,
     userId = user ? user._id : Meteor.userId(),
   }) {
+    const oldLevel = this.getLevel();
     this.setLevel({ level, userId });
 
     Game.Statistic.incrementUser(userId, {
-      'building.total': 1,
+      'building.total': level - oldLevel,
     });
   }
 }

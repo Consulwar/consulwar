@@ -2090,6 +2090,7 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
     shipsLayer,
     offset,
     myAllies,
+    selectedArtefact,
   });
 
   galaxyByUsername[username] = galaxy;

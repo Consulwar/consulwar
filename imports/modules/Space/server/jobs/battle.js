@@ -2,6 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import Battle from '/moduls/battle/server/battle';
+import User from '/imports/modules/User/lib/User';
 
 import Config from '../config';
 import Space from '../../lib/space';
@@ -89,7 +90,7 @@ const humansWin = function({
   if (planet) {
     planet.mission = null;
     if (!planet.isDiscovered) {
-      const user = Meteor.users.findOne({ _id: planet.userId });
+      const user = User.getById({ userId: planet.userId });
       Game.Planets.discover(planet._id, user);
     }
   }

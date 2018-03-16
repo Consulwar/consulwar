@@ -1,5 +1,5 @@
 export default {
-  id: 'Quest/Regular/Tamily/Tutorial/Tutorial20',
+  id: 'Quest/Regular/Tamily/Tutorial/Tutorial26',
   condition: [
     ['Unit/Human/Space/Cruiser', 1],
   ],

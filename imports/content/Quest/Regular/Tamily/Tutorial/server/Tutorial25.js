@@ -12,7 +12,6 @@ export default {
     },
   },
   reward: {
-    LaserTurret: 25,
-    metals: 5000,
+    credits: 150,
   },
 };

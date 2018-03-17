@@ -1,0 +1,71 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--BuildBoostAdd
+  display block
+  max-width 360px
+  height auto
+  padding 7px 10px 14px 10px
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  border solid 1px $cw--color_metal
+  border-image linear-gradient(0deg, #2b6d92, $cw--color_metal) 1
+  background-color $cw--color_black
+  
+  &__head
+    padding-bottom 6px
+    padding-top 3px
+
+    font-size $cw--fontSize_l
+    font-weight bold
+    color $cw--color_human
+
+  &__description
+    padding-bottom 6px
+    padding-top 6px
+    margin-bottom 6px
+
+    color $cw--color_nearWhite
+
+  &__current
+    display flex
+    align-items center
+  
+  &__icon
+    width 63px
+    height @width
+    flex-grow 0
+    margin-right 15px
+
+    background-image url(/img/game/artefact/red/i/ruby_plasmoid.png)
+    background-size 100%
+    background-repeat no-repeat
+
+  &__counter
+    margin 12px 0
+
+    font-size $cw--fontSize_l
+    font-weight normal
+
+  &__count
+    display block
+    color $cw--color_honor
+    font-weight bold
+    font-size $cw--fontSize_xl
+
+  &__result
+    margin 12px 0 10px
+    color $cw--color_nearWhite
+
+  &__actions
+    display flex
+    justify-content space-between
+
+  &__action_add
+    flex-basis 170px
+    margin-right 10px
+
+  &__action_reset
+    flex-basis 160px
+

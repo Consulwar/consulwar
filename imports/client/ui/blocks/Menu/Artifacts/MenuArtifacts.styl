@@ -1,7 +1,13 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/responsive'
 
 .cw--MenuArtifacts
+  flex-wrap wrap
+  +media(null, $cw--size_xs)
+    flex-direction column
+    align-items center
+
   &__itemCount
     position absolute
     display flex
@@ -23,9 +29,11 @@
       width auto
       border-radius 0
   
+  &__group
+    flex-wrap nowrap
+
   &__item
     width 65px
-    height 65px
 
   &__itemIcon
     filter grayscale(0)

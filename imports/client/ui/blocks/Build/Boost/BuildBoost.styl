@@ -1,0 +1,45 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--BuildBoost
+  display block
+
+  &__time
+    color $cw--color_lightGrey
+
+  &__timer
+    color $cw--color_white
+
+  &__collection
+    display flex
+    padding-top 7px
+
+  &__item
+    flex-basis 63px
+    margin-right 10px
+
+    cursor pointer
+    background-color $cw--color_black
+    background-repeat no-repeat
+    box-sizing border-box
+
+    &:before
+      content ''
+      display block
+      width 100%
+      padding-top 100%
+
+    &_added
+      background-image url(/img/game/artefact/red/i/ruby_plasmoid.png)
+      background-size 100%
+
+    &_empty
+      border 1px solid $cw--color_credit
+      border-image linear-gradient(0deg, #85993C, $cw--color_credit) 1
+      background-image url(/img/add.svg)
+      background-position center center
+      &:hover
+      &:active
+      &:focus
+        -webkit-filter brightness(1.2)
+        filter brightness(1.2)

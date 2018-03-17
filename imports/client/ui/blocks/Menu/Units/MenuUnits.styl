@@ -1,7 +1,42 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/responsive'
 
 .cw--MenuUnits
+  +media(null, $cw--size_xl)
+    align-items flex-start
+    justify-content space-between
+  +media(null, $cw--size_m)
+    flex-direction column
+    align-items center
+
+  &__group
+    flex-shrink 1
+    +media(null, $cw--size_m)
+      margin 10px 0
+
+  &__item
+    width auto
+    flex-basis 110px
+    +media($cw--size_l, $cw--size_xl)
+      width 100px
+      flex-basis 100px
+    +media($cw--size_m, $cw--size_l)
+      width 90px
+      flex-basis 90px
+    +media($cw--size_s, $cw--size_m)
+      width round(100vw / 7 - 1)
+      flex-basis round(100vw / 7 - 1)
+      margin 3px .5vw
+    +media($cw--size_xs, $cw--size_s)
+      width round(100vw / 5 - 1)
+      flex-basis round(100vw / 5 - 1)
+      margin 3px .5vw
+    +media(null, $cw--size_xs)
+      width round(100vw / 4 - 1)
+      flex-basis round(100vw / 4 - 1)
+      margin 3px .5vw
+
   &__itemCount
     position absolute
     display flex
@@ -16,6 +51,11 @@
     text-align right
     color $cw--color_white
     background linear-gradient(to right, $cw--color_black 0%, alpha($cw--color_black, 0) 60%)
+
+    +media(null, $cw--size_l)
+      font-size $cw--fontSize_m
+    +media(null, $cw--size_s)
+      font-size $cw--fontSize_s
 
     &_progress
       top 6px

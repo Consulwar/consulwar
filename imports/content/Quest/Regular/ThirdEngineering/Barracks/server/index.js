@@ -21,8 +21,9 @@ import Barracks100 from './Barracks100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Barracks',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 10],
+    ['Building/Residential/House', 28],
+    ['Building/Residential/Entertainment', 15],
+    ['Building/Military/Barracks', 20],
   ],
   finalText: 'Поздравляем! Казармы достигли максимального уровня. Слава Великому Консулу!',
   quests: [

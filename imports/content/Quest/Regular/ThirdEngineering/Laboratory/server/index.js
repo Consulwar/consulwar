@@ -1,4 +1,3 @@
-import Laboratory25 from './Laboratory25';
 import Laboratory30 from './Laboratory30';
 import Laboratory35 from './Laboratory35';
 import Laboratory40 from './Laboratory40';
@@ -24,7 +23,6 @@ export default {
   ],
   finalText: 'Поздравляем! Врата достигли максимального уровня. Слава Великому Консулу!',
   quests: [
-    Laboratory25,
     Laboratory30,
     Laboratory35,
     Laboratory40,

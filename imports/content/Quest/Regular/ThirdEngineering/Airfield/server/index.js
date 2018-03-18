@@ -1,6 +1,3 @@
-import Airfield10 from './Airfield10';
-import Airfield15 from './Airfield15';
-import Airfield20 from './Airfield20';
 import Airfield25 from './Airfield25';
 import Airfield30 from './Airfield30';
 import Airfield35 from './Airfield35';
@@ -27,9 +24,6 @@ export default {
   ],
   finalText: 'Поздравляем! Аэродром достиг максимального уровня. Слава Великому Консулу!',
   quests: [
-    Airfield10,
-    Airfield15,
-    Airfield20,
     Airfield25,
     Airfield30,
     Airfield35,

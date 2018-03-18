@@ -1,6 +1,3 @@
-import Factory10 from './Factory10';
-import Factory15 from './Factory15';
-import Factory20 from './Factory20';
 import Factory25 from './Factory25';
 import Factory30 from './Factory30';
 import Factory35 from './Factory35';
@@ -27,9 +24,6 @@ export default {
   ],
   finalText: 'Поздравляем! Военный Завод достиг максимального уровня. Слава Великому Консулу!',
   quests: [
-    Factory10,
-    Factory15,
-    Factory20,
     Factory25,
     Factory30,
     Factory35,

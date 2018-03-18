@@ -1,8 +1,3 @@
-import Crystallization5 from './Crystallization5';
-import Crystallization10 from './Crystallization10';
-import Crystallization15 from './Crystallization15';
-import Crystallization20 from './Crystallization20';
-import Crystallization25 from './Crystallization25';
 import Crystallization30 from './Crystallization30';
 import Crystallization35 from './Crystallization35';
 import Crystallization40 from './Crystallization40';
@@ -28,11 +23,6 @@ export default {
   ],
   finalText: 'Кристаллизация достигла своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Crystallization5,
-    Crystallization10,
-    Crystallization15,
-    Crystallization20,
-    Crystallization25,
     Crystallization30,
     Crystallization35,
     Crystallization40,

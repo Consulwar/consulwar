@@ -21,8 +21,8 @@ import Science100 from './Science100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Science',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
     ['Building/Military/Laboratory', 15],
+    ['Research/Evolution/Science', 15],
   ],
   finalText: 'Научный Отдел достиг своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

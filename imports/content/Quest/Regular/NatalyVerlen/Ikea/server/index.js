@@ -22,7 +22,6 @@ import Ikea100 from './Ikea100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Ikea',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
     ['Building/Military/Laboratory', 20],
   ],
   finalText: 'Исследование «Мебель из Икеа» достигло своего максимума. Мои поздравления, Консул.',

@@ -1,6 +1,3 @@
-import Barracks10 from './Barracks10';
-import Barracks15 from './Barracks15';
-import Barracks20 from './Barracks20';
 import Barracks25 from './Barracks25';
 import Barracks30 from './Barracks30';
 import Barracks35 from './Barracks35';
@@ -27,9 +24,6 @@ export default {
   ],
   finalText: 'Поздравляем! Казармы достигли максимального уровня. Слава Великому Консулу!',
   quests: [
-    Barracks10,
-    Barracks15,
-    Barracks20,
     Barracks25,
     Barracks30,
     Barracks35,

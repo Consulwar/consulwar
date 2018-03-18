@@ -1,3 +1,5 @@
+import Entertainment1 from './Entertainment1';
+import Entertainment5 from './Entertainment5';
 import Entertainment10 from './Entertainment10';
 import Entertainment15 from './Entertainment15';
 import Entertainment20 from './Entertainment20';
@@ -25,6 +27,8 @@ export default {
   ],
   finalText: 'Поздравляем! Центр Развлечений достиг максимального уровня. Слава Великому Консулу!',
   quests: [
+    Entertainment1,
+    Entertainment5,
     Entertainment10,
     Entertainment15,
     Entertainment20,

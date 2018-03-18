@@ -22,8 +22,9 @@ import Crystallization100 from './Crystallization100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Crystallization',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 30],
+    ['Building/Military/Laboratory', 16],
+    ['Building/Residential/Crystal', 15],
+    ['Research/Evolution/Crystallization', 25],
   ],
   finalText: 'Кристаллизация достигла своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

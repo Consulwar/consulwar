@@ -18,9 +18,9 @@ import Laboratory100 from './Laboratory100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Laboratory',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/SpacePort', 1],
-    ['Building/Military/PowerStation', 15],
+    ['Research/Evolution/Science', 15],
+    ['Building/Military/PowerStation', 23],
+    ['Building/Military/Laboratory', 25],
   ],
   finalText: 'Поздравляем! Врата достигли максимального уровня. Слава Великому Консулу!',
   quests: [

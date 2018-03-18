@@ -23,8 +23,7 @@ import TradingPort100 from './TradingPort100';
 export default {
   id: 'Quest/Regular/Tamily/TradingPort',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Research/Evolution/Alloy', 20],
+    ['Building/Residential/SpacePort', 15],
   ],
   finalText: 'Поздравляем! Торговый Порт достиг максимального уровня. Слава Великому Консулу!',
   quests: [

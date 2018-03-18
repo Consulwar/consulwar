@@ -20,8 +20,9 @@ import Alloy100 from './Alloy100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Alloy',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 15],
+    ['Building/Military/Laboratory', 24],
+    ['Building/Residential/Crystal', 24],
+    ['Research/Evolution/Alloy', 25],
   ],
   finalText: 'Особые Сплавы достигли своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

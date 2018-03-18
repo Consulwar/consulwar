@@ -22,8 +22,7 @@ import AnimalWorld100 from './AnimalWorld100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/AnimalWorld',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 40],
+    ['Research/Evolution/Ikea', 8],
   ],
   finalText: 'Стая диких животных была распущена, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

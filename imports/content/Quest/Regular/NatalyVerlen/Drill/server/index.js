@@ -1,7 +1,3 @@
-import Drill5 from './Drill5';
-import Drill10 from './Drill10';
-import Drill15 from './Drill15';
-import Drill20 from './Drill20';
 import Drill25 from './Drill25';
 import Drill30 from './Drill30';
 import Drill35 from './Drill35';
@@ -28,10 +24,6 @@ export default {
   ],
   finalText: 'Бурильный Бур достиг своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Drill5,
-    Drill10,
-    Drill15,
-    Drill20,
     Drill25,
     Drill30,
     Drill35,

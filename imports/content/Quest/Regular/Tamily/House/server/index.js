@@ -1,3 +1,4 @@
+import House25 from './House25';
 import House30 from './House30';
 import House35 from './House35';
 import House40 from './House40';
@@ -22,6 +23,7 @@ export default {
   ],
   finalText: 'Поздравляем! Жилые Комплексы достигли максимального уровня. Слава Великому Консулу!',
   quests: [
+    House25,
     House30,
     House35,
     House40,

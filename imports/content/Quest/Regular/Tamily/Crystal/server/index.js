@@ -18,8 +18,9 @@ import Crystal100 from './Crystal100';
 export default {
   id: 'Quest/Regular/Tamily/Crystal',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Research/Evolution/Energy', 10],
+    ['Building/Residential/Crystal', 24],
+    ['Research/Evolution/Energy', 14],
+    ['Research/Evolution/Crystallization', 25],
   ],
   finalText: 'Поздравляем! Шахта Кристалла достигла максимального уровня. Слава Великому Консулу!',
   quests: [

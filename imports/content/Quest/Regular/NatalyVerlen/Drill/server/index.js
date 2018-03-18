@@ -22,8 +22,9 @@ import Drill100 from './Drill100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Drill',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 25],
+    ['Building/Military/Laboratory', 13],
+    ['Building/Residential/Metal', 15],
+    ['Research/Evolution/Drill', 20],
   ],
   finalText: 'Бурильный Бур достиг своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

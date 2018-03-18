@@ -20,8 +20,9 @@ import Energy100 from './Energy100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Energy',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 5],
+    ['Building/Military/Laboratory', 18],
+    ['Building/Residential/Metal', 24],
+    ['Research/Evolution/Energy', 20],
   ],
   finalText: 'Энергетика достигла своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

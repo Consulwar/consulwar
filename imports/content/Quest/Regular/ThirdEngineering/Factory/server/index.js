@@ -21,8 +21,9 @@ import Factory100 from './Factory100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Factory',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 15],
+    ['Building/Residential/Metal', 28],
+    ['Building/Military/PowerStation', 22],
+    ['Building/Military/Factory', 20],
   ],
   finalText: 'Поздравляем! Военный Завод достиг максимального уровня. Слава Великому Консулу!',
   quests: [

@@ -1,6 +1,3 @@
-import Alloy15 from './Alloy15';
-import Alloy20 from './Alloy20';
-import Alloy25 from './Alloy25';
 import Alloy30 from './Alloy30';
 import Alloy35 from './Alloy35';
 import Alloy40 from './Alloy40';
@@ -26,9 +23,6 @@ export default {
   ],
   finalText: 'Особые Сплавы достигли своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Alloy15,
-    Alloy20,
-    Alloy25,
     Alloy30,
     Alloy35,
     Alloy40,

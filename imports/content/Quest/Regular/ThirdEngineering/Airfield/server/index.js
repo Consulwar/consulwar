@@ -21,8 +21,9 @@ import Airfield100 from './Airfield100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Airfield',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 20],
+    ['Building/Residential/Crystal', 28],
+    ['Building/Military/PowerStation', 27],
+    ['Building/Military/Airfield', 20],
   ],
   finalText: 'Поздравляем! Аэродром достиг максимального уровня. Слава Великому Консулу!',
   quests: [

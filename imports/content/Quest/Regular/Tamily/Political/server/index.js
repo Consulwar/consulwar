@@ -23,8 +23,7 @@ import Political100 from './Political100';
 export default {
   id: 'Quest/Regular/Tamily/Political',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/Colosseum', 20],
+    ['Research/Evolution/AnimalWorld', 9],
   ],
   finalText: 'Поздравляем! Политический Центр достиг максимального уровня. При его постройке не пострадало ни одного пиджака. Вроде бы.',
   quests: [

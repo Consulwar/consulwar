@@ -22,8 +22,7 @@ import Nanotechnology100 from './Nanotechnology100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Nanotechnology',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 50],
+    ['Research/Evolution/Alloy', 28],
   ],
   finalText: 'Нанотехнологии достигли своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [

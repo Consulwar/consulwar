@@ -23,8 +23,7 @@ import PulseCatcher100 from './PulseCatcher100';
 export default {
   id: 'Quest/Regular/Tamily/PulseCatcher',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Research/Evolution/Science', 20],
+    ['Building/Residential/Alliance', 4],
   ],
   finalText: 'Поздравляем! Импульсный Уловитель достиг максимального уровня. Он ещё послужит величию вашей колонии, вот увидите!',
   quests: [

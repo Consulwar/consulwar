@@ -23,8 +23,7 @@ import Colosseum100 from './Colosseum100';
 export default {
   id: 'Quest/Regular/Tamily/Colosseum',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Research/Evolution/Alloy', 30],
+    ['Research/Evolution/Statue', 10],
   ],
   finalText: 'Поздравляем! Колизей достиг максимального уровня. Слава Великому Консулу!',
   quests: [

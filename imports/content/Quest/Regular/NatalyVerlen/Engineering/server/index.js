@@ -22,8 +22,7 @@ import Engineering100 from './Engineering100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Engineering',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 35],
+    ['Building/Military/DefenseComplex', 10],
   ],
   finalText: 'Орудие Судного Дня покрыло своей тенью обитаемые миры, и Лаборатории больше нечего исследовать в области оборонной инженерии. Мои поздравления, Консул.',
   quests: [

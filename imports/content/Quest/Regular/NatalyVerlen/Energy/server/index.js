@@ -1,5 +1,3 @@
-import Energy15 from './Energy15';
-import Energy20 from './Energy20';
 import Energy25 from './Energy25';
 import Energy30 from './Energy30';
 import Energy35 from './Energy35';
@@ -20,13 +18,12 @@ import Energy100 from './Energy100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Energy',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 5],
+    ['Building/Military/Laboratory', 18],
+    ['Building/Residential/Metal', 24],
+    ['Research/Evolution/Energy', 20],
   ],
   finalText: 'Энергетика достигла своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Energy15,
-    Energy20,
     Energy25,
     Energy30,
     Energy35,

@@ -21,8 +21,8 @@ import Shipyard100 from './Shipyard100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Shipyard',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 25],
+    ['Building/Residential/Alliance', 1],
+    ['Building/Military/Shipyard', 1],
   ],
   finalText: 'Поздравляем! Верфь достигла максимального уровня. Слава Великому Консулу!',
   quests: [

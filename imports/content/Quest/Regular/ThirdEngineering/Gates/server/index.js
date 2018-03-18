@@ -23,8 +23,7 @@ import Gates100 from './Gates100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Gates',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 55],
+    ['Research/Evolution/Science', 26],
   ],
   finalText: 'Поздравляем! Врата достигли максимального уровня. Слава Великому Консулу!',
   quests: [

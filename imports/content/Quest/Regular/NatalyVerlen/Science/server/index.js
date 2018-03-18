@@ -1,5 +1,3 @@
-import Science10 from './Science10';
-import Science15 from './Science15';
 import Science20 from './Science20';
 import Science25 from './Science25';
 import Science30 from './Science30';
@@ -21,13 +19,11 @@ import Science100 from './Science100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Science',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
     ['Building/Military/Laboratory', 15],
+    ['Research/Evolution/Science', 15],
   ],
   finalText: 'Научный Отдел достиг своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Science10,
-    Science15,
     Science20,
     Science25,
     Science30,

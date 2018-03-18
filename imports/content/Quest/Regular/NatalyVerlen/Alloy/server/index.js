@@ -1,6 +1,3 @@
-import Alloy15 from './Alloy15';
-import Alloy20 from './Alloy20';
-import Alloy25 from './Alloy25';
 import Alloy30 from './Alloy30';
 import Alloy35 from './Alloy35';
 import Alloy40 from './Alloy40';
@@ -20,14 +17,12 @@ import Alloy100 from './Alloy100';
 export default {
   id: 'Quest/Regular/NatalyVerlen/Alloy',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/Laboratory', 15],
+    ['Building/Military/Laboratory', 24],
+    ['Building/Residential/Crystal', 24],
+    ['Research/Evolution/Alloy', 25],
   ],
   finalText: 'Особые Сплавы достигли своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Alloy15,
-    Alloy20,
-    Alloy25,
     Alloy30,
     Alloy35,
     Alloy40,

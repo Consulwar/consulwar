@@ -17,8 +17,9 @@ import PowerStation100 from './PowerStation100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/PowerStation',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
     ['Building/Residential/House', 20],
+    ['Research/Evolution/Energy', 15],
+    ['Building/Military/PowerStation', 25],
   ],
   finalText: 'Поздравляем! Электростанция достигла максимального уровня. Слава Великому Консулу!',
   quests: [

@@ -1,5 +1,3 @@
-import Energy15 from './Energy15';
-import Energy20 from './Energy20';
 import Energy25 from './Energy25';
 import Energy30 from './Energy30';
 import Energy35 from './Energy35';
@@ -26,8 +24,6 @@ export default {
   ],
   finalText: 'Энергетика достигла своего максимума, и Лаборатории больше нечего исследовать в этой области науки. Мои поздравления, Консул.',
   quests: [
-    Energy15,
-    Energy20,
     Energy25,
     Energy30,
     Energy35,

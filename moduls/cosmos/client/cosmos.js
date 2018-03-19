@@ -43,7 +43,6 @@ initCosmosClient = function() {
 'use strict';
 
 initCosmosLib();
-initCosmosPathView();
 
 initCosmosContentClient();
 let spaceEventsSubscription = Meteor.subscribe('mySpaceEvents');
@@ -68,7 +67,6 @@ var updated = new ReactiveVar(null);
 var mapView = null;
 var pathViews = {};
 var observerSpaceEvents = null;
-var cosmosObjectsView = null;
 var cosmosPopupView = null;
 var selectedArtefact = new ReactiveVar(null);
 var isPopupLocked = new ReactiveVar(false);
@@ -1925,105 +1923,6 @@ const getFleetAnimation = function(fleet, mapView, path) {
   };
 };
 
-Template.cosmosObjects.events({
-  'mouseover .map-fleet': function(e, t) {
-    let eventId = e.currentTarget.dataset.id;
-
-    let polyline = pathViews[eventId].polyline;
-    polyline.setStyle({
-      weight: 3
-    });
-    polyline.bringToFront();
-
-    $(`.map-fleet:not([data-id="${eventId}"])`).addClass('blur');
-    $('.map-planet-marker').addClass('blur');
-
-    let planetsId = '[data-id="' + _.map(pathViews[eventId].planetsInPath, (planet)=> planet._id).
-      join('"], [data-id="') + '"]';
-
-    $(planetsId).removeClass('blur');
-
-    for (let id in pathViews) {
-      if (id !== eventId) {
-        pathViews[id].polyline.setStyle({opacity: 0.4});
-      }
-    }
-  },
-
-  'mouseout .map-fleet': function(e, t) {
-    let eventId = e.currentTarget.dataset.id;
-
-    pathViews[eventId].polyline.setStyle({
-      weight: 2
-    });
-
-    $(`.map-fleet`).removeClass('blur');
-
-    $('.map-planet-marker').removeClass('blur');
-
-    for (let id in pathViews) {
-      if (id !== eventId) {
-        pathViews[id].polyline.setStyle({opacity: 1});
-      }
-    }
-  }
-});
-
-Template.cosmosObjects.helpers({
-  zoom: function() {
-    return zoom.get();
-  },
-
-  owner: function() {
-    return (this.planet.mission 
-      ? 'reptiles' 
-      : this.planet.armyId || this.planet.isHome 
-        ? 'humans' 
-        : null
-    );
-  },
-
-  statusName() {
-    return statusName(this.planet.status);
-  },
-
-  getPlanetPosition: function(x, y, iconSize) {
-    var k = Math.pow(2, (zoom.get() - 7));
-    var coords = mapView.latLngToLayerPoint(new L.latLng(x, y));
-
-    return {
-      x: coords.x,
-      y: coords.y,
-      height: iconSize * k,
-      width: iconSize * k,
-      marginTop: iconSize * k * -0.5,
-      marginLeft: iconSize * k * -0.5,
-      nameTop: -30,
-      nameLeft: -100 + iconSize * k * 0.5
-    };
-  },
-
-  getFleetAnimation: getFleetAnimation,
-
-  isHidden: function(x, y) {
-    return false;
-
-    if (bounds.get().contains(new L.latLng(x, y))) {
-      return false;
-    } else {
-      return true;
-    }
-  },
-
-  isHighlighted: function(planet) {
-    return planet.artefacts && planet.artefacts.hasOwnProperty(selectedArtefact.get());
-  },
-
-  selectedArtefact: function() {
-    return selectedArtefact.get();
-  }
-});
-
 // ----------------------------------------------------------------------------
 // Main
 // ----------------------------------------------------------------------------
@@ -2073,8 +1972,9 @@ const showSpaceEvent = function(id, event, offset, user) {
 };
 
 const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 }, hex }) {
+  let subscription = null;
   if (Meteor.user().username !== username) {
-    Meteor.subscribe('planets', username)
+    subscription = Meteor.subscribe('planets', username)
   }
 
   if (hex) {
@@ -2091,6 +1991,7 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
     offset,
     myAllies,
     selectedArtefact,
+    subscription,
   });
 
   galaxyByUsername[username] = galaxy;
@@ -2417,40 +2318,6 @@ Template.cosmos.helpers({
 Template.cosmos.events({
   'click .btn-selection': function(e, t) {
     selectedArtefact.set(null);
-  },
-
-  'click .map-fleet': function(e, t) {
-    var id = $(e.currentTarget).attr('data-id');
-    if (id) {
-      Game.Cosmos.showShipInfo(id, true);
-    }
-  },
-
-  'mouseover .map-fleet': function(e, t) {
-    if (!isPopupLocked.get()) {
-      var id = $(e.currentTarget).attr('data-id');
-      Game.Cosmos.showShipInfo.call(t, id);
-    }
-  },
-
-  'click .map-planet-marker': function(e, t) {
-    var id = $(e.currentTarget).attr('data-id');
-    if (id) {
-      Game.Cosmos.showPlanetInfo(id);
-    }
-  },
-
-  'mouseover .map-planet-marker': function(e, t) {
-    if (!isPopupLocked.get()) {
-      var id = $(e.currentTarget).attr('data-id');
-      Game.Cosmos.showPlanetPopup.call(t, id);
-    }
-  },
-
-  'mouseout .map-planet-marker, mouseout .map-fleet': function(e, t) {
-    if (!isPopupLocked.get()) {
-      Game.Cosmos.hidePlanetPopup();
-    }
   },
 
   'click .map-control-home': function(e, t) {

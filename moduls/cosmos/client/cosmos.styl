@@ -118,29 +118,18 @@
   //background-image url(/img/game/cosmomap/back.jpg)
   background-position center center
 
+  .artefactRateTooltip
+    font-family 'Roboto', Arial, sans-serif
+    color #e9a844
+    background none
+    border none
+    margin 0px
+    padding 0px
 
-.map-fleet
-  outline none
-  cursor pointer
-  z-index 1000
-  background-color none
+    &:before
+      content none
 
-  &.blur
-     z-index 1 !important
-     -webkit-filter blur(2px)
-     filter blur(2px)
 
-.map-fleet-humans
-  position absolute
-  display block
-  width 51px
-  height 47px
-  margin-left -25.5px
-  margin-top -23.5px
-  background-repeat no-repeat
-  background-position center center
-  background-image url(/img/game/cosmomap/marker_fleet_humans.png)
-  
 .map-fleet-rept
   position absolute
   display block
@@ -151,75 +140,19 @@
   background-repeat no-repeat
   background-position center center
   background-image url(/img/game/cosmomap/marker_fleet_rept.png)
-  
-.map-fleet-rept-tradefleet
-  position absolute
-  display block
-  width 51px
-  height 74px
-  margin-left -25.5px
-  margin-top -37px
-  background-repeat no-repeat
-  background-position center center
-  background-image url(/img/game/cosmomap/marker_fleet_rept_tradefleet_newyear.png)
 
-.map-fleet-time
-  position absolute
-  display block
-  font-size 16px
-  color '#ffffff'
-
-
-.map-planet-attack-cursor
-  position absolute
-  width 100px
-  text-align center
-  padding-top 48px
-  font-size 14px
-  color #ffffff
-  background-position top center
-  background-repeat no-repeat
-  background-image url(/img/game/cosmomap/marker_attack_humans.png)
-  
-.map-planet-attack-cursor-rept
-  position absolute
-  width 100px
-  text-align center
-  padding-bottom 48px
-  font-size 14px
-  color #ffffff
-  background-position top center
-  background-repeat no-repeat
-  background-image url(/img/game/cosmomap/marker_attack_rept.png)
-
-
-.map-planet-marker-name
-  pointer-events none
-  position absolute
-  width 200px
-  text-align center
-  font-size 14px
 
 .map-planet-border-reptile
   border 3px solid #DC6257
   border-radius 50%
-  &.zoom-lt-5
-    background-color #DC6257
   
 .map-planet-border-human
   border 3px solid $color-ggk
   border-radius 50%
-  &.zoom-lt-5
-    background-color $color-ggk
   
 .map-planet-border-empty
   border 3px solid #ffffff
   border-radius 50%
-  &.zoom-lt-5
-    background-color #ffffff
-
-.map-planet-marker-hidden
-  display none
 
 .map-planet-marker-animated
   .texture:before
@@ -228,38 +161,6 @@
 .map-planet-marker
   outline none
   cursor pointer
-
-  &.highlighted
-    border-color $color-metal
-    &.zoom-lt-5
-      background-color $color-metal
-
-  &.blur
-    z-index 2 !important
-    -webkit-filter blur(2px)
-    filter blur(2px)
-
-  &.zoom-lt-7
-    border-width 2px
-
-  &.zoom-lt-5
-    border-width 1px
-    .texture:before
-      display none
-    .texture:after
-      display none
-  
-  .chance
-    position absolute
-    z-index 2
-    top 50%
-    left 50%
-    margin -11px 0 0 -30px
-    width 60px
-    height 22px
-    background-color rgba(0, 0, 0, 0.3)
-    text-align center
-    font-size 16px
 
   .texture
     position absolute
@@ -295,68 +196,42 @@
       width 100%
       height 100%
     
-.jungle.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/jungle_low.jpg)
 .jungle .texture:before
   background-image url(/img/game/cosmomap/planets/jungle.jpg)
   
-.terran.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/terran_low.jpg)
 .terran .texture:before
   background-image url(/img/game/cosmomap/planets/terran.jpg)
   
-.ocean.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/ocean_low.jpg)  
 .ocean .texture:before
   background-image url(/img/game/cosmomap/planets/ocean.jpg)
   
-.arid.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/arid_low.jpg)  
 .arid .texture:before
   background-image url(/img/game/cosmomap/planets/arid.jpg)
   
-.tundra.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/tundra_low.jpg)  
 .tundra .texture:before
   background-image url(/img/game/cosmomap/planets/tundra.jpg)
   
-.desert.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/desert_low.jpg)  
 .desert .texture:before
   background-image url(/img/game/cosmomap/planets/desert.jpg)
   
-.arctic.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/arctic_low.jpg)  
 .arctic .texture:before
   background-image url(/img/game/cosmomap/planets/arctic.jpg)
   
-.lava.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/lava_low.jpg)  
 .lava .texture:before
   background-image url(/img/game/cosmomap/planets/lava.jpg)
   
-.barren.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/barren_low.jpg)  
 .barren .texture:before
   background-image url(/img/game/cosmomap/planets/barren.jpg)
   
-.asteroids.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/asteroids_low.jpg)  
 .asteroids .texture:before
   background-image url(/img/game/cosmomap/planets/asteroids.jpg)
   
-.methane.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/methane_low.jpg)  
 .methane .texture:before
   background-image url(/img/game/cosmomap/planets/methane.jpg)
   
-.hydrogen.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/hydrogen_low.jpg)  
 .hydrogen .texture:before
   background-image url(/img/game/cosmomap/planets/hydrogen.jpg)
   
-.helium.zoom-lt-9 .texture:before
-  background-image url(/img/game/cosmomap/planets/helium_low.jpg)  
 .helium .texture:before
   background-image url(/img/game/cosmomap/planets/helium.jpg)
   

@@ -1,3 +1,4 @@
+import content from '/imports/content/client';
 import persons from '/imports/content/Person/client/';
 import '/imports/client/ui/Person/image/PersonImage';
 
@@ -63,17 +64,47 @@ Game.Quest.showQuest = function(id) {
   }
 
   if (currentQuest.status == Game.Quest.status.FINISHED) {
-    // quest finished, render reward popup
-    Game.Popup.show({
-      templateName: 'reward',
-      data: {
-        type: 'quest',
-        engName: currentQuest.engName,
-        who: currentQuest.who,
-        person: Game.Persons[currentQuest.who],
-      },
+    Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
+      const quest = new game.Quest(data);
+      let reward = {};
+  
+      _(quest.reward).pairs().forEach(([id, count]) => {
+        if (content[id]) {
+          switch(content[id].type) {
+            case 'artefact':
+              reward[id] = count;
+              break;
+            case 'resource':
+              reward.resources = reward.resources || {};
+              reward.resources[id] = count;
+              break;
+            case 'unit':
+              reward.units = reward.units || {};
+              reward.units[id] = count;
+              break;
+          }
+        }
+      });
+  
+      // quest finished, render reward popup
+      Game.Popup.show({
+        templateName: 'promocodeReward',
+        data: {
+          profit: reward,
+          onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
+        },
+      });
     });
   } else {
+    // load full info
+    isLoading.set(true);
+    loadedQuest.set(null);
+
+    Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
+      isLoading.set(false);
+      loadedQuest.set( new game.Quest(data) );
+    });
+
     // quest not finished, render reqular quest window
     Game.Popup.show({
       templateName: 'quest',
@@ -87,15 +118,6 @@ Game.Quest.showQuest = function(id) {
       },
     });
   }
-
-  // load full info
-  isLoading.set(true);
-  loadedQuest.set(null);
-
-  Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
-    isLoading.set(false);
-    loadedQuest.set( new game.Quest(data) );
-  });
 };
 
 Game.Quest.showGreeteing = function(who) {
@@ -159,7 +181,11 @@ Template.quest.helpers({
 
   reward: function() {
     var quest = loadedQuest.get();
-    return quest ? quest.reward : this.reward;
+
+    return quest && _(quest.reward).pairs().map(([id, count]) => ({
+      title: content[id].title,
+      count,
+    }));
   },
 
   characterName: function(who) {
@@ -185,15 +211,6 @@ Template.quest.events({
         loadedQuest.set(result);
       });
     }
-  }
-});
-
-Template.reward.helpers({
-  isLoading: function() { return isLoading.get(); },
-
-  reward: function() {
-    var quest = loadedQuest.get();
-    return quest ? quest.reward : null;
   }
 });
 

@@ -18,10 +18,13 @@ class Research extends ResearchAbstract {
     }
   }
 
-  url() {
+  url({
+    group,
+    item,
+  } = { group: this.group, item: this.engName }) {
     return Router.routes.research.path({
-      group: this.group,
-      item: this.engName,
+      group,
+      item,
     });
   }
 

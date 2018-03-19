@@ -4,6 +4,7 @@ import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import spaceport from '/imports/content/Building/Residential/server/SpacePort';
 import fleetContainers from '/imports/content/Container/Fleet/server';
+import Game from '/moduls/game/lib/main.game';
 
 Meteor.methods({
   'Building/Residential/SpacePort.buyContainer'({ id, count = 1 }) {
@@ -49,6 +50,10 @@ Meteor.methods({
     if (!container) {
       throw new Meteor.Error('Нет такого контейнера');
     }
+
+    Game.Statistic.incrementUser(user._id, {
+      'containers.open': 1,
+    });
 
     return container.open({ userId: user._id });
   },

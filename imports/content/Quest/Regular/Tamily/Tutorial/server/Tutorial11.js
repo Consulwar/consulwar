@@ -14,7 +14,7 @@ export default {
     },
   },
   reward: {
-    RotaryAmplifier: 10,
-    SecretTechnology: 10,
+    'Resource/Artifact/Green/RotaryAmplifier': 10,
+    'Resource/Artifact/Green/SecretTechnology': 10,
   },
 };

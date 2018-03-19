@@ -14,10 +14,13 @@ class Building extends BuildingAbstract {
     this.overlayOwn = `${this.path}item.png`;
   }
 
-  url() {
+  url({
+    group,
+    item,
+  } = { group: this.group, item: this.engName }) {
     return Router.routes.building.path({
-      group: this.group,
-      item: this.engName,
+      group,
+      item,
     });
   }
 

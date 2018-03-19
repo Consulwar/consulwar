@@ -12,7 +12,7 @@ export default {
     },
   },
   reward: {
-    Mirage: 10,
+    'Unit/Human/Space/Mirage': 10,
     metals: 3500,
     crystals: 1000,
   },

@@ -12,6 +12,6 @@ export default {
     },
   },
   reward: {
-    Father: 25,
+    'Unit/Human/Ground/Infantry/Father': 25,
   },
 };

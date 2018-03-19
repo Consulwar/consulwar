@@ -1,3 +1,4 @@
+import content from '/imports/content/client';
 import persons from '/imports/content/Person/client';
 import allFleetContainers from '/imports/content/Container/Fleet/client';
 import humanUnits from '/imports/content/Unit/Human/client';
@@ -20,20 +21,32 @@ Game.Payment.showPromocodeReward = function(profit) {
 
 Template.promocodeReward.helpers({
   resources: function() {
-    if (!this.profit || !this.profit.resources) {
+    if (!this.profit) {
       return null;
     }
 
     var result = [];
 
-    for (var key in this.profit.resources) {
-      if (!Game.Artefacts.items[key]) {
-        result.push({
-          engName: key,
-          amount: this.profit.resources[key]
-        });
+    if (this.profit.resources) {
+      for (var key in this.profit.resources) {
+        if (!Game.Artefacts.items[key]) {
+          result.push({
+            engName: key,
+            amount: this.profit.resources[key]
+          });
+        }
       }
     }
+
+    _(this.profit).pairs().forEach(([id, count]) => {
+      const item = content[id];
+      if (item && item.type === 'artefact') {
+        result.push({
+          engName: item.engName,
+          amount: count,
+        });
+      }
+    })
 
     return result.length > 0 ? result : null;
   },
@@ -153,6 +166,10 @@ Template.promocodeReward.helpers({
 
 Template.promocodeReward.events({
   'click .take': function(e, t) {
+    if (this.onGet) {
+      this.onGet();
+    }
+
     Blaze.remove(t.view);
   }
 });

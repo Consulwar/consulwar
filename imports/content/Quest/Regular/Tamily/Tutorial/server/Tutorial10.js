@@ -12,7 +12,7 @@ export default {
     },
   },
   reward: {
-    MeteorFragments: 10,
-    CrystalFragments: 10,
+    'Resource/Artifact/White/MeteorFragments': 10,
+    'Resource/Artifact/White/CrystalFragments': 10,
   },
 };

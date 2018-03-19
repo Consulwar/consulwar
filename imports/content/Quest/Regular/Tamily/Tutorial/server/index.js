@@ -28,9 +28,7 @@ import Tutorial27 from './Tutorial27';
 
 export default {
   id: 'Quest/Regular/Tamily/Tutorial',
-  condition: [
-    [],
-  ],
+  condition: [],
   finalText: 'Поздравляем! Вы прошли обучение и готовы к самостоятельной жизни Консула!',
   quests: [
     Tutorial1,

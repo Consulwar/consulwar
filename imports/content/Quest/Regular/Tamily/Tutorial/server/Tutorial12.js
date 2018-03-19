@@ -14,6 +14,6 @@ export default {
     },
   },
   reward: {
-    Wasp: 10,
+    'Unit/Human/Space/Wasp': 10,
   },
 };

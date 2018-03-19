@@ -1,5 +1,5 @@
 export default {
-  id: 'Quest/Regular/Tamily/Tutorial/Tutorial8',
+  id: 'Quest/Regular/Tamily/Tutorial/Tutorial18',
   condition: [
     ['Building/Military/Laboratory', 25],
   ],

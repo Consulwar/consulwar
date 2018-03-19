@@ -15,11 +15,15 @@ class UnitReptile extends UnitReptileAbstract {
     this.overlayOwn = this.card;
   }
 
-  url() {
+  url({
+    group,
+    subgroup,
+    item,
+  } = { group: this.group, subgroup: this.subgroup, item: this.engName }) {
     return Router.routes.reptileUnit.path({
-      group: this.group,
-      subgroup: this.subgroup,
-      item: this.engName,
+      group,
+      subgroup,
+      item,
     });
   }
 

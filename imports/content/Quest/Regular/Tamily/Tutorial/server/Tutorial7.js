@@ -12,6 +12,6 @@ export default {
     },
   },
   reward: {
-    Gammadrone: 10,
+    'Unit/Human/Space/Gammadrone': 10,
   },
 };

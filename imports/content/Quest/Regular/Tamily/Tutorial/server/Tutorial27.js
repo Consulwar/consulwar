@@ -12,6 +12,6 @@ export default {
     },
   },
   reward: {
-    RailCannon: 1,
+    'Unit/Human/Defense/RailCannon': 1,
   },
 };

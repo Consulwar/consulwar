@@ -14,6 +14,6 @@ export default {
     },
   },
   reward: {
-    Agmogedcar: 5,
+    'Unit/Human/Ground/Enginery/Agmogedcar': 5,
   },
 };

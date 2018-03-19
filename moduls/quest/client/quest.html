@@ -7,11 +7,12 @@
     <br/><br/>
     <span class="prize">
       {{#if reward}}
-        {{#if or reward.metals reward.crystals}}
-          Награда: {{#if reward.metals}}{{formatNumber reward.metals}} металла{{/if}}{{#if reward.crystals}}{{#if reward.metals}}, {{/if}}{{formatNumber reward.crystals}} кристалла{{/if}}
-        {{else}}
-          Награды нет
-        {{/if}}
+        Награда: 
+        {{#each reward}}
+          {{formatNumber count}} {{title}}; 
+        {{/each}}
+      {{else}}
+        Награды нет
       {{/if}}
     </span>
 

@@ -12,9 +12,9 @@ export default {
     },
   },
   reward: {
-    Gammadrone: 10,
-    Wasp: 25,
-    Mirage: 10,
-    Frigate: 1,
+    'Unit/Human/Space/Gammadrone': 10,
+    'Unit/Human/Space/Wasp': 25,
+    'Unit/Human/Space/Mirage': 10,
+    'Unit/Human/Space/Frigate': 1,
   },
 };

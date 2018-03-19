@@ -23,8 +23,7 @@ import DefenseComplex100 from './DefenseComplex100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/DefenseComplex',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 35],
+    ['Building/Military/PowerStation', 20],
   ],
   finalText: 'Поздравляем! Оборонный комплекс достиг максимального уровня. Слава Великому Консулу!',
   quests: [

@@ -34,11 +34,15 @@ class UnitHuman extends UnitHumanAbstract {
     return 3;
   }
 
-  url() {
+  url({
+    group,
+    subgroup,
+    item,
+  } = { group: this.group, subgroup: this.subgroup, item: this.engName }) {
     return Router.routes.unit.path({
-      group: this.group,
-      subgroup: this.subgroup,
-      item: this.engName,
+      group,
+      subgroup,
+      item,
     });
   }
 

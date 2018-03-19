@@ -1,5 +1,6 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/responsive'
 
 .cw--BuildBuilding
   font-size 14px
@@ -7,6 +8,9 @@
   display flex
   flex-direction column
   margin auto
+  +media(null, $cw--size_m)
+    width 100%
+    margin 0
   
   &__header
     display flex
@@ -101,6 +105,10 @@
     flex-basis 380px
     display flex
     flex-direction row
+    +media(null, $cw--size_s)
+      flex-direction column
+      flex-basis auto
+
   &__panel
     cw--fontFamily_cond()
     padding 14px
@@ -109,6 +117,8 @@
     display flex
     flex-direction column
     font-weight bold
+    +media(null, $cw--size_s)
+      flex-basis auto
 
   &__effects
     padding-bottom 6px
@@ -126,6 +136,10 @@
     color $cw--color_human
     padding-bottom 4px
 
+  &__resources
+    +media(null, $cw--size_xs)
+      justify-content center
+
   &__actions
     display flex
     padding-top 6px
@@ -133,6 +147,9 @@
     flex-basis auto
     flex-shrink 0
     border-top solid 1px $cw--color_grey
+    +media(null, $cw--size_xs)
+      flex-wrap wrap
+      justify-content center
 
   &__action
     display flex
@@ -141,7 +158,9 @@
     flex-direction column
     justify-content flex-end
     margin auto 15px 0 0
-  
+    +media(null, $cw--size_s)
+      margin-bottom 15px
+
   &__actionAmount
   &__bonus
     display flex
@@ -178,12 +197,17 @@
     font-size $cw--fontSize_m
   
   &__actionStatus
+  &__actionNeeds
     height 22px
     padding-top 3px
     padding-bottom 8px
     color $cw--color_human
     font-size $cw--fontSize_m
     white-space nowrap
+
+  &__actionNeeds
+    color $cw--color_lightGrey
+    font-size $cw--fontSize_s
 
   &__bonusIcon
     flex-shrink 0
@@ -243,3 +267,6 @@
     background-color alpha($cw--color_black, .7)
     flex-basis 260px
     flex-grow 0
+    +media(null,$cw--size_s)
+      order -1
+      flex-basis auto

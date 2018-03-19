@@ -1,6 +1,3 @@
-import Airfield10 from './Airfield10';
-import Airfield15 from './Airfield15';
-import Airfield20 from './Airfield20';
 import Airfield25 from './Airfield25';
 import Airfield30 from './Airfield30';
 import Airfield35 from './Airfield35';
@@ -21,14 +18,12 @@ import Airfield100 from './Airfield100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Airfield',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 20],
+    ['Building/Residential/Crystal', 28],
+    ['Building/Military/PowerStation', 27],
+    ['Building/Military/Airfield', 20],
   ],
   finalText: 'Поздравляем! Аэродром достиг максимального уровня. Слава Великому Консулу!',
   quests: [
-    Airfield10,
-    Airfield15,
-    Airfield20,
     Airfield25,
     Airfield30,
     Airfield35,

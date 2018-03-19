@@ -1,6 +1,3 @@
-import Factory10 from './Factory10';
-import Factory15 from './Factory15';
-import Factory20 from './Factory20';
 import Factory25 from './Factory25';
 import Factory30 from './Factory30';
 import Factory35 from './Factory35';
@@ -21,14 +18,12 @@ import Factory100 from './Factory100';
 export default {
   id: 'Quest/Regular/ThirdEngineering/Factory',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Military/PowerStation', 15],
+    ['Building/Residential/Metal', 28],
+    ['Building/Military/PowerStation', 22],
+    ['Building/Military/Factory', 20],
   ],
   finalText: 'Поздравляем! Военный Завод достиг максимального уровня. Слава Великому Консулу!',
   quests: [
-    Factory10,
-    Factory15,
-    Factory20,
     Factory25,
     Factory30,
     Factory35,

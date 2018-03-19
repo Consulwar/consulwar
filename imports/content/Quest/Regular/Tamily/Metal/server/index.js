@@ -18,8 +18,9 @@ import Metal100 from './Metal100';
 export default {
   id: 'Quest/Regular/Tamily/Metal',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Research/Evolution/Energy', 10],
+    ['Research/Evolution/Drill', 25],
+    ['Research/Evolution/Alloy', 13],
+    ['Building/Residential/Metal', 20],
   ],
   finalText: 'Поздравляем! Шахта Металла достигла максимального уровня. Слава Великому Консулу!',
   quests: [

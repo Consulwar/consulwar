@@ -1,3 +1,4 @@
+import Tutorial from '../Tutorial/server';
 import House from '../House/server';
 import Metal from '../Metal/server';
 import Crystal from '../Crystal/server';
@@ -10,6 +11,7 @@ import BlackMarket from '../BlackMarket/server';
 import Political from '../Political/server';
 
 export default {
+  'Quest/Regular/Tamily/Tutorial': Tutorial,
   'Quest/Regular/Tamily/House': House,
   'Quest/Regular/Tamily/Metal': Metal,
   'Quest/Regular/Tamily/Crystal': Crystal,

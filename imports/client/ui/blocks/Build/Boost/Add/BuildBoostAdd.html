@@ -1,0 +1,45 @@
+<template name="BuildBoostAdd">
+  <div class="cw--BuildBoostAdd">
+    <div class="cw--BuildBoostAdd__head">
+      Встроить Красный плазмоид
+    </div>
+    <div class="cw--BuildBoostAdd__description">
+      Любое строение или исследование, которое достигло 100 уровня, на вермя можно усилить с помощью Красных плазмоидов. Каждый слот добавляет время к усилению.
+    </div>
+    <div class="cw--BuildBoostAdd__current">
+      <div class="cw--BuildBoostAdd__icon"></div>
+      <div class="cw--BuildBoostAdd__counter">
+        У вас сейчас:
+        <span class="cw--BuildBoostAdd__count">
+          15
+        </span>
+      </div>
+    </div>
+    <div class="cw--BuildBoostAdd__result">
+      Встроить
+      <b class="cw--color_honor">1 Красный плазмоид</b>
+    </div>
+    <div class="cw--BuildBoostAdd__actions">
+      <button
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_orange
+          cw--BuildBoostAdd__action_add
+        "
+      >
+        Встроить
+      </button>
+      <button
+        onClick={{closeWindow}}
+        class="
+          cw--button
+          cw--button_flat
+          cw--BuildBoostAdd__action_reset
+        "
+      >
+        Отмена
+      </button>
+    </div>
+  </div>
+</template>

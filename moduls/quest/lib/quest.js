@@ -22,6 +22,10 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
 
     options.isDone = function() {
       return _(options.condition).every((condition) => {
+        if (_(condition).isFunction()) {
+          return condition();
+        }
+
         let idParts = condition[0].split('/');
         switch(idParts[0]) {
           case 'Quest':
@@ -29,6 +33,10 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
           case 'Building':
           case 'Research':
             return content[condition[0]].has({ level: condition[1] });
+          case 'Unit':
+            return content[condition[0]].has({ count: condition[1] });
+          case 'Statistic':
+            return Game.Statistic.getUserValue(idParts[1]);
         }
         return false;
       });

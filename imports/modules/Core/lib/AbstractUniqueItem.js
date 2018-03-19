@@ -105,7 +105,7 @@ class AbstractUniqueItem extends AbstractItem {
       resources: this.getPrice(level),
     });
     const hasTechnologies = this.meetRequirements({ level });
-    const limitExceeded = this.maxLevel && level >= this.maxLevel;
+    const limitExceeded = this.maxLevel && level > this.maxLevel;
     return hasResources && hasTechnologies && !limitExceeded && !this.isQueueBusy();
   }
 }

@@ -120,14 +120,14 @@ var showNotificationFromSpaceEvent = function(event) {
     }
   }
 
-  if (!event.data.mission && !event.data.battleId && event.status === 'completed') {
+  if (!event.data.mission && !event.data.battleId && event.data.userId === Meteor.userId() && event.status === 'completed') {
     options.path = Router.path(
       'cosmos',
       { group: 'cosmos' },
       { hash: ((targetPlanet && targetPlanet._id) || event._id) },
     );
 
-    Game.showDesktopNotification('Консул, ваш флот долетел!', options);
+    debounceDesktopNotification('Консул, ваш флот долетел!', options);
   }
 };
 
@@ -2090,6 +2090,7 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
     shipsLayer,
     offset,
     myAllies,
+    selectedArtefact,
   });
 
   galaxyByUsername[username] = galaxy;

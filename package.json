@@ -39,7 +39,9 @@
   "eslintConfig": {
     "extends": "@meteorjs/eslint-config-meteor"
   },
-  "eslintIgnore": ["moduls/*"],
+  "eslintIgnore": [
+    "moduls/*"
+  ],
   "repository": {
     "type": "git",
     "url": "ssh://git@bitbucket.consulwar.ru:10021/con/consulwar-engine.git"

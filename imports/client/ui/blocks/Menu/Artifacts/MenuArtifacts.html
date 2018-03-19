@@ -1,7 +1,12 @@
 <template name="MenuArtifacts">
   <div class="cw--Menu cw--MenuArtifacts">
     {{#each group in items}}
-      <div class="cw--Menu__group">
+      <div
+        class="
+          cw--Menu__group
+          cw--MenuArtifacts__group
+        "
+      >
         {{#each item in group}}
           <a
             href={{item.url}}

@@ -11,7 +11,7 @@ Template.pages.helpers({
 
     var options = {};
     if (saveHash) {
-      options.hash = current.params.hash;
+      options.hash = current.params.hash && decodeURIComponent(current.params.hash);
     }
 
     return Router.routes[ current.route.getName() ].path( 

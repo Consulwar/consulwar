@@ -12,29 +12,25 @@
         <div class="cw--UnitCharacterisctics__characteristics">
           <div
             class="cw--UnitCharacterisctics__damage"
-            onMouseOver={{showCharacteristicsTooltip}}
-            data-type="weapon"
+            onMouseOver={{showCharacteristicsTooltip 'damage'}}
           >
             {{formatNumberWithISO (getUnitChars 'weapon.damage') 3}}
           </div>
           <div
             class="cw--UnitCharacterisctics__armor"
-            onMouseOver={{showCharacteristicsTooltip}}
-            data-type="life"
+            onMouseOver={{showCharacteristicsTooltip 'life'}}
           >
             {{formatNumberWithISO (getUnitChars 'health.armor') 3}}
           </div>
           <div
             class="cw--UnitCharacterisctics__damage_signature"
-            data-tooltip="Радиус поражения"
-            data-tooltip-direction="s"
+            onMouseOver={{showCharacteristicsTooltip 'weapon.signature'}}
           >
             {{formatNumberWithISO (getUnitChars 'weapon.signature') 3}}
           </div>
           <div
             class="cw--UnitCharacterisctics__armor_signature"
-            data-tooltip="Размер защитного поля"
-            data-tooltip-direction="s"
+            onMouseOver={{showCharacteristicsTooltip 'health.signature'}}
           >
             {{formatNumberWithISO (getUnitChars 'health.signature') 3}}
           </div>

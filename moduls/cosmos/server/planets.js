@@ -684,6 +684,11 @@ Game.Planets.discover = function(planetId, user = Meteor.user()) {
     Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand,
       sectors[i].segment, true, user);
   }
+
+  // save statistic
+  Game.Statistic.incrementUser(user._id, {
+    'cosmos.planets.discovered': 1
+  });
 };
 
 // ----------------------------------------------------------------------------
@@ -779,12 +784,7 @@ Meteor.methods({
 
     Game.Cards.spend(cardsObject);
 
-    Game.Planets.discover(planetId);
-
-    // save statistic
-    Game.Statistic.incrementUser(user._id, {
-      'cosmos.planets.discovered': 1
-    });
+    Game.Planets.discover(planetId, user);
   },
 
   'planet.collectArtefacts': function(planetId, cardsObject) {

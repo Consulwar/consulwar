@@ -451,12 +451,19 @@ Template.connection.helpers({
 });
 
 Template.newgame.onRendered(function(){
-  showTutorialDuringActivation();
+  this.autorun(showTutorialDuringActivation);
+
+  const planets = Game.Planets.getAll().fetch();
+  if (planets.length === 0) {
+    Meteor.call('planet.initialize');
+  }
+
   Meteor.setTimeout(function() {
     $('.fleet_info_full .scrollbar-inner').perfectScrollbar('update');
   });
 });
 
+let prevStep;
 var showTutorialDuringActivation = function() {
   var user = Meteor.user();
   if (user
@@ -469,10 +476,17 @@ var showTutorialDuringActivation = function() {
 
   var currentQuest = Game.Quest.getOneByHero('tamily');
   if (currentQuest
-   && currentQuest.engName == 'tutorial'
-   && currentQuest.status == Game.Quest.status.PROMPT
+   && currentQuest.engName == 'Tutorial'
+   && (
+     currentQuest.status == Game.Quest.status.PROMPT
+     || currentQuest.status == Game.Quest.status.FINISHED
+   )
   ) {
-    Game.Quest.showQuest('tutorial');
+    let nowStep = `${currentQuest.step}-${currentQuest.status}`;
+    if (prevStep !== nowStep) {
+      Game.Quest.showQuest('Tutorial');
+      prevStep = nowStep;
+    }
   }
 };
 

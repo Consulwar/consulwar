@@ -70,7 +70,10 @@
             <div class="cw--BuildUnit__priceHead">
               Стоимость:
             </div>
-            {{> ResourcePrice args price=(unit.getPrice count.get)}}
+            {{> ResourcePrice args
+              price=(unit.getPrice count.get)
+              className='cw--BuildUnit__resources'
+            }}
           </div>
           <div class="cw--BuildUnit__actions">
 

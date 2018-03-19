@@ -71,7 +71,10 @@
             Стоимость{{#if building.getCurrentLevel}} улучшения{{else}} строительства{{/if}}:
           </div>
           {{#if gt building.maxLevel building.getCurrentLevel}}
-            {{> ResourcePrice args price=(building.getPrice level.get)}}
+            {{> ResourcePrice args
+              price=(building.getPrice level.get)
+              className='cw--BuildBuilding__resources'
+            }}
           {{else}}
             В разработке
           {{/if}}
@@ -120,7 +123,7 @@
                   }}
                 </div>
               {{else}}
-                <div class="cw--BuildBuilding__actionStatus">
+                <div class="cw--BuildBuilding__actionNeeds">
                   Требуется красный плазмоид
                 </div>
               {{/if}}

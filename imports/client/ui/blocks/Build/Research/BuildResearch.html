@@ -68,7 +68,10 @@
             Стоимость{{#if research.getCurrentLevel}} улучшения{{else}} исследования{{/if}}:
           </div>
           {{#if gt research.maxLevel research.getCurrentLevel}}
-            {{> ResourcePrice args price=(research.getPrice level.get)}}
+            {{> ResourcePrice args
+              price=(research.getPrice level.get)
+              className='cw--BuildResearch__resources'
+            }}
           {{else}}
             В разработке
           {{/if}}
@@ -116,7 +119,7 @@
                   }}
                 </div>
               {{else}}
-                <div class="cw--BuildResearch__actionStatus">
+                <div class="cw--BuildResearch__actionNeeds">
                   Требуется красный плазмоид
                 </div>
               {{/if}}

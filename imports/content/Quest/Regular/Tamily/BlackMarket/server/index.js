@@ -23,8 +23,7 @@ import BlackMarket100 from './BlackMarket100';
 export default {
   id: 'Quest/Regular/Tamily/BlackMarket',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/Political', 25],
+    ['Building/Residential/TradingPort', 15],
   ],
   finalText: 'Поздравляем! Чёрный Рынок достиг максимального уровня. Слава Великому Консулу!',
   quests: [

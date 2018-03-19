@@ -20,8 +20,8 @@ import SpacePort100 from './SpacePort100';
 export default {
   id: 'Quest/Regular/Tamily/SpacePort',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/House', 20],
+    ['Building/Residential/House', 8],
+    ['Building/Residential/SpacePort', 10],
   ],
   finalText: 'Поздравляем! Космопорт достиг максимального уровня. Слава Великому Консулу!',
   quests: [

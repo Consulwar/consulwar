@@ -1,3 +1,5 @@
+import Entertainment1 from './Entertainment1';
+import Entertainment5 from './Entertainment5';
 import Entertainment10 from './Entertainment10';
 import Entertainment15 from './Entertainment15';
 import Entertainment20 from './Entertainment20';
@@ -21,11 +23,12 @@ import Entertainment100 from './Entertainment100';
 export default {
   id: 'Quest/Regular/Tamily/Entertainment',
   condition: [
-    ['Quest/Regular/Tamily/Tutorial', true],
-    ['Building/Residential/SpacePort', 10],
+    ['Building/Residential/House', 15],
   ],
   finalText: 'Поздравляем! Центр Развлечений достиг максимального уровня. Слава Великому Консулу!',
   quests: [
+    Entertainment1,
+    Entertainment5,
     Entertainment10,
     Entertainment15,
     Entertainment20,

@@ -30,17 +30,24 @@ game.QuestLine = function(options, quests, isNew = true) {
 
     options.canStart = function() {
       return _(options.condition).every((condition) => {
+        if (_(condition).isFunction()) {
+          return condition();
+        }
+
         let idParts = condition[0].split('/');
+
+        if (content[condition[0]] === undefined) {
+          console.log(condition[0]);
+        }
 
         switch(idParts[0]) {
           case 'Quest':
-            if (idParts[idParts.length - 1] === 'Tutorial') {
-              return true;
-            }
             return Game.Quest.checkFinished(idParts[idParts.length - 1]);
           case 'Building':
           case 'Research':
             return content[condition[0]].has({ level: condition[1] });
+          case 'Statistic':
+            return Game.Statistic.getUserValue(idParts[1]);
         }
         return false;
       });
@@ -311,7 +318,23 @@ Meteor.methods({
 
       // add reward
       if (prevStep && prevStep.reward) {
-        Game.Resources.add(prevStep.reward);
+        let reward = {};
+
+        _(prevStep.reward).pairs().forEach(([id, count]) => {
+          switch(content[id].type) {
+            case 'artefact':
+              reward[id] = count;
+              break;
+            case 'resource':
+              reward.resources = reward.resources || {};
+              reward.resources[id] = count;
+            case 'unit':
+              reward.units = reward.units || {};
+              reward.units[id] = count;
+          }
+        });
+
+        Game.Resources.addProfit(reward);
       }
 
       // save statistic

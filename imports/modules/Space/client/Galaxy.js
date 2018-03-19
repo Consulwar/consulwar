@@ -1,3 +1,4 @@
+import { Tracker } from 'meteor/tracker';
 import { L } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import Ship from './Ship';
@@ -13,6 +14,7 @@ class Galaxy {
     shipsLayer,
     offset,
     myAllies,
+    selectedArtefact,
   }) {
     this.user = user;
     this.username = username;
@@ -22,6 +24,7 @@ class Galaxy {
     this.shipsLayer = shipsLayer;
     this.offset = offset;
     this.myAllies = myAllies;
+    this.selectedArtefact = selectedArtefact;
     this.circles = {};
 
     Game.Planets.Collection.find({ username }).observeChanges({
@@ -58,6 +61,15 @@ class Galaxy {
           });
         }
       },
+    });
+
+    Tracker.autorun(() => {
+      Object.keys(this.circles).forEach((id) => {
+        const planet = Game.Planets.getOne(id);
+        this.circles[id].setStyle({
+          color: this.getColor(planet),
+        });
+      });
     });
   }
 
@@ -119,7 +131,9 @@ class Galaxy {
   }
 
   getColor(planet) {
-    if (planet.status === Game.Planets.STATUS.HUMANS) {
+    if (planet.artefacts && planet.artefacts[this.selectedArtefact.get()] > 0) {
+      return Config.colors.artefact;
+    } else if (planet.status === Game.Planets.STATUS.HUMANS) {
       if (planet.minerUsername === this.user.username) {
         return Config.colors.user;
       } else if (this.myAllies.indexOf(planet.minerUsername) !== -1) {

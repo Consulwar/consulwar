@@ -1,12 +1,195 @@
 @import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
 
 .cw--PageIndex
-  display block
+  display flex
+  flex-basis auto
+  flex-grow 1
+  flex-direction column
+  max-width 100%
+
+  cw--fontFamily_cond()
+  font-size 16px
+  background-color $cw--color_black
+
+  &__slider
+    position relative
+    flex-basis 320px
+    flex-grow 1
+
+    background-position 80% 30%
+    background-size cover
+
+    &:before
+      content ''
+      position absolute
+      left 0
+      top 0
+      display block
+      width 70%
+      height 100%
+      background linear-gradient(90deg, alpha($cw--color_black, .8) 39%, alpha($cw--color_black, 0))
+
+    &_consul
+      background-position 60% 30%
+
+
+  &__rating18
+    position absolute
+    bottom 10px
+    left 50%
+    transform translateX(-50%)
+    font-size $cw--fontSize_l
+    color $cw--color_human
+    +media($cw--size_xs, $cw--size_s)
+      left 70px
+      transform none
+    +media(null, $cw--size_xs)
+      font-size $cw--fontSize_m
+      left 20px
+      transform none
+
+
+  &__rating18img
+    vertical-align middle
+    margin-right 6px
+
+
+
+  &__sliderText
+    width 465px
+    max-width 70%
+    position absolute
+    top 50%
+    left 19%
+    transform translateY(-50%)
+    font-size 24px
+    +media($cw--size_xs, $cw--size_s)
+      font-size $cw--fontSize_xl
+      top auto
+      left 70px
+      bottom 60px
+      transform none
+
+    +media(null, $cw--size_xs)
+      left 20px
+      top auto
+      bottom 60px
+      transform translateY(0)
+      font-size $cw--fontSize_l
+
+  &__sliderHeader
+    margin-bottom 20px
+    font-size 66%
+    font-weight bold
+    color $cw--color_nearWhite
+
+  &__sliderLogo
+    font-size 150%
+
+  &__sliderTitle
+    margin-bottom 20px
+    color $cw--color_description
+    font-size 100%
+
+  &__sliderDescription
+    width 75%
+    color $cw--color_lightGrey
+    font-size 75%
+
+  &__slideRow
+    position absolute
+    width 60px
+    height 100%
+    top 0
+
+    cursor pointer
+    background-color alpha($cw--color_black, .25)
+    border none
+    transition all .25s ease
+    +media(null, $cw--size_xs)
+      display none
+
+    &:hover
+    &:focus
+      width 70px
+      outline none
+      background-color alpha($cw--color_black, .35)
+
+    &:before
+      content ''
+      display block
+      width 1px
+      height 1px
+      margin auto
+      box-sizing border-box
+
+      border-top 10px solid transparent
+      border-bottom 10px solid transparent
+
+    &_back
+      left 0
+      &:before
+        border-right 8px solid $cw--color_lightGrey
+      &:hover:before
+        border-right 8px solid $cw--color_human
+
+    &_next
+      right 0
+
+      &:before
+        border-left 8px solid $cw--color_lightGrey
+      &:hover:before
+        border-left 8px solid $cw--color_human
+
+
+  &__sliderControl
+    display flex
+    flex-basis 80px
+    justify-content center
+    align-items center
+
+  &__sliderDot
+    display block
+    width 40px
+    height 40px
+    box-sizing border-box
+    margin 4px
+
+    cursor pointer
+    border solid 2px $cw--color_human
+    border-radius 50%
+
+    &:hover
+      background alpha($cw--color_human, .2)
+      filter brightness(1.2)
+
+    &_current
+    &_current:hover
+      background-color $cw--color_human
+      background-image linear-gradient(0deg, $cw--color_honor, $cw--color_human)
+      border none
 
   &__intro
-    color $cw--color_white
-    line-height 28px
-    max-width 900px
-    font-size 24px
+    min-width 90%
+    flex-basis 120px
     margin auto
-    text-align center
+    padding 20px 30px
+    box-sizing border-box
+
+    font-size $cw--fontSize_m
+    line-height 19px
+    text-align left
+    color $cw--color_description
+    border-top solid 1px $cw--color_human
+    border-image linear-gradient(90deg, alpha($cw--color_human, 0), $cw--color_human, alpha($cw--color_human, 0)) 1
+    border-width 1px 0 0 0
+
+  &__introContent
+    max-width 515px
+    margin auto
+
+  &__introHeader
+    margin-bottom 20px
+    color $cw--color_metal

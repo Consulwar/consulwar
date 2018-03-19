@@ -1,8 +1,72 @@
 <template name="PageIndex">
   <div class="cw--PageIndex">
+    <div
+      class="
+        cw--PageIndex__slider
+        {{#if currentSlide.get.isConsul}}
+          cw--PageIndex__slider_consul
+        {{/if}}
+      "
+      style="background-image:URL({{currentSlide.get.img}})"
+    >
+      <button
+        onClick={{goBack}}
+        class="
+          cw--PageIndex__slideRow cw--PageIndex__slideRow_back
+        "
+      ></button>
+      <button
+        onClick={{goNext}}
+        class="
+          cw--PageIndex__slideRow cw--PageIndex__slideRow_next
+        "
+      ></button>
+      {{#if currentSlide.get.isRating18}}
+        <div class="cw--PageIndex__rating18">
+          <img
+            class="cw--PageIndex__rating18img"
+            src="/img/18plus.png"
+            alt="Рейтинг игры 18+"
+          />
+          Рейтинг игры <b class="cw--color_white">18+</b>
+        </div>
+      {{/if}}
+      <div class="cw--PageIndex__sliderText">
+        <div class="cw--PageIndex__sliderHeader">
+          <span class="cw--PageIndex__sliderLogo">
+            <b class="cw--color_human">Consul</b><b class="cw--color_honor">War</b>
+          </span> бета тест
+        </div>
+        <div class="cw--PageIndex__sliderTitle">
+          {{currentSlide.get.title}}
+        </div>
+        <div class="cw--PageIndex__sliderDescription">
+          {{currentSlide.get.description}}
+        </div>
+      </div>
+    </div>
+    <div class="cw--PageIndex__sliderControl">
+      {{#each slide in slides}}
+        <div
+          onClick={{setSlide slide}}
+          class="
+            cw--PageIndex__sliderDot
+            {{#if isCurrent slide}}cw--PageIndex__sliderDot_current{{/if}}
+          "
+        >
+        </div>
+      {{/each}}
+    </div>
     <div class="cw--PageIndex__intro">
-      Мы – маленькая студия из пары человек – стараемся сделать интересный 
-      и качественный проект. Мы благодарим вас за помощь и вашу поддержку!
+      <div class="cw--PageIndex__introContent">
+        <div class="cw--PageIndex__introHeader">
+          <span class="cw--PageIndex__introLogo">
+            <b class="cw--color_human">Consul</b><b class="cw--color_honor">War</b>
+            &mdash; открытый бета тест
+          </span>
+        </div>
+        Мы – маленькая студия из пары человек – стараемся сделать интересный и качественный проект. Мы благодарим вас за помощь и вашу поддержку!
+      </div>
     </div>
   </div>
 </template>

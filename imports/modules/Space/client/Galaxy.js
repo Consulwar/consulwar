@@ -52,19 +52,7 @@ class Galaxy {
           || (fields.armyId !== undefined && fields.armyId !== null)
         ) {
           const planet = Game.Planets.getOne(id);
-          // eslint-disable-next-line no-new
-          new Ship({
-            isStatic: true,
-            planet,
-            planetId: id,
-            planetRadius: getPlanetRadius(planet.size),
-            mapView,
-            shipsLayer,
-            isPopupLocked,
-            origin: this.offset,
-            user,
-            myAllies: this.myAllies,
-          });
+          this.addShip(id, planet);
         }
       },
     });
@@ -117,19 +105,7 @@ class Galaxy {
     this.circles[id] = circle;
 
     if (planet.mission || planet.armyId) {
-      // eslint-disable-next-line no-new
-      new Ship({
-        isStatic: true,
-        planet,
-        planetId: id,
-        planetRadius: radius,
-        mapView: this.mapView,
-        shipsLayer: this.shipsLayer,
-        isPopupLocked: this.isPopupLocked,
-        origin: offset,
-        user: this.user,
-        myAllies: this.myAllies,
-      });
+      this.addShip(id, planet);
     }
 
     this.upsertArtefactLabel(id, planet);
@@ -157,6 +133,22 @@ class Galaxy {
       return Config.colors.enemy;
     }
     return Config.colors.empty;
+  }
+
+  addShip(id, planet) {
+    // eslint-disable-next-line no-new
+    new Ship({
+      isStatic: true,
+      planet,
+      planetId: id,
+      planetRadius: getPlanetRadius(planet.size),
+      mapView: this.mapView,
+      shipsLayer: this.shipsLayer,
+      isPopupLocked: this.isPopupLocked,
+      origin: this.offset,
+      user: this.user,
+      myAllies: this.myAllies,
+    });
   }
 
   upsertArtefactLabel(id, planet) {

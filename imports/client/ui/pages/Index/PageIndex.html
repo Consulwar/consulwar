@@ -7,7 +7,7 @@
           cw--PageIndex__slider_consul
         {{/if}}
       "
-      style="background-image:URL({{currentSlide.get.img}})"
+      style="background-image:URL({{currentImage.get}})"
     >
       <button
         onClick={{goBack}}
@@ -44,6 +44,11 @@
           {{currentSlide.get.description}}
         </div>
       </div>
+      {{#if eq currentImage.get ''}}
+        <div class="cw--PageIndex__sliderLoading">
+          {{> loading}}
+        </div>
+      {{/if}}
     </div>
     <div class="cw--PageIndex__sliderControl">
       {{#each slide in slides}}

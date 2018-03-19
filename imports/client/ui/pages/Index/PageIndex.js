@@ -40,15 +40,26 @@ class PageIndex extends BlazeComponent {
         isConsul: true,
       },
     ];
-    this.currentSlide = new ReactiveVar(this.slides[0]);
-    this.autoSwitcher = setInterval(() => this.goNext(), 5000);
+    this.currentSlide = new ReactiveVar();
+    this.currentImage = new ReactiveVar();
+
+    this.setSlide(false, this.slides[0]);
+    this.autoSwitcher = _.debounce(this.goNext, 5000);
   }
 
   setSlide(event, slide) {
-    if (event) {
-      clearInterval(this.autoSwitcher);
-    }
+    this.currentImage.set('');
     this.currentSlide.set(slide);
+    const img = (new Image());
+    img.src = slide.img;
+    img.onload = () => {
+      this.currentImage.set(slide.img);
+      if (event) {
+        this.autoSwitcher.cancel();
+      } else {
+        this.autoSwitcher();
+      }
+    };
   }
 
   isCurrent(slider) {

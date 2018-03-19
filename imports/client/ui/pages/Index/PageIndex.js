@@ -44,7 +44,7 @@ class PageIndex extends BlazeComponent {
     this.currentImage = new ReactiveVar();
 
     this.setSlide(false, this.slides[0]);
-    this.autoSwitcher = _.debounce(this.goNext, 5000);
+    this.autoSwitcher = _.debounce(this.goNext, 10000);
   }
 
   setSlide(event, slide) {

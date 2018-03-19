@@ -2073,8 +2073,9 @@ const showSpaceEvent = function(id, event, offset, user) {
 };
 
 const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 }, hex }) {
+  let subscription = null;
   if (Meteor.user().username !== username) {
-    Meteor.subscribe('planets', username)
+    subscription = Meteor.subscribe('planets', username)
   }
 
   if (hex) {
@@ -2091,6 +2092,7 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
     offset,
     myAllies,
     selectedArtefact,
+    subscription,
   });
 
   galaxyByUsername[username] = galaxy;

@@ -1,3 +1,4 @@
+import Shipyard5 from './Shipyard5';
 import Shipyard10 from './Shipyard10';
 import Shipyard15 from './Shipyard15';
 import Shipyard20 from './Shipyard20';
@@ -26,6 +27,7 @@ export default {
   ],
   finalText: 'Поздравляем! Верфь достигла максимального уровня. Слава Великому Консулу!',
   quests: [
+    Shipyard5,
     Shipyard10,
     Shipyard15,
     Shipyard20,

@@ -4,6 +4,10 @@ import Game from '/moduls/game/lib/main.game';
 import Ship from './Ship';
 import Config from './config';
 
+const getPlanetRadius = function(size) {
+  return 0.01 + (size / 20);
+};
+
 class Galaxy {
   constructor({
     user,
@@ -15,6 +19,7 @@ class Galaxy {
     offset,
     myAllies,
     selectedArtefact,
+    subscription,
   }) {
     this.user = user;
     this.username = username;
@@ -26,6 +31,7 @@ class Galaxy {
     this.myAllies = myAllies;
     this.selectedArtefact = selectedArtefact;
     this.circles = {};
+    this.labels = {};
 
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
@@ -38,6 +44,7 @@ class Galaxy {
           this.circles[id].setStyle({
             color: this.getColor(planet),
           });
+          this.upsertArtefactLabel(id, planet);
         }
 
         if (
@@ -45,30 +52,22 @@ class Galaxy {
           || (fields.armyId !== undefined && fields.armyId !== null)
         ) {
           const planet = Game.Planets.getOne(id);
-          const radius = 0.01 + (planet.size / 20);
-          // eslint-disable-next-line no-new
-          new Ship({
-            isStatic: true,
-            planet,
-            planetId: id,
-            planetRadius: radius,
-            mapView,
-            shipsLayer,
-            isPopupLocked,
-            origin: this.offset,
-            user,
-            myAllies: this.myAllies,
-          });
+          this.addShip(id, planet);
         }
       },
     });
 
     Tracker.autorun(() => {
+      if (subscription && !subscription.ready()) {
+        return;
+      }
+
       Object.keys(this.circles).forEach((id) => {
         const planet = Game.Planets.getOne(id);
         this.circles[id].setStyle({
           color: this.getColor(planet),
         });
+        this.upsertArtefactLabel(id, planet);
       });
     });
   }
@@ -76,7 +75,7 @@ class Galaxy {
   showPlanet(id, planet) {
     const { offset } = this;
 
-    const radius = 0.01 + (planet.size / 20);
+    const radius = getPlanetRadius(planet.size);
     const circle = L.circle(
       [planet.x + offset.x, planet.y + offset.y],
       {
@@ -103,23 +102,13 @@ class Galaxy {
       L.DomEvent.stopPropagation(event);
     });
 
+    this.circles[id] = circle;
+
     if (planet.mission || planet.armyId) {
-      // eslint-disable-next-line no-new
-      new Ship({
-        isStatic: true,
-        planet,
-        planetId: id,
-        planetRadius: radius,
-        mapView: this.mapView,
-        shipsLayer: this.shipsLayer,
-        isPopupLocked: this.isPopupLocked,
-        origin: offset,
-        user: this.user,
-        myAllies: this.myAllies,
-      });
+      this.addShip(id, planet);
     }
 
-    this.circles[id] = circle;
+    this.upsertArtefactLabel(id, planet);
   }
 
   reRender(offset) {
@@ -144,6 +133,44 @@ class Galaxy {
       return Config.colors.enemy;
     }
     return Config.colors.empty;
+  }
+
+  addShip(id, planet) {
+    // eslint-disable-next-line no-new
+    new Ship({
+      isStatic: true,
+      planet,
+      planetId: id,
+      planetRadius: getPlanetRadius(planet.size),
+      mapView: this.mapView,
+      shipsLayer: this.shipsLayer,
+      isPopupLocked: this.isPopupLocked,
+      origin: this.offset,
+      user: this.user,
+      myAllies: this.myAllies,
+    });
+  }
+
+  upsertArtefactLabel(id, planet) {
+    let label = this.labels[id];
+    if (planet.artefacts && planet.artefacts[this.selectedArtefact.get()] > 0) {
+      if (!label) {
+        const labelOffset = getPlanetRadius(planet.size) + 0.1;
+        label = (L.tooltip({
+          direction: 'bottom',
+          className: 'artefactRateTooltip',
+          permanent: true,
+        })
+          .setLatLng([(planet.x + this.offset.x) - labelOffset, planet.y + this.offset.y])
+          .addTo(this.mapView));
+
+        this.labels[id] = label;
+      }
+      label.setContent(`${planet.artefacts[this.selectedArtefact.get()]}%`);
+    } else if (label) {
+      label.remove();
+      delete this.labels[id];
+    }
   }
 }
 

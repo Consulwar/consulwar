@@ -4,6 +4,12 @@
 
 .cw--MenuUnique
   &__item
+    +media($cw--size_xxl, $cw--size_xxxl)
+      width 100px
+      height @width
+    +media($cw--size_xl, $cw--size_xxl)
+      width 90px
+      height @width
     +media(null, $cw--size_s)
       flex-basis 23%
       margin 2px 1%

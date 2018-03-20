@@ -1639,7 +1639,7 @@ Template.cosmosAttackMenu.events({
   },
 
   'change .fleet input': function (e, t) {
-    var value = parseInt( e.currentTarget.value, 10 );
+    var value = parseInt( e.currentTarget.value, 10 ) || 0;
     var id = $(e.currentTarget.parentElement.parentElement).attr('data-id');
     var max = parseInt( $(e.currentTarget.parentElement.parentElement).attr('data-max'), 10 );
 
@@ -1799,9 +1799,9 @@ Template.cosmosAttackMenu.events({
 
   'click .squad:not(.noPremium) img': function(e, t) {
     var slot = parseInt(e.currentTarget.parentElement.dataset.id, 10);
+    let squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
 
     Game.Icons.showSelectWindow(function(group, name) {
-      var squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
       var message = 'Сменить иконку отряда «' + squad.name + '»';
 
       Game.showAcceptWindow(message, function() {
@@ -1810,11 +1810,12 @@ Template.cosmosAttackMenu.events({
             Notifications.error('Не удалось выбрать иконку', err.error);
           } else {
             Notifications.success('Вы поменяли иконку');
+            Game.Icons.closeSelectWindow();
           }
         });
       });
     }, function(group, id) {
-      if (Game.Squad.getOne(slot).icon == group + '/' + id) {
+      if (squad.icon == group + '/' + id) {
         return true;
       }
       return false;

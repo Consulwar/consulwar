@@ -50,9 +50,9 @@ Game.Squad.setUnits = function(slot, units) {
   });
 };
 
-Game.Unit.remove = function(slot) {
+Game.Squad.remove = function(slot) {
   Game.Squad.Collection.remove({
-    user_id: Meteor.user_id(),
+    user_id: Meteor.userId(),
     slot
   });
 };
@@ -76,7 +76,7 @@ Meteor.methods({
     }));
 
     if (options.slot > Game.Squad.config.slots.free && !Game.hasPremium()) {
-      throw new Meteor.Error('Данный отряд доступен долько обладателям премиум-аккаунта.');
+      throw new Meteor.Error('Данный отряд доступен только обладателям премиум-аккаунта.');
     }
 
     if (options.name.length > 10) {
@@ -104,7 +104,7 @@ Meteor.methods({
     }));
 
     if (options.slot > Game.Squad.config.slots.free && !Game.hasPremium()) {
-      throw new Meteor.Error('Данный отряд доступен долько обладателям премиум-аккаунта.');
+      throw new Meteor.Error('Данный отряд доступен только обладателям премиум-аккаунта.');
     }
 
     if (Game.Icons.canUseIcon(options.group, options.name)) {
@@ -138,7 +138,7 @@ Meteor.methods({
     }));
 
     if (options.slot > Game.Squad.config.slots.free && !Game.hasPremium()) {
-      throw new Meteor.Error('Данный отряд доступен долько обладателям премиум-аккаунта.');
+      throw new Meteor.Error('Данный отряд доступен только обладателям премиум-аккаунта.');
     }
 
     Game.Squad.setUnits(options.slot, options.units);
@@ -160,10 +160,10 @@ Meteor.methods({
     }));
 
     if (options.slot > Game.Squad.config.slots.free && !Game.hasPremium()) {
-      throw new Meteor.Error('Данный отряд доступен долько обладателям премиум-аккаунта.');
+      throw new Meteor.Error('Данный отряд доступен только обладателям премиум-аккаунта.');
     }
 
-
+    Game.Squad.remove(options.slot);
   }
 });
 

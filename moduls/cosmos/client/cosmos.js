@@ -1799,9 +1799,9 @@ Template.cosmosAttackMenu.events({
 
   'click .squad:not(.noPremium) img': function(e, t) {
     var slot = parseInt(e.currentTarget.parentElement.dataset.id, 10);
+    let squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
 
     Game.Icons.showSelectWindow(function(group, name) {
-      var squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
       var message = 'Сменить иконку отряда «' + squad.name + '»';
 
       Game.showAcceptWindow(message, function() {
@@ -1814,7 +1814,7 @@ Template.cosmosAttackMenu.events({
         });
       });
     }, function(group, id) {
-      if (Game.Squad.getOne(slot).icon == group + '/' + id) {
+      if (squad.icon == group + '/' + id) {
         return true;
       }
       return false;

@@ -1,0 +1,130 @@
+<template name="UserMenu">
+  <div class="cw--UserMenu">
+    <div class="cw--UserMenu__userName">
+      {{user.username}}
+    </div>
+    <div class="cw--UserMenu__summary">
+      <div
+        class="cw--UserMenu__icon"
+        onClick={{showIcons}}
+      >
+        <img
+          class="cw--UserMenu__iconImg"
+          src="/img/game/chat/icons/{{userIcon}}.png"
+        />
+      </div>
+      <div class="cw--UserMenu__info">
+        <time
+          class="cw--UserMenu__time"
+          data-tooltip="Время сервера"
+          data-tooltip-direction="n"
+        >
+          {{formatHours getServerTime -180}}
+        </time>
+        <button
+          onClick={{showMail}}
+          class="
+            cw--UserMenu__button
+            cw--UserMenu__button_mail
+          "
+        >
+          {{#if hasMail}}
+            <span class="cw--UserMenu__mailCount">5</span>
+          {{/if}}
+        </button>
+      </div>
+      <div class="cw--UserMenu__smallMenu">
+        <button
+          onClick={{showSettings}}
+          class="
+            cw--UserMenu__button
+            cw--UserMenu__button_settings
+            {{#if eq isRouterName 'settings'}}
+              cw--UserMenu__button_active
+            {{/if}}
+          "
+        ></button>
+        <button
+          onClick={{showStatistics}}
+          class="
+            cw--UserMenu__button
+            cw--UserMenu__button_stats
+            {{#if eq isRouterName 'statistics'}}
+              cw--UserMenu__button_active
+            {{/if}}
+          "
+        ></button>
+      </div>
+    </div>
+
+    <div class="cw--UserMenu__menu">
+      <form
+        onSubmit={{sendPromocode}}
+        class="cw--UserMenu__promo"
+      >
+        {{> InputString args
+          name='promocode'
+          value=promoCode
+          placeholder='промо код'
+          className='cw--UserMenu__promoInput'
+        }}<button
+          type="submit"
+          class="
+            cw--button
+            cw--button_flat
+            cw--UserMenu__promoSend
+          "
+        >
+          >
+        </button>
+      </form>
+      {{#if isAdmin}}
+        <a
+          onClick={{showPromocodeCreate}}
+          class="cw--UserMenu__menuItem cw--UserMenu__menuItem_human"
+        >
+          Создать промо
+        </a>
+        <a
+          onClick={{showPromocodeHistory}}
+          class="cw--UserMenu__menuItem cw--UserMenu__menuItem_human"
+        >
+          История промо
+        </a>
+      {{/if}}
+      <a
+        class="cw--UserMenu__menuItem cw--UserMenu__menuItem_credit"
+      >
+        Награды за день
+      </a>
+      <a href="/" class="cw--UserMenu__menuItem cw--UserMenu__menuItem_home">
+        На главную
+      </a>
+      <a class="cw--UserMenu__menuItem cw--UserMenu__menuItem_disabled">
+        Комикс
+      </a>
+      <a onClick={{showFeedback 'questions'}} class="cw--UserMenu__menuItem">
+        Вопрос
+      </a>
+      <a onClick={{showFeedback 'problems'}} class="cw--UserMenu__menuItem">
+        Ошибка
+      </a>
+      <a onClick={{showFeedback 'ideas'}} class="cw--UserMenu__menuItem">
+        Идея
+      </a>
+      <a
+        class="cw--UserMenu__menuItem"
+        target="_blank"
+        href="https://info.consulwar.ru/"
+      >
+        Тех. поддержка
+      </a>
+      <a
+        href="{{pathFor 'logout'}}"
+        class="cw--UserMenu__menuItem cw--UserMenu__menuItem_logout"
+      >
+        Выход
+      </a>
+    </div>
+  </div>
+</template>

@@ -1639,7 +1639,7 @@ Template.cosmosAttackMenu.events({
   },
 
   'change .fleet input': function (e, t) {
-    var value = parseInt( e.currentTarget.value, 10 );
+    var value = parseInt( e.currentTarget.value, 10 ) || 0;
     var id = $(e.currentTarget.parentElement.parentElement).attr('data-id');
     var max = parseInt( $(e.currentTarget.parentElement.parentElement).attr('data-max'), 10 );
 

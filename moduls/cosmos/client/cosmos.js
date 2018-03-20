@@ -1810,6 +1810,7 @@ Template.cosmosAttackMenu.events({
             Notifications.error('Не удалось выбрать иконку', err.error);
           } else {
             Notifications.success('Вы поменяли иконку');
+            Game.Icons.closeSelectWindow();
           }
         });
       });

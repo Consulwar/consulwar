@@ -1,0 +1,82 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--Gallery
+  width 1024px
+  max-width 100%
+  cw--fontFamily_cond()
+  background-color $cw--color_darkGrey
+
+  +media(null, $cw--size_s)
+    display flex
+    max-height 100%
+    flex-direction column
+
+  &__head
+    display flex
+    height 33px
+    padding 3px 10px
+    align-items center
+    font-weight bold
+    font-size $cw--fontSize_m
+    color $cw--color_nearWhite
+
+    +media(null, $cw--size_s)
+      flex-basis 33px
+
+  &__content
+    height 580px
+
+    +media(null, $cw--size_xs)
+      display flex
+      height auto
+      flex-basis auto
+      flex-direction column
+  
+  &__theater
+    position relative
+    display flex
+    height 512px
+    justify-content center
+    align-items center
+    overflow hidden
+    background-color $cw--color_black
+
+    +media(null, $cw--size_xs)
+      height auto
+      flex-basis auto
+      flex-grow 1
+  
+  &__image
+    max-width 100%
+    max-height 100%
+
+  &__controls
+    display flex
+    padding 10px
+    justify-content space-between
+    align-items center
+    
+    +media(null, $cw--size_xs)
+      flex-direction column
+      flex-grow 0
+      flex-basis 155px
+
+  &__goBack
+  &__goNext
+    width 170px
+
+    +media(null, $cw--size_xs)
+      margin-bottom 10px
+
+  &__goBack
+    +media(null, $cw--size_xs)
+      order 3
+
+  &__counter
+    font-size $cw--fontSize_l
+    color $cw--color_lightGrey
+
+    +media(null, $cw--size_xs)
+      padding 10px

@@ -1029,43 +1029,45 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
 
   var spaceEvent = FlightEvents.getOne(id);
 
-  cosmosPopupView = Blaze.renderWithData(
-    Template.cosmosShipInfo, {
-      spaceEvent: spaceEvent,
-      ship: Game.Cosmos.getShipInfo(spaceEvent),
-      allowActions: isLock,
-      position: function() {
-        const startPosition = this.spaceEvent.data.startPosition;
-        const targetPosition = this.spaceEvent.data.targetPosition;
-        const startPositionWithOffset = { ...startPosition };
-        const targetPositionWithOffset = { ...targetPosition };
-        if (this.spaceEvent.data.hex) {
-          let center = new Hex(this.spaceEvent.data.hex).center();
-          startPositionWithOffset.x += center.x;
-          startPositionWithOffset.y += center.y;
-
-          center = new Hex(this.spaceEvent.data.targetHex).center();
-          targetPositionWithOffset.x += center.x;
-          targetPositionWithOffset.y += center.y;
-        }
-
-        const pos = getFleetAnimation({
-          spaceEvent: this.spaceEvent,
-          maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
-          acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
-          totalFlyDistance: calcDistance(
-            startPositionWithOffset,
-            targetPositionWithOffset,
-          ),
-        }, mapView, pathViews[this.spaceEvent._id]);
-        return {
-          x: pos.x + 50,
-          y: pos.y - 50,
-        };
+  if (spaceEvent) {
+    cosmosPopupView = Blaze.renderWithData(
+      Template.cosmosShipInfo, {
+        spaceEvent: spaceEvent,
+        ship: Game.Cosmos.getShipInfo(spaceEvent),
+        allowActions: isLock,
+        position: function() {
+          const startPosition = this.spaceEvent.data.startPosition;
+          const targetPosition = this.spaceEvent.data.targetPosition;
+          const startPositionWithOffset = { ...startPosition };
+          const targetPositionWithOffset = { ...targetPosition };
+          if (this.spaceEvent.data.hex) {
+            let center = new Hex(this.spaceEvent.data.hex).center();
+            startPositionWithOffset.x += center.x;
+            startPositionWithOffset.y += center.y;
+  
+            center = new Hex(this.spaceEvent.data.targetHex).center();
+            targetPositionWithOffset.x += center.x;
+            targetPositionWithOffset.y += center.y;
+          }
+  
+          const pos = getFleetAnimation({
+            spaceEvent: this.spaceEvent,
+            maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
+            acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
+            totalFlyDistance: calcDistance(
+              startPositionWithOffset,
+              targetPositionWithOffset,
+            ),
+          }, mapView, pathViews[this.spaceEvent._id]);
+          return {
+            x: pos.x + 50,
+            y: pos.y - 50,
+          };
+        },
       },
-    },
-    $('.leaflet-popup-pane')[0],
-  );
+      $('.leaflet-popup-pane')[0],
+    );
+  }
 };
 
 Game.Cosmos.getShipInfo = function(spaceEvent) {

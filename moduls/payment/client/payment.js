@@ -94,45 +94,10 @@ Game.Payment.Income.Collection.find({}).observeChanges({
 // Payment side menu
 // ----------------------------------------------------------------------------
 
-var isPromoLoading = new ReactiveVar(false);
-
-Template.paymentSide.helpers({
-  isAdmin: function() {
-    return Meteor.user().role == 'admin';
-  }
-});
-
 Template.paymentSide.events({
   'click .buy': function(e, t) {
     Game.Payment.showWindow();
   },
-
-  'click .create': function(e, t) {
-    Game.Payment.showPromocodeCreate();
-  },
-
-  'click .promo .send': function(e, t) {
-    if (isPromoLoading.get()) {
-      return;
-    }
-
-    var code = t.find('.promo .code').value;
-    if (!code || code.length === 0) {
-      Notifications.error('Нужно ввести промокод');
-      return;
-    }
-
-    isPromoLoading.set(true);
-
-    Meteor.call('user.activatePromoCode', code, function(err, profit) {
-      isPromoLoading.set(false);
-      if (err) {
-        Notifications.error(err.error);
-      } else {
-        Game.Payment.showPromocodeReward(profit);
-      }
-    });
-  }
 });
 
 // ----------------------------------------------------------------------------

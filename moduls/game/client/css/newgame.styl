@@ -498,32 +498,7 @@ body.game
     color $color-ggk
   .defeat
     color $color-honor
-    
-  .newMessage
-    position absolute
-    bottom 250px
-    right 0
-    display block
-    padding 18px 16px
-    background-color $color-black
-    color $color-metal
-    z-index 4
-    font-size 16px
-    text-decoration none
-    font-weight bold
-    
-    &:before
-      content url(/img/game/message.png)
-      vertical-align middle
-      width 34px
-      height 23px
-      display inline-block
-      margin-right 20px
-            
-    &:hover
-      -webkit-filter brightness(1.2)
-      filter brightness(1.2)
-  
+
   button:not(.cw--button):not(.cw--button_max), a:not(.cw--button):not(.cw--Menu__item)
     outline none
 
@@ -1367,84 +1342,7 @@ body.game
           font-size 20px
           top -20px
           z-index 2
-    
-  > .user
-    position absolute
-    z-index 15
-    top 100px
-    right 15px
-    width 70px
-    height 95px
-    background-color $color-black
-    
-    .servertime
-      display block
-      height 20px
-      padding-top 5px
-      text-align center
-      color $color-metal
-    
-    .mini_menu
-      display flex
-      flex-shrink 0
-      flex-direction column
-      justify-content flex-end
-      width 23px
-      height h = 69px
-      position absolute
-      left -(@width)
-      bottom 0
-      background-color $color-black
-      
-      a
-        display block
-        width 100%
-        height (h / 3)
-        text-decoration none
-        background-repeat no-repeat
-        background-position bottom center
 
-        &.active,
-        &:hover
-          background-position top center
-
-        &.statistics
-          background-image url(/img/game/statistics.png)
-        
-        &.settings
-          background-image url(/img/game/settings.png)
-    
-    &:hover
-      .menu
-        display flex
-        flex-shrink 0
-
-    .menu
-      position absolute
-      display none
-      width 108px
-      height 155px
-      padding 15px 5px
-      right 0
-      bottom -(@height + 30px)
-      background-color $color-black
-      flex-direction column
-      text-align center
-      
-      a
-        text-decoration none
-        color $color-description
-
-        &:hover
-          color $color-metal
-
-
-      .support:first-child
-        margin-top 20px
-        
-      .support:last-child
-        margin-bottom 20px
-  
   .quest
     position absolute
     z-index 10

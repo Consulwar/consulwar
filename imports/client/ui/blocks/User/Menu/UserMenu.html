@@ -75,7 +75,7 @@
               cw--UserMenu__promoSend
             "
           >
-            >
+            &gt;
           </button>
         </form>
 
@@ -99,9 +99,9 @@
           >
             Награды за день
           </a> --}}
-          <a href="/" class="cw--UserMenu__menuItem cw--UserMenu__menuItem_home">
+          {{!-- <a href="/" class="cw--UserMenu__menuItem cw--UserMenu__menuItem_home">
             На главную
-          </a>
+          </a> --}}
           <a class="cw--UserMenu__menuItem cw--UserMenu__menuItem_disabled">
             Комикс
           </a>
@@ -121,6 +121,20 @@
           >
             Тех. поддержка
           </a>
+
+          <a 
+            class="cw--UserMenu__menuItem"
+            href="{{pathFor 'walletHistory' type='income' page=1}}"
+          >
+            История покупок
+          </a>
+          <a 
+            class="cw--UserMenu__menuItem"
+            href="{{pathFor 'walletHistory' type='expense' page=1}}"
+          >
+            История расходов
+          </a>
+
           <a
             href="{{pathFor 'logout'}}"
             class="cw--UserMenu__menuItem cw--UserMenu__menuItem_logout"

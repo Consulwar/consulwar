@@ -42,8 +42,8 @@ class UserMenu extends BlazeComponent {
 
   hasMail() {
     if (
-      Game.Quest.hasNewDaily
-      || Game.Mail.hasUnread
+      Game.Quest.hasNewDaily()
+      || Game.Mail.hasUnread()
     ) {
       return true;
     }

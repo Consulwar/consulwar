@@ -82,6 +82,10 @@ class Gallery extends BlazeComponent {
   getCurrentSlide() {
     return this.slides[this.currentIndex.get()];
   }
+
+  close() {
+    this.removeComponent();
+  }
 }
 
 Gallery.register('Gallery');

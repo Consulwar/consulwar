@@ -27,16 +27,18 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
         }
 
         let idParts = condition[0].split('/');
-        switch(idParts[0]) {
+        const type = idParts.shift();
+        const item = idParts.join('/');
+        switch(type) {
           case 'Quest':
-            return Game.Quest.checkFinished(idParts[idParts.length - 1]);
+            return Game.Quest.checkFinished(item);
           case 'Building':
           case 'Research':
             return content[condition[0]].has({ level: condition[1] });
           case 'Unit':
             return content[condition[0]].has({ count: condition[1] });
           case 'Statistic':
-            return Game.Statistic.getUserValue(idParts[1]);
+            return Game.Statistic.getUserValue(item) >= condition[1];
         }
         return false;
       });
@@ -50,6 +52,7 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
   this.reward = options.reward;
   this.options = options.options;
   this.isDone = options.isDone;
+  this.slides = options.slides;
 };
 
 Game.Quest = {

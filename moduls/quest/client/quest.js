@@ -1,5 +1,6 @@
 import content from '/imports/content/client';
 import persons from '/imports/content/Person/client/';
+import Gallery from '/imports/client/ui/blocks/Gallery/Gallery'
 import '/imports/client/ui/Person/image/PersonImage';
 
 const engNameToPerson = {};
@@ -100,11 +101,6 @@ Game.Quest.showQuest = function(id) {
     isLoading.set(true);
     loadedQuest.set(null);
 
-    Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, function(err, data) {
-      isLoading.set(false);
-      loadedQuest.set( new game.Quest(data) );
-    });
-
     // quest not finished, render reqular quest window
     Game.Popup.show({
       templateName: 'quest',
@@ -116,6 +112,32 @@ Game.Quest.showQuest = function(id) {
         title: currentQuest.name,
         isPrompt: currentQuest.status == Game.Quest.status.PROMPT,
       },
+    });
+
+    Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
+      isLoading.set(false);
+      loadedQuest.set( new game.Quest(data) );
+
+      if (data.slides) {
+        const slides = [];
+
+        for (let i = 1; i <= data.slides; i += 1) {
+          slides.push({
+            img: `/img/game/quests/${currentQuest.engName}/${currentQuest.step}/${i}.jpg`
+          });
+        }
+
+        const stepNumber = parseInt(currentQuest.step.substr(8));
+    
+        Game.Popup.show({
+          template: (new Gallery({
+            hash: {
+              slides,
+              title: `Обучение — ${stepNumber} задание`,
+            },
+          })).renderComponent(),
+        });
+      }
     });
   }
 };

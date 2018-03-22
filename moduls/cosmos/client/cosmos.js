@@ -828,10 +828,6 @@ Template.cosmosPlanetPopup.helpers({
 
 Template.cosmosPlanetPopup.events({
   'click .open': function(e, t) {
-    if (!Game.User.haveVerifiedEmail()) {
-      return Notifications.info('Сперва нужно верифицировать email');
-    }
-
     var id = $(e.currentTarget).attr("data-id");
     if (id) {
       Game.Cosmos.showAttackMenu(id);

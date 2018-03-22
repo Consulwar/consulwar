@@ -3,11 +3,11 @@
     <div
       class="
         cw--PageIndex__slider
-        {{#if currentSlide.get.isConsul}}
+        {{#if getCurrentSlide.isConsul}}
           cw--PageIndex__slider_consul
         {{/if}}
       "
-      style="background-image:URL({{currentSlide.get.img}})"
+      style="background-image:URL({{getCurrentSlide.img}})"
     >
       <button
         onClick={{goBack}}
@@ -21,7 +21,7 @@
           cw--PageIndex__slideRow cw--PageIndex__slideRow_next
         "
       ></button>
-      {{#if currentSlide.get.isRating18}}
+      {{#if getCurrentSlide.isRating18}}
         <div class="cw--PageIndex__rating18">
           <img
             class="cw--PageIndex__rating18img"
@@ -38,20 +38,27 @@
           </span> бета тест
         </div>
         <div class="cw--PageIndex__sliderTitle">
-          {{currentSlide.get.title}}
+          {{getCurrentSlide.title}}
         </div>
         <div class="cw--PageIndex__sliderDescription">
-          {{currentSlide.get.description}}
+          {{getCurrentSlide.description}}
         </div>
       </div>
+      {{#unless getCurrentSlide.loaded.get }}
+        <div class="cw--PageIndex__sliderLoading">
+          {{> loading}}
+        </div>
+      {{/unless}}
     </div>
     <div class="cw--PageIndex__sliderControl">
       {{#each slide in slides}}
         <div
-          onClick={{setSlide slide}}
+          onClick={{showSlide @index}}
           class="
             cw--PageIndex__sliderDot
-            {{#if isCurrent slide}}cw--PageIndex__sliderDot_current{{/if}}
+            {{#if eq currentIndex.get @index}}
+              cw--PageIndex__sliderDot_current
+            {{/if}}
           "
         >
         </div>

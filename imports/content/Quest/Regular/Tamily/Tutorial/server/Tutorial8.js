@@ -3,6 +3,7 @@ export default {
   condition: [
     ['Building/Residential/SpacePort', 10],
   ],
+  slides: 1,
   title: 'Построить Космопорт 10-го уровня',
   text: '<p>Ваш флот полетел в атаку, но вам нужно больше кораблей для защиты и нападения. Нам… Вам, Правитель. Вам нужен Космопорт. Постройте космопорт 10-го уровня.</p>',
   options: {
@@ -15,5 +16,6 @@ export default {
     metals: 500,
     crystals: 500,
     humans: 500,
+    credits: 100,
   },
 };

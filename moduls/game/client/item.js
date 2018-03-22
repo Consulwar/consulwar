@@ -20,7 +20,12 @@ Game.Icons.showSelectWindow = function(selectAction, isSelectedCondition) {
     }, $('.over')[0]);
   }
 };
-
+Game.Icons.closeSelectWindow = function() {
+  if (iconsWindowView) {
+    Blaze.remove(iconsWindowView);
+    iconsWindowView = null;
+  }
+}
 
 Game.Chat.showIconsWindow = function() {
   Game.Icons.showSelectWindow(function(group, id) {
@@ -95,10 +100,7 @@ Template.icons.helpers({
 
 Template.icons.events({
   'click .close': function(e, t) {
-    if (iconsWindowView) {
-      Blaze.remove(iconsWindowView);
-      iconsWindowView = null;
-    }
+    Game.Icons.closeSelectWindow();
   },
 
   'click .tabItems': function(e, t) {

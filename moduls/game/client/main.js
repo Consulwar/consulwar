@@ -5,6 +5,7 @@ import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
 
+import '/imports/client/ui/blocks/User/Menu/UserMenu';
 import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
 
 Blaze._allowJavascriptUrls();
@@ -428,14 +429,6 @@ var helpers = {
   fleetTime: function(time) {
     var timeLeft = time - Session.get('serverTime');
     return (timeLeft > 0) ? timeLeft : 0;
-  },
-
-  userIcon: function() {
-    var user = Meteor.user();
-    if (user && user.settings && user.settings.chat && user.settings.chat.icon) {
-      return user.settings.chat.icon;
-    }
-    return 'common/1';
   },
 
   helpraceAuth: () => Session.get('helpraceAuth'),

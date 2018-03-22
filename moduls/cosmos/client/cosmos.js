@@ -828,10 +828,6 @@ Template.cosmosPlanetPopup.helpers({
 
 Template.cosmosPlanetPopup.events({
   'click .open': function(e, t) {
-    if (!Game.User.haveVerifiedEmail()) {
-      return Notifications.info('Сперва нужно верифицировать email');
-    }
-
     var id = $(e.currentTarget).attr("data-id");
     if (id) {
       Game.Cosmos.showAttackMenu(id);
@@ -1029,43 +1025,45 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
 
   var spaceEvent = FlightEvents.getOne(id);
 
-  cosmosPopupView = Blaze.renderWithData(
-    Template.cosmosShipInfo, {
-      spaceEvent: spaceEvent,
-      ship: Game.Cosmos.getShipInfo(spaceEvent),
-      allowActions: isLock,
-      position: function() {
-        const startPosition = this.spaceEvent.data.startPosition;
-        const targetPosition = this.spaceEvent.data.targetPosition;
-        const startPositionWithOffset = { ...startPosition };
-        const targetPositionWithOffset = { ...targetPosition };
-        if (this.spaceEvent.data.hex) {
-          let center = new Hex(this.spaceEvent.data.hex).center();
-          startPositionWithOffset.x += center.x;
-          startPositionWithOffset.y += center.y;
-
-          center = new Hex(this.spaceEvent.data.targetHex).center();
-          targetPositionWithOffset.x += center.x;
-          targetPositionWithOffset.y += center.y;
-        }
-
-        const pos = getFleetAnimation({
-          spaceEvent: this.spaceEvent,
-          maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
-          acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
-          totalFlyDistance: calcDistance(
-            startPositionWithOffset,
-            targetPositionWithOffset,
-          ),
-        }, mapView, pathViews[this.spaceEvent._id]);
-        return {
-          x: pos.x + 50,
-          y: pos.y - 50,
-        };
+  if (spaceEvent) {
+    cosmosPopupView = Blaze.renderWithData(
+      Template.cosmosShipInfo, {
+        spaceEvent: spaceEvent,
+        ship: Game.Cosmos.getShipInfo(spaceEvent),
+        allowActions: isLock,
+        position: function() {
+          const startPosition = this.spaceEvent.data.startPosition;
+          const targetPosition = this.spaceEvent.data.targetPosition;
+          const startPositionWithOffset = { ...startPosition };
+          const targetPositionWithOffset = { ...targetPosition };
+          if (this.spaceEvent.data.hex) {
+            let center = new Hex(this.spaceEvent.data.hex).center();
+            startPositionWithOffset.x += center.x;
+            startPositionWithOffset.y += center.y;
+  
+            center = new Hex(this.spaceEvent.data.targetHex).center();
+            targetPositionWithOffset.x += center.x;
+            targetPositionWithOffset.y += center.y;
+          }
+  
+          const pos = getFleetAnimation({
+            spaceEvent: this.spaceEvent,
+            maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
+            acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
+            totalFlyDistance: calcDistance(
+              startPositionWithOffset,
+              targetPositionWithOffset,
+            ),
+          }, mapView, pathViews[this.spaceEvent._id]);
+          return {
+            x: pos.x + 50,
+            y: pos.y - 50,
+          };
+        },
       },
-    },
-    $('.leaflet-popup-pane')[0],
-  );
+      $('.leaflet-popup-pane')[0],
+    );
+  }
 };
 
 Game.Cosmos.getShipInfo = function(spaceEvent) {
@@ -1639,7 +1637,7 @@ Template.cosmosAttackMenu.events({
   },
 
   'change .fleet input': function (e, t) {
-    var value = parseInt( e.currentTarget.value, 10 );
+    var value = parseInt( e.currentTarget.value, 10 ) || 0;
     var id = $(e.currentTarget.parentElement.parentElement).attr('data-id');
     var max = parseInt( $(e.currentTarget.parentElement.parentElement).attr('data-max'), 10 );
 
@@ -1799,9 +1797,9 @@ Template.cosmosAttackMenu.events({
 
   'click .squad:not(.noPremium) img': function(e, t) {
     var slot = parseInt(e.currentTarget.parentElement.dataset.id, 10);
+    let squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
 
     Game.Icons.showSelectWindow(function(group, name) {
-      var squad = Game.Squad.getOne(slot) || {name: 'Отряд ' + slot};
       var message = 'Сменить иконку отряда «' + squad.name + '»';
 
       Game.showAcceptWindow(message, function() {
@@ -1810,11 +1808,12 @@ Template.cosmosAttackMenu.events({
             Notifications.error('Не удалось выбрать иконку', err.error);
           } else {
             Notifications.success('Вы поменяли иконку');
+            Game.Icons.closeSelectWindow();
           }
         });
       });
     }, function(group, id) {
-      if (Game.Squad.getOne(slot).icon == group + '/' + id) {
+      if (squad.icon == group + '/' + id) {
         return true;
       }
       return false;

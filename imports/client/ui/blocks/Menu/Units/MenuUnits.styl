@@ -16,8 +16,12 @@
       margin 10px 0
 
   &__item
-    width auto
+    width 110px
     flex-basis 110px
+    +media($cw--size_xxl, $cw--size_xxxl)
+      width 100px
+    +media($cw--size_xl, $cw--size_xxl)
+      width 90px
     +media($cw--size_l, $cw--size_xl)
       width 100px
       flex-basis 100px

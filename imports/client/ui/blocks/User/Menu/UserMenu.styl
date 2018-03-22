@@ -1,0 +1,252 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--UserMenu
+  position absolute
+  z-index 15
+  top 100px
+  right 15px
+  width 145px
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  background-color $cw--color_black
+
+  +media(null, $cw--size_l)
+    order 1
+    position relative
+    right initial
+    top initial
+    height auto
+    width 100%
+
+  &__userName
+    display block
+    padding 3px 6px
+
+    color $cw--color_credit
+    font-weight bold
+    background-color $cw--color_darkGrey
+
+  &__content
+    +media(null, $cw--size_m)
+      display flex
+      flex-direction column
+    +media($cw--size_m, $cw--size_l)
+      display flex
+      flex-wrap nowrap
+      justify-content space-between
+
+
+  &__summary
+    display flex
+
+    +media($cw--size_m, $cw--size_l)
+      flex-basis 165px
+      flex-grow 1
+
+  &__icon
+    flex-basis 65px
+    width 65px
+    height @width
+    cursor pointer
+
+    &:hover
+    &:active
+      outline solid 1px $cw--color_metal
+      outline-offset -1px
+
+  &__iconImg
+    display block
+    height 100%
+    width 100%
+
+  &__info
+    display flex
+    flex-direction column
+    justify-content space-between
+    flex-basis 36px
+
+  &__time
+    padding 5px 3px
+    color $cw--color_nearWhite
+
+  &__smallMenu
+    display flex
+    flex-basis 36px
+    flex-direction column
+
+  &__button
+    position relative
+    width auto
+    min-width 25px
+    min-height @width
+    flex-basis 50%
+
+    cursor pointer
+    background-color transparent
+    background-repeat no-repeat
+    background-position center
+    border none
+    &:hover
+    &:active
+      background-color alpha($cw--color_metal, .25)
+
+    &_settings
+      background-image url(/img/game/user_settings.svg)
+    &_stats
+      background-image url(/img/game/user_statistics.svg)
+    &_mail
+      background-image url(/img/game/user_mail.svg)
+
+  &__mailCount
+    position absolute
+    top 50%
+    left 50%
+    z-index 1
+    width 20px
+    height @width
+    transform translate(3px, -20px)
+
+    cursor pointer
+    color $cw--color_black
+    background-color $cw--color_human
+    border-radius 50%
+    text-align center
+    line-height 22px
+
+  &__promo
+    display flex
+    justify-content center
+    padding 7px 0
+    box-sizing border-box
+
+    +media($cw--size_m, $cw--size_l)
+      height 65px
+      align-items center
+      margin-right 20px
+
+  &__promoInput
+    height 27px
+    width 100px
+    box-sizing border-box
+
+  &__promoSend
+    width 30px
+    height 27px
+    padding 0
+    color $cw--color_metal
+    background-color $cw--color_black
+    border solid 1px #2B6D92
+    border-image linear-gradient(0deg, #2B6D92, #56BBF3) 1
+    font-size $cw--fontSize_l
+    box-sizing border-box
+    display inline-block
+    cursor pointer
+    &:hover
+    &:active
+      filter none
+      color #A3DEFF
+      border-image linear-gradient(0deg, #4594BF, #8BD4FC) 1
+
+
+  &__roll
+    background $cw--color_black
+
+    +media($cw--size_l)
+      max-height 0
+      transition max-height 1s ease
+      overflow hidden
+
+    +media($cw--size_m, $cw--size_l)
+      display flex
+      flex-basis 75%
+    +media(null, $cw--size_m)
+      display flex
+      flex-direction column
+      flex-basis auto
+
+  +media($cw--size_l)
+    &:hover &__roll
+      max-height 1000px
+
+  &__menu
+    font-size $cw--fontSize_m
+
+    +media(null, $cw--size_m)
+      justify-content center
+    +media(null, $cw--size_l)
+      display flex
+      flex-wrap wrap
+
+  &__menuItem
+    display block
+    padding 5px 10px
+    cursor pointer
+    color $cw--color_description
+    text-decoration none
+    &:hover
+    &:active
+      color $cw--color_white
+      background alpha($cw--color_metal, .5)
+
+    &_human
+      color $cw--color_human
+
+    &_credit
+      color $cw--color_credit
+
+    &_disabled
+      &, &:hover
+        cursor default
+        color $cw--color_grey
+        background-color alpha($cw--color_darkGrey, .3)
+
+    &_logout
+      color $cw--color_honor
+
+    +media($cw--size_l)
+      &_home
+        margin-top 6px
+      &_logout
+        margin-top 15px
+
+
+
+  // > .user
+  //   order 1
+  //   position relative
+  //   right initial
+  //   top initial
+  //   height auto
+  //   width 100%
+  //   height 100px
+  //   display flex
+  //   flex-direction row
+  //   flex-wrap wrap
+  //   flex-shrink 0
+    
+  //   .servertime
+  //     width 100%
+    
+  //   .menu
+  //     position relative
+  //     display flex
+  //     bottom initial
+  //     right initial
+  //     height auto
+  //     flex-direction row
+  //     width calc(100% - 75px)
+  //     justify-content space-between
+  //     box-sizing border-box
+  //     text-decoration underline
+  //     flex-wrap wrap
+  //     padding 10px
+  //     align-items center
+      
+  //     a
+  //       margin 0 5px
+      
+  //     .support
+  //       margin 0 5px

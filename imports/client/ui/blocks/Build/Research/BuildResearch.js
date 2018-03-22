@@ -66,9 +66,6 @@ class BuildResearch extends BlazeComponent {
         }
       },
     );
-    if (item.getCurrentLevel() === 0) {
-      Router.go(item.url({ group: item.group }));
-    }
   }
 
   toggleDescription() {

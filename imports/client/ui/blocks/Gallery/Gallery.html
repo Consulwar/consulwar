@@ -1,0 +1,58 @@
+<template name="Gallery">
+  <div class="cw--Gallery">
+    <div class="cw--Gallery__head">
+      {{title}}
+    </div>
+    <div class="cw--Gallery__content">
+      <div class="cw--Gallery__theater">
+        <img
+          class="cw--Gallery__image"
+          src={{getCurrentSlide.img}}
+        />
+      </div>
+      <div class="cw--Gallery__controls">
+        <button
+          onClick={{goBack}}
+          class="
+            cw--button
+            cw--button_flat
+            cw--Gallery__goBack
+            {{#if eq currentIndex.get 0}}
+              cw--button_disabled
+            {{/if}}
+          "
+        >
+          Назад
+        </button>
+        <div class="cw--Gallery__counter">
+          Кадр {{sum currentIndex.get 1}} из {{gallerySize}}
+        </div>
+        {{#if isLast currentIndex.get}}
+          <button
+            onClick={{close}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--Gallery__openQuest
+            "
+          >
+            Открыть задание
+          </button>
+        {{else}}
+          <button
+            onClick={{goNext}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_blue
+              cw--Gallery__goNext
+            "
+          >
+            Далее
+          </button>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>

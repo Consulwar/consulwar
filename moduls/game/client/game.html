@@ -86,50 +86,7 @@
           </div>
         </div>
 
-        <div class="user">
-          <span class="servertime" data-tooltip="Время сервера" data-tooltip-direction="s">
-            {{formatHours serverTime -180}}
-          </span>
-          <a href="javascript: Game.Chat.showIconsWindow();">
-            <img src="/img/game/chat/icons/{{userIcon}}.png"/>
-          </a>
-          <div class="mini_menu">
-            <a 
-              class="
-                statistics
-                {{#if eq currentRouteName 'statistics'}}
-                  active
-                {{/if}}
-              " 
-              href="{{pathFor 'statistics' group="general"}}">
-            </a>
-            <a 
-              class="
-                settings
-                {{#if eq currentRouteName 'settings'}}
-                  active
-                {{/if}}
-              "
-              href="{{pathFor 'settings'}}">
-            </a>
-          </div>
-          <div class="menu">
-            <a href="{{pathFor 'mail' page=1}}">Почта</a>
-            <a href="{{pathFor 'statistics' group='general'}}">Статистика</a>
-            <a href="{{pathFor 'settings'}}">Настройки</a>
-
-            <a class="support" href="javascript: ChdFeedbackWidget.show();">Вопрос</a>
-            <a class="support" href="javascript: ChdFeedbackWidget.show();">Ошибка</a>
-            <a class="support" href="javascript: ChdFeedbackWidget.show();">Идея</a>
-            <a class="support" target="_blank" href="https://info.consulwar.ru/">Тех. поддержка</a>
-
-            <a href="{{pathFor 'logout'}}">Выход</a>
-          </div>
-        </div>
-    <!--
-        <div class="quest">
-        </div>
-    -->
+        {{> UserMenu }}
 
         <div class="content {{currentRouteName}} {{menuGroup}} {{itemGroup}}">
           {{>yield region="content"}}
@@ -147,12 +104,6 @@
         {{> additional_area}}
 
         {{>yield region="permanent_content"}}
-
-        {{#if (or Game.Quest.hasNewDaily Game.Mail.hasUnread)}}
-          <a href="{{pathFor 'mail' page=1}}" class="newMessage">
-            Новое сообщение
-          </a>
-        {{/if}}
 
         {{> yield "bottomMenu"}}
       </div>

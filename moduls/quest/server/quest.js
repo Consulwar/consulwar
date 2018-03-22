@@ -35,19 +35,17 @@ game.QuestLine = function(options, quests, isNew = true) {
         }
 
         let idParts = condition[0].split('/');
+        const type = idParts.shift();
+        const item = idParts.join('/');
 
-        if (content[condition[0]] === undefined) {
-          console.log(condition[0]);
-        }
-
-        switch(idParts[0]) {
+        switch(type) {
           case 'Quest':
-            return Game.Quest.checkFinished(idParts[idParts.length - 1]);
+            return Game.Quest.checkFinished(item);
           case 'Building':
           case 'Research':
             return content[condition[0]].has({ level: condition[1] });
           case 'Statistic':
-            return Game.Statistic.getUserValue(idParts[1]);
+            return Game.Statistic.getUserValue(item) >= condition[1];
         }
         return false;
       });

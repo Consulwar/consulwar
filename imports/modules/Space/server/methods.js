@@ -25,10 +25,6 @@ Meteor.methods({
     check(targetId, String);
     check(units, Object);
 
-    if (!Game.User.haveVerifiedEmail()) {
-      throw new Meteor.Error('Сперва нужно верифицировать Email');
-    }
-
     const basePlanet = Game.Planets.getOne(baseId);
     if (!basePlanet) {
       throw new Meteor.Error('Планета не существует');

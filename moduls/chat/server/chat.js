@@ -165,10 +165,6 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'chat.sendMessage', user });
 
-    if (!Game.User.haveVerifiedEmail()) {
-      throw new Meteor.Error('Сперва нужно верифицировать email');
-    }
-
     // check room name
     check(roomName, String);
 

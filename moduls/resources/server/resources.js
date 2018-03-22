@@ -337,7 +337,7 @@ Game.Resources.initialize = function(user) {
       humans: { amount: 5000 },
       metals: { amount: 12000 },
       crystals: { amount: 8000 },
-      credits: { amount: 1000 },
+      credits: { amount: 100 },
       honor: { amount: 0 },
       updated: Game.getCurrentTime()
     });

@@ -72,9 +72,6 @@ class BuildBuilding extends BlazeComponent {
         }
       },
     );
-    if (this.building.getCurrentLevel() === 0) {
-      Router.go(this.building.url({ group: this.building.group }));
-    }
   }
 
   toggleDescription() {

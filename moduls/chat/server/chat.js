@@ -155,6 +155,18 @@ var getAccessLevel = function(user, room) {
   return 0;
 };
 
+const sanitizeHtmlGraceful = function(message) {
+  const options = {
+    allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
+    allowedAttributes: {
+      'a': [ 'href' ]
+    }
+  };
+  const regEx = new RegExp(`<(?!/?(?:${options.allowedTags.join('|')}))`, 'g'); // escape '<' of disallowed tags as entity
+  message = message.replace(regEx, '&lt;');
+  return sanitizeHtml(message, options);
+}
+
 
 Meteor.methods({
   'chat.sendMessage': function(message, roomName) {
@@ -190,12 +202,7 @@ Meteor.methods({
     // check message
     check(message, String);
 
-    message = sanitizeHtml(message.trim().substr(0, 175), {
-      allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
-      allowedAttributes: {
-        'a': [ 'href' ]
-      }
-    }).trim();
+    message = sanitizeHtmlGraceful(message.trim().substr(0, 175)).trim();
 
     if (message.length === 0) {
       throw new Meteor.Error('Напиши хоть что-нибудь, чтобы отправить сообщение!');

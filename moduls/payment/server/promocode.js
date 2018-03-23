@@ -85,19 +85,20 @@ Game.PromoCode.randomItems =  [{
 }, {
   resources: { honor: 25 }
 }, {
-  units: { fleet: { wasp: 8 } }
+  units: { 'Unit/Human/Space/Wasp': 8 }
 }, {
-  units: { fleet: { mirage: 3 } }
+  units: { 'Unit/Human/Space/Mirage': 3 }
 }, {
-  units: { defense: { bomb: 30 } }
+  units: { 'Unit/Human/Defense/Mine': 30 }
 }, {
-  units: { defense: { turret: 10 } }
+  units: { 'Unit/Human/Defense/Turret': 10 }
+  // 
 }, {
-  units: { ground: { horizontalbarman: 3 } }
+  units: { 'Unit/Human/Ground/Infantry/Horizontalbarman': 3 }
 }, {
-  units: { ground: { agmogedcar: 1 } }
+  units: { 'Unit/Human/Ground/Enginery/Agmogedcar': 1 }
 }, {
-  units: { ground: { fast: 1 } }
+  units: { 'Unit/Human/Ground/Air/Fast': 1 }
 }];
 
 Meteor.methods({

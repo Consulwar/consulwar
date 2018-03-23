@@ -1,0 +1,114 @@
+<template name="Reward">
+  <div class="cw--Reward">
+    <h2 class="cw--Reward__header">Награда доставлена!</h2>
+
+    {{#if getResources}}
+      {{> ResourcePrice args
+        price=getResources
+        isShowDiff=false
+        className='cw--Reward__resources'
+      }}
+    {{/if}}
+
+    {{#if getUnits}}
+      <div class="cw--Reward__section">
+        {{#each unit in getUnits}}
+          <div 
+            class="
+              cw--Reward__item
+              cw--Reward__unit
+            "
+            style="background-image: url({{unit.icon}})"
+          >
+            <div class="cw--Reward__unitCount">
+              {{formatNumber unit.count}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if getCards}}
+      <div class="cw--Reward__section">
+        {{#each card in getCards}}
+          <div
+            class="
+              cw--Reward__item
+              cw--Reward__card
+            "
+          >
+            <img class="cw--Reward__cardImg" src={{card.icon}} alt={{card.title}} />
+            <div class="cw--Reward__cardCount">
+              {{formatNumber card.count}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if getContainers}}
+      <div class="cw--Reward__section">
+        {{#each container in getContainers}}
+          <div class="cw--Reward__item">
+            {{> ContainerCard
+              container=container.obj
+              class='cw--Reward__container'
+            }}
+            <div class="cw--Reward__containerCount">
+              {{container.count}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if getHouseItems}}
+      <div class="cw--Reward__section">
+        {{#each houseItem in getHouseItems}}
+          <img
+            class="
+              cw--Reward__item
+              cw--Reward__houseItem
+            "
+            src={{houseItem.icon}}
+          />
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if reward.votePower}}
+      <div class="cw--Reward__votePower">
+        Сила голоса +{{reward.votePower}}
+      </div>
+    {{/if}}
+
+    {{#if getPersonSkin}}
+      <div class="cw--Reward__section">
+        {{#each skin in getPersonSkin}}
+          <img
+            class="
+              cw--Reward__item
+              cw--Reward__personSkin
+            "
+            src="{{skin}}"
+          />
+        {{/each}}
+      </div>
+    {{/if}}
+
+
+    <div class="cw--Reward__actions">
+      <button
+        onClick={{takeReward}}
+        class="
+          cw--Reward__take
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_orange
+        "
+      >
+        Забрать награду
+      </button>
+    </div>
+  </div>
+</template>

@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
-import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';

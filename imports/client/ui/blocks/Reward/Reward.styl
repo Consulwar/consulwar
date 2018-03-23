@@ -1,0 +1,90 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--Reward
+  width 360px
+  max-width 100%
+  padding 16px 20px 20px
+
+  cw--fontFamily_cond()
+  background-color alpha($cw--color_black, .8)
+  border 2px solid $cw--color_human
+  border-image linear-gradient(0deg, $cw--color_honor, $cw--color_human) 2
+
+  &__header
+    margin-bottom 20px
+    font-size $cw__fontSize_xl
+    font-weight bold
+    color $cw--color_human
+
+  &__resources
+    justify-content center
+
+  &__section
+    display flex
+    flex-wrap wrap
+    justify-content center
+    align-items flex-start
+    margin 16px 0
+
+  &__item
+    position relative
+    display block
+    width 90px
+    height auto
+    margin 10px
+
+
+  &__unit
+    height 90px
+    background-position center
+    background-size 100%
+
+  &__unitCount
+    position absolute
+    left 0
+    top 7px
+    padding 3px 7px
+
+    font-size $cw--fontSize_m
+    background linear-gradient(90deg, #000 0%, rgba(0,0,0,0) 60%)
+
+  
+  &__cardImg
+    width 100%
+    height auto
+
+  &__cardCount
+  &__containerCount
+    position absolute
+    left 6px
+    top 6px
+    width 30px
+    height @widht
+
+    background-color alpha($cw--color_black, .7)
+    text-align center
+    font-size $cw--fontSize_m
+    font-weight bold
+    line-height @width
+    border-radius 20px
+
+  &__container
+    width 90px
+    height auto
+
+
+  &__votePower
+    margin 16px 0
+    padding 5px
+
+    font-size $cw--fontSize_xl
+    font-weight bold
+    text-align center
+    color $cw--color_human
+
+
+  &__actions
+    display flex
+    justify-content center
+    margin-top 16px

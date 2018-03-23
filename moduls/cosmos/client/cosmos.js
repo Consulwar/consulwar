@@ -2143,7 +2143,7 @@ Template.cosmos.onRendered(function() {
   // Scroll to space object on hash change
   this.autorun(function() {
     var hash = Router.current().getParams().hash;
-    if (hash) {
+    if (!isLoading.get() && hash) {
       zoom.dep.changed();
       Tracker.nonreactive(function() {
         if (Game.Artefacts.items[hash]) {

@@ -1,0 +1,36 @@
+@keyframes arrowAnimation
+  0%
+    top 5px
+
+  20%
+    top 30px
+
+  30%
+    top 5px
+
+
+.cw--Arrow
+  position fixed
+  top 30px
+  left 100px
+  z-index 100
+
+  display none
+  height 1px
+  width 1px
+
+  pointer-events none
+
+  &_show
+    display block
+
+  &__itself
+    position absolute
+    top 5px
+    left 50%
+    transform translateX(-50%)
+
+    width 79px
+    height 46px
+
+    animation arrowAnimation 3s linear infinite

@@ -7,6 +7,7 @@ import BattleCollection from '../../battle/lib/imports/collection';
 
 import '/imports/client/ui/blocks/User/Menu/UserMenu';
 import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
+import Arrow from '/imports/client/ui/Arrow/Arrow';
 
 Blaze._allowJavascriptUrls();
 

@@ -40,7 +40,8 @@ class Reward extends BlazeComponent {
 
     _.toPairs(units).forEach(([id, count]) => {
       result.push({
-        icon: humanUnits[id].icon,
+        icon: humanUnits[id].card,
+        title: humanUnits[id].title,
         count,
       });
     });

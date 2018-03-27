@@ -335,12 +335,16 @@ Meteor.methods({
         if (userResources.credits.amount < price.credits) {
           throw new Meteor.Error('У Вас недостаточно ресурсов');
         }
-        set.data = {
-          type: 'coub',
-          id: _.last(message.substr(3).trim().split('/'))
-        };
-
-        if (set.data.id.length < 3 || set.data.id.length > 10) {
+        const match = (
+          message.match(new RegExp("coub\\.com/(?:view|embed)/([a-z0-9]{3,10})", 'i')) ||
+          message.substr(6).match(new RegExp("^([a-z0-9]{3,10})$", 'i'))
+        );
+        if (match) {
+          set.data = {
+            type: 'coub',
+            id: match[1]
+          };
+        } else {
           throw new Meteor.Error('Ошибка распознавания ID coub');
         }
         

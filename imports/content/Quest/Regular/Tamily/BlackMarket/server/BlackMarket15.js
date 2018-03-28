@@ -12,7 +12,7 @@ export default {
     },
   },
   reward: {
-    metals: 7,
-    crystals: 8,
+    metals: 250,
+    crystals: 250,
   },
 };

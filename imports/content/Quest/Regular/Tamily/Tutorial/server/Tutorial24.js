@@ -5,14 +5,22 @@ export default {
   ],
   slides: 6,
   helpers: [
-
     {
       url: '/game/planet/Residential/SpacePort',
       condition: {
-        target: '.cw--ContainerRewardOpener .cw--ContainerRewardOpener__actions .cw--button_type_primary_blue',
+        target: '.cw--ContainerRewardOpener .cw--ContainerRewardOpener__actions .cw--ContainerRewardOpener__action_open',
         exists: true,
       },
-      target: '.cw--ContainerRewardOpener .cw--ContainerRewardOpener__actions .cw--button_type_primary_blue',
+      target: '.cw--ContainerRewardOpener .cw--ContainerRewardOpener__actions .cw--ContainerRewardOpener__action_open',
+      direction: 'right',
+    },
+    {
+      url: '/game/planet/Residential/SpacePort',
+      condition: {
+        target: '.cw--ContainerRewardOpener .cw--ContainerRewardOpener__actions .cw--ContainerRewardOpener__action_grab',
+        exists: true,
+      },
+      target: '.cw--ContainerRewardOpener .cw--ContainerRewardOpener__actions .cw--ContainerRewardOpener__action_grab',
       direction: 'right',
     },
     {

@@ -7,7 +7,6 @@ export default {
   ],
   slides: 5,
   helpers: [
-
     {
       url: '/game/planet/Residential/House',
       condition: {

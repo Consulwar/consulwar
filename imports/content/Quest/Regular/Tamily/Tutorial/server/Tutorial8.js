@@ -5,7 +5,6 @@ export default {
   ],
   slides: 1,
   helpers: [
-
     {
       url: '/game/planet/Residential/SpacePort',
       condition: {

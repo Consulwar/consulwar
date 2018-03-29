@@ -5,7 +5,6 @@ export default {
   ],
   slides: 2,
   helpers: [
-
     {
       url: '/game/cosmos',
       condition: {

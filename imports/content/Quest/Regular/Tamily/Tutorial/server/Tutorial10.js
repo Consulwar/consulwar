@@ -5,7 +5,6 @@ export default {
   ],
   slides: 4,
   helpers: [
-
     {
       url: '/game/planet/Military/PowerStation',
       condition: {

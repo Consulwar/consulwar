@@ -5,7 +5,6 @@ export default {
   ],
   slides: 3,
   helpers: [
-
     {
       url: '/game/planet/Residential/Alliance',
       condition: {

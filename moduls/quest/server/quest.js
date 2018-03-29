@@ -215,6 +215,10 @@ Game.Quest.actualize = function() {
       step: firstStep.engName,
       who: questLine.who
     };
+
+    if (firstStep.helpers) {
+      quests.current[key].helpers = firstStep.helpers;
+    }
   }
 
   // refresh daily quest
@@ -287,6 +291,10 @@ Meteor.methods({
 
     var current = quests.current[questId];
 
+    if (current && current.history && current.history[current.step]) {
+      throw new Meteor.Error('Награда за квест уже была получена');
+    }
+
     if (current && current.status == Game.Quest.status.FINISHED) {
       var questLine = Game.Quest.regularQuests[questId];
       var prevStep = questLine.findStep(current.step);
@@ -306,6 +314,12 @@ Meteor.methods({
         current.name = nextStep.conditionText;
         current.step = nextStep.engName;
         current.startTime = Game.getCurrentTime();
+
+        if (nextStep.helpers) {
+          current.helpers = nextStep.helpers;
+        } else if (current.helpers) {
+          delete current.helpers;
+        }
       } else {
         // move quest line to finished
         quests.finished[questId] = current;

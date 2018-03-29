@@ -29,6 +29,7 @@ window.GameRouteController = RouteController.extend({
     this.wait(Meteor.subscribe('buildings'));
     this.wait(Meteor.subscribe('units'));
     this.wait(Meteor.subscribe('researches'));
+    this.wait(Meteor.subscribe('quest'));
 
     if (this.ready()) {
       $('body').addClass('game');

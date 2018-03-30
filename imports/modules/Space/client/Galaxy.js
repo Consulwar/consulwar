@@ -33,18 +33,37 @@ class Galaxy {
     this.circles = {};
     this.labels = {};
 
+    const planetsQueue = [];
+    let incrementalDefer = null;
+    const incrementalRenderer = () => {
+      if (planetsQueue.length) {
+        const {id, planet} = planetsQueue.pop();
+        this.showPlanet(id, planet);
+      }
+      if (planetsQueue.length) {
+        incrementalDefer = setTimeout(incrementalRenderer, 1);
+      } else {
+        incrementalDefer = null;
+      }
+    };
+
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
-        this.showPlanet(id, planet);
+        planetsQueue.push({id, planet});
+        if (!incrementalDefer)
+          incrementalDefer = setTimeout(incrementalRenderer, 1);
       },
 
       changed: (id, fields) => {
         if (fields.status !== undefined || fields.minerUsername !== undefined) {
           const planet = Game.Planets.getOne(id);
-          this.circles[id].setStyle({
-            color: this.getColor(planet),
-          });
-          this.upsertArtefactLabel(id, planet);
+          const circle = this.circles[id];
+          if (circle) {
+            circle.setStyle({
+              color: this.getColor(planet),
+            });
+            this.upsertArtefactLabel(id, planet);
+          }
         }
 
         if (

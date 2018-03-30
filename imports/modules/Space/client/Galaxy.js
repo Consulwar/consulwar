@@ -56,14 +56,7 @@ class Galaxy {
 
       changed: (id, fields) => {
         if (fields.status !== undefined || fields.minerUsername !== undefined) {
-          const planet = Game.Planets.getOne(id);
-          const circle = this.circles[id];
-          if (circle) {
-            circle.setStyle({
-              color: this.getColor(planet),
-            });
-            this.upsertArtefactLabel(id, planet);
-          }
+          this.updatePlanet(id);
         }
 
         if (
@@ -82,11 +75,7 @@ class Galaxy {
       }
 
       Object.keys(this.circles).forEach((id) => {
-        const planet = Game.Planets.getOne(id);
-        this.circles[id].setStyle({
-          color: this.getColor(planet),
-        });
-        this.upsertArtefactLabel(id, planet);
+        this.updatePlanet(id);
       });
     });
   }
@@ -136,6 +125,17 @@ class Galaxy {
     Game.Planets.Collection.find({ username: this.username }).fetch().forEach((planet) => {
       this.showPlanet(planet._id, planet);
     });
+  }
+
+  updatePlanet(id) {
+    const circle = this.circles[id];
+    if (circle) {
+      const planet = Game.Planets.getOne(id);
+      circle.setStyle({
+        color: this.getColor(planet),
+      });
+      this.upsertArtefactLabel(id, planet);
+    }
   }
 
   getColor(planet) {

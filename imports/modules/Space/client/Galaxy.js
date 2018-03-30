@@ -73,6 +73,7 @@ class Galaxy {
       if (subscription && !subscription.ready()) {
         return;
       }
+      this.selectedArtefact.get(); // explicit reactive dependency
 
       Object.keys(this.circles).forEach((id) => {
         this.updatePlanet(id);

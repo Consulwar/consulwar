@@ -4,6 +4,7 @@ import { $ } from 'meteor/jquery';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
 import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
 import UnitRepair from '/imports/client/ui/blocks/Unit/Repair/UnitRepair';
@@ -62,6 +63,7 @@ class BuildUnit extends BlazeComponent {
           Notifications.error('Невозможно подготовить юнитов', error.error);
         } else {
           Notifications.success('Строительство юнитов запущено');
+          SoundManager.play('buildingStart');
         }
       },
     );

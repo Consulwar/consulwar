@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
-import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
 import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
 import '/imports/client/ui/blocks/Effect/Levels/EffectLevels';
@@ -63,6 +63,7 @@ class BuildResearch extends BlazeComponent {
           Notifications.error('Невозможно начать исследование', error.error);
         } else {
           Notifications.success('Исследование запущено');
+          SoundManager.play('buildingStart');
         }
       },
     );

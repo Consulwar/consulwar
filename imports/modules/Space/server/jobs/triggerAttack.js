@@ -47,7 +47,7 @@ export default Space.jobs.processJobs(
     // calculate user health
     const userArmy = Game.Unit.getArmy({ id: planet.armyId });
     if (!userArmy || !userArmy.units) {
-      return done(); // strange shit suddenly appeared
+      return done(); // army already removed
     }
 
     const userHealth = Game.Unit.calcUnitsHealth(userArmy.units, userId);

@@ -1,5 +1,6 @@
 <template name="player">
   <div class="player">
+    {{> SoundManagerMute}}
     <div data-id="{{currentTrack.id}}" class="currentTrack {{#if isPlaying}}play{{/if}}">
       <button class="playpause"></button>
       <span>{{currentTrack.name}}</span>

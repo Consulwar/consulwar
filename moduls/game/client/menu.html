@@ -202,6 +202,7 @@
             metals 
             {{#if bonusStorage.metals}}active{{/if}}
           "
+          data-sound="click"
         >
           <div
             class="currentValue"
@@ -215,6 +216,7 @@
             crystals
             {{#if bonusStorage.crystals}}active{{/if}}
           "
+          data-sound="click"
         >
           <div
             class="currentValue"
@@ -228,7 +230,8 @@
             colosseum
             {{#if Game.Building.special.Colosseum.checkCanStart}}active{{/if}}
           "
-          href="{{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}" 
+          href="{{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}"
+          data-sound="click"
         >
         </a>
 
@@ -239,6 +242,7 @@
             {{#if Game.Building.special.Pulsecatcher.canActivate}}active{{/if}}
           "
           href="{{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}" 
+          data-sound="click"
         >
         </a>
       {{/if}}

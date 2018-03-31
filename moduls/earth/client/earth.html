@@ -16,11 +16,11 @@
       {{/if}}
       <div>Консулов: {{zone.usersCount}}</div>
       <!-- buttons -->
-      <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}">Информация</a>
+      <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}" data-sound="click">Информация</a>
       {{#if hasLink}}
         {{#if notBattle}}
           {{#unless eq army.generalCommand ResponseToGeneral.ACCEPT}}
-            <a class="btn-command" data-action="{{zone.name}}">
+            <a class="btn-command" data-action="{{zone.name}}" data-sound="attack">
               {{#if eq army.zoneName zone.name}}
                 Ждём
               {{else}}
@@ -34,11 +34,11 @@
           {{/unless}}
         {{/if}}
         {{#if eq army.zoneName zone.name}}
-          <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Подкрепление</a>
+          <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}" data-sound="click">Подкрепление</a>
         {{/if}}
 
         {{#if and (eq armyZone.general.username user.username) (not armyZone.general.command)}}
-          <a class="btn-general-command" data-action="{{zone.name}}">
+          <a class="btn-general-command" data-action="{{zone.name}}" data-sound="attack">
             Приказ:
             {{#if eq army.zoneName zone.name}}
               Ждём
@@ -69,8 +69,8 @@
                 не согласились
               {{/if}}
             {{else}}
-              <a class="btn-response-yes" data-action="{{zone.name}}">Да</a>
-              <a class="btn-response-no" data-action="{{zone.name}}">Нет</a>
+              <a class="btn-response-yes" data-action="{{zone.name}}" data-sound="click">Да</a>
+              <a class="btn-response-no" data-action="{{zone.name}}" data-sound="click">Нет</a>
             {{/if}}
           {{/if}}
         {{/if}}
@@ -80,7 +80,7 @@
         {{/if}}
       {{/if}}
       {{#if eq user.role 'admin'}}
-        <a class="btn-admin-panel" data-action="{{zone.name}}">Админка</a>
+        <a class="btn-admin-panel" data-action="{{zone.name}}" data-sound="click">Админка</a>
       {{/if}}
     </div>
   {{/if}}
@@ -123,7 +123,7 @@
       {{#if eq army.zoneName zone.name}}
         <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=info.name}}">Подкрепление</a>
       {{/if}}
-      <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
+      <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}" data-sound="close"></a>
       <!-- <a class="btn-special">Спец атака</a> -->
     </div>
   {{/if}}
@@ -161,11 +161,11 @@
         </div>
       </p>
       
-      <a class="btn-all">Выбрать всех</a>
-      <a class="btn-send">Отправить</a>
+      <a class="btn-all" data-sound="click">Выбрать всех</a>
+      <a class="btn-send" data-sound="attack">Отправить</a>
     </div>
 
-    <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}"></a>
+    <a class="btn-close-horizontal" href="{{pathFor 'earth' group='earth'}}" data-sound="close"></a>
   </div>
   <div class="additional_area bolz">
     <span class="title">Адмирал Стил Болз</span>
@@ -241,7 +241,7 @@
         <h2>История боев пуста</h2>
       {{/if}}
     {{/if}}
-    <a class="btn-close" href="{{pathFor 'earth' group='earth'}}"></a>
+    <a class="btn-close" href="{{pathFor 'earth' group='earth'}}" data-sound="close"></a>
   </div>
 
   {{#if battle}}
@@ -307,6 +307,6 @@
         </div>
       {{/if}}
     {{/if}}
-    <a class="btn-back" href="{{pathFor 'earthHistory' group='earth' page=currentPage}}"></a>
+    <a class="btn-back" href="{{pathFor 'earthHistory' group='earth' page=currentPage}}" data-sound="click"></a>
   </div>
 </template>

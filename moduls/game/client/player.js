@@ -1,3 +1,5 @@
+import SoundManagerMute from '/imports/client/ui/SoundManager/Mute/SoundManagerMute';
+
 initPleerClient = function() {
 'use strict';
 
@@ -98,7 +100,11 @@ Game.Player = {
       if (this.isShuffle.get()) {
         nextTrack = this.getRandomWithout(this.currentTrack.get());
       } else {
-        nextTrack = this[target]();
+        if(typeof(target) === 'number') {
+          nextTrack = target;
+        } else {
+          nextTrack = this[target]();
+        }
         let disabledCount = 0;
         while(tracks[this.playlist[nextTrack]].disabled) {
           // Если все треки выключены
@@ -106,8 +112,11 @@ Game.Player = {
             return;
           }
           disabledCount++;
-
-          nextTrack = this[target]();
+          if(typeof(target) === 'number') {
+            nextTrack = this.next();
+          } else {
+            nextTrack = this[target]();
+          }
         }
         nextTrack = playlist[nextTrack];
       }

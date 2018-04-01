@@ -14,8 +14,6 @@ initQuestClient = function () {
 
 initQuestLib();
 
-Meteor.subscribe('quest');
-
 var isLoading = new ReactiveVar(false);
 var loadedQuest = new ReactiveVar(null);
 

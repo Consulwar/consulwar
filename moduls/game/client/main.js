@@ -1,7 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
 import content from '/imports/content/client';
+import buildings from '/imports/content/Building/client';
+import researches from '/imports/content/Research/client';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
+import ArrowControl from '/imports/client/ui/Arrow/ArrowControl';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
 
@@ -446,6 +449,7 @@ Template.connection.helpers({
 
 Template.newgame.onRendered(function(){
   this.autorun(showTutorialDuringActivation);
+  this.autorun(showTutorialArrows);
 
   const planets = Game.Planets.getAll().fetch();
   if (planets.length === 0) {
@@ -456,6 +460,80 @@ Template.newgame.onRendered(function(){
     $('.fleet_info_full .scrollbar-inner').perfectScrollbar('update');
   });
 });
+
+let arrowInterval;
+
+const meetCondition = function(condition) {
+  if (condition) {
+    if (condition.value && $(condition.target).val() < condition.value) {
+      return false;
+    }
+    if (condition.exists && !$(condition.target)[0]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+const matchLevel = function(condition) {
+  if (condition && condition.level) {
+    let currentLevel = 0;
+    if (buildings[condition.id]) {
+      currentLevel = buildings[condition.id].getCurrentLevel();
+    } else if (researches[condition.id]) {
+      currentLevel = researches[condition.id].getCurrentLevel();
+    }
+    if (currentLevel >= condition.level) {
+      return false;
+    }
+  }
+  return true;
+}
+
+const showTutorialArrows = function() {
+  if (arrowInterval) {
+    Meteor.clearInterval(arrowInterval);
+  }
+
+  const tutorial = Game.Quest.getOneById('Tutorial');
+
+  if (tutorial && tutorial.status === 1 && tutorial.helpers) {
+    const router = Router.current(); // For URL changes reactive handle
+
+    arrowInterval = Meteor.setInterval(() => {
+      const { helpers } = tutorial;
+
+      let currentHelper = 0;
+
+      while (
+        window.location.pathname.indexOf(helpers[currentHelper].url) === -1
+        || !meetCondition(helpers[currentHelper].condition)
+        || helpers[currentHelper].skip
+        || !matchLevel(helpers[currentHelper].condition)
+      ) {
+        if (
+          helpers[currentHelper].condition
+          && !helpers[currentHelper].skip
+          && !matchLevel(helpers[currentHelper].condition)
+        ) {
+          helpers[currentHelper].skip = true;
+        }
+        currentHelper += 1;
+      }
+
+      ArrowControl.hide();
+
+      if($(helpers[currentHelper].target)[0]) {
+        ArrowControl.show(
+          helpers[currentHelper].target,
+          helpers[currentHelper].direction
+        );
+      }
+    }, 200);
+  } else {
+    ArrowControl.hide();
+  }
+};
 
 let prevStep;
 var showTutorialDuringActivation = function() {

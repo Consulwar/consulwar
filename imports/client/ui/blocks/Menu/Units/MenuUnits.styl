@@ -17,27 +17,35 @@
 
   &__item
     width 110px
+    height @width
     flex-basis 110px
     +media($cw--size_xxl, $cw--size_xxxl)
       width 100px
+      height @width
     +media($cw--size_xl, $cw--size_xxl)
       width 90px
+      height @width
     +media($cw--size_l, $cw--size_xl)
       width 100px
+      height @width
       flex-basis 100px
     +media($cw--size_m, $cw--size_l)
       width 90px
+      height @width
       flex-basis 90px
     +media($cw--size_s, $cw--size_m)
       width round(100vw / 7 - 1)
+      height @width
       flex-basis round(100vw / 7 - 1)
       margin 3px .5vw
     +media($cw--size_xs, $cw--size_s)
       width round(100vw / 5 - 1)
+      height @width
       flex-basis round(100vw / 5 - 1)
       margin 3px .5vw
     +media(null, $cw--size_xs)
       width round(100vw / 4 - 1)
+      height @width
       flex-basis round(100vw / 4 - 1)
       margin 3px .5vw
 

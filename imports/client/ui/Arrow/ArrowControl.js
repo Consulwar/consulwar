@@ -14,7 +14,7 @@ const hide = () => {
   isShow.set(false);
 };
 
-export {
+export default {
   target,
   direction,
   isShow,

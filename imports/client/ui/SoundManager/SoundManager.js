@@ -25,7 +25,11 @@ const SoundManager = {
     );
   },
   play(action) {
-    if (Meteor.user().settings.options.muteSound) {
+    if (
+      Meteor.user().settings
+      && Meteor.user().settings.options
+      && Meteor.user().settings.options.muteSound
+    ) {
       return;
     }
     player[action].stop().play();

@@ -9,7 +9,9 @@ class SoundManagerMute extends BlazeComponent {
     return 'SoundManagerMute';
   }
   isMute() {
-    return Meteor.user().settings.options.muteSound;
+    return Meteor.user().settings
+      && Meteor.user().settings.options
+      && Meteor.user().settings.options.muteSound;
   }
   muteToggle() {
     SoundManager.muteToggle();

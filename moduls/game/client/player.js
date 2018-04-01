@@ -1,4 +1,5 @@
 import SoundManagerMute from '/imports/client/ui/SoundManager/Mute/SoundManagerMute';
+import buildings from '/imports/content/Building/client';
 
 initPleerClient = function() {
 'use strict';
@@ -297,6 +298,12 @@ Template.player.helpers({
   hasMusic: function() {
     var user = Meteor.user();
     return user && user.music;
+  }
+});
+
+Template.player.onRendered(function() {
+  if(buildings["Building/Residential/House"].getCurrentLevel() === 0) {
+    Game.Player.play(14, true);
   }
 });
 

@@ -7,7 +7,7 @@ export default {
   add(data) {
     const oldJobs = Space.jobs.find({
       type: Lib.EVENT_TYPE,
-      data: { targetPlanet: data.targetPlanet },
+      'data.targetPlanet': data.targetPlanet,
       status: { $nin: ['completed', 'cancelled'] }
     });
     if (!oldJobs.count())

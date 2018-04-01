@@ -4,6 +4,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Notifications, ChdFeedbackWidget } from '/moduls/game/lib/importCompability';
 import { Router } from 'meteor/iron:router';
 import Game from '/moduls/game/lib/main.game';
+import Reward from '/imports/client/ui/blocks/Reward/Reward';
 import './UserMenu.html';
 import './UserMenu.styl';
 
@@ -92,12 +93,18 @@ class UserMenu extends BlazeComponent {
     Meteor.call(
       'user.activatePromoCode',
       code,
-      (err, profit) => {
+      (err, reward) => {
         this.isPromoLoading.set(false);
         if (err) {
           Notifications.error(err.error);
         } else {
-          Game.Payment.showPromocodeReward(profit);
+          Game.Popup.show({
+            template: (new Reward({
+              hash: {
+                reward,
+              },
+            })).renderComponent(),
+          });
         }
       },
     );

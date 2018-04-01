@@ -161,7 +161,7 @@
         {{/if}}
       {{/if}}
       {{#if eq this.data.type 'medice'}}
-        {{this.data.medice.preText}}
+        {{{this.data.medice.preText}}}
           {{#each this.data.medice.variables}}
             <span 
               class="
@@ -171,10 +171,10 @@
                 {{/if}}
                 "
             >
-              {{this}}
+              {{{this}}}
             </span>
           {{/each}}
-        {{this.data.medice.afterText}}
+        {{{this.data.medice.afterText}}}
       {{/if}}
       {{#if eq this.data.type 'changeDiceModifier'}}
         {{#if eq this.data.modifier 0}}

@@ -1,6 +1,7 @@
 import content from '/imports/content/client';
 import persons from '/imports/content/Person/client/';
 import Gallery from '/imports/client/ui/blocks/Gallery/Gallery'
+import Reward from '/imports/client/ui/blocks/Reward/Reward';
 import '/imports/client/ui/Person/image/PersonImage';
 
 const engNameToPerson = {};
@@ -12,8 +13,6 @@ initQuestClient = function () {
 'use strict';
 
 initQuestLib();
-
-Meteor.subscribe('quest');
 
 var isLoading = new ReactiveVar(false);
 var loadedQuest = new ReactiveVar(null);
@@ -73,7 +72,8 @@ Game.Quest.showQuest = function(id) {
         if (content[id]) {
           switch(content[id].type) {
             case 'artefact':
-              reward[id] = count;
+              reward.resources = reward.resources || {};
+              reward.resources[id] = count;
               break;
             case 'resource':
               reward.resources = reward.resources || {};
@@ -89,11 +89,12 @@ Game.Quest.showQuest = function(id) {
   
       // quest finished, render reward popup
       Game.Popup.show({
-        templateName: 'promocodeReward',
-        data: {
-          profit: reward,
-          onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
-        },
+        template: (new Reward({
+          hash: {
+            reward,
+            onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
+          },
+        })).renderComponent(),
       });
     });
   } else {
@@ -235,12 +236,4 @@ Template.quest.events({
     }
   }
 });
-
-Template.reward.events({
-  'click .take': function(e, t) {
-    Meteor.call('quests.getReward', t.data.engName);
-    Blaze.remove(t.view);
-  }
-});
-
 };

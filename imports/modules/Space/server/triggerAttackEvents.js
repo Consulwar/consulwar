@@ -5,7 +5,11 @@ import Lib from '../lib/triggerAttack';
 
 export default {
   add(data) {
-    const oldJobs = Space.jobs.find({ type: Lib.EVENT_TYPE, data, status: { $nin: ['completed', 'cancelled'] } });
+    const oldJobs = Space.jobs.find({
+      type: Lib.EVENT_TYPE,
+      data: { targetPlanet: data.targetPlanet },
+      status: { $nin: ['completed', 'cancelled'] }
+    });
     if (!oldJobs.count())
     {
       const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);

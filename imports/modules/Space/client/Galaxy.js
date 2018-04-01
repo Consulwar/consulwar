@@ -33,18 +33,31 @@ class Galaxy {
     this.circles = {};
     this.labels = {};
 
+    const planetsQueue = [];
+    let incrementalDefer = null;
+    const incrementalRenderer = () => {
+      if (planetsQueue.length) {
+        const {id, planet} = planetsQueue.pop();
+        this.showPlanet(id, planet);
+      }
+      if (planetsQueue.length) {
+        incrementalDefer = Meteor.setTimeout(incrementalRenderer);
+      } else {
+        incrementalDefer = null;
+      }
+    };
+
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
-        this.showPlanet(id, planet);
+        planetsQueue.push({id, planet});
+        if (!incrementalDefer) {
+          incrementalDefer = Meteor.setTimeout(incrementalRenderer);
+        }
       },
 
       changed: (id, fields) => {
         if (fields.status !== undefined || fields.minerUsername !== undefined) {
-          const planet = Game.Planets.getOne(id);
-          this.circles[id].setStyle({
-            color: this.getColor(planet),
-          });
-          this.upsertArtefactLabel(id, planet);
+          this.updatePlanet(id);
         }
 
         if (
@@ -61,13 +74,10 @@ class Galaxy {
       if (subscription && !subscription.ready()) {
         return;
       }
+      this.selectedArtefact.get(); // explicit reactive dependency
 
       Object.keys(this.circles).forEach((id) => {
-        const planet = Game.Planets.getOne(id);
-        this.circles[id].setStyle({
-          color: this.getColor(planet),
-        });
-        this.upsertArtefactLabel(id, planet);
+        this.updatePlanet(id);
       });
     });
   }
@@ -117,6 +127,17 @@ class Galaxy {
     Game.Planets.Collection.find({ username: this.username }).fetch().forEach((planet) => {
       this.showPlanet(planet._id, planet);
     });
+  }
+
+  updatePlanet(id) {
+    const circle = this.circles[id];
+    if (circle) {
+      const planet = Game.Planets.getOne(id);
+      circle.setStyle({
+        color: this.getColor(planet),
+      });
+      this.upsertArtefactLabel(id, planet);
+    }
   }
 
   getColor(planet) {

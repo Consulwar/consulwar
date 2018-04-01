@@ -53,6 +53,7 @@ game.Quest = function(options, isNew = (Meteor.isClient ? false : true)) {
   this.options = options.options;
   this.isDone = options.isDone;
   this.slides = options.slides;
+  this.helpers = options.helpers;
 };
 
 Game.Quest = {

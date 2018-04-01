@@ -6,7 +6,7 @@ import { _ } from 'lodash';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Colosseum from '/imports/content/Building/Residential/client/Colosseum';
 import Game from '/moduls/game/lib/main.game';
-import ColosseumReward from '/imports/client/ui/blocks/Colosseum/Reward/ColosseumReward';
+import Reward from '/imports/client/ui/blocks/Reward/Reward';
 import './ColosseumTournament.html';
 import './ColosseumTournament.styl';
 
@@ -66,17 +66,16 @@ class ColosseumTournament extends BlazeComponent {
       return;
     }
 
-    Meteor.call('colosseum.startTournament', item.engName, function(err, profit) {
+    Meteor.call('colosseum.startTournament', item.engName, function(err, reward) {
       if (err) {
         Notifications.error('Не удалось провести турнир', err.error);
         return;
       }
-      // show reward window
-      if (profit && profit.resources) {
+      if (reward) {
         Game.Popup.show({
-          template: (new ColosseumReward({
+          template: (new Reward({
             hash: {
-              reward: profit.resources,
+              reward,
             },
           })).renderComponent(),
         });

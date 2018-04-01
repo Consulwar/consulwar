@@ -45,6 +45,12 @@ Space.collection._ensureIndex({
   status: 1,
 });
 
+Space.collection._ensureIndex({
+  type: 1,
+  'data.targetPlanet': 1,
+  status: 1,
+});
+
 Meteor.publish('mySpaceEvents', function() {
   if (Config.DISABLE_MERGEBOX) {
     this.disableMergebox();

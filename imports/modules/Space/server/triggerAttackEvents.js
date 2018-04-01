@@ -5,13 +5,21 @@ import Lib from '../lib/triggerAttack';
 
 export default {
   add(data) {
-    const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
-    job
-      .retry({
-        retries: Config.JOBS.retry.retries,
-        wait: Config.JOBS.retry.wait,
-      })
-      .delay(Config.TRIGGER_ATTACK_DELAY * 1000)
-      .save();
+    const oldJobs = Space.jobs.find({
+      type: Lib.EVENT_TYPE,
+      'data.targetPlanet': data.targetPlanet,
+      status: { $nin: ['completed', 'cancelled'] }
+    });
+    if (!oldJobs.count())
+    {
+      const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
+      job
+        .retry({
+          retries: Config.JOBS.retry.retries,
+          wait: Config.JOBS.retry.wait,
+        })
+        .delay(Config.TRIGGER_ATTACK_DELAY * 1000)
+        .save();
+    }
   },
 };

@@ -41,7 +41,7 @@ class Galaxy {
         this.showPlanet(id, planet);
       }
       if (planetsQueue.length) {
-        incrementalDefer = setTimeout(incrementalRenderer, 1);
+        incrementalDefer = Meteor.setTimeout(incrementalRenderer);
       } else {
         incrementalDefer = null;
       }
@@ -50,8 +50,9 @@ class Galaxy {
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
         planetsQueue.push({id, planet});
-        if (!incrementalDefer)
-          incrementalDefer = setTimeout(incrementalRenderer, 1);
+        if (!incrementalDefer) {
+          incrementalDefer = Meteor.setTimeout(incrementalRenderer);
+        }
       },
 
       changed: (id, fields) => {

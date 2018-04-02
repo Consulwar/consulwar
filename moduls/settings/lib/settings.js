@@ -30,6 +30,7 @@ Game.Settings = {
     moveCompletedUnitToHangar: [true, false],
     isMultiSkinEnabled: [false, true],
     disableBroadcast: [true, false],
+    muteSound: [true, false],
   },
 
   getOption({

@@ -21,6 +21,7 @@
             cw--MainHeader__menuItem
             {{#if isRouterName "screenshots"}}cw--MainHeader__menuItem_active{{/if}}
           "
+          data-sound="hover,click"
         >
           Скриншоты
         </a>
@@ -32,6 +33,7 @@
             cw--button_type_primary_orange
           "
           onClick={{showWelcomePopup}}
+          data-sound="hover,click"
         >
           Начать игру
         </button>
@@ -41,6 +43,7 @@
             cw--MainHeader__menuItem
             {{#if isRouterName "about"}}cw--MainHeader__menuItem_active{{/if}}
           "
+          data-sound="hover,click"
         >
           Про игру
         </a>
@@ -72,24 +75,31 @@
       </div>
 
       <nav class="cw--MainFooter__menu">
-        <a class="cw--MainFooter__menuItem" href="http://info.consulwar.ru/">
+        <a
+          class="cw--MainFooter__menuItem"
+          href="http://info.consulwar.ru/"
+          data-sound="hover,click"
+        >
           Техническая поддержка
         </a>
         <a
           onClick={{showFeedback 'questions'}}
           class="cw--MainFooter__menuItem"
+          data-sound="hover,click"
         >
           Вопрос
         </a>
         <a
           onClick={{showFeedback 'problems'}}
           class="cw--MainFooter__menuItem"
+          data-sound="hover,click"
         >
           Ошибка
         </a>
         <a
           onClick={{showFeedback 'ideas'}}
           class="cw--MainFooter__menuItem"
+          data-sound="hover,click"
         >
           Идея
         </a>
@@ -100,6 +110,7 @@
           class="cw--MainFooter__licenseLink"
           onClick={{showLicense}}
           href="/legal/agreement"
+          data-sound="hover,click"
         >
           Лицензионное соглашение
         </a>

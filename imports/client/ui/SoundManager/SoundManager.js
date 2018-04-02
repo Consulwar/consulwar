@@ -26,7 +26,8 @@ const SoundManager = {
   },
   play(action) {
     if (
-      Meteor.user().settings
+      Meteor.user()
+      && Meteor.user().settings
       && Meteor.user().settings.options
       && Meteor.user().settings.options.muteSound
     ) {

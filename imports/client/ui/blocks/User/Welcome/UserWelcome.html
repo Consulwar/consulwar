@@ -16,10 +16,18 @@
           placeholder="Введите Никнейм"
         }}
         <div class="cw--UserWelcome__chose">
-          <a class="cw--UserWelcome__login" onClick={{showLoginPopup}}>
+          <a
+            class="cw--UserWelcome__login"
+            onClick={{showLoginPopup}}
+            data-sound="hover,click"
+          >
             вход
           </a>
-          <a class="cw--UserWelcome__register" onClick={{showRegisterPopup}}>
+          <a
+            class="cw--UserWelcome__register"
+            onClick={{showRegisterPopup}}
+            data-sound="hover,click"
+          >
             регистрация
           </a>
         </div>
@@ -31,6 +39,7 @@
             cw--button_type_primary_orange
           "
           onClick={{goNext}}
+          data-sound="hover,click"
         >
           Продолжить
         </button>

@@ -44,10 +44,24 @@
         </a>
       </div>
       {{#if hasMusic}}
-        <button class="downloadMusic orangeButton">Скачать альбом</button>
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            downloadMusic
+          "
+        >
+          Скачать альбом
+        </button>
       {{else}}
         <button 
-          class="buyMusic orangeButton" 
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            buyMusic
+          "
           data-tooltip="{{#if true}}{{> musicTooltip}}{{/if}}"
           data-tooltip-direction="s"
         >

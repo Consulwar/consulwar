@@ -4,15 +4,15 @@
       <div id="map-battle"></div>
     </div>
     <button class="map-control-home"></button>
-    <a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}">История боёв</a>
+    <a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}" data-sound="click">История боёв</a>
     {{#if possibleDesync}}
       <div class="possibleDesync">Возможен рассинхрон. Обновите страницу.</div>
     {{/if}}
     {{#if isSelection}}
-      <a class="btn-selection" href="{{pathFor 'cosmos'}}">Сбросить выделение</a>
+      <a class="btn-selection" href="{{pathFor 'cosmos'}}" data-sound="click">Сбросить выделение</a>
     {{/if}}
     {{#if and (gte user.rating 100000) (not isMutualSpace)}}
-      <a class="btn-mutual-space">Общий космос</a>
+      <a class="btn-mutual-space" data-sound="click">Общий космос</a>
     {{/if}}
     
     {{#if isLoading}}
@@ -89,6 +89,7 @@
         {{#if allowActions}}
           {{#if canMine}}
             <button
+              style="margin-top:15px"
               class="
                 cw--button
                 cw--button_type_primary
@@ -101,6 +102,7 @@
             </button>
           {{else}}{{#if canUnMine}}
             <button
+              style="margin-top:15px"
               class="
                 cw--button
                 cw--button_type_primary
@@ -267,7 +269,7 @@
 
       <div class="unitsAdditionalControl">
         <span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
-        <button class="btn-all">
+        <button data-sound="click" class="btn-all">
           {{#if isAllSelected}}
             Отменить выбор
           {{else}}
@@ -287,12 +289,12 @@
         {{/if}}
 
         {{#if or planet.isHome planet.armyId}}
-          <button class="btn-attack defend" disabled={{not canSendFleet}}>Отправить</button>
+          <button class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">Отправить</button>
         {{else}}
-          <button class="btn-attack defend" disabled={{not canSendFleet}}>
+          <button  class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">
             Захватить
           </button>
-          <button class="btn-attack return" disabled={{not canSendFleet}}>
+          <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">
             {{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
           </button>
         {{/if}}
@@ -300,7 +302,7 @@
         {{#if timeAttackBattle}}
           <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
 
-          <button class="btn-attack help">Отправить</button>
+          <button class="btn-attack help" data-sound="attack">Отправить</button>
         {{/if}}
       {{else}}
         {{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo ship) spaceEvent=ship}}
@@ -311,11 +313,11 @@
           <p>Не успеем перехватить</p>
         {{/if}}
 
-        <button class="btn-attack return" disabled={{not canSendFleet}}>Перехватить</button>
+        <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">Перехватить</button>
       {{/if}}{{/if}}
     </div>
 
-    <button class="btn-close"></button>
+    <button class="btn-close" data-sound="close"></button>
   </div>
 </template>
 
@@ -502,7 +504,7 @@
         <p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
       {{/if}}
       {{#if and allowActions ship.canSend}}
-        <button class="button-attack open" data-id="{{ship.id}}">Перехватить</button>
+        <button class="button-attack open" data-id="{{ship.id}}" data-sound="click">Перехватить</button>
       {{/if}}
     {{/if}}
   </div>
@@ -625,7 +627,7 @@
         <h2>История боёв пуста</h2>
       {{/if}}
     {{/if}}
-    <a class="btn-close" href="{{pathFor 'cosmos'}}"></a>
+    <a class="btn-close" href="{{pathFor 'cosmos'}}" data-sound="close"></a>
   </div>
 
   {{#if battle}}

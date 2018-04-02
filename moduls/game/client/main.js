@@ -11,6 +11,7 @@ import BattleCollection from '../../battle/lib/imports/collection';
 import '/imports/client/ui/blocks/User/Menu/UserMenu';
 import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
 import Arrow from '/imports/client/ui/Arrow/Arrow';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 
 Blaze._allowJavascriptUrls();
 
@@ -665,6 +666,7 @@ Game.showDesktopNotification = function(text, options) {
    && user.settings.notifications
    && user.settings.notifications.showDesktopNotifications === true
   ) {
+    SoundManager.play('notice');
     var notification = new Notification(who , options);
     notification.onclick = function() {
       window.focus();

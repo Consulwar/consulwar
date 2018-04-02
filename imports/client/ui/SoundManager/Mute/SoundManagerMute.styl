@@ -1,0 +1,23 @@
+@import '{}/imports/client/ui/colors'
+
+.cw--SoundManagerMute
+  display inline-block
+  width 25px
+  height @width
+
+  cursor pointer
+
+  border solid 1px $cw--color_metal
+  border-image linear-gradient(0deg, #316F91, $cw--color_metal) 1
+  background-color $cw--color_black
+  background-image url(/img/sound_kit.svg)
+  background-repeat no-repeat
+  background-position top center
+
+  &_muted
+    border-color $cw--color_human
+    border-image linear-gradient(0deg, #BD8A3C, $cw--color_human) 1
+    background-position bottom center
+
+  &:hover
+    filter brightness(1.4)

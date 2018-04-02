@@ -70,7 +70,7 @@
           {{else}}
             <a>Нет передвижений флота</a>
           {{/if}}
-          <button class="toggle"></button>
+          <button class="toggle" data-sound="click"></button>
         </div>
 
         <div class="
@@ -80,7 +80,7 @@
           {{#if options.showFleetInfoFull}}active{{/if}}
           "
         >
-          <button class="toggle"></button>
+          <button class="toggle" data-sound="click"></button>
           <div class="fleets scrollbar-inner">
             {{> cosmosFleetsInfo}}
           </div>

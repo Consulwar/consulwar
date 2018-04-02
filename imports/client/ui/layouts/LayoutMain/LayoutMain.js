@@ -7,6 +7,8 @@ import { ChdFeedbackWidget } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import UserWelcome from '/imports/client/ui/blocks/User/Welcome/UserWelcome';
 import License from '/imports/client/ui/blocks/License/License';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
+import '/imports/client/ui/SoundManager/Mute/SoundManagerMute';
 import '/imports/client/ui/button/button.styl';
 import './LayoutMain.html';
 import './LayoutMain.styl';
@@ -28,6 +30,7 @@ class LayoutMain extends BlazeComponent {
 
   onRendered() {
     $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>');
+    SoundManager.welcome();
   }
 
   showWelcomePopup() {

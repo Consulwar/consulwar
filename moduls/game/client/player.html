@@ -1,5 +1,6 @@
 <template name="player">
   <div class="player">
+    {{> SoundManagerMute}}
     <div data-id="{{currentTrack.id}}" class="currentTrack {{#if isPlaying}}play{{/if}}">
       <button class="playpause"></button>
       <span>{{currentTrack.name}}</span>
@@ -35,13 +36,32 @@
       </ul>
       <div class="author">
         Автор музыки:
-        <a href="http://cyclone-music-space.ru/?from=consulwar">Антон Брежнев</a>
+        <a
+          href="http://cyclone-music-space.ru/?from=consulwar"
+          target="_blank"
+        >
+          Антон Брежнев
+        </a>
       </div>
       {{#if hasMusic}}
-        <button class="downloadMusic orangeButton">Скачать альбом</button>
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            downloadMusic
+          "
+        >
+          Скачать альбом
+        </button>
       {{else}}
         <button 
-          class="buyMusic orangeButton" 
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            buyMusic
+          "
           data-tooltip="{{#if true}}{{> musicTooltip}}{{/if}}"
           data-tooltip-direction="s"
         >

@@ -8,8 +8,9 @@
         </div>
       {{else}}
         <div 
-          class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact {{this.group}}{{/if}}" 
-          data-tooltip="true" data-tooltip-direction="n"
+          class="{{this.engName}} {{#if (isArtefact this.engName)}}artefact {{this.group}}{{/if}}"
+          data-sound="click"
+          data-tooltip-direction="n"
           data-id="{{this.engName}}"
         >
           {{formatNumberWithISO this.amount 5}}

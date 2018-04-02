@@ -1,3 +1,6 @@
+import SoundManagerMute from '/imports/client/ui/SoundManager/Mute/SoundManagerMute';
+import buildings from '/imports/content/Building/client';
+
 initPleerClient = function() {
 'use strict';
 
@@ -27,7 +30,9 @@ var storedTracks = JSON.parse(localStorage.getItem('tracks'));
 var playlist = [];
 for (let key in tracks) {
   key = parseInt(key, 10);
-  let track = new buzz.sound('http://times.consulwar.ru/music/' + tracks[key] + '.mp3');
+  let track = new buzz.sound('http://times.consulwar.ru/music/' + tracks[key] + '.mp3', {
+    volume:50,
+  });
   track.name = tracks[key];
   track.id = key;
 
@@ -98,7 +103,11 @@ Game.Player = {
       if (this.isShuffle.get()) {
         nextTrack = this.getRandomWithout(this.currentTrack.get());
       } else {
-        nextTrack = this[target]();
+        if(typeof(target) === 'number') {
+          nextTrack = target;
+        } else {
+          nextTrack = this[target]();
+        }
         let disabledCount = 0;
         while(tracks[this.playlist[nextTrack]].disabled) {
           // Если все треки выключены
@@ -106,8 +115,11 @@ Game.Player = {
             return;
           }
           disabledCount++;
-
-          nextTrack = this[target]();
+          if(typeof(target) === 'number') {
+            nextTrack = this.next();
+          } else {
+            nextTrack = this[target]();
+          }
         }
         nextTrack = playlist[nextTrack];
       }
@@ -288,6 +300,12 @@ Template.player.helpers({
   hasMusic: function() {
     var user = Meteor.user();
     return user && user.music;
+  }
+});
+
+Template.player.onRendered(function() {
+  if(buildings["Building/Residential/House"].getCurrentLevel() === 0) {
+    Game.Player.play(14, true);
   }
 });
 

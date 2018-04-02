@@ -4,6 +4,7 @@ import Game from '/moduls/game/lib/main.game';
 import allFleetContainers from '/imports/content/Container/Fleet/client';
 import humanUnits from '/imports/content/Unit/Human/client';
 import persons from '/imports/content/Person/client';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import './Reward.html';
 import './Reward.styl';
 
@@ -21,6 +22,11 @@ class Reward extends BlazeComponent {
     super();
     this.reward = reward;
     this.onGet = onGet;
+  }
+
+  onRendered() {
+    super.onRendered();
+    SoundManager.play('notice');
   }
 
   getResources() {

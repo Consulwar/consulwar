@@ -22,8 +22,8 @@
           >
             {{formatHours getServerTime -180}}
           </time>
-          <button
-            onClick={{showMail}}
+          <a
+            href={{pathFor 'mail' page='1'}}
             class="
               cw--UserMenu__button
               cw--UserMenu__button_mail
@@ -32,11 +32,11 @@
             {{#if hasMail}}
               <span class="cw--UserMenu__mailCount">!</span>
             {{/if}}
-          </button>
+          </a>
         </div>
         <div class="cw--UserMenu__smallMenu">
-          <button
-            onClick={{showSettings}}
+          <a
+            href={{pathFor 'settings'}}
             class="
               cw--UserMenu__button
               cw--UserMenu__button_settings
@@ -44,9 +44,9 @@
                 cw--UserMenu__button_active
               {{/if}}
             "
-          ></button>
-          <button
-            onClick={{showStatistics}}
+          ></a>
+          <a
+            href={{pathFor 'statistics' group='general'}}
             class="
               cw--UserMenu__button
               cw--UserMenu__button_stats
@@ -54,7 +54,7 @@
                 cw--UserMenu__button_active
               {{/if}}
             "
-          ></button>
+          ></a>
         </div>
       </div>
       <div class="cw--UserMenu__roll">

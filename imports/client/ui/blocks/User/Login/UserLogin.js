@@ -9,6 +9,7 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import Tamily from '/imports/content/Person/client/Tamily';
 import Game from '/moduls/game/lib/main.game';
 import UserRegister from '/imports/client/ui/blocks/User/Register/UserRegister';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import '/imports/client/ui/Person/image/PersonImage';
 import '/imports/client/ui/Input/String/InputString';
 import '/imports/client/ui/Input/Password/InputPassword';
@@ -82,6 +83,7 @@ class UserLogin extends BlazeComponent {
             Notifications.error('Авторизация не удалась', errorText);
           } else {
             Router.go('game');
+            SoundManager.login();
             this.removeComponent();
           }
         },

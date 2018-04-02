@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'lodash';
 import { $ } from 'meteor/jquery';
 import { buzz } from '/moduls/game/lib/importCompability';
@@ -16,24 +17,42 @@ const tracks = {
 const player = {};
 
 const SoundManager = {
+  isMuted: new ReactiveVar(false),
   muteToggle() {
-    const options = Meteor.user().settings && Meteor.user().settings.options;
-    Meteor.call(
-      'settings.setOption',
-      'muteSound',
-      !(options && options.muteSound),
-    );
+    if (Meteor.user()) {
+      const options = Meteor.user().settings && Meteor.user().settings.options;
+      Meteor.call(
+        'settings.setOption',
+        'muteSound',
+        !(options && options.muteSound),
+      );
+    } else {
+      this.isMuted.set(!this.isMuted.get());
+      if (player.welcome) {
+        player.welcome.toggleMute();
+      }
+    }
   },
   play(action) {
     if (
-      Meteor.user()
-      && Meteor.user().settings
-      && Meteor.user().settings.options
-      && Meteor.user().settings.options.muteSound
+      this.isMuted.get() || (
+        Meteor.user()
+        && Meteor.user().settings
+        && Meteor.user().settings.options
+        && Meteor.user().settings.options.muteSound
+      )
     ) {
       return;
     }
     player[action].stop().play();
+  },
+  welcome() {
+    player.welcome.fadeTo(15, 5000);
+  },
+  login() {
+    player.welcome.fadeTo(0, 1000, () => {
+      player.welcome.stop();
+    });
   },
 };
 
@@ -62,7 +81,6 @@ const selectors = {
     '.menu .second_menu li:not(.active) a',
     '.greenButton',
     '.cw--button_type_primary_blue',
-    '.cw--button_type_primary_green',
     '.cw--button_flat',
     '.consul-items a:not(.active)',
     '.entranceReward .take',
@@ -84,6 +102,9 @@ const selectors = {
     '.close',
     '.cw--button_close',
   ],
+  build: [
+    '[data-sound*="build"]',
+  ],
   attack: [
     '[data-sound*="attack"]',
     '.attack-menu .btn-attack',
@@ -94,16 +115,28 @@ const hoverEvent = () => SoundManager.play('hover');
 const clickEvent = () => SoundManager.play('press');
 const closeEvent = () => SoundManager.play('close');
 const attackEvent = () => SoundManager.play('attack');
+const buildEvent = () => SoundManager.play('buildingStart');
 
 const init = function() {
   _.keys(tracks).forEach((key) => {
     player[key] = new buzz.sound(`/sound/${tracks[key]}.mp3`);
+    if (key !== 'hover') {
+      player[key].setVolume(30);
+    }
+    if (key === 'buildingStart') {
+      player[key].setVolume(28);
+    }
+  });
+  player.welcome = new buzz.sound('http://times.consulwar.ru/music/2 Коварство Рептилоидов.mp3', {
+    volume: 0,
+    loop: true,
   });
 
   $(document).on('mouseenter', selectors.hover.join(), hoverEvent);
   $(document).on('click', selectors.click.join(), clickEvent);
   $(document).on('click', selectors.close.join(), closeEvent);
   $(document).on('click', selectors.attack.join(), attackEvent);
+  $(document).on('click', selectors.build.join(), buildEvent);
 };
 
 init();

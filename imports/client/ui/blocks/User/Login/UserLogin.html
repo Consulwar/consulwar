@@ -1,31 +1,51 @@
 <template name="UserLogin">
   <div class="cw--UserLogin">
-    {{> PersonImage
-      person=Tamily
-      showChangeOption=false
-      class="cw--UserLogin__person"
-    }}
+    <div class="cw--UserLogin__sidebar">
+      <img
+        src="/img/Tamily_register.jpg"
+        alt="Советник Тамили"
+        class="cw--UserLogin__person"
+      />
+      <div class="cw--UserLogin__switch">
+        <div class="cw--UserLogin__switchHead">
+          У вас нету аккаунта? Тогда зарегистрируйтесь.
+        </div>
+        <button
+          class="
+            cw--button
+            cw--UserLogin__switchButton
+          "
+          data-sound="hover,click"
+          onClick={{showRegisterPopup}}
+        >
+          Регистрация
+        </button>
+      </div>
+    </div>
+
     <div class="cw--UserLogin__content">
+      <div class="cw--UserLogin__title">
+        Вход
+      </div>
       <div class="cw--UserLogin__intro">
-        Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
-        к каналу связи или же вы уже имеете Аккаунт Связи со вселенной 42?
+        Приятно видеть вас снова, правитель, ваш народ скучает по вам и с нетерпением ждёт приказов.
       </div>
       <div class="cw--UserLogin__formSection">
-        <div class="cw--UserLogin__formTitle">
-          Вход
-        </div>
         <form class="cw--UserLogin__form" onSubmit={{login}}>
           <div class="cw--UserLogin__inputs">
             <div class="cw--UserLogin__inputsGroup">
-              {{> InputString args
-                name="username"
-                value=username
-                validators=usernameValidators
-                errors=errors
-                required=true
-                className="cw--UserLogin__input"
-                placeholder="Введите Никнейм"
-              }}
+              <label class="cw--UserLogin__label">
+                Никнейм
+                {{> InputString args
+                  name="username"
+                  value=username
+                  validators=usernameValidators
+                  errors=errors
+                  required=true
+                  className="cw--UserLogin__input"
+                  placeholder="Введите Никнейм"
+                }}
+              </label>
               {{> InputCheckbox args
                 name="remember"
                 errors=errors
@@ -36,15 +56,18 @@
               }}
             </div>
             <div class="cw--UserLogin__inputsGroup">
-              {{> InputPassword args
-                name="password"
-                value=password
-                validators=passwordValidators
-                errors=errors
-                required=true
-                className="cw--UserLogin__input"
-                placeholder="Введите Пароль"
-              }}
+              <label class="cw--UserLogin__label">
+                Пароль
+                {{> InputPassword args
+                  name="password"
+                  value=password
+                  validators=passwordValidators
+                  errors=errors
+                  required=true
+                  className="cw--UserLogin__input"
+                  placeholder="Введите Пароль"
+                }}
+              </label>
               <div class="cw--UserLogin__remind">
                 <a
                   href="#remindPassword"
@@ -59,12 +82,7 @@
           </div>
           <button
             type="submit"
-            class="
-              cw--UserLogin__submit
-              cw--button
-              cw--button_type_primary
-              cw--button_type_primary_green
-            "
+            class="cw--UserLogin__submit"
             data-sound="hover,click"
           >
             Войти в игру
@@ -76,18 +94,6 @@
           и прочие улучшения сохранились. Вы сможете быстро догнать
           развитие других Консулов, если пожелаете.
         </div>
-      </div>
-      <div class="cw--UserLogin__switch">
-        <div class="cw--UserLogin__switchHead">
-          У вас нету аккаунта? Желаете зарегистрировать новый?
-        </div>
-        <button
-          class="cw--UserLogin__switchButton"
-          onClick={{showRegisterPopup}}
-          data-sound="hover,click"
-        >
-          Регистрация
-        </button>
       </div>
     </div>
   </div>

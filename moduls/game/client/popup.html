@@ -9,12 +9,14 @@
         <button
           class="
             cw--popup__close
-            cw--button
-            cw--button_close
             {{#if isMain}}
               cw--PageIndex__closeButton
+            {{else}}
+              cw--button
+              cw--button_close
             {{/if}}
           "
+          data-sound="hover,close"
         ></button>
       {{/unless}}
     </div>

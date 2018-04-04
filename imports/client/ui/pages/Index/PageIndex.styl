@@ -13,6 +13,12 @@
   font-size 16px
   background-color $cw--color_black
 
+  &__firstScreen
+    display flex
+    flex-direction column
+    +media($cw--size_l)
+      min-height 93vh
+
   &__sliderLoading
     position absolute
     left 0
@@ -58,21 +64,21 @@
       left 20px
       transform none
 
-
   &__rating18img
     vertical-align middle
     margin-right 6px
 
 
-
   &__sliderText
-    width 465px
+    width 450px
     max-width 70%
     position absolute
     top 50%
     left 19%
     transform translateY(-50%)
     font-size 24px
+    font-weight bold
+
     +media($cw--size_xs, $cw--size_s)
       font-size $cw--fontSize_xl
       top auto
@@ -87,24 +93,10 @@
       transform translateY(0)
       font-size $cw--fontSize_l
 
-  &__sliderHeader
-    margin-bottom 20px
-    font-size 66%
-    font-weight bold
-    color $cw--color_nearWhite
-
-  &__sliderLogo
-    font-size 150%
-
   &__sliderTitle
     margin-bottom 20px
     color $cw--color_description
     font-size 100%
-
-  &__sliderDescription
-    width 75%
-    color $cw--color_lightGrey
-    font-size 75%
 
   &__slideRow
     position absolute
@@ -116,6 +108,7 @@
     background-color alpha($cw--color_black, .25)
     border none
     transition all .25s ease
+
     +media(null, $cw--size_xs)
       display none
 
@@ -138,8 +131,10 @@
 
     &_back
       left 0
+
       &:before
         border-right 8px solid $cw--color_lightGrey
+
       &:hover:before
         border-right 8px solid $cw--color_human
 
@@ -148,9 +143,9 @@
 
       &:before
         border-left 8px solid $cw--color_lightGrey
+
       &:hover:before
         border-left 8px solid $cw--color_human
-
 
   &__sliderControl
     display flex
@@ -179,25 +174,219 @@
       background-image linear-gradient(0deg, $cw--color_honor, $cw--color_human)
       border none
 
-  &__intro
+
+  &__playButton
+    padding 13px
+    border none
+    width 200px
+    background linear-gradient(0deg, #D63C2B 40%, #FF7940 75%)
+    outline solid 1px #AB1A11
+    outline-offset -6px
+    color $cw--color_white
+    cw--fontFamily_cond()
+    font-size 24px
+    font-weight bold
+    text-transform uppercase
+
+    &:hover
+    &:active
+      filter brightness(1.4)
+
+
+  &__more
+  &__studio
     min-width 90%
-    flex-basis 120px
-    margin auto
     padding 20px 30px
+    margin auto
     box-sizing border-box
+
+    border-top solid 1px $cw--color_human
+    border-image linear-gradient(90deg, alpha($cw--color_human, 0), $cw--color_human, alpha($cw--color_human, 0)) 1
+    border-width 1px 0 0 0
+
+  &__more
+    font-size 20px
+    text-align center
+
+  &__moreLink
+    cursor pointer
+    color $cw--color_human
+    text-decoration none
+    &:hover
+    &:active
+      color lighten($cw--color_human, 50%)
+
+  &__studio
+    flex-basis 120px
 
     font-size $cw--fontSize_m
     line-height 19px
     text-align left
     color $cw--color_description
-    border-top solid 1px $cw--color_human
-    border-image linear-gradient(90deg, alpha($cw--color_human, 0), $cw--color_human, alpha($cw--color_human, 0)) 1
-    border-width 1px 0 0 0
 
-  &__introContent
+  &__studioContent
     max-width 515px
     margin auto
 
-  &__introHeader
+  &__studioHeader
     margin-bottom 20px
     color $cw--color_metal
+
+  &__screens
+    position relative
+    background-color #050921
+    display flex
+    flex-direction column
+    align-items center
+    padding 0 40px
+    +media(null, $cw--size_xl)
+      padding 0px 40px 60px
+    &:before
+    &:after
+      content ''
+      position absolute
+      left 0
+      display block
+      height 100px
+      width 100%
+    &:before
+      top 0
+      background linear-gradient(0deg, transparent, #000)
+    &:after
+      bottom 0
+      background linear-gradient(180deg, transparent, #000)
+
+  &__screen
+    display flex
+    flex-direction row
+    justify-content space-around
+    align-items center
+    max-width 1280px
+    margin auto
+
+    +media(null, $cw--size_xl)
+      flex-direction column
+      justify-content center
+
+  &__screenText
+    color $cw--color_description
+    font-size $cw--fontSize_m
+    +media($cw--size_xl)
+      flex-basis 340px
+
+  &__screenHead
+    font-size 24px
+    font-weight bold
+    margin-bottom 20px
+
+  &__screenImg
+    flex-basis auto
+    max-width 100%
+    &_planet
+      +media($cw--size_xl)
+        order 5
+
+  &__reviews
+    display flex
+    flex-wrap wrap
+    max-width 1200px
+    margin 40px auto
+
+    +media($cw--size_m, $cw--size_xl)
+      margin 30px 40px
+
+    +media(null, $cw--size_m)
+      flex-direction column
+      margin 20px
+  
+  &__reviewsHeader
+    flex-basis 100%
+    font-size 24px
+    font-weight bold
+    color $cw--color_metal
+    margin-bottom 20px
+
+  &__review
+    display flex
+    flex-direction row
+    +media($cw--size_m)
+      flex-basis 32%
+    +media($cw--size_m, $cw--size_xl)
+      flex-direction column
+      justify-content center
+      align-items center
+    +media(null, $cw--size_m)
+      margin-bottom 20px
+      flex-basis 100%
+
+  &__reviewText
+    margin-left 15px
+    color $cw--color_description
+    font-size $cw--fontSize_m
+    +media($cw--size_m, $cw--size_xl)
+      margin 15px 10px
+      text-align center
+
+  &__reviewHead
+    font-size $cw--fontSize_l
+    font-weight bold
+    color $cw--color_nearWhite
+    margin-bottom 12px
+
+  &__about
+    position relative
+    display block
+    padding 30px 0
+    box-sizing border-box
+    cw--fontFamily_normal()
+    font-size $cw--fontSize_m
+    letter-spacing 0.02em
+    background-image url(/img/game/house/room/cruel/1.jpg)
+    background-repeat no-repeat
+    background-position center
+    color $cw--color_nearWhite
+
+    +media($cw--size_m, $cw--size_xl)
+      padding 30px 40px
+
+    +media(null, $cw--size_m)
+      padding 20px
+
+    &:before
+      content ''
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      background-color alpha($cw--color_black, .9)
+
+  &__aboutWrapper
+    position relative
+    max-width 1200px
+    margin auto
+
+  &__aboutIntro
+    margin-bottom 30px
+
+  &__aboutHeader
+    margin 20px 0 10px 0
+    font-size $cw--fontSize_m
+    font-weight bold
+    color $cw--color_metal
+    &_human
+      color $cw--color_human
+
+
+  &__closeButton
+    &
+    &:hover
+    &:active
+      border none
+      background-image url(/img/close_human.svg)
+      background-color transparent
+      outline none
+
+    &:hover
+    &:active
+      filter brightness(4)

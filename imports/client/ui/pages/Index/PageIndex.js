@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { $ } from 'meteor/jquery';
 import './PageIndex.html';
 import './PageIndex.styl';
 
@@ -13,30 +14,25 @@ class PageIndex extends BlazeComponent {
     super.onCreated();
     this.slides = [
       {
-        title: 'Уникальная вселенная – со своими персонажами, историей и конфликтом',
-        description: 'По игре выходит комикс, события которого развиваются так, как хочешь ты',
-        img: '/img/mainSlider/slide05.jpg',
+        title: 'Подготовь армию для освобождения Земли от захватчиков',
+        img: '/img/mainPage/slide05.jpg',
       },
       {
-        title: 'Десятки космических кораблей, оборонных сооружений и других боевых единиц',
-        description: 'Отстрой свой флот и получи контроль над галактикой',
-        img: '/img/mainSlider/slide04.jpg',
+        title: 'Строй боевые корабли и создай самый мощный флот в галактике',
+        img: '/img/mainPage/slide04.jpg',
       },
       {
-        title: 'Совместные недетские сражения против кровавых Рептилоидов по всей галактике',
-        description: 'Взрослый сеттинг с кровью, мясом и обнажёнкой',
-        img: '/img/mainSlider/slide03.jpg',
+        title: 'Наводи страх на коварных и жестоких рептилоидов',
+        img: '/img/mainPage/slide03.jpg',
         isRating18: true,
       },
       {
-        title: 'Десятки строений, исследований и сотни уровней развития своей колонии',
-        description: 'Начни с пустой планеты и застрой её самыми мощными сооружениями',
-        img: '/img/mainSlider/slide02.jpg',
+        title: 'Развивай индустрию, военное дело и экономику своей колонии',
+        img: '/img/mainPage/slide02.jpg',
       },
       {
-        title: 'Ты сам решаешь, как тебе править и какой стиль управления тебе выгоднее',
-        description: 'Наладь добычу ресурсов и военного снабжения и правь твёрдой рукой',
-        img: '/img/mainSlider/slide01.jpg',
+        title: 'Твоя планета готова, люди ждут приказов, Правитель',
+        img: '/img/mainPage/slide01.jpg',
         isConsul: true,
       },
     ];
@@ -103,6 +99,13 @@ class PageIndex extends BlazeComponent {
 
   getCurrentSlide() {
     return this.slides[this.currentIndex.get()];
+  }
+
+  scrollTo(event, target) {
+    const headerSize = $('.cw--MainHeader').outerHeight();
+    $('html, body').animate({
+      scrollTop: ($(target).offset().top - headerSize),
+    }, 1000);
   }
 }
 

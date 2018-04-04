@@ -6,7 +6,11 @@
   >
     <header class="cw--MainHeader">
       <div class="cw--MainHeader__logo">
-        <a href="/" class="cw--MainHeader__logoLink">
+        <a
+          href="/"
+          onClick={{scrollTo 'body'}}
+          class="cw--MainHeader__logoLink"
+        >
           <img
             class="cw--MainHeader__logoImg"
             src="/img/logo.png"
@@ -16,10 +20,10 @@
       </div>
       <nav class="cw--MainHeader__menu">
         <a
-          href="{{pathFor route='screenshots'}}"
+          onClick={{scrollTo '.cw--PageIndex__screens'}}
           class="
             cw--MainHeader__menuItem
-            {{#if isRouterName "screenshots"}}cw--MainHeader__menuItem_active{{/if}}
+            {{#if scrollPosition.get 'screens'}}cw--MainHeader__menuItem_active{{/if}}
           "
           data-sound="hover,click"
         >
@@ -29,19 +33,19 @@
           class="
             cw--MainHeader__playButton
             cw--button
-            cw--button_type_primary
-            cw--button_type_primary_orange
+            cw--button_flat
+            cw--button_flat_orange
           "
           onClick={{showWelcomePopup}}
           data-sound="hover,click"
         >
-          Начать игру
+          Зарегистрируйся
         </button>
         <a
-          href="{{pathFor route='about'}}"
+          onClick={{scrollTo '.cw--PageIndex__about'}}
           class="
             cw--MainHeader__menuItem
-            {{#if isRouterName "about"}}cw--MainHeader__menuItem_active{{/if}}
+            {{#if scrollPosition.get 'about'}}cw--MainHeader__menuItem_active{{/if}}
           "
           data-sound="hover,click"
         >

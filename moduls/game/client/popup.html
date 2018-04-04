@@ -5,7 +5,18 @@
     tabindex="-1"
   >
     <div class="cw--popup__wrapper">
-      <button class="cw--popup__close cw--button cw--button_close"></button>
+      {{#unless hideClose}}
+        <button
+          class="
+            cw--popup__close
+            cw--button
+            cw--button_close
+            {{#if isMain}}
+              cw--PageIndex__closeButton
+            {{/if}}
+          "
+        ></button>
+      {{/unless}}
     </div>
   </div>
 </template>

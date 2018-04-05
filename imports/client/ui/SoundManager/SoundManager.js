@@ -18,30 +18,30 @@ const player = {};
 
 const SoundManager = {
   isMuted: new ReactiveVar(false),
+  getUserMute() {
+    return Meteor.user()
+      && Meteor.user().settings
+      && Meteor.user().settings.options
+      && Meteor.user().settings.options.muteSound;
+  },
   muteToggle() {
     if (Meteor.user()) {
-      const options = Meteor.user().settings && Meteor.user().settings.options;
       Meteor.call(
         'settings.setOption',
         'muteSound',
-        !(options && options.muteSound),
+        !this.isMuted.get(),
       );
+    }
+    this.isMuted.set(!this.isMuted.get());
+
+    if (this.isMuted.get()) {
+      player.welcome.mute();
     } else {
-      this.isMuted.set(!this.isMuted.get());
-      if (player.welcome) {
-        player.welcome.toggleMute();
-      }
+      player.welcome.unmute();
     }
   },
   play(action) {
-    if (
-      this.isMuted.get() || (
-        Meteor.user()
-        && Meteor.user().settings
-        && Meteor.user().settings.options
-        && Meteor.user().settings.options.muteSound
-      )
-    ) {
+    if (this.isMuted.get()) {
       return;
     }
     player[action].stop().play();

@@ -78,6 +78,7 @@ class ColosseumTournament extends BlazeComponent {
               reward,
             },
           })).renderComponent(),
+          hideClose: true,
         });
       }
     });

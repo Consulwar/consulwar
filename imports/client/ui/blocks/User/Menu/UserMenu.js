@@ -92,6 +92,7 @@ class UserMenu extends BlazeComponent {
                 reward,
               },
             })).renderComponent(),
+            hideClose: true,
           });
         }
       },

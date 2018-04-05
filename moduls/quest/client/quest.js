@@ -95,6 +95,7 @@ Game.Quest.showQuest = function(id) {
             onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
           },
         })).renderComponent(),
+        hideClose: true,
       });
     });
   } else {

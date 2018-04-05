@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { $ } from 'meteor/jquery';
+import Game from '/moduls/game/lib/main.game';
+import UserWelcome from '/imports/client/ui/blocks/User/Welcome/UserWelcome';
 import './PageIndex.html';
 import './PageIndex.styl';
 
@@ -106,6 +108,13 @@ class PageIndex extends BlazeComponent {
     $('html, body').animate({
       scrollTop: ($(target).offset().top - headerSize),
     }, 1000);
+  }
+
+  showWelcomePopup() {
+    Game.Popup.show({
+      template: UserWelcome.renderComponent(),
+      isMain: true,
+    });
   }
 }
 

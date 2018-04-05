@@ -179,6 +179,7 @@
     padding 13px
     border none
     width 200px
+    cursor pointer
     background linear-gradient(0deg, #D63C2B 40%, #FF7940 75%)
     outline solid 1px #AB1A11
     outline-offset -6px
@@ -374,6 +375,7 @@
     font-size $cw--fontSize_m
     font-weight bold
     color $cw--color_metal
+
     &_human
       color $cw--color_human
 
@@ -384,12 +386,14 @@
     &:active
       width 25px
       height 25px
+
+      cursor pointer
       border none
+      outline none
       background-image url(/img/close_human.svg)
       background-repeat no-repeat
       background-position center
       background-color transparent
-      outline none
 
     &:hover
     &:active

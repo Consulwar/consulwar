@@ -16,8 +16,17 @@ class PageIndex extends BlazeComponent {
     super.onCreated();
     this.slides = [
       {
+        title: 'Твоя планета готова, люди ждут приказов, Правитель',
+        img: '/img/mainPage/slide01.jpg',
+        isConsul: true,
+      },
+      {
         title: 'Подготовь армию для освобождения Земли от захватчиков',
         img: '/img/mainPage/slide05.jpg',
+      },
+      {
+        title: 'Развивай индустрию, военное дело и экономику своей колонии',
+        img: '/img/mainPage/slide02.jpg',
       },
       {
         title: 'Строй боевые корабли и создай самый мощный флот в галактике',
@@ -27,15 +36,6 @@ class PageIndex extends BlazeComponent {
         title: 'Наводи страх на коварных и жестоких рептилоидов',
         img: '/img/mainPage/slide03.jpg',
         isRating18: true,
-      },
-      {
-        title: 'Развивай индустрию, военное дело и экономику своей колонии',
-        img: '/img/mainPage/slide02.jpg',
-      },
-      {
-        title: 'Твоя планета готова, люди ждут приказов, Правитель',
-        img: '/img/mainPage/slide01.jpg',
-        isConsul: true,
       },
     ];
     this.slides.forEach((item, index) => {

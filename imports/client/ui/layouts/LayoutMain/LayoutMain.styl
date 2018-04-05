@@ -66,7 +66,10 @@
     left 0
     z-index 50
     width 100%
-    background alpha($cw--color_black, .8)
+    background $cw--color_black
+    border-bottom solid 1px alpha(#e9a844, 0.5)
+    border-image linear-gradient(90deg, rgba(233,168,68,0), #e9a844, rgba(233,168,68,0)) 1
+    border-width 0 0 1px 0
     +media($cw--size_xs, $cw--size_l)
       height 130px
 
@@ -107,12 +110,15 @@
 
   &__menuItem
     flex 0 auto
-    margin 0 15px
+    margin 0
+    padding 0 15px
     display flex
     height auto
+    min-height 40px
     align-items center
     cursor pointer
 
+    white-space nowrap
     text-decoration none
     font-weight bold
     transition all .15s ease

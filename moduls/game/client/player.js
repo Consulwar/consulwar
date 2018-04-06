@@ -30,7 +30,7 @@ var storedTracks = JSON.parse(localStorage.getItem('tracks'));
 var playlist = [];
 for (let key in tracks) {
   key = parseInt(key, 10);
-  let track = new buzz.sound('http://times.consulwar.ru/music/' + tracks[key] + '.mp3', {
+  let track = new buzz.sound('https://consulwar.ru/music/' + tracks[key] + '.mp3', {
     volume:50,
   });
   track.name = tracks[key];

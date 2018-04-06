@@ -2,35 +2,47 @@
 @import '{}/imports/client/ui/colors.styl'
 @import '{}/imports/client/ui/responsive'
 
+$formWidth = 190px
+
 .cw--UserWelcome
-  display flex
   width 100vw
   height 100vh
-  max-width 500px
-  max-height 500px
-  background-color alpha($cw--color_black, .8)
+  max-width 350px
+  max-height 350px
+  cw--fontFamily_cond()  
   font-size $cw--fontSize_m
+  background-color alpha($cw--color_black, .8)
+  border solid 1px $cw--color_human
+  border-image linear-gradient(0deg, #D65F52, $cw--color_human) 1
+
   +media(null, $cw--size_xs)
     max-height none
 
   &__content
-    padding 40px
+    padding 20px
+    width 100%
+    height 100%
+    box-sizing border-box
     display flex
     flex-direction column
+    justify-content center
+    align-items center
+
     +media(null, $cw--size_xs)
       padding 40px 30px
   
-  &__logo
-    flex 0 auto
-    display flex
-    height 50px
+  &__header
+    margin 25px auto 20px
+    font-size 30px
+    font-weight bold
+    color $cw--color_human
 
-  &__logoImg
-    margin auto
-    max-width 90%
+  &__subHeader
+    font-size $cw--fontSize_l
+    color $cw--color_white
 
   &__form
-    width 220px
+    width $formWidth
     margin auto
 
   &__label
@@ -41,17 +53,34 @@
     box-sizing border-box
 
   &__label
-    color $cw--color_human
+    color $cw--color_white
 
   &__input
     margin 10px 0
     height 40px
 
+  &__playButton
+    padding 8px
+    border none
+    background linear-gradient(0deg, #D63C2B 40%, #FF7940 75%)
+    outline solid 1px #AB1A11
+    outline-offset -6px
+    color $cw--color_white
+    cw--fontFamily_cond()
+    font-size 24px
+    font-weight bold
+    text-transform uppercase
+
+    &:hover
+    &:active
+      filter brightness(1.4)
+
   &__chose
     display flex
     justify-content space-between
+    width $formWidth
     height 25px
-    margin 10px 0
+    margin 10px 0 0
 
   &__login
   &__register

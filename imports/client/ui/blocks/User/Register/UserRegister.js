@@ -7,7 +7,6 @@ import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
-import Tamily from '/imports/content/Person/client/Tamily';
 import UserLogin from '/imports/client/ui/blocks/User/Login/UserLogin';
 import License from '/imports/client/ui/blocks/License/License';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
@@ -101,7 +100,6 @@ class UserRegister extends BlazeComponent {
       },
     ];
 
-    this.Tamily = Tamily;
     this.isInviteRequired = Meteor.settings.public.isInviteRequired;
   }
 
@@ -206,6 +204,7 @@ class UserRegister extends BlazeComponent {
           username: this.username.get(),
         },
       })).renderComponent(),
+      isMain: true,
     });
   }
 }

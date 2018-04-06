@@ -103,12 +103,22 @@
       border-image linear-gradient(0deg, #4594BF, #8BD4FC) 1
 
     &_green
-      color $cw--color_credit
-      border solid 1px #2B6D92
-      border-image linear-gradient(0deg, #5E7118, $cw--color_credit) 1
+      &:active
+        color $cw--color_credit
+        border solid 1px $cw--color_credit
+        border-image linear-gradient(0deg, #5E7118, $cw--color_credit) 1
+        &:hover
+          color #D5F075
+          border-image linear-gradient(0deg, #82992E, #D7F07D) 1
+    
+    &_orange
+      color $cw--color_human
+      border solid 1px $cw--color_human
+      border-image radial-gradient(ellipse at top, #E9A844, #B85117) 1;
       &:hover
-        color #D5F075
-        border-image linear-gradient(0deg, #82992E, #D7F07D) 1
+      &:active
+        color lighten($cw--color_human, 40%)
+        border-image radial-gradient(ellipse at top, lighten(#E9A844, 40%), lighten(#B85117, 25%)) 1;
 
   &:disabled
     filter grayscale(100%) brightness(60%)

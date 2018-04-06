@@ -15,23 +15,24 @@
     padding-bottom 50px
     overflow-x hidden
 
-  &__person
-    flex-basis auto
+  &__sidebar
+    background-color #101821
+    flex-basis 380px
     flex-grow 0
     flex-shrink 1
-    user-select none
 
-    +media($cw--size_m, $cw--size_l)
-      overflow hidden
+  &__person
+    user-select none
+    width 100%
 
   &__content
-    flex-basis auto
-    flex-shrink 11
-    flex-grow 1
-    box-sizing border-box
-    padding 30px 50px 15px
     display flex
     flex-direction column
+    flex-basis 480px
+    flex-shrink 11
+    flex-grow 0
+    padding 30px 50px 15px
+    box-sizing border-box
 
     +media($cw--size_s, $cw--size_l)
       padding 30px 30px 15px
@@ -41,30 +42,34 @@
       flex-grow 0
       flex-shrink 0
 
+  &__title
+    font-size 22px
+    font-weight bold
+    color $cw--color_human
+
   &__intro
     flex-basis auto
     flex-shrink 0
     flex-grow 0
-    color $cw--color_lightGrey
-
-  &__formSection
-    flex-grow 1
-    flex-shrink 0
-    flex-basis auto
+    margin-top 5px
+    margin-bottom 30px
+    cw--fontFamily_cond()
+    color $cw--color_description
 
   &__switch
-    padding-top 12px
-    flex-basis auto
-    flex-grow 0
+    padding 20px 40px
     color $cw--color_lightGrey
+
   &__switchHead
     padding-bottom 10px
+
   &__switchButton
     cursor pointer
     padding 0
     border none
     background none
     color $cw--color_metal
+    cw--fontFamily_cond()
     font-size $cw--fontSize_l
     font-weight bold
     text-decoration underline
@@ -75,42 +80,51 @@
       text-decoration none
       color $cw--color_white
 
-  &__formTitle
-    display block
-    margin 30px 0 15px 
-    color $cw--color_honor
-    font-size $cw--fontSize_l
-    font-weight bold
+  &__formSection
+    flex-grow 1
+    flex-shrink 0
+    flex-basis auto
 
   &__form
     margin-bottom 10px
+    margin-right auto
 
   &__inputs
     display flex
     flex-direction row
-    height 62px
+    height 115px
 
     +media(null, $cw--size_m)
       flex-direction column
-      height 145px
+      height 240px
       justify-content space-between
   
   &__inputsGroup
     display flex
+    margin-right 12px
     flex-direction column
     flex-basis auto
     justify-content space-between
-    margin-right 12px
-
+    
     +media(null, $cw--size_m)
-    	flex-basis: 62px;
+      flex-basis 115px
+
+  &__label
+    flex-grow 0
+    flex-basis auto
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_m
+    line-height 22px
+    color $cw--color_description
+
 
   &__input
+    display block
     flex 0 auto
-    width 184px
-    height 25px
+    width 182px
+    height 30px
     box-sizing border-box
-    font-sze $cw--fontSize_m
+    font-size $cw--fontSize_m
   
   &__rulesLabel
     color $cw--color_lightGrey
@@ -126,8 +140,26 @@
     margin 15px 0
   
   &__submit
-    padding-left 20px
-    padding-right 20px
+    width 100%
+    padding 12px 20px
+    margin-top 20px
+    box-sizing border-box
+
+    color $cw--color_white
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_l
+    font-weight bold
+    text-transform uppercase
+
+    cursor pointer
+    border none
+    outline solid 1px #3A470B
+    outline-offset -6px
+    background linear-gradient(0deg, #70871C 30%, #98BD13)
+
+    &:hover
+    &:active
+      filter brightness(1.4)
 
   &__errors
     padding 10px

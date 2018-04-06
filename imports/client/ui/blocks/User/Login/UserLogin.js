@@ -6,7 +6,6 @@ import { Router } from 'meteor/iron:router';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 import { Notifications } from '/moduls/game/lib/importCompability';
-import Tamily from '/imports/content/Person/client/Tamily';
 import Game from '/moduls/game/lib/main.game';
 import UserRegister from '/imports/client/ui/blocks/User/Register/UserRegister';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
@@ -53,8 +52,6 @@ class UserLogin extends BlazeComponent {
         }
       },
     ];
-
-    this.Tamily = Tamily;
   }
 
   login(event) {
@@ -118,6 +115,7 @@ class UserLogin extends BlazeComponent {
           username: this.username.get(),
         },
       })).renderComponent(),
+      isMain: true,
     });
   }
 }

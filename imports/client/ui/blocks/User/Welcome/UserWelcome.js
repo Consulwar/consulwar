@@ -72,6 +72,7 @@ class UserWelcome extends BlazeComponent {
           username: this.username.get(),
         },
       })).renderComponent(),
+      isMain: true,
     });
     this.removeComponent();
   }
@@ -83,6 +84,7 @@ class UserWelcome extends BlazeComponent {
           username: this.username.get(),
         },
       })).renderComponent(),
+      isMain: true,
     });
     this.removeComponent();
   }

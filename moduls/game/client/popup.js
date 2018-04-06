@@ -12,11 +12,15 @@ Game.Popup = {
     templateName,
     data,
     template = Template[templateName],
+    hideClose = false,
+    isMain,
   }) {
     this.zIndex += 1;
 
     const popup = Blaze.renderWithData(Template.popup, {
       zIndex: this.zIndex,
+      hideClose,
+      isMain,
     }, $('.over')[0]);
     const subtemplate = Blaze.renderWithData(
       template,

@@ -18,7 +18,14 @@
 
     {{#if isPrompt}}
       {{#each options}}
-        <a data-option="{{this.name}}" class="{{this.mood}}" href="#">{{this.text}}</a>
+        <a
+          data-option="{{this.name}}"
+          class="{{this.mood}}"
+          href="#"
+          data-sound="click"
+        >
+          {{this.text}}
+        </a>
       {{/each}}
     {{/if}}
 

@@ -94,6 +94,7 @@
                 "
                 disabled={{lt timeLeft.get 5}}
                 onClick={{showSpeedUp}}
+                data-sound="click"
               >
                 {{#if lt timeLeft.get 5}}
                   {{formatSeconds timeLeft.get}}
@@ -112,6 +113,7 @@
                     data-tooltip="Ввести максимум"
                     data-tooltip-direction="s"
                     onClick={{setMaximum}}
+                    data-sound="click"
                   ></button>
                   {{> InputNumber args
                     value=level

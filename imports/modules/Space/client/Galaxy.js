@@ -8,6 +8,43 @@ const getPlanetRadius = function(size) {
   return 0.01 + (size / 20);
 };
 
+const planetsQueue = [];
+let incrementalDefer = null;
+let lastTimestamp = 0;
+let minFrameTime = 100;
+let batchSize = 1;
+const timeError = 5;
+const batchStep = 1.1;
+const incrementalRenderer = (timestamp) => {
+  const performanceNow = performance.now();
+  const delta = timestamp - lastTimestamp;
+  const thisFrame = performanceNow - timestamp; // time spent rendering this frame
+  lastTimestamp = timestamp;
+  minFrameTime = Math.min(minFrameTime, delta);
+  if (thisFrame > minFrameTime + timeError) { // already took too much time, better to not make it worse
+    incrementalDefer = requestAnimationFrame(incrementalRenderer);
+    return;
+  }
+  if (delta < minFrameTime + timeError) {
+    batchSize *= batchStep;
+  } else if (delta > (2 * minFrameTime) + timeError && batchSize > 1) {
+    batchSize /= batchStep;
+  }
+  for (let i = 0; i < batchSize; i += 1) {
+    if (planetsQueue.length) {
+      const { id, galaxy, planet } = planetsQueue.pop();
+      galaxy.showPlanet(id, planet);
+    } else {
+      break;
+    }
+  }
+  if (planetsQueue.length) {
+    incrementalDefer = requestAnimationFrame(incrementalRenderer);
+  } else {
+    incrementalDefer = null;
+  }
+};
+
 class Galaxy {
   constructor({
     user,
@@ -33,25 +70,15 @@ class Galaxy {
     this.circles = {};
     this.labels = {};
 
-    const planetsQueue = [];
-    let incrementalDefer = null;
-    const incrementalRenderer = () => {
-      if (planetsQueue.length) {
-        const {id, planet} = planetsQueue.pop();
-        this.showPlanet(id, planet);
-      }
-      if (planetsQueue.length) {
-        incrementalDefer = Meteor.setTimeout(incrementalRenderer);
-      } else {
-        incrementalDefer = null;
-      }
-    };
-
     Game.Planets.Collection.find({ username }).observeChanges({
       added: (id, planet) => {
-        planetsQueue.push({id, planet});
+        planetsQueue.push({
+          id,
+          galaxy: this,
+          planet,
+        });
         if (!incrementalDefer) {
-          incrementalDefer = Meteor.setTimeout(incrementalRenderer);
+          incrementalDefer = requestAnimationFrame(incrementalRenderer);
         }
       },
 

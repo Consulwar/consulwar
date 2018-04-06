@@ -7,6 +7,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
 import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
 import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import '/imports/client/ui/blocks/Effect/Levels/EffectLevels';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Requirements/Requirements';
@@ -69,6 +70,7 @@ class BuildBuilding extends BlazeComponent {
           Notifications.error('Невозможно начать строительство', error.error);
         } else {
           Notifications.success('Строительство запущено');
+          SoundManager.play('buildingStart');
         }
       },
     );

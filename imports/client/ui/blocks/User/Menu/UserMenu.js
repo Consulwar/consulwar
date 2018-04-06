@@ -63,18 +63,6 @@ class UserMenu extends BlazeComponent {
     ChdFeedbackWidget.show(theme);
   }
 
-  showSettings() {
-    Router.go('settings');
-  }
-
-  showStatistics() {
-    Router.go('statistics', { group: 'general' });
-  }
-
-  showMail() {
-    Router.go('mail', { page: 1 });
-  }
-
   sendPromocode(event) {
     event.preventDefault();
 
@@ -104,6 +92,7 @@ class UserMenu extends BlazeComponent {
                 reward,
               },
             })).renderComponent(),
+            hideClose: true,
           });
         }
       },

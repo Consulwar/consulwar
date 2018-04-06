@@ -1,64 +1,96 @@
 <template name="UserRegister">
   <div class="cw--UserRegister">
-    {{> PersonImage
-      person=Tamily
-      showChangeOption=false
-      class="cw--UserRegister__person"
-    }}
+    <div class="cw--UserRegister__sidebar">
+      <img
+        src="/img/Tamily_register.jpg"
+        alt="Советник Тамили"
+        class="cw--UserRegister__person"
+      />
+      <div class="cw--UserRegister__switch">
+        <div class="cw--UserRegister__switchHead">
+          Возможно у вас уже есть аккаунт, тогда просто войдите в него.
+        </div>
+        <button
+          class="
+            cw--button
+            cw--UserRegister__switchButton
+          "
+          data-sound="hover,click"
+          onClick={{showLoginPopup}}
+        >
+          Уже есть аккаунт
+        </button>
+      </div>
+    </div>
+
     <div class="cw--UserRegister__content">
+      <div class="cw--UserRegister__title">
+        Регистрация
+      </div>
       <div class="cw--UserRegister__intro">
-        Рада вас видеть, Консул, желаете ввести свои параметры для подключения 
-        к каналу связи или же вы уже имеете Аккаунт Связи со вселенной 42?
+        После регистрации вы получите особые бонусы
+        <span class="cw--color_human">ускоряющие развитие</span>,
+        а также <span class="cw--color_human">больше ресурсов</span>.
       </div>
       <form
         onSubmit={{register}}
         class="cw--UserRegister__formSection"
       >
-        <div class="cw--UserRegister__formTitle">
-          Регистрация
-        </div>
 
         <div class="cw--UserRegister__form">
           <div class="cw--UserRegister__inputs">
             <div class="cw--UserRegister__inputsGroup">
-              {{> InputString args
-                name="username"
-                value=username
-                errors=errors
-                validators=usernameValidators
-                className="cw--UserRegister__input"
-                placeholder="Введите Никнейм"
-                required=true
-              }}
-              {{> InputEmail args
-                name="email"
-                value=email
-                errors=errors
-                validators=emailValidators
-                className="cw--UserRegister__input"
-                placeholder="Введите Емейл"
-                required=true
-              }}
+              <label class="cw--UserRegister__label">
+                Никнейм
+                {{> InputString args
+                  name="username"
+                  value=username
+                  errors=errors
+                  validators=usernameValidators
+                  className="cw--UserRegister__input"
+                  placeholder="Введите Никнейм"
+                  required=true
+                }}
+              </label>
+              <label class="cw--UserRegister__label">
+                E-mail
+                {{> InputEmail args
+                  name="email"
+                  value=email
+                  errors=errors
+                  validators=emailValidators
+                  className="cw--UserRegister__input"
+                  placeholder="Введите Емейл"
+                  required=true
+                }}
+              </label>
             </div>
             <div class="cw--UserRegister__inputsGroup">
-              {{> InputPassword args
-                name="password"
-                value=password
-                errors=errors
-                validators=passwordValidators
-                className="cw--UserRegister__input"
-                placeholder="Введите Пароль"
-                required=true
-              }}
-              {{> InputPassword args
-                name="password_repeat"
-                value=passwordRepeat
-                errors=errors
-                validators=passwordRepeatValidators
-                className="cw--UserRegister__input"
-                placeholder="Повторите Пароль"
-                required=true
-              }}
+              <label class="cw--UserRegister__label">
+                Пароль
+                {{> InputPassword args
+                  name="password"
+                  value=password
+                  errors=errors
+                  validators=passwordValidators
+                  className="cw--UserRegister__input"
+                  placeholder="Введите пароль"
+                  required=true
+                }}
+              </label>
+              <label class="cw--UserRegister__label">
+                Повторите пароль
+                {{> InputPassword args
+                  name="password_repeat"
+                  value=passwordRepeat
+                  errors=errors
+                  validators=passwordRepeatValidators
+                  className="cw--UserRegister__input"
+                  placeholder="Повторите пароль"
+                  required=true
+                }}
+              </label>
+              
             </div>
           </div>
         </div>
@@ -76,6 +108,7 @@
               href="/legal/agreement"
               class="cw--UserRegister__rulesLink"
               onClick={{showLicense}}
+              data-sound="hover,click"
             >
               правилами
             </a>
@@ -105,31 +138,13 @@
         {{/if}}
 
         <button
-          class="
-            cw--UserLogin__submit
-            cw--button
-            cw--button_type_primary
-            cw--button_type_primary_green
-          "
+          class="cw--UserRegister__submit"
+          data-sound="hover,click"
         >
           Войти в игру
         </button>
       </form>
-      <div class="cw--UserRegister__switch">
-        <div class="cw--UserRegister__switchHead">
-          У вас уже есть аккаунт? Желаете войти в него?
-        </div>
-        <button
-          class="
-            cw--button
-            cw--button_flat
-            cw--UserRegister__switchButton
-          "
-          onClick={{showLoginPopup}}
-        >
-          Уже есть аккаунт
-        </button>
-      </div>
+      
     </div>
   </div>
 </template>

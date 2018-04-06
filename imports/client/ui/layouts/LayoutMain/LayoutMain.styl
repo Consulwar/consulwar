@@ -35,7 +35,7 @@
   display flex
   flex-grow 1
   flex-shrink 0
-  flex-basis 70%
+  flex-basis auto
 
 // Header section
 
@@ -43,11 +43,12 @@
   position relative
   flex-basis 60px
   flex-grow 0
+  flex-shrink 0
   display flex
   flex-direction row
   padding 5px 50px
   box-sizing border-box
-  background alpha($cw--color_black, 50%)
+  background alpha($cw--color_black, .5)
 
   +media($cw--size_xs, $cw--size_l)
     flex-basis 130px
@@ -59,6 +60,22 @@
     flex-basis 220px
     padding 5px 10px
 
+  &_fly
+    position fixed
+    top 0
+    left 0
+    z-index 50
+    width 100%
+    background $cw--color_black
+    border-bottom solid 1px alpha(#e9a844, 0.5)
+    border-image linear-gradient(90deg, rgba(233,168,68,0), #e9a844, rgba(233,168,68,0)) 1
+    border-width 0 0 1px 0
+    +media($cw--size_xs, $cw--size_l)
+      height 130px
+
+    +media(null, $cw--size_xs)
+      height 220px
+
   &__logo
     flex-basis 200px
     flex-grow 1
@@ -66,7 +83,7 @@
     display flex
 
     +media(null, $cw--size_xs)
-      flex-basis 50%
+      flex-basis auto
 
   &__logoLink
     display block
@@ -81,7 +98,6 @@
       margin auto
 
   &__menu
-    flex auto
     margin auto
     display flex
     flex-direction row
@@ -94,10 +110,19 @@
 
   &__menuItem
     flex 0 auto
-    margin auto 15px
+    margin 0
+    padding 0 15px
+    display flex
+    height auto
+    min-height 40px
+    align-items center
+    cursor pointer
+
+    white-space nowrap
     text-decoration none
     font-weight bold
     transition all .15s ease
+
     &:hover
     &:active
     &_active
@@ -109,18 +134,24 @@
     cursor pointer
     padding-left 30px
     padding-right 30px
-    text-transform uppercase
     
     +media(null, $cw--size_xs)
       order 10
       flex-basis 200px
 
+  &_fly &__playButton
+    background-color $cw--color_human
+    border-image none
+    border none
+    color $cw--color_white
+
   &__stats
+    display flex
+    margin auto
     flex-basis 200px
     flex-grow 1
-    margin auto
-    display flex
     justify-content flex-end
+    align-items center
 
     +media($cw--size_s, $cw--size_l)
       flex-basis 50%
@@ -149,17 +180,20 @@
 
 .cw--MainFooter
   position relative
-  flex 0 1 auto
   display flex
   height 50px
   padding 10px 50px
   box-sizing border-box
+  flex-basis 50px
+  flex-grow 0
+  flex-shrink 0
   background alpha($cw--color_black, 25%)
 
   +media(null, $cw--size_l)
+    height auto
     padding 10px
     flex-direction column
-    height auto
+    flex-basis auto
   +media(null, $cw--size_xs)
     padding 10px 50px
 

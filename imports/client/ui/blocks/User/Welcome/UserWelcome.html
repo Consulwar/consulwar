@@ -1,12 +1,16 @@
 <template name="UserWelcome">
   <div class="cw--UserWelcome">
     <div class="cw--UserWelcome__content">
-      <div class="cw--UserWelcome__logo">
-        <img class="cw--UserWelcome__logoImg" src="/img/logo.png" alt="Consulwar"/>
+
+      <div class="cw--UserWelcome__header">
+        Быстрый вход
+        <div class="cw--UserWelcome__subHeader">
+          Ваше имя, правитель?
+        </div>
       </div>
       <form class="cw--UserWelcome__form">
         <label class="cw--UserWelcome__label">
-          Введите Никнейм
+          Никнейм
         </label>
         {{> InputString args
           name="username"
@@ -15,26 +19,30 @@
           className="cw--UserWelcome__input"
           placeholder="Введите Никнейм"
         }}
-        <div class="cw--UserWelcome__chose">
-          <a class="cw--UserWelcome__login" onClick={{showLoginPopup}}>
-            вход
-          </a>
-          <a class="cw--UserWelcome__register" onClick={{showRegisterPopup}}>
-            регистрация
-          </a>
-        </div>
         <button
-          class="
-            cw--UserWelcome__playButton
-            cw--button
-            cw--button_type_primary
-            cw--button_type_primary_orange
-          "
+          class="cw--UserWelcome__playButton"
           onClick={{goNext}}
+          data-sound="hover,click"
         >
-          Продолжить
+          Играть
         </button>
       </form>
+      <div class="cw--UserWelcome__chose">
+        <a
+          class="cw--UserWelcome__login"
+          onClick={{showLoginPopup}}
+          data-sound="hover,click"
+        >
+          вход
+        </a>
+        <a
+          class="cw--UserWelcome__register"
+          onClick={{showRegisterPopup}}
+          data-sound="hover,click"
+        >
+          регистрация
+        </a>
+      </div>
     </div>
   </div>
 </template>

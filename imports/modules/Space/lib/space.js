@@ -66,6 +66,8 @@ export default {
   jobs,
   collection,
   filterActive,
+  getCurrentArmyCount,
+  getMaxArmyCount,
   canCreateArmy,
   checkSendFleet,
   canMoveFromSpaceToHangar,

@@ -287,6 +287,7 @@
         {{#if timeAttack}}
           <p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
         {{/if}}
+          <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
         {{#if or planet.isHome planet.armyId}}
           <button class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">Отправить</button>
@@ -301,6 +302,7 @@
       {{else}}{{#if battle}}
         {{#if timeAttackBattle}}
           <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
+          <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
           <button class="btn-attack help" data-sound="attack">Отправить</button>
         {{/if}}
@@ -312,6 +314,7 @@
         {{else}}
           <p>Не успеем перехватить</p>
         {{/if}}
+          <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
         <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">Перехватить</button>
       {{/if}}{{/if}}

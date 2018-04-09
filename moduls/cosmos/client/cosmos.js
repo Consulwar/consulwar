@@ -451,7 +451,7 @@ Template.cosmosFleetsInfo_table.helpers({
 });
 
 Template.cosmosFleetsInfo_table.events({
-  'mouseover .way .fleet_marker, mouseover .end .map-fleet-rept': function (e, t) {
+  'mouseover .cw--FleetInfoPlanets__marker, mouseover .cw--FleetInfoPlanets__planet_end .cw--FleetInfoPlanets__fleetReptiles': function (e, t) {
     $(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
       Template.cosmosShipInfo, 
       {

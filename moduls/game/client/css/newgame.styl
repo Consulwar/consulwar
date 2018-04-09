@@ -1,3 +1,8 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+
 $color-human = #ffb74a
 $color-metal = #66cce2
 $color-crystal = #d36fff
@@ -314,6 +319,7 @@ body.game
             filter brightness(1.1)
               
           img
+            user-select none
             position absolute
             z-index 1
             
@@ -1053,89 +1059,7 @@ body.game
       background-repeat no-repeat
     
 
-  .fleet_info
-    position absolute
-    z-index 8
-    left 0
-    top 100px
-    width 0
-    padding 0
-    height 71px
-    background-color grey
-    display flex
-    flex-shrink 0
-    flex-direction column
-    justify-content center
-    background-color rgba($color-black, 0.5)
-    font-weight bold
-    background-image url(/img/game/attack.png)
-    background-repeat no-repeat
-    background-position right top
-    
-    &.attack
-      min-width 71px
-    
-    &.active
-      width 215px
-      height 61px
-      padding 5px 80px 5px 15px
-      
-      button:before
-        transform scaleX(1)
-      
-    
-    button
-      position absolute
-      top 0
-      right -20px
-      display flex
-      justify-content center
-      align-items center
-      width 20px
-      height 100%
-      background-color rgba($color-black, 0.4)
-      border 0
-      cursor pointer
-      
-      &:before
-        content url(/img/game/arrow.png)
-        position absolute
-        transform scaleX(-1)
-        -webkit-filter grayscale(1) brightness(0.5)
-        filter grayscale(1) brightness(0.5)
 
-      &:hover
-        -webkit-filter brightness(1.2)
-        filter brightness(1.2)
-          
-        &:before
-          -webkit-filter grayscale(0)
-          filter grayscale(0)
-    
-    .attack
-      position absolute
-      right 0
-      top 0
-      width 71px
-      height 17px
-      padding-top 54px
-      background-image url(/img/game/attack.png)
-      background-position right bottom
-      text-align center
-    
-    &:not(.active) a:not(.attack)
-      display none
-
-    a
-      text-decoration none
-    
-    .fleets,
-    .reinforcements
-      color $color-ggk
-    
-    .reptiles
-      color $color-honor
-      
   .planet:not(.overlay):not(.content):not(li)
     display inline-flex
     vertical-align middle
@@ -1152,11 +1076,6 @@ body.game
     
     .map-planet-marker
       flex-shrink 0
-    
-    .map-fleet-rept
-      position relative
-      margin auto
-      flex-shrink 0
 
     &.humans
       color $color-ggk
@@ -1164,179 +1083,6 @@ body.game
     &.reptiles
       color $color-honor
   
-  .fleet_info_full
-    overflow-y auto
-    left 0
-    top 171px
-    bottom 125px
-    z-index 7
-    position absolute
-    width 330px
-    background-color rgba($color-black, 0.8)
-    text-align center
-    box-sizing border-box
-    font-weight bold
-    
-    .fleets
-      position relative
-      box-sizing border-box
-      height 100%
-      border-top 20px solid transparent
-      
-      .scrollbar-inner
-        height 100%
-        overflow auto
-    
-    &:not(.active)
-      height 20px
-      
-      ul
-        display none
-    
-    button
-      position absolute
-      top 0
-      left 0
-      display flex
-      justify-content center
-      align-items center
-      width 100%
-      height 20px
-      background-color rgba($color-black, 0.4)
-      border 0
-      cursor pointer
-      z-index 1
-      
-      &:before
-        content url(/img/game/arrow.png)
-        position absolute
-        transform rotate(90deg) scaleX(-1)
-        -webkit-filter grayscale(1) brightness(0.5)
-        filter grayscale(1) brightness(0.5)
-
-      &:hover
-        -webkit-filter brightness(1.2)
-        filter brightness(1.2)
-          
-        &:before
-          -webkit-filter grayscale(0)
-          filter grayscale(0)
-    
-    &.active
-      display block
-      
-      button:before
-        transform rotate(90deg) scaleX(1)
-    
-    &.hide
-      display none
-
-    a
-      text-decoration none
-        
-    &.compact
-      li
-        height 30px
-        border-bottom 1px dashed rgba($color-white, 0.2)
-        
-        h2
-          font-size 12px
-          position absolute
-          width 100%
-
-        .start,
-        .end
-          top 0
-        
-        .map-planet-marker
-          display none
-          
-        .way
-          height 2px
-          
-          time
-            margin-top 2px
-          
-          .fleet_marker
-            top -10px
-    
-    li
-      position relative
-      display flex
-      flex-direction column
-      height 100px
-      border-bottom 1px dashed rgba($color-white, 0.1)
-      
-      h2
-        height 20px
-        font-size 18px
-          
-      
-      .start,
-      .end
-        width 80px
-        position absolute
-        top 20px
-        bottom 0
-        display inline-flex
-        
-      .start
-        left 0
-      
-      .end
-        right 0
-        
-      &.back
-        .start 
-          left initial
-          right 0
-        
-        .fleet_marker
-          transform scaleX(-1)
-        
-        .end
-          left 0
-          right initial
-      
-      .map-planet-marker
-        flex-shrink 0
-      
-      .map-fleet-rept
-        position relative
-        margin auto
-        flex-shrink 0
-
-      &.humans
-        color $color-ggk
-        
-      &.reptiles
-        color $color-honor
-
-      .way
-        position relative
-        display inline-block
-        vertical-align middle
-        margin auto 40px
-        height 4px
-        
-        &.humans
-          background-color $color-ggk
-        
-        &.reptiles
-          background-color $color-honor
-        
-        time
-          display block
-          width 100%
-          text-align center
-          margin-top 8px
-        
-        .fleet_marker
-          position absolute
-          font-size 20px
-          top -20px
-          z-index 2
-
   .quest
     position absolute
     z-index 10
@@ -1528,3 +1274,268 @@ body.game
   
 .ps-scrollbar-x-rail
   display none !important
+
+
+.cw--FleetInfo
+  position absolute
+  left 0
+  top 100px
+  z-index 8
+  display flex
+  flex-direction column
+  width 0
+  max-height 100vh
+
+  +media(null, $cw--size_l)
+    position fixed
+    top initial
+    bottom 0
+    z-index 20
+
+  &_active
+    width 320px
+    overflow visible
+    +media($cw--size_xxxl)
+      width 320px
+    +media(null, $cw--size_xxxl)
+      width 280px
+
+  &_attack:not(&_active)
+    width 82px
+
+  &__header
+    display flex
+    flex-direction row
+    flex-shrink 0
+    height 82px
+    padding 3px
+    box-sizing border-box
+    overflow hidden
+    background-color #131313
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_m
+    font-weight bold
+
+    +media(null, $cw--size_l)
+      order 3
+
+  &__status
+    display block
+    text-decoration none
+
+  &__time
+    font-weight normal
+    color $cw--color_white
+
+  &__headerText
+    display flex
+    padding 10px 15px 10px 10px
+    flex-grow 1
+    flex-direction column
+    justify-content center
+    align-items flex-start
+
+  &_attack:not(&_active) &__headerText
+    display none
+
+  &__waitingAttack
+    display flex
+    height 76px
+    width 76px
+    box-sizing border-box
+    justify-content center
+    align-items flex-end
+
+    text-decoration none
+    font-size $cw--fontSize_s
+
+    &_reptile
+      background-image url(/img/game/fleet_reptiles.svg)
+      background-repeat no-repeat
+      background-position center 40%
+      color $cw--color_honor
+      border solid 1px $cw--color_honor
+      border-image $cw--gradient_honor 1
+
+  &__toggle
+    position absolute
+    left 100%
+    top 0
+    width 34px
+    height 82px
+    cursor pointer
+    background-color $cw--color_black
+    border solid 1px $cw--color_metal
+    border-image $cw--gradient_metal 1
+
+    +media(null, $cw--size_l)
+      top initial
+      bottom 0
+
+    &:before
+      content ''
+      position absolute
+      left 50%
+      top 50%
+      display block
+      width 16px
+      height 23px
+      transform translate(-50%, -50%)
+
+      background-image url(/img/arrow.svg)
+      background-repeat no-repeat
+      background-position center
+
+  &_active &__toggle:before
+    transform translate(-50%, -50%) rotate(180deg)
+
+    &:hover
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
+  &__table
+    position relative
+    display none
+    max-height 400px
+    overflow hidden
+    background-color $cw--color_black
+    box-sizing border-box
+    +media(null, $cw--size_l)
+      max-height 100%
+
+  &_active &__table
+    display block
+
+.cw--FleetInfoTable
+  text-align center
+  font-size $cw--fontSize_s
+
+.cw--FleetInfoPlanets
+  text-align center
+  font-size $cw--fontSize_s
+
+  &__item
+    padding 5px
+    border-bottom 1px dashed rgba($color-white, 0.1)
+  
+  &__itemHead
+    font-size $cw--fontSize_m
+
+  &_compact &__itemHead
+    font-size $cw--fontSize_xs
+    margin-bottom -12px
+
+  &__path
+    position relative
+    display flex
+    flex-direction column
+    height 70px
+
+  &_compact &__path
+    height 30px
+
+  &__planet
+    width 80px
+    position absolute
+    top 0
+    bottom 0
+    display inline-flex
+    font-size 12px
+    font-weight bold
+
+    &_start
+      left 0
+
+    &_end
+      right 0
+  
+  &__item_back &__planet
+    &_start
+      left initial
+      right 0
+
+    &_end
+      right initial
+      left 0
+
+  &__fleetReptiles
+    position absolute
+    left 50%
+    top 50%
+    display block
+    width 37px
+    height 30px
+    transform translate(-50%,-50%)
+
+    background-repeat no-repeat
+    background-position center center
+    background-image url(/img/game/cosmomap/marker_fleet_rept.png)
+  
+  &__way
+    position relative
+    display inline-block
+    height 2px
+    vertical-align middle
+    margin auto 40px
+    text-decoration none
+
+    &_humans
+      color $cw--color_credit
+      background-color $cw--color_credit
+    &_reptiles
+      color $cw--color_honor
+      background-color $cw--color_honor
+
+  &_compact &__way
+    height 1px
+
+  &__marker
+    position absolute
+    top -16px
+    width 14px
+    height 14px
+    z-index 2
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+    transform rotate(90deg)
+    font-size 20px
+
+    &_humans
+      background-image url(/img/game/fleet_user.svg)
+
+    &_reptiles
+      background-image url(/img/game/fleet_reptiles.svg)
+
+    &:after
+      content ''
+      position absolute
+      left 50%
+      transform translateX(-50%)
+      width 2px
+      height 2px
+      background-color $cw--color_black
+
+    &:after
+      bottom 100%
+
+  &__item_back &__marker
+    transform rotate(-90deg)
+
+  &_compact &__marker
+    top -7px
+
+  &__wayTime
+    display block
+    width 100%
+    margin-top 8px
+    text-align center
+
+  &_compact &__wayTime
+    margin-top 2px
+    font-size $cw--fontSize_xs
+
+
+  &_compact
+    .map-planet-marker
+      display none

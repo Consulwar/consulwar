@@ -458,7 +458,7 @@ Template.newgame.onRendered(function(){
   }
 
   Meteor.setTimeout(function() {
-    $('.fleet_info_full .scrollbar-inner').perfectScrollbar('update');
+    $('.cw--FleetInfo__table').perfectScrollbar({suppressScrollX: true});
   });
 });
 
@@ -564,14 +564,10 @@ var showTutorialDuringActivation = function() {
 };
 
 Template.newgame.events({
-  'click .fleet_info .toggle': function() {
+  'click .cw--FleetInfo__toggle': function() {
     var options = Meteor.user().settings && Meteor.user().settings.options;
     Meteor.call('settings.setOption', 'hideFleetInfo', !(options && options.hideFleetInfo));
   },
-  'click .fleet_info_full .toggle': function() {
-    var options = Meteor.user().settings && Meteor.user().settings.options;
-    Meteor.call('settings.setOption', 'showFleetInfoFull', !(options && options.showFleetInfoFull));
-  }
 });
 
 window.ShowModalWindow = function(template, data) {

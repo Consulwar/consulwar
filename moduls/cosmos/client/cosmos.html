@@ -532,8 +532,10 @@
                   <img src="/img/game/damage.png" class="attack" data-tooltip="Нападение" data-tooltip-direction="s"/> 
                 {{/if}}
                 
-                {{#if this.planet}}
-                  {{> cosmos_planet_item planet=this.planet}}
+                {{#if this.planetId}}
+                  {{#let battlePlanet=getBattlePlanet}}
+                    {{> cosmos_planet_item isDisabled=battlePlanet.isDisabled location=battlePlanet.location planet=battlePlanet}}
+                  {{/let}}
                 {{else}}
                   Космос
                 {{/if}}

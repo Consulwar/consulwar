@@ -32,8 +32,8 @@ const incrementalRenderer = (timestamp) => {
   }
   for (let i = 0; i < batchSize; i += 1) {
     if (planetsQueue.length) {
-      const { id, galaxy, planet } = planetsQueue.pop();
-      galaxy.showPlanet(id, planet);
+      const { id, galaxy } = planetsQueue.pop();
+      galaxy.showPlanet(id);
     } else {
       break;
     }
@@ -75,7 +75,6 @@ class Galaxy {
         planetsQueue.push({
           id,
           galaxy: this,
-          planet,
         });
         if (!incrementalDefer) {
           incrementalDefer = requestAnimationFrame(incrementalRenderer);
@@ -109,8 +108,9 @@ class Galaxy {
     });
   }
 
-  showPlanet(id, planet) {
+  showPlanet(id) {
     const { offset } = this;
+    const planet = Game.Planets.getOne(id);
 
     const radius = getPlanetRadius(planet.size);
     const circle = L.circle(

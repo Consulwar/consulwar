@@ -12,11 +12,26 @@
   &__timeCount
     color $cw--color_white
   &__item
+    position relative
     width 60px
     white-space nowrap
     margin-right 12px
     font-size 12px
     text-decoration none
+
+  &__itemNeed
+    position absolute
+    left -6px
+    top 7px
+    display block
+    width 36px
+    height 36px
+
+    background-image url(/img/game/attention.svg)
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+
   &__itemArtifact
     background-image url(/img/game/Resource/Artifacts.svg)
     &:hover

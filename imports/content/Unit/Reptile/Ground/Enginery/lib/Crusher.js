@@ -20,4 +20,9 @@ export default {
     'Unit/Human/Ground/Air/Grandmother',
     'Unit/Human/Ground/Air/Butterfly',
   ],
+  opponents: [
+    'Unit/Human/Ground/Infantry/Horizontalbarman',
+    'Unit/Human/Ground/Infantry/Psiman',
+    'Unit/Human/Ground/Air/Butterfly',
+  ],
 };

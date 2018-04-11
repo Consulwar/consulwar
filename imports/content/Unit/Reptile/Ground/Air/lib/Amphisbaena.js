@@ -20,4 +20,9 @@ export default {
     'Unit/Human/Ground/Air/Xynlet',
     'Unit/Human/Ground/Air/Butterfly',
   ],
+  opponents: [
+    'Unit/Human/Ground/Infantry/Horizontalbarman',
+    'Unit/Human/Ground/Infantry/Psiman',
+    'Unit/Human/Ground/Enginery/Agmogedcar',
+  ],
 };

@@ -175,6 +175,16 @@ class UserRegister extends BlazeComponent {
       options.captcha = window.grecaptcha.getResponse() || '';
       window.grecaptcha.reset();
     }
+
+    const uuid = window.localStorage.getItem('ref_uuid');
+    if (uuid) {
+      options.uuid = uuid;
+    }
+    const from = window.localStorage.getItem('ref_from');
+    if (from) {
+      options.from = from;
+    }
+
     Accounts.createUser(options, (err) => {
       if (err) {
         Notifications.error(

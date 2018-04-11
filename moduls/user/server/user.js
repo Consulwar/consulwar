@@ -1,3 +1,4 @@
+import { HTTP } from 'meteor/http';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 
@@ -78,6 +79,20 @@ Accounts.onCreateUser(function(option, user) {
 
   option.username = option.username.trim();
   option.username = option.username.replace(/\s+/g, ' ');
+
+  if (option.from) {
+    user.from = option.from;
+  }
+
+  if (option.uuid) {
+    user.uuid = option.uuid;
+
+    HTTP.call(
+      'GET',
+      `https://r.advg.agency/p/?target=mmmmmn94jp&uuid=${option.uuid}&order_id=${user._id}`,
+      () => null,
+    );
+  }
 
   check(option.username, Match.Where(function(username) {
     if (username.length === 0) {

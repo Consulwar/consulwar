@@ -3,6 +3,7 @@ import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 
 import Space from '/imports/modules/Space/client/space';
+import SpaceLib from '/imports/modules/Space/lib/space';
 import Utils from '/imports/modules/Space/lib/utils';
 import calcAttackOptions from '/imports/modules/Space/lib/calcAttackOptions';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
@@ -252,7 +253,22 @@ Template.cosmosHistory.helpers({
   countTotal: function() { return Game.Statistic.getUserValue('battle.total'); },
   countPerPage: function() { return historyCountPerPage; },
   battle: function() { return historyBattle.get(); },
-  battles: function() { return historyBattles.list(); }
+  battles: function() { return historyBattles.list(); },
+
+  getBattlePlanet: function() {
+    let planet = Game.Planets.getOne(this.planetId);
+    if (!planet) {
+      planet = {
+        isEmpty: true,
+        isDisabled: true,
+        name: 'скрытая',
+        location: 'галактика',
+        size: Game.Random.interval(2, 5),
+        type: _.sample(_.toArray(Game.Planets.types)).engName,
+      };
+    }
+    return planet;
+  }
 });
 
 Template.cosmosHistory.events({
@@ -301,8 +317,8 @@ var getArmyInfo = function(units, rest) {
 const getBattleInfo = function(battle) {
   const user = Meteor.user();
   const result = {};
-  // Распарсить место
-  // planet
+  // парсить планету будем при отображении
+  result.planetId = battle.options.planetId;
 
   // Время
   result.timestamp = Math.floor(battle.timeStart.valueOf() / 1000);
@@ -451,7 +467,7 @@ Template.cosmosFleetsInfo_table.helpers({
 });
 
 Template.cosmosFleetsInfo_table.events({
-  'mouseover .way .fleet_marker, mouseover .end .map-fleet-rept': function (e, t) {
+  'mouseover .cw--FleetInfoPlanets__marker, mouseover .cw--FleetInfoPlanets__planet_end .cw--FleetInfoPlanets__fleetReptiles': function (e, t) {
     $(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
       Template.cosmosShipInfo, 
       {
@@ -1421,6 +1437,10 @@ Template.cosmosAttackMenu.helpers({
   timeAttack: timeAttack,
 
   timeAttackBattle: timeAttackBattle,
+
+  vacantFleets: function () {
+    return SpaceLib.getMaxArmyCount() - SpaceLib.getCurrentArmyCount();
+  },
 
   timeLeft: function() {
     var targetId = this.id;

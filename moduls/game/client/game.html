@@ -32,59 +32,91 @@
           </div>
         </header>
 
-        <div class="fleet_info {{#if not options.hideFleetInfo}}active{{/if}} {{#if fleetInfo.isWaitingAttack}}attack{{/if}}">
-          {{#if fleetInfo}}
-            {{#with fleetInfo}}
-              {{#if reinforcements}}
-                <a class="reinforcements" href="{{pathFor 'cosmos' hash=reinforcementsId}}">
-                  Подкрепление 
-                  {{#if gt reinforcements 1}}({{reinforcements}}) {{/if}}
-                  {{formatSeconds (fleetTime reinforcementsTime)}}
-                </a>
-              {{/if}}
-              {{#if consul}}
-                <a class="fleets" href="{{pathFor 'cosmos' hash=consulId}}">
-                  Флот Консула 
-                  {{#if gt consul 1}}({{consul}}) {{/if}}
-                  {{formatSeconds (fleetTime consulTime)}}
-                </a>
-              {{/if}}
-              {{#if reptile}}
-                <a class="reptiles" href="{{pathFor 'cosmos' hash=reptileId}}">
-                  Флот Рептилий 
-                  {{#if gt reptile 1}}({{reptile}}) {{/if}}
-                  {{formatSeconds (fleetTime reptileTime)}}
-                </a>
-              {{/if}}
-              {{#if isWaitingAttack}}
-                <a class="attack reptiles" href="{{pathFor 'cosmos' hash=attackId}}">
-                  {{formatSeconds (fleetTime attackTime)}}
-                </a>
-              {{/if}}
-              {{#if battles}}
-                <a class="battles" href="">
-                  Сражений({{battles}})
-                </a>
-              {{/if}}
-            {{/with}}
-          {{else}}
-            <a>Нет передвижений флота</a>
-          {{/if}}
-          <button class="toggle" data-sound="click"></button>
-        </div>
-
-        <div class="
-          fleet_info_full
-          {{#if options.compactFleetInfo}}compact{{/if}}
-          {{#if options.hideFleetInfo}}hide{{/if}}
-          {{#if options.showFleetInfoFull}}active{{/if}}
+        <div
+          class="
+            cw--FleetInfo
+            {{#if not options.hideFleetInfo}}cw--FleetInfo_active{{/if}}
+            {{#if fleetInfo.isWaitingAttack}}cw--FleetInfo_attack{{/if}}
           "
         >
-          <button class="toggle" data-sound="click"></button>
-          <div class="fleets scrollbar-inner">
+          <div class="cw--FleetInfo__header">
+            {{#if fleetInfo}}
+              {{#with fleetInfo}}
+                <div class="cw--FleetInfo__headerText">
+                  {{#if reinforcements}}
+                    <a
+                      class="cw--FleetInfo__status cw--color_credit"
+                      href="{{pathFor 'cosmos' hash=reinforcementsId}}"
+                    >
+                      Подкрепление 
+                      {{#if gt reinforcements 1}}({{reinforcements}}){{/if}}
+                      <time class="cw--FleetInfo__time">
+                        {{formatSeconds (fleetTime reinforcementsTime)}}
+                      </time>
+                    </a>
+                  {{/if}}
+                  {{#if consul}}
+                    <a
+                      class="cw--FleetInfo__status cw--color_credit"
+                      href="{{pathFor 'cosmos' hash=consulId}}"
+                    >
+                      Флот Консула 
+                      {{#if gt consul 1}}({{consul}}){{/if}}
+                      <time class="cw--FleetInfo__time">
+                        {{formatSeconds (fleetTime consulTime)}}
+                      </time>
+                    </a>
+                  {{/if}}
+                  {{#if reptile}}
+                    <a
+                      class="cw--FleetInfo__status cw--color_honor"
+                      href="{{pathFor 'cosmos' hash=reptileId}}"
+                    >
+                      Флот Рептилий 
+                      {{#if gt reptile 1}}({{reptile}}){{/if}}
+                      <time class="cw--FleetInfo__time">
+                        {{formatSeconds (fleetTime reptileTime)}}
+                      </time>
+                    </a>
+                  {{/if}}
+
+                  {{#if battles}}
+                    <span class="cw--FleetInfo__status cw--color_human">
+                      Сражений ({{battles}})
+                    </span>
+                  {{/if}}
+                </div>
+
+                {{#if isWaitingAttack}}
+                  <a
+                    class="
+                      cw--FleetInfo__waitingAttack
+                      cw--FleetInfo__waitingAttack_reptile
+                    "
+                    href="{{pathFor 'cosmos' hash=attackId}}"
+                  >
+                    {{formatSeconds (fleetTime attackTime)}}
+                  </a>
+                {{/if}}
+
+              {{/with}}
+            {{else}}
+              <div class="cw--FleetInfo__headerText cw--color_nearWhite">Нет передвижений флота</div>
+            {{/if}}
+          </div>
+          <button
+            class="cw--FleetInfo__toggle"
+            data-sound="click"
+          ></button>
+          <div
+            class="
+              cw--FleetInfo__table
+              fleet_info_full
+            "
+          >
             {{> cosmosFleetsInfo}}
           </div>
-        </div>
+        </div> {{!-- cw--FleetInfo --}}
 
         {{> UserMenu }}
 

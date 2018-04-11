@@ -41,6 +41,9 @@
       
       a.planet
         height 76px
+        &.disabled
+          -webkit-filter grayscale(1) brightness(0.5)
+          filter grayscale(1) brightness(0.5)
       
       tr:not(.header)
         text-align left
@@ -128,18 +131,6 @@
 
     &:before
       content none
-
-
-.map-fleet-rept
-  position absolute
-  display block
-  width 37px
-  height 30px
-  margin-left -18.5px
-  margin-top -15px
-  background-repeat no-repeat
-  background-position center center
-  background-image url(/img/game/cosmomap/marker_fleet_rept.png)
 
 
 .map-planet-border-reptile

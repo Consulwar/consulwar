@@ -4,11 +4,40 @@ import { $ } from 'meteor/jquery';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/Index/PageIndex';
 
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
+
+
 initRouterClient = function() {
 'use strict';
 
+const parseQuery = function(queryString) {
+  var query = {};
+  var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+  for (var i = 0; i < pairs.length; i += 1) {
+      var pair = pairs[i].split('=');
+      query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+  }
+  return query;
+}
+
+const registerRef = function() {
+  const search = window.location.search;
+  if (search) {
+    const parts = parseQuery(search);
+
+    if (parts.uuid) {
+      window.localStorage.setItem('ref_uuid', parts.uuid);
+    }
+    if (parts.from) {
+      window.localStorage.setItem('ref_from', parts.from);
+    }
+  }
+}
+
 window.GameRouteController = RouteController.extend({
   before: function() {
+    registerRef();
+
     if (!Meteor.userId()) {
       this.redirect('index');
       return;
@@ -169,6 +198,7 @@ Router.route('/game/chat/alliance/:room', {
   name: 'chatAlliance',
   controller: 'GameRouteController',
   before: function() {
+    registerRef();
     if (this.params.room.indexOf('alliance/') === -1) {
       this.params.room = 'alliance/' + this.params.room;
     }
@@ -181,11 +211,14 @@ Router.route('/game/chat/alliance/:room', {
 Router.route('/game', {
   name: 'game',
   action: function() {
+    registerRef();
+    SoundManager.login();
     Router.go('building', {group: 'Residential'});
   }
 });
 
 Router.route('/logout', function () {
+  registerRef();
   Meteor.logout();
   this.redirect('index');
 });
@@ -195,6 +228,7 @@ Router.route('/logout', function () {
   });
 
   Router.route('/', function() {
+    registerRef();
     this.layout(LayoutMain.renderComponent());
     this.render(PageIndex.renderComponent());
 
@@ -216,6 +250,7 @@ Router.route('/logout', function () {
 Router.route('pageNotFound', {
   path: '/(.+)',
   action: function() {
+    registerRef();
     if (Meteor.user()) {
       return this.redirect('game');
     }

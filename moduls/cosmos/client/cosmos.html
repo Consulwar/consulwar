@@ -287,6 +287,7 @@
         {{#if timeAttack}}
           <p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
         {{/if}}
+          <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
         {{#if or planet.isHome planet.armyId}}
           <button class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">Отправить</button>
@@ -301,6 +302,7 @@
       {{else}}{{#if battle}}
         {{#if timeAttackBattle}}
           <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
+          <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
           <button class="btn-attack help" data-sound="attack">Отправить</button>
         {{/if}}
@@ -312,6 +314,7 @@
         {{else}}
           <p>Не успеем перехватить</p>
         {{/if}}
+          <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
         <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">Перехватить</button>
       {{/if}}{{/if}}
@@ -388,10 +391,17 @@
 </template>
 
 <template name="cosmosFleetsInfo_table">
-  <ul class="planets">
+  <ul
+    class="
+      planets
+      cw--FleetInfoPlanets
+      {{#if options.compactFleetInfo}}cw--FleetInfoPlanets_compact{{/if}}
+    "
+  >
     {{#each fleets}}
       <li data-id="{{this._id}}"
         class="
+          cw--FleetInfoPlanets__item
           {{#if eq this._id activeColonyId}}
             active
           {{else}}
@@ -399,41 +409,64 @@
               home
             {{/if}}
           {{/if}}
-          {{#if this.isBack}}back{{/if}}
-          "
+          {{#if this.isBack}}
+            cw--FleetInfoPlanets__item_back
+          {{/if}}
+        "
       >
-        <h2>{{this.name}}</h2>
-
-        <div class="start">
-          {{#if this.start}}
-            {{> cosmos_planet_item planet=this.start}}
-          {{else}}
-            <a class="map-fleet-rept"></a>
-          {{/if}}
-        </div>
-
-        <a href="{{pathFor 'cosmos' hash=this.id}}"  class="way {{../owner}}">
-          <time>{{formatSeconds (getTimeLeft this.timeEnd)}}</time>
-          <div class="fleet_marker" style="
-            {{#if this.isBack}}right{{else}}left{{/if}}: {{percentOfWay this.timeStart this.timeEnd}}%;"
-            data-tooltip="true"
-            data-tooltip-direction="e"
+        <h2 class="cw--FleetInfoPlanets__itemHead">
+          {{this.name}}
+        </h2>
+        <div class="cw--FleetInfoPlanets__path">
+          <div
+            class="
+              cw--FleetInfoPlanets__planet
+              cw--FleetInfoPlanets__planet_start
+            "
           >
-            &gt;
+            {{#if this.start}}
+              {{> cosmos_planet_item planet=this.start}}
+            {{else}}
+              <a class="cw--FleetInfoPlanets__fleetReptiles"></a>
+            {{/if}}
           </div>
-        </a>
 
-        <div class="end">
-          {{#if this.finish}}
-            {{> cosmos_planet_item planet=this.finish}}
-          {{else}}
-            <a class="map-fleet-rept"
-              href="{{pathFor 'cosmos' hash=this.spaceEvent.info.targetId}}" 
-              data-tooltip="true"
+          <a href="{{pathFor 'cosmos' hash=this.id}}"
+            class="
+              cw--FleetInfoPlanets__way
+              cw--FleetInfoPlanets__way_{{../owner}}
+            "
+          >
+            <time class="cw--FleetInfoPlanets__wayTime">
+              {{formatSeconds (getTimeLeft this.timeEnd)}}
+            </time>
+            <div
+              class="
+                cw--FleetInfoPlanets__marker
+                cw--FleetInfoPlanets__marker_{{../owner}}
+              "
+              style="
+              {{#if this.isBack}}right{{else}}left{{/if}}: {{percentOfWay this.timeStart this.timeEnd}}%;"
               data-tooltip-direction="e"
-            >
-            </a>
-          {{/if}}
+            ></div>
+          </a>
+
+          <div
+            class="
+              cw--FleetInfoPlanets__planet
+              cw--FleetInfoPlanets__planet_end
+            "
+          >
+            {{#if this.finish}}
+              {{> cosmos_planet_item planet=this.finish}}
+            {{else}}
+              <a class="cw--FleetInfoPlanets__fleetReptiles"
+                href="{{pathFor 'cosmos' hash=this.spaceEvent.info.targetId}}" 
+                data-tooltip-direction="e"
+              >
+              </a>
+            {{/if}}
+          </div>
         </div>
       </li>
     {{/each}}
@@ -441,26 +474,25 @@
 </template>
 
 <template name="cosmosFleetsInfo">
-  {{#if userFleets}}
-    {{> cosmosFleetsInfo_table fleets=userFleets owner='humans'}}
-  {{/if}}
-  {{#if reptileFleets}}
-    {{> cosmosFleetsInfo_table fleets=reptileFleets owner='reptiles'}}
-  {{/if}}
-  {{#if battles}}
-    {{#each battles}}
-      <div>
-        <a href="{{pathFor 'cosmos' hash=this.id}}">
-          <img src="/img/game/battle/battleIcon.svg" width="30" height="30">
-        </a>
-        Сражение<br/>
-        Раунд {{round}}
-      </div>
-    {{/each}}
-  {{/if}}
-  {{#if and (and (not userFleets) (not reptileFleets)) (not battles)}}
-    <h2>Нет передвижений флота</h2>
-  {{/if}}
+  <div class="cw--FleetInfoTable">
+    {{#if userFleets}}
+      {{> cosmosFleetsInfo_table fleets=userFleets owner='humans'}}
+    {{/if}}
+    {{#if reptileFleets}}
+      {{> cosmosFleetsInfo_table fleets=reptileFleets owner='reptiles'}}
+    {{/if}}
+    {{#if battles}}
+      {{#each battles}}
+        <div>
+          <a href="{{pathFor 'cosmos' hash=this.id}}">
+            <img src="/img/game/battle/battleIcon.svg" width="30" height="30">
+          </a>
+          Сражение<br/>
+          Раунд {{round}}
+        </div>
+      {{/each}}
+    {{/if}}
+  </div>
 </template>
 
 <template name="cosmosShipInfo">
@@ -532,8 +564,10 @@
                   <img src="/img/game/damage.png" class="attack" data-tooltip="Нападение" data-tooltip-direction="s"/> 
                 {{/if}}
                 
-                {{#if this.planet}}
-                  {{> cosmos_planet_item planet=this.planet}}
+                {{#if this.planetId}}
+                  {{#let battlePlanet=getBattlePlanet}}
+                    {{> cosmos_planet_item isDisabled=battlePlanet.isDisabled location=battlePlanet.location planet=battlePlanet}}
+                  {{/let}}
                 {{else}}
                   Космос
                 {{/if}}

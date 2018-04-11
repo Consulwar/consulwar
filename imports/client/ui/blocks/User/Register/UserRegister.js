@@ -9,7 +9,6 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import UserLogin from '/imports/client/ui/blocks/User/Login/UserLogin';
 import License from '/imports/client/ui/blocks/License/License';
-import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import '/imports/client/ui/Input/String/InputString';
 import '/imports/client/ui/Input/Email/InputEmail';
 import '/imports/client/ui/Input/Password/InputPassword';
@@ -176,6 +175,16 @@ class UserRegister extends BlazeComponent {
       options.captcha = window.grecaptcha.getResponse() || '';
       window.grecaptcha.reset();
     }
+
+    const uuid = window.localStorage.getItem('ref_uuid');
+    if (uuid) {
+      options.uuid = uuid;
+    }
+    const from = window.localStorage.getItem('ref_from');
+    if (from) {
+      options.from = from;
+    }
+
     Accounts.createUser(options, (err) => {
       if (err) {
         Notifications.error(
@@ -184,7 +193,6 @@ class UserRegister extends BlazeComponent {
         );
       } else {
         Router.go('game');
-        SoundManager.login();
         this.removeComponent();
       }
     });

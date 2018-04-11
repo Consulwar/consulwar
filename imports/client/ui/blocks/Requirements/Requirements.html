@@ -18,19 +18,21 @@
           >
             {{requirement.title}}
           </div>
-          <div class="cw--Requirements__levelHas">
-            Требование: {{requirement.needLevel}} уровень
-          </div>
           <div class="cw--Requirements__levelNeed">
-            Имеется:
-              <span
-                class="
-                  cw--Requirements__currentLevel
+            Требование: 
+              <span class="
+                  cw--Requirements__levelOk
                   {{#if gt requirement.needLevel requirement.currentLevel}}
-                    cw--Requirements__currentLevel_need
+                    cw--Requirements__levelNeedMore
                   {{/if}}
                 "
               >
+                {{requirement.needLevel}} уровень
+              </span>
+          </div>
+          <div class="cw--Requirements__levelHas">
+            Имеется:
+              <span class="cw--Requirements__currentLevel">
                 {{requirement.currentLevel}} уровень
               </span>
           </div>

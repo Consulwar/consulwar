@@ -4,6 +4,9 @@ import { $ } from 'meteor/jquery';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/Index/PageIndex';
 
+import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
+
+
 initRouterClient = function() {
 'use strict';
 
@@ -181,6 +184,7 @@ Router.route('/game/chat/alliance/:room', {
 Router.route('/game', {
   name: 'game',
   action: function() {
+    SoundManager.login();
     Router.go('building', {group: 'Residential'});
   }
 });

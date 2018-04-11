@@ -9,7 +9,6 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
 import UserLogin from '/imports/client/ui/blocks/User/Login/UserLogin';
 import License from '/imports/client/ui/blocks/License/License';
-import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import '/imports/client/ui/Input/String/InputString';
 import '/imports/client/ui/Input/Email/InputEmail';
 import '/imports/client/ui/Input/Password/InputPassword';
@@ -184,7 +183,6 @@ class UserRegister extends BlazeComponent {
         );
       } else {
         Router.go('game');
-        SoundManager.login();
         this.removeComponent();
       }
     });

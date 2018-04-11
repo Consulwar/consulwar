@@ -40,9 +40,21 @@
           href={{resource.obj.url}}
         >
           {{#if isShowDiff}}
-            {{formatNumberWithISO
-              (availableResources resource.obj.engName resource.value) 4
-            }}
+            {{#if gt resource.value (availableResources resource.obj.engName resource.value)}}
+              <div class="cw--ResourcePrice__itemNeed"></div>
+            {{/if}}
+            <span
+              class="
+                cw--ResourcesPrice__userResources
+                {{#if gt resource.value (availableResources resource.obj.engName resource.value)}}
+                  cw--color_white
+                {{/if}}
+              "
+            >
+              {{formatNumberWithISO
+                (availableResources resource.obj.engName resource.value) 4
+              }}
+            </span>
             / 
           {{/if}}
           {{formatNumberWithISO resource.value 4}}

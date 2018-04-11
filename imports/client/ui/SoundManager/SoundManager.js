@@ -47,7 +47,7 @@ const SoundManager = {
     player[action].stop().play();
   },
   welcome() {
-    player.welcome.fadeTo(15, 5000);
+    player.welcome.fadeTo(15, 3000);
   },
   login() {
     player.welcome.fadeTo(0, 1000, () => {

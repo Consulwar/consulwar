@@ -41,6 +41,9 @@
       
       a.planet
         height 76px
+        &.disabled
+          -webkit-filter grayscale(1) brightness(0.5)
+          filter grayscale(1) brightness(0.5)
       
       tr:not(.header)
         text-align left

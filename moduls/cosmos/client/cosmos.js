@@ -252,7 +252,22 @@ Template.cosmosHistory.helpers({
   countTotal: function() { return Game.Statistic.getUserValue('battle.total'); },
   countPerPage: function() { return historyCountPerPage; },
   battle: function() { return historyBattle.get(); },
-  battles: function() { return historyBattles.list(); }
+  battles: function() { return historyBattles.list(); },
+
+  getBattlePlanet: function() {
+    let planet = Game.Planets.getOne(this.planetId);
+    if (!planet) {
+      planet = {
+        isEmpty: true,
+        isDisabled: true,
+        name: 'скрытая',
+        location: 'галактика',
+        size: Game.Random.interval(2, 5),
+        type: _.sample(_.toArray(Game.Planets.types)).engName,
+      };
+    }
+    return planet;
+  }
 });
 
 Template.cosmosHistory.events({
@@ -301,8 +316,8 @@ var getArmyInfo = function(units, rest) {
 const getBattleInfo = function(battle) {
   const user = Meteor.user();
   const result = {};
-  // Распарсить место
-  // planet
+  // парсить планету будем при отображении
+  result.planetId = battle.options.planetId;
 
   // Время
   result.timestamp = Math.floor(battle.timeStart.valueOf() / 1000);

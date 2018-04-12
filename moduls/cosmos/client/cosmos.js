@@ -22,6 +22,8 @@ import unitItems from '/imports/content/Unit/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
 
+import UnitPopup from '/imports/client/ui/blocks/Unit/Popup/UnitPopup';
+
 import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
@@ -903,6 +905,24 @@ Template.cosmosPlanetPopup.events({
     });
   }
 });
+
+
+Template.cosmosUnitsBlock.helpers({
+  showUnit(event, unit) {
+    if (unit.type === 'reptileUnit') {
+      event.preventDefault();
+      Game.Popup.show({
+        template: (new UnitPopup({
+          hash: {
+            unit,
+          },
+        })).renderComponent(),
+        hideClose: true,
+      });
+    }
+  }
+});
+
 
 // ----------------------------------------------------------------------------
 // Planets popup

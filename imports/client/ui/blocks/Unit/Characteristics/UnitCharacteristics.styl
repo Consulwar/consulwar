@@ -1,7 +1,7 @@
 @import '{}/imports/client/ui/colors'
 @import '{}/imports/client/ui/config'
 
-.cw--UnitCharacterisctics
+.cw--UnitCharacteristics
   display block
   min-width 300px
 
@@ -57,16 +57,29 @@
 
   &__targets
     display flex
+
   &__target
     display block
     height 60px
     flex-basis @height
     margin-right 10px
+    box-sizing border-box
+
+    cursor pointer
     background-size @height
     border solid 1px transparent
     background-repeat no-repeat
     background-position center
-    box-sizing border-box
+
     &:hover
-      border solid 1px #D65F52
-      border-image linear-gradient(0deg, #A3473C, #D65F52) 1
+      border solid 1px $cw--color_metal
+      border-image $cw--gradient_metal 1
+
+    &_reptile:hover
+      border solid 1px $cw--color_honor
+      border-image $cw--gradient_honor 1
+
+  &__opponents
+    padding 12px 0 6px 0
+    margin-top 12px
+    border-top solid 1px $cw--color_grey

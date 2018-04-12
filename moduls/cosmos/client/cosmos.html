@@ -152,7 +152,8 @@
     {{else}}
       <div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
         {{#each units}}
-          <a 
+          <a
+            onClick={{showUnit this.unit}}
             class="{{#unless this.count}}disabled{{/unless}}"
             style="background-image: url({{this.unit.icon}});"
             href="{{this.unit.url}}"

@@ -1,4 +1,5 @@
 import Group from './group';
+import { isBattle1x1 } from '../lib/imports/battle.js';
 
 let performRound = function(battle, damageReduction = 0) {
   if (damageReduction < 0) {
@@ -97,15 +98,6 @@ let recalculateCurrentCounts = function(battle) {
   const leftByUsername = {};
   let decrement = {};
 
-  const isBattle1x1 = !(_(battle.initialUnits)
-    .values()
-    .some(side => _(side).keys().length > 1 || (
-      _(side)
-        .values()
-        .some(player => player.length > 1)
-    ))
-  );
-
   battle.everyCurrentUnit(({ unit, sideName, username, groupNum, id }) => {
     if (unit.count === 0) {
       return;
@@ -121,7 +113,7 @@ let recalculateCurrentCounts = function(battle) {
 
     let left;
 
-    if (isBattle1x1) {
+    if (isBattle1x1(battle)) {
       left = Math.ceil(floatCurrentAlive);
     } else {
       left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);

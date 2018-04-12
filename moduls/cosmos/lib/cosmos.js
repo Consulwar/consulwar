@@ -84,17 +84,11 @@ Game.Planets = {
     });
   },
 
-  _getBaseCache: {},
   getBase: function (userId = Meteor.userId()) {
-    let result = this._getBaseCache[userId];
-    if (!result) {
-      result = Game.Planets.Collection.findOne({
-        userId,
-        isHome: true,
-      });
-      this._getBaseCache[userId] = result;
-    }
-    return result;
+    return Game.Planets.Collection.findOne({
+      userId,
+      isHome: true,
+    });
   },
 
   getColonies: function (options = {}) {

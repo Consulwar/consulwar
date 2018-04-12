@@ -26,10 +26,6 @@ Game.Resources.showArtefactsPage = function() {
   });
 };
 
-const calculatePlanetDistance = function(planet) {
-  const basePlanet = Game.Planets.getBase();
-  planet.distance = Game.Planets.calcDistance(planet, basePlanet);
-}
 const fillPlanetChance = function(artefactId, planet) {
   planet.chance = planet.artefacts[artefactId];
 }
@@ -47,9 +43,10 @@ Template.item_artefact.helpers({
 
   topPlanets: function(limit = 4) {
     const planets = Game.Planets.getByArtefact(this.item.engName);
+    const basePlanet = Game.Planets.getBase();
     planets.forEach(planet => {
       fillPlanetChance(this.item.engName, planet);
-      calculatePlanetDistance(planet);
+      planet.distance = Game.Planets.calcDistance(planet, basePlanet);
     });
     return (_(planets).sortBy(planet => planet.chance)
       .reverse()
@@ -59,9 +56,10 @@ Template.item_artefact.helpers({
 
   nearestPlanets: function(limit = 4) {
     const planets = Game.Planets.getByArtefact(this.item.engName);
+    const basePlanet = Game.Planets.getBase();
     planets.forEach(planet => {
       fillPlanetChance(this.item.engName, planet);
-      calculatePlanetDistance(planet);
+      planet.distance = Game.Planets.calcDistance(planet, basePlanet);
     });
     return _(planets).sortBy(planet => planet.distance).splice(0, limit);
   },

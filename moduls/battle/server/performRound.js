@@ -1,5 +1,5 @@
 import Group from './group';
-import { isBattle1x1 } from '../lib/imports/battle.js';
+import Battle from '../lib/imports/battle.js';
 
 let performRound = function(battle, damageReduction = 0) {
   if (damageReduction < 0) {
@@ -113,7 +113,7 @@ let recalculateCurrentCounts = function(battle) {
 
     let left;
 
-    if (isBattle1x1(battle)) {
+    if (Battle.isBattle1x1(battle)) {
       left = Math.ceil(floatCurrentAlive);
     } else {
       left = Math.floor(floatCurrentAlive) + Game.Random.chance((floatCurrentAlive % 1) * 100);

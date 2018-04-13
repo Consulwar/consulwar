@@ -79,6 +79,7 @@ let planetsLayer = null;
 let pathsLayer = null;
 let shipsLayer = null;
 let galaxyByUsername = {};
+let galaxyByHex = {};
 const showedHexes = [];
 const usernameTooltips = [];
 let myAllies = [];
@@ -420,11 +421,14 @@ const scrollMapToPlanet = function(id) {
 const scrollMapToBattle = function(id) {
   const battleEvent = BattleEvents.findByBattleId(id);
   if (battleEvent) {
-    const offset = galaxyByUsername[battleEvent.data.username].offset;
-    mapView.setView([
-      offset.x + battleEvent.data.targetPosition.x,
-      offset.y + battleEvent.data.targetPosition.y,
-    ], 7);
+    const hex = battleEvent.data.targetHex;
+    const offset = ((galaxyByHex[hex.x] || {})[hex.z] || {}).offset;
+    if (offset) {
+      mapView.setView([
+        offset.x + battleEvent.data.targetPosition.x,
+        offset.y + battleEvent.data.targetPosition.y,
+      ], 7);
+    }
   }
 };
 
@@ -2014,6 +2018,8 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
   });
 
   galaxyByUsername[username] = galaxy;
+  const column = galaxyByHex[hex.x] = galaxyByHex[hex.x] || {};
+  column[hex.z] = galaxy;
 
   return galaxy;
 };

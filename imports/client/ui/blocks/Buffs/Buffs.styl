@@ -1,0 +1,81 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--Buffs
+  position absolute
+  top 50%
+  transform translateY(-50%)
+
+  display block
+  width 300px
+
+  background linear-gradient(90deg, $cw--color_black, alpha($cw--color_black, 0))
+
+  &__item
+    display flex
+    padding 6px 16px
+
+    cursor default
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_s
+    color $cw--color_human
+
+    &_metal
+      color $cw--color_metal
+
+    &_crystals
+      color $cw--color_crystal
+
+    &_honor
+    &_damage
+      color $cw--color_honor
+
+    &_life
+      color $cw--color_white
+    
+  &__icon
+    display block
+    width 35px
+    height @width
+    flex-shrink 0
+
+    background-image url(/img/game/buff.svg)
+    background-position center
+    background-repeat no-repeat
+    background-size 100%
+
+    &_crystals
+      background-image url(/img/game/Resource/Base/Crystal/icon.svg)
+
+    &_metals
+      background-image url(/img/game/Resource/Base/Metal/icon.svg)
+
+    &_honor
+      background-image url(/img/game/Resource/Base/Honor/icon.svg)
+
+    &_damage
+      background-image url(/img/game/Unit/damage.svg)
+    
+    &_life
+      background-image url(/img/game/Unit/armor.svg)
+
+    &_humans
+      background-image url(/img/game/Resource/Base/Human/icon.svg)
+
+    &_time
+      background-image url(/img/game/status_queueBusy.svg)
+    
+
+
+  &__text
+    display flex
+    flex-direction column
+    justify-content center
+    padding 0px 6px
+    font-weight bold
+    color inherit
+
+  &__timer
+    display block
+    font-weight normal
+    color $cw--color_white

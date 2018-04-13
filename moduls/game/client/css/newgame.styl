@@ -1295,41 +1295,57 @@ body.game
   &_active
     width 320px
     overflow visible
+    +media(null, $cw--size_l)
+      width 280px
+    +media($cw--size_l, $cw--size_xxxl)
+      width 300px
     +media($cw--size_xxxl)
       width 320px
-    +media(null, $cw--size_xxxl)
-      width 280px
 
   &_attack:not(&_active)
     width 82px
+
+    +media(null, $cw--size_l)
+      width 70px
 
   &__header
     display flex
     flex-direction row
     flex-shrink 0
+    align-items center
     height 82px
     padding 3px
     box-sizing border-box
     overflow hidden
     background-color #131313
     cw--fontFamily_cond()
-    font-size $cw--fontSize_m
+    font-size 15px
     font-weight bold
 
     +media(null, $cw--size_l)
       order 3
+      height 70px
+      font-size $cw--fontSize_s
+
+  &_active &__header
+    height auto
+    min-height 82px
+    
+    +media(null, $cw--size_l)
+      min-height 70px
 
   &__status
     display block
     text-decoration none
 
   &__time
+    white-space nowrap
     font-weight normal
     color $cw--color_white
 
   &__headerText
     display flex
-    padding 10px 15px 10px 10px
+    padding 0 5px 0 10px
     flex-grow 1
     flex-direction column
     justify-content center
@@ -1342,12 +1358,20 @@ body.game
     display flex
     height 76px
     width 76px
+    margin auto
+    flex-shrink 0
     box-sizing border-box
     justify-content center
     align-items flex-end
 
     text-decoration none
     font-size $cw--fontSize_s
+
+    +media(null, $cw--size_l)
+      width 60px
+      height 60px
+      font-size $cw--fontSize_xs
+      background-size 40%
 
     &_reptile
       background-image url(/img/game/fleet_reptiles.svg)
@@ -1371,6 +1395,7 @@ body.game
     +media(null, $cw--size_l)
       top initial
       bottom 0
+      height 70px
 
     &:before
       content ''

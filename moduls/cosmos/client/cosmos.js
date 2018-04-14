@@ -1994,6 +1994,11 @@ const showSpaceEvent = function(id, event, offset, user) {
   }
 };
 
+const indexGalaxyHex = function(galaxy, hex) {
+  const column = galaxyByHex[hex.x] = galaxyByHex[hex.x] || {};
+  column[hex.z] = galaxy;
+}
+
 const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 }, hex }) {
   let subscription = null;
   if (Meteor.user().username !== username) {
@@ -2018,8 +2023,9 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
   });
 
   galaxyByUsername[username] = galaxy;
-  const column = galaxyByHex[hex.x] = galaxyByHex[hex.x] || {};
-  column[hex.z] = galaxy;
+  if (hex) {
+    indexGalaxyHex(galaxy, hex);
+  }
 
   return galaxy;
 };
@@ -2382,6 +2388,7 @@ Template.cosmos.events({
         const galaxy = galaxyByUsername[user.username];
         const userHex = _(hexes).find(hex => hex.username === user.username);
         const center = new Hex(userHex).center();
+        indexGalaxyHex(galaxy, userHex);
 
         galaxy.reRender(center);
 

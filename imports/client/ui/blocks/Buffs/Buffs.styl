@@ -1,5 +1,6 @@
 @import '{}/imports/client/ui/colors'
 @import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
 
 .cw--Buffs
   position absolute
@@ -10,6 +11,9 @@
   width 300px
 
   background linear-gradient(90deg, $cw--color_black, alpha($cw--color_black, 0))
+
+  +media(null, $cw--size_l)
+    display none
 
   &__item
     display flex

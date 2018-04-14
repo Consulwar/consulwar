@@ -401,6 +401,8 @@ const getBattleInfo = function(battle) {
       [result.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : result.lostUnitsPrice.crystals || ' ',
     };
   }
+  
+  result.isBattle1x1 = Battle.isBattle1x1(battle);
 
   return result;
 };

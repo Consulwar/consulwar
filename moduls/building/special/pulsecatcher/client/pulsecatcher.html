@@ -2,12 +2,16 @@
   <div class="pulsecatcher-menu">
     {{> pulsecatcherGetBonus choosenBonus=choosenBonus}}
     {{> pulsecatcherVote bonusList=bonusList}}
-
-    <div class="previousBonus">
-      Предыдущий бонус:
-      {{> item_effect item=previousBonusCard}}
-    </div>
-
+    {{#if previousBonusCard.effects}}
+      <div class="previousBonus">
+        Предыдущий бонус:
+        {{> EffectList args
+          effects=previousBonusCard.effects
+          hideAdditional=true
+          additionalClass="cw--color_metal"
+        }}
+      </div>
+    {{/if}}
     <a href="{{building.url}}" class="back back_action">
       Назад
     </a>
@@ -17,10 +21,16 @@
 <template name="pulsecatcherGetBonus">
   <div class="pulsecatcherGetBonus">
     <img class="activeBonus" src="/img/game/pulsecatcher/{{choosenBonus.card.engName}}.jpg"/>
+    {{#if choosenBonus.card.effects}}
     <div class="todayBonus">
       Бонус на сегодня:
-      {{> item_effect item=choosenBonus.card}}
+      {{> EffectList args
+        effects=choosenBonus.card.effects
+        hideAdditional=true
+        additionalClass="cw--color_metal"
+      }}
     </div>
+    {{/if}}
     <button class="activate additional_action" disabled="{{#unless choosenBonus.canActivate}}disabled{{/unless}}">
       {{#if choosenBonus.canActivate}}
         Получить бонус

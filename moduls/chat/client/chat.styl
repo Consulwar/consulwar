@@ -1,3 +1,6 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
 .content.chat:not(.mail):not(.mailAdmin)
   height 100%  
   flex-shrink 1
@@ -51,7 +54,7 @@
   .channelList
     justify-content flex-start
     flex-shrink 1
-    
+
     ul
       font-size 30px
       width 100%
@@ -142,6 +145,10 @@
         
           &:hover
             background-image url(/img/game/cosmomap/button_close_active.png)
+
+  &.wide .channels
+    +media($cw--size_l)
+      padding-top 80px
 
   .channels
     position relative

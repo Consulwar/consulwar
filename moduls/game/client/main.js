@@ -13,6 +13,8 @@ import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/Resource
 import Arrow from '/imports/client/ui/Arrow/Arrow';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 
+import '/imports/client/ui/blocks/Buffs/Buffs';
+
 Blaze._allowJavascriptUrls();
 
 buzz.defaults.preload = 'none';

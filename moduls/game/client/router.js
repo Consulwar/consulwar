@@ -108,10 +108,6 @@ var gameRoutes = {
     unit: 'army/:group(Space|Defense|Ground)/:subgroup(Infantry|Enginery|Air)?/:item?',
   },
 
-  info: {
-    reptileUnit: 'info/:group(Space|Ground)/:subgroup(Infantry|Enginery|Air)?/:item?',
-  },
-
   research: {
     research: 'research/:group(Evolution|Fleet)/:item?'
   },
@@ -158,7 +154,6 @@ var gameActions = {
   mailAdmin: Game.Mail.showAdminPage,
 
   unit: Game.Unit.showPage,
-  reptileUnit: Game.Unit.showReptilePage,
 
   mutual: Game.Mutual.showPage,
   earth: Game.Earth.showMap,

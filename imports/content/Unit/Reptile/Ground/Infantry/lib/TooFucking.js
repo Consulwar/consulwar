@@ -20,4 +20,9 @@ export default {
     'Unit/Human/Ground/Infantry/Psiman',
     'Unit/Human/Ground/Infantry/Horizontalbarman',
   ],
+  opponents: [
+    'Unit/Human/Ground/Infantry/Lost',
+    'Unit/Human/Ground/Enginery/HBHR',
+    'Unit/Human/Ground/Air/Xynlet',
+  ],
 };

@@ -20,4 +20,9 @@ export default {
     'Unit/Human/Ground/Enginery/Agmogedcar',
     'Unit/Human/Ground/Air/Grandmother',
   ],
+  opponents: [
+    'Unit/Human/Ground/Infantry/Lost',
+    'Unit/Human/Ground/Enginery/HBHR',
+    'Unit/Human/Ground/Air/Xynlet',
+  ],
 };

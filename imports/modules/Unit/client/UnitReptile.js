@@ -1,4 +1,3 @@
-import { Router } from 'meteor/iron:router';
 import { _ } from 'meteor/underscore';
 import UnitReptileAbstract from '../lib/UnitReptileAbstract';
 
@@ -13,18 +12,6 @@ class UnitReptile extends UnitReptileAbstract {
     this.icon = `${this.path}icon.png`;
     this.card = `${this.path}card.jpg`;
     this.overlayOwn = this.card;
-  }
-
-  url({
-    group,
-    subgroup,
-    item,
-  } = { group: this.group, subgroup: this.subgroup, item: this.engName }) {
-    return Router.routes.reptileUnit.path({
-      group,
-      subgroup,
-      item,
-    });
   }
 
   getOverlayImage(currentLevel = this.getCurrentLevel()) {

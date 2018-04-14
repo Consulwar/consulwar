@@ -21,4 +21,9 @@ export default {
     'Unit/Human/Space/Wasp',
     'Unit/Human/Space/Mirage',
   ],
+  opponents: [
+    'Unit/Human/Space/Frigate',
+    'Unit/Human/Space/Carrier',
+    'Unit/Human/Space/Dreadnought',
+  ],
 };

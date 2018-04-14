@@ -17,11 +17,13 @@ class UnitAbstract extends AbstractCountableItem {
     power,
     characteristics,
     targets = [],
+    opponents = [],
     ...options
   }) {
     super({ id, ...options });
 
     this.targets = targets;
+    this.opponents = opponents;
 
     if (power) {
       this.power = power;
@@ -60,6 +62,10 @@ class UnitAbstract extends AbstractCountableItem {
 
   getTargets() {
     return this.targets.map(id => this.constructor.getObject({ id }));
+  }
+
+  getOpponents() {
+    return this.opponents.map(id => this.constructor.getObject({ id }));
   }
 
   has({ count = 1, ...options } = {}) {

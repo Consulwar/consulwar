@@ -1,6 +1,8 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { $ } from 'meteor/jquery';
 import { militaryTooltip } from '/moduls/game/client/helper';
+import Game from '/moduls/game/lib/main.game';
+import UnitPopup from '/imports/client/ui/blocks/Unit/Popup/UnitPopup';
 import './UnitCharacteristics.html';
 import './UnitCharacteristics.styl';
 
@@ -69,6 +71,23 @@ class UnitCharacteristics extends BlazeComponent {
     }
     const chars = charsList.split('.');
     return this.unitChars[chars[0]][chars[1]];
+  }
+
+  showUnit(event, unit) {
+    if (this.parentComponent().template() === 'UnitPopup') {
+      this.parentComponent().removeComponent();
+    }
+    if (unit.type === 'reptileUnit') {
+      event.preventDefault();
+      Game.Popup.show({
+        template: (new UnitPopup({
+          hash: {
+            unit,
+          },
+        })).renderComponent(),
+        hideClose: true,
+      });
+    }
   }
 }
 

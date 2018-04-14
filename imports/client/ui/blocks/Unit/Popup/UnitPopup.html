@@ -1,0 +1,52 @@
+<template name="UnitPopup">
+  <div class="cw--UnitPopup">
+    <div
+      class="cw--UnitPopup__card"
+      style="background-image:url({{unit.card}})"
+    >
+      
+    </div>
+
+    <div class="cw--UnitPopup__content">
+      <div class="cw--UnitPopup__header">
+        <div class="cw--UnitPopup__title">
+          {{unit.title}}
+        </div>
+        <div class="cw--UnitPopup__headerControls">
+          <span
+            onClick={{toggleDescription}}
+            class="
+              cw--UnitPopup__headerIcon
+              cw--UnitPopup__buttonDescription
+              cw--button
+              {{#if options.hideDescription}}cw--button_notActive{{/if}}
+            "
+          ></span>
+          <a
+            onClick={{closeWindow}}
+            class="
+              cw--UnitPopup__headerIcon
+              cw--button_close
+            "
+          ></a>
+        </div>
+      </div>
+      <div
+        class="
+          cw--UnitPopup__info
+          {{#if options.hideDescription}}cw--UnitPopup__info_hidden{{/if}}
+        "
+      >
+        <div class="cw--UnitPopup__infoWrap">
+          <div class="cw--UnitPopup__description scrollbar-inner">
+            {{unit.description}}
+          </div>
+        </div>
+      </div>
+      <div class="cw--UnitPopup__chars">
+        {{> UnitCharacteristics args unit=unit}}
+      </div>
+    </div>
+
+  </div>
+</template>

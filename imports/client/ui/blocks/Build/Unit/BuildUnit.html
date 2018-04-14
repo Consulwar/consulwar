@@ -65,94 +65,92 @@
       <div class="cw--BuildUnit__panel">
         {{> UnitCharacteristics args unit=unit}}
 
-        {{#unless eq unit.type 'reptileUnit'}}
-          <div class="cw--BuildUnit__price">
-            <div class="cw--BuildUnit__priceHead">
-              Стоимость:
-            </div>
-            {{> ResourcePrice args
-              price=(unit.getPrice count.get)
-              className='cw--BuildUnit__resources'
-            }}
+        <div class="cw--BuildUnit__price">
+          <div class="cw--BuildUnit__priceHead">
+            Стоимость:
           </div>
-          <div class="cw--BuildUnit__actions">
+          {{> ResourcePrice args
+            price=(unit.getPrice count.get)
+            className='cw--BuildUnit__resources'
+          }}
+        </div>
+        <div class="cw--BuildUnit__actions">
 
-            <div class="cw--BuildUnit__action">
-              {{#if unit.getQueue}}
-                <div class="cw--BuildUnit__actionStatus">
-                  Идёт строительство
-                </div>
-                <button
-                  class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_green
-                  "
-                  onClick={{showSpeedUp}}
-                  disabled={{lt timeLeft.get 5}}
-                  data-sound="click"
-                >
-                  {{#if lt timeLeft.get 5}}
-                    {{formatSeconds timeLeft.get}}
-                  {{else}}
-                    Ускорить 
-                  {{/if}}
-                </button>
-              {{else}}
-                <div class="cw--BuildUnit__actionAmount">
-                  <button 
-                    class="
-                      cw--button
-                      cw--BuildUnit__actionSetMax
-                    "
-                    data-tooltip="Ввести максимум"
-                    data-tooltip-direction="s"
-                    onClick={{setMaximum}}
-                    data-sound="click"
-                  ></button>
-                  {{> InputNumber args
-                    value=count
-                    max=unit.maxCount
-                    placeholder="Количество"
-                    class="cw--BuildUnit__actionAmountCount"
-                  }}
-                </div>
-                <button
-                  class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_orange
-                  "
-                  onClick={{build}}
-                  disabled={{not unit.canBuild}}
-                >
-                  Построить
-                </button>
-              {{/if}}
-            </div>
-
-            {{#unless eq unit.group 'Ground'}}
-              <div class="cw--BuildUnit__action">
-                {{#if unit.maxCount}}
-                  <div class="cw--BuildUnit__actionCount">
-                    Всего юнитов {{formatNumber unit.getTotalCount}}
-                    из {{formatNumber unit.maxCount}}
-                  </div>
-                {{/if}}
-                <button
-                  class="
-                    cw--button
-                    cw--button_type_primary
-                    cw--button_type_primary_blue
-                  "
-                  onClick={{repair}}
-                >
-                  Ремонтировать
-                </button>
+          <div class="cw--BuildUnit__action">
+            {{#if unit.getQueue}}
+              <div class="cw--BuildUnit__actionStatus">
+                Идёт строительство
               </div>
-            {{/unless}}
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_green
+                "
+                onClick={{showSpeedUp}}
+                disabled={{lt timeLeft.get 5}}
+                data-sound="click"
+              >
+                {{#if lt timeLeft.get 5}}
+                  {{formatSeconds timeLeft.get}}
+                {{else}}
+                  Ускорить 
+                {{/if}}
+              </button>
+            {{else}}
+              <div class="cw--BuildUnit__actionAmount">
+                <button 
+                  class="
+                    cw--button
+                    cw--BuildUnit__actionSetMax
+                  "
+                  data-tooltip="Ввести максимум"
+                  data-tooltip-direction="s"
+                  onClick={{setMaximum}}
+                  data-sound="click"
+                ></button>
+                {{> InputNumber args
+                  value=count
+                  max=unit.maxCount
+                  placeholder="Количество"
+                  class="cw--BuildUnit__actionAmountCount"
+                }}
+              </div>
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                onClick={{build}}
+                disabled={{not unit.canBuild}}
+              >
+                Построить
+              </button>
+            {{/if}}
           </div>
-        {{/unless}}
+
+          {{#unless eq unit.group 'Ground'}}
+            <div class="cw--BuildUnit__action">
+              {{#if unit.maxCount}}
+                <div class="cw--BuildUnit__actionCount">
+                  Всего юнитов {{formatNumber unit.getTotalCount}}
+                  из {{formatNumber unit.maxCount}}
+                </div>
+              {{/if}}
+              <button
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                "
+                onClick={{repair}}
+              >
+                Ремонтировать
+              </button>
+            </div>
+          {{/unless}}
+        </div>
       </div>
       {{> Requirements args
         requirements=unit.getRequirements

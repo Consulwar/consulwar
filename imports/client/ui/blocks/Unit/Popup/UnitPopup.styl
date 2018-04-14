@@ -1,0 +1,98 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/responsive'
+
+.cw--UnitPopup
+  display flex
+  flex-direction row
+  width 800px
+  max-width 100%
+  height 428px
+
+  font-size $cw--fontSize_m
+
+  &__card
+    flex-basis 350px
+    flex-shrink 0
+    background-repeat no-repeat
+    background-position center
+    background-size cover
+
+  &__content
+    display flex
+    flex-direction column
+    flex-basis 450px
+
+  &__header
+    display flex
+    flex-grow 0
+    flex-basis 33px
+    justify-content space-between
+    align-items center
+    padding-left 14px
+
+    cw--fontFamily_cond()
+    font-weight bold
+    font-size $cw--fontSize_l
+    background-color $cw--color_black
+  
+  &__headerTitle
+    flex-basis auto
+    text-align left
+    flex-grow 1
+
+  &__headerControls
+    display flex
+    justify-content flex-end
+
+  &__headerIcon
+    margin auto 6px
+
+  &__buttonDescription
+    width 25px
+    height 25px
+    box-sizing border-box
+
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
+  &__info
+    cw--fontFamily_cond()
+    display block
+    height 100px
+    overflow hidden
+    background-color alpha($cw--color_black, .95)
+
+  &__infoWrap
+    height 100px
+    display flex
+    padding-left 14px
+
+  &__info_hidden
+    display none
+
+  &__description
+    padding-right 20px
+    height 85px
+    margin auto
+    overflow hidden
+
+    font-size $cw--fontSize_s
+    text-align justify
+    color $cw--color_description
+
+  &__chars
+    flex-grow 1
+    padding 15px
+
+    cw--fontFamily_cond()
+    background-color alpha($cw--color_black, .9)

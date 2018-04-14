@@ -202,23 +202,6 @@ var menu = {
       }
     }
   },
-  info: {
-    name: 'Рептилии',
-    routeName: ['reptileUnit'],
-    url: firstItemUrl(reptileSpaceUnits),
-    items: {
-      Space: {
-        name: 'Космический флот',
-        url: firstItemUrl(reptileSpaceUnits),
-        items: reptileSpaceUnits,
-      },
-      Ground: {
-        name: 'Армия',
-        url: firstItemUrl(reptileGroundUnits),
-        items: reptileGroundUnits,
-      },
-    },
-  },
   artefacts: {
     name: 'Артефакты',
     routeName: ['artefacts'],

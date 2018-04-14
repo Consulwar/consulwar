@@ -38,8 +38,13 @@
       <p>
         {{item.description}}
       </p>
-
-      {{> item_effect item=item}}
+      <p style="margin-top: 10px">
+        {{> EffectList args
+          effects=item.effects
+          hideAdditional=true
+          additionalClass="cw--color_metal"
+        }}
+      </p>
     </div>
     {{#if item.checkBought}}
       {{#unless item.checkPlaced}}
@@ -93,8 +98,13 @@
       {{#if item.description}}
         <p>{{{item.description}}}</p>
       {{/if}}
-
-      {{> item_effect item=item}}
+      <p style="margin-top: 10px">
+        {{> EffectList args
+          effects=item.effects
+          hideAdditional=true
+          additionalClass="cw--color_metal"
+        }}
+      </p>
 
       {{#if finishTime}}
         <p>Карточка активна! Закончится через {{formatSeconds (getTimeLeft finishTime)}}</p>

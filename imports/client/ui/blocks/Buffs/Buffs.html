@@ -1,0 +1,32 @@
+<template name="Buffs">
+  <div class="cw--Buffs">
+    {{#each bonus in getBonus}}
+      <div
+        class="
+          cw--Buffs__item
+          cw--Buffs__item_{{bonus.type}}
+        "
+        data-tooltip={{bonus.tooltip}}
+      >
+        <div
+          class="
+            cw--Buffs__icon
+            cw--Buffs__icon_{{bonus.type}}
+          "
+        ></div>
+        <div class="cw--Buffs__text">
+          {{#if bonus.effect}}
+            {{> EffectList args
+              effects=bonus.effect
+              hideAdditional=true
+              additionalClass=''
+            }}
+          {{else}}
+            {{bonus.name}}
+          {{/if}}
+          <time class="cw--Buffs__timer">{{formatSeconds bonus.time}}</time>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</template>

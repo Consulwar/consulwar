@@ -20,4 +20,9 @@ export default {
     'Unit/Human/Ground/Infantry/Father',
     'Unit/Human/Ground/Infantry/Lost',
   ],
+  opponents: [
+    'Unit/Human/Ground/Enginery/MotherTank',
+    'Unit/Human/Ground/Enginery/HBHR',
+    'Unit/Human/Ground/Air/Butterfly',
+  ],
 };

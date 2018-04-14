@@ -1,4 +1,5 @@
 import pulseCatcherBuilding from '/imports/content/Building/Residential/client/PulseCatcher';
+import '/imports/client/ui/blocks/Effect/List/EffectList';
 
 initBuildingSpecialPulsecatcherClient = function() {
 'use strict';

@@ -16,4 +16,9 @@ export default {
     },
   },
   targets: [],
+  opponents: [
+    'Unit/Human/Ground/Infantry/Lost',
+    'Unit/Human/Ground/Enginery/HBHR',
+    'Unit/Human/Ground/Air/Xynlet',
+  ],
 };

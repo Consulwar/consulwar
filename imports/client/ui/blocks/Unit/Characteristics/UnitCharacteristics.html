@@ -1,51 +1,73 @@
 <template name="UnitCharacteristics">
   {{#if unit.characteristics}}
-    <div class="cw--UnitCharacterisctics">
+    <div class="cw--UnitCharacteristics">
       {{#if addTitle}}
-        <div class="cw--UnitCharacterisctics__head">
+        <div class="cw--UnitCharacteristics__head">
           {{unit.title}}
         </div>
       {{/if}}
-        <div class="cw--UnitCharacterisctics__title">
+        <div class="cw--UnitCharacteristics__title">
           Характеристики:
         </div>
-        <div class="cw--UnitCharacterisctics__characteristics">
+        <div class="cw--UnitCharacteristics__characteristics">
           <div
-            class="cw--UnitCharacterisctics__damage"
+            class="cw--UnitCharacteristics__damage"
             onMouseOver={{showCharacteristicsTooltip 'damage'}}
           >
             {{formatNumberWithISO (getUnitChars 'weapon.damage') 3}}
           </div>
           <div
-            class="cw--UnitCharacterisctics__armor"
+            class="cw--UnitCharacteristics__armor"
             onMouseOver={{showCharacteristicsTooltip 'life'}}
           >
             {{formatNumberWithISO (getUnitChars 'health.armor') 3}}
           </div>
           <div
-            class="cw--UnitCharacterisctics__damage_signature"
+            class="cw--UnitCharacteristics__damage_signature"
             onMouseOver={{showCharacteristicsTooltip 'weapon.signature'}}
           >
             {{formatNumberWithISO (getUnitChars 'weapon.signature') 3}}
           </div>
           <div
-            class="cw--UnitCharacterisctics__armor_signature"
+            class="cw--UnitCharacteristics__armor_signature"
             onMouseOver={{showCharacteristicsTooltip 'health.signature'}}
           >
             {{formatNumberWithISO (getUnitChars 'health.signature') 3}}
           </div>
         </div>
       {{#if unit.getTargets}}
-        <div class="cw--UnitCharacterisctics__title">Приоритеты атаки:</div>
-        <div class="cw--UnitCharacterisctics__targets">
+        <div class="cw--UnitCharacteristics__title">Приоритеты атаки:</div>
+        <div class="cw--UnitCharacteristics__targets">
           {{#each target in unit.getTargets}}
             <a
-              onMouseOver={{showUnitTooltip target}}
-              class="cw--UnitCharacterisctics__target"
-              style="background-image:url({{target.icon}})"
               href="{{target.url}}"
+              onClick={{showUnit target}}
+              onMouseOver={{showUnitTooltip target}}
+              class="
+                cw--UnitCharacteristics__target
+                {{#if eq target.type 'reptileUnit'}}
+                  cw--UnitCharacteristics__target_reptile
+                {{/if}}
+              "
+              style="background-image:url({{target.icon}})"
             ></a>
           {{/each}}
+        </div>
+      {{/if}}
+      {{#if unit.getOpponents}}
+        <div class="cw--UnitCharacteristics__opponents">
+          <div class="cw--UnitCharacteristics__title">Избегает встречи:</div>
+          <div class="cw--UnitCharacteristics__targets">
+            {{#each opponent in unit.getOpponents}}
+              <a
+                href="{{opponent.url}}"
+                onClick={{showUnit opponent}}
+                onMouseOver={{showUnitTooltip opponent}}
+                class="cw--UnitCharacteristics__target"
+                style="background-image:url({{opponent.icon}})"
+              ></a>
+            {{/each}}
+          </div>
         </div>
       {{/if}}
     </div>

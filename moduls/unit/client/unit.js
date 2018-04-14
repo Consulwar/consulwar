@@ -66,48 +66,4 @@ Game.Unit.showPage = function() {
     this.render('empty', { to: 'content' });
   }
 };
-
-Game.Unit.showReptilePage = function() {
-  let item;
-  let group = this.params.group;
-  let menuItems;
-
-  if (group === 'Space') {
-    menuItems = reptileSpaceUnits;
-  } else {
-    menuItems = reptileGroundUnits;
-  }
-  
-  if (this.params.item) {
-    const engName = this.params.item;
-    if (group === 'Ground') {
-      group = `Ground/${this.params.subgroup}`;
-    }
-    const id = `Unit/Reptile/${group}/${engName}`;
-    item = reptileUnits[id];
-  }
-
-  this.render(
-    (new MenuUnits({
-      hash: {
-        items: menuItems,
-        selected: item,
-      },
-    })).renderComponent(),
-    { to: 'bottomMenu' }
-  );
-
-  if (item) {
-    this.render(
-      new Unit({ 
-        hash: {
-          unit: item,
-        },
-      }).renderComponent(),
-      { to: 'content' }
-    );
-  } else {
-    this.render('empty', {to: 'content'});
-  }
-};
 };

@@ -152,9 +152,10 @@
     {{else}}
       <div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
         {{#each units}}
-          <a 
+          <a
+            onClick={{showUnit this.unit}}
             class="{{#unless this.count}}disabled{{/unless}}"
-            style="background-image: url({{this.unit.icon}});"
+            style="background-image: url({{this.unit.icon}}); cursor: pointer"
             href="{{this.unit.url}}"
           >
             <div
@@ -589,22 +590,27 @@
                   <h2>—</h2>
                 {{/if}}
 
-                {{#if this.userUnits}}
-                  <table>
-                    <tr class="header">
-                      <th class="name"></th>
-                      <th class="count">Вылетело</th>
-                      <th class="count">Осталось</th>
-                    </tr>
-                    {{#each this.userUnits}}
-                      <tr>
-                        <td class="name humans">{{this.title}}</td>
-                        <td class="count">{{formatNumberWithISO this.start}}</td>
-                        <td class="count">{{formatNumberWithISO this.end}}</td>
+                <div class="details">
+                  {{#if not this.isBattle1x1}}
+                  Совместный бой
+                  {{/if}}
+                  {{#if this.userUnits}}
+                    <table>
+                      <tr class="header">
+                        <th class="name"></th>
+                        <th class="count">Вылетело</th>
+                        <th class="count">Осталось</th>
                       </tr>
-                    {{/each}}
-                  </table>
-                {{/if}}
+                      {{#each this.userUnits}}
+                        <tr>
+                          <td class="name humans">{{this.title}}</td>
+                          <td class="count">{{formatNumberWithISO this.start}}</td>
+                          <td class="count">{{formatNumberWithISO this.end}}</td>
+                        </tr>
+                      {{/each}}
+                    </table>
+                  {{/if}}
+                </div>
               </td>
               <td>
                 <div class="result
@@ -623,23 +629,24 @@
 
                 {{> item_price price=this.reward}}
 
-
-                {{#if this.enemyUnits}}
-                  <table>
-                    <tr class="header">
-                      <th class="count">Вылетело</th>
-                      <th class="count">Осталось</th>
-                      <th class="name"></th>
-                    </tr>
-                    {{#each this.enemyUnits}}
-                      <tr>
-                        <td class="name reptiles">{{formatNumberWithISO this.title}}</td>
-                        <td class="count">{{formatNumberWithISO this.start}}</td>
-                        <td class="count">{{this.end}}</td>
+                <div class="details">
+                  {{#if this.enemyUnits}}
+                    <table>
+                      <tr class="header">
+                        <th class="count">Вылетело</th>
+                        <th class="count">Осталось</th>
+                        <th class="name"></th>
                       </tr>
-                    {{/each}}
-                  </table>
-                {{/if}}
+                      {{#each this.enemyUnits}}
+                        <tr>
+                          <td class="name reptiles">{{formatNumberWithISO this.title}}</td>
+                          <td class="count">{{formatNumberWithISO this.start}}</td>
+                          <td class="count">{{this.end}}</td>
+                        </tr>
+                      {{/each}}
+                    </table>
+                  {{/if}}
+                </div>
               </td>
               <td 
                 data-tooltip="{{formatDate this.timestamp}}"

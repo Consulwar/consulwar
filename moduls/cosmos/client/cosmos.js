@@ -22,6 +22,8 @@ import unitItems from '/imports/content/Unit/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
 
+import UnitPopup from '/imports/client/ui/blocks/Unit/Popup/UnitPopup';
+
 import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
@@ -79,6 +81,7 @@ let planetsLayer = null;
 let pathsLayer = null;
 let shipsLayer = null;
 let galaxyByUsername = {};
+let galaxyByHex = {};
 const showedHexes = [];
 const usernameTooltips = [];
 let myAllies = [];
@@ -401,6 +404,8 @@ const getBattleInfo = function(battle) {
       [result.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : result.lostUnitsPrice.crystals || ' ',
     };
   }
+  
+  result.isBattle1x1 = Battle.isBattle1x1(battle);
 
   return result;
 };
@@ -420,11 +425,14 @@ const scrollMapToPlanet = function(id) {
 const scrollMapToBattle = function(id) {
   const battleEvent = BattleEvents.findByBattleId(id);
   if (battleEvent) {
-    const offset = galaxyByUsername[battleEvent.data.username].offset;
-    mapView.setView([
-      offset.x + battleEvent.data.targetPosition.x,
-      offset.y + battleEvent.data.targetPosition.y,
-    ], 7);
+    const hex = battleEvent.data.targetHex;
+    const offset = ((galaxyByHex[hex.x] || {})[hex.z] || {}).offset;
+    if (offset) {
+      mapView.setView([
+        offset.x + battleEvent.data.targetPosition.x,
+        offset.y + battleEvent.data.targetPosition.y,
+      ], 7);
+    }
   }
 };
 
@@ -903,6 +911,24 @@ Template.cosmosPlanetPopup.events({
     });
   }
 });
+
+
+Template.cosmosUnitsBlock.helpers({
+  showUnit(event, unit) {
+    if (unit.type === 'reptileUnit') {
+      event.preventDefault();
+      Game.Popup.show({
+        template: (new UnitPopup({
+          hash: {
+            unit,
+          },
+        })).renderComponent(),
+        hideClose: true,
+      });
+    }
+  }
+});
+
 
 // ----------------------------------------------------------------------------
 // Planets popup
@@ -2014,6 +2040,8 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
   });
 
   galaxyByUsername[username] = galaxy;
+  const column = galaxyByHex[hex.x] = galaxyByHex[hex.x] || {};
+  column[hex.z] = galaxy;
 
   return galaxy;
 };

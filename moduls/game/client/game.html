@@ -89,6 +89,7 @@
                   {{/if}}
                 </div>
 
+                {{#if isWaitingAttack}}
                   <a
                     class="
                       cw--FleetInfo__waitingAttack
@@ -98,7 +99,6 @@
                   >
                     {{formatSeconds (fleetTime attackTime)}}
                   </a>
-                {{#if isWaitingAttack}}
                 {{/if}}
 
               {{/with}}

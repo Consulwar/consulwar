@@ -109,7 +109,7 @@ Meteor.publish('pulsecatcherQuiz', function() {
   }
 });
 
-Meteor.publish('pulsecatcherQuizAnswer', function(id) {
+Meteor.publish('pulsecatcherQuizAnswer', function() {
   if (this.userId) {
     var activeQuiz = Game.Quiz.Collection.findOne({
       type: 'pulsecatcher'

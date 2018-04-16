@@ -11,7 +11,7 @@ export default {
         textAfter: ' кристаллов в час',
         priority: 1,
         affect: 'crystals',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 20 : 0;
         },
       },

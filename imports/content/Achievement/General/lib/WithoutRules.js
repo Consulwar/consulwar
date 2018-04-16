@@ -11,7 +11,7 @@ export default {
         textAfter: ' ГГК в час',
         priority: 1,
         affect: 'credits',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 0.01 : 0;
         },
       },

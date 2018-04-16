@@ -12,7 +12,7 @@ export default {
         priority: 2,
         condition: 'Unique/dailyQuestReward',
         affect: ['crystals', 'metals'],
-        result(level) {
+        result({ level }) {
           return level * 10;
         },
       },

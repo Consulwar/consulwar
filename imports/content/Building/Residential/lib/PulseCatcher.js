@@ -7,7 +7,7 @@ export default {
       {
         textBefore: '+',
         textAfter: '% увеличение ежедневного бонуса Консулов',
-        result(level) {
+        result({ level }) {
           return level * 0.5;
         },
       },

@@ -12,7 +12,7 @@ export default {
         condition: 'Unique/Repair',
         priority: 2,
         affect: ['metals', 'crystals', 'credits'],
-        result(level) {
+        result({ level }) {
           return level * 0.3;
         },
       },

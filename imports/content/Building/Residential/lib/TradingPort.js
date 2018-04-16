@@ -10,7 +10,7 @@ export default {
         priority: 2,
         condition: 'Unique/tradingBonus',
         affect: 'amount',
-        result(level) {
+        result({ level }) {
           return level * 0.5;
         },
       },

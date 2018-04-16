@@ -12,7 +12,7 @@ export default {
         condition: 'Unit/Human/Ground',
         priority: 2,
         affect: 'life',
-        result(level) {
+        result({ level }) {
           return level * 0.2;
         },
       },

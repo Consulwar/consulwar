@@ -12,7 +12,7 @@ export default {
         condition: 'Unit/Human/Ground/Infantry/Lost',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level) {
+        result({ level }) {
           return level * 0.2;
         },
       },

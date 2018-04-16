@@ -12,7 +12,7 @@ export default {
         condition: 'Unique/VotePower',
         affect: 'power',
         priority: 1,
-        result(level) {
+        result({ level }) {
           return Math.floor(level / 10);
         },
       },

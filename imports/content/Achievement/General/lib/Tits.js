@@ -6,7 +6,7 @@ export default {
     Special: [
       {
         priority: 1,
-        result(level) {
+        result({ level }) {
           return level ? 'молодец!' : '';
         },
       },

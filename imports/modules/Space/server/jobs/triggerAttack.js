@@ -25,7 +25,7 @@ export default Space.jobs.processJobs(
     };
 
     const { data } = job;
-    const { userId } = data;
+    const jobUserId = data.userId;
 
     const planet = Game.Planets.getOne(data.targetPlanet);
 
@@ -46,19 +46,21 @@ export default Space.jobs.processJobs(
 
     // calculate user health
     const userArmy = Game.Unit.getArmy({ id: planet.armyId });
-    if (!userArmy || !userArmy.units) {
-      return done(); // army already removed
+    const userUnits = userArmy ? userArmy.units : null;
+    const targetUserId = userArmy ? userArmy.user_id : jobUserId;
+    if (!userUnits && planet.minerUsername == null) {
+      return done(); // nothing to attack
     }
 
-    const userHealth = Game.Unit.calcUnitsHealth(userArmy.units, userId);
+    const userHealth = Game.Unit.calcUnitsHealth(userUnits, targetUserId);
 
     // generate appropriate mission and calculate enemy health
-    const mission = Game.Planets.generateMission(planet, userId);
+    const mission = Game.Planets.generateMission(planet);
 
     let enemyFleet = _.clone(Game.Battle.items[mission.type].level[mission.level].enemies);
     enemyFleet = _.mapObject(enemyFleet, (val, name) => Game.Unit.rollCount(enemyFleet[name]));
 
-    const enemyHealth = Game.Unit.calcUnitsHealth(enemyFleet, userId);
+    const enemyHealth = Game.Unit.calcUnitsHealth(enemyFleet, targetUserId);
 
     // check attack possibility
     if (userHealth > enemyHealth * 0.5 /* && Game.Random.random() > 0.35 */) {
@@ -90,7 +92,7 @@ export default Space.jobs.processJobs(
 
     const flightData = {
       targetType: FlightEvents.TARGET.PLANET,
-      userId,
+      userId: jobUserId,
       username: data.username,
       startPosition,
       startPlanetId: nearestPlanet._id,

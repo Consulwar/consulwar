@@ -375,13 +375,13 @@ Game.Planets.setLastFunTime = function(time) {
   }
 };
 
-Game.Planets.generateMission = function(planet, userId = Meteor.userId()) {
+Game.Planets.generateMission = function(planet) {
   // check planets
   if (!planet) {
     return null;
   }
 
-  var basePlanet = Game.Planets.getBase(userId);
+  var basePlanet = Game.Planets.getBase(planet.userId);
   if (!basePlanet) {
     return null;
   }

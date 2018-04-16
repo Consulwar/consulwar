@@ -415,9 +415,9 @@ class Effect {
     this.result = (options = this.getCurrentLevel()) => {
       if (_(options).isObject()) {
         if (!_(options.level).isUndefined()) {
-          return result(options.level);
+          return result(options.level, options.userId);
         }
-        return result(this.getCurrentLevel(options));
+        return result(this.getCurrentLevel(options), options.userId);
       }
 
       // legacy!

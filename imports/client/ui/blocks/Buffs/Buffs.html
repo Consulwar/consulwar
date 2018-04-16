@@ -7,25 +7,17 @@
           cw--Buffs__item_{{bonus.type}}
         "
         data-tooltip={{bonus.tooltip}}
+        data-tooltip-direction="e"
       >
         <div
           class="
             cw--Buffs__icon
             cw--Buffs__icon_{{bonus.type}}
+            {{#if bonus.hasMark}}
+              cw--Buffs__icon_hasMark
+            {{/if}}
           "
         ></div>
-        <div class="cw--Buffs__text">
-          {{#if bonus.effect}}
-            {{> EffectList args
-              effects=bonus.effect
-              hideAdditional=true
-              additionalClass=''
-            }}
-          {{else}}
-            {{bonus.name}}
-          {{/if}}
-          <time class="cw--Buffs__timer">{{formatSeconds bonus.time}}</time>
-        </div>
       </div>
     {{/each}}
   </div>

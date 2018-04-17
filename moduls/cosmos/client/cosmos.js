@@ -993,6 +993,7 @@ Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
     Template.cosmosPlanetPopup, {
       planet: planet,
       drop: dropInfo,
+      allowEdit: isLock,
       allowActions: isLock,
       position: function() {
         var k = Math.pow(2, (zoom.get() - 7));

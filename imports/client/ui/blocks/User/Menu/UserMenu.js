@@ -111,6 +111,10 @@ class UserMenu extends BlazeComponent {
     }
     Router.go('promocodeHistory', { page: 1 });
   }
+
+  getToken() {
+    return Router.token;
+  }
 }
 
 UserMenu.register('UserMenu');

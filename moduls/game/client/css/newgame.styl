@@ -1363,14 +1363,11 @@ body.game
     box-sizing border-box
     justify-content center
     align-items flex-end
-
     text-decoration none
-    font-size $cw--fontSize_s
 
     +media(null, $cw--size_l)
       width 60px
       height 60px
-      font-size $cw--fontSize_xs
       background-size 40%
 
     &_reptile
@@ -1380,6 +1377,15 @@ body.game
       color $cw--color_honor
       border solid 1px $cw--color_honor
       border-image $cw--gradient_honor 1
+    
+  &__waitingTime
+    height 17px
+    overflow hidden
+    font-size $cw--fontSize_s
+    text-align center
+
+    +media(null, $cw--size_l)
+      font-size $cw--fontSize_xs
 
   &__toggle
     position absolute

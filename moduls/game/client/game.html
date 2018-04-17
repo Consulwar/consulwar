@@ -97,7 +97,9 @@
                     "
                     href="{{pathFor 'cosmos' hash=attackId}}"
                   >
-                    {{formatSeconds (fleetTime attackTime)}}
+                    <time class="cw--FleetInfo__waitingTime">
+                      {{formatSeconds (fleetTime attackTime)}}
+                    </time>
                   </a>
                 {{/if}}
 

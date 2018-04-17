@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
@@ -212,9 +213,12 @@ Router.route('/game', {
   }
 });
 
+Router.token = Random.secret(5);
 Router.route('/logout', function () {
   registerRef();
-  Meteor.logout();
+  if (Router.token == Router.current().getParams().hash) {
+    Meteor.logout();
+  }
   this.redirect('index');
 });
 

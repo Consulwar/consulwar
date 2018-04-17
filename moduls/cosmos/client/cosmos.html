@@ -86,7 +86,7 @@
         {{#if and (and allowActions planet.canSend) (not disableSend)}}
           <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
         {{/if}}
-        {{#if allowActions}}
+        {{#if and allowActions (not disableSend)}}
           {{#if canMine}}
             <button
               style="margin-top:15px"

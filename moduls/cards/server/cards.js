@@ -130,7 +130,7 @@ Game.Cards.activate = function(item, user) {
   }
 
   if (item.engName === 'Crazy') {
-    Game.Broadcast.add(user.username, `Совет, кажется, ебанулся.`);
+    Game.Broadcast.add(user.username, `Совет галактики расщедрился.`);
   }
 
   // activate card

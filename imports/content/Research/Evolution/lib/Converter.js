@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Space',
         priority: 2,
         affect: ['metals', 'crystals'],
-        result(level) {
+        result({ level }) {
           return (level * 0.2);
         },
       },

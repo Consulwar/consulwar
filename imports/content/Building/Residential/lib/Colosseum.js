@@ -7,14 +7,14 @@ export default {
       {
         textBefore: 'Снижает время между турнирами на ',
         textAfter: ' секунд',
-        result(level) {
+        result({ level }) {
           return level * 580;
         },
       },
       {
         textBefore: '',
         textAfter: ' турниров открыто',
-        result(level) {
+        result({ level }) {
           return level === 0 ? 0 : [
             '1 вид',
             '2 вида',

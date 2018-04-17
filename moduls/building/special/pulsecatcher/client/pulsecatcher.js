@@ -124,19 +124,9 @@ var updateCharts = function() {
 
 Template.pulsecatcherVote.onRendered(function() {
   this.autorun(() => {
-    var quiz = Game.Quiz.Collection.find({
-      type: 'pulsecatcher'
-    }, {
-      sort: { endDate: -1 }
-    });
-
-    quiz.observeChanges({
-      added: (id) => {
-        Meteor.subscribe('pulsecatcherQuizAnswer', id);
-        updateCharts();
-      },
-      changed: updateCharts,
-    });
+    userVote(); // explicit reactive dependency
+    Meteor.subscribe('pulsecatcherQuizAnswer');
+    updateCharts();
   });
 });
 

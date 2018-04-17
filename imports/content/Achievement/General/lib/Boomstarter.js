@@ -9,7 +9,7 @@ export default {
         textAfter: ' металла в час',
         priority: 1,
         affect: 'metals',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 10 : 0;
         },
       },
@@ -18,7 +18,7 @@ export default {
         textAfter: ' кристаллов в час',
         priority: 1,
         affect: 'crystals',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 3 : 0;
         },
       },

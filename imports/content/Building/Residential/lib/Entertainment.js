@@ -9,7 +9,7 @@ export default {
         textAfter: '% меньше людей',
         priority: 2,
         affect: 'humans',
-        result(level) {
+        result({ level }) {
           return level * 0.2;
         },
       },

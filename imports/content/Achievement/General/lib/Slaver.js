@@ -11,7 +11,7 @@ export default {
         textAfter: ' человек в час',
         priority: 1,
         affect: 'humans',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 30 : 0;
         },
       },

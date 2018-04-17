@@ -11,7 +11,7 @@ export default {
         textAfter: '%',
         priority: 2,
         affect: 'humans',
-        result(level) {
+        result({ level }) {
           return (level * 0.4) + [0, 3, 5, 8, 10, 15][Math.floor(level / 20)];
         },
       },

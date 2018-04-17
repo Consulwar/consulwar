@@ -9,7 +9,7 @@ export default {
         textAfter: ' грамм в час',
         priority: 1,
         affect: 'crystals',
-        result(level) {
+        result({ level }) {
           return [
             0,
             1, 3, 4, 5, 6,
@@ -47,7 +47,7 @@ export default {
         priority: 1,
         condition: 'Unique/bunker',
         affect: 'crystals',
-        result(level) {
+        result({ level }) {
           return [
             0,
             100,

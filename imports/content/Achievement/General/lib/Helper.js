@@ -9,7 +9,7 @@ export default {
         textAfter: ' чести в час',
         priority: 1,
         affect: 'honor',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 1 : 0;
         },
       },
@@ -21,7 +21,7 @@ export default {
         priority: 6,
         condition: 'Unique/message',
         affect: 'crystals',
-        result(level) {
+        result({ level }) {
           return (level > 0) ? 100 : 0;
         },
       },

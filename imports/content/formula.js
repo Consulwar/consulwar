@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 const reduceSpeed = Meteor.settings.public.reduceBuildingSpeed || 1;
 
 
-const every10x2 = level => (
+const every10x2 = ({ level }) => (
   (
     level
     + (level >= 10 ? (Math.ceil(2 ** (Math.floor(level / 10) - 1)) * 100) : 0)
@@ -11,7 +11,7 @@ const every10x2 = level => (
 );
 
 // 1.62658 ^ 4 = 700
-const tier1 = level => (
+const tier1 = ({ level }) => (
   (
     level
     + (level >= 20 ? (Math.ceil(1.62658 ** (Math.floor(level / 20) - 1)) * 100) : 0)
@@ -19,7 +19,7 @@ const tier1 = level => (
 );
 
 // 1.31607 ^ 4 = 300
-const tier2 = level => (
+const tier2 = ({ level }) => (
   (
     level
     + (level >= 20 ? (Math.ceil(1.31607 ** (Math.floor(level / 20) - 1)) * 100) : 0)
@@ -27,7 +27,7 @@ const tier2 = level => (
 );
 
 // 1.10668 ^ 4 = 150
-const tier3 = level => (
+const tier3 = ({ level }) => (
   (
     (level * 0.5)
     + (level >= 20 ? (Math.ceil(1.10668 ** (Math.floor(level / 20) - 1)) * 100) : 0)

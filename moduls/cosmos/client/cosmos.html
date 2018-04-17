@@ -29,7 +29,7 @@
 
     {{#let planet=(Game.Cosmos.getPlanetInfo planet)}}
       <h2>
-        {{#if allowActions}}
+        {{#if allowEdit}}
           <span class="edit" data-id="{{planet.id}}"></span> 
         {{/if}}
         {{planet.name}} 
@@ -83,7 +83,7 @@
       {{> cosmosUnitsBlock units=planet.units isReptiles=planet.mission}}
 
       <div style="display: flex; flex-wrap: wrap">
-        {{#if and (and allowActions planet.canSend) (not disableSend)}}
+        {{#if and allowActions planet.canSend}}
           <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
         {{/if}}
         {{#if allowActions}}
@@ -283,7 +283,7 @@
 
     <div class="target">
       {{#if planet}}
-        {{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet allowActions=true disableSend=true}}
+        {{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet allowEdit=true allowActions=false}}
 
         {{#if timeAttack}}
           <p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>

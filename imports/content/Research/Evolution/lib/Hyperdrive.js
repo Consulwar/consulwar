@@ -10,7 +10,7 @@ export default {
         condition: 'Unique/spaceEngine',
         textBefore: '',
         textAfter: ' уровень движителей',
-        result(level) {
+        result({ level }) {
           return level;
         },
       },

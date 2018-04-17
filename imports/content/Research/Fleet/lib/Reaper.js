@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Space/Reaper',
         priority: 2,
         affect: 'damage',
-        result(level) {
+        result({ level }) {
           return level * 0.4;
         },
       },
@@ -20,7 +20,7 @@ export default {
         condition: 'Unit/Human/Space/Reaper',
         priority: 2,
         affect: 'life',
-        result(level) {
+        result({ level }) {
           return level * 0.4;
         },
       },

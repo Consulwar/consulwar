@@ -9,7 +9,7 @@ export default {
       {
         textBefore: '',
         textAfter: '',
-        result(level) {
+        result({ level }) {
           return level === 0 ? '' : [
             'Можно вступить в альянс 1 уровня',
             'Можно вступить в альянс 2 уровня',
@@ -22,7 +22,7 @@ export default {
       {
         textBefore: '',
         textAfter: '',
-        result(level) {
+        result({ level }) {
           return level === 0 ? '' : [
             '',
             'Можно создавать альянс до 10 человек',

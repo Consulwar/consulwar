@@ -17,7 +17,7 @@ export default {
         textBefore: 'Член длиннее на ',
         textAfter: 'см',
         priority: 1,
-        result(level) {
+        result({ level }) {
           return level;
         },
       },

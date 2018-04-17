@@ -12,7 +12,7 @@ export default {
         condition: 'Unit/Human/Defense',
         priority: 2,
         affect: 'damage',
-        result(level) {
+        result({ level }) {
           return level * 0.2;
         },
       },

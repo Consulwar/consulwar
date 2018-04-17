@@ -11,7 +11,7 @@ export default {
         textAfter: ' человек в час',
         priority: 1,
         affect: 'humans',
-        result(level) {
+        result({ level }) {
           return [
             0,
             1, 2, 3, 4, 5,
@@ -49,7 +49,7 @@ export default {
         priority: 1,
         condition: 'Unique/bunker',
         affect: 'humans',
-        result(level) {
+        result({ level }) {
           return [
             0,
             1000,

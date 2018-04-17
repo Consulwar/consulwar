@@ -12,7 +12,7 @@ export default {
         condition: 'Unique/EnchantHouse',
         priority: 2,
         affect: 'result',
-        result(level) {
+        result({ level }) {
           return (level * 0.4) + [0, 10, 20, 30, 40, 60][Math.floor(level / 20)];
         },
       },

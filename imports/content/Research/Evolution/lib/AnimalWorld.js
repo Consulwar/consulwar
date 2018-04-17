@@ -10,7 +10,7 @@ export default {
         priority: 2,
         condition: 'Unique/message',
         affect: 'crystals',
-        result(level) {
+        result({ level }) {
           return (level * 0.1) + [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
         },
       },

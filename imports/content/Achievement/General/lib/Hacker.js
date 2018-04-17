@@ -17,7 +17,7 @@ export default {
         textBefore: '',
         textAfter: ' ггк единоразово + приз',
         priority: 1,
-        result(level) {
+        result({ level }) {
           return level * 500;
         },
       },

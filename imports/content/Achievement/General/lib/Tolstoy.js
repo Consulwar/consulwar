@@ -10,7 +10,7 @@ export default {
         condition: 'Unit/Human/Space/Flagship',
         priority: 4,
         affect: 'damage',
-        result(level) {
+        result({ level }) {
           return level ? 10 : 0;
         },
       },

@@ -13,7 +13,6 @@ import '/imports/client/ui/Input/String/InputString';
 import '/imports/client/ui/Input/Email/InputEmail';
 import '/imports/client/ui/Input/Password/InputPassword';
 import '/imports/client/ui/Input/Checkbox/InputCheckbox';
-import '/imports/client/ui/Person/image/PersonImage';
 import '/imports/client/ui/button/button.styl';
 import './UserRegister.html';
 import './UserRegister.styl';

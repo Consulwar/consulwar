@@ -191,18 +191,6 @@ var loadHistoryBattle = function(itemId) {
   }
 };
 
-const statusName = function(status) {
-  if (status === Game.Planets.STATUS.REPTILES) {
-    return 'reptile';
-  }
-
-  if (status === Game.Planets.STATUS.HUMANS) {
-    return 'human';
-  }
-
-  return 'empty';
-};
-
 Template.cosmosHistory.onRendered(function() {
   // run this function each time as page or hash cahnges
   this.autorun(function() {
@@ -526,8 +514,50 @@ Template.cosmos_planet_item.helpers({
     );
   },
 
-  statusName() {
-    return statusName(this.planet.status);
+  statusColony() {
+    let planet = this.planet;
+    if (planet.status === Game.Planets.STATUS.REPTILES) {
+      return 'colony-reptile';
+    }
+  
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
+      if (planet.minerUsername == Meteor.user().username) {
+        return 'colony-user';
+      } else {
+        const alliance = Game.Alliance.Collection.findOne();
+        if (alliance && alliance.participants.indexOf(planet.minerUsername) >= 0) {
+          return 'colony-ally';
+        }
+      }
+      return 'colony-human';
+    }
+  },
+
+  statusFleet() {
+    let planet = this.planet;
+    if (planet.mission) {
+      return 'fleet-reptile';
+    }
+  
+    if (planet.armyUsername != null) {
+      if (planet.armyUsername == Meteor.user().username) {
+        return 'fleet-user';
+      } else {
+        const alliance = Game.Alliance.Collection.findOne();
+        if (alliance && alliance.participants.indexOf(planet.armyUsername) >= 0) {
+          return 'fleet-ally';
+        }
+      }
+      return 'fleet-human';
+    }
+  },
+
+  battleExists() {
+    return Space.collection.findOne({
+      type: BattleEvents.EVENT_TYPE,
+      status: Space.filterActive,
+      'data.planetId': this.planet._id,
+    });
   },
 
   getTimeNextDrop: function(timeCollected) {
@@ -1651,7 +1681,8 @@ Template.cosmosAttackMenu.events({
   'click .planets a': function(e, t) {
     e.preventDefault();
     var id = $(e.currentTarget).attr("data-id");
-    if (id && $(e.currentTarget).hasClass('humans') && !$(e.currentTarget).hasClass('disabled')) {
+    let planet = Game.Planets.getOne(id);
+    if (id && planet.armyUsername == Meteor.user().username && !$(e.currentTarget).hasClass('disabled')) {
       resetSelectedUnits();
 
       // set new colony id

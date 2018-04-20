@@ -133,19 +133,6 @@
     &:before
       content none
 
-
-.map-planet-border-reptile
-  border 3px solid #DC6257
-  border-radius 50%
-  
-.map-planet-border-human
-  border 3px solid $color-ggk
-  border-radius 50%
-  
-.map-planet-border-empty
-  border 3px solid #ffffff
-  border-radius 50%
-
 .map-planet-marker-animated
   .texture:before
     animation animatePlanetBack 20s linear infinite
@@ -486,9 +473,7 @@
         filter grayscale(0.5) brightness(0.3)
         
       &.selected
-        color $color-metal
-        .map-planet-border-human
-          border-color $color-metal
+        background-color: #fff2;
       
     .home
       color $color-ggk

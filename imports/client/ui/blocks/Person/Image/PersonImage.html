@@ -10,7 +10,11 @@
       style="background-image:url({{person.getImage}})"
     >
       {{#if and showChangeOption (gt person.skinCount 1)}}
-        <button class="cw--PersonImage__change" onClick={{changeAvatar}}>
+        <button
+          class="cw--PersonImage__change"
+          onClick={{changeAvatar}}
+          data-sound="hover, click"
+        >
           <img
             class="cw--PersonImage__icon"
             alt="Сменить аватар"

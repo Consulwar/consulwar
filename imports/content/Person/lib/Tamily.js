@@ -8,6 +8,9 @@ export default {
     santa: {
       isUnique: true,
     },
+    agent: {
+      isUnique: true,
+    },
     assassin: {
       price: {
         credits: 2500,

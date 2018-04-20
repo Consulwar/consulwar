@@ -2,7 +2,6 @@ import content from '/imports/content/client';
 import persons from '/imports/content/Person/client/';
 import Gallery from '/imports/client/ui/blocks/Gallery/Gallery'
 import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
-import '/imports/client/ui/blocks/Person/Image/PersonImage';
 import Quest from '/imports/client/ui/blocks/Quest/Quest';
 
 const engNameToPerson = {};
@@ -125,7 +124,6 @@ Game.Quest.showQuest = function(id) {
     Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
       isLoading.set(false);
       loadedQuest.set( new game.Quest(data) );
-      console.log(data);
 
       if (data.slides) {
         const slides = [];

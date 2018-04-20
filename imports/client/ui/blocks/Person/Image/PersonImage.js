@@ -1,6 +1,6 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
-import PersonSkinPopup from '../skinPopup/PersonSkinPopup';
+import PersonSkinPopup from '../SkinPopup/PersonSkinPopup';
 import './PersonImage.html';
 import './PersonImage.styl';
 
@@ -9,12 +9,18 @@ class PersonImage extends BlazeComponent {
     return 'PersonImage';
   }
 
-  onCreated() {
-    super.onCreated();
-    this.person = this.data('person');
-    this.showChangeOption = this.data('showChangeOption') === undefined
-      ? true
-      : this.data('showChangeOption');
+  constructor({
+    hash: {
+      person,
+      showChangeOption = true,
+      className,
+    },
+  }) {
+    super();
+
+    this.person = person;
+    this.showChangeOption = showChangeOption;
+    this.className = className;
   }
 
   changeAvatar() {

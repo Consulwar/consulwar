@@ -1,36 +1,49 @@
-<template name="quest">
-  <div class="modal quest scrollbar-inner">
-    {{> PersonImage person=person}}
-    <div class="title">{{title}}</div>
-    {{{text}}}
-    
-    <br/><br/>
-    <span class="prize">
-      {{#if reward}}
-        Награда: 
-        {{#each reward}}
-          {{formatNumber count}} {{title}}; 
-        {{/each}}
-      {{else}}
-        Награды нет
+<template name="Quest">
+  <div class="cw--Quest">
+    {{> PersonImage args
+      person=getPerson
+      className='cw--Quest__person'
+    }}
+    <div class="cw--Quest__content">
+      <div class="cw--Quest__header">
+        {{title}}
+      </div>
+      <div class="cw--Quest__description">
+        {{{getText}}}
+      </div>
+      <div class="cw--Quest__reward">
+        {{#if getReward}}
+          <div class="cw--Quest__rewardHead">
+            Вознаграждение за квест
+          </div>
+          {{> Reward args
+            reward=getReward
+            className='cw--Quest__rewardPrice'
+          }}
+        {{/if}}
+      </div>
+
+      {{#if isPrompt}}
+        <div class="cw--Quest__actions">
+          {{#each option in getOptions}}
+            <a
+              onClick={{sendAnswer option.name}}
+              class="
+                cw--Quest__button
+                cw--Quest__button_{{option.mood}}
+                {{option.mood}}
+              "
+              data-sound="hover, click"
+            >
+              {{option.text}}
+            </a>
+          {{/each}}
+        </div>
       {{/if}}
-    </span>
 
-    {{#if isPrompt}}
-      {{#each options}}
-        <a
-          data-option="{{this.name}}"
-          class="{{this.mood}}"
-          href="#"
-          data-sound="click"
-        >
-          {{this.text}}
-        </a>
-      {{/each}}
-    {{/if}}
-
-    {{#if isLoading}}
-      {{> loading}}
-    {{/if}}
+      {{#if isLoading.get}}
+        {{> loading}}
+      {{/if}}
+    </div>
   </div>
 </template>

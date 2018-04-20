@@ -6,7 +6,7 @@
   width 700px
   max-width 100%
   min-height 320px
-  max-height 100vh
+  max-height 100%
   padding 12px 17px
   box-sizing border-box
   background-color $cw--color_black
@@ -17,7 +17,14 @@
     min-height 30px
     align-items center
 
+    +media(null, $cw--size_s)
+      flex-direction column
+      min-height 50px
+      align-items flex-start
+      justify-content space-around
+
   &__title
+    margin-right 20px
     cw--fontFamily_cond()
     font-size $cw--fontSize_l
     font-weight bold
@@ -26,13 +33,16 @@
   &__settings
     display flex
     width 300px
-    margin-left 20px
+    max-width 100%
     justify-content space-around
     align-content center
 
     color $cw--color_metal
     cw--fontFamily_cond()
     font-size $cw--fontSize_m
+
+    +media(null, $cw--size_s)
+      justify-content space-between
 
 
   &__settingsRadio
@@ -54,10 +64,16 @@
     width 155px
     flex-direction column
     margin 7px
+    +media(null, $cw--size_xs)
+      flex-basis calc(50% - 14px)
+    +media($cw--size_xs, $cw--size_s)
+      flex-basis calc(33% - 14px)
+    +media($cw--size_s)
+      flex-basis calc(25% - 14px)
 
   &__skinImageBlock
     position relative
-    width 155px
+    width 100%
     margin-bottom 5px
 
     .cw--PersonSkinPopup__skinInfo
@@ -67,7 +83,7 @@
 
   &__skinImage
     display block
-    width 155px
+    width 100%
 
   &__skinInfo
     display flex

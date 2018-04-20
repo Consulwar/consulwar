@@ -1,0 +1,74 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--Quest
+  display flex
+  width 890px
+  max-width 100%
+  min-height 572px
+
+  cw--fontFamily_cond()
+  background-color $cw--color_darkGrey
+
+  +media(null, $cw--size_m)
+    flex-direction column
+    width 384px
+
+  &__person
+    flex-shrink 0
+    +media(null, $cw--size_m)
+      width 100%
+
+  &__content
+    padding 16px
+    box-sizing border-box
+
+  &__header
+    margin 0 30px 30px 0
+
+    font-size 20px
+    font-weight bold
+    color $cw--color_metal
+
+  &__description
+    margin 30px 0
+
+    font-size 16px
+    color $cw--color_description
+  
+  &__reward
+    margin-top 20px
+
+  &__rewardHead
+    display block
+    margin-bottom 6px
+
+    text-align center
+    font-size $cw--fontSize_m
+    font-weight bold
+    color $cw--color_human
+
+  &__actions
+    margin-top 30px
+
+  &__button
+    display flex
+    min-height 60px
+    padding 16px
+    margin 6px 0
+    box-sizing border-box
+    align-items center
+    justify-content center
+
+    font-size $cw--fontSize_m
+    color $cw--color_metal
+    border solid 1px $cw--color_metal
+    border-image $cw--gradient_metal 1
+    cursor pointer
+
+    &:hover
+      color $cw--color_white
+      background-color $cw--color_metal
+      border solid 1px $cw--color_metal
+      border-image none

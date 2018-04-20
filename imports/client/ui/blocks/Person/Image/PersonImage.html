@@ -1,15 +1,24 @@
 <template name="PersonImage">
-  <div class="cw--PersonImage {{class}}">
-    <img class="cw--PersonImage__avatar" src="{{person.getImage}}"/>
+  <div
+    class="
+      cw--PersonImage
+      {{className}}
+    "
+  >
+    <div
+      class="cw--PersonImage__avatar"
+      style="background-image:url({{person.getImage}})"
+    >
+      {{#if and showChangeOption (gt person.skinCount 1)}}
+        <button class="cw--PersonImage__change" onClick={{changeAvatar}}>
+          <img
+            class="cw--PersonImage__icon"
+            alt="Сменить аватар"
+            src="{{person.getIcon}}"
+          />
+        </button>
+      {{/if}}
+    </div>
     <div class="cw--PersonImage__title">{{person.title}}</div>
-    {{#if and showChangeOption (gt person.skinCount 1)}}
-      <button class="cw--PersonImage__change" onClick={{changeAvatar}}>
-        <img
-          class="cw--PersonImage__icon"
-          alt="Сменить аватар"
-          src="{{person.getIcon}}"
-        />
-      </button>
-    {{/if}}
   </div>
 </template>

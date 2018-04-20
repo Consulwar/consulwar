@@ -431,25 +431,29 @@ Meteor.methods({
         result = 'fail';
       }
 
-      var income = Game.Resources.getIncome();
+      var reward = null;
 
-      var reward = {
-        metals: result == 'win' ? Math.floor( income.metals ) : 0,
-        crystals: result == 'win' ? Math.floor( income.crystals ) : 0
-      };
-      
-      reward = SpecialEffect.applyTo({
-        target: { id: 'Unique/dailyQuestReward' },
-        obj: reward,
-        hideEffects: true,
-      });
+      if (result === 'win') {
+        var income = Game.Resources.getIncome();
+        var raw = {
+          metals: Math.floor( income.metals ),
+          crystals: Math.floor( income.crystals ),
+        };
+
+        reward = SpecialEffect.applyTo({
+          target: { id: 'Unique/dailyQuestReward' },
+          obj: raw,
+          hideEffects: true,
+        });
+
+        Game.Resources.add(reward);
+      }
 
       var set = {
         'daily.status': Game.Quest.status.FINISHED,
         'daily.result': quest.answers[answer][result]
       };
 
-      Game.Resources.add(reward);
 
       Game.Quest.Collection.update({
         user_id: user._id

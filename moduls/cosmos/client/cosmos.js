@@ -1577,7 +1577,7 @@ Template.cosmosAttackMenu.helpers({
     }
 
     _.chain(result)
-      .filter(item => !!item.armyId)
+      .filter(item => item.armyUsername == Meteor.user().username)
       .sortBy(item => (item.timeAttack ? item.timeAttack : Infinity))
       .first(3)
       .each(function(item) {

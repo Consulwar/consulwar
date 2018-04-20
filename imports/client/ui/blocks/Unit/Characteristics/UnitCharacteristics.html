@@ -40,7 +40,7 @@
         <div class="cw--UnitCharacteristics__targets">
           {{#each target in unit.getTargets}}
             <a
-              href="{{target.url}}"
+              href={{target.url}}
               onClick={{showUnit target}}
               onMouseOver={{showUnitTooltip target}}
               class="
@@ -50,21 +50,23 @@
                 {{/if}}
               "
               style="background-image:url({{target.icon}})"
+              data-sound="hover, click"
             ></a>
           {{/each}}
         </div>
       {{/if}}
       {{#if unit.getOpponents}}
         <div class="cw--UnitCharacteristics__opponents">
-          <div class="cw--UnitCharacteristics__title">Избегает встречи:</div>
+          <div class="cw--UnitCharacteristics__title">Против него эффективны:</div>
           <div class="cw--UnitCharacteristics__targets">
             {{#each opponent in unit.getOpponents}}
               <a
-                href="{{opponent.url}}"
+                href={{opponent.url}}
                 onClick={{showUnit opponent}}
                 onMouseOver={{showUnitTooltip opponent}}
                 class="cw--UnitCharacteristics__target"
                 style="background-image:url({{opponent.icon}})"
+                data-sound="hover, click"
               ></a>
             {{/each}}
           </div>

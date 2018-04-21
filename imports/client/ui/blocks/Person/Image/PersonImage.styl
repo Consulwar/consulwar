@@ -1,0 +1,87 @@
+@import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+$personImage_x = 384px
+$personImage_y = 512px
+$presonImage_dim = round(percentage($personImage_y / $personImage_x), 2)
+
+.cw--PersonImage
+  display flex
+  flex-direction column
+  width $personImage_x
+  max-width 100%
+
+  &__avatar
+    position relative
+    display block
+    width 100%
+    height auto
+    flex-shrink 0
+    background-repeat no-repeat
+    background-size cover
+    background-position 0 0
+
+    &:before
+      content ''
+      display block
+      width 100%
+      padding-top $presonImage_dim
+      +media(null, $cw--size_m)
+        padding-top round($presonImage_dim * .6, 2)
+
+  &__title
+    display flex
+    flex-grow 1
+    padding 10px
+    box-sizing border-box
+    align-items center
+    justify-content center
+
+    cw--fontFamily_cond()
+    font-size 20px
+    font-weight bold
+    white-space nowrap
+    text-align center
+    color $cw--color_white
+    background-color alpha($cw--color_black, 0.7)
+
+  &__change
+    position absolute
+    top 10px
+    right 10px
+
+    display flex
+    width 65px
+    height 65px
+    align-content center
+    justify-content center
+
+    border none
+    border-radius 50%
+    background radial-gradient(65.00px at 50% 0%, #56BAF2 0%, #2474A1 100%);
+
+    +media(null, $cw--size_m)
+      top initial
+      bottom 10px
+
+    &:before
+      content ""
+      position absolute
+      z-index 0
+      top 50%
+      left 50%
+      margin-left -28px
+      margin-top -28px
+      display block
+      width 56px
+      height 56px
+      border-radius 50%
+      background-color $cw--color_black
+    
+    .cw--PersonImage__icon
+      z-index 2
+
+  &__icon
+    width 50px
+    height 50px

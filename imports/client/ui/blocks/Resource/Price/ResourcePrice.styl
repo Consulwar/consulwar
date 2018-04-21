@@ -4,6 +4,7 @@
   display flex
   flex-direction row
   flex-wrap wrap
+  font-size 12px
   
   &__time
     color $cw--color_lightGrey
@@ -16,8 +17,9 @@
     width 60px
     white-space nowrap
     margin-right 12px
-    font-size 12px
     text-decoration none
+  &__item:nth-last-child(1)
+    margin-right 0
 
   &__itemNeed
     position absolute

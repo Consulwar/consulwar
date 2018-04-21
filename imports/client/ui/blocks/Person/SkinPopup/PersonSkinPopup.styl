@@ -1,0 +1,109 @@
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/colors.styl'
+@import '{}/imports/client/ui/responsive'
+
+.cw--PersonSkinPopup
+  width 700px
+  max-width 100%
+  min-height 320px
+  max-height 100%
+  padding 12px 17px
+  box-sizing border-box
+  background-color $cw--color_black
+
+  &__header
+    display flex
+    flex-wrap wrap
+    min-height 30px
+    align-items center
+
+    +media(null, $cw--size_s)
+      flex-direction column
+      min-height 50px
+      align-items flex-start
+      justify-content space-around
+
+  &__title
+    margin-right 20px
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_l
+    font-weight bold
+    color $cw--color_human
+
+  &__settings
+    display flex
+    width 300px
+    max-width 100%
+    justify-content space-around
+    align-content center
+
+    color $cw--color_metal
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_m
+
+    +media(null, $cw--size_s)
+      justify-content space-between
+
+
+  &__settingsRadio
+    vertical-align middle
+
+  &__content
+    display block
+    margin 20px -7px 0
+
+  &__skinList
+    display flex
+    width 100%
+    justify-content flex-start
+    align-content flex-start
+    flex-wrap wrap
+
+  &__skin
+    display flex
+    width 155px
+    flex-direction column
+    margin 7px
+    +media(null, $cw--size_xs)
+      flex-basis calc(50% - 14px)
+    +media($cw--size_xs, $cw--size_s)
+      flex-basis calc(33% - 14px)
+    +media($cw--size_s)
+      flex-basis calc(25% - 14px)
+
+  &__skinImageBlock
+    position relative
+    width 100%
+    margin-bottom 5px
+
+    .cw--PersonSkinPopup__skinInfo
+      position absolute
+      bottom 0
+      left 0
+
+  &__skinImage
+    display block
+    width 100%
+
+  &__skinInfo
+    display flex
+    box-sizing border-box
+    width 100%
+    height 50px
+    padding 5px
+    align-items center
+    font-size 24px
+    font-weight bold
+    color $cw--color_credit
+    background-color alpha($cw--color_black, 0.75)
+
+    &_unique
+      justify-content center
+      font-size $cw--fontSize_l
+      font-weight bold
+      color $cw--color_metal
+
+  &__iconCredits
+    width 40px
+    height 40px
+    margin-right 10px

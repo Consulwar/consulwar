@@ -2,63 +2,11 @@
 @import '{}/imports/client/ui/config'
 
 .cw--Reward
-  position relative
-  width 360px
-  max-width 100%
-  padding 16px
-
   cw--fontFamily_cond()
-  background-color alpha($cw--color_black, .8)
-  border 2px solid $cw--color_human
-  border-image linear-gradient(0deg, $cw--color_honor, $cw--color_human) 2
-
-  &:before
-  &:after
-    content ''
-    position absolute
-    left 0
-    display block
-    width 100%
-    height 160px
-
-  &:before
-    top 0
-    background linear-gradient(0deg, rgba(233, 168, 68, 0), rgba(214, 95, 82, 0.25))
-  &:after
-    bottom 0
-    background radial-gradient(circle closest-corner at 50% 160%, $cw--color_human, alpha($cw--color_human, 0));
-
-  &__header
-    margin 30px 0 50px
-    font-size 30px
-    font-weight bold
-    text-align center
-    color $cw--color_human
 
   &__resources
     justify-content center
-
-
-  &__reward
-    position relative
-    z-index 1
-    background-color $cw--color_black
-    margin 5px -16px
-    padding 1px 16px
-    position relative
-    &:after
-    &:before
-      content ''
-      position absolute
-      left 0
-      top 0
-      display block
-      height 1px
-      width 100%
-      background linear-gradient(90deg, $cw--color_black, $cw--color_human, $cw--color_black)
-    &:after
-      top auto
-      bottom 0
+    font-size $cw--fontSize_s
 
   &__section
     display flex
@@ -89,7 +37,7 @@
     font-size $cw--fontSize_m
     background linear-gradient(90deg, #000 0%, rgba(0,0,0,0) 60%)
 
-  
+
   &__cardImg
     width 100%
     height auto
@@ -122,11 +70,3 @@
     font-weight bold
     text-align center
     color $cw--color_human
-
-
-  &__actions
-    position relative
-    z-index 1
-    display flex
-    justify-content center
-    margin-top 16px

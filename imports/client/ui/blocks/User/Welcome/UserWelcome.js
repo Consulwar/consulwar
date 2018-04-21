@@ -7,7 +7,7 @@ import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 import UserRegister from '/imports/client/ui/blocks/User/Register/UserRegister';
 import UserLogin from '/imports/client/ui/blocks/User/Login/UserLogin';
-import '/imports/client/ui/Input/input.styl';
+import '/imports/client/ui/Input/Input.styl';
 import '/imports/client/ui/button/button.styl';
 import './UserWelcome.html';
 import './UserWelcome.styl';

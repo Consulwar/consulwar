@@ -47,6 +47,7 @@ class BuildResearch extends BlazeComponent {
   }
 
   onRendered() {
+    super.onRendered();
     $('.scrollbar-inner').perfectScrollbar('update');
   }
 

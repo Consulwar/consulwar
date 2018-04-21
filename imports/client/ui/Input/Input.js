@@ -3,8 +3,7 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { _ } from 'meteor/underscore';
-import './input.styl';
-// TODO: Input rename
+import './Input.styl';
 
 class Input extends BlazeComponent {
   constructor({

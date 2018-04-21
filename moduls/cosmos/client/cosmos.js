@@ -553,7 +553,7 @@ Template.cosmos_planet_item.helpers({
   },
 
   battleExists() {
-    return Space.collection.findOne({
+    return this.planet._id && Space.collection.findOne({
       type: BattleEvents.EVENT_TYPE,
       status: Space.filterActive,
       'data.planetId': this.planet._id,

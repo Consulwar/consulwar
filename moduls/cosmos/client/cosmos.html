@@ -329,7 +329,8 @@
   <a 
     class="
       planet 
-      {{owner}}
+      {{statusColony}}
+      {{statusFleet}}
       {{#if planet.isEmpty}}empty{{/if}}
       {{#if planet.notAvaliable}}notAvaliable{{/if}}
       {{#if planet.canBuy}}canBuy{{/if}}
@@ -361,15 +362,15 @@
       class="
         map-planet-marker
         {{planet.type}} 
-        map-planet-border-{{statusName}}
+        map-planet-border
         {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
-        {{owner}}
         " 
       style="
         width: {{multiply (sum planet.size 3) 4}}px;
-        height: {{multiply (sum planet.size 3) 4}}px;
-        position: relative;"
+        height: {{multiply (sum planet.size 3) 4}}px;"
     >
+      <div class="fleet-marker"></div>
+      {{#if battleExists}}<div class="battle-marker"></div>{{/if}}
       <div class="texture"></div>
     </div>
     <div class="location">

@@ -119,6 +119,7 @@ const buildEvent = () => SoundManager.play('buildingStart');
 
 const init = function() {
   _.keys(tracks).forEach((key) => {
+    // eslint-disable-next-line new-cap
     player[key] = new buzz.sound(`/sound/${tracks[key]}.mp3`);
     if (key !== 'hover') {
       player[key].setVolume(30);
@@ -127,6 +128,7 @@ const init = function() {
       player[key].setVolume(28);
     }
   });
+  // eslint-disable-next-line new-cap
   player.welcome = new buzz.sound('http://times.consulwar.ru/music/2 Коварство Рептилоидов.mp3', {
     volume: 0,
     loop: true,

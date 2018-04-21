@@ -2,7 +2,7 @@ import { $ } from 'meteor/jquery';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { check } from 'meteor/check';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
-import '../input.styl';
+import '../Input.styl';
 import './InputNumber.html';
 
 

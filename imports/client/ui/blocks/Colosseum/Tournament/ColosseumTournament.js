@@ -6,7 +6,7 @@ import { _ } from 'lodash';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Colosseum from '/imports/content/Building/Residential/client/Colosseum';
 import Game from '/moduls/game/lib/main.game';
-import Reward from '/imports/client/ui/blocks/Reward/Reward';
+import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 import './ColosseumTournament.html';
 import './ColosseumTournament.styl';
 
@@ -73,7 +73,7 @@ class ColosseumTournament extends BlazeComponent {
       }
       if (reward) {
         Game.Popup.show({
-          template: (new Reward({
+          template: (new RewardPopup({
             hash: {
               reward,
             },

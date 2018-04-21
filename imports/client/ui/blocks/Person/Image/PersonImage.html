@@ -1,0 +1,28 @@
+<template name="PersonImage">
+  <div
+    class="
+      cw--PersonImage
+      {{className}}
+    "
+  >
+    <div
+      class="cw--PersonImage__avatar"
+      style="background-image:url({{person.getImage}})"
+    >
+      {{#if and showChangeOption (gt person.skinCount 1)}}
+        <button
+          class="cw--PersonImage__change"
+          onClick={{changeAvatar}}
+          data-sound="hover, click"
+        >
+          <img
+            class="cw--PersonImage__icon"
+            alt="Сменить аватар"
+            src="{{person.getIcon}}"
+          />
+        </button>
+      {{/if}}
+    </div>
+    <div class="cw--PersonImage__title">{{person.title}}</div>
+  </div>
+</template>

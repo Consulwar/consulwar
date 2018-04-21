@@ -1,0 +1,25 @@
+<template name="RewardPopup">
+  <div class="cw--RewardPopup">
+    <h2 class="cw--RewardPopup__header">Награда доставлена!</h2>
+
+    {{> Reward args
+      reward=reward
+      className='cw--RewardPopup__reward'
+    }}
+
+    <div class="cw--RewardPopup__actions">
+      <button
+        onClick={{takeReward}}
+        class="
+          cw--RewardPopup__take
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_orange
+        "
+        data-sound="click"
+      >
+        Забрать награду
+      </button>
+    </div>
+  </div>
+</template>

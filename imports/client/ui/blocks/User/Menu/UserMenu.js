@@ -4,7 +4,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Notifications, ChdFeedbackWidget } from '/moduls/game/lib/importCompability';
 import { Router } from 'meteor/iron:router';
 import Game from '/moduls/game/lib/main.game';
-import Reward from '/imports/client/ui/blocks/Reward/Reward';
+import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 import './UserMenu.html';
 import './UserMenu.styl';
 
@@ -87,7 +87,7 @@ class UserMenu extends BlazeComponent {
           Notifications.error(err.error);
         } else {
           Game.Popup.show({
-            template: (new Reward({
+            template: (new RewardPopup({
               hash: {
                 reward,
               },

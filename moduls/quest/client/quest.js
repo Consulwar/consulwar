@@ -1,8 +1,8 @@
 import content from '/imports/content/client';
 import persons from '/imports/content/Person/client/';
 import Gallery from '/imports/client/ui/blocks/Gallery/Gallery'
-import Reward from '/imports/client/ui/blocks/Reward/Reward';
-import '/imports/client/ui/Person/image/PersonImage';
+import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
+import Quest from '/imports/client/ui/blocks/Quest/Quest';
 
 const engNameToPerson = {};
 _(persons).values().forEach((person) => {
@@ -26,14 +26,16 @@ Game.Quest.showDailyQuest = function() {
   if (dailyQuest.status == Game.Quest.status.INPROGRESS) {
     // show inprogress daily quest
     Game.Popup.show({
-      templateName: 'quest',
-      data: {
-        who: dailyQuest.who || 'tamily',
-        person: Game.Persons[dailyQuest.who || 'tamily'],
-        type: 'daily',
-        title: dailyQuest.name,
-        isPrompt: true,
-      },
+      template: (new Quest({
+        hash: {
+          personName: dailyQuest.who,
+          title: dailyQuest.name,
+          type: 'daily',
+          isPrompt: true,
+          isLoading: isLoading,
+          questData: loadedQuest,
+        }
+      })).renderComponent(),
     });
 
     // load full info
@@ -45,14 +47,15 @@ Game.Quest.showDailyQuest = function() {
   } else {
     // show finished daily quest
     Game.Popup.show({
-      templateName: 'quest',
-      data: {
-        who: dailyQuest.who || 'tamily',
-        person: Game.Persons[dailyQuest.who || 'tamily'],
-        type: 'daily',
-        title: dailyQuest.name, 
-        text: dailyQuest.result,
-      },
+      template: (new Quest({
+        hash: {
+          personName: dailyQuest.who,
+          title: dailyQuest.name,
+          text: dailyQuest.result,
+          type: 'daily',
+          questData: loadedQuest,
+        }
+      })).renderComponent(),
     });
   }
 };
@@ -89,7 +92,7 @@ Game.Quest.showQuest = function(id) {
   
       // quest finished, render reward popup
       Game.Popup.show({
-        template: (new Reward({
+        template: (new RewardPopup({
           hash: {
             reward,
             onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
@@ -105,15 +108,17 @@ Game.Quest.showQuest = function(id) {
 
     // quest not finished, render reqular quest window
     Game.Popup.show({
-      templateName: 'quest',
-      data: {
-        type: 'quest',
-        engName: currentQuest.engName,
-        who: currentQuest.who,
-        person: Game.Persons[currentQuest.who],
-        title: currentQuest.name,
-        isPrompt: currentQuest.status == Game.Quest.status.PROMPT,
-      },
+      template: (new Quest({
+        hash: {
+          personName: currentQuest.who,
+          title: currentQuest.name,
+          type: 'quest',
+          engName: currentQuest.engName,
+          isPrompt: currentQuest.status == Game.Quest.status.PROMPT,
+          isLoading: isLoading,
+          questData: loadedQuest,
+        }
+      })).renderComponent(),
     });
 
     Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
@@ -144,97 +149,24 @@ Game.Quest.showQuest = function(id) {
   }
 };
 
-Game.Quest.showGreeteing = function(who) {
+Game.Quest.showGreeteing = function(personName) {
   isLoading.set(false);
   loadedQuest.set(null);
 
   // show character greeting text
-  var text = Game.Persons[who].defaultText;
+  var text = Game.Persons[personName].defaultText;
   if (text && text.length > 0) {
     Game.Popup.show({
-      templateName: 'quest',
-      data: {
-        who,
-        person: Game.Persons[who],
-        type: 'quest',
-        text,
-      },
-    });
+      template: (new Quest({
+        hash: {
+          personName,
+          type: 'quest',
+          text,
+          isLoading: isLoading,
+          questData: loadedQuest,
+        }
+      })).renderComponent(),
+    })
   }
 };
-
-Template.quest.helpers({
-  isLoading: function() { return isLoading.get(); },
-
-  options: function() {
-    if (isLoading.get()) {
-      return null; // don't show options during loading
-    }
-
-    var quest = loadedQuest.get();
-    if (!quest) {
-      return null; // quest not loaded
-    }
-
-    // daily quest answers
-    if (quest.answers) {
-      return _.map(quest.answers, function(text, name) {
-        return {
-          name: name,
-          text: text,
-          mood: 'neutral'
-        };
-      });
-    }
-
-    // regular quest options
-    if (quest.options) {
-      return _.map(quest.options, function(values, name) {
-        values.name = name;
-        return values;
-      });
-    }
-
-    return null;
-  },
-
-  text: function() {
-    var quest = loadedQuest.get();
-    return quest ? quest.text : this.text;
-  },
-
-  reward: function() {
-    var quest = loadedQuest.get();
-
-    return quest && _(quest.reward).pairs().map(([id, count]) => ({
-      title: content[id].title,
-      count,
-    }));
-  },
-
-  characterName: function(who) {
-    return engNameToPerson[who] ? engNameToPerson[who].title : null;
-  }
-});
-
-Template.quest.onRendered(function() {
-  $(this.firstNode).perfectScrollbar();
-});
-
-Template.quest.events({
-  'click a': function(e, t) {
-    if (t.data.type == 'quest') {
-      // send reqular quest action and close popup
-      Meteor.call('quests.sendAction', t.data.engName, e.target.dataset.option);
-      Blaze.remove(t.view);
-    } else {
-      // send daily quest answer and render result
-      isLoading.set(true);
-      Meteor.call('quests.sendDailyAnswer', e.target.dataset.option, function(err, result) {
-        isLoading.set(false);
-        loadedQuest.set(result);
-      });
-    }
-  }
-});
 };

@@ -61,9 +61,7 @@ Tracker.autorun((userPlanetsTracker) => {
   }
 });
 
-const tooltipZoom = 1;
 var isLoading = new ReactiveVar(false);
-var zoom = new ReactiveVar(null);
 var bounds = new ReactiveVar(null);
 var isFleetSendInProgress = new ReactiveVar(false);
 var updated = new ReactiveVar(null);
@@ -83,7 +81,6 @@ let pathsLayer = null;
 let shipsLayer = null;
 let galaxyByUsername = {};
 let galaxyByHex = {};
-const usernameTooltips = [];
 let myAllies = [];
 
 Space.collection.find({}).observe({
@@ -1026,7 +1023,7 @@ Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
       allowEdit: isLock,
       allowActions: isLock,
       position: function() {
-        var k = Math.pow(2, (zoom.get() - 7));
+        var k = Math.pow(2, (mapView.getZoom() - 7));
         var iconSize = (planet.size + 3) * 4;
         var position = mapView.latLngToLayerPoint(
           new L.latLng(offset.x + planet.x, offset.y + planet.y),
@@ -1060,7 +1057,7 @@ Game.Cosmos.showBattlePopup = function(battleId, isLock, offset = { x: 0, y: 0 }
     Template.cosmosBattlePopup, {
       battleId,
       position: function() {
-        const k = Math.pow(2, (zoom.get() - 7));
+        const k = Math.pow(2, (mapView.getZoom() - 7));
         const iconSize = 6;
         const position = mapView.latLngToLayerPoint(
           new L.latLng(
@@ -2078,21 +2075,6 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
 
   galaxyByUsername[username] = galaxy;
 
-  const center = galaxy.offset;
-
-  if (zoom.get() <= tooltipZoom) {
-    const usernameTooltip = L.tooltip({
-      direction: 'center',
-      className: 'usernameTooltip',
-      permanent: true,
-    })
-      .setLatLng([center.x, center.y])
-      .setContent(galaxy.username)
-      .addTo(mapView);
-  
-    usernameTooltips.push(usernameTooltip);
-  }
-
   if (hex) {
     indexGalaxyHex(galaxy, hex);
   }
@@ -2192,37 +2174,6 @@ Template.cosmos.onRendered(function() {
   mapView.createPane('hexesLayer2').style.zIndex = 398;
   mapView.createPane('hexesLayer1').style.zIndex = 399;
 
-  zoom.set(mapView.getZoom());
-  let prevZoom = mapView.getZoom();
-
-  mapView.on('zoomend', function() {
-    const currentZoom = mapView.getZoom();
-    zoom.set(currentZoom);
-    if (currentZoom <= tooltipZoom && prevZoom > tooltipZoom) {
-      _(galaxyByUsername).values().forEach((galaxy) => {
-        const center = galaxy.offset;
-
-        const usernameTooltip = L.tooltip({
-          direction: 'center',
-          className: 'usernameTooltip',
-          permanent: true,
-        })
-          .setLatLng([center.x, center.y])
-          .setContent(galaxy.username)
-          .addTo(mapView);
-
-        usernameTooltips.push(usernameTooltip);
-      });
-    } else if (currentZoom > tooltipZoom && prevZoom <= tooltipZoom) {
-      usernameTooltips.forEach((usernameTooltip) => {
-        usernameTooltip.remove();
-      });
-
-      usernameTooltips.length = 0;
-    }
-    prevZoom = currentZoom;
-  });
-
   bounds.set(mapView.getBounds());
   mapView.on('moveend', function() {
     bounds.set(mapView.getBounds());
@@ -2245,7 +2196,6 @@ Template.cosmos.onRendered(function() {
   this.autorun(function() {
     var hash = Router.current().getParams().hash;
     if (!isLoading.get() && hash) {
-      zoom.dep.changed();
       Tracker.nonreactive(function() {
         if (Game.Artefacts.items[hash]) {
           // highlight planets by artefact

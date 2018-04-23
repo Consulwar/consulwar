@@ -307,6 +307,14 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
   const userResources = Game.Resources.getValue({ userId });
   const stealCost = Game.Unit.calculateBaseArmyCost(enemyArmy);
 
+  // converting some uniresources to humans
+  const humansRatio = 0.5;
+  const rating = Game.Resources.calculateRatingFromResources(stealCost);
+  _(stealCost).pairs().forEach(([resName, value]) => {
+    stealCost[resName] = value * (1 - humansRatio);
+  });
+  stealCost.humans = rating * humansRatio * 0.5;
+
   const bunker = SpecialEffect.getValue({
     hideEffects: true,
     obj: { id: 'Unique/bunker' },

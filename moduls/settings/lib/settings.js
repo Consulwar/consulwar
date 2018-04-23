@@ -27,7 +27,7 @@ Game.Settings = {
     showDistanceFromPlanets: [true, false],
     mobileVersion: [true, false],
     textUnits: [true, false],
-    moveCompletedUnitToHangar: [true, false],
+    // moveCompletedUnitToHangar: [true, false], // TODO: implement hangar UI before uncommenting this
     isMultiSkinEnabled: [false, true],
     disableBroadcast: [true, false],
     muteSound: [true, false],

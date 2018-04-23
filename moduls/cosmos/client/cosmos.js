@@ -61,6 +61,7 @@ Tracker.autorun((userPlanetsTracker) => {
   }
 });
 
+const tooltipZoom = 1;
 var isLoading = new ReactiveVar(false);
 var zoom = new ReactiveVar(null);
 var bounds = new ReactiveVar(null);
@@ -82,7 +83,6 @@ let pathsLayer = null;
 let shipsLayer = null;
 let galaxyByUsername = {};
 let galaxyByHex = {};
-const showedHexes = [];
 const usernameTooltips = [];
 let myAllies = [];
 
@@ -2077,6 +2077,22 @@ const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y
   });
 
   galaxyByUsername[username] = galaxy;
+
+  const center = galaxy.offset;
+
+  if (zoom.get() <= tooltipZoom) {
+    const usernameTooltip = L.tooltip({
+      direction: 'center',
+      className: 'usernameTooltip',
+      permanent: true,
+    })
+      .setLatLng([center.x, center.y])
+      .setContent(galaxy.username)
+      .addTo(mapView);
+  
+    usernameTooltips.push(usernameTooltip);
+  }
+
   if (hex) {
     indexGalaxyHex(galaxy, hex);
   }
@@ -2179,11 +2195,10 @@ Template.cosmos.onRendered(function() {
   zoom.set(mapView.getZoom());
   let prevZoom = mapView.getZoom();
 
-  const tooltipZoom = 1;
   mapView.on('zoomend', function() {
     const currentZoom = mapView.getZoom();
     zoom.set(currentZoom);
-    if (currentZoom === tooltipZoom && prevZoom === (tooltipZoom+1)) {
+    if (currentZoom <= tooltipZoom && prevZoom > tooltipZoom) {
       _(galaxyByUsername).values().forEach((galaxy) => {
         const center = galaxy.offset;
 
@@ -2198,7 +2213,7 @@ Template.cosmos.onRendered(function() {
 
         usernameTooltips.push(usernameTooltip);
       });
-    } else if (currentZoom === (tooltipZoom+1) && prevZoom === tooltipZoom) {
+    } else if (currentZoom > tooltipZoom && prevZoom <= tooltipZoom) {
       usernameTooltips.forEach((usernameTooltip) => {
         usernameTooltip.remove();
       });
@@ -2332,7 +2347,6 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
         },
       });
 
-      showedHexes.push(hex);
       hexPoly.setStyle({ fill: false });
     };
 

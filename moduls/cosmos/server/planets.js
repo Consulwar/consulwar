@@ -941,7 +941,7 @@ Meteor.methods({
       || !planet.armyId
       || Game.Unit.getArmy({ id: planet.armyId }).user_id !== user._id
     ) {
-      throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+      throw new Meteor.Error('Невозможно начать добычу артефактов');
     }
 
     if (Game.Planets.getColoniesCount() >= Game.Planets.getMaxColoniesCount()) {
@@ -979,7 +979,7 @@ Meteor.methods({
       || planet.status !== Game.Planets.STATUS.HUMANS
       || planet.minerUsername !== user.username
     ) {
-      throw new Meteor.Error('Ты втираешь мне какую-то дичь');
+      throw new Meteor.Error('Невозможно прекратить добычу артефактов');
     }
 
     planet.status = Game.Planets.STATUS.NOBODY;

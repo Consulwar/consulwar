@@ -69,30 +69,6 @@ Game.Building.showPage = function() {
   }
 };
 
-var bonusEvents = {
-  'click .collectBonus.metals': function(e, t) {
-    Meteor.call('getBonusResources', 'metals', function(error, result) {
-      if (error) {
-        Notifications.error('Нельзя получить бонусный металл', error.error);
-      } else {
-        Notifications.success('Бонусный металл получен', '+' + result);
-      }
-    });
-  },
-
-  'click .collectBonus.crystals': function(e, t) {
-    Meteor.call('getBonusResources', 'crystals', function(error, result) {
-      if (error) {
-        Notifications.error('Нельзя получить бонусный кристалл', error.error);
-      } else {
-        Notifications.success('Бонусный кристалл получен', '+' + result);
-      }
-    });
-  }
-};
-
-Template.overlay_menu.events(bonusEvents);
-
 initBuildingSpecialMarketClient();
 initBuildingSpecialColosseumLib();
 initBuildingSpecialContainerClient();

@@ -1,0 +1,37 @@
+<template name="MenuExtras">
+  {{#if isResidential}}
+    <div class="cw--MenuExtras">
+      {{#if getBonus}}
+        <div
+          class="
+            cw--MenuExtras__bonus
+            cw--MenuExtras__bonus_{{resource}}
+          "
+          onClick={{collectBonus}}
+        >
+          <div class="cw--MenuExtras__bonusCounter">
+            {{#each piece in getBonus.pieces}}
+              <div class="cw--MenuExtras__bonusCounterPiece"></div>
+            {{/each}}
+          </div>
+          <img
+            class="cw--MenuExtras__bonusIcon"
+            src={{getBonus.icon}}
+            alt="Собрать бонус"
+          />
+          <div class="cw--MenuExtras__bonusCount">
+            {{getBonus.value}}
+          </div>
+        </div>
+      {{else}}
+        {{#if isReady}}
+          <div
+            onClick={{showPage}}
+            class="cw--MenuExtras__icon"
+            style="background-image:url({{getIcon}})"
+          ></div>
+        {{/if}}
+      {{/if}}
+    </div>
+  {{/if}}
+</template>

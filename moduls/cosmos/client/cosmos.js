@@ -891,14 +891,22 @@ Template.cosmosPlanetPopup.events({
   'click .mine'(e, t) {
     const planetId = $(e.currentTarget).attr('data-id');
     if (planetId) {
-      Meteor.call('planet.startMining', planetId);
+      Meteor.call('planet.startMining', planetId, (error) => {
+        if (error) {
+          Notifications.error(error.error);
+        }
+      });
     }
   },
 
   'click .unmine'(e, t) {
     const planetId = $(e.currentTarget).attr('data-id');
     if (planetId) {
-      Meteor.call('planet.stopMining', planetId);
+      Meteor.call('planet.stopMining', planetId, (error) => {
+        if (error) {
+          Notifications.error(error.error);
+        }
+      });
     }
   },
 

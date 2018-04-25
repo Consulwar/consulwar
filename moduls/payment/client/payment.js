@@ -1,3 +1,5 @@
+import Payment from '/imports/client/ui/blocks/Payment/Payment';
+
 initPaymentClient = function() {
 'use strict';
   
@@ -7,13 +9,9 @@ initPaymentLib();
 // Payment modal window
 // ----------------------------------------------------------------------------
 
-var canShowReward = false;
+// var canShowReward = false;
+var canShowReward = true;
 var isPaymentSuccess = false;
-
-var showPaymentWindow = function() {
-  Game.Popup.show({ templateName: 'payment' });
-  canShowReward = true;
-};
 
 var showPlatboxWindow = function(url) {
   if (url) {
@@ -37,7 +35,7 @@ var showRewardWindow = function(itemId) {
 };
 
 Game.Payment.showWindow = function() {
-  showPaymentWindow();
+  Game.Popup.show({ template: Payment.renderComponent() });
 };
 
 Game.Payment.buyItem = function(item) {
@@ -49,26 +47,6 @@ Game.Payment.buyItem = function(item) {
     }
   });
 };
-
-Template.payment.onRendered(function() {
-  $('.payment.scrollbar-inner').perfectScrollbar();
-});
-
-Template.payment.helpers({
-  paymentItems: function() {
-    return _.filter(_.map(Game.Payment.items, function(item) {
-      return item;
-    }), function(item) {
-      return item.profit.resources !== undefined;
-    });
-  }
-});
-
-Template.payment.events({
-  'click .paymentItems .greenButton': function(e, t) {
-    Game.Payment.buyItem(e.currentTarget.dataset.id);
-  }
-});
 
 Template.paymentReward.events({
   'click .take': function(e, t) {

@@ -1,0 +1,60 @@
+<template name="Payment">
+  <div class="cw--Payment">
+    <div class="cw--Payment__header">
+      <span class="cw--color_honor">Помните, Консулы:</span>
+      &nbsp;покупая&nbsp;
+      <span class="cw--color_credit">Грязные Галактические Кредиты,</span>
+      &nbsp;вы поддерживаете
+      <span class="cw--color_honor">&nbsp;Борьбу за освобождение Земли от Рептилоидов.</span>
+    </div>
+    <div class="cw--Payment__items">
+      {{#each item in paymentItems}}
+        <div
+          class="cw--Payment__item"
+          style="background-image:url(/img/game/payment/{{item.id}}.png"
+        >
+          <div class="cw--Payment__itemTitle">
+            Кредиты: <span class="cw--color_credit">{{formatNumber item.result.base}}</span>
+            {{#if item.result.bonus}}
+              + 
+              <span class="cw--color_credit">
+                {{formatNumber item.result.bonus}}
+              </span>
+            {{/if}}
+            {{#if item.result.extra}}
+              + 
+              <span class="cw--color_credit">
+                {{formatNumber item.result.extra}}
+              </span>
+            {{/if}}
+          </div>
+
+          <div class="cw--Payment__itemProfit">
+            {{formatNumber item.profit.resources.credits}}
+            {{#if item.result.extra}}
+              <span class="cw--Payment__itemOldProfit">
+                {{formatNumber (sum item.result.base (or item.result.bonus 0))}}
+              </span>
+            {{/if}}
+          </div>
+          <div class="cw--Payment__itemPrice">
+            {{formatNumber item.cost.rub}}
+          </div>
+          
+          <button
+            class="
+              cw--Payment__buy
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_green
+            "
+            onClick={{buy item.id}}
+            data-sound="hover, click"
+          >
+            Приобрести
+          </button>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>

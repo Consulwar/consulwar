@@ -1,16 +1,3 @@
-payment-icon(name)
-  .{name}-icon
-    background-image url("/img/game/payment/" name ".png")
-
-
-payment-icon('paymentCredits1000')
-payment-icon('paymentCredits2500')
-payment-icon('paymentCredits5000')
-payment-icon('paymentCredits10000')
-payment-icon('paymentCredits25000')
-payment-icon('paymentCredits50000')
-
-
 .side_payment
   position relative
   width 340px
@@ -76,12 +63,6 @@ payment-icon('paymentCredits50000')
   
   > span
     color $color-white
-    
-    .alert
-      color $color-honor
-
-    .ggk
-      color $color-ggk
 
   &.platbox
     width 1030px
@@ -150,68 +131,6 @@ payment-icon('paymentCredits50000')
         -webkit-filter brightness(1.4)
         filter brightness(1.4)
 
-  .paymentItems
-    display flex
-    flex-wrap wrap
-    flex-direction row
-    justify-content space-between
-    width 100%
-    margin 10px 0
-    
-    > div
-      display block
-      width 303px
-      height 229px
-      background-repeat no-repeat
-      background-position center top
-      color $color-ggk
-      margin 5px 0
-      
-      .description
-        color $color-human
-        font-size 15px
-        font-weight bold
-        margin 12px 20px
-        span
-          color $color-ggk
-          margin 0 3px
-      
-      .profit,
-      .price
-        display flex
-        align-items center
-        width 230px
-        height 46px
-        padding-left 64px
-        box-sizing border-box
-        background-repeat no-repeat
-        background-position left center
-        font-size 20px
-        margin 12px 0
-      
-      .profit
-        color $color-ggk
-        background-image url(/img/game/Resource/Base/Credit/icon.svg)
-        
-        .previous
-          -webkit-filter grayscale(1) brightness(0.6)
-          filter grayscale(1) brightness(0.6)
-          font-size 15px
-          text-decoration line-through
-          margin-left 8px
-
-      .price
-        color $color-white
-        background-image url(/img/game/payment/rub.png)
-
-      .profit,
-      .price,
-      .greenButton
-        margin-left 61px
-        
-      .greenButton
-        margin-top 6px
-    
 
 .content
   .paymentHistory

@@ -1,0 +1,74 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--Payment
+  width 960px
+  height 540px
+  max-width 100%
+  padding 10px
+  box-sizing border-box
+
+  background-color $cw--color_black
+
+  &__header
+    display flex
+    margin 0 30px 10px 0
+    height 30px
+    align-items center
+
+    font-size $cw--fontSize_s
+    color $cw--color_white
+
+  &__items
+    display flex
+    flex-wrap wrap
+    justify-content space-between
+
+  &__item
+    width 303px
+    height 229px
+    margin-bottom 16px
+
+    background-repeat no-repeat
+    background-position center top
+
+  &__itemTitle
+    display block
+    margin 12px 20px
+    font-size $cw--fontSize_m
+    font-weight bold
+    color $cw--color_human
+
+  &__itemProfit
+  &__itemPrice
+    display flex
+    margin 12px 0 12px 61px
+    align-items center
+    width 230px
+    height 46px
+    padding-left 64px
+    box-sizing border-box
+
+    font-size 20px
+    background-repeat no-repeat
+    background-position left center
+
+  &__itemProfit
+    color $cw--color_credit
+    background-image url(/img/game/Resource/Base/Credit/icon.svg)
+
+  &__itemOldProfit
+    margin-left 8px
+    font-size $cw--fontSize_m
+    text-decoration line-through
+    filter grayscale(1) brightness(0.6)
+
+  &__itemPrice
+    color $cw--color_white
+    background-image url(/img/game/payment/rub.png)
+
+  &__buy
+    width 185px
+    height 50px
+    margin 18px auto 0

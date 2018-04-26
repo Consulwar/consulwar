@@ -311,9 +311,9 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
   const humansRatio = 0.5;
   const rating = Game.Resources.calculateRatingFromResources(stealCost);
   _(stealCost).pairs().forEach(([resName, value]) => {
-    stealCost[resName] = value * (1 - humansRatio);
+    stealCost[resName] = Math.round(value * (1 - humansRatio));
   });
-  stealCost.humans = rating * humansRatio * 0.5;
+  stealCost.humans = Math.round(rating * humansRatio * 0.5);
 
   const bunker = SpecialEffect.getValue({
     hideEffects: true,

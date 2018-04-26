@@ -15,15 +15,20 @@ export default Space.jobs.processJobs(
     workTimeout: Config.JOBS.workTimeout,
   },
   (job, cb) => {
-    const { data } = job;
+    try {
+      const { data } = job;
 
-    if (data.isHumans) {
-      humansArrival(data);
-    } else {
-      reptileArrival(data);
+      if (data.isHumans) {
+        humansArrival(data);
+      } else {
+        reptileArrival(data);
+      }
+
+      job.done();
+      cb();
+    } catch (err) {
+      job.fail(err.stack);
+      cb(err.stack);
     }
-
-    job.done();
-    cb();
   },
 );

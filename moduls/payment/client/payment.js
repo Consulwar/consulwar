@@ -1,4 +1,5 @@
 import Payment from '/imports/client/ui/blocks/Payment/Payment';
+import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 
 initPaymentClient = function() {
 'use strict';
@@ -9,8 +10,6 @@ initPaymentLib();
 // Payment modal window
 // ----------------------------------------------------------------------------
 
-// var canShowReward = false;
-var canShowReward = true;
 var isPaymentSuccess = false;
 
 var showPlatboxWindow = function(url) {
@@ -30,7 +29,15 @@ var showTekoWindow = function(url) {
 var showRewardWindow = function(itemId) {
   var item = Game.Payment.items[itemId];
   if (item) {
-    Game.Popup.show({ templateName: 'paymentReward', data: { item } });
+    Game.Popup.show({
+      template: (new RewardPopup({
+        hash: {
+          reward: item.profit,
+          description: item.description,
+        }
+      })).renderComponent(),
+      hideClose: true,
+    });
   }
 };
 
@@ -48,18 +55,11 @@ Game.Payment.buyItem = function(item) {
   });
 };
 
-Template.paymentReward.events({
-  'click .take': function(e, t) {
-    Blaze.remove(t.view);
-  }
-});
-
 Meteor.subscribe('paymentIncome');
 
 Game.Payment.Income.Collection.find({}).observeChanges({
   added: function(id, fields) {
-    if (canShowReward
-     && fields
+    if (fields
      && fields.source
      && fields.source.type == 'payment'
     ) {
@@ -114,7 +114,6 @@ Game.Payment.showHistory = function() {
         history.set(data);
       }
     });
-
     this.render('paymentHistory', {
       to: 'content',
       data: {

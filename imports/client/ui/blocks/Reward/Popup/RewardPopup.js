@@ -12,12 +12,14 @@ class RewardPopup extends BlazeComponent {
   constructor({
     hash: {
       reward,
+      description,
       onGet,
     },
   }) {
     super();
     this.reward = reward;
     this.onGet = onGet;
+    this.description = description;
   }
 
   onRendered() {

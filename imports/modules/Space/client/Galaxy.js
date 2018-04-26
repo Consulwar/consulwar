@@ -21,7 +21,8 @@ const incrementalRenderer = (timestamp) => {
   const thisFrame = performanceNow - timestamp; // time spent rendering this frame
   lastTimestamp = timestamp;
   minFrameTime = Math.min(minFrameTime, delta);
-  if (thisFrame > minFrameTime + timeError) { // already took too much time, better to not make it worse
+  if (thisFrame > minFrameTime + timeError) {
+    // already took too much time, better to not make it worse
     incrementalDefer = requestAnimationFrame(incrementalRenderer);
     return;
   }
@@ -71,7 +72,7 @@ class Galaxy {
     this.labels = {};
 
     Game.Planets.Collection.find({ username }).observeChanges({
-      added: (id, planet) => {
+      added: (id) => {
         planetsQueue.push({
           id,
           galaxy: this,

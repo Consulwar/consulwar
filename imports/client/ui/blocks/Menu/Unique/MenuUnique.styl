@@ -10,8 +10,11 @@
     +media($cw--size_xl, $cw--size_xxl)
       width 90px
       height @width
-    +media(null, $cw--size_s)
+    +media($cw--size_xs, $cw--size_s)
       flex-basis 23%
+      margin 2px 1%
+    +media(null, $cw--size_xs)
+      flex-basis 31%
       margin 2px 1%
 
   &__itemLevel

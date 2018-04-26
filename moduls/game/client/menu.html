@@ -194,58 +194,6 @@
           {{/let}}
         {{/if}}
       {{/each}}
-      
-      {{#if eq currentUrl (pathFor route='building' group='Residential')}}
-        <div 
-          class="
-            collectBonus 
-            metals 
-            {{#if bonusStorage.metals}}active{{/if}}
-          "
-          data-sound="click"
-        >
-          <div
-            class="currentValue"
-            style="height: {{bonusStorage.metals}}%"
-          ></div>
-        </div>
-
-        <div 
-          class="
-            collectBonus 
-            crystals
-            {{#if bonusStorage.crystals}}active{{/if}}
-          "
-          data-sound="click"
-        >
-          <div
-            class="currentValue"
-            style="height: {{bonusStorage.crystals}}%"
-          ></div>
-        </div>
-
-        <a 
-          class="
-            collectBonus 
-            colosseum
-            {{#if Game.Building.special.Colosseum.checkCanStart}}active{{/if}}
-          "
-          href="{{pathFor 'building' group='Residential' item='Colosseum' menu='tournaments'}}"
-          data-sound="click"
-        >
-        </a>
-
-        <a 
-          class="
-            collectBonus 
-            pulsecatcher
-            {{#if Game.Building.special.Pulsecatcher.canActivate}}active{{/if}}
-          "
-          href="{{pathFor 'building' group='Residential' item='PulseCatcher' menu='bonus'}}" 
-          data-sound="click"
-        >
-        </a>
-      {{/if}}
     </div>
   {{/if}}
 </template>

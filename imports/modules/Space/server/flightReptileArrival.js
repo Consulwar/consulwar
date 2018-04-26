@@ -1,3 +1,5 @@
+import { _ } from 'lodash';
+
 import Game from '/moduls/game/lib/main.game';
 
 import createGroup from '/moduls/battle/lib/imports/createGroup';

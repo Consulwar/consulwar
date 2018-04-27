@@ -18,6 +18,10 @@ class ReminderEmails {
     }
 
     Meteor.users._ensureIndex({
+      'emails.address': 1,
+    });
+
+    Meteor.users._ensureIndex({
       'emails.unsubscribed': 1,
     });
 
@@ -93,6 +97,7 @@ class ReminderEmails {
         inactivityDate.setDate(inactivityDate.getDate() - minimumInterval);
         inactivityDate.setMinutes(inactivityDate.getMinutes() + 1);
         const inactiveUsers = Meteor.users.find({
+          'emails.address': { $exists: true },
           emails: { $elemMatch: { unsubscribed: { $ne: true } } },
           'status.online': { $ne: true },
           'status.lastLogout': { $lt: inactivityDate },

@@ -17,6 +17,26 @@ class ReminderEmails {
       );
     }
 
+    Meteor.users._ensureIndex({
+      'emails.unsubscribed': 1,
+    });
+
+    Meteor.users._ensureIndex({
+      'status.online': 1,
+    });
+
+    Meteor.users._ensureIndex({
+      'status.lastLogout': 1,
+    });
+
+    Meteor.users._ensureIndex({
+      lastReminderDate: 1,
+    });
+
+    Meteor.users._ensureIndex({
+      reminderLevel: 1,
+    });
+
     Meteor.users.find({ 'status.online': true }).observe({
       removed({ _id }) {
         Meteor.users.update({ _id }, {

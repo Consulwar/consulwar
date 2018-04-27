@@ -5,6 +5,16 @@ import { Email } from 'meteor/email';
 
 class ReminderEmails {
   static schedule() {
+    if (
+      !Meteor.settings.reminderEmails
+      || !Meteor.settings.reminderEmails.schedule
+    ) {
+      throw new Meteor.Error(
+        'Ошибка в настройках',
+        'Заданы не все настройки напоминаний неактивным игрокам (см. settings.sample reminderEmails)',
+      );
+    }
+
     Meteor.users.find({ 'status.online': true }).observe({
       removed({ _id }) {
         Meteor.users.update({ _id }, {

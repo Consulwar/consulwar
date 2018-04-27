@@ -92,6 +92,9 @@
     },
 	"reduceBuildingSpeed": 1
   },
+  "reminderEmails": {
+    "schedule": "at 4:00 am"
+  },
   "helprace": {
     "secret": "xxx"
   },

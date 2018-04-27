@@ -14,6 +14,14 @@ Meteor.users._ensureIndex({
   rating: 1
 });
 
+Meteor.users._ensureIndex({
+  'emails.unsubscribed': 1,
+  'status.online': 1,
+  'status.lastLogout': 1,
+  lastReminderDate: 1,
+  reminderLevel: 1,
+});
+
 Game.Statistic.Collection._ensureIndex({
   'research.total': 1
 });

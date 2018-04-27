@@ -29,9 +29,15 @@ class ReminderEmails {
       name: 'Рассылка неактивным пользователям',
       schedule: parser => parser.text(Meteor.settings.reminderEmails.schedule),
       job() {
+        // any file that exists there will do
         let path = Assets.absoluteFilePath('reminderEmails/index1.html');
         path = path.substring(0, path.lastIndexOf('/'));
-        const templateFilenames = fs.readdirSync(path).filter(filename => filename.substr(-5) === '.html').sort();
+        const templateFilenames = (
+          fs
+            .readdirSync(path)
+            .filter(filename => filename.substr(-5) === '.html')
+            .sort()
+        );
         const templates = templateFilenames.map(filename => ({
           from: Meteor.settings.mail.from,
           html: Assets.getText(`reminderEmails/${filename}`),
@@ -39,7 +45,8 @@ class ReminderEmails {
         }));
         const subjectRE = new RegExp('<title>([^<>]+)</title>', 'i');
         const attachmentRE = new RegExp('(\\ssrc=")([^/:"]+)(")', 'gi');
-        templates.forEach((template) => {
+        for (let i = 0; i < templates.length; i += 1) {
+          const template = templates[i];
           const attachmentsDictionary = {};
           let match;
           do {
@@ -58,7 +65,7 @@ class ReminderEmails {
             template.attachments = Object.values(attachmentsDictionary);
           } while (match);
           template.html = template.html.replace(attachmentRE, '$1cid:$2$3');
-        });
+        }
 
         const inactivityDate = new Date();
         const INTERVALS = Meteor.settings.reminderEmails.intervals;

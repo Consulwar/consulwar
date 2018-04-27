@@ -8,6 +8,7 @@ class ReminderEmails {
     if (
       !Meteor.settings.reminderEmails
       || !Meteor.settings.reminderEmails.schedule
+      || !Meteor.settings.reminderEmails.intervals
     ) {
       throw new Meteor.Error(
         'Ошибка в настройках',
@@ -59,7 +60,9 @@ class ReminderEmails {
         });
 
         const inactivityDate = new Date();
-        inactivityDate.setDate(inactivityDate.getDate() - 2);
+        const INTERVALS = Meteor.settings.reminderEmails.intervals;
+        const minimumInterval = Math.min(...INTERVALS);
+        inactivityDate.setDate(inactivityDate.getDate() - minimumInterval);
         inactivityDate.setMinutes(inactivityDate.getMinutes() + 1);
         const inactiveUsers = Meteor.users.find({
           emails: { $elemMatch: { unsubscribed: { $ne: true } } },
@@ -71,15 +74,24 @@ class ReminderEmails {
         const emailRE = new RegExp('\\{\\{email}}', 'g');
         inactiveUsers.forEach((user) => {
           const reminderLevel = user.reminderLevel ? user.reminderLevel : 0;
-          const reminder = { ...templates[reminderLevel], to: user.emails[0].address };
-          reminder.html = reminder.html.replace(emailRE, user.emails[0].address);
-          Email.send(reminder);
-          Meteor.users.update({ _id: user._id }, {
-            $set: {
-              reminderLevel: reminderLevel + 1,
-              lastReminderDate: new Date(),
-            },
-          });
+          const userInterval = INTERVALS[Math.min(reminderLevel, INTERVALS.length)];
+          const userInactivityDate = new Date();
+          userInactivityDate.setDate(userInactivityDate.getDate() - userInterval);
+          userInactivityDate.setMinutes(userInactivityDate.getMinutes() + 1);
+          if (
+            user.status.lastLogout < userInactivityDate
+            && (user.lastReminderDate < userInactivityDate || !user.lastReminderDate)
+          ) {
+            const reminder = { ...templates[reminderLevel], to: user.emails[0].address };
+            reminder.html = reminder.html.replace(emailRE, user.emails[0].address);
+            Email.send(reminder);
+            Meteor.users.update({ _id: user._id }, {
+              $set: {
+                reminderLevel: reminderLevel + 1,
+                lastReminderDate: new Date(),
+              },
+            });
+          }
         });
       },
     });

@@ -93,7 +93,8 @@
 	"reduceBuildingSpeed": 1
   },
   "reminderEmails": {
-    "schedule": "at 4:00 am"
+    "schedule": "at 4:00 am",
+    "intervals": [2, 5, 10]
   },
   "helprace": {
     "secret": "xxx"

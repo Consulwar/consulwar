@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 import fs from 'fs';
 import { Email } from 'meteor/email';
+import { Assets } from '/moduls/game/lib/importCompability';
 
 class ReminderEmails {
   static schedule() {

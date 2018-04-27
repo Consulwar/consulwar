@@ -41,13 +41,15 @@ class ReminderEmails {
       reminderLevel: 1,
     });
 
-    Meteor.users.find({ 'status.online': true }).observe({
-      removed({ _id }) {
-        Meteor.users.update({ _id }, {
-          $set: { 'status.lastLogout': new Date() },
-        });
-      },
-    });
+    if (Meteor.settings.last) {
+      Meteor.users.find({ 'status.online': true }).observe({
+        removed({ _id }) {
+          Meteor.users.update({ _id }, {
+            $set: { 'status.lastLogout': new Date() },
+          });
+        },
+      });
+    }
 
     SyncedCron.add({
       name: 'Рассылка неактивным пользователям',

@@ -3,7 +3,50 @@ import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Email } from 'meteor/email';
 import { Assets } from '/moduls/game/lib/importCompability';
 
+import './adminMethods';
+
+const prepareTemplate = function(filename) {
+  const template = {
+    from: Meteor.settings.mail.from,
+    html: Assets.getText(filename),
+    attachments: {},
+  };
+  const subjectRE = new RegExp('<title>([^<>]+)</title>', 'i');
+  const attachmentRE = new RegExp('(\\ssrc=")([^/:"]+)(")', 'gi');
+  const attachmentsDictionary = {};
+  let match;
+  do {
+    const subjectMatch = subjectRE.exec(template.html);
+    template.subject = subjectMatch ? subjectMatch[1] : '';
+    match = attachmentRE.exec(template.html);
+    if (match) {
+      const attachmentFilename = match[2];
+      if (!attachmentsDictionary[attachmentFilename]) {
+        attachmentsDictionary[attachmentFilename] = {
+          path: Assets.absoluteFilePath(`reminderEmails/${attachmentFilename}`),
+          cid: attachmentFilename,
+        };
+      }
+    }
+    template.attachments = Object.values(attachmentsDictionary);
+  } while (match);
+  template.html = template.html.replace(attachmentRE, '$1cid:$2$3');
+  return template;
+};
+
+const personalize = function({ template, user }) {
+  const emailRE = new RegExp('\\{\\{email}}', 'g');
+  const reminder = { ...template, to: user.emails[0].address };
+  reminder.html = reminder.html.replace(emailRE, user.emails[0].address);
+  return reminder;
+};
+
 class ReminderEmails {
+  static forceSend({ filename, user }) {
+    const template = prepareTemplate(filename);
+    Email.send(personalize({ template, user }));
+  }
+
   static schedule() {
     if (
       !Meteor.settings.reminderEmails
@@ -32,35 +75,7 @@ class ReminderEmails {
       name: 'Рассылка неактивным пользователям',
       schedule: parser => parser.text(Meteor.settings.reminderEmails.schedule),
       job() {
-        const templates = Meteor.settings.reminderEmails.templates.map(filename => ({
-          from: Meteor.settings.mail.from,
-          html: Assets.getText(filename),
-          attachments: {},
-        }));
-        const subjectRE = new RegExp('<title>([^<>]+)</title>', 'i');
-        const attachmentRE = new RegExp('(\\ssrc=")([^/:"]+)(")', 'gi');
-        for (let i = 0; i < templates.length; i += 1) {
-          const template = templates[i];
-          const attachmentsDictionary = {};
-          let match;
-          do {
-            const subjectMatch = subjectRE.exec(template.html);
-            template.subject = subjectMatch ? subjectMatch[1] : '';
-            match = attachmentRE.exec(template.html);
-            if (match) {
-              const attachmentFilename = match[2];
-              if (!attachmentsDictionary[attachmentFilename]) {
-                attachmentsDictionary[attachmentFilename] = {
-                  path: Assets.absoluteFilePath(`reminderEmails/${attachmentFilename}`),
-                  cid: attachmentFilename,
-                };
-              }
-            }
-            template.attachments = Object.values(attachmentsDictionary);
-          } while (match);
-          template.html = template.html.replace(attachmentRE, '$1cid:$2$3');
-        }
-
+        const templates = Meteor.settings.reminderEmails.templates.map(prepareTemplate);
         const inactivityDate = new Date();
         const INTERVALS = Meteor.settings.reminderEmails.intervals;
         const minimumInterval = Math.min(...INTERVALS);
@@ -73,7 +88,6 @@ class ReminderEmails {
           lastReminderDate: { $not: { $gt: inactivityDate } },
           reminderLevel: { $not: { $gte: templates.length } },
         });
-        const emailRE = new RegExp('\\{\\{email}}', 'g');
         inactiveUsers.forEach((user) => {
           const reminderLevel = user.reminderLevel ? user.reminderLevel : 0;
           const userInterval = INTERVALS[Math.min(reminderLevel, INTERVALS.length)];
@@ -85,9 +99,7 @@ class ReminderEmails {
             && (user.status.lastLogout < userInactivityDate || !user.status.lastLogout)
             && (user.lastReminderDate < userInactivityDate || !user.lastReminderDate)
           ) {
-            const reminder = { ...templates[reminderLevel], to: user.emails[0].address };
-            reminder.html = reminder.html.replace(emailRE, user.emails[0].address);
-            Email.send(reminder);
+            Email.send(personalize({ template: templates[reminderLevel], user }));
             Meteor.users.update({ _id: user._id }, {
               $set: {
                 reminderLevel: reminderLevel + 1,

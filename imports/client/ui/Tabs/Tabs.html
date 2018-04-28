@@ -1,0 +1,17 @@
+<template name="Tabs">
+  <div class="cw--Tabs {{className}}">
+    {{#each tab in tabs.get}}
+      <a
+        onClick={{switchTab @index}}
+        class="
+          cw--Tabs__item
+          {{#if tab.isActive}}
+            cw--Tabs__item_active
+          {{/if}}
+        "
+      >
+        {{tab.name}}
+      </a>
+    {{/each}}
+  </div>
+</template>

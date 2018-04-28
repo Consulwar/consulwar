@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/Tabs/Tabs';
 import '/imports/client/ui/blocks/Paging/Paging';
 import './PaymentHistory.html';
 import './PaymentHistory.styl';
@@ -44,12 +45,25 @@ class PaymentHistory extends BlazeComponent {
       unitSpeedup: 'Ускорение постройки юнитов',
       researchSpeedup: 'Ускорение исследования',
     };
+
+    this.tabs = new ReactiveVar([
+      {
+        id: 'income',
+        name: 'История пополнений',
+        isActive: true,
+      },
+      {
+        id: 'spend',
+        name: 'История расходов',
+      },
+    ]);
   }
 
   onCreated() {
     super.onCreated();
 
     this.autorun(() => {
+      this.switchType();
       this.getHistory(this.currentPage.get());
     });
   }
@@ -146,14 +160,25 @@ class PaymentHistory extends BlazeComponent {
     });
   }
 
-  switchType(event, type = 'income') {
-    if (type === 'income') {
+  switchType() {
+    let tabId = '';
+    this.tabs.get().forEach((tabItem) => {
+      if (tabItem.isActive) {
+        tabId = tabItem.id;
+      }
+    });
+
+    const currentType = this.isIncome.get() ? 'income' : 'spend';
+    if (currentType !== tabId) {
+      this.currentPage.set(1);
+    }
+
+    if (tabId === 'income') {
       this.isIncome.set(true);
     } else {
       this.isIncome.set(false);
     }
-    this.currentPage.set(1);
-    this.getHistory();
+
   }
 }
 

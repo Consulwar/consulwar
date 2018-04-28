@@ -1,0 +1,32 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--Tabs
+  display flex
+  flex-direction row
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  font-weight bold
+
+  border-bottom solid 2px $cw--color_tableEven
+
+  &__item
+    display flex
+    padding 6px 16px
+    margin 12px 2px 0
+    justify-content center
+    align-items center
+
+    cursor pointer
+    color $cw--color_metal
+    background-color $cw--color_tableOdd
+    border-radius 4px 4px 0 0
+
+    &:not(&_active):hover
+      color $cw--color_human
+
+    &_active
+      margin-top 2px
+      color $cw--color_white
+      background-color $cw--color_tableEven

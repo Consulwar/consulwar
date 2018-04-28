@@ -1,5 +1,11 @@
 <template name="PaymentHistory">
   <div class="cw--PaymentHistory">
+    <div class="cw--PaymentHistory__header">
+      {{> Tabs args
+        tabs=tabs
+        className='cw--PaymentHistory__tabs'
+      }}
+    </div>
     <table
       class="
         cw--PaymentHistory__table
@@ -73,11 +79,6 @@
     </div>
 
     <div class="cw--PaymentHistory__footer">
-      {{#if isIncome.get}}
-        <button onClick={{switchType 'spend'}}>Расходы</button>
-      {{else}}
-        <button onClick={{switchType 'income'}}>Приходы</button>
-      {{/if}}
       {{> Paging args
         currentPage = currentPage
         pagesTotal = pagesTotal

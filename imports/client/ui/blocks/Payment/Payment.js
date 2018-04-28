@@ -1,6 +1,7 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
 import { _ } from 'lodash';
+import PaymentHistory from './History/PaymentHistory';
 import './Payment.html';
 import './Payment.styl';
 
@@ -20,6 +21,10 @@ class Payment extends BlazeComponent {
   buy(event, id) {
     event.preventDefault();
     Game.Payment.buyItem(id);
+  }
+
+  showHistory() {
+    Game.Popup.show({ template: PaymentHistory.renderComponent() });
   }
 }
 

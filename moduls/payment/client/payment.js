@@ -1,4 +1,6 @@
 import Payment from '/imports/client/ui/blocks/Payment/Payment';
+import PaymentHistory from '/imports/client/ui/blocks/Payment/History/PaymentHistory';
+import PaymentProcessing from '/imports/client/ui/blocks/Payment/Processing/PaymentProcessing';
 import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 
 initPaymentClient = function() {
@@ -10,19 +12,30 @@ initPaymentLib();
 // Payment modal window
 // ----------------------------------------------------------------------------
 
-var isPaymentSuccess = false;
-
 var showPlatboxWindow = function(url) {
   if (url) {
     isPaymentSuccess = false;
-    Game.Popup.show({ templateName: 'paymentPlatbox', data: { url } });
+    Game.Popup.show({
+      template: (new PaymentProcessing({
+        hash: {
+          url,
+          name: 'platbox',
+        }
+      })).renderComponent(),
+    });
   }
 };
 
 var showTekoWindow = function(url) {
   if (url) {
-    isPaymentSuccess = false;
-    Game.Popup.show({ templateName: 'paymentTeko', data: { url } });
+    Game.Popup.show({
+      template: (new PaymentProcessing({
+        hash: {
+          url,
+          name: 'teko',
+        }
+      })).renderComponent(),
+    });
   }
 };
 
@@ -45,6 +58,12 @@ Game.Payment.showWindow = function() {
   Game.Popup.show({ template: Payment.renderComponent() });
 };
 
+Game.Payment.showHistory = function(type) {
+  Game.Popup.show({
+    template: (new PaymentHistory(type)).renderComponent()
+  });
+}
+
 Game.Payment.buyItem = function(item) {
   Meteor.call('teko.getPaymentUrl', item, function(err, url) {
     if (err) {
@@ -66,81 +85,6 @@ Game.Payment.Income.Collection.find({}).observeChanges({
       showRewardWindow(fields.source.item);
     }
   }
-});
-
-// ----------------------------------------------------------------------------
-// Payment side menu
-// ----------------------------------------------------------------------------
-
-Template.paymentSide.events({
-  'click .buy': function(e, t) {
-    Game.Payment.showWindow();
-  },
-});
-
-// ----------------------------------------------------------------------------
-// Payment history
-// ----------------------------------------------------------------------------
-
-var isLoading = new ReactiveVar(false);
-var history = new ReactiveVar(null);
-var historyCurrentPage = null;
-var historyCurrentType = null;
-
-Game.Payment.showHistory = function() {
-  var type = Router.current().getParams().type;
-  var page = parseInt( Router.current().getParams().page, 10 );
-  var count = 20;
-  var isIncome = (type  == 'income') ? true : false;
-
-  if (page == historyCurrentPage && type == historyCurrentType) {
-    return; // Fucking Iron router! Prevent calling this action two times!
-  }
-
-  if (page && page > 0) {
-    historyCurrentType = type;
-    historyCurrentPage = page;
-
-    history.set(null);
-    isLoading.set(true);
-
-    var methodName = isIncome ? 'user.getPaymentIncomeHistory' : 'user.getPaymentExpenseHistory';
-
-    Meteor.call(methodName, page, count, function(err, data) {
-      isLoading.set(false);
-      if (err) {
-        Notifications.error('Не удалось загрузить историю', err.error);
-      } else {
-        history.set(data);
-      }
-    });
-    this.render('paymentHistory', {
-      to: 'content',
-      data: {
-        count: count,
-        isIncome: isIncome
-      }
-    });
-  }
-};
-
-Template.paymentHistory.onDestroyed(function() {
-  historyCurrentPage = null;
-  historyCurrentType = null;
-});
-
-Template.paymentHistory.helpers({
-  isIncome: function() { return this.isIncome; },
-
-  count: function() { return this.count; },
-  countTotal: function() {
-    return this.isIncome
-      ? Game.Statistic.getUserValue('payment.income')
-      : Game.Statistic.getUserValue('payment.expense');
-  },
-
-  isLoading: function() { return isLoading.get(); },
-  history: function() { return history.get(); },
 });
 
 };

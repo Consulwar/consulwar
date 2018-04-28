@@ -4,11 +4,12 @@
 
 .cw--Payment
   width 960px
-  height 540px
+  height 570px
   max-width 100%
   padding 10px
   box-sizing border-box
 
+  cw--fontFamily_cond()
   background-color $cw--color_black
 
   &__header
@@ -17,7 +18,7 @@
     height 30px
     align-items center
 
-    font-size $cw--fontSize_s
+    font-size $cw--fontSize_m
     color $cw--color_white
 
   &__items
@@ -72,3 +73,17 @@
     width 185px
     height 50px
     margin 18px auto 0
+
+  &__footer
+    height 18px
+    flex-grow 0
+
+  &__historyLink
+    font-size $cw--fontSize_m
+    text-decoration underline
+
+    cursor pointer
+    color $cw--color_credit
+
+    &:hover
+      text-decoration none

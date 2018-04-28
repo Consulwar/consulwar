@@ -62,7 +62,7 @@
         {{#each history}}
         <tr>
           <td>{{this.code}}</td>
-          <td>{{formatProfit this.profit}}</td>
+          <td>{{{formatProfit this.profit}}}</td>
           <td>{{#if this.timestamp}}{{formatDate this.timestamp}}{{/if}}</td>
           {{#if not ../username}}
           <td>{{#if this.validthru}}{{formatDate this.validthru}}{{/if}}</td>

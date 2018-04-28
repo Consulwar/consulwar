@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
-import fs from 'fs';
 import { Email } from 'meteor/email';
 import { Assets } from '/moduls/game/lib/importCompability';
 
@@ -10,6 +9,8 @@ class ReminderEmails {
       !Meteor.settings.reminderEmails
       || !Meteor.settings.reminderEmails.schedule
       || !Meteor.settings.reminderEmails.intervals
+      || !Meteor.settings.reminderEmails.templates
+      || !Meteor.settings.reminderEmails.templates.length
     ) {
       throw new Meteor.Error(
         'Ошибка в настройках',
@@ -31,18 +32,9 @@ class ReminderEmails {
       name: 'Рассылка неактивным пользователям',
       schedule: parser => parser.text(Meteor.settings.reminderEmails.schedule),
       job() {
-        // any file that exists there will do
-        let path = Assets.absoluteFilePath('reminderEmails/index1.html');
-        path = path.substring(0, path.lastIndexOf('/'));
-        const templateFilenames = (
-          fs
-            .readdirSync(path)
-            .filter(filename => filename.substr(-5) === '.html')
-            .sort()
-        );
-        const templates = templateFilenames.map(filename => ({
+        const templates = Meteor.settings.reminderEmails.templates.map(filename => ({
           from: Meteor.settings.mail.from,
-          html: Assets.getText(`reminderEmails/${filename}`),
+          html: Assets.getText(filename),
           attachments: {},
         }));
         const subjectRE = new RegExp('<title>([^<>]+)</title>', 'i');

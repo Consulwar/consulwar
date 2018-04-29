@@ -14,11 +14,6 @@
 
   +media(null, $cw--size_l)
     height auto
-  
-  +media($cw--size_s, $cw--size_l)
-    width 640px
-  +media(null, $cw--size_s)
-    width 340px
 
   &__header
     display block
@@ -34,13 +29,25 @@
     flex-wrap wrap
     justify-content space-between
 
+    +media(null, $cw--size_s)
+      justify-content center
+
   &__item
-    width 303px
-    height 229px
+    flex-basis calc(33.33% - 10px)
+    height 230px
     margin-bottom 16px
+    box-sizing border-box
+
+    border solid 2px $cw--color_credit
+    border-image $cw--gradient_credit 2
 
     background-repeat no-repeat
-    background-position center top
+    background-position center
+    background-size cover
+    +media($cw--size_s, $cw--size_m)
+      flex-basis calc(50% - 10px)
+    +media(null, $cw--size_s)
+      flex-basis 450px
 
   &__itemTitle
     display block
@@ -52,16 +59,16 @@
   &__itemProfit
   &__itemPrice
     display flex
-    margin 12px 0 12px 61px
+    margin 12px auto
     align-items center
     width 230px
     height 46px
-    padding-left 64px
+    padding-left 92px
     box-sizing border-box
 
     font-size 20px
     background-repeat no-repeat
-    background-position left center
+    background-position 30px center
 
   &__itemProfit
     color $cw--color_credit

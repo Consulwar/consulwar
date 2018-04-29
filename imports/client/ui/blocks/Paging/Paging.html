@@ -6,6 +6,7 @@
         cw--Paging__page_back
         cw--Paging__page
       "
+      data-sound="hover, click"
     ></button>
     {{#each page in pages}}
       {{#if or (page.count) (page.type)}}
@@ -20,6 +21,7 @@
             {{/if}}
           "
           onClick={{switchPage page.count}}
+          data-sound="hover, click"
         >
           {{page.count}}
         </button>
@@ -35,6 +37,7 @@
         cw--Paging__page
         cw--Paging__page_next
       "
+      data-sound="hover, click"
     ></button>
   </div>
 </template>

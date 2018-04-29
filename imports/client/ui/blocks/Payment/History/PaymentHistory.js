@@ -143,6 +143,7 @@ class PaymentHistory extends BlazeComponent {
   }
 
   getHistory(page = 1, count = this.itemsOnPage) {
+    this.isEmpty.set(false);
     this.isLoading.set(true);
 
     let methodName = 'user.getPaymentIncomeHistory';

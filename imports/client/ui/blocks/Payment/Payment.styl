@@ -12,9 +12,16 @@
   cw--fontFamily_cond()
   background-color $cw--color_black
 
+  +media(null, $cw--size_l)
+    height auto
+  
+  +media($cw--size_s, $cw--size_l)
+    width 640px
+  +media(null, $cw--size_s)
+    width 340px
+
   &__header
     display block
-    height 30px
     padding 5px 0
     margin 0 30px 10px 0
     box-sizing border-box

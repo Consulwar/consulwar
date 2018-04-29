@@ -24,6 +24,7 @@ class PaymentHistory extends BlazeComponent {
     this.isLoading = new ReactiveVar(true);
     this.currentPage = new ReactiveVar(1);
     this.pagesTotal = new ReactiveVar();
+    this.isEmpty = new ReactiveVar(true);
 
     this.itemsOnPage = 15;
     this.paymentTypes = {
@@ -132,7 +133,13 @@ class PaymentHistory extends BlazeComponent {
     });
 
     this.setTotalPages();
-    this.history.set(data);
+
+    if (data.length > 0) {
+      this.isEmpty.set(false);
+      this.history.set(data);
+    } else {
+      this.isEmpty.set(true);
+    }
   }
 
   getHistory(page = 1, count = this.itemsOnPage) {
@@ -148,12 +155,6 @@ class PaymentHistory extends BlazeComponent {
       if (err) {
         Notifications.error('Не удалось загрузить историю', err.error);
       } else {
-        if (data.length < count && data.length !== 0) {
-          this.pagesTotal.set(this.currentPage.get());
-        } else if (data.length === 0) {
-          this.getHistory(this.currentPage.get() - 1);
-          this.pagesTotal.set(this.currentPage.get() - 1);
-        }
         this.setHistory(data);
         $('.cw--PaymentHistory__data').perfectScrollbar('update');
       }
@@ -178,7 +179,6 @@ class PaymentHistory extends BlazeComponent {
     } else {
       this.isIncome.set(false);
     }
-
   }
 }
 

@@ -44,38 +44,49 @@
       </tr>
     </table>
     <div class="cw--PaymentHistory__data">
-      <table class="cw--PaymentHistory__table">
-        {{#each item in history.get}}
-          <tr
-            class="
-              cw--PaymentHistory__row
-              {{#if even @index}}
-                cw--PaymentHistory__row_even
-              {{else}}
-                cw--PaymentHistory__row_odd
-              {{/if}}
-            "
-          >
-            <td class="cw--PaymentHistory__tableTime">
-              {{item.date}}
-            </td>
-            <td class="cw--PaymentHistory__tableProfit">
-              {{#if item.credits}}
-                <span class="cw--color_honor">
-                  -{{formatNumber item.credits}} ГГК
-                </span>
-              {{/if}}
-              {{{formatProfit item.profit}}}
-            </td>
-            <td class="cw--PaymentHistory__tableDescription">
-              {{item.goal}}
-              {{#if item.goalTimes}}
-                ({{item.goalTimes}})
-              {{/if}}
-            </td>
-          </tr>
-        {{/each}}
-      </table>
+      {{#if isEmpty.get}}
+        <div class="cw--PaymentHistory__empty">
+          Нет ни одной записи о
+          {{#if isIncome.get}}
+            пополнениях
+          {{else}}
+            расходах
+          {{/if}}
+        </div>
+      {{else}}
+        <table class="cw--PaymentHistory__table">
+          {{#each item in history.get}}
+            <tr
+              class="
+                cw--PaymentHistory__row
+                {{#if even @index}}
+                  cw--PaymentHistory__row_even
+                {{else}}
+                  cw--PaymentHistory__row_odd
+                {{/if}}
+              "
+            >
+              <td class="cw--PaymentHistory__tableTime">
+                {{item.date}}
+              </td>
+              <td class="cw--PaymentHistory__tableProfit">
+                {{#if item.credits}}
+                  <span class="cw--color_honor">
+                    -{{formatNumber item.credits}} ГГК
+                  </span>
+                {{/if}}
+                {{{formatProfit item.profit}}}
+              </td>
+              <td class="cw--PaymentHistory__tableDescription">
+                {{item.goal}}
+                {{#if item.goalTimes}}
+                  ({{item.goalTimes}})
+                {{/if}}
+              </td>
+            </tr>
+          {{/each}}
+        </table>
+      {{/if}}
     </div>
 
     <div class="cw--PaymentHistory__footer">

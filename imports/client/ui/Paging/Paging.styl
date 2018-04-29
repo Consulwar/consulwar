@@ -22,6 +22,7 @@
     cursor pointer
     background-color #010101
     border solid 1px $cw--color_metal
+    border-image $cw--gradient_metal 1
 
     &:hover
       filter brightness(1.4)
@@ -29,6 +30,7 @@
     &_current
       color $cw--color_white
       background-color $cw--color_metal
+      border-image none
 
     &_next
     &_back
@@ -37,4 +39,4 @@
       background-image url(/img/arrow.svg)
 
     &_back
-      transform rotate(180deg)
+      transform scaleX(-1)

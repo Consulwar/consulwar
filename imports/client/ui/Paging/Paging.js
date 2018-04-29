@@ -48,7 +48,11 @@ class Paging extends BlazeComponent {
   pages() {
     let pages = [];
     const space = (this.size - 5) / 2;
-    const currentPage = this.currentPage.get();
+    const currentPage = this.currentPage.get() || 1;
+
+    if (!this.pagesTotal.get()) {
+      return false;
+    }
 
     if (this.pagesTotal.get() < this.size) {
       pages = pages.concat(this.getRange(1, this.pagesTotal.get()));

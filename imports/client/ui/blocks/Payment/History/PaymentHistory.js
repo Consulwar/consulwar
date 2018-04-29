@@ -5,7 +5,7 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/Tabs/Tabs';
-import '/imports/client/ui/blocks/Paging/Paging';
+import '/imports/client/ui/Paging/Paging';
 import './PaymentHistory.html';
 import './PaymentHistory.styl';
 

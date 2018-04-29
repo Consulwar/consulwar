@@ -6,43 +6,41 @@
         className='cw--PaymentHistory__tabs'
       }}
     </div>
-    <table
+    <div
       class="
-        cw--PaymentHistory__table
+        cw--PaymentHistory__row
         cw--PaymentHistory__head
       "
     >
-      <tr class="cw--PaymentHistory__tableHead">
-        <th
-          class="
-            cw--PaymentHistory__tableTime
-            cw--PaymentHistory__th
-          "
-        >
-          Дата
-        </th>
-        <th
-          class="
-            cw--PaymentHistory__tableProfit
-            cw--PaymentHistory__th
-          "
-        >
-          {{#if isIncome.get}}
-            Получено
-          {{else}}
-            Потрачено ГГК
-          {{/if}}
-        </th>
-        <th
-          class="
-            cw--PaymentHistory__tableDescription
-            cw--PaymentHistory__th
-          "
-        >
-          Описание
-        </th>
-      </tr>
-    </table>
+      <div
+        class="
+          cw--PaymentHistory__tableTime
+          cw--PaymentHistory__th
+        "
+      >
+        Дата
+      </div>
+      <div
+        class="
+          cw--PaymentHistory__tableProfit
+          cw--PaymentHistory__th
+        "
+      >
+        {{#if isIncome.get}}
+          Получено
+        {{else}}
+          Потрачено ГГК
+        {{/if}}
+      </div>
+      <div
+        class="
+          cw--PaymentHistory__tableDescription
+          cw--PaymentHistory__th
+        "
+      >
+        Описание
+      </div>
+    </div>
     <div class="cw--PaymentHistory__data">
       {{#if isEmpty.get}}
         <div class="cw--PaymentHistory__empty">
@@ -54,9 +52,9 @@
           {{/if}}
         </div>
       {{else}}
-        <table class="cw--PaymentHistory__table">
+        <div class="cw--PaymentHistory__table">
           {{#each item in history.get}}
-            <tr
+            <div
               class="
                 cw--PaymentHistory__row
                 {{#if even @index}}
@@ -65,27 +63,28 @@
                   cw--PaymentHistory__row_odd
                 {{/if}}
               "
+              data-tooltip={{formatDate item.time}}
             >
-              <td class="cw--PaymentHistory__tableTime">
+              <div class="cw--PaymentHistory__tableTime">
                 {{item.date}}
-              </td>
-              <td class="cw--PaymentHistory__tableProfit">
+              </div>
+              <div class="cw--PaymentHistory__tableProfit">
                 {{#if item.credits}}
                   <span class="cw--color_honor">
                     -{{formatNumber item.credits}} ГГК
                   </span>
                 {{/if}}
                 {{{formatProfit item.profit}}}
-              </td>
-              <td class="cw--PaymentHistory__tableDescription">
+              </div>
+              <div class="cw--PaymentHistory__tableDescription">
                 {{item.goal}}
                 {{#if item.goalTimes}}
                   ({{item.goalTimes}})
                 {{/if}}
-              </td>
-            </tr>
+              </div>
+            </div>
           {{/each}}
-        </table>
+        </div>
       {{/if}}
     </div>
 

@@ -10,6 +10,11 @@
   max-width 100%
   max-height 100%
   background-color $cw--color_black
+  +media(null, $cw--size_xs)
+    height 100vh
+
+  &__tabs
+    padding-right 45px
 
   &__data
     position relative
@@ -32,20 +37,15 @@
     font-size $cw--fontSize_l
     color $cw--color_lightGrey
 
-  &__table
-    width 100%
-    font-size $cw--fontSize_m
-    border-collapse collapse
-    color $cw--color_nearWhite
-
   &__head
     flex-grow 0
+    flex-shrink 0
     color $cw--color_lightGrey
 
-  &__tableHead
   &__tableTime
   &__tableProfit
   &__tableDescription
+    flex-grow 0
     padding 10px 16px
     text-align left
     font-weight normal
@@ -56,13 +56,27 @@
 
   &__tableTime
     width 170px
+    +media(null, $cw--size_s)
+      width 120px
+
+  &__tableProfit
+    flex-grow 1
 
   &__tableDescription
     width 50%
+    +media(null, $cw--size_xs)
+      order -1
+      width 100%
 
 
   &__row
-    vertical-align top
+    display flex
+    flex-direction row
+    align-items flex-start
+    font-size $cw--fontSize_m
+    color $cw--color_nearWhite
+    +media(null, $cw--size_xs)
+      flex-wrap wrap
 
     &:hover
       filter brightness(1.2)

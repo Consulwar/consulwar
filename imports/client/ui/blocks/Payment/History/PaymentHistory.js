@@ -85,7 +85,7 @@ class PaymentHistory extends BlazeComponent {
     this.pagesTotal.set(Math.ceil(itemsTotal / this.itemsOnPage));
   }
 
-  formatDate(timestamp) {
+  formatShortDate(timestamp) {
     const date = new Date((timestamp - (new Date().getTimezoneOffset() * 60)) * 1000);
     const day = [
       `0${date.getUTCDate()}`.slice(-2),
@@ -105,9 +105,9 @@ class PaymentHistory extends BlazeComponent {
         credits: item.credits || 0,
       };
 
-      const time = item.timestamp || item.timeUpdated;
-      if (lastDate !== this.formatDate(time)) {
-        lastDate = this.formatDate(time);
+      historyItem.time = item.timestamp || item.timeUpdated;
+      if (lastDate !== this.formatShortDate(historyItem.time)) {
+        lastDate = this.formatShortDate(historyItem.time);
         historyItem.date = lastDate;
       }
 

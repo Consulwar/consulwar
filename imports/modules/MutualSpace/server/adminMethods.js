@@ -164,7 +164,7 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'mutualSpace.comeBack', user });
 
-    const isAdmin = user && ['admin'].indexOf(user.role) >= 0;
+    const isAdmin = ['admin'].indexOf(user.role) >= 0;
 
     if (!isAdmin) {
       throw new Meteor.Error('Не админ.');

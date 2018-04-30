@@ -1,0 +1,97 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--MenuExtras
+  position absolute
+  bottom 100%
+  z-index 3
+
+  &:hover
+    filter brightness(1.4)
+
+  +media($cw--size_xl)
+    margin-bottom 6px
+    left 50%
+    transform translateX(-50%)
+
+  +media(null, $cw--size_xl)
+    left 3px
+    bottom 3px
+
+  &__bonus
+    display flex
+    width 60px
+    height 140px
+    padding 5px 5px 0
+    box-sizing border-box
+    flex-direction column
+    align-items center
+
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_s
+    font-weight bold
+
+    color $cw--color_white
+    border solid 2px @color
+    border-radius 5px
+    background-color $cw--color_black
+    
+    +media(null, $cw--size_xl)
+      width 46px
+      height @width
+      padding 2px 3px 3px
+
+    &_metals
+      color $cw--color_metal
+      border-color @color
+    &_crystals
+      color $cw--color_crystal
+      border-color @color
+
+  &__bonusCounter
+    display flex
+    flex-direction column
+    justify-content flex-end
+    flex-basis 50px
+    flex-grow 1
+    width 100%
+    +media($cw--size_xl)
+      margin-bottom 12px
+
+  &__bonusCounterPiece
+    flex-basis calc(20% - 2px)
+    flex-grow 0
+    flex-shrink 0
+    margin-top 2px
+
+    background-color $cw--color_white
+
+  &__bonus_metals &__bonusCounterPiece
+    background-color $cw--color_metal
+
+  &__bonus_crystals &__bonusCounterPiece
+    background-color $cw--color_crystal
+
+  &__bonusIcon
+    width 45px
+    height auto
+    margin-bottom 3px
+
+  &__bonusIcon
+  &__bonusCount
+    +media(null, $cw--size_xl)
+      display none
+
+  &__icon
+    display block
+    width 70px
+    height 70px
+
+    background-position center
+    background-size cover
+    background-repeat no-repeat
+    
+    +media(null, $cw--size_xl)
+      width 46px
+      height @width

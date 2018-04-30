@@ -100,20 +100,7 @@ body.game
     &:hover
       -webkit-filter brightness(1.2)
       filter brightness(1.2)
-    
-    &.greenButton
-      background-color transparent
-      border 0
-      flex-shrink 0
-      background-repeat no-repeat
-      color $color-white
-      font-weight bold
-    
-    &.greenButton
-      width 181px
-      height 50px
-      background-image url(/img/game/green_button.png)
-      font-size 20px
+
 
   @import '{}/moduls/game/client/css/player.styl'
   @import '{}/moduls/game/client/css/popup.styl'
@@ -126,7 +113,6 @@ body.game
   @import '{}/moduls/cosmos/client/cosmos.styl'
   @import '{}/moduls/resources/client/resources.styl'
   @import '{}/moduls/user/client/user.styl'
-  @import '{}/moduls/payment/client/payment.styl'
   @import '{}/moduls/payment/client/promocode.styl'
   @import '{}/moduls/user/client/entranceReward.styl'
 
@@ -167,79 +153,7 @@ body.game
         background-image url(/img/game/bg/net.png), url(/img/game/bg/default.jpg), url(/img/game/bg/bg.jpg)
         background-repeat repeat, no-repeat, no-repeat
         background-blend-mode normal, exclusion, normal
-        
-        &.planet.Residential
-          .collectBonus
-            position absolute
-            display none
-            z-index 20
-            width 71px
-            height 71px
-            border-radius 50%
-            background-color $color-black
-            cursor pointer
-            overflow hidden
-            
-            &:hover
-              -webkit-filter brightness(1.2)
-              filter brightness(1.2)
-            
-            .currentValue
-              width 100%
-              position absolute
-              bottom 0
-              left 0
-            
-            &.active
-              display block
-              &:after
-                content ''
-                position absolute
-                top 0px
-                left 0px
-                width 71px
-                height 71px
-                box-sizing border-box
-                background-repeat no-repeat
-                background-position center center
-                border-radius 50%
-                border-width 2px
-                border-style solid
 
-            &.metals
-              top 734px
-              right 508px
-              &.active:after
-                background-image url(/img/game/metals_bonus.png)
-                border-color $color-metal
-              
-              .currentValue
-                background-color $color-metal
-              
-            &.crystals
-              top 666px
-              left 696px
-              &.active:after
-                background-image url(/img/game/crystals_bonus.png)
-                border-color $color-crystal
-              
-              .currentValue
-                background-color $color-crystal
-
-            &.colosseum
-              top 630px
-              left 388px
-              &.active:after
-                border-width 0
-                background-image url(/img/game/colosseum/collect.png)
-                
-            &.pulsecatcher
-              top 649px
-              left 1138px
-              &.active:after
-                border-width 0
-                background-image url(/img/game/pulsecatcher/collect.png)
-          
         &.hideNet
           background-repeat no-repeat, no-repeat, no-repeat
         

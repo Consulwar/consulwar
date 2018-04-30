@@ -79,7 +79,6 @@ const selectors = {
     '.cw--ResourceCurrent__artifacts',
     '.menu .main_menu a',
     '.menu .second_menu li:not(.active) a',
-    '.greenButton',
     '.cw--button_type_primary_blue',
     '.cw--button_flat',
     '.consul-items a:not(.active)',
@@ -119,6 +118,7 @@ const buildEvent = () => SoundManager.play('buildingStart');
 
 const init = function() {
   _.keys(tracks).forEach((key) => {
+    // eslint-disable-next-line new-cap
     player[key] = new buzz.sound(`/sound/${tracks[key]}.mp3`);
     if (key !== 'hover') {
       player[key].setVolume(30);
@@ -127,6 +127,7 @@ const init = function() {
       player[key].setVolume(28);
     }
   });
+  // eslint-disable-next-line new-cap
   player.welcome = new buzz.sound('http://times.consulwar.ru/music/2 Коварство Рептилоидов.mp3', {
     volume: 0,
     loop: true,

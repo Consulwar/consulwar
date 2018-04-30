@@ -1,0 +1,104 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--Payment
+  width 960px
+  height 570px
+  max-width 100%
+  padding 10px
+  box-sizing border-box
+
+  cw--fontFamily_cond()
+  background-color $cw--color_black
+
+  +media(null, $cw--size_l)
+    height auto
+
+  &__header
+    display block
+    padding 5px 0
+    margin 0 30px 10px 0
+    box-sizing border-box
+
+    font-size $cw--fontSize_m
+    color $cw--color_white
+
+  &__items
+    display flex
+    flex-wrap wrap
+    justify-content space-between
+
+    +media(null, $cw--size_s)
+      justify-content center
+
+  &__item
+    flex-basis calc(33.33% - 10px)
+    height 230px
+    margin-bottom 16px
+    box-sizing border-box
+
+    border solid 2px $cw--color_credit
+    border-image $cw--gradient_credit 2
+
+    background-repeat no-repeat
+    background-position center
+    background-size cover
+    +media($cw--size_s, $cw--size_m)
+      flex-basis calc(50% - 10px)
+    +media(null, $cw--size_s)
+      flex-basis 450px
+
+  &__itemTitle
+    display block
+    margin 12px 20px
+    font-size $cw--fontSize_m
+    font-weight bold
+    color $cw--color_human
+
+  &__itemProfit
+  &__itemPrice
+    display flex
+    margin 12px auto
+    align-items center
+    width 230px
+    height 46px
+    padding-left 92px
+    box-sizing border-box
+
+    font-size 20px
+    background-repeat no-repeat
+    background-position 30px center
+
+  &__itemProfit
+    color $cw--color_credit
+    background-image url(/img/game/Resource/Base/Credit/icon.svg)
+
+  &__itemOldProfit
+    margin-left 8px
+    font-size $cw--fontSize_m
+    text-decoration line-through
+    filter grayscale(1) brightness(0.6)
+
+  &__itemPrice
+    color $cw--color_white
+    background-image url(/img/game/Payment/rub.png)
+
+  &__buy
+    width 185px
+    height 50px
+    margin 18px auto 0
+
+  &__footer
+    height 18px
+    flex-grow 0
+
+  &__historyLink
+    font-size $cw--fontSize_m
+    text-decoration underline
+
+    cursor pointer
+    color $cw--color_credit
+
+    &:hover
+      text-decoration none

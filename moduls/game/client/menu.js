@@ -472,22 +472,6 @@ var helpers = {
 
     return item;
   },
-
-  bonusStorage: function() { 
-    var resources = Game.Resources.currentValue.get();
-    var income = Game.Resources.getIncome();
-
-    return {
-      metals: (resources.metals.bonus > income.metals * 0.25
-        ? Math.floor((resources.metals.bonus || 0) * 100 / (income.metals * Game.Resources.bonusStorage))
-        : 0
-      ),
-      crystals: (resources.crystals.bonus > income.crystals * 0.25
-        ? Math.floor((resources.crystals.bonus || 0) * 100 / (income.crystals * Game.Resources.bonusStorage))
-        : 0
-      )
-    };
-  }
 };
 
 Template.items_menu.helpers(helpers);

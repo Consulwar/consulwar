@@ -97,10 +97,6 @@ var gameRoutes = {
     artefacts: 'resources/artefacts/:item'
   },
 
-  wallet: {
-    walletHistory: 'wallet/history/:type(income|expense)/:page'
-  },
-
   admin: {
     promocodeHistory: 'promocode/history/:page/:filterType?/:filterValue?'
   },
@@ -147,7 +143,6 @@ var gameActions = {
   house: Game.House.showPage,
   artefacts: Game.Resources.showArtefactsPage,
 
-  walletHistory: Game.Payment.showHistory,
   promocodeHistory: Game.Payment.showPromocodeHistory,
 
   chat: Game.Chat.showPage,

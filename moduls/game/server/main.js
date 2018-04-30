@@ -7,6 +7,7 @@ import initMutualSpaceServer from '/imports/modules/MutualSpace/server/index';
 import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import '/imports/modules/Person/server/methods';
+import ReminderEmails from '../../../imports/modules/User/server/ReminderEmails';
 
 //BrowserPolicy.framing.allowAll();
 
@@ -99,6 +100,7 @@ Meteor.startup(function () {
   initDDPLimiter();
   initAllianceServer();
   initWrecksServer();
+  ReminderEmails.schedule();
 
   SyncedCron.start();
   initSpaceServer();

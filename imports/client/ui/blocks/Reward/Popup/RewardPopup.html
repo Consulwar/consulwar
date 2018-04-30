@@ -2,6 +2,12 @@
   <div class="cw--RewardPopup">
     <h2 class="cw--RewardPopup__header">Награда доставлена!</h2>
 
+    {{#if description}}
+      <div class="cw--RewardPopup__description">
+        {{{description}}}
+      </div>
+    {{/if}}
+
     {{> Reward args
       reward=reward
       className='cw--RewardPopup__reward'

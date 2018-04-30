@@ -8,6 +8,8 @@ const getPlanetRadius = function(size) {
   return 0.01 + (size / 20);
 };
 
+const tooltipZoom = 1;
+
 const planetsQueue = [];
 let incrementalDefer = null;
 let lastTimestamp = 0;
@@ -21,7 +23,8 @@ const incrementalRenderer = (timestamp) => {
   const thisFrame = performanceNow - timestamp; // time spent rendering this frame
   lastTimestamp = timestamp;
   minFrameTime = Math.min(minFrameTime, delta);
-  if (thisFrame > minFrameTime + timeError) { // already took too much time, better to not make it worse
+  if (thisFrame > minFrameTime + timeError) {
+    // already took too much time, better to not make it worse
     incrementalDefer = requestAnimationFrame(incrementalRenderer);
     return;
   }
@@ -71,7 +74,7 @@ class Galaxy {
     this.labels = {};
 
     Game.Planets.Collection.find({ username }).observeChanges({
-      added: (id, planet) => {
+      added: (id) => {
         planetsQueue.push({
           id,
           galaxy: this,
@@ -106,6 +109,26 @@ class Galaxy {
         this.updatePlanet(id);
       });
     });
+
+    mapView.on('zoomend', () => this.updateTooltip());
+    this.updateTooltip();
+  }
+
+  updateTooltip() {
+    const currentZoom = this.mapView.getZoom();
+    if (currentZoom <= tooltipZoom && !this.tooltip) {
+      this.tooltip = L.tooltip({
+        direction: 'center',
+        className: 'usernameTooltip',
+        permanent: true,
+      })
+        .setLatLng([this.offset.x, this.offset.y])
+        .setContent(this.username)
+        .addTo(this.mapView);
+    } else if (currentZoom > tooltipZoom && this.tooltip) {
+      this.tooltip.remove();
+      this.tooltip = null;
+    }
   }
 
   showPlanet(id) {

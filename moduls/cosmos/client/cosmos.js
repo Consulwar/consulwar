@@ -82,8 +82,6 @@ let pathsLayer = null;
 let shipsLayer = null;
 let galaxyByUsername = {};
 let galaxyByHex = {};
-const showedHexes = [];
-const usernameTooltips = [];
 let myAllies = [];
 
 Space.collection.find({}).observe({
@@ -553,7 +551,7 @@ Template.cosmos_planet_item.helpers({
   },
 
   battleExists() {
-    return Space.collection.findOne({
+    return this.planet._id && Space.collection.findOne({
       type: BattleEvents.EVENT_TYPE,
       status: Space.filterActive,
       'data.planetId': this.planet._id,
@@ -891,14 +889,22 @@ Template.cosmosPlanetPopup.events({
   'click .mine'(e, t) {
     const planetId = $(e.currentTarget).attr('data-id');
     if (planetId) {
-      Meteor.call('planet.startMining', planetId);
+      Meteor.call('planet.startMining', planetId, (error) => {
+        if (error) {
+          Notifications.error(error.error);
+        }
+      });
     }
   },
 
   'click .unmine'(e, t) {
     const planetId = $(e.currentTarget).attr('data-id');
     if (planetId) {
-      Meteor.call('planet.stopMining', planetId);
+      Meteor.call('planet.stopMining', planetId, (error) => {
+        if (error) {
+          Notifications.error(error.error);
+        }
+      });
     }
   },
 
@@ -2177,35 +2183,8 @@ Template.cosmos.onRendered(function() {
   mapView.createPane('hexesLayer1').style.zIndex = 399;
 
   zoom.set(mapView.getZoom());
-  let prevZoom = mapView.getZoom();
-
-  const tooltipZoom = 1;
   mapView.on('zoomend', function() {
-    const currentZoom = mapView.getZoom();
-    zoom.set(currentZoom);
-    if (currentZoom === tooltipZoom && prevZoom === (tooltipZoom+1)) {
-      _(galaxyByUsername).values().forEach((galaxy) => {
-        const center = galaxy.offset;
-
-        const usernameTooltip = L.tooltip({
-          direction: 'center',
-          className: 'usernameTooltip',
-          permanent: true,
-        })
-          .setLatLng([center.x, center.y])
-          .setContent(galaxy.username)
-          .addTo(mapView);
-
-        usernameTooltips.push(usernameTooltip);
-      });
-    } else if (currentZoom === (tooltipZoom+1) && prevZoom === tooltipZoom) {
-      usernameTooltips.forEach((usernameTooltip) => {
-        usernameTooltip.remove();
-      });
-
-      usernameTooltips.length = 0;
-    }
-    prevZoom = currentZoom;
+    zoom.set(mapView.getZoom());
   });
 
   bounds.set(mapView.getBounds());
@@ -2332,7 +2311,6 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
         },
       });
 
-      showedHexes.push(hex);
       hexPoly.setStyle({ fill: false });
     };
 

@@ -124,15 +124,9 @@
 
           <a 
             class="cw--UserMenu__menuItem"
-            href="{{pathFor 'walletHistory' type='income' page=1}}"
+            onClick={{showPaymentHistory}}
           >
-            История покупок
-          </a>
-          <a 
-            class="cw--UserMenu__menuItem"
-            href="{{pathFor 'walletHistory' type='expense' page=1}}"
-          >
-            История расходов
+            История баланса
           </a>
 
           <a

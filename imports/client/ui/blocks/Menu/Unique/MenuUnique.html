@@ -24,6 +24,9 @@
             {{/if}}
           "
         >
+          {{#if item.hasExtras}}
+            {{> MenuExtras args buildingID=item.id}}
+          {{/if}}
           <img
             class="cw--Menu__itemIcon"
             src={{item.icon}} 

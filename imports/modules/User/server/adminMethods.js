@@ -12,7 +12,7 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'user.sendReminder', user });
 
-    const isAdmin = user && ['admin'].indexOf(user.role) >= 0;
+    const isAdmin = ['admin'].indexOf(user.role) >= 0;
     if (!isAdmin) {
       throw new Meteor.Error('Нужны права администратора');
     }

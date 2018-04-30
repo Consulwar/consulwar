@@ -42,9 +42,9 @@ const personalize = function({ template, user }) {
 };
 
 class ReminderEmails {
-  static forceSend({ filename, user }) {
+  static forceSend({ filename, email }) {
     const template = prepareTemplate(filename);
-    Email.send(personalize({ template, user }));
+    Email.send(personalize({ template, user: { emails: [{ address: email }] } }));
   }
 
   static schedule() {

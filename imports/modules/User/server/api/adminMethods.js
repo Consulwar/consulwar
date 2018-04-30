@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import { Accounts } from 'meteor/accounts-base';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import ReminderEmails from '../ReminderEmails';
@@ -20,11 +19,6 @@ Meteor.methods({
     check(filename, String);
     check(email, String);
 
-    const targetUser = Accounts.findUserByEmail(email);
-    if (!targetUser) {
-      throw new Meteor.Error('Игрок с таким e-mail не найден');
-    }
-
-    ReminderEmails.forceSend({ filename, user: targetUser });
+    ReminderEmails.forceSend({ filename, email });
   },
 });

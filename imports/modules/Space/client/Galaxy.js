@@ -8,6 +8,8 @@ const getPlanetRadius = function(size) {
   return 0.01 + (size / 20);
 };
 
+const tooltipZoom = 1;
+
 const planetsQueue = [];
 let incrementalDefer = null;
 let lastTimestamp = 0;
@@ -107,6 +109,26 @@ class Galaxy {
         this.updatePlanet(id);
       });
     });
+
+    mapView.on('zoomend', () => this.updateTooltip());
+    this.updateTooltip();
+  }
+
+  updateTooltip() {
+    const currentZoom = this.mapView.getZoom();
+    if (currentZoom <= tooltipZoom && !this.tooltip) {
+      this.tooltip = L.tooltip({
+        direction: 'center',
+        className: 'usernameTooltip',
+        permanent: true,
+      })
+        .setLatLng([this.offset.x, this.offset.y])
+        .setContent(this.username)
+        .addTo(this.mapView);
+    } else if (currentZoom > tooltipZoom && this.tooltip) {
+      this.tooltip.remove();
+      this.tooltip = null;
+    }
   }
 
   showPlanet(id) {

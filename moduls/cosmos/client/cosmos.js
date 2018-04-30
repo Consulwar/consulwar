@@ -82,8 +82,6 @@ let pathsLayer = null;
 let shipsLayer = null;
 let galaxyByUsername = {};
 let galaxyByHex = {};
-const showedHexes = [];
-const usernameTooltips = [];
 let myAllies = [];
 
 Space.collection.find({}).observe({
@@ -2185,35 +2183,8 @@ Template.cosmos.onRendered(function() {
   mapView.createPane('hexesLayer1').style.zIndex = 399;
 
   zoom.set(mapView.getZoom());
-  let prevZoom = mapView.getZoom();
-
-  const tooltipZoom = 1;
   mapView.on('zoomend', function() {
-    const currentZoom = mapView.getZoom();
-    zoom.set(currentZoom);
-    if (currentZoom === tooltipZoom && prevZoom === (tooltipZoom+1)) {
-      _(galaxyByUsername).values().forEach((galaxy) => {
-        const center = galaxy.offset;
-
-        const usernameTooltip = L.tooltip({
-          direction: 'center',
-          className: 'usernameTooltip',
-          permanent: true,
-        })
-          .setLatLng([center.x, center.y])
-          .setContent(galaxy.username)
-          .addTo(mapView);
-
-        usernameTooltips.push(usernameTooltip);
-      });
-    } else if (currentZoom === (tooltipZoom+1) && prevZoom === tooltipZoom) {
-      usernameTooltips.forEach((usernameTooltip) => {
-        usernameTooltip.remove();
-      });
-
-      usernameTooltips.length = 0;
-    }
-    prevZoom = currentZoom;
+    zoom.set(mapView.getZoom());
   });
 
   bounds.set(mapView.getBounds());
@@ -2340,7 +2311,6 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
         },
       });
 
-      showedHexes.push(hex);
       hexPoly.setStyle({ fill: false });
     };
 

@@ -213,6 +213,12 @@ UI.registerHelper('formatProfit', function(profit) {
 
   var result = '';
   for (var type in profit) {
+    const testTitle = (space, id) => {
+      if (space[id]) {
+        return space[id].title;
+      }
+      return id;
+    }
     switch (type) {
       case 'resources':
         for (var resName in profit[type]) {
@@ -222,7 +228,7 @@ UI.registerHelper('formatProfit', function(profit) {
                        </div>`;
           } else {
             result += `<div>
-                        ${resourceItems[resName].title}:
+                        ${testTitle(resourceItems, resName)}:
                         ${parseInt(profit[type][resName], 10)}
                       </div>`;
           }
@@ -231,7 +237,7 @@ UI.registerHelper('formatProfit', function(profit) {
       case 'units':
         _(profit.units).pairs().forEach(([id, count]) => {
           result += `<div>
-                      ${unitItems[id].title}: ${parseInt(count, 10)}
+                      ${testTitle(unitItems, id)}: ${parseInt(count, 10)}
                     </div>`;
         });
         break;
@@ -258,7 +264,7 @@ UI.registerHelper('formatProfit', function(profit) {
       case 'containers':
         _(profit[type]).pairs().forEach(([id, count]) => {
           result += `<div>
-                      ${allContainers[id].title}: ${count}
+                      ${testTitle(allContainers, id)}: ${count}
                     </div>`;
         });
         break;
@@ -271,7 +277,7 @@ UI.registerHelper('formatProfit', function(profit) {
         _(profit[type]).pairs().forEach(([personId, skins]) => {
           _.keys(skins).forEach((skinId) => {
             result += `<div>
-                        Скин персонажа<br/> ${Game.Persons[personId].title}: ${skinId}
+                        Скин персонажа<br/> ${testTitle(Game.Persons, personId)}: ${skinId}
                       </div>`;
           });
         });

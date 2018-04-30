@@ -3,7 +3,7 @@ import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
-import ReminderEmails from './ReminderEmails';
+import ReminderEmails from '../ReminderEmails';
 
 Meteor.methods({
   'user.sendReminder'({ filename, email }) {

@@ -3,7 +3,7 @@ import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Email } from 'meteor/email';
 import { Assets } from '/moduls/game/lib/importCompability';
 
-import './adminMethods';
+import './api';
 
 const prepareTemplate = function(filename) {
   const template = {

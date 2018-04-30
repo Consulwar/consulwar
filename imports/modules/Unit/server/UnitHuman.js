@@ -60,7 +60,9 @@ class UnitHuman extends UnitHumanAbstract {
 
     if (
       unit.group === 'Ground' ||
-      (user.settings && user.settings.options && user.settings.options.moveCompletedUnitToHangar) ||
+      /* TODO: implement hangar UI before uncommenting this
+      (user.settings && user.settings.options &&
+      user.settings.options.moveCompletedUnitToHangar) || */
       (!homePlanet)
     ) {
       location = Game.Unit.location.HOME;

@@ -3,7 +3,7 @@ import { SyncedCron } from 'meteor/percolate:synced-cron';
 import { Email } from 'meteor/email';
 import { Assets } from '/moduls/game/lib/importCompability';
 
-import './adminMethods';
+import './api';
 
 const prepareTemplate = function(filename) {
   const template = {
@@ -42,9 +42,9 @@ const personalize = function({ template, user }) {
 };
 
 class ReminderEmails {
-  static forceSend({ filename, user }) {
+  static forceSend({ filename, email }) {
     const template = prepareTemplate(filename);
-    Email.send(personalize({ template, user }));
+    Email.send(personalize({ template, user: { emails: [{ address: email }] } }));
   }
 
   static schedule() {

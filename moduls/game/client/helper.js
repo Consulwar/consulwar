@@ -1,5 +1,6 @@
 import helpers from '/imports/client/ui/helpers';
 import unitItems from '/imports/content/Unit/client';
+import resourceItems from '/imports/content/Resource/client';
 import allContainers from '/imports/content/Container/Fleet/client';
 
 UI.registerHelper('isNewLayout', function() {
@@ -146,6 +147,10 @@ UI.registerHelper('not', function(value) {
   return !value;
 });
 
+UI.registerHelper('even', function(index) {
+  return ((index + 1) % 2) === 0;
+});
+
 UI.registerHelper('toArray', function(obj) {
   return _.toArray(obj);
 });
@@ -211,7 +216,16 @@ UI.registerHelper('formatProfit', function(profit) {
     switch (type) {
       case 'resources':
         for (var resName in profit[type]) {
-          result += resName + ': ' + parseInt(profit[type][resName], 10) + ' ';
+          if(resName === 'credits') {
+            result += `<div class="cw--color_credit">
+                         +${parseInt(profit[type][resName], 10)} ГГК
+                       </div>`;
+          } else {
+            result += `<div>
+                        ${resourceItems[resName].title}:
+                        ${parseInt(profit[type][resName], 10)}
+                      </div>`;
+          }
         }
         break;
       case 'units':

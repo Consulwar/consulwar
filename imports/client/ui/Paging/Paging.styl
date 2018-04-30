@@ -1,0 +1,42 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--Paging
+  display flex
+  justify-content center
+
+  &__page
+  &__space
+    display flex
+    align-items center
+    justify-content center
+    width 40px
+    height 40px
+    margin 0 5px
+    box-sizing border-box
+
+    font-size $cw--fontSize_m
+    color $cw--color_metal
+
+  &__page
+    cursor pointer
+    background-color #010101
+    border solid 1px $cw--color_metal
+    border-image $cw--gradient_metal 1
+
+    &:hover
+      filter brightness(1.4)
+
+    &_current
+      color $cw--color_white
+      background-color $cw--color_metal
+      border-image none
+
+    &_next
+    &_back
+      background-position center
+      background-repeat no-repeat
+      background-image url(/img/arrow.svg)
+
+    &_back
+      transform scaleX(-1)

@@ -79,7 +79,6 @@ const selectors = {
     '.cw--ResourceCurrent__artifacts',
     '.menu .main_menu a',
     '.menu .second_menu li:not(.active) a',
-    '.greenButton',
     '.cw--button_type_primary_blue',
     '.cw--button_flat',
     '.consul-items a:not(.active)',

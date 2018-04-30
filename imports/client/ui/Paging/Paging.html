@@ -1,0 +1,43 @@
+<template name="Paging">
+  <div class="cw--Paging {{className}}">
+    <button
+      onClick={{switchPage 'back'}}
+      class="
+        cw--Paging__page_back
+        cw--Paging__page
+      "
+      data-sound="hover, click"
+    ></button>
+    {{#each page in pages}}
+      {{#if or (page.count) (page.type)}}
+        <button
+          class="
+            cw--Paging__page
+            {{#if page.isCurrent}}
+              cw--Paging__page_current
+            {{/if}}
+            {{#if page.type}}
+              cw--Paging__page_{{page.type}}
+            {{/if}}
+          "
+          onClick={{switchPage page.count}}
+          data-sound="hover, click"
+        >
+          {{page.count}}
+        </button>
+      {{else}}
+        <span class="cw--Paging__space">
+          ...
+        </span>
+      {{/if}}
+    {{/each}}
+    <button
+      onClick={{switchPage 'next'}}
+      class="
+        cw--Paging__page
+        cw--Paging__page_next
+      "
+      data-sound="hover, click"
+    ></button>
+  </div>
+</template>

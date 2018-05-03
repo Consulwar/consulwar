@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'lodash';
 import { $ } from 'meteor/jquery';
-import { buzz } from '/moduls/game/lib/importCompability';
+import buzz from 'buzz';
 
 const tracks = {
   attack: 'Attack',

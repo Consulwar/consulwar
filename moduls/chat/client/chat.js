@@ -1,3 +1,5 @@
+import buzz from 'buzz';
+
 initChatClient = function() {
 'use strict';
 

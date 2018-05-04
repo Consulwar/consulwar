@@ -91,8 +91,6 @@ const selectors = {
     '.cw--ContainerRewardOpener .cw--button',
     '.cw--UserMenu__button',
     '.modal.quest .neutral',
-    '.additional_area',
-    '.additional_area ul.quests > li',
     '.cw--ColosseumTournament__tournament',
     '.map-planet-popup .button-attack',
   ],

@@ -1,0 +1,40 @@
+<template name="Assistant">
+  {{#if getPerson}}
+    <div
+      onClick={{showQuest}}
+      class="cw--Assistant"
+      data-sound="click"
+    >
+      <div
+        class="
+          cw--Assistant__icon
+          {{#if questStatus.get}}
+            cw--Assistant__icon_{{questStatus.get}}
+          {{/if}}
+        "
+        style="background-image:url({{getPerson.getIcon}})"
+      ></div>
+      <div class="cw--Assistant__content">
+        <div class="cw--Assistant__name">
+          {{getPerson.title}}
+        </div>
+        <div
+          class="
+            cw--Assistant__status
+            cw--Assistant__status_{{questStatus.get}}
+          "
+        >
+          {{#if questStatus.get}}
+            {{#if eq questStatus.get 'quest'}}
+              Есть новое задание
+            {{else if eq questStatus.get 'reward'}}
+              Есть награда
+            {{/if}}
+          {{else}}
+            Нет новых заданий
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</template>

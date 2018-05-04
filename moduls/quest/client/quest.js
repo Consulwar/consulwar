@@ -89,12 +89,14 @@ Game.Quest.showQuest = function(id) {
           }
         }
       });
-  
+
       // quest finished, render reward popup
       Game.Popup.show({
         template: (new RewardPopup({
           hash: {
             reward,
+            type: 'quest',
+            description: quest.conditionText,
             onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
           },
         })).renderComponent(),

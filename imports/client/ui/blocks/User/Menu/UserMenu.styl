@@ -2,6 +2,14 @@
 @import '{}/imports/client/ui/config'
 @import '{}/imports/client/ui/responsive'
 
+@keyframes mailStatusAnimation
+  0%
+    transform translate(3px, -20px)
+  20%
+    transform translate(3px, -23px)
+  40%
+    transform translate(3px, -20px)
+
 .cw--UserMenu
   position absolute
   z-index 15
@@ -115,6 +123,8 @@
     border-radius 50%
     text-align center
     line-height 22px
+
+    animation mailStatusAnimation .5s linear infinite
 
   &__promo
     display flex

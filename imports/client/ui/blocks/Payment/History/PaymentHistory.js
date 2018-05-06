@@ -46,31 +46,33 @@ class PaymentHistory extends BlazeComponent {
       unitSpeedup: 'Ускорение постройки юнитов',
       researchSpeedup: 'Ускорение исследования',
     };
-
-    this.tabs = new ReactiveVar([
-      {
-        id: 'income',
-        name: 'История пополнений',
-        isActive: true,
-      },
-      {
-        id: 'spend',
-        name: 'История расходов',
-      },
-    ]);
   }
 
   onCreated() {
     super.onCreated();
 
+    this.currentKey = new ReactiveVar('income');
+
     this.autorun(() => {
-      this.switchType();
+      // switch page to 1, when old tabs key !== new tabs key
+      if (this.currentKey.get() !== this.isIncome.get()) {
+        this.currentPage.set(1);
+        this.currentKey.set(this.isIncome.get());
+      }
+
       this.getHistory(this.currentPage.get());
+      // scroll List to Top every time
+      $('.cw--PaymentHistory__data').scrollTop(0);
     });
   }
 
   onRendered() {
     super.onRendered();
+
+    // find Tabs component & create tabs
+    [this.tabsComponent] = this.childComponents('Tabs');
+    this.tabsComponent.addTab('История пополнений', true);
+    this.tabsComponent.addTab('История расходов', false);
 
     $('.cw--PaymentHistory__data').perfectScrollbar();
   }
@@ -157,29 +159,8 @@ class PaymentHistory extends BlazeComponent {
         Notifications.error('Не удалось загрузить историю', err.error);
       } else {
         this.setHistory(data);
-        $('.cw--PaymentHistory__data').perfectScrollbar('update');
       }
     });
-  }
-
-  switchType() {
-    let tabId = '';
-    this.tabs.get().forEach((tabItem) => {
-      if (tabItem.isActive) {
-        tabId = tabItem.id;
-      }
-    });
-
-    const currentType = this.isIncome.get() ? 'income' : 'spend';
-    if (currentType !== tabId) {
-      this.currentPage.set(1);
-    }
-
-    if (tabId === 'income') {
-      this.isIncome.set(true);
-    } else {
-      this.isIncome.set(false);
-    }
   }
 }
 

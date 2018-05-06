@@ -5,7 +5,7 @@
         onClick={{switchTab @index}}
         class="
           cw--Tabs__item
-          {{#if tab.isActive}}
+          {{#if eq key.get tab.value}}
             cw--Tabs__item_active
           {{/if}}
         "

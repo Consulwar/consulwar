@@ -1,0 +1,26 @@
+<template name="QuestList">
+  <div class="cw--QuestList {{className}}">
+    {{#each quest in getQuests}}
+      <div
+        onClick={{showQuest quest.engName}}
+        class="
+          cw--QuestList__item
+          {{#if even @index}}
+            cw--QuestList__item_even
+          {{else}}
+            cw--QuestList__item_odd
+          {{/if}}
+          {{#if eq quest.engName currentQuest.get}}
+            cw--QuestList__item_active
+          {{/if}}
+          {{#if quest.statusName}}
+            cw--QuestList__item_{{quest.statusName}}
+          {{/if}}
+        "
+        data-sound="hover, click"
+      >
+        {{quest.title}}
+      </div>
+    {{/each}}
+  </div>
+</template>

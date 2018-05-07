@@ -1,0 +1,24 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--QuestCatalog
+  display block
+  width 1160px
+  max-width 100%
+  height 620px
+  background-color $cw--color_black
+  +media(null, $cw--size_l)
+    height auto
+
+  &__content
+    display flex
+    flex-direction row
+
+  &__quest
+    position relative
+    flex-grow 1
+
+  +media(null, $cw--size_l)
+    &__list
+      display none

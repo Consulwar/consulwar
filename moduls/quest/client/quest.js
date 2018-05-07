@@ -3,6 +3,7 @@ import persons from '/imports/content/Person/client/';
 import Gallery from '/imports/client/ui/blocks/Gallery/Gallery'
 import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 import Quest from '/imports/client/ui/blocks/Quest/Quest';
+import QuestCatalog from '/imports/client/ui/blocks/Quest/Catalog/QuestCatalog';
 
 const engNameToPerson = {};
 _(persons).values().forEach((person) => {
@@ -67,91 +68,86 @@ Game.Quest.showQuest = function(id) {
   }
 
   if (currentQuest.status == Game.Quest.status.FINISHED) {
-    Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
-      const quest = new game.Quest(data);
-      let reward = {};
-  
-      _(quest.reward).pairs().forEach(([id, count]) => {
-        if (content[id]) {
-          switch(content[id].type) {
-            case 'artefact':
-              reward.resources = reward.resources || {};
-              reward.resources[id] = count;
-              break;
-            case 'resource':
-              reward.resources = reward.resources || {};
-              reward.resources[id] = count;
-              break;
-            case 'unit':
-              reward.units = reward.units || {};
-              reward.units[id] = count;
-              break;
-          }
-        }
-      });
-
-      // quest finished, render reward popup
-      Game.Popup.show({
-        template: (new RewardPopup({
-          hash: {
-            reward,
-            type: 'quest',
-            description: quest.conditionText,
-            onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
-          },
-        })).renderComponent(),
-        hideClose: true,
-      });
-    });
+    Game.Quest.showReward(currentQuest);
   } else {
-    // load full info
-    isLoading.set(true);
-    loadedQuest.set(null);
-
-    // quest not finished, render reqular quest window
     Game.Popup.show({
-      template: (new Quest({
+      template: (new QuestCatalog({
         hash: {
           personName: currentQuest.who,
-          title: currentQuest.name,
-          type: 'quest',
-          engName: currentQuest.engName,
-          isPrompt: currentQuest.status == Game.Quest.status.PROMPT,
-          isLoading: isLoading,
-          questData: loadedQuest,
+          questId: currentQuest.engName,
         }
       })).renderComponent(),
-    });
-
-    Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
-      isLoading.set(false);
-      loadedQuest.set( new game.Quest(data) );
-
-      if (data.slides) {
-        const slides = [];
-
-        for (let i = 1; i <= data.slides; i += 1) {
-          slides.push({
-            img: `/img/game/quests/${currentQuest.engName}/${currentQuest.step}/${i}.jpg`
-          });
-        }
-
-        const stepNumber = parseInt(currentQuest.step.substr(8));
-    
-        Game.Popup.show({
-          template: (new Gallery({
-            hash: {
-              slides,
-              title: `Обучение — ${stepNumber} задание`,
-            },
-          })).renderComponent(),
-        });
-      }
     });
   }
 };
 
-Game.Quest.showGreeteing = function(personName) {
+Game.Quest.showReward = function(currentQuest) {
+  Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
+    const quest = new game.Quest(data);
+    let reward = {};
+
+    _(quest.reward).pairs().forEach(([id, count]) => {
+      if (content[id]) {
+        switch(content[id].type) {
+          case 'artefact':
+            reward.resources = reward.resources || {};
+            reward.resources[id] = count;
+            break;
+          case 'resource':
+            reward.resources = reward.resources || {};
+            reward.resources[id] = count;
+            break;
+          case 'unit':
+            reward.units = reward.units || {};
+            reward.units[id] = count;
+            break;
+        }
+      }
+    });
+
+    // quest finished, render reward popup
+    Game.Popup.show({
+      template: (new RewardPopup({
+        hash: {
+          reward,
+          type: 'quest',
+          description: quest.conditionText,
+          onGet: () => Meteor.call('quests.getReward', currentQuest.engName)
+        },
+      })).renderComponent(),
+      hideClose: true,
+    });
+  });
+}
+
+Game.Quest.getData = function(currentQuest, setDataCallback) {
+  Meteor.call('quests.getInfo', currentQuest.engName, currentQuest.step, (err, data) => {
+    setDataCallback(new game.Quest(data));
+  });
+}
+
+Game.Quest.showSlides = function(currentQuest, slidesLength) {
+  const slides = [];
+
+  for (let i = 1; i <= slidesLength; i += 1) {
+    slides.push({
+      img: `/img/game/quests/${currentQuest.engName}/${currentQuest.step}/${i}.jpg`,
+    });
+  }
+
+  const stepNumber = parseInt(currentQuest.step.substr(8));
+
+  Game.Popup.show({
+    template: (new Gallery({
+      hash: {
+        slides,
+        title: `Обучение — ${stepNumber} задание`,
+      },
+    })).renderComponent(),
+  });
+}
+
+Game.Quest.showGreeting = function(personName) {
   isLoading.set(false);
   loadedQuest.set(null);
 

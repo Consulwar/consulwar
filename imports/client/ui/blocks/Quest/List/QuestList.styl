@@ -1,0 +1,39 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--QuestList
+  display flex
+  flex-direction column
+  width 260px
+
+  &__item
+    padding 8px 16px 8px 8px
+
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_m
+    font-weight bold
+
+    color $cw--color_metal
+    cursor pointer
+    user-select none
+    border solid 1px transparent
+
+    &:hover
+      filter brightness(1.4)
+
+    &_even
+      background-color $cw--color_tableEven
+
+    &_odd
+      background-color $cw--color_tableOdd
+
+    &_active
+      border solid 1px $cw--color_metal
+      border-image $cw--gradient_metal 1
+      border-right none
+
+    &_newest
+      color $cw--color_white
+
+    &_reward
+      color $cw--color_human

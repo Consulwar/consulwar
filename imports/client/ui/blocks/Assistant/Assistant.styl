@@ -13,7 +13,7 @@
 .cw--Assistant
   position absolute
   right 0
-  bottom 250px
+  bottom 150px
   z-index 5
 
   display flex
@@ -33,9 +33,19 @@
   border-radius 40px 0 0 40px
   transition all .5s ease
 
-  &:hover
-    width 290px
-    border-color $cw--color_metal
+  +media(null, $cw--size_l)
+    position static
+    order 2
+    margin 5px 0
+    width 100%
+    flex-shrink 0
+    justify-content center
+    border-radius 0
+
+  +media($cw--size_l, null)
+    &:hover
+      width 290px
+      border-color $cw--color_metal
 
   &__icon
     position relative

@@ -1,5 +1,6 @@
 @import '{}/imports/client/ui/colors'
 @import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
 
 .cw--Tabs
   display flex
@@ -23,6 +24,9 @@
     cursor pointer
     color $cw--color_metal
     background-color $cw--color_tableOdd
+
+    +media(null, $cw--size_m)
+      padding 6px
 
     &:not(&_active):hover
       color $cw--color_human

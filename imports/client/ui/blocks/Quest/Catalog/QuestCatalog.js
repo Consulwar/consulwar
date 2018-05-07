@@ -1,6 +1,7 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'lodash';
+import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
 import persons from '/imports/content/Person/client';
 import '/imports/client/ui/Tabs/Tabs';
@@ -35,9 +36,25 @@ class QuestCatalog extends BlazeComponent {
     [this.tabsComponent] = this.childComponents('Tabs');
     this.createTabs();
 
+    this.personNameTemp = this.personName.get();
     this.autorun(() => {
+      // mobile: show List while changing person
+      if (this.personName.get() !== this.personNameTemp) {
+        this.hideQuest();
+        this.personNameTemp = this.personName.get();
+      }
+
       this.getQuestData();
     });
+  }
+
+  showQuestExt() {
+    return () => {
+      $('.cw--QuestCatalog').addClass('cw--QuestCatalog_showQuest');
+    };
+  }
+  hideQuest() {
+    $('.cw--QuestCatalog').removeClass('cw--QuestCatalog_showQuest');
   }
 
   createTabs() {

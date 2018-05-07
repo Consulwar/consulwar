@@ -16,6 +16,7 @@ class QuestList extends BlazeComponent {
       personName,
       currentQuest,
       className,
+      onClick,
     },
   }) {
     super();
@@ -29,6 +30,8 @@ class QuestList extends BlazeComponent {
       check(currentQuest, ReactiveVar);
     }
     this.currentQuest = currentQuest;
+
+    this.onClick = onClick;
   }
 
   getQuests() {
@@ -65,6 +68,7 @@ class QuestList extends BlazeComponent {
   }
 
   showQuest(event, id) {
+    this.onClick();
     this.currentQuest.set(id);
   }
 }

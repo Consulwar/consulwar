@@ -10,6 +10,7 @@
       {{> QuestList args
         personName=personName
         currentQuest=questId
+        onClick=showQuestExt
         className='cw--QuestCatalog__list'
       }}
       {{> Quest args
@@ -22,6 +23,10 @@
         questData=questData
         className='cw--QuestCatalog__quest'
       }}
+      <button
+        onClick={{hideQuest}}
+        class="cw--QuestCatalog__listSwitcher">
+      </button>
     </div>
   </div>
 </template>

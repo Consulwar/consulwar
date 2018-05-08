@@ -74,7 +74,21 @@
                     -{{formatNumber item.credits}} ГГК
                   </span>
                 {{/if}}
-                {{{formatProfit item.profit}}}
+                {{#each profitItem in (formatProfit item.profit)}}
+                  <div
+                    class="
+                      cw--PaymentHistory__profitItem
+                      {{#if eq profitItem.type 'credit'}}
+                        cw--color_credit
+                      {{/if}}
+                    "
+                  >
+                    <div class="cw--PaymentHistory__profitItemDescr">
+                      {{profitItem.description}}
+                    </div>
+                    {{profitItem.text}}
+                  </div>
+                {{/each}}
               </div>
               <div class="cw--PaymentHistory__tableDescription">
                 {{item.goal}}

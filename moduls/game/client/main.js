@@ -15,6 +15,7 @@ import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 
 import '/imports/client/ui/blocks/Buffs/Buffs';
 import '/imports/client/ui/blocks/Assistant/Assistant';
+import '/imports/client/ui/blocks/Quest/Wobbler/QuestWobbler';
 
 Blaze._allowJavascriptUrls();
 

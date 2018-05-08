@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/Builder',
-  field: 'Building/Total',
+  field: 'building.total',
   levels: [100, 250, 500, 750, 1000],
   title: [
     'Градостроитель 1 степени',

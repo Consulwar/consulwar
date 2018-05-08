@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/SecretSociety',
-  field: 'Chat/Dice',
+  field: 'chat.dice',
   levels: [1000],
   title: 'Тайное общество',
   description: 'Знает то, чего не знают другие',

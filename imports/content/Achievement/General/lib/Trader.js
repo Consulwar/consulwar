@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/Trader',
-  field: 'Resources/Bought/Total',
+  field: 'resources.bought.total',
   levels: [1000000],
   title: 'Торговец',
   description: 'Выторговать любых ресурсов на 1 000 000 за всё время',

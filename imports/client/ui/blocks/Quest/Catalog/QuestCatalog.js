@@ -48,6 +48,12 @@ class QuestCatalog extends BlazeComponent {
     });
   }
 
+  onDestroyed() {
+    super.onDestroyed();
+
+    Game.Quest.catalogWindow = null;
+  }
+
   showQuestExt() {
     return () => {
       $('.cw--QuestCatalog').addClass('cw--QuestCatalog_showQuest');
@@ -87,7 +93,10 @@ class QuestCatalog extends BlazeComponent {
     });
 
     Game.Quest.getData(currentQuest, (data) => {
-      if (data.slides) {
+      if (
+        data.slides
+        && currentQuest.status === Game.Quest.status.PROMPT
+      ) {
         Game.Quest.showSlides(currentQuest, data.slides);
       }
       this.isLoading.set(false);

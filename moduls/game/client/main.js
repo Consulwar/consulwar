@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
+import buzz from 'buzz';
 import content from '/imports/content/client';
 import buildings from '/imports/content/Building/client';
 import researches from '/imports/content/Research/client';

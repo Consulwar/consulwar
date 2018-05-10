@@ -1,9 +1,11 @@
 // Mixin Media
 
-media($min-width, $max-width = null)
+media($min-width, $max-width = null, $min-height = null, $max-height = null)
   min-width = $min-width != null ? 'and (min-width: $min-width) ' : ''
-  max-width = $max-width != null ? 'and (max-width: $max-width - 1)' : ''
-  media = 'all '+ min-width + max-width
+  max-width = $max-width != null ? 'and (max-width: $max-width - 1) ' : ''
+  min-height = $min-height != null ? 'and (min-height: $min-height) ' : ''
+  max-height = $max-height != null ? 'and (max-height: $max-height)' : ''
+  media = 'all '+ min-width + max-width + min-height + max-height
   @media media
     {block}
 

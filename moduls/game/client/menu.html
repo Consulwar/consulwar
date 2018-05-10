@@ -103,7 +103,10 @@
   {{#if and isNewLayout item}}
     <div class="overlay {{menuGroup}} {{itemGroup}} item {{item.group}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
       <div 
-        class="item" 
+        class="
+          item
+          cw--ItemImage
+        " 
         style="background-image: url({{item.overlayOwn}})"></div>
     </div>
 

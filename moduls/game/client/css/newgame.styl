@@ -208,17 +208,6 @@ body.game
             .item:before
               background-image url(/img/game/artefact/red/bg.png)
 
-        .item
-          position absolute
-          top 50%
-          left 5%
-          width 40%
-          height 60%
-          background-repeat no-repeat
-          background-position center center
-          background-size contain
-          transform translateY(-55%)
-        
         a
           position absolute
           
@@ -585,6 +574,11 @@ body.game
       flex-wrap wrap
       justify-content space-between
       align-items stretch
+
+      +media($cw--size_l, $cw--size_xxxl)
+        margin-right 175px
+      +media($cw--size_xxxl, 1800px)
+        margin-right 12%
       
       &.cosmos
         width 960px
@@ -1365,3 +1359,19 @@ body.game
   &_compact
     .map-planet-marker
       display none
+
+
+.cw--ItemImage
+  position absolute
+  top 50%
+  right 50%
+  width 40vw
+  height 60vh
+  background-repeat no-repeat
+  background-position center center
+  background-size contain
+  transform translate(-20%, -55%)
+
+  +media($cw--size_l, $cw--size_xxl)
+    width 30vw
+    transform translate(-60%, -55%)

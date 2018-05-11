@@ -74,13 +74,14 @@ Game.Payment.buyItem = function(item) {
   });
 };
 
-Meteor.subscribe('paymentIncome');
+const subscription = Meteor.subscribe('paymentIncome');
 
 Game.Payment.Income.Collection.find({}).observeChanges({
   added: function(id, fields) {
     if (fields
      && fields.source
      && fields.source.type == 'payment'
+     && subscription.ready()
     ) {
       showRewardWindow(fields.source.item);
     }

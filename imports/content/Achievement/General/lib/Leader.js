@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/Leader',
-  field: 'Resources/Gained/Honor',
+  field: 'resources.gained.honor',
   levels: [100000000],
   title: 'Вождь',
   description: 'Заработать 100 000 000 чести',

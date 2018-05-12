@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/Space/CarryingLight',
-  field: 'Reptiles/Killed/Reptiles/Fleet/Shadow',
+  field: 'reptiles.killed.Unit/Reptile/Space/Shadow',
   levels: [10],
   title: 'Несущий свет',
   description: 'Уничтожить 10 кораблей Тень',

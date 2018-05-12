@@ -21,16 +21,6 @@ game.Achievement = function(options) {
     options.group = Game.newToLegacyNames[options.group];
   }
 
-  if (options.field) {
-    options.field = (options.field
-      .split('/')
-      .map((part) => part.toLocaleLowerCase())
-      .map((part) => Game.newToLegacyNames[part] || part)
-      .join('.')
-    );
-  }
-  //
-
   this.doNotRegisterEffect = true;
 
   game.Achievement.superclass.constructor.apply(this, arguments);

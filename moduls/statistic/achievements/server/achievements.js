@@ -34,7 +34,6 @@ Meteor.methods({
             result = {};
           }
           if (!set[group]) {
-            set[group] = {};
             result[group] = {};
           }
 

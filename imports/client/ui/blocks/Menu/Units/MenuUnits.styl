@@ -3,12 +3,32 @@
 @import '{}/imports/client/ui/responsive'
 
 .cw--MenuUnits
+  position relative
+
   +media(null, $cw--size_xl)
     align-items flex-start
     justify-content space-between
   +media(null, $cw--size_m)
     flex-direction column
     align-items center
+
+  &:before
+    content ''
+    position absolute
+    top 24px
+    background-color $cw--color_tableEven
+
+    +media($cw--size_xxxl, null)
+      height calc(110px + 5px)
+      width calc((110px + 10px) * 12)
+    +media($cw--size_xxl, $cw--size_xxxl)
+      height calc(100px + 5px)
+      width calc((100px + 10px) * 12)
+    +media($cw--size_xl, $cw--size_xxl)
+      height calc(90px + 5px)
+      width calc((90px + 10px) * 12)
+    +media(null, $cw--size_s)
+      display none
 
   &__group
     flex-shrink 1

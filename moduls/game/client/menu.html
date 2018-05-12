@@ -159,8 +159,7 @@
         {{#if this.overlay}}
           {{#let overlay=this.getOverlay}}
             {{#if and (overlay (or overlay.img overlay.progress))}}
-              <a 
-                href="{{this.url}}"
+              <a
                 title="{{this.name}}"
                 style="
                   top: {{overlay.y}}px;
@@ -170,7 +169,11 @@
                 >
 
                 {{#if overlay.img}}
-                  <img src="{{overlay.img}}" alt=""/>
+                  <img
+                    draggable="false"
+                    src="{{overlay.img}}"
+                    alt="{{this.name}}"
+                  />
                 {{/if}}
 
                 {{#if and overlay.progress (not (eq overlay.img overlay.progress.img))}}

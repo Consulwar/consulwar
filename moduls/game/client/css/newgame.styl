@@ -236,11 +236,7 @@ body.game
             user-select none
             position absolute
             z-index 1
-            
-            &:hover
-              -webkit-filter brightness(1.1)
-              filter brightness(1.1)
-            
+
             &[progress]
               z-index 2
               
@@ -803,6 +799,16 @@ body.game
       margin 0 auto
       z-index inherit
 
+      &:before
+        content ''
+        position absolute
+        top -15px
+        left 15px
+        display block
+        width calc(100% - 30px)
+        height 30px
+        background-color $cw--color_tableEven
+
       .main_menu
         display flex
         flex-shrink 0
@@ -818,6 +824,10 @@ body.game
           height 53px
           overflow hidden
           background-color $color-black
+          border-bottom 4px solid $cw--color_black
+
+          &:hover
+            filter brightness(1.2)
 
           img
             position absolute
@@ -826,7 +836,6 @@ body.game
           
           &:hover,
           &.active
-            border-bottom 4px solid transparent
             &.planet
               border-color #e8e8e8
             
@@ -866,25 +875,31 @@ body.game
         top 57px
         left 0
         list-style-type none
-        padding 8px
-        background-color $color-black
+        background-color $cw--color_black
         z-index: 5
 
         li
+          padding 6px 8px
+          box-sizing border-box
+          font-size $cw--fontSize_s
+          white-space nowrap
+          border solid 1px $cw--color_metal
+          border-image $cw--gradient_metal 1
+          background-color $cw--color_black
           a
             text-decoration none
-            color $color-description
+            color $cw--color_metal
+
+          &:hover
+            filter brightness(1.2)
           
           &.active
+            background-color $cw--color_metal
+            border solid 1px $cw--color_metal
             a
-              color $color-metal
-        
-        li + li
-          &:before
-            content '/'
-            color $color-white
-            margin 0 0 0 4px
-        
+              color $cw--color_white
+            &:hover
+              filter none
 
     .menu_soc
       width 100px

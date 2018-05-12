@@ -253,8 +253,7 @@ Template.side_menu.helpers({
 
     return getMenu(menu[group].items, function(item, key) {
       return (
-           Router.current().url.indexOf(key) == item.url.indexOf(key)
-        || (Router.current().url.indexOf(key) - 32) == item.url.indexOf(key)
+        Router.current().url.indexOf(item.url) !== -1
       );
     });
   },

@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/Communication/Seppuku',
-  field: 'Chat/Seppuku',
+  field: 'chat.sepukku',
   levels: [50, 100, 200],
   title: [
     'Мастер сэппуку',

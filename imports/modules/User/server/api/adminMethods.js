@@ -19,6 +19,6 @@ Meteor.methods({
     check(filename, String);
     check(email, String);
 
-    ReminderEmails.forceSend({ filename, email });
+    ReminderEmails.forceSend({ filename, email, sender: user.username });
   },
 });

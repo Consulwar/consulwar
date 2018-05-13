@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/Space/LeprechaunKiller',
-  field: 'Battle/TradeFleet/Victory',
+  field: 'battle.tradefleet.victory',
   levels: [10],
   title: 'Убийца леприконов',
   description: '10 раз уничтожить караван',

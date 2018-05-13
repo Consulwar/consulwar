@@ -1,0 +1,63 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--QuestCatalog
+  display block
+  width 1160px
+  max-width 100%
+  height 620px
+  background-color $cw--color_black
+  +media(null, $cw--size_l)
+    height auto
+    min-height 100vh
+
+  &__tabs
+    padding-right 40px
+
+  &__content
+    position relative
+    display flex
+    flex-direction row
+
+  &__quest
+    position relative
+    flex-grow 1
+
+  &__listSwitcher
+    position absolute
+    left 20px
+    top 20px
+    z-index 10
+    display none
+    align-items center
+    justify-content center
+    width 40px
+    height @width
+    border solid 1px $cw--color_metal
+    border-image $cw--gradient_metal 1
+
+    background-position center
+    background-repeat no-repeat
+    background-image url(/img/arrow.svg)
+    background-color $cw--color_darkGrey
+    transform scaleX(-1)
+
+  &__list
+    position relative
+    height 570px
+
+  +media(null, $cw--size_l)
+    &__list
+      width 100%
+      height auto
+
+    &__quest
+    &_showQuest &__list
+      display none
+
+    &_showQuest &__quest
+      display flex
+
+    &_showQuest &__listSwitcher
+      display flex

@@ -1,0 +1,54 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--QuestWobbler
+  position absolute
+  left 0
+  top 200px
+  display flex
+  flex-direction row
+  align-items center
+  width 350px
+  padding 8px
+  box-sizing border-box
+
+  cursor pointer
+  background-color $cw--color_darkGrey
+  border solid 1px $cw--color_metal
+  border-image $cw--gradient_metal 1
+  border-left none
+
+  +media(null, $cw--size_l)
+    position static
+    z-index 0
+
+    width 100%
+    order 2
+    flex-basis 100px
+    flex-shrink 0
+    justify-content center
+    box-sizing border-box
+
+  &:hover
+    filter brightness(1.4)
+
+  &__personIcon
+    display block
+    width 60px
+    height @width
+    flex-shrink 0
+    margin 0 8px
+
+    border-radius @width
+    background-repeat no-repeat
+    background-position center
+    background-size cover
+
+  &__text
+    flex-basis 240px
+    padding-left 8px
+
+    cw--fontFamily_cond()
+    font-size $cw--fontSize_s
+    color $cw--color_metal

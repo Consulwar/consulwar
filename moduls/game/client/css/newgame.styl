@@ -87,7 +87,8 @@ html, body
     
     .newgame 
       width 100%
-      height 100%
+      height auto
+      min-height 100%
 
 body.game
   max-width 1920px
@@ -207,15 +208,6 @@ body.game
             .item:before
               background-image url(/img/game/artefact/red/bg.png)
 
-        .item
-          position absolute
-          top 0
-          left 0
-          width 60%
-          height 100%
-          background-repeat no-repeat
-          background-position center center
-        
         a
           position absolute
           
@@ -236,11 +228,7 @@ body.game
             user-select none
             position absolute
             z-index 1
-            
-            &:hover
-              -webkit-filter brightness(1.1)
-              filter brightness(1.1)
-            
+
             &[progress]
               z-index 2
               
@@ -582,6 +570,13 @@ body.game
       flex-wrap wrap
       justify-content space-between
       align-items stretch
+
+      +media($cw--size_l, $cw--size_xxxl)
+        margin-right 175px
+      +media($cw--size_xxxl, 1800px)
+        margin-right 12%
+      +media($cw--size_l, 1290px, 1000px)
+        margin-right 20px
       
       &.cosmos
         width 960px
@@ -737,10 +732,7 @@ body.game
       
       & + .overlay
         display none
-        
-        & + .additional_area
-          min-width 0
-          flex-shrink 10000
+
     .overlay
       position relative
       flex-shrink 1
@@ -803,6 +795,16 @@ body.game
       margin 0 auto
       z-index inherit
 
+      &:before
+        content ''
+        position absolute
+        top -15px
+        left 15px
+        display block
+        width calc(100% - 30px)
+        height 30px
+        background-color $cw--color_tableEven
+
       .main_menu
         display flex
         flex-shrink 0
@@ -818,6 +820,10 @@ body.game
           height 53px
           overflow hidden
           background-color $color-black
+          border-bottom 4px solid $cw--color_black
+
+          &:hover
+            filter brightness(1.2)
 
           img
             position absolute
@@ -826,7 +832,6 @@ body.game
           
           &:hover,
           &.active
-            border-bottom 4px solid transparent
             &.planet
               border-color #e8e8e8
             
@@ -866,25 +871,31 @@ body.game
         top 57px
         left 0
         list-style-type none
-        padding 8px
-        background-color $color-black
+        background-color $cw--color_black
         z-index: 5
 
         li
+          padding 6px 8px
+          box-sizing border-box
+          font-size $cw--fontSize_s
+          white-space nowrap
+          border solid 1px $cw--color_metal
+          border-image $cw--gradient_metal 1
+          background-color $cw--color_black
           a
             text-decoration none
-            color $color-description
+            color $cw--color_metal
+
+          &:hover
+            filter brightness(1.2)
           
           &.active
+            background-color $cw--color_metal
+            border solid 1px $cw--color_metal
             a
-              color $color-metal
-        
-        li + li
-          &:before
-            content '/'
-            color $color-white
-            margin 0 0 0 4px
-        
+              color $cw--color_white
+            &:hover
+              filter none
 
     .menu_soc
       width 100px
@@ -1045,175 +1056,6 @@ body.game
       .map-planet-border
         border-color $cw--color_crystal
 
-
-  .quest
-    position absolute
-    z-index 10
-    bottom 140px
-    right 0
-    width 215px
-    height 70px
-    
-    padding 9px 9px 8px 85px
-    background-color rgba(0, 0, 0, 0.8)
-    background-position 10px center
-    border 2px solid rgba(100, 100, 100, 0.8)
-    border-right 0
-    border-radius 50px 0 0 50px
-  
-
-  .additional_area
-    background-repeat no-repeat
-    flex-shrink 3
-    opacity 0.8
-    z-index 4
-    
-    .title
-      display flex
-      flex-direction column
-      justify-content space-around
-      position relative
-      margin auto
-      width 100%
-      height 100%
-      color $color-white
-      font-weight bold
-      white-space nowrap
-      text-align center
-      
-      h2
-        text-overflow ellipsis
-        overflow hidden
-      
-      .prompt
-        color $color-metal
-        
-      .finished
-        color $color-ggk
-
-    .quests-switch
-      display block
-      position absolute
-      right 25px
-      bottom 50px
-      width 36px
-      height 36px
-      background-position center center
-      background-repeat no-repeat
-
-      &:hover
-        -webkit-filter brightness(1.5)
-        filter brightness(1.5)
-
-      &.open
-        background-image url(/img/game/arrow_open.png)
-        
-      &.close
-        background-image url(/img/game/arrow_close.png)
-
-    .quests
-      position absolute
-      display flex
-      flex-direction column
-      right 0px
-      bottom 90px
-      z-index 5
-      width 300px
-      
-      li
-        cursor pointer
-        display inline-block
-        padding 10px
-        margin-top 5px
-        width 100%
-        box-sizing border-box
-        border-radius 10px
-        font-weight bold
-        font-size 16px
-        overflow hidden
-        text-overflow ellipsis
-        text-align left
-        white-space nowrap
-        background rgb(0, 0, 0)
-        background rgba(0, 0, 0, 0.8)
-      
-        &:hover
-          -webkit-filter brightness(1.4)
-          filter brightness(1.4)
-
-      .prompt
-        border-color #ffffff
-        color #ffffff
-      
-      .inprogress
-        border-color #56baf2
-        color #56baf2
-        
-      .finished
-        border-color #e9a844
-        color #e9a844
-
-    &.quest
-      cursor pointer
-
-      &.prompt:after,
-      &.finished:after
-        position absolute
-        top 10px
-        right 33px
-      
-      &.prompt:after
-        content url(/img/game/quests/hasquest.png)
-        
-      &.finished:after
-        content url(/img/game/quests/hasreward.png)
-    
-    &.bolz
-      background-image url(/img/game/quests/bolz.png)
-
-    &.tamily
-      background-image url(/img/game/quests/tamily.png)
-    
-    &.portal
-      margin auto 0 auto auto
-      min-width 100px
-      width 267px
-      height 428px
-      background-image url(/img/game/portal.jpg)
-  
-    &.thirdenginery
-      background-image url(/img/game/quests/thirdenginery.png)
-  
-    &.vaha
-      background-image url(/img/game/quests/vaha.png)
-  
-    &.psm
-      background-image url(/img/game/quests/psm.png)
-  
-    &.tilps
-      background-image url(/img/game/quests/tilps.png)
-  
-    &.nataly
-      background-image url(/img/game/quests/nataly.png)
-  
-    &.mechanic
-      background-image url(/img/game/quests/mechanic.png)
-  
-    &.calibrator
-      background-image url(/img/game/quests/calibrator.png)
-  
-    &.bolz
-      background-image url(/img/game/quests/bolz.png)
-  
-    &.renexis
-      background-image url(/img/game/quests/renexis.png)
-    
-    &.general
-      margin auto 0 auto auto
-      min-width 100px
-      width 267px
-      height 428px
-      background-image url(/img/game/Unit/reptiles/heroes/general.jpg)
 
 .content.wallet,
 .content.admin
@@ -1534,3 +1376,23 @@ body.game
   &_compact
     .map-planet-marker
       display none
+
+
+.cw--ItemImage
+  position absolute
+  top 50%
+  right 50%
+  width 40vw
+  height 60vh
+  background-repeat no-repeat
+  background-position center center
+  background-size contain
+  transform translate(-20%, -55%)
+
+  +media($cw--size_l, $cw--size_xxl)
+    width 30vw
+    transform translate(-60%, -55%)
+
+  +media($cw--size_l, 1290px, 1000px)
+    width 36vw
+    transform translate(-30%, -55%)

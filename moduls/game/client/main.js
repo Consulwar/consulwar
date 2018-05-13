@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Router } from 'meteor/iron:router';
+import buzz from 'buzz';
 import content from '/imports/content/client';
 import buildings from '/imports/content/Building/client';
 import researches from '/imports/content/Research/client';
@@ -14,6 +15,8 @@ import Arrow from '/imports/client/ui/Arrow/Arrow';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 
 import '/imports/client/ui/blocks/Buffs/Buffs';
+import '/imports/client/ui/blocks/Assistant/Assistant';
+import '/imports/client/ui/blocks/Quest/Wobbler/QuestWobbler';
 
 Blaze._allowJavascriptUrls();
 

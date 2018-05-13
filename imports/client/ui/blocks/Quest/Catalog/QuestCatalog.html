@@ -1,0 +1,33 @@
+<template name="QuestCatalog">
+  <div class="cw--QuestCatalog">
+    <div class="cw--QuestCatalog__header">
+      {{> Tabs args
+        key=personName
+        className='cw--QuestCatalog__tabs'
+      }}
+    </div>
+    <div class="cw--QuestCatalog__content">
+      {{> QuestList args
+        personName=personName
+        currentQuest=questId
+        onClick=showQuestExt
+        className='cw--QuestCatalog__list'
+      }}
+      {{> Quest args
+        personName=personName.get
+        title=quest.get.title
+        type='quest'
+        engName=quest.get.engName
+        isPrompt=quest.get.isPrompt
+        isLoading=isLoading
+        questData=questData
+        className='cw--QuestCatalog__quest'
+      }}
+      <button
+        onClick={{hideQuest}}
+        class="cw--QuestCatalog__listSwitcher"
+        data-sound="click"
+      ></button>
+    </div>
+  </div>
+</template>

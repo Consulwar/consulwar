@@ -253,116 +253,13 @@ Template.side_menu.helpers({
 
     return getMenu(menu[group].items, function(item, key) {
       return (
-           Router.current().url.indexOf(key) == item.url.indexOf(key)
-        || (Router.current().url.indexOf(key) - 32) == item.url.indexOf(key)
+        Router.current().url.indexOf(item.url) !== -1
       );
     });
   },
 
   getUrl: function(item) {
     return item.getUrl ? item.getUrl() : item.url;
-  }
-});
-
-var getSideHeroByRoute = function(route) {
-  return (
-    route &&
-    route.group &&
-    route.params.group &&
-    menu[route.group] &&
-    menu[route.group].items &&
-    menu[route.group].items[route.params.group] &&
-    menu[route.group].items[route.params.group].additionalArea
-  );
-};
-
-Session.set('sideQuestsOpened', false);
-
-Template.additional_area.events({
-  'click .close': function(e, t) {
-    e.stopPropagation();
-    Session.set('sideQuestsOpened', false);
-  },
-
-  'click .open': function(e, t) {
-    e.stopPropagation();
-    Session.set('sideQuestsOpened', true);
-  },
-
-  'click .quest': function(e, t) {
-    var who = getSideHeroByRoute( Router.current() );
-    var quests = (who) ? Game.Quest.getAllByHero(who) : null;
-    if (quests) {
-      Session.set('sideQuestsOpened', !Session.get('sideQuestsOpened'));
-    } else {
-      Game.Quest.showGreeteing(who);
-    }
-
-    
-    /*
-    if (!who) {
-      return;
-    }
-
-    if (who == 'portal') {
-      return ShowModalWindow( Template.support );
-    }
-
-    var currentQuest = Game.Quest.getOneByHero(who);
-    if (currentQuest) {
-      Game.Quest.showQuest(currentQuest.engName);
-    } else {
-      Game.Quest.showGreeteing(who);
-    }*/
-  },
-
-  'click .quests li': function(e, t) {
-    e.stopPropagation();
-    var id = $(e.currentTarget).attr('data-id');
-    if (id) {
-      Game.Quest.showQuest(id);
-    }
-  }
-});
-
-Template.additional_area.helpers({
-  sideHero: function() {
-    return getSideHeroByRoute( Router.current() );  
-  },
-
-  sideHeroName: function() {
-    var who = getSideHeroByRoute( Router.current() );
-    return who && Game.Persons[who] ? Game.Persons[who].name : null;
-  },
-
-  sideHeroIcon() {
-    const who = getSideHeroByRoute(Router.current());
-    return who && Game.Persons[who] ? Game.Persons[who].getIcon() : null;
-  },
-
-  status: function() {
-    var who = getSideHeroByRoute( Router.current() );
-    var quest = (who) ? Game.Quest.getOneByHero(who) : null;
-    return (quest) ? quest.status : null;
-  },
-
-  isOpened: function() {
-    return Session.get('sideQuestsOpened');
-  },
-
-  quests: function() {
-    var who = getSideHeroByRoute( Router.current() );
-    var quests = (who) ? Game.Quest.getAllByHero(who) : null;
-    if (quests) {
-      return _.map(quests, function(item) {
-        return {
-          engName: item.engName,
-          name: item.name,
-          status: item.status
-        };
-      });
-    }
-    return null;
   }
 });
 

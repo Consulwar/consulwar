@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/LossOfLosses',
-  field: 'Quests/Daily/Fail',
+  field: 'quests.daily.fail',
   levels: [200],
   title: 'Потеря потерь',
   description: 'Зафейлить 200 ежедневных заданий',

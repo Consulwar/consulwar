@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/Freeloader',
-  field: 'Promocode/Total',
+  field: 'promocode.total',
   levels: [100],
   title: 'Халявщик',
   description: 'Набивал карманы казённым золотом',

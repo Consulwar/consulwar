@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/Metallurgist',
-  field: 'Resources/Spent/Metals',
+  field: 'resources.spent.metals',
   levels: [1000000],
   title: 'Металлург',
   description: 'Потратить 1 000 000 металла',

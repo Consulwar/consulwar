@@ -1,0 +1,113 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+@keyframes questStatusAnimation
+  0%
+    bottom 0
+  20%
+    bottom 3px
+  40%
+    bottom 0
+
+.cw--Assistant
+  position absolute
+  right 0
+  bottom 150px
+  z-index 5
+
+  display flex
+  width 85px
+  height 76px
+  padding 6px
+  box-sizing border-box
+  overflow hidden
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+
+  cursor pointer
+  background-color $cw--color_black
+  border solid 2px $cw--color_black
+  border-right none
+  border-radius 40px 0 0 40px
+  transition all .5s ease
+
+  +media(null, $cw--size_l)
+    position fixed
+    bottom 0
+    right 0
+
+    &:active
+      width 290px
+      border-color $cw--color_metal
+
+  +media($cw--size_l, null)
+    &:hover
+      width 290px
+      border-color $cw--color_metal
+
+  &__icon
+    position relative
+    display block
+    width 60px
+    height @width
+    flex-shrink 0
+
+    border-radius 60px
+    background-repeat no-repeat
+    background-position center
+    background-size cover
+
+    &_quest:before
+    &_reward:before
+      content '!'
+      position absolute
+      bottom 0
+      right -5px
+      z-index 1
+      width 18px
+      height @width
+
+      font-size 16px
+      font-weight bold
+      line-height 20px
+      text-align center
+
+      color $cw--color_black
+      background-color $cw--color_credit
+      border-radius 50%
+
+      animation questStatusAnimation .5s linear infinite
+
+    &_reward:before
+      background-color $cw--color_human
+
+  +media($cw--size_l, null)
+    &:hover &__icon:before
+      display none
+
+  &__content
+    display flex
+    width 200px
+    margin 5px 0
+    flex-shrink 0
+    flex-direction column
+    align-items center
+    justify-content space-around
+
+    font-weight bold
+    font-size $cw--fontSize_m
+
+  &__name
+    font-size $cw--fontSize_l
+    color $cw--color_metal
+  
+  &__status
+    color $cw--color_lightGrey
+
+    &_quest
+      color $cw--color_credit
+
+    &_reward
+      color $cw--color_human

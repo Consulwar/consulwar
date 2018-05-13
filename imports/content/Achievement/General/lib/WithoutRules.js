@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/WithoutRules',
-  field: 'Colosseum/Tournaments/Total',
+  field: 'colosseum.tournaments.total',
   levels: [250],
   title: 'Без правил',
   description: 'Провести 250 турниров в колизее',

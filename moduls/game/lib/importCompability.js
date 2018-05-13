@@ -1,1 +1,1 @@
-export { Notifications, L, ChdFeedbackWidget, buzz, Assets };
+export { Notifications, L, ChdFeedbackWidget, Assets };

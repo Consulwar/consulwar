@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/RichMan',
-  field: 'Resources/Spent/Credits',
+  field: 'resources.spent.credits',
   levels: [100000],
   title: 'Богач',
   description: 'Потратить 100 000 ГГК',

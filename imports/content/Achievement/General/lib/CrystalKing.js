@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/CrystalKing',
-  field: 'Resources/Spent/Crystals',
+  field: 'resources.spent.crystals',
   levels: [1000000],
   title: 'Кристальный Король',
   description: 'Потратить 1 000 000 кристаллов',

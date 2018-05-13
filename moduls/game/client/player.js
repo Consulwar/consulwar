@@ -1,3 +1,4 @@
+import buzz from 'buzz';
 import SoundManagerMute from '/imports/client/ui/SoundManager/Mute/SoundManagerMute';
 import buildings from '/imports/content/Building/client';
 

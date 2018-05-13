@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/Respected',
-  field: 'Resources/Spent/Honor',
+  field: 'resources.spent.honor',
   levels: [1000000],
   title: 'Почитаемый',
   description: 'Потратить 1 000 000 чести',

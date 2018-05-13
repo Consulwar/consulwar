@@ -1,6 +1,6 @@
 export default {
   id: 'Achievement/General/SatanMinister',
-  field: 'Colosseum/Tournaments/BloodyMess',
+  field: 'colosseum.tournaments.bloody_mess',
   levels: [100],
   title: 'Служитель Сатаны',
   description: '100 раз устраивал турнир Кровавое Месиво',

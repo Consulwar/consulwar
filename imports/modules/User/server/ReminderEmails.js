@@ -4,9 +4,11 @@ import { Email } from 'meteor/email';
 import { Assets } from '/moduls/game/lib/importCompability';
 
 import './api';
+import ReminderLogCollection from './ReminderLogCollection';
 
 const prepareTemplate = function(filename) {
   const template = {
+    source: filename,
     from: Meteor.settings.mail.from,
     html: Assets.getText(filename),
     attachments: {},
@@ -42,9 +44,15 @@ const personalize = function({ template, user }) {
 };
 
 class ReminderEmails {
-  static forceSend({ filename, email }) {
+  static forceSend({ filename, email, sender }) {
     const template = prepareTemplate(filename);
     Email.send(personalize({ template, user: { emails: [{ address: email }] } }));
+    ReminderLogCollection.insert({
+      date: new Date(),
+      sender,
+      recipient: email,
+      template: template.source,
+    });
   }
 
   static schedule() {
@@ -99,12 +107,18 @@ class ReminderEmails {
             && (user.status.lastLogout < userInactivityDate || !user.status.lastLogout)
             && (user.lastReminderDate < userInactivityDate || !user.lastReminderDate)
           ) {
-            Email.send(personalize({ template: templates[reminderLevel], user }));
+            const template = templates[reminderLevel];
+            Email.send(personalize({ template, user }));
             Meteor.users.update({ _id: user._id }, {
               $set: {
                 reminderLevel: reminderLevel + 1,
                 lastReminderDate: new Date(),
               },
+            });
+            ReminderLogCollection.insert({
+              date: new Date(),
+              recipient: user.emails[0].address,
+              template: template.source,
             });
           }
         });

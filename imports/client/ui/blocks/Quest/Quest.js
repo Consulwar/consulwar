@@ -23,17 +23,19 @@ class Quest extends BlazeComponent {
       isPrompt,
       isLoading,
       questData,
+      className,
     },
   }) {
     super();
     this.engName = engName;
     this.personName = personName || 'tamily';
-    this.type = type;
+    this.type = type || 'quest';
     this.title = title;
     this.text = text;
     this.isPrompt = isPrompt;
     this.isLoading = isLoading;
     this.questData = questData;
+    this.className = className;
   }
 
   getPerson() {

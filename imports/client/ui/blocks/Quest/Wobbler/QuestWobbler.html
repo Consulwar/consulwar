@@ -1,0 +1,18 @@
+<template name="QuestWobbler">
+  {{#if getTutorial}}
+    <div
+      onClick={{showTutorial}}
+      class="cw--QuestWobbler"
+    >
+      <div
+        class="cw--QuestWobbler__personIcon"
+        style="background-image:url({{personIcon}})"
+      ></div>
+      <div class="cw--QuestWobbler__text">
+        {{#each line in tutorialData.get}}
+          {{line}}<br/>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+</template>

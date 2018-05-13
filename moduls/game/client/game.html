@@ -32,8 +32,6 @@
           </div>
         </header>
 
-        {{> Buffs}}
-
         <div
           class="
             cw--FleetInfo
@@ -112,15 +110,14 @@
             class="cw--FleetInfo__toggle"
             data-sound="click"
           ></button>
-          <div
-            class="
-              cw--FleetInfo__table
-              fleet_info_full
-            "
-          >
+          <div class="cw--FleetInfo__table">
             {{> cosmosFleetsInfo}}
           </div>
         </div> {{!-- cw--FleetInfo --}}
+
+        {{> QuestWobbler }}
+
+        {{> Buffs}}
 
         {{> UserMenu }}
 
@@ -137,7 +134,8 @@
             {{>yield region="permanent_chat"}}
           </div>
         </div>
-        {{> additional_area}}
+
+        {{> Assistant }}
 
         {{>yield region="permanent_content"}}
 

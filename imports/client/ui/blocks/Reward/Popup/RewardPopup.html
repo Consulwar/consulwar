@@ -4,6 +4,11 @@
 
     {{#if description}}
       <div class="cw--RewardPopup__description">
+        {{#if eq type 'quest'}}
+          <div class="cw--RewardPopup__title">
+            Задание выполнено:
+          </div>
+        {{/if}}
         {{{description}}}
       </div>
     {{/if}}

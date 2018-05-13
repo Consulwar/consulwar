@@ -67,7 +67,6 @@ const selectors = {
     '.cw--button',
     '.cw--UserMenu__icon',
     '.cw--UserMenu__menuItem',
-    '.quest > ul > li',
     '.entranceReward .take',
     '.entranceReward .roll',
     '.entranceReward .paymentItems .rewardItem',
@@ -90,9 +89,6 @@ const selectors = {
     '.cw--ContainerList__image',
     '.cw--ContainerRewardOpener .cw--button',
     '.cw--UserMenu__button',
-    '.modal.quest .neutral',
-    '.additional_area',
-    '.additional_area ul.quests > li',
     '.cw--ColosseumTournament__tournament',
     '.map-planet-popup .button-attack',
   ],
@@ -128,7 +124,7 @@ const init = function() {
     }
   });
   // eslint-disable-next-line new-cap
-  player.welcome = new buzz.sound('http://times.consulwar.ru/music/2 Коварство Рептилоидов.mp3', {
+  player.welcome = new buzz.sound('https://consulwar.ru/music/2 Коварство Рептилоидов.mp3', {
     volume: 0,
     loop: true,
   });

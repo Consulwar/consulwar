@@ -13,6 +13,7 @@ class RewardPopup extends BlazeComponent {
     hash: {
       reward,
       description,
+      type,
       onGet,
     },
   }) {
@@ -20,6 +21,7 @@ class RewardPopup extends BlazeComponent {
     this.reward = reward;
     this.onGet = onGet;
     this.description = description;
+    this.type = type;
   }
 
   onRendered() {

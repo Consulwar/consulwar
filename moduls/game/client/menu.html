@@ -43,51 +43,6 @@
   {{/if}}
 </template>
 
-<template name="additional_area">
-  {{#if sideHero}}
-    <div 
-      class="
-        additional_area 
-        quest
-        {{sideHero}}
-      "
-      style="background-image: url({{sideHeroIcon}});"
-    >
-      {{#if sideHeroName}}
-        <div class="title">
-          <h2>{{sideHeroName}}</h2>
-          {{#if or (eq status 0) (eq status 3)}}
-            <h2 class="
-              {{#if eq status 0}}prompt{{/if}}
-              {{#if eq status 3}}finished{{/if}}
-            ">
-              {{#if eq status 0}}Есть задание{{/if}}
-              {{#if eq status 3}}Задание выполнено{{/if}}
-            </h2>
-          {{/if}}
-        </div>
-        {{#if quests}}
-          {{#if isOpened}}
-            <ul class="quests">
-              {{#each quests}}
-                <li 
-                  data-id="{{this.engName}}"
-                  class="
-                    {{#if eq this.status 0}}prompt{{/if}}
-                    {{#if eq this.status 1}}inprogress{{/if}}
-                    {{#if eq this.status 3}}finished{{/if}}"
-                >
-                  {{this.name}}
-                </li>
-              {{/each}}
-            </ul>
-          {{/if}}
-        {{/if}}
-      {{/if}}
-    </div>
-  {{/if}}
-</template>
-
 <template name="items_menu">
   <ul class="bottom_menu items {{#if isArtefactsPage}} artefacts{{/if}}">
     {{#if not isArtefactsPage}}
@@ -148,7 +103,10 @@
   {{#if and isNewLayout item}}
     <div class="overlay {{menuGroup}} {{itemGroup}} item {{item.group}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
       <div 
-        class="item" 
+        class="
+          item
+          cw--ItemImage
+        " 
         style="background-image: url({{item.overlayOwn}})"></div>
     </div>
 

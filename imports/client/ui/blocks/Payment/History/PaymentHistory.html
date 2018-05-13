@@ -2,7 +2,7 @@
   <div class="cw--PaymentHistory">
     <div class="cw--PaymentHistory__header">
       {{> Tabs args
-        tabs=tabs
+        key=isIncome
         className='cw--PaymentHistory__tabs'
       }}
     </div>
@@ -74,7 +74,21 @@
                     -{{formatNumber item.credits}} ГГК
                   </span>
                 {{/if}}
-                {{{formatProfit item.profit}}}
+                {{#each profitItem in (formatProfit item.profit)}}
+                  <div
+                    class="
+                      cw--PaymentHistory__profitItem
+                      {{#if eq profitItem.type 'credit'}}
+                        cw--color_credit
+                      {{/if}}
+                    "
+                  >
+                    <div class="cw--PaymentHistory__profitItemDescr">
+                      {{profitItem.description}}
+                    </div>
+                    {{profitItem.text}}
+                  </div>
+                {{/each}}
               </div>
               <div class="cw--PaymentHistory__tableDescription">
                 {{item.goal}}

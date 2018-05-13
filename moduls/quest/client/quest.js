@@ -62,7 +62,7 @@ Game.Quest.showDailyQuest = function() {
 };
 
 // QuestCatalog component storage
-Game.Quest.catalogWindow = null;
+let instance = null;
 
 Game.Quest.showQuest = function(id) {
   var currentQuest = Game.Quest.getOneById(id);
@@ -71,26 +71,29 @@ Game.Quest.showQuest = function(id) {
   }
 
   if (currentQuest.status == Game.Quest.status.FINISHED
-    && Game.Quest.catalogWindow === null) {
+    && instance === null) {
     // Render Reward when questCatalog not exist
     Game.Quest.showReward(currentQuest);
   } else {
     // Catalog exist && status != FINISHED
-    if (Game.Quest.catalogWindow === null) {
+    if (instance === null) {
       // catalog not exist - create
-      Game.Quest.catalogWindow = new QuestCatalog({
+      instance = new QuestCatalog({
         hash: {
           personName: currentQuest.who,
           questId: currentQuest.engName,
         }
       });
+
+      const template = (instance).renderComponent();
+      template.onDestroyed(() => instance = null);
       Game.Popup.show({
-        template: (Game.Quest.catalogWindow).renderComponent(),
+        template,
       });
     } else {
       // catalog exist - set fresh data
-      Game.Quest.catalogWindow.personName.set(currentQuest.who);
-      Game.Quest.catalogWindow.questId.set(currentQuest.engName);
+      instance.personName.set(currentQuest.who);
+      instance.questId.set(currentQuest.engName);
     }
   }
 };

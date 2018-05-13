@@ -46,12 +46,7 @@ class QuestCatalog extends BlazeComponent {
 
       this.getQuestData();
     });
-  }
-
-  onDestroyed() {
-    super.onDestroyed();
-
-    Game.Quest.catalogWindow = null;
+    $('.cw--QuestCatalog__list').perfectScrollbar();
   }
 
   showQuestExt() {

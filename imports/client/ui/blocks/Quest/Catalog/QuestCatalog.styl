@@ -43,9 +43,14 @@
     background-color $cw--color_darkGrey
     transform scaleX(-1)
 
+  &__list
+    position relative
+    height 570px
+
   +media(null, $cw--size_l)
     &__list
       width 100%
+      height auto
 
     &__quest
     &_showQuest &__list

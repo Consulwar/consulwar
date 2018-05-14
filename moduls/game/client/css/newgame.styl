@@ -156,56 +156,17 @@ body.game
 
         &.hideNet
           background-repeat no-repeat, no-repeat, no-repeat
-        
+
         &.item,
         &.ground
+        &.artefacts
           background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
-          
+
         &.fleet
           background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
           
         &.cosmos
           background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
-
-        &.artefacts
-          background-repeat no-repeat, no-repeat
-          background-blend-mode exclusion, normal
-          
-          .item
-            height 90%
-            &:before
-              content ''
-              position absolute
-              top 0
-              left 0
-              width 100%
-              height 100%
-              background-position center
-
-          &.white
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/white/bg.png)
-          &.green
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/green/bg.png)
-          &.blue
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/blue/bg.png)
-          &.purple
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/purple/bg.png)
-          &.orange
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/orange/bg.png)
-          &.red
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/red/bg.png)
 
         a
           position absolute

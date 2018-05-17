@@ -100,7 +100,7 @@
 </template>
 
 <template name="overlay_menu">
-  {{#if and isNewLayout item}}
+  {{#if and (and isNewLayout item) (not (eq menuGroup 'artefacts'))}}
     <div class="overlay {{menuGroup}} {{itemGroup}} item {{item.group}} {{item.engName}} {{#if options.hideNet}}hideNet{{/if}}">
       <div 
         class="

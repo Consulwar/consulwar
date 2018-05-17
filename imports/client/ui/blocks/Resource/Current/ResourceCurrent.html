@@ -39,7 +39,12 @@
       {{/if}}
     {{/each}}
     <a
-      class="cw--ResourceCurrent__artifacts"
+      class="
+        cw--ResourceCurrent__artifacts
+        {{#if isArtifactPage}}
+          cw--ResourceCurrent__artifacts_active
+        {{/if}}
+      "
       data-tooltip="Артефакты"
       data-tooltip-direction="s"
       href={{pathFor route='artefacts' item='silver_plasmoid'}}

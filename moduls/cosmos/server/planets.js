@@ -81,10 +81,7 @@ Game.Planets.actualize = function() {
         const delta = timeCurrent - planet.timeArtefacts;
         const count = Math.floor(delta / Game.Cosmos.COLLECT_ARTEFACTS_PERIOD);
         if (count > 0) {
-          const artefacts = Game.Planets.getArtefacts(planet, count);
-          if (artefacts) {
-            Game.Resources.add(artefacts);
-          }
+          Game.Planets.awardArtefacts(planet, count);
           planet.timeArtefacts += (Game.Cosmos.COLLECT_ARTEFACTS_PERIOD * count);
           Game.Planets.update(planet);
         }
@@ -268,6 +265,14 @@ Game.Planets.getArtefacts = function(planet, count) {
 
   return result;
 };
+
+Game.Planets.awardArtefacts = function(planet, count, userId) {
+  const artefacts = Game.Planets.getArtefacts(planet, count);
+  if (artefacts) {
+    Game.Resources.add(artefacts, userId);
+  }
+  return artefacts;
+}
 
 Game.Planets.generateType = function() {
   var result = null;
@@ -832,11 +837,7 @@ Meteor.methods({
       throw new Meteor.Error('Карточки недоступны для применения');
     }
 
-    let artefacts = Game.Planets.getArtefacts(planet, cycles);
-
-    if (artefacts) {
-      Game.Resources.add(artefacts);
-    }
+    let artefacts = Game.Planets.awardArtefacts(planet, cycles);
 
     for (let card of cardList) {
       Game.Cards.activate(card, user);
@@ -951,10 +952,7 @@ Meteor.methods({
     if (planet.status === Game.Planets.STATUS.HUMANS && planet.minerUsername === user.username) {
       throw new Meteor.Error('На планете уже ведется добыча артефактов');
     } else if (planet.status === Game.Planets.STATUS.REPTILES) {
-      const artefacts = Game.Planets.getArtefacts(planet, 1);
-      if (artefacts) {
-        Game.Resources.add(artefacts);
-      }
+      Game.Planets.awardArtefacts(planet, 1);
     }
 
     planet.timeArtefacts = Game.getCurrentTime();

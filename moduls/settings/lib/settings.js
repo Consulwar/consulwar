@@ -28,6 +28,7 @@ Game.Settings = {
     mobileVersion: [true, false],
     textUnits: [true, false],
     moveCompletedUnitToHangar: [true, false],
+    disableAutoCollect: [true, false],
     isMultiSkinEnabled: [false, true],
     disableBroadcast: [true, false],
     muteSound: [true, false],

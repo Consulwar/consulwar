@@ -2,6 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import Battle from '/moduls/battle/server/battle';
+import BattleLib from '/moduls/battle/lib/imports/battle';
 import User from '/imports/modules/User/lib/User';
 
 import Config from '../config';
@@ -92,6 +93,17 @@ const humansWin = function({
     if (!planet.isDiscovered) {
       const user = User.getById({ userId: planet.userId });
       Game.Planets.discover(planet._id, user);
+    }
+
+    const initialUser = User.getById({ userId: data.userId });
+    if (
+      !initialUser.settings.options.disableAutoCollect
+      && planet.status === Game.Planets.STATUS.REPTILES
+      && BattleLib.isBattle1x1(battle)
+    ) {
+      Game.Planets.awardArtefacts(planet, 1, data.userId);
+      planet.status = Game.Planets.STATUS.NOBODY;
+      Game.Planets.update(planet);
     }
   }
 

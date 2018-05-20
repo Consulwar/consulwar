@@ -52,6 +52,15 @@ const completeOnPeacefulPlanet = function(data, planet) {
     Game.Planets.discover(planet._id, user);
   }
 
+  if (
+    !user.settings.options.disableAutoCollect
+    && planet.status === Game.Planets.STATUS.REPTILES
+  ) {
+    Game.Planets.awardArtefacts(planet, 1, userId);
+    planet.status = Game.Planets.STATUS.NOBODY;
+    Game.Planets.update(planet);
+  }
+
   if (data.isOneway) {
     if (planet.armyId) {
       if (planet.isHome || planet.armyUsername === username) {

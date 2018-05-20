@@ -1153,7 +1153,7 @@ body.game
       display none
 
 
-.cw--ItemImage
+.overlay:not(.artefacts) .cw--ItemImage
   position absolute
   top 50%
   right 50%
@@ -1171,3 +1171,12 @@ body.game
   +media($cw--size_l, 1290px, 1000px)
     width 36vw
     transform translate(-30%, -55%)
+
+.overlay.artefacts .cw--ItemImage
+    position absolute
+    top 0
+    left 0
+    width 60%
+    height 100%
+    background-repeat no-repeat
+    background-position center

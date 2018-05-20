@@ -64,18 +64,8 @@
           <td>{{this.code}}</td>
           <td>
             {{#each profitItem in (formatProfit this.profit)}}
-              <div
-                class="
-                  {{#if eq profitItem.type 'credit'}}
-                    cw--color_credit
-                  {{/if}}
-                "
-              >
-                <div>
-                  {{profitItem.description}}
-                </div>
-                {{profitItem.text}}
-              </div>
+              {{profitItem.description}}
+              {{profitItem.text}}
             {{/each}}
           </td>
           <td>{{#if this.timestamp}}{{formatDate this.timestamp}}{{/if}}</td>

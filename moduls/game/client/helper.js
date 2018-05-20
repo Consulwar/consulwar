@@ -207,7 +207,7 @@ UI.registerHelper('formatTime', Game.Helpers.formatTime);
 UI.registerHelper('getNumeralEnding', Game.Helpers.getNumeralEnding);
 
 UI.registerHelper('formatProfit', function(profit) {
-  var result = [];
+  const result = [];
   if (profit == 'random') {
     result.push({
       text: 'Случайная награда'
@@ -223,10 +223,10 @@ UI.registerHelper('formatProfit', function(profit) {
   }
 
   for (var type in profit) {
-    const item = {};
     switch (type) {
       case 'resources':
         for (var resName in profit[type]) {
+          const item = {};
           if(resName === 'credits') {
             item.type = 'credit';
             item.text = `+${parseInt(profit[type][resName], 10)} ГГК`;
@@ -235,53 +235,65 @@ UI.registerHelper('formatProfit', function(profit) {
             item.text = `${testTitle(resourceItems, resName)}:
               ${parseInt(profit[type][resName], 10)}`;
           }
+          result.push(item);
         }
         break;
       case 'units':
         _(profit.units).pairs().forEach(([id, count]) => {
+          const item = {};
           item.type = 'unit';
           item.text = `${testTitle(unitItems, id)}: ${parseInt(count, 10)}`;
+          result.push(item);
         });
         break;
       case 'cards':
         for (var cardId in profit[type]) {
           var card = Game.Cards.getItem(cardId);
           if (card) {
+            const item = {};
             item.type = 'card';
             item.text = `${card.name}: ${parseInt(profit[type][cardId], 10)}`;
+            result.push(item);
           }
         }
         break;
       case 'houseItems':
         for (var houseItemGroup in profit[type]) {
           for (var houseItemName in profit[type][houseItemGroup]) {
+            const item = {};
             item.type = 'houseItem';
             item.text = `${Game.House.items[houseItemGroup][houseItemName].name}:
                         ${parseInt(profit[type][houseItemGroup][houseItemName], 10)}`;
+            result.push(item);
           }
         }
         break;
       case 'containers':
         _(profit[type]).pairs().forEach(([id, count]) => {
+          const item = {};
           item.type = 'container';
           item.text = `${testTitle(allContainers, id)}: ${count}`;
+          result.push(item);
         });
         break;
       case 'votePower':
+        const item = {};
         item.type = 'votePower';
         item.text = `Сила голоса: ${parseInt(profit[type], 10)}`;
+        result.push(item);
         break;
       case 'personSkin':
         _(profit[type]).pairs().forEach(([personId, skins]) => {
           _.keys(skins).forEach((skinId) => {
+            const item = {};
             item.type = 'personSkin';
             item.description = `Скин персонажа`
             item.text = `${testTitle(Game.Persons, personId)}: ${skinId}`;
+            result.push(item);
           });
         });
         break;
     }
-    result.push(item);
   }
   return result;
 });

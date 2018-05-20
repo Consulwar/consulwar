@@ -73,6 +73,10 @@ class Person {
     return `/img/game/${this.id}/skin/${skin}.jpg`;
   }
 
+  getAnimation(skin = this.getCurrentSkin()) {
+    return `/img/game/${this.id}/skin/${skin}.webm`;
+  }
+
   getIcon() {
     return `/img/game/${this.id}/icon/default.png`;
   }

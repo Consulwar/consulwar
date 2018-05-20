@@ -637,7 +637,23 @@ body.game
           &.active
             img
               top 0
-          
+
+          &.house
+            position relative
+            &:before
+              content ''
+              position absolute
+              top 0
+              left 0
+              z-index 1
+
+              display block
+              width 100%
+              height 100%
+
+              pointer-events none
+              background url(/img/game/menu/house_crownHighlight.svg) no-repeat center
+
       
       .second_menu
         display flex

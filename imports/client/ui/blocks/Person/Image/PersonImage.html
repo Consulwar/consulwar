@@ -5,10 +5,15 @@
       {{className}}
     "
   >
-    <div
-      class="cw--PersonImage__avatar"
-      style="background-image:url({{person.getImage}})"
-    >
+    <div class="cw--PersonImage__avatar">
+      <video
+        class="cw--PersonImage__animation"
+        loop="loop"
+        autoplay="autoplay"
+        poster={{person.getImage}}
+      >
+        <source src={{person.getAnimation}} type="video/webm" />
+      </video>
       {{#if and showChangeOption (gt person.skinCount 1)}}
         <button
           class="cw--PersonImage__change"

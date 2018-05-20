@@ -52,7 +52,7 @@ export default {
 
     {
       url: '/game/resources/artefacts/crystal_fragments',
-      target: '.content.artefacts .item_info .planets',
+      target: '.cw--Artifact .cw--Artifact__planets',
       direction: 'left',
     },
 

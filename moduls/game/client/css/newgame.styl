@@ -156,56 +156,17 @@ body.game
 
         &.hideNet
           background-repeat no-repeat, no-repeat, no-repeat
-        
+
         &.item,
         &.ground
+        &.artefacts
           background-image url(/img/game/bg/net.png), url(/img/game/bg/ground.jpg), url(/img/game/bg/bg.jpg)
-          
+
         &.fleet
           background-image url(/img/game/bg/net.png), url(/img/game/bg/fleet.jpg), url(/img/game/bg/bg.jpg)
           
         &.cosmos
           background-image url(/img/game/bg/net.png), url(/img/game/bg/space.jpg), url(/img/game/bg/bg.jpg)
-
-        &.artefacts
-          background-repeat no-repeat, no-repeat
-          background-blend-mode exclusion, normal
-          
-          .item
-            height 90%
-            &:before
-              content ''
-              position absolute
-              top 0
-              left 0
-              width 100%
-              height 100%
-              background-position center
-
-          &.white
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/white/bg.png)
-          &.green
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/green/bg.png)
-          &.blue
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/blue/bg.png)
-          &.purple
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/purple/bg.png)
-          &.orange
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/orange/bg.png)
-          &.red
-            background-image url(/img/game/bg/artefacts.jpg), url(/img/game/bg/bg.jpg)
-            .item:before
-              background-image url(/img/game/artefact/red/bg.png)
 
         a
           position absolute
@@ -403,115 +364,7 @@ body.game
   button:not(.cw--button):not(.cw--button_max), a:not(.cw--button):not(.cw--Menu__item)
     outline none
 
-  &.new  
-    .item_info
-      width 360px
-      padding 5px 15px
-      display flex
-      flex-shrink 0
-      flex-direction column
-      justify-content space-between
-      
-      h2
-        font-size 15px
-        color $color-human
-        margin 10px 0
-
-      .effects
-        .title
-          color $color-white
-            
-        .currentLevel
-          margin-bottom 20px
-          .effect
-            color $color-metal
-          
-        .nextLevel
-          margin 20px 0
-          .effect
-            color $color-ggk
-      
-      .planets
-        display flex
-        justify-content space-around
-        flex-wrap wrap
-        min-height 80px
-        
-      
-      .actions
-        display flex
-        flex-shrink 0
-        justify-content flex-start
-        padding 25px 0 10px
-        
-        .action
-          display flex
-          flex-wrap wrap
-          justify-content space-between
-          align-items flex-end
-          padding 0 7.5px
-          width 50%
-
-          &:first-child
-            padding-left 0
-
-          button
-            width 100%
-          
-          .notImplemented
-            flex-wrap nowrap
-            margin 0 0 8px 0
-            justify-content space-between
-            -webkit-filter grayscale(1) brightness(0.6)
-            filter grayscale(1) brightness(0.6)
-          
-          .transition
-            width 100%
-
-          .max
-            display inline-block
-            width 43px
-            height 24px
-            border 0
-            background-image url(/img/game/max.png)
-            cursor pointer
-            
-            &:hover
-              -webkit-filter brightness(1.2)
-              filter brightness(1.2)
-          
-          .count
-            width 115px
-            text-align center
-            border-radius 5px
-            padding-top 2px
-            -webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-            -moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-            box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-            border 2px solid #335168
-            background-color #adadad
-            align-self center
-            
-            & + .build
-              margin-top 8px
-          
-          .build
-            width 100%
-            box-sizing border-box
-
-        div
-          width 100%
-          -webkit-flex-shrink 1
-          flex-shrink 1
-          display flex
-          flex-direction row
-          flex-wrap wrap
-          overflow hidden
-
-        progress
-          align-self flex-start
-          max-width 100%
-        
+  &.new
     .main_action,
     .additional_action,
     .back_action
@@ -556,7 +409,7 @@ body.game
         height 80px      
 
     .content
-      width 720px
+      width auto
       height auto
       
       margin auto 15% auto auto
@@ -588,74 +441,7 @@ body.game
           
         .attack-menu
           display flex
-      div.header
-        display flex
-        flex-shrink 0
-        width 100%
-        height 36px
-        text-align center
-        justify-content space-between
-        align-items center
-        background-color $color-black
-        font-size 16px
-        
-        .level
-          width 180px
-          color $color-description
-          
-          span
-            font-weight bold
-            color $color-metal
-        
-        .name
-          margin auto
-          color $color-white
-          
-          &:after
-            content ""
-            position relative
-            display inline-block
-            vertical-align sub
-            background-image url(/img/game/star.png)
-    
-          &.star1:after
-            width 23px
-            height 18px
-            
-          &.star2:after
-            width 46px
-            height 18px
-            
-          &.star3:after
-            width 69px
-            height 18px
-          
-        .toggle_description
-          display block
-          margin 0
-          padding 0
-          width 21px
-          height 26px
-          background-image url(/img/game/description.png)
-          border 0
-          background-color transparent
-          cursor pointer
-          margin auto 10px auto auto
-          -webkit-filter grayscale(1)
-          filter grayscale(1)
-          
-          &.active
-            -webkit-filter grayscale(0)
-            filter grayscale(0)
-              
-            &:hover
-              -webkit-filter grayscale(0) brightness(1.4)
-              filter grayscale(0) brightness(1.4)
-          
-          &:hover
-            -webkit-filter grayscale(1) brightness(1.4)
-            filter grayscale(1) brightness(1.4)
-      
+
       > .description
         position relative
         height 106px
@@ -673,16 +459,6 @@ body.game
         width 230px
         padding 5px 15px
         background-color rgba($color-black, 0.7)
-        
-      .artefactsStatistics
-        display flex
-        flex-direction column
-        font-size 36px
-        justify-content space-around
-        text-align center
-        
-        span
-          color $color-ggk
 
       .requirements
         min-height 302px

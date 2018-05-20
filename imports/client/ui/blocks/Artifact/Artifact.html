@@ -1,0 +1,139 @@
+<template name="Artifact">
+  <div class="cw--Artifact">
+    <div
+      class="cw--Artifact__card"
+      style="background-image:url({{item.card}})"
+    >
+    </div>
+    <div class="cw--Artifact__content">
+      <div class="cw--Artifact__header">
+        <div class="cw--Artifact__headerCount">
+          {{#if item.amount}}
+            <span class="cw--color_metal">{{formatNumber item.amount}}</span>
+            {{declension item.amount 'единиц' 'а' 'ы' ''}}  
+          {{else}}
+            Отсутствуют
+          {{/if}}
+        </div>
+        <div class="cw--Artifact__title">
+          {{item.name}}
+        </div>
+        <div class="cw--Artifact__headerControls">
+          <span
+            onClick={{toggleDescription}}
+            class="
+              cw--Artifact__headerIcon
+              cw--Artifact__buttonDescription
+              cw--button
+              {{#if options.hideDescription}}cw--button_notActive{{/if}}
+            "
+          ></span>
+          <a
+            onClick={{closeWindow}}
+            class="
+              cw--Artifact__headerIcon
+              cw--button_close
+            "
+          ></a>
+        </div>
+      </div>
+      <div
+        class="
+          cw--Artifact__info
+          {{#if options.hideDescription}}cw--Artifact__info_hidden{{/if}}
+        "
+      >
+        <div class="cw--Artifact__infoWrap">
+          <div class="cw--Artifact__mainPic">
+            <img
+              class="cw--Artifact__mainPicImage"
+              src={{item.icon}}
+              alt={{item.title}}
+            />
+          </div>
+          <div class="cw--Artifact__description scrollbar-inner">
+            {{item.description}}
+          </div>
+        </div>
+      </div>
+      <div class="cw--Artifact__mainField">
+        <div class="cw--Artifact__mainInfo">
+          <div class="cw--Artifact__planetsBlock">
+            {{#if nearestPlanets}}
+              <h2 class="cw--Artifact__planetsHead">
+                Ближайшие планеты:
+              </h2>
+              <div class="cw--Artifact__planets">
+                {{#each nearestPlanets}}
+                  {{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
+                {{/each}}
+              </div>
+              {{#if topPlanets}}
+                <h2
+                  class="
+                    cw--Artifact__planetsHead
+                    cw--Artifact__planetsHead_best
+                  "
+                >
+                  Лучшие планеты:
+                </h2>
+                <div class="cw--Artifact__planets">
+                  {{#each topPlanets}}
+                    {{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
+                  {{/each}}
+                </div>
+              {{/if}}
+            {{else}}
+              <p class="cw--Artifact__warning">
+                {{#if eq item.engName 'ruby_plasmoid'}}
+                  Этот артефакт может быть только синтезирован.
+                {{else}}
+                  Вы ещё не открыли планеты с этим артефактом. Разведайте галактику.
+                {{/if}}
+              </p>
+            {{/if}}
+          </div>
+          <div class="cw--Artifact__actions">
+            {{#if nearestPlanets}}
+              <a
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                "
+                href="{{pathFor 'cosmos' hash=item.engName}}"
+              >
+                Все планеты
+              </a>
+            {{/if}}
+          </div>
+        </div>
+        <div class="cw--Artifact__activity">
+          {{#if userPlanets}}
+            <div>
+              <span>{{formatNumber userPlanets.planets}}</span>
+              {{declension userPlanets.planets 'планет' 'a' 'ы' ''}}
+            </div>
+            <div class="cw--color_metal">
+                {{#if not (eq userPlanets.chance.min userPlanets.chance.max)}}
+                  {{formatNumber userPlanets.chance.min}} – {{formatNumber userPlanets.chance.max}}%
+                {{else}}
+                  {{formatNumber userPlanets.chance.min}}%
+                {{/if}}
+            </div>
+            <div>
+              <span class="cw--color_credit">{{formatNumber userPlanets.chance.total}}</span> в день
+            </div>
+            <div class="cw--Artifact__collectingTime">
+              {{formatSeconds (getTimeNextDrop userPlanets.collection)}}
+            </div>
+          {{else}}
+            <div>
+              Добыча не&nbsp;ведется
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

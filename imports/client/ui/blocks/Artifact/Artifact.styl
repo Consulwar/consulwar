@@ -1,0 +1,205 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+
+.cw--Artifact
+  display flex
+  flex-direction row
+  width 970px
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+
+  +media($cw--size_l, $cw--size_xl)
+    width 600px
+    max-width 100%
+
+  +media(null, $cw--size_l)
+    width 100%
+
+  &__card
+    display block
+    flex-shrink 0
+    flex-grow 0
+    width 380px
+    height 465px
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+
+    +media(null, $cw--size_xl)
+      display none
+
+  &__content
+    display flex
+    flex-direction column
+    flex-grow 1
+    flex-basis 450px
+    
+  &__header
+    display flex
+    flex-grow 0
+    flex-basis 33px
+    justify-content space-between
+    align-items center
+    padding-left 14px
+
+    font-weight bold
+    font-size $cw--fontSize_l
+    background-color $cw--color_black
+
+    +media(null, $cw--size_xs)
+      flex-wrap wrap
+      flex-basis auto
+      padding-top 10px
+
+  &__title
+    margin auto
+
+    +media(null, $cw--size_xs)
+      flex-basis 60%
+      margin-left 0
+
+  &__headerCount
+    color $cw--color_description
+
+    +media(null, $cw--size_xs)
+      order 5
+
+  &__headerControls
+    display flex
+    justify-content flex-end
+
+  &__headerIcon
+    margin auto 6px
+
+  &__buttonDescription
+    width 25px
+    height 25px
+    box-sizing border-box
+
+    border solid 1px #56BAF2
+    border-image linear-gradient(0deg, #2E79A3, #56BAF2) 1
+    background-image url(/img/description.svg)
+    background-repeat no-repeat
+    background-position center
+    background-color $cw--color_black
+
+    &:hover
+    &:active
+      -webkit-filter brightness(1.2)
+      filter brightness(1.2)
+
+  &__info
+    display block
+    height 100px
+    overflow hidden
+    background-color alpha($cw--color_black, .95)
+
+  &__info_hidden
+    display none
+  
+  &__infoWrap
+    height 100px
+    display flex
+    padding-left 14px
+
+  &__mainPic
+    flex-basis 75px
+    flex-grow 0
+    margin auto
+    padding-right 8px
+
+    +media($cw--size_xl, null)
+      display none
+
+  &__mainPicImage
+    display block
+    width 80px
+    height auto
+
+  &__description
+    padding-right 20px
+    height 85px
+    margin auto
+    overflow hidden
+
+    font-size $cw--fontSize_s
+    text-align justify
+    color $cw--color_description
+
+  &__mainField
+    display flex
+    flex-direction row
+    flex-grow 1
+    
+    +media(null, $cw--size_xs)
+      flex-direction column
+
+  &__mainInfo
+    display flex
+    flex-direction column
+    flex-grow 1
+    padding 14px
+    justify-content space-between
+
+  &__planetsBlock
+    display flex
+    flex-direction column
+    flex-grow 1
+
+  &__planetsHead
+    font-weight bold
+    font-size $cw--fontSize_m
+    color $cw--color_human
+
+    &_best
+      padding-top 6px
+      margin-top 10px
+      border-top solid 1px #282828
+
+  &__planets
+    min-height 72px
+    margin 5px 0
+    font-size $cw--fontSize_s
+
+    +media(null, $cw--size_xs)
+      display flex
+      justify-content center
+
+  &__warning
+    margin auto
+    text-align center
+
+  &__actions
+    display flex
+    flex-grow 0
+    justify-content flex-start
+
+    +media(null, $cw--size_xl)
+      margin-top 16px
+
+    +media(null, $cw--size_xs)
+      justify-content center
+
+  &__activity
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
+    flex-shrink 0
+    width 220px
+    padding 16px
+    box-sizing border-box
+
+    font-size 24px
+    text-align center
+    background alpha($cw--color_black, .5)
+
+    +media(null, $cw--size_xs)
+      order -1
+      width 100%
+      font-size 20px
+
+  &__collectingTime
+    margin-top 16px

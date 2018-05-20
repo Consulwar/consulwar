@@ -4,6 +4,7 @@
 
 .cw--MenuArtifacts
   flex-wrap wrap
+  padding 0 20px
   +media(null, $cw--size_xs)
     flex-direction column
     align-items center
@@ -31,9 +32,21 @@
   
   &__group
     flex-wrap nowrap
+    +media(null, $cw--size_xs)
+      width 100%
 
   &__item
-    width 65px
+    width 80px
+    height @width
+    +media($cw--size_xl, $cw--size_xxl)
+      width 70px
+      height @width
+    +media($cw--size_xs, $cw--size_s)
+      width 65px
+      height @width
+    +media(null, $cw--size_xs)
+      flex-basis 19%
+      margin 2px 1%
 
   &__itemIcon
     filter grayscale(0)

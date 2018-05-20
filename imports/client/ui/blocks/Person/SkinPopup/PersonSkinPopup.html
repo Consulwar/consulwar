@@ -34,11 +34,14 @@
         {{#each skin in skins}}
           <div class="cw--PersonSkinPopup__skin">
             <div class="cw--PersonSkinPopup__skinImageBlock">
-              <img
+              <video
                 class="cw--PersonSkinPopup__skinImage"
-                src="{{person.getImage skin.id}}" 
-                alt="{{skin.title}}"
-              />
+                autoplay="autoplay"
+                loop="loop"
+                poster="{{person.getImage skin.id}}"
+              >
+                <source src={{person.getAnimation skin.id}} type="video/webm" />
+              </video>
               {{#if not skin.has}}
                 {{#if skin.isUnique}} 
                   <div

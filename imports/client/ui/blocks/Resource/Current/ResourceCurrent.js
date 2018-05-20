@@ -1,6 +1,7 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
 import { $ } from 'meteor/jquery';
+import { Router } from 'meteor/iron:router';
 import { incomeTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
 import resourceItems from '/imports/content/Resource/client';
@@ -10,6 +11,10 @@ import './ResourceCurrent.styl';
 class ResourceCurrent extends BlazeComponent {
   template() {
     return 'ResourceCurrent';
+  }
+
+  isArtifactPage() {
+    return Router.current().group === 'artefacts';
   }
 
   getResources() {

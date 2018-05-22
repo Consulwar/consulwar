@@ -1072,6 +1072,7 @@ Meteor.publish('myPlanets', function() {
           galactic: 1,
           mission: 1,
           artefacts: 1,
+          timeArtefacts: 1,
           userId: 1,
           username: 1,
           armyId: 1,

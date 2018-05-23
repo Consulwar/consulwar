@@ -57,16 +57,19 @@ const completeOnPeacefulPlanet = function(data, planet) {
     && planet.status === Game.Planets.STATUS.REPTILES
   ) {
     Game.Planets.awardArtefacts(planet, 1, userId);
+    // eslint-disable-next-line no-param-reassign
     planet.status = Game.Planets.STATUS.NOBODY;
     Game.Planets.update(planet);
   }
 
   if (data.isOneway) {
     if (planet.armyId) {
-      if (planet.isHome || planet.armyUsername === username) {
-        const destArmyId = (planet.isHome)
-          ? Game.Unit.getHomeFleetArmy({ userId })._id
-          : planet.armyId;
+      if (planet.armyUsername === username) {
+        const destArmyId = (
+          planet.isHome
+            ? Game.Unit.getHomeFleetArmy({ userId })._id
+            : planet.armyId
+        );
         Game.Unit.mergeArmy(data.armyId, destArmyId, userId);
       } else {
         // if planet has army but it isn't our army

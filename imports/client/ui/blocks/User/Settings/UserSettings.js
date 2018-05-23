@@ -4,6 +4,7 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import { Accounts } from 'meteor/accounts-base';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { $ } from 'meteor/jquery';
+import ModalPrompt from '/imports/client/ui/blocks/Modal/Prompt/ModalPrompt';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/Input/Checkbox/InputCheckbox';
 import '/imports/client/ui/button/button.styl';
@@ -173,26 +174,35 @@ class UserSettings extends BlazeComponent {
 
   changeEmail() {
     const currentEmail = Meteor.user().emails[0].address;
-    Game.showInputWindow('Введите новый email', currentEmail, (email) => {
-      const mail = email.trim();
-      if (mail === currentEmail) {
-        return;
-      }
-      Meteor.call(
-        'settings.changeEmail',
-        currentEmail,
-        mail,
-        (err) => {
-          if (err) {
-            Notifications.error(
-              'Не получилось изменить email',
-              err.message,
+    Game.Popup.show({
+      template: (new ModalPrompt({
+        hash: {
+          legend: 'Введите новый email',
+          type: 'email',
+          value: currentEmail,
+          onAccept: (email) => {
+            const mail = email.trim();
+            if (mail === currentEmail) {
+              return;
+            }
+            Meteor.call(
+              'settings.changeEmail',
+              currentEmail,
+              mail,
+              (err) => {
+                if (err) {
+                  Notifications.error(
+                    'Не получилось изменить email',
+                    err.message,
+                  );
+                } else {
+                  Notifications.success('Email успешно изменён');
+                }
+              },
             );
-          } else {
-            Notifications.success('Email успешно изменён');
-          }
+          },
         },
-      );
+      })).renderComponent(),
     });
   }
   verifyEmail(event, email) {
@@ -280,26 +290,32 @@ class UserSettings extends BlazeComponent {
   }
 
   remindPassword() {
-    Game.showInputWindow(
-      'Ваш е-mail адрес',
-      Meteor.user().emails[0].address,
-      (userMail) => {
-        if (userMail) {
-          Accounts.forgotPassword({
-            email: userMail,
-          }, (err) => {
-            if (err) {
-              Notifications.error(
-                'Восстановление пароля не удалось',
-                err.error,
+    Game.Popup.show({
+      template: (new ModalPrompt({
+        hash: {
+          legend: 'Ваш е-mail адрес',
+          type: 'email',
+          value: Meteor.user().emails[0].address,
+          onAccept: (userMail) => {
+            if (userMail) {
+              Accounts.forgotPassword(
+                { email: userMail },
+                (err) => {
+                  if (err) {
+                    Notifications.error(
+                      'Восстановление пароля не удалось',
+                      err.error,
+                    );
+                  } else {
+                    Notifications.success('Способ восстановления кодов доступа отправлен на почту');
+                  }
+                },
               );
-            } else {
-              Notifications.success('Способ восстановления кодов доступа отправлен на почту');
             }
-          });
-        }
-      },
-    );
+          },
+        },
+      })).renderComponent(),
+    });
   }
 
   switchNotifications(currentTarget) {

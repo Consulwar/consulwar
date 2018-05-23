@@ -146,6 +146,7 @@ const completeOnPlanet = function(data) {
       const userGroup = createGroup({ army: userArmy, userId: data.userId });
 
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
+      Game.Unit.removeArmy(data.armyId, data.userId);
     } else {
       completeOnPeacefulPlanet(data, planet);
     }

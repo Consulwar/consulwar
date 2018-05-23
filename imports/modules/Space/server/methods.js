@@ -311,7 +311,7 @@ Meteor.methods({
     FlightEvents.add(flightData);
 
     // if planet is colony
-    if (!basePlanet.isHome && basePlanet.armyId) {
+    if (!basePlanet.isHome && (basePlanet.armyId || basePlanet.status === Game.Planets.STATUS.HUMANS)) {
       // add reptiles attack trigger
       TriggerAttackEvents.add({
         targetPlanet: basePlanet._id,

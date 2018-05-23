@@ -21,7 +21,7 @@
 
 <template name="UserSettings__password">
   <form
-    class="cw--UserSettings__password"
+    class="cw--UserSettings__passwordSettings"
     onSubmit={{changePassword}}
   >
     <h2
@@ -75,88 +75,90 @@
 </template>
 
 <template name="UserSettings__emailSettings">
-  <div class="cw--UserSettings__emailSection">
-    E-mail:
-    <span
-      class="
-        cw--UserSettings__email
-        {{#if user.emails.[0].verified}}
-          cw--UserSettings__email_verified
-        {{else}}
-          cw--UserSettings__email_notVerified
-        {{/if}}
-      "
-      data-tooltip={{#unless user.emails.[0].verified}}E-mail не подтвержден{{/unless}}
-    >
-      {{user.emails.[0].address}}
-    </span>
-    {{#unless user.emails.[0].verified}}
-      <div class="cw--UserSettings__emailActions">
-        <button
-          class="
-            cw--button
-            cw--button_flat
-            cw--UserSettings__emailChange
-          "
-          onClick={{changeEmail}}
-        >
-          Изменить
-        </button>
-        <button 
-          class="
-            cw--button
-            cw--button_flat
-            cw--button_flat_green
-            cw--UserSettings__emailVerify
-          "
-          onClick={{verifyEmail user.emails.[0].address}}
-          name="verify"
-        >
-          Подтвердить
-        </button>
-      </div>
-      <div class="cw--UserSettings__emailNotice">
-        Письмо можно отправить не более 2 раз в сутки
-      </div>
-    {{/unless}}
-  </div>
-  <div class="cw--UserSettings__subscribeSection">
-    <h2 class="cw--UserSettings__head">
-      E-mail уведомления
-    </h2>
-    <div class="cw--UserSettings__subscribeLegend">
-      Получать письма не чаще, чем раз в:
+  <div class="cw--UserSettings__emailSettings">
+    <div class="cw--UserSettings__emailSection">
+      E-mail:
+      <span
+        class="
+          cw--UserSettings__email
+          {{#if user.emails.[0].verified}}
+            cw--UserSettings__email_verified
+          {{else}}
+            cw--UserSettings__email_notVerified
+          {{/if}}
+        "
+        data-tooltip={{#unless user.emails.[0].verified}}E-mail не подтвержден{{/unless}}
+      >
+        {{user.emails.[0].address}}
+      </span>
+      {{#unless user.emails.[0].verified}}
+        <div class="cw--UserSettings__emailActions">
+          <button
+            class="
+              cw--button
+              cw--button_flat
+              cw--UserSettings__emailChange
+            "
+            onClick={{changeEmail}}
+          >
+            Изменить
+          </button>
+          <button 
+            class="
+              cw--button
+              cw--button_flat
+              cw--button_flat_green
+              cw--UserSettings__emailVerify
+            "
+            onClick={{verifyEmail user.emails.[0].address}}
+            name="verify"
+          >
+            Подтвердить
+          </button>
+        </div>
+        <div class="cw--UserSettings__emailNotice">
+          Письмо можно отправить не более 2 раз в сутки
+        </div>
+      {{/unless}}
     </div>
-    <div class="cw--UserSettings__lettersFrequency">
-      {{#each item in Game.Settings.emailLettersFrequency}}
-        <button 
-          onClick={{setMailFrequency item.engName}}
-          class="
-            cw--button
-            cw--button_flat
-            cw--UserSettings__lettersFrequencyItem
-            {{#if (and
-              (eq item.engName (or user.settings.email.lettersFrequency 'everyDay'))
-              (not user.emails.[0].unsubscribed)
-            )}}
-              cw--button_flat_active
-            {{/if}}
-          "
-        >
-          {{item.title}}
-        </button>
-      {{/each}}
+    <div class="cw--UserSettings__subscribeSection">
+      <h2 class="cw--UserSettings__head">
+        E-mail уведомления
+      </h2>
+      <div class="cw--UserSettings__subscribeLegend">
+        Получать письма не чаще, чем раз в:
+      </div>
+      <div class="cw--UserSettings__lettersFrequency">
+        {{#each item in Game.Settings.emailLettersFrequency}}
+          <button 
+            onClick={{setMailFrequency item.engName}}
+            class="
+              cw--button
+              cw--button_flat
+              cw--UserSettings__lettersFrequencyItem
+              {{#if (and
+                (eq item.engName (or user.settings.email.lettersFrequency 'everyDay'))
+                (not user.emails.[0].unsubscribed)
+              )}}
+                cw--button_flat_active
+              {{/if}}
+            "
+          >
+            {{item.title}}
+          </button>
+        {{/each}}
+      </div>
+      <label class="cw--UserSettings__subscription">
+        <input
+          class="cw--UserSettings__checkbox"
+          type="checkbox"
+          name="subscribed"
+          checked={{not user.emails.[0].unsubscribed}}
+          onChange={{switchSubscription user.emails.[0].address}}
+        />
+        Подписка на рассылку
+      </label>
     </div>
-    <label class="cw--UserSettings__subscription">
-      <input
-        class="cw--UserSettings__checkbox"
-        type="checkbox"
-        name="subscribed"
-        checked={{not user.emails.[0].unsubscribed}}
-        onChange={{switchSubscription user.emails.[0].address}}
-      />
-      Подписка на рассылку
-    </label>
   </div>
 </template>
 

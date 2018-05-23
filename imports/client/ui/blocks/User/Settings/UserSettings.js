@@ -6,6 +6,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/Input/Checkbox/InputCheckbox';
+import '/imports/client/ui/button/button.styl';
 import './UserSettings.html';
 import './UserSettings.styl';
 

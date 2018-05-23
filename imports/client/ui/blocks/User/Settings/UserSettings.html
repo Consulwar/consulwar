@@ -1,208 +1,184 @@
-<template name="settings">
-  <div class="settings">
-    <div>
-      <h2>Аватар консула</h2>
-      <div class="user">
-        <img src="/img/game/chat/icons/{{Game.User.iconPath user}}.png" alt="Аватар"/>
-        <button class="changeAvatar"></button>
-      </div>
-      <h2>Режим отпуска</h2>
-      <label class="checkBlock">
-        <input type="checkbox" name="vacationMode" disabled>
-        <span class="checkboxTitle">активирован</span>
-        <span class="notImplemented">В разработке!</span>
-      </label>
+<template name="UserSettings">
+  <div class="cw--UserSettings">
+    <div class="cw--UserSettings__header">
+      Настройки
     </div>
-
-    {{> changePassword}}
-
-    {{> emailSettings}}
-
-    {{> notificationsSettings}}
-    
+    <div class="cw--UserSettings__content">
+      {{> UserSettings__options }}
+      <div class="cw--UserSettings__main">
+        {{> UserSettings__emailSettings }}
+        {{> UserSettings__password }}
+        {{!-- <h2>Режим отпуска</h2>
+        <label class="checkBlock">
+          <input type="checkbox" name="vacationMode" disabled>
+          активирован
+          <span class="notImplemented">В разработке!</span>
+        </label> --}}
+      </div>
+    </div>
   </div>
 </template>
 
-<template name="changePassword">
-  <form class="changePassword">
-    <h2>Смена пароля</h2>
-    <label>
-      <div class="title">Старый пароль:</div>
-      <input name="currentPassword" type="password" placeholder="Ваш старый пароль">
-    </label>
-    <label>
-      <div class="title">Новый пароль:</div>
-      <input name="newPassword" type="password" placeholder="Ваш новый пароль">
-    </label>
-    <label>
-      <div class="title">Повторите пароль:</div>
-      <input name="newPasswordRepeat" type="password" placeholder="Повторите пароль">
-    </label>
-
-    <button name="change">Изменить пароль</button>
+<template name="UserSettings__password">
+  <form
+    class="cw--UserSettings__password"
+    onSubmit={{changePassword}}
+  >
+    <h2
+      class="
+        cw--UserSettings__head
+        cw--UserSettings__passwordHead
+      "
+    >
+      Смена пароля
+      <span
+        class="cw--UserSettings__passwordRemind"
+        onClick={{remindPassword}}
+      >
+        забыли пароль?
+      </span>
+    </h2>
+    {{> InputPassword args
+      name="password"
+      value=currentPassword
+      className="cw--UserSettings__passwordInput"
+      placeholder="Старый пароль"
+      required=true
+    }}
+    {{> InputPassword args
+      name="newPassword"
+      value=newPassword
+      className="cw--UserSettings__passwordInput"
+      validators=passwordRepeatValidators
+      placeholder="Новый пароль"
+      required=true
+    }}
+    {{> InputPassword args
+      name="newPasswordRepeat"
+      value=newPasswordRepeat
+      className="cw--UserSettings__passwordInput"
+      validators=passwordRepeatValidators
+      placeholder="Повторите пароль"
+      required=true
+    }}
+    <button
+      type="submit"
+      class="
+        cw--button
+        cw--button_flat
+        cw--UserSettings__passwordSubmit
+      "
+    >
+      Изменить пароль
+    </button>
   </form>
 </template>
 
-<template name="emailSettings">
-  <div class="emailSettings">
-    <h2>Настройка email</h2>
-    <div class="emailBlock">
-      {{#if user.emails.[0].verified}}
-        <span class="check" data-tooltip="email подтверждён"></span>
-        <span class="email">{{user.emails.[0].address}}</span>
-      {{else}}
-        <span class="cross" data-tooltip="email не подтверждён"></span>
-        <span class="email">{{user.emails.[0].address}}</span>
-        <button name="changeEmail" data-tooltip="изменить email"></button>
-        <button 
-          name="verify" 
-          data-tooltip="Отправить письмо подтверждения"
-          data-email="{{user.emails.[0].address}}"
-        >
-        </button>
-        <span class="hint">Письмо можно отправить не более 2 раз в сутки</span>
-      {{/if}}
-    </div>
-    <span class="title">Получать письма не чаще, чем раз в:</span>
-    <div class="emailLettersFrequency">
-      {{#each Game.Settings.emailLettersFrequency}}
-        <button 
-          data-frequency="{{engName}}"
+<template name="UserSettings__emailSettings">
+  <div class="cw--UserSettings__emailSection">
+    E-mail:
+    <span
+      class="
+        cw--UserSettings__email
+        {{#if user.emails.[0].verified}}
+          cw--UserSettings__email_verified
+        {{else}}
+          cw--UserSettings__email_notVerified
+        {{/if}}
+      "
+      data-tooltip={{#unless user.emails.[0].verified}}E-mail не подтвержден{{/unless}}
+    >
+      {{user.emails.[0].address}}
+    </span>
+    {{#unless user.emails.[0].verified}}
+      <div class="cw--UserSettings__emailActions">
+        <button
           class="
+            cw--button
+            cw--button_flat
+            cw--UserSettings__emailChange
+          "
+          onClick={{changeEmail}}
+        >
+          Изменить
+        </button>
+        <button 
+          class="
+            cw--button
+            cw--button_flat
+            cw--button_flat_green
+            cw--UserSettings__emailVerify
+          "
+          onClick={{verifyEmail user.emails.[0].address}}
+          name="verify"
+        >
+          Подтвердить
+        </button>
+      </div>
+      <div class="cw--UserSettings__emailNotice">
+        Письмо можно отправить не более 2 раз в сутки
+      </div>
+    {{/unless}}
+  </div>
+  <div class="cw--UserSettings__subscribeSection">
+    <h2 class="cw--UserSettings__head">
+      E-mail уведомления
+    </h2>
+    <div class="cw--UserSettings__subscribeLegend">
+      Получать письма не чаще, чем раз в:
+    </div>
+    <div class="cw--UserSettings__lettersFrequency">
+      {{#each item in Game.Settings.emailLettersFrequency}}
+        <button 
+          onClick={{setMailFrequency item.engName}}
+          class="
+            cw--button
+            cw--button_flat
+            cw--UserSettings__lettersFrequencyItem
             {{#if (and
-              (eq engName (or user.settings.email.lettersFrequency 'everyDay'))
+              (eq item.engName (or user.settings.email.lettersFrequency 'everyDay'))
               (not user.emails.[0].unsubscribed)
             )}}
-              active
+              cw--button_flat_active
             {{/if}}
           "
         >
-          {{title}}
+          {{item.title}}
         </button>
       {{/each}}
     </div>
-    <label class="checkBlock">
-      <input 
+    <label class="cw--UserSettings__subscription">
+      <input
+        class="cw--UserSettings__checkbox"
         type="checkbox"
         name="subscribed"
-        checked="{{not user.emails.[0].unsubscribed}}"
-        data-email="{{user.emails.[0].address}}"
-      >
-      <span class="checkboxTitle">Подписан на рассылку</span>
+        checked={{not user.emails.[0].unsubscribed}}
+        onChange={{switchSubscription user.emails.[0].address}}
+      />
+      Подписка на рассылку
     </label>
   </div>
 </template>
 
-<template name="notificationsSettings">
-  <div class="notificationsSettings">
-    <h2>Настройка уведомлений</h2>
-    <label class="checkBlock">
-      <input 
-        type="checkbox"
-        data-settings_field="showDesktopNotifications"
-        checked="{{user.settings.notifications.showDesktopNotifications}}" 
-      >
-      <span class="checkboxTitle">Показывать уведомления на рабочем столе</span>
-    </label>
-    <label class="checkBlock">
-      <input
-        type="checkbox"
-        data-settings_field="showQuestsDuringActivation"
-        checked="{{not user.settings.notifications.notShowQuestsDuringActivation}}" 
-      >
-      <span class="checkboxTitle">Отображать Задания во время их активации</span>
-    </label>
-
-    <div class="customization">
-      <h2>Настройка экрана</h2>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="hideNet"
-          checked="{{options.hideNet}}" 
-        >
-        <span class="checkboxTitle">Отключить сетку</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="mobileVersion"
-          checked="{{options.mobileVersion}}" 
-        >
-        <span class="checkboxTitle">Экспериментальная мобильная версия</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="compactFleetInfo"
-          checked="{{options.compactFleetInfo}}" 
-        >
-        <span class="checkboxTitle">Компактный информер флотов</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="rotatePlanets"
-          checked="{{options.rotatePlanets}}" 
-        >
-        <span class="checkboxTitle">«Крутить» планеты (нагрузка на CPU)</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="rareScreenUpdates"
-          checked="{{options.rareScreenUpdates}}" 
-        >
-        <span class="checkboxTitle">Обновлять экран раз в 20 секунд. Требуется перезапуск игры.</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="wideChat"
-          checked="{{options.wideChat}}" 
-        >
-        <span class="checkboxTitle">Чат 100% ширины экрана</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="showDistanceFromPlanets"
-          checked="{{options.showDistanceFromPlanets}}" 
-        >
-        <span class="checkboxTitle">Показывать расстояние при отправке флота</span>
-      </label>
-      <label class="checkBlock">
-        <input 
-          type="checkbox"
-          data-settings_field="textUnits"
-          checked="{{options.textUnits}}" 
-        >
-        <span class="checkboxTitle">Отображать юниты на карте текстом</span>
-      </label>
-    </div>
-
-    <div class="otherSettings">
-      <h2>Другие настройки</h2>
-      <!--label class="checkBlock">
-        <input
-            type="checkbox"
-            data-settings_field="moveCompletedUnitToHangar"
-            checked="{{options.moveCompletedUnitToHangar}}"
-        >
-        <span class="checkboxTitle">Помещать построенные юниты в ангар</span>
-      </label-->
-      <label class="checkBlock">
-        <input type="checkbox" data-settings_field="disableAutoCollect" checked="{{not options.disableAutoCollect}}">
-        <span class="checkboxTitle">Автоматически собирать артефакты с планет рептилий</span>
-      </label>
-      <label class="checkBlock">
-        <input type="checkbox" data-settings_field="isMultiSkinEnabled" checked="{{options.isMultiSkinEnabled}}">
-        <span class="checkboxTitle">Сменяемые наряды</span>
-      </label>
-      <label class="checkBlock">
-        <input type="checkbox" data-settings_field="disableBroadcast" checked="{{options.disableBroadcast}}">
-        <span class="checkboxTitle">Скрывать оповещения</span>
-      </label>
-    </div>
+<template name="UserSettings__options">
+  <div class="cw--UserSettings__options">
+    {{#each group in optionsList}}
+      <div class="cw--UserSettings__optionsCase">
+        <h2 class="cw--UserSettings__optionsHead">
+          {{group.name}}
+        </h2>
+        {{#each option in group.options}}
+          <label class="cw--UserSettings__option">
+            <input
+              class="cw--UserSettings__checkbox"
+              type="checkbox"
+              name={{option.name}}
+              checked={{option.value}}
+              onChange={{switchSetting}}
+            /> {{option.title}}
+          </label>
+        {{/each}}
+      </div>
+    {{/each}}
   </div>
 </template>

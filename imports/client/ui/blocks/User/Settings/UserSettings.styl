@@ -1,0 +1,128 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--UserSettings
+  display flex
+  flex-direction column
+  width 900px
+  max-height 620px
+  max-width 100%
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+
+  &__header
+    display flex
+    align-items center
+    height 42px
+    padding 0 16px
+
+    font-size $cw--fontSize_l
+    font-weight bold
+
+    color $cw--color_white
+    background-color $cw--color_black
+
+  &__content
+    display flex
+    flex-direction row
+    flex-grow 1
+
+  &__options
+    position relative
+    flex-grow 1
+    padding 0 16px
+    background-color alpha($cw--color_tableOdd, .9)
+
+  &__optionsCase
+    margin 10px 0
+
+  &__optionsHead
+  &__head
+    margin 12px 0 7px 0
+    font-size $cw--fontSize_m
+    color $cw--color_human
+
+  &__option
+    display block
+    margin 7px 0
+    color $cw--color_metal
+
+  &__main
+    flex-grow 0
+    flex-basis 300px
+    box-sizing border-box
+    padding 12px 16px
+
+    background-color alpha($cw--color_black, .9)
+
+  &__checkbox
+    vertical-align middle
+
+  &__email
+    color $cw--color_credit
+
+    &_notVerified
+      color $cw--color_honor
+
+  &__emailActions
+    display flex
+    margin 5px 0
+    justify-content space-between
+
+  &__emailChange
+  &__emailVerify
+    font-size $cw--fontSize_m
+    padding 10px
+
+  &__emailVerify
+    margin-left 10px
+    flex-grow 1
+
+  &__emailNotice
+    padding 3px
+    font-size $cw--fontSize_s
+    color $cw--color_metal
+
+  &__lettersFrequency
+    display flex
+    flex-direction row
+    flex-wrap wrap
+    margin 5px -5px
+
+  &__lettersFrequencyItem
+    height 40px
+    flex-basis auto
+    flex-grow 1
+    margin 5px
+
+  &__password
+    display flex
+    flex-direction column
+    margin-top auto
+
+  &__passwordHead
+    display flex
+    padding-top 10px
+    justify-content space-between
+
+  &__passwordRemind
+    display inline-block
+    margin-left auto
+
+    font-size $cw--fontSize_s
+    font-weight normal
+
+    color $cw--color_metal
+    border-bottom dashed 1px $cw--color_metal
+    cursor pointer
+
+    &:hover
+      border-bottom-color transparent
+
+  &__passwordInput
+    margin 3px 0
+
+  &__passwordSubmit
+    margin-top 4px

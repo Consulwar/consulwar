@@ -131,10 +131,6 @@ var gameRoutes = {
     cosmos: 'cosmos',
     cosmosHistory: 'cosmos/history/:page',
   },
-
-  settings: {
-    settings: 'settings',
-  }
 };
 
 var gameActions = {
@@ -160,8 +156,6 @@ var gameActions = {
 
   cosmos: Game.Cosmos.showPage,
   cosmosHistory: Game.Cosmos.showHistory,
-
-  settings: Game.Settings.showPage
 };
 
 var registerRoute = function(group, name, path, action) {

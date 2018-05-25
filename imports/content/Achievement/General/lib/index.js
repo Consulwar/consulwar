@@ -18,6 +18,8 @@ import LossOfLosses from './LossOfLosses';
 import Tolstoy from './Tolstoy';
 import NewYear from './NewYear';
 import Hacker from './Hacker';
+import Philanthropist from './Philanthropist';
+import CGC from './CGC';
 
 export default {
   'Achievement/General/Builder': Builder,
@@ -40,4 +42,6 @@ export default {
   'Achievement/General/Tolstoy': Tolstoy,
   'Achievement/General/NewYear': NewYear,
   'Achievement/General/Hacker': Hacker,
+  'Achievement/General/Philanthropist': Philanthropist,
+  'Achievement/General/CGC': CGC,
 };

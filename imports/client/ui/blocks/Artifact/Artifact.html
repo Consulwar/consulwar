@@ -85,7 +85,7 @@
               {{/if}}
             {{else}}
               <p class="cw--Artifact__warning">
-                {{#if eq item.engName 'ruby_plasmoid'}}
+                {{#if or (eq item.engName 'ruby_plasmoid') (eq item.engName 'cleancredit')}}
                   Этот артефакт может быть только синтезирован.
                 {{else}}
                   Вы ещё не открыли планеты с этим артефактом. Разведайте галактику.

@@ -1,0 +1,141 @@
+<template name="Sponsor">
+  <div class="cw--Sponsor">
+    <div class="cw--Sponsor__header">
+      Внимание,
+      <span class="cw--color_honor">Консул</span>.
+      Не проходи мимо. Сейчас именно ты решаешь судьбу проекта, это очень важно.
+    </div>
+    <div class="cw--Sponsor__content">
+      <div class="cw--Sponsor__brief">
+        <div class="cw--Sponsor__intro">
+          В связи с некоторыми обстоятельствами у проекта больше нет инвестора. У нас есть сервера и сотрудники, работу которых нужно оплачивать. Поэтому мы обращаемся к вам, нашим игрокам. Как никогда нам нужна ваша материальная поддержка. Мы собираемся в течение <span class="cw--color_metal">3 месяцев</span> сделать:
+          <ul class="cw--Sponsor__workList">
+            <li class="cw--Sponsor__workItem">
+              Интерфейс Земли
+            </li>
+            <li class="cw--Sponsor__workItem">
+              Интерфейс Космоса
+            </li>
+            <li class="cw--Sponsor__workItem">
+              Новую почту
+            </li>
+            <li class="cw--Sponsor__workItem">
+              Альянсы
+            </li>
+            <li class="cw--Sponsor__workItem">
+              Удобное меню доната
+            </li>
+            <li class="cw--Sponsor__workItem">
+              Новый клёвый чат
+            </li>
+            <li class="cw--Sponsor__workItem">
+              Много других мелких улучшений
+            </li>
+          </ul>
+        </div>
+        <div class="cw--Sponsor__description">
+          Если вы
+          <span class="cw--color_credit">купите ГГК</span>
+          сейчас, то получите особую медальку, а
+          <span class="cw--color_credit">ГГК</span>
+          можете потратить, как вам захочется. Также мы предоставляем уникальную временную возможность обменять 
+          <span class="cw--color_credit">ГГК</span>
+          на
+          <span class="cw--color_cleanCredit">ЧГК (Чистые Галактические Кредиты)</span>.
+          За них вы сможете в будущем купить уникальные вещи на ваш выбор. Также те, кто совершат обмен
+          <span class="cw--color_credit">ГГК</span>
+          на
+          <span class="cw--color_cleanCredit">ЧГК</span>,
+          получат особую медальку. А ваши никнеймы мы добавим в специальный раздел на главной сайта. Пока существует проект, все будут знать героев, которые верили и помогали проекту.
+        </div>
+        <div class="cw--Sponsor__alert">
+          Настали сложные времена, <span class="cw--color_white">зима близко</span>, но мы не хотим сдаваться, мы полны мотивации исправить ошибки и сделать проект гораздо интереснее. Сейчас это внешнее улучшение, но мы ищем программиста, который сможет переделать космос, после чего мы сделаем много сюжетных крутых заданий и сильно улучшим геймплей. Но всё зависит от вас и вашей поддержки.
+        </div>
+      </div>
+      <div class="cw--Sponsor__summary">
+        <div class="cw--Sponsor__summaryMain">
+          <div class="cw--Sponsor__aboutCredits">
+            <span class="cw--color_cleanCredit">Чистые Галактические Кредиты</span>
+            будут продаваться в случаях, когда проекту нужна помощь игроков. Мы, в свою очередь, будем предоставлять новые уникальные вещи в будущем, которые нельзя будет купить за обычную донат-валюту, и только те, кто поддержал проект в сложные времена, в будущем смогут купить уникальные скины, сюжетные комиксные квесты, встроенные в игру,  ускорители и многое другое. Это ваше вложение в будущее проекта. Огромное спасибо вам за то, что вы верите в нас.
+          </div>
+          <div class="cw--Sponsor__actions">
+            <div class="cw--Sponsor__buy">
+              <div class="cw--Sponsor__actionHead">
+                Прикупи новые ГГК:
+              </div>
+              <button
+                onClick={{showCredits}}
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_green
+                  cw--Sponsor__buttonBuy
+                "
+                data-sound="hover, click"
+              >
+                Купить ГГК
+              </button>
+            </div>
+            <div class="cw--Sponsor__convert">
+              <div class="cw--Sponsor__actionHead">
+                Обменять ГГК на ЧГК:
+              </div>
+              <div class="cw--Sponsor__calc">
+                <div class="cw--Sponsor__calcCredits">
+                  {{getCalculatedCredits}}
+                </div>
+                <div class="cw--Sponsor__calcProfit">
+                  {{> InputNumber args
+                    name="profit"
+                    class='cw--Sponsor__profitInput'
+                    value=count
+                    min=1
+                  }}
+                </div>
+                <button
+                  onClick={{convert}}
+                  class="
+                    cw--Sponsor__buttonExchange
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_orange
+                  "
+                  data-sound="hover, click"
+                >
+                  обмен
+                </button>
+              </div>
+            </div>
+            {{!--
+            <div class="cw--Sponsor__timer">
+              <div class="cw--Sponsor__actionHead">
+                До конца сборов:
+              </div>
+              <time class="cw--Sponsor__time">
+                {{formatSeconds getTime}}
+              </time>
+            </div>
+            --}}
+
+          </div>
+        </div>
+        {{!--
+        <div
+          class="cw--Sponsor__scale"
+          data-percent={{getPercent}}
+        >
+          <div class="cw--Sponsor__scaleCount">
+            <div class="cw--Sponsor__scaleCountHead">
+              собрано
+            </div>
+            <span class="cw--color_credit">
+              {{formatNumberWithISO collected.get 3}}
+            </span>
+            / {{formatNumberWithISO needed 3}}
+          </div>
+        </div>
+        --}}
+      </div>
+    </div>
+  </div>
+</template>

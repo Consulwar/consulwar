@@ -6,6 +6,7 @@
       cw--input
       {{#if eq item.max 0}}cw--input__disabled{{/if}}
       {{class}}
+      {{className}}
     "
     value="{{#if (or this.isShowZero (gt value.get 0))}}{{value.get}}{{/if}}"
     onInput={{onInput}}

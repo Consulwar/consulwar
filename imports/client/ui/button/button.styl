@@ -102,14 +102,21 @@
       color #A3DEFF
       border-image linear-gradient(0deg, #4594BF, #8BD4FC) 1
 
+    &_active
+      color $cw--color_white
+      border solid 1px $cw--color_metal
+      border-image none
+      background-color $cw--color_metal
+
     &_green
+      color $cw--color_credit
+      border-color $cw--color_credit
+      border-image linear-gradient(0deg, #5E7118, $cw--color_credit) 1
+
       &:active
-        color $cw--color_credit
-        border solid 1px $cw--color_credit
-        border-image linear-gradient(0deg, #5E7118, $cw--color_credit) 1
-        &:hover
-          color #D5F075
-          border-image linear-gradient(0deg, #82992E, #D7F07D) 1
+      &:hover
+        color #D5F075
+        border-image linear-gradient(0deg, #82992E, #D7F07D) 1
     
     &_orange
       color $cw--color_human

@@ -4,6 +4,10 @@
     "helprace": {
       "subdomain": "consulwar"
     },
+    "event": {
+      "projectSupport": true,
+      "endTime": 1530043199000
+    },
     "yandex": {
       "id": 123
     },

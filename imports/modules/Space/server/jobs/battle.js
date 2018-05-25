@@ -88,6 +88,7 @@ const humansWin = function({
   planet,
   data,
 }) {
+  const initialUser = User.getByUsername({ username: battle.userNames[0] });
   if (planet) {
     planet.mission = null;
     if (!planet.isDiscovered) {
@@ -95,7 +96,6 @@ const humansWin = function({
       Game.Planets.discover(planet._id, user);
     }
 
-    const initialUser = User.getById({ userId: data.userId });
     if (
       !initialUser.settings.options.disableAutoCollect
       && planet.status === Game.Planets.STATUS.REPTILES
@@ -103,7 +103,6 @@ const humansWin = function({
     ) {
       Game.Planets.awardArtefacts(planet, 1, data.userId);
       planet.status = Game.Planets.STATUS.NOBODY;
-      Game.Planets.update(planet);
     }
   }
 
@@ -120,13 +119,20 @@ const humansWin = function({
       user._id,
     );
 
-    if (planet && (!data.isHumans || (data.isOneway && user._id === data.userId))) {
+    if (
+      planet && user._id === initialUser._id && (
+        (data.isHumans && data.isOneway)
+        || !data.isHumans
+      )
+    ) {
       // Остаемся на планете
-      if (planet.isHome || planet.armyId) {
+      if (planet.armyId) {
         // merge army
-        const destArmyId = (planet.isHome)
-          ? Game.Unit.getHomeFleetArmy({ userId: user._id })._id
-          : planet.armyId;
+        const destArmyId = (
+          planet.isHome
+            ? Game.Unit.getHomeFleetArmy({ userId: user._id })._id
+            : planet.armyId
+        );
         Game.Unit.mergeArmy(newArmyId, destArmyId, user._id);
       } else {
         // move army
@@ -138,6 +144,7 @@ const humansWin = function({
       // Возвращаемся
       const flightData = {
         ...data,
+        mission: null,
         targetType: FlightEvents.TARGET.PLANET,
         isHumans: true,
         armyId: newArmyId,
@@ -149,7 +156,7 @@ const humansWin = function({
         users.length > 1
         || battle.initialUnits[Battle.USER_SIDE][user.username].length > 1
       ) {
-        // Если было несколько флотов, то все они возвращаются на свои домашние планеты
+        // Если было несколько флотов игроков, то все они возвращаются на свои домашние планеты
         const returnPlanet = Game.Planets.getBase(user._id);
         flightData.returnPlanetId = returnPlanet._id;
         flightData.returnDestination = {

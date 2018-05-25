@@ -1,0 +1,23 @@
+<template name="SponsorWobbler">
+  {{#if hasTime}}
+    <div
+      onClick={{showSponsorPopup}}
+      class="cw--SponsorWobbler"
+      data-sound="hover, click"
+    >
+      <img
+        class="cw--SponsorWobbler__icon"
+        src="/img/game/CGC.svg"
+        alt="Чистые Галактические Кредиты"
+      />
+      <div class="cw--SponsorWobbler__content">
+        <div class="cw--SponsorWobbler__header">
+          Поддержи проект
+        </div>
+        <div class="cw--SponsorWobbler__motivation">
+          не будь какахой
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</template>

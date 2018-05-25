@@ -1,0 +1,62 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--SponsorWobbler
+  position absolute
+  left 0
+  top 500px
+
+  display flex
+  justify-content center
+  align-items center
+  width 320px
+  min-height 75px
+  padding 5px 16px
+  box-sizing border-box
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_s
+  font-weight bold
+  text-align center
+
+  cursor pointer
+  color $cw--color_lightGrey
+  background-color $cw--color_black
+  border solid 1px $cw--color_human
+  border-image linear-gradient(0deg, $cw--color_human, $cw--color_honor) 1
+  border-left none
+
+  +media($cw--size_l, $cw--size_xxl)
+    width 80px
+    padding 5px
+
+  +media(null, $cw--size_l)
+    position static
+    z-index 0
+
+    width 100%
+    order 2
+    flex-basis 75px
+    flex-shrink 0
+    border-right none
+
+  &__icon
+    width 60px
+    height 60px
+
+    +media(null, $cw--size_l)
+      margin-right 12px
+
+  &__content
+    flex-grow 1
+
+    +media($cw--size_l, $cw--size_xxl)
+      display none
+
+    +media(null, $cw--size_l)
+      flex-grow 0
+
+  &__header
+    font-size 24px
+    color $cw--color_human

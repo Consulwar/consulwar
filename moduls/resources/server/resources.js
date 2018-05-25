@@ -345,6 +345,47 @@ Game.Resources.initialize = function(user) {
 };
 
 Meteor.methods({
+  'resources.buyCGC'(count) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'resources.buyCGC', user });
+
+    if (
+      !Meteor.settings.public.event
+      || !Meteor.settings.public.event.projectSupport
+    ) {
+      throw new Meteor.Error('Событие не активно');
+    }
+
+    check(count, Match.Integer);
+    if (count < 1) {
+      throw new Meteor.Error('Ты нас обокрасть решил? Не так ли?');
+    }
+    const price = { credits: 1000 * count };
+
+    if(!Game.Resources.has({ resources: price, user })) {
+      throw new Meteor.Error('Недостаточно ресурсов для покупки ЧГК');
+    }
+
+    const item = content['Resource/Artifact/Red/CleanCredit'];
+    item.add({ count, userId: user._id });
+    console.log(item);
+
+    Game.Resources.spend(price, user._id);
+
+    Game.Payment.Expense.log(price.credits, 'buyResource', {
+      itemId: item.id,
+      count,
+    });
+
+    const profit = {
+      resources: {},
+    };
+    profit.resources[item.engName] = count;
+
+    return profit;
+  },
   getBonusResources: function(name) {
     const user = User.getById();
     User.checkAuth({ user });

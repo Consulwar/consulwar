@@ -1,0 +1,56 @@
+<template name="ModalPrompt">
+  <div class="cw--Modal">
+    <div class="cw--Modal__legend">
+      {{legend}}
+    </div>
+    {{#if eq type 'email'}}
+      {{> InputEmail args
+        name='email'
+        value=value
+        placeholder="Введите Емейл"
+        required=true
+        className='cw--ModalPrompt__input'
+      }}
+    {{else}}
+      {{> InputString args
+        name='string'
+        value=value
+        required=true
+        className='cw--ModalPrompt__input'
+      }}
+    {{/if}}
+    <div
+      class="
+        cw--Modal__actions
+        cw--ModalPrompt__actions
+      "
+    >
+      <button
+        onClick={{accept}}
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_green
+          cw--ModalPrompt__action
+          cw--ModalPrompt__action_accept
+        "
+        data-sound="hover,click"
+      >
+        ОК
+      </button>
+      <button
+        onClick={{cancel}}
+        class="
+          cw--button
+          cw--button_flat
+          cw--button_flat_orange
+          cw--ModalPrompt__action
+          cw--ModalPrompt__action_cancel
+        "
+        data-sound="hover,click"
+      >
+        Отмена
+      </button>
+    </div>
+  </div>
+</template>

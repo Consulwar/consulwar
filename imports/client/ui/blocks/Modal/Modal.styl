@@ -1,0 +1,26 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--Modal
+  width 400px
+  height auto
+  max-width 100%
+  padding 16px
+  box-sizing border-box
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  background $cw--color_black
+
+  &__legend
+    padding-right 30px
+    margin-bottom 12px
+    font-weight bold
+    color $cw--color_human
+
+  &__actions
+    display flex
+    margin-top 12px
+
+  &__action
+    padding 10px

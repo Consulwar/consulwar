@@ -82,6 +82,7 @@ Game.Payment.Income.Collection.find({}).observeChanges({
      && fields.source
      && fields.source.type == 'payment'
      && subscription.ready()
+     && Meteor.user()
     ) {
       showRewardWindow(fields.source.item);
     }

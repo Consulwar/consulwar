@@ -37,7 +37,7 @@ export default {
         textBefore: 'Скидки на товары за ЧГК ',
         textAfter: '%',
         priority: 2,
-        affect: 'crystals',
+        affect: 'Resource/Artifact/Red/CleanCredit',
         result({ level }) {
           return [
             0,

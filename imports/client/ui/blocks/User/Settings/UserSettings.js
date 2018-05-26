@@ -44,7 +44,10 @@ class UserSettings extends BlazeComponent {
       },
     ];
 
-    const getUserSetting = (type, name) => Meteor.user().settings[type][name] || false;
+    const getUserSetting = (type, name) => (
+      Meteor.user().settings[type]
+      && Meteor.user().settings[type][name]
+    ) || false;
 
     this.optionsList = [
       {

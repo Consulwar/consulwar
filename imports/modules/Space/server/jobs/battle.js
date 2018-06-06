@@ -97,7 +97,11 @@ const humansWin = function({
     }
 
     if (
-      !initialUser.settings.options.disableAutoCollect
+      !(
+        initialUser.settings
+        && initialUser.settings.options
+        && initialUser.settings.options.disableAutoCollect
+      )
       && planet.status === Game.Planets.STATUS.REPTILES
       && BattleLib.isBattle1x1(battle)
     ) {

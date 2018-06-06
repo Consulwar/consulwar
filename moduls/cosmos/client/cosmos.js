@@ -3,7 +3,6 @@ import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 
 import Space from '/imports/modules/Space/client/space';
-import SpaceLib from '/imports/modules/Space/lib/space';
 import Utils from '/imports/modules/Space/lib/utils';
 import calcAttackOptions from '/imports/modules/Space/lib/calcAttackOptions';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
@@ -1502,7 +1501,7 @@ Template.cosmosAttackMenu.helpers({
   timeAttackBattle: timeAttackBattle,
 
   vacantFleets: function () {
-    return SpaceLib.getMaxArmyCount() - SpaceLib.getCurrentArmyCount();
+    return Space.getMaxArmyCount() - Space.getCurrentArmyCount();
   },
 
   timeLeft: function() {

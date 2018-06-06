@@ -42,6 +42,7 @@ const getFleetUnits = function(data) {
 
 const getOne = function(_id) {
   return Space.collection.findOne({
+    type: EVENT_TYPE,
     _id,
     status: Space.filterActive,
   });

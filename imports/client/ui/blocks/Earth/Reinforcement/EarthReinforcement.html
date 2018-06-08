@@ -1,0 +1,73 @@
+<template name="EarthReinforcement">
+  <div class="cw--EarthReinforcement">
+    <div class="cw--EarthReinforcement__header">
+      Подкрепление:
+      <span class="cw--color_credit">
+        {{zoneName}}
+      </span>
+    </div>
+    <div class="cw--EarthReinforcement__units">
+      {{#each unit in units}}
+        <div
+          class="
+            {{#unless unit.max}}
+              cw--EarthReinforcement__unit_passive
+            {{/unless}}
+            cw--EarthReinforcement__unit
+          "
+        >
+          <div
+            onClick={{toggleMaxCount unit}}
+            class="cw--EarthReinforcement__unitIcon"
+            style="background-image:url({{unit.icon}})"
+            data-sound="click"
+            data-tooltip={{unit.title}}
+          >
+            <div class="cw--EarthReinforcement__unitReserve">
+              {{getReserve unit}}
+            </div>
+          </div>
+          {{> InputNumber args
+            value=unit.count
+            min=0
+            max=unit.max
+            placeholder='Кол-во'
+            class='cw--EarthReinforcement__unitCount'
+          }}
+        </div>
+      {{/each}}
+    </div> {{!-- cw--EarthReinforcement__units --}}
+    <div class="cw--EarthReinforcement__actions">
+      <button
+        onClick={{selectAllUnits}}
+        class="
+          cw--button
+          cw--button_flat
+          cw--EarthReinforcment__selectAll
+        "
+        data-sound="hover,click"
+      >
+        Выбрать всех
+      </button>
+      <button
+        onClick={{sendUnits}}
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_blue
+          cw--EarthReinforcement__send
+        "
+        data-sound="hover,attack"
+      >
+        Отправить
+      </button>
+    </div> {{!-- cw--EarthReinforcement__actions: user --}}
+    <div class="cw--EarthReinforcement__reward">
+      После отправки войск на точку совет галактики пополнит ваш счёт честью.
+      <div class="cw--EarthReinforcement__honor">
+        <div class="cw--EarthReinforcement__honorIcon"></div>
+        {{formatNumberWithISO honor.get 6}}
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,40 @@
+<template name="EarthBattle">
+  <div class="cw--EarthBattle">
+    <div class="cw--EarthBattle__timer">
+      До конца раунда осталось:
+      <time class="cw--EarthBattle__time">
+        ??м ??с
+      </time>
+    </div>
+    {{#each army in battleList}}
+      <div class="cw--EarthBattle__army">
+        <div
+          class="
+            {{army.colorClass}}
+            cw--EarthBattle__armyHead
+          "
+        >
+          {{army.title}}
+        </div>
+        <ul class="cw--EarthBattle__list">
+          {{#each item in army.list}}
+            <li class="cw--EarthBattle__item">
+              <span
+                class="
+                  {{army.colorClass}}
+                  cw--EarthBattle__itemCount
+                "
+              >
+                {{formatNumberWithISO item.count 3}}
+                {{#if item.myArmyCount}}
+                  ({{formatNumberWithISO item.myArmyCount 3}})
+                {{/if}}
+              </span>
+              {{item.name}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/each}}
+  </div>
+</template>

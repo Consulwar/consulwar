@@ -17,8 +17,11 @@
       <div>Консулов: {{zone.usersCount}}</div>
       <!-- buttons -->
       <a class="btn-info" href="{{pathFor 'earthZone' group='earth' name=zone.name}}" data-sound="click">Информация</a>
+
       {{#if hasLink}}
+      {{!-- Есть куда идти --}}
         {{#if notBattle}}
+          {{!-- Нет битвы --}}
           {{#unless eq army.generalCommand ResponseToGeneral.ACCEPT}}
             <a class="btn-command" data-action="{{zone.name}}" data-sound="attack">
               {{#if eq army.zoneName zone.name}}
@@ -36,7 +39,7 @@
         {{#if eq army.zoneName zone.name}}
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}" data-sound="click">Подкрепление</a>
         {{/if}}
-
+      {{!-- Генерал --}}
         {{#if and (eq armyZone.general.username user.username) (not armyZone.general.command)}}
           <a class="btn-general-command" data-action="{{zone.name}}" data-sound="attack">
             Приказ:
@@ -51,9 +54,11 @@
             {{/if}}
           </a>
         {{/if}}
+      {{!-- end: Генерал --}}
 
         {{#if eq army.zoneName zone.name}}
           {{#if and zone.general.command (not (eq zone.general.command Command.NONE))}}
+            {{!-- Генерал приказал --}}
             Генерал {{zone.general.username}} приказал:
             {{#if eq zone.general.command Command.MOVE}}
               Идем на {{zone.general.commandTarget}}
@@ -69,16 +74,19 @@
                 не согласились
               {{/if}}
             {{else}}
+              
               <a class="btn-response-yes" data-action="{{zone.name}}" data-sound="click">Да</a>
               <a class="btn-response-no" data-action="{{zone.name}}" data-sound="click">Нет</a>
             {{/if}}
           {{/if}}
         {{/if}}
       {{else}}
+      {{!-- Некуда перемещаться --}}
         {{#if not zone.isEnemy}}
           <a class="btn-reinforce" href="{{pathFor 'earthReserve' group='earth' name=zone.name}}">Отправить</a>
         {{/if}}
       {{/if}}
+      {{!-- Админка --}}
       {{#if eq user.role 'admin'}}
         <a class="btn-admin-panel" data-action="{{zone.name}}" data-sound="click">Админка</a>
       {{/if}}

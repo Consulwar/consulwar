@@ -1,5 +1,7 @@
+import { Blaze } from 'meteor/blaze';
 import unitItems from '/imports/content/Unit/client';
 import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
+import EarthInfo from '/imports/client/ui/blocks/Earth/Info/EarthInfo';
 import { Command, ResponseToGeneral } from '../lib/generals';
 
 initEarthClient = function() {
@@ -369,23 +371,44 @@ Game.Earth.showZonePopup = function(name, latlng) {
     return;
   }
 
+  
   Game.Earth.hideZonePopup();
-
+  
   var zoom = new ReactiveVar( mapView.getZoom() );
   mapView.on('zoomend', function(e) {
     zoom.set( mapView.getZoom() );
   });
 
-  zonePopupView = Blaze.renderWithData(
-    Template.earthZonePopup, {
-      name: name,
-      position: function() {
-        zoom.get();
-        return mapView.latLngToLayerPoint(latlng);
-      }
-    },
-    $('.leaflet-popup-pane')[0]
-  );
+  // zonePopupView = Blaze.renderWithData(
+  //   Template.earthZonePopup, {
+  //     name: name,
+  //     position: function() {
+  //       zoom.get();
+  //       return mapView.latLngToLayerPoint(latlng);
+  //     }
+  //   },
+  //   $('.leaflet-popup-pane')[0]
+  // );
+  Game.Popup.show({
+    template: (new EarthInfo({
+      hash: {
+        name,
+      },
+    })).renderComponent(),
+    hideClose: true,
+  });
+  // zonePopupView = Blaze.render(
+  //   (new EarthInfo({
+  //     hash: {
+  //       name,
+  //       position: function() {
+  //         zoom.get();
+  //         return mapView.latLngToLayerPoint(latlng);
+  //       },
+  //     },
+  //   })).renderComponent(),
+  //   $('.leaflet-popup-pane')[0]
+  // );
 };
 
 Game.Earth.hideZonePopup = function() {
@@ -476,25 +499,6 @@ Template.earthZonePopup.events({
   'click .btn-general-command'(event) {
     const target = $(event.currentTarget).attr('data-action');
     Meteor.call('earth.generalCommand', 'move', target);
-  },
-
-  'click .btn-response-yes'() {
-    Meteor.call('earth.responseToGeneral', true);
-  },
-
-  'click .btn-response-no'() {
-    Meteor.call('earth.responseToGeneral', false);
-  },
-
-  'click .btn-admin-panel': function (event, templateInstance) {
-    const zoneName = templateInstance.$(event.currentTarget).attr('data-action');
-
-    Game.Popup.show({
-      templateName: 'adminReptileChange',
-      data: {
-        zoneName,
-      },
-    });
   },
 });
 

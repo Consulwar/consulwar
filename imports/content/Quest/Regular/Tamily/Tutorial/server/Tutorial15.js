@@ -6,27 +6,31 @@ export default {
   slides: 3,
   helpers: [
     {
-      url: '/game/mutual/earth/reserve/',
+      url: '/game/mutual/earth',
       condition: {
-        target: '.earthReserve .zone-reserve .unit.active[data-id*=Father] .count',
+        target: '.cw--EarthReinforcement__unit .cw--EarthReinforcement__unitCount',
         value: 1,
       },
-      target: '.earthReserve .zone-reserve .btn-send',
-      direction: 'top',
+      target: '.cw--EarthReinforcement__send',
+      direction: 'bottom',
     },
     {
-      url: '/game/mutual/earth/reserve/',
-      target: '.earthReserve .zone-reserve .unit.active[data-id*=Father] .count',
+      url: '/game/mutual/earth',
+      condition: {
+        target: '.cw--EarthReinforcement',
+        exists: true,
+      },
+      target: '.cw--EarthReinforcement__unit',
       direction: 'left',
     },
 
     {
       url: '/game/mutual/earth',
       condition: {
-        target: '.leaflet-pane .btn-reinforce',
+        target: '.cw--EarthInfo__sendReinforcement',
         exists: true,
       },
-      target: '.leaflet-pane .btn-reinforce',
+      target: '.cw--EarthInfo__sendReinforcement',
       direction: 'bottom',
     },
     {

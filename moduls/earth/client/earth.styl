@@ -1,3 +1,5 @@
+@import '{}/imports/client/ui/colors'
+
 .content.earth
   
   &:not(.research):not(.earthReserve):not(.earthZone)
@@ -17,127 +19,6 @@
     max-width none
     padding 0
 
-.zone-reserve
-  position relative
-  width 100%
-  max-width 1150px
-  height 100%
-  margin auto
-  background-color #090e14
-  
-  p
-    font-size 14px
-    color #b6c5d3
-
-  .resources
-    margin-top 15px
-    margin-bottom 15px
-
-  .btn-send
-    display block
-    position relative
-    float left
-    margin-left 10px
-    width 177px
-    height 34px
-    padding-top 12px
-    cursor pointer
-    color #ffffff
-    font-weight bold
-    font-size 18px
-    text-transform uppercase
-    text-decoration none
-    text-align center
-    background-image url(/img/game/earth/btn_reinforce.png)
-    background-repeat no-repeat
-    background-size 100% 100%
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-  
-  .btn-all
-    float left
-    display block
-    position relative
-    margin-left 10px
-    width 177px
-    height 34px
-    padding-top 12px
-    cursor pointer
-    color #ffffff
-    font-weight bold
-    font-size 18px
-    text-align center
-    text-transform uppercase
-    text-decoration none
-    background-image url(/img/game/earth/btn_spec.png)
-    background-repeat no-repeat
-    background-size 100% 100%
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-
-  .btn-close-horizontal
-    display block
-    position absolute
-    left 300px
-    bottom 0px
-    width 164px
-    height 34px
-    cursor pointer
-    color #ffffff
-    background-image url(/img/game/earth/btn_close.png)
-    background-repeat no-repeat
-    background-position 0px 0px
-    &:hover
-      background-position 0px -34px
-  
-  .description
-    position absolute
-    top 20px
-    left 750px
-    width 380px
-
-  .units
-    position absolute
-    display block
-    left 20px
-    top 0px
-    width 750px
-    
-    li
-      position relative
-      display inline-block
-      overflow visible
-      margin-top 20px
-      
-      &:last-child
-        margin-top 20px
-      
-    a
-      background-repeat no-repeat
-
-    .max
-      position absolute
-      top 80px
-      height 20px
-      width 100%
-      text-align center
-      
-    .count
-      position relative
-      margin-top 5px
-      width 100%
-      height 20px
-      padding-top 2px
-      -webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-      -moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-      box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-      border-radius 5px
-      border 2px solid #335168
-      background-color #adadad
-      text-align center
-
 #map-earth
   z-index 1
   position absolute
@@ -145,11 +26,14 @@
   top 0
   width 100%
   height 100%
-  background-color #000
+  background-color $cw--color_tableOdd
 
 .earth-marker
   color #FFFFFF
-  pointer-events none
+  pointer-events none !important
+
+  *
+    pointer-events none !important
   
   &:before
     content ""
@@ -178,22 +62,16 @@
     pointer-events none
   
 .earth-marker-enemy:before
-  background-image url(/img/game/cosmomap/ico_rept.png)
-  -webkit-box-shadow: 0px 0px 50px 5px rgba(189,82,72,1)
-  -moz-box-shadow: 0px 0px 50px 5px rgba(189,82,72,1)
-  box-shadow: 0px 0px 50px 5px rgba(189,82,72,1)
+  background-image url(/img/game/earth/reptile_icon.svg)
   
 .earth-marker-our:before
-  background-image url(/img/game/cosmomap/ico_humans.png)
-  -webkit-box-shadow: 0px 0px 50px 5px rgba(73,128,191,1)
-  -moz-box-shadow: 0px 0px 50px 5px rgba(73,128,191,1)
-  box-shadow: 0px 0px 50px 5px rgba(73,128,191,1)
+  background-image url(/img/game/earth/consul_icon.svg)
   
 .earth-marker-battle:before
-  background-image url(/img/game/earth/ico_battle.png)
-  -webkit-box-shadow: 0px 0px 50px 5px rgba(233,168,68,1)
-  -moz-box-shadow: 0px 0px 50px 5px rgba(233,168,68,1)
-  box-shadow: 0px 0px 50px 5px rgba(233,168,68,1)
+  background-image url(/img/game/earth/battle_icon.svg)
+
+.earth-marker-startZone:before
+  background-image url(/img/game/earth/startZone_icon.svg)
   
 .earth-marker-connection-text
   font-weight bold
@@ -203,229 +81,6 @@
 .earth-marker-not-visible
   -webkit-filter grayscale(0.8)
   filter grayscale(0.8)
-
-.point-popup
-  z-index 100
-  position absolute
-  left 0
-  top 0
-  width 200px
-  padding 15px
-  border 4px solid #4D70B4
-  border-radius 15px
-  background-color #000711
-  
-  .text-enemy
-    color #D65D52
-
-  .text-ours
-    color #55BAF2
-
-  h2
-    display block
-    overflow hidden
-    text-overflow ellipsis
-    text-align center
-    white-space nowrap
-
-  p
-    padding 0
-    font-size 16px
-    text-align left
-    
-  a
-    display block
-    margin 10px auto
-    width 153px
-    height 30px
-    padding-top 10px
-    cursor pointer
-    color #ffffff
-    text-align center
-    text-transform uppercase
-    text-decoration none
-    font-weight bold
-    font-size 16px
-    background-repeat no-repeat
-    background-size 100% 100%
-  
-  .btn-info
-    background-image url(/img/game/earth/btn_info.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-    
-  .btn-command
-    background-image url(/img/game/earth/btn_attack.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-    
-  .btn-admin-panel
-    background-image url(/img/game/earth/btn_attack.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-
-  .btn-general-command
-    background-image url(/img/game/earth/btn_attack.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-
-  .btn-reinforce
-    background-image url(/img/game/earth/btn_reinforce.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-
-  .btn-response-yes
-    background-image url(/img/game/earth/btn_reinforce.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-
-  .btn-response-no
-    background-image url(/img/game/earth/btn_attack.png)
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-      
-
-.zone-info
-  z-index 2
-  position absolute
-  left 0
-  top 0
-  width 1464px
-  height 100%
-  background-repeat no-repeat
-  background-size 100% 100%
-  background-image url(/img/game/earth/back_africa.jpg)
-  font-size 20px
-  font-weight bold
-  
-  .btn-reinforce
-    position absolute
-    display block
-    left 15px
-    bottom 15px
-    width 177px
-    height 34px
-    padding-top 12px
-    cursor pointer
-    color #ffffff
-    font-weight bold
-    font-size 18px
-    text-align center
-    text-transform uppercase
-    text-decoration none
-    background-image url(/img/game/earth/btn_reinforce.png)
-    background-repeat no-repeat
-    background-size 100% 100%
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-  
-  .btn-special
-    position absolute
-    display block
-    right 15px
-    bottom 15px
-    width 177px
-    height 34px
-    padding-top 12px
-    cursor pointer
-    color #ffffff
-    text-align center
-    text-transform uppercase
-    text-decoration none
-    font-weight bold
-    font-size 18px
-    background-image url(/img/game/earth/btn_spec.png)
-    background-repeat no-repeat
-    background-size 100% 100%
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-    
-  .btn-close-horizontal
-    display block
-    position absolute
-    left 588px
-    bottom 0px
-    width 164px
-    height 34px
-    cursor pointer
-    color #ffffff
-    background-image url(/img/game/earth/btn_close.png)
-    background-repeat no-repeat
-    background-position 0px 0px
-    &:hover
-      background-position 0px -34px
-
-  span
-    color #FFFFFF
-    
-  ul
-    position relative
-    width 440px
-    
-    li
-      position relative
-      display inline-block
-      margin-top 10px
-      width 210px
-      font-size 16px
-
-  .army-humans
-    position absolute
-    left 15px
-    top 15px
-    width 440px
-    min-height 100px
-    background-position left top
-    background-repeat no-repeat
-    background-image url(/img/game/cosmomap/ico_humans.png)
-    color #55BAF0
-    
-    p
-      padding-left 70px
-    
-  .army-reptiles
-    position absolute
-    right 15px
-    top 15px
-    width 440px
-    min-height 100px
-    background-position right top
-    background-repeat no-repeat
-    background-image url(/img/game/cosmomap/ico_rept.png)
-    color #D3625E
-    
-    p
-      text-align right
-      padding-right 70px
-    
-  .summary-info
-    position absolute
-    left 455px
-    top 15px
-    width 430px
-    
-    .humans
-      color #55BAF0
-      
-    .reptiles
-      color #D3625E
-
-    > div
-      padding-top 80px
-      padding-left 80px
-    
-    h2
-      text-align center
-      
 
 .btn-history-earth
   cursor pointer

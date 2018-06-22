@@ -1,0 +1,69 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--EarthInfo
+  display flex
+  position absolute
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  background-color $cw--color_black
+
+  &__main
+    position relative
+    display block
+    width 360px
+    box-sizing border-box
+    padding 10px 16px
+
+  &__header
+    padding 0 0 10px
+    font-weight bold
+    color $cw--color_metal
+
+    &_my
+      color $cw--color_credit
+
+    &_reptiles
+      color $cw--color_honor
+
+    &_battle
+      color $cw--color_human
+
+
+  &__close
+    position absolute
+    top 10px
+    right 10px
+
+  &__bonusSection
+    padding 10px 0
+
+  &__bonus
+    color $cw--color_human
+
+  &__bonusPerConsul
+    color $cw--color_metal
+  
+  &__bonusItem
+  &__bonusPerConsulItem
+    font-weight bold
+    color $cw--color_nearWhite
+
+  &__order
+    margin 15px 0 25px
+
+  &__actions
+    display flex
+    justify-content center
+    margin 15px 0
+
+  &__showReinforcement
+  &__showControl
+    flex-basis calc(50% - 10px)
+
+  &__showReinforcement
+    margin-right auto
+
+  &__showControl
+    margin-left auto

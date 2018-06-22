@@ -1,0 +1,39 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--EarthOrder
+  display block
+  position relative
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  background-color $cw--color_black
+
+
+  &__commandText
+    color $cw--color_human
+
+  &__response
+    color $cw--color_metal
+
+  &__timeToResponse
+    margin 5px 0 15px
+    color $cw--color_lightGrey
+  
+  &__time
+    color $cw--color_metal
+
+  &__actions
+    display flex
+    justify-content space-between
+  
+  &__actionAccept
+    width calc(60% - 10px)
+
+  &__actionRefuse
+    width calc(40% - 10px)
+
+  &__close
+    position absolute
+    top 0
+    right 0

@@ -107,6 +107,8 @@ Game.Earth.addReinforcement = function(units, targetZoneName, user = Meteor.user
     }
   });
 
+  inc.power = Game.Unit.calculateUnitsPower(units, true);
+
   if (stats['reinforcements.arrived.total'] > 0) {
     Game.Statistic.incrementUser(user._id, stats);
 
@@ -335,7 +337,8 @@ Game.Earth.nextTurn = function() {
             username: username
           }).update({
             $set: {
-              userArmy: army
+              userArmy: army,
+              power: Game.Unit.calculateUnitsPower(army, true)
             }
           });
         });

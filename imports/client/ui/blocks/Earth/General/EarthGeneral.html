@@ -1,0 +1,65 @@
+<template name="EarthGeneral">
+  <div class="cw--EarthGeneral">
+    <div class="cw--EarthGeneral__intro">
+      Вы, как <span class="cw--color_human">Генерал</span>, можете устанавливать приказы Консулам подвластным вам на этой точке. Они могут выполнить этот приказ или отказаться, до завершения времени выдачи приказов: 
+      <span class="cw--color_metal">
+        {{formatSeconds generalCommandEndTime}}
+      </span>
+    </div>
+    <div class="cw--EarthGeneral__order">
+      <div class="cw--EarthGeneral__orderHead">
+        {{#if order.get}}
+          Вы приказали:
+        {{else}}
+          Приказ:
+        {{/if}}
+      </div>
+      {{#if not order.get}}
+        <select
+          class="cw--EarthGeneral__orderSelect"
+          onChange={{setTarget}}
+        >
+          <option class="cw--EarthGeneral__orderOption">
+            ---
+          </option>
+          {{#each link in getLinks}}
+            <option
+              class="cw--EarthGeneral__orderOption"
+              value={{link.name}}
+            >
+              {{link.action}}
+            </option>
+          {{/each}}
+        </select>
+        <div class="cw--EarthGeneral__actions">
+          <button
+            onClick={{sendOrder}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--EarthGeneral__actionOrder
+            "
+          >
+            Отдать приказ
+          </button>
+          <button
+            onClick={{resetOrder}}
+            class="
+              cw--button
+              cw--button_flat
+              cw--button_flat_honor
+              cw--EarthGeneral__actionReset
+            "
+          >
+            Отмена
+          </button>
+        </div>
+      {{else}}
+        <div class="cw--EarthGeneral__orderText">
+          {{order.get}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</template>

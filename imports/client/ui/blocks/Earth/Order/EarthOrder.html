@@ -1,0 +1,61 @@
+<template name="EarthOrder">
+  {{#if and getCommand isShowOrder.get}}
+    <div class="cw--EarthOrder {{className}}">
+      <div class="cw--EarthOrder__command">
+        Вам приказали:
+        <span class="cw--EarthOrder__commandText">
+          {{getCommand}}
+        </span>
+      </div>
+      <div class="cw--EarthOrder__response">
+        Вы 
+        {{#if getResponse}}
+          {{getResponse}}
+        {{else}}
+          еще не приняли решения
+        {{/if}}
+      </div>
+      {{#if not getResponse}}
+        <div class="cw--EarthOrder__timeToResponse">
+          Осталось:
+          <time class="cw--EarthOrder__time">
+            {{formatSeconds timeToResponse}}
+          </time>
+        </div>
+        <div class="cw--EarthOrder__actions">
+          <button
+            onClick={{response true}}
+            class="
+              cw--button
+              cw--button_flat
+              cw--EarthOrder__actionAccept
+            "
+            data-sound="hover, click"
+          >
+            Принять приказ
+          </button>
+          <button
+            onClick={{response false}}
+            class="
+              cw--button
+              cw--button_flat
+              cw--button_flat_honor
+              cw--EarthOrder__actionRefuse
+            "
+            data-sound="hover, click"
+          >
+            Отказать
+          </button>
+        </div>
+      {{/if}}
+      <button
+        onClick={{ignoreOrder}}
+        class="
+          cw--EarthOrder__close
+          cw--button
+          cw--button_close
+        "
+      ></button>
+    </div>
+  {{/if}}
+</template>

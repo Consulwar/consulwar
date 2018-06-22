@@ -16,8 +16,7 @@ class EarthGeneral extends BlazeComponent {
   onCreated() {
     super.onCreated();
 
-    // const generalCommandTimeConfig = Game.Earth.TIME_TO_GENERAL_COMMAND;
-    const generalCommandTimeConfig = 'at 20:00';
+    const generalCommandTimeConfig = Game.Earth.TIME_TO_GENERAL_COMMAND;
     const generalCommandTime = later.parse.text(generalCommandTimeConfig).schedules[0].t[0];
     this.generalCommandDate = new Date(generalCommandTime * 1000);
 

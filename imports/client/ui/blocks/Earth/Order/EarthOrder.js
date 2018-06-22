@@ -29,8 +29,7 @@ class EarthOrder extends BlazeComponent {
   onCreated() {
     super.onCreated();
 
-    // const updateScheduleTimeConfig = Game.Earth.UPDATE_SCHEDULE;
-    const updateScheduleTimeConfig = 'at 16:00';
+    const updateScheduleTimeConfig = Game.Earth.UPDATE_SCHEDULE;
     const updateScheduleTime = later.parse.text(updateScheduleTimeConfig).schedules[0].t[0];
     this.updateScheduleDate = new Date(updateScheduleTime * 1000);
 

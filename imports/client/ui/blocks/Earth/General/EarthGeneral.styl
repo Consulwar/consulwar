@@ -1,0 +1,39 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--EarthGeneral
+  display block
+  width 340px
+  box-sizing border-box
+  padding 10px 16px 16px
+  background-color $cw--color_darkGrey
+
+  &__intro
+    margin-bottom 15px
+    color $cw--color_description
+
+  &__order
+    margin-top 15px
+
+  &__orderHead
+    font-size $cw--fontSize_l
+    color $cw--color_human
+
+  &__orderSelect
+    padding 6px
+    font-size $cw--fontSize_m
+    color $cw--color_lightGrey
+    background-color $cw--color_black
+    border solid 1px $cw--color_metal
+
+  &__actions
+    display flex
+    margin-top 10px
+
+  &__actionOrder
+    flex-basis calc(60% - 10px)
+    margin-right auto
+
+  &__actionReset
+    flex-basis calc(40% - 10px)
+    margin-left auto

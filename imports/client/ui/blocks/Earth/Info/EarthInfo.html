@@ -1,0 +1,200 @@
+<template name="EarthInfo">
+  <div
+    class="cw--EarthInfo"
+    style="left: {{position.x}}px; top: {{position.y}}px;"
+  >
+    <div class="cw--EarthInfo__main">
+      <div
+        class="
+          cw--EarthInfo__header
+          {{#if isUserArmyLocation}}
+            cw--EarthInfo__header_my
+          {{/if}}
+          {{#if isEnemy}}
+            cw--EarthInfo__header_reptiles
+          {{else if isBattle}}
+            cw--EarthInfo__header_battle
+          {{/if}}
+        "
+      >
+        {{zone.name}}
+      </div>
+      <div
+        onClick={{closeWindow}}
+        class="
+          cw--EarthInfo__close
+          cw--button
+          cw--button_close
+        "
+      ></div>
+      {{#if zone.usersCount}}
+        <div class="cw--EarthInfo__consuls">
+          Консулов:
+          <b class="cw--color_human">
+            {{zone.usersCount}}
+          </b>
+        </div>
+      {{/if}}
+      {{#with zoneBonus}}
+        <div class="cw--EarthInfo__bonusSection">
+          <div class="cw--EarthInfo__bonus">
+            Бонус точки:
+            <span class="cw--EarthInfo__bonusItem">
+              <b class={{color}}>
+                {{count}} {{title}}
+              </b>
+            </span>
+          </div>
+          {{#if countPerConsul}}
+            <div class="cw--EarthInfo__bonusPerConsul">
+              На консула:
+              <span class="cw--EarthInfo__bonusPerConsulItem">
+                <b class={{color}}>
+                  {{countPerConsul}}
+                </b>
+                в день
+              </span>
+            </div>
+          {{/if}}
+        </div>
+      {{/with}}
+      {{#if isBattle}}
+        {{!-- both armies here == battle --}}
+        {{> EarthBattle args
+          isMyZone=isUserArmyLocation
+          reptiles=zone.enemyArmy
+          humans=zone.userArmy
+        }}
+      {{else}}
+        {{!-- not battle - show current army --}}
+        {{#if zone.userArmy}}
+          {{> EarthArmy args
+            army=zone.userArmy
+            userArmy=getUserArmy
+          }}
+        {{else if zone.enemyArmy}}
+          {{> EarthArmy args
+            army=zone.enemyArmy
+          }}
+        {{/if}}
+      {{/if}}
+
+      {{#if and isUserArmyLocation (not isUserGeneral)}}
+        {{> EarthOrder args
+          isPopup=false
+          className='cw--EarthInfo__order'
+        }}
+      {{/if}}
+
+      <div class="cw--EarthInfo__actions">
+        {{#if isUserArmyLocation}}
+          {{!-- zone is current user's army location --}}
+          <button
+            onClick={{toggleReinforcement}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--EarthInfo__showReinforcement
+            "
+            data-sound="hover,click"
+          >
+            Подкрепление
+          </button>
+          <button
+            onClick={{toggleConsuls}}
+            class="
+              cw--button
+              cw--button_flat
+              cw--EarthInfo__showControl
+            "
+            data-sound="click"
+          >
+            Управление
+          </button>
+        {{else if hasNotArmy}}
+          {{!-- user not placed army before --}}
+          <button
+            onClick={{toggleReinforcement}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--EarthInfo__showReinforcement
+            "
+            data-sound="hover,click"
+          >
+            Отправить
+          </button>
+        {{else}}
+          {{!-- zone is NOT current army location --}}
+          {{#if and hasLink isNotFightingNow}}
+            {{!-- has border with current location --}}
+            {{#if or isEnemy isBattle}}
+              {{!-- battle or enemy zone --}}
+              <button
+                onClick={{move}}
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_orange
+                "
+                data-sound="attack"
+              >
+                В атаку
+              </button>
+            {{else}}
+              {{!-- humans zone - can move --}}
+              <button
+                onClick={{move}}
+                class="
+                  cw--button
+                  cw--button_type_primary
+                  cw--button_type_primary_blue
+                "
+                data-sound="attack"
+              >
+                Перемещение
+              </button>
+            {{/if}}
+          {{/if}}
+        {{/if}}
+      </div>
+      {{#if eq user.role 'admin'}}
+        {{!-- admin actions --}}
+        <div
+          class="
+            cw--EarthInfo__actions
+            cw--EarthInfo__actions_admin
+          "
+        >
+          <button
+            onClick={{showAdmin}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+            "
+            data-sound="click"
+          >
+            Админка
+          </button>
+        </div>
+      {{/if}}
+    </div> {{!-- cw--EarthInfo__main --}}
+    {{#if (configEarthInfo.get 'isShowReinforcement')}}
+      {{> EarthReinforcement args
+        zoneName=zone.name
+      }}
+    {{/if}}
+    {{#if (configEarthInfo.get 'isShowConsuls')}}
+      {{> EarthConsuls args
+        zone=zone
+        config=configEarthInfo
+      }}
+    {{/if}}
+    {{#if (configEarthInfo.get 'isShowGeneral')}}
+      {{> EarthGeneral}}
+    {{/if}}
+  </div>
+</template>

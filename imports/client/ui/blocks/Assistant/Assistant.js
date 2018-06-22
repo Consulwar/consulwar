@@ -102,7 +102,7 @@ class Assistant extends BlazeComponent {
       if (questId) {
         Game.Quest.showQuest(questId);
       } else {
-        Game.Quest.showQuest(quests.engName)
+        Game.Quest.showQuest(quests.engName);
       }
     } else {
       Game.Quest.showGreeting(personName);

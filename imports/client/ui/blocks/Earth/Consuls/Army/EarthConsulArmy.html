@@ -1,0 +1,16 @@
+<template name="EarthConsulArmy">
+  <div class="cw--EarthConsulArmy">
+    <div class="cw--EarthConsulArmy__header">
+      Войска Консула:
+      <span class="cw--EarthConsulArmy__consulName">
+        {{consulName.get}}
+      </span>
+    </div>
+    <div class="cw--EarthConsulArmy__army">
+      {{#if isLoading.get}}
+        {{> loading}}
+      {{/if}}
+      {{> EarthArmy args army=consulArmy.get}}
+    </div>
+  </div>
+</template>

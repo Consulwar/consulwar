@@ -2,7 +2,6 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
-import { $ } from 'meteor/jquery';
 import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 import Game from '/moduls/game/lib/main.game';
 import './Sponsor.html';

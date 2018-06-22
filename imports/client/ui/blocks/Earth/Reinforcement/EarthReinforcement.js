@@ -26,18 +26,18 @@ class EarthReinforcement extends BlazeComponent {
   onCreated() {
     super.onCreated();
 
-    this.units = [];
-    this.updateUnits();
+    this.units = this.getUnits();
 
     this.autorun(() => {
       this.calculateHonor();
     });
   }
 
-  updateUnits() {
-    this.units = _.map(armyHumansContent, (unit, id) => {
+  getUnits() {
+    return _.map(armyHumansContent, (unit, id) => {
       const { title, icon } = unit;
-      const max = unit.getCurrentCount({ from: 'hangar' });
+      const hangarUnits = unit.getCurrentCount({ from: 'hangar' });
+      const max = new ReactiveVar(hangarUnits);
       const count = new ReactiveVar(0);
 
       return {
@@ -46,19 +46,24 @@ class EarthReinforcement extends BlazeComponent {
         icon,
         max,
         count,
-      }
+      };
     });
   }
 
-  getReserve(unit) {
-    return (unit.max - unit.count.get());
+  updateUnits() {
+    (this.units).forEach((unit) => {
+      const hangarUnits = armyHumansContent[unit.id].getCurrentCount({ from: 'hangar' });
+      unit.max.set(hangarUnits);
+      unit.count.set(0);
+    });
   }
 
   toggleMaxCount(event, unit) {
-    if (unit.max > 0) {
+    const max = unit.max.get();
+    if (max > 0) {
       const count = unit.count.get();
-      if(count < unit.max) {
-        unit.count.set(unit.max);
+      if (count < max) {
+        unit.count.set(max);
       } else {
         unit.count.set(0);
       }
@@ -68,7 +73,8 @@ class EarthReinforcement extends BlazeComponent {
   calculateHonor() {
     let honor = 0;
     (this.units).forEach((unit) => {
-      const { id, max } = unit;
+      const { id } = unit;
+      const max = unit.max.get();
       let count = unit.count.get();
       if (count > max) {
         count = max;
@@ -85,10 +91,10 @@ class EarthReinforcement extends BlazeComponent {
   selectAllUnits() {
     (this.units).forEach((unit) => {
       const { max, count } = unit;
-      if (max > 0) {
-        count.set(max);
+      if (max.get() > 0) {
+        count.set(max.get());
       }
-    })
+    });
   }
 
   sendUnits() {
@@ -96,15 +102,14 @@ class EarthReinforcement extends BlazeComponent {
     const units = {};
 
     (this.units).forEach((unit) => {
-      const { id, max } = unit;
+      const { id } = unit;
+      const max = unit.max.get();
       const count = unit.count.get();
 
       if (max > 0 && count > 0) {
         units[id] = Math.min(max, count);
         total += count;
       }
-
-      unit.count.set(0);
     });
 
     if (total > 0) {
@@ -114,7 +119,10 @@ class EarthReinforcement extends BlazeComponent {
         this.zoneName,
         (err) => {
           if (err) {
-            Notifications.error('Не удалось отправить войска',err.error);
+            Notifications.error(
+              'Не удалось отправить войска',
+              err.error,
+            );
           } else {
             this.updateUnits();
             Notifications.success('Войска отправлены на Землю');

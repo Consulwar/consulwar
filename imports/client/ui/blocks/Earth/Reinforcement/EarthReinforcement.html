@@ -10,7 +10,7 @@
       {{#each unit in units}}
         <div
           class="
-            {{#unless unit.max}}
+            {{#unless unit.max.get}}
               cw--EarthReinforcement__unit_passive
             {{/unless}}
             cw--EarthReinforcement__unit
@@ -24,13 +24,13 @@
             data-tooltip={{unit.title}}
           >
             <div class="cw--EarthReinforcement__unitReserve">
-              {{getReserve unit}}
+              {{unit.max.get}}
             </div>
           </div>
           {{> InputNumber args
             value=unit.count
             min=0
-            max=unit.max
+            max=unit.max.get
             placeholder='Кол-во'
             class='cw--EarthReinforcement__unitCount'
           }}
@@ -43,7 +43,7 @@
         class="
           cw--button
           cw--button_flat
-          cw--EarthReinforcment__selectAll
+          cw--EarthReinforcement__selectAll
         "
         data-sound="hover,click"
       >

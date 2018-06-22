@@ -1,0 +1,79 @@
+<template name="EarthConsuls">
+  <div class="cw--EarthConsuls">
+    <div class="cw--EarthConsuls__header">
+      Генерал:
+      <span class="cw--EarthConsuls__generalName">
+        {{generalName}}
+      </span>
+    </div>
+    <div class="cw--EarthConsuls__consuls">
+      {{#if isLoading.get}}
+        {{> loading}}
+      {{/if}}
+      <div class="cw--EarthConsuls__consulsTable">
+        {{#each consul in consuls.get}}
+          <div
+            onClick={{showConsulArmy consul.username}}
+            class="
+              cw--EarthConsuls__consul
+              {{#if even @index}}
+                cw--EarthConsuls__consul_even
+              {{else}}
+                cw--EarthConsuls__consul_odd
+              {{/if}}
+              {{#if eq consul.username consulName.get}}
+                cw--EarthConsuls__consul_active
+              {{/if}}
+              {{#if eq consul.username userName}}
+                cw--EarthConsuls__consul_self
+              {{/if}}
+            "
+          >
+            <div class="cw--EarthConsuls__consulName">
+              {{consul.username}}
+            </div>
+            <div class="cw--EarthConsuls__consulTag">
+              {{consul.tag}}
+            </div>
+            <div class="cw--EarthConsuls__consulRespond">
+              {{#if eq consul.generalCommand 'accept'}}
+                <span class="cw--color_credit">
+                  Принят
+                </span>
+              {{else if eq consul.generalCommand 'decline'}}
+                <span class="cw--color_honor">
+                  Отказ
+                </span>
+              {{/if}}
+            </div>
+            <div class="cw--EarthConsuls__consulPower">
+              {{formatNumberWithISO consul.power 4}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{#if isGeneral}}
+      <div class="cw--EarthConsuls__actions">
+        <button
+          onClick={{toggleShowGeneral}}
+          class="
+            cw--button
+            cw--button_flat
+            cw--button_flat_human
+            cw--EarthConsuls__actionCommand
+            {{isGeneralCommandTimeExpired 'cw--button_disabled'}}
+          "
+          data-tooltip={{isGeneralCommandTimeExpired 'Время отдачи приказа прошло'}}
+        >
+          Приказ
+        </button>
+      </div>
+    {{/if}}
+  </div>
+  {{#if consulName.get}}
+    {{> EarthConsulArmy args
+      consulName=consulName
+    }}
+  {{/if}}
+</template>

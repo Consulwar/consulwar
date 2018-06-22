@@ -20,7 +20,9 @@
           <div class="cw--EarthArmy__unitCount">
             {{formatNumberWithISO unit.count 3}}
             {{#if unit.myArmy}}
-              ({{formatNumberWithISO unit.myArmy 3}})
+              <span class="cw--color_credit">
+                ({{formatNumberWithISO unit.myArmy 3}})
+              </span>
             {{/if}}
           </div>
         {{/if}}

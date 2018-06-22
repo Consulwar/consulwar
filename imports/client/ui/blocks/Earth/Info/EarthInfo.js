@@ -1,10 +1,14 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
-import { Command, ResponseToGeneral } from '/moduls/earth/lib/generals';
-import { ReactiveVar } from 'meteor/reactive-var';
+import { ReactiveDict } from 'meteor/reactive-dict';
 import { Meteor } from 'meteor/meteor';
-import '../Battle/EarthBattle';
+import { Notifications } from '/moduls/game/lib/importCompability';
+import '/imports/client/ui/button/button.styl';
 import '../Army/EarthArmy';
+import '../Battle/EarthBattle';
+import '../Consuls/EarthConsuls';
+import '../General/EarthGeneral';
+import '../Order/EarthOrder';
 import '../Reinforcement/EarthReinforcement';
 import './EarthInfo.html';
 import './EarthInfo.styl';
@@ -24,27 +28,44 @@ class EarthInfo extends BlazeComponent {
 
     this.position = position;
     this.name = name;
-  }
-
-  onCreated() {
-    super.onCreated();
 
     this.zone = Game.EarthZones.getByName(this.name);
     this.userZone = Game.EarthUnits.get();
-    this.isShowingReinforcement = new ReactiveVar(false);
-    console.log('userZone', this.userZone);
-    console.log('zone', this.zone);
+
+    this.userName = Meteor.user().username;
+
+    this.configEarthInfo = new ReactiveDict();
+    this.configEarthInfo.set('isShowReinforcement', false);
+    this.configEarthInfo.set('isShowConsuls', false);
+    this.configEarthInfo.set('isShowGeneral', false);
+  }
+
+  hasNotArmy() {
+    return this.userZone === undefined;
   }
 
   isUserArmyLocation(zoneName = this.zone.name) {
     return this.userZone
       && this.userZone.zoneName === zoneName;
   }
-  isEnemy() {
-    return this.zone.isEnemy && this.zone.usersCount === 0;
+
+  isUserGeneral() {
+    if (
+      this.zone.general
+      && this.userName === this.zone.general.username
+    ) {
+      return true;
+    }
+    return false;
   }
+
+  isEnemy(zone = this.zone) {
+    return zone.isEnemy && zone.usersCount === 0;
+  }
+
   isBattle(zone = this.zone) {
-    // both army in zone
+    // both army in zone == war?
+    // do we need checking battleId?
     return zone.enemyArmy && zone.userArmy;
   }
 
@@ -61,11 +82,11 @@ class EarthInfo extends BlazeComponent {
     return {};
   }
 
-  zoneBonus() {
-    if (!this.zone.bonus) {
+  zoneBonus(zone = this.zone) {
+    if (!zone.bonus) {
       return false;
     }
-    const { id, count } = this.zone.bonus;
+    const { id, count } = zone.bonus;
 
     const bonusObj = {};
     const keys = id.split('.');
@@ -77,21 +98,20 @@ class EarthInfo extends BlazeComponent {
     });
     curObj[lastKey] = count;
 
-    const { title } = Game.getObjectByPath(bonusObj);
+    const { title, color } = Game.getObjectByPath(bonusObj);
 
     let countPerConsul = 0;
-    if (this.zone.usersCount) {
-      countPerConsul = Math.floor(count / this.zone.usersCount);
+    if (zone.usersCount) {
+      countPerConsul = Math.floor(count / zone.usersCount);
     }
 
     return {
       title,
+      color,
       count,
       countPerConsul,
     };
   }
-
-  // armyZone() = this.userZone;
 
   hasLink() {
     if (this.userZone) {
@@ -104,26 +124,34 @@ class EarthInfo extends BlazeComponent {
   }
 
   move() {
-    Meteor.call('earth.moveArmy', this.name);
+    Meteor.call(
+      'earth.moveArmy',
+      this.name,
+      (error) => {
+        if (error) {
+          Notifications.error('Перемещение невозможно', error.error);
+        } else {
+          Notifications.success(`Ваши войска выдвинулись в ${this.name}`);
+        }
+      },
+    );
   }
 
-  ResponseToGeneral() {
-    return ResponseToGeneral;
+  toggleReinforcement() {
+    this.configEarthInfo.set(
+      'isShowReinforcement',
+      !this.configEarthInfo.get('isShowReinforcement'),
+    );
   }
 
-  Command() {
-    return Command;
+  toggleConsuls() {
+    this.configEarthInfo.set(
+      'isShowConsuls',
+      !this.configEarthInfo.get('isShowConsuls'),
+    );
   }
 
-  orderResponse(event, answer = true) {
-    Meteor.call('earth.responseToGeneral', answer);
-  }
-
-  toggleReinforcement(event) {
-    this.isShowingReinforcement.set(!this.isShowingReinforcement.get());
-  }
-
-  showAdmin(event) {
+  showAdmin() {
     Game.Popup.show({
       templateName: 'adminReptileChange',
       data: {
@@ -132,7 +160,7 @@ class EarthInfo extends BlazeComponent {
     });
   }
 
-  closeWindow(event) {
+  closeWindow() {
     this.removeComponent();
   }
 }

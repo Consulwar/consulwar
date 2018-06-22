@@ -341,6 +341,32 @@ Meteor.methods({
 
     return null;
   },
+
+  'earth.getEarthZoneUsers'(name) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'earth.getEarthZoneUsers', user });
+
+    check(name, String);
+
+    if (!Game.EarthZones.Collection.findOne({ name })) {
+      throw new Meteor.Error('Запрошенная зона не найдена');
+    }
+
+    return Game.EarthUnits.Collection.find(
+      {
+        zoneName: name,
+      },
+      {
+        fields: {
+          username: 1,
+          generalCommand: 1,
+          power: 1,
+        }
+      },
+    ).fetch();
+  },
 });
 
 // ----------------------------------------------------------------------------

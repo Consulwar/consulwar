@@ -27,22 +27,29 @@
           cw--button_close
         "
       ></div>
+      {{#if zone.usersCount}}
+        <div class="cw--EarthInfo__consuls">
+          Консулов:
+          <b class="cw--color_human">
+            {{zone.usersCount}}
+          </b>
+        </div>
+      {{/if}}
       {{#with zoneBonus}}
         <div class="cw--EarthInfo__bonusSection">
           <div class="cw--EarthInfo__bonus">
             Бонус точки:
             <span class="cw--EarthInfo__bonusItem">
-              <b class="cw--color_human">
-                {{count}}
+              <b class={{color}}>
+                {{count}} {{title}}
               </b>
-              {{title}}
             </span>
           </div>
           {{#if countPerConsul}}
             <div class="cw--EarthInfo__bonusPerConsul">
               На консула:
               <span class="cw--EarthInfo__bonusPerConsulItem">
-                <b class="cw--color_metal">
+                <b class={{color}}>
                   {{countPerConsul}}
                 </b>
                 в день
@@ -72,6 +79,13 @@
         {{/if}}
       {{/if}}
 
+      {{#if and isUserArmyLocation (not isUserGeneral)}}
+        {{> EarthOrder args
+          isPopup=false
+          className='cw--EarthInfo__order'
+        }}
+      {{/if}}
+
       <div class="cw--EarthInfo__actions">
         {{#if isUserArmyLocation}}
           {{!-- zone is current user's army location --}}
@@ -81,10 +95,36 @@
               cw--button
               cw--button_type_primary
               cw--button_type_primary_orange
+              cw--EarthInfo__showReinforcement
             "
             data-sound="hover,click"
           >
             Подкрепление
+          </button>
+          <button
+            onClick={{toggleConsuls}}
+            class="
+              cw--button
+              cw--button_flat
+              cw--EarthInfo__showControl
+            "
+            data-sound="click"
+          >
+            Управление
+          </button>
+        {{else if hasNotArmy}}
+          {{!-- user not placed army before --}}
+          <button
+            onClick={{toggleReinforcement}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--EarthInfo__showReinforcement
+            "
+            data-sound="hover,click"
+          >
+            Отправить
           </button>
         {{else}}
           {{!-- zone is NOT current army location --}}
@@ -142,56 +182,19 @@
         </div>
       {{/if}}
     </div> {{!-- cw--EarthInfo__main --}}
-    {{#if isShowingReinforcement.get}}
+    {{#if (configEarthInfo.get 'isShowReinforcement')}}
       {{> EarthReinforcement args
         zoneName=zone.name
       }}
     {{/if}}
+    {{#if (configEarthInfo.get 'isShowConsuls')}}
+      {{> EarthConsuls args
+        zone=zone
+        config=configEarthInfo
+      }}
+    {{/if}}
+    {{#if (configEarthInfo.get 'isShowGeneral')}}
+      {{> EarthGeneral}}
+    {{/if}}
   </div>
-</template>
-
-<template name="EarthOrder">
-  {{#if and zone.general.command (not (eq zone.general.command Command.NONE))}}
-    <div class="cw--EarthOrder">
-      Генерал {{zone.general.username}} приказал:
-      {{#if eq zone.general.command Command.MOVE}}
-        Идем на {{zone.general.commandTarget}}
-      {{else}}
-        Ждём
-      {{/if}}
-
-      {{#if userArmy.generalCommand}}
-        Вы
-        {{#if eq userArmy.generalCommand ResponseToGeneral.ACCEPT}}
-          приняли приказ
-        {{else}}
-          отказались
-        {{/if}}
-      {{else}}
-        <div class="cw--EarthOrder__action">
-          <a
-            onClick={{orderResponse true}}
-            class="
-              cw--button
-              cw--button_flat
-            "
-            data-sound="click"
-          >
-            Принять приказ
-          </a>
-          <a
-            onClick={{orderResponse false}}
-            class="
-              cw--button
-              cw--button_flat
-              cw--button_flat_honor
-            "
-            data-sound="click"
-          >
-            Отказать
-          </a>
-        </div>
-      {{/if}}
-    </div>
-  {{/if}}
 </template>

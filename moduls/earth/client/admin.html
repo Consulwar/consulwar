@@ -13,8 +13,9 @@
         </li>
       {{/each}}
     </ul>
-
-    <div class="change">Изменить</div>
+    {{#if not hasArmy}}
+      <div class="change">Изменить</div>
+    {{/if}}
     <div class="changeTurn">Изменить на ход</div>
 
     <br/>

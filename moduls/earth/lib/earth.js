@@ -42,7 +42,11 @@ Game.EarthUnits = {
 
   get: function(user_id = Meteor.userId()) {
     return Game.EarthUnits.Collection.findOne({ user_id });
-  }
+  },
+
+  getByZoneName(zoneName) {
+    return Game.EarthUnits.Collection.find({ zoneName });
+  },
 };
 
 initEarthConfigLib();

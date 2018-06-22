@@ -8,6 +8,14 @@ initEarthAdminClient = function() {
 'use strict';
 
 Template.adminReptileChange.helpers({
+  hasArmy() {
+    const zone = Game.EarthZones.getByName(this.zoneName);
+    if (zone.userArmy) {
+      return true;
+    }
+    return false;
+  },
+
   army() {
     const zone = Game.EarthZones.getByName(this.zoneName);
     const zoneArmy = zone.enemyArmy ? zone.enemyArmy : {};

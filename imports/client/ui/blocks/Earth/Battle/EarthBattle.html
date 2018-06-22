@@ -27,7 +27,9 @@
               >
                 {{formatNumberWithISO item.count 3}}
                 {{#if item.myArmyCount}}
-                  ({{formatNumberWithISO item.myArmyCount 3}})
+                  <span class="cw--color_credit">
+                    ({{formatNumberWithISO item.myArmyCount 3}})
+                  </span>
                 {{/if}}
               </span>
               {{item.name}}

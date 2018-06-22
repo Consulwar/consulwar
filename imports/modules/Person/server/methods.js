@@ -90,10 +90,12 @@ Meteor.methods({
 
     Game.Resources.spend(person.skin[skinId].price, user._id);
 
-    Game.Payment.Expense.log(person.skin[skinId].price.credits, 'personSkin', {
-      personId,
-      skinId,
-    });
+    if (person.skin[skinId].price.credits) {
+      Game.Payment.Expense.log(person.skin[skinId].price.credits, 'personSkin', {
+        personId,
+        skinId,
+      });
+    }
 
     person.addSkin({ userId: user._id, id: skinId });
   },

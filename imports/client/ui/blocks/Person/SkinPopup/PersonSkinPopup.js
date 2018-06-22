@@ -16,6 +16,7 @@ class PersonSkinPopup extends BlazeComponent {
     super.onCreated();
 
     this.person = this.data('person');
+    console.log(this.skins());
   }
 
   skins() {

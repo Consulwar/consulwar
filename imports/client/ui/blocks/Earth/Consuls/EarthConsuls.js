@@ -44,16 +44,7 @@ class EarthConsuls extends BlazeComponent {
         if (err) {
           Notifications.error('Не удалось получить данные о точке', err.error);
         } else {
-          const sortUsersByPower = (a, b) => {
-            if (a.power > b.power) {
-              return -1;
-            }
-            if (a.power < b.power) {
-              return 1;
-            }
-            return 0;
-          };
-          this.consuls.set(users.sort(sortUsersByPower));
+          this.consuls.set(users.sort((a, b) => b.power - a.power));
           this.isLoading.set(false);
         }
       },

@@ -3,7 +3,7 @@
     <div class="cw--EarthBattle__timer">
       До конца раунда осталось:
       <time class="cw--EarthBattle__time">
-        ??м ??с
+        {{formatSeconds timeNextRound}}
       </time>
     </div>
     {{#each army in battleList}}

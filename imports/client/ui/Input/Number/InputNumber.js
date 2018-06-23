@@ -31,6 +31,10 @@ class InputNumber extends BlazeComponent {
     this.placeholder = placeholder;
   }
 
+  onWheel(event) {
+    event.stopPropagation();
+  }
+
   onInput({ currentTarget }) {
     let newVal = parseInt(currentTarget.value, 10) || null;
 

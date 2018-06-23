@@ -627,10 +627,13 @@ Template.earth.onRendered(function() {
       }).addTo(mapView);
     }
 
-    mapView.on('keypress', function({ key }) {
-      console.log(key);
-      // Game.Earth.hideZonePopup();
-    });
+    mapView.on('click', (event) => {
+      if (
+        $(event.originalEvent.target).attr('id') === 'map-earth'
+      ) {
+        Game.Earth.hideZonePopup();
+      }
+    })
 
     maxHealth = Game.EarthZones.calcMaxHealth();
 

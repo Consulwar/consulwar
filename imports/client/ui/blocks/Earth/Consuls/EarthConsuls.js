@@ -26,7 +26,7 @@ class EarthConsuls extends BlazeComponent {
     this.config = config;
 
     this.zone = zone;
-    this.generalName = this.zone.general.username;
+    this.generalName = this.zone.general ? this.zone.general.username : null;
     this.userName = Meteor.user().username;
 
     this.isLoading = new ReactiveVar(true);
@@ -44,7 +44,7 @@ class EarthConsuls extends BlazeComponent {
         if (err) {
           Notifications.error('Не удалось получить данные о точке', err.error);
         } else {
-          this.consuls.set(users);
+          this.consuls.set(users.sort((a, b) => b.power - a.power));
           this.isLoading.set(false);
         }
       },

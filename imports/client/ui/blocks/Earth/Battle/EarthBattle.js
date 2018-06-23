@@ -1,5 +1,6 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
+import { later } from 'meteor/mrt:later'; // eslint-disable-line
 import armyHumans from '/imports/content/Unit/Human/Ground/client';
 import armyReptiles from '/imports/content/Unit/Reptile/Ground/client';
 import Game from '/moduls/game/lib/main.game';
@@ -23,6 +24,10 @@ class EarthBattle extends BlazeComponent {
     this.reptiles = reptiles;
     this.humans = humans;
     this.isMyZone = isMyZone;
+
+    const updateScheduleTimeConfig = Game.Earth.UPDATE_SCHEDULE;
+    const updateScheduleTime = later.parse.text(updateScheduleTimeConfig).schedules[0].t[0];
+    this.updateScheduleDate = new Date(updateScheduleTime * 1000);
   }
 
   getMyArmy() {
@@ -30,6 +35,23 @@ class EarthBattle extends BlazeComponent {
       return Game.EarthUnits.get().userArmy;
     }
     return {};
+  }
+
+  timeNextRound() {
+    const nextRunHours = this.updateScheduleDate.getHours();
+    const nextRunMinutes = this.updateScheduleDate.getMinutes();
+
+    const serverTime = Game.getCurrentServerTime() * 1000;
+    const currentDate = new Date(serverTime);
+
+    const nextDate = new Date(serverTime);
+    nextDate.setHours(nextRunHours);
+    nextDate.setMinutes(nextRunMinutes);
+    nextDate.setSeconds(0);
+    if (currentDate.getHours() >= nextRunHours) {
+      nextDate.setDate(currentDate.getDate() + 1);
+    }
+    return (nextDate.getTime() - serverTime) / 1000;
   }
 
   battleList() {

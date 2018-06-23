@@ -26,7 +26,7 @@ class EarthConsuls extends BlazeComponent {
     this.config = config;
 
     this.zone = zone;
-    this.generalName = this.zone.general.username;
+    this.generalName = this.zone.general ? this.zone.general.username : null;
     this.userName = Meteor.user().username;
 
     this.isLoading = new ReactiveVar(true);

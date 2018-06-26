@@ -16,6 +16,7 @@ import BattleIcon from '/imports/modules/Space/client/BattleIcon';
 import Galaxy from '/imports/modules/Space/client/Galaxy';
 import Hex from '/imports/modules/MutualSpace/lib/Hex';
 import Config from '/imports/modules/Space/client/config';
+import ConfigLib from '/imports/modules/Space/lib/config';
 
 import unitItems from '/imports/content/Unit/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
@@ -1257,17 +1258,25 @@ Template.cosmosShipInfo.events({
   'click .withdraw': function(e, t) {
     var id = $(e.currentTarget).attr("data-id");
     if (id) {
-      Meteor.call(
-        'space.withdrawFleet',
-        id,
-        function(err) {
-          if (err) {
-            Notifications.error('Не удалось отозвать флот', err.error);
-          } else {
-            Notifications.success('Флот отозван');
-          }
+      Game.showAcceptWindow(`Экстренный отзыв флота обойдётся в ${ConfigLib.WITHDRAW_PRICE} ГГК.`, () => {
+        var userResources = Game.Resources.getValue();
+        if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
+          Notifications.error('Недостаточно ГГК');
+          return;
         }
-      );
+
+        Meteor.call(
+          'space.withdrawFleet',
+          id,
+          function(err) {
+            if (err) {
+              Notifications.error('Не удалось отозвать флот', err.error);
+            } else {
+              Notifications.success('Флот отозван');
+            }
+          }
+        );
+      });
     }
   }
 });

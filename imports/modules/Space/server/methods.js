@@ -9,6 +9,7 @@ import Utils from '../lib/utils';
 import FlightEvents from './flightEvents';
 import TriggerAttackEvents from './triggerAttackEvents';
 import Config from './config';
+import ConfigLib from '../lib/config';
 import BattleEvents from './battleEvents';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 import mutualSpaceConfig from '../../MutualSpace/lib/config';
@@ -356,6 +357,19 @@ Meteor.methods({
     if (Game.dateToTime(ship.after) - currentTime < WITHDRAW_TIME_MARGIN) {
       throw new Meteor.Error('Флот не успевает развернуться');
     }
+
+    const userResources = Game.Resources.getValue();
+    if (userResources.credits.amount < ConfigLib.WITHDRAW_PRICE) {
+      throw new Meteor.Error('Недостаточно ГГК');
+    }
+
+    Game.Resources.spend({
+      credits: ConfigLib.WITHDRAW_PRICE,
+    });
+
+    Game.Payment.Expense.log(ConfigLib.WITHDRAW_PRICE, 'withdrawFleet', {
+      jobId: shipId,
+    });
 
     const shipJob = Space.jobs.getJob(shipId);
 

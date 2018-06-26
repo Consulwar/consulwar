@@ -1153,6 +1153,7 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
 
   info.name = null;
   info.id = spaceEvent._id;
+  info.canWithdraw = false;
 
   if (spaceEvent.data.isHumans) {
     info.isHumans = true;
@@ -1160,6 +1161,8 @@ Game.Cosmos.getShipInfo = function(spaceEvent) {
     info.status = 'Флот Консула';
     if (Meteor.user().username !== spaceEvent.data.username) {
       info.owner = spaceEvent.data.username;
+    } else if (!spaceEvent.data.isBack) {
+      info.canWithdraw = true;
     }
   } else {
     info.isHumans = false;
@@ -1248,6 +1251,23 @@ Template.cosmosShipInfo.events({
     var id = $(e.currentTarget).attr("data-id");
     if (id) {
       Game.Cosmos.showAttackMenu(id);
+    }
+  },
+
+  'click .withdraw': function(e, t) {
+    var id = $(e.currentTarget).attr("data-id");
+    if (id) {
+      Meteor.call(
+        'space.withdrawFleet',
+        id,
+        function(err) {
+          if (err) {
+            Notifications.error('Не удалось отозвать флот', err.error);
+          } else {
+            Notifications.success('Флот отозван');
+          }
+        }
+      );
     }
   }
 });

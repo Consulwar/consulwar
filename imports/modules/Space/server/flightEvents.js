@@ -5,7 +5,7 @@ import Config from './config';
 import Hex from '../../MutualSpace/lib/Hex';
 import Utils from '../lib/utils';
 
-const add = function(data) {
+const add = function(data, delayOverride) {
   const savedData = { ...data };
 
   if (!data.returnDestination) {
@@ -19,11 +19,11 @@ const add = function(data) {
       retries: Config.JOBS.retry.retries,
       wait: Config.JOBS.retry.wait,
     })
-    .delay(data.flyTime * 1000)
+    .delay(delayOverride !== undefined ? delayOverride : data.flyTime * 1000)
     .save();
 };
 
-const flyBack = function(data) {
+const reverseFlightData = function(data) {
   const flyBackData = {
     ...data,
     isOneway: true,
@@ -59,11 +59,16 @@ const flyBack = function(data) {
     flyBackData.engineLevel,
   );
 
-  add(flyBackData);
+  return flyBackData;
+};
+
+const flyBack = function(data) {
+  add(reverseFlightData(data));
 };
 
 export default {
   ...Lib,
   add,
   flyBack,
+  reverseFlightData,
 };

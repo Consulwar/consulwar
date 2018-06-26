@@ -537,6 +537,9 @@
       {{#if timeLeft}}
         <p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
       {{/if}}
+      {{#if and allowActions ship.canWithdraw}}
+        <button class="button-attack withdraw" data-id="{{ship.id}}" data-sound="click">Отозвать</button>
+      {{/if}}
       {{#if and allowActions ship.canSend}}
         <button class="button-attack open" data-id="{{ship.id}}" data-sound="click">Перехватить</button>
       {{/if}}

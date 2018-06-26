@@ -14,6 +14,8 @@ import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 import mutualSpaceConfig from '../../MutualSpace/lib/config';
 import Hex from '../../MutualSpace/lib/Hex';
 
+const WITHDRAW_TIME_MARGIN = 30;
+
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units) {
     const user = User.getById();
@@ -327,6 +329,41 @@ Meteor.methods({
     Game.Statistic.incrementUser(user._id, {
       'cosmos.fleets.sent': 1,
     });
+  },
+
+  'space.withdrawFleet'(shipId) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'space.withdrawFleet', user });
+
+    check(shipId, String);
+
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    const ship = FlightEvents.getOne(shipId);
+    if (!ship) {
+      throw new Meteor.Error('Корабль не существует');
+    }
+    if (!ship.data.isHumans) {
+      throw new Meteor.Error('Рептилии не подчиняются людям');
+    }
+    if (ship.data.userId !== user._id) {
+      throw new Meteor.Error('Нельзя командовать чужим флотом');
+    }
+    if (ship.data.isBack) {
+      throw new Meteor.Error('Флот уже возвращается');
+    }
+    if (Game.dateToTime(ship.after) - currentTime < WITHDRAW_TIME_MARGIN) {
+      throw new Meteor.Error('Флот не успевает развернуться');
+    }
+
+    const shipJob = Space.jobs.getJob(shipId);
+
+    if (shipJob) {
+      shipJob.cancel();
+      const backData = FlightEvents.reverseFlightData(shipJob.data);
+      FlightEvents.add(backData, (currentTime - Game.dateToTime(shipJob.doc.created)) * 1000);
+    }
   },
 
   'space.moveFromSpaceToHangar'() {

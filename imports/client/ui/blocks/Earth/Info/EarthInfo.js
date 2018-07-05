@@ -1,10 +1,10 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
+import { _ } from 'lodash';
 import Game from '/moduls/game/lib/main.game';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Meteor } from 'meteor/meteor';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import '/imports/client/ui/button/button.styl';
-import '../Army/EarthArmy';
 import '../Battle/EarthBattle';
 import '../Consuls/EarthConsuls';
 import '../General/EarthGeneral';
@@ -69,6 +69,22 @@ class EarthInfo extends BlazeComponent {
     return zone.enemyArmy && zone.userArmy;
   }
 
+  formatUnits(source) {
+    // format units to space style
+    // source = { id: count, ... }
+    return _.map(source, (count, id) => ({ id, count }));
+  }
+
+  getUnits() {
+    let source = null;
+    if (this.isEnemy()) {
+      source = this.zone.enemyArmy;
+    } else {
+      source = this.zone.userArmy;
+    }
+    return this.formatUnits(source);
+  }
+
   isNotFightingNow() {
     const userArmyZone = Game.EarthZones.getByName(this.userZone.zoneName);
 
@@ -77,9 +93,9 @@ class EarthInfo extends BlazeComponent {
 
   getUserArmy() {
     if (this.isUserArmyLocation()) {
-      return this.userZone.userArmy;
+      return this.formatUnits(this.userZone.userArmy);
     }
-    return {};
+    return null;
   }
 
   zoneBonus(zone = this.zone) {

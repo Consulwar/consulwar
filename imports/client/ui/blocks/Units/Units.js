@@ -1,49 +1,94 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
+import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import armyHumans from '/imports/content/Unit/Human/Ground/client';
 import armyReptiles from '/imports/content/Unit/Reptile/Ground/client';
+import fleetHumans from '/imports/content/Unit/Human/Space/client';
+import fleetReptiles from '/imports/content/Unit/Reptile/Space/client';
 import UnitPopup from '/imports/client/ui/blocks/Unit/Popup/UnitPopup';
-import './EarthArmy.html';
-import './EarthArmy.styl';
+import './Units.html';
+import './Units.styl';
 
-class EarthArmy extends BlazeComponent {
+class Units extends BlazeComponent {
   template() {
-    return 'EarthArmy';
+    return 'Units';
   }
 
   constructor({
     hash: {
-      army = {},
+      isReptiles,
+      isSpace = false,
+      units = {},
       userArmy = {},
     },
   }) {
     super();
 
-    this.army = army;
+    this.units = units;
     this.userArmy = userArmy;
+    this.isSpace = isSpace;
+    this.isReptiles = isReptiles;
   }
 
-  getUnits(id) {
-    if (_.includes(_.keys(armyHumans), id)) {
-      return armyHumans;
+  isTextUnits() {
+    // is user setting "text units on map" turned on
+    const options = Meteor.user().settings && Meteor.user().settings.options;
+
+    return options && options.textUnits;
+  }
+
+  getUnits() {
+    if (this.isSpace) {
+      if (this.isReptiles) {
+        return fleetReptiles;
+      }
+      return fleetHumans;
     }
-    return armyReptiles;
+    if (this.isReptiles) {
+      return armyReptiles;
+    }
+    return armyHumans;
   }
 
   getArmy() {
-    const armyContent = this.getUnits(_.keys(this.army)[0]);
+    const armyContent = this.getUnits();
+
+    // format units to { id: { count, countId } }
+    const units = {};
+    _.forEach(this.units, (unit) => {
+      units[unit.id] = {
+        count: unit.count,
+        countId: unit.countId,
+      };
+    });
+    // format userArmy to { id:count }
+    const userArmy = {};
+    if (this.userArmy) {
+      _.forEach(this.userArmy, (unit) => {
+        userArmy[unit.id] = unit.count;
+      });
+    }
 
     return _.map(armyContent, (item) => {
       const { id, title, icon } = item;
-      const count = this.army[id] || 0;
-      const myArmy = this.userArmy[id] || 0;
+      const url = item.url ? item.url() : null;
+      const count = (units[id] && units[id].count) || 0;
+      const countId = (units[id] && units[id].countId) || 0;
+      const myArmy = userArmy[id] || 0;
+
+      if (this.isTextUnits() && !count) {
+        return false;
+      }
+
       return {
         id,
         title,
         icon,
         count,
+        countId,
         myArmy,
+        url,
       };
     });
   }
@@ -52,17 +97,21 @@ class EarthArmy extends BlazeComponent {
     event.stopPropagation();
 
     const unit = this.getUnits(unitId)[unitId];
-    Game.Popup.show({
-      template: (new UnitPopup({
-        hash: {
-          unit,
-        },
-      })).renderComponent(),
-      hideClose: true,
-    });
+    if (unit.type === 'reptileUnit') {
+      event.preventDefault();
+
+      Game.Popup.show({
+        template: (new UnitPopup({
+          hash: {
+            unit,
+          },
+        })).renderComponent(),
+        hideClose: true,
+      });
+    }
   }
 }
 
-EarthArmy.register('EarthArmy');
+Units.register('Units');
 
-export default EarthArmy;
+export default Units;

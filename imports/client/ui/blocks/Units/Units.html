@@ -1,32 +1,47 @@
-<template name="EarthArmy">
-  <div class="cw--EarthArmy">
-    {{#each unit in getArmy}}
-      <div
-        onClick={{showUnit unit.id}}
-        class="
-          cw--EarthArmy__unit
-          {{#unless unit.count}}
-            cw--EarthArmy__unit_passive
-          {{/unless}}
-        "
-        data-sound="hover, click"
-      >
-        <img
-          class="cw--EarthArmy__unitIcon"
-          src={{unit.icon}}
-          alt={{unit.title}}
-        />
-        {{#if unit.count}}
-          <div class="cw--EarthArmy__unitCount">
-            {{formatNumberWithISO unit.count 3}}
-            {{#if unit.myArmy}}
-              <span class="cw--color_credit">
-                ({{formatNumberWithISO unit.myArmy 3}})
+<template name="Units">
+  {{#if units}}
+    <div class="cw--Units">
+      {{#each unit in getArmy}}
+        {{#if unit}}
+          <a
+            href={{unit.url}}
+            onClick={{showUnit unit.id}}
+            class="
+              cw--Units__unit
+              {{#unless unit.count}}
+                cw--Units__unit_passive
+              {{/unless}}
+              {{#if isTextUnits}}
+                cw--Units__unit_text
+              {{/if}}
+            "
+            data-sound="hover, click"
+          >
+            {{#if isTextUnits}}
+              {{unit.title}}
+            {{else}}
+              <img
+                class="cw--Units__unitIcon"
+                src={{unit.icon}}
+                alt={{unit.title}}
+              />
+            {{/if}}
+            {{#if unit.count}}
+              <span
+                class="cw--Units__unitCount"
+                data-tooltip={{battleCountNumber unit.countId}}
+              >
+                {{formatNumberWithISO unit.count 3}}
+                {{#if unit.myArmy}}
+                  <span class="cw--color_credit">
+                    ({{formatNumberWithISO unit.myArmy 3}})
+                  </span>
+                {{/if}}
               </span>
             {{/if}}
-          </div>
+          </a>
         {{/if}}
-      </div>
-    {{/each}}
-  </div>
+      {{/each}}
+    </div>
+  {{/if}}
 </template>

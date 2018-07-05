@@ -67,16 +67,11 @@
         }}
       {{else}}
         {{!-- not battle - show current army --}}
-        {{#if zone.userArmy}}
-          {{> EarthArmy args
-            army=zone.userArmy
-            userArmy=getUserArmy
-          }}
-        {{else if zone.enemyArmy}}
-          {{> EarthArmy args
-            army=zone.enemyArmy
-          }}
-        {{/if}}
+        {{> Units args
+          isReptiles=isEnemy
+          userArmy=getUserArmy
+          units=getUnits
+        }}
       {{/if}}
 
       {{#if and isUserArmyLocation (not isUserGeneral)}}

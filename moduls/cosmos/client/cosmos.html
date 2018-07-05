@@ -80,7 +80,11 @@
         <h2>Свободная планета</h2>
       {{/if}}{{/if}}
 
-      {{> cosmosUnitsBlock units=planet.units isReptiles=planet.mission}}
+      {{> Units args
+        isSpace=true
+        units=planet.units
+        isReptiles=planet.mission
+      }}
 
       <div style="display: flex; flex-wrap: wrap">
         {{#if and allowActions planet.canSend}}
@@ -132,45 +136,6 @@
   </div>
 </template>
 
-<template name="cosmosUnitsBlock">
-  {{#if units}}
-    {{#if options.textUnits}}
-      <ul class="armyText {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
-        {{#each units}}
-          {{#if this.count}}
-            <li>
-              {{this.unit.title}} 
-              <span 
-                data-tooltip="{{battleCountNumber this.countId}}"
-                data-tooltip-direction="e">
-                {{formatNumberWithISO this.count}}
-              </span>
-            </li>
-          {{/if}}
-        {{/each}}
-      </ul>
-    {{else}}
-      <div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
-        {{#each units}}
-          <a
-            onClick={{showUnit this.unit}}
-            class="{{#unless this.count}}disabled{{/unless}}"
-            style="background-image: url({{this.unit.icon}}); cursor: pointer"
-            href="{{this.unit.url}}"
-          >
-            <div
-              class="count"
-              data-tooltip="{{battleCountNumber this.countId}}"
-              data-tooltip-direction="e"
-            >
-              {{#if this.count}}{{formatNumberWithISO this.count}}{{/if}}
-            </div>
-          </a>
-        {{/each}}
-      </div>
-    {{/if}}
-  {{/if}}
-</template>
 
 <template name="cosmosAttackMenu">
   <div class="attack-menu">
@@ -532,7 +497,11 @@
         {{/if}}
       </div>
 
-      {{> cosmosUnitsBlock units=ship.units isReptiles=ship.mission}}
+      {{> Units args
+        isSpace=true
+        units=ship.units
+        isReptiles=ship.mission
+      }}
 
       {{#if timeLeft}}
         <p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>

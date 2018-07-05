@@ -69,6 +69,9 @@ class EarthOrder extends BlazeComponent {
   }
 
   getCommand() {
+    if (!this.zone.general) {
+      return null;
+    }
     const { command, commandTarget } = this.zone.general;
     if (command && command !== Command.NONE) {
       if (command === Command.MOVE) {

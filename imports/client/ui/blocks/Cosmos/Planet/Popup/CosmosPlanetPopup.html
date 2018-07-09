@@ -1,0 +1,177 @@
+<template name="CosmosPlanetPopup">
+  <div 
+    class="
+      cw--CosmosPlanetPopup
+      {{#if isTooltip}}
+        cw--CosmosPlanetPopup_tooltip
+      {{/if}}
+    " 
+    style="
+      left: {{position.x}}px;
+      top: {{position.y}}px;
+    "
+  >
+
+    <div
+      class="
+        cw--CosmosPlanetPopup__header
+        {{#if planetInfo.isHumans}}
+          cw--CosmosPlanetPopup__header_humans
+        {{else if planetInfo.mission}}
+          cw--CosmosPlanetPopup__header_reptiles
+        {{/if}}
+      "
+    >
+      {{#if allowEdit}}
+        <span
+          onClick={{edit}}
+          class="cw--CosmosPlanetPopup__edit"
+        ></span>
+      {{/if}}
+      {{#if planetInfo.name}}
+        {{planetInfo.name}} ({{planetInfo.type}})
+      {{else}}
+        {{planetInfo.mission.name}}
+        {{planetInfo.mission.level}} уровня
+      {{/if}}
+    </div>
+    <div
+      class="cw--CosmosPlanetPopup__drop"
+    >
+      {{#each item in getDropItems}}
+        <a
+          href={{item.url}}
+          class="cw--CosmosPlanetPopup__dropItem"
+          title={{item.name}}
+          style="background-image:url({{item.icon}})"
+        >
+          <span class="cw--CosmosPlanetPopup__dropChance">
+            {{item.chance}}%
+          </span>
+        </a>
+      {{/each}}
+      {{#if planetInfo.mission.reward}}
+        <div class="resources cost">
+          {{#each reward (arrayify planetInfo.mission.reward)}}
+            <div class="{{reward.key}}">
+              {{formatNumberWithISO reward.value}}
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{#if and planetInfo.isHumans planetInfo.timeArtefacts}}
+      <div class="cw--CosmosPlanetPopup__collectTimer">
+        Сбор через:
+        <time class="cw--CosmosPlanetPopup__collectTime">
+          {{formatSeconds (getTimeNextDrop planetInfo.timeArtefacts)}}
+        </time>
+      </div>
+    {{/if}}
+
+    {{#if drop.cards}}
+      <div class="cw--CosmosPlanetPopup__dropCards">
+      {{#each drop.cards}}
+        <div class="cw--CosmosPlanetPopup__dropCard">
+          {{this.name}} {{this.chance}}%
+        </div>
+      {{/each}}
+      </div>
+    {{/if}}
+
+    <div class="cw--CosmosPlanetPopup__type">
+      {{#if planetInfo.isHumans}}
+        <div
+          class="
+            humans
+            cw--CosmosPlanetPopup__typeTitle
+            cw--CosmosPlanetPopup__typeTitle_humans
+          "
+        >
+          {{planetInfo.title}}
+          {{#if planetInfo.owner}}
+            <a href="{{pathFor 'statistics' hash=planetInfo.owner}}">{{planetInfo.owner}}</a>
+          {{/if}}
+        </div>
+        
+        {{#if planetInfo.fleetOwner}}
+          <div class="cw--CosmosPlanetPopup__fleetOwner">
+            Флот
+            <a href="{{pathFor 'statistics' hash=planetInfo.fleetOwner}}">
+              {{planetInfo.fleetOwner}}
+            </a>
+          </div>
+        {{/if}}
+      {{else if planetInfo.mission}}
+        <div
+          class="
+            reptiles
+            cw--CosmosPlanetPopup__mission
+          "
+        >
+          {{planetInfo.mission.name}}
+          {{planetInfo.mission.level}}
+          уровня
+          <span class="unitsPower">
+            {{formatNumberWithISO getReptilesFleetPower}}
+          </span>
+        </div>
+      {{else}}
+        <div>Свободная планета</div>
+      {{/if}}
+    </div>
+    
+
+    {{> Units args
+      isSpace=true
+      units=planetInfo.units
+      isReptiles=planetInfo.mission
+    }}
+
+    <div class="cw--CosmosPlanetPopup__actions">
+      {{#if and allowActions planetInfo.canSend}}
+        <button
+          onClick={{sendFleet}}
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            cw--CosmosPlanetPopup__actionAttack
+          "
+        >
+          Отправить
+        </button>
+      {{/if}}
+      {{#if allowActions}}
+        {{#if canMine}}
+          <button
+            onClick={{mine}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_blue
+              cw--CosmosPlanetPopup__actionMine
+            "
+          >
+            Захватить
+          </button>
+        {{else}}
+          {{#if canUnMine}}
+            <button
+              onClick={{unMine}}
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_blue
+                cw--CosmosPlanetPopup__actionMine
+              "
+            >
+              Освободить
+            </button>
+          {{/if}}
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</template>

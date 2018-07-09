@@ -1,0 +1,82 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--CosmosPlanetPopup
+  display block
+  width 360px
+  padding 0 15px
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  background-color $cw--color_tableOdd
+
+  &_tooltip
+    width 320px
+    padding 0
+    background none
+
+  &__header
+    display block
+    height 45px
+    padding 10px 0
+
+    font-size $cw--fontSize_l
+    font-weight bold
+
+    &_humans
+      color $cw--color_metal
+
+    &_reptiles
+      color $cw--color_honor
+
+  &_tooltip &__header
+    padding 0
+    height auto
+
+  &__content
+    display block
+
+  &__edit
+    display inline-block
+    width 21px
+    height 21px
+    vertical-align middle
+    background-image url(/img/game/edit.png)
+    background-repeat no-repeat
+    background-color transparent
+    border none
+    
+    &:hover
+      background-image url(/img/game/edit_a.png)
+
+  &__drop
+    display flex
+
+  &__dropItem
+    position relative
+    width 70px
+    height @width
+    margin-right 14px
+
+    background-repeat no-repeat
+    background-color $cw--color_tableOdd
+    background-size 100%
+    background-position center
+
+  &__dropChance
+    position absolute
+    bottom 0px
+    left 0px
+    width 100%
+
+    font-size $cw--fontSize_s
+    text-align center
+    text-decoration none
+
+    color $cw--color_nearWhite
+    background-color alpha($cw--color_black, .5)
+
+  &__actions
+    display flex
+    flex-wrap wrap
+    margin-top 15px

@@ -26,6 +26,7 @@ class CosmosPlanetPopup extends BlazeComponent {
     this.isTooltip = isTooltip;
     this.planetInfo = Game.Cosmos.getPlanetInfo(this.planet);
     this.drop = drop;
+    console.log(this.planetInfo);
   }
 
   getDropItems() {

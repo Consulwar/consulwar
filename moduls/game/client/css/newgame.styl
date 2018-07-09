@@ -772,80 +772,6 @@ body.game
       height 100%
       background-size 100%
       background-repeat no-repeat
-    
-
-
-  .planet:not(.overlay):not(.content):not(li)
-    display inline-flex
-    vertical-align middle
-    width 80px
-    flex-direction column
-    align-items center
-    justify-content space-between
-    
-    text-decoration none
-    
-    h2
-      height 20px
-      font-size 18px
-    
-    .map-planet-marker
-      flex-shrink 0
-
-    .map-planet-border
-      position relative
-      border-radius 50%
-      border 3px solid transparent
-      border-color $cw--color_white
-
-    .fleet-marker
-      position absolute
-      left 100%
-      top -5px
-      width 11px
-      height @width
-      background-repeat no-repeat
-      background-position center
-      background-size 100%
-      z-index 2
-
-    .battle-marker
-      position absolute
-      left -12px
-      top -5px
-      width 13px
-      height @width
-      background-repeat no-repeat
-      background-position center
-      background-size 100%
-      background-image url(/img/game/battle/battleIcon.svg)
-      z-index 2
-
-    &.fleet-reptile .fleet-marker
-      background-image url(/img/game/fleet_reptiles.svg)
-    &.fleet-human .fleet-marker
-      background-image url(/img/game/fleet_consul.svg)
-    &.fleet-user .fleet-marker
-      background-image url(/img/game/fleet_user.svg)
-    &.fleet-ally .fleet-marker
-      background-image url(/img/game/fleet_alians.svg)
-
-    &.colony-reptile
-      color $cw--color_honor
-      .map-planet-border
-        border-color $cw--color_honor
-    &.colony-human
-      color $cw--color_metal
-      .map-planet-border
-        border-color $cw--color_metal
-    &.colony-user
-      color $cw--color_credit
-      .map-planet-border
-        border-color $cw--color_credit
-    &.colony-ally
-      color $cw--color_crystal
-      .map-planet-border
-        border-color $cw--color_crystal
 
 
 .content.wallet,
@@ -1165,7 +1091,7 @@ body.game
 
 
   &_compact
-    .map-planet-marker
+    .cw--CosmosPlanet__planet
       display none
 
 

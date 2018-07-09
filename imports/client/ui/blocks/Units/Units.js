@@ -19,8 +19,9 @@ class Units extends BlazeComponent {
     hash: {
       isReptiles,
       isSpace = false,
-      units = {},
-      userArmy = {},
+      units = [],
+      userArmy = [],
+      className,
     },
   }) {
     super();
@@ -29,6 +30,7 @@ class Units extends BlazeComponent {
     this.userArmy = userArmy;
     this.isSpace = isSpace;
     this.isReptiles = isReptiles;
+    this.className = className;
   }
 
   isTextUnits() {
@@ -38,7 +40,7 @@ class Units extends BlazeComponent {
     return options && options.textUnits;
   }
 
-  getUnits() {
+  getSourceUnits() {
     if (this.isSpace) {
       if (this.isReptiles) {
         return fleetReptiles;
@@ -52,7 +54,7 @@ class Units extends BlazeComponent {
   }
 
   getArmy() {
-    const armyContent = this.getUnits();
+    const armyContent = this.getSourceUnits();
 
     // format units to { id: { count, countId } }
     const units = {};
@@ -62,6 +64,7 @@ class Units extends BlazeComponent {
         countId: unit.countId,
       };
     });
+
     // format userArmy to { id:count }
     const userArmy = {};
     if (this.userArmy) {
@@ -96,7 +99,7 @@ class Units extends BlazeComponent {
   showUnit(event, unitId) {
     event.stopPropagation();
 
-    const unit = this.getUnits(unitId)[unitId];
+    const unit = this.getSourceUnits(unitId)[unitId];
     if (unit.type === 'reptileUnit') {
       event.preventDefault();
 

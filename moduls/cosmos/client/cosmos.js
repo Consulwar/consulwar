@@ -22,11 +22,15 @@ import unitItems from '/imports/content/Unit/client';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
 
-import UnitPopup from '/imports/client/ui/blocks/Unit/Popup/UnitPopup';
+import '/imports/client/ui/blocks/Units/Units';
 
 import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
+
+// import CosmosHistory from '/imports/client/ui/blocks/Cosmos/History/CosmosHistory';
+
+import '/imports/client/ui/blocks/Cosmos/Planet/CosmosPlanet';
 
 const {
   calcDistance,
@@ -162,6 +166,10 @@ var historyCountPerPage = 20;
 
 Game.Cosmos.showHistory = function() {
   Router.current().render('cosmosHistory', { to: 'content' });
+  // Game.Popup.show({
+  //   template: CosmosHistory.renderComponent(),
+  //   hideClose: true,
+  // });
 };
 
 var loadHistoryBattle = function(itemId) {
@@ -502,100 +510,6 @@ Template.cosmosFleetsInfo_table.events({
   }
 });
 
-Template.cosmos_planet_item.helpers({
-  owner: function() {
-    return (this.planet.mission
-        ? 'reptiles'
-        : this.planet.armyId || this.planet.isHome
-          ? 'humans'
-          : null
-    );
-  },
-
-  statusColony() {
-    let planet = this.planet;
-    if (planet.status === Game.Planets.STATUS.REPTILES) {
-      return 'colony-reptile';
-    }
-  
-    if (planet.status === Game.Planets.STATUS.HUMANS) {
-      if (planet.minerUsername == Meteor.user().username) {
-        return 'colony-user';
-      } else {
-        const alliance = Game.Alliance.Collection.findOne();
-        if (alliance && alliance.participants.indexOf(planet.minerUsername) >= 0) {
-          return 'colony-ally';
-        }
-      }
-      return 'colony-human';
-    }
-  },
-
-  statusFleet() {
-    let planet = this.planet;
-    if (planet.mission) {
-      return 'fleet-reptile';
-    }
-  
-    if (planet.armyUsername != null) {
-      if (planet.armyUsername == Meteor.user().username) {
-        return 'fleet-user';
-      } else {
-        const alliance = Game.Alliance.Collection.findOne();
-        if (alliance && alliance.participants.indexOf(planet.armyUsername) >= 0) {
-          return 'fleet-ally';
-        }
-      }
-      return 'fleet-human';
-    }
-  },
-
-  battleExists() {
-    return this.planet._id && Space.collection.findOne({
-      type: BattleEvents.EVENT_TYPE,
-      status: Space.filterActive,
-      'data.planetId': this.planet._id,
-    });
-  },
-
-  getTimeNextDrop: function(timeCollected) {
-    var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
-    return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
-  }
-});
-
-Template.cosmos_planet_item.events({
-  'mouseover .planet': function (e, t) {
-    let tooltip = '';
-
-    if (this.isDisabled) {
-      tooltip = 'Недоступна для выбора';
-    } else if (this.planet.isEmpty) {
-      if (this.isSent) {
-        tooltip = 'Флот в полёте';
-      } else {
-        tooltip = 'Свободная колония';
-      }
-    } else if (this.planet.notAvaliable) {
-      if (this.planet.canBuy) {
-        tooltip = 'Можно купить';
-      } else {
-        tooltip = 'Доступна с повышением ранга';
-      }
-    } else {
-      tooltip = Blaze.toHTMLWithData(
-        Template.cosmosPlanetPopup, 
-        {
-          drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
-          planet: this.planet
-        }
-      )
-    }
-
-    $(e.currentTarget).attr('data-tooltip', tooltip);
-  }
-});
-
 Template.cosmosFleetsInfo.helpers({
   userFleets: function () {
     var result = [];
@@ -818,8 +732,14 @@ Game.Cosmos.getPlanetInfo = function(planet) {
   return info;
 };
 
+Game.Cosmos.getTimeNextDrop = (timeCollected) => {
+  const currentTime = Game.getCurrentServerTime();
+  const collectPeriod = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+  const passed = (currentTime - timeCollected) % collectPeriod;
+  return collectPeriod - passed;
+};
 
-var reptilesFleetPower = function(units) {
+Game.Cosmos.reptilesFleetPower = (units) => {
   return Game.Unit.calculateUnitsPower(_.reduce(units, function(units, unit) {
     let count = (_.isString( unit.count )
       ? game.Battle.countNumber[unit.countId].max
@@ -862,7 +782,8 @@ Template.cosmosPlanetPopup.helpers({
     return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
   },
   reptilesFleetPower: function() {
-    return reptilesFleetPower(Game.Cosmos.getPlanetInfo(this.planet).units);
+    const { units } = Game.Cosmos.getPlanetInfo(this.planet);
+    return Game.Cosmos.reptilesFleetPower(units);
   },
   canMine() {
     const user = Meteor.user();
@@ -947,24 +868,6 @@ Template.cosmosPlanetPopup.events({
     });
   }
 });
-
-
-Template.cosmosUnitsBlock.helpers({
-  showUnit(event, unit) {
-    if (unit.type === 'reptileUnit') {
-      event.preventDefault();
-      Game.Popup.show({
-        template: (new UnitPopup({
-          hash: {
-            unit,
-          },
-        })).renderComponent(),
-        hideClose: true,
-      });
-    }
-  }
-});
-
 
 // ----------------------------------------------------------------------------
 // Planets popup
@@ -1240,7 +1143,7 @@ Template.cosmosShipInfo.helpers({
     return (!this.spaceEvent) ? 0 : Game.dateToTime(this.spaceEvent.after) - Session.get('serverTime');
   },
   reptilesFleetPower: function() {
-    return reptilesFleetPower(this.ship.units);
+    return Game.Cosmos.reptilesFleetPower(this.ship.units);
   }
 });
 

@@ -1,0 +1,143 @@
+import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
+import { $ } from 'meteor/jquery';
+import { Meteor } from 'meteor/meteor';
+import Game from '/moduls/game/lib/main.game';
+import Space from '/imports/modules/Space/client/space';
+import BattleEvents from '/imports/modules/Space/client/battleEvents';
+import CosmosPlanetPopup from '/imports/client/ui/blocks/Cosmos/Planet/Popup/CosmosPlanetPopup';
+import './CosmosPlanet.html';
+import './CosmosPlanet.styl';
+
+class CosmosPlanet extends BlazeComponent {
+  template() {
+    return 'CosmosPlanet';
+  }
+
+  constructor({
+    hash: {
+      name,
+      isDisabled,
+      location,
+      planet,
+      isSelected,
+      isTopTime,
+      className,
+    },
+  }) {
+    super();
+
+    this.name = name;
+    this.isSelected = isSelected;
+    this.isTopTime = isTopTime;
+    this.isDisabled = isDisabled;
+    this.location = location;
+    this.planet = planet;
+    this.className = className;
+  }
+
+  statusColony(planet = this.planet) {
+    let status = null;
+    if (planet.status === Game.Planets.STATUS.REPTILES) {
+      status = 'reptile';
+    }
+
+    if (planet.status === Game.Planets.STATUS.HUMANS) {
+      status = 'human';
+
+      if (planet.minerUsername === Meteor.user().username) {
+        status = 'user';
+      } else {
+        const alliance = Game.Alliance.Collection.findOne();
+        if (
+          alliance
+          && alliance.participants.indexOf(planet.minerUsername) >= 0
+        ) {
+          status = 'ally';
+        }
+      }
+    }
+    return status;
+  }
+
+  statusFleet(planet = this.planet) {
+    let status = null;
+    if (planet.mission) {
+      status = 'reptile';
+    }
+
+    if (planet.armyUsername) {
+      status = 'human';
+
+      if (planet.armyUsername === Meteor.user().username) {
+        status = 'user';
+      } else {
+        const alliance = Game.Alliance.Collection.findOne();
+        if (
+          alliance
+          && alliance.participants.indexOf(planet.armyUsername) >= 0
+        ) {
+          status = 'ally';
+        }
+      }
+    }
+    return status;
+  }
+
+  battleExists() {
+    return this.planet._id && Space.collection.findOne({
+      type: BattleEvents.EVENT_TYPE,
+      status: Space.filterActive,
+      'data.planetId': this.planet._id,
+    });
+  }
+
+  getTimeNextDrop(timeCollected) {
+    const currentTime = Game.getCurrentServerTime();
+    const collectPeriod = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
+    const passed = (currentTime - timeCollected) % collectPeriod;
+    return collectPeriod - passed;
+  }
+
+  showTooltip({ currentTarget }) {
+    let tooltip = '';
+
+    if (this.planet.isDisabled) {
+      tooltip = 'Недоступна для выбора';
+    } else if (this.planet.isEmpty) {
+      if (this.isSent) {
+        tooltip = 'Флот в полёте';
+      } else {
+        tooltip = 'Свободная колония';
+      }
+    } else if (this.planet.notAvaliable) {
+      if (this.planet.canBuy) {
+        tooltip = 'Можно купить';
+      } else {
+        tooltip = 'Доступна с повышением ранга';
+      }
+    } else {
+      tooltip = new CosmosPlanetPopup({
+        hash: {
+          drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
+          planet: this.planet,
+          isTooltip: true,
+        },
+      }).renderComponentToHTML();
+      // Blaze.toHTMLWithData(
+      //   Template.cosmosPlanetPopup,
+      //   {
+      //     drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
+      //     planet: this.planet,
+      //   },
+      // );
+    }
+    $(currentTarget).attr({
+      'data-tooltip': tooltip,
+      'data-tooltip-direction': 'e',
+    });
+  }
+}
+
+CosmosPlanet.register('CosmosPlanet');
+
+export default CosmosPlanet;

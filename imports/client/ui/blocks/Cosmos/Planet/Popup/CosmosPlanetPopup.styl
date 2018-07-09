@@ -30,7 +30,7 @@
       color $cw--color_honor
 
   &_tooltip &__header
-    padding 0
+    padding-top 0
     height auto
 
   &__content
@@ -51,6 +51,7 @@
 
   &__drop
     display flex
+    margin 5px 0
 
   &__dropItem
     position relative
@@ -75,6 +76,35 @@
 
     color $cw--color_nearWhite
     background-color alpha($cw--color_black, .5)
+
+
+  &__info
+    margin 10px 0
+
+  &__typeTitle
+    font-weight bold
+    
+    &_humans
+      color $cw--color_credit
+
+  &__mission
+    font-weight bold
+    color $cw--color_honor
+
+  &__unitsPower
+    display inline-block
+    height 25px
+    padding-left 32px
+    margin-left 15px
+    vertical-align middle
+
+    line-height 25px
+    color $cw--color_human
+
+    background-image url(/img/game/buff.svg)
+    background-repeat no-repeat
+    background-position left center
+    background-size 25px
 
   &__actions
     display flex

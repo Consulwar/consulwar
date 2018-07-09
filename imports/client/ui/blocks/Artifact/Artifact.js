@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { _ } from 'lodash';
 import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/blocks/Cosmos/Planet/CosmosPlanet';
 import './Artifact.html';
 import './Artifact.styl';
 

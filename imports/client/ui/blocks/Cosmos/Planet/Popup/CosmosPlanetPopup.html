@@ -80,11 +80,10 @@
       </div>
     {{/if}}
 
-    <div class="cw--CosmosPlanetPopup__type">
+    <div class="cw--CosmosPlanetPopup__info">
       {{#if planetInfo.isHumans}}
         <div
           class="
-            humans
             cw--CosmosPlanetPopup__typeTitle
             cw--CosmosPlanetPopup__typeTitle_humans
           "
@@ -96,29 +95,29 @@
         </div>
         
         {{#if planetInfo.fleetOwner}}
-          <div class="cw--CosmosPlanetPopup__fleetOwner">
+          <div class="cw--CosmosPlanetPopup__fleet">
             Флот
-            <a href="{{pathFor 'statistics' hash=planetInfo.fleetOwner}}">
+            <a
+              class="cw--CosmosPlanetPopup__fleetOwner"
+              href={{pathFor 'statistics' hash=planetInfo.fleetOwner}}
+            >
               {{planetInfo.fleetOwner}}
             </a>
           </div>
         {{/if}}
       {{else if planetInfo.mission}}
-        <div
-          class="
-            reptiles
-            cw--CosmosPlanetPopup__mission
-          "
-        >
+        <div class="cw--CosmosPlanetPopup__mission">
           {{planetInfo.mission.name}}
           {{planetInfo.mission.level}}
           уровня
-          <span class="unitsPower">
+          <span class="cw--CosmosPlanetPopup__unitsPower">
             {{formatNumberWithISO getReptilesFleetPower}}
           </span>
         </div>
       {{else}}
-        <div>Свободная планета</div>
+        <div class="cw--CosmosPlanetPopup__typeTitle">
+          Свободная планета
+        </div>
       {{/if}}
     </div>
     

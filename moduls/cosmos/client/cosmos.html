@@ -169,10 +169,13 @@
       <div class="planets scrollbar-inner">
         {{#each colonies}}
           {{#if this.canBuy}}
-            {{> cosmos_planet_item planet=this}}
+            {{> CosmosPlanet args
+              planet=this
+              className='cw--CosmosAttackMenu__planet'
+            }}
           {{else}}
-            {{> cosmos_planet_item 
-                planet=this 
+            {{> CosmosPlanet args
+                planet=this
                 location=(or 
                   (and 
                     (and 
@@ -185,10 +188,11 @@
                     )
                   ) 
                   ' '
-                ) 
+                )
                 isSelected=(eqandtrue activeColonyId this._id)
                 isDisabled=(eqandtrue ../id this._id)
                 isTopTime=this.isTopTime
+                className='cw--CosmosAttackMenu__planet'
             }}
           {{/if}}
         {{/each}}
@@ -290,73 +294,6 @@
   </div>
 </template>
 
-<template name="cosmos_planet_item">
-  <a 
-    class="
-      planet 
-      {{statusColony}}
-      {{statusFleet}}
-      {{#if planet.isEmpty}}empty{{/if}}
-      {{#if planet.notAvaliable}}notAvaliable{{/if}}
-      {{#if planet.canBuy}}canBuy{{/if}}
-      {{#if isDisabled}}disabled{{/if}}
-      {{#if isSelected}}selected{{/if}}
-      {{#if isTopTime}}topTime{{/if}}
-    " 
-    data-id="{{planet._id}}"
-    href="{{pathFor 'cosmos' hash=planet._id}}"
-    data-tooltip="true"
-    data-tooltip-direction="e"
-  >
-    <div class="name">
-      {{#if planet.notAvaliable}}
-        {{#if planet.canBuy}}
-          Купить
-        {{else}}
-          {{planet.requiredRank}} уровень
-        {{/if}}
-      {{else}}
-        {{#if name}}
-          {{name}}
-        {{else}}
-          {{planet.name}}
-        {{/if}}
-      {{/if}}
-    </div>
-    <div 
-      class="
-        map-planet-marker
-        {{planet.type}} 
-        map-planet-border
-        {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
-        " 
-      style="
-        width: {{multiply (sum planet.size 3) 4}}px;
-        height: {{multiply (sum planet.size 3) 4}}px;"
-    >
-      <div class="fleet-marker"></div>
-      {{#if battleExists}}<div class="battle-marker"></div>{{/if}}
-      <div class="texture"></div>
-    </div>
-    <div class="location">
-      {{#if location}}
-        {{location}}
-      {{else}}{{#if showTimeLeft}}
-        {{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}
-      {{else}}{{#if planet.canBuy}}
-        {{formatNumber planet.price}}
-      {{else}}
-        {{#if eq planet.segment 0}}
-          Центр
-        {{else}}
-          Р{{planet.hand}} 
-          С{{planet.segment}}
-        {{/if}}
-      {{/if}}{{/if}}{{/if}}
-    </div>
-  </a>
-</template>
-
 <template name="cosmosFleetsInfo_table">
   <ul
     class="
@@ -392,7 +329,7 @@
             "
           >
             {{#if this.start}}
-              {{> cosmos_planet_item planet=this.start}}
+              {{> CosmosPlanet args planet=this.start}}
             {{else}}
               <a class="cw--FleetInfoPlanets__fleetReptiles"></a>
             {{/if}}
@@ -425,7 +362,7 @@
             "
           >
             {{#if this.finish}}
-              {{> cosmos_planet_item planet=this.finish}}
+              {{> CosmosPlanet args planet=this.finish}}
             {{else}}
               <a class="cw--FleetInfoPlanets__fleetReptiles"
                 href="{{pathFor 'cosmos' hash=this.spaceEvent.info.targetId}}" 
@@ -537,7 +474,11 @@
                 
                 {{#if this.planetId}}
                   {{#let battlePlanet=getBattlePlanet}}
-                    {{> cosmos_planet_item isDisabled=battlePlanet.isDisabled location=battlePlanet.location planet=battlePlanet}}
+                    {{> CosmosPlanet args
+                      planet=battlePlanet
+                      isDisabled=battlePlanet.isDisabled
+                      location=battlePlanet.location
+                    }}
                   {{/let}}
                 {{else}}
                   Космос

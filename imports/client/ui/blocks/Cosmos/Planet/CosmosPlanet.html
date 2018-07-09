@@ -1,0 +1,80 @@
+<template name="CosmosPlanet">
+  <a 
+    class="
+      cw--CosmosPlanet
+      cw--CosmosPlanet_{{statusColony}}
+      {{#if planet.isEmpty}}
+        cw--CosmosPlanet_empty
+      {{/if}}
+      {{#if planet.notAvaliable}}
+        cw--CosmosPlanet_notAvailable
+      {{/if}}
+      {{#if planet.canBuy}}
+        cw--CosmosPlanet_canBuy
+      {{/if}}
+      {{#if isDisabled}}
+        cw--CosmosPlanet_disabled
+      {{/if}}
+      {{#if isSelected}}
+        cw--CosmosPlanet_selected
+      {{/if}}
+      {{className}}
+    "
+    href={{pathFor 'cosmos' hash=planet._id}}
+    onMouseOver={{showTooltip}}
+  >
+    <div class="cw--CosmosPlanet__name">
+      {{#if planet.notAvaliable}}
+        {{#if planet.canBuy}}
+          Купить
+        {{else}}
+          {{planet.requiredRank}} уровень
+        {{/if}}
+      {{else}}
+        {{#if name}}
+          {{name}}
+        {{else}}
+          {{planet.name}}
+        {{/if}}
+      {{/if}}
+    </div>
+    <div 
+      class="
+        cw--CosmosPlanet__planet
+        cw--CosmosPlanet__planet_{{planet.type}}
+        {{#if options.rotatePlanets}}
+          cw--CosmosPlanet__planet_animated
+        {{/if}}
+      " 
+      style="
+        width: {{multiply (sum planet.size 3) 4}}px;
+        height: {{multiply (sum planet.size 3) 4}}px;
+      "
+    >
+      <div
+        class="
+          cw--CosmosPlanet__fleet
+          cw--CosmosPlanet__fleet_{{statusFleet}}
+        "
+      ></div>
+      {{#if battleExists}}
+        <div class="cw--CosmosPlanet__battle"></div>
+      {{/if}}
+      <div class="cw--CosmosPlanet__planetTexture"></div>
+    </div>
+    <div class="cw--CosmosPlanet__location">
+      {{#if location}}
+        {{location}}
+      {{else if showTimeLeft}}
+        {{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}
+      {{else if planet.canBuy}}
+        {{formatNumber planet.price}}
+      {{else if eq planet.segment 0}}
+        Центр
+      {{else}}
+        Р{{planet.hand}} 
+        С{{planet.segment}}
+      {{/if}}
+    </div>
+  </a>
+</template>

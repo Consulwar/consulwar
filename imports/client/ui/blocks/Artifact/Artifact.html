@@ -64,8 +64,12 @@
                 Ближайшие планеты:
               </h2>
               <div class="cw--Artifact__planets">
-                {{#each nearestPlanets}}
-                  {{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
+                {{#each planet in nearestPlanets}}
+                  {{> CosmosPlanet args
+                    planet=planet
+                    name=(sum planet.chance '%')
+                    location=(sum (formatNumber planet.distance) 'ае')
+                  }}
                 {{/each}}
               </div>
               {{#if topPlanets}}
@@ -78,8 +82,12 @@
                   Лучшие планеты:
                 </h2>
                 <div class="cw--Artifact__planets">
-                  {{#each topPlanets}}
-                    {{> cosmos_planet_item planet=this name=(sum this.chance '%') location=(sum (formatNumber this.distance) 'ае')}}
+                  {{#each planet in topPlanets}}
+                    {{> CosmosPlanet args
+                      planet=planet
+                      name=(sum planet.chance '%')
+                      location=(sum (formatNumber planet.distance) 'ае')
+                    }}
                   {{/each}}
                 </div>
               {{/if}}

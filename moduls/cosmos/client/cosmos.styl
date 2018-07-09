@@ -133,89 +133,6 @@
     &:before
       content none
 
-.map-planet-marker-animated
-  .texture:before
-    animation animatePlanetBack 20s linear infinite
-
-.map-planet-marker
-  outline none
-  cursor pointer
-
-  .texture
-    position absolute
-    top 3%
-    left 3%
-    width 94%
-    height 94%
-    border-radius 50%
-    overflow hidden
-    z-index 1
-
-    &:before
-      content ""
-      position absolute
-      display block
-      top 75%
-      left -20%
-      width 400%
-      height 100%
-      background-size 50% 100%
-      background-repeat repeat-x
-      transform rotate(30deg)
-      z-index -1
-  
-    &:after
-      content ""
-      background-size 100% 100%
-      background-image url(/img/game/cosmomap/planet_shadow.png)
-      position absolute
-      display block
-      top 0
-      left 0
-      width 100%
-      height 100%
-    
-.jungle .texture:before
-  background-image url(/img/game/cosmomap/planets/jungle.jpg)
-  
-.terran .texture:before
-  background-image url(/img/game/cosmomap/planets/terran.jpg)
-  
-.ocean .texture:before
-  background-image url(/img/game/cosmomap/planets/ocean.jpg)
-  
-.arid .texture:before
-  background-image url(/img/game/cosmomap/planets/arid.jpg)
-  
-.tundra .texture:before
-  background-image url(/img/game/cosmomap/planets/tundra.jpg)
-  
-.desert .texture:before
-  background-image url(/img/game/cosmomap/planets/desert.jpg)
-  
-.arctic .texture:before
-  background-image url(/img/game/cosmomap/planets/arctic.jpg)
-  
-.lava .texture:before
-  background-image url(/img/game/cosmomap/planets/lava.jpg)
-  
-.barren .texture:before
-  background-image url(/img/game/cosmomap/planets/barren.jpg)
-  
-.asteroids .texture:before
-  background-image url(/img/game/cosmomap/planets/asteroids.jpg)
-  
-.methane .texture:before
-  background-image url(/img/game/cosmomap/planets/methane.jpg)
-  
-.hydrogen .texture:before
-  background-image url(/img/game/cosmomap/planets/hydrogen.jpg)
-  
-.helium .texture:before
-  background-image url(/img/game/cosmomap/planets/helium.jpg)
-  
-
-
 .map-control-home
   z-index 2
   cursor pointer
@@ -391,51 +308,32 @@
     color #91b935
 
   .planets
-    display block
-    overflow auto
-    height 176px
+    display flex
     flex-wrap wrap
     width 100%
-    color #e8e8e8
+    height 176px
+    overflow auto
     font-size 12px
+    color #e8e8e8
     
     a.planet
-      width 60px
-      height 70px
-      margin 9px auto
-      
       &.empty
         -webkit-filter grayscale(1)
         filter grayscale(1)
-          
+
       &.notAvaliable
         -webkit-filter grayscale(1) brightness(0.5)
         filter grayscale(1) brightness(0.5)
-          
-      .name,
-      .location
-        min-height 14px
-      
-      &.notAvaliable
-        .name,
-        .location
-          visibility hidden
 
+      &.notAvaliable
         &:hover
           -webkit-filter none
           filter none
           color $color-ggk
-          
-          .name,
-          .location
-            visibility visible
-      
+
       &.disabled
         -webkit-filter grayscale(0.5) brightness(0.3)
         filter grayscale(0.5) brightness(0.3)
-        
-      &.selected
-        background-color: #fff2;
       
     .home
       color $color-ggk
@@ -827,3 +725,6 @@
       background-position top center
       text-align center
       vertical-align top
+
+.cw--CosmosAttackMenu__planet
+  width 60px

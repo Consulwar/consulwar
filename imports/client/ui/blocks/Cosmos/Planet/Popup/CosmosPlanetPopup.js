@@ -16,17 +16,17 @@ class CosmosPlanetPopup extends BlazeComponent {
     hash: {
       planet,
       drop,
-      isTooltip = false,
       allowActions,
       allowEdit,
       position,
+      isMapView = false,
     },
   }) {
     super();
 
     this.planet = planet;
-    this.planetId = planet.id;
-    this.isTooltip = isTooltip;
+    this.planetId = planet._id;
+    this.isMapView = isMapView;
     this.planetInfo = Game.Cosmos.getPlanetInfo(this.planet);
     this.drop = drop;
     this.position = position;
@@ -72,13 +72,15 @@ class CosmosPlanetPopup extends BlazeComponent {
     );
   }
 
-  sendFleet(planetId = this.planetId) {
+  sendFleet(event, planetId = this.planetId) {
+    event.preventDefault();
     if (planetId) {
       Game.Cosmos.showAttackMenu(planetId);
     }
   }
 
-  mine(planetId = this.planetId) {
+  mine(event, planetId = this.planetId) {
+    event.stopPropagation();
     if (planetId) {
       Meteor.call(
         'planet.startMining',
@@ -92,7 +94,8 @@ class CosmosPlanetPopup extends BlazeComponent {
     }
   }
 
-  unMine(planetId = this.planetId) {
+  unMine(event, planetId = this.planetId) {
+    event.stopPropagation();
     if (planetId) {
       Meteor.call('planet.stopMining', planetId, (error) => {
         if (error) {
@@ -102,7 +105,7 @@ class CosmosPlanetPopup extends BlazeComponent {
     }
   }
 
-  edit(planetId = this.planetId) {
+  edit(event, planetId = this.planetId) {
     const targetPlanet = Game.Planets.getOne(planetId);
     const basePlanet = Game.Planets.getBase();
 

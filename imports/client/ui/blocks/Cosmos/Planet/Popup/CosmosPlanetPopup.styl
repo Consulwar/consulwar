@@ -2,22 +2,18 @@
 @import '{}/imports/client/ui/config'
 
 .cw--CosmosPlanetPopup
-  position absolute
   display block
-  width 360px
-  padding 15px
+  width 320px
   box-sizing border-box
 
   cw--fontFamily_cond()
   font-size $cw--fontSize_m
-  background-color $cw--color_tableOdd
 
-  &_tooltip
-    position relative
-    width 320px
-    padding 0
-    background none
-    pointer-events none
+  &_mapView
+    position absolute
+    padding 15px
+    width 360px
+    background-color $cw--color_black
 
   &_notLocked
     pointer-events none
@@ -34,10 +30,6 @@
 
     &_reptiles
       color $cw--color_honor
-
-  &_tooltip &__header
-    padding-top 0
-    height auto
 
   &__content
     display block

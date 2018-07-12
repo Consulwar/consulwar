@@ -2,11 +2,11 @@
   <div 
     class="
       cw--CosmosFleetPopup
-      {{#if isTooltip}}
-        cw--CosmosFleetPopup_tooltip
-      {{/if}}
-      {{#if not allowActions}}
-        cw--CosmosFleetPopup_notLocked
+      {{#if isMapView}}
+        cw--CosmosFleetPopup_mapView
+        {{#if not allowActions}}
+          cw--CosmosFleetPopup_notLocked
+        {{/if}}
       {{/if}}
     "
     style="left: {{position.x}}px; top: {{position.y}}px;"

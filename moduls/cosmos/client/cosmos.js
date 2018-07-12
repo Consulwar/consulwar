@@ -28,6 +28,9 @@ import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
 
+import CosmosPlanetPopup from '/imports/client/ui/blocks/Cosmos/Planet/Popup/CosmosPlanetPopup';
+import CosmosFleetPopup from '/imports/client/ui/blocks/Cosmos/FleetPopup/CosmosFleetPopup';
+
 // import CosmosHistory from '/imports/client/ui/blocks/Cosmos/History/CosmosHistory';
 
 import '/imports/client/ui/blocks/Cosmos/Planet/CosmosPlanet';
@@ -470,13 +473,13 @@ Template.cosmosFleetsInfo_table.helpers({
 
 Template.cosmosFleetsInfo_table.events({
   'mouseover .cw--FleetInfoPlanets__marker, mouseover .cw--FleetInfoPlanets__planet_end .cw--FleetInfoPlanets__fleetReptiles': function (e, t) {
-    $(e.currentTarget).attr('data-tooltip', Blaze.toHTMLWithData(
-      Template.cosmosShipInfo, 
-      {
+    const tooltip = new CosmosFleetPopup({
+      hash: {
         ship: Game.Cosmos.getShipInfo(this.spaceEvent),
-        spaceEvent: this.spaceEvent
-      }
-    ));
+        spaceEvent: this.spaceEvent,
+      },
+    }).renderComponentToHTML();
+    $(e.currentTarget).attr('data-tooltip', tooltip);
   },
 
   'mouseover .planet': function (e, t) {
@@ -497,13 +500,12 @@ Template.cosmosFleetsInfo_table.events({
         tooltip = 'Доступна с повышением ранга';
       }
     } else {
-      tooltip = Blaze.toHTMLWithData(
-        Template.cosmosPlanetPopup, 
-        {
+      tooltip = new CosmosPlanetPopup({
+        hash: {
           drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
-          planet: this.planet
-        }
-      )
+          planet: this.planet,
+        },
+      }).renderComponentToHTML();
     }
 
     $(e.currentTarget).attr('data-tooltip', tooltip);
@@ -776,99 +778,6 @@ Template.cosmosBattlePopup.helpers({
   }
 });
 
-Template.cosmosPlanetPopup.helpers({
-  getTimeNextDrop: function(timeCollected) {
-    var passed = ( Session.get('serverTime') - timeCollected ) % Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
-    return Game.Cosmos.COLLECT_ARTEFACTS_PERIOD - passed;
-  },
-  reptilesFleetPower: function() {
-    const { units } = Game.Cosmos.getPlanetInfo(this.planet);
-    return Game.Cosmos.reptilesFleetPower(units);
-  },
-  canMine() {
-    const user = Meteor.user();
-    return this.planet.armyUsername === user.username && this.planet.minerUsername !== user.username;
-  },
-  canUnMine() {
-    const planet = this.planet;
-    const user = Meteor.user();
-
-    return !planet.isHome &&
-      planet.status === Game.Planets.STATUS.HUMANS &&
-      planet.minerUsername === user.username;
-  }
-});
-
-Template.cosmosPlanetPopup.events({
-  'click .open': function(e, t) {
-    var id = $(e.currentTarget).attr("data-id");
-    if (id) {
-      Game.Cosmos.showAttackMenu(id);
-    }
-  },
-
-  'click .mine'(e, t) {
-    const planetId = $(e.currentTarget).attr('data-id');
-    if (planetId) {
-      Meteor.call('planet.startMining', planetId, (error) => {
-        if (error) {
-          Notifications.error(error.error);
-        }
-      });
-    }
-  },
-
-  'click .unmine'(e, t) {
-    const planetId = $(e.currentTarget).attr('data-id');
-    if (planetId) {
-      Meteor.call('planet.stopMining', planetId, (error) => {
-        if (error) {
-          Notifications.error(error.error);
-        }
-      });
-    }
-  },
-
-  'click .edit': function(e, t) {
-    var id = e.currentTarget.dataset.id;
-    var targetPlanet = Game.Planets.getOne(id);
-    var basePlanet = Game.Planets.getBase();
-
-    Game.showInputWindow('Как назвать планету?', targetPlanet.name, function(planetName) {
-      if (!planetName) {
-        return;
-      }
-
-      planetName = planetName.trim();
-      if (planetName == targetPlanet.name) {
-        return;
-      }
-
-      if (id == basePlanet._id) {
-        Meteor.call('user.changePlanetName', planetName, function(err, result) {
-          if (err) {
-            Notifications.error('Невозможно сменить название планеты', err.error);
-          }
-        });
-      } else {
-        Game.showAcceptWindow('Изменение имени планеты стоит ' +  Game.Planets.RENAME_PLANET_PRICE + ' ГГК', function() {
-          var userResources = Game.Resources.getValue();
-          if (userResources.credits.amount < Game.Planets.RENAME_PLANET_PRICE) {
-            Notifications.error('Недостаточно ГГК');
-            return;
-          }
-
-          Meteor.call('planet.changeName', id, planetName, function(err, result) {
-            if (err) {
-              Notifications.error('Невозможно сменить название планеты', err.error);
-            }
-          });
-        });
-      }
-    });
-  }
-});
-
 // ----------------------------------------------------------------------------
 // Planets popup
 // ----------------------------------------------------------------------------
@@ -928,24 +837,27 @@ Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
     isPopupLocked.set(true);
   }
 
-  cosmosPopupView = Blaze.renderWithData(
-    Template.cosmosPlanetPopup, {
-      planet: planet,
-      drop: dropInfo,
-      allowEdit: isLock,
-      allowActions: isLock,
-      position: function() {
-        var k = Math.pow(2, (zoom.get() - 7));
-        var iconSize = (planet.size + 3) * 4;
-        var position = mapView.latLngToLayerPoint(
-          new L.latLng(offset.x + planet.x, offset.y + planet.y),
-        );
-        position.x += 24 + 10 + Math.round(iconSize * k / 2);
-        position.y -= 85;
-        return position;
-      }
-    },
-    $('.leaflet-popup-pane')[0]
+  cosmosPopupView = Blaze.render(
+    new CosmosPlanetPopup({
+      hash: {
+        planet: planet,
+        drop: dropInfo,
+        isMapView: true,
+        allowEdit: isLock,
+        allowActions: isLock,
+        position: function() {
+          const k = Math.pow(2, (zoom.get() - 7));
+          const iconSize = (planet.size + 3) * 4;
+          const position = mapView.latLngToLayerPoint(
+            new L.latLng(offset.x + planet.x, offset.y + planet.y),
+          );
+          position.x += 24 + 10 + Math.round(iconSize * k / 2);
+          position.y -= 85;
+          return position;
+        },
+      },
+    }).renderComponent(),
+    $('.leaflet-popup-pane')[0],
   );
 };
 
@@ -1008,41 +920,44 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
   var spaceEvent = FlightEvents.getOne(id);
 
   if (spaceEvent) {
-    cosmosPopupView = Blaze.renderWithData(
-      Template.cosmosShipInfo, {
-        spaceEvent: spaceEvent,
-        ship: Game.Cosmos.getShipInfo(spaceEvent),
-        allowActions: isLock,
-        position: function() {
-          const startPosition = this.spaceEvent.data.startPosition;
-          const targetPosition = this.spaceEvent.data.targetPosition;
-          const startPositionWithOffset = { ...startPosition };
-          const targetPositionWithOffset = { ...targetPosition };
-          if (this.spaceEvent.data.hex) {
-            let center = new Hex(this.spaceEvent.data.hex).center();
-            startPositionWithOffset.x += center.x;
-            startPositionWithOffset.y += center.y;
-  
-            center = new Hex(this.spaceEvent.data.targetHex).center();
-            targetPositionWithOffset.x += center.x;
-            targetPositionWithOffset.y += center.y;
-          }
-  
-          const pos = getFleetAnimation({
-            spaceEvent: this.spaceEvent,
-            maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
-            acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
-            totalFlyDistance: calcDistance(
-              startPositionWithOffset,
-              targetPositionWithOffset,
-            ),
-          }, mapView, pathViews[this.spaceEvent._id]);
-          return {
-            x: pos.x + 50,
-            y: pos.y - 50,
-          };
+    cosmosPopupView = Blaze.render(
+      new CosmosFleetPopup({
+        hash: {
+          ship: Game.Cosmos.getShipInfo(spaceEvent),
+          spaceEvent: spaceEvent,
+          allowActions: isLock,
+          isMapView: true,
+          position: function() {
+            const startPosition = this.spaceEvent.data.startPosition;
+            const targetPosition = this.spaceEvent.data.targetPosition;
+            const startPositionWithOffset = { ...startPosition };
+            const targetPositionWithOffset = { ...targetPosition };
+            if (this.spaceEvent.data.hex) {
+              let center = new Hex(this.spaceEvent.data.hex).center();
+              startPositionWithOffset.x += center.x;
+              startPositionWithOffset.y += center.y;
+
+              center = new Hex(this.spaceEvent.data.targetHex).center();
+              targetPositionWithOffset.x += center.x;
+              targetPositionWithOffset.y += center.y;
+            }
+
+            const pos = getFleetAnimation({
+              spaceEvent: this.spaceEvent,
+              maxSpeed: calcMaxSpeed(this.spaceEvent.data.engineLevel),
+              acceleration: calcAcceleration(this.spaceEvent.data.engineLevel),
+              totalFlyDistance: calcDistance(
+                startPositionWithOffset,
+                targetPositionWithOffset,
+              ),
+            }, mapView, pathViews[this.spaceEvent._id]);
+            return {
+              x: pos.x + 50,
+              y: pos.y - 50,
+            };
+          },
         },
-      },
+      }).renderComponent(),
       $('.leaflet-popup-pane')[0],
     );
   }
@@ -1125,36 +1040,18 @@ Game.Cosmos.getReinforcementInfo = function(spaceEvent) {
 };
 
 
-Template.cosmosShipInfo.onRendered(function() {
-  // show fleets info when ship removed
-  this.autorun(function() {
-    if (!mapView) {
-      return;
-    }
+// Template.cosmosShipInfo.onRendered(function() {
+//   // show fleets info when ship removed
+//   this.autorun(function() {
+//     if (!mapView) {
+//       return;
+//     }
 
-    if (!Template.currentData().spaceEvent) {
-      Game.Cosmos.hidePlanetPopup();
-    }
-  });
-});
-
-Template.cosmosShipInfo.helpers({
-  timeLeft: function() {
-    return (!this.spaceEvent) ? 0 : Game.dateToTime(this.spaceEvent.after) - Session.get('serverTime');
-  },
-  reptilesFleetPower: function() {
-    return Game.Cosmos.reptilesFleetPower(this.ship.units);
-  }
-});
-
-Template.cosmosShipInfo.events({
-  'click .open': function(e, t) {
-    var id = $(e.currentTarget).attr("data-id");
-    if (id) {
-      Game.Cosmos.showAttackMenu(id);
-    }
-  }
-});
+//     if (!Template.currentData().spaceEvent) {
+//       Game.Cosmos.hidePlanetPopup();
+//     }
+//   });
+// });
 
 // ----------------------------------------------------------------------------
 // Attack menu

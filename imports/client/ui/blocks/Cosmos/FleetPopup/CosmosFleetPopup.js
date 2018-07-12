@@ -15,7 +15,7 @@ class CosmosFleetPopup extends BlazeComponent {
       spaceEvent,
       allowActions,
       position,
-      isTooltip = false,
+      isMapView = false,
     },
   }) {
     super();
@@ -24,7 +24,17 @@ class CosmosFleetPopup extends BlazeComponent {
     this.spaceEvent = spaceEvent;
     this.allowActions = allowActions;
     this.position = position;
-    this.isTooltip = isTooltip;
+    this.isMapView = isMapView;
+  }
+
+  onRendered() {
+    super.onRendered();
+
+    this.autorun(function() {
+      if (!this.spaceEvent) {
+        Game.Cosmos.hidePlanetPopup();
+      }
+    });
   }
 
   getTimeLeft() {
@@ -40,8 +50,8 @@ class CosmosFleetPopup extends BlazeComponent {
     return Game.Cosmos.reptilesFleetPower(this.ship.units);
   }
 
-  attack(shipId = this.ship.id) {
-    console.log(shipId);
+  attack(event, shipId = this.ship.id) {
+    event.preventDefault();
     if (shipId) {
       Game.Cosmos.showAttackMenu(shipId);
     }

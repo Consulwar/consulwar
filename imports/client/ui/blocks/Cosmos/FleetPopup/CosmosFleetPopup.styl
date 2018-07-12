@@ -2,21 +2,18 @@
 @import '{}/imports/client/ui/config'
 
 .cw--CosmosFleetPopup
-  position absolute
   display block
-  width 360px
-  padding 15px
+  width 320px
   box-sizing border-box
 
   cw--fontFamily_cond()
   font-size $cw--fontSize_m
-  background-color $cw--color_tableOdd
 
-  &_tooltip
-    position relative
-    width 320px
-    padding 0
-    background none
+  &_mapView
+    position absolute
+    padding 15px
+    width 360px
+    background-color $cw--color_black
 
   &_notLocked
     pointer-events none

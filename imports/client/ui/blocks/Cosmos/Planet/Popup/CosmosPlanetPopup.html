@@ -2,11 +2,11 @@
   <div 
     class="
       cw--CosmosPlanetPopup
-      {{#if isTooltip}}
-        cw--CosmosPlanetPopup_tooltip
-      {{/if}}
-      {{#if not allowActions}}
-        cw--CosmosPlanetPopup_notLocked
+      {{#if isMapView}}
+        cw--CosmosPlanetPopup_mapView
+        {{#if not allowActions}}
+          cw--CosmosPlanetPopup_notLocked
+        {{/if}}
       {{/if}}
     " 
     style="

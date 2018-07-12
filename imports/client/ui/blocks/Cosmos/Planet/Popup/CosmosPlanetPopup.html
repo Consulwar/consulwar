@@ -5,6 +5,9 @@
       {{#if isTooltip}}
         cw--CosmosPlanetPopup_tooltip
       {{/if}}
+      {{#if not allowActions}}
+        cw--CosmosPlanetPopup_notLocked
+      {{/if}}
     " 
     style="
       left: {{position.x}}px;
@@ -128,21 +131,22 @@
       isReptiles=planetInfo.mission
     }}
 
-    <div class="cw--CosmosPlanetPopup__actions">
-      {{#if and allowActions planetInfo.canSend}}
-        <button
-          onClick={{sendFleet}}
-          class="
-            cw--button
-            cw--button_type_primary
-            cw--button_type_primary_orange
-            cw--CosmosPlanetPopup__actionAttack
-          "
-        >
-          Отправить
-        </button>
-      {{/if}}
-      {{#if allowActions}}
+    {{#if allowActions}}
+      <div class="cw--CosmosPlanetPopup__actions">
+        {{#if planetInfo.canSend}}
+          <button
+            onClick={{sendFleet}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosPlanetPopup__action
+              cw--CosmosPlanetPopup__action_attack
+            "
+          >
+            Отправить
+          </button>
+        {{/if}}
         {{#if canMine}}
           <button
             onClick={{mine}}
@@ -150,27 +154,27 @@
               cw--button
               cw--button_type_primary
               cw--button_type_primary_blue
-              cw--CosmosPlanetPopup__actionMine
+              cw--CosmosPlanetPopup__action
+              cw--CosmosPlanetPopup__action_mine
             "
           >
             Захватить
           </button>
-        {{else}}
-          {{#if canUnMine}}
-            <button
-              onClick={{unMine}}
-              class="
-                cw--button
-                cw--button_type_primary
-                cw--button_type_primary_blue
-                cw--CosmosPlanetPopup__actionMine
-              "
-            >
-              Освободить
-            </button>
-          {{/if}}
+        {{else if canUnMine}}
+          <button
+            onClick={{unMine}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_blue
+              cw--CosmosPlanetPopup__action
+              cw--CosmosPlanetPopup__action_mine
+            "
+          >
+            Освободить
+          </button>
         {{/if}}
-      {{/if}}
-    </div>
+      </div>
+    {{/if}}
   </div>
 </template>

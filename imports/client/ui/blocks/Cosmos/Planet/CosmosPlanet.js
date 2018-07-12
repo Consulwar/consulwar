@@ -123,13 +123,6 @@ class CosmosPlanet extends BlazeComponent {
           isTooltip: true,
         },
       }).renderComponentToHTML();
-      // Blaze.toHTMLWithData(
-      //   Template.cosmosPlanetPopup,
-      //   {
-      //     drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
-      //     planet: this.planet,
-      //   },
-      // );
     }
     $(currentTarget).attr({
       'data-tooltip': tooltip,

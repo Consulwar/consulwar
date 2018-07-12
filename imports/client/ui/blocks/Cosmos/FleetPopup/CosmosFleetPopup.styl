@@ -1,0 +1,57 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--CosmosFleetPopup
+  position absolute
+  display block
+  width 360px
+  padding 15px
+  box-sizing border-box
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+  background-color $cw--color_tableOdd
+
+  &_tooltip
+    position relative
+    width 320px
+    padding 0
+    background none
+
+  &_notLocked
+    pointer-events none
+
+  &__mission
+    font-weight bold
+    color $cw--color_honor
+
+  &__unitsPower
+    display inline-block
+    height 25px
+    padding-left 32px
+    margin-left 15px
+    vertical-align middle
+
+    line-height 25px
+    color $cw--color_human
+
+    background-image url(/img/game/buff.svg)
+    background-repeat no-repeat
+    background-position left center
+    background-size 25px
+
+  &__missionReward
+    margin 10px auto
+    justify-content center
+
+  &__timer
+    margin 10px
+
+  &__actions
+    display flex
+    margin-top 15px
+    justify-content center
+
+  &__action
+    width 200px
+    margin auto

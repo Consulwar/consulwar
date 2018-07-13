@@ -22,6 +22,7 @@
     "
     href={{pathFor 'cosmos' hash=planet._id}}
     onMouseOver={{showTooltip}}
+    data-id={{planet._id}}
   >
     <div class="cw--CosmosPlanet__name">
       {{#if planet.notAvaliable}}
@@ -31,37 +32,39 @@
           {{planet.requiredRank}} уровень
         {{/if}}
       {{else}}
-        {{#if name}}
-          {{name}}
+        {{#if planetName}}
+          {{planetName}}
         {{else}}
           {{planet.name}}
         {{/if}}
       {{/if}}
     </div>
-    <div 
-      class="
-        cw--CosmosPlanet__planet
-        cw--CosmosPlanet__planet_{{planet.type}}
-        {{#if options.rotatePlanets}}
-          cw--CosmosPlanet__planet_animated
-        {{/if}}
-      " 
-      style="
-        width: {{multiply (sum planet.size 3) 4}}px;
-        height: {{multiply (sum planet.size 3) 4}}px;
-      "
-    >
-      <div
+    {{#if not isCompact}}
+      <div 
         class="
-          cw--CosmosPlanet__fleet
-          cw--CosmosPlanet__fleet_{{statusFleet}}
+          cw--CosmosPlanet__planet
+          cw--CosmosPlanet__planet_{{planet.type}}
+          {{#if options.rotatePlanets}}
+            cw--CosmosPlanet__planet_animated
+          {{/if}}
+        " 
+        style="
+          width: {{multiply (sum planet.size 3) 4}}px;
+          height: {{multiply (sum planet.size 3) 4}}px;
         "
-      ></div>
-      {{#if battleExists}}
-        <div class="cw--CosmosPlanet__battle"></div>
-      {{/if}}
-      <div class="cw--CosmosPlanet__planetTexture"></div>
-    </div>
+      >
+        <div
+          class="
+            cw--CosmosPlanet__fleet
+            cw--CosmosPlanet__fleet_{{statusFleet}}
+          "
+        ></div>
+        {{#if battleExists}}
+          <div class="cw--CosmosPlanet__battle"></div>
+        {{/if}}
+        <div class="cw--CosmosPlanet__planetTexture"></div>
+      </div>
+    {{/if}}
     <div class="cw--CosmosPlanet__location">
       {{#if location}}
         {{location}}

@@ -21,17 +21,19 @@ class CosmosPlanet extends BlazeComponent {
       planet,
       isSelected,
       isTopTime,
+      isCompact,
       className,
     },
   }) {
     super();
 
-    this.name = name;
+    this.planetName = name;
+    this.planet = planet;
     this.isSelected = isSelected;
     this.isTopTime = isTopTime;
     this.isDisabled = isDisabled;
     this.location = location;
-    this.planet = planet;
+    this.isCompact = isCompact;
     this.className = className;
   }
 

@@ -240,7 +240,10 @@
             "
           >
             {{#if this.start}}
-              {{> CosmosPlanet args planet=this.start}}
+              {{> CosmosPlanet args
+                planet=this.start
+                isCompact=options.compactFleetInfo
+              }}
             {{else}}
               <a class="cw--FleetInfoPlanets__fleetReptiles"></a>
             {{/if}}
@@ -273,7 +276,10 @@
             "
           >
             {{#if this.finish}}
-              {{> CosmosPlanet args planet=this.finish}}
+              {{> CosmosPlanet args
+                planet=this.finish
+                isCompact=options.compactFleetInfo
+              }}
             {{else}}
               <a class="cw--FleetInfoPlanets__fleetReptiles"
                 href="{{pathFor 'cosmos' hash=this.spaceEvent.info.targetId}}" 

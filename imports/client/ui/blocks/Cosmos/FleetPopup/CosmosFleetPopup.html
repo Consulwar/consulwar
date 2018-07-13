@@ -13,12 +13,22 @@
   >
     {{#if ship}}
       {{#if ship.isHumans}}
-        <h2 class="humans">
+        <div
+          class="
+            cw--CosmosFleetPopup__header
+            cw--CosmosFleetPopup__header_humans
+          "
+        >
           {{ship.status}} 
           {{#if ship.owner}}
-            <a href="{{pathFor 'statistics' hash=ship.owner}}">{{ship.owner}}</a>
+            <a
+              class="cw--CosmosFleetPopup__owner"
+              href="{{pathFor 'statistics' hash=ship.owner}}"
+            >
+              {{ship.owner}}
+            </a>
           {{/if}}
-        </h2>
+        </div>
       {{/if}}
       {{#if ship.mission}}
         <div class="cw--CosmosFleetPopup__mission">
@@ -30,11 +40,6 @@
           </span>
         </div>
       {{/if}}
-      <div>
-        {{#each drop.items}}
-          <a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
-        {{/each}}
-      </div>
 
       {{#if ship.mission.reward}}
         {{> ResourcePrice args

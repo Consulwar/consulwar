@@ -19,7 +19,11 @@
       class="
         cw--CosmosPlanetPopup__header
         {{#if planetInfo.isHumans}}
-          cw--CosmosPlanetPopup__header_humans
+          {{#if isMyPlanet}}
+            cw--CosmosPlanetPopup__header_my
+          {{else if planetInfo.owner}}
+            cw--CosmosPlanetPopup__header_humans
+          {{/if}}
         {{else if planetInfo.mission}}
           cw--CosmosPlanetPopup__header_reptiles
         {{/if}}

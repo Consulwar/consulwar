@@ -16,7 +16,11 @@
         <div
           class="
             cw--CosmosFleetPopup__header
-            cw--CosmosFleetPopup__header_humans
+            {{#if ship.owner}}
+              cw--CosmosFleetPopup__header_humans
+            {{else}}
+              cw--CosmosFleetPopup__header_my
+            {{/if}}
           "
         >
           {{ship.status}} 

@@ -34,6 +34,10 @@ class CosmosPlanetPopup extends BlazeComponent {
     this.allowEdit = allowEdit;
   }
 
+  isMyPlanet() {
+    return Meteor.user().username === this.planet.minerUsername;
+  }
+
   getDropItems() {
     const dropItems = [];
     (this.drop.items).forEach((item) => {

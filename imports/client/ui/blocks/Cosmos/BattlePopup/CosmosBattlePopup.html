@@ -1,0 +1,32 @@
+<template name="CosmosBattlePopup">
+  <div
+      class="cw--CosmosBattlePopup"
+      style="left: {{position.x}}px; top: {{position.y}}px;"
+  >
+    <div class="cw--CosmosBattlePopup__header">
+      Идёт бой
+    </div>
+
+    {{#with info}}
+      <div class="cw--CosmosBattlePopup__round">
+        Раунд {{round}}
+      </div>
+      <div class="cw--CosmosBattlePopup__roundTime">
+        {{formatSeconds secondsLeft}}
+      </div>
+    {{/with}}
+    <div class="cw--CosmosBattlePopup__actions">
+      <button
+        onClick={{send}}
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_orange
+          cw--CosmosBattlePopup__action
+        "
+      >
+        Отправить
+      </button>
+    </div>
+  </div>
+</template>

@@ -22,22 +22,6 @@
 </template>
 
 
-<template name="cosmosBattlePopup">
-  <div
-      class="map-planet-popup"
-      style="left: {{position.x}}px; top: {{position.y}}px;"
-  >
-    Идёт бой<br/>
-    {{#with info}}
-      Раунд {{round}}<br/>
-      {{formatSeconds secondsLeft}}
-    {{/with}}
-    <button class="button-attack open" data-id="{{battleId}}">Отправить</button>
-
-  </div>
-</template>
-
-
 <template name="cosmosAttackMenu">
   <div class="attack-menu">
     <div class="departure">

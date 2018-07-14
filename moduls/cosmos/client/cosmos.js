@@ -30,6 +30,7 @@ import BattleCollection from '../../battle/lib/imports/collection';
 
 import CosmosPlanetPopup from '/imports/client/ui/blocks/Cosmos/Planet/Popup/CosmosPlanetPopup';
 import CosmosFleetPopup from '/imports/client/ui/blocks/Cosmos/FleetPopup/CosmosFleetPopup';
+import CosmosBattlePopup from '/imports/client/ui/blocks/Cosmos/BattlePopup/CosmosBattlePopup';
 
 // import CosmosHistory from '/imports/client/ui/blocks/Cosmos/History/CosmosHistory';
 
@@ -756,28 +757,6 @@ Game.Cosmos.reptilesFleetPower = (units) => {
   }, {}));
 };
 
-Template.cosmosBattlePopup.events({
-  'click .open'(e, t) {
-    const id = $(e.currentTarget).attr("data-id");
-    if (id) {
-      Game.Cosmos.showAttackMenu(id);
-    }
-  },
-});
-
-Template.cosmosBattlePopup.helpers({
-  info() {
-    const battleEvent = Space.collection.findOne({
-      'data.battleId': this.battleId
-    });
-
-    return battleEvent && {
-      round: battleEvent.repeated + 1,
-      secondsLeft: Math.ceil((battleEvent.after - Session.get('serverTime') * 1000) / 1000),
-    };
-  }
-});
-
 // ----------------------------------------------------------------------------
 // Planets popup
 // ----------------------------------------------------------------------------
@@ -877,23 +856,24 @@ Game.Cosmos.showBattlePopup = function(battleId, isLock, offset = { x: 0, y: 0 }
     isPopupLocked.set(true);
   }
 
-  cosmosPopupView = Blaze.renderWithData(
-    Template.cosmosBattlePopup, {
-      battleId,
-      position: function() {
-        const k = Math.pow(2, (zoom.get() - 7));
-        const iconSize = 6;
-        const position = mapView.latLngToLayerPoint(
-          new L.latLng(
-            offset.x + battleEvent.data.targetPosition.x,
-            offset.y + battleEvent.data.targetPosition.y,
-          ),
-        );
-        position.x += 24 + 10 + Math.round((iconSize * k) / 2);
-        // position.y -= 85;
-        return position;
+  cosmosPopupView = Blaze.render(
+    new CosmosBattlePopup({
+      hash: {
+        battleId,
+        position: function() {
+          const k = Math.pow(2, (zoom.get() - 7));
+          const iconSize = 6;
+          const position = mapView.latLngToLayerPoint(
+            new L.latLng(
+              offset.x + battleEvent.data.targetPosition.x,
+              offset.y + battleEvent.data.targetPosition.y,
+            ),
+          );
+          position.x += 24 + 10 + Math.round((iconSize * k) / 2);
+          return position;
+        },
       },
-    },
+    }).renderComponent(),
     $('.leaflet-popup-pane')[0],
   );
 };
@@ -1038,20 +1018,6 @@ Game.Cosmos.getReinforcementInfo = function(spaceEvent) {
 
   return info;
 };
-
-
-// Template.cosmosShipInfo.onRendered(function() {
-//   // show fleets info when ship removed
-//   this.autorun(function() {
-//     if (!mapView) {
-//       return;
-//     }
-
-//     if (!Template.currentData().spaceEvent) {
-//       Game.Cosmos.hidePlanetPopup();
-//     }
-//   });
-// });
 
 // ----------------------------------------------------------------------------
 // Attack menu

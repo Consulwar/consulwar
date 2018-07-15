@@ -1,12 +1,12 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
 import Space from '/imports/modules/Space/client/space';
-import './CosmosBattlePopup.html';
-import './CosmosBattlePopup.styl';
+import './SpaceBattlePopup.html';
+import './SpaceBattlePopup.styl';
 
-class CosmosBattlePopup extends BlazeComponent {
+class SpaceBattlePopup extends BlazeComponent {
   template() {
-    return 'CosmosBattlePopup';
+    return 'SpaceBattlePopup';
   }
   constructor({
     hash: {
@@ -45,6 +45,6 @@ class CosmosBattlePopup extends BlazeComponent {
   }
 }
 
-CosmosBattlePopup.register('CosmosBattlePopup');
+SpaceBattlePopup.register('SpaceBattlePopup');
 
-export default CosmosBattlePopup;
+export default SpaceBattlePopup;

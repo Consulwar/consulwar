@@ -30,7 +30,7 @@ import BattleCollection from '../../battle/lib/imports/collection';
 
 import CosmosPlanetPopup from '/imports/client/ui/blocks/Cosmos/Planet/Popup/CosmosPlanetPopup';
 import CosmosFleetPopup from '/imports/client/ui/blocks/Cosmos/FleetPopup/CosmosFleetPopup';
-import CosmosBattlePopup from '/imports/client/ui/blocks/Cosmos/BattlePopup/CosmosBattlePopup';
+import SpaceBattlePopup from '/imports/client/ui/blocks/Cosmos/BattlePopup/SpaceBattlePopup';
 
 // import CosmosHistory from '/imports/client/ui/blocks/Cosmos/History/CosmosHistory';
 
@@ -857,7 +857,7 @@ Game.Cosmos.showBattlePopup = function(battleId, isLock, offset = { x: 0, y: 0 }
   }
 
   cosmosPopupView = Blaze.render(
-    new CosmosBattlePopup({
+    new SpaceBattlePopup({
       hash: {
         battleId,
         position: function() {

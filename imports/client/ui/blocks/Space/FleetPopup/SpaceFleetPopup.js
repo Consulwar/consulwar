@@ -1,12 +1,12 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
-import './CosmosFleetPopup.html';
-import './CosmosFleetPopup.styl';
+import './SpaceFleetPopup.html';
+import './SpaceFleetPopup.styl';
 
-class CosmosFleetPopup extends BlazeComponent {
+class SpaceFleetPopup extends BlazeComponent {
   template() {
-    return 'CosmosFleetPopup';
+    return 'SpaceFleetPopup';
   }
 
   constructor({
@@ -58,6 +58,6 @@ class CosmosFleetPopup extends BlazeComponent {
   }
 }
 
-CosmosFleetPopup.register('CosmosFleetPopup');
+SpaceFleetPopup.register('SpaceFleetPopup');
 
-export default CosmosFleetPopup;
+export default SpaceFleetPopup;

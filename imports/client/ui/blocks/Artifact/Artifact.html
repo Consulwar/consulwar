@@ -65,7 +65,7 @@
               </h2>
               <div class="cw--Artifact__planets">
                 {{#each planet in nearestPlanets}}
-                  {{> CosmosPlanet args
+                  {{> SpacePlanet args
                     planet=planet
                     name=(sum planet.chance '%')
                     location=(sum (formatNumber planet.distance) 'ае')
@@ -83,7 +83,7 @@
                 </h2>
                 <div class="cw--Artifact__planets">
                   {{#each planet in topPlanets}}
-                    {{> CosmosPlanet args
+                    {{> SpacePlanet args
                       planet=planet
                       name=(sum planet.chance '%')
                       location=(sum (formatNumber planet.distance) 'ае')

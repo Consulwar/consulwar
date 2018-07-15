@@ -28,13 +28,13 @@ import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
 
-import CosmosPlanetPopup from '/imports/client/ui/blocks/Cosmos/Planet/Popup/CosmosPlanetPopup';
-import CosmosFleetPopup from '/imports/client/ui/blocks/Cosmos/FleetPopup/CosmosFleetPopup';
-import SpaceBattlePopup from '/imports/client/ui/blocks/Cosmos/BattlePopup/SpaceBattlePopup';
+import SpacePlanetPopup from '/imports/client/ui/blocks/Space/Planet/Popup/SpacePlanetPopup';
+import SpaceFleetPopup from '/imports/client/ui/blocks/Space/FleetPopup/SpaceFleetPopup';
+import SpaceBattlePopup from '/imports/client/ui/blocks/Space/BattlePopup/SpaceBattlePopup';
 
-// import CosmosHistory from '/imports/client/ui/blocks/Cosmos/History/CosmosHistory';
+// import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
 
-import '/imports/client/ui/blocks/Cosmos/Planet/CosmosPlanet';
+import '/imports/client/ui/blocks/Space/Planet/SpacePlanet';
 
 const {
   calcDistance,
@@ -474,7 +474,7 @@ Template.cosmosFleetsInfo_table.helpers({
 
 Template.cosmosFleetsInfo_table.events({
   'mouseover .cw--FleetInfoPlanets__marker, mouseover .cw--FleetInfoPlanets__planet_end .cw--FleetInfoPlanets__fleetReptiles': function (e, t) {
-    const tooltip = new CosmosFleetPopup({
+    const tooltip = new SpaceFleetPopup({
       hash: {
         ship: Game.Cosmos.getShipInfo(this.spaceEvent),
         spaceEvent: this.spaceEvent,
@@ -501,7 +501,7 @@ Template.cosmosFleetsInfo_table.events({
         tooltip = 'Доступна с повышением ранга';
       }
     } else {
-      tooltip = new CosmosPlanetPopup({
+      tooltip = new SpacePlanetPopup({
         hash: {
           drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
           planet: this.planet,
@@ -817,7 +817,7 @@ Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
   }
 
   cosmosPopupView = Blaze.render(
-    new CosmosPlanetPopup({
+    new SpacePlanetPopup({
       hash: {
         planet: planet,
         drop: dropInfo,
@@ -901,7 +901,7 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
 
   if (spaceEvent) {
     cosmosPopupView = Blaze.render(
-      new CosmosFleetPopup({
+      new SpaceFleetPopup({
         hash: {
           ship: Game.Cosmos.getShipInfo(spaceEvent),
           spaceEvent: spaceEvent,

@@ -1,11 +1,11 @@
-<template name="CosmosFleetPopup">
+<template name="SpaceFleetPopup">
   <div 
     class="
-      cw--CosmosFleetPopup
+      cw--SpaceFleetPopup
       {{#if isMapView}}
-        cw--CosmosFleetPopup_mapView
+        cw--SpaceFleetPopup_mapView
         {{#if not allowActions}}
-          cw--CosmosFleetPopup_notLocked
+          cw--SpaceFleetPopup_notLocked
         {{/if}}
       {{/if}}
     "
@@ -15,18 +15,18 @@
       {{#if ship.isHumans}}
         <div
           class="
-            cw--CosmosFleetPopup__header
+            cw--SpaceFleetPopup__header
             {{#if ship.owner}}
-              cw--CosmosFleetPopup__header_humans
+              cw--SpaceFleetPopup__header_humans
             {{else}}
-              cw--CosmosFleetPopup__header_my
+              cw--SpaceFleetPopup__header_my
             {{/if}}
           "
         >
           {{ship.status}} 
           {{#if ship.owner}}
             <a
-              class="cw--CosmosFleetPopup__owner"
+              class="cw--SpaceFleetPopup__owner"
               href="{{pathFor 'statistics' hash=ship.owner}}"
             >
               {{ship.owner}}
@@ -35,11 +35,11 @@
         </div>
       {{/if}}
       {{#if ship.mission}}
-        <div class="cw--CosmosFleetPopup__mission">
+        <div class="cw--SpaceFleetPopup__mission">
           {{ship.mission.name}}
           {{ship.mission.level}}
           уровня
-          <span class="cw--CosmosFleetPopup__unitsPower">
+          <span class="cw--SpaceFleetPopup__unitsPower">
             {{formatNumberWithISO getReptilesFleetPower}}
           </span>
         </div>
@@ -49,7 +49,7 @@
         {{> ResourcePrice args
           price=ship.mission.reward
           isShowDiff=false
-          className='cw--CosmosFleetPopup__missionReward'
+          className='cw--SpaceFleetPopup__missionReward'
         }}
       {{/if}}
 
@@ -60,22 +60,22 @@
       }}
 
       {{#if getTimeLeft}}
-        <div class="cw--CosmosFleetPopup__timer">
+        <div class="cw--SpaceFleetPopup__timer">
           Время до цели:
-          <time class="cw--CosmosFleetPopup__time">
+          <time class="cw--SpaceFleetPopup__time">
             {{formatSeconds getTimeLeft}}
           </time>
         </div>
       {{/if}}
       {{#if and allowActions ship.canSend}}
-        <div class="cw--CosmosFleetPopup__actions">
+        <div class="cw--SpaceFleetPopup__actions">
           <button
             onClick={{attack}}
             class="
               cw--button
               cw--button_type_primary
               cw--button_type_primary_orange
-              cw--CosmosFleetPopup__action
+              cw--SpaceFleetPopup__action
             "
             data-sound="hover,click"
           >

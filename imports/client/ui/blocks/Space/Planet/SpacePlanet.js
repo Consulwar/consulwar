@@ -4,13 +4,13 @@ import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import Space from '/imports/modules/Space/client/space';
 import BattleEvents from '/imports/modules/Space/client/battleEvents';
-import CosmosPlanetPopup from '/imports/client/ui/blocks/Cosmos/Planet/Popup/CosmosPlanetPopup';
-import './CosmosPlanet.html';
-import './CosmosPlanet.styl';
+import SpacePlanetPopup from '/imports/client/ui/blocks/Space/Planet/Popup/SpacePlanetPopup';
+import './SpacePlanet.html';
+import './SpacePlanet.styl';
 
-class CosmosPlanet extends BlazeComponent {
+class SpacePlanet extends BlazeComponent {
   template() {
-    return 'CosmosPlanet';
+    return 'SpacePlanet';
   }
 
   constructor({
@@ -118,7 +118,7 @@ class CosmosPlanet extends BlazeComponent {
         tooltip = 'Доступна с повышением ранга';
       }
     } else {
-      tooltip = new CosmosPlanetPopup({
+      tooltip = new SpacePlanetPopup({
         hash: {
           drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
           planet: this.planet,
@@ -133,6 +133,6 @@ class CosmosPlanet extends BlazeComponent {
   }
 }
 
-CosmosPlanet.register('CosmosPlanet');
+SpacePlanet.register('SpacePlanet');
 
-export default CosmosPlanet;
+export default SpacePlanet;

@@ -4,12 +4,12 @@ import Game from '/moduls/game/lib/main.game';
 import { Meteor } from 'meteor/meteor';
 import '/imports/client/ui/blocks/Units/Units';
 import '/imports/client/ui/button/button.styl';
-import './CosmosPlanetPopup.html';
-import './CosmosPlanetPopup.styl';
+import './SpacePlanetPopup.html';
+import './SpacePlanetPopup.styl';
 
-class CosmosPlanetPopup extends BlazeComponent {
+class SpacePlanetPopup extends BlazeComponent {
   template() {
-    return 'CosmosPlanetPopup';
+    return 'SpacePlanetPopup';
   }
 
   constructor({
@@ -171,6 +171,6 @@ class CosmosPlanetPopup extends BlazeComponent {
   }
 }
 
-CosmosPlanetPopup.register('CosmosPlanetPopup');
+SpacePlanetPopup.register('SpacePlanetPopup');
 
-export default CosmosPlanetPopup;
+export default SpacePlanetPopup;

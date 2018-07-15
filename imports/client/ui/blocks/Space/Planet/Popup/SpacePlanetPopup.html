@@ -1,11 +1,11 @@
-<template name="CosmosPlanetPopup">
+<template name="SpacePlanetPopup">
   <div 
     class="
-      cw--CosmosPlanetPopup
+      cw--SpacePlanetPopup
       {{#if isMapView}}
-        cw--CosmosPlanetPopup_mapView
+        cw--SpacePlanetPopup_mapView
         {{#if not allowActions}}
-          cw--CosmosPlanetPopup_notLocked
+          cw--SpacePlanetPopup_notLocked
         {{/if}}
       {{/if}}
     " 
@@ -17,22 +17,22 @@
 
     <div
       class="
-        cw--CosmosPlanetPopup__header
+        cw--SpacePlanetPopup__header
         {{#if planetInfo.isHumans}}
           {{#if isMyPlanet}}
-            cw--CosmosPlanetPopup__header_my
+            cw--SpacePlanetPopup__header_my
           {{else if planetInfo.owner}}
-            cw--CosmosPlanetPopup__header_humans
+            cw--SpacePlanetPopup__header_humans
           {{/if}}
         {{else if planetInfo.mission}}
-          cw--CosmosPlanetPopup__header_reptiles
+          cw--SpacePlanetPopup__header_reptiles
         {{/if}}
       "
     >
       {{#if allowEdit}}
         <span
           onClick={{edit}}
-          class="cw--CosmosPlanetPopup__edit"
+          class="cw--SpacePlanetPopup__edit"
         ></span>
       {{/if}}
       {{#if planetInfo.name}}
@@ -43,16 +43,16 @@
       {{/if}}
     </div>
     <div
-      class="cw--CosmosPlanetPopup__drop"
+      class="cw--SpacePlanetPopup__drop"
     >
       {{#each item in getDropItems}}
         <a
           href={{item.url}}
-          class="cw--CosmosPlanetPopup__dropItem"
+          class="cw--SpacePlanetPopup__dropItem"
           title={{item.name}}
           style="background-image:url({{item.icon}})"
         >
-          <span class="cw--CosmosPlanetPopup__dropChance">
+          <span class="cw--SpacePlanetPopup__dropChance">
             {{item.chance}}%
           </span>
         </a>
@@ -69,30 +69,30 @@
     </div>
 
     {{#if and planetInfo.isHumans planetInfo.timeArtefacts}}
-      <div class="cw--CosmosPlanetPopup__collectTimer">
+      <div class="cw--SpacePlanetPopup__collectTimer">
         Сбор через:
-        <time class="cw--CosmosPlanetPopup__collectTime">
+        <time class="cw--SpacePlanetPopup__collectTime">
           {{formatSeconds (getTimeNextDrop planetInfo.timeArtefacts)}}
         </time>
       </div>
     {{/if}}
 
     {{#if drop.cards}}
-      <div class="cw--CosmosPlanetPopup__dropCards">
+      <div class="cw--SpacePlanetPopup__dropCards">
       {{#each drop.cards}}
-        <div class="cw--CosmosPlanetPopup__dropCard">
+        <div class="cw--SpacePlanetPopup__dropCard">
           {{this.name}} {{this.chance}}%
         </div>
       {{/each}}
       </div>
     {{/if}}
 
-    <div class="cw--CosmosPlanetPopup__info">
+    <div class="cw--SpacePlanetPopup__info">
       {{#if planetInfo.isHumans}}
         <div
           class="
-            cw--CosmosPlanetPopup__typeTitle
-            cw--CosmosPlanetPopup__typeTitle_humans
+            cw--SpacePlanetPopup__typeTitle
+            cw--SpacePlanetPopup__typeTitle_humans
           "
         >
           {{planetInfo.title}}
@@ -102,10 +102,10 @@
         </div>
         
         {{#if planetInfo.fleetOwner}}
-          <div class="cw--CosmosPlanetPopup__fleet">
+          <div class="cw--SpacePlanetPopup__fleet">
             Флот
             <a
-              class="cw--CosmosPlanetPopup__fleetOwner"
+              class="cw--SpacePlanetPopup__fleetOwner"
               href={{pathFor 'statistics' hash=planetInfo.fleetOwner}}
             >
               {{planetInfo.fleetOwner}}
@@ -113,16 +113,16 @@
           </div>
         {{/if}}
       {{else if planetInfo.mission}}
-        <div class="cw--CosmosPlanetPopup__mission">
+        <div class="cw--SpacePlanetPopup__mission">
           {{planetInfo.mission.name}}
           {{planetInfo.mission.level}}
           уровня
-          <span class="cw--CosmosPlanetPopup__unitsPower">
+          <span class="cw--SpacePlanetPopup__unitsPower">
             {{formatNumberWithISO getReptilesFleetPower}}
           </span>
         </div>
       {{else}}
-        <div class="cw--CosmosPlanetPopup__typeTitle">
+        <div class="cw--SpacePlanetPopup__typeTitle">
           Свободная планета
         </div>
       {{/if}}
@@ -136,7 +136,7 @@
     }}
 
     {{#if allowActions}}
-      <div class="cw--CosmosPlanetPopup__actions">
+      <div class="cw--SpacePlanetPopup__actions">
         {{#if planetInfo.canSend}}
           <button
             onClick={{sendFleet}}
@@ -144,8 +144,8 @@
               cw--button
               cw--button_type_primary
               cw--button_type_primary_orange
-              cw--CosmosPlanetPopup__action
-              cw--CosmosPlanetPopup__action_attack
+              cw--SpacePlanetPopup__action
+              cw--SpacePlanetPopup__action_attack
             "
           >
             Отправить
@@ -158,8 +158,8 @@
               cw--button
               cw--button_type_primary
               cw--button_type_primary_blue
-              cw--CosmosPlanetPopup__action
-              cw--CosmosPlanetPopup__action_mine
+              cw--SpacePlanetPopup__action
+              cw--SpacePlanetPopup__action_mine
             "
           >
             Захватить
@@ -171,8 +171,8 @@
               cw--button
               cw--button_type_primary
               cw--button_type_primary_blue
-              cw--CosmosPlanetPopup__action
-              cw--CosmosPlanetPopup__action_mine
+              cw--SpacePlanetPopup__action
+              cw--SpacePlanetPopup__action_mine
             "
           >
             Освободить

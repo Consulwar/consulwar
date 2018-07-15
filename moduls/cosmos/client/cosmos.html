@@ -54,12 +54,12 @@
       <div class="planets scrollbar-inner">
         {{#each colonies}}
           {{#if this.canBuy}}
-            {{> CosmosPlanet args
+            {{> SpacePlanet args
               planet=this
               className='cw--CosmosAttackMenu__planet'
             }}
           {{else}}
-            {{> CosmosPlanet args
+            {{> SpacePlanet args
                 planet=this
                 location=(or 
                   (and 
@@ -137,7 +137,7 @@
 
     <div class="target">
       {{#if planet}}
-        {{> CosmosPlanetPopup args
+        {{> SpacePlanetPopup args
           drop=(Game.Cosmos.getPlanetPopupInfo planet)
           planet=planet
           allowEdit=true
@@ -168,7 +168,7 @@
           <button class="btn-attack help" data-sound="attack">Отправить</button>
         {{/if}}
       {{else}}
-        {{> CosmosFleetPopup args
+        {{> SpaceFleetPopup args
           ship=(Game.Cosmos.getShipInfo ship)
           spaceEvent=ship
           isTooltip=true
@@ -224,7 +224,7 @@
             "
           >
             {{#if this.start}}
-              {{> CosmosPlanet args
+              {{> SpacePlanet args
                 planet=this.start
                 isCompact=options.compactFleetInfo
               }}
@@ -260,7 +260,7 @@
             "
           >
             {{#if this.finish}}
-              {{> CosmosPlanet args
+              {{> SpacePlanet args
                 planet=this.finish
                 isCompact=options.compactFleetInfo
               }}
@@ -325,7 +325,7 @@
                 
                 {{#if this.planetId}}
                   {{#let battlePlanet=getBattlePlanet}}
-                    {{> CosmosPlanet args
+                    {{> SpacePlanet args
                       planet=battlePlanet
                       isDisabled=battlePlanet.isDisabled
                       location=battlePlanet.location

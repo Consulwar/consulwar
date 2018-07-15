@@ -1,22 +1,22 @@
-<template name="CosmosPlanet">
+<template name="SpacePlanet">
   <a 
     class="
-      cw--CosmosPlanet
-      cw--CosmosPlanet_{{statusColony}}
+      cw--SpacePlanet
+      cw--SpacePlanet_{{statusColony}}
       {{#if planet.isEmpty}}
-        cw--CosmosPlanet_empty
+        cw--SpacePlanet_empty
       {{/if}}
       {{#if planet.notAvaliable}}
-        cw--CosmosPlanet_notAvailable
+        cw--SpacePlanet_notAvailable
       {{/if}}
       {{#if planet.canBuy}}
-        cw--CosmosPlanet_canBuy
+        cw--SpacePlanet_canBuy
       {{/if}}
       {{#if isDisabled}}
-        cw--CosmosPlanet_disabled
+        cw--SpacePlanet_disabled
       {{/if}}
       {{#if isSelected}}
-        cw--CosmosPlanet_selected
+        cw--SpacePlanet_selected
       {{/if}}
       {{className}}
     "
@@ -24,7 +24,7 @@
     onMouseOver={{showTooltip}}
     data-id={{planet._id}}
   >
-    <div class="cw--CosmosPlanet__name">
+    <div class="cw--SpacePlanet__name">
       {{#if planet.notAvaliable}}
         {{#if planet.canBuy}}
           Купить
@@ -42,10 +42,10 @@
     {{#if not isCompact}}
       <div 
         class="
-          cw--CosmosPlanet__planet
-          cw--CosmosPlanet__planet_{{planet.type}}
+          cw--SpacePlanet__planet
+          cw--SpacePlanet__planet_{{planet.type}}
           {{#if options.rotatePlanets}}
-            cw--CosmosPlanet__planet_animated
+            cw--SpacePlanet__planet_animated
           {{/if}}
         " 
         style="
@@ -55,17 +55,17 @@
       >
         <div
           class="
-            cw--CosmosPlanet__fleet
-            cw--CosmosPlanet__fleet_{{statusFleet}}
+            cw--SpacePlanet__fleet
+            cw--SpacePlanet__fleet_{{statusFleet}}
           "
         ></div>
         {{#if battleExists}}
-          <div class="cw--CosmosPlanet__battle"></div>
+          <div class="cw--SpacePlanet__battle"></div>
         {{/if}}
-        <div class="cw--CosmosPlanet__planetTexture"></div>
+        <div class="cw--SpacePlanet__planetTexture"></div>
       </div>
     {{/if}}
-    <div class="cw--CosmosPlanet__location">
+    <div class="cw--SpacePlanet__location">
       {{#if location}}
         {{location}}
       {{else if showTimeLeft}}

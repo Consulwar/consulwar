@@ -79,9 +79,9 @@
 
     {{#if drop.cards}}
       <div class="cw--SpacePlanetPopup__dropCards">
-      {{#each drop.cards}}
+      {{#each card in drop.cards}}
         <div class="cw--SpacePlanetPopup__dropCard">
-          {{this.name}} {{this.chance}}%
+          {{card.name}} {{card.chance}}%
         </div>
       {{/each}}
       </div>

@@ -503,7 +503,6 @@ Template.cosmosFleetsInfo_table.events({
     } else {
       tooltip = new SpacePlanetPopup({
         hash: {
-          drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
           planet: this.planet,
         },
       }).renderComponentToHTML();
@@ -655,93 +654,6 @@ Game.Cosmos.showPlanetInfo = function(id, offset) {
   Game.Cosmos.showPlanetPopup(id, true, offset);
 };
 
-Game.Cosmos.getPlanetInfo = function(planet) {
-  if (!planet) {
-    return null;
-  }
-
-  var info = {};
-
-  info.id = planet._id;
-  info.name = planet.name;
-  info.type = Game.Planets.types[planet.type].name;
-
-  if (planet.isHome || planet.armyId || planet.status === Game.Planets.STATUS.HUMANS) {
-    info.isHumans = true;
-    info.isHome = true;
-    const user = Meteor.user();
-    
-    switch (planet.status) {
-      case Game.Planets.STATUS.NOBODY:
-        info.title = 'Свободная планета';
-        break;
-      case Game.Planets.STATUS.HUMANS:
-        if (user.username !== planet.minerUsername) {
-          info.title = (planet.isHome) ? 'Планета консула' : 'Колония консула';
-        } else {
-          info.title = (planet.isHome) ? 'Наша планета' : 'Наша колония';
-        }
-        break;
-      case Game.Planets.STATUS.REPTILES:
-        info.title = 'Планета рептилий';
-        break;
-    }
-
-    if (user.username !== planet.minerUsername) {
-      info.owner = planet.minerUsername;
-    }
-    
-    if (user.username !== planet.armyUsername && planet.armyUsername !== planet.minerUsername) {
-      info.fleetOwner = planet.armyUsername;
-    }
-    info.canSend = true;
-
-    if (planet.artefacts) {
-      info.timeArtefacts = planet.timeArtefacts;
-    }
-
-  } else {
-    info.isHumans = false;
-    info.canSend = true;
-  }
-
-  if (planet.mission) {
-    info.mission = {
-      level: planet.mission.level,
-      name: Game.Battle.items[planet.mission.type].name,
-      reward: Game.Battle.items[planet.mission.type].level[planet.mission.level].reward
-    };
-  }
-
-  if (planet.isHome || planet.armyId || planet.mission) {
-    var units = Game.Planets.getFleetUnits(planet._id) ;
-    if (units) {
-      const sideUnits = (planet.mission) ? reptileSpaceUnits : humanSpaceUnits;
-      info.units = [];
-      
-      _(sideUnits).pairs().forEach(([id, unit]) => {
-        info.units.push({
-          id,
-          unit,
-          count: _.isString( units[id] )
-            ? game.Battle.count[ units[id] ]
-            : units[id] || 0,
-          countId: units[id]
-        });
-      });
-    }
-  }
-
-  return info;
-};
-
-Game.Cosmos.getTimeNextDrop = (timeCollected) => {
-  const currentTime = Game.getCurrentServerTime();
-  const collectPeriod = Game.Cosmos.COLLECT_ARTEFACTS_PERIOD;
-  const passed = (currentTime - timeCollected) % collectPeriod;
-  return collectPeriod - passed;
-};
-
 Game.Cosmos.reptilesFleetPower = (units) => {
   return Game.Unit.calculateUnitsPower(_.reduce(units, function(units, unit) {
     let count = (_.isString( unit.count )
@@ -761,54 +673,12 @@ Game.Cosmos.reptilesFleetPower = (units) => {
 // Planets popup
 // ----------------------------------------------------------------------------
 
-Game.Cosmos.getPlanetPopupInfo = function(planet) {
-  if (!planet) {
-    return null;
-  }
-
-  var items = [];
-  for (var key in planet.artefacts) {
-    items.push({
-      id: key,
-      name: Game.Artefacts.items[key].name,
-      chance: planet.artefacts[key],
-      url: Game.Artefacts.items[key].url()
-    });
-  }
-
-  var cards = null;
-  if (planet.mission
-   && Game.Battle.items[ planet.mission.type ]
-   && Game.Battle.items[ planet.mission.type ].level[ planet.mission.level ].cards
-  ) {
-    var missionCards = Game.Battle.items[ planet.mission.type ].level[ planet.mission.level ].cards;
-    cards = _.map(missionCards, function(value, key) {
-      return {
-        engName: key,
-        chance: value,
-        name: Game.Cards.items.general[key].name
-      };
-    });
-  }
-
-  return {
-    name: planet.name,
-    type: Game.Planets.types[planet.type].name,
-    items: items,
-    cards: cards
-  };
-};
-
 Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
   if (!mapView) {
     return;
   }
 
   var planet = Game.Planets.getOne(id);
-  var dropInfo = Game.Cosmos.getPlanetPopupInfo(planet);
-  if (!dropInfo) {
-    return;
-  }
 
   Game.Cosmos.hidePlanetPopup();
 
@@ -820,7 +690,6 @@ Game.Cosmos.showPlanetPopup = function(id, isLock, offset = { x: 0, y: 0 }) {
     new SpacePlanetPopup({
       hash: {
         planet: planet,
-        drop: dropInfo,
         isMapView: true,
         allowEdit: isLock,
         allowActions: isLock,

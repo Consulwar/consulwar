@@ -120,7 +120,6 @@ class SpacePlanet extends BlazeComponent {
     } else {
       tooltip = new SpacePlanetPopup({
         hash: {
-          drop: Game.Cosmos.getPlanetPopupInfo(this.planet),
           planet: this.planet,
           isTooltip: true,
         },

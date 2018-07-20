@@ -33,6 +33,7 @@ import SpaceFleetPopup from '/imports/client/ui/blocks/Space/FleetPopup/SpaceFle
 import SpaceBattlePopup from '/imports/client/ui/blocks/Space/BattlePopup/SpaceBattlePopup';
 
 import '/imports/client/ui/blocks/Units/Reinforcement/UnitsReinforcement';
+import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 
 // import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
 
@@ -1156,19 +1157,6 @@ Template.cosmosAttackMenu.helpers({
 
   activeSquad: function() {
     return Template.instance().data.activeSquad.get();
-  },
-
-  selectedFleetPower: function() {
-    var units = selectedUnits.get();
-
-    return Game.Unit.calculateUnitsPower(_.reduce(_.keys(units), function(resultUnits, id) {
-      let count = units[id];
-      if (count > 0) {
-        resultUnits[id] = count;
-      }
-      
-      return resultUnits;
-    }, {}));
   },
 
   canHaveMoreColonies: function() {

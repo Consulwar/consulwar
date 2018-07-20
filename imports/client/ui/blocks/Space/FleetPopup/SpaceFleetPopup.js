@@ -1,6 +1,8 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
+import { _ } from 'lodash';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
+import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 import './SpaceFleetPopup.html';
 import './SpaceFleetPopup.styl';
 
@@ -46,8 +48,16 @@ class SpaceFleetPopup extends BlazeComponent {
     return 0;
   }
 
-  getReptilesFleetPower() {
-    return Game.Cosmos.reptilesFleetPower(this.ship.units);
+  getReptilesFleet() {
+    return _.reduce(this.ship.units, (result, unit) => {
+      const fleet = result;
+      if (_.isString(unit.count)) {
+        fleet[unit.id] = unit.countId;
+      } else if (unit.count > 0) {
+        fleet[unit.id] = unit.count;
+      }
+      return fleet;
+    }, {});
   }
 
   attack(event, shipId = this.ship.id) {

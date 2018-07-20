@@ -108,7 +108,9 @@
       </div>
 
       <div class="unitsAdditionalControl">
-        <span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
+        {{> UnitsPower args
+          units=selectedUnits.get
+        }}
         <button
           data-sound="click"
           onClick={{toggleSelectAllUnits}}

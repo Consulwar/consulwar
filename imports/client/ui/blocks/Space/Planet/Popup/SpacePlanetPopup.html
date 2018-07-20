@@ -117,9 +117,10 @@
           {{planetInfo.mission.name}}
           {{planetInfo.mission.level}}
           уровня
-          <span class="cw--SpacePlanetPopup__unitsPower">
-            {{formatNumberWithISO getReptilesFleetPower}}
-          </span>
+          {{> UnitsPower args
+            units=getFleet
+            className='cw--SpacePlanetPopup__unitsPower'
+          }}
         </div>
       {{else}}
         <div class="cw--SpacePlanetPopup__typeTitle">

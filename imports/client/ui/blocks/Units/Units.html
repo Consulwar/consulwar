@@ -1,0 +1,47 @@
+<template name="Units">
+  {{#if units}}
+    <div class="cw--Units {{className}}">
+      {{#each unit in getArmy}}
+        {{#if unit}}
+          <a
+            href={{unit.url}}
+            onClick={{showUnit unit.id}}
+            class="
+              cw--Units__unit
+              {{#unless unit.count}}
+                cw--Units__unit_passive
+              {{/unless}}
+              {{#if isTextUnits}}
+                cw--Units__unit_text
+              {{/if}}
+            "
+            data-sound="hover, click"
+          >
+            {{#if isTextUnits}}
+              {{unit.title}}
+            {{else}}
+              <img
+                class="cw--Units__unitIcon"
+                src={{unit.icon}}
+                alt={{unit.title}}
+              />
+            {{/if}}
+            {{#if unit.count}}
+              <span
+                class="cw--Units__unitCount"
+                data-tooltip={{battleCountNumber unit.countId}}
+              >
+                {{formatNumberWithISO unit.count 3}}
+                {{#if unit.myArmy}}
+                  <span class="cw--color_credit">
+                    ({{formatNumberWithISO unit.myArmy 3}})
+                  </span>
+                {{/if}}
+              </span>
+            {{/if}}
+          </a>
+        {{/if}}
+      {{/each}}
+    </div>
+  {{/if}}
+</template>

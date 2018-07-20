@@ -76,9 +76,9 @@ export default {
   maxLevel: 100,
   requirements() {
     return [
-      ['Building/Military/Shipyard', 120],
-      ['Building/Military/Airfield', 120],
-      ['Building/Military/Factory', 120],
+      ['Building/Military/Shipyard', 100],
+      ['Building/Military/Airfield', 100],
+      ['Building/Military/Factory', 100],
     ];
   },
 };

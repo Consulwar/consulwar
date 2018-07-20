@@ -21,193 +21,31 @@
   </div>
 </template>
 
-<template name="cosmosPlanetPopup">
-  <div 
-    class="map-planet-popup" 
-    style="left: {{position.x}}px; top: {{position.y}}px;"
-  >
-
-    {{#let planet=(Game.Cosmos.getPlanetInfo planet)}}
-      <h2>
-        {{#if allowEdit}}
-          <span class="edit" data-id="{{planet.id}}"></span> 
-        {{/if}}
-        {{planet.name}} 
-        ({{planet.type}})
-      </h2>
-      <div class="map-planet-popup-items">
-        {{#each drop.items}}
-          <a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
-        {{/each}}
-        {{#if planet.mission.reward}}
-          <div class="resources cost">
-            {{#each (arrayify planet.mission.reward)}}
-              <div class="{{this.key}}">{{formatNumberWithISO this.value}}</div>
-            {{/each}}
-          </div>
-        {{/if}}
-      </div>
-
-      {{#if and planet.isHumans planet.timeArtefacts}}
-        <p>Сбор через: <span>{{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}</span></p>
-      {{/if}}
-
-      {{#if drop.cards}}
-        {{#each drop.cards}}
-          {{this.name}} {{this.chance}}%<br/>
-        {{/each}}
-      {{/if}}
-      
-      {{#if planet.isHumans}}
-        <h2 class="humans">
-          {{planet.title}}
-          {{#if planet.owner}}
-            <a href="{{pathFor 'statistics' hash=planet.owner}}">{{planet.owner}}</a>
-          {{/if}}
-        </h2>
-        
-        {{#if planet.fleetOwner}}
-          <br>Флот <a href="{{pathFor 'statistics' hash=planet.fleetOwner}}">{{planet.fleetOwner}}</a>
-        {{/if}}
-      {{else}}{{#if planet.mission}}
-        <h2 class="reptiles">
-          {{planet.mission.name}}
-          {{planet.mission.level}}
-          уровня
-          <span class="unitsPower">{{formatNumberWithISO reptilesFleetPower}}</span>
-        </h2>
-      {{else}}
-        <h2>Свободная планета</h2>
-      {{/if}}{{/if}}
-
-      {{> cosmosUnitsBlock units=planet.units isReptiles=planet.mission}}
-
-      <div style="display: flex; flex-wrap: wrap">
-        {{#if and allowActions planet.canSend}}
-          <button class="button-attack open" data-id="{{planet.id}}">Отправить</button>
-        {{/if}}
-        {{#if allowActions}}
-          {{#if canMine}}
-            <button
-              style="margin-top:15px"
-              class="
-                cw--button
-                cw--button_type_primary
-                cw--button_type_primary_blue
-                mine
-              "
-              data-id="{{planet.id}}"
-            >
-              Захватить
-            </button>
-          {{else}}{{#if canUnMine}}
-            <button
-              style="margin-top:15px"
-              class="
-                cw--button
-                cw--button_type_primary
-                cw--button_type_primary_blue
-                unmine
-              "
-              data-id="{{planet.id}}">Освободить</button>
-          {{/if}}{{/if}}
-        {{/if}}
-      </div>
-    {{/let}}
-  </div>
-</template>
-
-<template name="cosmosBattlePopup">
-  <div
-      class="map-planet-popup"
-      style="left: {{position.x}}px; top: {{position.y}}px;"
-  >
-    Идёт бой<br/>
-    {{#with info}}
-      Раунд {{round}}<br/>
-      {{formatSeconds secondsLeft}}
-    {{/with}}
-    <button class="button-attack open" data-id="{{battleId}}">Отправить</button>
-
-  </div>
-</template>
-
-<template name="cosmosUnitsBlock">
-  {{#if units}}
-    {{#if options.textUnits}}
-      <ul class="armyText {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
-        {{#each units}}
-          {{#if this.count}}
-            <li>
-              {{this.unit.title}} 
-              <span 
-                data-tooltip="{{battleCountNumber this.countId}}"
-                data-tooltip-direction="e">
-                {{formatNumberWithISO this.count}}
-              </span>
-            </li>
-          {{/if}}
-        {{/each}}
-      </ul>
-    {{else}}
-      <div class="army {{#if isReptiles}}reptiles{{else}}humans{{/if}}">
-        {{#each units}}
-          <a
-            onClick={{showUnit this.unit}}
-            class="{{#unless this.count}}disabled{{/unless}}"
-            style="background-image: url({{this.unit.icon}}); cursor: pointer"
-            href="{{this.unit.url}}"
-          >
-            <div
-              class="count"
-              data-tooltip="{{battleCountNumber this.countId}}"
-              data-tooltip-direction="e"
-            >
-              {{#if this.count}}{{formatNumberWithISO this.count}}{{/if}}
-            </div>
-          </a>
-        {{/each}}
-      </div>
-    {{/if}}
-  {{/if}}
-</template>
 
 <template name="cosmosAttackMenu">
   <div class="attack-menu">
     <div class="departure">
-      <ul class="items fleet">
-        {{#each availableFleet}}
-          <li 
-            class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}" 
-            data-id="{{this.id}}"
-            data-max="{{this.max}}"
-          >
-            <a style="background-image: url({{this.icon}});"></a>
-            <div class="max">{{formatNumberWithISO this.max}}</div>
-
-            <div class="count">
-              {{#if this.count}}
-                {{#if lte this.count this.max}}
-                  <input type="number" placeholder="" value="{{this.count}}">
-                {{else}}
-                  <input type="number" placeholder="" value="{{this.max}}">
-                  <span>{{formatNumberWithISO (substract this.count this.max) 3}}</span>
-                {{/if}}
-              {{else}}
-                <input type="number" placeholder="" value="">
-              {{/if}}
-            </div>
-          </li>
-        {{/each}}
-      </ul>
+      {{> UnitsReinforcement args
+        activeSquad=activeSquad
+        selectAllUnits=selectAllUnits
+        colonyId=activeColonyId
+        isSelectedAll=isSelectedAll
+        selectedUnits=selectedUnits
+        isSpace=true
+        units=units
+        className='cw--SpaceAttackMenu__reinforcement'
+      }}
       
       <div class="planets scrollbar-inner">
         {{#each colonies}}
           {{#if this.canBuy}}
-            {{> cosmos_planet_item planet=this}}
+            {{> SpacePlanet args
+              planet=this
+              className='cw--CosmosAttackMenu__planet'
+            }}
           {{else}}
-            {{> cosmos_planet_item 
-                planet=this 
+            {{> SpacePlanet args
+                planet=this
                 location=(or 
                   (and 
                     (and 
@@ -220,10 +58,11 @@
                     )
                   ) 
                   ' '
-                ) 
+                )
                 isSelected=(eqandtrue activeColonyId this._id)
                 isDisabled=(eqandtrue ../id this._id)
                 isTopTime=this.isTopTime
+                className='cw--CosmosAttackMenu__planet'
             }}
           {{/if}}
         {{/each}}
@@ -270,8 +109,17 @@
 
       <div class="unitsAdditionalControl">
         <span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
-        <button data-sound="click" class="btn-all">
-          {{#if isAllSelected}}
+        <button
+          data-sound="click"
+          onClick={{toggleSelectAllUnits}}
+          class="
+            cw--button
+            cw--button_flat
+            cw--button_flat_blue
+          "
+          style="font-size:16px; width:100%"
+        >
+          {{#if isSelectedAll.get}}
             Отменить выбор
           {{else}}
             Выбрать всех
@@ -283,7 +131,12 @@
 
     <div class="target">
       {{#if planet}}
-        {{> cosmosPlanetPopup drop=(Game.Cosmos.getPlanetPopupInfo planet) planet=planet allowEdit=true allowActions=false}}
+        {{> SpacePlanetPopup args
+          planet=planet
+          allowEdit=true
+          allowActions=false
+          isTooltip=true
+        }}
 
         {{#if timeAttack}}
           <p>Время до цели: <span>{{formatSeconds timeAttack}}</span></p>
@@ -291,24 +144,75 @@
           <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
         {{#if or planet.isHome planet.armyId}}
-          <button class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">Отправить</button>
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              defend
+            "
+            disabled={{not canSendFleet}}
+            data-sound="attack"
+          >
+            Отправить
+          </button>
         {{else}}
-          <button  class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              defend
+            "
+            disabled={{not canSendFleet}}
+            data-sound="attack"
+          >
             Захватить
           </button>
-          <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              return
+            "
+            disabled={{not canSendFleet}}
+            data-sound="attack"
+          >
             {{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
           </button>
         {{/if}}
-      {{else}}{{#if battle}}
+      {{else if battle}}
         {{#if timeAttackBattle}}
           <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
           <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
-          <button class="btn-attack help" data-sound="attack">Отправить</button>
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              help
+            "
+            data-sound="attack"
+          >
+            Отправить
+          </button>
         {{/if}}
       {{else}}
-        {{> cosmosShipInfo ship=(Game.Cosmos.getShipInfo ship) spaceEvent=ship}}
+        {{> SpaceFleetPopup args
+          ship=(Game.Cosmos.getShipInfo ship)
+          spaceEvent=ship
+          isTooltip=true
+        }}
 
         {{#if timeAttack}}
           <p>Время перехвата: <span>{{formatSeconds timeAttack}}</span></p>
@@ -317,79 +221,33 @@
         {{/if}}
           <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
-        <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">Перехватить</button>
-      {{/if}}{{/if}}
-    </div>
-
-    <button class="btn-close" data-sound="close"></button>
-  </div>
-</template>
-
-<template name="cosmos_planet_item">
-  <a 
-    class="
-      planet 
-      {{statusColony}}
-      {{statusFleet}}
-      {{#if planet.isEmpty}}empty{{/if}}
-      {{#if planet.notAvaliable}}notAvaliable{{/if}}
-      {{#if planet.canBuy}}canBuy{{/if}}
-      {{#if isDisabled}}disabled{{/if}}
-      {{#if isSelected}}selected{{/if}}
-      {{#if isTopTime}}topTime{{/if}}
-    " 
-    data-id="{{planet._id}}"
-    href="{{pathFor 'cosmos' hash=planet._id}}"
-    data-tooltip="true"
-    data-tooltip-direction="e"
-  >
-    <div class="name">
-      {{#if planet.notAvaliable}}
-        {{#if planet.canBuy}}
-          Купить
-        {{else}}
-          {{planet.requiredRank}} уровень
-        {{/if}}
-      {{else}}
-        {{#if name}}
-          {{name}}
-        {{else}}
-          {{planet.name}}
-        {{/if}}
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            cw--CosmosAttackMenu__action
+            btn-attack
+            return
+          "
+          disabled={{not canSendFleet}}
+          data-sound="attack"
+        >
+          Перехватить
+        </button>
       {{/if}}
     </div>
-    <div 
+
+    <button
+      onClick={{closeWindow}}
       class="
-        map-planet-marker
-        {{planet.type}} 
-        map-planet-border
-        {{#if options.rotatePlanets}}map-planet-marker-animated{{/if}}
-        " 
-      style="
-        width: {{multiply (sum planet.size 3) 4}}px;
-        height: {{multiply (sum planet.size 3) 4}}px;"
-    >
-      <div class="fleet-marker"></div>
-      {{#if battleExists}}<div class="battle-marker"></div>{{/if}}
-      <div class="texture"></div>
-    </div>
-    <div class="location">
-      {{#if location}}
-        {{location}}
-      {{else}}{{#if showTimeLeft}}
-        {{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}
-      {{else}}{{#if planet.canBuy}}
-        {{formatNumber planet.price}}
-      {{else}}
-        {{#if eq planet.segment 0}}
-          Центр
-        {{else}}
-          Р{{planet.hand}} 
-          С{{planet.segment}}
-        {{/if}}
-      {{/if}}{{/if}}{{/if}}
-    </div>
-  </a>
+        cw--button
+        cw--button_close
+        cw--CosmosAttackMenu__close
+      "
+      data-sound="close"
+    ></button>
+  </div>
 </template>
 
 <template name="cosmosFleetsInfo_table">
@@ -427,7 +285,10 @@
             "
           >
             {{#if this.start}}
-              {{> cosmos_planet_item planet=this.start}}
+              {{> SpacePlanet args
+                planet=this.start
+                isCompact=options.compactFleetInfo
+              }}
             {{else}}
               <a class="cw--FleetInfoPlanets__fleetReptiles"></a>
             {{/if}}
@@ -460,7 +321,10 @@
             "
           >
             {{#if this.finish}}
-              {{> cosmos_planet_item planet=this.finish}}
+              {{> SpacePlanet args
+                planet=this.finish
+                isCompact=options.compactFleetInfo
+              }}
             {{else}}
               <a class="cw--FleetInfoPlanets__fleetReptiles"
                 href="{{pathFor 'cosmos' hash=this.spaceEvent.info.targetId}}" 
@@ -497,52 +361,6 @@
   </div>
 </template>
 
-<template name="cosmosShipInfo">
-  <div 
-    class="map-planet-popup" 
-    style="left: {{position.x}}px; top: {{position.y}}px;"
-  >
-    {{#if ship}}
-      {{#if ship.isHumans}}
-        <h2 class="humans">
-          {{ship.status}} 
-          {{#if ship.owner}}
-            <a href="{{pathFor 'statistics' hash=ship.owner}}">{{ship.owner}}</a>
-          {{/if}}
-        </h2>
-      {{/if}}
-      {{#if ship.mission}}
-        <h2 class="reptiles">
-          {{ship.mission.name}}
-          {{ship.mission.level}}
-          уровня
-          <span class="unitsPower">{{formatNumberWithISO reptilesFleetPower}}</span>
-        </h2>
-      {{/if}}
-      <div class="map-planet-popup-items">
-        {{#each drop.items}}
-          <a href="{{this.url}}" class="{{this.id}}" title="{{this.name}}">{{this.chance}}%</a>
-        {{/each}}
-        {{#if ship.mission.reward}}
-          <div class="resources cost">
-            {{#each (arrayify ship.mission.reward)}}
-              <div class="{{this.key}}">{{formatNumberWithISO this.value}}</div>
-            {{/each}}
-          </div>
-        {{/if}}
-      </div>
-
-      {{> cosmosUnitsBlock units=ship.units isReptiles=ship.mission}}
-
-      {{#if timeLeft}}
-        <p>Время до цели: <span>{{formatSeconds timeLeft}}</span></p>
-      {{/if}}
-      {{#if and allowActions ship.canSend}}
-        <button class="button-attack open" data-id="{{ship.id}}" data-sound="click">Перехватить</button>
-      {{/if}}
-    {{/if}}
-  </div>
-</template>
 
 <template name="cosmosHistory">
   <div class="history">
@@ -568,7 +386,11 @@
                 
                 {{#if this.planetId}}
                   {{#let battlePlanet=getBattlePlanet}}
-                    {{> cosmos_planet_item isDisabled=battlePlanet.isDisabled location=battlePlanet.location planet=battlePlanet}}
+                    {{> SpacePlanet args
+                      planet=battlePlanet
+                      isDisabled=battlePlanet.isDisabled
+                      location=battlePlanet.location
+                    }}
                   {{/let}}
                 {{else}}
                   Космос

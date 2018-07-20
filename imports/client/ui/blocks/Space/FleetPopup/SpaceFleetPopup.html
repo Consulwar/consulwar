@@ -1,0 +1,88 @@
+<template name="SpaceFleetPopup">
+  <div 
+    class="
+      cw--SpaceFleetPopup
+      {{#if isMapView}}
+        cw--SpaceFleetPopup_mapView
+        {{#if not allowActions}}
+          cw--SpaceFleetPopup_notLocked
+        {{/if}}
+      {{/if}}
+    "
+    style="left: {{position.x}}px; top: {{position.y}}px;"
+  >
+    {{#if ship}}
+      {{#if ship.isHumans}}
+        <div
+          class="
+            cw--SpaceFleetPopup__header
+            {{#if ship.owner}}
+              cw--SpaceFleetPopup__header_humans
+            {{else}}
+              cw--SpaceFleetPopup__header_my
+            {{/if}}
+          "
+        >
+          {{ship.status}} 
+          {{#if ship.owner}}
+            <a
+              class="cw--SpaceFleetPopup__owner"
+              href="{{pathFor 'statistics' hash=ship.owner}}"
+            >
+              {{ship.owner}}
+            </a>
+          {{/if}}
+        </div>
+      {{/if}}
+      {{#if ship.mission}}
+        <div class="cw--SpaceFleetPopup__mission">
+          {{ship.mission.name}}
+          {{ship.mission.level}}
+          уровня
+          <span class="cw--SpaceFleetPopup__unitsPower">
+            {{formatNumberWithISO getReptilesFleetPower}}
+          </span>
+        </div>
+      {{/if}}
+
+      {{#if ship.mission.reward}}
+        {{> ResourcePrice args
+          price=ship.mission.reward
+          isShowDiff=false
+          className='cw--SpaceFleetPopup__missionReward'
+        }}
+      {{/if}}
+
+      {{> Units args
+        isSpace=true
+        units=ship.units
+        isReptiles=ship.mission
+      }}
+
+      {{#if getTimeLeft}}
+        <div class="cw--SpaceFleetPopup__timer">
+          Время до цели:
+          <time class="cw--SpaceFleetPopup__time">
+            {{formatSeconds getTimeLeft}}
+          </time>
+        </div>
+      {{/if}}
+      {{#if and allowActions ship.canSend}}
+        <div class="cw--SpaceFleetPopup__actions">
+          <button
+            onClick={{attack}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--SpaceFleetPopup__action
+            "
+            data-sound="hover,click"
+          >
+            Перехватить
+          </button>
+        </div>
+      {{/if}}
+    {{/if}}
+  </div>
+</template>

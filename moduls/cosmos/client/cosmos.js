@@ -32,6 +32,8 @@ import SpacePlanetPopup from '/imports/client/ui/blocks/Space/Planet/Popup/Space
 import SpaceFleetPopup from '/imports/client/ui/blocks/Space/FleetPopup/SpaceFleetPopup';
 import SpaceBattlePopup from '/imports/client/ui/blocks/Space/BattlePopup/SpaceBattlePopup';
 
+import '/imports/client/ui/blocks/Units/Reinforcement/UnitsReinforcement';
+
 // import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
 
 import '/imports/client/ui/blocks/Space/Planet/SpacePlanet';
@@ -91,6 +93,9 @@ let shipsLayer = null;
 let galaxyByUsername = {};
 let galaxyByHex = {};
 let myAllies = [];
+
+const selectAllUnits = new ReactiveVar(false);
+const isSelectedAll = new ReactiveVar(false);
 
 Space.collection.find({}).observe({
   added: function(event) {
@@ -990,7 +995,9 @@ Game.Cosmos.showAttackMenu = function(id) {
       activeColonyId,
       updated,
       activeSquad,
-      selectedUnits
+      selectedUnits,
+      isSelectedAll,
+      selectAllUnits,
     }
   });
 };
@@ -1032,15 +1039,6 @@ var resetSelectedUnits = function() {
   selectedUnits.set(units);
 };
 resetSelectedUnits();
-
-var selectAllAvaliableUnits = function() {
-  var army = Game.Planets.getFleetUnits(activeColonyId.get());
-  var units = {};
-  _(humanSpaceUnits).keys().forEach((id) => {
-    units[id] = (army && army[id]) || 0;
-  });
-  selectedUnits.set(units);
-};
 
 var timeAttack = function(id) {
   var baseId = id || Template.instance().data.activeColonyId.get();
@@ -1113,6 +1111,8 @@ const timeAttackBattle = function(id) {
   return null;
 };
 
+const units = [];
+
 Template.cosmosAttackMenu.onRendered(function() {
   setTimeout(function() {
     $('.content .attack-menu .scrollbar-inner').perfectScrollbar();
@@ -1156,33 +1156,6 @@ Template.cosmosAttackMenu.helpers({
 
   activeSquad: function() {
     return Template.instance().data.activeSquad.get();
-  },
-
-  availableFleet: function() {
-    var colonyId = this.activeColonyId.get();
-
-    var army = Game.Planets.getFleetUnits(colonyId) || {};
-
-    var selected = selectedUnits.get();
-
-    var units = [];
-
-    _(humanSpaceUnits).pairs().forEach(([id, unit]) => {
-      var max = 0;
-      if (army[id] && army[id] > 0) {
-        max = army[id];
-      }
-      
-      units.push({
-        id,
-        title: unit.title,
-        icon: unit.icon,
-        max: max,
-        count: (selected && selected[id]) || 0
-      });
-    });
-
-    return units;
   },
 
   selectedFleetPower: function() {
@@ -1238,8 +1211,6 @@ Template.cosmosAttackMenu.helpers({
     return Game.Planets.getExtraColoniesCount() < Game.Planets.MAX_EXTRA_COLONIES;
   },
 
-  isAllSelected,
-
   colonies: function() {
     const result = getSourcePlanets();
 
@@ -1258,6 +1229,10 @@ Template.cosmosAttackMenu.helpers({
       });
 
     return result;
+  },
+
+  toggleSelectAllUnits() {
+    selectAllUnits.set(!selectAllUnits.get());
   },
 
   squads: function() {
@@ -1289,19 +1264,19 @@ Template.cosmosAttackMenu.helpers({
 
       return squad;
     });
+  },
+
+  closeWindow() {
+    Game.Cosmos.hideAttackMenu();
   }
 });
 
 Template.cosmosAttackMenu.events({
-  'click .btn-close': function(e, t) {
-    Game.Cosmos.hideAttackMenu();
-  },
-
   'click .resources .credits': function(e, t) {
     Game.Payment.showWindow();
   },
   
-  'click a.planet.canBuy': function(e, t) {
+  'click .cw--SpacePlanet_canBuy': function(e, t) {
     var price = Game.Planets.getExtraColonyPrice();
 
     Game.showAcceptWindow('Дополнительная колония стоит ' + price + ' ГГК. Купить?', function() {
@@ -1329,48 +1304,6 @@ Template.cosmosAttackMenu.events({
       // set new colony id
       t.data.activeColonyId.set( id );
     }
-  },
-
-  'click .btn-all': function(e, t) {
-    if (isAllSelected()) {
-      resetSelectedUnits();
-    } else {
-      selectAllAvaliableUnits();
-    }
-  },
-
-  'click .fleet a, click .fleet .max': function(e, t) {
-    var id = $(e.currentTarget.parentElement).attr('data-id');
-    var max = $(e.currentTarget.parentElement).attr('data-max');
-    var input = $(e.currentTarget.parentElement).find('input');
-
-    var selected = selectedUnits.get();
-
-    if (max == input.val()) {
-      selected[id] = 0;
-    } else {
-      selected[id] = max;
-    }
-
-    selectedUnits.set(selected);
-  },
-
-  'change .fleet input': function (e, t) {
-    var value = parseInt( e.currentTarget.value, 10 ) || 0;
-    var id = $(e.currentTarget.parentElement.parentElement).attr('data-id');
-    var max = parseInt( $(e.currentTarget.parentElement.parentElement).attr('data-max'), 10 );
-
-    var selected = selectedUnits.get();
-
-    if (value < 0) {
-      selected[id] = 0;
-    } else if (value > max) {
-      selected[id] = max;
-    } else {
-      selected[id] = value;
-    }
-
-    selectedUnits.set(selected);
   },
 
   'click .btn-attack': function(e, t) {

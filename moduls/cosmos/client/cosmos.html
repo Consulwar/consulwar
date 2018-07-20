@@ -25,31 +25,16 @@
 <template name="cosmosAttackMenu">
   <div class="attack-menu">
     <div class="departure">
-      <ul class="items fleet">
-        {{#each availableFleet}}
-          <li 
-            class="unit {{#if lt this.max 1}}disabled{{else}}active{{/if}}" 
-            data-id="{{this.id}}"
-            data-max="{{this.max}}"
-          >
-            <a style="background-image: url({{this.icon}});"></a>
-            <div class="max">{{formatNumberWithISO this.max}}</div>
-
-            <div class="count">
-              {{#if this.count}}
-                {{#if lte this.count this.max}}
-                  <input type="number" placeholder="" value="{{this.count}}">
-                {{else}}
-                  <input type="number" placeholder="" value="{{this.max}}">
-                  <span>{{formatNumberWithISO (substract this.count this.max) 3}}</span>
-                {{/if}}
-              {{else}}
-                <input type="number" placeholder="" value="">
-              {{/if}}
-            </div>
-          </li>
-        {{/each}}
-      </ul>
+      {{> UnitsReinforcement args
+        activeSquad=activeSquad
+        selectAllUnits=selectAllUnits
+        colonyId=activeColonyId
+        isSelectedAll=isSelectedAll
+        selectedUnits=selectedUnits
+        isSpace=true
+        units=units
+        className='cw--SpaceAttackMenu__reinforcement'
+      }}
       
       <div class="planets scrollbar-inner">
         {{#each colonies}}
@@ -124,8 +109,17 @@
 
       <div class="unitsAdditionalControl">
         <span class="unitsPower">{{formatNumberWithISO selectedFleetPower}}</span>
-        <button data-sound="click" class="btn-all">
-          {{#if isAllSelected}}
+        <button
+          data-sound="click"
+          onClick={{toggleSelectAllUnits}}
+          class="
+            cw--button
+            cw--button_flat
+            cw--button_flat_blue
+          "
+          style="font-size:16px; width:100%"
+        >
+          {{#if isSelectedAll.get}}
             Отменить выбор
           {{else}}
             Выбрать всех
@@ -150,12 +144,47 @@
           <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
         {{#if or planet.isHome planet.armyId}}
-          <button class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">Отправить</button>
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              defend
+            "
+            disabled={{not canSendFleet}}
+            data-sound="attack"
+          >
+            Отправить
+          </button>
         {{else}}
-          <button  class="btn-attack defend" disabled={{not canSendFleet}} data-sound="attack">
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              defend
+            "
+            disabled={{not canSendFleet}}
+            data-sound="attack"
+          >
             Захватить
           </button>
-          <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              return
+            "
+            disabled={{not canSendFleet}}
+            data-sound="attack"
+          >
             {{#if planet.mission}}Уничтожить{{else}}Исследовать{{/if}}
           </button>
         {{/if}}
@@ -164,7 +193,19 @@
           <p>Время до цели: <span>{{formatSeconds timeAttackBattle}}</span></p>
           <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
-          <button class="btn-attack help" data-sound="attack">Отправить</button>
+          <button
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--CosmosAttackMenu__action
+              btn-attack
+              help
+            "
+            data-sound="attack"
+          >
+            Отправить
+          </button>
         {{/if}}
       {{else}}
         {{> SpaceFleetPopup args
@@ -180,11 +221,32 @@
         {{/if}}
           <p>Свободно флотов: <span>{{vacantFleets}}</span></p>
 
-        <button class="btn-attack return" disabled={{not canSendFleet}} data-sound="attack">Перехватить</button>
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_orange
+            cw--CosmosAttackMenu__action
+            btn-attack
+            return
+          "
+          disabled={{not canSendFleet}}
+          data-sound="attack"
+        >
+          Перехватить
+        </button>
       {{/if}}
     </div>
 
-    <button class="btn-close" data-sound="close"></button>
+    <button
+      onClick={{closeWindow}}
+      class="
+        cw--button
+        cw--button_close
+        cw--CosmosAttackMenu__close
+      "
+      data-sound="close"
+    ></button>
   </div>
 </template>
 

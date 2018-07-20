@@ -160,6 +160,9 @@
 .attack-menu .fleet
   cursor pointer
 
+.cw--SpaceAttackMenu__reinforcement
+  padding 10px 10px 0 10px
+
 .unitsPower
   display inline-flex
   vertical-align middle
@@ -182,31 +185,6 @@
   font-weight bold
   flex-wrap wrap
 
-  .btn-attack
-    cursor pointer
-    display block
-    font-weight bold
-    font-size 16px
-    text-align center
-    text-transform uppercase
-    width 135px
-    height 32px
-    padding-top 2px
-    color #ffffff
-    background-image url(/img/game/cosmomap/button_attack.png)
-    background-repeat no-repeat
-    border 0px solid transparent
-    border-radius 9px
-    margin auto 0 0 0
-    
-    &:hover
-      -webkit-filter brightness(1.4)
-      filter brightness(1.4)
-      
-    &.disabled
-      -webkit-filter grayscale(0.5) brightness(0.75)
-      filter grayscale(0.5) brightness(0.75)
-  
   .unitsAdditionalControl
     width 150px
     margin 10px auto
@@ -214,17 +192,6 @@
     flex-direction column
     align-items center
     justify-content space-around
-      
-    .btn-all
-      cursor pointer
-      font-size 16px
-      text-align center
-      padding-top 14px
-      padding-bottom 14px
-      width 100%
-      background-color #000000
-      border 2px solid #80BAEC
-      color #80BAEC
 
   .btn-add
     cursor pointer
@@ -282,81 +249,7 @@
     flex-wrap wrap
     width 640px
     max-width 100%
-      
-  .fleet
-    display flex
-    width 640px
-    flex-wrap wrap
-    justify-content space-around
-    padding-top 25px
 
-    li
-      width 85px
-      height 85px
-      position relative
-      display inline-block
-      overflow visible
-      margin 0 7px 30px
-      
-      &:last-child
-        margin 0 7px 30px
-      
-    a
-      background-repeat no-repeat
-
-    .max
-      position absolute
-      top 60px
-      height 18px
-      width 100%
-      text-align center
-      background-color rgba(0, 0, 0, 0.5)
-      padding-top 2px
-      font-size 14px
-    
-    .disabled
-      .count
-        -webkit-filter brightness(0.5)
-        filter brightness(0.5)
-
-    .count
-      position relative
-      display flex
-      
-      margin-top 5px
-      width 100%
-      height 22px
-      -webkit-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-      -moz-box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-      box-shadow inset 2px 2px 4px 0px rgba(0,0,0,0.75);
-      border 2px solid #335168
-      background-color #adadad
-      border-radius 5px
-      box-sizing border-box
-      
-      &:before
-        display none
-      
-      input
-        flex-shrink 1
-        width 100%
-        min-width 50%
-        height 100%
-        padding-top 2px
-        border 0
-        background transparent
-        text-align center
-        box-sizing border-box
-        
-      span
-        flex-shrink 1
-        background-color rgba(0, 0, 0, 0.5)
-        color $color-honor
-        padding 3px 5px
-        box-sizing border-box
-        white-space nowrap
-        font-size 14px
-  
   .squads
     display flex
     width 430px
@@ -455,7 +348,7 @@
     flex-wrap wrap
     justify-content space-around
     width 320px
-    padding 12px 0
+    padding 12px 5px
 
     ul
       position relative
@@ -523,22 +416,6 @@
   background-position 0px 0px
   &:hover
     background-position 0px -34px
-
-.btn-close
-  cursor pointer
-  display block
-  z-index 4
-  position absolute
-  right 5px
-  top 5px
-  width 30px
-  height 30px
-  background-image url(/img/game/cosmomap/button_close.png)
-  background-repeat no-repeat
-  border 0px solid transparent
-  
-  &:hover
-    background-image url(/img/game/cosmomap/button_close_active.png)
 
 .history-item
   display flex
@@ -654,3 +531,12 @@
 
 .cw--CosmosAttackMenu__planet
   width 60px
+
+.cw--CosmosAttackMenu__close
+  position absolute
+  right 10px
+  top 10px
+
+.cw--CosmosAttackMenu__action
+  width 145px
+  margin-top auto

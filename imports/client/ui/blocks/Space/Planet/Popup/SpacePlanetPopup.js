@@ -229,9 +229,9 @@ class SpacePlanetPopup extends BlazeComponent {
       Meteor.call(
         'planet.startMining',
         planetId,
-        (error) => {
-          if (error) {
-            Notifications.error(error.error);
+        (err) => {
+          if (err) {
+            Notifications.error(err.error);
           }
         },
       );
@@ -241,11 +241,15 @@ class SpacePlanetPopup extends BlazeComponent {
   unMine(event, planetId = this.planet._id) {
     event.stopPropagation();
     if (planetId) {
-      Meteor.call('planet.stopMining', planetId, (error) => {
-        if (error) {
-          Notifications.error(error.error);
-        }
-      });
+      Meteor.call(
+        'planet.stopMining',
+        planetId,
+        (err) => {
+          if (err) {
+            Notifications.error(err.error);
+          }
+        },
+      );
     }
   }
 

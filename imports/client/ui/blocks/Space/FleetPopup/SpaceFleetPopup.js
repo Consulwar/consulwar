@@ -1,6 +1,10 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
-import Game from '/moduls/game/lib/main.game';
+import Game, { game } from '/moduls/game/lib/main.game';
+import { Meteor } from 'meteor/meteor';
+import FlightEvents from '/imports/modules/Space/client/flightEvents';
+import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
+import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 import './SpaceFleetPopup.html';
@@ -13,7 +17,6 @@ class SpaceFleetPopup extends BlazeComponent {
 
   constructor({
     hash: {
-      ship,
       spaceEvent,
       allowActions,
       position,
@@ -22,11 +25,11 @@ class SpaceFleetPopup extends BlazeComponent {
   }) {
     super();
 
-    this.ship = ship;
     this.spaceEvent = spaceEvent;
     this.allowActions = allowActions;
     this.position = position;
     this.isMapView = isMapView;
+    this.ship = this.getShipInfo(this.spaceEvent);
   }
 
   onRendered() {
@@ -37,6 +40,71 @@ class SpaceFleetPopup extends BlazeComponent {
         Game.Cosmos.hidePlanetPopup();
       }
     });
+  }
+
+
+  getShipInfo(spaceEvent = this.spaceEvent) {
+    if (
+      !spaceEvent
+      || spaceEvent.status === 'completed'
+      || spaceEvent.status === 'cancelled'
+    ) {
+      return null;
+    }
+
+    const info = {};
+
+    info.name = null;
+    info.id = spaceEvent._id;
+
+    if (spaceEvent.data.isHumans) {
+      info.isHumans = true;
+      info.canSend = false;
+      info.status = 'Флот Консула';
+      if (Meteor.user().username !== spaceEvent.data.username) {
+        info.owner = spaceEvent.data.username;
+      }
+    } else {
+      const { level, type } = spaceEvent.data.mission;
+      info.isHumans = false;
+      info.canSend = true;
+      info.mission = {
+        level,
+        name: Game.Battle.items[type].name,
+        reward: Game.Battle.items[type].level[level].reward,
+      };
+      info.status = 'Флот Рептилий';
+    }
+
+    const units = FlightEvents.getFleetUnits(spaceEvent.data);
+    if (units) {
+      let unitsSource = null;
+      if (spaceEvent.data.isHumans) {
+        unitsSource = humanSpaceUnits;
+      } else {
+        unitsSource = reptileSpaceUnits;
+      }
+
+      info.units = [];
+
+      _.toPairs(unitsSource).forEach(([id, unit]) => {
+        const countId = units[id];
+
+        let count = countId || 0;
+        if (_.isString(countId)) {
+          count = game.Battle.count[countId];
+        }
+
+        info.units.push({
+          id,
+          unit,
+          count,
+          countId,
+        });
+      });
+    }
+
+    return info;
   }
 
   getTimeLeft() {

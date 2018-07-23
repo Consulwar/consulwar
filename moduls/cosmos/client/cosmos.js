@@ -482,7 +482,6 @@ Template.cosmosFleetsInfo_table.events({
   'mouseover .cw--FleetInfoPlanets__marker, mouseover .cw--FleetInfoPlanets__planet_end .cw--FleetInfoPlanets__fleetReptiles': function (e, t) {
     const tooltip = new SpaceFleetPopup({
       hash: {
-        ship: Game.Cosmos.getShipInfo(this.spaceEvent),
         spaceEvent: this.spaceEvent,
       },
     }).renderComponentToHTML();
@@ -778,7 +777,6 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
     cosmosPopupView = Blaze.render(
       new SpaceFleetPopup({
         hash: {
-          ship: Game.Cosmos.getShipInfo(spaceEvent),
           spaceEvent: spaceEvent,
           allowActions: isLock,
           isMapView: true,
@@ -816,54 +814,6 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
       $('.leaflet-popup-pane')[0],
     );
   }
-};
-
-Game.Cosmos.getShipInfo = function(spaceEvent) {
-  if (!spaceEvent || spaceEvent.status === 'completed' || spaceEvent.status === 'cancelled') {
-    return null;
-  }
-
-  var info = {};
-
-  info.name = null;
-  info.id = spaceEvent._id;
-
-  if (spaceEvent.data.isHumans) {
-    info.isHumans = true;
-    info.canSend = false;
-    info.status = 'Флот Консула';
-    if (Meteor.user().username !== spaceEvent.data.username) {
-      info.owner = spaceEvent.data.username;
-    }
-  } else {
-    info.isHumans = false;
-    info.canSend = true;
-    info.mission = {
-      level: spaceEvent.data.mission.level,
-      name: Game.Battle.items[spaceEvent.data.mission.type].name,
-      reward: Game.Battle.items[spaceEvent.data.mission.type].level[spaceEvent.data.mission.level].reward
-    };
-    info.status = 'Флот Рептилий';
-  }
-
-  var units = FlightEvents.getFleetUnits(spaceEvent.data);
-  if (units) {
-    const sideUnits = (spaceEvent.data.isHumans) ? humanSpaceUnits : reptileSpaceUnits;
-    info.units = [];
-    
-    _(sideUnits).pairs().forEach(([id, unit]) => {
-      info.units.push({
-        id,
-        unit,
-        count: _.isString( units[id] )
-          ? game.Battle.count[ units[id] ]
-          : units[id] || 0,
-        countId: units[id]
-      });
-    });
-  }
-
-  return info;
 };
 
 Game.Cosmos.getReinforcementInfo = function(spaceEvent) {

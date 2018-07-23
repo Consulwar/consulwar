@@ -659,21 +659,6 @@ Game.Cosmos.showPlanetInfo = function(id, offset) {
   Game.Cosmos.showPlanetPopup(id, true, offset);
 };
 
-Game.Cosmos.reptilesFleetPower = (units) => {
-  return Game.Unit.calculateUnitsPower(_.reduce(units, function(units, unit) {
-    let count = (_.isString( unit.count )
-      ? game.Battle.countNumber[unit.countId].max
-      : unit.count
-    );
-
-    if (count > 0) {
-      units[unit.id] = count;
-    }
-    
-    return units;
-  }, {}));
-};
-
 // ----------------------------------------------------------------------------
 // Planets popup
 // ----------------------------------------------------------------------------

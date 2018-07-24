@@ -1,5 +1,13 @@
 <template name="ResourcePrice">
-  <div class="cw--ResourcePrice {{className}}">
+  <div
+    class="
+      cw--ResourcePrice
+      {{#if isStyleSmall}}
+        cw--ResourcePrice_small
+      {{/if}}
+      {{className}}
+    "
+  >
     {{#if time}}
       <div
         onMouseOver={{showTooltip 'time' price}}

@@ -1,0 +1,120 @@
+<template name="SpaceHistory">
+  <div class="cw--SpaceHistory">
+    <div class="cw--SpaceHistory__main">
+      <div class="cw--SpaceHistory__header">
+        История боев
+      </div>
+      <button
+        onClick={{closeWindow}}
+        class="
+          cw--button
+          cw--button_close
+          cw--SpaceHistory__close
+        "
+      ></button>
+      <div class="cw--SpaceHistory__list">
+        {{#each battle in battles}}
+          <div
+            class="
+              cw--SpaceHistory__item
+              {{#if even @index}}
+                cw--SpaceHistory__item_even
+              {{/if}}
+            "
+          >
+            <div class="cw--SpaceHistory__itemHead">
+              <div
+                class="
+                  cw--SpaceHistory__result
+                  {{#if eq battle.resultId 0}}
+                    cw--SpaceHistory__result_tie
+                  {{else if eq battle.resultId 1}}
+                    cw--SpaceHistory__result_victory
+                  {{else if eq battle.resultId 2}}
+                    cw--SpaceHistory__result_defeat
+                  {{else if eq battle.resultId 3}}
+                    cw--SpaceHistory__result_damage
+                  {{else if eq battle.resultId 4}}
+                    cw--SpaceHistory__result_damageVictory
+                  {{/if}}
+                "
+              >
+                {{#if eq battle.resultId 0}}
+                  Ничья
+                {{else if eq battle.resultId 1}}
+                  Победа
+                {{else if eq battle.resultId 2}}
+                  Поражение
+                {{else if eq battle.resultId 3}}
+                  Нанесение Урона
+                {{else if eq battle.resultId 4}}
+                  Бдыщь!
+                {{/if}}
+              </div>
+              <div class="cw--SpaceHistory__rounds">
+                Раунды: {{battle.round}}
+              </div>
+              <div
+                class="cw--SpaceHistory__date"
+                data-tooltip="{{formatDate battle.timestamp}}"
+                data-tooltip-direction="s"
+              >
+                {{#if isToday battle.timestamp}}
+                  {{formatHours battle.timestamp}}
+                {{else}}
+                  {{formatYearMonthDay (multiply battle.timestamp 1000)}}
+                {{/if}}
+              </div>
+            </div>
+            <div class="cw--SpaceHistory__battleData">
+              <div
+                class="
+                  cw--SpaceHistory__battleType
+                  {{#if eq battle.status 2}}
+                    {{#if battle.isHome}}
+                      cw--SpaceHistory__battleType_defense
+                    {{else}}
+                      cw--SpaceHistory__battleType_attack
+                    {{/if}}
+                  {{/if}}
+                "
+              >
+              </div>
+              <div class="cw--SpaceHistory__battlePlace">
+                {{#if battle.planetId}}
+                  {{#let battlePlanet=(getBattlePlanet battle.planetId)}}
+                    {{> SpacePlanet args
+                      isDisabled=battlePlanet.isDisabled
+                      location=battlePlanet.location
+                      planet=battlePlanet
+                    }}
+                  {{/let}}
+                {{else}}
+                  Космос
+                {{/if}}
+              </div>
+
+              {{#if not battle.isBattle1x1}}
+                Совместный бой
+              {{/if}}
+              {{> ResourcePrice args
+                price=battle.summaryProfit
+                isShowDiff=false
+                isStyleSmall=true
+                className='cw--SpaceHistory__summaryPrice'
+              }}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+      {{> Paging args
+        currentPage = currentPage
+        pagesTotal = pagesTotal
+        className = 'cw--SpaceHistory__paging'
+      }}
+      {{#if isLoading.get}}
+        {{> loading}}
+      {{/if}}
+    </div>
+  </div>
+</template>

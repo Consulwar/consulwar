@@ -35,7 +35,7 @@ import SpaceBattlePopup from '/imports/client/ui/blocks/Space/BattlePopup/SpaceB
 import '/imports/client/ui/blocks/Units/Reinforcement/UnitsReinforcement';
 import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 
-// import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
+import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
 
 import '/imports/client/ui/blocks/Space/Planet/SpacePlanet';
 
@@ -174,12 +174,15 @@ var historyBattle = new ReactiveVar(null);
 var historyPage = null;
 var historyCountPerPage = 20;
 
+Game.Cosmos.showHistoryPopup = function() {
+  Game.Popup.show({
+    template: SpaceHistory.renderComponent(),
+    hideClose: true,
+  });
+}
+
 Game.Cosmos.showHistory = function() {
   Router.current().render('cosmosHistory', { to: 'content' });
-  // Game.Popup.show({
-  //   template: CosmosHistory.renderComponent(),
-  //   hideClose: true,
-  // });
 };
 
 var loadHistoryBattle = function(itemId) {

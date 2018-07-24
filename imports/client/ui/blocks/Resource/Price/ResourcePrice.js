@@ -20,6 +20,7 @@ class ResourcePrice extends BlazeComponent {
       artifacts = [],
       resources = [],
       isShowDiff = true,
+      isStyleSmall = false,
       artifactsToResources = false,
       className,
     },
@@ -34,6 +35,7 @@ class ResourcePrice extends BlazeComponent {
     this.resources = resources;
 
     this.isShowDiff = isShowDiff;
+    this.isStyleSmall = isStyleSmall;
 
     _.toPairs(price).forEach(([id, value]) => {
       if (!value) {

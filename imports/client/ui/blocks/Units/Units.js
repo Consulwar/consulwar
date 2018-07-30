@@ -17,10 +17,11 @@ class Units extends BlazeComponent {
 
   constructor({
     hash: {
-      isReptiles,
-      isSpace = false,
       units = [],
       userArmy = [],
+      isReptiles,
+      isBattleUnits = false,
+      isSpace = false,
       className,
     },
   }) {
@@ -28,8 +29,9 @@ class Units extends BlazeComponent {
 
     this.units = units;
     this.userArmy = userArmy;
-    this.isSpace = isSpace;
     this.isReptiles = isReptiles;
+    this.isBattleUnits = isBattleUnits;
+    this.isSpace = isSpace;
     this.className = className;
   }
 
@@ -80,7 +82,7 @@ class Units extends BlazeComponent {
       const countId = (units[id] && units[id].countId) || 0;
       const myArmy = userArmy[id] || 0;
 
-      if (this.isTextUnits() && !count) {
+      if ((this.isTextUnits() || this.isBattleUnits) && !count) {
         return false;
       }
 

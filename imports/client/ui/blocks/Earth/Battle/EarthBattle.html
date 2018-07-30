@@ -16,26 +16,12 @@
         >
           {{army.title}}
         </div>
-        <ul class="cw--EarthBattle__list">
-          {{#each item in army.list}}
-            <li class="cw--EarthBattle__item">
-              <span
-                class="
-                  {{army.colorClass}}
-                  cw--EarthBattle__itemCount
-                "
-              >
-                {{formatNumberWithISO item.count 3}}
-                {{#if item.myArmyCount}}
-                  <span class="cw--color_credit">
-                    ({{formatNumberWithISO item.myArmyCount 3}})
-                  </span>
-                {{/if}}
-              </span>
-              {{item.name}}
-            </li>
-          {{/each}}
-        </ul>
+        {{> Units args
+          units=army.list
+          userArmy=army.myArmy
+          isReptiles=army.isReptiles
+          isBattleUnits=true
+        }}
       </div>
     {{/each}}
   </div>

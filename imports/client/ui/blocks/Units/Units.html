@@ -14,10 +14,16 @@
               {{#if isTextUnits}}
                 cw--Units__unit_text
               {{/if}}
+              {{#if isBattleUnits}}
+                cw--Units__unit_battle
+              {{/if}}
+              {{#if isReptiles}}
+                cw--Units__unit_reptile
+              {{/if}}
             "
             data-sound="hover, click"
           >
-            {{#if isTextUnits}}
+            {{#if or isTextUnits isBattleUnits}}
               {{unit.title}}
             {{else}}
               <img

@@ -18,7 +18,7 @@
     text-decoration none
     color $cw--color_lightGrey
     background $cw--color_darkGrey
-  
+
     &_text
       display flex
       width 100%
@@ -26,6 +26,16 @@
       margin 3px 0
       background none
       color $cw--color_lightGrey
+
+    &_battle
+      display flex
+      width 50%
+      height auto
+      margin 3px 0
+      justify-content left
+
+      line-height 100%
+      background none
 
     &_passive
       filter grayscale(1) brightness(.4)
@@ -53,7 +63,21 @@
     background-color alpha($cw--color_black, .5)
 
   &__unit_text &__unitCount
+  &__unit_battle &__unitCount
     position static
     width auto
+
+    color $cw--color_metal
+    font-size $cw--fontSize_m
+
+  &__unit_text &__unitCount
     margin-left auto
     text-align right
+
+  &__unit_battle &__unitCount
+    order -1
+    margin-right 5px
+
+  &__unit_text&__unit_reptile &__unitCount
+  &__unit_battle&__unit_reptile &__unitCount
+    color $cw--color_honor

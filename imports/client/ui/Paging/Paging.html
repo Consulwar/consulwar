@@ -1,13 +1,15 @@
 <template name="Paging">
   <div class="cw--Paging {{className}}">
-    <button
-      onClick={{switchPage 'back'}}
-      class="
-        cw--Paging__page_back
-        cw--Paging__page
-      "
-      data-sound="hover, click"
-    ></button>
+    {{#if isShowArrows}}
+      <button
+        onClick={{switchPage 'back'}}
+        class="
+          cw--Paging__page_back
+          cw--Paging__page
+        "
+        data-sound="hover, click"
+      ></button>
+    {{/if}}
     {{#each page in pages}}
       {{#if or (page.count) (page.type)}}
         <button
@@ -31,13 +33,15 @@
         </span>
       {{/if}}
     {{/each}}
-    <button
-      onClick={{switchPage 'next'}}
-      class="
-        cw--Paging__page
-        cw--Paging__page_next
-      "
-      data-sound="hover, click"
-    ></button>
+    {{#if isShowArrows}}
+      <button
+        onClick={{switchPage 'next'}}
+        class="
+          cw--Paging__page
+          cw--Paging__page_next
+        "
+        data-sound="hover, click"
+      ></button>
+    {{/if}}
   </div>
 </template>

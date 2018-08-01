@@ -28,7 +28,7 @@ class SpaceHistory extends BlazeComponent {
     this.isLoading = new ReactiveVar(true);
     this.isLoadingBattle = new ReactiveVar(true);
 
-    this.itemsPerPage = 20;
+    this.itemsPerPage = 10;
     this.pagesTotal = new ReactiveVar();
     this.currentPage = new ReactiveVar(1);
 

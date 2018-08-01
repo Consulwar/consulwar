@@ -8,7 +8,9 @@ import { Notifications } from '/moduls/game/lib/importCompability';
 import Game, { game } from '/moduls/game/lib/main.game';
 import unitItems from '/imports/content/Unit/client';
 import Battle from '/moduls/battle/lib/imports/battle';
+import '/imports/client/ui/blocks/Space/History/Battle/SpaceHistoryBattle';
 import '/imports/client/ui/blocks/Space/Planet/SpacePlanet';
+import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/Paging/Paging';
 import './SpaceHistory.html';
 import './SpaceHistory.styl';
@@ -22,8 +24,9 @@ class SpaceHistory extends BlazeComponent {
     super.onCreated();
 
     this.historyBattles = new ReactiveArray();
-    this.historyBattle = new ReactiveVar();
+    this.currentBattle = new ReactiveVar();
     this.isLoading = new ReactiveVar(true);
+    this.isLoadingBattle = new ReactiveVar(true);
 
     this.itemsPerPage = 20;
     this.pagesTotal = new ReactiveVar();
@@ -65,48 +68,58 @@ class SpaceHistory extends BlazeComponent {
           for (let i = 0; i < battles.length; i += 1) {
             this.historyBattles.push(this.getBattleInfo(battles[i]));
           }
-          // // load additional record
-          // // itemId adding by Router in this case
-          // if (itemId) {
-          //   this.loadHistoryBattle(itemId);
-          // }
-          setTimeout(function() {
-            $('.content .history .scrollbar-inner').perfectScrollbar();
-          });
-          console.log('battles', battles);
-          console.log('historyBattles', this.historyBattles);
         }
       },
     );
   }
-  loadHistoryBattle(itemId) {
+
+  loadBattle(event, itemId) {
+    if (!itemId) {
+      return;
+    }
+    if (
+      this.currentBattle.get()
+      && itemId === this.currentBattle.get().id
+    ) {
+      this.currentBattle.set(false);
+      return;
+    }
     // try to get record from cache
     let isFound = false;
     for (let i = 0; i < this.historyBattles.length; i += 1) {
-      if (this.historyBattles[i]._id === itemId) {
+      if (this.historyBattles[i].id === itemId) {
         isFound = true;
-        this.historyBattle.set(this.historyBattles[i]);
+        this.currentBattle.set(this.historyBattles[i]);
+        this.isLoadingBattle.set(false);
         break;
       }
     }
 
     // not found, then load from server
     if (!isFound) {
-      this.isLoading.set(true);
-      Meteor.call('battleHistory.getById', itemId, function(err, data) {
-        this.isLoading.set(false);
-        if (err) {
-          Notifications.error('Не удалось получить информацию о бое', err.error);
-        } else {
-          this.historyBattle.set(this.getBattleInfo(data));
-        }
-      });
+      this.isLoadingBattle.set(true);
+      Meteor.call(
+        'battleHistory.getById',
+        itemId,
+        (err, data) => {
+          this.isLoadingBattle.set(false);
+          if (err) {
+            Notifications.error(
+              'Не удалось получить информацию о бое',
+              err.error,
+            );
+          } else {
+            this.currentBattle.set(this.getBattleInfo(data));
+          }
+        },
+      );
     }
   }
 
   getBattleInfo(battle) {
     const user = Meteor.user();
     const result = {
+      id: battle._id,
       resultId: battle.result,
       round: battle.round,
       status: battle.status,
@@ -114,8 +127,17 @@ class SpaceHistory extends BlazeComponent {
     // парсить планету будем при отображении
     result.planetId = battle.options.planetId;
 
+    if (battle.options && battle.options.isEarth) {
+      result.isEarth = true;
+    }
+
     if (result.planetId) {
       result.isHome = this.getBattlePlanet(result.planetId).isHome;
+    }
+
+    const { missionType, missionLevel } = battle.options;
+    if (missionType) {
+      result.mission = `${Game.Battle.items[missionType].name} ${missionLevel}`;
     }
 
     // Convert time to timeStamp
@@ -237,6 +259,7 @@ class SpaceHistory extends BlazeComponent {
       }
 
       result.push({
+        id,
         title: unit.title,
         order: unit.order,
         start: countStart,

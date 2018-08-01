@@ -1,0 +1,119 @@
+<template name="SpaceHistoryBattle">
+  <div class="cw--SpaceHistoryBattle">
+    <div class="cw--SpaceHistoryBattle__main">
+      <div class="cw--SpaceHistoryBattle__fleets">
+        <div class="cw--SpaceHistoryBattle__fleet">
+          <div class="cw--SpaceHistoryBattle__fleetStart">
+            <div
+              class="
+                cw--SpaceHistoryBattle__fleetHead
+                cw--SpaceHistoryBattle__fleetHead_reptiles
+              "
+            >
+              {{#if battle.mission}}
+                {{battle.mission}}
+              {{else}}
+                Рептилии
+              {{/if}}
+              {{> UnitsPower args
+                units=(getRawUnits 'enemyUnits')
+                className='cw--SpaceHistoryBattle__fleetPower'
+              }}
+            </div>
+            {{> Units args
+              isSpace=isSpace
+              isReptiles=true
+              units=enemyUnits
+              isBattleUnits=true
+              className='cw--SpaceHistoryBattle__units'
+            }}
+          </div>
+          <div class="cw--SpaceHistoryBattle__fleetLosses">
+            <div class="cw--SpaceHistoryBattle__fleetHead">
+              {{#if enemyLostUnits}}
+                Потеряно юнитов:
+              {{else}}
+                Потерь нет.
+              {{/if}}
+            </div>
+            {{> Units args
+              isSpace=isSpace
+              isReptiles=true
+              units=enemyLostUnits
+              isBattleUnits=true
+              className='cw--SpaceHistoryBattle__units'
+            }}
+          </div>
+        </div> {{!-- __fleet reptiles --}}
+
+        <div class="cw--SpaceHistoryBattle__fleet">
+          <div class="cw--SpaceHistoryBattle__fleetStart">
+            <div
+              class="
+                cw--SpaceHistoryBattle__fleetHead
+                cw--SpaceHistoryBattle__fleetHead_user
+              "
+            >
+              {{userName}}
+              {{> UnitsPower args
+                units=(getRawUnits 'userUnits')
+                className='cw--SpaceHistoryBattle__fleetPower'
+              }}
+            </div>
+            {{> Units args
+              isSpace=isSpace
+              units=userUnits
+              isBattleUnits=true
+              className='cw--SpaceHistoryBattle__units'
+            }}
+          </div>
+          <div class="cw--SpaceHistoryBattle__fleetLosses">
+            <div class="cw--SpaceHistoryBattle__fleetHead">
+              {{#if userLostUnits}}
+                Потеряно юнитов:
+              {{else}}
+                Потерь нет.
+              {{/if}}
+            </div>
+            {{> Units args
+              isSpace=isSpace
+              units=userLostUnits
+              isBattleUnits=true
+              className='cw--SpaceHistoryBattle__units'
+            }}
+          </div>
+        </div> {{!-- __fleet user --}}
+      </div> {{!-- __fleets --}}
+      {{#if isSpace}}
+        <div class="cw--SpaceHistoryBattle__profits">
+          {{#if userLostUnits}}
+            <div class="cw--SpaceHistoryBattle__profit">
+              <div class="cw--SpaceHistoryBattle__profitHead">
+                Потерял:
+              </div>
+              {{> ResourcePrice args
+                price=battle.lostUnitsPrice
+                isShowDiff=false
+                isStyleSmall=true
+                className='cw--SpaceHistoryBattle__price'
+              }}
+            </div>
+          {{/if}}
+          {{#if enemyLostUnits}}
+            <div class="cw--SpaceHistoryBattle__profit">
+              <div class="cw--SpaceHistoryBattle__profitHead">
+                Заработал:
+              </div>
+              {{> ResourcePrice args
+                price=battle.reward
+                isShowDiff=false
+                isStyleSmall=true
+                className='cw--SpaceHistoryBattle__price'
+              }}
+            </div>
+          {{/if}}
+        </div> {{!-- __profits --}}
+      {{/if}}
+    </div>
+  </div>
+</template>

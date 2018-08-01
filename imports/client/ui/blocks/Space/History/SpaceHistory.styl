@@ -1,8 +1,9 @@
 @import '{}/imports/client/ui/colors'
 @import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
 
 .cw--SpaceHistory
-  display block
+  display flex
 
   cw--fontFamily_cond()
   background-color $cw--color_black
@@ -40,6 +41,16 @@
 
     &_even
       background-color $cw--color_tableEven
+    
+    &:hover
+      filter brightness(1.2)
+    
+    &_active
+      border solid 1px $cw--color_metal
+      border-image $cw--gradient_metal 1
+
+      +media($cw--size_l, null)
+        border-right none
 
   &__itemHead
     display flex

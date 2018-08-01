@@ -15,10 +15,14 @@
       <div class="cw--SpaceHistory__list">
         {{#each battle in battles}}
           <div
+            onClick={{loadBattle battle.id}}
             class="
               cw--SpaceHistory__item
               {{#if even @index}}
                 cw--SpaceHistory__item_even
+              {{/if}}
+              {{#if eq currentBattle.get.id battle.id}}
+                cw--SpaceHistory__item_active
               {{/if}}
             "
           >
@@ -89,6 +93,8 @@
                       planet=battlePlanet
                     }}
                   {{/let}}
+                {{else if battle.isEarth}}
+                  Земля
                 {{else}}
                   Космос
                 {{/if}}
@@ -116,5 +122,10 @@
         {{> loading}}
       {{/if}}
     </div>
+    {{#if currentBattle.get}}
+      {{> SpaceHistoryBattle args
+        battle=currentBattle.get
+      }}
+    {{/if}}
   </div>
 </template>

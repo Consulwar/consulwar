@@ -4,7 +4,13 @@
       <div id="map-battle"></div>
     </div>
     <button class="map-control-home"></button>
-    <a class="btn-history" href="{{pathFor 'cosmosHistory' page=1}}" data-sound="click">История боёв</a>
+    <a
+      onClick={{Game.Cosmos.showHistory}}
+      class="btn-history"
+      data-sound="click"
+    >
+      История боёв
+    </a>
     {{#if possibleDesync}}
       <div class="possibleDesync">Возможен рассинхрон. Обновите страницу.</div>
     {{/if}}
@@ -360,146 +366,4 @@
       {{/each}}
     {{/if}}
   </div>
-</template>
-
-
-<template name="cosmosHistory">
-  <div class="history">
-    {{#if battles}}
-      <table>
-        <tr class="header">
-          <th class="sides">Место боя</th>
-          <th class="lost">Потери войск</th>
-          <th class="result">Итог</th>
-          <th class="time">Время</th>  
-        </tr>
-      </table>
-      <div class="data scrollbar-inner">
-        <table>
-          {{#each battles}}
-            <tr data-id="{{this._id}}">
-              <td>
-                {{#if eq this.userLocation this.location}}
-                  <img src="/img/game/life.png" class="defense" data-tooltip="Защита" data-tooltip-direction="s"/> 
-                {{else}}
-                  <img src="/img/game/damage.png" class="attack" data-tooltip="Нападение" data-tooltip-direction="s"/> 
-                {{/if}}
-                
-                {{#if this.planetId}}
-                  {{#let battlePlanet=getBattlePlanet}}
-                    {{> SpacePlanet args
-                      planet=battlePlanet
-                      isDisabled=battlePlanet.isDisabled
-                      location=battlePlanet.location
-                    }}
-                  {{/let}}
-                {{else}}
-                  Космос
-                {{/if}}
-              </td>
-              <td>
-                {{#if this.lostUnitsCount}}
-                  <div class="result">
-                    {{declension this.lostUnitsCount 'Потерян' '' 'о' 'о'}} 
-                    {{this.lostUnitsCount}} 
-                    {{declension this.lostUnitsCount 'юнит' '' 'а' 'ов'}}
-                  </div>
-                  <div 
-                    data-tooltip="Отображается стоимость потери по цене юнитов на текущий момент"
-                    data-tooltip-direction="s"
-                  >
-                    {{> item_price price=this.lostUnitsPrice}}
-                  </div>
-                {{else}}
-                  <h2>—</h2>
-                {{/if}}
-
-                <div class="details">
-                  {{#if not this.isBattle1x1}}
-                  Совместный бой
-                  {{/if}}
-                  {{#if this.userUnits}}
-                    <table>
-                      <tr class="header">
-                        <th class="name"></th>
-                        <th class="count">Вылетело</th>
-                        <th class="count">Осталось</th>
-                      </tr>
-                      {{#each this.userUnits}}
-                        <tr>
-                          <td class="name humans">{{this.title}}</td>
-                          <td class="count">{{formatNumberWithISO this.start}}</td>
-                          <td class="count">{{formatNumberWithISO this.end}}</td>
-                        </tr>
-                      {{/each}}
-                    </table>
-                  {{/if}}
-                </div>
-              </td>
-              <td>
-                <div class="result
-                  {{#if eq this.result 0}}tie{{/if}}
-                  {{#if eq this.result 1}}victory{{/if}}
-                  {{#if eq this.result 2}}defeat{{/if}}
-                  {{#if eq this.result 3}}damage{{/if}}
-                  {{#if eq this.result 4}}damageVictory{{/if}}
-                ">
-                  {{#if eq this.result 0}}Ничья{{/if}}
-                  {{#if eq this.result 1}}Победа{{/if}}
-                  {{#if eq this.result 2}}Поражение{{/if}}
-                  {{#if eq this.result 3}}Нанесение Урона{{/if}}
-                  {{#if eq this.result 4}}Бдыщь!{{/if}}
-                </div>
-
-                {{> item_price price=this.reward}}
-
-                <div class="details">
-                  {{#if this.enemyUnits}}
-                    <table>
-                      <tr class="header">
-                        <th class="name"></th>
-                        <th class="count">Вылетело</th>
-                        <th class="count">Осталось</th>
-                      </tr>
-                      {{#each this.enemyUnits}}
-                        <tr>
-                          <td class="name reptiles">{{formatNumberWithISO this.title}}</td>
-                          <td class="count">{{formatNumberWithISO this.start}}</td>
-                          <td class="count">{{this.end}}</td>
-                        </tr>
-                      {{/each}}
-                    </table>
-                  {{/if}}
-                </div>
-              </td>
-              <td 
-                data-tooltip="{{formatDate this.timestamp}}"
-                data-tooltip-direction="s"
-              >
-                {{#if isToday this.timestamp}}
-                  {{formatHours this.timestamp}}
-                {{else}}
-                  {{formatYearMonthDay (multiply this.timestamp 1000)}}
-                {{/if}}
-              </td>
-            </tr>
-          {{/each}}
-        </table>
-      </div>
-      {{> pages total=countTotal perPage=countPerPage}}
-    {{else}}
-      {{#if lt countTotal 1}}
-        <h2>История боёв пуста</h2>
-      {{/if}}
-    {{/if}}
-    <a class="btn-close" href="{{pathFor 'cosmos'}}" data-sound="close"></a>
-  </div>
-
-  {{#if battle}}
-    {{> cosmosHistoryItem battle=battle}}
-  {{/if}}
-
-  {{#if isLoading}}
-    {{> loading}}
-  {{/if}}
 </template>

@@ -62,6 +62,8 @@
             </div>
             {{> Units args
               isSpace=isSpace
+              isShowDefense=battle.isHome
+              isHideNull=battle.isHome
               units=userUnits
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'
@@ -77,6 +79,8 @@
             </div>
             {{> Units args
               isSpace=isSpace
+              isShowDefense=battle.isHome
+              isHideNull=battle.isHome
               units=userLostUnits
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'

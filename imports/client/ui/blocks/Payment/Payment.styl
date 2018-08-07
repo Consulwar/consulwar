@@ -25,12 +25,37 @@
     color $cw--color_white
 
   &__items
+    position relative
     display flex
     flex-wrap wrap
     justify-content space-between
 
     +media(null, $cw--size_s)
       justify-content center
+
+  &__shadow
+    position absolute
+    left 0
+    top 0
+    display flex
+    width 100%
+    height 100%
+    padding 40px
+    box-sizing border-box
+    justify-content center
+    align-items center
+    background-color alpha($cw--color_black, .9)
+  
+  &__shadowHead
+    margin-bottom 16px
+    font-weight bold
+    font-size 28px
+
+  &__shadowText
+    font-size 24px
+    text-align center
+    color $cw--color_description
+
 
   &__item
     flex-basis calc(33.33% - 10px)

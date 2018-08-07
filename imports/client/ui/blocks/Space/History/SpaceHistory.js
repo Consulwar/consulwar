@@ -69,6 +69,8 @@ class SpaceHistory extends BlazeComponent {
             this.historyBattles.push(this.getBattleInfo(battles[i]));
           }
         }
+        console.log('battles', battles);
+        console.log('formbatt', this.historyBattles.list());
       },
     );
   }
@@ -155,33 +157,61 @@ class SpaceHistory extends BlazeComponent {
       result.reward = result.lostResources;
     }
 
+    result.users = _.keys(battle.initialUnits[Battle.USER_SIDE]);
+
     // Parsing army
+
+    // const getUnits = (
+    //   isStart,
+    //   side,
+    //   userName = user.username,
+    // ) => {
+    //   const source = isStart ? battle.initialUnits : battle.currentUnits;
+
+    // }
+
     const userUnits = {};
+    const userSquads = [];
     battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+      const squad = {};
       _.toPairs(units).forEach(([id, { count }]) => {
+        squad[id] = count;
         userUnits[id] = (userUnits[id] || 0) + count;
       });
+      userSquads.push(squad);
     });
 
     const userUnitsLeft = {};
+    const userSquadsLeft = [];
     battle.currentUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+      const squad = {};
       _.toPairs(units).forEach(([id, { count }]) => {
+        squad[id] = count;
         userUnitsLeft[id] = (userUnitsLeft[id] || 0) + count;
       });
+      userSquadsLeft.push(squad);
     });
 
     const enemyUnits = {};
+    const enemySquads = [];
     battle.initialUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
+      const squad = {};
       _.toPairs(units).forEach(([id, { count }]) => {
+        squad[id] = count;
         enemyUnits[id] = (enemyUnits[id] || 0) + count;
       });
+      enemySquads.push(squad);
     });
 
     const enemyUnitsLeft = {};
+    const enemySquadsLeft = [];
     battle.currentUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
+      const squad = {};
       _.toPairs(units).forEach(([id, { count }]) => {
+        squad[id] = count;
         enemyUnitsLeft[id] = (enemyUnitsLeft[id] || 0) + count;
       });
+      enemySquadsLeft.push(squad);
     });
 
     result.userUnits = this.getArmyInfo(userUnits, userUnitsLeft);

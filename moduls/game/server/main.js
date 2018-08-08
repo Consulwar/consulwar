@@ -75,7 +75,6 @@ SyncedCron.config({
 });
 
 Meteor.startup(function () {
-  initGameConfigLib();
   initBanHistoryServer();
   initPaymentServer();
   initPromoCodeServer();

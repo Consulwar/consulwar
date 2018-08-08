@@ -55,7 +55,6 @@
     "statistic": {
       "countPerPage": 20
     },
-    "serverStartDate": 1483315200000,
     "beginnersBoost": {
       "powerUnit": {
         "humans": 10,
@@ -94,7 +93,7 @@
       "accessRating": 10000,
       "maxFlyTime": 86400
     },
-	"reduceBuildingSpeed": 1
+	  "reduceBuildingSpeed": 1
   },
   "reminderEmails": {
     "schedule": "at 4:00 am",
@@ -110,24 +109,6 @@
   },
   "recaptcha": {
     "privatekey": "ABCDEFGHIJKLMNOP"
-  },
-  "payment": {
-    "platbox": {
-      "url": "https://playground.platbox.com/paybox",
-      "secretKey": "ABCDEFGHIJKLMNOP",
-      "merchantId": "42424242424242",
-      "project": "consulwar"
-    },
-    "teko": {
-      "initiatorId": "id",
-      "secretKey": "key",
-      "product": "prd",
-      "showcase": "shwcs",
-      "locale": "ru",
-      "url": "http://pg.teko.io:3005/init_session",
-      "theme": "light",
-      "gameUrl": "https://consulwar.ru/"
-    }
   },
   "mail": {
     "protocol": "smtp",

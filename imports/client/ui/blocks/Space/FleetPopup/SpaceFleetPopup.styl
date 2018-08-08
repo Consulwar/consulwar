@@ -1,0 +1,70 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--SpaceFleetPopup
+  display block
+  width 320px
+  box-sizing border-box
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+
+  &_mapView
+    position absolute
+    padding 15px
+    width 360px
+    background-color $cw--color_black
+
+  &_notLocked
+    pointer-events none
+
+  &__header
+    display block
+    margin-bottom 15px
+
+    font-size $cw--fontSize_l
+    font-weight bold
+
+    &_my
+      color $cw--color_credit
+
+    &_humans
+      color $cw--color_metal
+
+    &_reptiles
+      color $cw--color_honor
+
+  &__mission
+    font-weight bold
+    color $cw--color_honor
+
+  &__unitsPower
+    display inline-block
+    height 25px
+    padding-left 32px
+    margin-left 15px
+    vertical-align middle
+
+    line-height 25px
+    color $cw--color_human
+
+    background-image url(/img/game/buff.svg)
+    background-repeat no-repeat
+    background-position left center
+    background-size 25px
+
+  &__missionReward
+    margin 10px auto
+    justify-content center
+
+  &__timer
+    margin 10px
+
+  &__actions
+    display flex
+    margin-top 15px
+    justify-content center
+
+  &__action
+    width 200px
+    margin auto

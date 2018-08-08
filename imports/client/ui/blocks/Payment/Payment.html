@@ -8,6 +8,17 @@
       <span class="cw--color_human">Борьбу за освобождение Земли от Рептилоидов.</span>
     </div>
     <div class="cw--Payment__items">
+      <div class="cw--Payment__shadow">
+        <div class="cw--Payment__shadowText">
+          <p class="cw--Payment__shadowHead">
+            Доната больше нет.
+          </p>
+          Каждый игровой день Вы получаете
+          <span class="cw--color_credit">
+            100 ГГК
+          </span>
+        </div>
+      </div>
       {{#each item in paymentItems}}
         <div
           class="cw--Payment__item"
@@ -48,7 +59,6 @@
               cw--button_type_primary
               cw--button_type_primary_green
             "
-            onClick={{buy item.id}}
             data-sound="hover, click"
           >
             Приобрести

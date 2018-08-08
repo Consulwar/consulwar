@@ -1,0 +1,116 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+.cw--SpacePlanetPopup
+  display block
+  width 320px
+  box-sizing border-box
+
+  cw--fontFamily_cond()
+  font-size $cw--fontSize_m
+
+  &_mapView
+    position absolute
+    padding 15px
+    width 360px
+    background-color $cw--color_black
+
+  &_notLocked
+    pointer-events none
+
+  &__header
+    display block
+    margin-bottom 15px
+
+    font-size $cw--fontSize_l
+    font-weight bold
+
+    &_my
+      color $cw--color_credit
+
+    &_humans
+      color $cw--color_metal
+
+    &_reptiles
+      color $cw--color_honor
+
+  &__content
+    display block
+
+  &__edit
+    display inline-block
+    width 21px
+    height 21px
+    vertical-align middle
+    background-image url(/img/game/edit.png)
+    background-repeat no-repeat
+    background-color transparent
+    border none
+    
+    &:hover
+      background-image url(/img/game/edit_a.png)
+
+  &__drop
+    display flex
+    margin 5px 0
+
+  &__dropItem
+    position relative
+    width 70px
+    height @width
+    margin-right 14px
+
+    background-repeat no-repeat
+    background-color $cw--color_tableOdd
+    background-size 100%
+    background-position center
+
+  &__dropChance
+    position absolute
+    bottom 0px
+    left 0px
+    width 100%
+
+    font-size $cw--fontSize_s
+    text-align center
+    text-decoration none
+
+    color $cw--color_nearWhite
+    background-color alpha($cw--color_black, .5)
+
+  &__info
+    margin 10px 0
+
+  &__typeTitle
+    font-weight bold
+    
+    &_humans
+      color $cw--color_credit
+
+  &__mission
+    font-weight bold
+    color $cw--color_honor
+
+  &__unitsPower
+    display inline-block
+    height 25px
+    padding-left 32px
+    margin-left 15px
+    vertical-align middle
+
+    line-height 25px
+    color $cw--color_human
+
+    background-image url(/img/game/buff.svg)
+    background-repeat no-repeat
+    background-position left center
+    background-size 25px
+
+  &__actions
+    display flex
+    flex-wrap wrap
+    justify-content center
+    margin-top 15px
+
+  &__action
+    margin 0 10px

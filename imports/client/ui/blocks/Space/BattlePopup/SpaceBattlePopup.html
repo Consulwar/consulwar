@@ -1,0 +1,32 @@
+<template name="SpaceBattlePopup">
+  <div
+      class="cw--SpaceBattlePopup"
+      style="left: {{position.x}}px; top: {{position.y}}px;"
+  >
+    <div class="cw--SpaceBattlePopup__header">
+      Идёт бой
+    </div>
+
+    {{#with info}}
+      <div class="cw--SpaceBattlePopup__round">
+        Раунд {{round}}
+      </div>
+      <div class="cw--SpaceBattlePopup__roundTime">
+        {{formatSeconds secondsLeft}}
+      </div>
+    {{/with}}
+    <div class="cw--SpaceBattlePopup__actions">
+      <button
+        onClick={{send}}
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_orange
+          cw--SpaceBattlePopup__action
+        "
+      >
+        Отправить
+      </button>
+    </div>
+  </div>
+</template>

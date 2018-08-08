@@ -250,10 +250,6 @@ Template.player.events({
     }
   },
 
-  'click .buyMusic': function(e, t) {
-    Game.Payment.buyItem('music');
-  },
-
   'click .downloadMusic': function(e, t) {
     window.location = 'http://times.consulwar.ru/music/ConsulwarMusic.zip';
   }

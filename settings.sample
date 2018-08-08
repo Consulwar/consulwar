@@ -110,24 +110,6 @@
   "recaptcha": {
     "privatekey": "ABCDEFGHIJKLMNOP"
   },
-  "payment": {
-    "platbox": {
-      "url": "https://playground.platbox.com/paybox",
-      "secretKey": "ABCDEFGHIJKLMNOP",
-      "merchantId": "42424242424242",
-      "project": "consulwar"
-    },
-    "teko": {
-      "initiatorId": "id",
-      "secretKey": "key",
-      "product": "prd",
-      "showcase": "shwcs",
-      "locale": "ru",
-      "url": "http://pg.teko.io:3005/init_session",
-      "theme": "light",
-      "gameUrl": "https://consulwar.ru/"
-    }
-  },
   "mail": {
     "protocol": "smtp",
     "username": "***",

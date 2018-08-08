@@ -12,33 +12,6 @@ initPaymentLib();
 // Payment modal window
 // ----------------------------------------------------------------------------
 
-var showPlatboxWindow = function(url) {
-  if (url) {
-    isPaymentSuccess = false;
-    Game.Popup.show({
-      template: (new PaymentProcessing({
-        hash: {
-          url,
-          name: 'platbox',
-        }
-      })).renderComponent(),
-    });
-  }
-};
-
-var showTekoWindow = function(url) {
-  if (url) {
-    Game.Popup.show({
-      template: (new PaymentProcessing({
-        hash: {
-          url,
-          name: 'teko',
-        }
-      })).renderComponent(),
-    });
-  }
-};
-
 var showRewardWindow = function(itemId) {
   var item = Game.Payment.items[itemId];
   if (item) {
@@ -63,16 +36,6 @@ Game.Payment.showHistory = function(type) {
     template: (new PaymentHistory(type)).renderComponent()
   });
 }
-
-Game.Payment.buyItem = function(item) {
-  Meteor.call('teko.getPaymentUrl', item, function(err, url) {
-    if (err) {
-      Notifications.error(err.error);
-    } else {
-      showTekoWindow(url);
-    }
-  });
-};
 
 const subscription = Meteor.subscribe('paymentIncome');
 

@@ -26,7 +26,6 @@ buzz.defaults.preload = 'none';
 Meteor.startup(function () {
 'use strict';
 
-initGameConfigLib();
 initUserClient();
 initPaymentClient();
 initPromoCodeClient();

@@ -18,6 +18,9 @@
       {{#if isSelected}}
         cw--SpacePlanet_selected
       {{/if}}
+      {{#if isTopTime}}
+        cw--SpacePlanet_topTime
+      {{/if}}
       {{className}}
     "
     href={{pathFor 'cosmos' hash=planet._id}}

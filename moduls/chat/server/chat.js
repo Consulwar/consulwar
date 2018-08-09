@@ -664,56 +664,6 @@ Meteor.methods({
     });
   },
 
-  'chat.cheaterVaip': function(username) {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'chat.cheaterVaip', user });
-
-    if (['admin'].indexOf(user.role) == -1) {
-      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
-    }
-
-    var target = Meteor.users.findOne({
-      username: username
-    });
-
-    if (!target) {
-      throw new Meteor.Error('Некорректно указан логин');
-    }
-
-    Battle.remove({user_id: target._id});
-
-    Game.Building.Collection.remove({user_id: target._id});
-
-    Game.Queue.Collection.remove({user_id: target._id});
-
-    Game.Research.Collection.remove({user_id: target._id});
-
-    Game.Unit.Collection.remove({user_id: target._id});
-
-    Game.Investments.Collection.remove({user_id: target._id});
-    
-    Game.Resources.Collection.upsert({
-      user_id: target._id
-    }, {
-      $set: {
-        humans: {amount: 200},
-        metals: {amount: 0},
-        crystals: {amount: 0},
-        credits: {amount: 0},
-        honor: {amount: 0}
-        }
-      });
-
-    Meteor.users.update({_id: target._id}, {
-      $set: {
-        rating: 1,
-        cheater: true
-      }
-    });
-  },
-
   'chat.createRoom': function(title, url, isPublic, isOwnerPays) {
     const user = User.getById();
     User.checkAuth({ user });

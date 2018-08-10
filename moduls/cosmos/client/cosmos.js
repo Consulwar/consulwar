@@ -33,8 +33,9 @@ import SpaceFleetPopup from '/imports/client/ui/blocks/Space/FleetPopup/SpaceFle
 import SpaceBattlePopup from '/imports/client/ui/blocks/Space/BattlePopup/SpaceBattlePopup';
 
 import '/imports/client/ui/blocks/Units/Reinforcement/UnitsReinforcement';
+import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 
-// import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
+import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
 
 import '/imports/client/ui/blocks/Space/Planet/SpacePlanet';
 
@@ -167,251 +168,12 @@ Game.Cosmos.showPage = function() {
 // Cosmos battle history
 // ----------------------------------------------------------------------------
 
-var isHistoryLoading = new ReactiveVar(false);
-var historyBattles = new ReactiveArray();
-var historyBattle = new ReactiveVar(null);
-var historyPage = null;
-var historyCountPerPage = 20;
-
 Game.Cosmos.showHistory = function() {
-  Router.current().render('cosmosHistory', { to: 'content' });
-  // Game.Popup.show({
-  //   template: CosmosHistory.renderComponent(),
-  //   hideClose: true,
-  // });
-};
-
-var loadHistoryBattle = function(itemId) {
-  // try to get record from cache
-  var isFound = false;
-  for (var i = 0; i < historyBattles.length; i++) {
-    if (historyBattles[i]._id == itemId) {
-      isFound = true;
-      historyBattle.set( historyBattles[i] );
-      break;
-    }
-  }
-
-  // not found, then load from server
-  if (!isFound) {
-    isHistoryLoading.set(true);
-    Meteor.call('battleHistory.getById', itemId, function(err, data) {
-      isHistoryLoading.set(false);
-      if (err) {
-        Notifications.error('Не удалось получить информацию о бое', err.error);
-      } else {
-        historyBattle.set( getBattleInfo(data) );
-      }
-    });
-  }
-};
-
-Template.cosmosHistory.onRendered(function() {
-  // run this function each time as page or hash cahnges
-  this.autorun(function() {
-    if (Router.current().route.getName() != 'cosmosHistory') {
-      return;
-    }
-    
-    var pageNumber = parseInt( Router.current().getParams().page, 10 );
-    var itemId = Router.current().getParams().hash;
-
-    isHistoryLoading.set(false);
-    historyBattle.set(null);
-
-    if (pageNumber != historyPage) {
-      // new page, then need to load records
-      historyPage = pageNumber;
-      historyBattles.clear();
-      isHistoryLoading.set(true);
-
-      Meteor.call('battle.getPage', pageNumber, historyCountPerPage, false, function(err, data) {
-        isHistoryLoading.set(false);
-        if (err) {
-          Notifications.error('Не удалось получить историю боёв', err.error);
-        } else {
-          // parse data
-          for (var i = 0; i < data.length; i++) {
-            historyBattles.push( getBattleInfo( data[i] ) );
-          }
-          // load additional record
-          if (itemId) {
-            loadHistoryBattle(itemId);
-          }
-          setTimeout(function() {
-            $('.content .history .scrollbar-inner').perfectScrollbar();
-          });
-        }
-      });
-    } else if (itemId) {
-      // load additional record
-      loadHistoryBattle(itemId);
-    }
+  Game.Popup.show({
+    template: SpaceHistory.renderComponent(),
+    hideClose: true,
   });
-});
-
-Template.cosmosHistory.onDestroyed(function() {
-  historyPage = null;
-});
-
-Template.cosmosHistory.helpers({
-  isLoading: function() { return isHistoryLoading.get(); },
-  countTotal: function() { return Game.Statistic.getUserValue('battle.total'); },
-  countPerPage: function() { return historyCountPerPage; },
-  battle: function() { return historyBattle.get(); },
-  battles: function() { return historyBattles.list(); },
-
-  getBattlePlanet: function() {
-    let planet = Game.Planets.getOne(this.planetId);
-    if (!planet) {
-      planet = {
-        isEmpty: true,
-        isDisabled: true,
-        name: 'скрытая',
-        location: 'галактика',
-        size: Game.Random.interval(2, 5),
-        type: _.sample(_.toArray(Game.Planets.types)).engName,
-      };
-    }
-    return planet;
-  }
-});
-
-Template.cosmosHistory.events({
-  'click tr:not(.header)': function(e, t) {
-    $(e.currentTarget).toggleClass('expanded');
-  }
-});
-
-var getArmyInfo = function(units, rest) {
-  const result = [];
-
-  _(units).pairs().forEach(([id, countStart]) => {
-    const unit = unitItems[id];
-    if (_.isString(countStart)) {
-      countStart = game.Battle.count[ countStart ];
-    }
-
-    if (countStart <= 0) {
-      return;
-    }
-
-    let countAfter = 0;
-    if (rest
-     && rest[id]
-    ) {
-      countAfter = rest[id];
-    }
-
-    result.push({
-      title: unit.title,
-      order: unit.order,
-      start: countStart,
-      end: countAfter,
-      resourcesLost: (countStart - countAfter > 0
-        ? unit.getPrice(countStart - countAfter)
-        : null
-      ),
-    });
-  });
-
-  result = _.sortBy(result, function(item) { return item.order; });
-
-  return result.length > 0 ? result : null;
-};
-
-const getBattleInfo = function(battle) {
-  const user = Meteor.user();
-  const result = {};
-  // парсить планету будем при отображении
-  result.planetId = battle.options.planetId;
-
-  // Время
-  result.timestamp = Math.floor(battle.timeStart.valueOf() / 1000);
-
-  // Распарсить ресурсы, потерянные при грабеже нашего дома
-  if (battle.lostResources) {
-    result.lostResources = _.mapObject(battle.lostResources, count => count * -1);
-  }
-
-  // Распарсить награду
-  if (battle.reward && !_.isEmpty(battle.reward[user.username])) {
-    result.reward = battle.reward[user.username];
-  } else {
-    result.reward = result.lostResources;
-  }
-  
-  // Распарсить армии
-  const userUnits = {};
-  battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-    _(units).pairs().forEach(([id, { count }]) => {
-      userUnits[id] = (userUnits[id] || 0) + count;
-    });
-  });
-
-  const userUnitsLeft = {};
-  battle.currentUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-    _(units).pairs().forEach(([id, { count }]) => {
-      userUnitsLeft[id] = (userUnitsLeft[id] || 0) + count;
-    });
-  });
-
-  const enemyUnits = {};
-  battle.initialUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
-    _(units).pairs().forEach(([id, { count }]) => {
-      enemyUnits[id] = (enemyUnits[id] || 0) + count;
-    });
-  });
-
-  const enemyUnitsLeft = {};
-  battle.currentUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
-    _(units).pairs().forEach(([id, { count }]) => {
-      enemyUnitsLeft[id] = (enemyUnitsLeft[id] || 0) + count;
-    });
-  });
-  
-  
-  result.userUnits = getArmyInfo(userUnits, userUnitsLeft);
-  result.enemyUnits = getArmyInfo(enemyUnits, enemyUnitsLeft);
-
-  // Считаем потери
-  if (result.userUnits) {
-    result.lostUnitsPrice = {
-      humans: 0,
-      metals: 0,
-      crystals: 0,
-    };
-
-    result.lostUnitsCount = 0;
-
-    _(result.userUnits).forEach((unit) => {
-      const lostCount = unit.start - unit.end;
-      result.lostUnitsCount += lostCount;
-
-      if (lostCount) {
-        if (unit.resourcesLost.metals) {
-          result.lostUnitsPrice.metals += unit.resourcesLost.metals;
-        }
-        if (unit.resourcesLost.crystals) {
-          result.lostUnitsPrice.crystals += unit.resourcesLost.crystals;
-        }
-        if (unit.resourcesLost.humans) {
-          result.lostUnitsPrice.humans += unit.resourcesLost.humans;
-        }
-      }
-    });
-
-    result.lostUnitsPrice = {
-      [result.lostUnitsPrice.humans   ? 'humans'   : 'empty'] : result.lostUnitsPrice.humans   || ' ',
-      [result.lostUnitsPrice.metals   ? 'metals'   : 'empty'] : result.lostUnitsPrice.metals   || ' ',
-      [result.lostUnitsPrice.crystals ? 'crystals' : 'empty'] : result.lostUnitsPrice.crystals || ' ',
-    };
-  }
-  
-  result.isBattle1x1 = Battle.isBattle1x1(battle);
-
-  return result;
-};
+}
 
 // ----------------------------------------------------------------------------
 // Fleets side menu
@@ -481,7 +243,6 @@ Template.cosmosFleetsInfo_table.events({
   'mouseover .cw--FleetInfoPlanets__marker, mouseover .cw--FleetInfoPlanets__planet_end .cw--FleetInfoPlanets__fleetReptiles': function (e, t) {
     const tooltip = new SpaceFleetPopup({
       hash: {
-        ship: Game.Cosmos.getShipInfo(this.spaceEvent),
         spaceEvent: this.spaceEvent,
       },
     }).renderComponentToHTML();
@@ -659,21 +420,6 @@ Game.Cosmos.showPlanetInfo = function(id, offset) {
   Game.Cosmos.showPlanetPopup(id, true, offset);
 };
 
-Game.Cosmos.reptilesFleetPower = (units) => {
-  return Game.Unit.calculateUnitsPower(_.reduce(units, function(units, unit) {
-    let count = (_.isString( unit.count )
-      ? game.Battle.countNumber[unit.countId].max
-      : unit.count
-    );
-
-    if (count > 0) {
-      units[unit.id] = count;
-    }
-    
-    return units;
-  }, {}));
-};
-
 // ----------------------------------------------------------------------------
 // Planets popup
 // ----------------------------------------------------------------------------
@@ -777,7 +523,6 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
     cosmosPopupView = Blaze.render(
       new SpaceFleetPopup({
         hash: {
-          ship: Game.Cosmos.getShipInfo(spaceEvent),
           spaceEvent: spaceEvent,
           allowActions: isLock,
           isMapView: true,
@@ -815,54 +560,6 @@ Game.Cosmos.showShipInfo = function(id, isLock) {
       $('.leaflet-popup-pane')[0],
     );
   }
-};
-
-Game.Cosmos.getShipInfo = function(spaceEvent) {
-  if (!spaceEvent || spaceEvent.status === 'completed' || spaceEvent.status === 'cancelled') {
-    return null;
-  }
-
-  var info = {};
-
-  info.name = null;
-  info.id = spaceEvent._id;
-
-  if (spaceEvent.data.isHumans) {
-    info.isHumans = true;
-    info.canSend = false;
-    info.status = 'Флот Консула';
-    if (Meteor.user().username !== spaceEvent.data.username) {
-      info.owner = spaceEvent.data.username;
-    }
-  } else {
-    info.isHumans = false;
-    info.canSend = true;
-    info.mission = {
-      level: spaceEvent.data.mission.level,
-      name: Game.Battle.items[spaceEvent.data.mission.type].name,
-      reward: Game.Battle.items[spaceEvent.data.mission.type].level[spaceEvent.data.mission.level].reward
-    };
-    info.status = 'Флот Рептилий';
-  }
-
-  var units = FlightEvents.getFleetUnits(spaceEvent.data);
-  if (units) {
-    const sideUnits = (spaceEvent.data.isHumans) ? humanSpaceUnits : reptileSpaceUnits;
-    info.units = [];
-    
-    _(sideUnits).pairs().forEach(([id, unit]) => {
-      info.units.push({
-        id,
-        unit,
-        count: _.isString( units[id] )
-          ? game.Battle.count[ units[id] ]
-          : units[id] || 0,
-        countId: units[id]
-      });
-    });
-  }
-
-  return info;
 };
 
 Game.Cosmos.getReinforcementInfo = function(spaceEvent) {
@@ -1158,19 +855,6 @@ Template.cosmosAttackMenu.helpers({
     return Template.instance().data.activeSquad.get();
   },
 
-  selectedFleetPower: function() {
-    var units = selectedUnits.get();
-
-    return Game.Unit.calculateUnitsPower(_.reduce(_.keys(units), function(resultUnits, id) {
-      let count = units[id];
-      if (count > 0) {
-        resultUnits[id] = count;
-      }
-      
-      return resultUnits;
-    }, {}));
-  },
-
   canHaveMoreColonies: function() {
     var updated = this.updated.get(); // rerun this helper on units update
     var targetId = this.id;
@@ -1209,6 +893,10 @@ Template.cosmosAttackMenu.helpers({
 
   canHaveMoreExtraColonies: function() {
     return Game.Planets.getExtraColoniesCount() < Game.Planets.MAX_EXTRA_COLONIES;
+  },
+
+  hasArmy(colony) {
+    return colony.armyUsername === Meteor.user().username;
   },
 
   colonies: function() {
@@ -1298,7 +986,11 @@ Template.cosmosAttackMenu.events({
     e.preventDefault();
     var id = $(e.currentTarget).attr("data-id");
     let planet = Game.Planets.getOne(id);
-    if (id && planet.armyUsername == Meteor.user().username && !$(e.currentTarget).hasClass('disabled')) {
+    if (
+      id
+      && planet.armyUsername == Meteor.user().username
+      && !$(e.currentTarget).hasClass('cw--SpacePlanet_disabled')
+    ) {
       resetSelectedUnits();
 
       // set new colony id

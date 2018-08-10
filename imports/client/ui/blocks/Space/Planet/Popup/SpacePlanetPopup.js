@@ -6,6 +6,7 @@ import { _ } from 'lodash';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
 import '/imports/client/ui/blocks/Units/Units';
+import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 import '/imports/client/ui/button/button.styl';
 import './SpacePlanetPopup.html';
 import './SpacePlanetPopup.styl';
@@ -193,9 +194,8 @@ class SpacePlanetPopup extends BlazeComponent {
     return collectPeriod - passed;
   }
 
-  getReptilesFleetPower() {
-    const { units } = this.planetInfo;
-    return Game.Cosmos.reptilesFleetPower(units);
+  getFleet() {
+    return Game.Planets.getFleetUnits(this.planet._id);
   }
 
   canMine() {

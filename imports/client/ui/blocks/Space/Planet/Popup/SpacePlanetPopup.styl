@@ -8,6 +8,7 @@
 
   cw--fontFamily_cond()
   font-size $cw--fontSize_m
+  font-weight normal
 
   &_mapView
     position absolute
@@ -78,6 +79,10 @@
     color $cw--color_nearWhite
     background-color alpha($cw--color_black, .5)
 
+  &__collectTimer
+    font-size $cw--fontSize_s
+    margin 5px 0
+
   &__info
     margin 10px 0
 
@@ -93,18 +98,8 @@
 
   &__unitsPower
     display inline-block
-    height 25px
-    padding-left 32px
     margin-left 15px
     vertical-align middle
-
-    line-height 25px
-    color $cw--color_human
-
-    background-image url(/img/game/buff.svg)
-    background-repeat no-repeat
-    background-position left center
-    background-size 25px
 
   &__actions
     display flex
@@ -113,4 +108,5 @@
     margin-top 15px
 
   &__action
+    width 130px
     margin 0 10px

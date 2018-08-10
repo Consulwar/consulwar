@@ -6,6 +6,7 @@ import armyHumans from '/imports/content/Unit/Human/Ground/client';
 import armyReptiles from '/imports/content/Unit/Reptile/Ground/client';
 import fleetHumans from '/imports/content/Unit/Human/Space/client';
 import fleetReptiles from '/imports/content/Unit/Reptile/Space/client';
+import defenseUnits from '/imports/content/Unit/Human/Defense/client';
 import UnitPopup from '/imports/client/ui/blocks/Unit/Popup/UnitPopup';
 import './Units.html';
 import './Units.styl';
@@ -17,10 +18,13 @@ class Units extends BlazeComponent {
 
   constructor({
     hash: {
-      isReptiles,
-      isSpace = false,
       units = [],
       userArmy = [],
+      isShowDefense = false,
+      isHideNull = false,
+      isReptiles,
+      isBattleUnits = false,
+      isSpace = false,
       className,
     },
   }) {
@@ -28,8 +32,11 @@ class Units extends BlazeComponent {
 
     this.units = units;
     this.userArmy = userArmy;
-    this.isSpace = isSpace;
+    this.isShowDefense = isShowDefense;
+    this.isHideNull = isHideNull;
     this.isReptiles = isReptiles;
+    this.isBattleUnits = isBattleUnits;
+    this.isSpace = isSpace;
     this.className = className;
   }
 
@@ -44,6 +51,9 @@ class Units extends BlazeComponent {
     if (this.isSpace) {
       if (this.isReptiles) {
         return fleetReptiles;
+      }
+      if (this.isShowDefense) {
+        return _.merge({}, defenseUnits, fleetHumans);
       }
       return fleetHumans;
     }
@@ -80,7 +90,7 @@ class Units extends BlazeComponent {
       const countId = (units[id] && units[id].countId) || 0;
       const myArmy = userArmy[id] || 0;
 
-      if (this.isTextUnits() && !count) {
+      if ((this.isTextUnits() || this.isHideNull) && !count) {
         return false;
       }
 

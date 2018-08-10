@@ -90,7 +90,7 @@ var menu = {
   },
   galaxy: {
     name: 'Космос',
-    routeName: ['cosmos', 'cosmosHistory'],
+    routeName: ['cosmos'],
     url: Router.routes.cosmos.path()
   },
   earth: {

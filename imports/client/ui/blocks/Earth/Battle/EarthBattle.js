@@ -1,9 +1,8 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
 import { later } from 'meteor/mrt:later'; // eslint-disable-line
-import armyHumans from '/imports/content/Unit/Human/Ground/client';
-import armyReptiles from '/imports/content/Unit/Reptile/Ground/client';
 import Game from '/moduls/game/lib/main.game';
+import '/imports/client/ui/blocks/Units/Units';
 import './EarthBattle.html';
 import './EarthBattle.styl';
 
@@ -55,15 +54,12 @@ class EarthBattle extends BlazeComponent {
   }
 
   battleList() {
-    const myArmy = this.getMyArmy();
-
-    const addArmyItems = (army, contentSource) => {
+    const addArmyItems = (army) => {
       const result = [];
       _.forEach(army, (count, id) => {
         const obj = {
-          name: contentSource[id].title,
+          id,
           count,
-          myArmyCount: myArmy[id],
         };
         result.push(obj);
       });
@@ -73,13 +69,15 @@ class EarthBattle extends BlazeComponent {
     return [
       {
         title: 'Рептилии',
+        isReptiles: true,
         colorClass: 'cw--color_honor',
-        list: addArmyItems(this.reptiles, armyReptiles),
+        list: addArmyItems(this.reptiles),
       },
       {
         title: 'Армия Консулов',
         colorClass: 'cw--color_metal',
-        list: addArmyItems(this.humans, armyHumans),
+        list: addArmyItems(this.humans),
+        myArmy: addArmyItems(this.getMyArmy()),
       },
     ];
   }

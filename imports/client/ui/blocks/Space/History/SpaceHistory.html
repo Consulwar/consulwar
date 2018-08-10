@@ -101,7 +101,13 @@
               </div>
 
               {{#if not battle.isBattle1x1}}
-                Совместный бой
+                <img
+                  class="cw--SpaceHistory__battleCoop"
+                  src="/img/game/Space/battleCoop.svg"
+                  alt="Совместный бой"
+                  data-tooltip="Совместный бой"
+                  data-tooltip-direction="s"
+                />
               {{/if}}
               {{> ResourcePrice args
                 price=battle.summaryProfit

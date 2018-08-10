@@ -23,14 +23,14 @@
             {{> Units args
               isSpace=isSpace
               isReptiles=true
-              units=enemyUnits
+              units=(getUnits 'enemyUnits' false)
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'
             }}
           </div>
           <div class="cw--SpaceHistoryBattle__fleetLosses">
             <div class="cw--SpaceHistoryBattle__fleetHead">
-              {{#if enemyLostUnits}}
+              {{#if hasEnemyLosts.get}}
                 Потеряно юнитов:
               {{else}}
                 Потерь нет.
@@ -39,12 +39,43 @@
             {{> Units args
               isSpace=isSpace
               isReptiles=true
-              units=enemyLostUnits
+              units=(getUnits 'enemyUnits' true)
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'
             }}
           </div>
         </div> {{!-- __fleet reptiles --}}
+
+        <div class="cw--SpaceHistoryBattle__selects">
+          <select
+            onChange={{switchUser}}
+            class="
+              cw--SpaceHistoryBattle__select
+              cw--SpaceHistoryBattle__select_users
+            "
+            disabled={{not hasUsers}}
+          >
+            {{#each userName in getUsers}}
+              <option value={{userName}}>
+                {{userName}}
+              </option>
+            {{/each}}
+          </select>
+          <select
+            onChange={{switchSquad}}
+            class="
+              cw--SpaceHistoryBattle__select
+              cw--SpaceHistoryBattle__select_squads
+            "
+            disabled={{not hasSquads}}
+          >
+            {{#each squadName in getSquads}}
+              <option value={{@index}}>
+                {{squadName}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
 
         <div class="cw--SpaceHistoryBattle__fleet">
           <div class="cw--SpaceHistoryBattle__fleetStart">
@@ -54,7 +85,7 @@
                 cw--SpaceHistoryBattle__fleetHead_user
               "
             >
-              {{userName}}
+              {{user.get}}
               {{> UnitsPower args
                 units=(getRawUnits 'userUnits')
                 className='cw--SpaceHistoryBattle__fleetPower'
@@ -64,14 +95,14 @@
               isSpace=isSpace
               isShowDefense=battle.isHome
               isHideNull=battle.isHome
-              units=userUnits
+              units=(getUnits 'userUnits' false)
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'
             }}
           </div>
           <div class="cw--SpaceHistoryBattle__fleetLosses">
             <div class="cw--SpaceHistoryBattle__fleetHead">
-              {{#if userLostUnits}}
+              {{#if hasUserLosts.get}}
                 Потеряно юнитов:
               {{else}}
                 Потерь нет.
@@ -81,7 +112,7 @@
               isSpace=isSpace
               isShowDefense=battle.isHome
               isHideNull=battle.isHome
-              units=userLostUnits
+              units=(getUnits 'userUnits' true)
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'
             }}
@@ -90,26 +121,26 @@
       </div> {{!-- __fleets --}}
       {{#if isSpace}}
         <div class="cw--SpaceHistoryBattle__profits">
-          {{#if userLostUnits}}
+          {{#if hasUserLosts.get}}
             <div class="cw--SpaceHistoryBattle__profit">
               <div class="cw--SpaceHistoryBattle__profitHead">
                 Потерял:
               </div>
               {{> ResourcePrice args
-                price=battle.lostUnitsPrice
+                price=getUserCosts
                 isShowDiff=false
                 isStyleSmall=true
                 className='cw--SpaceHistoryBattle__price'
               }}
             </div>
           {{/if}}
-          {{#if enemyLostUnits}}
+          {{#if hasEnemyLosts.get}}
             <div class="cw--SpaceHistoryBattle__profit">
               <div class="cw--SpaceHistoryBattle__profitHead">
                 Заработал:
               </div>
               {{> ResourcePrice args
-                price=battle.reward
+                price=getUserReward
                 isShowDiff=false
                 isStyleSmall=true
                 className='cw--SpaceHistoryBattle__price'

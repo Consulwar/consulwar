@@ -23,6 +23,8 @@ class SpaceHistory extends BlazeComponent {
   onCreated() {
     super.onCreated();
 
+    this.mainUserName = Meteor.user().username;
+
     this.historyBattles = new ReactiveArray();
     this.currentBattle = new ReactiveVar();
     this.isLoading = new ReactiveVar(true);
@@ -69,8 +71,6 @@ class SpaceHistory extends BlazeComponent {
             this.historyBattles.push(this.getBattleInfo(battles[i]));
           }
         }
-        console.log('battles', battles);
-        console.log('formbatt', this.historyBattles.list());
       },
     );
   }
@@ -157,41 +157,77 @@ class SpaceHistory extends BlazeComponent {
       result.reward = result.lostResources;
     }
 
-    result.users = _.keys(battle.initialUnits[Battle.USER_SIDE]);
-
     // Parsing army
+    result.users = {};
 
-    // const getUnits = (
-    //   isStart,
-    //   side,
-    //   userName = user.username,
-    // ) => {
-    //   const source = isStart ? battle.initialUnits : battle.currentUnits;
+    const battleUsersUnits = battle.initialUnits[Battle.USER_SIDE];
+    const currentUsersUnits = battle.currentUnits[Battle.USER_SIDE];
+    // Parsing users
+    _.keys(battleUsersUnits).forEach((userName) => {
+      const userObj = {};
 
-    // }
+      // adding current user reward to userObject
+      if (battle.reward && !_.isEmpty(battle.reward[userName])) {
+        userObj.reward = battle.reward[userName];
+      } else {
+        userObj.reward = result.lostResources;
+      }
 
-    const userUnits = {};
-    const userSquads = [];
-    battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-      const squad = {};
-      _.toPairs(units).forEach(([id, { count }]) => {
-        squad[id] = count;
-        userUnits[id] = (userUnits[id] || 0) + count;
+      // lost user's units price counter
+      userObj.lostUnitsPrice = {};
+
+      // All user squads
+      userObj.squads = [];
+
+      // All user's units
+      const allUnitsStart = {};
+      const allUnitsEnd = {};
+
+      // parsing userSquads
+      battleUsersUnits[userName].forEach((squad, i) => {
+        const unitsStart = {};
+        const unitsEnd = {};
+        _.toPairs(squad).forEach(([id, { count }]) => {
+          // getting count in the end of battle
+          const countEnd = currentUsersUnits[userName][i][id].count;
+          // adding unit counters to current squad
+          unitsStart[id] = count;
+          unitsEnd[id] = countEnd;
+          // adding unit counters to all user units
+          allUnitsStart[id] = (allUnitsStart[id] || 0) + count;
+          allUnitsEnd[id] = (allUnitsEnd[id] || 0) + countEnd;
+
+          // Lost Units is NEGATIVE number
+          const lostUnits = unitsEnd[id] - unitsStart[id];
+          // summing price to userObj.lostUnitsPrice
+          _.toPairs(unitItems[id].getPrice(lostUnits)).forEach(([name, price]) => {
+            if (name !== 'time') {
+              if (!userObj.lostUnitsPrice[name]) {
+                userObj.lostUnitsPrice[name] = 0;
+              }
+              userObj.lostUnitsPrice[name] += price;
+            }
+          });
+        });
+
+        const unitsResult = this.getArmyInfo(unitsStart, unitsEnd);
+        (userObj.squads).push(unitsResult);
       });
-      userSquads.push(squad);
+
+      // when user has more than 1 squad
+      // add first element "all Units" to top of squads array
+      // otherwise first (single) squad = all Units
+      if (userObj.squads.length > 1) {
+        const allUnits = this.getArmyInfo(allUnitsStart, allUnitsEnd);
+        (userObj.squads).splice(0, 0, allUnits);
+      }
+
+      // moving user Object to result
+      result.users[userName] = userObj;
     });
 
-    const userUnitsLeft = {};
-    const userSquadsLeft = [];
-    battle.currentUnits[Battle.USER_SIDE][user.username].forEach((units) => {
-      const squad = {};
-      _.toPairs(units).forEach(([id, { count }]) => {
-        squad[id] = count;
-        userUnitsLeft[id] = (userUnitsLeft[id] || 0) + count;
-      });
-      userSquadsLeft.push(squad);
-    });
 
+    // parsing Enemy Units
     const enemyUnits = {};
     const enemySquads = [];
     battle.initialUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
@@ -214,39 +250,13 @@ class SpaceHistory extends BlazeComponent {
       enemySquadsLeft.push(squad);
     });
 
-    result.userUnits = this.getArmyInfo(userUnits, userUnitsLeft);
     result.enemyUnits = this.getArmyInfo(enemyUnits, enemyUnitsLeft);
 
-    // Считаем потери
-    result.lostUnitsPrice = {
-      humans: 0,
-      metals: 0,
-      crystals: 0,
-    };
-
-    if (result.userUnits) {
-      result.lostUnitsCount = 0;
-
-      _.forEach(result.userUnits, (unit) => {
-        const lostCount = unit.start - unit.end;
-        result.lostUnitsCount += lostCount;
-
-        if (lostCount) {
-          if (unit.resourcesLost.metals) {
-            result.lostUnitsPrice.metals += unit.resourcesLost.metals;
-          }
-          if (unit.resourcesLost.crystals) {
-            result.lostUnitsPrice.crystals += unit.resourcesLost.crystals;
-          }
-          if (unit.resourcesLost.humans) {
-            result.lostUnitsPrice.humans += unit.resourcesLost.humans;
-          }
-        }
-      });
-    }
 
     // Count summary resource profit
-    if (result.lostUnitsCount || result.reward) {
+    const { lostUnitsPrice } = result.users[this.mainUserName];
+
+    if (lostUnitsPrice || result.reward) {
       result.summaryProfit = {
         humans: 0,
         metals: 0,
@@ -254,8 +264,10 @@ class SpaceHistory extends BlazeComponent {
         honor: 0,
       };
       _.keys(result.summaryProfit).forEach((key) => {
-        result.summaryProfit[key] -= result.lostUnitsPrice[key] || 0;
-        result.summaryProfit[key] += result.reward[key] || 0;
+        result.summaryProfit[key] += lostUnitsPrice[key] || 0;
+        if (result.reward && result.reward[key]) {
+          result.summaryProfit[key] += result.reward[key] || 0;
+        }
       });
     }
 
@@ -283,18 +295,11 @@ class SpaceHistory extends BlazeComponent {
         countAfter = rest[id];
       }
 
-      let resourcesLost = null;
-      if (countStart - countAfter > 0) {
-        resourcesLost = unit.getPrice(countStart - countAfter);
-      }
-
       result.push({
         id,
-        title: unit.title,
         order: unit.order,
         start: countStart,
         end: countAfter,
-        resourcesLost,
       });
     });
 

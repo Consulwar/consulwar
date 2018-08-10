@@ -32,8 +32,9 @@
 
   &__fleetStart
   &__fleetLosses
-    flex-basis calc(50% - 10px)
     flex-shrink 0
+    +media($cw--size_s, null)
+      flex-basis calc(50% - 10px)
 
   &__fleetHead
     display flex
@@ -67,3 +68,23 @@
 
   &__profitHead
     margin-bottom 10px
+
+  &__selects
+    display flex
+    justify-content space-between
+    height 40px
+    margin-bottom 10px
+
+    +media($cw--size_s, null)
+      width calc(50% - 10px)
+
+  &__select
+    flex-basis calc(50% - 10px)
+    padding 5px
+    box-sizing border-box
+
+    font-size $cw--fontSize_m
+    color $cw--color_description
+    background-color $cw--color_black
+    border solid 1px $cw--color_metal
+    border-image $cw--gradient_metal 1

@@ -13,98 +13,6 @@
   bottom 10px
   left 200px
 
-.cosmosHistory
-  ~ .bottom_menu
-    display none
-
-  .history
-    display flex
-    flex-direction column
-    width 100%
-    background-color #04080B
-    
-    h2
-      width 100%
-      text-align center
-      
-    .data
-      display block
-      overflow-y auto
-
-    .result
-      font-size 16px
-      margin -5px auto 6px
-
-    table
-      width 100%
-      border-collapse collapse
-      
-      a.planet
-        height 76px
-        &.disabled
-          -webkit-filter grayscale(1) brightness(0.5)
-          filter grayscale(1) brightness(0.5)
-      
-      tr:not(.header)
-        text-align left
-        cursor pointer
-        
-        &:nth-child(odd):not(.header)
-          background-color $color-row1
-        
-        &:nth-child(even)
-          background-color $color-row2
-        
-        &:hover
-          -webkit-filter brightness(1.2)
-          filter brightness(1.2)
-            
-        &.expanded
-          td:not(:last-child)
-            vertical-align top
-          .details
-            display block
-          table
-            width 250px
-            
-            tr
-              height auto
-              
-              td
-                height auto
-                width auto
-                padding 0
-          
-        .details
-          display none
-            
-      td, th
-        position relative
-        text-align center
-        vertical-align middle
-        padding 5px
-        &:nth-child(1)
-          width 100px
-
-        &:nth-child(2)
-          width 250px
-
-        &:nth-child(3)
-          width 420px
-      td
-        height 76px
-
-      th
-        padding 10px
-        color $color-metal
-        &:last-child
-          padding-right 20px
-      
-      .defense, .attack
-        position absolute
-        left 10px
-        top 32.5px
-
 #map-battle-container
   position absolute
   overflow hidden
@@ -163,23 +71,11 @@
 .cw--SpaceAttackMenu__reinforcement
   padding 10px 10px 0 10px
 
-.unitsPower
-  display inline-flex
-  vertical-align middle
-  align-items center
-  margin 0 15px
-  
-  &:before
-    content url(/img/game/power.png)
-    width 24px
-    height 24px
-    margin-right 10px
-
 .attack-menu
   display none
   position relative
   width 1420px
-  height 560px
+  height 570px
   background-color #090e14
   font-size 16px
   font-weight bold

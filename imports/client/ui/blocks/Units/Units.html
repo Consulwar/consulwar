@@ -14,10 +14,16 @@
               {{#if isTextUnits}}
                 cw--Units__unit_text
               {{/if}}
+              {{#if isBattleUnits}}
+                cw--Units__unit_battle
+              {{/if}}
+              {{#if isReptiles}}
+                cw--Units__unit_reptile
+              {{/if}}
             "
             data-sound="hover, click"
           >
-            {{#if isTextUnits}}
+            {{#if or isTextUnits isBattleUnits}}
               {{unit.title}}
             {{else}}
               <img
@@ -31,10 +37,10 @@
                 class="cw--Units__unitCount"
                 data-tooltip={{battleCountNumber unit.countId}}
               >
-                {{formatNumberWithISO unit.count 3}}
+                {{formatNumberWithISO unit.count 5}}
                 {{#if unit.myArmy}}
                   <span class="cw--color_credit">
-                    ({{formatNumberWithISO unit.myArmy 3}})
+                    ({{formatNumberWithISO unit.myArmy 5}})
                   </span>
                 {{/if}}
               </span>

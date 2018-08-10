@@ -39,9 +39,10 @@
           {{ship.mission.name}}
           {{ship.mission.level}}
           уровня
-          <span class="cw--SpaceFleetPopup__unitsPower">
-            {{formatNumberWithISO getReptilesFleetPower}}
-          </span>
+          {{> UnitsPower args
+            units=getReptilesFleet
+            className='cw--SpaceFleetPopup__unitsPower'
+          }}
         </div>
       {{/if}}
 

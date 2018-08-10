@@ -43,31 +43,31 @@
       }}
       
       <div class="planets scrollbar-inner">
-        {{#each colonies}}
-          {{#if this.canBuy}}
+        {{#each colony in colonies}}
+          {{#if colony.canBuy}}
             {{> SpacePlanet args
-              planet=this
+              planet=colony
               className='cw--CosmosAttackMenu__planet'
             }}
           {{else}}
             {{> SpacePlanet args
-                planet=this
+                planet=colony
                 location=(or 
                   (and 
                     (and 
                       options.showDistanceFromPlanets 
-                      (not (or this.isEmpty this.notAvaliable))
+                      (not (or colony.isEmpty colony.notAvaliable))
                     )
                     (or 
-                      (and this.timeAttack (formatSeconds this.timeAttack))
+                      (and colony.timeAttack (formatSeconds colony.timeAttack))
                       '–'
                     )
                   ) 
                   ' '
                 )
-                isSelected=(eqandtrue activeColonyId this._id)
-                isDisabled=(eqandtrue ../id this._id)
-                isTopTime=this.isTopTime
+                isSelected=(eqandtrue activeColonyId colony._id)
+                isDisabled=(or (eqandtrue ../id colony._id) (not (hasArmy colony)))
+                isTopTime=colony.isTopTime
                 className='cw--CosmosAttackMenu__planet'
             }}
           {{/if}}

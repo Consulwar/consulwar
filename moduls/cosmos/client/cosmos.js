@@ -895,6 +895,10 @@ Template.cosmosAttackMenu.helpers({
     return Game.Planets.getExtraColoniesCount() < Game.Planets.MAX_EXTRA_COLONIES;
   },
 
+  hasArmy(colony) {
+    return colony.armyUsername === Meteor.user().username;
+  },
+
   colonies: function() {
     const result = getSourcePlanets();
 
@@ -982,7 +986,11 @@ Template.cosmosAttackMenu.events({
     e.preventDefault();
     var id = $(e.currentTarget).attr("data-id");
     let planet = Game.Planets.getOne(id);
-    if (id && planet.armyUsername == Meteor.user().username && !$(e.currentTarget).hasClass('disabled')) {
+    if (
+      id
+      && planet.armyUsername == Meteor.user().username
+      && !$(e.currentTarget).hasClass('cw--SpacePlanet_disabled')
+    ) {
       resetSelectedUnits();
 
       // set new colony id

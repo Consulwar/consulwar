@@ -26,10 +26,10 @@ export default {
     {
       url: '/game/planet/Residential/SpacePort',
       condition: {
-        target: '.acceptWindow .button.accept',
+        target: '.cw--ModalConfirm__action_accept',
         exists: true,
       },
-      target: '.acceptWindow .button.accept',
+      target: '.cw--ModalConfirm__action_accept',
       direction: 'bottom',
     },
     {

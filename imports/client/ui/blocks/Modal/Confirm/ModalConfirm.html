@@ -1,0 +1,43 @@
+<template name="ModalConfirm">
+  <div class="cw--Modal">
+    <div class="cw--Modal__legend">
+      {{legend}}
+    </div>
+    <div class="cw--ModalConfirm__message">
+      {{{message}}}
+    </div>
+    <div
+      class="
+        cw--Modal__actions
+        cw--ModalConfirm__actions
+      "
+    >
+      <button
+        onClick={{accept}}
+        class="
+          cw--button
+          cw--button_type_primary
+          cw--button_type_primary_green
+          cw--ModalConfirm__action
+          cw--ModalConfirm__action_accept
+        "
+        data-sound="hover,click"
+      >
+        Да
+      </button>
+      <button
+        onClick={{cancel}}
+        class="
+          cw--button
+          cw--button_flat
+          cw--button_flat_orange
+          cw--ModalConfirm__action
+          cw--ModalConfirm__action_cancel
+        "
+        data-sound="hover,click"
+      >
+        Нет
+      </button>
+    </div>
+  </div>
+</template>

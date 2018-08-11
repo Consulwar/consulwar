@@ -13,6 +13,8 @@ import '/imports/client/ui/blocks/User/Menu/UserMenu';
 import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
 import Arrow from '/imports/client/ui/Arrow/Arrow';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
+import ModalPrompt from '/imports/client/ui/blocks/Modal/Prompt/ModalPrompt';
+import ModalConfirm from '/imports/client/ui/blocks/Modal/Confirm/ModalConfirm';
 
 import '/imports/client/ui/blocks/Buffs/Buffs';
 import '/imports/client/ui/blocks/Assistant/Assistant';
@@ -588,61 +590,35 @@ window.ShowModalWindow = function(template, data) {
 // Accept window
 // ----------------------------------------------------------------------------
 
-var acceptWindowView = null;
-
 Game.showAcceptWindow = function(message, onAccept, onCancel) {
-  if (!acceptWindowView) {
-    acceptWindowView = Blaze.renderWithData(
-      Template.acceptWindow, {
-        message: message,
-        onAccept: onAccept,
-        onCancel: onCancel
-      }, $('.over')[0]
-    );
-  }
+  Game.Popup.show({
+    template: (new ModalConfirm({
+      hash: {
+        message,
+        onAccept,
+        onCancel,
+      },
+    })).renderComponent(),
+  });
 };
 
-var closeAcceptWindow = function(callback) {
-  if (acceptWindowView) {
-    Blaze.remove(acceptWindowView);
-    acceptWindowView = null;
-  }
-  if (_.isFunction(callback)) {
-    callback.call();
-  }
-};
-
-Template.acceptWindow.events({
-  'click .close': function(e, t) {
-    closeAcceptWindow(t.data.onCancel);
-  },
-
-  'click .cancel': function(e, t) {
-    closeAcceptWindow(t.data.onCancel);
-  },
-
-  'click .accept': function(e, t) {
-    closeAcceptWindow(t.data.onAccept);
-  }
-});
 
 // ----------------------------------------------------------------------------
 // Input window
 // ----------------------------------------------------------------------------
 
-var inputWindowView = null;
-
 Game.showInputWindow = function(message, value, onAccept, onCancel) {
-  if (!inputWindowView) {
-    inputWindowView = Blaze.renderWithData(
-      Template.inputWindow, {
-        message: message,
-        value: value,
-        onAccept: onAccept,
-        onCancel: onCancel
-      }, $('.over')[0]
-    );
-  }
+  Game.Popup.show({
+    template: (new ModalPrompt({
+      hash: {
+        legend: message,
+        type: 'text',
+        value,
+        onAccept,
+        onCancel,
+      },
+    })).renderComponent(),
+  });
 };
 
 
@@ -680,29 +656,5 @@ Game.showDesktopNotification = function(text, options) {
   
   }
 };
-
-var closeInputWindow = function(callback, value) {
-  if (inputWindowView) {
-    Blaze.remove(inputWindowView);
-    inputWindowView = null;
-  }
-  if (_.isFunction(callback)) {
-    callback.call(this, value);
-  }
-};
-
-Template.inputWindow.events({
-  'click .close': function(e, t) {
-    closeInputWindow(t.data.onCancel, t.find('input').value);
-  },
-
-  'click .cancel': function(e, t) {
-    closeInputWindow(t.data.onCancel, t.find('input').value);
-  },
-
-  'click .accept': function(e, t) {
-    closeInputWindow(t.data.onAccept, t.find('input').value);
-  }
-});
 
 });

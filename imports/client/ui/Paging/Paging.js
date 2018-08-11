@@ -12,6 +12,7 @@ class Paging extends BlazeComponent {
       size,
       currentPage,
       pagesTotal,
+      isShowArrows = true,
       className,
     },
   }) {
@@ -19,6 +20,7 @@ class Paging extends BlazeComponent {
 
     this.currentPage = currentPage;
     this.pagesTotal = pagesTotal;
+    this.isShowArrows = isShowArrows;
     this.className = className;
 
     this.size = size || 7;

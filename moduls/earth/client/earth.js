@@ -1,6 +1,6 @@
+import { Blaze } from 'meteor/blaze';
 import unitItems from '/imports/content/Unit/client';
-import humanGroundUnits from '/imports/content/Unit/Human/Ground/client';
-import { Command, ResponseToGeneral } from '../lib/generals';
+import EarthInfo from '/imports/client/ui/blocks/Earth/Info/EarthInfo';
 
 initEarthClient = function() {
 'use strict';
@@ -161,204 +161,6 @@ Template.earthHistory.events({
 });
 
 // ----------------------------------------------------------------------------
-// Reserve
-// ----------------------------------------------------------------------------
-
-Game.Earth.showReserve = function() {
-  const name = this.params.name;
-
-  Router.current().render('reserve', {
-    to: 'content',
-    data: {
-      honor: new ReactiveVar(0),
-      name
-    }
-  });
-};
-
-Template.reserve.helpers({
-  units() {
-    return _(humanGroundUnits).map((unit, id) => ({
-      id,
-      icon: unit.icon,
-      max: unit.getCurrentCount({ from: 'hangar' }),
-    }));
-  },
-
-  honor: function() {
-    return this.honor.get();
-  }
-});
-
-Template.reserve.events({
-  'click .btn-all': function(e, t) {
-    $('.units li').each(function(index, element) {
-      var max = Number( $(element).attr('data-max') );
-      $(element).find('.count').val( max );
-      $(element).find('.count').change();
-    });
-  },
-
-  'change .units input': function (e, t) {
-    var value = parseInt( e.currentTarget.value );
-    var max = parseInt( $(e.currentTarget.parentElement).attr('data-max') );
-
-    if (value < 0) {
-      e.currentTarget.value = 0;
-    } else if (value > max) {
-      e.currentTarget.value = max;
-    }
-
-    // recalculate honor
-    var honor = 0;
-
-    $('.units li').each(function(index, elem) {
-      var element = $(elem);
-      var id = element.attr('data-id');
-      var max = parseInt( element.attr('data-max') );
-      var count = parseInt( element.find('.count').val() );
-
-      if (max < count) {
-        count = max;
-      }
-
-      if (count > 0) {
-        honor += Game.Resources.calculateHonorFromReinforcement(
-          humanGroundUnits[id].getBasePrice(count)
-        );
-      }
-    });
-
-    t.data.honor.set(honor);
-  },
-
-  'click .btn-send': function(e, t) {
-    var total = 0;
-    var units = {};
-
-    $('.units li').each(function(index, elem) {
-      var element = $(elem);
-      var id = element.attr('data-id');
-      var max = parseInt( element.attr('data-max') );
-      var count = parseInt( element.find('.count').val() );
-
-      if (max > 0 && count > 0) {
-        units[ id ] = Math.min(max, count);
-        total += units[ id ];
-      }
-
-      element.find('.count').val(0);
-      element.find('.count').change();
-    });
-
-    if (total <= 0) {
-      return Notifications.info('Выберите войска для отправки');
-    }
-
-    Meteor.call('earth.sendReinforcement', units, t.data.name, function(err) {
-      if (err) {
-        Notifications.error('Не удалось отправить войска', err.error);
-      } else {
-        Notifications.success('Войска отправлены на Землю');
-      }
-    });
-  }
-});
-
-// ----------------------------------------------------------------------------
-// Zone info
-// ----------------------------------------------------------------------------
-
-Game.Earth.showZone = function() {
-  var name = this.params.name;
-
-  Router.current().render('earthZoneInfo', {
-    to: 'content',
-    data: {
-      name: name
-    }
-  });
-};
-
-Template.earthZoneInfo.helpers({
-  zone: function() {
-    return Game.EarthZones.getByName(this.name);
-  },
-
-  army: function() {
-    return Game.EarthUnits.get();
-  },
-
-  info: function() {
-    var zone = Game.EarthZones.getByName(this.name);
-    let userUnits = Game.EarthUnits.get();
-    let userUnitsArmy = {};
-    if (userUnits && userUnits.zoneName === this.name) {
-      userUnitsArmy = userUnits.userArmy;
-    }
-
-    var maxHealth = Game.EarthZones.calcMaxHealth();
-    var currentUserPower = Game.Unit.calcUnitsHealth( zone.userArmy );
-    var currentEnemyPower = Game.Unit.calcUnitsHealth( zone.enemyArmy );
-
-    var side = null;
-    var group = null;
-    var name = null;
-
-    let userArmy = null;
-    if (zone.userArmy) {
-      userArmy = _(zone.userArmy).map((count, id) => ({
-        title: unitItems[id].title,
-        count,
-        userUnitsCount: userUnitsArmy[id] ? userUnitsArmy[id] : null,
-      }));
-    }
-
-    let enemyArmy = null;
-    if (zone.enemyArmy) {
-      enemyArmy = _(zone.enemyArmy).map((count, id) => ({
-        title: unitItems[id].title,
-        count,
-      }));
-    }
-
-    var userCount = 0;
-    var enemyCount = 0;
-
-    var zones = Game.EarthZones.getAll().fetch();
-    for (var i = 0; i < zones.length; i++) {
-      if (zones[i].isEnemy) {
-        enemyCount++;
-      } else {
-        userCount++;
-      }
-    }
-
-    var totalCount = userCount + enemyCount;
-    var capturedPercent = Math.round( (userCount / totalCount) * 100 );
-
-    var userPower = (maxHealth > 0)
-      ? Math.round( (currentUserPower / maxHealth) * 100 )
-      : 0;
-
-    var enemyPower = (maxHealth > 0)
-      ? Math.round( (currentEnemyPower / maxHealth) * 100 )
-      : 0;
-
-    return {
-      name: zone.name,
-      capturedPercent: capturedPercent,
-      userCount: userCount,
-      userPower: userPower,
-      userArmy: userArmy,
-      enemyCount: enemyCount,
-      enemyPower: enemyPower,
-      enemyArmy: enemyArmy
-    };
-  }
-});
-
-// ----------------------------------------------------------------------------
 // Zone popup
 // ----------------------------------------------------------------------------
 
@@ -368,22 +170,33 @@ Game.Earth.showZonePopup = function(name, latlng) {
   if (!mapView || !zoneViews[name]) {
     return;
   }
-
+  
   Game.Earth.hideZonePopup();
-
+  
   var zoom = new ReactiveVar( mapView.getZoom() );
   mapView.on('zoomend', function(e) {
     zoom.set( mapView.getZoom() );
   });
 
-  zonePopupView = Blaze.renderWithData(
-    Template.earthZonePopup, {
-      name: name,
-      position: function() {
-        zoom.get();
-        return mapView.latLngToLayerPoint(latlng);
-      }
-    },
+  // * show zoneInfo in Popup *
+  // Game.Popup.show({
+  //   template: (new EarthInfo({
+  //     hash: {
+  //       name,
+  //     },
+  //   })).renderComponent(),
+  //   hideClose: true,
+  // });
+  zonePopupView = Blaze.render(
+    (new EarthInfo({
+      hash: {
+        name,
+        position: function() {
+          zoom.get();
+          return mapView.latLngToLayerPoint(latlng);
+        },
+      },
+    })).renderComponent(),
     $('.leaflet-popup-pane')[0]
   );
 };
@@ -395,114 +208,41 @@ Game.Earth.hideZonePopup = function() {
   }
 };
 
-Template.earthZonePopup.helpers({
-  zone: function() {
-    return Game.EarthZones.getByName(this.name);
-  },
-
-  zoneBonusLine() {
-    const zone = Game.EarthZones.getByName(this.name);
-
-    const { id, count } = zone.bonus;
-
-    const bonusObj = {};
-    const keys = id.split('.');
-    const lastKey = keys.pop();
-    let curObj = bonusObj;
-    keys.forEach((key) => {
-      curObj[key] = {};
-      curObj = curObj[key];
-    });
-    curObj[lastKey] = count;
-
-    const item = Game.getObjectByPath(bonusObj);
-
-    return `${item.name}, ${count}`;
-  },
-
-  armyZone() {
-    const earthUnit = Game.EarthUnits.get();
-    if (earthUnit) {
-      return Game.EarthZones.getByName(earthUnit.zoneName);
-    }
-    return null;
-  },
-
-  hasLink: function () {
-    let army = Game.EarthUnits.get();
-    if (army) {
-      let armyZone = Game.EarthZones.getByName(army.zoneName);
-
-      if (this.name === army.zoneName || armyZone.links.indexOf(this.name) !== -1) {
-        return true;
-      }
-    }
-
-    return false;
-  },
-
-  notBattle: function () {
-    let army = Game.EarthUnits.get();
-    if (army) {
-      let armyZone = Game.EarthZones.getByName(army.zoneName);
-
-      if (armyZone && armyZone.battleId) {
-        return false;
-      }
-    }
-
-    return true;
-  },
-
-  army: function() {
-    return Game.EarthUnits.get();
-  },
-
-  ResponseToGeneral() {
-    return ResponseToGeneral;
-  },
-
-  Command() {
-    return Command;
-  },
-});
-
-Template.earthZonePopup.events({
-  'click .btn-command': function(e, t) {
-    var action = $(e.currentTarget).attr('data-action');
-    Meteor.call('earth.moveArmy', action);
-  },
-
-  'click .btn-general-command'(event) {
-    const target = $(event.currentTarget).attr('data-action');
-    Meteor.call('earth.generalCommand', 'move', target);
-  },
-
-  'click .btn-response-yes'() {
-    Meteor.call('earth.responseToGeneral', true);
-  },
-
-  'click .btn-response-no'() {
-    Meteor.call('earth.responseToGeneral', false);
-  },
-
-  'click .btn-admin-panel': function (event, templateInstance) {
-    const zoneName = templateInstance.$(event.currentTarget).attr('data-action');
-
-    Game.Popup.show({
-      templateName: 'adminReptileChange',
-      data: {
-        zoneName,
-      },
-    });
-  },
-});
-
 // ----------------------------------------------------------------------------
 // Zone view (maker + polygon on map which displays zone status)
 // ----------------------------------------------------------------------------
 
 let maxHealth = -1;
+
+const moveLineColor = '#56BAF2';
+const moveLineColorCurrent = '#E0E0E0';
+
+const zoneStyles = {
+  empty: {
+    regular: '#F2F2F2',
+    hover: '#E0E0E0',
+  },
+  enemy: {
+    regular: '#D65F52',
+    hover: '#E63D2A',
+  },
+  enemyNotVisible: {
+    regular: '#D65F52',
+    hover: '#E63D2A',
+  },
+  ally: {
+    regular: '#56BAF2',
+    hover: '#56BAF2',
+  },
+  battle: {
+    regular: '#E9A844',
+    hover: '#ECA333',
+  },
+  user: {
+    regular: '#B5D054',
+    hover: '#B5D054',
+  },
+};
 
 var ZoneView = function(mapView, zoneData) {
   this.id = null;
@@ -536,48 +276,6 @@ var ZoneView = function(mapView, zoneData) {
     this.x = polygonCenter.lat;
     this.y = polygonCenter.lng;
 
-    var ourStyle = {
-      color: '#374a60',
-      weight: 3,
-      opacity: 1,
-      zIndex: 100,
-      fillOpacity: 0.05,
-      fillColor: '#374a60'
-    };
-
-    var ourStyleHover = {
-      color: '#4a82c4',
-      weight: 4,
-      opacity: 1,
-      fillOpacity: 0.2,
-      zIndex: 100
-    };
-
-    var enemyStyle = {
-      color: (zone.isVisible ? '#913b31' : '#694743'),
-      weight: 2,
-      opacity: 0.1,
-      fillOpacity: 0.05,
-      fillColor: (zone.isVisible ? '#913b31' : '#694743'),
-    };
-
-    var enemyStyleHover = {
-      color: '#bd5348',
-      weight: 2,
-      fillOpacity: 0.2,
-      opacity: 1
-    };
-
-    polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
-
-    polygon.on('mouseover', function (e) {
-      polygon.setStyle( zone.isEnemy ? enemyStyleHover : ourStyleHover );
-    });
-
-    polygon.on('mouseout', function (e) {
-      polygon.setStyle( zone.isEnemy ? enemyStyle : ourStyle );
-    });
-
     // marker
     marker = L.marker(
       [this.x, this.y],
@@ -603,6 +301,53 @@ var ZoneView = function(mapView, zoneData) {
   this.update = function() {
     zone = Game.EarthZones.getByName(this.name);
 
+    const userArmy = Game.EarthUnits.Collection.findOne();
+    const userZone = userArmy && userArmy.zoneName;
+
+    let color;
+    if (zone.name === userZone) {
+      color = 'user';
+    } else if (!zone.isVisible) {
+      color = 'enemyNotVisible'
+    } else if (zone.enemyArmy) {
+      if (zone.userArmy) {
+        color = 'battle';
+      } else {
+        color = 'enemy';
+      }
+    } else if (zone.userArmy) {
+      color = 'ally';
+    } else {
+      color = 'empty';
+    }
+
+    const regularStyle = {
+      color: zoneStyles[color].regular,
+      weight: 3,
+      opacity: 0.5,
+      zIndex: 100,
+      fillOpacity: 0.2,
+      fillColor: zoneStyles[color].hover,
+    };
+
+    const hoverStyle = {
+      color: zoneStyles[color].hover,
+      weight: 4,
+      opacity: 1,
+      fillOpacity: 0.3,
+      zIndex: 100
+    };
+
+    polygon.setStyle( regularStyle );
+
+    polygon.on('mouseover', function (e) {
+      polygon.setStyle( hoverStyle );
+    });
+
+    polygon.on('mouseout', function (e) {
+      polygon.setStyle( regularStyle );
+    });
+
     this.isVisible = zone.isVisible;
     const isAdmin = Meteor.user().role === 'admin';
 
@@ -620,25 +365,23 @@ var ZoneView = function(mapView, zoneData) {
         reptilePower = 0;
       }
 
-      // extend map bounds
-      if (mapBounds) {
-        mapBounds.extend(L.latLng(polygon.getBounds().getSouthWest()));
-        mapBounds.extend(L.latLng(polygon.getBounds().getNorthEast()));
-      } else {
-        mapBounds = polygon.getBounds();
-      }
-
-      if (mapBounds) {
-        mapView.setMaxBounds(mapBounds);
-      }
-
       // show on map
       polygon.addTo(mapView);
       marker.addTo(mapView);
 
       element = $(marker._icon);
-      element.html('<canvas></canvas><span></span>');
+      element.html('<canvas></canvas>');
       canvasElement = element.find('canvas');
+
+      element.on('mouseover', function (e) {
+        polygon.setStyle( hoverStyle );
+      });
+  
+      element.on('mouseout', function (e) {
+        polygon.setStyle( regularStyle );
+      });
+      
+      element.on('click', this.showPopup.bind(this));
 
       element.removeClass('earth-marker-battle');
       element.removeClass('earth-marker-enemy');
@@ -676,12 +419,13 @@ var ZoneView = function(mapView, zoneData) {
 
   this.showPopup = function(e) {
     L.DomEvent.stopPropagation(e);
-    if (e && e.latlng) {
+    if (e) {
+      if (!e.latlng) {
+        e.latlng = new L.latLng({lat: this.x, lng: this.y});
+      }
       Game.Earth.showZonePopup(zone.name, e.latlng);
     }
   };
-
-  this.hidePopup = Game.Earth.hideZonePopup;
 
   this.refreshZoom = function() {
     const isAdmin = Meteor.user().role === 'admin';
@@ -690,10 +434,12 @@ var ZoneView = function(mapView, zoneData) {
     }
 
     var zoom = mapView.getZoom();
-    var k = Math.pow(2, (zoom - 4));
+    var k = Math.pow(2, (zoom - 3));
 
     if (k > 2) {
       k = 2;
+    } else if (k === 1) {
+      k = 1.5;
     } else if (k < 1) {
       k = 1;
     }
@@ -799,7 +545,7 @@ var LineView = function(start, finish, selected) {
     // create line
     line = new L.Polyline([], {
       clickable: false,
-      color: selected ? '#4a82c4' : '#374a60',
+      color: selected ? moveLineColorCurrent : moveLineColor,
       weight: 3,
       smoothFactor: 1
     }).addTo(mapView);
@@ -859,10 +605,6 @@ var observerZones = null;
 Template.earth.onRendered(function() {
 
   if (!mapView) {
-
-    // first time manualy create div inside template
-    $('#map-content').html('<div id="map-earth"></div>');
-
     mapView = L.map('map-earth', {
       crs: L.CRS.Simple,
       zoomAnimation: false,
@@ -885,9 +627,13 @@ Template.earth.onRendered(function() {
       }).addTo(mapView);
     }
 
-    mapView.on('click', function(e) {
-      Game.Earth.hideZonePopup();
-    });
+    mapView.on('click', (event) => {
+      if (
+        $(event.originalEvent.target).attr('id') === 'map-earth'
+      ) {
+        Game.Earth.hideZonePopup();
+      }
+    })
 
     maxHealth = Game.EarthZones.calcMaxHealth();
 
@@ -896,6 +642,25 @@ Template.earth.onRendered(function() {
     for (var i = 0; i < zones.length; i++) {
       zoneViews[ zones[i].name ] = new ZoneView(mapView, zones[i]);
     }
+
+    let userArmy = Game.EarthUnits.Collection.findOne({
+      username: Meteor.user().username,
+    });
+
+    let startPoint;
+
+    if (userArmy) {
+      startPoint = userArmy.zoneName;
+    } else {
+      startPoint = Game.EarthZones.Collection.findOne({
+        isStarting: true,
+      }).name;
+    }
+
+    mapView.setView([
+      zoneViews[startPoint].x,
+      zoneViews[startPoint].y,
+    ], 4);
 
     if (mapBounds) {
       mapView.fitBounds(mapBounds);

@@ -93,70 +93,6 @@ Game.Statistic.incrementGame = function(increment) {
   });
 };
 
-Game.Statistic.fixGame = function() {
-  // fix only essential for GUI values!
-  var set = {};
-
-  set['mail.complaint'] = Game.Mail.Collection.find({
-    complaint: true
-  }).count();
-
-  set['battle.total'] = Game.BattleHistory.Collection.find({
-    user_id: 'earth'
-  }).count();
-
-  set['promocode.total'] = Game.PromoCode.Collection.find({}).count();
-
-  Game.Statistic.Collection.upsert({
-    user_id: 'system'
-  }, {
-    $set: set
-  });
-};
-
-Game.Statistic.fixUser = function(userId) {
-  var user = Meteor.users.findOne({
-    _id: userId
-  });
-
-  if (!user) {
-    throw new Meteor.Error('Пользователя не существует');
-  }
-
-  // fix only essential for GUI values!
-  var set = {};
-
-  // mail
-  set['mail.current'] = Game.Mail.Collection.find({
-    owner: user._id,
-    deleted: { $ne: true }
-  }).count();
-
-  set['mail.total'] = Game.Mail.Collection.find({
-    owner: user._id
-  }).count();
-
-  // payment
-  set['payment.income'] = Game.Payment.Income.Collection.find({
-    user_id: user._id
-  }).count();
-
-  set['payment.expense'] = Game.Payment.Expense.Collection.find({
-    user_id: user._id
-  }).count();
-
-  // cosmos
-  set['battle.total'] = Game.BattleHistory.Collection.find({
-    user_id: user._id
-  }).count();
-
-  Game.Statistic.Collection.upsert({
-    user_id: user._id
-  }, {
-    $set: set
-  });
-};
-
 Game.Statistic.getUserPositionInRating = function(type, user) {
   let position;
   let total;
@@ -202,42 +138,6 @@ Game.Statistic.getUserPositionInRating = function(type, user) {
 };
 
 Meteor.methods({
-  'statistic.fixGame': function() {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'statistic.fixGame', user });
-
-    if (['admin'].indexOf(user.role) == -1) {
-      throw new Meteor.Error('Нужны права администратора');
-    }
-
-    Game.Statistic.fixGame();
-  },
-
-  'statistic.fixUser': function(username) {
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'statistic.fixUser', user });
-
-    if (['admin', 'helper'].indexOf(user.role) == -1) {
-      throw new Meteor.Error('Нужны права администратора или модератора');
-    }
-
-    check(username, String);
-
-    var target = Meteor.users.findOne({
-      username: username
-    });
-
-    if (!target) {
-      throw new Meteor.Error('Пользователя с именем ' + username + ' не существует');
-    }
-
-    Game.Statistic.fixUser(target._id);
-  },
-
   'statistic.getUserPositionInRating': function(type, selectedUserName) {
     const user = User.getById();
     User.checkAuth({ user });

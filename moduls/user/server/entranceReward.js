@@ -144,6 +144,9 @@ Meteor.methods({
 
     Game.Resources.addProfit(profit);
 
+    // Additionally add 100 credits daily
+    Game.Resources.addProfit({ resources: { credits: 100 } });
+
     Game.Statistic.incrementUser(user._id, {
       'entranceReward.total': 1
     });

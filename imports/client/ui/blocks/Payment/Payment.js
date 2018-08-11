@@ -18,11 +18,6 @@ class Payment extends BlazeComponent {
     });
   }
 
-  buy(event, id) {
-    event.preventDefault();
-    Game.Payment.buyItem(id);
-  }
-
   showHistory() {
     Game.Popup.show({ template: PaymentHistory.renderComponent() });
   }

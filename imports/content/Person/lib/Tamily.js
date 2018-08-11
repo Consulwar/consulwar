@@ -26,5 +26,10 @@ export default {
         credits: 10000,
       },
     },
+    cheerleader: {
+      price: {
+        cleancredit: 3,
+      },
+    },
   },
 };

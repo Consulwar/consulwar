@@ -53,7 +53,11 @@ const completeOnPeacefulPlanet = function(data, planet) {
   }
 
   if (
-    !user.settings.options.disableAutoCollect
+    !(
+      user.settings
+      && user.settings.options
+      && user.settings.options.disableAutoCollect
+    )
     && planet.status === Game.Planets.STATUS.REPTILES
   ) {
     Game.Planets.awardArtefacts(planet, 1, userId);

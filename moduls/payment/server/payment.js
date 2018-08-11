@@ -6,8 +6,6 @@ initPaymentServer = function() {
 
 initPaymentLib();
 
-initPaymentTekoServer();
-
 Game.Payment.Expense = {
   Collection: new Meteor.Collection('paymentExpense')
 };

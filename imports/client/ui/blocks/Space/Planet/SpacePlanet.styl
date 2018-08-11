@@ -1,0 +1,201 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+
+@keyframes animatePlanetBack
+  from
+    transform rotate(30deg) translateX(0%)
+  to
+    transform rotate(30deg) translateX(-50%)
+
+.cw--SpacePlanet
+  display flex
+  width 80px
+  flex-direction column
+
+  // display inline-flex
+  align-items center
+  justify-content space-between
+  text-decoration none
+
+  &__planet_animated &__planetTexture:before
+    animation animatePlanetBack 20s linear infinite
+
+  &__planet
+    position relative
+    flex-shrink 0
+
+    outline none
+    border-radius 50%
+    border 3px solid transparent
+    border-color $cw--color_white
+    cursor pointer
+
+  &__planetTexture
+    position absolute
+    top 3%
+    left 3%
+    width 94%
+    height 94%
+    border-radius 50%
+    overflow hidden
+    z-index 1
+
+    &:before
+      content ''
+      position absolute
+      top 75%
+      left -20%
+      z-index -1
+
+      display block
+      width 400%
+      height 100%
+
+      background-size 50% 100%
+      background-repeat repeat-x
+      transform rotate(30deg)
+  
+    &:after
+      content ''
+      position absolute
+      top 0
+      left 0
+
+      display block
+      width 100%
+      height 100%
+
+      background-size 100% 100%
+      background-image url(/img/game/cosmomap/planet_shadow.png)
+    
+  &__planet_jungle &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/jungle.jpg)
+  
+  &__planet_terran &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/terran.jpg)
+    
+  &__planet_ocean &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/ocean.jpg)
+    
+  &__planet_arid &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/arid.jpg)
+    
+  &__planet_tundra &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/tundra.jpg)
+    
+  &__planet_desert &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/desert.jpg)
+    
+  &__planet_arctic &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/arctic.jpg)
+    
+  &__planet_lava &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/lava.jpg)
+    
+  &__planet_barren &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/barren.jpg)
+    
+  &__planet_asteroids &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/asteroids.jpg)
+    
+  &__planet_methane &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/methane.jpg)
+    
+  &__planet_hydrogen &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/hydrogen.jpg)
+    
+  &__planet_helium &__planetTexture:before
+    background-image url(/img/game/cosmomap/planets/helium.jpg)
+
+
+  &__fleet
+    position absolute
+    left 100%
+    top -5px
+    z-index 2
+
+    width 11px
+    height @width
+
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+
+    &_reptile
+      background-image url(/img/game/fleet_reptiles.svg)
+    &_human
+      background-image url(/img/game/fleet_consul.svg)
+    &_user
+      background-image url(/img/game/fleet_user.svg)
+    &_ally
+      background-image url(/img/game/fleet_alians.svg)
+
+  &__battle
+    position absolute
+    left -12px
+    top -5px
+    width 13px
+    height @width
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+    background-image url(/img/game/battle/battleIcon.svg)
+    z-index 2
+
+  &_reptile
+    color $cw--color_honor
+
+  &_reptile &__planet
+    border-color $cw--color_honor
+
+  &_human
+    color $cw--color_metal
+  &_human &__planet
+    border-color $cw--color_metal
+
+  &_user
+    color $cw--color_credit
+  &_user &__planet
+    border-color $cw--color_credit
+
+  &_ally
+    color $cw--color_crystal
+  &_ally &__planet
+    border-color $cw--color_crystal
+
+  &_notAvailable
+    filter grayscale(1) brightness(0.5)
+    -webkit-filter grayscale(1) brightness(0.5)
+
+    &:hover
+      filter none
+      color $cw--color_credit
+
+  &_notAvailable &__name
+  &_notAvailable &__location
+    visibility hidden
+
+  &_notAvailable:hover &__name
+  &_notAvailable:hover &__location
+    visibility visible
+
+  &_empty
+    -webkit-filter grayscale(1)
+    filter grayscale(1)
+
+  &_topTime
+    color $cw--color_metal
+
+  &_disabled
+    -webkit-filter grayscale(0.5) brightness(0.3)
+    filter grayscale(0.5) brightness(0.3)
+        
+  &_selected
+    background-color #fff2
+
+  &__name
+  &__location
+    display block
+    height 15px
+    text-align center
+    overflow hidden

@@ -1,0 +1,185 @@
+<template name="SpacePlanetPopup">
+  <div 
+    class="
+      cw--SpacePlanetPopup
+      {{#if isMapView}}
+        cw--SpacePlanetPopup_mapView
+        {{#if not allowActions}}
+          cw--SpacePlanetPopup_notLocked
+        {{/if}}
+      {{/if}}
+    " 
+    style="
+      left: {{position.x}}px;
+      top: {{position.y}}px;
+    "
+  >
+
+    <div
+      class="
+        cw--SpacePlanetPopup__header
+        {{#if planetInfo.isHumans}}
+          {{#if isMyPlanet}}
+            cw--SpacePlanetPopup__header_my
+          {{else if planetInfo.owner}}
+            cw--SpacePlanetPopup__header_humans
+          {{/if}}
+        {{else if planetInfo.mission}}
+          cw--SpacePlanetPopup__header_reptiles
+        {{/if}}
+      "
+    >
+      {{#if allowEdit}}
+        <span
+          onClick={{edit}}
+          class="cw--SpacePlanetPopup__edit"
+        ></span>
+      {{/if}}
+      {{#if planetInfo.name}}
+        {{planetInfo.name}} ({{planetInfo.type}})
+      {{else}}
+        {{planetInfo.mission.name}}
+        {{planetInfo.mission.level}} уровня
+      {{/if}}
+    </div>
+    <div
+      class="cw--SpacePlanetPopup__drop"
+    >
+      {{#each item in getDropItems}}
+        <a
+          href={{item.url}}
+          class="cw--SpacePlanetPopup__dropItem"
+          title={{item.name}}
+          style="background-image:url({{item.icon}})"
+        >
+          <span class="cw--SpacePlanetPopup__dropChance">
+            {{item.chance}}%
+          </span>
+        </a>
+      {{/each}}
+      {{#if planetInfo.mission.reward}}
+        <div class="resources cost">
+          {{#each reward (arrayify planetInfo.mission.reward)}}
+            <div class="{{reward.key}}">
+              {{formatNumberWithISO reward.value}}
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{#if and planetInfo.isHumans planetInfo.timeArtefacts}}
+      <div class="cw--SpacePlanetPopup__collectTimer">
+        Сбор через:
+        <time class="cw--SpacePlanetPopup__collectTime">
+          {{formatSeconds (getTimeNextDrop planetInfo.timeArtefacts)}}
+        </time>
+      </div>
+    {{/if}}
+
+    {{#if drop.cards}}
+      <div class="cw--SpacePlanetPopup__dropCards">
+      {{#each card in drop.cards}}
+        <div class="cw--SpacePlanetPopup__dropCard">
+          {{card.name}} {{card.chance}}%
+        </div>
+      {{/each}}
+      </div>
+    {{/if}}
+
+    <div class="cw--SpacePlanetPopup__info">
+      {{#if planetInfo.isHumans}}
+        <div
+          class="
+            cw--SpacePlanetPopup__typeTitle
+            cw--SpacePlanetPopup__typeTitle_humans
+          "
+        >
+          {{planetInfo.title}}
+          {{#if planetInfo.owner}}
+            <a href="{{pathFor 'statistics' hash=planetInfo.owner}}">{{planetInfo.owner}}</a>
+          {{/if}}
+        </div>
+        
+        {{#if planetInfo.fleetOwner}}
+          <div class="cw--SpacePlanetPopup__fleet">
+            Флот
+            <a
+              class="cw--SpacePlanetPopup__fleetOwner"
+              href={{pathFor 'statistics' hash=planetInfo.fleetOwner}}
+            >
+              {{planetInfo.fleetOwner}}
+            </a>
+          </div>
+        {{/if}}
+      {{else if planetInfo.mission}}
+        <div class="cw--SpacePlanetPopup__mission">
+          {{planetInfo.mission.name}}
+          {{planetInfo.mission.level}}
+          уровня
+          {{> UnitsPower args
+            units=getFleet
+            className='cw--SpacePlanetPopup__unitsPower'
+          }}
+        </div>
+      {{else}}
+        <div class="cw--SpacePlanetPopup__typeTitle">
+          Свободная планета
+        </div>
+      {{/if}}
+    </div>
+    
+
+    {{> Units args
+      isSpace=true
+      units=planetInfo.units
+      isReptiles=planetInfo.mission
+    }}
+
+    {{#if allowActions}}
+      <div class="cw--SpacePlanetPopup__actions">
+        {{#if planetInfo.canSend}}
+          <button
+            onClick={{sendFleet}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_orange
+              cw--SpacePlanetPopup__action
+              cw--SpacePlanetPopup__action_attack
+            "
+          >
+            Отправить
+          </button>
+        {{/if}}
+        {{#if canMine}}
+          <button
+            onClick={{mine}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_blue
+              cw--SpacePlanetPopup__action
+              cw--SpacePlanetPopup__action_mine
+            "
+          >
+            Захватить
+          </button>
+        {{else if canUnMine}}
+          <button
+            onClick={{unMine}}
+            class="
+              cw--button
+              cw--button_type_primary
+              cw--button_type_primary_blue
+              cw--SpacePlanetPopup__action
+              cw--SpacePlanetPopup__action_mine
+            "
+          >
+            Освободить
+          </button>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+</template>

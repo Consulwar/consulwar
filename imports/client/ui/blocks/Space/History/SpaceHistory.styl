@@ -1,0 +1,111 @@
+@import '{}/imports/client/ui/colors'
+@import '{}/imports/client/ui/config'
+@import '{}/imports/client/ui/responsive'
+
+.cw--SpaceHistory
+  display flex
+
+  cw--fontFamily_cond()
+  background-color $cw--color_black
+
+  &__main
+    position relative
+    display flex
+    width 360px
+    flex-direction column
+
+  &__header
+    display flex
+    height 40px
+    padding 0 10px
+    justify-content space-between
+    align-items center
+
+    font-weight bold
+    font-size $cw--fontSize_m
+
+  &__list
+    position relative
+    display block
+    height 580px
+    overflow auto
+    flex-basis auto
+    flex-grow 1
+
+  &__item
+    display block
+    padding 10px 20px 10px 10px
+
+    background-color $cw--color_tableOdd
+    cursor pointer
+
+    &_even
+      background-color $cw--color_tableEven
+    
+    &:hover
+      filter brightness(1.2)
+    
+    &_active
+      border solid 1px $cw--color_metal
+      border-image $cw--gradient_metal 1
+
+      +media($cw--size_l, null)
+        border-right none
+
+  &__itemHead
+    display flex
+    flex-direction row
+    justify-content space-between
+    font-size $cw--fontSize_s
+
+  &__result
+    width 110px
+
+    font-weight bold
+    font-size $cw--fontSize_m
+    color $cw--color_human
+
+    &_victory
+      color $cw--color_credit
+    &_defeat
+      color $cw--color_honor
+
+  &__battleData
+    display flex
+    margin-top 10px
+    flex-direction row
+    justify-content space-between
+    align-items center
+
+  &__battleType
+    width 25px
+    height @width
+
+    background-image url(/img/game/battle/battleIcon.svg)
+    background-repeat no-repeat
+    background-position center
+    background-size 100%
+
+    &_attack
+      background-image url(/img/game/Unit/damage.svg)
+
+    &_defense
+      background-image url(/img/game/Unit/armor.svg)
+
+  &__battlePlace
+    width 80px
+    margin-right auto
+    text-align center
+    font-size $cw--fontSize_s
+  
+  &__summaryPrice
+    margin-left auto
+
+  &__close
+    position absolute
+    top 7px
+    right 7px
+
+  &__paging
+    margin 10px 0
+

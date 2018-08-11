@@ -112,8 +112,6 @@ var gameRoutes = {
   earth: {
     mutual: 'mutual/:group(research)/:item?',
     earth: 'mutual/:group(earth)',
-    earthReserve: 'mutual/:group(earth)/reserve/:name',
-    earthZone: 'mutual/:group(earth)/zone/:name?',
   },
 
 
@@ -129,7 +127,6 @@ var gameRoutes = {
 
   cosmos: {
     cosmos: 'cosmos',
-    cosmosHistory: 'cosmos/history/:page',
   },
 };
 
@@ -149,13 +146,10 @@ var gameActions = {
 
   mutual: Game.Mutual.showPage,
   earth: Game.Earth.showMap,
-  earthReserve: Game.Earth.showReserve,
-  earthZone: Game.Earth.showZone,
   earthHistory: Game.Earth.showHistory,
   statistics: Game.Rating.showPage,
 
   cosmos: Game.Cosmos.showPage,
-  cosmosHistory: Game.Cosmos.showHistory,
 };
 
 var registerRoute = function(group, name, path, action) {

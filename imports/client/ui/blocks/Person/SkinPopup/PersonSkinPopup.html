@@ -53,9 +53,25 @@
                     Уникальный
                   </div>
                 {{else if skin.price}}
-                  <div class="cw--PersonSkinPopup__skinInfo">
-                    {{> iconCredits class="cw--PersonSkinPopup__iconCredits"}}
-                    {{formatNumber skin.price.credits}}
+                  <div
+                    class="
+                      cw--PersonSkinPopup__skinInfo
+                      {{#if skin.price.cleancredit}}
+                        cw--PersonSkinPopup__skinInfo_cleanCredit
+                      {{/if}}
+                    "
+                  >
+                    {{#if skin.price.cleancredit}}
+                      <img
+                        class="cw--PersonSkinPopup__iconCredits"
+                        src="/img/game/Resource/CleanCredit.svg"
+                        alt="Чистые Галактические Кредиты"
+                      />
+                      {{formatNumber skin.price.cleancredit}}
+                    {{else if skin.price.credits}}
+                      {{> iconCredits class="cw--PersonSkinPopup__iconCredits"}}
+                      {{formatNumber skin.price.credits}}
+                    {{/if}}
                   </div>
                 {{/if}}
               {{/if}}

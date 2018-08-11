@@ -1,0 +1,86 @@
+<template name="SpacePlanet">
+  <a 
+    class="
+      cw--SpacePlanet
+      cw--SpacePlanet_{{statusColony}}
+      {{#if planet.isEmpty}}
+        cw--SpacePlanet_empty
+      {{/if}}
+      {{#if planet.notAvaliable}}
+        cw--SpacePlanet_notAvailable
+      {{/if}}
+      {{#if planet.canBuy}}
+        cw--SpacePlanet_canBuy
+      {{/if}}
+      {{#if isDisabled}}
+        cw--SpacePlanet_disabled
+      {{/if}}
+      {{#if isSelected}}
+        cw--SpacePlanet_selected
+      {{/if}}
+      {{#if isTopTime}}
+        cw--SpacePlanet_topTime
+      {{/if}}
+      {{className}}
+    "
+    href={{pathFor 'cosmos' hash=planet._id}}
+    onMouseOver={{showTooltip}}
+    data-id={{planet._id}}
+  >
+    <div class="cw--SpacePlanet__name">
+      {{#if planet.notAvaliable}}
+        {{#if planet.canBuy}}
+          Купить
+        {{else}}
+          {{planet.requiredRank}} уровень
+        {{/if}}
+      {{else}}
+        {{#if planetName}}
+          {{planetName}}
+        {{else}}
+          {{planet.name}}
+        {{/if}}
+      {{/if}}
+    </div>
+    {{#if not isCompact}}
+      <div 
+        class="
+          cw--SpacePlanet__planet
+          cw--SpacePlanet__planet_{{planet.type}}
+          {{#if options.rotatePlanets}}
+            cw--SpacePlanet__planet_animated
+          {{/if}}
+        " 
+        style="
+          width: {{multiply (sum planet.size 3) 4}}px;
+          height: {{multiply (sum planet.size 3) 4}}px;
+        "
+      >
+        <div
+          class="
+            cw--SpacePlanet__fleet
+            cw--SpacePlanet__fleet_{{statusFleet}}
+          "
+        ></div>
+        {{#if battleExists}}
+          <div class="cw--SpacePlanet__battle"></div>
+        {{/if}}
+        <div class="cw--SpacePlanet__planetTexture"></div>
+      </div>
+    {{/if}}
+    <div class="cw--SpacePlanet__location">
+      {{#if location}}
+        {{location}}
+      {{else if showTimeLeft}}
+        {{formatSeconds (getTimeNextDrop planet.timeArtefacts)}}
+      {{else if planet.canBuy}}
+        {{formatNumber planet.price}}
+      {{else if eq planet.segment 0}}
+        Центр
+      {{else}}
+        Р{{planet.hand}} 
+        С{{planet.segment}}
+      {{/if}}
+    </div>
+  </a>
+</template>

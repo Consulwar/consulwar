@@ -1,0 +1,41 @@
+<template name="UnitsReinforcement">
+  <div
+    class="
+      cw--UnitsReinforcement
+      {{#if colonyId}}
+        cw--UnitsReinforcement_fleet
+      {{/if}}
+      {{className}}
+    "
+  >
+    {{#each unit in units}}
+      <div
+        class="
+          cw--UnitsReinforcement__unit
+          {{#unless unit.max.get}}
+            cw--UnitsReinforcement__unit_passive
+          {{/unless}}
+        "
+      >
+        <div
+          onClick={{toggleMaxCount unit}}
+          class="cw--UnitsReinforcement__unitIcon"
+          style="background-image:url({{unit.icon}})"
+          data-sound="click"
+          data-tooltip={{unit.title}}
+        >
+          <div class="cw--UnitsReinforcement__unitReserve">
+            {{unit.max.get}}
+          </div>
+        </div>
+        {{> InputNumber args
+          value=unit.count
+          min=0
+          max=unit.max.get
+          placeholder='Кол-во'
+          class='cw--UnitsReinforcement__unitCount'
+        }}
+      </div>
+    {{/each}}
+  </div>
+</template>

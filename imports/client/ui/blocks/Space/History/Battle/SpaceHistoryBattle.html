@@ -53,10 +53,12 @@
               cw--SpaceHistoryBattle__select
               cw--SpaceHistoryBattle__select_users
             "
-            disabled={{not hasUsers}}
           >
             {{#each userName in getUsers}}
-              <option value={{userName}}>
+              <option
+                value={{userName}}
+                selected={{isMainUser userName}}
+              >
                 {{userName}}
               </option>
             {{/each}}

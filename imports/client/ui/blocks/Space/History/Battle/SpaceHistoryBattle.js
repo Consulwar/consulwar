@@ -41,8 +41,12 @@ class SpaceHistoryBattle extends BlazeComponent {
     return _.keys(this.battle.users);
   }
 
+  isMainUser(userName) {
+    return userName === this.mainUserName;
+  }
+
   hasUsers() {
-    return this.battle.users.length > 1;
+    return this.getUsers().length > 1;
   }
 
   hasSquads(userName = this.user.get()) {

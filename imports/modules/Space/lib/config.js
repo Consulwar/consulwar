@@ -22,4 +22,5 @@ export default {
   MIN_ACC: Meteor.settings.public.cosmos.minAcc * (speedFactor ** 2),
   MAX_ACC: Meteor.settings.public.cosmos.maxAcc * (speedFactor ** 2),
   FROM_SPACE_TO_HANGAR_PERIOD: Meteor.settings.public.cosmos.fromSpaceToHangarPeriod,
+  WITHDRAW_PRICE: 50,
 };

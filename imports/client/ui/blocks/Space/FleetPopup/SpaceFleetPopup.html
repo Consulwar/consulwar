@@ -23,7 +23,7 @@
             {{/if}}
           "
         >
-          {{ship.status}} 
+          {{ship.status}}
           {{#if ship.owner}}
             <a
               class="cw--SpaceFleetPopup__owner"
@@ -68,20 +68,36 @@
           </time>
         </div>
       {{/if}}
-      {{#if and allowActions ship.canSend}}
+      {{#if allowActions}}
         <div class="cw--SpaceFleetPopup__actions">
-          <button
-            onClick={{attack}}
-            class="
-              cw--button
-              cw--button_type_primary
-              cw--button_type_primary_orange
-              cw--SpaceFleetPopup__action
-            "
-            data-sound="hover,click"
-          >
-            Перехватить
-          </button>
+          {{#if ship.canSend}}
+            <button
+              onClick={{attack}}
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_orange
+                cw--SpaceFleetPopup__action
+              "
+              data-sound="hover,click"
+            >
+              Перехватить
+            </button>
+          {{/if}}
+          {{#if ship.canWithdraw}}
+            <button
+              onClick={{withdraw}}
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_orange
+                cw--SpaceFleetPopup__action
+              "
+              data-sound="hover,click"
+            >
+                Отозвать
+            </button>
+          {{/if}}
         </div>
       {{/if}}
     {{/if}}

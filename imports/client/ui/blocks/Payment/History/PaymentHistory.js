@@ -46,6 +46,7 @@ class PaymentHistory extends BlazeComponent {
       unitSpeedup: 'Ускорение постройки юнитов',
       researchSpeedup: 'Ускорение исследования',
       buyResource: 'Покупка ресурсов',
+      withdrawFleet: 'Отмена перелёта',
     };
   }
 

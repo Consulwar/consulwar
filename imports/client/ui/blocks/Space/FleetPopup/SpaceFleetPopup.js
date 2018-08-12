@@ -1,10 +1,12 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
 import Game, { game } from '/moduls/game/lib/main.game';
+import { Notifications } from '/moduls/game/lib/importCompability';
 import { Meteor } from 'meteor/meteor';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
+import ConfigLib from '/imports/modules/Space/lib/config';
 import '/imports/client/ui/blocks/Resource/Price/ResourcePrice';
 import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 import './SpaceFleetPopup.html';
@@ -56,6 +58,7 @@ class SpaceFleetPopup extends BlazeComponent {
 
     info.name = null;
     info.id = spaceEvent._id;
+    info.canWithdraw = false;
 
     if (spaceEvent.data.isHumans) {
       info.isHumans = true;
@@ -63,6 +66,8 @@ class SpaceFleetPopup extends BlazeComponent {
       info.status = 'Флот Консула';
       if (Meteor.user().username !== spaceEvent.data.username) {
         info.owner = spaceEvent.data.username;
+      } else if (!spaceEvent.data.isBack) {
+        info.canWithdraw = true;
       }
     } else {
       const { level, type } = spaceEvent.data.mission;
@@ -132,6 +137,31 @@ class SpaceFleetPopup extends BlazeComponent {
     event.preventDefault();
     if (shipId) {
       Game.Cosmos.showAttackMenu(shipId);
+    }
+  }
+
+  withdraw(event, shipId = this.ship.id) {
+    event.preventDefault();
+    if (shipId) {
+      Game.showAcceptWindow(`Экстренный отзыв флота обойдётся в ${ConfigLib.WITHDRAW_PRICE} ГГК.`, () => {
+        const userResources = Game.Resources.getValue();
+        if (userResources.credits.amount < ConfigLib.WITHDRAW_PRICE) {
+          Notifications.error('Недостаточно ГГК');
+          return;
+        }
+
+        Meteor.call(
+          'space.withdrawFleet',
+          shipId,
+          function(err) {
+            if (err) {
+              Notifications.error('Не удалось отозвать флот', err.error);
+            } else {
+              Notifications.success('Флот отозван');
+            }
+          },
+        );
+      });
     }
   }
 }

@@ -42,8 +42,9 @@ const getFleetAnimation = function(fleet, mapView, path) {
     };
   }
 
+  const timeFlying = Game.dateToTime(fleet.spaceEvent.after) - fleet.spaceEvent.data.flyTime;
   const currentDistance = calcDistanceByTime(
-    currentTime - Game.dateToTime(fleet.spaceEvent.created),
+    currentTime - timeFlying,
     fleet.totalFlyDistance,
     fleet.maxSpeed,
     fleet.acceleration,

@@ -1,0 +1,28 @@
+@import '{}/imports/client/ui/colors'
+
+@keyframes moveUpAndHide
+  0%
+    opacity 0
+    top 0
+  100%
+    opacity 1
+    top -40px
+
+.cw--UserPosition
+  position relative
+  color $cw--color_lightGrey
+  transition color 0.3s
+
+  &_highlighted
+    color $cw--color_credit
+
+  &__change
+    position absolute
+    top 0
+    right 0
+    color $cw--color_credit
+    white-space nowrap
+    opacity 0
+
+    animation moveUpAndHide 3s linear
+    animation-iteration-count 1

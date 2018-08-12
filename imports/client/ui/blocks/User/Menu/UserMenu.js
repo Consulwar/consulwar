@@ -5,6 +5,7 @@ import { Notifications, ChdFeedbackWidget } from '/moduls/game/lib/importCompabi
 import { Router } from 'meteor/iron:router';
 import Game from '/moduls/game/lib/main.game';
 import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
+import '../Position/UserPosition';
 import './UserMenu.html';
 import './UserMenu.styl';
 

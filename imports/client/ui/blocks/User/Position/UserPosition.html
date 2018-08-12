@@ -1,0 +1,15 @@
+<template name="UserPosition">
+  <div class="
+    cw--UserPosition
+    {{className}}
+    {{#if change.get}}cw--UserPosition_highlighted{{/if}}
+  ">
+    {{ position.get }}
+
+    {{#if change.get}}
+      <div class="cw--UserPosition__change">
+        + {{ change.get }}
+      </div>
+    {{/if}}
+  </div>
+</template>

@@ -1,7 +1,6 @@
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { Tracker } from 'meteor/tracker';
 import './UserPosition.html';
 import './UserPosition.styl';
 

@@ -94,10 +94,18 @@
             cw--SpacePlanetPopup__typeTitle
             cw--SpacePlanetPopup__typeTitle_humans
           "
+          onClick={{stopPropagation}}
         >
           {{planetInfo.title}}
           {{#if planetInfo.owner}}
             <a href="{{pathFor 'statistics' hash=planetInfo.owner}}">{{planetInfo.owner}}</a>
+          {{else}}
+            {{> InputCheckbox args
+              name="autopilot"
+              className="cw--SpacePlanetPopup__autopilot"
+              checked=autopilot
+              label="автопилот"
+            }}
           {{/if}}
         </div>
         

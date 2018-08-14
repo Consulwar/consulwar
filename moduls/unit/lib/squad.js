@@ -14,7 +14,11 @@ Game.Squad = {
 
   getAll: function() {
     return Game.Squad.Collection.find({
-      user_id: Meteor.userId()
+      user_id: Meteor.userId(),
+    }, {
+      sort: {
+        slot: 1,
+      }
     });
   },
 

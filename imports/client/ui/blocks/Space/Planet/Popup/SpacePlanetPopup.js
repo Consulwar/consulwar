@@ -2,9 +2,12 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import Game, { game } from '/moduls/game/lib/main.game';
 import { Meteor } from 'meteor/meteor';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { Tracker } from 'meteor/tracker';
 import { _ } from 'lodash';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
 import reptileSpaceUnits from '/imports/content/Unit/Reptile/Space/client';
+import autopilot from '/moduls/cosmos/client/autopilot';
 import '/imports/client/ui/blocks/Units/Units';
 import '/imports/client/ui/blocks/Units/Power/UnitsPower';
 import '/imports/client/ui/button/button.styl';
@@ -30,6 +33,16 @@ class SpacePlanetPopup extends BlazeComponent {
     this.planet = planet;
     this.planetInfo = this.getPlanetInfo(this.planet);
     this.drop = this.getPlanetDrop(this.planet);
+
+    this.autopilot = new ReactiveVar(autopilot.has(planet._id));
+
+    Tracker.autorun(() => {
+      if (this.autopilot.get()) {
+        autopilot.add(planet._id);
+      } else {
+        autopilot.remove(planet._id);
+      }
+    });
 
     this.isMapView = isMapView;
     this.position = position;
@@ -312,6 +325,10 @@ class SpacePlanetPopup extends BlazeComponent {
         }
       },
     );
+  }
+
+  stopPropagation(event) {
+    event.stopPropagation();
   }
 }
 

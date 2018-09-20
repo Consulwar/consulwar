@@ -163,15 +163,17 @@ Game.Alliance.Contact.decline = function(contactId) {
   return Game.Alliance.Contact.set(contactId, false);
 };
 
-SyncedCron.add({
-  name: 'Инвалидация устаревших запросов в альянсы',
-  schedule: function(parser) {
-    return parser.text(Game.Alliance.INVALIDATE_SCHEDULE);
-  },
-  job: function() {
-    Game.Alliance.Contact.checkForInvalidatingAll();
-  }
-});
+if (Meteor.settings.space.jobs.enabled) {
+  SyncedCron.add({
+    name: 'Инвалидация устаревших запросов в альянсы',
+    schedule: function(parser) {
+      return parser.text(Game.Alliance.INVALIDATE_SCHEDULE);
+    },
+    job: function() {
+      Game.Alliance.Contact.checkForInvalidatingAll();
+    }
+  });
+}
 
 Meteor.publish('alliance_contact_requests', function () {
   if (this.userId) {

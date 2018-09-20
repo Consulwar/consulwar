@@ -254,16 +254,18 @@ Meteor.publish('myAlliance', function () {
   this.ready();
 });
 
-SyncedCron.add({
-  name: 'Расчет рейтинга альянсов и выдача карточек',
-  schedule: function(parser) {
-    return parser.text(Game.Alliance.UPDATE_SCHEDULE);
-  },
-  job: function() {
-    Game.Alliance.calculateAllRating();
-    Game.Alliance.giveCardsForParticipants();
-  }
-});
+if (Meteor.settings.space.jobs.enabled) {
+  SyncedCron.add({
+    name: 'Расчет рейтинга альянсов и выдача карточек',
+    schedule: function(parser) {
+      return parser.text(Game.Alliance.UPDATE_SCHEDULE);
+    },
+    job: function() {
+      Game.Alliance.calculateAllRating();
+      Game.Alliance.giveCardsForParticipants();
+    }
+  });
+}
 
 initAllianceContactServer();
 initAllianceReplenishmentHistoryServer();

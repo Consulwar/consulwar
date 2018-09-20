@@ -79,51 +79,53 @@ class ReminderEmails {
       });
     }
 
-    SyncedCron.add({
-      name: 'Рассылка неактивным пользователям',
-      schedule: parser => parser.text(Meteor.settings.reminderEmails.schedule),
-      job() {
-        const templates = Meteor.settings.reminderEmails.templates.map(prepareTemplate);
-        const inactivityDate = new Date();
-        const INTERVALS = Meteor.settings.reminderEmails.intervals;
-        const minimumInterval = Math.min(...INTERVALS);
-        inactivityDate.setDate(inactivityDate.getDate() - minimumInterval);
-        inactivityDate.setMinutes(inactivityDate.getMinutes() + 1);
-        const inactiveUsers = Meteor.users.find({
-          emails: { $elemMatch: { unsubscribed: { $ne: true } } },
-          'status.online': { $ne: true },
-          'status.lastLogout': { $not: { $gt: inactivityDate } },
-          lastReminderDate: { $not: { $gt: inactivityDate } },
-          reminderLevel: { $not: { $gte: templates.length } },
-        });
-        inactiveUsers.forEach((user) => {
-          const reminderLevel = user.reminderLevel ? user.reminderLevel : 0;
-          const userInterval = INTERVALS[Math.min(reminderLevel, INTERVALS.length)];
-          const userInactivityDate = new Date();
-          userInactivityDate.setDate(userInactivityDate.getDate() - userInterval);
-          userInactivityDate.setMinutes(userInactivityDate.getMinutes() + 1);
-          if (
-            user.emails[0].address
-            && (user.status.lastLogout < userInactivityDate || !user.status.lastLogout)
-            && (user.lastReminderDate < userInactivityDate || !user.lastReminderDate)
-          ) {
-            const template = templates[reminderLevel];
-            Email.send(personalize({ template, user }));
-            Meteor.users.update({ _id: user._id }, {
-              $set: {
-                reminderLevel: reminderLevel + 1,
-                lastReminderDate: new Date(),
-              },
-            });
-            ReminderLogCollection.insert({
-              date: new Date(),
-              recipient: user.emails[0].address,
-              template: template.source,
-            });
-          }
-        });
-      },
-    });
+    if (Meteor.settings.space.jobs.enabled) {
+      SyncedCron.add({
+        name: 'Рассылка неактивным пользователям',
+        schedule: parser => parser.text(Meteor.settings.reminderEmails.schedule),
+        job() {
+          const templates = Meteor.settings.reminderEmails.templates.map(prepareTemplate);
+          const inactivityDate = new Date();
+          const INTERVALS = Meteor.settings.reminderEmails.intervals;
+          const minimumInterval = Math.min(...INTERVALS);
+          inactivityDate.setDate(inactivityDate.getDate() - minimumInterval);
+          inactivityDate.setMinutes(inactivityDate.getMinutes() + 1);
+          const inactiveUsers = Meteor.users.find({
+            emails: { $elemMatch: { unsubscribed: { $ne: true } } },
+            'status.online': { $ne: true },
+            'status.lastLogout': { $not: { $gt: inactivityDate } },
+            lastReminderDate: { $not: { $gt: inactivityDate } },
+            reminderLevel: { $not: { $gte: templates.length } },
+          });
+          inactiveUsers.forEach((user) => {
+            const reminderLevel = user.reminderLevel ? user.reminderLevel : 0;
+            const userInterval = INTERVALS[Math.min(reminderLevel, INTERVALS.length)];
+            const userInactivityDate = new Date();
+            userInactivityDate.setDate(userInactivityDate.getDate() - userInterval);
+            userInactivityDate.setMinutes(userInactivityDate.getMinutes() + 1);
+            if (
+              user.emails[0].address
+              && (user.status.lastLogout < userInactivityDate || !user.status.lastLogout)
+              && (user.lastReminderDate < userInactivityDate || !user.lastReminderDate)
+            ) {
+              const template = templates[reminderLevel];
+              Email.send(personalize({ template, user }));
+              Meteor.users.update({ _id: user._id }, {
+                $set: {
+                  reminderLevel: reminderLevel + 1,
+                  lastReminderDate: new Date(),
+                },
+              });
+              ReminderLogCollection.insert({
+                date: new Date(),
+                recipient: user.emails[0].address,
+                template: template.source,
+              });
+            }
+          });
+        },
+      });
+    }
   }
 }
 

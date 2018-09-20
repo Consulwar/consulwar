@@ -228,35 +228,37 @@ Meteor.publish('cards', function () {
   }
 });
 
-SyncedCron.add({
-  name: 'Выдача контейнеров за донат',
-  schedule: function(parser) {
-    return parser.text('at 1:00 am');
-  },
-  job: function() {
-    var users = Game.Queue.Collection.find({
-      engName: 'Crazy', 
-      finishTime: {
-        $gt: Game.getCurrentTime()
-      }
-    }, {
-      user_id: 1
-    }).fetch();
-
-    console.log('Give containers to ', users.length, ' users');
-
-    for (var i = 0; i < users.length; i++) {
-      console.log('Give to ', users[i].user_id);
-
-      containerCollection.upsert({
-        userId: users[i].user_id
-      }, {
-        $inc: {
-          'Container/Fleet/Green.count': 1
+if (Meteor.settings.space.jobs.enabled) {
+  SyncedCron.add({
+    name: 'Выдача контейнеров за донат',
+    schedule: function(parser) {
+      return parser.text('at 1:00 am');
+    },
+    job: function() {
+      var users = Game.Queue.Collection.find({
+        engName: 'Crazy', 
+        finishTime: {
+          $gt: Game.getCurrentTime()
         }
-      });
+      }, {
+        user_id: 1
+      }).fetch();
+  
+      console.log('Give containers to ', users.length, ' users');
+  
+      for (var i = 0; i < users.length; i++) {
+        console.log('Give to ', users[i].user_id);
+  
+        containerCollection.upsert({
+          userId: users[i].user_id
+        }, {
+          $inc: {
+            'Container/Fleet/Green.count': 1
+          }
+        });
+      }
     }
-  }
-});
+  });
+}
 
 };

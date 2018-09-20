@@ -67,12 +67,14 @@ heartbeat();
 Meteor.setInterval(heartbeat, 5000);
 
 
-SyncedCron.config({
-  log: true,
-  collectionName: 'cronHistory',
-  utc: true,
-  collectionTTL: 604800
-});
+if (Meteor.settings.space.jobs.enabled) {
+  SyncedCron.config({
+    log: true,
+    collectionName: 'cronHistory',
+    utc: true,
+    collectionTTL: 604800
+  });
+}
 
 Meteor.startup(function () {
   initBanHistoryServer();
@@ -101,8 +103,10 @@ Meteor.startup(function () {
   initWrecksServer();
   ReminderEmails.schedule();
 
-  SyncedCron.start();
-  initSpaceServer();
+  if (Meteor.settings.space.jobs.enabled) {
+    SyncedCron.start();
+    initSpaceServer();
+  }
   initMutualSpaceServer();
 });
 

@@ -44,15 +44,17 @@ Game.Building.special.Pulsecatcher.startNextQuiz = function() {
   });
 };
 
-SyncedCron.add({
-  name: 'Следующее голосование по Импульсному уловителю',
-  schedule: function(parser) {
-    return parser.text(Game.Building.special.Pulsecatcher.UPDATE_SCHEDULE);
-  },
-  job: function() {
-    Game.Building.special.Pulsecatcher.startNextQuiz();
-  }
-});
+if (Meteor.settings.space.jobs.enabled) {
+  SyncedCron.add({
+    name: 'Следующее голосование по Импульсному уловителю',
+    schedule: function(parser) {
+      return parser.text(Game.Building.special.Pulsecatcher.UPDATE_SCHEDULE);
+    },
+    job: function() {
+      Game.Building.special.Pulsecatcher.startNextQuiz();
+    }
+  });
+}
 
 Meteor.methods({
   'pulsecatcher.voteBonus': function(answer) {

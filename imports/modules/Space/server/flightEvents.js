@@ -5,7 +5,7 @@ import Config from './config';
 import Hex from '../../MutualSpace/lib/Hex';
 import Utils from '../lib/utils';
 
-const add = function(data, delayOverride) {
+const add = function(data, delayOverride = data.flyTime * 1000) {
   const savedData = { ...data };
 
   if (!data.returnDestination) {
@@ -19,7 +19,7 @@ const add = function(data, delayOverride) {
       retries: Config.JOBS.retry.retries,
       wait: Config.JOBS.retry.wait,
     })
-    .delay(delayOverride !== undefined ? delayOverride : data.flyTime * 1000)
+    .delay(delayOverride)
     .save();
 };
 

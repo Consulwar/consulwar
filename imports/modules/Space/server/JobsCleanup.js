@@ -15,16 +15,6 @@ class JobsCleanup {
       );
     }
 
-    if (Meteor.settings.last) {
-      Meteor.users.find({ 'status.online': true }).observe({
-        removed({ _id }) {
-          Meteor.users.update({ _id }, {
-            $set: { 'status.lastLogout': new Date() },
-          });
-        },
-      });
-    }
-
     SyncedCron.add({
       name: 'Чистка задач',
       schedule: parser => parser.text(Meteor.settings.space.jobs.cleanup.schedule),

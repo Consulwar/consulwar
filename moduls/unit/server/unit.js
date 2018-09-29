@@ -89,10 +89,10 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
     throw new Meteor.Error('Нет армии с таким id');
   }
 
-  var sourceUnits = source.units;
+  var sourceUnits = { ...source.units };
   var totalCount = 0;
   var restCount = 0;
-  const updateQuery = { $inc: {} };
+  const updateQuery = {};
 
   _(destUnits).pairs().forEach(([id]) => {
     if (!sourceUnits[id]) {
@@ -112,7 +112,18 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 
         sourceUnits[id] -= dCount;
         totalCount += dCount;
-        updateQuery.$inc[`units.${id}`] = -dCount;
+        if (sourceUnits[id] > 0) {
+          if (updateQuery.$inc === undefined) {
+            updateQuery.$inc = {};
+          }
+          updateQuery.$inc[`units.${id}`] = -dCount;
+        }
+        else {
+          if (updateQuery.$unset === undefined) {
+            updateQuery.$unset = {};
+          }
+          updateQuery.$unset[`units.${id}`] = '';
+        }
       }
     }
 
@@ -125,7 +136,7 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 
   // update source
   if (restCount > 0) {
-    const updated = Game.Unit.Collection.update({ _id: sourceId }, updateQuery);
+    const updated = Game.Unit.Collection.update({ _id: sourceId, units: source.units }, updateQuery);
     if (!updated) {
       throw new Meteor.Error('С армией что-то произошло, пока мы пытались её разделить');
     }

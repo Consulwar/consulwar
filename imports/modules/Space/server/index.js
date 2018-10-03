@@ -136,6 +136,8 @@ export default function initSpaceServer() {
     );
   }
 
+  Error.stackTraceLimit = 1000;
+
   process.on('SIGINT', function() {
     let i = 0;
 

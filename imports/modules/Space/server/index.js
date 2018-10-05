@@ -96,7 +96,7 @@ Meteor.publish('spaceEvents', function(hex) {
 export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
 
-  Space.jobs.startJobServer();
+  Space.jobs.startJobServer(); /*
   if (datadog.gauge && Meteor.settings.last) {
     const job = new Job(Space.jobs, 'datadog', {});
     job
@@ -113,6 +113,9 @@ export default function initSpaceServer() {
         pollInterval: Config.JOBS.pollInterval,
         prefetch: Config.JOBS.prefetch,
         workTimeout: Config.JOBS.workTimeout,
+        errorCallback(err) {
+          console.log(err);
+        },
       },
       (spaceJob, cb) => {
         datadog.gauge(
@@ -135,7 +138,7 @@ export default function initSpaceServer() {
       },
     );
   }
-
+  */
   process.on('SIGINT', function() {
     let i = 0;
 

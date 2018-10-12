@@ -35,9 +35,7 @@
   },
   "scripts": {
     "lint": "eslint ./imports;exit 0",
-    "pretest": "npm run lint --silent",
-    "server": "meteor --settings settings-server.json",
-    "worker": "export MONGO_URL=mongodb://localhost:3001/meteor && meteor --settings settings-worker.json --port 4000"
+    "pretest": "npm run lint --silent"
   },
   "eslintConfig": {
     "extends": "@meteorjs/eslint-config-meteor"

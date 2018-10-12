@@ -163,7 +163,7 @@ Game.Alliance.Contact.decline = function(contactId) {
   return Game.Alliance.Contact.set(contactId, false);
 };
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   SyncedCron.add({
     name: 'Инвалидация устаревших запросов в альянсы',
     schedule: function(parser) {

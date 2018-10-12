@@ -77,9 +77,7 @@ class ReminderEmails {
           });
         },
       });
-    }
 
-    if (Meteor.settings.space.jobs.enabled) {
       SyncedCron.add({
         name: 'Рассылка неактивным пользователям',
         schedule: parser => parser.text(Meteor.settings.reminderEmails.schedule),

@@ -165,7 +165,6 @@
     "disableMergebox": true,
 
     "jobs": {
-      "enabled": false,
       "concurrency": 10,
       "payload": 1,
       "pollInterval": 1000,

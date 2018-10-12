@@ -8,7 +8,6 @@ if (!Meteor.settings.space
   || !Meteor.settings.space.funPeriod
   || !Meteor.settings.space.disableMergebox
   || !Meteor.settings.space.jobs
-  || Meteor.settings.space.jobs.enabled === undefined
   || !Meteor.settings.space.jobs.concurrency
   || !Meteor.settings.space.jobs.payload
   || !Meteor.settings.space.jobs.pollInterval

@@ -228,7 +228,7 @@ Meteor.publish('cards', function () {
   }
 });
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   SyncedCron.add({
     name: 'Выдача контейнеров за донат',
     schedule: function(parser) {

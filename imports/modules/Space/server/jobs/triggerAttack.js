@@ -10,7 +10,7 @@ import Lib from '../../lib/triggerAttack';
 import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
 import Hex from '../../../MutualSpace/lib/Hex';
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   export default Space.jobs.processJobs(
     Lib.EVENT_TYPE,
     {

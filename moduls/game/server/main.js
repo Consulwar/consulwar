@@ -67,7 +67,7 @@ heartbeat();
 Meteor.setInterval(heartbeat, 5000);
 
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   SyncedCron.config({
     log: true,
     collectionName: 'cronHistory',
@@ -103,7 +103,7 @@ Meteor.startup(function () {
   initWrecksServer();
   ReminderEmails.schedule();
 
-  if (Meteor.settings.space.jobs.enabled) {
+  if (Meteor.settings.last) {
     SyncedCron.start();
     initSpaceServer();
   }

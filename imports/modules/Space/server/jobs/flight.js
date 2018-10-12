@@ -6,7 +6,7 @@ import Config from '../config';
 import humansArrival from '../flightHumansArrival';
 import reptileArrival from '../flightReptileArrival';
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   export default Space.jobs.processJobs(
     Lib.EVENT_TYPE,
     {

@@ -188,7 +188,7 @@ const wreakUnits = function(battle, users) {
   });
 };
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   export default Space.jobs.processJobs(
     Lib.EVENT_TYPE,
     {

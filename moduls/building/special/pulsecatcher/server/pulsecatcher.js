@@ -44,7 +44,7 @@ Game.Building.special.Pulsecatcher.startNextQuiz = function() {
   });
 };
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   SyncedCron.add({
     name: 'Следующее голосование по Импульсному уловителю',
     schedule: function(parser) {

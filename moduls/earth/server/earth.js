@@ -622,7 +622,7 @@ const moveArmy = function (army, targetZoneName) {
   });
 };
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   SyncedCron.add({
     name: 'Следующий ход битвы на Земле',
     schedule: function(parser) {

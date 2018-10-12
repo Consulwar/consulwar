@@ -254,7 +254,7 @@ Meteor.publish('myAlliance', function () {
   this.ready();
 });
 
-if (Meteor.settings.space.jobs.enabled) {
+if (Meteor.settings.last) {
   SyncedCron.add({
     name: 'Расчет рейтинга альянсов и выдача карточек',
     schedule: function(parser) {

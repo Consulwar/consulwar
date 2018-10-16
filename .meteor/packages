@@ -58,5 +58,4 @@ vsivsi:job-collection
 peerlibrary:control-mergebox
 reactive-dict
 email
-mongo-livedata
-meteorhacks:meteorx
+meteorhacks:kadira

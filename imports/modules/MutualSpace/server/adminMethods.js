@@ -260,31 +260,21 @@ Meteor.methods({
       const homeHex = collection.findOne({ username: planet.armyUsername });
       const homeHexDB = { x: homeHex.x, z: homeHex.z };
       sendPlanetFleetToHome(planet, hexDB, homeHexDB);
-    }); // Сброс колоний
+    });
 
+    // Сброс колоний
     Game.Planets.Collection.update({
-      $and: [{
-        userId: targetUser._id,
-      }, {
-        minerUsername: {
-          $exists: true,
-        },
-      }, {
-        minerUsername: {
-          $ne: null,
-        },
-      }, {
-        minerUsername: {
-          $ne: targetUser.username,
-        },
-      }],
+      $and: [
+        { userId: targetUser._id },
+        { minerUsername: { $exists: true } },
+        { minerUsername: { $ne: null } },
+        { minerUsername: { $ne: targetUser.username } },
+      ],
     }, {
       $set: {
         minerUsername: null,
       },
-    }, {
-      multi: true,
-    });
+    }, { multi: true });
 
     collection.update({
       username,

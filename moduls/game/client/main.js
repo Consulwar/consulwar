@@ -8,6 +8,7 @@ import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import ArrowControl from '/imports/client/ui/Arrow/ArrowControl';
 import Battle from '../../battle/lib/imports/battle';
 import BattleCollection from '../../battle/lib/imports/collection';
+const gameanalytics = require('gameanalytics');
 
 import '/imports/client/ui/blocks/User/Menu/UserMenu';
 import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
@@ -26,7 +27,6 @@ Blaze._allowJavascriptUrls();
 buzz.defaults.preload = 'none';
 
 Meteor.startup(function () {
-'use strict';
 
 initUserClient();
 initPaymentClient();
@@ -54,6 +54,16 @@ initPopupClient();
 initPleerClient();
 initEntranceRewardClient();
 initAllianceClient();
+
+(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter31824636 = new Ya.Metrika({ id:31824636, clickmap:false, trackLinks:true, accurateTrackBounce:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://cdn.jsdelivr.net/npm/yandex-metrica-watch/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");
+
+if (gameanalytics) {
+  gameanalytics.GameAnalytics.setEnabledInfoLog(false);
+  gameanalytics.GameAnalytics.initialize(
+    '354e2205f585cfd338254f01d3abb869',
+    'c6c595ddd45286c1cf8b0eff66f33d72b8e78dbb',
+  );
+}
 
 
 /*

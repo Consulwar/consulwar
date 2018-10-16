@@ -96,7 +96,8 @@ Meteor.publish('spaceEvents', function(hex) {
 export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
 
-  Space.jobs.startJobServer(); /*
+  Space.jobs.startJobServer();
+  /*
   if (datadog.gauge && Meteor.settings.last) {
     const job = new Job(Space.jobs, 'datadog', {});
     job
@@ -139,6 +140,7 @@ export default function initSpaceServer() {
     );
   }
   */
+
   process.on('SIGINT', function() {
     let i = 0;
 

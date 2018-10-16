@@ -140,7 +140,6 @@ Accounts.onCreateUser(function(option, user) {
     if (!recaptchaResponse.success) {
       throw new Meteor.Error('Вы робот');
     }
-
   }
 
   if (option.from) {

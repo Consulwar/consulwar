@@ -96,6 +96,8 @@ Meteor.publish('spaceEvents', function(hex) {
 export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
   Space.jobs.startJobServer();
+
+  Error.stackTraceLimit = 1000;
   process.on('SIGINT', function() {
     let i = 0;
 

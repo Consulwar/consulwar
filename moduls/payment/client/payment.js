@@ -47,6 +47,14 @@ Game.Payment.Income.Collection.find({}).observeChanges({
      && subscription.ready()
      && Meteor.user()
     ) {
+      if (
+        Meteor.settings.public.gameAnalytics
+        && Meteor.settings.public.gameAnalytics.enabled
+      ) {
+        const gameanalytics = require('gameanalytics');
+        let item = Game.Payment.items[fields.source.item];
+        gameanalytics.GameAnalytics.addBusinessEvent('RUB', item.cost.rub * 100, 'credits', fields.source.item, window.location.pathname);
+      }
       showRewardWindow(fields.source.item);
     }
   }

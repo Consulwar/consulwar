@@ -262,6 +262,20 @@ Meteor.methods({
       sendPlanetFleetToHome(planet, hexDB, homeHexDB);
     });
 
+    // Сброс колоний
+    Game.Planets.Collection.update({
+      $and: [
+        { userId: targetUser._id },
+        { minerUsername: { $exists: true } },
+        { minerUsername: { $ne: null } },
+        { minerUsername: { $ne: targetUser.username } },
+      ],
+    }, {
+      $set: {
+        minerUsername: null,
+      },
+    }, { multi: true });
+
     collection.update({
       username,
     }, {

@@ -46,7 +46,10 @@ const reptilesWin = function({
       }
     } else if (!data.isHumans) {
       // Возвращаются
-      if (planet.isHome) {
+
+      // army check needed when player lost last ship due to mutual battle and
+      // all reptiles were destroyed
+      if (planet.isHome && army) {
         Reptiles.stealUserResources({
           enemyArmy: army,
           userId: data.userId,
@@ -236,11 +239,7 @@ if (Meteor.settings.last) {
           if (planet) {
             Game.Planets.update(planet);
           }
-
-          job.done();
         } else {
-          job.done();
-
           job.rerun({
             wait: battleDelay({
               userArmy: roundResult.left[Battle.USER_SIDE],
@@ -248,6 +247,7 @@ if (Meteor.settings.last) {
             }),
           });
         }
+        job.done();
 
         cb();
       } catch (err) {

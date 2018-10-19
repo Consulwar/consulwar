@@ -69,14 +69,6 @@ Game.Unit.createArmy = function(units, location, user_id = Meteor.userId()) {
   return Game.Unit.Collection.insert(record);
 };
 
-Game.Unit.updateArmy = function(id, units) {
-  var army = Game.Unit.getArmy({ id });
-  if (army) {
-    army.units = units;
-    Game.Unit.Collection.update({ _id: id }, army);
-  }
-};
-
 Game.Unit.moveArmy = function (id, location) {
   var army = Game.Unit.getArmy({ id });
   if (army) {
@@ -97,9 +89,10 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
     throw new Meteor.Error('Нет армии с таким id');
   }
 
-  var sourceUnits = source.units;
+  var sourceUnits = { ...source.units };
   var totalCount = 0;
   var restCount = 0;
+  const updateQuery = {};
 
   _(destUnits).pairs().forEach(([id]) => {
     if (!sourceUnits[id]) {
@@ -119,6 +112,18 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 
         sourceUnits[id] -= dCount;
         totalCount += dCount;
+        if (sourceUnits[id] > 0) {
+          if (updateQuery.$inc === undefined) {
+            updateQuery.$inc = {};
+          }
+          updateQuery.$inc[`units.${id}`] = -dCount;
+        }
+        else {
+          if (updateQuery.$unset === undefined) {
+            updateQuery.$unset = {};
+          }
+          updateQuery.$unset[`units.${id}`] = '';
+        }
       }
     }
 
@@ -131,7 +136,10 @@ Game.Unit.sliceArmy = function(sourceId, destUnits, destLocation) {
 
   // update source
   if (restCount > 0) {
-    Game.Unit.updateArmy(sourceId, sourceUnits);
+    const updated = Game.Unit.Collection.update({ _id: sourceId, units: source.units }, updateQuery);
+    if (!updated) {
+      throw new Meteor.Error('С армией что-то произошло, пока мы пытались её разделить');
+    }
   } else {
     Game.Unit.removeArmy(sourceId);
   }
@@ -157,25 +165,24 @@ Game.Unit.mergeArmy = function(sourceId, destId, user_id = Meteor.userId()) {
   }
 
   var sourceUnits = source.units;
-  var destUnits = dest.units;
-  var mergeCount = 0;
+  const updateQuery = { $inc: {} };
 
   _(sourceUnits).pairs().forEach(([id, sCount]) => {
     const count = parseInt(sCount, 10);
 
     if (count > 0) {
-      destUnits[id] = (destUnits[id] || 0) + count;
-      mergeCount += count;
+      updateQuery.$inc[`units.${id}`] = count;
     }
   });
 
+  // update destination units
+  const updated = Game.Unit.Collection.update({ _id: destId }, updateQuery);
+  if (!updated) {
+    throw new Meteor.Error('С армией что-то произошло, пока мы пытались слить её с другой');
+  }
+
   // remove source
   Game.Unit.removeArmy(sourceId, user_id);
-
-  // update destination units
-  if (mergeCount > 0) {
-    Game.Unit.updateArmy(destId, destUnits, user_id);
-  }
 };
 
 Game.Unit.rollCount = function(name) {

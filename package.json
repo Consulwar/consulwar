@@ -10,7 +10,7 @@
     "@turf/turf": "4.5.2",
     "babel-runtime": "6.23.0",
     "bcrypt": "^1.0.3",
-    "buzz": "git://github.com/fusioneer-GitHub/buzz.git#promises_fix",
+    "buzz": "^1.2.1",
     "gameanalytics": "^2.1.5",
     "hot-shots": "4.4.0",
     "jwt-simple": "^0.5.1",

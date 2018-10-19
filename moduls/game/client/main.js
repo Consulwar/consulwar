@@ -402,6 +402,7 @@ var helpers = {
     var isWaitingAttack = false;
     var attackId = null;
     var attackTime = null;
+    const username = Meteor.user().username;
 
     for (var i = 0; i < fleets.length; i++) {
       const after = Game.dateToTime(fleets[i].after);
@@ -428,7 +429,7 @@ var helpers = {
           } else if (fleets[i].data.targetType === FlightEvents.TARGET.PLANET) {
             // check planet
             var planet = Game.Planets.getOne(fleets[i].data.targetId);
-            if (planet && (planet.isHome || planet.armyId) && after > attackTime) {
+            if (planet && (planet.isHome || planet.armyId || planet.minerUsername == username) && after > attackTime) {
               isWaitingAttack = true;
               attackId = fleets[i]._id;
               attackTime = after;

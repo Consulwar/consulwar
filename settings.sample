@@ -180,7 +180,11 @@
         "retries": 1,
         "wait": 120000
       },
-      "battleDelay": 5000
+      "battleDelay": 5000,
+      "cleanup": {
+        "maxAge": 30,
+        "schedule": "at 4:00 pm"
+      }
     }
   },
   "ddplimiter": {

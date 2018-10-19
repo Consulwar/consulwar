@@ -8,6 +8,7 @@ import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import '/imports/modules/Person/server/methods';
 import ReminderEmails from '../../../imports/modules/User/server/ReminderEmails';
+import JobsCleanup from '../../../imports/modules/Space/server/JobsCleanup';
 
 //BrowserPolicy.framing.allowAll();
 
@@ -100,6 +101,7 @@ Meteor.startup(function () {
   initAllianceServer();
   initWrecksServer();
   ReminderEmails.schedule();
+  JobsCleanup.schedule();
 
   SyncedCron.start();
   initSpaceServer();

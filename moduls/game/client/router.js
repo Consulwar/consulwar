@@ -78,8 +78,8 @@ window.GameRouteController = RouteController.extend({
       }
     });
 
-    if (window.yaCounter31824636 !== undefined) {
-      Meteor.setTimeout(() => window.yaCounter31824636.hit(window.location.href, 'Game', document.referrer), 100);
+    if (window.yaCounter !== undefined) {
+      Meteor.setTimeout(() => window.yaCounter.hit(window.location.href, 'Game', document.referrer), 100);
     }
   }
 });
@@ -224,8 +224,8 @@ Router.route('/logout', function () {
       }
     }
 
-    if (window.yaCounter31824636 !== undefined) {
-      Meteor.setTimeout(() => window.yaCounter31824636.hit(window.location.href, 'Index', document.referrer), 100);
+    if (window.yaCounter !== undefined) {
+      Meteor.setTimeout(() => window.yaCounter.hit(window.location.href, 'Index', document.referrer), 100);
     }
   }, { name: 'index' });
 

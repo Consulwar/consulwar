@@ -97,11 +97,11 @@
     "gameAnalytics": {
       "enabled": false,
       "key1": "",
-      "key2": "",
+      "key2": ""
     },
     "metrics": {
       "enabled": false,
-      "id": "",
+      "id": ""
     }
   },
   "reminderEmails": {

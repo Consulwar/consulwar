@@ -225,22 +225,26 @@ class Battle {
     const userUnits = roundResult.killed[USER_SIDE];
     let totalLost = 0;
 
-    _(userUnits).pairs().forEach(([id, count]) => {
-      increment[`units.lost.${id}`] = count;
-      totalLost += count;
-    });
-
-    increment['units.lost.total'] = totalLost;
+    if (userUnits) {
+      _(userUnits).pairs().forEach(([id, count]) => {
+        increment[`units.lost.${id}`] = count;
+        totalLost += count;
+      });
+  
+      increment['units.lost.total'] = totalLost;
+    }
 
     const enemyUnits = roundResult.killed[ENEMY_SIDE];
     totalLost = 0;
 
-    _(enemyUnits).pairs().forEach(([id, count]) => {
-      increment[`reptiles.killed.${id}`] = count;
-      totalLost += count;
-    });
-
-    increment['reptiles.killed.total'] = totalLost;
+    if (enemyUnits) {
+      _(enemyUnits).pairs().forEach(([id, count]) => {
+        increment[`reptiles.killed.${id}`] = count;
+        totalLost += count;
+      });
+  
+      increment['reptiles.killed.total'] = totalLost;
+    }
 
     const user = Meteor.users.findOne({ username: this.userNames[0] });
     Game.Statistic.incrementUser(user._id, increment);

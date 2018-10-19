@@ -95,47 +95,9 @@ Meteor.publish('spaceEvents', function(hex) {
 
 export default function initSpaceServer() {
   Space.jobs.promote(Config.JOBS.promote);
-
   Space.jobs.startJobServer();
-  if (datadog.gauge && Meteor.settings.last) {
-    const job = new Job(Space.jobs, 'datadog', {});
-    job
-      .repeat({
-        wait: 1000,
-      })
-      .save();
 
-    Space.jobs.processJobs(
-      'datadog',
-      {
-        concurrency: Config.JOBS.concurrency,
-        payload: Config.JOBS.payload,
-        pollInterval: Config.JOBS.pollInterval,
-        prefetch: Config.JOBS.prefetch,
-        workTimeout: Config.JOBS.workTimeout,
-      },
-      (spaceJob, cb) => {
-        datadog.gauge(
-          'jobs.ready',
-          Space.collection.find({ status: 'ready' }).count(),
-        );
-
-        datadog.gauge(
-          'jobs.failed',
-          Space.collection.find({ status: 'failed' }).count(),
-        );
-
-        datadog.gauge(
-          'jobs.waiting',
-          Space.collection.find({ status: 'waiting' }).count(),
-        );
-
-        spaceJob.done();
-        cb();
-      },
-    );
-  }
-
+  Error.stackTraceLimit = 1000;
   process.on('SIGINT', function() {
     let i = 0;
 

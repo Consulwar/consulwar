@@ -80,20 +80,6 @@ Accounts.onCreateUser(function(option, user) {
   option.username = option.username.trim();
   option.username = option.username.replace(/\s+/g, ' ');
 
-  if (option.from) {
-    user.from = option.from;
-  }
-
-  if (option.uuid) {
-    user.uuid = option.uuid;
-
-    HTTP.call(
-      'GET',
-      `https://r.advg.agency/p/?target=mmmmmn94jp&uuid=${option.uuid}&order_id=${user._id}`,
-      () => null,
-    );
-  }
-
   check(option.username, Match.Where(function(username) {
     if (username.length === 0) {
       throw new Meteor.Error('Имя не должно быть пустым');
@@ -154,7 +140,14 @@ Accounts.onCreateUser(function(option, user) {
     if (!recaptchaResponse.success) {
       throw new Meteor.Error('Вы робот');
     }
+  }
 
+  if (option.from) {
+    user.from = option.from;
+  }
+
+  if (option.uuid) {
+    user.uuid = option.uuid;
   }
 
   user.username = option.username;

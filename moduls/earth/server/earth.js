@@ -622,25 +622,27 @@ const moveArmy = function (army, targetZoneName) {
   });
 };
 
-SyncedCron.add({
-  name: 'Следующий ход битвы на Земле',
-  schedule: function(parser) {
-    return parser.text(Game.Earth.UPDATE_SCHEDULE);
-  },
-  job: function() {
-    Game.Earth.nextTurn();
-  }
-});
-
-SyncedCron.add({
-  name: 'Завершение времени отдачи команд генералами',
-  schedule(parser) {
-    return parser.text(Game.Earth.TIME_TO_GENERAL_COMMAND);
-  },
-  job() {
-    Generals.finishCommandsTime();
-  },
-});
+if (Meteor.settings.last) {
+  SyncedCron.add({
+    name: 'Следующий ход битвы на Земле',
+    schedule: function(parser) {
+      return parser.text(Game.Earth.UPDATE_SCHEDULE);
+    },
+    job: function() {
+      Game.Earth.nextTurn();
+    }
+  });
+  
+  SyncedCron.add({
+    name: 'Завершение времени отдачи команд генералами',
+    schedule(parser) {
+      return parser.text(Game.Earth.TIME_TO_GENERAL_COMMAND);
+    },
+    job() {
+      Generals.finishCommandsTime();
+    },
+  });
+}
 
 Meteor.publish('zones', function () {
   if (this.userId) {

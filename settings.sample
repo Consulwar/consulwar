@@ -189,5 +189,6 @@
     "host": "localhost",
     "port": 8125,
     "prefix": "game."
-  }
+  },
+  "last": true
 }

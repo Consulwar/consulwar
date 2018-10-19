@@ -3,8 +3,6 @@ import PaymentHistory from '/imports/client/ui/blocks/Payment/History/PaymentHis
 import PaymentProcessing from '/imports/client/ui/blocks/Payment/Processing/PaymentProcessing';
 import RewardPopup from '/imports/client/ui/blocks/Reward/Popup/RewardPopup';
 
-const gameanalytics = require('gameanalytics');
-
 initPaymentClient = function() {
 'use strict';
   
@@ -52,8 +50,8 @@ Game.Payment.Income.Collection.find({}).observeChanges({
       if (
         Meteor.settings.public.gameAnalytics
         && Meteor.settings.public.gameAnalytics.enabled
-        && gameanalytics
       ) {
+        const gameanalytics = require('gameanalytics');
         let item = Game.Payment.items[fields.source.item];
         gameanalytics.GameAnalytics.addBusinessEvent('RUB', item.cost.rub * 100, 'credits', fields.source.item, window.location.pathname);
       }

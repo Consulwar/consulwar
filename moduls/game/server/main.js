@@ -7,8 +7,9 @@ import initMutualSpaceServer from '/imports/modules/MutualSpace/server/index';
 import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import '/imports/modules/Person/server/methods';
-import ReminderEmails from '../../../imports/modules/User/server/ReminderEmails';
-import JobsCleanup from '../../../imports/modules/Space/server/JobsCleanup';
+import ReminderEmails from '/imports/modules/User/server/ReminderEmails';
+import JobsCleanup from '/imports/modules/Space/server/JobsCleanup';
+import ShutdownHack from '/imports/modules/User/server/ShutdownHack';
 
 //BrowserPolicy.framing.allowAll();
 
@@ -104,6 +105,7 @@ Meteor.startup(function () {
   initWrecksServer();
   ReminderEmails.schedule();
   JobsCleanup.schedule();
+  ShutdownHack.monitor();
 
   if (Meteor.settings.last) {
     SyncedCron.start();

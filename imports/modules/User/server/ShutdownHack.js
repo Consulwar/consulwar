@@ -3,7 +3,7 @@ import { _ } from 'meteor/underscore';
 
 class ShutdownHack {
   static monitor() {
-    if (Meteor.settings.shutdownHackTimeout == null) {
+    if (!Meteor.settings.shutdownHackTimeout) {
       return;
     }
 
@@ -14,7 +14,7 @@ class ShutdownHack {
         console.log(`Process ${process.pid} shutting down due to inactivity`);
         process.kill(process.pid, 'SIGINT');
       }
-    }, Meteor.settings.shutdownHackTimeout * 1000);
+    }, Meteor.settings.shutdownHackTimeout);
 
     Meteor.onConnection((connection) => {
       connections += 1;

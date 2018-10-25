@@ -98,18 +98,22 @@ export default function initSpaceServer() {
   Space.jobs.startJobServer();
 
   Error.stackTraceLimit = 1000;
-  process.on('SIGINT', function() {
-    let i = 0;
+  const bound = Meteor.bindEnvironment((callback) => { callback(); });
+  process.on('SIGINT', () => {
+    bound(function() {
+      let i = 0;
 
-    const done = function() {
-      i += 1;
-      if (i >= 3) {
-        process.exit(0);
-      }
-    };
+      const done = function() {
+        i += 1;
+        if (i >= 3) {
+          console.log(`Process ${process.pid} exiting normally`);
+          process.exit(0);
+        }
+      };
 
-    FlightQueue.shutdown({ level: 'soft' }, done);
-    BattleQueue.shutdown({ level: 'soft' }, done);
-    TriggerAttackQueue.shutdown({ level: 'soft' }, done);
+      FlightQueue.shutdown({ level: 'soft' }, done);
+      BattleQueue.shutdown({ level: 'soft' }, done);
+      TriggerAttackQueue.shutdown({ level: 'soft' }, done);
+    });
   });
 }

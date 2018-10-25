@@ -203,5 +203,6 @@
     "port": 8125,
     "prefix": "game."
   },
+  "shutdownHackTimeout": 60,
   "last": true
 }

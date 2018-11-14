@@ -1,6 +1,11 @@
 export default {
   id: 'Achievement/Space/Thorns',
-  title: 'У розы есть шипы',
+  levels: [1, 2, 3],
+  title: [
+    'У розы есть шипы 1 степени',
+    'У розы есть шипы 2 степени',
+    'У розы есть шипы 3 степени',
+  ],
   description: 'Был готов к жертвам',
   effects: {
     Income: [
@@ -10,7 +15,7 @@ export default {
         priority: 1,
         affect: 'humans',
         result({ level }) {
-          return (level > 0) ? 50 : 0;
+          return (level > 0) ? 25 * (1 + level) : 0;
         },
       },
     ],

@@ -262,7 +262,7 @@ Meteor.methods({
       sendPlanetFleetToHome(planet, hexDB, homeHexDB);
     });
 
-    // Сброс колоний
+    // Сброс своих колоний
     Game.Planets.Collection.update({
       $and: [
         { userId: targetUser._id },
@@ -272,7 +272,23 @@ Meteor.methods({
       ],
     }, {
       $set: {
+        status: Game.Planets.STATUS.NOBODY,
         minerUsername: null,
+        timeArtefacts: null,
+      },
+    }, { multi: true });
+
+    // Сброс чужих колоний
+    Game.Planets.Collection.update({
+      $and: [
+        { userId: { $ne: targetUser._id } },
+        { minerUsername: targetUser.username },
+      ],
+    }, {
+      $set: {
+        status: Game.Planets.STATUS.NOBODY,
+        minerUsername: null,
+        timeArtefacts: null,
       },
     }, { multi: true });
 

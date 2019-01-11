@@ -3,7 +3,8 @@ export default {
   title: 'Красный контейнер',
   description: '',
   price: {
-    'Resource/Artifact/Red/RubyPlasmoid': 10,
+    //'Resource/Artifact/Red/RubyPlasmoid': 10,
+    'ruby_plasmoid': 10, // HACK refactor old resource names
   },
   drop: [
     {

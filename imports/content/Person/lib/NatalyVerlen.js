@@ -6,5 +6,9 @@ export default {
     legacy: {
       isFree: true,
     },
+    supnat: {
+      isUnique: true,
+      comment: 'будет доступен 22.03.2019',
+    },
   },
 };

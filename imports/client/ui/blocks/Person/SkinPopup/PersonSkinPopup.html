@@ -50,7 +50,10 @@
                       cw--PersonSkinPopup__skinInfo_unique
                     "
                   >
-                    Уникальный
+                    <div>Уникальный</div>
+                    {{#if skin.comment}}
+                    <div class="cw--PersonSkinPopup__skinInfoComment">{{skin.comment}}</div>
+                    {{/if}}
                   </div>
                 {{else if skin.price}}
                   <div

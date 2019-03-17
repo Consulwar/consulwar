@@ -22,10 +22,11 @@ class PersonSkinPopup extends BlazeComponent {
     const availableSkins = this.person.getAvailableSkins();
     const activeSkins = this.person.getActiveSkins();
 
-    return _(this.person.skin).pairs().map(([id, { isUnique = false, price }]) => ({
+    return _(this.person.skin).pairs().map(([id, { isUnique = false, comment, price }]) => ({
       id,
       has: availableSkins.indexOf(id) !== -1,
       isUnique,
+      comment,
       isActive: activeSkins.indexOf(id) !== -1,
       price,
     }));

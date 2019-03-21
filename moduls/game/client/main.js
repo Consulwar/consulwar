@@ -479,11 +479,6 @@ Template.newgame.onRendered(function(){
   this.autorun(showTutorialDuringActivation);
   this.autorun(showTutorialArrows);
 
-  const planets = Game.Planets.getAll().fetch();
-  if (planets.length === 0) {
-    Meteor.call('planet.initialize');
-  }
-
   Meteor.setTimeout(function() {
     $('.cw--FleetInfo__table').perfectScrollbar({suppressScrollX: true});
   });

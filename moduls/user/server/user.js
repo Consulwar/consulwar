@@ -169,6 +169,7 @@ Accounts.onCreateUser(function(option, user) {
   Game.House.initialize(user);
   Game.Quest.initialize(user);
   Game.Statistic.initialize(user);
+  Game.Planets.initialize(user);
 
   Meteor.setTimeout(function(user) {
     Accounts.sendVerificationEmail(user._id);

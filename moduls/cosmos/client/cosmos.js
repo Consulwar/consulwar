@@ -1451,14 +1451,7 @@ Template.cosmos.onRendered(function() {
     bounds.set(mapView.getBounds());
   });
 
-  const planets = Game.Planets.getAll().fetch();
-  if (planets.length === 0) {
-    Meteor.call('planet.initialize', function(err, data) {
-      initGalaxy();
-    });
-  } else {
-    initGalaxy();
-  }
+  initGalaxy();
 
   mapView.on('click', () => {
     Game.Cosmos.hidePlanetPopup();

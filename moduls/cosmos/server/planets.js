@@ -40,8 +40,8 @@ Game.Planets.Collection._ensureIndex({
   armyId: 1,
 });
 
-Game.Planets.actualize = function() {
-  var planets = Game.Planets.getAll().fetch();
+Game.Planets.actualize = function(user = Meteor.user()) {
+  var planets = Game.Planets.getAll(user._id).fetch();
   if (!planets) {
     return;
   }
@@ -73,7 +73,7 @@ Game.Planets.actualize = function() {
 
   const timeCurrent = Game.getCurrentTime();
 
-  const ownedPlanets = Game.Planets.getAllByOwner();
+  const ownedPlanets = Game.Planets.getAllByOwner(user);
   ownedPlanets.forEach((planet) => {
     if (planet.status === Game.Planets.STATUS.HUMANS) {
       // auto collect artefacts
@@ -305,7 +305,7 @@ Game.Planets.generateType = function() {
   return result;
 };
 
-Game.Planets.generateName = function(userId = Meteor.userId()) {
+Game.Planets.generateName = function(user = Meteor.user()) {
   var letters = [
     'A', 'B', 'C', 'D', 'E', 'F',
     'G', 'H', 'I', 'J', 'K', 'L',
@@ -315,7 +315,7 @@ Game.Planets.generateName = function(userId = Meteor.userId()) {
     '4', '5', '6', '7', '8', '9'
   ];
 
-  var home = Meteor.users.findOne({ _id: userId }).planetName;
+  var home = user.planetName;
   var result = home;
 
   while (home == result) {
@@ -696,74 +696,68 @@ Game.Planets.discover = function(planetId, user = Meteor.user()) {
   });
 };
 
+Game.Planets.initialize = function(user) {
+  var planets = Game.Planets.getAll(user).fetch();
+
+  if (planets.length === 0) {
+
+    var galactic = {
+      radius: 40,
+      hands: Game.Random.interval(4, 6),
+      segments: 10,
+      rotationFactor: Game.Random.interval(2, 5) / 100, // 0.02 - 0.05
+      narrowFactor: 5,
+      angle: Game.Random.random() * Math.PI * 2, // 0 - 360
+      minPlanets: 400,
+      maxPlanets: 500
+    };
+
+    var hand = Game.Random.interval(0, galactic.hands - 1);
+    var segment = galactic.segments - 3;
+    var center = calcSegmentCenter(
+      hand,
+      segment,
+      galactic.hands,
+      galactic.segments,
+      galactic.rotationFactor,
+      galactic.radius,
+      galactic.angle
+    );
+
+    Game.Planets.add({
+      name: user.planetName,
+      isHome: true,
+      minerUsername: user.username,
+      status: Game.Planets.STATUS.HUMANS,
+      type: 'terran',
+      // generation
+      hand: hand,
+      segment: segment,
+      // appearance
+      x: center.x,
+      y: center.y,
+      size: 6,
+      // galactic options
+      galactic: galactic
+    }, user);
+
+    Game.Unit.initialize(user);
+
+    // open near sectors at start
+    Game.Planets.generateSector(galactic, hand, segment, false, user);
+    Game.Planets.generateSector(galactic, hand, segment + 1, false, user);
+    Game.Planets.generateSector(galactic, hand, segment - 1, false, user);
+
+    // refresh all planets
+    Game.Planets.actualize(user);
+  }
+}
+
 // ----------------------------------------------------------------------------
 // Public methods
 // ----------------------------------------------------------------------------
 
 Meteor.methods({
-  'planet.initialize': function() {
-    // For planets initialization Meteor.user() required!
-    const user = User.getById();
-    User.checkAuth({ user });
-
-    Log.method.call(this, { name: 'planet.initialize', user });
-
-    var planets = Game.Planets.getAll().fetch();
-
-    if (planets.length === 0) {
-
-      var galactic = {
-        radius: 40,
-        hands: Game.Random.interval(4, 6),
-        segments: 10,
-        rotationFactor: Game.Random.interval(2, 5) / 100, // 0.02 - 0.05
-        narrowFactor: 5,
-        angle: Game.Random.random() * Math.PI * 2, // 0 - 360
-        minPlanets: 400,
-        maxPlanets: 500
-      };
-
-      var hand = Game.Random.interval(0, galactic.hands - 1);
-      var segment = galactic.segments - 3;
-      var center = calcSegmentCenter(
-        hand,
-        segment,
-        galactic.hands,
-        galactic.segments,
-        galactic.rotationFactor,
-        galactic.radius,
-        galactic.angle
-      );
-
-      Game.Planets.add({
-        name: user.planetName,
-        isHome: true,
-        minerUsername: user.username,
-        status: Game.Planets.STATUS.HUMANS,
-        type: 'terran',
-        // generation
-        hand: hand,
-        segment: segment,
-        // appearance
-        x: center.x,
-        y: center.y,
-        size: 6,
-        // galactic options
-        galactic: galactic
-      }, user);
-
-      Game.Unit.initialize(user._id);
-
-      // open near sectors at start
-      Game.Planets.generateSector(galactic, hand, segment, false);
-      Game.Planets.generateSector(galactic, hand, segment + 1, false);
-      Game.Planets.generateSector(galactic, hand, segment - 1, false);
-
-      // refresh all planets
-      Game.Planets.actualize();
-    }
-  },
-
   'planet.discover': function(planetId) {
     const user = User.getById();
     User.checkAuth({ user });

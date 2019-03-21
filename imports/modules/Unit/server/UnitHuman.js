@@ -28,7 +28,7 @@ class UnitHuman extends UnitHumanAbstract {
   ) {
     const multiplier = invertSign === true ? -1 : 1;
 
-    Game.Unit.initialize(uid);
+    Game.Unit.initialize(User.getById({ uid }));
 
     const inc = {};
     inc[`units.${unit.id}`] = parseInt(unit.count * multiplier, 10);

@@ -4,7 +4,6 @@ import Game from '/moduls/game/lib/main.game';
 import BattleEvents from '/imports/modules/Space/server/battleEvents';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
-import User from '/imports/modules/User/lib/User';
 import unitItems from '/imports/content/Unit/server';
 
 initUnitServer = function() {
@@ -18,31 +17,31 @@ Game.Unit.Collection._ensureIndex({
   user_id: 1
 });
 
-Game.Unit.initialize = function(userId = Meteor.userId()) {
-  const hangarArmy = Game.Unit.getHangarArmy({ userId });
+Game.Unit.initialize = function(user = Meteor.user()) {
+  const hangarArmy = Game.Unit.getHangarArmy({ userId: user._id });
   if (hangarArmy === undefined) {
     Game.Unit.Collection.insert({
-      user_id: userId,
+      user_id: user._id,
       location: Game.Unit.location.HOME,
       units: {},
     });
   }
 
-  const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId });
-  if (homeFleetArmy === undefined && Game.Planets.getBase(userId)) {
+  const homeFleetArmy = Game.Unit.getHomeFleetArmy({ userId: user._id });
+  if (homeFleetArmy === undefined && Game.Planets.getBase(user._id)) {
     const fleetArmyId = Game.Unit.Collection.insert({
-      user_id: userId,
+      user_id: user._id,
       location: Game.Unit.location.PLANET,
       units: {},
     });
 
     Game.Planets.Collection.update({
-      userId,
+      userId: user._id,
       isHome: true,
     }, {
       $set: {
         armyId: fleetArmyId,
-        armyUsername: User.getById({ userId }).username,
+        armyUsername: user.username,
       },
     });
   }

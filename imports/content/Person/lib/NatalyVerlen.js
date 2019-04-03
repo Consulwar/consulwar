@@ -8,7 +8,10 @@ export default {
     },
     supnat: {
       isUnique: true,
-      comment: 'будет доступен 22.03.2019',
+    },
+    resident: {
+      isUnique: true,
+      comment: 'будет доступен 14.04.2019',
     },
   },
 };

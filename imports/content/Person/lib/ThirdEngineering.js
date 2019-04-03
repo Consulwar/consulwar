@@ -6,5 +6,9 @@ export default {
     legacy: {
       isFree: true,
     },
+    wh40k: {
+      isUnique: true,
+      comment: 'будет доступен 14.04.2019',
+    },
   },
 };

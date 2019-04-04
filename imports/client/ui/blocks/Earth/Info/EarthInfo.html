@@ -45,6 +45,16 @@
               </b>
             </span>
           </div>
+          {{#if min}}
+          <div class="cw--EarthInfo__bonus">
+            Минимум:
+            <span class="cw--EarthInfo__bonusItem">
+              <b class={{color}}>
+                {{min}} {{title}}
+              </b>
+            </span>
+          </div>
+          {{/if}}
           {{#if countPerConsul}}
             <div class="cw--EarthInfo__bonusPerConsul">
               На консула:

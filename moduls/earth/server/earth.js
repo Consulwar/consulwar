@@ -507,24 +507,30 @@ const giveBonuses = function (bonuses) {
       return;
     }
 
-    // stage 1 - give all the players average count
     const averageValue = Math.floor(bonus.count / players.length);
-    if (averageValue > 0) {
+    if (bonus.min > 0 && averageValue < bonus.min) {
       players.forEach((player) => {
-        player.value = averageValue;
+        player.value = bonus.min;
       });
-    }
+    } else {
+      // stage 1 - give all the players average count
+      if (averageValue > 0) {
+        players.forEach((player) => {
+          player.value = averageValue;
+        });
+      }
 
-    // stage 2 - the rest give by shuffling players and give by by the piece
-    let rest = bonus.count - (averageValue * players.length);
-    if (rest > 0) {
-      players = _.shuffle(players);
+      // stage 2 - the rest give by shuffling players and give by by the piece
+      let rest = bonus.count - (averageValue * players.length);
+      if (rest > 0) {
+        players = _.shuffle(players);
 
-      let i = 0;
-      while (rest > 0) {
-        players[i].value += 1;
-        rest -= 1;
-        i += 1;
+        let i = 0;
+        while (rest > 0) {
+          players[i].value += 1;
+          rest -= 1;
+          i += 1;
+        }
       }
     }
 

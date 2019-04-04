@@ -398,7 +398,17 @@ Meteor.methods({
         }
 
         Game.Payment.Expense.log(50, 'sepukku');
-        
+      } else if (message.indexOf('/яготовкрейду') === 0) {
+        if (makeFun({ raid: true })) {
+          set.data = {
+            type: 'notprepared'
+          };
+          set.message = ' думает, что готов. Наивный.';
+          stats['chat.notprepared'] = 1;
+          Game.Broadcast.add(user.username, 'Вторжение началось!');
+        } else {
+          throw new Meteor.Error('Ты не готов!');
+        }
       } else if (message.indexOf('/яготов') === 0) {
         if (makeFun()) {
           set.data = {

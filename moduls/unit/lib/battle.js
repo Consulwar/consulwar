@@ -9,6 +9,7 @@ game.Battle = function(options) {
     this.honor = options.honor;
     this.chance = options.chance;
     this.level = options.level;
+    this.firstRoundDuration = options.firstRoundDuration;
 
     Game.Battle.items[this.engName] = this;
   };

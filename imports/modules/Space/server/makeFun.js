@@ -3,7 +3,7 @@ import Game from '/moduls/game/lib/main.game';
 import Config from './config';
 import Reptiles from './reptiles';
 
-export default function ({ userId = Meteor.userId() } = {}) {
+export default function ({ userId = Meteor.userId(), raid = false } = {}) {
   if (Game.Planets.getLastFunTime() + Config.FUN_PERIOD > Game.getCurrentTime()) {
     return false;
   }
@@ -14,6 +14,14 @@ export default function ({ userId = Meteor.userId() } = {}) {
     type: 'prepearedfleet',
     level: 508,
   };
+
+  if (raid) {
+    mission.type = 'raidfleet';
+    mission.level = 509;
+    const base = Game.Planets.getBase();
+    Reptiles.sendReptileFleetToPlanet({ planetId: base._id, mission });
+    return true;
+  }
 
   const colonies = Game.Planets.getColonies();
   for (let i = 0; i < colonies.length; i += 1) {

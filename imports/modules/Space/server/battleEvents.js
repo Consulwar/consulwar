@@ -2,20 +2,26 @@ import { Meteor } from 'meteor/meteor';
 import { Job } from '/moduls/game/lib/jobs';
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
+import Game from '/moduls/game/lib/main.game';
 
 import Space from '../lib/space';
 import Lib from '../lib/battle';
 import battleDelay from './battleDelay';
 import Config from './config';
 
-const add = function({ userArmy, enemyArmy, data }) {
+const add = function({
+  userArmy,
+  enemyArmy,
+  data,
+  delay = battleDelay({ userArmy, enemyArmy }),
+}) {
   const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
   job
     .retry({
       retries: Config.JOBS.retry.retries,
       wait: Config.JOBS.retry.wait,
     })
-    .delay(battleDelay({ userArmy, enemyArmy }))
+    .delay(delay)
     .save();
 };
 
@@ -57,6 +63,7 @@ export default {
       },
     );
 
+    const delay = Game.Battle.items[mission.type].firstRoundDuration;
     add({
       userArmy,
       enemyArmy,
@@ -64,6 +71,7 @@ export default {
         ...data,
         battleId: battle.id,
       },
+      delay,
     });
   },
 

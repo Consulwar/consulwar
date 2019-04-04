@@ -26,7 +26,8 @@
           <option {{this.selected}} name="{{this.id}}">{{this.name}}</option>
         {{/each}}
       </select>
-      <input type="text" value="{{currentValue}}"/>
+      <input type="text" name="count" value="{{currentValue.count}}"/><br />
+      Минимум на человека: <input type="text" name="min" value="{{currentValue.min}}"/>
       <div class="setBonus">Установить</div>
       <div class="deleteBonus">Удалить</div>
     </div>

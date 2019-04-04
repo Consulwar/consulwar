@@ -104,10 +104,11 @@ Template.adminReptileChange.helpers({
   currentValue() {
     const zone = Game.EarthZones.getByName(this.zoneName);
     const bonus = zone.bonus;
-    if (bonus) {
-      return bonus.count;
-    }
-    return 0;
+    return {
+      count: 0,
+      min: 0,
+      ...bonus,
+    };
   },
 });
 
@@ -163,10 +164,15 @@ Template.adminReptileChange.events({
   'click .setBonus'(event, templateInstance) {
     const element = templateInstance.$('.bonusProfit');
     const id = templateInstance.$(element).find(':selected').attr('name');
-    const count = parseInt(templateInstance.$(element).find('input').val(), 10);
+    const count = parseInt(templateInstance.$(element).find('input[name=count]').val(), 10);
+    const min = parseInt(templateInstance.$(element).find('input[name=min]').val(), 10);
 
-    if (id && count > 0) {
-      Meteor.call('earth.setBonus', this.zoneName, { id, count }, function(err) {
+    if (id
+      && count >= 0
+      && min >= 0
+      && (count > 0 || min > 0)
+    ) {
+      Meteor.call('earth.setBonus', this.zoneName, { id, count, min }, function(err) {
         if (err) {
           Notifications.error('Не удалось установить бонус: ', err.error);
         } else {

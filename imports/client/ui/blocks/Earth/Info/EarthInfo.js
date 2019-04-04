@@ -102,7 +102,7 @@ class EarthInfo extends BlazeComponent {
     if (!zone.bonus) {
       return false;
     }
-    const { id, count } = zone.bonus;
+    const { id, count, min = 0 } = zone.bonus;
 
     const bonusObj = {};
     const keys = id.split('.');
@@ -118,13 +118,14 @@ class EarthInfo extends BlazeComponent {
 
     let countPerConsul = 0;
     if (zone.usersCount) {
-      countPerConsul = Math.floor(count / zone.usersCount);
+      countPerConsul = Math.max(Math.floor(count / zone.usersCount), min);
     }
 
     return {
       title,
       color,
-      count,
+      count: Math.max(count, min),
+      min,
       countPerConsul,
     };
   }

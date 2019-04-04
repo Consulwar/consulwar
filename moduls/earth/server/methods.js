@@ -367,6 +367,66 @@ Meteor.methods({
       },
     ).fetch();
   },
+
+  'earth.linkZones'(firstName, secondName) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'earth.linkZones', user });
+
+    if (['admin'].indexOf(user.role) === -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    check(firstName, String);
+    check(secondName, String);
+
+    Game.Earth.linkZones(firstName, secondName);
+
+    const firstZone = Game.EarthZones.Collection.findOne({
+      name: firstName,
+    });
+    const secondZone = Game.EarthZones.Collection.findOne({
+      name: secondName,
+    });
+
+    if (!firstZone.isVisible && secondZone.isVisible && !secondZone.isEnemy) {
+      Game.Earth.observeZone(secondName);
+    }
+    if (!secondZone.isVisible && firstZone.isVisible && !firstZone.isEnemy) {
+      Game.Earth.observeZone(firstName);
+    }
+  },
+
+  'earth.unlinkZones'(firstName, secondName) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'earth.unlinkZones', user });
+
+    if (['admin'].indexOf(user.role) === -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    check(firstName, String);
+    check(secondName, String);
+
+    const firstZone = Game.EarthZones.Collection.findOne({
+      name: firstName,
+    });
+    const secondZone = Game.EarthZones.Collection.findOne({
+      name: secondName,
+    });
+
+    if (firstZone.links.length === 1 && firstZone.links.indexOf(secondName) >= 0) {
+      throw new Meteor.Error(`Нельзя убрать последнюю связь зоны ${firstName}`);
+    }
+    if (secondZone.links.length === 1 && secondZone.links.indexOf(firstName) >= 0) {
+      throw new Meteor.Error(`Нельзя убрать последнюю связь зоны ${secondName}`);
+    }
+
+    Game.Earth.unlinkZones(firstName, secondName);
+  },
 });
 
 // ----------------------------------------------------------------------------
@@ -375,8 +435,6 @@ Meteor.methods({
 
 if (process.env.NODE_ENV === 'development') {
   Meteor.methods({
-    'earth.linkZones': Game.Earth.linkZones,
-    'earth.unlinkZones': Game.Earth.unlinkZones,
     'earth.nextTurn': Game.Earth.nextTurn,
   });
 }

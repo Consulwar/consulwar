@@ -13,7 +13,7 @@ const add = function({
   userArmy,
   enemyArmy,
   data,
-  delay,
+  delay = battleDelay({ userArmy, enemyArmy }),
 }) {
   const job = new Job(Space.jobs, Lib.EVENT_TYPE, data);
   job
@@ -21,7 +21,7 @@ const add = function({
       retries: Config.JOBS.retry.retries,
       wait: Config.JOBS.retry.wait,
     })
-    .delay(delay || battleDelay({ userArmy, enemyArmy }))
+    .delay(delay)
     .save();
 };
 

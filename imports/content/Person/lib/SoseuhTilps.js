@@ -6,5 +6,9 @@ export default {
     legacy: {
       isFree: true,
     },
+    tilpskhorne: {
+      isUnique: true,
+      comment: 'будет доступен 01.05.2019',
+    },
   },
 };

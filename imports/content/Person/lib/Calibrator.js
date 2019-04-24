@@ -5,7 +5,6 @@ export default {
   skin: {
     sauron: {
       isUnique: true,
-      comment: 'будет доступен 14.04.2019',
     },
   },
 };

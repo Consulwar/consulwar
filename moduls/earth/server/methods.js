@@ -291,7 +291,7 @@ Meteor.methods({
     const user = User.getById();
     User.checkAuth({ user });
 
-    Log.method.call(this, { name: 'earth.setReptileArmy', user });
+    Log.method.call(this, { name: 'earth.setBonus', user });
 
     if (['admin'].indexOf(user.role) === -1) {
       throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');

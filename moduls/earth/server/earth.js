@@ -591,17 +591,19 @@ const moveArmy = function (army, targetZoneName) {
   let sourceArmy = sourceZone.userArmy;
   let restArmy = {};
 
-  _(sourceArmy).pairs().forEach(([id, count]) => {
-    let curCount = parseInt(count, 10);
-
-    if (units[id]) {
-      curCount -= parseInt(units[id], 10);
-    }
-
-    if (curCount > 0) {
-      restArmy[id] = curCount;
-    }
-  });
+  if (sourceArmy) { // HACK
+    _(sourceArmy).pairs().forEach(([id, count]) => {
+      let curCount = parseInt(count, 10);
+  
+      if (units[id]) {
+        curCount -= parseInt(units[id], 10);
+      }
+  
+      if (curCount > 0) {
+        restArmy[id] = curCount;
+      }
+    });
+  }
 
   if (_.keys(restArmy).length === 0) {
     Game.EarthZones.Collection.update({

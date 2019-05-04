@@ -11,7 +11,6 @@ export default {
     },
     resident: {
       isUnique: true,
-      comment: 'будет доступен 14.04.2019',
     },
   },
 };

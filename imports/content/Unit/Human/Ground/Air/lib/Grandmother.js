@@ -6,7 +6,7 @@ export default {
     humans: 1600,
     metals: 50000,
     crystals: 14000,
-    time: 205000,
+    time: 41000,
   },
   queue: 'Ground/Air',
   characteristics: {

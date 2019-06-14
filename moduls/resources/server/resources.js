@@ -354,6 +354,8 @@ Meteor.methods({
     if (
       !Meteor.settings.public.event
       || !Meteor.settings.public.event.projectSupport
+      || !Meteor.settings.public.event.endTime
+      || Meteor.settings.public.event.endTime < Date.now()
     ) {
       throw new Meteor.Error('Событие не активно');
     }

@@ -5,7 +5,7 @@ export default {
   basePrice: {
     humans: 1,
     metals: 95,
-    time: 204,
+    time: 41,
   },
   queue: 'Ground/Infantry',
   characteristics: {

@@ -6,7 +6,7 @@ export default {
     humans: 100,
     metals: 4500,
     crystals: 15000,
-    time: 103958,
+    time: 20792,
   },
   queue: 'Ground/Infantry',
   characteristics: {

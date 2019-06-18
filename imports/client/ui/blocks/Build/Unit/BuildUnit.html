@@ -97,6 +97,18 @@
                   Ускорить 
                 {{/if}}
               </button>
+              {{#if gt timeLeft.get 5}}
+                <button class="
+                    cw--button
+                    cw--button_type_primary
+                    cw--button_type_primary_red
+                  "
+                  onClick={{confirmCancel}}
+                  data-sound="click"
+                >
+                  Отменить
+                </button>
+              {{/if}}
             {{else}}
               <div class="cw--BuildUnit__actionAmount">
                 <button 

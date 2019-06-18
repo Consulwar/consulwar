@@ -5,6 +5,7 @@ import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
 import humanUnits from '/imports/content/Unit/Human/server';
+import ConfigLib from '/imports/modules/Building/lib/config';
 
 Meteor.methods({
   'unit.build'({ id, count, cards }) {
@@ -39,14 +40,14 @@ Meteor.methods({
 
     Meteor.call('actualizeGameInfo');
 
-    const item = humanUnits[id];
+    const unit = humanUnits[id];
 
-    if (!item || !item.canBuild(setCount, cards)) {
+    if (!unit || !unit.canBuild(setCount, cards)) {
       throw new Meteor.Error('Недостаточно ресурсов');
     }
 
-    if (item.maxCount !== undefined) {
-      const countDelta = item.maxCount - item.getTotalCount();
+    if (unit.maxCount !== undefined) {
+      const countDelta = unit.maxCount - unit.getTotalCount();
       if (countDelta < 1) {
         throw new Meteor.Error('Достигнуто максимальное количество юнитов данного типа');
       }
@@ -56,15 +57,21 @@ Meteor.methods({
       }
     }
 
+    const price = unit.getPrice(setCount, cardList);
+
+    const rating = Game.Resources.calculateRatingFromResources(price);
+
     const set = {
-      group: item.queue || item.group,
-      itemId: item.id,
+      group: unit.queue || unit.group,
+      itemId: unit.id,
       count: setCount,
       dontNeedResourcesUpdate: true,
+      time: price.time,
+      data: {
+        price,
+        rating,
+      },
     };
-
-    const price = item.getPrice(setCount, cardList);
-    set.time = price.time;
 
     const isTaskInserted = Game.Queue.add(set);
     if (!isTaskInserted) {
@@ -79,33 +86,75 @@ Meteor.methods({
 
     if (price.credits) {
       Game.Payment.Expense.log(price.credits, 'unitBuild', {
-        itemId: item.id,
+        itemId: unit.id,
         count: setCount,
       });
     }
 
-    const rating = Game.Resources.calculateRatingFromResources(price);
-
     if (rating > 100000) {
-      if (item.group === 'Ground') {
+      if (unit.group === 'Ground') {
         Game.Broadcast.add(
           user.username,
-          `начал подготовку «${item.title}» в количестве ${setCount} штук`,
+          `начал подготовку «${unit.title}» в количестве ${setCount} штук`,
         );
       } else {
         Game.Broadcast.add(
           user.username,
-          `отправил на верфь ${setCount} кораблей «${item.title}»`,
+          `отправил на верфь ${setCount} кораблей «${unit.title}»`,
         );
       }
     }
+  },
 
-    Meteor.users.update({
-      _id: user._id,
-    }, {
-      $inc: {
-        rating,
-      },
-    });
+  'unit.cancel'({ id }) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'unit.cancel', user });
+
+    check(id, String);
+
+    Meteor.call('actualizeGameInfo');
+
+    const unit = humanUnits[id];
+
+    if (!unit) {
+      throw new Meteor.Error('Что-то не то вы готовить собрались, дядя Фёдор');
+    }
+
+    const queueItem = Game.Queue.getByItemId(id);
+
+    if (!queueItem) {
+      throw new Meteor.Error('Подготовка уже завершилась, или не начиналась');
+    }
+
+    const price = (queueItem.data && queueItem.data.price
+      ? queueItem.data.price
+      : unit.getPrice(queueItem.level)
+    );
+    const priceRefund = _.mapObject(price, priceItem => priceItem * ConfigLib.BUILDING_REFUND);
+
+    const isTaskCancelled = Game.Queue.cancel(queueItem._id);
+    if (!isTaskCancelled) {
+      throw new Meteor.Error('Не удалось отменить подготовку');
+    }
+
+    Game.Resources.add(priceRefund);
+
+    if (priceRefund.credits) {
+      Game.Payment.Income.log(priceRefund.credits, 'unitBuild', {
+        itemId: unit.id,
+      });
+    }
+
+    if (!(queueItem.data && queueItem.data.rating)) { // Legacy item, rating was awarded at start
+      Meteor.users.update({
+        _id: user._id,
+      }, {
+        $inc: {
+          rating: -Game.Resources.calculateRatingFromResources(price),
+        },
+      });
+    }
   },
 });

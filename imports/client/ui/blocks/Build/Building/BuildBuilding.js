@@ -5,6 +5,7 @@ import { Router } from 'meteor/iron:router';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
+import ConfigLib from '/imports/modules/Building/lib/config';
 import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
 import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
@@ -164,6 +165,24 @@ class BuildBuilding extends BlazeComponent {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
       data: { item: this.building },
+    });
+  }
+
+  confirmCancel() {
+    Game.showAcceptWindow(`Отмена строительства вернёт только ${ConfigLib.BUILDING_REFUND * 100}% ресурсов`, () => {
+      Meteor.call(
+        'building.cancel',
+        {
+          id: this.building.id,
+        },
+        function(error) {
+          if (error) {
+            Notifications.error('Невозможно отменить строительство', error.error);
+          } else {
+            Notifications.success('Строительство отменено');
+          }
+        },
+      );
     });
   }
 

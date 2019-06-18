@@ -130,7 +130,7 @@ Meteor.methods({
 
     const price = (queueItem.data && queueItem.data.price
       ? queueItem.data.price
-      : unit.getPrice(queueItem.level)
+      : unit.getPrice(queueItem.count)
     );
     const priceRefund = _.mapObject(
       price,

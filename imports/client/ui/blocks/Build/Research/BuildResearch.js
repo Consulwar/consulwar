@@ -4,6 +4,7 @@ import { $ } from 'meteor/jquery';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
+import ConfigLib from '/imports/modules/Building/lib/config';
 import SoundManager from '/imports/client/ui/SoundManager/SoundManager';
 import Maximum from '/imports/client/ui/blocks/Build/Maximum/BuildMaximum';
 import SpeedUp from '/imports/client/ui/blocks/Build/SpeedUp/BuildSpeedUp';
@@ -103,6 +104,24 @@ class BuildResearch extends BlazeComponent {
     Game.Popup.show({
       template: SpeedUp.renderComponent(),
       data: { item: this.research },
+    });
+  }
+
+  confirmCancel() {
+    Game.showAcceptWindow(`Отмена исследований вернёт только ${ConfigLib.BUILDING_REFUND * 100}% ресурсов`, () => {
+      Meteor.call(
+        'research.cancel',
+        {
+          id: this.research.id,
+        },
+        function(error) {
+          if (error) {
+            Notifications.error('Невозможно отменить исследование', error.error);
+          } else {
+            Notifications.success('Исследование отменено');
+          }
+        },
+      );
     });
   }
 

@@ -54,13 +54,15 @@ Game.Queue.add = function(item) {
     type: item.type,
     startTime: startTime,
     finishTime: startTime + item.time,
-    createdTime: Game.getCurrentTime() // debug field
+    createdTime: Game.getCurrentTime(), // debug field
+    data: item.data,
   };
 
   var select = {
     user_id: Meteor.userId(),
     type: item.type,
-    finishTime: { $gt: startTime }
+    finishTime: { $gt: startTime },
+    status: Game.Queue.status.INCOMPLETE,
   };
 
   // parse additonal options
@@ -121,6 +123,23 @@ Game.Queue.add = function(item) {
   return result.insertedId ? set : null;
 };
 
+Game.Queue.cancel = function(taskId) {
+  if (!Meteor.userId()) {
+    return;
+  }
+
+  return Game.Queue.Collection.update({
+    _id: taskId,
+    user_id: Meteor.userId(),
+    status: Game.Queue.status.INCOMPLETE,
+  }, {
+    $set: {
+      status: Game.Queue.status.DONE,
+      cancelled: true,
+    }
+  });
+};
+
 Game.Queue.complete = function(taskId) {
   if (!Meteor.userId()) {
     return;
@@ -175,6 +194,15 @@ var completeItems = function(items, needResourcesUpdate) {
           items.push(newTask);
         }
       }
+    }
+    if (item.data && item.data.rating) {
+      Meteor.users.update({
+        _id: item.user_id,
+      }, {
+        $inc: {
+          rating: item.data.rating,
+        },
+      });
     }
     // Отметить текущее задание как обработанное
     Game.Queue.complete( item._id );

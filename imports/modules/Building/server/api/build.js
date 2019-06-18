@@ -100,7 +100,10 @@ Meteor.methods({
       ? queueItem.data.price
       : building.getPrice(queueItem.level)
     );
-    const priceRefund = _.mapObject(price, priceItem => priceItem * ConfigLib.BUILDING_REFUND);
+    const priceRefund = _.mapObject(
+      price,
+      priceItem => Math.floor(priceItem * ConfigLib.BUILDING_REFUND),
+    );
 
     const isTaskCancelled = Game.Queue.cancel(queueItem._id);
     if (!isTaskCancelled) {

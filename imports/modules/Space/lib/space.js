@@ -10,18 +10,21 @@ const jobs = new JobCollection('spaceEvents');
 const collection = jobs; // для более внятного использования
 const filterActive = { $nin: ['completed', 'cancelled'] };
 
-const getCurrentArmyCount = function(userId = Meteor.userId()) {
-  const battleCount = BattleCollection.find({
+const getCurrentSpaceBattleCount = function (userId = Meteor.userId()) {
+  return BattleCollection.find({
     status: Battle.Status.progress,
     userNames: Meteor.users.findOne({ _id: userId }).username,
+    'options.isEarth': null,
   }).count();
+};
 
+const getCurrentArmyCount = function(userId = Meteor.userId()) {
   const unitCount = Game.Unit.Collection.find({
     user_id: userId,
     location: { $ne: Game.Unit.location.HOME },
   }).count();
 
-  return battleCount + unitCount;
+  return getCurrentSpaceBattleCount(userId) + unitCount;
 };
 
 const getMaxArmyCount = function() {
@@ -66,6 +69,7 @@ export default {
   jobs,
   collection,
   filterActive,
+  getCurrentSpaceBattleCount,
   getCurrentArmyCount,
   getMaxArmyCount,
   canCreateArmy,

@@ -4,8 +4,6 @@ import User from '/imports/modules/User/lib/User';
 
 import UnitCollection from '/imports/modules/Unit/lib/UnitCollection';
 
-import BattleCollection from '../../battle/lib/imports/collection';
-import Battle from '../../battle/lib/imports/battle';
 import calculateGroupPower from '../../battle/lib/imports/calculateGroupPower';
 
 let unitItems;

@@ -6,8 +6,7 @@ import buildings from '/imports/content/Building/client';
 import researches from '/imports/content/Research/client';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import ArrowControl from '/imports/client/ui/Arrow/ArrowControl';
-import Battle from '../../battle/lib/imports/battle';
-import BattleCollection from '../../battle/lib/imports/collection';
+import Space from '/imports/modules/Space/client/space';
 
 import '/imports/client/ui/blocks/User/Menu/UserMenu';
 import ResourceCurrent from '/imports/client/ui/blocks/Resource/Current/ResourceCurrent';
@@ -389,12 +388,9 @@ var helpers = {
 
   fleetInfo: function() {
     var fleets = FlightEvents.getFleetsEvents().fetch();
-    const battles = BattleCollection.find({
-      status: Battle.Status.progress,
-      userNames: Meteor.user().username,
-    }).fetch();
+    const battleCount = Space.getCurrentSpaceBattleCount();
 
-    if (fleets.length === 0 && battles.length === 0) {
+    if (fleets.length === 0 && battleCount === 0) {
       return null;
     }
 
@@ -454,7 +450,7 @@ var helpers = {
       isWaitingAttack: isWaitingAttack,
       attackId: attackId,
       attackTime: attackTime,
-      battles: battles.length,
+      battles: battleCount,
     };
   },
 

@@ -1,9 +1,6 @@
 import '/imports/modules/Unit/server/api';
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
-import BattleEvents from '/imports/modules/Space/server/battleEvents';
-import createGroup from '/moduls/battle/lib/imports/createGroup';
-import Battle from '/moduls/battle/server/battle';
 import unitItems from '/imports/content/Unit/server';
 
 initUnitServer = function() {

@@ -9,5 +9,9 @@ export default {
     tilpskhorne: {
       isUnique: true,
     },
+    tilpsds: {
+      isUnique: true,
+      comment: 'будет доступен 21.07.2019',
+    },
   },
 };

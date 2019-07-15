@@ -5,7 +5,6 @@ export default {
   skin: {
     shredder: {
       isUnique: true,
-      comment: 'будет доступен 12.05.2019',
     },
   },
 };

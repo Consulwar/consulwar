@@ -5,6 +5,15 @@
         Открыто {{opened.get}} из {{count.get}}
       </div>
       <label class="cw--ContainerRewardOpener__option">
+        {{> InputNumber args
+          value=countToOpen
+          min=1
+          max=1000
+          isShowZero=false
+          class="cw--ContainerList__input"
+        }}
+      </label>
+      <label class="cw--ContainerRewardOpener__option">
         <input 
           type="checkbox" 
           onClick={{switchAutoOpen}}

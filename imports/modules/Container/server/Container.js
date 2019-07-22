@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
-import allContainers from '/imports/content/Container/Fleet/server';
 import LibContainer from '../lib/Container';
 import collection from '../lib/collection';
 
@@ -22,15 +21,6 @@ const rollRandomValues = function(drop) {
 };
 
 class Container extends LibContainer {
-  static massIncrement({
-    containers,
-    ...options
-  }) {
-    _(containers).pairs().forEach(([id, count]) => {
-      allContainers[id].increment({ ...options, count });
-    });
-  }
-
   increment({
     count = 1,
     invertSign = false,
@@ -74,7 +64,7 @@ class Container extends LibContainer {
 
     const price = this.getPrice({ ...options, count });
     if (!Game.Resources.has({ ...options, resources: price })) {
-      throw new Meteor.Error('Невозможно купить контейнер');
+      throw new Meteor.Error('Недостаточно ресурсов для покупки контейнеров');
     }
 
     if (price) {
@@ -92,39 +82,20 @@ class Container extends LibContainer {
 
   open(options) {
     if (!this.has(options)) {
-      throw new Meteor.Error('Сперва необходимо преобрести контейнер');
+      throw new Meteor.Error('Сперва необходимо приобрести контейнеры');
     }
 
-    const profit = this.getRandomDrop();
+    const profit = {};
+
+    for (let i = 0; i < options.count; i += 1) {
+      _(this.getRandomDrop()).pairs().forEach(([rewardId, rewardCount]) => {
+        profit[rewardId] = (profit[rewardId] || 0) + rewardCount;
+      });
+    }
 
     Game.Resources.addProfit(profit);
 
     this.spend(options);
-
-    return profit;
-  }
-
-  buyAndOpen({ count = 1, ...options }) {
-    if (count < 1) {
-      throw new Meteor.Error('Ты пытаешься продать контейнер нам?');
-    }
-
-    const price = this.getPrice({ ...options, count });
-    if (!Game.Resources.has({ ...options, resources: price })) {
-      throw new Meteor.Error('Невозможно купить контейнер');
-    }
-
-    Game.Resources.spend(price);
-
-    if (price.credits) {
-      Game.Payment.Expense.log(price.credits, 'container', {
-        containerId: this.id,
-      });
-    }
-
-    const profit = this.getRandomDrop();
-
-    Game.Resources.addProfit(profit);
 
     return profit;
   }

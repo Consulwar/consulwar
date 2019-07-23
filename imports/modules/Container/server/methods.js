@@ -24,7 +24,7 @@ Meteor.methods({
     }
 
     if (count < 1) {
-      throw new Meteor.Error('Контейнера не продаются');
+      throw new Meteor.Error('Контейнеры не продаются');
     }
 
     const container = fleetContainers[id];
@@ -35,26 +35,37 @@ Meteor.methods({
     container.buy({ count, userId: user._id });
   },
 
-  'Building/Residential/SpacePort.openContainer'({ id }) {
+  'Building/Residential/SpacePort.openContainer'({ id, count = 1 }) {
     const user = User.getById();
     User.checkAuth({ user });
 
     check(id, String);
+    check(count, Match.Integer);
 
     Log.method.call(this, {
       name: 'Building/Residential/SpacePort.openContainer',
       user,
     });
 
+    if (count < 1) {
+      throw new Meteor.Error('Контейнеры не закрываются');
+    }
+
+    if (count > 1000) {
+      throw new Meteor.Error('Максимум 1000 контейнеров за раз');
+    }
+
     const container = fleetContainers[id];
     if (!container) {
       throw new Meteor.Error('Нет такого контейнера');
     }
 
+    const profit = container.open({ userId: user._id, count });
+
     Game.Statistic.incrementUser(user._id, {
-      'containers.open': 1,
+      'containers.open': count,
     });
 
-    return container.open({ userId: user._id });
+    return profit;
   },
 });

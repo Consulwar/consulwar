@@ -25,6 +25,7 @@ class ContainerRewardOpener extends BlazeComponent {
     this.isLoading = new ReactiveVar(false);
 
     this.countToBuy = new ReactiveVar(1);
+    this.countToOpen = new ReactiveVar(1);
 
     // авто открыть
     this.autoOpen = new ReactiveVar(false);
@@ -58,10 +59,10 @@ class ContainerRewardOpener extends BlazeComponent {
 
   rewards() {
     const winner = this.winner.get();
-    const winnerId = winner && _(winner).keys()[0];
+    const winnerIds = (winner && _(winner).keys()) || [];
     return _(this.container.drop).map((reward) => {
       const id = _(reward.profit).keys()[0];
-      const isWinner = _(reward.profit).keys()[0] === winnerId;
+      const isWinner = winnerIds.includes(_(reward.profit).keys()[0]);
       return {
         isWinner,
         obj: content[id],
@@ -75,14 +76,14 @@ class ContainerRewardOpener extends BlazeComponent {
     this.isLoading.set(true);
     Meteor.call(
       'Building/Residential/SpacePort.openContainer',
-      { id: this.container.id },
+      { id: this.container.id, count: this.countToOpen.get() },
       (error, winner) => {
         this.isLoading.set(false);
         if (error) {
           Notifications.error('Не удалось открыть контейнер', error.error);
         } else {
           this.winner.set(winner);
-          this.opened.set(this.opened.get() + 1);
+          this.opened.set(this.opened.get() + this.countToOpen.get());
         }
       },
     );

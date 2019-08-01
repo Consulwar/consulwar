@@ -350,7 +350,10 @@ Game.Earth.nextTurn = function() {
         });
       }
 
-      Game.EarthUnits.Collection.remove({ username: { $in: _.keys(unsetEarthUnits) } });
+      Game.EarthUnits.Collection.remove({
+        username: { $in: _.keys(unsetEarthUnits) },
+        zoneName: zone.name,
+      });
     }
 
     Game.EarthZones.Collection.update({ _id: zone._id }, modifier);

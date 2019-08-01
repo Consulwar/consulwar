@@ -269,11 +269,7 @@ Game.Earth.nextTurn = function() {
       });
     }
 
-    let modifier = {
-      $set: {
-        usersCount: Game.EarthUnits.Collection.find({ zoneName: zone.name }).count(),
-      },
-    };
+    let modifier = { $set: {} };
 
     if (battle) {
       const roundResult = battle.performRound();
@@ -350,9 +346,13 @@ Game.Earth.nextTurn = function() {
         });
       }
 
-      Game.EarthUnits.Collection.remove({ username: { $in: _.keys(unsetEarthUnits) } });
+      Game.EarthUnits.Collection.remove({
+        username: { $in: _.keys(unsetEarthUnits) },
+        zoneName: zone.name,
+      });
     }
 
+    modifier.$set.usersCount = Game.EarthUnits.Collection.find({ zoneName: zone.name }).count(),
     Game.EarthZones.Collection.update({ _id: zone._id }, modifier);
   });
 

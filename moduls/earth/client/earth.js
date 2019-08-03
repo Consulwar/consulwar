@@ -667,14 +667,13 @@ Template.earth.onRendered(function() {
     }
 
   } else {
-
     // put existing map content into template
     $('#map-content').html( mapView._container );
+    mapView.invalidateSize();
 
     for (var key in zoneViews) {
       zoneViews[ key ].update();
     }
-
   }
 
   // track db updates

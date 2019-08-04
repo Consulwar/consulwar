@@ -17,13 +17,14 @@ const {
 } = Lib;
 
 Collection._ensureIndex({
-  userNames: 1,
   status: 1,
+  userNames: 1,
 });
 
 Collection._ensureIndex({
-  userNames: 1,
   'options.isEarth': 1,
+  userNames: 1,
+  timeStart : -1,
 });
 
 Meteor.publish('battles', function () {

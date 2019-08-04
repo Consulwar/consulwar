@@ -146,7 +146,6 @@ var gameActions = {
 
   mutual: Game.Mutual.showPage,
   earth: Game.Earth.showMap,
-  earthHistory: Game.Earth.showHistory,
   statistics: Game.Rating.showPage,
 
   cosmos: Game.Cosmos.showPage,

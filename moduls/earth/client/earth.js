@@ -23,12 +23,6 @@ Game.Earth.showMap = function() {
 // Earth battle history
 // ----------------------------------------------------------------------------
 
-var isHistoryLoading = new ReactiveVar(false);
-var historyBattles = new ReactiveArray();
-var historyBattle = new ReactiveVar(null);
-var historyPage = null;
-var historyCountPerPage = 20;
-
 Game.Earth.showHistory = function() {
   Game.Popup.show({
     template: SpaceHistory.renderComponent(),
@@ -36,134 +30,6 @@ Game.Earth.showHistory = function() {
     hideClose: true,
   });
 };
-
-var loadHistoryBattle = function(itemId) {
-  // try to get record from cache
-  var isFound = false;
-  for (var i = 0; i < historyBattles.length; i++) {
-    if (historyBattles[i]._id == itemId) {
-      isFound = true;
-      historyBattle.set( historyBattles[i] );
-      break;
-    }
-  }
-
-  // not found, then load from server
-  if (!isFound) {
-    isHistoryLoading.set(true);
-    Meteor.call('battleHistory.getById', itemId, function(err, data) {
-      isHistoryLoading.set(false);
-      if (err) {
-        Notifications.error('Не удалось получить информацию о бое', err.error);
-      } else {
-        historyBattle.set(data);
-      }
-    });
-  }
-};
-
-Template.earthHistory.onRendered(function() {
-  // run this function each time as page or hash cahnges
-  this.autorun(function() {
-    if (Router.current().route.getName() != 'earthHistory') {
-      return;
-    }
-
-    var pageNumber = parseInt( Router.current().getParams().page, 10 );
-    var itemId = Router.current().getParams().hash;
-
-    isHistoryLoading.set(false);
-    historyBattle.set(null);
-
-    if (pageNumber != historyPage) {
-      // new page, then need to load records
-      historyPage = pageNumber;
-      historyBattles.clear();
-      isHistoryLoading.set(true);
-
-      Meteor.call('battleHistory.getPage', pageNumber, historyCountPerPage, true, function(err, data) {
-        isHistoryLoading.set(false);
-        if (err) {
-          Notifications.error('Не удалось получить историю боев', err.error);
-        } else {
-          // parse data
-          for (var i = 0; i < data.length; i++) {
-            historyBattles.push(data[i]);
-          }
-          // load additional record
-          if (itemId) {
-            loadHistoryBattle(itemId);
-          }
-        }
-      });
-    } else if (itemId) {
-      // load additional record
-      loadHistoryBattle(itemId);
-    }
-  });
-});
-
-Template.earthHistory.onDestroyed(function() {
-  historyPage = null;
-});
-
-Template.earthHistory.helpers({
-  isLoading: function() { return isHistoryLoading.get(); },
-  countTotal: function() { return Game.Statistic.getSystemValue('battle.total'); },
-  countPerPage: function() { return historyCountPerPage; },
-  battle: function() { return historyBattle.get(); },
-  battles: function() { return historyBattles.list(); }
-});
-
-Template.earthHistoryItem.helpers({
-  currentPage: function() {
-    return Router.current().params.page;
-  },
-
-  getArmyInfo: function(units, rest) {
-    const result = [];
-    const wasBattle = (this.battle.result === undefined) ? false : true;
-
-    _(units).pairs().forEach(([id, countStart]) => {
-      const unit = unitItems[id];
-      if (_.isString(countStart)) {
-        countStart = game.Battle.count[countStart];
-      }
-
-      if (countStart <= 0) {
-        return;
-      }
-
-      let countAfter = 0;
-      if (rest
-       && rest[id]
-      ) {
-        countAfter = rest[id];
-      }
-
-      result.push({
-        title: unit.title,
-        order: unit.order,
-        start: countStart,
-        end: wasBattle ? countAfter : countStart,
-      });
-    });
-
-    result = _.sortBy(result, function(item) { return item.order; });
-
-    return result.length > 0 ? result : null;
-  }
-});
-
-Template.earthHistory.events({
-  'click tr:not(.header)': function(e, t) {
-    var page = Router.current().params.page;
-    var id = $(e.currentTarget).attr('data-id');
-    if (id) {
-      Router.go('earthHistory', { group: 'earth', page: page }, { hash: id });
-    }
-  }
-});
 
 // ----------------------------------------------------------------------------
 // Zone popup
@@ -175,9 +41,9 @@ Game.Earth.showZonePopup = function(name, latlng) {
   if (!mapView || !zoneViews[name]) {
     return;
   }
-  
+
   Game.Earth.hideZonePopup();
-  
+
   var zoom = new ReactiveVar( mapView.getZoom() );
   mapView.on('zoomend', function(e) {
     zoom.set( mapView.getZoom() );
@@ -381,11 +247,11 @@ var ZoneView = function(mapView, zoneData) {
       element.on('mouseover', function (e) {
         polygon.setStyle( hoverStyle );
       });
-  
+
       element.on('mouseout', function (e) {
         polygon.setStyle( regularStyle );
       });
-      
+
       element.on('click', this.showPopup.bind(this));
 
       element.removeClass('earth-marker-battle');

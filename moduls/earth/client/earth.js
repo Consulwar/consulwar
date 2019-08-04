@@ -1,6 +1,7 @@
 import { Blaze } from 'meteor/blaze';
 import unitItems from '/imports/content/Unit/client';
 import EarthInfo from '/imports/client/ui/blocks/Earth/Info/EarthInfo';
+import SpaceHistory from '/imports/client/ui/blocks/Space/History/SpaceHistory';
 
 initEarthClient = function() {
 'use strict';
@@ -29,7 +30,11 @@ var historyPage = null;
 var historyCountPerPage = 20;
 
 Game.Earth.showHistory = function() {
-  Router.current().render('earthHistory', { to: 'content' });
+  Game.Popup.show({
+    template: SpaceHistory.renderComponent(),
+    data: { isEarth: true },
+    hideClose: true,
+  });
 };
 
 var loadHistoryBattle = function(itemId) {

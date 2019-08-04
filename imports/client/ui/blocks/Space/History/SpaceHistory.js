@@ -31,11 +31,8 @@ class SpaceHistory extends BlazeComponent {
     this.isLoadingBattle = new ReactiveVar(true);
 
     this.itemsPerPage = 10;
-    this.pagesTotal = new ReactiveVar();
+    this.pagesTotal = new ReactiveVar(1);
     this.currentPage = new ReactiveVar(1);
-
-    const countTotalBattles = Game.Statistic.getUserValue('battle.total');
-    this.pagesTotal.set(Math.floor(countTotalBattles / this.itemsPerPage));
 
     this.autorun(() => {
       this.getHistory();
@@ -60,8 +57,9 @@ class SpaceHistory extends BlazeComponent {
       'battle.getPage',
       this.currentPage.get(),
       this.itemsPerPage,
-      false,
-      (err, battles) => {
+      this.data().isEarth,
+      (err, { battles, totalCount }) => {
+        this.pagesTotal.set(Math.floor(totalCount / this.itemsPerPage));
         this.isLoading.set(false);
         if (err) {
           Notifications.error('Не удалось получить историю боёв', err.error);

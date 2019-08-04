@@ -5,9 +5,10 @@ import User from '/imports/modules/User/server/User';
 import BattleCollection from '../lib/imports/collection';
 
 Meteor.methods({
-  'battle.getPage'(page, count) {
+  'battle.getPage'(page, count, isEarth) {
     check(page, Match.Integer);
     check(count, Match.Integer);
+    check(isEarth, Boolean);
 
     const user = User.getById();
     User.checkAuth({ user });
@@ -18,13 +19,15 @@ Meteor.methods({
       throw new Meteor.Error('Много будешь знать – скоро состаришься');
     }
 
-    return BattleCollection.find({
+    const cursor = BattleCollection.find({
       userNames: user.username,
+      'options.isEarth': (isEarth ? true : null),
     }, {
       sort: { timeStart: -1 },
       skip: (page > 0) ? (page - 1) * count : 0,
       limit: count,
-    }).fetch();
+    });
+    return { battles: cursor.fetch(), totalCount: cursor.count() };
   },
 
   'battle.getById'(id) {

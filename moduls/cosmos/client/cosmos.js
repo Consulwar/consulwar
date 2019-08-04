@@ -170,6 +170,7 @@ Game.Cosmos.showPage = function() {
 Game.Cosmos.showHistory = function() {
   Game.Popup.show({
     template: SpaceHistory.renderComponent(),
+    data: { isEarth: false },
     hideClose: true,
   });
 }

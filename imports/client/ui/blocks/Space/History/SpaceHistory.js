@@ -28,14 +28,10 @@ class SpaceHistory extends BlazeComponent {
     this.historyBattles = new ReactiveArray();
     this.currentBattle = new ReactiveVar();
     this.isLoading = new ReactiveVar(true);
-    this.isLoadingBattle = new ReactiveVar(true);
 
     this.itemsPerPage = 10;
-    this.pagesTotal = new ReactiveVar();
+    this.pagesTotal = new ReactiveVar(1);
     this.currentPage = new ReactiveVar(1);
-
-    const countTotalBattles = Game.Statistic.getUserValue('battle.total');
-    this.pagesTotal.set(Math.floor(countTotalBattles / this.itemsPerPage));
 
     this.autorun(() => {
       this.getHistory();
@@ -60,8 +56,9 @@ class SpaceHistory extends BlazeComponent {
       'battle.getPage',
       this.currentPage.get(),
       this.itemsPerPage,
-      false,
-      (err, battles) => {
+      this.data().isEarth,
+      (err, { battles, totalCount }) => {
+        this.pagesTotal.set(Math.floor(totalCount / this.itemsPerPage));
         this.isLoading.set(false);
         if (err) {
           Notifications.error('Не удалось получить историю боёв', err.error);
@@ -76,9 +73,6 @@ class SpaceHistory extends BlazeComponent {
   }
 
   loadBattle(event, itemId) {
-    if (!itemId) {
-      return;
-    }
     if (
       this.currentBattle.get()
       && itemId === this.currentBattle.get().id
@@ -87,35 +81,13 @@ class SpaceHistory extends BlazeComponent {
       return;
     }
     // try to get record from cache
-    let isFound = false;
     for (let i = 0; i < this.historyBattles.length; i += 1) {
       if (this.historyBattles[i].id === itemId) {
-        isFound = true;
         this.currentBattle.set(this.historyBattles[i]);
-        this.isLoadingBattle.set(false);
-        break;
+        return;
       }
     }
-
-    // not found, then load from server
-    if (!isFound) {
-      this.isLoadingBattle.set(true);
-      Meteor.call(
-        'battleHistory.getById',
-        itemId,
-        (err, data) => {
-          this.isLoadingBattle.set(false);
-          if (err) {
-            Notifications.error(
-              'Не удалось получить информацию о бое',
-              err.error,
-            );
-          } else {
-            this.currentBattle.set(this.getBattleInfo(data));
-          }
-        },
-      );
-    }
+    Notifications.error('Не удалось получить информацию о бое');
   }
 
   getBattleInfo(battle) {

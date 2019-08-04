@@ -48,17 +48,17 @@
   background-repeat no-repeat
   border 0px solid transparent
   border-radius 9px
-  
+
   &:hover
     background-image url(/img/game/cosmomap/button_home_active.png)
 
 
 .reptiles
   color $color-honor
-  
+
 .humans
   color $color-ggk
-  
+
 .attack-menu .fleet
   cursor pointer
 
@@ -127,7 +127,7 @@
     +media(null, $cw--size_l)
       margin-top 45px
       order 1
-    
+
     a.planet
       &.empty
         -webkit-filter grayscale(1)
@@ -146,16 +146,16 @@
       &.disabled
         -webkit-filter grayscale(0.5) brightness(0.3)
         filter grayscale(0.5) brightness(0.3)
-      
+
     .home
       color $color-ggk
-      
+
     .locked
       color #4a4a4a
-      
+
     .active
       color #e9a844
-      
+
   .departure
     display flex
     flex-wrap wrap
@@ -202,15 +202,15 @@
 
       &.active
         outline 2px solid $color-metal
-        
+
       &.noPremium
         -webkit-filter grayscale(1) brightness(0.6)
         filter grayscale(1) brightness(0.6)
-      
+
       img
         width 26px
         height 26px
-        
+
       span
         position relative
         display flex
@@ -223,7 +223,7 @@
         align-items center
         overflow hidden
         background-color #232323
-        
+
       .edit
         position absolute
         right 3px
@@ -236,10 +236,10 @@
         background-repeat no-repeat
         background-color transparent
         border none
-        
+
         &:hover
           background-image url(/img/game/edit_a.png)
-    
+
     .control
       display flex
       flex-direction column
@@ -259,8 +259,8 @@
       &.active
         -webkit-filter none
         filter none
-      
-      
+
+
       button
         width 26px
         height 26px
@@ -270,12 +270,12 @@
 
       .save
         background-image url(/img/game/cosmomap/save.png)
-        
+
       .link
         -webkit-filter grayscale(1) brightness(0.6)
         filter grayscale(1) brightness(0.6)
         background-image url(/img/game/cosmomap/link.png)
-        
+
       .remove
         background-image url(/img/game/cosmomap/remove.png)
 
@@ -295,11 +295,11 @@
       text-align left
       font-weight bold
       font-size 18px
-      
+
       li
         position relative
         display block
-      
+
     p 
       font-weight normal
       color $color-metal
@@ -307,10 +307,10 @@
       padding 10px
       margin auto
       width 100%
-      
+
     span
       color $color-white
-    
+
 
 .btn-history
 .btn-selection
@@ -329,144 +329,16 @@
   background-color #000000
   border 2px solid #80BAEC
   color #80BAEC
-  
+
 .btn-history
   left 10px
-  
+
 .btn-selection
   left 200px
 
 .btn-mutual-space
   left 380px
 
-
-.btn-back
-  display block
-  position absolute
-  z-index 4
-  left 640px
-  bottom 0px
-  width 164px
-  height 34px
-  cursor pointer
-  color #ffffff
-  background-image url(/img/game/earth/btn_close.png)
-  background-repeat no-repeat
-  background-position 0px 0px
-  &:hover
-    background-position 0px -34px
-
-.history-item
-  display flex
-  position absolute
-  z-index 3
-  width 100%
-  height 100%
-  font-weight bold
-  font-size 16px
-  background-size 100% 100%
-  background-repeat no-repeat
-  background-image url(/img/game/cosmomap/back_history.jpg)
-  
-  .result
-    margin-top 10px
-    width 100%
-    font-size 18px
-    text-align center
-    text-transform uppercase
-    
-    &.tie
-      color #E4E4E4
-      
-    &.victory
-      color #CEF861
-      
-    &.defeat
-      color #FB6153
-
-  .user-army
-    position absolute
-    top 0px
-    left 0px
-    text-align left
-    background-repeat no-repeat
-    background-image url(/img/game/cosmomap/ico_humans.png)
-    background-position 90px 5px
-    
-    p
-      padding-top 10px
-      padding-left 150px
-      
-    tr
-      &:not(.header)
-        background -moz-linear-gradient(left,  rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0) 100%)
-        background -webkit-linear-gradient(left,  rgba(0,0,0,0.8) 0%,rgba(0,0,0,0.8) 50%,rgba(0,0,0,0) 100%)
-        background linear-gradient(to right,  rgba(0,0,0,0.8) 0%,rgba(0,0,0,0.8) 50%,rgba(0,0,0,0) 100%)
-
-  .enemy-army
-    position absolute
-    top 0px
-    right 0px
-    text-align right
-    background-repeat no-repeat
-    background-image url(/img/game/cosmomap/ico_rept.png)
-    background-position 270px 5px
-    
-    p
-      padding-top 10px
-      padding-right 150px
-      
-    tr
-      &:not(.header)
-        background -moz-linear-gradient(left,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.8) 100%)
-        background -webkit-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 50%,rgba(0,0,0,0.8) 100%)
-        background linear-gradient(to right,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 50%,rgba(0,0,0,0.8) 100%)
-        
-  table
-    width 400px
-    border-collapse collapse
-  
-    tr
-      display block
-      margin-top 4px
-      
-    td
-      padding 5px
-    
-    .name
-      width 150px
-      
-    .count
-      width 125px
-      
-  .resources,
-  .artefacts,
-  .cards
-    position relative
-    display flex
-    left 450px
-    width 570px
-    height 95px
-    margin-top 5px
-    padding-top 10px
-    text-align center
-    background -moz-linear-gradient(left,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,0) 100%)
-    background -webkit-linear-gradient(left,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,0) 100%)
-    background linear-gradient(to right,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,0) 100%)
-  
-  .resources
-    margin-top 22px
-
-  .artefacts
-    li
-      display inline-block
-      width 120px
-      height 20px
-      padding-top 70px
-      background-repeat no-repeat
-      background-position top center
-      text-align center
-      vertical-align top
 
 .cw--CosmosAttackMenu__planet
   width 60px

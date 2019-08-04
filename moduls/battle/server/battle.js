@@ -21,6 +21,11 @@ Collection._ensureIndex({
   status: 1,
 });
 
+Collection._ensureIndex({
+  userNames: 1,
+  'options.isEarth': 1,
+});
+
 Meteor.publish('battles', function () {
   if (this.userId) {
     const user = User.getById({ userId: this.userId });

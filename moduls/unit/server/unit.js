@@ -224,62 +224,6 @@ Game.Unit.calculateBaseArmyCost = function(army) {
   return cost;
 };
 
-// ----------------------------------------------------------------------------
-// Battle
-// ----------------------------------------------------------------------------
-
-Game.BattleHistory = {
-  Collection: new Meteor.Collection('battleHistory')
-};
-
-Game.BattleHistory.Collection._ensureIndex({
-  user_id: 1
-});
-
-Game.BattleHistory.Collection._ensureIndex({
-  user_id: 1,
-  timestamp: -1
-});
-
-Game.BattleHistory.add = function(userArmy, enemyArmy, options, battleResults) {
-  var history = {
-    user_id: options.isEarth ? 'earth' : Meteor.userId(),
-    timestamp: options.timestamp ? options.timestamp : Game.getCurrentTime(),
-    moveType: options.moveType,
-    location: options.location,
-    userLocation: options.userLocation,
-    userArmy: userArmy,
-    enemyLocation: options.enemyLocation,
-    enemyArmy: enemyArmy
-  };
-
-  if (battleResults) {
-    history.result = battleResults.result;
-    history.userArmyRest = battleResults.userArmy;
-    history.enemyArmyRest = battleResults.enemyArmy;
-    if (battleResults.reward) {
-      history.reward = battleResults.reward;
-    }
-    if (battleResults.artefacts) {
-      history.artefacts = battleResults.artefacts;
-    }
-    if (battleResults.cards) {
-      history.cards = battleResults.cards;
-    }
-  }
-  
-  return Game.BattleHistory.Collection.insert(history);
-};
-
-Game.BattleHistory.set = function(id, set) {
-  Game.BattleHistory.Collection.update({
-    _id: id,
-    user_id: Meteor.userId()
-  }, {
-    $set: set
-  });
-};
-
 Meteor.publish('units', function () {
   if (this.userId) {
     return Game.Unit.Collection.find({user_id: this.userId});

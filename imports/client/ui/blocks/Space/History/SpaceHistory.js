@@ -136,7 +136,9 @@ class SpaceHistory extends BlazeComponent {
     const currentUsersUnits = battle.currentUnits[Battle.USER_SIDE];
     // Parsing users
     _.keys(battleUsersUnits).forEach((userName) => {
-      const userObj = {};
+      const userObj = {
+        power: battle.armyPowers[userName],
+      };
 
       // adding current user reward to userObject
       if (battle.reward && !_.isEmpty(battle.reward[userName])) {

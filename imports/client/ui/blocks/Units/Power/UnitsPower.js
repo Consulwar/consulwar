@@ -13,15 +13,19 @@ class UnitsPower extends BlazeComponent {
     hash: {
       units,
       className,
+      rawPower,
     },
   }) {
     super();
 
     this.className = className;
     this.units = units;
+    this.rawPower = rawPower;
   }
 
   getPower() {
+    if (this.rawPower) return this.rawPower;
+
     const units = _.reduce(this.units, (result, unitCount, id) => {
       const fleet = result;
       let count = unitCount;

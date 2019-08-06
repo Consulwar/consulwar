@@ -111,6 +111,10 @@ class SpaceHistoryBattle extends BlazeComponent {
     return resultUnits;
   }
 
+  getUserPower() {
+    return this.battle.users[this.user.get()].power;
+  }
+
   getRawUnits(unitsType) {
     // for calculate Power
     let units;

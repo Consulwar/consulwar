@@ -89,7 +89,7 @@
             >
               {{user.get}}
               {{> UnitsPower args
-                units=(getRawUnits 'userUnits')
+                rawPower=(getUserPower)
                 className='cw--SpaceHistoryBattle__fleetPower'
               }}
             </div>

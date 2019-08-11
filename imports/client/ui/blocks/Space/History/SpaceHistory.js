@@ -132,11 +132,11 @@ class SpaceHistory extends BlazeComponent {
     // Parsing army
     result.users = {};
 
-    const battleUsersUnits = battle.initialUnits[Battle.USER_SIDE];
-    const currentUsersUnits = battle.currentUnits[Battle.USER_SIDE];
     // Parsing users
-    _.keys(battleUsersUnits).forEach((userName) => {
-      const userObj = {};
+    Object.entries(battle.sides[Battle.USER_SIDE]).forEach(([userName, userData]) => {
+      const userObj = {
+        power: userData.power,
+      };
 
       // adding current user reward to userObject
       if (battle.reward && !_.isEmpty(battle.reward[userName])) {
@@ -156,18 +156,16 @@ class SpaceHistory extends BlazeComponent {
       const allUnitsEnd = {};
 
       // parsing userSquads
-      battleUsersUnits[userName].forEach((squad, i) => {
+      userData.groups.forEach((squad) => {
         const unitsStart = {};
         const unitsEnd = {};
-        _.toPairs(squad).forEach(([id, { count }]) => {
-          // getting count in the end of battle
-          const countEnd = currentUsersUnits[userName][i][id].count;
+        _.toPairs(squad).forEach(([id, unit]) => {
           // adding unit counters to current squad
-          unitsStart[id] = count;
-          unitsEnd[id] = countEnd;
+          unitsStart[id] = unit.initial;
+          unitsEnd[id] = unit.current;
           // adding unit counters to all user units
-          allUnitsStart[id] = (allUnitsStart[id] || 0) + count;
-          allUnitsEnd[id] = (allUnitsEnd[id] || 0) + countEnd;
+          allUnitsStart[id] = (allUnitsStart[id] || 0) + unit.initial;
+          allUnitsEnd[id] = (allUnitsEnd[id] || 0) + unit.current;
 
           // Lost Units is NEGATIVE number
           const lostUnits = unitsEnd[id] - unitsStart[id];
@@ -201,29 +199,23 @@ class SpaceHistory extends BlazeComponent {
 
     // parsing Enemy Units
     const enemyUnits = {};
+    const enemyUnitsLeft = {};
     const enemySquads = [];
-    battle.initialUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
+    const enemySquadsLeft = [];
+    battle.sides[Battle.ENEMY_SIDE].ai.groups.forEach((group) => {
       const squad = {};
-      _.toPairs(units).forEach(([id, { count }]) => {
-        squad[id] = count;
-        enemyUnits[id] = (enemyUnits[id] || 0) + count;
+      const squadLeft = {};
+      _.toPairs(group).forEach(([id, unit]) => {
+        squad[id] = unit.initial;
+        squadLeft[id] = unit.current;
+        enemyUnits[id] = (enemyUnits[id] || 0) + unit.initial;
+        enemyUnitsLeft[id] = (enemyUnitsLeft[id] || 0) + unit.current;
       });
       enemySquads.push(squad);
-    });
-
-    const enemyUnitsLeft = {};
-    const enemySquadsLeft = [];
-    battle.currentUnits[Battle.ENEMY_SIDE].ai.forEach((units) => {
-      const squad = {};
-      _.toPairs(units).forEach(([id, { count }]) => {
-        squad[id] = count;
-        enemyUnitsLeft[id] = (enemyUnitsLeft[id] || 0) + count;
-      });
-      enemySquadsLeft.push(squad);
+      enemySquadsLeft.push(squadLeft);
     });
 
     result.enemyUnits = this.getArmyInfo(enemyUnits, enemyUnitsLeft);
-
 
     // Count summary resource profit
     const { lostUnitsPrice } = result.users[this.mainUserName];
@@ -243,7 +235,7 @@ class SpaceHistory extends BlazeComponent {
       });
     }
 
-    result.isBattle1x1 = Battle.isBattle1x1(battle);
+    result.isBattle1x1 = battle.isBattle1x1;
 
     return result;
   }

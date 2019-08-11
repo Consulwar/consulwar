@@ -31,5 +31,9 @@ export default {
         cleancredit: 3,
       },
     },
+    tamsps: {
+      isUnique: true,
+      comment: 'будет доступен 22.08.2019',
+    },
   },
 };

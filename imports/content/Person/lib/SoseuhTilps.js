@@ -11,7 +11,6 @@ export default {
     },
     tilpsds: {
       isUnique: true,
-      comment: 'будет доступен 21.07.2019',
     },
   },
 };

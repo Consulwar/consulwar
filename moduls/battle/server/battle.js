@@ -14,6 +14,7 @@ const {
   Status,
   USER_SIDE,
   ENEMY_SIDE,
+  aiName,
 } = Lib;
 
 Collection._ensureIndex({
@@ -455,7 +456,7 @@ class Battle {
 Battle.Status = Status;
 Battle.USER_SIDE = USER_SIDE;
 Battle.ENEMY_SIDE = ENEMY_SIDE;
-Battle.aiName = 'ai';
+Battle.aiName = aiName;
 
 const calculateTotalPower = function(armyPowers) {
   let totalPower = 0;

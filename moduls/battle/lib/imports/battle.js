@@ -6,6 +6,8 @@ const Status = {
 const USER_SIDE = '1';
 const ENEMY_SIDE = '2';
 
+const aiName = 'ai';
+
 const isBattle1x1 = function(battle) {
   return !(_(battle.initialUnits)
     .values()
@@ -22,4 +24,5 @@ export default {
   USER_SIDE,
   ENEMY_SIDE,
   isBattle1x1,
+  aiName,
 };

@@ -16,7 +16,7 @@ var selectedUserName;
 var lastPageNumber;
 var users = [];
 var countTotal;
-var laststatisticGroup;
+var lastStatisticGroup;
 var selectedUser;
 
 Game.Rating = {};
@@ -34,13 +34,13 @@ Game.Rating.showPage = function() {
   var hash = this.getParams().hash && decodeURIComponent(this.getParams().hash).split('/');
   var detailStatisticTab;
 
-  if (hash && (hash[0] != selectedUserName || statisticGroup != laststatisticGroup) && pageNumber) {
+  if (hash && (hash[0] != selectedUserName || statisticGroup != lastStatisticGroup) && pageNumber) {
     selectedUserName = hash[0];
     renderConsulInfo.call(this, selectedUserName, pageNumber, statisticGroup);
   }
 
   if (hash && statisticGroup && pageNumber) {
-    if (statisticGroup == laststatisticGroup) {
+    if (statisticGroup == lastStatisticGroup) {
       renderRating.call(this, selectedUserName, countPerPage, countTotal, users, statisticGroup);
     }
 
@@ -68,7 +68,7 @@ Game.Rating.showPage = function() {
   } else {
     this.render('empty', { to: 'detailStatistic' });
   }
-  var pageChanged = (pageNumber != lastPageNumber || statisticGroup != laststatisticGroup);
+  var pageChanged = (pageNumber != lastPageNumber || statisticGroup != lastStatisticGroup);
   if (pageChanged && pageNumber && statisticGroup) {
     isLoading.set(true);
     // show required page
@@ -91,7 +91,7 @@ Game.Rating.showPage = function() {
           }
         }
 
-        if (selectedUserName && !selectedUserContain && (!selectedUser || statisticGroup != laststatisticGroup)) {
+        if (selectedUserName && !selectedUserContain && (!selectedUser || statisticGroup != lastStatisticGroup)) {
           Game.Statistic.redirectToUser({
             userName: selectedUserName, 
             detailStatisticTab: detailStatisticTab, 
@@ -103,7 +103,7 @@ Game.Rating.showPage = function() {
 
         renderRating.call(self, selectedUserName, countPerPage, countTotal, users, statisticGroup);
 
-        laststatisticGroup = statisticGroup;
+        lastStatisticGroup = statisticGroup;
         lastPageNumber = pageNumber;
       }
     });
@@ -210,7 +210,7 @@ Game.Statistic.redirectToUser = function(options) {
     return options.userName == user.username; 
   });
 
-  if (user && options.statisticGroup == laststatisticGroup && options.lastPageNumber) {
+  if (user && options.statisticGroup == lastStatisticGroup && options.lastPageNumber) {
     Router.go(
       'statistics',
       { page: options.lastPageNumber, group: options.statisticGroup },

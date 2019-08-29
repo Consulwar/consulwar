@@ -62,7 +62,6 @@ Game.Rating.showPage = function() {
           renderDetailStatistic.call(self, selectedUserName, detailStatisticTab, detailStatisticData);
         }
       });
-      detailStatisticTab = 'development';
     } else {
       this.render('empty', { to: 'detailStatistic' });
     }
@@ -252,6 +251,9 @@ Game.Statistic.redirectToUser = function(options) {
 Template.developmentDetailStatisticPage.helpers({
   humanSpaceUnits,
   humanDefenseUnits,
+});
+
+Template.battleDetailStatisticPage.helpers({
   humanGroundUnits,
   reptileSpaceUnits,
 });

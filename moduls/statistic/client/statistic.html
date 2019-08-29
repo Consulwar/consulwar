@@ -250,13 +250,23 @@
     
     {{#each items}}
       <tr>
-        <td>{{this.name}}</td>
+        <td>
+          {{#if this.name}}
+            {{this.name}}
+          {{else}}
+            {{this.title}}
+          {{/if}}
+        </td>
         {{#each ../columns}}
           <td>
             {{#if field}}
               {{or (formatNumberWithISO (lookup this.data (../engName) field)) 0}}
             {{else}}
-              {{or (formatNumberWithISO (lookup this.data (../engName))) 0}}
+              {{#if or (eq ../type 'unit') (eq ../type 'reptileUnit')}}
+                {{or (formatNumberWithISO (lookup this.data (../id))) 0}}
+              {{else}}
+                {{or (formatNumberWithISO (lookup this.data (../engName))) 0}}
+              {{/if}}
             {{/if}}
           </td>
         {{/each}}
@@ -381,11 +391,11 @@
     columns=(makeArray
       (makeObject 
         title="Построено"
-        data=this.data.units.build.army.fleet
+        data=this.data.units.build
       )
       (makeObject 
         title="Потеряно"
-        data=this.data.units.lost.army.fleet
+        data=this.data.units.lost
       )
     )
     items=(toArray humanSpaceUnits)
@@ -396,11 +406,11 @@
     columns=(makeArray
       (makeObject 
         title="Построено"
-        data=this.data.units.build.army.defense
+        data=this.data.units.build
       )
       (makeObject 
         title="Потеряно"
-        data=this.data.units.lost.army.defense
+        data=this.data.units.lost
       )
     )
     items=(toArray humanDefenseUnits)
@@ -413,15 +423,15 @@
     columns=(makeArray
       (makeObject 
         title="Построено"
-        data=this.data.units.build.army.ground
+        data=this.data.units.build
       )
       (makeObject 
         title="Отправлено"
-        data=this.data.reinforcements.sent.army.ground
+        data=this.data.reinforcements.sent
       )
       (makeObject 
         title="Долетело"
-        data=this.data.reinforcements.arrived.army.ground
+        data=this.data.reinforcements.arrived
       )
     )
     items=(toArray humanGroundUnits)
@@ -432,7 +442,7 @@
     columns=(makeArray
       (makeObject 
         title="Уничтожено"
-        data=this.data.reptiles.killed.reptiles.fleet
+        data=this.data.reptiles.killed
       )
     )
     items=(toArray reptileSpaceUnits)

@@ -33,7 +33,6 @@ export default {
     },
     tamsps: {
       isUnique: true,
-      comment: 'будет доступен 22.08.2019',
     },
   },
 };

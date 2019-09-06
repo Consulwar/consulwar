@@ -5,6 +5,7 @@ import LeprechaunKiller from './LeprechaunKiller';
 import CarryingLight from './CarryingLight';
 import ColdBlooded from './ColdBlooded';
 import Thorns from './Thorns';
+import Hurricane from './Hurricane';
 
 export default {
   'Achievement/Space/PirateRaid': PirateRaid,
@@ -14,4 +15,5 @@ export default {
   'Achievement/Space/CarryingLight': CarryingLight,
   'Achievement/Space/ColdBlooded': ColdBlooded,
   'Achievement/Space/Thorns': Thorns,
+  'Achievement/Space/Hurricane': Hurricane,
 };

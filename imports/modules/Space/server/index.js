@@ -81,7 +81,10 @@ Meteor.publish('globalSpaceEvents', function() {
 
   if (this.userId) {
     return Space.collection.find({
-      'data.mission.type': 'prisoners',
+      $or: [
+        { 'data.global': true },
+        { 'data.mission.type': 'prisoners' },
+      ],
       status: Space.filterActive,
     }, {
       fields: {

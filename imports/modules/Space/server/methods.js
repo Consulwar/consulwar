@@ -165,6 +165,10 @@ Meteor.methods({
       armyId: newArmyId,
     };
 
+    if (enemyShip.data.mission.type === 'prisoners') {
+      flightData.global = true;
+    }
+
     if (fromGalaxy) {
       const fromHex = new Hex(fromGalaxy);
       flightData.hex = fromHex;
@@ -227,6 +231,10 @@ Meteor.methods({
         x: battleEvent.data.targetPosition.x,
         y: battleEvent.data.targetPosition.y,
       };
+
+      if (battleEvent.data.mission && battleEvent.data.mission.type === 'prisoners') {
+        target.global = true;
+      }
 
       ({ targetHex } = battleEvent.data);
     } else {
@@ -325,6 +333,10 @@ Meteor.methods({
       isOneway,
       armyId: newArmyId,
     };
+
+    if (target.global) {
+      flightData.global = true;
+    }
 
     if (fromGalaxy) {
       flightData.hex = new Hex(fromGalaxy);

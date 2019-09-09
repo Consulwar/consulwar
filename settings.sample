@@ -168,6 +168,10 @@
   "space": {
     "enemyRespawnPeriod": 120,
     "tradeFleetPeriod": 120,
+    "prisonersFleet": {
+      "schedule": "every 1 hour",
+      "engineLevel": 80
+    },
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
     "funPeriod": 86400,

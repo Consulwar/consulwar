@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
+import { SyncedCron } from 'meteor/percolate:synced-cron';
 import Game from '/moduls/game/lib/main.game';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import Space from '../lib/space';
@@ -84,6 +85,37 @@ const spawnTradeFleet = function(hand, segment) {
 
     FlightEvents.add(flightData);
   }
+};
+
+const spawnPrisonersFleet = function() {
+  const [first, second] = mutualSpaceCollection.aggregate([
+    { $match: { username: { $exists: true, $eq: null } } },
+    { $sample: { size: 2 } },
+  ]);
+
+  const startPosition = (new Hex(first)).center();
+  const targetPosition = (new Hex(second)).center();
+
+  const { engineLevel } = Meteor.settings.space.prisonersFleet;
+  const flyTime = Utils.calcFlyTime(startPosition, targetPosition, engineLevel);
+
+  const flightData = {
+    targetType: FlightEvents.TARGET.SHIP,
+    startPosition: { x: 0, y: 0 },
+    targetPosition: { x: 0, y: 0 },
+    flyTime,
+    isHumans: false,
+    isOneway: true,
+    engineLevel,
+    mission: {
+      type: 'prisoners',
+      level: 1,
+    },
+    hex: { x: first.x, z: first.z },
+    targetHex: { x: second.x, z: second.z },
+  };
+
+  FlightEvents.add(flightData);
 };
 
 const actualizeTradeFleets = function() {
@@ -185,6 +217,23 @@ const actualizeTradeFleets = function() {
   });
 };
 
+const getSourceMissionPlanet = function() {
+  // find available start planets
+  const planets = Game.Planets.getAll().fetch();
+
+  const result = planets.filter(planet => planet.mission && !planet.isHome);
+
+  if (result.length > 0) {
+    // choose start planet
+    const rand = Game.Random.interval(0, result.length - 1);
+    const startPlanet = result[rand];
+
+    return startPlanet;
+  }
+
+  return null;
+}
+
 const sendReptileFleetToPlanet = function({
   planetId,
   targetPlanet = Game.Planets.getOne(planetId),
@@ -193,65 +242,53 @@ const sendReptileFleetToPlanet = function({
       ? Game.Planets.getReptileAttackMission()
       : Game.Planets.generateMission(targetPlanet)
   ),
+  startPlanet = getSourceMissionPlanet(),
 }) {
   if (!mission) {
     throw new Meteor.Error('Не получилось сгенерировать миссию для нападения');
   }
 
-  // find available start planets
-  const planets = Game.Planets.getAll().fetch();
-  let n = planets.length;
-
-  while (n > 0) {
-    n -= 1;
-    if (!planets[n].mission || planets[n].isHome) {
-      planets.splice(n, 1);
-    }
+  if (!startPlanet) {
+    return;
   }
 
-  if (planets.length > 0) {
-    // choose start planet
-    const rand = Game.Random.interval(0, planets.length - 1);
-    const startPlanet = planets[rand];
+  // send ship
+  const startPosition = {
+    x: startPlanet.x,
+    y: startPlanet.y,
+  };
 
-    // send ship
-    const startPosition = {
-      x: startPlanet.x,
-      y: startPlanet.y,
-    };
+  const targetPosition = {
+    x: targetPlanet.x,
+    y: targetPlanet.y,
+  };
 
-    const targetPosition = {
-      x: targetPlanet.x,
-      y: targetPlanet.y,
-    };
+  const engineLevel = 0;
 
-    const engineLevel = 0;
+  const user = Meteor.user();
 
-    const user = Meteor.user();
+  const flightData = {
+    targetType: FlightEvents.TARGET.PLANET,
+    userId: user._id,
+    username: user.username,
+    startPosition,
+    startPlanetId: startPlanet._id,
+    targetPosition,
+    targetId: targetPlanet._id,
+    flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
+    isHumans: false,
+    isOneway: false,
+    engineLevel,
+    mission,
+  };
 
-    const flightData = {
-      targetType: FlightEvents.TARGET.PLANET,
-      userId: user._id,
-      username: user.username,
-      startPosition,
-      startPlanetId: startPlanet._id,
-      targetPosition,
-      targetId: targetPlanet._id,
-      flyTime: Utils.calcFlyTime(startPosition, targetPosition, engineLevel),
-      isHumans: false,
-      isOneway: false,
-      engineLevel,
-      mission,
-    };
-
-    const galaxy = mutualSpaceCollection.findOne({ username: user.username });
-    if (galaxy) {
-      flightData.hex = new Hex(galaxy);
-      flightData.targetHex = flightData.hex;
-    }
-
-    FlightEvents.add(flightData);
+  const galaxy = mutualSpaceCollection.findOne({ username: user.username });
+  if (galaxy) {
+    flightData.hex = new Hex(galaxy);
+    flightData.targetHex = flightData.hex;
   }
+
+  FlightEvents.add(flightData);
 };
 
 const actualize = function({ user }) {
@@ -355,6 +392,26 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
     });
   }
 };
+
+if (
+  !Meteor.settings.space.prisonersFleet
+  || !Meteor.settings.space.prisonersFleet.schedule
+  || !Meteor.settings.space.prisonersFleet.engineLevel
+) {
+  throw new Meteor.Error(
+    'Ошибка в настройках',
+    'Заданы не все настройки чистки задач (см. settings.sample space.prisonersFleetPeriod)',
+  );
+}
+if (Meteor.settings.last) {
+  SyncedCron.add({
+    name: 'Отправка флота с заключенными',
+    schedule: parser => parser.text(Meteor.settings.space.prisonersFleet.schedule),
+    job() {
+      spawnPrisonersFleet();
+    },
+  });
+}
 
 export default {
   spawnTradeFleet,

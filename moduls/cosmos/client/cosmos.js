@@ -1504,6 +1504,8 @@ const loadHexes = function() {
 
     showHexes({ user, hexes, visibleUsernames, visibleHexes });
 
+    Meteor.subscribe('globalSpaceEvents');
+
     isLoading.set(false);
   });
 };

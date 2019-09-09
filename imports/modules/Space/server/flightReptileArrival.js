@@ -11,6 +11,10 @@ import BattleEvents from './battleEvents';
 import Reptiles from './reptiles';
 
 export default function reptileArrival(data) {
+  if (!data.targetId) {
+    return;
+  }
+
   const planet = Game.Planets.getOne(data.targetId);
 
   const job = BattleEvents.findByPlanetId(planet._id);

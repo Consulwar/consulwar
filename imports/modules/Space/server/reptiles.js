@@ -111,8 +111,8 @@ const spawnPrisonersFleet = function() {
       type: 'prisoners',
       level: 1,
     },
-    hex: first,
-    targetHex: second,
+    hex: { x: first.x, z: first.z },
+    targetHex: { x: second.x, z: second.z },
   };
 
   FlightEvents.add(flightData);

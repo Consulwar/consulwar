@@ -309,6 +309,9 @@ class Battle {
     if (mission.reward) {
       totalReward.metals = mission.reward.metals;
       totalReward.crystals = mission.reward.crystals;
+      if (mission.reward.humans) {
+        totalReward.humans = mission.reward.humans;
+      }
     } else {
       const killedArmy = this.calculateTotalKilled(ENEMY_SIDE);
       const killedCost = Game.Unit.calculateBaseArmyCost(killedArmy);
@@ -325,6 +328,10 @@ class Battle {
       crystals: totalReward.crystals / totalPower,
     };
 
+    if (totalReward.humans) {
+      dividedReward.humans = totalReward.humans / totalPower;
+    }
+
     const inc = {};
 
     _(armyPowers).pairs().forEach(([username, armyPower]) => {
@@ -333,11 +340,18 @@ class Battle {
         crystals: Math.floor(dividedReward.crystals * armyPower),
       };
 
+      if (dividedReward.humans) {
+        reward.humans = Math.floor(dividedReward.humans * armyPower);
+      }
+
       const user = Meteor.users.findOne({ username });
       Game.Resources.add(reward, user._id);
 
       inc[`reward.${username}.metals`] = reward.metals;
       inc[`reward.${username}.crystals`] = reward.crystals;
+      if (dividedReward.humans) {
+        inc[`reward.${username}.humans`] = reward.humans;
+      }
     });
 
     const names = this.userNames;

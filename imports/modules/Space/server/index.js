@@ -60,6 +60,38 @@ Meteor.publish('mySpaceEvents', function() {
     return Space.collection.find({
       'data.userId': this.userId,
       status: Space.filterActive,
+    }, {
+      fields: {
+        type: 1,
+        data: 1,
+        status: 1,
+        created: 1,
+        repeated: 1,
+        after: 1,
+      },
+    });
+  }
+  return null;
+});
+
+Meteor.publish('globalSpaceEvents', function() {
+  if (Config.DISABLE_MERGEBOX) {
+    this.disableMergebox();
+  }
+
+  if (this.userId) {
+    return Space.collection.find({
+      'data.mission.type': 'prisoners',
+      status: Space.filterActive,
+    }, {
+      fields: {
+        type: 1,
+        data: 1,
+        status: 1,
+        created: 1,
+        repeated: 1,
+        after: 1,
+      },
     });
   }
   return null;

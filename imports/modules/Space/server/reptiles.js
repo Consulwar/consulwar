@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
+import { SyncedCron } from 'meteor/percolate:synced-cron';
 import Game from '/moduls/game/lib/main.game';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
 import Space from '../lib/space';
@@ -84,6 +85,37 @@ const spawnTradeFleet = function(hand, segment) {
 
     FlightEvents.add(flightData);
   }
+};
+
+const spawnPrisonersFleet = function() {
+  const [first, second] = mutualSpaceCollection.aggregate([
+    { $match: { username: { $exists: true, $eq: null } } },
+    { $sample: { size: 2 } },
+  ]);
+
+  const startPosition = (new Hex(first)).center();
+  const targetPosition = (new Hex(second)).center();
+
+  const { engineLevel } = Meteor.settings.space.prisonersFleet;
+  const flyTime = Utils.calcFlyTime(startPosition, targetPosition, engineLevel);
+
+  const flightData = {
+    targetType: FlightEvents.TARGET.SHIP,
+    startPosition: { x: 0, y: 0 },
+    targetPosition: { x: 0, y: 0 },
+    flyTime,
+    isHumans: false,
+    isOneway: true,
+    engineLevel,
+    mission: {
+      type: 'prisoners',
+      level: 1,
+    },
+    hex: first,
+    targetHex: second,
+  };
+
+  FlightEvents.add(flightData);
 };
 
 const actualizeTradeFleets = function() {
@@ -188,9 +220,8 @@ const actualizeTradeFleets = function() {
 const getSourceMissionPlanet = function() {
   // find available start planets
   const planets = Game.Planets.getAll().fetch();
-  let n = planets.length;
 
-  const result = planets.filter(planet => planets[n].mission && !planets[n].isHome);
+  const result = planets.filter(planet => planet.mission && !planet.isHome);
 
   if (result.length > 0) {
     // choose start planet
@@ -361,6 +392,26 @@ const stealUserResources = function({ enemyArmy, userId, battle }) {
     });
   }
 };
+
+if (
+  !Meteor.settings.space.prisonersFleet
+  || !Meteor.settings.space.prisonersFleet.schedule
+  || !Meteor.settings.space.prisonersFleet.engineLevel
+) {
+  throw new Meteor.Error(
+    'Ошибка в настройках',
+    'Заданы не все настройки чистки задач (см. settings.sample space.prisonersFleetPeriod)',
+  );
+}
+if (Meteor.settings.last) {
+  SyncedCron.add({
+    name: 'Отправка флота с заключенными',
+    schedule: parser => parser.text(Meteor.settings.space.prisonersFleet.schedule),
+    job() {
+      spawnPrisonersFleet();
+    },
+  });
+}
 
 export default {
   spawnTradeFleet,

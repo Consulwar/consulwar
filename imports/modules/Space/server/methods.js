@@ -100,13 +100,30 @@ Meteor.methods({
       k = 0;
     }
 
+    const enemyStartPosition = { ...enemyShip.data.startPosition };
+    const enemyTargetPosition = { ...enemyShip.data.targetPosition };
+
+    if (enemyShip.data.mission.type === 'prisoners') {
+      if (enemyShip.data.hex) {
+        const center = new Hex(enemyShip.data.hex).center();
+        enemyStartPosition.x += center.x;
+        enemyStartPosition.y += center.y;
+      }
+
+      if (enemyShip.data.targetHex) {
+        const targetHexCenter = new Hex(enemyShip.data.targetHex).center();
+        enemyTargetPosition.x += targetHexCenter.x;
+        enemyTargetPosition.y += targetHexCenter.y;
+      }
+    }
+
     const vector = {
-      x: enemyShip.data.targetPosition.x - enemyShip.data.startPosition.x,
-      y: enemyShip.data.targetPosition.y - enemyShip.data.startPosition.y,
+      x: enemyTargetPosition.x - enemyStartPosition.x,
+      y: enemyTargetPosition.y - enemyStartPosition.y,
     };
 
-    const targetX = enemyShip.data.startPosition.x + (vector.x * k);
-    const targetY = enemyShip.data.startPosition.y + (vector.y * k);
+    const targetX = enemyStartPosition.x + (vector.x * k);
+    const targetY = enemyStartPosition.y + (vector.y * k);
 
     const targetPosition = {
       x: targetX,
@@ -151,7 +168,11 @@ Meteor.methods({
     if (fromGalaxy) {
       const fromHex = new Hex(fromGalaxy);
       flightData.hex = fromHex;
-      flightData.targetHex = enemyShip.data.targetHex || fromHex;
+      flightData.targetHex = (
+        enemyShip.data.mission.type === 'prisoners'
+          ? { x: 0, z: 0 }
+          : enemyShip.data.targetHex || fromHex
+      );
     }
 
     FlightEvents.add(flightData);

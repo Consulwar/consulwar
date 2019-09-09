@@ -68,17 +68,12 @@ const reptilesWin = function({
   } else {
     // Продолжают прерванный боем полет
     const { reptileData } = data;
+    const { targetPosition } = reptileData;
     const startPosition = data.targetPosition;
-    const targetPlanet = Game.Planets.getOne(reptileData.targetId);
-    const targetPosition = {
-      x: targetPlanet.x,
-      y: targetPlanet.y,
-    };
 
     FlightEvents.add({
       ...reptileData,
       startPosition,
-      targetPosition,
       flyTime: Utils.calcFlyTime(startPosition, targetPosition, 1),
     });
   }

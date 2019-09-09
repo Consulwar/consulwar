@@ -143,8 +143,30 @@ class Ship {
 
       this.watchPlanet(planetId, planet.mission ? 'mission' : 'armyId');
     } else {
-      this.path = path;
+      let fromOffset = origin;
+      if (fleet.data.hex) {
+        fromOffset = new Hex(fleet.data.hex).center();
+      }
+      let toOffset = origin;
+      if (fleet.data.targetHex) {
+        toOffset = new Hex(fleet.data.targetHex).center();
+      } else if (fleet.data.hex) {
+        toOffset = fromOffset;
+      }
+
+      fleet.data.startPosition = {
+        x: fleet.data.startPosition.x + fromOffset.x,
+        y: fleet.data.startPosition.y + fromOffset.y,
+      };
+
+      fleet.data.targetPosition = {
+        x: fleet.data.targetPosition.x + toOffset.x,
+        y: fleet.data.targetPosition.y + toOffset.y,
+      };
+
       this.fleet = fleet;
+
+      this.path = path;
       const pos = getFleetAnimation({
         spaceEvent: fleet,
         maxSpeed: calcMaxSpeed(fleet.data.engineLevel),
@@ -156,6 +178,9 @@ class Ship {
       }, mapView, path);
 
       this.size = 0.4;
+      if (fleet.data.mission && fleet.data.mission.type === 'prisoners') {
+        this.size = 8;
+      }
       const offset = [0, 0];
       const latlngs = createTriangle(pos.lat, pos.lng, offset, this.size, pos.angleRad);
 
@@ -225,31 +250,13 @@ class Ship {
       this.autorun.stop();
     }
 
-    let fromOffset = this.origin;
-    if (this.fleet.data.hex) {
-      fromOffset = new Hex(this.fleet.data.hex).center();
-    }
-    let toOffset = this.origin;
-    if (this.fleet.data.targetHex) {
-      toOffset = new Hex(this.fleet.data.targetHex).center();
-    } else if (this.fleet.data.hex) {
-      toOffset = fromOffset;
-    }
-
     const maxSpeed = calcMaxSpeed(this.fleet.data.engineLevel);
     const acceleration = calcAcceleration(this.fleet.data.engineLevel);
 
-    const startPosition = {
-      x: this.fleet.data.startPosition.x + fromOffset.x,
-      y: this.fleet.data.startPosition.y + fromOffset.y,
-    };
-
-    const targetPosition = {
-      x: this.fleet.data.targetPosition.x + toOffset.x,
-      y: this.fleet.data.targetPosition.y + toOffset.y,
-    };
-
-    const totalFlyDistance = calcDistance(startPosition, targetPosition);
+    const totalFlyDistance = calcDistance(
+      this.fleet.data.startPosition,
+      this.fleet.data.targetPosition,
+    );
 
     this.autorun = Tracker.autorun(() => {
       const pos = getFleetAnimation({
@@ -284,6 +291,9 @@ class Ship {
 
   static getColor(fleetData, user, myAllies) {
     if (fleetData.mission) {
+      if (fleetData.mission.type === 'prisoners') {
+        return Config.colors.artefact;
+      }
       return Config.colors.enemy;
     }
 

@@ -1539,6 +1539,10 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
     } else if (myAllies.indexOf(hexInfo.username) !== -1) {
       color = Config.colors.ally;
       pane = 'hexesLayer2';
+    } else if(hexInfo.username === '✯ Совет Галактики ✯') {
+      color = Config.colors.council;
+      isClickable = false;
+      pane = 'hexesLayer4';
     } else {
       color = Config.colors.other;
       pane = 'hexesLayer3';
@@ -1552,6 +1556,10 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
       pane,
       interactive: isClickable,
     }).addTo(mapView);
+
+    if(hexInfo.username === '✯ Совет Галактики ✯') {
+      return;
+    }
 
     const center = hex.center();
 

@@ -7,6 +7,7 @@ import Space from '/imports/modules/Space/lib/space';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+import systemUser from '/moduls/user/server/systemUser';
 
 const {
   calcSegmentRandomPoints,
@@ -990,6 +991,10 @@ Meteor.methods({
 });
 
 Meteor.publish('planets', function(username) {
+  if (username === systemUser.username) {
+    return;
+  }
+
   if (Config.DISABLE_MERGEBOX) {
     this.disableMergebox(); 
   }

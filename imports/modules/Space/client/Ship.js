@@ -301,6 +301,8 @@ class Ship {
       return Config.colors.user;
     } else if (myAllies.indexOf(fleetData.username) !== -1) {
       return Config.colors.ally;
+    } else if (fleetData.username === '✯ Совет Галактики ✯') {
+      return Config.colors.council;
     }
 
     return Config.colors.other;

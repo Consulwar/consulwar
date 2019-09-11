@@ -66,9 +66,12 @@ Game.Quest = {
     FINISHED: 3
   },
 
-  getValue: function() {
+  getValue: function({
+    user,
+    userId = user ? user._id : Meteor.userId(),
+  } = {}) {
     return Game.Quest.Collection.findOne({
-      user_id: Meteor.userId()
+      user_id: userId,
     });
   },
 

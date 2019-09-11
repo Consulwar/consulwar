@@ -1,6 +1,7 @@
 import { HTTP } from 'meteor/http';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import './systemUser';
 
 Meteor.startup(function() {
 'use strict';

@@ -30,7 +30,7 @@ Game.House.defaultItems = {
 
 Game.House.initialize = function(user, isRewrite) {
   user = user || Meteor.user();
-  var currentValue = Game.House.getValue();
+  var currentValue = Game.House.getValue({ user });
 
   if (currentValue === undefined) {
     Game.House.Collection.insert({

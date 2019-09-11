@@ -329,7 +329,7 @@ Game.Resources.updateWithIncome = function(currentTime) {
 
 Game.Resources.initialize = function(user) {
   user = user || Meteor.user();
-  var currentValue = Game.Resources.getValue();
+  var currentValue = Game.Resources.getValue({ user });
 
   if (currentValue === undefined) {
     Game.Resources.Collection.insert({

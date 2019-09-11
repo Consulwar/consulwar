@@ -142,7 +142,7 @@ initQuestContent();
 
 Game.Quest.initialize = function(user, isRewrite) {
   user = user || Meteor.user();
-  var quests = Game.Quest.getValue();
+  var quests = Game.Quest.getValue({ user });
 
   if (quests === undefined) {
     Game.Quest.Collection.insert({

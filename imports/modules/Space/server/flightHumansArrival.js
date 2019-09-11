@@ -152,6 +152,10 @@ const completeOnPlanet = function(data) {
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
       Game.Unit.removeArmy(data.armyId, data.userId);
     } else {
+      if (data.username === '✯ Совет Галактики ✯') {
+        Game.Unit.removeArmy(data.armyId, data.userId);
+        return;
+      }
       completeOnPeacefulPlanet(data, planet);
     }
   }

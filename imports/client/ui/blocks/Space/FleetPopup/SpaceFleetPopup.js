@@ -63,11 +63,15 @@ class SpaceFleetPopup extends BlazeComponent {
     if (spaceEvent.data.isHumans) {
       info.isHumans = true;
       info.canSend = false;
-      info.status = 'Флот Консула';
       if (Meteor.user().username !== spaceEvent.data.username) {
         info.owner = spaceEvent.data.username;
       } else if (!spaceEvent.data.isBack) {
         info.canWithdraw = true;
+      }
+      
+      if (spaceEvent.data.username === '✯ Совет Галактики ✯') {
+        info.status = info.owner;
+        info.owner = false;
       }
     } else {
       const { level, type } = spaceEvent.data.mission;

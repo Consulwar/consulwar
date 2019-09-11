@@ -8,6 +8,7 @@ import './methods';
 import FlightQueue from './jobs/flight';
 import BattleQueue from './jobs/battle';
 import TriggerAttackQueue from './jobs/triggerAttack';
+import './aiFleets';
 
 Space.collection._ensureIndex({
   'data.userId': 1,

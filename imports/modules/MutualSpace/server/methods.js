@@ -51,13 +51,24 @@ Meteor.methods({
       throw new Meteor.Error('Перед выходом в общий космос необходимо разведать все планеты.');
     }
 
-    collection.upsert({
+    const id = collection.aggregate([
+      { $match: { username: { $exists: false } } },
+      { $sample: { size: 1 } },
+    ])[0]._id;
+
+    // To avoid occupation of same hex by different processes we're checking username
+    const success = collection.update({
+      _id: id,
       username: { $exists: false },
     }, {
       $set: {
         username: user.username,
       },
     });
+
+    if (success === 0) {
+      throw new Meteor.Error('Ого, вот это да! Попробуйте ещё раз');
+    }
 
     const hex = new Hex(collection.findOne({ username: user.username }));
     const hexToDB = { x: hex.x, z: hex.z };

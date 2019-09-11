@@ -95,7 +95,8 @@ const humansWin = function({
     }
 
     if (
-      !(
+      initialUser.username !== '✯ Совет Галактики ✯'
+      && !(
         initialUser.settings
         && initialUser.settings.options
         && initialUser.settings.options.disableAutoCollect
@@ -109,6 +110,10 @@ const humansWin = function({
   }
 
   users.forEach((user) => {
+    if (user.username === '✯ Совет Галактики ✯') {
+      return;
+    }
+
     const army = roundResult.leftByUsername[user.username];
 
     if (!army) {
@@ -179,6 +184,9 @@ const humansWin = function({
 
 const wreakUnits = function(battle, users) {
   users.forEach((user) => {
+    if (user.username === '✯ Совет Галактики ✯') {
+      return;
+    }
     Game.Wrecks.addUnits({
       units: battle.getUsersKilledUnits(user.username),
       userId: user._id,

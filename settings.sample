@@ -172,6 +172,10 @@
       "schedule": "every 1 hour",
       "engineLevel": 80
     },
+    "aiFleets": {
+      "schedule": "every 5 minutes",
+      "engineLevel": 100
+    },
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
     "funPeriod": 86400,

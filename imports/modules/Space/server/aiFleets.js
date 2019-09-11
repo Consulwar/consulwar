@@ -65,9 +65,12 @@ const spawnAiFleet = function() {
     return;
   }
 
-  const closestHex = findClosestHex((new Hex(randomHex)).center());
-  const startPosition = (new Hex(closestHex).center());
   const targetHexCenter = (new Hex(randomHex).center());
+  const closestHex = findClosestHex({
+    x: planet.x + targetHexCenter.x,
+    y: planet.y + targetHexCenter.y,
+  });
+  const startPosition = (new Hex(closestHex).center());
 
   const newArmyId = Game.Unit.createArmy(
     {

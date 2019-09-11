@@ -117,7 +117,7 @@ if (
 ) {
   throw new Meteor.Error(
     'Ошибка в настройках',
-    'Заданы не все настройки чистки задач (см. settings.sample space.aiFleets)',
+    'Заданы не все настройки флотов Совета Галактики (см. settings.sample space.aiFleets)',
   );
 }
 if (Meteor.settings.last) {

@@ -400,7 +400,7 @@ if (
 ) {
   throw new Meteor.Error(
     'Ошибка в настройках',
-    'Заданы не все настройки чистки задач (см. settings.sample space.prisonersFleet)',
+    'Заданы не все настройки Корабль-тюрем (см. settings.sample space.prisonersFleet)',
   );
 }
 if (Meteor.settings.last) {

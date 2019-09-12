@@ -676,9 +676,14 @@ Game.Planets.discover = function(planetId, user = Meteor.user()) {
   Game.Planets.update(planet);
 
   // get base planet
-  let basePlanet = Game.Planets.getBase(user._id);
+  let basePlanet = Game.Planets.getBase(planet.userId);
   if (!basePlanet) {
     return;
+  }
+
+  let planetOwner = user;
+  if (planet.userId !== user._id) {
+    planetOwner = Meteor.users.findOne({ _id: planet.userId });
   }
 
   // find sectors to discover
@@ -687,8 +692,13 @@ Game.Planets.discover = function(planetId, user = Meteor.user()) {
 
   // discover
   for (let i = 0; i < sectors.length; i++) {
-    Game.Planets.generateSector(basePlanet.galactic, sectors[i].hand,
-      sectors[i].segment, true, user);
+    Game.Planets.generateSector(
+      basePlanet.galactic,
+      sectors[i].hand,
+      sectors[i].segment,
+      true,
+      planetOwner,
+    );
   }
 
   // save statistic

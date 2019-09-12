@@ -410,6 +410,7 @@ Meteor.methods({
           throw new Meteor.Error('Ты не готов!');
         }
       } else if (message.indexOf('/яготов') === 0) {
+        throw new Meteor.Error('Ты не готов!');
         if (makeFun()) {
           set.data = {
             type: 'notprepared'
@@ -417,8 +418,6 @@ Meteor.methods({
           set.message = ' думает, что готов. Наивный.';
           stats['chat.notprepared'] = 1;
           Game.Broadcast.add(user.username, 'Думал что он готов. Хах.');
-        } else {
-          throw new Meteor.Error('Ты не готов!');
         }
       } else if (message.indexOf('/ilovereptiles') === 0) {
         if (Game.Cards.activate(Game.Cards.items.penalty.penaltyHumans, user)) {

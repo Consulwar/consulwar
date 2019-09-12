@@ -179,6 +179,10 @@
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
     "funPeriod": 86400,
+    "autoEviction": {
+      "schedule": "at 4:00 pm",
+      "inactivityDays": 30
+    },
     "disableMergebox": true,
 
     "jobs": {

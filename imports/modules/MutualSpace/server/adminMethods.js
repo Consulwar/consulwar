@@ -197,7 +197,7 @@ Meteor.methods({
 
     // remove hex fields in local fleets
     Space.collection.update({
-      'data.userId': user._id,
+      'data.userId': targetUser._id,
       status: Space.filterActive,
       type: FlightEvents.EVENT_TYPE,
       'data.hex': hexDB,
@@ -215,7 +215,7 @@ Meteor.methods({
 
     // Что свое летело не дома - летит домой
     Space.collection.find({
-      'data.userId': user._id,
+      'data.userId': targetUser._id,
       status: Space.filterActive,
       type: FlightEvents.EVENT_TYPE,
       'data.hex': { $exists: true },
@@ -255,6 +255,20 @@ Meteor.methods({
         { armyUsername: { $exists: true } },
         { armyUsername: { $ne: null } },
         { armyUsername: { $ne: targetUser.username } },
+      ],
+    }).fetch().forEach((planet) => {
+      const homeHex = collection.findOne({ username: planet.armyUsername });
+      const homeHexDB = { x: homeHex.x, z: homeHex.z };
+      sendPlanetFleetToHome(planet, hexDB, homeHexDB);
+    });
+
+    // Что своё было не дома - улетает домой
+    Game.Planets.Collection.find({
+      $and: [
+        { userId: { $ne: targetUser._id } },
+        { armyUsername: { $exists: true } },
+        { armyUsername: { $ne: null } },
+        { armyUsername: targetUser.username },
       ],
     }).fetch().forEach((planet) => {
       const homeHex = collection.findOne({ username: planet.armyUsername });

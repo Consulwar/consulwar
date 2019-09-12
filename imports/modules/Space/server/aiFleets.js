@@ -50,7 +50,7 @@ const spawnAiFleet = function({
   ]);
 
   if (!randomHex) {
-    return;
+    return 0;
   }
 
   const [planet] = Game.Planets.Collection.aggregate([
@@ -65,7 +65,7 @@ const spawnAiFleet = function({
   ]);
 
   if (!planet) {
-    return;
+    return 0;
   }
 
   const existEvent = Space.collection.findOne({
@@ -73,7 +73,7 @@ const spawnAiFleet = function({
     status: Space.filterActive,
   });
   if (existEvent) {
-    return;
+    return 0;
   }
 
   const targetHexCenter = (new Hex(randomHex).center());
@@ -120,6 +120,8 @@ const spawnAiFleet = function({
   };
 
   FlightEvents.add(flightData);
+
+  return 1;
 };
 
 if (
@@ -182,15 +184,17 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'aiFleets.spawn', user });
 
+    let sentCount = 0;
     for (let i = 0; i < count; i += 1) {
-      spawnAiFleet({
+      sentCount += spawnAiFleet({
         missionType,
         missionLevel,
         fleet,
       });
     }
-
-    const message = `Совет выслал в поддержку ${count} ${declension(count, 'флот', '', 'а', 'ов')}`;
-    Game.Broadcast.add(message);
+    if (sentCount > 0) {
+      const message = `Совет выслал в поддержку ${sentCount} ${declension(sentCount, 'флот', '', 'а', 'ов')}`;
+      Game.Broadcast.add(message);
+    }
   },
 });

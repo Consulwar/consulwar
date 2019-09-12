@@ -37,6 +37,7 @@ const spawnAiFleet = function({
   fleet = {
     'Unit/Human/Space/Mirage': 25,
   },
+  targetUsername = { $exists: true, $ne: null },
 } = {}) {
   if (greenHexes.length === 0) {
     loadGreenHexes();
@@ -44,7 +45,7 @@ const spawnAiFleet = function({
 
   const [randomHex] = mutualSpaceCollection.aggregate([
     { $match: { username: { $ne: systemUser.username } } },
-    { $match: { username: { $exists: true, $ne: null } } },
+    { $match: { username: targetUsername } },
     { $sample: { size: 1 } },
   ]);
 

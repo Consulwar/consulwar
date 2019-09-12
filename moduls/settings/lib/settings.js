@@ -31,6 +31,7 @@ Game.Settings = {
     isMultiSkinEnabled: [false, true],
     disableBroadcast: [true, false],
     muteSound: [true, false],
+    hideMutualHexes: [false, true],
   },
 
   getOption({

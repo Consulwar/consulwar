@@ -1389,6 +1389,14 @@ const initGalaxy = function() {
       center.x + homePlanet.x, center.y + homePlanet.y
     ], 7);
   }
+
+  Tracker.autorun(() => {
+    if (zoom.get() < 2) {
+      mapView.getPane('planets').hidden = true;
+    } else {
+      mapView.getPane('planets').hidden = false;
+    }
+  });
 };
 
 // Paths
@@ -1416,7 +1424,6 @@ const removePath = function(id) {
 };
 
 Template.cosmos.onRendered(function() {
-  // Init map
   mapView = L.map('map-battle', {
     crs: L.CRS.Simple,
     zoomAnimation: false,
@@ -1436,11 +1443,33 @@ Template.cosmos.onRendered(function() {
   pathsLayer = L.layerGroup().addTo(mapView);
   shipsLayer = L.layerGroup().addTo(mapView);
 
+  mapView.createPane('planets').style.zIndex = 394;
+
   mapView.createPane('hexesLayer5').style.zIndex = 395;
   mapView.createPane('hexesLayer4').style.zIndex = 396;
   mapView.createPane('hexesLayer3').style.zIndex = 397;
   mapView.createPane('hexesLayer2').style.zIndex = 398;
   mapView.createPane('hexesLayer1').style.zIndex = 399;
+
+  Tracker.autorun(() => {
+    const user = Meteor.user();
+    if (
+      user
+      && user.settings
+      && user.settings.options
+      && user.settings.options.hideMutualHexes
+    ) {
+      mapView.getPane('hexesLayer5').hidden = true;
+      mapView.getPane('hexesLayer4').hidden = true;
+      mapView.getPane('hexesLayer3').hidden = true;
+      mapView.getPane('hexesLayer2').hidden = true;
+    } else {
+      mapView.getPane('hexesLayer5').hidden = false;
+      mapView.getPane('hexesLayer4').hidden = false;
+      mapView.getPane('hexesLayer3').hidden = false;
+      mapView.getPane('hexesLayer2').hidden = false;
+    }
+  });
 
   zoom.set(mapView.getZoom());
   mapView.on('zoomend', function() {
@@ -1482,6 +1511,14 @@ Template.cosmos.onRendered(function() {
       });
     }
   });
+
+  const user = Meteor.user();
+  if (user && user.rating > 120000) {
+    const mutualSpace = mutualSpaceCollection.find({ username: user.username });
+    if (mutualSpace.count() === 0) {
+      accessMutualSpace();
+    }
+  }
 });
 
 const loadHexes = function() {
@@ -1511,6 +1548,13 @@ const loadHexes = function() {
 };
 
 const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = {} }) {
+  const hideMutualHexes = (
+    user
+    && user.settings
+    && user.settings.options
+    && user.settings.options.hideMutualHexes
+  );
+  
   hexes.forEach((hexInfo) => {
     const visibleHex = (
       visibleUsernames[hexInfo.username] ||
@@ -1546,6 +1590,10 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
     } else {
       color = Config.colors.other;
       pane = 'hexesLayer3';
+    }
+
+    if (hideMutualHexes && visibleHex) {
+      pane = 'hexesLayer1';
     }
 
     const hex = new Hex(hexInfo);
@@ -1586,8 +1634,21 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
         permanent: true,
       })
         .setLatLng([center.x, center.y])
-        .setContent(hexInfo.username)
-        .addTo(mapView);
+        .setContent(hexInfo.username);
+
+      Tracker.autorun(() => {
+        const user = Meteor.user();
+        if (
+          user
+          && user.settings
+          && user.settings.options
+          && user.settings.options.hideMutualHexes
+        ) {
+          usernameTooltip.remove();
+        } else {
+          usernameTooltip.addTo(mapView);
+        }
+      });
 
       hexPoly.on('click', () => {
         loadHex();
@@ -1641,6 +1702,48 @@ Template.cosmos.helpers({
   }
 });
 
+const accessMutualSpace = function() {
+  Meteor.call('mutualSpace.access', (err, hexes) => {
+    if (err) {
+      Notifications.error('Не удалось совершить выход в космос', err.error);
+      return;
+    }
+
+    planetsLayer.clearLayers();
+    pathsLayer.clearLayers();
+    shipsLayer.clearLayers();
+
+    L.DomUtil.empty(mapView.getPane('hexesLayer1'));
+    L.DomUtil.empty(mapView.getPane('hexesLayer2'));
+    L.DomUtil.empty(mapView.getPane('hexesLayer3'));
+    L.DomUtil.empty(mapView.getPane('hexesLayer4'));
+    L.DomUtil.empty(mapView.getPane('hexesLayer5'));
+
+    const user = Meteor.user();
+    const galaxy = galaxyByUsername[user.username];
+    const userHex = _(hexes).find(hex => hex.username === user.username);
+    const center = new Hex(userHex).center();
+    indexGalaxyHex(galaxy, userHex);
+
+    galaxy.reRender(center);
+
+    Space.collection.find({}).fetch().forEach((event) => {
+      removePath(event._id);
+      showSpaceEvent(event._id, event, center, user);
+    });
+
+    showHexes({
+      user,
+      hexes,
+      visibleUsernames: {
+        [user.username]: true,
+      },
+    });
+
+    mapView.setView([center.x, center.y], 2);
+  });
+};
+
 Template.cosmos.events({
   'click .btn-selection': function(e, t) {
     selectedArtefact.set(null);
@@ -1662,47 +1765,7 @@ Template.cosmos.events({
   },
 
   'click .btn-mutual-space'(e, t) {
-    if (mapView) {
-      Meteor.call('mutualSpace.access', (err, hexes) => {
-        if (err) {
-          Notifications.error('Не удалось совершить выход в космос', err.error);
-          return;
-        }
-
-        planetsLayer.clearLayers();
-        pathsLayer.clearLayers();
-        shipsLayer.clearLayers();
-
-        L.DomUtil.empty(mapView.getPane('hexesLayer1'));
-        L.DomUtil.empty(mapView.getPane('hexesLayer2'));
-        L.DomUtil.empty(mapView.getPane('hexesLayer3'));
-        L.DomUtil.empty(mapView.getPane('hexesLayer4'));
-        L.DomUtil.empty(mapView.getPane('hexesLayer5'));
-
-        const user = Meteor.user();
-        const galaxy = galaxyByUsername[user.username];
-        const userHex = _(hexes).find(hex => hex.username === user.username);
-        const center = new Hex(userHex).center();
-        indexGalaxyHex(galaxy, userHex);
-
-        galaxy.reRender(center);
-
-        Space.collection.find({}).fetch().forEach((event) => {
-          removePath(event._id);
-          showSpaceEvent(event._id, event, center, user);
-        });
-
-        showHexes({
-          user,
-          hexes,
-          visibleUsernames: {
-            [user.username]: true,
-          },
-        });
-
-        mapView.setView([center.x, center.y], 2);
-      });
-    }
+    accessMutualSpace();
   },
 });
 

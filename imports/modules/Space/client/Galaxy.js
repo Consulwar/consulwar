@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { L } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
@@ -115,6 +116,19 @@ class Galaxy {
   }
 
   updateTooltip() {
+    const user = Meteor.user();
+    if (
+      user
+      && user.settings
+      && user.settings.options
+      && user.settings.options.hideMutualHexes
+    ) {
+      if (this.tooltip) {
+        this.tooltip.remove();
+        this.tooltip = null;
+      }
+      return;
+    }
     const currentZoom = this.mapView.getZoom();
     if (currentZoom <= tooltipZoom && !this.tooltip) {
       this.tooltip = L.tooltip({
@@ -139,6 +153,7 @@ class Galaxy {
     const circle = L.circle(
       [planet.x + offset.x, planet.y + offset.y],
       {
+        pane: 'planets',
         radius,
         color: this.getColor(planet),
         fillOpacity: 0.8,

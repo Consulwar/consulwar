@@ -119,6 +119,12 @@ class UserSettings extends BlazeComponent {
             title: 'Отображать юниты на карте текстом',
             value: getUserSetting('options', 'textUnits'),
           },
+          {
+            type: 'options',
+            name: 'hideMutualHexes',
+            title: 'Скрывать чужие гексы в космосе',
+            value: getUserSetting('options', 'hideMutualHexes'),
+          },
         ],
       },
       {

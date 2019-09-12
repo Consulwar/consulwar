@@ -27,30 +27,6 @@ Meteor.methods({
       throw new Meteor.Error('Ты не готов!');
     }
 
-    const homePlanet = Game.Planets.getBase();
-    if (!homePlanet) {
-      throw new Meteor.Error('Перед выходом в общий космос необходимо разведать все планеты.');
-    }
-
-    const { galactic } = homePlanet;
-    const planets = Game.Planets.getAll().fetch();
-    const hands = {};
-    let allCount = 0;
-    planets.forEach(({ hand, segment }) => {
-      if (!hands[hand]) {
-        hands[hand] = {};
-      }
-
-      if (!hands[hand][segment]) {
-        hands[hand][segment] = true;
-        allCount += 1;
-      }
-    });
-
-    if (allCount !== ((galactic.hands * galactic.segments) + 1)) {
-      throw new Meteor.Error('Перед выходом в общий космос необходимо разведать все планеты.');
-    }
-
     const id = collection.aggregate([
       { $match: { username: { $exists: false } } },
       { $sample: { size: 1 } },

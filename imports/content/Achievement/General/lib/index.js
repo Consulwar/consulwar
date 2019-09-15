@@ -20,6 +20,7 @@ import NewYear from './NewYear';
 import Hacker from './Hacker';
 import Philanthropist from './Philanthropist';
 import CGC from './CGC';
+import BadMusic from './BadMusic';
 
 export default {
   'Achievement/General/Builder': Builder,
@@ -44,4 +45,5 @@ export default {
   'Achievement/General/Hacker': Hacker,
   'Achievement/General/Philanthropist': Philanthropist,
   'Achievement/General/CGC': CGC,
+  'Achievement/General/BadMusic': BadMusic,
 };

@@ -174,6 +174,7 @@ Meteor.methods({
       missionType,
       missionLevel,
       fleet,
+      targetUsername,
     } = options;
 
     check(count, Number);
@@ -190,6 +191,7 @@ Meteor.methods({
         missionType,
         missionLevel,
         fleet,
+        targetUsername,
       });
     }
     if (sentCount > 0) {

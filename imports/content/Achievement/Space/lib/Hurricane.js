@@ -1,7 +1,12 @@
 export default {
   id: 'Achievement/Space/Hurricane',
-  levels: [1],
-  title: 'Ураган пати 1 степени',
+  levels: [1, 2, 3, 4],
+  title: [
+    'Ураган пати 1 степени',
+    'Ураган пати 2 степени',
+    'Ураган пати 3 степени',
+    'Ураган пати 4 степени',
+  ],
   description: 'Отправил ёбаный флот в блядский рейд',
   effects: {
     Price: [
@@ -12,7 +17,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -22,7 +27,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -32,7 +37,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -42,7 +47,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -52,7 +57,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -62,7 +67,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -72,7 +77,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -82,7 +87,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -92,7 +97,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -102,7 +107,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
       {
@@ -112,7 +117,7 @@ export default {
         priority: 8,
         affect: 'time',
         result({ level }) {
-          return 1;
+          return level;
         },
       },
     ],

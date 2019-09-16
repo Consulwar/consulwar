@@ -8,4 +8,20 @@ export default {
     'Очень плохая музыка 4 степени',
   ],
   description: 'Направление? Какое направление?',
+  effects: {
+    Special: [
+      {
+        textBefore: '',
+        textAfter: '',
+        priority: 1,
+        result({ level }) {
+          return (
+            (level > 0)
+              ? 'На этот раз как-то не удало-ось'
+              : 0
+          );
+        },
+      },
+    ],
+  },
 };

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import datadog from '/imports/modules/Log/server/datadog';
 import { Job } from '/moduls/game/lib/jobs';
+import Log from '/imports/modules/Log/server/Log';
 import Space from '../lib/space';
 import Config from './config';
 import './methods';
@@ -102,6 +103,7 @@ Meteor.publish('globalSpaceEvents', function() {
 });
 
 Meteor.publish('spaceEvents', function(hex) {
+  const ts = Date.now();
   if (Config.DISABLE_MERGEBOX) {
     this.disableMergebox();
   }
@@ -109,7 +111,7 @@ Meteor.publish('spaceEvents', function(hex) {
   check(hex, Object);
 
   if (this.userId) {
-    return Space.collection.find({
+    const result = Space.collection.find({
       $or: [
         { 'data.hex': hex },
         { 'data.targetHex': hex },
@@ -125,6 +127,8 @@ Meteor.publish('spaceEvents', function(hex) {
         after: 1,
       },
     });
+    Log.add({ name: 'subscribe.spaceEvents', info: `${Meteor.user().username} => [${hex.x}, ${hex.z}] (${Date.now() - ts})` });
+    return result;
   }
   return null;
 });

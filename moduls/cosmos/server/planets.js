@@ -1001,6 +1001,7 @@ Meteor.methods({
 });
 
 Meteor.publish('planets', function(username) {
+  const ts = Date.now();
   if (username === systemUser.username) {
     return;
   }
@@ -1014,7 +1015,7 @@ Meteor.publish('planets', function(username) {
   if (this.userId) {
     const currentUsername = Meteor.users.findOne({ _id: this.userId }).username;
 
-    return Game.Planets.Collection.find(
+    const result = Game.Planets.Collection.find(
       {
         $or: [
           { username },
@@ -1045,6 +1046,8 @@ Meteor.publish('planets', function(username) {
         }
       }
     );
+    Log.add({ name: 'subscribe.planets', info: `${currentUsername} => ${username} (${Date.now() - ts})` });
+    return result;
   } else {
     this.ready();
   }

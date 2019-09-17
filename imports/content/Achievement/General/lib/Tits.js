@@ -5,10 +5,8 @@ export default {
   effects: {
     Special: [
       {
-        priority: 1,
-        result({ level }) {
-          return level ? 'молодец!' : '';
-        },
+        textBefore: 'молодец',
+        result() {},
       },
     ],
   },

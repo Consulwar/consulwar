@@ -5,16 +5,8 @@ export default {
   effects: {
     Special: [
       {
-        textBefore: '',
-        textAfter: '',
-        priority: 1,
-        result({ level }) {
-          return (
-            (level === 1)
-              ? 'Бонуса нет — настоящему филантропу он не нужен'
-              : 0
-          );
-        },
+        textBefore: 'Бонуса нет — настоящему филантропу он не нужен',
+        result() {},
       },
     ],
   },

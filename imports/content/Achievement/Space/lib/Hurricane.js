@@ -1,3 +1,7 @@
+const effect = function ({ level }) {
+  return [0, 1, 3, 6, 10][level];
+};
+
 export default {
   id: 'Achievement/Space/Hurricane',
   levels: [1, 2, 3, 4],
@@ -16,9 +20,7 @@ export default {
         condition: 'Unit/Human/Space/Gammadrone',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Ос быстрее на ',
@@ -26,9 +28,7 @@ export default {
         condition: 'Unit/Human/Space/Wasp',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Миражей быстрее на ',
@@ -36,9 +36,7 @@ export default {
         condition: 'Unit/Human/Space/Mirage',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Рейлганов быстрее на ',
@@ -46,9 +44,7 @@ export default {
         condition: 'Unit/Human/Space/Railgun',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Фрегатов быстрее на ',
@@ -56,9 +52,7 @@ export default {
         condition: 'Unit/Human/Space/Frigate',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Траков C быстрее на ',
@@ -66,9 +60,7 @@ export default {
         condition: 'Unit/Human/Space/TruckC',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Крейсеров быстрее на ',
@@ -76,9 +68,7 @@ export default {
         condition: 'Unit/Human/Space/Cruiser',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Линкоров быстрее на ',
@@ -86,9 +76,7 @@ export default {
         condition: 'Unit/Human/Space/Battleship',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Авианосцев быстрее на ',
@@ -96,9 +84,7 @@ export default {
         condition: 'Unit/Human/Space/Carrier',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Дредноутов быстрее на ',
@@ -106,9 +92,7 @@ export default {
         condition: 'Unit/Human/Space/Dreadnought',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
       {
         textBefore: 'Строительство Пожинателей быстрее на ',
@@ -116,9 +100,7 @@ export default {
         condition: 'Unit/Human/Space/Reaper',
         priority: 8,
         affect: 'time',
-        result({ level }) {
-          return level;
-        },
+        result: effect,
       },
     ],
   },

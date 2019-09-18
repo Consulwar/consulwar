@@ -5,8 +5,8 @@ export default {
   effects: {
     Price: [
       {
-        textBefore: 'Стоимость подготовки наземных войск на ',
-        textAfter: '% дешевле',
+        textBefore: 'Подготовка наземных войск дешевле на ',
+        textAfter: '%',
         condition: 'Unit/Human/Ground',
         priority: 2,
         affect: ['metals', 'crystals'],

@@ -53,14 +53,20 @@
 <template name="achievementEffect">
   {{#if this.effect}}
     {{#each this.effect}}
-      {{#unless (eq (this.result ../level) 0)}}
+      {{#if and
+        (not (eq (this.result ../level) 0))
+        (or
+          (not (eq this.pretext ""))
+          (not (eq this.aftertext ""))
+        )
+      }}
         <div class="effect">
           {{this.pretext}}{{this.result ../level}}{{this.aftertext}}
           {{#if this.notImplemented}}
             <span class="notImplemented">В разработке!</span>
           {{/if}}
         </div>
-      {{/unless}}
+      {{/if}}
     {{/each}}
   {{/if}}
 </template>

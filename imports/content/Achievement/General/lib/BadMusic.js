@@ -11,16 +11,9 @@ export default {
   effects: {
     Special: [
       {
-        textBefore: '',
-        textAfter: '',
+        textBefore: 'На этот раз как-то не удало-ось',
         priority: 1,
-        result({ level }) {
-          return (
-            (level > 0)
-              ? 'На этот раз как-то не удало-ось'
-              : 0
-          );
-        },
+        result() {},
       },
     ],
   },

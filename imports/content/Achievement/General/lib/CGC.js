@@ -25,11 +25,8 @@ export default {
   effects: {
     Special: [
       {
-        textBefore: '',
-        textAfter: '',
-        result({ level }) {
-          return (level === 1) ? 'Это очень редкая валюта' : 0;
-        },
+        textBefore: 'Это очень редкая валюта',
+        result: ({ level }) => (level === 1 ? '' : 0),
       },
     ],
     Price: [

@@ -125,6 +125,10 @@ Game.Broadcast.Collection.find({}).observe({
     ) {
       Notifications.info(message.username, message.text);
     }
+
+    if (message.action) {
+      eval(message.action);
+    }
   }
 });
 

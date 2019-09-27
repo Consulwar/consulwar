@@ -215,16 +215,20 @@ Meteor.publish('game', function () {
   }
 });
 
-Game.Broadcast.add = function(username, text) {
-  Game.Broadcast.Collection.insert({
+Game.Broadcast.add = function(username, text, action = null) {
+  const data = {
     text,
     username,
     date: new Date(),
-  });
+  };
+  if (action) {
+    data.action = action;
+  }
+  Game.Broadcast.Collection.insert(data);
 };
 
 Meteor.methods({
-  broadcast: function(username, message) {
+  broadcast: function(username, message, action = null) {
     const user = User.getById();
     User.checkAuth({ user });
 
@@ -235,7 +239,7 @@ Meteor.methods({
     check(username, String);
     check(message, String);
 
-    Game.Broadcast.add(username, message);
+    Game.Broadcast.add(username, message, action);
   }
 });
 

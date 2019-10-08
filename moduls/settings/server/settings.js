@@ -136,6 +136,10 @@ Meteor.methods({
       throw new Meteor.Error('Несуществующее поле настроек');
     }
 
+    if (!Game.Settings.options[option].includes(value)) {
+      throw new Meteor.Error('Такой настройки нет');
+    }
+
     var set = {};
     set['settings.options.' + option] = value;
     Meteor.users.update({

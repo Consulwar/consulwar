@@ -113,20 +113,26 @@
     </ul>
 
     <form id="message">
-      {{#if (and (not isChatFree) (lt user.rating room.minRating))}}
-        <div class="whyCanNotWrite">
-          в этот чат могут писать только игроки с рейтингом выше {{formatNumber room.minRating}}
-        </div>
-        <input type="submit" value="" disabled="true"/>
+      {{#if user.settings.options.chatDratuti}}
+        <button class="dratuti" style="width:100%;hegith:100%;cursor:pointer;">
+          <h1>Дратути</h1>
+        </button>
       {{else}}
-        <textarea name="text" maxlength="175"></textarea>
-
-        {{#if price.crystals}}
-          <div class="resources" data-tooltip="Стоимость сообщения">
-            <div class="crystals">{{price.crystals}}</div>
+        {{#if (and (not isChatFree) (lt user.rating room.minRating))}}
+          <div class="whyCanNotWrite">
+            в этот чат могут писать только игроки с рейтингом выше {{formatNumber room.minRating}}
           </div>
+          <input type="submit" value="" disabled="true"/>
+        {{else}}
+          <textarea name="text" maxlength="175"></textarea>
+
+          {{#if price.crystals}}
+            <div class="resources" data-tooltip="Стоимость сообщения">
+              <div class="crystals">{{price.crystals}}</div>
+            </div>
+          {{/if}}
+          <input type="submit" value=""/>
         {{/if}}
-        <input type="submit" value=""/>
       {{/if}}
     </form>
   </div>

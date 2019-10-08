@@ -13,12 +13,13 @@ Game.Chat.Messages.Collection._ensureIndex({
   timestamp: -1
 });
 
-Game.Chat.Room.Collection._ensureIndex({
-  name: 1
+Game.Chat.Messages.Collection._ensureIndex({
+  username: 1,
+  timestamp: -1,
 });
 
 Game.Chat.Room.Collection._ensureIndex({
-  user_id: 1
+  name: 1
 });
 
 Game.Chat.BalanceHistory = {

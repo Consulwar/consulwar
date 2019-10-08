@@ -25,14 +25,13 @@ Template.quiz.events({
           : result.options[userAnswer]
         ) + '»');
         Blaze.remove(t.view);
-        Blaze.renderWithData(
-          Template.quiz, 
-          {
+        Game.Popup.show({
+          templateName: 'quiz',
+          data: {
             quiz: result,
             questionNum: questionNum
-          }, 
-          $('.over').get(0)
-        );
+          }
+        });
       }
     });
   },
@@ -61,6 +60,9 @@ Template.quizQuestion.helpers({
         totalVotes: self.question.totalVotes
       };
     });
+  },
+  person: function() {
+    return Game.Persons[this.question.who];
   }
 });
 

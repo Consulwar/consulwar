@@ -292,55 +292,59 @@
           
 
 .quiz
-  
-  &.modal > .title
-    margin-bottom 0
-    font-size 16px
-    
-  &.modal > a
-    font-size 14px
-    padding 10px 15px
-    width 430px
-    margin 10px 0
-
-  &.modal > progress
-    position relative
-    width 450px
-    height 25px
-    margin-top 40px
-    background-color #000
-    font-size 14px
+  &.modal
+    float left
+    height auto
+    > .title
+      margin-bottom 0
+      font-size 16px
       
-    &[role][aria-valuenow]
-      background-color #000
+    > .quiz_answers 
+      float right
+      width 400px
+      > a
+        font-size 14px
+        padding 10px 15px
+        margin 10px 0
+
+      > progress
+        position relative
+        width 400px
+        height 25px
+        margin-top 40px
+        background-color #000
+        font-size 14px
+          
+        &[role][aria-valuenow]
+          background-color #000
+            
+        &::-moz-progress-bar 
+          background-color #56baf2
+
+        &::-webkit-progress-value
+          background-color #56baf2
+          
+        &[aria-valuenow]:before
+          background-color #56baf2
         
-    &::-moz-progress-bar 
-      background-color #56baf2
-
-    &::-webkit-progress-value
-      background-color #56baf2
-      
-    &[aria-valuenow]:before
-      background-color #56baf2
-    
-    &:before
-      content attr(data-option)
-      display block
-      position absolute
-      bottom 25px
-      font-size 15px
-      color #cfdcdf
-      
-    &:after
-      position absolute
-      width 100%
-      top 0
-      left 0
-      display block
-      content attr(value) ' (' attr(data-percent) '%)'
-      font-size 20px
-      text-align center
-      color #ededed
+        &:before
+          content attr(data-option)
+          display block
+          position absolute
+          bottom 25px
+          font-size 15px
+          color #cfdcdf
+          
+        &:after
+          position absolute
+          width 100%
+          top 0
+          left 0
+          display block
+          content attr(value) ' (' attr(data-percent) '%)'
+          font-size 20px
+          text-align center
+          color #ededed
   
   .vote_power
     font-size 12px

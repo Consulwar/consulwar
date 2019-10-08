@@ -149,14 +149,13 @@ var readLetter = function(id, t) {
         if (err) {
           Notifications.error('Не удалось открыть опрос', err.error);
         } else {
-          Blaze.renderWithData(
-            Template.quiz, 
-            {
+          Game.Popup.show({
+            templateName: 'quiz',
+            data: {
               quiz: result,
               questionNum: 0
-            }, 
-            $('.over')[0]
-          );
+            }
+          });
         }
       });
     } else {

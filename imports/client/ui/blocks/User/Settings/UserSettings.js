@@ -152,6 +152,16 @@ class UserSettings extends BlazeComponent {
           },
         ],
       },
+      {
+        name: 'Стрёмные настройки',
+        options: [
+          {
+            name: 'chatDratuti',
+            title: 'Заменить чат на «Дратути» (неотключаемо)',
+            value: getUserSetting('options', 'chatDratuti'),
+          },
+        ],
+      },
     ];
   }
 

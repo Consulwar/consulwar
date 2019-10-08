@@ -50,7 +50,8 @@
       "room": {
         "usersLimit": 20,
         "moderatorsLimit": 10
-      }
+      },
+      "possibleToDisableDratuti": true
     },
     "statistic": {
       "countPerPage": 20

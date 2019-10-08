@@ -32,6 +32,7 @@ Game.Settings = {
     disableBroadcast: [true, false],
     muteSound: [true, false],
     hideMutualHexes: [false, true],
+    chatDratuti: [true]
   },
 
   getOption({
@@ -46,4 +47,9 @@ Game.Settings = {
     );
   },
 };
+
+if (Meteor.settings.public.chat && Meteor.settings.public.chat.possibleToDisableDratuti) {
+  Game.Settings.options.chatDratuti.push(false);
+}
+
 };

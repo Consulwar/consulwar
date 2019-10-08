@@ -13,6 +13,11 @@ Game.Chat.Messages.Collection._ensureIndex({
   timestamp: -1
 });
 
+Game.Chat.Messages.Collection._ensureIndex({
+  username: 1,
+  timestamp: -1,
+});
+
 Game.Chat.Room.Collection._ensureIndex({
   name: 1
 });
@@ -224,6 +229,26 @@ Meteor.methods({
      && (!user.rating || user.rating < room.minRating)
     ) {
       throw new Meteor.Error('Ваш рейтинг слишком мал, подрастите.');
+    }
+
+    const isDratutiChat = Game.Settings.getOption({
+      name: 'chatDratuti',
+      user
+    });
+
+    if (isDratutiChat) {
+      const haveMessageDuringLastHour = Game.Chat.Messages.Collection.findOne({
+        username: user.username,
+        timestamp: {
+          $gt: Game.getCurrentTime() - 60 * 60,
+        }
+      });
+
+      if (haveMessageDuringLastHour) {
+        throw new Meteor.Error('Вы уже дратути недавно');
+      }
+
+      message = 'Дратути';
     }
 
     // send message

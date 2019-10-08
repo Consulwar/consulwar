@@ -47,9 +47,32 @@ var addMessage = function(message, previousMessage) {
    ) {
       message.showProfile = true;
    }
+
+   if (Game.Settings.getOption({ name: 'chatDratuti' })) {
+      message.message = 'Дратути';
+      message.iconPath = 'exclusive/dratuti';
+   }
+
    messages.upsert(message._id, message);
    Meteor.defer(updateScrollbar);
 };
+
+Tracker.autorun((comp) => {
+   const user = Meteor.user();
+   if (user && user.username && Game.Settings.getOption({ name: 'chatDratuti' })) {
+      messages.update(
+         {}, 
+         {
+            $set: {
+               message: 'Дратути',
+               iconPath: 'exclusive/dratuti',
+            }
+         },
+         { multi: true }
+      );
+      comp.stop();
+   }
+});
 
 var addMessagesAfter = function(newMessages, message) {
    addMessage(newMessages[0], message);
@@ -752,6 +775,15 @@ Template.chat.events({
 
    'click .toggle': function() {
       Session.set('hideChannels', !Session.get('hideChannels', false));
+   },
+
+   'click .dratuti'(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      var roomName = Router.current().params.room;
+      Meteor.call('chat.sendMessage', 'Дратути', roomName, (err) => {
+         err && Notifications.error('Не получилось отправить сообщение', err.error);
+      });
    },
 
    'submit #message': function(e, t) {

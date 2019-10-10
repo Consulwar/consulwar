@@ -9,6 +9,7 @@ import Lib from '/imports/modules/Space/lib/flightEvents';
 import Utils from '/imports/modules/Space/lib/utils';
 import BattleCollection from '/moduls/battle/lib/imports/collection';
 import Battle from '/moduls/battle/lib/imports/battle';
+import systemUser from '/moduls/user/server/systemUser';
 import collection from '../lib/collection';
 import Hex from '../lib/Hex';
 
@@ -310,7 +311,7 @@ const evictInactive = function() {
   const inactivityDate = new Date();
   inactivityDate.setDate(inactivityDate.getDate() - Meteor.settings.space.autoEviction.inactivityDays);
   const inactiveUsernames = Meteor.users.find({
-    username: { $ne: '✯ Совет Галактики ✯' },
+    username: { $ne: systemUser.username },
     'status.online': { $ne: true },
     'status.lastLogout': { $not: { $gt: inactivityDate } },
   }).fetch().map(user => user.username);

@@ -224,15 +224,15 @@ const evict = function(username) {
     type: FlightEvents.EVENT_TYPE,
     'data.targetHex': hexDB,
   }).fetch().forEach((event) => {
-    const homePlanet = Game.Planets.getBase(event.data.userId);
-    const homeHex = collection.findOne({ username: event.data.username });
-    const homeHexDB = { x: homeHex.x, z: homeHex.z };
+    const guestHomePlanet = Game.Planets.getBase(event.data.userId);
+    const guestHomeHex = collection.findOne({ username: event.data.username });
+    const guestHomeHexDB = { x: guestHomeHex.x, z: guestHomeHex.z };
 
     Space.collection.update({
       _id: event._id,
     }, {
       $set: {
-        data: calcBackToPlanetData(event, homePlanet, homeHexDB),
+        data: calcBackToPlanetData(event, guestHomePlanet, guestHomeHexDB),
       },
     });
   });
@@ -247,9 +247,9 @@ const evict = function(username) {
     ],
   }).fetch().forEach((planet) => {
     const guestUser = Meteor.users.findOne(planet.armyUsername);
-    const homeHex = collection.findOne({ username: planet.armyUsername });
-    const homeHexDB = { x: homeHex.x, z: homeHex.z };
-    sendPlanetFleetToHome(planet, hexDB, homeHexDB, guestUser);
+    const guestHex = collection.findOne({ username: planet.armyUsername });
+    const guestHexDB = { x: guestHex.x, z: guestHex.z };
+    sendPlanetFleetToHome(planet, hexDB, guestHexDB, guestUser);
   });
 
   // Что своё было не дома - улетает домой
@@ -261,9 +261,9 @@ const evict = function(username) {
       { armyUsername: targetUser.username },
     ],
   }).fetch().forEach((planet) => {
-    const homeHex = collection.findOne({ username: planet.armyUsername });
-    const homeHexDB = { x: homeHex.x, z: homeHex.z };
-    sendPlanetFleetToHome(planet, hexDB, homeHexDB, targetUser);
+    const otherHex = collection.findOne({ username: planet.armyUsername });
+    const otherHexDB = { x: otherHex.x, z: otherHex.z };
+    sendPlanetFleetToHome(planet, hexDB, otherHexDB, targetUser);
   });
 
   // Сброс своих колоний

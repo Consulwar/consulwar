@@ -263,7 +263,7 @@ const evict = function(username) {
   }).fetch().forEach((planet) => {
     const otherHex = collection.findOne({ username: planet.armyUsername });
     const otherHexDB = { x: otherHex.x, z: otherHex.z };
-    sendPlanetFleetToHome(planet, hexDB, otherHexDB, targetUser);
+    sendPlanetFleetToHome(planet, otherHexDB, hexDB, targetUser);
   });
 
   // Сброс своих колоний

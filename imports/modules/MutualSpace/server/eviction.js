@@ -91,7 +91,7 @@ const calcBackToPlanetData = function(event, planet, hex) {
   };
 };
 
-const sendPlanetFleetToHome = function(planet, fromHex, hex) {
+const sendPlanetFleetToHome = function(planet, fromHex, hex, user) {
   Game.Unit.moveArmy(planet.armyId, Game.Unit.location.SHIP);
 
   Game.Planets.update({
@@ -125,7 +125,7 @@ const sendPlanetFleetToHome = function(planet, fromHex, hex) {
   targetPositionWithOffset.x += center.x;
   targetPositionWithOffset.y += center.y;
 
-  const engineLevel = Game.Planets.getEngineLevel(Meteor.user());
+  const engineLevel = Game.Planets.getEngineLevel(user);
 
   const flyTime = Utils.calcFlyTime(
     startPositionWithOffset,
@@ -233,9 +233,10 @@ const evict = function(username) {
       { armyUsername: { $ne: targetUser.username } },
     ],
   }).fetch().forEach((planet) => {
+    const guestUser = Meteor.users.findOne(planet.armyUsername);
     const homeHex = collection.findOne({ username: planet.armyUsername });
     const homeHexDB = { x: homeHex.x, z: homeHex.z };
-    sendPlanetFleetToHome(planet, hexDB, homeHexDB);
+    sendPlanetFleetToHome(planet, hexDB, homeHexDB, guestUser);
   });
 
   // Что своё было не дома - улетает домой
@@ -249,7 +250,7 @@ const evict = function(username) {
   }).fetch().forEach((planet) => {
     const homeHex = collection.findOne({ username: planet.armyUsername });
     const homeHexDB = { x: homeHex.x, z: homeHex.z };
-    sendPlanetFleetToHome(planet, hexDB, homeHexDB);
+    sendPlanetFleetToHome(planet, hexDB, homeHexDB, targetUser);
   });
 
   // Сброс своих колоний

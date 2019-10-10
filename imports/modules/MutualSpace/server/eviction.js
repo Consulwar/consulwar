@@ -7,6 +7,8 @@ import BattleEvents from '/imports/modules/Space/server/battleEvents';
 import Space from '/imports/modules/Space/lib/space';
 import Lib from '/imports/modules/Space/lib/flightEvents';
 import Utils from '/imports/modules/Space/lib/utils';
+import BattleCollection from '/moduls/battle/lib/imports/collection';
+import Battle from '/moduls/battle/lib/imports/battle';
 import collection from '../lib/collection';
 import Hex from '../lib/Hex';
 
@@ -168,6 +170,17 @@ const evict = function(username) {
 
   if (hasBattle) {
     Log.add({ name: 'В галактике игрока проходят сражения.', info: username });
+    return;
+  }
+
+  const inBattle = BattleCollection.find({
+    'options.isEarth': { $exists: false },
+    userNames: targetUser.username,
+    status: Battle.Status.progress,
+  });
+
+  if (inBattle) {
+    Log.add({ name: 'Игрок участвует в космических сражениях.', info: username });
     return;
   }
 

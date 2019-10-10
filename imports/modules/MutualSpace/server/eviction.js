@@ -310,6 +310,7 @@ const evictInactive = function() {
   const inactivityDate = new Date();
   inactivityDate.setDate(inactivityDate.getDate() - Meteor.settings.space.autoEviction.inactivityDays);
   const inactiveUsernames = Meteor.users.find({
+    username: { $ne: '✯ Совет Галактики ✯' },
     'status.online': { $ne: true },
     'status.lastLogout': { $not: { $gt: inactivityDate } },
   }).fetch().map(user => user.username);

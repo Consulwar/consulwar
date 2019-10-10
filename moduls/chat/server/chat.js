@@ -247,8 +247,8 @@ Meteor.methods({
       if (haveMessageDuringLastHour) {
         throw new Meteor.Error('Вы уже дратути недавно');
       }
-
-      message = 'Дратути';
+      
+      message = '<h1><span style="color:#FF0018">Д</span><span style="color:#FFA52C">р</span><span style="color:#FFFF41">а</span><span style="color:#008018">т</span><span style="color:#0000F9">ут</span><span style="color:#86007D">и</span></h1>';
     }
 
     // send message

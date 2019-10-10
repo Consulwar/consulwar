@@ -3,6 +3,7 @@ import Game from '/moduls/game/lib/main.game';
 
 import createGroup from '/moduls/battle/lib/imports/createGroup';
 import Battle from '/moduls/battle/server/battle';
+import systemUser from '/moduls/user/server/systemUser';
 
 import Space from '../lib/space';
 import FlightEvents from './flightEvents';
@@ -152,7 +153,7 @@ const completeOnPlanet = function(data) {
       Battle.addGroup(battleEvent.data.battleId, Battle.USER_SIDE, data.username, userGroup);
       Game.Unit.removeArmy(data.armyId, data.userId);
     } else {
-      if (data.username === '✯ Совет Галактики ✯') {
+      if (data.username === systemUser.username) {
         Game.Unit.removeArmy(data.armyId, data.userId);
         return;
       }

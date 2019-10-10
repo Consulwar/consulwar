@@ -4,6 +4,7 @@ import Game from '/moduls/game/lib/main.game';
 import Battle from '/moduls/battle/server/battle';
 import BattleLib from '/moduls/battle/lib/imports/battle';
 import User from '/imports/modules/User/lib/User';
+import systemUser from '/moduls/user/server/systemUser';
 
 import Config from '../config';
 import Space from '../../lib/space';
@@ -95,7 +96,7 @@ const humansWin = function({
     }
 
     if (
-      initialUser.username !== '✯ Совет Галактики ✯'
+      initialUser.username !== systemUser.username
       && !(
         initialUser.settings
         && initialUser.settings.options
@@ -110,7 +111,7 @@ const humansWin = function({
   }
 
   users.forEach((user) => {
-    if (user.username === '✯ Совет Галактики ✯') {
+    if (user.username === systemUser.username) {
       return;
     }
 
@@ -184,7 +185,7 @@ const humansWin = function({
 
 const wreakUnits = function(battle, users) {
   users.forEach((user) => {
-    if (user.username === '✯ Совет Галактики ✯') {
+    if (user.username === systemUser.username) {
       return;
     }
     Game.Wrecks.addUnits({

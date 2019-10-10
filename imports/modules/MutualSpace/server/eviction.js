@@ -7,6 +7,9 @@ import BattleEvents from '/imports/modules/Space/server/battleEvents';
 import Space from '/imports/modules/Space/lib/space';
 import Lib from '/imports/modules/Space/lib/flightEvents';
 import Utils from '/imports/modules/Space/lib/utils';
+import BattleCollection from '/moduls/battle/lib/imports/collection';
+import Battle from '/moduls/battle/lib/imports/battle';
+import systemUser from '/moduls/user/server/systemUser';
 import collection from '../lib/collection';
 import Hex from '../lib/Hex';
 
@@ -91,7 +94,7 @@ const calcBackToPlanetData = function(event, planet, hex) {
   };
 };
 
-const sendPlanetFleetToHome = function(planet, fromHex, hex) {
+const sendPlanetFleetToHome = function(planet, fromHex, hex, user) {
   Game.Unit.moveArmy(planet.armyId, Game.Unit.location.SHIP);
 
   Game.Planets.update({
@@ -125,7 +128,7 @@ const sendPlanetFleetToHome = function(planet, fromHex, hex) {
   targetPositionWithOffset.x += center.x;
   targetPositionWithOffset.y += center.y;
 
-  const engineLevel = Game.Planets.getEngineLevel(Meteor.user());
+  const engineLevel = Game.Planets.getEngineLevel(user);
 
   const flyTime = Utils.calcFlyTime(
     startPositionWithOffset,
@@ -171,6 +174,17 @@ const evict = function(username) {
     return;
   }
 
+  const inBattle = BattleCollection.find({
+    'options.isEarth': { $exists: false },
+    userNames: targetUser.username,
+    status: Battle.Status.progress,
+  });
+
+  if (inBattle) {
+    Log.add({ name: 'Игрок участвует в космических сражениях.', info: username });
+    return;
+  }
+
   // remove hex fields in local fleets
   Space.collection.update({
     'data.userId': targetUser._id,
@@ -211,15 +225,15 @@ const evict = function(username) {
     type: FlightEvents.EVENT_TYPE,
     'data.targetHex': hexDB,
   }).fetch().forEach((event) => {
-    const homePlanet = Game.Planets.getBase(event.data.userId);
-    const homeHex = collection.findOne({ username: event.data.username });
-    const homeHexDB = { x: homeHex.x, z: homeHex.z };
+    const guestHomePlanet = Game.Planets.getBase(event.data.userId);
+    const guestHomeHex = collection.findOne({ username: event.data.username });
+    const guestHomeHexDB = { x: guestHomeHex.x, z: guestHomeHex.z };
 
     Space.collection.update({
       _id: event._id,
     }, {
       $set: {
-        data: calcBackToPlanetData(event, homePlanet, homeHexDB),
+        data: calcBackToPlanetData(event, guestHomePlanet, guestHomeHexDB),
       },
     });
   });
@@ -233,9 +247,10 @@ const evict = function(username) {
       { armyUsername: { $ne: targetUser.username } },
     ],
   }).fetch().forEach((planet) => {
-    const homeHex = collection.findOne({ username: planet.armyUsername });
-    const homeHexDB = { x: homeHex.x, z: homeHex.z };
-    sendPlanetFleetToHome(planet, hexDB, homeHexDB);
+    const guestUser = Meteor.users.findOne(planet.armyUsername);
+    const guestHex = collection.findOne({ username: planet.armyUsername });
+    const guestHexDB = { x: guestHex.x, z: guestHex.z };
+    sendPlanetFleetToHome(planet, hexDB, guestHexDB, guestUser);
   });
 
   // Что своё было не дома - улетает домой
@@ -247,9 +262,9 @@ const evict = function(username) {
       { armyUsername: targetUser.username },
     ],
   }).fetch().forEach((planet) => {
-    const homeHex = collection.findOne({ username: planet.armyUsername });
-    const homeHexDB = { x: homeHex.x, z: homeHex.z };
-    sendPlanetFleetToHome(planet, hexDB, homeHexDB);
+    const otherHex = collection.findOne({ username: planet.armyUsername });
+    const otherHexDB = { x: otherHex.x, z: otherHex.z };
+    sendPlanetFleetToHome(planet, otherHexDB, hexDB, targetUser);
   });
 
   // Сброс своих колоний
@@ -296,6 +311,7 @@ const evictInactive = function() {
   const inactivityDate = new Date();
   inactivityDate.setDate(inactivityDate.getDate() - Meteor.settings.space.autoEviction.inactivityDays);
   const inactiveUsernames = Meteor.users.find({
+    username: { $ne: systemUser.username },
     'status.online': { $ne: true },
     'status.lastLogout': { $not: { $gt: inactivityDate } },
   }).fetch().map(user => user.username);

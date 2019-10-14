@@ -12,5 +12,9 @@ export default {
     resident: {
       isUnique: true,
     },
+    br: {
+      isUnique: true,
+      comment: 'будет доступен 28.10.2019',
+    },
   },
 };

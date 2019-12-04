@@ -23,6 +23,9 @@ let showEntranceReward = function() {
     isEntranceRewardDisplayed = true;
 
     let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
+    if (rewardsTaken >= Game.EntranceReward.itemsLimit) {
+      return;
+    }
     let currentRewardPage = Math.floor(rewardsTaken / Game.EntranceReward.perPage);
     let selectedPage = currentRewardPage; // For future navigation
 
@@ -31,6 +34,10 @@ let showEntranceReward = function() {
         isEntranceRewardDisplayed = false;
         Notifications.error(err.error);
       } else {
+        if (!history.length) {
+          isEntranceRewardDisplayed = false;
+          return;
+        }
         for (let i = 0; i < history.length; i++) {
           history[i] = {
             index: i,

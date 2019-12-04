@@ -13,6 +13,7 @@ Game.EntranceReward = {
   perPage: 60,
 
   items: [],
+  itemsLimit: 999,
   ranks: {},
   default: null
 };

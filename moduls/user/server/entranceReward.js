@@ -90,13 +90,15 @@ Meteor.methods({
       let currentPageReward = currentRewardPage == page ? (rewardsTaken % Game.EntranceReward.perPage) : 0;
       let firstElement = page * Game.EntranceReward.perPage + currentPageReward + 1;
       let lastElement = firstElement + Game.EntranceReward.perPage - currentPageReward;
-      
+
       // take care about references
-      let unclaimed = _.map(Game.EntranceReward.items.slice(firstElement, lastElement), _.clone);
-      if (currentRewardPage == page) {
-        unclaimed[0].state = 'current';
+      if (firstElement < Game.EntranceReward.items.length) {
+        let unclaimed = _.map(Game.EntranceReward.items.slice(firstElement, lastElement), _.clone);
+        if (currentRewardPage == page) {
+          unclaimed[0].state = 'current';
+        }
+        history.push.apply(history, unclaimed);
       }
-      history.push.apply(history, unclaimed);
     }
 
     Log.method.call(this, { name: 'entranceReward.getHistory', user });

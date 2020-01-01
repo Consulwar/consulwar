@@ -312,6 +312,9 @@ class Battle {
       if (mission.reward.humans) {
         totalReward.humans = mission.reward.humans;
       }
+      if (mission.reward.honor) {
+        totalReward.honor = mission.reward.honor;
+      }
     } else {
       const killedArmy = this.calculateTotalKilled(ENEMY_SIDE);
       const killedCost = Game.Unit.calculateBaseArmyCost(killedArmy);
@@ -331,6 +334,9 @@ class Battle {
     if (totalReward.humans) {
       dividedReward.humans = totalReward.humans / totalPower;
     }
+    if (totalReward.honor) {
+      dividedReward.honor = totalReward.honor / totalPower;
+    }
 
     const inc = {};
 
@@ -344,6 +350,10 @@ class Battle {
         reward.humans = Math.floor(dividedReward.humans * armyPower);
       }
 
+      if (dividedReward.honor) {
+        reward.honor = Math.floor(dividedReward.honor * armyPower);
+      }
+
       const user = Meteor.users.findOne({ username });
       Game.Resources.add(reward, user._id);
 
@@ -351,6 +361,9 @@ class Battle {
       inc[`reward.${username}.crystals`] = reward.crystals;
       if (dividedReward.humans) {
         inc[`reward.${username}.humans`] = reward.humans;
+      }
+      if (dividedReward.honor) {
+        inc[`reward.${username}.honor`] = reward.honor;
       }
     });
 

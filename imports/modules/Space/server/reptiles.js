@@ -9,6 +9,7 @@ import Utils from '../lib/utils';
 import Config from './config';
 import Hex from '../../MutualSpace/lib/Hex';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
+import SystemUser from '/moduls/user/server/systemUser';
 
 const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
 
@@ -116,6 +117,83 @@ const spawnPrisonersFleet = function() {
   };
 
   FlightEvents.add(flightData);
+};
+
+// Загружаем красные гексы
+const redHexes = [];
+
+const loadRedHexes = function() {
+  mutualSpaceCollection
+    .find({
+      username: null,
+    })
+    .fetch()
+    .forEach(hex => redHexes.push(hex));
+};
+
+const krampusEngineLevel = 100;
+const findClosestHex = function(target) {
+  return _(redHexes).min(hex => (
+    Utils.calcFlyTime((new Hex(hex)).center(), target, krampusEngineLevel)
+  ));
+};
+
+const spawnKrampusFleet = function() {
+  if (redHexes.length === 0) {
+    loadRedHexes();
+  }
+
+  const userHexList = mutualSpaceCollection.find({
+    username: {
+      $exists: true,
+      $nin: [null, SystemUser.username],
+    },
+  }).fetch();
+
+  const userList = userHexList.map(hex => hex.username);
+  const usernameToHex = {};
+  userHexList.forEach((hex) => {
+    usernameToHex[hex.username] = hex;
+  });
+
+  Game.Planets.Collection.find({
+    type: 'arctic',
+    username: { $in: userList },
+  }).fetch().forEach((planet) => {
+    const targetHex = usernameToHex[planet.username];
+    const targetHexCenter = (new Hex(targetHex).center());
+    const targetPosition = {
+      x: planet.x + targetHexCenter.x,
+      y: planet.y + targetHexCenter.y,
+    };
+
+    const closestHex = findClosestHex({
+      x: planet.x + targetHexCenter.x,
+      y: planet.y + targetHexCenter.y,
+    });
+    const startPosition = (new Hex(closestHex).center());
+
+    const flyTime = Utils.calcFlyTime(startPosition, targetPosition, krampusEngineLevel);
+
+    const flightData = {
+      targetType: FlightEvents.TARGET.PLANET,
+      startPosition: { x: 0, y: 0 },
+      targetPosition: { x: planet.x, y: planet.y },
+      targetId: planet._id,
+      flyTime,
+      isHumans: false,
+      isOneway: true,
+      engineLevel: krampusEngineLevel,
+      mission: {
+        type: 'krampus',
+        level: 1,
+      },
+      hex: { x: closestHex.x, z: closestHex.z },
+      targetHex: { x: targetHex.x, z: targetHex.z },
+    };
+
+    FlightEvents.add(flightData);
+  });
 };
 
 const actualizeTradeFleets = function() {
@@ -418,4 +496,5 @@ export default {
   sendReptileFleetToPlanet,
   actualize,
   stealUserResources,
+  spawnKrampusFleet,
 };

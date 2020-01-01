@@ -50,7 +50,16 @@ class Units extends BlazeComponent {
   getSourceUnits() {
     if (this.isSpace) {
       if (this.isReptiles) {
-        return fleetReptiles;
+        if (this.isReptiles.name === 'Крампус') {
+          return _.pick(
+            fleetReptiles,
+            'Unit/Reptile/Space/Krampus',
+          );
+        }
+        return _.omit(
+          fleetReptiles,
+          'Unit/Reptile/Space/Krampus',
+        );
       }
       if (this.isShowDefense) {
         return _.merge({}, defenseUnits, fleetHumans);
@@ -61,6 +70,10 @@ class Units extends BlazeComponent {
       return armyReptiles;
     }
     return armyHumans;
+  }
+
+  getKrampus() {
+    return this.getArmy()[0];
   }
 
   getArmy() {

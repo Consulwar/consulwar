@@ -113,7 +113,11 @@ class Ship {
       );
 
       if (planet.mission) {
-        this.color = Config.colors.enemy;
+        if (planet.mission.type === 'krampus') {
+          this.color = Config.colors.artefact;
+        } else {
+          this.color = Config.colors.enemy;
+        }
       } else if (planet.armyUsername === user.username) {
         this.color = Config.colors.user;
       } else if (this.myAllies.indexOf(planet.armyUsername) !== -1) {

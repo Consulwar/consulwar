@@ -25,7 +25,7 @@ export default function reptileArrival(data) {
 
     const { battleId } = job.data;
     Battle.addGroup(battleId, Battle.ENEMY_SIDE, Battle.aiName, enemyGroup);
-  } else if (planet.mission) {
+  } else if (planet.mission && data.mission.type !== 'krampus') {
     if (!data.isOneway) {
       FlightEvents.flyBack(data);
     } else {

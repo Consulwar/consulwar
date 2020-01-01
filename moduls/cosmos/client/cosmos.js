@@ -63,6 +63,9 @@ Meteor.subscribe('myPlanets');
 Meteor.subscribe('battles');
 Meteor.subscribe('spaceHex');
 
+const krampusCount = new Meteor.Collection('krampusCount');
+Meteor.subscribe('krampus');
+
 Tracker.autorun((userPlanetsTracker) => {
   const user = Meteor.user();
   if (user) {
@@ -1688,6 +1691,8 @@ Template.cosmos.onDestroyed(function() {
 
 Template.cosmos.helpers({
   possibleDesync: () => Session.get('possibleDesync'),
+
+  krampusCount: () => krampusCount.findOne().count,
 
   isLoading: function() {
     return isLoading.get();

@@ -14,6 +14,7 @@ import BattleEvents from './battleEvents';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 import mutualSpaceConfig from '../../MutualSpace/lib/config';
 import Hex from '../../MutualSpace/lib/Hex';
+import Reptiles from './reptiles';
 
 const WITHDRAW_TIME_MARGIN = 30;
 
@@ -473,6 +474,19 @@ Meteor.methods({
       job.cancel();
       job.restart();
     }
+  },
+
+  'space.spawnKrampusFleet'() {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'space.spawnKrampusFleet', user });
+
+    if (user.role !== 'admin') {
+      throw new Meteor.Error('Ты не дед мороз.');
+    }
+
+    Reptiles.spawnKrampusFleet();
   },
 });
 

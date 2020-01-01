@@ -34,7 +34,7 @@ const reptilesWin = function({
       planet.armyId = null;
       planet.armyUsername = null;
 
-      if (planet.mission) {
+      if (planet.mission && data.mission.type !== 'krampus') {
         // restore mission units
         planet.mission.units = null;
       } else {

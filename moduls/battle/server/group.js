@@ -59,7 +59,7 @@ class Group {
 
         let rest = target.receiveDamage(unit, additionalDamage);
 
-        additionalDamage -= rest;
+        additionalDamage -= additionalDamage - rest;
       }
 
       if (previousAdditionalDamage === additionalDamage) {

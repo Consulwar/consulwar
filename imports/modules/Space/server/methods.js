@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { _ } from 'lodash';
 import Game from '/moduls/game/lib/main.game';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
@@ -17,6 +18,21 @@ import Hex from '../../MutualSpace/lib/Hex';
 import Reptiles from './reptiles';
 
 const WITHDRAW_TIME_MARGIN = 30;
+
+const tradeCodes = {
+  'Unit/Human/Space/Gammadrone': {
+    metals: 10000,
+  },
+  'Unit/Human/Space/Wasp': {
+    crystals: 3000,
+  },
+  'Unit/Human/Space/Mirage': {
+    humans: 1000,
+  },
+  'Unit/Human/Space/Railgun': {
+    credits: 100,
+  },
+};
 
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units) {
@@ -261,6 +277,40 @@ Meteor.methods({
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
+    //
+    let isResourceTransfer = false;
+    const resourcesToTransfer = {};
+    if (
+      basePlanet.isHome
+      && user.username === basePlanet.username
+      && target.isHome
+      && basePlanet.username !== target.username
+      && units['Unit/Human/Space/TruckC'] > 0
+    ) {
+      let trukcsAvaliable = units['Unit/Human/Space/TruckC'];
+
+      _.toPairs(tradeCodes).forEach(([key, resources]) => {
+        if (units[key] > 0) {
+          _.merge(
+            resourcesToTransfer,
+            _.mapValues(resources, price => price * units[key])
+          );
+
+          trukcsAvaliable -= units[key];
+        }
+      });
+
+      if (trukcsAvaliable < 0) {
+        throw new Meteor.Error('Недостаточно траков');
+      }
+
+      if (!Game.Resources.has({ resources: resourcesToTransfer })) {
+        throw new Meteor.Error('У вас недостаточно ресурсов');
+      }
+      isResourceTransfer = true;
+    }
+    //
+
     const startPosition = {
       x: basePlanet.x,
       y: basePlanet.y,
@@ -334,6 +384,11 @@ Meteor.methods({
       isOneway,
       armyId: newArmyId,
     };
+
+    if (isResourceTransfer) {
+      flightData.resourcesToTransfer = resourcesToTransfer;
+      Game.Resources.sold(resourcesToTransfer, user._id);
+    }
 
     if (target.global) {
       flightData.global = true;

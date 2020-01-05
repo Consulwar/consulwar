@@ -108,6 +108,11 @@ const completeOnPeacefulPlanet = function(data, planet) {
           targetPositionWithOffset,
           data.engineLevel,
         );
+        
+        if (planet.isHome && data.resourcesToTransfer) {
+          Game.Resources.bought(data.resourcesToTransfer, planet.userId);
+          delete data.resourcesToTransfer;
+        }
 
         FlightEvents.add({
           ...data,

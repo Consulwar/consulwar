@@ -11,7 +11,7 @@ let showEntranceReward = function() {
 
   let midnightDate = Game.getMidnightDate();
 
-  if (!isEntranceRewardDisplayed 
+  if (!isEntranceRewardDisplayed
     && ((
            !user.entranceReward // not get any rewards yet
         && (midnightDate > user.createdAt.valueOf()) // play at least 1 day
@@ -24,6 +24,13 @@ let showEntranceReward = function() {
 
     let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
     if (rewardsTaken >= Game.EntranceReward.itemsLimit) {
+      Meteor.call('entranceReward.takeReward', function(err, profit) {
+        if (err) {
+          Notifications.error(err.error);
+        } else {
+          Notifications.success('Получена награда за вход: 100 ГГК.');
+        }
+      });
       return;
     }
     let currentRewardPage = Math.floor(rewardsTaken / Game.EntranceReward.perPage);

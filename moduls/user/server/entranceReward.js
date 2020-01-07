@@ -119,8 +119,6 @@ Meteor.methods({
       throw new Meteor.Error('Невозможно получить награду за вход', 'награда уже получена');
     }
 
-    let profit = Game.EntranceReward.getProfit();
-
     let now = new Date();
 
     Meteor.users.update({
@@ -130,6 +128,15 @@ Meteor.methods({
         entranceReward: now
       }
     });
+
+    // Add 100 credits daily
+    Game.Resources.addProfit({ resources: { credits: 100 } });
+
+    if (Game.Statistic.getUserValue('entranceReward.total') + 1 >= Game.EntranceReward.items.length) {
+      return null;
+    }
+
+    let profit = Game.EntranceReward.getProfit();
 
     let record = {
       date: now,
@@ -145,9 +152,6 @@ Meteor.methods({
     });
 
     Game.Resources.addProfit(profit);
-
-    // Additionally add 100 credits daily
-    Game.Resources.addProfit({ resources: { credits: 100 } });
 
     Game.Statistic.incrementUser(user._id, {
       'entranceReward.total': 1

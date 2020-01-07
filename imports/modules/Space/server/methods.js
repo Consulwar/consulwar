@@ -280,14 +280,16 @@ Meteor.methods({
     //
     let isResourceTransfer = false;
     const resourcesToTransfer = {};
+    let resourcesToSpend = null;
+    const truckCount = units['Unit/Human/Space/TruckC'];
     if (
       basePlanet.isHome
       && user.username === basePlanet.username
       && target.isHome
       && basePlanet.username !== target.username
-      && units['Unit/Human/Space/TruckC'] > 0
+      && truckCount > 0
     ) {
-      let trukcsAvaliable = units['Unit/Human/Space/TruckC'];
+      let trukcsAvaliable = truckCount;
 
       _.toPairs(tradeCodes).forEach(([key, resources]) => {
         if (units[key] > 0) {
@@ -303,8 +305,13 @@ Meteor.methods({
       if (trukcsAvaliable < 0) {
         throw new Meteor.Error('Недостаточно траков');
       }
-
-      if (!Game.Resources.has({ resources: resourcesToTransfer })) {
+      
+      resourcesToSpend = _.clone(resourcesToTransfer);
+      const payableTrucs = truckCount - trukcsAvaliable;
+      const trucksTax = payableTrucs * 2;
+      resourcesToSpend.credits = (resourcesToSpend.credits || 0) + trucksTax;
+      
+      if (!Game.Resources.has({ resources: resourcesToSpend })) {
         throw new Meteor.Error('У вас недостаточно ресурсов');
       }
       isResourceTransfer = true;
@@ -345,7 +352,7 @@ Meteor.methods({
       engineLevel,
     );
 
-    if (flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
+    if (!isResourceTransfer && flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
       throw new Meteor.Error('Слишком долгий перелет');
     }
 
@@ -387,7 +394,7 @@ Meteor.methods({
 
     if (isResourceTransfer) {
       flightData.resourcesToTransfer = resourcesToTransfer;
-      Game.Resources.sold(resourcesToTransfer, user._id);
+      Game.Resources.sold(resourcesToSpend, user._id);
     }
 
     if (target.global) {

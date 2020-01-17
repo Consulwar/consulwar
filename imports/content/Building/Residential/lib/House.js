@@ -58,7 +58,7 @@ export default {
             5000,
             10000,
             20000,
-            40000,
+            200000,
           ][Math.floor(level / 20)];
         },
       },

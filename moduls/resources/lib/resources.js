@@ -25,7 +25,7 @@ Game.Resources = {
 
     result.amount += baseAmount;
     if (bonus) {
-      result.bonus = Math.min(result.bonus + bonus, income * Game.Resources.bonusStorage);
+      result.bonus = Math.max(Math.min(result.bonus + bonus, income * Game.Resources.bonusStorage), 0);
     }
 
     return result;

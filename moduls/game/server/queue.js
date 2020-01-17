@@ -36,12 +36,12 @@ Game.Queue.Collection._ensureIndex({
   finishTime: -1
 });
 
-Game.Queue.add = function(item) {
-  if (!Meteor.userId()) {
+Game.Queue.add = function(item, userId = Meteor.userId()) {
+  if (!userId) {
     return null;
   }
 
-  if (item.group && Game.Queue.isBusy(item.group)) {
+  if (item.group && Game.Queue.isBusy(item.group, userId)) {
     return null;
   }
 
@@ -50,7 +50,7 @@ Game.Queue.add = function(item) {
     : Game.getCurrentTime();
 
   var set = {
-    user_id: Meteor.userId(),
+    user_id: userId,
     type: item.type,
     startTime: startTime,
     finishTime: startTime + item.time,
@@ -59,7 +59,7 @@ Game.Queue.add = function(item) {
   };
 
   var select = {
-    user_id: Meteor.userId(),
+    user_id: userId,
     type: item.type,
     finishTime: { $gt: startTime },
     status: Game.Queue.status.INCOMPLETE,

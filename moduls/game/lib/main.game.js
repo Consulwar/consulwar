@@ -781,17 +781,17 @@ Game.Queue = {
     });
   },
 
-  getGroup: function(group) {
+  getGroup: function(group, userId = Meteor.userId()) {
     return Game.Queue.Collection.findOne({
-      user_id: Meteor.userId(),
+      user_id: userId,
       group: group,
       status: Game.Queue.status.INCOMPLETE
     });
   },
 
-  isBusy: function(group) {
-    if (Meteor.userId()) {
-      return Game.Queue.getGroup(group);  
+  isBusy: function(group, userId = Meteor.userId()) {
+    if (userId) {
+      return Game.Queue.getGroup(group, userId);  
     }
     return false;
   },
@@ -850,8 +850,10 @@ Game.Helpers = {
   },
 
   formatSeconds: function(seconds) {
+    let sign = '';
     if (seconds < 0) {
-      return '…';
+      sign = '-';
+      seconds *= -1;
     }
     var days = Math.floor(seconds / 86400);
     seconds -= days * 86400;
@@ -877,7 +879,7 @@ Game.Helpers = {
       }
     }
 
-    return `${fDays}${fHours}${fMinutes}${fSeconds}`;
+    return `${sign} ${fDays}${fHours}${fMinutes}${fSeconds}`;
   },
 
   getNumeralEnding: function (num, endings) {

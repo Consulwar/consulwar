@@ -210,6 +210,7 @@ Meteor.publish('game', function () {
         music: 1,
         entranceReward: 1,
         Person: 1,
+        krampusBuffedTill: 1,
       },
     });
   }

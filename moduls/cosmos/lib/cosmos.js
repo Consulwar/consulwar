@@ -2,6 +2,7 @@ import FlightEvents from '/imports/modules/Space/lib/flightEvents';
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'lodash';
 import User from '../../../imports/modules/User/lib/User';
+import Game from '/moduls/game/lib/main.game';
 
 let Hyperdrive;
 if (Meteor.isClient) {
@@ -235,6 +236,10 @@ Game.Planets = {
       default:
         minEngine = 0;
         break;
+    }
+
+    if (user.krampusBuffedTill && user.krampusBuffedTill > Game.getCurrentServerTime()) {
+      return 100;
     }
 
     return Math.max(Hyperdrive.getCurrentLevel({ user }), minEngine);

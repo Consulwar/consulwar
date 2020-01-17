@@ -266,6 +266,10 @@ Meteor.methods({
       set.role = user.role;
     }
 
+    if (user.chatTitle) {
+      set.chatTitle = user.chatTitle;
+    }
+
     if (user.settings && user.settings.chat && user.settings.chat.icon) {
       set.iconPath = user.settings.chat.icon;
     }
@@ -489,7 +493,7 @@ Meteor.methods({
         if (targetUsername === user.username) {
           set.message = ` знатно подрочил. Теперь всё плохо.`;
         } else {
-          set.message = ` поливает игрока @${target.username} крампус-бафом`;
+          set.message = ` поливает консула @${target.username} крампус-бафом`;
         }
       } else {
         throw new Meteor.Error('Неправильная команда, введите /help для помощи');
@@ -1423,7 +1427,8 @@ Meteor.methods({
         cheater: 1,
         room: 1,
         iconPath: 1,
-        rating: 1
+        rating: 1,
+        chatTitle: 1,
       },
       sort: {
         timestamp: -1
@@ -1571,7 +1576,8 @@ Meteor.publish('chat', function (roomName) {
           cheater: 1,
           room: 1,
           iconPath: 1,
-          rating: 1
+          rating: 1,
+          chatTitle: 1,
         },
         sort: {
           timestamp: -1

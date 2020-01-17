@@ -22,6 +22,7 @@ export default {
             '4 вида',
             '5 видов',
             '6 видов',
+            '6 видов',
           ][Math.floor(level / 20)];
         },
       },
@@ -35,6 +36,7 @@ export default {
     crystals: 160,
     honor: 130,
   },
+  plasmoidDuration: 60 * 60 * 24 * 14,
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {

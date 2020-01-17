@@ -358,6 +358,13 @@ Meteor.methods({
       throw new Meteor.Error('Ошибка повышения уровня альянса', 'Альянс уже максимального уровня.');
     }
 
+    if (!allianceBuilding.has({
+      level: nextLevel * 20,
+      user,
+    })) {
+      throw new Meteor.Error('Ошибка повышения уровня альянса', 'Недостаточный уровень системы связи');
+    }
+
     let price = nextLevel.price;
     let balance = alliance.balance;
 

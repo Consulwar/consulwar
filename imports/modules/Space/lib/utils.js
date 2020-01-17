@@ -12,8 +12,8 @@ const calcSpeedK = function(level) {
   const config = SPEED_CONFIG;
   let k = 0;
 
-  if (level >= 100) {
-    k = 100;
+  if (level >= 120) {
+    k = 120;
   } else if (level >= 1) {
     const i = Math.floor(level / 10);
     const j = level % 10;

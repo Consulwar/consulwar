@@ -11,7 +11,7 @@ export default {
         condition: 'Unique/message',
         affect: 'crystals',
         result({ level }) {
-          return (level * 0.1) + [0, 10, 15, 20, 30, 40][Math.floor(level / 20)];
+          return (level * 0.1) + [0, 10, 15, 20, 30, 40, 52][Math.floor(level / 20)];
         },
       },
     ],
@@ -24,6 +24,7 @@ export default {
     crystals: 2,
     honor: 7,
   },
+  plasmoidDuration: 60 * 60 * 24 * 365,
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {

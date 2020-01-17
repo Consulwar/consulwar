@@ -17,7 +17,7 @@
       "accessToken": "***"
     },
     "cosmos": {
-      "speedConfig": [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100 ],
+      "speedConfig": [ 0, 0.5, 1.5, 3, 6, 12, 24, 35, 44, 54, 80, 100, 110, 120 ],
       "minSpeed": 3,
       "maxSpeed": 80,
       "minAcc": 0.4,

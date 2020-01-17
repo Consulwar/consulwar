@@ -31,6 +31,7 @@ export default {
       honor: [30, 'slowExponentialGrow', 0],
     };
   },
+  plasmoidDuration: 60 * 60 * 24 * 28 * 3,
   maxLevel: 100,
   requirements() {
     return [

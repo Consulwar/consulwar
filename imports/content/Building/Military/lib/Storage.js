@@ -23,7 +23,7 @@ export default {
         condition: 'Unique/dailyQuestCount',
         affect: 'count',
         result({ level }) {
-          return [1, 2, 3, 4, 5, 6][Math.floor(level / 20)];
+          return [1, 2, 3, 4, 5, 6, 7][Math.floor(level / 20)];
         },
       },
     ],
@@ -46,6 +46,7 @@ export default {
     crystals: 25,
     honor: 60,
   },
+  plasmoidDuration: 60 * 60 * 24 * 28 * 2,
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {

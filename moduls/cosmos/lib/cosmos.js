@@ -239,7 +239,7 @@ Game.Planets = {
     }
 
     if (user.krampusBuffedTill && user.krampusBuffedTill > Game.getCurrentServerTime()) {
-      return 100;
+      minEngine = 100;
     }
 
     return Math.max(Hyperdrive.getCurrentLevel({ user }), minEngine);

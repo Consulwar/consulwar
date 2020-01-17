@@ -13,7 +13,7 @@ export default {
         priority: 2,
         affect: 'result',
         result({ level }) {
-          return (level * 0.4) + [0, 10, 20, 30, 40, 60][Math.floor(level / 20)];
+          return (level * 0.4) + [0, 10, 20, 30, 40, 60, 152][Math.floor(level / 20)];
         },
       },
     ],
@@ -52,6 +52,7 @@ export default {
     crystals: 8,
     honor: 15,
   },
+  plasmoidDuration: 60 * 60 * 24 * 21,
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {

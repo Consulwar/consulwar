@@ -238,7 +238,7 @@ Game.Planets = {
         break;
     }
 
-    if (user.krampusBuffedTill && user.krampusBuffedTill > Game.getCurrentServerTime()) {
+    if (user.krampusEngineBuff && user.krampusBuffedTill && user.krampusBuffedTill > Game.getCurrentServerTime()) {
       minEngine = 100;
     }
 

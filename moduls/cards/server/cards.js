@@ -177,15 +177,14 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
     };
     Game.Queue.add(taskFast, targetUser._id);
 
-    if (buffLevel !== 'Normal') {
-      Meteor.users.update({
-        _id: targetUser._id,
-      }, {
-        $set: {
-          krampusBuffedTill: Game.getCurrentTime() + krampusBuff.durationTime,
-        }
-      });
-    }
+    Meteor.users.update({
+      _id: targetUser._id,
+    }, {
+      $set: {
+        krampusBuffedTill: Game.getCurrentTime() + krampusBuff.durationTime,
+        krampusEngineBuff: buffLevel !== 'Normal',
+      }
+    });
 
     Meteor.users.update({
       _id: owner._id,

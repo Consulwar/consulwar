@@ -100,13 +100,9 @@ class User extends LibUser {
       user_id: user._id,
     });
 
-    // Remove white containers
-    ContainerCollection.update({
+    // Remove all containers
+    ContainerCollection.remove({
       userId: user._id,
-    }, {
-      $unset: {
-        [WhiteContainer.id]: 1,
-      },
     });
 
     // Cancel all battles in user hex & evict user from mutual space

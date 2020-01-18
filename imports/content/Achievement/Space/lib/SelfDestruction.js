@@ -75,7 +75,7 @@ export default {
         priority: 10,
         affect: 'damage',
         result({ level }) {
-          return level * 20 * -1;
+          return level * 20;
         },
       },
       {
@@ -85,7 +85,7 @@ export default {
         priority: 10,
         affect: 'life',
         result({ level }) {
-          return level * 20 * -1;
+          return level * 20;
         },
       },
     ],

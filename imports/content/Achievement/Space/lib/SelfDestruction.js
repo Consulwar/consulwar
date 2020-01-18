@@ -11,7 +11,7 @@ export default {
         textAfter: '% быстрее',
         condition: 'Unit/Human',
         priority: 10,
-        affect: ['metals', 'crystals'],
+        affect: 'time',
         result({ level }) {
           return level * 5;
         },

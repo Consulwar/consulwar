@@ -69,6 +69,11 @@ Meteor.methods({
         }
       }
       building.setLevel({ level: 120, user });
+    } else {
+      const isTaskInserted = Game.Queue.add(set);
+      if (!isTaskInserted) {
+        throw new Meteor.Error('Не удалось начать строительство');
+      }
     }
 
     Game.Resources.spend(price);

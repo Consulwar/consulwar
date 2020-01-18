@@ -69,6 +69,11 @@ Meteor.methods({
         }
       }
       research.setLevel({ level: 120, user });
+    } else {
+      const isTaskInserted = Game.Queue.add(set);
+      if (!isTaskInserted) {
+        throw new Meteor.Error('Не удалось начать исследование');
+      }
     }
 
     Game.Resources.spend(price);

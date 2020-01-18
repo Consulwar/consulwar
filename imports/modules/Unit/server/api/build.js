@@ -5,6 +5,7 @@ import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
 import humanUnits from '/imports/content/Unit/Human/server';
+import DoomsDayGun from '/imports/content/Unit/Human/Defense/server/DoomsDayGun';
 import ConfigLib from '/imports/modules/Building/lib/config';
 
 Meteor.methods({
@@ -73,6 +74,10 @@ Meteor.methods({
       },
     };
 
+    if (id === DoomsDayGun.id && !User.canSelfVaip({ user })) {
+      throw new Meteor.Error('Сперва завершите бои');
+    }
+
     const isTaskInserted = Game.Queue.add(set);
     if (!isTaskInserted) {
       throw new Meteor.Error('Не удалось начать подготовку юнитов');
@@ -105,7 +110,7 @@ Meteor.methods({
       }
     }
 
-    if (id === 'Unit/Human/Defense/DoomsDayGun') {
+    if (id === DoomsDayGun.id) {
       User.selfVaip({ user });
     }
   },

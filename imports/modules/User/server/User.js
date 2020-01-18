@@ -40,26 +40,41 @@ class User extends LibUser {
     }
   }
 
+  static canSelfVaip({ user } = {}) {
+    const hex = SpaceHexCollection.findOne({ username: user.username });
+    const hexDB = { x: hex.x, z: hex.z };
+
+    const hasBattle = Space.collection.findOne({
+      type: battleEvents.EVENT_TYPE,
+      status: Space.filterActive,
+      'data.targetHex': hexDB,
+    });
+
+    if (hasBattle) {
+      return false;
+    }
+
+    const inBattle = BattleCollection.findOne({
+      'options.isEarth': { $exists: false },
+      userNames: user.username,
+      status: Battle.Status.progress,
+    });
+
+    if (inBattle) {
+      return false;
+    }
+
+    return true;
+  }
+
   static selfVaip({ user } = {}) {
     if (!user) {
       throw new Meteor.Error('Требуется пользователь');
     }
 
-    // Cancel all active non-earth battles,
-    // including mutual ones
-    BattleCollection.update({
-      status: Battle.Status.progress,
-      userNames: user.username,
-      'options.isEarth': { $exists: false },
-    }, {
-      $set: {
-        status: Battle.Status.cancelled,
-        cancelledBy: user.username,
-      },
-    }, {
-      multi: true,
-    });
-
+    if (!User.canSelfVaip({ user })) {
+      throw new Meteor.Error('Нельзя');
+    }
 
     // Cancel all jobs
     Space.collection.update({
@@ -95,25 +110,7 @@ class User extends LibUser {
     });
 
     // Cancel all battles in user hex & evict user from mutual space
-    const hex = SpaceHexCollection.findOne({ username: user.username });
-    if (hex) {
-      const hexDB = { x: hex.x, z: hex.z };
-
-      Space.collection.update({
-        type: battleEvents.EVENT_TYPE,
-        status: Space.filterActive,
-        'data.targetHex': hexDB,
-      }, {
-        $set: {
-          status: 'cancelled',
-          cancelledBy: user.username,
-        },
-      }, {
-        multi: true,
-      });
-
-      evict(user.username);
-    }
+    evict(user.username);
 
     // DELETE SPACE and create new one
     Game.Planets.Collection.remove({

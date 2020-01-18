@@ -365,6 +365,11 @@ class Battle {
       if (dividedReward.honor) {
         inc[`reward.${username}.honor`] = reward.honor;
       }
+      if (totalPower === armyPower && mission.engName === 'prisoners') {
+        if (Game.Random.chance(50)) {
+          inc[`reward.${username}.ruby_plasmoid`] = 1;
+        }
+      }
     });
 
     const names = this.userNames;

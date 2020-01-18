@@ -26,9 +26,9 @@ export default {
   ],
   requirements() {
     return [
-      ['Building/Military/Shipyard', 100],
-      ['Building/Military/Airfield', 100],
-      ['Building/Military/Factory', 100],
+      ['Building/Military/Shipyard', 20],
+      ['Building/Military/Airfield', 20],
+      ['Building/Military/Factory', 20],
     ];
   },
 };

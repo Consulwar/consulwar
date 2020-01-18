@@ -13,7 +13,11 @@
         onMouseOver={{showTooltip 'time' price}}
         class="cw--ResourcePrice__time"
       >
+        {{#if timeLabel}}
+        {{timeLabel}}
+        {{else}}
         Время строительства: 
+        {{/if}}
         <time class="cw--ResourcePrice__timeCount">
           {{formatSeconds time}}
         </time>

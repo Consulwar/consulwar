@@ -15,12 +15,14 @@ Meteor.startup(() => {
 class AbstractUniqueItem extends AbstractItem {
   constructor({
     maxLevel = 100,
+    plasmoidDuration,
     overlay,
     ...options
   }) {
     super({ ...options });
 
     this.maxLevel = maxLevel;
+    this.plasmoidDuration = plasmoidDuration;
 
     this.overlay = overlay;
     if (overlay && typeof overlay.type === 'undefined') {
@@ -95,6 +97,12 @@ class AbstractUniqueItem extends AbstractItem {
   }
 
   getPrice(level) {
+    if (level > this.maxLevel && this.plasmoidDuration) {
+      return {
+        time: this.plasmoidDuration,
+        'ruby_plasmoid': 1,
+      };
+    }
     return this.applyPriceEffects({
       price: this.getBasePrice({ level }),
     });
@@ -106,6 +114,13 @@ class AbstractUniqueItem extends AbstractItem {
     });
     const hasTechnologies = this.meetRequirements({ level });
     const limitExceeded = this.maxLevel && level > this.maxLevel;
+    if (
+      level > this.maxLevel
+      && this.plasmoidDuration
+      && this.getCurrentLevel() >= this.maxLevel
+    ) {
+      return hasResources && hasTechnologies && !this.isQueueBusy();
+    }
     return hasResources && hasTechnologies && !limitExceeded && !this.isQueueBusy();
   }
 }

@@ -17,6 +17,7 @@ class ResourcePrice extends BlazeComponent {
     hash: {
       price,
       time = null,
+      timeLabel = '',
       artifacts = [],
       resources = [],
       isShowDiff = true,
@@ -31,6 +32,7 @@ class ResourcePrice extends BlazeComponent {
     this.className = className;
 
     this.time = time;
+    this.timeLabel = timeLabel;
     this.artifacts = artifacts;
     this.resources = resources;
 

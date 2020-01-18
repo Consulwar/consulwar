@@ -116,6 +116,11 @@ Meteor.methods({
     }
 
     if (id === DoomsDayGun.id) {
+      const increment = {};
+      increment['units.build.total'] = count;
+      increment[`units.build.${DoomsDayGun.id}`] = count;
+      Game.Statistic.incrementUser(user._id, increment);
+
       User.selfVaip({ user });
     }
   },

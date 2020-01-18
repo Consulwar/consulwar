@@ -411,6 +411,10 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'quests.sendDailyAnswer', user });
 
+    if (user.krampusBuffedTill > Game.getCurrentTime()) {
+      throw new Meteor.Error('Под крампус бафом ежедневные задания недоступны.');
+    }
+
     var quests = Game.Quest.getValue();
 
     if (!quests || !quests.daily || quests.daily.status != Game.Quest.status.INPROGRESS) {

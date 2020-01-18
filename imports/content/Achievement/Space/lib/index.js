@@ -6,6 +6,7 @@ import CarryingLight from './CarryingLight';
 import ColdBlooded from './ColdBlooded';
 import Thorns from './Thorns';
 import Hurricane from './Hurricane';
+import SelfDestruction from './SelfDestruction';
 
 export default {
   'Achievement/Space/PirateRaid': PirateRaid,
@@ -16,4 +17,5 @@ export default {
   'Achievement/Space/ColdBlooded': ColdBlooded,
   'Achievement/Space/Thorns': Thorns,
   'Achievement/Space/Hurricane': Hurricane,
+  'Achievement/Space/SelfDestruction': SelfDestruction,
 };

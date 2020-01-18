@@ -25,7 +25,7 @@ Game.Resources = {
 
     result.amount += baseAmount;
     if (bonus) {
-      result.bonus = Math.min(result.bonus + bonus, income * Game.Resources.bonusStorage);
+      result.bonus = Math.max(Math.min(result.bonus + bonus, income * Game.Resources.bonusStorage), 0);
     }
 
     return result;
@@ -143,19 +143,6 @@ Game.Resources = {
 
   multiplyResources({ resources, count }) {
     return _.mapObject(resources, resource => resource * count);
-  },
-
-  getAvailable(id, value) {
-    if (id === 'time') {
-      return;
-    }
-    const availableResource = Game.Resources.getValue()[id]
-      && Game.Resources.getValue()[id].amount
-      || 0;
-    if (value && value <= availableResource) {
-      return value;
-    }
-    return availableResource;
   }
 };
 

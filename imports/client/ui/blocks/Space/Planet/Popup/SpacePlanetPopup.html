@@ -57,14 +57,23 @@
           </span>
         </a>
       {{/each}}
+        
       {{#if planetInfo.mission.reward}}
-        <div class="resources cost">
-          {{#each reward (arrayify planetInfo.mission.reward)}}
-            <div class="{{reward.key}}">
-              {{formatNumberWithISO reward.value}}
-            </div>
-          {{/each}}
-        </div>
+        {{#if eq planetInfo.mission.name "Крампус"}}
+          {{> ResourcePrice args
+            price=planetInfo.mission.reward
+            isShowDiff=false
+            className='cw--SpaceFleetPopup__missionReward'
+          }}
+        {{else}}
+          <div class="resources cost">
+            {{#each reward (arrayify planetInfo.mission.reward)}}
+              <div class="{{reward.key}}">
+                {{formatNumberWithISO reward.value}}
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
       {{/if}}
     </div>
 

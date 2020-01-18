@@ -76,14 +76,17 @@
               className='cw--BuildBuilding__resources'
             }}
           {{else}}
-            В разработке
+            {{> ResourcePrice args
+              timeLabel='Время усиления:'
+              price=(building.getPrice level.get)
+              className='cw--BuildBuilding__resources'
+            }}
           {{/if}}
         </div>
 
         <div class="cw--BuildBuilding__actions">
-          
           <div class="cw--BuildBuilding__action">
-            {{#if building.getQueue}}
+            {{#if and building.getQueue (lt building.getCurrentLevel building.maxLevel)}}
               <div class="cw--BuildBuilding__actionStatus">
                 Идет строительство
               </div>
@@ -136,10 +139,6 @@
                     class="cw--BuildBuilding__actionAmountCount"
                   }}
                 </div>
-              {{else}}
-                <div class="cw--BuildBuilding__actionNeeds">
-                  Требуется красный плазмоид
-                </div>
               {{/if}}
               <button
                 class="
@@ -150,7 +149,9 @@
                 onClick={{build}}
                 disabled={{not (building.canBuild level.get)}}
               >
-                {{#if building.getCurrentLevel}}
+                {{#if gte building.getCurrentLevel building.maxLevel}}
+                  Вставить плазмоид
+                {{else if building.getCurrentLevel}}
                   Улучшить
                 {{else}}
                   Построить

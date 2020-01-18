@@ -22,6 +22,15 @@ if (
   );
 }
 
+if (
+  !Meteor.settings.public.maxBuildTime
+) {
+  throw new Meteor.Error(
+    'Ошибка в настройках',
+    'Не указано максимальное время стройки (см. settings.sample.public.maxBuildTime)',
+  );
+}
+
 BrowserPolicy.content.allowOriginForAll('*');
 BrowserPolicy.content.allowEval('*');
 BrowserPolicy.content.allowConnectOrigin("ws:");
@@ -210,6 +219,8 @@ Meteor.publish('game', function () {
         music: 1,
         entranceReward: 1,
         Person: 1,
+        krampusBuffedTill: 1,
+        krampusEngineBuff: 1,
       },
     });
   }

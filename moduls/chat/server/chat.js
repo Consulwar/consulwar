@@ -266,6 +266,10 @@ Meteor.methods({
       set.role = user.role;
     }
 
+    if (user.chatTitle) {
+      set.chatTitle = user.chatTitle;
+    }
+
     if (user.settings && user.settings.chat && user.settings.chat.icon) {
       set.iconPath = user.settings.chat.icon;
     }
@@ -424,6 +428,9 @@ Meteor.methods({
 
         Game.Payment.Expense.log(50, 'sepukku');
       } else if (message.indexOf('/яготовкрейду') === 0) {
+        if (['admin', 'helper'].indexOf(user.role) == -1) {
+          throw new Meteor.Error('Рейды доступны только хелперам и админам');
+        }
         if (makeFun({ raid: true })) {
           set.data = {
             type: 'notprepared'
@@ -470,6 +477,24 @@ Meteor.methods({
         }
         Game.Broadcast.add(user.username, message.substr(10).trim());
         Game.Payment.Expense.log(price.credits, 'broadcast');
+      } else if (message.indexOf('/krampus') === 0) {
+        const targetUsername = message.substr(8).trim();
+        const target = User.getByUsername({ username: targetUsername });
+        if (!target) {
+          throw new Meteor.Error('Некорректная цель для бафа');
+        }
+        const level = Game.Cards.useKrampusBuff(user, target);
+
+        set.data = {
+          type: 'krampus',
+          level,
+        };
+
+        if (targetUsername === user.username) {
+          set.message = ` знатно подрочил. Теперь всё плохо.`;
+        } else {
+          set.message = ` поливает консула @${target.username} крампус-бафом`;
+        }
       } else {
         throw new Meteor.Error('Неправильная команда, введите /help для помощи');
       }
@@ -1402,7 +1427,8 @@ Meteor.methods({
         cheater: 1,
         room: 1,
         iconPath: 1,
-        rating: 1
+        rating: 1,
+        chatTitle: 1,
       },
       sort: {
         timestamp: -1
@@ -1550,7 +1576,8 @@ Meteor.publish('chat', function (roomName) {
           cheater: 1,
           room: 1,
           iconPath: 1,
-          rating: 1
+          rating: 1,
+          chatTitle: 1,
         },
         sort: {
           timestamp: -1

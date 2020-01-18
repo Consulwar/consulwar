@@ -176,7 +176,7 @@ var menu = {
   },
   statistics: {
     name: 'Статистика',
-    routeName: ['general', 'science', 'cosmos', 'battle', 'communication'],
+    routeName: ['general', 'science', 'cosmos', 'battle', 'communication', 'krampus'],
     url: Router.routes.statistics.path({ group: 'general'}),
     doNotShowInGameMenu: true,
     items: {
@@ -199,6 +199,10 @@ var menu = {
       communication: {
         tooltip: "Общение",
         url: Router.routes.statistics.path({ group: 'communication' })
+      },
+      krampus: {
+        tooltip: "Нашествие Крампусова",
+        url: Router.routes.statistics.path({ group: 'krampus' })
       }
     }
   },

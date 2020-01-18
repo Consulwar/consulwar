@@ -1110,6 +1110,34 @@ Meteor.publish('myPlanets', function() {
   }
 });
 
+Meteor.publish('krampus', function() {
+  let self = this;
+  let count = 0;
+  let initializing = true;
+  let handle = Game.Planets.Collection.find({
+    'mission.type': 'krampus',
+  }).observeChanges({
+    added: function (id) {
+      count++;
+      if (!initializing) {
+        self.changed('krampusCount', 1, { count });
+      }
+    },
+    removed: function (id) {
+      count--;
+      self.changed('krampusCount', 1, { count });
+    }
+  });
+
+  initializing = false;
+  self.added('krampusCount', 1, { count });
+  self.ready();
+
+  self.onStop(function () {
+    handle.stop();
+  });
+});
+
 // ----------------------------------------------------------------------------
 // Debug methods
 // ----------------------------------------------------------------------------

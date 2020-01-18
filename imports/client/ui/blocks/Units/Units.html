@@ -1,5 +1,24 @@
 <template name="Units">
   {{#if units}}
+    {{#if eq isReptiles.name "Крампус"}}
+      {{#with getKrampus}}
+        <a
+            href={{url}}
+            onClick={{showUnit id}}
+            class="
+              cw--Units__unit
+              cw--Units__unit_reptile
+            "
+            data-sound="hover, click"
+          >
+            <img
+              class="cw--Units__unitIcon"
+              src={{icon}}
+              alt={{title}}
+            />
+          </a>
+      {{/with}}
+    {{else}}
     <div class="cw--Units {{className}}">
       {{#each unit in getArmy}}
         {{#if unit}}
@@ -49,5 +68,6 @@
         {{/if}}
       {{/each}}
     </div>
+    {{/if}}
   {{/if}}
 </template>

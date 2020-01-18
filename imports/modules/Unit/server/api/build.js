@@ -5,6 +5,7 @@ import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
 import humanUnits from '/imports/content/Unit/Human/server';
+import DoomsDayGun from '/imports/content/Unit/Human/Defense/server/DoomsDayGun';
 import ConfigLib from '/imports/modules/Building/lib/config';
 
 Meteor.methods({
@@ -59,6 +60,11 @@ Meteor.methods({
 
     const price = unit.getPrice(setCount, cardList);
 
+    const { maxBuildTime } = Meteor.settings.public;
+    if (count > 1 && price.time > maxBuildTime) {
+      throw new Meteor.Error(`Максимальное время стройки: ${Game.Helpers.formatTime(maxBuildTime)}`);
+    }
+
     const rating = Game.Resources.calculateRatingFromResources(price);
 
     const set = {
@@ -72,6 +78,10 @@ Meteor.methods({
         rating,
       },
     };
+
+    if (id === DoomsDayGun.id && !User.canSelfVaip({ user })) {
+      throw new Meteor.Error('Сперва завершите бои');
+    }
 
     const isTaskInserted = Game.Queue.add(set);
     if (!isTaskInserted) {
@@ -103,6 +113,15 @@ Meteor.methods({
           `отправил на верфь ${setCount} кораблей «${unit.title}»`,
         );
       }
+    }
+
+    if (id === DoomsDayGun.id) {
+      const increment = {};
+      increment['units.build.total'] = count;
+      increment[`units.build.${DoomsDayGun.id}`] = count;
+      Game.Statistic.incrementUser(user._id, increment);
+
+      User.selfVaip({ user });
     }
   },
 

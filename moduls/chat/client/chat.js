@@ -619,6 +619,13 @@ var canControlBlock = function() {
 
 
 var getUserRole = function(userId, username, role, rating) {
+   if (role && role.id && role.title) {
+      return {
+         id: role.id,
+         name: role.title,
+      };
+   }
+
    if (role == 'admin') {
       return {
          id: role,
@@ -669,11 +676,11 @@ Template.chat.helpers({
 
    getUserRole: function() {
       var user = Meteor.user();
-      return getUserRole(user._id, user.username, user.role, user.rating);
+      return getUserRole(user._id, user.username, user.chatTitle || user.role, user.rating);
    },
 
    getUserRoleByMessage: function(message) {
-      return getUserRole(message.user_id, message.username, message.role, message.rating);
+      return getUserRole(message.user_id, message.username, message.chatTitle || message.role, message.rating);
    },
 
    room: function() {
@@ -706,11 +713,11 @@ Template.chat.helpers({
 
       } else {
          // public room -> find from last messages
-
-         var names = [ Meteor.user().username ];
+         const user = Meteor.user();
+         var names = [ user.username ];
          users.push({
-            name: Meteor.user().username,
-            role: getUserRole(Meteor.userId(), Meteor.user().username, Meteor.user().role).id
+            name: user.username,
+            role: getUserRole(user._id, user.username, user.chatTitle || user.role).id
          });
          var time = 0;
          Tracker.nonreactive(function() {

@@ -12,18 +12,19 @@
           additionalClass='cw--color_metal'
         }}
       </div>
-
-      <div class="cw--EffectLevels__nextLevel">
-        <div class="title">
-          Следующий уровень: {{nextLevel}}<br/>
+      {{#if not (eq currentLevel nextLevel)}}
+        <div class="cw--EffectLevels__nextLevel">
+          <div class="title">
+            Следующий уровень: {{nextLevel}}<br/>
+          </div>
+          {{> EffectList args
+            effects=effects
+            level=nextLevel
+            hideAdditional=true
+            additionalClass='cw--color_credit'
+          }}
         </div>
-        {{> EffectList args
-          effects=effects
-          level=nextLevel
-          hideAdditional=true
-          additionalClass='cw--color_credit'
-        }}
-      </div>
+      {{/if}}
     </div>
   {{/if}}
 </template>

@@ -10,6 +10,7 @@ import Prism from './Prism';
 import Octopus from './Octopus';
 import Godzilla from './Godzilla';
 import Shadow from './Shadow';
+import Krampus from './Krampus';
 
 export default {
   'Unit/Reptile/Space/Sphero': Sphero,
@@ -24,4 +25,5 @@ export default {
   'Unit/Reptile/Space/Octopus': Octopus,
   'Unit/Reptile/Space/Godzilla': Godzilla,
   'Unit/Reptile/Space/Shadow': Shadow,
+  'Unit/Reptile/Space/Krampus': Krampus,
 };

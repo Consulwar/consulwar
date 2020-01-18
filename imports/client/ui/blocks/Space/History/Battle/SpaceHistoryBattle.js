@@ -33,6 +33,13 @@ class SpaceHistoryBattle extends BlazeComponent {
     this.hasUserLosts = new ReactiveVar(false);
   }
 
+  getIsReptiles() {
+    if (this.battle.mission === "Крампус 1") {
+      return { name: 'Крампус' };
+    }
+    return true;
+  }
+
   isSpace() {
     return !this.battle.isEarth;
   }

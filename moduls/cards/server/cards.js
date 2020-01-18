@@ -137,6 +137,67 @@ Game.Cards.activate = function(item, user) {
   return Game.Queue.add(task);
 };
 
+// {
+//   krampusBuff: {
+//     level: 'Gold|Silver|Bronze|Self',
+//     reloadTime: timestamp,
+//   }
+// }
+Game.Cards.useKrampusBuff = function(owner, targetUser) {
+  if (!owner.krampusBuff) {
+    throw new Meteor.Error('Вам ещё нет 30 или вы не девственник.');
+  }
+
+  const { reloadTime } = owner.krampusBuff;
+  if (reloadTime && reloadTime > Game.getCurrentTime()) {
+    throw new Meteor.Error('Вы устали.');
+  }
+
+  const buffLevel = (owner._id === targetUser._id) ? 'Self' : owner.krampusBuff.level;
+  const krampusBuff = Game.Cards.getItem(`Krampus${buffLevel}`);
+
+  if (Game.Queue.isBusy(krampusBuff.cardGroup, targetUser._id)) {
+    throw new Meteor.Error('Цель уже под действием бафа');
+  }
+
+  const task = {
+    type: krampusBuff.type,
+    engName: krampusBuff.engName,
+    time: krampusBuff.durationTime,
+    group: krampusBuff.cardGroup,
+  };
+
+  if (Game.Queue.add(task, targetUser._id)) {
+    const krampusFastBuff = Game.Cards.getItem(`KrampusFast${buffLevel}`);
+    const taskFast = {
+      type: krampusFastBuff.type,
+      engName: krampusFastBuff.engName,
+      time: krampusFastBuff.durationTime,
+      group: krampusFastBuff.cardGroup,
+    };
+    Game.Queue.add(taskFast, targetUser._id);
+
+    Meteor.users.update({
+      _id: targetUser._id,
+    }, {
+      $set: {
+        krampusBuffedTill: Game.getCurrentTime() + krampusBuff.durationTime,
+        krampusEngineBuff: buffLevel !== 'Normal',
+      }
+    });
+
+    Meteor.users.update({
+      _id: owner._id,
+    }, {
+      $set: {
+        'krampusBuff.reloadTime': Game.getCurrentTime() + krampusBuff.reloadTime,
+      }
+    });
+
+    return owner.krampusBuff.level;
+  }
+};
+
 Meteor.methods({
   'cards.buyAndActivate': function (id) {
     const buy = Meteor.call('cards.buy', id);

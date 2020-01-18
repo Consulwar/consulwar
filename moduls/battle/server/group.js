@@ -32,39 +32,24 @@ class Group {
     }, 0);
   }
 
-  receiveDamage(unit, damage) {
-    let targetDamages = this.fillTargetDamages(unit, damage);
+  receiveDamage(attackingUnit, totalDamage) {
+    let targetDamages = this.fillTargetDamages(attackingUnit, totalDamage);
+    let extraDamage = 0;
 
-    let additionalDamage = 0;
+    targetDamages.forEach(([targetUnit, damage]) => {
+      extraDamage += targetUnit.receiveDamage(attackingUnit, damage);
+    });
 
-    let length = targetDamages.length;
-    for (let i = 0; i < length; i++) {
-      let [target, damage] = targetDamages[i];
-
-      let rest = target.receiveDamage(unit, damage + additionalDamage);
-
-      // Распределяем оставшийся от атаки урон на еще не атакованных юнитов
-      if (i === length - 1) {
-        additionalDamage += Math.round(rest * restCoef);
-      } else {
-        additionalDamage += Math.round(rest * restCoef) / (length - (i+1));
-      }
-    }
-
-    while (additionalDamage > 0) {
-      const previousAdditionalDamage = additionalDamage;
-
-      for (let i = 0; i < length; i++) {
-        let [target] = targetDamages[i];
-
-        let rest = target.receiveDamage(unit, additionalDamage);
-
-        additionalDamage -= rest;
-      }
-
-      if (previousAdditionalDamage === additionalDamage) {
+    while (extraDamage > 0) {
+      let aliveTargetUnits = targetDamages.filter(([unit]) => unit.health.total > 0);
+      if (aliveTargetUnits.length <= 0) {
         break;
       }
+      const damagePerUnit = extraDamage / aliveTargetUnits.length;
+      extraDamage = 0;
+      aliveTargetUnits.forEach(([targetUnit]) => {
+        extraDamage += targetUnit.receiveDamage(attackingUnit, damagePerUnit);
+      });
     }
   }
 

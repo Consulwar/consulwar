@@ -24,6 +24,7 @@ export default {
     crystals: 1,
     honor: 6,
   },
+  plasmoidDuration: 60 * 60 * 24 * 365,
   maxLevel: 100,
   requirements(level = this.getCurrentLevel()) {
     if (level < 20) {

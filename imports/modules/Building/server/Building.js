@@ -32,6 +32,10 @@ class Building extends BuildingAbstract {
     userId = user ? user._id : Meteor.userId(),
   }) {
     const oldLevel = this.getLevel();
+    if (oldLevel > this.maxLevel) {
+      this.setLevel({ level: this.maxLevel, userId });
+      return;
+    }
     this.setLevel({ level, userId });
 
     Game.Statistic.incrementUser(userId, {

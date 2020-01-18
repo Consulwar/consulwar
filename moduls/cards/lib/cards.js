@@ -115,7 +115,8 @@ Game.Cards = {
     pulsecatcher: {},
     penalty: {},
     backReward: {},
-    instant: {}
+    instant: {},
+    buff: {},
   },
 
   getValue: function({

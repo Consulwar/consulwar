@@ -1,3 +1,5 @@
+import Game from "/moduls/game/lib/main.game";
+
 initResourcesClient = function() {
 'use strict';
 
@@ -53,6 +55,19 @@ Tracker.autorun(function(){
     Game.Resources.currentValue.set(baseValue);
   }
 });
+
+Game.Resources.getAvailable = function(id, value) {
+  if (id === 'time') {
+    return;
+  }
+  const availableResource = Game.Resources.currentValue.get()[id]
+    && Game.Resources.currentValue.get()[id].amount
+    || 0;
+  if (value && value <= availableResource) {
+    return value;
+  }
+  return availableResource;
+}
 
 // TODO: Удалить (events & helpers для цены постройки)
 // Используются в наградах до переделки не удалять

@@ -50,7 +50,7 @@
             {{/unless}}
           {{/unless}}
 
-          {{#if item.nextLevel}}
+          {{#if and item.nextLevel (not (eq item.level item.nextLevel))}}
             <span
               class="
                 cw--MenuUnique__itemLevel

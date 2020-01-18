@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { _ } from 'lodash';
 import Game from '/moduls/game/lib/main.game';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
@@ -14,8 +15,24 @@ import BattleEvents from './battleEvents';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
 import mutualSpaceConfig from '../../MutualSpace/lib/config';
 import Hex from '../../MutualSpace/lib/Hex';
+import Reptiles from './reptiles';
 
 const WITHDRAW_TIME_MARGIN = 30;
+
+const tradeCodes = {
+  'Unit/Human/Space/Gammadrone': {
+    metals: 10000,
+  },
+  'Unit/Human/Space/Wasp': {
+    crystals: 3000,
+  },
+  'Unit/Human/Space/Mirage': {
+    humans: 1000,
+  },
+  'Unit/Human/Space/Railgun': {
+    credits: 100,
+  },
+};
 
 Meteor.methods({
   'space.attackReptileFleet'(baseId, targetId, units) {
@@ -260,6 +277,47 @@ Meteor.methods({
       throw new Meteor.Error('Слишком много флотов уже отправлено');
     }
 
+    //
+    let isResourceTransfer = false;
+    const resourcesToTransfer = {};
+    let resourcesToSpend = null;
+    const truckCount = units['Unit/Human/Space/TruckC'];
+    if (
+      basePlanet.isHome
+      && user.username === basePlanet.username
+      && target.isHome
+      && basePlanet.username !== target.username
+      && truckCount > 0
+    ) {
+      let trukcsAvaliable = truckCount;
+
+      _.toPairs(tradeCodes).forEach(([key, resources]) => {
+        if (units[key] > 0) {
+          _.merge(
+            resourcesToTransfer,
+            _.mapValues(resources, price => price * units[key])
+          );
+
+          trukcsAvaliable -= units[key];
+        }
+      });
+
+      if (trukcsAvaliable < 0) {
+        throw new Meteor.Error('Недостаточно траков');
+      }
+      
+      resourcesToSpend = _.clone(resourcesToTransfer);
+      const payableTrucs = truckCount - trukcsAvaliable;
+      const trucksTax = payableTrucs * 2;
+      resourcesToSpend.credits = (resourcesToSpend.credits || 0) + trucksTax;
+      
+      if (!Game.Resources.has({ resources: resourcesToSpend })) {
+        throw new Meteor.Error('У вас недостаточно ресурсов');
+      }
+      isResourceTransfer = true;
+    }
+    //
+
     const startPosition = {
       x: basePlanet.x,
       y: basePlanet.y,
@@ -294,7 +352,7 @@ Meteor.methods({
       engineLevel,
     );
 
-    if (flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
+    if (!isResourceTransfer && flyTime > mutualSpaceConfig.MAX_FLY_TIME) {
       throw new Meteor.Error('Слишком долгий перелет');
     }
 
@@ -333,6 +391,11 @@ Meteor.methods({
       isOneway,
       armyId: newArmyId,
     };
+
+    if (isResourceTransfer) {
+      flightData.resourcesToTransfer = resourcesToTransfer;
+      Game.Resources.sold(resourcesToSpend, user._id);
+    }
 
     if (target.global) {
       flightData.global = true;
@@ -473,6 +536,19 @@ Meteor.methods({
       job.cancel();
       job.restart();
     }
+  },
+
+  'space.spawnKrampusFleet'() {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    Log.method.call(this, { name: 'space.spawnKrampusFleet', user });
+
+    if (user.role !== 'admin') {
+      throw new Meteor.Error('Ты не дед мороз.');
+    }
+
+    Reptiles.spawnKrampusFleet();
   },
 });
 

@@ -174,7 +174,7 @@ const evict = function(username) {
     return;
   }
 
-  const inBattle = BattleCollection.find({
+  const inBattle = BattleCollection.findOne({
     'options.isEarth': { $exists: false },
     userNames: targetUser.username,
     status: Battle.Status.progress,

@@ -22,7 +22,7 @@
             </div>
             {{> Units args
               isSpace=isSpace
-              isReptiles=true
+              isReptiles=getIsReptiles
               units=(getUnits 'enemyUnits' false)
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'
@@ -38,7 +38,7 @@
             </div>
             {{> Units args
               isSpace=isSpace
-              isReptiles=true
+              isReptiles=getIsReptiles
               units=(getUnits 'enemyUnits' true)
               isBattleUnits=true
               className='cw--SpaceHistoryBattle__units'

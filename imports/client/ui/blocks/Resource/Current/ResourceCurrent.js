@@ -20,7 +20,7 @@ class ResourceCurrent extends BlazeComponent {
   getResources() {
     const resourceArray = [];
     _.toPairs(_.pick(
-      Game.Resources.getValue(),
+      Game.Resources.currentValue.get(),
       ['humans', 'metals', 'crystals', 'honor', 'credits'],
     )).forEach(([id, value]) => {
       resourceArray.push({

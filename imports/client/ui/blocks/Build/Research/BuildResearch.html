@@ -73,12 +73,16 @@
               className='cw--BuildResearch__resources'
             }}
           {{else}}
-            В разработке
+            {{> ResourcePrice args
+              timeLabel='Время усиления:'
+              price=(research.getPrice level.get)
+              className='cw--BuildResearch__resources'
+            }}
           {{/if}}
         </div>
         <div class="cw--BuildResearch__actions">
           <div class="cw--BuildResearch__action">
-            {{#if research.getQueue}}
+            {{#if and research.getQueue (lt research.getCurrentLevel research.maxLevel)}}
               <div class="cw--BuildResearch__actionStatus">
                 Идет исследование
               </div>
@@ -132,10 +136,6 @@
                     class="cw--BuildResearch__actionAmountCount"
                   }}
                 </div>
-              {{else}}
-                <div class="cw--BuildResearch__actionNeeds">
-                  Требуется красный плазмоид
-                </div>
               {{/if}}
               <button
                 class="
@@ -146,7 +146,9 @@
                 onClick={{build}}
                 disabled={{not (research.canBuild level.get)}}
               >
-                {{#if research.getCurrentLevel}}
+                {{#if and (gte research.getCurrentLevel research.maxLevel)}}
+                  Вставить плазмоид
+                {{else if research.getCurrentLevel}}
                   Улучшить
                 {{else}}
                   Исследовать

@@ -3,7 +3,7 @@ export default {
   title: 'Белый контейнер',
   description: '',
   price: {
-    honor: 200,
+    silver_plasmoid: 1,
   },
   drop: [
     {

@@ -38,7 +38,7 @@ Game.Chat.Messages = {
       obj: basePrice,
       hideEffects: true,
     });
-    if (!price || !price.crystals) {
+    if (!price || !price.crystals || price.crystals < 0) {
       return null;
     }
 

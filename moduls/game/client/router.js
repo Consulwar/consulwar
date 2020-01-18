@@ -116,7 +116,7 @@ var gameRoutes = {
 
 
   statistics: {
-    statistics: 'statistics/:group(general|science|cosmos|battle|communication)?/:page?'
+    statistics: 'statistics/:group(general|science|cosmos|battle|communication|krampus)?/:page?'
   },
 
   chat: {

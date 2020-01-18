@@ -32,6 +32,10 @@ Game.Statistic = {
       battle: {
          field: 'reinforcements.sent.total',
          title: 'Отправлено войск'
+      },
+      krampus: {
+         field: 'battle.krampus.1.victory',
+         title: 'Уничтожено крампусов'
       }
    },
 

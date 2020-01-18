@@ -18,6 +18,7 @@ export default {
       signature: 100000,
     },
   },
+  maxCount: 1,
   targets: [
     'Unit/Reptile/Space/Armadillo',
     'Unit/Reptile/Space/Shadow',

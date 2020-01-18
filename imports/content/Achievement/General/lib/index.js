@@ -21,6 +21,7 @@ import Hacker from './Hacker';
 import Philanthropist from './Philanthropist';
 import CGC from './CGC';
 import BadMusic from './BadMusic';
+import Krampus from './Krampus';
 
 export default {
   'Achievement/General/Builder': Builder,
@@ -46,4 +47,5 @@ export default {
   'Achievement/General/Philanthropist': Philanthropist,
   'Achievement/General/CGC': CGC,
   'Achievement/General/BadMusic': BadMusic,
+  'Achievement/General/Krampus': Krampus,
 };

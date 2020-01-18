@@ -36,12 +36,12 @@ Game.Queue.Collection._ensureIndex({
   finishTime: -1
 });
 
-Game.Queue.add = function(item) {
-  if (!Meteor.userId()) {
+Game.Queue.add = function(item, userId = Meteor.userId()) {
+  if (!userId) {
     return null;
   }
 
-  if (item.group && Game.Queue.isBusy(item.group)) {
+  if (item.group && Game.Queue.isBusy(item.group, userId)) {
     return null;
   }
 
@@ -50,7 +50,7 @@ Game.Queue.add = function(item) {
     : Game.getCurrentTime();
 
   var set = {
-    user_id: Meteor.userId(),
+    user_id: userId,
     type: item.type,
     startTime: startTime,
     finishTime: startTime + item.time,
@@ -59,7 +59,7 @@ Game.Queue.add = function(item) {
   };
 
   var select = {
-    user_id: Meteor.userId(),
+    user_id: userId,
     type: item.type,
     finishTime: { $gt: startTime },
     status: Game.Queue.status.INCOMPLETE,
@@ -165,7 +165,7 @@ Game.Queue.spendTime = function(taskId, time) {
   });
 };
 
-var completeItems = function(items, needResourcesUpdate) {
+var completeItems = function(items, needResourcesUpdate, ratingMultiplier) {
   while (items.length > 0) {
     var item = items.shift();
     // Рассчитать доход до finishTime
@@ -200,7 +200,7 @@ var completeItems = function(items, needResourcesUpdate) {
         _id: item.user_id,
       }, {
         $inc: {
-          rating: item.data.rating,
+          rating: item.data.rating * (ratingMultiplier || 1),
         },
       });
     }
@@ -210,13 +210,14 @@ var completeItems = function(items, needResourcesUpdate) {
 };
 
 Game.Queue.checkAll = function() {
-  if (!Meteor.userId()) {
+  const user = Meteor.user();
+  if (!user) {
     return false;
   }
 
   // Выбираем необработанные задачи, которые должны завершиться
   var items = Game.Queue.Collection.find({
-    user_id: Meteor.userId(),
+    user_id: user._id,
     status: { $ne: Game.Queue.status.DONE },
     finishTime: { $lt: Game.getCurrentTime() }
   }, {
@@ -268,7 +269,7 @@ Game.Queue.checkAll = function() {
 
   // Если взяли задач столько же, сколько выбирали
   if (updatedCount == ids.length) {
-    completeItems(items, needUpdateResources);
+    completeItems(items, needUpdateResources, user.ratingMultiplier);
   } else {
     // Если другой процесс подхватил наши задачи
     var cursor = Game.Queue.Collection.find({
@@ -285,7 +286,7 @@ Game.Queue.checkAll = function() {
       removed: function(id, fields) {
         // Ожидаем пока другой процесс обработает свои задачи
         if (cursor.count() <= updatedCount && observer) {
-          completeItems(cursor.fetch(), needUpdateResources);
+          completeItems(cursor.fetch(), needUpdateResources, user.ratingMultiplier);
           observer.stop();
           observer = null;
         }
@@ -294,7 +295,7 @@ Game.Queue.checkAll = function() {
 
     // На всякий случай проверяем не обработались ли задачи
     if (cursor.count() <= updatedCount && observer) {
-      completeItems(cursor.fetch(), needUpdateResources);
+      completeItems(cursor.fetch(), needUpdateResources, user.ratingMultiplier);
       observer.stop();
       observer = null;
     }

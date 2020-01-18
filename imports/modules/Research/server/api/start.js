@@ -25,13 +25,14 @@ Meteor.methods({
       throw new Meteor.Error('Что-то не то вы исследовать собрались, дядя Фёдор');
     }
 
-    if (level > research.maxLevel) {
+    const currentLevel = research.getCurrentLevel();
+    const isBoost = level > research.maxLevel;
+
+    if (currentLevel < research.maxLevel && isBoost) {
       throw new Meteor.Error('Нельзя исследовать выше максимального уровня');
     }
 
-    const currentLevel = research.getCurrentLevel();
-
-    if (level <= currentLevel) {
+    if (level <= currentLevel && !isBoost) {
       throw new Meteor.Error('Нельзя разучиться');
     }
 
@@ -41,8 +42,13 @@ Meteor.methods({
 
     const price = research.getPrice(level);
 
+    const { maxBuildTime } = Meteor.settings.public;
+    if (!isBoost && (level - currentLevel) > 1 && price.time > maxBuildTime) {
+      throw new Meteor.Error(`Максимальное время стройки: ${Game.Helpers.formatTime(maxBuildTime)}`);
+    }
+
     const set = {
-      group: research.group,
+      group: isBoost ? research.id : research.group,
       itemId: research.id,
       level,
       time: price.time,
@@ -52,9 +58,22 @@ Meteor.methods({
       },
     };
 
-    const isTaskInserted = Game.Queue.add(set);
-    if (!isTaskInserted) {
-      throw new Meteor.Error('Не удалось начать исследование');
+    if (isBoost) {
+      const task = research.getQueue();
+      if (task) {
+        Game.Queue.spendTime(task._id, -research.plasmoidDuration);
+      } else {
+        const isTaskInserted = Game.Queue.add(set);
+        if (!isTaskInserted) {
+          throw new Meteor.Error('Не удалось начать исследование');
+        }
+      }
+      research.setLevel({ level: 120, user });
+    } else {
+      const isTaskInserted = Game.Queue.add(set);
+      if (!isTaskInserted) {
+        throw new Meteor.Error('Не удалось начать исследование');
+      }
     }
 
     Game.Resources.spend(price);
@@ -66,7 +85,7 @@ Meteor.methods({
       });
     }
 
-    if (set.level > 40) {
+    if (set.level > 40 && !isBoost) {
       Game.Broadcast.add(
         user.username,
         `начал исследование «${research.title}» ${set.level} уровня`,

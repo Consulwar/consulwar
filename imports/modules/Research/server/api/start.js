@@ -41,6 +41,11 @@ Meteor.methods({
 
     const price = research.getPrice(level);
 
+    const { maxBuildTime } = Meteor.settings.public;
+    if ((level - currentLevel) > 1 && price.time > maxBuildTime) {
+      throw new Meteor.Error(`Максимальное время стройки: ${Game.Helpers.formatTime(maxBuildTime)}`);
+    }
+
     const set = {
       group: research.group,
       itemId: research.id,

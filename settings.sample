@@ -30,6 +30,7 @@
       "schedule": "at 4:00 pm",
       "timeToGeneralCommand": "at 8:00 pm"
     },
+    "maxBuildTime": 604800,
     "building": {
       "special": {
         "pulsecatcher": {

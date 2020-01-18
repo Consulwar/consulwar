@@ -60,6 +60,11 @@ Meteor.methods({
 
     const price = unit.getPrice(setCount, cardList);
 
+    const { maxBuildTime } = Meteor.settings.public;
+    if (count > 1 && price.time > maxBuildTime) {
+      throw new Meteor.Error(`Максимальное время стройки: ${Game.Helpers.formatTime(maxBuildTime)}`);
+    }
+
     const rating = Game.Resources.calculateRatingFromResources(price);
 
     const set = {

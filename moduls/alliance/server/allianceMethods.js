@@ -352,9 +352,10 @@ Meteor.methods({
 
     let currentLevel = alliance.level;
 
-    let nextLevel = Game.Alliance.LEVELS[parseInt(currentLevel, 10) + 1];
+    const nextLevel = parseInt(currentLevel, 10) + 1;
+    const nextLevelConfig = Game.Alliance.LEVELS[parseInt(currentLevel, 10) + 1];
 
-    if (!nextLevel) {
+    if (!nextLevelConfig) {
       throw new Meteor.Error('Ошибка повышения уровня альянса', 'Альянс уже максимального уровня.');
     }
 
@@ -365,7 +366,7 @@ Meteor.methods({
       throw new Meteor.Error('Ошибка повышения уровня альянса', 'Недостаточный уровень системы связи');
     }
 
-    let price = nextLevel.price;
+    let price = nextLevelConfig.price;
     let balance = alliance.balance;
 
     let count = price[priceType];

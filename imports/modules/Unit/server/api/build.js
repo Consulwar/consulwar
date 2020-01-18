@@ -104,6 +104,10 @@ Meteor.methods({
         );
       }
     }
+
+    if (id === 'Unit/Human/Defense/DoomsDayGun') {
+      User.selfVaip({ user });
+    }
   },
 
   'unit.cancel'({ id }) {

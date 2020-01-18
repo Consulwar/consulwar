@@ -1,6 +1,7 @@
 const Status = {
   progress: 1,
   finish: 2,
+  cancelled: 3
 };
 
 const USER_SIDE = '1';

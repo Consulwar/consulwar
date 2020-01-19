@@ -183,7 +183,7 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
     }, {
       $set: {
         krampusBuffedTill: Game.getCurrentTime() + krampusBuff.durationTime,
-        krampusEngineBuff: buffLevel !== 'Normal',
+        krampusEngineBuff: buffLevel,
       }
     });
 

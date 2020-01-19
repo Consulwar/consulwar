@@ -150,7 +150,8 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
 
   const { reloadTime } = owner.krampusBuff;
   if (reloadTime && reloadTime > Game.getCurrentTime()) {
-    throw new Meteor.Error('Вы устали.');
+    const cooldownMinutes = Math.ceil((reloadTime - Game.getCurrentTime()) / 60);
+    throw new Meteor.Error(`Вы устали. Отдохните ещё ${cooldownMinutes} мин.`);
   }
 
   const buffLevel = (owner._id === targetUser._id) ? 'Self' : owner.krampusBuff.level;

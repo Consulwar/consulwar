@@ -239,7 +239,20 @@ Game.Planets = {
     }
 
     if (user.krampusEngineBuff && user.krampusBuffedTill && user.krampusBuffedTill > Game.getCurrentServerTime()) {
-      minEngine = 100;
+      switch (user.krampusEngineBuff) {
+        case 'Normal':
+          minEngine = 60;
+          break;
+        case 'Bronze':
+          minEngine = 80;
+          break;
+        case 'Silver':
+          minEngine = 100;
+          break;
+        case 'Gold':
+          minEngine = 120;
+          break;
+      }
     }
 
     return Math.max(Hyperdrive.getCurrentLevel({ user }), minEngine);

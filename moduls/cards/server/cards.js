@@ -1,6 +1,7 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import containerCollection from '/imports/modules/Container/lib/collection';
+import helpers from '/imports/lib/ui/helpers';
 
 initCardsServer = function() {
 'use strict';
@@ -150,7 +151,8 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
 
   const { reloadTime } = owner.krampusBuff;
   if (reloadTime && reloadTime > Game.getCurrentTime()) {
-    throw new Meteor.Error('Вы устали.');
+    const cooldownMinutes = Math.ceil((reloadTime - Game.getCurrentTime()) / 60);
+    throw new Meteor.Error(`Вы устали. Отдохните ещё ${cooldownMinutes} минут${helpers.declension(cooldownMinutes, '', 'у', 'ы', '')}.`);
   }
 
   const buffLevel = (owner._id === targetUser._id) ? 'Self' : owner.krampusBuff.level;
@@ -182,7 +184,7 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
     }, {
       $set: {
         krampusBuffedTill: Game.getCurrentTime() + krampusBuff.durationTime,
-        krampusEngineBuff: buffLevel !== 'Normal',
+        krampusEngineBuff: buffLevel,
       }
     });
 

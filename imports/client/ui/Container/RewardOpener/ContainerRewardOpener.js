@@ -4,7 +4,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { Notifications } from '/moduls/game/lib/importCompability';
 import content from '/imports/content/client';
-import helpers from '/imports/client/ui/helpers';
+import helpers from '/imports/lib/ui/helpers';
 import '/imports/client/ui/Input/Number/InputNumber';
 import '/imports/client/ui/Container/RewardRoller/ContainerRewardRoller';
 import './ContainerRewardOpener.html';

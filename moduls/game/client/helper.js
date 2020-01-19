@@ -1,4 +1,4 @@
-import helpers from '/imports/client/ui/helpers';
+import helpers from '/imports/lib/ui/helpers';
 import unitItems from '/imports/content/Unit/client';
 import resourceItems from '/imports/content/Resource/client';
 import allContainers from '/imports/content/Container/Fleet/client';

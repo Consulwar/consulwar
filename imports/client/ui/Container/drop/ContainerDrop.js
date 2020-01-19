@@ -1,7 +1,7 @@
 import { _ } from 'meteor/underscore';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import content from '/imports/content/client';
-import helpers from '/imports/client/ui/helpers';
+import helpers from '/imports/lib/ui/helpers';
 import './ContainerDrop.html';
 import './ContainerDrop.styl';
 

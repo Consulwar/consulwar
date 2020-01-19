@@ -1,5 +1,6 @@
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import systemUser from '/moduls/user/server/systemUser';
 
 import makeFun from '/imports/modules/Space/server/makeFun';
 
@@ -480,7 +481,7 @@ Meteor.methods({
       } else if (message.indexOf('/krampus') === 0) {
         const targetUsername = message.substr(8).trim();
         const target = User.getByUsername({ username: targetUsername });
-        if (!target || target.username === '✯ Совет Галактики ✯') {
+        if (!target || target.username === systemUser.username) {
           throw new Meteor.Error('Некорректная цель для бафа');
         }
         const level = Game.Cards.useKrampusBuff(user, target);

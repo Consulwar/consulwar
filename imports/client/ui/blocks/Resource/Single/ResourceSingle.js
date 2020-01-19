@@ -3,7 +3,7 @@ import { $ } from 'meteor/jquery';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { priceTooltip } from '/moduls/game/client/helper';
 import resourceItems from '/imports/content/Resource/client';
-import helpers from '/imports/client/ui/helpers';
+import helpers from '/imports/lib/ui/helpers';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/icon/credits/iconCredits';
 import './ResourceSingle.html';

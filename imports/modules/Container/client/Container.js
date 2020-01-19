@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import Game from '/moduls/game/lib/main.game';
 import { Notifications } from '/moduls/game/lib/importCompability';
-import helpers from '/imports/client/ui/helpers';
+import helpers from '/imports/lib/ui/helpers';
 import ResourceSingle from '/imports/client/ui/blocks/Resource/Single/ResourceSingle';
 import LibContainer from '../lib/Container';
 

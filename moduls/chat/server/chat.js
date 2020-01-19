@@ -480,7 +480,7 @@ Meteor.methods({
       } else if (message.indexOf('/krampus') === 0) {
         const targetUsername = message.substr(8).trim();
         const target = User.getByUsername({ username: targetUsername });
-        if (!target) {
+        if (!target || target.username === '✯ Совет Галактики ✯') {
           throw new Meteor.Error('Некорректная цель для бафа');
         }
         const level = Game.Cards.useKrampusBuff(user, target);

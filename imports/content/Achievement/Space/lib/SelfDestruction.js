@@ -10,7 +10,7 @@ export default {
         textBefore: 'Юниты строятся на ',
         textAfter: '% быстрее',
         condition: 'Unit/Human',
-        priority: 10,
+        priority: 50,
         affect: 'time',
         result({ level }) {
           return level * 5;
@@ -19,7 +19,7 @@ export default {
       {
         textBefore: 'Всё требует на -',
         textAfter: '% больше ресурсов',
-        priority: 10,
+        priority: 50,
         affect: ['humans', 'metals', 'crystals', 'honor'],
         result({ level }) {
           return level * 20 * -1;
@@ -29,7 +29,7 @@ export default {
         textBefore: 'Ремонт юнитов дороже на -',
         textAfter: '%',
         condition: 'Unique/Repair',
-        priority: 10,
+        priority: 50,
         affect: ['metals', 'crystals'],
         result({ level }) {
           return level * 20 * -1;
@@ -40,7 +40,7 @@ export default {
       {
         textBefore: 'Приток ресурсов ',
         textAfter: '%',
-        priority: 10,
+        priority: 50,
         affect: ['humans', 'metals', 'crystals', 'honor'],
         result({ level }) {
           return level * 20 * -1;
@@ -52,7 +52,7 @@ export default {
         textBefore: 'Урон флота ',
         textAfter: '%',
         condition: 'Unit/Human/Space',
-        priority: 10,
+        priority: 50,
         affect: 'damage',
         result({ level }) {
           return level * 20 * -1;
@@ -62,7 +62,7 @@ export default {
         textBefore: 'Жизни флота ',
         textAfter: '%',
         condition: 'Unit/Human/Space',
-        priority: 10,
+        priority: 50,
         affect: 'life',
         result({ level }) {
           return level * 20 * -1;
@@ -72,7 +72,7 @@ export default {
         textBefore: 'Урон наземной армии +',
         textAfter: '%',
         condition: 'Unit/Human/Ground',
-        priority: 10,
+        priority: 50,
         affect: 'damage',
         result({ level }) {
           return level * 20;
@@ -82,7 +82,7 @@ export default {
         textBefore: 'Жизни наземной армии +',
         textAfter: '%',
         condition: 'Unit/Human/Ground',
-        priority: 10,
+        priority: 50,
         affect: 'life',
         result({ level }) {
           return level * 20;

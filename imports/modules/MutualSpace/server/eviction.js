@@ -166,7 +166,8 @@ const evict = function(username) {
   const hasBattle = Space.collection.findOne({
     type: BattleEvents.EVENT_TYPE,
     status: Space.filterActive,
-    'data.targetHex': hexDB,
+    'data.targetHex.x': hexDB.x,
+    'data.targetHex.z': hexDB.z,
   });
 
   if (hasBattle) {
@@ -190,8 +191,10 @@ const evict = function(username) {
     'data.userId': targetUser._id,
     status: Space.filterActive,
     type: FlightEvents.EVENT_TYPE,
-    'data.hex': hexDB,
-    'data.targetHex': hexDB,
+    'data.hex.x': hexDB.x,
+    'data.hex.z': hexDB.z,
+    'data.targetHex.x': hexDB.x,
+    'data.targetHex.z': hexDB.z,
   }, {
     $unset: {
       'data.hex': 1,
@@ -223,8 +226,17 @@ const evict = function(username) {
   Space.collection.find({
     status: Space.filterActive,
     type: FlightEvents.EVENT_TYPE,
-    'data.targetHex': hexDB,
+    'data.targetHex.x': hexDB.x,
+    'data.targetHex.z': hexDB.z,
   }).fetch().forEach((event) => {
+    if (event.data.userId === systemUser._id) {
+      const job = Space.jobs.getJob(event._id);
+      if (job) {
+        job.cancel();
+      }
+      Game.Unit.removeArmy(event.data.armyId, event.data.userId);
+      return;
+    }
     const guestHomePlanet = Game.Planets.getBase(event.data.userId);
     const guestHomeHex = collection.findOne({ username: event.data.username });
     const guestHomeHexDB = { x: guestHomeHex.x, z: guestHomeHex.z };

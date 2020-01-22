@@ -44,7 +44,8 @@ class User extends LibUser {
     const hasBattle = Space.collection.findOne({
       type: battleEvents.EVENT_TYPE,
       status: Space.filterActive,
-      'data.targetHex': hexDB,
+      'data.targetHex.x': hexDB.x,
+      'data.targetHex.z': hexDB.z,
     });
 
     if (hasBattle) {

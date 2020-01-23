@@ -9,7 +9,6 @@ import SpaceHexCollection from '/imports/modules/MutualSpace/lib/collection';
 import LibUser from '../lib/User';
 
 let Game;
-let WhiteContainer;
 let evict;
 let battleEvents;
 let Space;
@@ -20,8 +19,6 @@ Meteor.startup(() => {
   // eslint-disable-next-line global-require
   Game = require('/moduls/game/lib/main.game').default;
   // eslint-disable-next-line global-require
-  WhiteContainer = require('/imports/content/Container/Fleet/server/White').default;
-  // eslint-disable-next-line global-require
   evict = require('/imports/modules/MutualSpace/server/eviction').default;
   // eslint-disable-next-line global-require
   battleEvents = require('/imports/modules/Space/server/battleEvents').default;
@@ -30,7 +27,7 @@ Meteor.startup(() => {
 });
 
 class User extends LibUser {
-  static checkAuth({ user }= {}) {
+  static checkAuth({ user } = {}) {
     if (!user || !user._id) {
       throw new Meteor.Error('Требуется авторизация');
     }
@@ -47,7 +44,8 @@ class User extends LibUser {
     const hasBattle = Space.collection.findOne({
       type: battleEvents.EVENT_TYPE,
       status: Space.filterActive,
-      'data.targetHex': hexDB,
+      'data.targetHex.x': hexDB.x,
+      'data.targetHex.z': hexDB.z,
     });
 
     if (hasBattle) {

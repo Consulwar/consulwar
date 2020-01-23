@@ -8,6 +8,7 @@ import Utils from '/imports/modules/Space/lib/utils';
 import Log from '/imports/modules/Log/server/Log';
 import systemUser from '/moduls/user/server/systemUser';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/server';
+import helpers from '/imports/lib/ui/helpers';
 import Space from '../lib/space';
 import Hex from '../../MutualSpace/lib/Hex';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
@@ -144,18 +145,6 @@ if (Meteor.settings.last) {
   });
 }
 
-const declension = function(number, zeroForm, singleForm, twoForm, manyForm) {
-  let ending = '';
-  if (/^(.*[0,2-9])?[1]$/.test(number)) {
-    ending = singleForm;
-  } else if (/^(.*[0,2-9])?[2-4]$/.test(number)) {
-    ending = twoForm;
-  } else {
-    ending = manyForm;
-  }
-  return `${zeroForm}${ending}`;
-};
-
 Meteor.methods({
   'aiFleets.spawn'(options = {
     count: 1,
@@ -195,7 +184,7 @@ Meteor.methods({
       });
     }
     if (sentCount > 0) {
-      const message = `Совет выслал в поддержку ${sentCount} ${declension(sentCount, 'флот', '', 'а', 'ов')}`;
+      const message = `Совет выслал в поддержку ${sentCount} ${helpers.declension(sentCount, 'флот', '', 'а', 'ов')}`;
       Game.Broadcast.add(message);
     }
   },

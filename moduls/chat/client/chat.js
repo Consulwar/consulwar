@@ -1022,6 +1022,17 @@ Template.chatUserPopup.helpers({
       }
 
       return result.length > 0 ? result : null;
+   },
+
+   canDoKrampusBuff: function() {
+      const user = Meteor.user();
+      return (
+         user
+         && user.achievements
+         && user.achievements.general
+         && user.achievements.general.krampus
+         && user.achievements.general.krampus.level >= 2
+      );
    }
 });
 
@@ -1041,7 +1052,13 @@ Template.chatUserPopup.events({
 
    'click .block.active': function(e, t) {
       Game.Chat.showControlWindow(t.data.username);
-   }
+   },
+
+   'click .krampus': function(e, t) {
+      Meteor.call('chat.sendMessage', '/krampus ' + t.data.username, 'general', (err) => {
+         Notifications.error('Не получилось выполнить команду', err.error);
+      });
+   },
 });
 
 // ----------------------------------------------------------------------------

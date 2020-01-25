@@ -94,7 +94,11 @@
                     }}
                   {{/let}}
                 {{else if battle.isEarth}}
-                  Земля
+                  {{#if battle.zoneName}}
+                    {{battle.zoneName}}
+                  {{else}}
+                    Земля
+                  {{/if}}
                 {{else}}
                   Космос
                 {{/if}}

@@ -103,6 +103,7 @@ class SpaceHistory extends BlazeComponent {
 
     if (battle.options && battle.options.isEarth) {
       result.isEarth = true;
+      result.zoneName = battle.options.zoneName;
     }
 
     if (result.planetId) {

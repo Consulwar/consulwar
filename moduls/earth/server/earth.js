@@ -243,6 +243,7 @@ Game.Earth.nextTurn = function() {
       const enemyArmy = createGroup({ army: zone.enemyArmy });
       const options = {
         isEarth: true,
+        zoneName: zone.name,
         damageReduction: Game.Earth.DAMAGE_REDUCTION,
       };
 

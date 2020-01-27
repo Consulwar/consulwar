@@ -316,9 +316,12 @@ Game.Resources.updateWithIncome = function(currentTime) {
         ? resources[name].bonus
         : 0;
 
-      result[name].totalBonus = Math.min(
-        currentBonus + result[name].bonus,
-        (income[name] || 0) * Game.Resources.bonusStorage
+      result[name].totalBonus = Math.max(
+        0,
+        Math.min(
+          currentBonus + result[name].bonus,
+          (income[name] || 0) * Game.Resources.bonusStorage
+        )
       );
     }
   }

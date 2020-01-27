@@ -169,7 +169,17 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
     group: krampusBuff.cardGroup,
   };
 
-  if (Game.Queue.add(task, targetUser._id)) {
+  const targetUpdated = Meteor.users.update({
+    _id: targetUser._id,
+    krampusBuffedTill: targetUser.krampusBuffedTill,
+  }, {
+    $set: {
+      krampusBuffedTill: Game.getCurrentTime() + krampusBuff.durationTime,
+      krampusEngineBuff: buffLevel,
+    }
+  });
+  if (targetUpdated > 0) {
+    Game.Queue.add(task, targetUser._id);
     const krampusFastBuff = Game.Cards.getItem(`KrampusFast${buffLevel}`);
     const taskFast = {
       type: krampusFastBuff.type,
@@ -197,6 +207,8 @@ Game.Cards.useKrampusBuff = function(owner, targetUser) {
     });
 
     return owner.krampusBuff.level;
+  } else {
+    throw new Meteor.Error('Цель уже под действием бафа');
   }
 };
 

@@ -1056,7 +1056,9 @@ Template.chatUserPopup.events({
 
    'click .krampus': function(e, t) {
       Meteor.call('chat.sendMessage', '/krampus ' + t.data.username, 'general', (err) => {
-         Notifications.error('Не получилось выполнить команду', err.error);
+         if (err) {
+            Notifications.error('Не получилось выполнить команду', err.error);
+         }
       });
    },
 });

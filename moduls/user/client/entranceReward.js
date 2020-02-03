@@ -25,6 +25,7 @@ let showEntranceReward = function() {
     let rewardsTaken = Game.Statistic.getUserValue('entranceReward.total');
     if (rewardsTaken >= Game.EntranceReward.itemsLimit) {
       Meteor.call('entranceReward.takeReward', function(err, profit) {
+        isEntranceRewardDisplayed = false;
         if (err) {
           Notifications.error(err.error);
         } else {

@@ -131,10 +131,18 @@ Game.Cards = {
   getActive: function ({
     user,
     userId = user ? user._id : Meteor.userId(),
+    timestamp = Game.getCurrentTime(),
   } = {}) {
     var tasks = Game.Queue.Collection.find({
       user_id: userId,
-      status: Game.Queue.status.INCOMPLETE,
+      status: {
+        $in: [
+          Game.Queue.status.INCOMPLETE,
+          Game.Queue.status.INPROGRESS,
+        ],
+      },
+      startTime: { $lt: timestamp },
+      finishTime: { $gte: timestamp },
       type: 'card'
     }).fetch();
 

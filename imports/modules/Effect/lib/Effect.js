@@ -121,6 +121,7 @@ class Effect {
     isOnlyMutual = false,
     instantEffects = [],
     userId = Meteor.userId(),
+    ...options
   } = {}) {
     const effects = {};
 
@@ -146,7 +147,7 @@ class Effect {
       // Items, Cards, Achievements
       const items = [
         ...Game.House.getPlacedItems({ userId }),
-        ...Game.Cards.getActive({ userId }),
+        ...Game.Cards.getActive({ userId, ...options }),
         ...Game.Achievements.getCompleted({ userId }),
       ];
 

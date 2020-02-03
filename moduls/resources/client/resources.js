@@ -19,14 +19,14 @@ Tracker.autorun(function(){
       baseValue.humans.amount, 
       income.humans, 
       delta,
-      baseValue.humans.bonusSeconds
+      baseValue.humans.leftover
     );
 
     baseValue.crystals = Game.Resources.calculateFinalAmount(
       baseValue.crystals.amount, 
       income.crystals, 
       delta,
-      baseValue.crystals.bonusSeconds,
+      baseValue.crystals.leftover,
       baseValue.crystals.bonus
     );
 
@@ -34,7 +34,7 @@ Tracker.autorun(function(){
       baseValue.metals.amount, 
       income.metals, 
       delta,
-      baseValue.metals.bonusSeconds,
+      baseValue.metals.leftover,
       baseValue.metals.bonus
     );
 
@@ -42,14 +42,14 @@ Tracker.autorun(function(){
       baseValue.honor.amount, 
       income.honor, 
       delta,
-      baseValue.honor.bonusSeconds
+      baseValue.honor.leftover
     );
 
     baseValue.credits = Game.Resources.calculateFinalAmount(
       baseValue.credits.amount, 
       income.credits, 
       delta,
-      baseValue.credits.bonusSeconds
+      baseValue.credits.leftover
     );
 
     Game.Resources.currentValue.set(baseValue);

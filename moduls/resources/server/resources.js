@@ -42,12 +42,12 @@ Game.Resources.set = function(resource, invertSign, uid) {
     inc[name + '.amount'] = parseInt(increment * invertSign);
 
     // set resource bonus seconds
-    if (resource[name].bonusSeconds !== undefined) {
+    if (resource[name].leftover !== undefined) {
       if (!set) {
         set = {};
       }
 
-      set[name + '.bonusSeconds'] = resource[name].bonusSeconds;
+      set[name + '.leftover'] = resource[name].leftover;
     }
 
     // set resource bonus
@@ -240,7 +240,7 @@ Game.Resources.updateWithIncome = function(currentTime) {
     return true;
   }
 
-  var income = Game.Resources.getIncome();
+  var income = Game.Resources.getIncome({ timestamp: currentTime });
 
   Game.Resources.Collection.update({
     user_id: Meteor.userId()
@@ -283,29 +283,29 @@ Game.Resources.updateWithIncome = function(currentTime) {
     humans: Game.Resources.calculateProduction(
       income.humans, 
       delta,
-      resources.humans.bonusSeconds
+      resources.humans.leftover
     ),
     crystals: Game.Resources.calculateProduction(
       income.crystals, 
       delta,
-      resources.crystals.bonusSeconds,
+      resources.crystals.leftover,
       true
     ),
     metals: Game.Resources.calculateProduction(
       income.metals, 
       delta,
-      resources.metals.bonusSeconds,
+      resources.metals.leftover,
       true
     ),
     honor: Game.Resources.calculateProduction(
       income.honor, 
       delta,
-      resources.honor.bonusSeconds
+      resources.honor.leftover
     ),
     credits: Game.Resources.calculateProduction(
       income.credits, 
       delta,
-      resources.credits.bonusSeconds
+      resources.credits.leftover
     )
   };
 

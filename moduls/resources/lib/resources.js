@@ -17,11 +17,11 @@ Game.Resources = {
 
   /**
    * income - общая добыца
-   * delta - количество секунд
+   * deltaT - количество секунд
    * uncountedSeconds - бонусные секунды
    */
-  calculateFinalAmount: function(baseAmount = 0, income = 0, delta = 0, uncountedSeconds = 0, bonus = false) {
-    var result = Game.Resources.calculateProduction(income, delta, uncountedSeconds, bonus);
+  calculateFinalAmount: function(baseAmount = 0, income = 0, deltaT = 0, oldLeftover = 0, bonus = false) {
+    var result = Game.Resources.calculateProduction(income, deltaT, oldLeftover, bonus);
 
     result.amount += baseAmount;
     if (bonus) {
@@ -31,54 +31,22 @@ Game.Resources = {
     return result;
   },
 
-  calculateProduction: function(income = 0, delta = 0, uncountedSeconds = 0, halfToBonus = false) {
-    delta += uncountedSeconds ? uncountedSeconds : 0;
+  calculateProduction: function(income = 0, deltaT = 0, oldLeftover = 0, halfToBonus = false) {
 
     var interval = 3600 * (halfToBonus ? 2 : 1);
-    var result = null;
 
-    // Добыча в секунду (дробное)
-    var incomePerSecond = income / interval;
-    if (incomePerSecond < 1 || Meteor.isClient) {
-      // Количество секунд необходимых для получения единицы ресурса
-      var secondsForOne = interval / income;
+    let amount = income * deltaT / interval + oldLeftover;
+    const leftover = amount - Math.trunc(amount);
+    amount = Math.trunc(amount);
 
-      // Общая сумма прибыли
-      var amount = Math.floor(delta / secondsForOne);
-
-      // Количество использованных секунд (округление в большу сторону)
-      var usedSeconds = Math.ceil(amount * secondsForOne);
-      if (Meteor.isClient) {
-        usedSeconds = amount * secondsForOne;
-      }
-
-      // Количетсво неиспользованных секунд
-      var secondsLeft = delta - usedSeconds;
-
-      result = {
-        amount: amount,
-        bonusSeconds: secondsLeft
-      };
-
-      if (halfToBonus) {
-        result.bonus = amount;
-      }
-
-      return result;
-    } else {
-      var totalAmount = Math.floor((income * delta) / interval);
-
-      result = {
-        amount: totalAmount,
-        bonusSeconds: 0
-      };
-
-      if (halfToBonus) {
-        result.bonus = totalAmount;
-      }
-    
-      return result;
+    const result = {
+      amount,
+      leftover,
+    };
+    if (halfToBonus) {
+      result.bonus = amount;
     }
+    return result;
   },
 
   getIncome: function(options) {

@@ -149,7 +149,7 @@ class User extends LibUser {
     });
 
     const creditsAmount = (resources.credits && resources.credits.amount) || 0;
-    const rubyPlasmoidAmoint = (resources.ruby_plasmoid && resources.ruby_plasmoid.amount) || 0;
+    const rubyPlasmoidAmount = (resources.ruby_plasmoid && resources.ruby_plasmoid.amount) || 0;
     const cleanCreditAmount = (resources.cleancredit && resources.cleancredit.amount) || 0;
     Game.Resources.Collection.insert({
       _id: resources._id,
@@ -159,7 +159,7 @@ class User extends LibUser {
       crystals: { amount: 0 },
       credits: { amount: creditsAmount },
       honor: { amount: 0 },
-      ruby_plasmoid: { amount: rubyPlasmoidAmoint },
+      ruby_plasmoid: { amount: rubyPlasmoidAmount },
       cleancredit: { amount: cleanCreditAmount },
       updated: Game.getCurrentTime(),
     });

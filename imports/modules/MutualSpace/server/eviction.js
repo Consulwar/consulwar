@@ -95,14 +95,6 @@ const calcBackToPlanetData = function(event, planet, hex) {
 };
 
 const sendPlanetFleetToHome = function(planet, fromHex, hex, user) {
-  Game.Unit.moveArmy(planet.armyId, Game.Unit.location.SHIP);
-
-  Game.Planets.update({
-    ...planet,
-    armyId: null,
-    armyUsername: null,
-  });
-
   const startPosition = {
     x: planet.x,
     y: planet.y,
@@ -154,11 +146,20 @@ const sendPlanetFleetToHome = function(planet, fromHex, hex, user) {
   flightData.hex = fromHex;
   flightData.targetHex = hex;
 
+  Game.Unit.moveArmy(planet.armyId, Game.Unit.location.SHIP);
+
+  Game.Planets.update({
+    ...planet,
+    armyId: null,
+    armyUsername: null,
+  });
+
   FlightEvents.add(flightData);
 };
 
 const evict = function(username) {
   const targetUser = Meteor.users.findOne({ username });
+  Log.add({ name: 'Выселяем', info: username });
 
   const hex = collection.findOne({ username });
   const hexDB = { x: hex.x, z: hex.z };
@@ -259,7 +260,7 @@ const evict = function(username) {
       { armyUsername: { $ne: targetUser.username } },
     ],
   }).fetch().forEach((planet) => {
-    const guestUser = Meteor.users.findOne(planet.armyUsername);
+    const guestUser = Meteor.users.findOne({ username: planet.armyUsername });
     const guestHex = collection.findOne({ username: planet.armyUsername });
     const guestHexDB = { x: guestHex.x, z: guestHex.z };
     sendPlanetFleetToHome(planet, hexDB, guestHexDB, guestUser);

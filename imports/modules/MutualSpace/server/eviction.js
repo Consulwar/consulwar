@@ -209,9 +209,10 @@ const evict = function(username) {
 
   // Что свое летело не дома - летит домой
   Space.collection.find({
-    'data.userId': targetUser._id,
     status: Space.filterActive,
     type: FlightEvents.EVENT_TYPE,
+    'data.userId': targetUser._id,
+    'data.isHumans': true,
     'data.hex': { $exists: true },
   }).fetch().forEach((event) => {
     Space.collection.update({
@@ -227,6 +228,8 @@ const evict = function(username) {
   Space.collection.find({
     status: Space.filterActive,
     type: FlightEvents.EVENT_TYPE,
+    'data.userId': { $ne: targetUser._id },
+    'data.isHumans': true,
     'data.targetHex.x': hexDB.x,
     'data.targetHex.z': hexDB.z,
   }).fetch().forEach((event) => {

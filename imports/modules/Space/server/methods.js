@@ -50,6 +50,10 @@ Meteor.methods({
       throw new Meteor.Error('Планета не существует');
     }
 
+    if (basePlanet.armyUsername !== user.username) {
+      throw new Meteor.Error('Чужие армии не выполняют ваших приказов');
+    }
+
     const { canSend, needSliceArmy } = Space.checkSendFleet({
       planet: basePlanet,
       units,
@@ -219,6 +223,16 @@ Meteor.methods({
     let target;
     let targetHex;
 
+    const basePlanet = Game.Planets.getOne(baseId);
+    if (!basePlanet) {
+      throw new Meteor.Error('Не найдена стартовая планета');
+    }
+
+    if (basePlanet.armyUsername !== user.username) {
+      throw new Meteor.Error('Чужие армии не выполняют ваших приказов');
+    }
+
+    const fromGalaxy = mutualSpaceCollection.findOne({ username: basePlanet.username });
     if (targetType === FlightEvents.TARGET.PLANET) {
       if (baseId === targetId) {
         throw new Meteor.Error('Стартовая планета и конечная должны быть разными');
@@ -234,7 +248,12 @@ Meteor.methods({
       const toGalaxy = mutualSpaceCollection.findOne({ username: target.username });
 
       if (toGalaxy) {
+        if (!fromGalaxy) {
+          throw new Meteor.Error('Вы ещё не в общем космосе');
+        }
         targetHex = new Hex(toGalaxy);
+      } else if (target.username !== user.username) {
+        throw new Meteor.Error('Рассинхронизация. Перезагрузите страницу');
       }
     } else if (targetType === FlightEvents.TARGET.BATTLE) {
       const battleEvent = BattleEvents.findByBattleId(targetId);
@@ -256,11 +275,6 @@ Meteor.methods({
       ({ targetHex } = battleEvent.data);
     } else {
       throw new Meteor.Error('Неверный параметр типа цели.');
-    }
-
-    const basePlanet = Game.Planets.getOne(baseId);
-    if (!basePlanet) {
-      throw new Meteor.Error('Не найдена стартовая планета');
     }
 
     if (!basePlanet.armyId) {
@@ -305,12 +319,12 @@ Meteor.methods({
       if (trukcsAvaliable < 0) {
         throw new Meteor.Error('Недостаточно траков');
       }
-      
+
       resourcesToSpend = _.clone(resourcesToTransfer);
       const payableTrucs = truckCount - trukcsAvaliable;
       const trucksTax = payableTrucs * 2;
       resourcesToSpend.credits = (resourcesToSpend.credits || 0) + trucksTax;
-      
+
       if (!Game.Resources.has({ resources: resourcesToSpend })) {
         throw new Meteor.Error('У вас недостаточно ресурсов');
       }
@@ -323,8 +337,6 @@ Meteor.methods({
       y: basePlanet.y,
     };
     const startPositionWithOffset = { ...startPosition };
-
-    const fromGalaxy = mutualSpaceCollection.findOne({ username: basePlanet.username });
 
     if (fromGalaxy) {
       const center = new Hex(fromGalaxy).center();

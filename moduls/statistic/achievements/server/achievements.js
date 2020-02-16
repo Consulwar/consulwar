@@ -56,7 +56,7 @@ Meteor.methods({
     return result;
   },
 
-  'achievements.give': function(username, achievementGroup, achievementId, level) {
+  'achievements.give': function(username, achievementGroup, achievementId, level = 1) {
     const user = User.getById();
     User.checkAuth({ user });
 
@@ -69,37 +69,99 @@ Meteor.methods({
     check(username, String);
     check(achievementId, String);
     check(achievementGroup, String);
+    check(level, Match.Integer);
 
-    if (level) {
-      check(level, Match.Integer);
-    } else {
-      level = 1;
-    }
-
-    var target = Meteor.users.findOne({
+    const target = Meteor.users.findOne({
       username: username
     });
-
     if (!target) {
       throw new Meteor.Error('Некорректно указан логин');
     }
 
-    if (!Game.Achievements.items[achievementGroup][achievementId]) {
+    const group = Game.Achievements.items[achievementGroup];
+    if (!group) {
       throw new Meteor.Error('Такого достижения нет');
     }
 
-    var set = {};
-    set['achievements.' + achievementGroup + '.' + achievementId] = {
-      level: level,
-      timestamp: Game.getCurrentTime()
-    };
+    const achievement = group[achievementId];
+    if (!achievement) {
+      throw new Meteor.Error('Такого достижения нет');
+    }
 
     Meteor.users.update({
       _id: target._id
     }, {
-      $set: set
+      $set: {
+        [`achievements.${achievementGroup}.${achievementId}.timestamps.${level}`]: Game.getCurrentTime(),
+        [`achievements.${achievementGroup}.${achievementId}.level`]: level,
+      },
     });
-  }
+  },
+
+  'achievements.increase': function(username, achievementGroup, achievementId, levels = 1) {
+    const user = User.getById();
+    User.checkAuth({ user });
+
+    if (['admin'].indexOf(user.role) == -1) {
+      throw new Meteor.Error('Zav за тобой следит, и ты ему не нравишься.');
+    }
+
+    Log.method.call(this, { name: 'achievements.increase', user });
+
+    check(username, String);
+    check(achievementId, String);
+    check(achievementGroup, String);
+    check(levels, Match.Integer);
+
+    const target = Meteor.users.findOne({
+      username: username
+    });
+    if (!target) {
+      throw new Meteor.Error('Некорректно указан логин');
+    }
+
+    const group = Game.Achievements.items[achievementGroup];
+    if (!group) {
+      throw new Meteor.Error('Такого достижения нет');
+    }
+
+    const achievement = group[achievementId];
+    if (!achievement) {
+      throw new Meteor.Error('Такого достижения нет');
+    }
+
+    let currentLevel = 0;
+    let currentLevelRaw = null;
+    if (
+      target.achievements
+      && target.achievements[achievementGroup] != null
+      && target.achievements[achievementGroup][achievementId] != null
+    ) {
+      currentLevelRaw = currentLevel = target.achievements[achievementGroup][achievementId].level;
+    }
+    if (currentLevel >= achievement.maxLevel()) {
+      throw new Meteor.Error('Уже достигнут максимальный уровень');
+    }
+    if (currentLevel + levels > achievement.maxLevel()) {
+      throw new Meteor.Error('Давать ачивку выше максимального уровня — так себе идея');
+    }
+
+    const updated = Meteor.users.update({
+      _id: target._id,
+      [`achievements.${achievementGroup}.${achievementId}.level`]: currentLevelRaw,
+    }, {
+      $set: {
+        [`achievements.${achievementGroup}.${achievementId}.timestamps.${currentLevel + levels}`]: Game.getCurrentTime(),
+      },
+      $inc: {
+        [`achievements.${achievementGroup}.${achievementId}.level`]: levels,
+      }
+    });
+
+    if (!updated) {
+      throw new Meteor.Error('Упс, кажется, кто-то выдал ачивку одновременно с вами');
+    }
+  },
 });
 
 };

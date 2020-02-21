@@ -16,7 +16,7 @@ export default {
         priority: 10,
         affect: 'damage',
         result({ level }) {
-          return [15, 25, 40][level - 1];
+          return [10, 20, 30][level - 1];
         },
       },
       {
@@ -26,7 +26,7 @@ export default {
         priority: 10,
         affect: 'life',
         result({ level }) {
-          return [15, 25, 40][level - 1];
+          return [10, 20, 30][level - 1];
         },
       },
     ],

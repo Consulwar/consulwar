@@ -35,7 +35,7 @@ Game.Resources.set = function(resource, invertSign, uid) {
       ? resource[name].amount
       : resource[name];
 
-    if (isNaN(increment)) {
+    if (isNaN(increment) || (increment < 0 && invertSign)) {
       increment = 0;
     }
 

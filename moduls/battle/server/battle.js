@@ -354,9 +354,6 @@ class Battle {
         reward.honor = Math.floor(dividedReward.honor * armyPower);
       }
 
-      const user = Meteor.users.findOne({ username });
-      Game.Resources.add(reward, user._id);
-
       inc[`reward.${username}.metals`] = reward.metals;
       inc[`reward.${username}.crystals`] = reward.crystals;
       if (dividedReward.humans) {
@@ -368,9 +365,13 @@ class Battle {
       if (totalPower === armyPower && mission.engName === 'prisoners') {
         if (Game.Random.chance(50)) {
           inc[`reward.${username}.ruby_plasmoid`] = 1;
+          reward.ruby_plasmoid = 1;
         }
       }
     });
+
+    const user = Meteor.users.findOne({ username });
+    Game.Resources.add(reward, user._id);
 
     const names = this.userNames;
 

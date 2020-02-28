@@ -362,16 +362,16 @@ class Battle {
       if (dividedReward.honor) {
         inc[`reward.${username}.honor`] = reward.honor;
       }
-      if (totalPower === armyPower && mission.engName === 'prisoners') {
+      if (totalPower === armyPower && this.options.missionType === 'prisoners') {
         if (Game.Random.chance(50)) {
           inc[`reward.${username}.ruby_plasmoid`] = 1;
           reward.ruby_plasmoid = 1;
         }
       }
-    });
 
-    const user = Meteor.users.findOne({ username });
-    Game.Resources.add(reward, user._id);
+      const user = Meteor.users.findOne({ username });
+      Game.Resources.add(reward, user._id);
+    });
 
     const names = this.userNames;
 

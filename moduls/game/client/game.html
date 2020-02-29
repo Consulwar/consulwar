@@ -186,7 +186,18 @@
         {{/unless}}
       {{/unless}}
       {{#if eq connection.status 'waiting'}}
-        Восстановление связи через <span>{{formatSeconds reconnectTime}}</span>
+        Восстановление связи через <span>{{formatSeconds reconnectTime}}</span><br>
+        <br>
+        <button
+          class="
+            cw--button
+            cw--button_type_primary
+            cw--button_type_primary_blue
+          "
+          onClick={{reconnectNow}}
+        >
+          Подключиться сейчас
+        </button>
       {{/if}}
     </div>
   {{/unless}}

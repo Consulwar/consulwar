@@ -14,7 +14,6 @@ export default {
     },
     br: {
       isUnique: true,
-      comment: 'будет доступен 28.10.2019',
     },
   },
 };

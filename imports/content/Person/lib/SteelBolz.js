@@ -9,5 +9,9 @@ export default {
     matrix: {
       isUnique: true,
     },
+    firefly: {
+      isUnique: true,
+      comment: 'Soon',
+    },
   },
 };

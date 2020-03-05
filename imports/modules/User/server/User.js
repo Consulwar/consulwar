@@ -136,7 +136,7 @@ class User extends LibUser {
 
     // Remove all wrecks
     Game.Wrecks.Collection.remove({
-      user_id: user._id,
+      userId: user._id,
     });
 
     // Remove resources except credits, ruby plasmoids and cleancredits

@@ -1060,9 +1060,10 @@ Meteor.publish('myPlanets', function() {
   }
 
   if (this.userId) {
-    const currentUsername = Meteor.users.findOne({ _id: this.userId }).username;
+    const currentUser = Meteor.users.findOne({ _id: this.userId });
+    const currentUsername = currentUser.username;
 
-    var handle = Game.Planets.Collection.find(
+    const cursor = Game.Planets.Collection.find(
       {
         $or: [
           { armyUsername: currentUsername },
@@ -1092,16 +1093,20 @@ Meteor.publish('myPlanets', function() {
           minerUsername: 1,
         }
       }
-    ).observeChanges({
+    );
+    if (cursor.count() === 0) {
+      Game.Planets.initialize(currentUser);
+    }
+    const handle = cursor.observeChanges({
       added: function (id, fields) {
         self.added('planets', id, fields);
       },
-  
+
       changed: function (id, fields) {
         self.changed('planets', id, fields);
       },
     });
-  
+
     self.onStop(function () {
       handle.stop()
     });

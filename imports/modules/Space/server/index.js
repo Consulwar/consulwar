@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import datadog from '/imports/modules/Log/server/datadog';
-import { Job } from '/moduls/game/lib/jobs';
+import { _ } from 'meteor/underscore';
 import Log from '/imports/modules/Log/server/Log';
 import Space from '../lib/space';
 import Config from './config';
@@ -111,13 +110,10 @@ Meteor.publish('spaceEvents', function(hex) {
   check(hex, Object);
 
   if (this.userId) {
-    const subsCounts = {};
-    Object.values(this._session._namedSubs).forEach((sub) => {
-      subsCounts[sub._name] = 1 + (subsCounts[sub._name] ? subsCounts[sub._name] : 0);
-    });
-    if (subsCounts[this._name] > Meteor.settings.ddplimiter.spaceSubscriptions) {
+    const subsCount = Object.values(this._session._namedSubs)
+      .reduce((sum, x) => sum += x._name === this._name ? 1 : 0, 0);
+    if (subsCount > Meteor.settings.ddplimiter.spaceSubscriptions) {
       throw new Meteor.Error('Уже открыто слишком много галактик');
-      return null;
     }
 
     const result = Space.collection.find({

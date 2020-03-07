@@ -111,6 +111,15 @@ Meteor.publish('spaceEvents', function(hex) {
   check(hex, Object);
 
   if (this.userId) {
+    const subsCounts = {};
+    Object.values(this._session._namedSubs).forEach((sub) => {
+      subsCounts[sub._name] = 1 + (subsCounts[sub._name] ? subsCounts[sub._name] : 0);
+    });
+    if (subsCounts[this._name] > Meteor.settings.ddplimiter.spaceSubscriptions) {
+      throw new Meteor.Error('Уже открыто слишком много галактик');
+      return null;
+    }
+
     const result = Space.collection.find({
       $or: [
         { 'data.hex': hex },

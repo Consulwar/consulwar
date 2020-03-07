@@ -1322,7 +1322,7 @@ const indexGalaxyHex = function(galaxy, hex) {
 const viewGalaxy = function({ user, username = user.username, offset = { x: 0, y: 0 }, hex }) {
   let subscription = null;
   if (Meteor.user().username !== username) {
-    subscription = Meteor.subscribe('planets', username)
+    subscription = Meteor.subscribe('planets', username, { onStop: (e) => Notifications.error(e.error) });
   }
 
   if (hex) {

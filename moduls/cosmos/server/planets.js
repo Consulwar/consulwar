@@ -1013,6 +1013,15 @@ Meteor.publish('planets', function(username) {
   check(username, String);
 
   if (this.userId) {
+    const subsCounts = {};
+    Object.values(this._session._namedSubs).forEach((sub) => {
+      subsCounts[sub._name] = 1 + (subsCounts[sub._name] ? subsCounts[sub._name] : 0);
+    });
+    if (subsCounts[this._name] > Meteor.settings.ddplimiter.spaceSubscriptions) {
+      throw new Meteor.Error('Уже открыто слишком много галактик');
+      return null;
+    }
+
     const currentUsername = Meteor.users.findOne({ _id: this.userId }).username;
 
     const result = Game.Planets.Collection.find(

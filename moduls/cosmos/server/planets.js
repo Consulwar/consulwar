@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 import Config from '/imports/modules/Space/server/config';
 import PlanetGeneration from '/imports/modules/Space/lib/planetGeneration';
@@ -1013,6 +1014,12 @@ Meteor.publish('planets', function(username) {
   check(username, String);
 
   if (this.userId) {
+    const subsCount = Object.values(this._session._namedSubs)
+      .reduce((sum, x) => sum += x._name === this._name ? 1 : 0, 0);
+    if (subsCount > Meteor.settings.ddplimiter.spaceSubscriptions) {
+      throw new Meteor.Error('Уже открыто слишком много галактик');
+    }
+
     const currentUsername = Meteor.users.findOne({ _id: this.userId }).username;
 
     const result = Game.Planets.Collection.find(

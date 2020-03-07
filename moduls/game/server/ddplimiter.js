@@ -7,7 +7,11 @@ if (!Meteor.settings.ddplimiter || !Meteor.settings.ddplimiter.isEnabled) {
 
 } else {
 
-  if (!Meteor.settings.ddplimiter.numRequests || !Meteor.settings.ddplimiter.timeInterval) {
+  if (
+    !Meteor.settings.ddplimiter.numRequests
+    || !Meteor.settings.ddplimiter.timeInterval
+    || !Meteor.settings.ddplimiter.spaceSubscriptions
+  ) {
     throw new Meteor.Error('Ошибка в настройках', 'Заполни параметры модуля DDPLimiter (см. settings.sample ddplimiter)');
   }
 

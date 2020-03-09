@@ -58,7 +58,7 @@ class SpaceHistory extends BlazeComponent {
       this.itemsPerPage,
       this.data().isEarth,
       (err, { battles, totalCount }) => {
-        this.pagesTotal.set(Math.floor(totalCount / this.itemsPerPage));
+        this.pagesTotal.set(Math.ceil(totalCount / this.itemsPerPage));
         this.isLoading.set(false);
         if (err) {
           Notifications.error('Не удалось получить историю боёв', err.error);

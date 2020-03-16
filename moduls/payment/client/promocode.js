@@ -155,7 +155,7 @@ Template.promocodeCreate.events({
         for (var i = 0; i < elements.length; i++) {
           var id = $(elements[i]).find(':selected').attr('name');
           var count = parseInt( $(elements[i]).find('input').val() );
-          if (id && count > 0) {
+          if (id && !isNaN(count)) {
             if (!object.profit) {
               object.profit = {};
             }

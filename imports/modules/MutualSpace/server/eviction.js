@@ -140,6 +140,7 @@ const sendPlanetFleetToHome = function(planet, fromHex, hex, user) {
     flyTime,
     engineLevel,
     isOneway: true,
+    isBack: true,
     armyId: planet.armyId,
   };
 

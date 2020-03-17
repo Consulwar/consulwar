@@ -88,6 +88,7 @@ export default {
     },
   },
   reward: {
+    'Resource/Artifact/White/SilverPlasmoid': 10,
     'Resource/Artifact/White/ShipDetails': 10,
     'Resource/Artifact/White/MeteorFragments': 10,
     'Resource/Artifact/White/WeaponParts': 10,

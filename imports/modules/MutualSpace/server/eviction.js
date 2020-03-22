@@ -255,6 +255,25 @@ const evict = function(username) {
     });
   });
 
+  // Что чужое хочет вернуться - возвращается домой
+  const evictedPlanetIds = Game.Planets.Collection.find(
+    { userId: targetUser._id },
+    { fields: { _id: 1 } },
+  ).fetch().map(planet => planet._id);
+  Space.collection.find({
+    status: Space.filterActive,
+    type: { $in: [FlightEvents.EVENT_TYPE, BattleEvents.EVENT_TYPE] },
+    'data.userId': { $ne: targetUser._id },
+    'data.isHumans': true,
+    'data.returnPlanetId': { $in: evictedPlanetIds },
+  }).fetch().forEach((event) => {
+    const returnPlanet = Game.Planets.getBase(event.data.userId);
+    Space.collection.update(
+      { _id: event._id },
+      { $set: { 'data.returnPlanetId': returnPlanet._id } },
+    );
+  });
+
   // Что чужое было - улетает домой
   Game.Planets.Collection.find({
     $and: [

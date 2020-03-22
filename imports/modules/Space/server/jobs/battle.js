@@ -13,7 +13,6 @@ import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
 import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
-import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
 
 const reptilesWin = function({
   battle,
@@ -165,17 +164,8 @@ const humansWin = function({
         || battle.initialUnits[Battle.USER_SIDE][user.username].length > 1
       ) {
         // Если было несколько флотов игроков, то все они возвращаются на свои домашние планеты
-        const returnPlanet = Game.Planets.getBase(user._id);
-        flightData.returnPlanetId = returnPlanet._id;
-        flightData.returnDestination = {
-          x: returnPlanet.x,
-          y: returnPlanet.y,
-        };
-
-        const userHex = mutualSpaceCollection.findOne({ username: user.username });
-        if (userHex) {
-          flightData.hex = userHex;
-        }
+        flightData.returnPlanetId = Game.Planets.getBase(user._id)._id;
+        flightData.engineLevel = Game.Planets.getEngineLevel(user);
       }
 
       FlightEvents.flyBack(flightData);

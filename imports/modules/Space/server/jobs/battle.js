@@ -165,6 +165,7 @@ const humansWin = function({
       ) {
         // Если было несколько флотов игроков, то все они возвращаются на свои домашние планеты
         flightData.returnPlanetId = Game.Planets.getBase(user._id)._id;
+        flightData.engineLevel = Game.Planets.getEngineLevel(user);
       }
 
       FlightEvents.flyBack(flightData);

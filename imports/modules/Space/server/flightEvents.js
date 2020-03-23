@@ -52,7 +52,7 @@ const reverseFlightData = function(data) {
   if (returnHex) {
     flyBackData.targetHex = { x: returnHex.x, z: returnHex.z };
 
-    let center = new Hex(returnHex).center();
+    let center = new Hex(flyBackData.hex).center();
     startPositionGlobal.x += center.x;
     startPositionGlobal.y += center.y;
 

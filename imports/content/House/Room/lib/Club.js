@@ -1,8 +1,8 @@
 export default {
   id: 'House/Room/Club',
   isUnique: true,
-  title: 'Стриптиз-клуб',
-  description: 'Зачем вам соседняя луна, если можно устроить блядки прямо у себя в Палате? Сисек много не бывает, а если и бывает, то это не плохо. И вообще сиськи это не только ценная кожа...',
+  title: 'Палата',
+  description: 'Coming soon',
   effects: {
     Price: [
       {

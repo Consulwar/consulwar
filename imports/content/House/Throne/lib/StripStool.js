@@ -1,8 +1,8 @@
 export default {
   id: 'House/Throne/StripStool',
   isUnique: true,
-  title: 'Эротический табурет',
-  description: 'На этом стуле любой аватар будет выглядеть суперэротично. Поставь наконец этот предмет интерьера посреди Палаты и получи +5 к эротичности. А ещё в постаменте есть лампочки!',
+  title: 'Трон',
+  description: 'Coming soon',
   effects: {
     Price: [
       {

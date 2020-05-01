@@ -15,7 +15,8 @@
     "hot-shots": "4.4.0",
     "jwt-simple": "^0.5.1",
     "lodash": "^4.17.10",
-    "mapbox": "^1.0.0-beta7"
+    "mapbox": "^1.0.0-beta7",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
@@ -36,7 +37,9 @@
   },
   "scripts": {
     "lint": "eslint ./imports;exit 0",
-    "pretest": "npm run lint --silent"
+    "pretest": "npm run lint --silent",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "eslintConfig": {
     "extends": "@meteorjs/eslint-config-meteor"
@@ -49,5 +52,6 @@
     "url": "ssh://git@bitbucket.consulwar.ru:10021/con/consulwar-engine.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "snyk": true
 }

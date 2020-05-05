@@ -209,7 +209,8 @@
     "isEnabled": true,
     "isDebug": false,
     "numRequests": 5,
-    "timeInterval": 10000
+    "timeInterval": 10000,
+    "spaceSubscriptions": 100
   },
   "datadog": {
     "isEnabled": true,

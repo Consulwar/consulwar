@@ -93,13 +93,13 @@ const completeOnPeacefulPlanet = function(data, planet) {
 
         const startPositionWithOffset = { ...startPosition };
         const targetPositionWithOffset = { ...targetPosition };
-        const targetHex = mutualSpaceCollection.findOne({ username });
+        const homeHex = mutualSpaceCollection.findOne({ username });
 
         let center = new Hex(data.targetHex).center();
         startPositionWithOffset.x += center.x;
         startPositionWithOffset.y += center.y;
 
-        center = new Hex(data.targetHex).center();
+        center = new Hex(homeHex).center();
         targetPositionWithOffset.x += center.x;
         targetPositionWithOffset.y += center.y;
 
@@ -125,7 +125,7 @@ const completeOnPeacefulPlanet = function(data, planet) {
           isOneway: true,
           isBack: true,
           hex: data.targetHex,
-          targetHex,
+          targetHex: homeHex,
         });
       }
     } else {

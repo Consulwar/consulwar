@@ -1,15 +1,17 @@
+import { Meteor } from 'meteor/meteor';
 import { Job } from '/moduls/game/lib/jobs';
+import Game from '/moduls/game/lib/main.game';
 import Space from '../lib/space';
 import Lib from '../lib/flightEvents';
 import Config from './config';
 import Hex from '../../MutualSpace/lib/Hex';
+import MutualCollection from '../../MutualSpace/lib/collection';
 import Utils from '../lib/utils';
 
 const add = function(data, delayOverride = data.flyTime * 1000) {
   const savedData = { ...data };
 
-  if (!data.returnDestination) {
-    savedData.returnDestination = data.startPosition;
+  if (!data.returnPlanetId) {
     savedData.returnPlanetId = data.startPlanetId;
   }
 
@@ -30,32 +32,38 @@ const reverseFlightData = function(data) {
     isBack: true,
     startPosition: data.targetPosition,
     startPlanetId: data.targetId,
-    targetPosition: data.returnDestination,
+    targetPosition: { x: 0, y: 0 },
     targetId: data.returnPlanetId,
     targetType: Lib.TARGET.PLANET,
     targetHex: data.hex,
     hex: data.targetHex,
   };
 
-  const startPosition = { ...flyBackData.startPosition };
-  const targetPosition = { ...flyBackData.targetPosition };
+  const returnPlanet = Game.Planets.Collection.findOne({ _id: flyBackData.targetId });
+  if (returnPlanet) {
+    flyBackData.targetPosition = { x: returnPlanet.x, y: returnPlanet.y };
+  }
 
-  const startPositionWithOffset = { ...startPosition };
-  const targetPositionWithOffset = { ...targetPosition };
+  const startPositionGlobal = { ...flyBackData.startPosition };
+  const targetPositionGlobal = { ...flyBackData.targetPosition };
 
-  if (flyBackData.hex) {
+  const returnUser = Meteor.users.findOne({ _id: returnPlanet.userId });
+  const returnHex = MutualCollection.findOne({ username: returnUser.username });
+  if (returnHex) {
+    flyBackData.targetHex = { x: returnHex.x, z: returnHex.z };
+
     let center = new Hex(flyBackData.hex).center();
-    startPositionWithOffset.x += center.x;
-    startPositionWithOffset.y += center.y;
+    startPositionGlobal.x += center.x;
+    startPositionGlobal.y += center.y;
 
-    center = new Hex(flyBackData.targetHex).center();
-    targetPositionWithOffset.x += center.x;
-    targetPositionWithOffset.y += center.y;
+    center = new Hex(returnHex).center();
+    targetPositionGlobal.x += center.x;
+    targetPositionGlobal.y += center.y;
   }
 
   flyBackData.flyTime = Utils.calcFlyTime(
-    startPositionWithOffset,
-    targetPositionWithOffset,
+    startPositionGlobal,
+    targetPositionGlobal,
     flyBackData.engineLevel,
   );
 

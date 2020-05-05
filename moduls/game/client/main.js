@@ -473,6 +473,7 @@ Template.item.helpers(helpers);
 Template.connection.helpers({
   connection: function() { return Meteor.status(); },
   reconnectTime: function() { return Session.get('reconnectTime'); },
+  reconnectNow: function() { Meteor.reconnect(); },
 });
 
 Template.newgame.onRendered(function(){

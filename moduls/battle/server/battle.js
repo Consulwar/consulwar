@@ -368,10 +368,10 @@ class Battle {
           reward.ruby_plasmoid = 1;
         }
       }
-    });
 
-    const user = Meteor.users.findOne({ username });
-    Game.Resources.add(reward, user._id);
+      const user = Meteor.users.findOne({ username });
+      Game.Resources.add(reward, user._id);
+    });
 
     const names = this.userNames;
 

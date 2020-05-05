@@ -76,7 +76,7 @@
           {{#if item.time}}
             <time
               class="cw--Menu__time"
-              data-tooltip="До конца строительтва осталось:"
+              data-tooltip="До завершения: {{formatSeconds item.time}}"
               data-tooltip-direction="n"
             >
               {{formatSeconds item.time}}

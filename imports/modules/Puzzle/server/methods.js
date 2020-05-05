@@ -3,7 +3,8 @@ import { check, Match } from 'meteor/check';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
-import PuzzleCollection from '../lib/collection';
+
+import PuzzleCollection from '../lib/PuzzleCollection';
 
 const PLASMOIDS = [
   'Resource/Artifact/White/SilverPlasmoid',

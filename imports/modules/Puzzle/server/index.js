@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import collection from '../lib/collection';
+
+import collection from '../lib/PuzzleCollection';
 import './methods';
 
 Meteor.publish('puzzle', function(puzzleId) {

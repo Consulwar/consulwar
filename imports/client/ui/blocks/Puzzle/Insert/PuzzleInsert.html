@@ -1,0 +1,14 @@
+<template name="PuzzleInsert">
+  <div class="cw--PuzzleInsert">
+    <div>
+      Вставка в слот {{slot}}
+    </div>
+    {{> ResourceCurrent args
+      resourceList=PLASMOIDS
+      disableTooltip=true
+      enableArtifacts=false
+      className="cw--PuzzleInsert__resources"
+      onClick=selectResource
+    }}
+  </div>
+</template>

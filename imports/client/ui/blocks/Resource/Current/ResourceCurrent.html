@@ -1,5 +1,5 @@
 <template name="ResourceCurrent">
-  <div class="cw--ResourceCurrent">
+  <div class="cw--ResourceCurrent {{className}}">
     {{#each resource in getResources}}
       {{#if eq resource.obj.id 'Resource/Base/Credit'}}
         <div
@@ -24,9 +24,11 @@
       {{else}}
         <div
           onMouseOver={{showResourceTooltip resource.obj}}
+          onClick={{onClick resource.obj}}
           class="
             {{resource.obj.color}}
             cw--ResourceCurrent__resource
+            cw--ResourceCurrent__resource_{{resource.obj.type}}
           "
         >
           <img
@@ -38,17 +40,19 @@
         </div>
       {{/if}}
     {{/each}}
-    <a
-      class="
-        cw--ResourceCurrent__artifacts
-        {{#if isArtifactPage}}
-          cw--ResourceCurrent__artifacts_active
-        {{/if}}
-      "
-      data-tooltip="Артефакты"
-      data-tooltip-direction="s"
-      href={{pathFor route='artefacts' item='silver_plasmoid'}}
-    >
-    </a>
+    {{#if enableArtifacts}}
+      <a
+        class="
+          cw--ResourceCurrent__artifacts
+          {{#if isArtifactPage}}
+            cw--ResourceCurrent__artifacts_active
+          {{/if}}
+        "
+        data-tooltip="Артефакты"
+        data-tooltip-direction="s"
+        href={{pathFor route='artefacts' item='silver_plasmoid'}}
+      >
+      </a>
+    {{/if}}
   </div>
 </template>

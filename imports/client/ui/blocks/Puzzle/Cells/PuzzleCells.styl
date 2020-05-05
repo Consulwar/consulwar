@@ -1,0 +1,34 @@
+.cw--PuzzleCells
+  display flex
+  flex-direction row
+  flex-wrap wrap
+  justify-content space-around
+  width 300px
+  height 150px
+
+  &__cell
+    display flex
+    align-items center
+    justify-content center
+    flex-grow 0
+    flex-shrink 0
+    width 63px
+    height 63px
+    margin 5px
+    border-radius 100%
+    background-color #0f2337
+    background-image url(/img/game/slot.png)
+    color #ffffff
+
+    &_highlight
+      filter brightness(1.5)
+
+    &_answered
+      background-color grey
+    
+    .cw--PuzzleCells_artifact
+      width 63px
+      height 63px
+      .cw--ResourceSingle__image
+        margin -5px 0 0 -5px
+        height 74px

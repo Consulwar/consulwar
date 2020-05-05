@@ -1,0 +1,27 @@
+@import '{}/imports/client/ui/colors.styl'
+
+.cw--PuzzleSolve
+  width 500px
+  padding 50px
+  
+  background-color $cw--color_black
+  
+  &__text
+    font-size 18px
+    color #cdcdcd
+
+  &__cells
+    margin 22px auto
+
+  &__options
+    display flex
+    align-content space-between
+    justify-content space-between
+
+  &__option
+    flex-grow 0
+    flex-shrink 0
+    cursor pointer
+    .cw--ResourceSingle__image
+      height 75px
+      margin 0

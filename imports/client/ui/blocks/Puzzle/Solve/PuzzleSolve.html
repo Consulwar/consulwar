@@ -1,0 +1,27 @@
+<template name="PuzzleSolve">
+  <div class="cw--PuzzleSolve">
+    <div class="cw--PuzzleSolve__text">
+      {{text.get}}
+    </div>
+    {{> PuzzleCells args 
+      cells=cells
+      answers=answers
+      onDrop=confirmInsert
+      className="cw--PuzzleSolve__cells"
+    }}
+    <div class="cw--PuzzleSolve__options">
+      {{#each plasmoid in plasmoids}}
+        <div
+          draggable="true"
+          onDragstart={{selectOrb plasmoid}}
+        >
+          {{> ResourceSingle args 
+            resources=plasmoid
+            showCount=false
+            className="cw--PuzzleSolve__option"
+          }}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>

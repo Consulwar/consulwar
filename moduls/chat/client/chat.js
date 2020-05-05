@@ -1,4 +1,5 @@
 import buzz from 'buzz';
+import '/imports/client/ui/blocks/Puzzle/Chat/PuzzleChat';
 
 initChatClient = function() {
 'use strict';

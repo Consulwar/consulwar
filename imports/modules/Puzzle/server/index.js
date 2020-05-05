@@ -13,6 +13,7 @@ Meteor.publish('puzzle', function(puzzleId) {
       fields: {
         _id: 1,
         reward: 1,
+        maxSlots: 1,
         winner: 1,
       },
     });

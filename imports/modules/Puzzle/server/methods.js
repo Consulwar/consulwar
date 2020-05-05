@@ -74,19 +74,17 @@ Meteor.methods({
       deleted: { $ne: true },
     });
 
-    const message = `задал загадку на ${reward} ГГК`;
-
     const chatMessage = {
       room_id: room._id,
       user_id: user._id,
       username: user.username,
       alliance: user.alliance,
       rating: user.rating,
-      message,
       timestamp: Game.getCurrentTime(),
       data: {
         type: 'puzzle',
         id: puzzleId,
+        reward,
       },
     };
 
@@ -106,7 +104,7 @@ Meteor.methods({
 
     Game.Broadcast.add(
       user.username,
-      message,
+      `задал загадку на ${reward} ГГК`,
     );
   },
 });

@@ -24,7 +24,7 @@ Meteor.methods({
 
     Log.method.call(this, { name: 'puzzle.create', user });
 
-    check(sequence, [{ place: Match.Integer, plasmoid: String, hint: String }]);
+    check(sequence, [{ place: Match.Integer, plasmoid: String, hint: String, text: String }]);
     check(reward, Match.Integer);
 
     if (reward < 0) {

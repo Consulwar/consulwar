@@ -42,6 +42,8 @@ Meteor.methods({
 
     const slots = (new Array(SLOTS_TOTAL)).fill(0);
 
+    const price = {};
+
     sequence.forEach((item) => {
       if (!PLASMOIDS.includes(item.plasmoid)) {
         throw new Meteor.Error('В пазле можно использовать только плазмоиды');
@@ -50,13 +52,23 @@ Meteor.methods({
         throw new Meteor.Error(`В пазле есть только ${SLOTS_TOTAL} позиций`);
       }
       slots[item.place] += 1;
+      const plasmoidInfo = Artifacts[item.plasmoid];
+      const currentPrice = price[plasmoidInfo.engName] || 0;
+      price[plasmoidInfo.engName] = currentPrice + 1;
     });
 
     if (!slots.every(count => count === 1)) {
       throw new Meteor.Error('Каждый слот нужно заполнить один раз');
     }
 
-    const price = { credits: reward + PUZZLE_PRICE_DGC };
+    if (!Game.Resources.has({
+      resources: price,
+      user,
+    })) {
+      throw new Meteor.Error('Недостаточно плазмоидов');
+    }
+
+    price.credits = reward + PUZZLE_PRICE_DGC;
     if (!Game.Resources.has({
       resources: price,
       user,

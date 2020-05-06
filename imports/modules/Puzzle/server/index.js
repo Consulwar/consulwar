@@ -30,7 +30,7 @@ Meteor.publish('puzzleSolutions', function(puzzleId) {
   check(puzzleId, String);
   if (this.userId) {
     return SolutionCollection.find({
-      _id: puzzleId,
+      puzzleId,
       userId: this.userId,
     });
   }

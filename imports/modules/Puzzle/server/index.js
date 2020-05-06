@@ -7,6 +7,7 @@ import './methods';
 
 SolutionCollection._ensureIndex({
   puzzleId: 1,
+  userId: 1,
 });
 
 Meteor.publish('puzzle', function(puzzleId) {

@@ -6,6 +6,7 @@ import Game from '/moduls/game/lib/main.game';
 import Artifacts from '/imports/content/Resource/Artifact/server';
 
 import PuzzleCollection from '../lib/PuzzleCollection';
+import SolutionCollection from '../lib/SolutionCollection';
 
 const PLASMOIDS = [
   'Resource/Artifact/White/SilverPlasmoid',
@@ -126,11 +127,14 @@ Meteor.methods({
     check(puzzleId, String);
 
     const puzzle = PuzzleCollection.findOne({ _id: puzzleId });
-    const solutions = puzzle.solutions || {};
-    const solution = solutions[user.username] || { successMoves: 0 };
+    const solution = (
+      SolutionCollection.findOne({ puzzleId, userId: user._id })
+      || {}
+    );
+    const { successMoves = 0 } = solution;
 
-    const result = puzzle.sequence.slice(0, solution.successMoves + 1);
-    if (solution.successMoves < SLOTS_TOTAL) {
+    const result = puzzle.sequence.slice(0, successMoves + 1);
+    if (successMoves < SLOTS_TOTAL) {
       result[result.length - 1] = { hint: result[result.length - 1].hint };
     }
 
@@ -159,8 +163,11 @@ Meteor.methods({
       throw new Meteor.Error('Пазл уже собран');
     }
 
-    const solutions = puzzle.solutions || {};
-    const solution = solutions[user.username] || { successMoves: 0 };
+    const solution = (
+      SolutionCollection.findOne({ puzzleId, userId: user._id })
+      || {}
+    );
+    let { successMoves = 0 } = solution;
     if (solution.timeout > Game.getCurrentTime()) {
       throw new Meteor.Error('Штрафной таймаут ещё не закончился');
     }
@@ -175,27 +182,34 @@ Meteor.methods({
     }
     Game.Resources.spend(price);
 
-    const nextMove = puzzle.sequence[solution.successMoves];
-    const modifier = { $set: {} };
-    let result = false;
-    let { successMoves } = solution;
+    const nextMove = puzzle.sequence[successMoves];
+    const solutionMod = { $set: {} };
+    const puzzleMod = { $set: {} };
     if (place === nextMove.place && plasmoid === nextMove.plasmoid) {
       successMoves += 1;
-      modifier.$set[`solutions.${user.username}.successMoves`] = successMoves;
+      solutionMod.$set.successMoves = successMoves;
+      const slots = solution.slots || [];
+      slots[place] = plasmoid;
+      solutionMod.$set.slots = slots;
       if (successMoves > puzzle.maxMoves) {
-        modifier.$set.maxMoves = successMoves;
+        puzzleMod.$set.maxMoves = successMoves;
       }
-      result = true;
     } else {
-      modifier.$set[`solutions.${user.username}.timeout`] = Game.getCurrentTime() + PENAL_TIMEOUT;
+      solutionMod.$set.timeout = Game.getCurrentTime() + PENAL_TIMEOUT;
+      SolutionCollection.upsert({ puzzleId, userId: user._id }, solutionMod);
+      return false;
     }
     if (successMoves === SLOTS_TOTAL) {
-      modifier.$set.winner = user.username;
+      puzzleMod.$set.winner = user.username;
     }
     const updated = PuzzleCollection.update(
       { _id: puzzle._id, winner: null },
-      modifier,
+      puzzleMod,
     );
+
+    if (updated) {
+      SolutionCollection.upsert({ puzzleId, userId: user._id }, solutionMod);
+    }
 
     if (successMoves === SLOTS_TOTAL) {
       if (updated) {
@@ -209,6 +223,6 @@ Meteor.methods({
       }
     }
 
-    return result;
+    return true;
   },
 });

@@ -1,13 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 
-import collection from '../lib/PuzzleCollection';
+import PuzzleCollection from '../lib/PuzzleCollection';
+import SolutionCollection from '../lib/SolutionCollection';
 import './methods';
+
+SolutionCollection._ensureIndex({
+  puzzleId: 1,
+});
 
 Meteor.publish('puzzle', function(puzzleId) {
   check(puzzleId, String);
   if (this.userId) {
-    return collection.find({
+    return PuzzleCollection.find({
       _id: puzzleId,
     }, {
       fields: {
@@ -16,6 +21,17 @@ Meteor.publish('puzzle', function(puzzleId) {
         maxMoves: 1,
         winner: 1,
       },
+    });
+  }
+  return null;
+});
+
+Meteor.publish('puzzleSolutions', function(puzzleId) {
+  check(puzzleId, String);
+  if (this.userId) {
+    return SolutionCollection.find({
+      _id: puzzleId,
+      userId: this.userId,
     });
   }
   return null;

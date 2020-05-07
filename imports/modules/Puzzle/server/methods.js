@@ -48,7 +48,7 @@ Meteor.methods({
       if (!PLASMOIDS.includes(item.plasmoid)) {
         throw new Meteor.Error('В пазле можно использовать только плазмоиды');
       }
-      if (item.place < 0 || item.place > 7) {
+      if (item.place < 0 || item.place >= SLOTS_TOTAL) {
         throw new Meteor.Error(`В пазле есть только ${SLOTS_TOTAL} позиций`);
       }
       slots[item.place] += 1;
@@ -163,7 +163,7 @@ Meteor.methods({
     check(place, Match.Integer);
     check(plasmoid, String);
 
-    if (place < 0 || place > 7) {
+    if (place < 0 || place >= SLOTS_TOTAL) {
       throw new Meteor.Error(`В пазле есть только ${SLOTS_TOTAL} позиций`);
     }
     if (!PLASMOIDS.includes(plasmoid)) {

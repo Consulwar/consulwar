@@ -7,6 +7,7 @@ import initMutualSpaceServer from '/imports/modules/MutualSpace/server/index';
 import Reptiles from '/imports/modules/Space/server/reptiles';
 
 import '/imports/modules/Person/server/methods';
+import '/imports/modules/Puzzle/server';
 import ReminderEmails from '/imports/modules/User/server/ReminderEmails';
 import JobsCleanup from '/imports/modules/Space/server/JobsCleanup';
 import ShutdownHack from '/imports/modules/User/server/ShutdownHack';

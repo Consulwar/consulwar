@@ -7,6 +7,7 @@
     <div class="cw--PuzzleChat__status">
       {{#if eq winner.get null}}
         <img class="cw--PuzzleChat__lock" src="/img/game/lock.png" alt="Не решена"/>
+        <span>{{maxMoves.get}} / 8</span>
       {{else}}
         <img class="cw--PuzzleChat__lock" src="/img/game/lock_open.png" alt="Не решена"/>
         <span>{{winner.get}}</span>

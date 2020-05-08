@@ -48,10 +48,10 @@ Meteor.methods({
       if (!PLASMOIDS.includes(item.plasmoid)) {
         throw new Meteor.Error('В пазле можно использовать только плазмоиды');
       }
-      if (item.place < 0 || item.place >= SLOTS_TOTAL) {
+      if (item.place < 1 || item.place > SLOTS_TOTAL) {
         throw new Meteor.Error(`В пазле есть только ${SLOTS_TOTAL} позиций`);
       }
-      slots[item.place] += 1;
+      slots[item.place - 1] += 1;
       const plasmoidInfo = Artifacts[item.plasmoid];
       const currentPrice = price[plasmoidInfo.engName] || 0;
       price[plasmoidInfo.engName] = currentPrice + 1;
@@ -105,7 +105,7 @@ Meteor.methods({
       timestamp: Game.getCurrentTime(),
       data: {
         type: 'puzzle',
-        id: puzzleId,
+        puzzleId,
         reward,
       },
     };

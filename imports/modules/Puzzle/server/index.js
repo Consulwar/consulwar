@@ -21,6 +21,7 @@ Meteor.publish('puzzle', function(puzzleId) {
         reward: 1,
         maxMoves: 1,
         winner: 1,
+        answers: 1,
       },
     });
   }

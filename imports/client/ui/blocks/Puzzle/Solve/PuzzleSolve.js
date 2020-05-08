@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Tracker } from 'meteor/tracker';
 import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Game from '/moduls/game/lib/main.game';
@@ -9,7 +10,6 @@ import AmethystPlasmoid from '/imports/content/Resource/Artifact/Purple/client/A
 import TopazPlasmoid from '/imports/content/Resource/Artifact/Orange/client/TopazPlasmoid';
 import RubyPlasmoid from '/imports/content/Resource/Artifact/Red/client/RubyPlasmoid';
 import resourceItems from '/imports/content/Resource/client';
-import PuzzleInsert from '../Insert/PuzzleInsert';
 import './PuzzleSolve.html';
 import './PuzzleSolve.styl';
 
@@ -32,6 +32,8 @@ class PuzzleSolve extends BlazeComponent {
       puzzleId,
       cells,
       answers,
+      hints,
+      timeout,
     },
   }) {
     super();
@@ -39,20 +41,43 @@ class PuzzleSolve extends BlazeComponent {
     this.puzzleId = puzzleId;
     this.cells = cells;
     this.answers = answers;
+    this.hints = hints;
     this.text = new ReactiveVar('…');
-    this.selected = null;
+    this.timeout = timeout;
 
-    Meteor.call(
-      'puzzle.getHints',
-      puzzleId,
-      (err, result) => this.text.set(result),
-    );
+    this.hintUpdater = Tracker.autorun((calc) => {
+      if (this.hints.get()) {
+        calc.stop();
+        this.text.set('Нажмите на шар что бы увидеть соответствующую подсказку');
+        return;
+      }
+      this.answers.get(); // for reactivity
+      Meteor.call(
+        'puzzle.getHints',
+        { puzzleId },
+        (err, result) => this.text.set(result[result.length - 1].hint),
+      );
+    });
 
     this.plasmoids = PLASMOIDS.map(x => ({ [x.id]: 1 }));
   }
 
+  onDestroyed() {
+    super.onDestroyed();
+
+    this.hintUpdater.stop();
+  }
+
   selectOrb(e, plasmoid) {
     e.originalEvent.dataTransfer.setData('plasmoidId', Object.keys(plasmoid)[0]);
+  }
+
+  showHint() {
+    return (e, slot) => {
+      if (this.hints.get()) {
+        this.text.set(this.hints.get()[slot]);
+      }
+    };
   }
 
   confirmInsert() {
@@ -61,27 +86,16 @@ class PuzzleSolve extends BlazeComponent {
       Game.showAcceptWindow(
         `Вставить 1 ${resourceItems[plasmoidId].title} в ${slot}?`,
         () => {
-          // Meteor call ACCEPT
-          //this.removeComponent();
+          Meteor.call(
+            'puzzle.insert',
+            {
+              puzzleId: this.puzzleId,
+              place: slot,
+              plasmoid: plasmoidId,
+            },
+          );
         },
       );
-    };
-  }
-
-  openInsertModal() {
-    return (e, cell) => {
-      if (this.answers.get()[cell]) {
-        return;
-      }
-
-      Game.Popup.show({
-        template: (new PuzzleInsert({
-          hash: {
-            puzzleId: this.puzzleId,
-            slot: cell,
-          },
-        })).renderComponent(),
-      });
     };
   }
 }

@@ -143,7 +143,7 @@ Meteor.methods({
       SolutionCollection.findOne({ puzzleId, userId: user._id })
       || {}
     );
-    const { successMoves = 0 } = solution;
+    const { successMoves = 0 } = puzzle.winner ? SLOTS_TOTAL : solution;
 
     const result = puzzle.sequence.slice(0, successMoves + 1);
     if (successMoves < SLOTS_TOTAL) {
@@ -163,7 +163,7 @@ Meteor.methods({
     check(place, Match.Integer);
     check(plasmoid, String);
 
-    if (place < 0 || place >= SLOTS_TOTAL) {
+    if (place < 0 || place > SLOTS_TOTAL) {
       throw new Meteor.Error(`В пазле есть только ${SLOTS_TOTAL} позиций`);
     }
     if (!PLASMOIDS.includes(plasmoid)) {
@@ -195,43 +195,50 @@ Meteor.methods({
     Game.Resources.spend(price);
 
     const nextMove = puzzle.sequence[successMoves];
-    const solutionMod = { $set: {} };
-    const puzzleMod = { $set: {} };
+    const solutionMod = {};
+    const puzzleMod = {};
     if (place === nextMove.place && plasmoid === nextMove.plasmoid) {
       successMoves += 1;
-      solutionMod.$set.successMoves = successMoves;
+      solutionMod.successMoves = successMoves;
       const slots = solution.slots || [];
       slots[place] = plasmoid;
-      solutionMod.$set.slots = slots;
-      if (successMoves > puzzle.maxMoves) {
-        puzzleMod.$set.maxMoves = successMoves;
-      }
+      solutionMod.slots = slots;
     } else {
-      solutionMod.$set.timeout = Game.getCurrentTime() + PENAL_TIMEOUT;
-      SolutionCollection.upsert({ puzzleId, userId: user._id }, solutionMod);
+      solutionMod.timeout = Game.getCurrentTime() + PENAL_TIMEOUT;
+      SolutionCollection.upsert(
+        { puzzleId, userId: user._id },
+        { $set: solutionMod },
+      );
       return false;
     }
-    if (successMoves === SLOTS_TOTAL) {
-      puzzleMod.$set.winner = user.username;
-    }
-    const updated = PuzzleCollection.update(
-      { _id: puzzle._id, winner: null },
-      puzzleMod,
+
+    SolutionCollection.upsert(
+      { puzzleId, userId: user._id },
+      { $set: solutionMod },
     );
 
-    if (updated) {
-      SolutionCollection.upsert({ puzzleId, userId: user._id }, solutionMod);
-    }
+    if (successMoves > puzzle.maxMoves) {
+      puzzleMod.maxMoves = successMoves;
+      if (successMoves === SLOTS_TOTAL) {
+        puzzleMod.winner = user.username;
+        puzzleMod.answers = puzzle.sequence;
+      }
 
-    if (successMoves === SLOTS_TOTAL) {
-      if (updated) {
-        Game.Resources.add({ credits: puzzle.reward });
-        Game.Broadcast.add(
-          user.username,
-          `отгадал загадку на ${puzzle.reward} ГГК`,
-        );
-      } else {
-        throw new Meteor.Error('Чуть-чуть не успели :(');
+      const puzzleUpdated = PuzzleCollection.update(
+        { _id: puzzle._id, winner: null },
+        { $set: puzzleMod },
+      );
+
+      if (successMoves === SLOTS_TOTAL) {
+        if (puzzleUpdated) {
+          Game.Resources.add({ credits: puzzle.reward });
+          Game.Broadcast.add(
+            user.username,
+            `отгадал загадку на ${puzzle.reward} ГГК`,
+          );
+        } else {
+          throw new Meteor.Error('Чуть-чуть не успели :(');
+        }
       }
     }
 

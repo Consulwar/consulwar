@@ -13,7 +13,7 @@ class PuzzleCells extends BlazeComponent {
     hash: {
       cells,
       answers,
-      onCellClick = () => {},
+      onClick = () => {},
       onDrop = () => {},
       className,
     },
@@ -22,7 +22,7 @@ class PuzzleCells extends BlazeComponent {
 
     this.cells = cells;
     this.answers = answers;
-    this.onCellClick = onCellClick;
+    this.onClick = onClick;
     this.onDrop = (e, cell) => {
       this.unhighlight(e);
       onDrop(e, cell);

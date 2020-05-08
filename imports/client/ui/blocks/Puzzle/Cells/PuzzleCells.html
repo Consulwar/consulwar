@@ -1,19 +1,18 @@
 <template name="PuzzleCells">
   <div class="cw--PuzzleCells {{className}}">
-    {{#each cell in cells.get}}
+    {{#each cell in cells}}
       <div
         class="
           cw--PuzzleCells__cell
           {{hasAnswer cell}}
         "
-        onClick={{onCellClick cell}}
+        onClick={{onClick cell}}
         onDrop={{onDrop cell}}
         onDragover={{highlight}}
         onDragleave={{unhighlight}}
         onBlur={{unhighlight}}
       >
         {{#if (answer cell)}}
-          <!--{{answer cell}}-->
           {{> ResourceSingle args 
             resources=(answer cell)
             showCount=false

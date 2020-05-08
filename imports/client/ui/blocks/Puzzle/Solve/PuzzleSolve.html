@@ -3,25 +3,38 @@
     <div class="cw--PuzzleSolve__text">
       {{text.get}}
     </div>
-    {{> PuzzleCells args 
-      cells=cells
-      answers=answers
-      onDrop=confirmInsert
-      className="cw--PuzzleSolve__cells"
-    }}
-    <div class="cw--PuzzleSolve__options">
-      {{#each plasmoid in plasmoids}}
-        <div
-          draggable="true"
-          onDragstart={{selectOrb plasmoid}}
-        >
-          {{> ResourceSingle args 
-            resources=plasmoid
-            showCount=false
-            className="cw--PuzzleSolve__option"
-          }}
+    <div class="cw--PuzzleSolve__cellsContainer">
+      {{> PuzzleCells args 
+        cells=cells
+        answers=answers
+        onDrop=confirmInsert
+        onClick=showHint
+        className="cw--PuzzleSolve__cells"
+      }}
+      {{#if gt timeout.get serverTime}}
+        <div class="cw--PuzzleSolve__timeoutText_container">
+          <div class="cw--PuzzleSolve__timeoutText">
+            Дан неверный ответ.<br>
+            Откат: {{formatSeconds (substract timeout.get serverTime)}}
+          </div>
         </div>
-      {{/each}}
+      {{/if}}
     </div>
+    {{#if not hints.get}}
+      <div class="cw--PuzzleSolve__options">
+        {{#each plasmoid in plasmoids}}
+          <div
+            draggable="true"
+            onDragstart={{selectOrb plasmoid}}
+          >
+            {{> ResourceSingle args 
+              resources=plasmoid
+              showCount=false
+              className="cw--PuzzleSolve__option"
+            }}
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
   </div>
 </template>

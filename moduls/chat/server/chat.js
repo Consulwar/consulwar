@@ -4,8 +4,6 @@ import systemUser from '/moduls/user/server/systemUser';
 
 import makeFun from '/imports/modules/Space/server/makeFun';
 
-import '/imports/modules/Puzzle/server/publications';
-
 initChatServer = function() {
 'use strict';
 

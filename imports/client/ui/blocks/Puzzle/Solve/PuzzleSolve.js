@@ -82,6 +82,7 @@ class PuzzleSolve extends BlazeComponent {
 
   confirmInsert() {
     return (e, slot) => {
+      e.preventDefault();
       const plasmoidId = e.originalEvent.dataTransfer.getData('plasmoidId');
       Game.showAcceptWindow(
         `Вставить 1 ${resourceItems[plasmoidId].title} в ${slot}?`,

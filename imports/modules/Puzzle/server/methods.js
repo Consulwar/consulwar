@@ -18,7 +18,7 @@ const PLASMOIDS = [
 ];
 
 const PUZZLE_PRICE_DGC = 500;
-const PENAL_TIMEOUT = 60 * 60;
+const PENAL_TIMEOUT = 60 * 15;
 const SLOTS_TOTAL = 8;
 
 Meteor.methods({

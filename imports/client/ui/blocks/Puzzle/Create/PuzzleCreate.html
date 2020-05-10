@@ -1,0 +1,70 @@
+<template name="PuzzleCreate">
+  <form class="cw--PuzzleCreate" onSubmit={{createPuzzle}}>
+    <div>
+      Награда:
+      {{> InputNumber args
+        value=reward
+        min=1
+        isShowZero=false
+        placeholder="Награда"
+        class="cw--PuzzleCreate__reward"
+      }}
+
+      Цена:
+      {{> ResourceSingle args 
+        resources=price
+        showCount=true
+        className="cw--PuzzleCreate__price"
+      }}
+    </div>
+
+    
+    {{#each cell in sequence}}
+      <div class="cw--PuzzleCreate__cell">
+        Подсказка:
+        {{> InputString args
+          name=(sum 'hint-' cell.place)
+          value=cell.hint
+          placeholder='Подсказка'
+          className='cw--PuzzleCreate__hint'
+        }}
+
+        <div>
+          Место:
+          <select>
+            {{#each place in possiblePlace}}
+              <option 
+                {{isPlaceSelected cell place}}
+                name="{{place}}"
+              >
+              {{place}}
+            </option>
+            {{/each}}
+          </select>
+
+          Плазмоид:
+          <select>
+            {{#each plasmoid in plasmoids}}
+              <option 
+                {{isPlasmoidSelected cell plasmoid}}
+                name="{{plasmoid.id}}"
+              >
+              {{plasmoid.title}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    {{/each}}
+
+    <button
+      class="
+        cw--button
+        cw--button_type_primary
+        cw--button_type_primary_orange
+      "
+    >
+      Создать
+    </button>
+  </form>
+</template>

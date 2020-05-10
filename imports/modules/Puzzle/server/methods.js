@@ -45,6 +45,10 @@ Meteor.methods({
     const price = {};
 
     sequence.forEach((item) => {
+      if (item.hint.length < 1) {
+        throw new Meteor.Error('В пазле должны быть все подсказки');
+      }
+
       if (!PLASMOIDS.includes(item.plasmoid)) {
         throw new Meteor.Error('В пазле можно использовать только плазмоиды');
       }

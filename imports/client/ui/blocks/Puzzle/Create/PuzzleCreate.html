@@ -31,11 +31,11 @@
 
         <div>
           Место:
-          <select>
+          <select onChange={{selectPlace cell}}>
             {{#each place in possiblePlace}}
               <option 
                 {{isPlaceSelected cell place}}
-                name="{{place}}"
+                value="{{place}}"
               >
               {{place}}
             </option>
@@ -43,11 +43,11 @@
           </select>
 
           Плазмоид:
-          <select>
+          <select onChange={{selectPlasmoid cell}}>
             {{#each plasmoid in plasmoids}}
               <option 
                 {{isPlasmoidSelected cell plasmoid}}
-                name="{{plasmoid.id}}"
+                value="{{plasmoid.id}}"
               >
               {{plasmoid.title}}
             </option>

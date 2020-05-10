@@ -62,6 +62,14 @@ class PuzzleCreate extends BlazeComponent {
     return '';
   }
 
+  selectPlace(e, cell) {
+    cell.place.set(parseInt(e.target.value, 10));
+  }
+
+  selectPlasmoid(e, cell) {
+    cell.plasmoid.set(e.target.value);
+  }
+
   createPuzzle(e) {
     e.preventDefault();
 

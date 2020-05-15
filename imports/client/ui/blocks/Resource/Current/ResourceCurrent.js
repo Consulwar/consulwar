@@ -13,6 +13,32 @@ class ResourceCurrent extends BlazeComponent {
     return 'ResourceCurrent';
   }
 
+  constructor({
+    hash: {
+      resourceList = [
+        resourceItems['Resource/Base/Human'],
+        resourceItems['Resource/Base/Metal'],
+        resourceItems['Resource/Base/Crystal'],
+        resourceItems['Resource/Base/Honor'],
+        resourceItems['Resource/Base/Credit'],
+      ],
+      disableTooltip = false,
+      enableArtifacts = true,
+      className = null,
+      onClick = () => {},
+    } = {},
+  } = {}) {
+    super();
+
+    this.onClick = onClick;
+    this.className = className;
+    this.resourceList = resourceList;
+    this.resourceEngNames = resourceList.map(x => x.engName);
+    this.engNameToObject = _.keyBy(resourceList, x => x.engName);
+    this.disableTooltip = disableTooltip;
+    this.enableArtifacts = enableArtifacts;
+  }
+
   isArtifactPage() {
     return Router.current().group === 'artefacts';
   }
@@ -21,10 +47,10 @@ class ResourceCurrent extends BlazeComponent {
     const resourceArray = [];
     _.toPairs(_.pick(
       Game.Resources.currentValue.get(),
-      ['humans', 'metals', 'crystals', 'honor', 'credits'],
-    )).forEach(([id, value]) => {
+      this.resourceEngNames,
+    )).forEach(([engName, value]) => {
       resourceArray.push({
-        obj: resourceItems[id],
+        obj: this.engNameToObject[engName],
         count: value.amount,
       });
     });
@@ -36,6 +62,10 @@ class ResourceCurrent extends BlazeComponent {
   }
 
   showResourceTooltip(event, resource) {
+    if (this.disableTooltip) {
+      return;
+    }
+
     const target = $(event.currentTarget);
     const tooltip = incomeTooltip(
       Game.Resources.getIncome().effects,

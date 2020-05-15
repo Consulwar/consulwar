@@ -1,3 +1,4 @@
+import sanitizeHtml from 'sanitize-html';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
 import systemUser from '/moduls/user/server/systemUser';

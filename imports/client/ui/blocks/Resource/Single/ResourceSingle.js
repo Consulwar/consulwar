@@ -19,18 +19,23 @@ class ResourceSingle extends BlazeComponent {
       resources,
       isShowDiff = false,
       className,
+      showCount = true,
     },
   }) {
     super();
     this.resources = resources;
     this.isShowDiff = isShowDiff;
     this.className = className;
+    this.showCount = showCount;
     [this.resourceName] = _(this.resources).keys();
     this.resource = resourceItems[this.resourceName]
       || Game.Artefacts.items[this.resourceName];
   }
 
   count() {
+    if (!this.showCount) {
+      return '';
+    }
     const weight = this.resources[this.resourceName];
     const weightFormated = helpers.formatNumberWithIso(weight);
     if (this.isShowDiff) {

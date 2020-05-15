@@ -1,4 +1,6 @@
 import buzz from 'buzz';
+import '/imports/client/ui/blocks/Puzzle/Chat/PuzzleChat';
+import PuzzleCreate from '/imports/client/ui/blocks/Puzzle/Create/PuzzleCreate';
 
 initChatClient = function() {
 'use strict';
@@ -570,6 +572,11 @@ var execClientCommand = function(message) {
          Router.current().params.room, 
          parseInt(message.substr('/d mod'.length).trim())
       );
+      return true;
+   } else if (message.indexOf('/puzzle') === 0) {
+      Game.Popup.show({
+         template: (new PuzzleCreate()).renderComponent(),
+      });
       return true;
    }
 

@@ -1,0 +1,22 @@
+<template name="PuzzleChat">
+  <div class="cw--PuzzleChat" onClick={{openSolve}}>
+    {{> PuzzleCells args 
+      cells=cells
+      answers=answers
+    }}
+    <div class="cw--PuzzleChat__status">
+      {{#if eq winner.get null}}
+        <img class="cw--PuzzleChat__lock" src="/img/game/lock.png" alt="Не решена"/>
+        <span>{{maxMoves.get}} / 8</span>
+      {{else}}
+        <img class="cw--PuzzleChat__lock" src="/img/game/lock_open.png" alt="Не решена"/>
+        <span>{{winner.get}}</span>
+      {{/if}}
+    </div>
+
+    {{> ResourceSingle args 
+      resources=reward.get
+      className="cw--PuzzleChat__reward"
+    }}
+  </div>
+</template>

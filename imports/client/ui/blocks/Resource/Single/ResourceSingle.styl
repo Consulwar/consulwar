@@ -1,15 +1,15 @@
 @import '{}/imports/client/ui/config'
 
 .cw--ResourceSingle
-  display inline-flex
-  height 45px
-  justify-content flex-start
-  align-items center
-  margin-left 10px
-  font-size $cw--fontSize_l
-  font-weight bold
-
   &__image
-    width 45px
+    display inline-flex
     height 45px
-    margin-right 10px
+    justify-content flex-start
+    align-items center
+    margin-left 10px
+    font-size $cw--fontSize_l
+    font-weight bold
+  
+  &_artefact
+    .cw--ResourceSingle__image
+      clip-path circle(40%)

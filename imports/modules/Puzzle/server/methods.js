@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import sanitizeHtml from 'sanitize-html';
 import User from '/imports/modules/User/server/User';
 import Log from '/imports/modules/Log/server/Log';
 import Game from '/moduls/game/lib/main.game';
@@ -20,6 +21,17 @@ const PLASMOIDS = [
 const PUZZLE_PRICE_DGC = 500;
 const PENAL_TIMEOUT = 60 * 15;
 const SLOTS_TOTAL = 8;
+
+const sanitizeHtmlGraceful = function(message) {
+  const options = {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike', 'br'],
+    allowedAttributes: {
+      a: ['href', 'target'],
+    },
+  };
+  const regEx = new RegExp(`<(?!/?(?:${options.allowedTags.join('|')}))`, 'g');
+  return sanitizeHtml(message.replace(regEx, '&lt;'), options);
+}
 
 Meteor.methods({
   'puzzle.create'({ sequence, reward }) {
@@ -45,6 +57,9 @@ Meteor.methods({
     const price = {};
 
     sequence.forEach((item) => {
+      // eslint-disable-next-line no-param-reassign
+      item.hint = sanitizeHtmlGraceful(item.hint);
+
       if (item.hint.length < 1) {
         throw new Meteor.Error('В пазле должны быть все подсказки');
       }

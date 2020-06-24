@@ -1,8 +1,13 @@
+function getPenalty({ level }) {
+  const percentValue = ((1 - (0.8 ** level)) * 100);
+  return (Math.round((percentValue * 100)) / 100) * -1;
+}
+
 export default {
   id: 'Achievement/Space/SelfDestruction',
   field: 'units.build.Unit/Human/Defense/DoomsDayGun',
-  levels: [1],
-  title: 'НГ+',
+  levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  title: level => `НГ${'+'.repeat(level)}`,
   description: 'Ну всё, пиздец',
   effects: {
     Price: [
@@ -21,9 +26,7 @@ export default {
         textAfter: '% больше ресурсов',
         priority: 10,
         affect: ['humans', 'metals', 'crystals', 'honor'],
-        result({ level }) {
-          return level * 20 * -1;
-        },
+        result: getPenalty,
       },
       {
         textBefore: 'Ремонт юнитов дороже на -',
@@ -31,8 +34,16 @@ export default {
         condition: 'Unique/Repair',
         priority: 10,
         affect: ['metals', 'crystals'],
+        result: getPenalty,
+      },
+      {
+        textBefore: 'ОСД дороже на -',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/DoomsDayGun',
+        priority: 10,
+        affect: ['ruby_plasmoid'],
         result({ level }) {
-          return level * 20 * -1;
+          return level * 100 * -1;
         },
       },
     ],
@@ -42,9 +53,7 @@ export default {
         textAfter: '%',
         priority: 10,
         affect: ['humans', 'metals', 'crystals', 'honor'],
-        result({ level }) {
-          return level * 20 * -1;
-        },
+        result: getPenalty,
       },
     ],
     Military: [
@@ -54,9 +63,7 @@ export default {
         condition: 'Unit/Human/Space',
         priority: 10,
         affect: 'damage',
-        result({ level }) {
-          return level * 20 * -1;
-        },
+        result: getPenalty,
       },
       {
         textBefore: 'Жизни флота ',
@@ -64,9 +71,7 @@ export default {
         condition: 'Unit/Human/Space',
         priority: 10,
         affect: 'life',
-        result({ level }) {
-          return level * 20 * -1;
-        },
+        result: getPenalty,
       },
       {
         textBefore: 'Урон наземной армии +',

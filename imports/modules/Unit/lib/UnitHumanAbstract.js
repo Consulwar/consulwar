@@ -59,13 +59,15 @@ class UnitHumanAbstract extends UnitAbstract {
       }
     });
 
-    const earthUnits = Game.EarthUnits.get(user._id);
-    if (earthUnits) {
-      Object.entries(earthUnits.userArmy).forEach(([unitId, count]) => {
-        if (this.id === unitId) {
-          result += count;
-        }
-      });
+    if (this.group === 'Ground') {
+      const earthUnits = Game.EarthUnits.get(user._id);
+      if (earthUnits) {
+        Object.entries(earthUnits.userArmy).forEach(([unitId, count]) => {
+          if (this.id === unitId) {
+            result += count;
+          }
+        });
+      }
     }
 
     const battles = BattleCollection.find({

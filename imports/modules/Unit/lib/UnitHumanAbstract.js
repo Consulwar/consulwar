@@ -65,7 +65,7 @@ class UnitHumanAbstract extends UnitAbstract {
     }).fetch() || [];
 
     battles.forEach((battle) => {
-      battle.initialUnits[Battle.USER_SIDE][user.username].forEach((units) => {
+      battle.currentUnits[Battle.USER_SIDE][user.username].forEach((units) => {
         _(units).pairs().forEach(([id, { count }]) => {
           if (this.id === id) {
             result += count;

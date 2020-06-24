@@ -76,6 +76,8 @@ game.Achievement = function(options) {
     if (_.isArray(options.name)) {
       level = (level !== undefined) ? level : this.currentLevel();
       return options.name[ Math.max(level - 1, 0) ];
+    } else if (_.isFunction(options.name)) {
+      return options.name(level);
     } else {
       return options.name;
     }

@@ -36,6 +36,16 @@ export default {
         affect: ['metals', 'crystals'],
         result: getPenalty,
       },
+      {
+        textBefore: 'ОСД дороже на -',
+        textAfter: '%',
+        condition: 'Unit/Human/Defense/DoomsDayGun',
+        priority: 10,
+        affect: ['ruby_plasmoid'],
+        result({ level }) {
+          return level * 100 * -1;
+        },
+      },
     ],
     Income: [
       {

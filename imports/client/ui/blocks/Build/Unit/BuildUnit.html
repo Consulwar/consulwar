@@ -141,26 +141,29 @@
             {{/if}}
           </div>
 
-          {{#unless eq unit.group 'Ground'}}
-            <div class="cw--BuildUnit__action">
-              {{#if unit.maxCount}}
-                <div class="cw--BuildUnit__actionCount">
-                  Всего юнитов {{formatNumber unit.getTotalCount}}
-                  из {{formatNumber unit.maxCount}}
-                </div>
-              {{/if}}
-              <button
-                class="
-                  cw--button
-                  cw--button_type_primary
-                  cw--button_type_primary_blue
-                "
-                onClick={{repair}}
-              >
-                Ремонтировать
-              </button>
-            </div>
-          {{/unless}}
+          <div class="cw--BuildUnit__action">
+            {{#if unit.maxCount}}
+              <div class="cw--BuildUnit__actionCount">
+                Всего юнитов {{formatNumber unit.getTotalCount}}
+                из {{formatNumber unit.maxCount}}
+              </div>
+            {{/if}}
+            <button
+              class="
+                cw--button
+                cw--button_type_primary
+                cw--button_type_primary_blue
+              "
+              onClick={{repair}}
+              style="
+                {{#if eq unit.group 'Ground'}}
+                visibility: hidden;
+                {{/if}}
+              "
+            >
+              Ремонтировать
+            </button>
+          </div>
         </div>
       </div>
       {{> Requirements args

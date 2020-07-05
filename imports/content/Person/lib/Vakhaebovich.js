@@ -6,5 +6,9 @@ export default {
     avatar: {
       isUnique: true,
     },
+    aladdin: {
+      isUnique: true,
+      comment: 'Soon',
+    },
   },
 };

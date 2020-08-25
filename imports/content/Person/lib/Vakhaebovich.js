@@ -8,7 +8,6 @@ export default {
     },
     aladdin: {
       isUnique: true,
-      comment: 'Soon',
     },
   },
 };

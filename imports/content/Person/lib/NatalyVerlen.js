@@ -15,5 +15,9 @@ export default {
     br: {
       isUnique: true,
     },
+    siren: {
+      isUnique: true,
+      comment: 'Raid skin',
+    },
   },
 };

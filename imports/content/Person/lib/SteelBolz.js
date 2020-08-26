@@ -11,7 +11,6 @@ export default {
     },
     firefly: {
       isUnique: true,
-      comment: 'Soon',
     },
   },
 };

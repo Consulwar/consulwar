@@ -2,6 +2,7 @@ import { BlazeComponent } from 'meteor/peerlibrary:blaze-components';
 import { _ } from 'lodash';
 import Game, { game } from '/moduls/game/lib/main.game';
 import { Notifications } from '/moduls/game/lib/importCompability';
+import systemUsername from '/moduls/user/lib/systemUsername';
 import { Meteor } from 'meteor/meteor';
 import FlightEvents from '/imports/modules/Space/client/flightEvents';
 import humanSpaceUnits from '/imports/content/Unit/Human/Space/client';
@@ -68,8 +69,8 @@ class SpaceFleetPopup extends BlazeComponent {
       } else if (!spaceEvent.data.isBack) {
         info.canWithdraw = true;
       }
-      
-      if (spaceEvent.data.username === '✯ Совет Галактики ✯') {
+
+      if (spaceEvent.data.username === systemUsername) {
         info.status = info.owner;
         info.owner = false;
       }

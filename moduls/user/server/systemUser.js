@@ -1,5 +1,6 @@
+import systemUsername from '../lib/systemUsername';
+
 // should be before defining "Accounts.onCreateUser"
-const systemUsername = '✯ Совет Галактики ✯';
 let systemUser = Meteor.users.findOne({ username: systemUsername });
 if (!systemUser) {
   if (Meteor.settings.last) {

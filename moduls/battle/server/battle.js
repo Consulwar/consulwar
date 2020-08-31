@@ -362,8 +362,8 @@ class Battle {
       if (dividedReward.honor) {
         inc[`reward.${username}.honor`] = reward.honor;
       }
-      if (totalPower === armyPower && this.options.missionType === 'prisoners') {
-        if (Game.Random.chance(50)) {
+      if (this.options.missionType === 'prisoners') {
+        if (Game.Random.chance(100 * armyPower / totalPower)) {
           inc[`reward.${username}.ruby_plasmoid`] = 1;
           reward.ruby_plasmoid = 1;
         }

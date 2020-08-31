@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
+import systemUsername from '/moduls/user/lib/systemUsername';
 
 import Space from '/imports/modules/Space/client/space';
 import Utils from '/imports/modules/Space/lib/utils';
@@ -1583,7 +1584,7 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
     } else if (myAllies.indexOf(hexInfo.username) !== -1) {
       color = Config.colors.ally;
       pane = 'hexesLayer2';
-    } else if(hexInfo.username === '✯ Совет Галактики ✯') {
+    } else if(hexInfo.username === systemUsername) {
       color = Config.colors.council;
       isClickable = false;
       pane = 'hexesLayer4';
@@ -1605,7 +1606,7 @@ const showHexes = function({ user, hexes, visibleUsernames = {}, visibleHexes = 
       interactive: isClickable,
     }).addTo(mapView);
 
-    if(hexInfo.username === '✯ Совет Галактики ✯') {
+    if(hexInfo.username === systemUsername) {
       return;
     }
 

@@ -2,6 +2,7 @@ import { Tracker } from 'meteor/tracker';
 import { Session } from 'meteor/session';
 import { L } from '/moduls/game/lib/importCompability';
 import Game from '/moduls/game/lib/main.game';
+import systemUsername from '/moduls/user/lib/systemUsername';
 import Utils from '/imports/modules/Space/lib/utils';
 
 import Space from './space';
@@ -305,7 +306,7 @@ class Ship {
       return Config.colors.user;
     } else if (myAllies.indexOf(fleetData.username) !== -1) {
       return Config.colors.ally;
-    } else if (fleetData.username === '✯ Совет Галактики ✯') {
+    } else if (fleetData.username === systemUsername) {
       return Config.colors.council;
     }
 

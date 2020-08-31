@@ -177,6 +177,10 @@ if (process.env.NODE_ENV == 'development') {
       Reptiles.spawnTradeFleet(hand, segment);
     },
 
+    'cheats.spawnPrisonersFleet': function() {
+      Reptiles.spawnPrisonersFleet();
+    },
+
     'cheats.sendReptileFleetToPlanet': function(planetId) {
       Reptiles.sendReptileFleetToPlanet({ planetId });
     },
@@ -219,7 +223,7 @@ if (process.env.NODE_ENV == 'development') {
         level: level
       });
     },
-    
+
     'cheats.setResearchLevel': function(id, level) {
       researches[id].setLevel({
         level: level

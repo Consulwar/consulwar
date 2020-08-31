@@ -88,11 +88,75 @@ const spawnTradeFleet = function(hand, segment) {
   }
 };
 
+const findNearestRedHex = function(x, z, maxDistance = 10) {
+  let distance = 0;
+  let redHex = null;
+  do {
+    distance += 1;
+    [redHex] = mutualSpaceCollection.aggregate([
+      {
+        $match: {
+          username: {
+            $exists: true,
+            $eq: null,
+          },
+          x: {
+            $gte: x - distance,
+            $lte: x + distance,
+          },
+          z: {
+            $gte: z - distance,
+            $lte: z + distance,
+          },
+        },
+      },
+      {
+        $project: {
+          x: 1,
+          z: 1,
+          username: 1,
+          offsetX: { $subtract: ['$x', x] },
+          offsetZ: { $subtract: ['$z', z] },
+        },
+      },
+      {
+        $project:
+        {
+          x: 1,
+          z: 1,
+          username: 1,
+          offsetX: 1,
+          offsetZ: 1,
+          offsetSum: { $abs: { $add: ['$offsetX', '$offsetZ'] } },
+        },
+      },
+      {
+        $match: {
+          offsetSum: {
+            $lte: distance,
+          },
+        },
+      },
+      { $sample: { size: 1 } },
+    ]);
+  } while (!redHex && distance < maxDistance);
+  return redHex;
+};
+
 const spawnPrisonersFleet = function() {
-  const [first, second] = mutualSpaceCollection.aggregate([
-    { $match: { username: { $exists: true, $eq: null } } },
+  const [firstUserHex, secondUserHex] = mutualSpaceCollection.aggregate([
+    {
+      $match: {
+        username: {
+          $exists: true,
+          $nin: [null, SystemUser.username],
+        },
+      },
+    },
     { $sample: { size: 2 } },
   ]);
+  const first = findNearestRedHex(firstUserHex.x, firstUserHex.z);
+  const second = findNearestRedHex(secondUserHex.x, secondUserHex.z);
 
   const startPosition = (new Hex(first)).center();
   const targetPosition = (new Hex(second)).center();
@@ -310,7 +374,7 @@ const getSourceMissionPlanet = function() {
   }
 
   return null;
-}
+};
 
 const sendReptileFleetToPlanet = function({
   planetId,
@@ -496,5 +560,6 @@ export default {
   sendReptileFleetToPlanet,
   actualize,
   stealUserResources,
+  spawnPrisonersFleet,
   spawnKrampusFleet,
 };

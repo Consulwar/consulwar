@@ -35,5 +35,9 @@ export default {
     tamsps: {
       isUnique: true,
     },
+    tmnt: {
+      isUnique: true,
+      comment: 'Soon',
+    },
   },
 };

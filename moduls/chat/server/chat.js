@@ -164,7 +164,7 @@ var getAccessLevel = function(user, room) {
 
 const sanitizeHtmlGraceful = function(message) {
   const options = {
-    allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike' ],
+    allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'sub', 'sup', 's', 'strike', 'spoiler' ],
     allowedAttributes: {
       'a': [ 'href' ]
     }

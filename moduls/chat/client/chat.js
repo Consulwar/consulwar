@@ -859,6 +859,13 @@ Template.chat.events({
       t.find('#message textarea[name="text"]').focus();
    },
 
+   'click .messages .message spoiler': function (e, t) {
+      if (!$(e.target).hasClass('disclose')) {
+         $(e.target).addClass('disclose');
+         e.stopPropagation();
+      }
+   },
+
    'click .messages li.profile, click .participants .online': function(e, t) {
       e.stopPropagation();
 

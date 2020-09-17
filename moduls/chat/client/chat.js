@@ -127,7 +127,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
       if (chatSubscription.ready())  {  
          addMessage(message, lastMessage);
          lastMessage = message;
-         showDesctopNotofocationFromMessage(message);
+         showDesktopNotificationFromMessage(message);
          Meteor.setTimeout(scrollChatToBottom);
       }
 
@@ -139,9 +139,11 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
    }
 });
 
-var showDesctopNotofocationFromMessage = function(message) {
+var showDesktopNotificationFromMessage = function(message) {
    if (message.message && message.message.indexOf('@' + Meteor.user().username) != -1) {
-      Game.showDesktopNotification(message.message, {
+      const doc = new DOMParser().parseFromString(message.message, 'text/html');
+      let text = doc.body.textContent || "";
+      Game.showDesktopNotification(text, {
          who: message.username,
          icon: '/img/game/chat/icons/' + message.iconPath + '.png',
          path: Router.path('chat', {group: 'communication', room: currentRoomName})

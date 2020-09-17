@@ -858,8 +858,8 @@ Template.chat.events({
    },
 
    'click .messages .message spoiler': function (e, t) {
-      if (!$(e.target).hasClass('disclose')) {
-         $(e.target).addClass('disclose');
+      if (!$(e.currentTarget).hasClass('disclose')) {
+         $(e.currentTarget).addClass('disclose');
          e.stopPropagation();
       }
    },

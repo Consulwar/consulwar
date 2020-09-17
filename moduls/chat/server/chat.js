@@ -12,17 +12,54 @@ initChatLib();
 
 Game.Chat.Messages.Collection._ensureIndex({
   room_id: 1,
-  timestamp: -1
+  sid: -1,
+}, {
+  unique: true,
 });
 
 Game.Chat.Messages.Collection._ensureIndex({
   username: 1,
-  timestamp: -1,
+  sid: -1,
 });
 
 Game.Chat.Room.Collection._ensureIndex({
   name: 1
 });
+
+Game.Chat.Messages.Collection.insertWithSid = function (doc, callback) {
+  const targetCollection = Game.Chat.Messages.Collection;
+  while (1) {
+    var cursor = targetCollection.find(
+      { room_id: doc.room_id },
+      {
+        fields: {
+          sid: 1,
+        },
+        sort: {
+          sid: -1,
+        },
+        limit: 1,
+      },
+    );
+    var seq = cursor.count() > 0 && !isNaN(Number(cursor.fetch()[0].sid)) ? Number(cursor.fetch()[0].sid) + 1 : 1;
+    doc.sid = seq;
+    let result;
+    try {
+      targetCollection.insert(doc);
+    } catch (ex) {
+      result = ex;
+    }
+    if(result) {
+      if(result.code === 11000 /* dup key */ ) {
+        continue;
+      } else {
+        Log.add({ info: 'unexpected error inserting data', name: result });
+        throw new Meteor.Error('Не получилось сохранить сообщение');
+      }
+    }
+    break;
+  }
+}
 
 Game.Chat.BalanceHistory = {
   Collection: new Meteor.Collection('chatBalanceHistory')
@@ -530,7 +567,7 @@ Meteor.methods({
         }
       });
     } else {
-      Game.Chat.Messages.Collection.insert(set);
+      Game.Chat.Messages.Collection.insertWithSid(set);
     }
 
     // save statistic
@@ -649,7 +686,7 @@ Meteor.methods({
         message.iconPath = user.settings.chat.icon;
       }
 
-      Game.Chat.Messages.Collection.insert(message);
+      Game.Chat.Messages.Collection.insertWithSid(message);
     } else {
       // silient block with hide messages
       // one million and one second is secret code :-)
@@ -693,7 +730,7 @@ Meteor.methods({
           message.iconPath = user.settings.chat.icon;
         }
 
-        Game.Chat.Messages.Collection.insert(message);
+        Game.Chat.Messages.Collection.insertWithSid(message);
       }
     }
   },
@@ -941,7 +978,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
 
     // save statistic
     var stats = {};
@@ -1011,7 +1048,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
   },
 
   'chat.changeMinRating': function(roomName, minRating) {
@@ -1076,7 +1113,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
   },
 
   'chat.addModeratorToRoom': function(roomName, username) {
@@ -1156,7 +1193,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
   },
 
   'chat.removeModeratorFromRoom': function(roomName, username) {
@@ -1218,7 +1255,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
   },
 
   'chat.addUserToRoom': function(roomName, username) {
@@ -1297,7 +1334,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
   },
 
   'chat.removeUserFromRoom': function(roomName, username) {
@@ -1377,7 +1414,7 @@ Meteor.methods({
       message.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(message);
+    Game.Chat.Messages.Collection.insertWithSid(message);
   },
 
   'chat.loadMore': function(options) {
@@ -1388,7 +1425,7 @@ Meteor.methods({
 
     check(options, Object);
     check(options.roomName, String);
-    check(options.timestamp, Match.Integer);
+    check(options.sid, Match.Integer);
 
     var room = Game.Chat.Room.Collection.findOne({
       name: options.roomName,
@@ -1403,17 +1440,9 @@ Meteor.methods({
       throw new Meteor.Error('Нет такой комнаты');
     }
 
-    var timeCondition = {};
-
-    if (options.isPrevious) {
-      timeCondition.$lte = options.timestamp;
-    } else {
-      timeCondition.$gte = options.timestamp;
-    }
-
     return Game.Chat.Messages.Collection.find({
       room_id: room._id,
-      timestamp: timeCondition,
+      sid: { $lt: options.sid },
       deleted: { $ne: true }
     }, {
       fields: {
@@ -1423,6 +1452,7 @@ Meteor.methods({
         message: 1,
         data: 1,
         timestamp: 1,
+        sid: 1,
         alliance: 1,
         type: 1,
         role: 1,
@@ -1433,9 +1463,9 @@ Meteor.methods({
         chatTitle: 1,
       },
       sort: {
-        timestamp: -1
+        sid: -1,
       },
-      limit: Game.Chat.Messages.SUBSCRIBE_LIMIT
+      limit: Game.Chat.Messages.LOAD_COUNT
     }).fetch();
   },
 
@@ -1572,6 +1602,7 @@ Meteor.publish('chat', function (roomName) {
           message: 1,
           data: 1,
           timestamp: 1,
+          sid: 1,
           alliance: 1,
           type: 1,
           role: 1,
@@ -1582,7 +1613,7 @@ Meteor.publish('chat', function (roomName) {
           chatTitle: 1,
         },
         sort: {
-          timestamp: -1
+          sid: -1,
         },
         limit: Game.Chat.Messages.LOAD_COUNT
       });
@@ -1593,7 +1624,5 @@ Meteor.publish('chat', function (roomName) {
     this.ready();
   }
 });
-
-initChatConfigServer();
 
 };

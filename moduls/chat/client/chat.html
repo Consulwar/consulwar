@@ -67,10 +67,10 @@
             </div>
           </li>
         {{else}}
-          {{#if this.hasAllowedMessages}}
+          {{#if this.hasMoreHistory}}
             <li 
               class="missed"
-              data-timestamp="{{this.timestamp}}"
+              data-sid="{{this.sid}}"
               data-messageid="{{this._id}}"
             >
               <span>пропущенные сообщения</span>

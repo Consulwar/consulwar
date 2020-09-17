@@ -24,31 +24,22 @@ var lastMessage = null;
 var firstMessage = null;
 
 var sortMessages = function(messages) {
-   //Нужно для устойчивой сортировки
-   //так как сообщения приходят в обратном порядке
-   //а сообщения с одинаковым timestamp в правильном порядке
-   for (var i = 0; i < messages.length; i++) {
-      messages[i].index = i;
-   }
-
    return messages.sort(function(a, b) {
-      var delta = a.timestamp - b.timestamp;
-        return (delta === 0 ? a.index - b.index : delta);
+      return a.sid - b.sid;
    });
 };
 
 var updateScrollbar = _.debounce(() => $('.scrollbar-inner').perfectScrollbar('update'), 10);
 
 var addMessage = function(message, previousMessage) {
-   if (!previousMessage
-    || previousMessage.isMotd
-    || message.isMotd
-    || message.username != previousMessage.username
-    || message.role != previousMessage.role
-    || message.iconPath != previousMessage.iconPath
-   ) {
-      message.showProfile = true;
-   }
+   message.showProfile = (
+      !previousMessage
+      || previousMessage.isMotd
+      || message.isMotd
+      || message.username != previousMessage.username
+      || message.role != previousMessage.role
+      || message.iconPath != previousMessage.iconPath
+   );
 
    if (Game.Settings.getOption({ name: 'chatDratuti' })) {
       message.message = 'Дратути';
@@ -85,9 +76,12 @@ var addMessagesAfter = function(newMessages, message) {
 
 var appendMessages = function(newMessages) {
    newMessages = sortMessages(newMessages);
+   if (lastMessage && newMessages[newMessages.length - 1].sid <= lastMessage.sid) {
+      return;
+   }
 
-   if (lastMessage && newMessages[0].timestamp > lastMessage.timestamp) {
-      newMessages[0].hasAllowedMessages = true;
+   if (lastMessage && newMessages[0].sid > lastMessage.sid + 1) {
+      newMessages[0].hasMoreHistory = true;
       newMessages[0].previousMessage = lastMessage;
       addMessagesAfter(newMessages, null);
    } else {
@@ -103,25 +97,27 @@ var appendMessages = function(newMessages) {
 var prependMessages = function(newMessages) {
    newMessages = sortMessages(newMessages);
 
-   firstMessage = newMessages[0];
-
    addMessagesAfter(newMessages, null);
+   addMessage(firstMessage, newMessages[newMessages.length - 1]);
+   firstMessage = newMessages[0];
 };
 
 var addMessagesBefore = function(newMessages, message) {
    newMessages = sortMessages(newMessages);
-
-   if (newMessages[0].timestamp > message.previousMessage.timestamp) {
+   while (newMessages[0].sid <= message.previousMessage.sid) {
       newMessages.shift();
-      newMessages[0].hasAllowedMessages = true;
-      newMessages[0].previousMessage = message.previousMessage;
+   }
+
+   newMessages[0].previousMessage = message.previousMessage;
+   if (newMessages[0].sid > message.previousMessage.sid + 1) {
+      newMessages[0].hasMoreHistory = true;
       addMessagesAfter(newMessages, null);
-   } else {
-      while (newMessages[0].timestamp <= message.previousMessage.timestamp) {
-         newMessages.shift();
-      }
+   }
+   else {
       addMessagesAfter(newMessages, message.previousMessage);
    }
+   message.hasMoreHistory = false;
+   addMessage(message, newMessages[newMessages.length - 1]);
 };
 
 
@@ -138,7 +134,7 @@ Game.Chat.Messages.Collection.find({}).observeChanges({
       // limit max count
       if (messages.find().count() > Game.Chat.Messages.LIMIT) {
          messages.remove({$gte: {timestamp: firstMessage.timestamp - 60 * 10}});
-         firstMessage = messages.findOne({}, {sort: {timestamp: 1}});
+         firstMessage = messages.findOne({}, {sort: {sid: 1}});
       }
    }
 });
@@ -678,7 +674,7 @@ Template.chat.helpers({
    gotLimit: function() { return gotLimit.get(); },
    hasMore: function() { return hasMore.get(); },
    messages: function() {
-      return messages.find({},{sort:{timestamp:1}});
+      return messages.find({}, { sort: { sid: 1 } });
    },
 
    getUserRole: function() {
@@ -904,10 +900,9 @@ Template.chat.events({
 
       var options = {
          roomName: roomName,
-         timestamp: parseInt(e.currentTarget.dataset.timestamp, 10) || firstMessage.timestamp,
-         isPrevious: true
+         sid: parseInt(e.currentTarget.dataset.sid, 10) || firstMessage.sid,
       };
-      
+
       Meteor.call('chat.loadMore', options, function(err, data) {
          isLoading.set(false);
 

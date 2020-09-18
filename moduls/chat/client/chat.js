@@ -154,6 +154,8 @@ var showDesktopNotificationFromMessage = function(message) {
 var addMotd = function(message) {
    message.isMotd = true;
    message.timestamp = Session.get('serverTime');
+   const lastSid = messages.findOne({}, { fields: { sid: 1 }, sort: { sid: -1 } });
+   message.sid = lastSid ? lastSid.sid : 1;
 
    messages.upsert({isMotd: true}, message);
    lastMessage = message;

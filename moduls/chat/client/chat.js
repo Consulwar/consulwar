@@ -14,7 +14,7 @@ var lostConnectionTime = null;
 var chatSubscription = null;
 var chatRoomSubscription = null;
 
-var hasMore = new ReactiveVar(true);
+var hasMore = new ReactiveVar(false);
 var isLoading = new ReactiveVar(false);
 var isSending = new ReactiveVar(false);
 var gotLimit = new ReactiveVar(false);
@@ -74,6 +74,10 @@ var addMessagesAfter = function(newMessages, message) {
    }
 };
 
+var updateMoreAvailable = function () {
+   hasMore.set(messages.find({ sid: 1 }).count() === 0);
+}
+
 var appendMessages = function(newMessages) {
    newMessages = sortMessages(newMessages);
    if (lastMessage && newMessages[newMessages.length - 1].sid <= lastMessage.sid) {
@@ -92,6 +96,7 @@ var appendMessages = function(newMessages) {
    if (!firstMessage) {
       firstMessage = newMessages[0];
    }
+   updateMoreAvailable();
 };
 
 var prependMessages = function(newMessages) {
@@ -100,6 +105,7 @@ var prependMessages = function(newMessages) {
    addMessagesAfter(newMessages, null);
    addMessage(firstMessage, newMessages[newMessages.length - 1]);
    firstMessage = newMessages[0];
+   updateMoreAvailable();
 };
 
 var addMessagesBefore = function(newMessages, message) {
@@ -221,7 +227,7 @@ Template.chat.onRendered(function() {
          : 0;
 
       lostConnectionTime = null;
-      
+
       // get route room name
       var roomName = Router.current().getParams().room;
       isLoading.set(true);
@@ -232,7 +238,7 @@ Template.chat.onRendered(function() {
          ) {
             // reset current room
             messages.remove({});
-            hasMore.set(true);
+            hasMore.set(false);
             isSending.set(false);
             gotLimit.set(false);
             firstMessage = null;
@@ -925,12 +931,6 @@ Template.chat.events({
 
             if (messages.find().count() >= Game.Chat.Messages.LIMIT) {
                gotLimit.set(true);
-            }
-
-            if (messages.find().count() >= Game.Chat.Messages.LIMIT
-             || (data.length < Game.Chat.Messages.LOAD_COUNT && !afterMessageId)
-            ) {
-               hasMore.set(false);
             }
          }
       });

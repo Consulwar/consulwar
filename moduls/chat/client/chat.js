@@ -913,7 +913,11 @@ Template.chat.events({
          sid: parseInt(e.currentTarget.dataset.sid, 10) || firstMessage.sid,
       };
 
+      const currentRoomNameCache = currentRoomName;
       Meteor.call('chat.loadMore', options, function(err, data) {
+         if (currentRoomNameCache !== currentRoomName) {
+            return;
+         }
          isLoading.set(false);
 
          if (err) {

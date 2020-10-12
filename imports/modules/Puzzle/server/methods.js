@@ -141,7 +141,7 @@ Meteor.methods({
       chatMessage.iconPath = user.settings.chat.icon;
     }
 
-    Game.Chat.Messages.Collection.insert(chatMessage);
+    Game.Chat.Messages.Collection.insertWithSid(chatMessage);
 
     Game.Broadcast.add(
       user.username,

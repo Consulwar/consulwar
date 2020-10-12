@@ -78,8 +78,10 @@ Meteor.methods({
   'pulsecatcher.activateBonus': function() {
     const user = User.getById();
     User.checkAuth({ user });
-    
+
     Log.method.call(this, { name: 'pulsecatcher.activateBonus', user });
+
+    Meteor.call('actualizeGameInfo');
 
     if (PulseCatcher.getCurrentLevel() < 1) {
       throw new Meteor.Error('Нужно построить Импульсный уловитель');

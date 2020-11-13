@@ -55,12 +55,15 @@ game.Card = function(options) {
   this.getCurrentLevel = this.currentLevel;
 
   this.getActiveTask = function() {
-    return Game.Queue.Collection.findOne({
-      user_id: Meteor.userId(),
-      status: Game.Queue.status.INCOMPLETE,
-      type: 'card',
-      engName: this.engName
-    });
+    return Game.Queue.Collection.findOne(
+      {
+        user_id: Meteor.userId(),
+        status: Game.Queue.status.INCOMPLETE,
+        type: 'card',
+        engName: this.engName
+      },
+      { sort: { finishTime: -1 } },
+    );
   };
 
   this.canBuy = function() {

@@ -37,7 +37,6 @@ export default {
     },
     tmnt: {
       isUnique: true,
-      comment: 'Soon',
     },
   },
 };

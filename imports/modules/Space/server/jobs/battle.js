@@ -15,6 +15,7 @@ import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
 import spawnEnemy from '../enemySpawner';
 import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
+import systemUsername from '/moduls/user/lib/systemUsername';
 
 const reptilesWin = function({
   battle,
@@ -203,7 +204,7 @@ const humansWin = function({
       while (!targetUsername) {
         const [potentialUser] = Meteor.users.aggregate([
           { $match: { rating: { $gte: targetRating } } },
-          { $match: { username: { $ne: initialUser.username } } },
+          { $match: { username: { $nin: [initialUser.username, systemUsername] } } },
           { $sample: { size: 1 } },
         ]);
         const targetHex = mutualSpaceCollection.findOne({

@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import BattleCollection from '/moduls/battle/lib/imports/collection';
 import Battle from '/moduls/battle/lib/imports/battle';
-import DoomsDayGun from '/imports/content/Unit/Human/Defense/server/DoomsDayGun';
 import BuildingCollection from '/imports/modules/Building/lib/BuildingCollection';
 import ResearchCollection from '/imports/modules/Research/lib/ResearchCollection';
 import ContainerCollection from '/imports/modules/Container/lib/collection';
@@ -13,6 +12,7 @@ let Game;
 let evict;
 let battleEvents;
 let Space;
+let DoomsDayGun;
 Meteor.startup(() => {
   // Temporary hack to avoid circular dependency
   // Must be changed to imports after
@@ -25,6 +25,8 @@ Meteor.startup(() => {
   battleEvents = require('/imports/modules/Space/server/battleEvents').default;
   // eslint-disable-next-line global-require
   Space = require('/imports/modules/Space/lib/space').default;
+  // eslint-disable-next-line global-require
+  DoomsDayGun = require('/imports/content/Unit/Human/Defense/server/DoomsDayGun');
 });
 
 class User extends LibUser {
@@ -152,7 +154,7 @@ class User extends LibUser {
     const creditsAmount = (resources.credits && resources.credits.amount) || 0;
     const rubyPlasmoidAmount = Math.min(
       (resources.ruby_plasmoid && resources.ruby_plasmoid.amount) || 0,
-      (DoomsDayGun.getPrice().ruby_plasmoid / 2) + 50,
+      (DoomsDayGun.getPrice().ruby_plasmoid / 4) + 50,
     );
     const cleanCreditAmount = (resources.cleancredit && resources.cleancredit.amount) || 0;
     Game.Resources.Collection.insert({

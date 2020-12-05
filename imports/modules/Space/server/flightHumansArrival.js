@@ -181,6 +181,10 @@ const completeOnShip = function(data) {
 
     const userArmy = FlightEvents.getFleetUnits(data);
 
+    if (targetShip.data.noReward) {
+      data.noReward = true;
+    }
+
     BattleEvents.createBattleAndAdd({
       username: data.username,
       userArmy,

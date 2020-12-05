@@ -173,6 +173,13 @@
       "schedule": "every 5 minutes",
       "engineLevel": 100
     },
+    "enemySpawner": {
+      "enabled": true,
+      "duration": 86400,
+      "engineLevel": 120,
+      "enabledAuto": true,
+      "autoChance": 0.1
+    },
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,
     "funPeriod": 86400,

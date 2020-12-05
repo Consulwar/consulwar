@@ -239,6 +239,9 @@
       {{#if eq this.data.type 'krampus'}}
         <span class="krampus {{this.data.level}}">{{this.message}}</span>
       {{/if}}
+      {{#if eq this.data.type 'setenemy'}}
+        <span class="setenemy">{{this.message}}</span>
+      {{/if}}
       {{#if eq this.data.type 'puzzle'}}
         {{> PuzzleChat args id=this.data.puzzleId }}
       {{/if}}

@@ -53,7 +53,9 @@ export default function reptileArrival(data) {
           userId,
         });
 
-        FlightEvents.flyBack(data);
+        if (!data.isOneway) {
+          FlightEvents.flyBack(data);
+        }
         return;
       }
 

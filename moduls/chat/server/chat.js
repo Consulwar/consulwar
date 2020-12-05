@@ -1,9 +1,12 @@
 import sanitizeHtml from 'sanitize-html';
 import Log from '/imports/modules/Log/server/Log';
 import User from '/imports/modules/User/server/User';
+import mutualSpaceCollection from '/imports/modules/MutualSpace/lib/collection';
 import systemUser from '/moduls/user/server/systemUser';
 
 import makeFun from '/imports/modules/Space/server/makeFun';
+import systemUsername from '/moduls/user/lib/systemUsername';
+import Game from '/moduls/game/lib/main.game';
 
 initChatServer = function() {
 'use strict';
@@ -534,6 +537,52 @@ Meteor.methods({
         } else {
           set.message = ` поливает консула @${target.username} крампус-бафом`;
         }
+      } else if (message.indexOf('/setenemy') === 0) {
+        const enemyUsername = message.substr(9).trim();
+        if (enemyUsername === systemUsername) {
+          throw new Meteor.Error('Вы будете отключены от канала связи.');
+        }
+        if (enemyUsername === user.username) {
+          throw new Meteor.Error('Вы не очень умны, да?');
+        }
+        if (user.enemy && user.enemy.expire > Game.getCurrentServerTime()) {
+          throw new Meteor.Error('У вас уже есть враг');
+        }
+
+        const userLevel = Game.User.getLevel(user.rating);
+        if (userLevel < 2) {
+          throw new Meteor.Error('Вы слишком маленькие');
+        }
+        const enemy = User.getByUsername({ username: enemyUsername });
+        if (!enemy) {
+          throw new Meteor.Error('Нет такого пользователя');
+        }
+        const enemyLevel = Game.User.getLevel(enemy.rating);
+        if (userLevel > enemyLevel) {
+          throw new Meteor.Error('Маленьких бить нельзя');
+        }
+        if (!mutualSpaceCollection.findOne({
+          username: enemyUsername,
+        })) {
+          throw new Meteor.Error('Враг должен быть в общем космосе');
+        }
+
+        Meteor.users.update({
+          _id: user._id
+        }, {
+          $set: {
+            enemy: {
+              username: enemyUsername,
+              expire: Game.getCurrentServerTime() + Meteor.settings.space.enemySpawner.duration,
+            },
+          },
+        })
+
+        set.data = {
+          type: 'setenemy'
+        };
+        set.message = `объявил @${enemyUsername} своим врагом`;
+        Game.Broadcast.add(user.username, set.message);
       } else {
         throw new Meteor.Error('Неправильная команда, введите /help для помощи');
       }

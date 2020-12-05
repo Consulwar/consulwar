@@ -43,6 +43,10 @@ export default {
       missionLevel: mission.level,
     };
 
+    if (data.noReward) {
+      options.noReward = data.noReward;
+    }
+
     if (data.planetId) {
       options.planetId = data.planetId;
     } else if (data.fleetId) {

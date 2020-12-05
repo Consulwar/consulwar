@@ -61,6 +61,10 @@ class SpaceFleetPopup extends BlazeComponent {
     info.id = spaceEvent._id;
     info.canWithdraw = false;
 
+    if (spaceEvent.data.senderUsername) {
+      info.senderUsername = spaceEvent.data.senderUsername;
+    }
+
     if (spaceEvent.data.isHumans) {
       info.isHumans = true;
       info.canSend = false;

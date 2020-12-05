@@ -172,7 +172,10 @@ class Battle {
 
     if (!this.options.isEarth) {
       this.saveRoundStatistic(roundResult);
-      this.giveHonor(roundResult);
+
+      if (!this.options.noReward) {
+        this.giveHonor(roundResult);
+      }
     }
 
     this.update({
@@ -284,7 +287,9 @@ class Battle {
     }
 
     if (!this.options.isEarth) {
-      this.giveReward(userArmyRest, enemyArmyRest);
+      if (!this.options.noReward) {
+        this.giveReward(userArmyRest, enemyArmyRest);
+      }
       this.saveBattleStatistic(this.result);
     }
 

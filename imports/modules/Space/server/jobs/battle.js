@@ -13,6 +13,8 @@ import FlightEvents from '../flightEvents';
 import battleDelay from '../battleDelay';
 import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
+import spawnEnemy from '../enemySpawner';
+import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
 
 const reptilesWin = function({
   battle,
@@ -28,7 +30,7 @@ const reptilesWin = function({
   const army = roundResult.left[Battle.ENEMY_SIDE];
 
   if (planet) {
-    if (data.isOneway && !data.isHumans) {
+    if (data.isOneway && !data.isHumans && !planet.isHome) {
       // Остаются на планете
       planet.armyId = null;
       planet.armyUsername = null;
@@ -44,7 +46,7 @@ const reptilesWin = function({
           units: army,
         };
       }
-    } else if (!data.isHumans) {
+    } else if (!data.isOneway && !data.isHumans) {
       // Возвращаются
 
       // army check needed when player lost last ship due to mutual battle and
@@ -171,6 +173,55 @@ const humansWin = function({
       FlightEvents.flyBack(flightData);
     }
   });
+
+  if (
+    Meteor.settings.space.enemySpawner.enabled
+    && initialUser.username !== systemUser.username
+    && !battle.options.noReward
+    && battle.options.missionType
+  ) {
+    let targetUsername;
+    if (!mutualSpaceCollection.findOne({
+      username: initialUser.username,
+    })) {
+      return;
+    }
+    const userLevel = Game.User.getLevel(initialUser.rating);
+    const targetRating = Game.User.levels[userLevel].rating;
+
+    if (
+      initialUser.enemy
+      && initialUser.enemy.expire > Game.getCurrentServerTime()
+      && User.getByUsername({ username: initialUser.enemy.username }).rating >= targetRating
+    ) {
+      targetUsername = initialUser.enemy.username;
+    } else if (Meteor.settings.space.enemySpawner.enabledAuto) {
+      if (Game.Random.random() > Meteor.settings.space.enemySpawner.autoChance) {
+        return;
+      }
+
+      while (!targetUsername) {
+        const [potentialUser] = Meteor.users.aggregate([
+          { $match: { rating: { $gte: targetRating } } },
+          { $match: { username: { $ne: initialUser.username } } },
+          { $sample: { size: 1 } },
+        ]);
+        const targetHex = mutualSpaceCollection.findOne({
+          username: potentialUser.username,
+        });
+        if (targetHex) {
+          targetUsername = potentialUser.username;
+        }
+      }
+    }
+
+    spawnEnemy({
+      missionType: battle.options.missionType,
+      missionLevel: battle.options.missionLevel,
+      targetUsername,
+      senderUsername: initialUser.username,
+    });
+  }
 };
 
 const wreakUnits = function(battle, users) {

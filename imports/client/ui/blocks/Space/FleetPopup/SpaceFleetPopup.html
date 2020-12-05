@@ -43,6 +43,15 @@
             units=getReptilesFleet
             className='cw--SpaceFleetPopup__unitsPower'
           }}
+          
+          {{#if ship.senderUsername}}
+            <a 
+              class="cw--SpaceFleetPopup__sender"
+              href="{{pathFor 'statistics' group='general' hash=username}}"
+            >
+              {{ship.senderUsername}}
+            </a>
+          {{/if}}
         </div>
       {{/if}}
 

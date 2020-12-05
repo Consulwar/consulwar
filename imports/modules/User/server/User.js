@@ -154,7 +154,7 @@ class User extends LibUser {
     const creditsAmount = (resources.credits && resources.credits.amount) || 0;
     const rubyPlasmoidAmount = Math.min(
       (resources.ruby_plasmoid && resources.ruby_plasmoid.amount) || 0,
-      (DoomsDayGun.getPrice().ruby_plasmoid / 2) + 50,
+      (DoomsDayGun.getPrice().ruby_plasmoid / 4) + 50,
     );
     const cleanCreditAmount = (resources.cleancredit && resources.cleancredit.amount) || 0;
     Game.Resources.Collection.insert({

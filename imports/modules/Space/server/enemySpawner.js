@@ -12,6 +12,8 @@ if (
   || Meteor.settings.space.enemySpawner.enabled === undefined
   || !Meteor.settings.space.enemySpawner.duration
   || !Meteor.settings.space.enemySpawner.engineLevel
+  || !Meteor.settings.space.enemySpawner.enabledAuto
+  || !Meteor.settings.space.enemySpawner.autoChance
 ) {
   throw new Meteor.Error(
     'Ошибка в настройках',

@@ -176,7 +176,9 @@
     "enemySpawner": {
       "enabled": true,
       "duration": 86400,
-      "engineLevel": 120
+      "engineLevel": 120,
+      "enabledAuto": true,
+      "autoChance": 0.1
     },
     "attackPlayerPeriod": 120,
     "triggerAttackDelay": 1800,

@@ -195,7 +195,11 @@ const humansWin = function({
       && User.getByUsername({ username: initialUser.enemy.username }).rating >= targetRating
     ) {
       targetUsername = initialUser.enemy.username;
-    } else {
+    } else if (Meteor.settings.space.enemySpawner.enabledAuto) {
+      if (Game.Random.random() > Meteor.settings.space.enemySpawner.autoChance) {
+        return;
+      }
+
       while (!targetUsername) {
         const [potentialUser] = Meteor.users.aggregate([
           { $match: { rating: { $gte: targetRating } } },

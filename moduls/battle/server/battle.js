@@ -377,14 +377,25 @@ class Battle {
         }
       } else if (this.options.missionType === 'krampussy') {
         reward = Game.Resources.rollProfit(Meteor.settings.space.krampussy.rewards);
-        const rewardGroup = reward[Object.keys(reward)[0]];
+        const groupId = Object.keys(reward)[0];
+        const rewardGroup = reward[groupId];
         const rewardId = Object.keys(rewardGroup)[0];
-        inc[`reward.${username}.${rewardId}`] = rewardGroup[rewardId];
+        const count = rewardGroup[rewardId];
+        if (groupId === 'cards') {
+          inc[`reward.${username}.card.${rewardId}`] = count;
 
-        Game.Broadcast.add(
-          username,
-          `выбил ${rewardGroup[rewardId]} ${content[rewardId].title}`,
-        );
+          Game.Broadcast.add(
+            username,
+            `выбил ${count} ${Game.Cards.items.donate[rewardId].name}`,
+          );
+        } else {
+          inc[`reward.${username}.${rewardId}`] = count;
+
+          Game.Broadcast.add(
+            username,
+            `выбил ${count} ${content[rewardId].title}`,
+          );
+        }
       }
 
       const user = Meteor.users.findOne({ username });

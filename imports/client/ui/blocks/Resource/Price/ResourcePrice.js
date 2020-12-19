@@ -61,6 +61,11 @@ class ResourcePrice extends BlazeComponent {
           obj: content[id],
           value,
         });
+      } else if (id === 'card') {
+        this.resources.push({
+          obj: Game.Cards.items.donate[Object.keys(value)[0]],
+          value: value[Object.keys(value)[0]],
+        });
       }
     });
 

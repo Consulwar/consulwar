@@ -36,6 +36,10 @@ Game.Statistic = {
       krampus: {
          field: 'battle.krampus.1.victory',
          title: 'Уничтожено крампусов'
+      },
+      krampussy: {
+         field: 'battle.krampussy.1.victory',
+         title: 'Уничтожено крампуссиков'
       }
    },
 

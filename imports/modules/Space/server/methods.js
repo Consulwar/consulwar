@@ -77,7 +77,12 @@ Meteor.methods({
       throw new Meteor.Error('Нельзя перехватить свой корабль');
     }
 
-    const engineLevel = Game.Planets.getEngineLevel(user);
+    let engineLevel;
+    if (enemyShip.mission && enemyShip.mission.type === 'krampussy') {
+      engineLevel = 120;
+    } else {
+      engineLevel = Game.Planets.getEngineLevel(user);
+    }
 
     const startPosition = {
       x: basePlanet.x,
@@ -356,7 +361,13 @@ Meteor.methods({
       targetPositionWithOffset.y += center.y;
     }
 
-    const engineLevel = Game.Planets.getEngineLevel(user);
+    let engineLevel;
+
+    if (target.mission && target.mission.type === 'krampussy') {
+      engineLevel = 120;
+    } else {
+      engineLevel = Game.Planets.getEngineLevel(user);
+    }
 
     const flyTime = Utils.calcFlyTime(
       startPositionWithOffset,

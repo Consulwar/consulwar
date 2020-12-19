@@ -230,9 +230,9 @@ class SpaceHistory extends BlazeComponent {
       };
       _.keys(result.summaryProfit).forEach((key) => {
         result.summaryProfit[key] += lostUnitsPrice[key] || 0;
-        if (result.reward && result.reward[key]) {
-          result.summaryProfit[key] += result.reward[key] || 0;
-        }
+      });
+      _.keys(result.reward).forEach((key) => {
+        result.summaryProfit[key] = (result.summaryProfit[key] || 0) + result.reward[key];
       });
     }
 

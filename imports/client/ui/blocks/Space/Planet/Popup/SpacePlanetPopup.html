@@ -59,7 +59,7 @@
       {{/each}}
         
       {{#if planetInfo.mission.reward}}
-        {{#if eq planetInfo.mission.name "Крампус"}}
+        {{#if or (eq planetInfo.mission.name "Крампус") (eq planetInfo.mission.name "Крампусси")}}
           {{> ResourcePrice args
             price=planetInfo.mission.reward
             isShowDiff=false

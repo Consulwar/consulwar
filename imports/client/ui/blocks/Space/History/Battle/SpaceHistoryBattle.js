@@ -37,6 +37,9 @@ class SpaceHistoryBattle extends BlazeComponent {
     if (this.battle.mission === "Крампус 1") {
       return { name: 'Крампус' };
     }
+    if (this.battle.mission === "Крампусси 1") {
+      return { name: 'Крампусси' };
+    }
     return true;
   }
 

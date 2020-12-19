@@ -1,6 +1,6 @@
 <template name="Units">
   {{#if units}}
-    {{#if eq isReptiles.name "Крампус"}}
+    {{#if or (eq isReptiles.name "Крампус") (eq isReptiles.name "Крампусси")}}
       {{#with getKrampus}}
         <a
             href={{url}}

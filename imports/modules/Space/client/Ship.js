@@ -114,7 +114,7 @@ class Ship {
       );
 
       if (planet.mission) {
-        if (planet.mission.type === 'krampus') {
+        if (['krampus', 'krampussy'].includes(planet.mission.type)) {
           this.color = Config.colors.artefact;
         } else {
           this.color = Config.colors.enemy;

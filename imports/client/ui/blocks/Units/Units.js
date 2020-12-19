@@ -55,10 +55,18 @@ class Units extends BlazeComponent {
             fleetReptiles,
             'Unit/Reptile/Space/Krampus',
           );
+        } else if (this.isReptiles.name === 'Крампусси') {
+          return _.pick(
+            fleetReptiles,
+            'Unit/Reptile/Space/Krampussy',
+          );
         }
         return _.omit(
           fleetReptiles,
-          'Unit/Reptile/Space/Krampus',
+          [
+            'Unit/Reptile/Space/Krampus',
+            'Unit/Reptile/Space/Krampussy',
+          ],
         );
       }
       if (this.isShowDefense) {

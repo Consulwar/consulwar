@@ -216,7 +216,7 @@ class Galaxy {
       }
       return Config.colors.other;
     } else if (planet.status === Game.Planets.STATUS.REPTILES) {
-      if (planet.mission && planet.mission.type === 'krampus') {
+      if (planet.mission && ['krampus', 'krampussy'].includes(planet.mission.type)) {
         return Config.colors.artefact;
       }
       return Config.colors.enemy;

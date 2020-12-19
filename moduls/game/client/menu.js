@@ -203,6 +203,10 @@ var menu = {
       krampus: {
         tooltip: "Нашествие Крампусова",
         url: Router.routes.statistics.path({ group: 'krampus' })
+      },
+      krampussy: {
+        tooltip: "Нашествие Крампуссиков",
+        url: Router.routes.statistics.path({ group: 'krampussy' })
       }
     }
   },
@@ -256,9 +260,11 @@ Template.side_menu.helpers({
     }
 
     return getMenu(menu[group].items, function(item, key) {
-      return (
-        Router.current().url.indexOf(item.url) !== -1
-      );
+      let url = item.url;
+      if (group === 'statistics') {
+        url += '/';
+      }
+      return Router.current().url.indexOf(url) !== -1;
     });
   },
 

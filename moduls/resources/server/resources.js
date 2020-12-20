@@ -164,7 +164,10 @@ Game.Resources.rollProfit = function(drop) {
     }
   }
 
-  return rollRandomValues( drop[i].profit );
+  return {
+    ...drop[i],
+    profit: rollRandomValues( drop[i].profit ),
+  };
 };
 
 Game.Resources.addProfit = function(profit, uid = Meteor.userId()) {

@@ -58,7 +58,7 @@ Game.EntranceReward.getProfit = function() {
 
   if (_.isString(reward.profit)) {
     let rewards = Game.EntranceReward.ranks[reward.profit].rewards;
-    return Game.Resources.rollProfit(rewards);
+    return Game.Resources.rollProfit(rewards).profit;
   } else {
     return reward.profit;
   }

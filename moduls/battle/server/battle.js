@@ -345,6 +345,7 @@ class Battle {
     }
 
     const inc = {};
+    const modifier = { $inc: inc };
 
     _(armyPowers).pairs().forEach(([username, armyPower]) => {
       let reward = {
@@ -377,25 +378,24 @@ class Battle {
         }
       } else if (this.options.missionType === 'krampussy') {
         reward = Game.Resources.rollProfit(Meteor.settings.space.krampussy.rewards);
-        const groupId = Object.keys(reward)[0];
-        const rewardGroup = reward[groupId];
+        const profit = reward.profit;
+        const groupId = Object.keys(profit)[0];
+        const rewardGroup = profit[groupId];
         const rewardId = Object.keys(rewardGroup)[0];
         const count = rewardGroup[rewardId];
+
+        modifier['$set'] = { 'rewardTitle': reward.title };
+
         if (groupId === 'cards') {
           inc[`reward.${username}.card.${rewardId}`] = count;
-
-          Game.Broadcast.add(
-            username,
-            `выбил ${count} ${Game.Cards.items.donate[rewardId].name}`,
-          );
         } else {
           inc[`reward.${username}.${rewardId}`] = count;
-
-          Game.Broadcast.add(
-            username,
-            `выбил ${count} ${content[rewardId].title}`,
-          );
         }
+
+        Game.Broadcast.add(
+          username,
+          `выбил «${reward.title}»`,
+        );
       }
 
       const user = Meteor.users.findOne({ username });
@@ -420,7 +420,7 @@ class Battle {
       this.cards = missionCards;
     }
 
-    this.update({ $inc: inc });
+    this.update(modifier);
   }
 
   saveBattleStatistic(result) {

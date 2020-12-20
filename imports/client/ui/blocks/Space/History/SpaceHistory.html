@@ -113,6 +113,9 @@
                   data-tooltip-direction="s"
                 />
               {{/if}}
+              {{#if battle.rewardTitle}}
+                <span class="cw--SpaceHistory__rewardTitle">{{battle.rewardTitle}}</span>
+              {{/if}}
               {{> ResourcePrice args
                 price=battle.summaryProfit
                 isShowDiff=false

@@ -240,6 +240,10 @@ class SpaceHistory extends BlazeComponent {
       });
     }
 
+    if (battle.rewardTitle) {
+      result.rewardTitle = battle.rewardTitle;
+    }
+
     result.isBattle1x1 = battle.isBattle1x1;
 
     return result;

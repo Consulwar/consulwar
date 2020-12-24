@@ -755,7 +755,6 @@ var timeAttack = function(id) {
 
   var targetPlanet = Game.Planets.getOne(targetId);
   if (targetPlanet) {
-    let engineLevel;
     if (targetPlanet.mission && targetPlanet.mission.type === 'krampussy') {
       engineLevel = 120;
     }

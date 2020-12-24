@@ -173,6 +173,16 @@
       "schedule": "every 5 minutes",
       "engineLevel": 100
     },
+    "krampussy": {
+      "schedule": "every 5 seconds after 25 day of the month of December in 2020 and every 5 seconds before 10 day of the month of January in 2021",
+      "rewards": [{
+        "chance": 1,
+        "profit": { "units": { "Unit/Human/Ground/Enginery/EasyTank": 1 } },
+      }, {
+        "chance": 30,
+        "profit": { "resources": { "metals": 250 } }
+      }]
+    },
     "enemySpawner": {
       "enabled": true,
       "duration": 86400,

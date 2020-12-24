@@ -755,6 +755,10 @@ var timeAttack = function(id) {
 
   var targetPlanet = Game.Planets.getOne(targetId);
   if (targetPlanet) {
+    let engineLevel;
+    if (targetPlanet.mission && targetPlanet.mission.type === 'krampussy') {
+      engineLevel = 120;
+    }
     const targetGalaxy = galaxyByUsername[targetPlanet.username];
     const targetPosition = {
       x: targetPlanet.x + targetGalaxy.offset.x,
@@ -765,6 +769,9 @@ var timeAttack = function(id) {
 
   var targetShip = FlightEvents.getOne(targetId);
   if (targetShip) {
+    if (targetShip.mission && targetShip.mission.type === 'krampussy') {
+      engineLevel = 120;
+    }
     var result = calcAttackOptions({
       attackerPosition: basePosition,
       attackerEngineLevel: engineLevel,
@@ -1084,6 +1091,10 @@ Template.cosmosAttackMenu.events({
       // Attack ship
       var pathView = pathViews[ship._id];
       var engineLevel = Game.Planets.getEngineLevel(Meteor.user());
+
+      if (ship.mission && ship.mission.type === 'krampussy') {
+        engineLevel = 120;
+      }
 
       const baseGalaxy = galaxyByUsername[basePlanet.username];
       const basePosition = {

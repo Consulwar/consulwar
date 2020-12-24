@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import Game from '/moduls/game/lib/main.game';
 import User from '/imports/modules/User/lib/User';
+import content from '/imports/content/server';
 
 import performRound from './performRound';
 import calculateGroupPower from '../lib/imports/calculateGroupPower';
@@ -344,38 +345,63 @@ class Battle {
     }
 
     const inc = {};
+    const modifier = { $inc: inc };
 
     _(armyPowers).pairs().forEach(([username, armyPower]) => {
-      const reward = {
-        metals: Math.floor(dividedReward.metals * armyPower),
-        crystals: Math.floor(dividedReward.crystals * armyPower),
+      let reward = {
+        resources: {
+          metals: Math.floor(dividedReward.metals * armyPower),
+          crystals: Math.floor(dividedReward.crystals * armyPower),
+        },
       };
 
       if (dividedReward.humans) {
-        reward.humans = Math.floor(dividedReward.humans * armyPower);
+        reward.resources.humans = Math.floor(dividedReward.humans * armyPower);
       }
 
       if (dividedReward.honor) {
-        reward.honor = Math.floor(dividedReward.honor * armyPower);
+        reward.resources.honor = Math.floor(dividedReward.honor * armyPower);
       }
 
-      inc[`reward.${username}.metals`] = reward.metals;
-      inc[`reward.${username}.crystals`] = reward.crystals;
+      inc[`reward.${username}.metals`] = reward.resources.metals;
+      inc[`reward.${username}.crystals`] = reward.resources.crystals;
       if (dividedReward.humans) {
-        inc[`reward.${username}.humans`] = reward.humans;
+        inc[`reward.${username}.humans`] = reward.resources.humans;
       }
       if (dividedReward.honor) {
-        inc[`reward.${username}.honor`] = reward.honor;
+        inc[`reward.${username}.honor`] = reward.resources.honor;
       }
       if (this.options.missionType === 'prisoners') {
         if (Game.Random.chance(100 * armyPower / totalPower)) {
           inc[`reward.${username}.ruby_plasmoid`] = 1;
-          reward.ruby_plasmoid = 1;
+          reward.resources.ruby_plasmoid = 1;
         }
+      } else if (this.options.missionType === 'krampussy') {
+        reward = Game.Resources.rollProfit(Meteor.settings.space.krampussy.rewards);
+        modifier['$set'] = { 'rewardTitle': reward.title };
+
+        const profit = reward.profit;
+
+        _.pairs(profit).forEach(([groupId, items]) => {
+          _.pairs(items).forEach(([rewardId, count]) => {
+            if (groupId === 'cards') {
+              inc[`reward.${username}.card.${rewardId}`] = count;
+            } else {
+              inc[`reward.${username}.${rewardId}`] = count;
+            }
+          });
+        });
+
+        Game.Broadcast.add(
+          username,
+          `выбил ${reward.title}`,
+        );
+
+        reward = profit;
       }
 
       const user = Meteor.users.findOne({ username });
-      Game.Resources.add(reward, user._id);
+      Game.Resources.addProfit(reward, user._id);
     });
 
     const names = this.userNames;
@@ -396,7 +422,7 @@ class Battle {
       this.cards = missionCards;
     }
 
-    this.update({ $inc: inc });
+    this.update(modifier);
   }
 
   saveBattleStatistic(result) {

@@ -44,6 +44,9 @@ const sanitizeBattle = function(battle) {
     },
     isBattle1x1: Battle.isBattle1x1(battle),
   };
+  if (battle.rewardTitle) {
+    result.rewardTitle = battle.rewardTitle;
+  }
   return result;
 }
 

@@ -42,6 +42,10 @@ Game.Statistic.Collection._ensureIndex({
   'battle.krampus.1.victory': 1
 });
 
+Game.Statistic.Collection._ensureIndex({
+  'battle.krampussy.1.victory': 1
+});
+
 Game.Statistic.initialize = function(user) {
   var statistic = Game.Statistic.Collection.findOne({
     user_id: user._id

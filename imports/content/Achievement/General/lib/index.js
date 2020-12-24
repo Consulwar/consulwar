@@ -22,6 +22,7 @@ import Philanthropist from './Philanthropist';
 import CGC from './CGC';
 import BadMusic from './BadMusic';
 import Krampus from './Krampus';
+import Krampussy from './Krampussy';
 import Pesduk from './Pesduk';
 
 export default {
@@ -49,5 +50,6 @@ export default {
   'Achievement/General/CGC': CGC,
   'Achievement/General/BadMusic': BadMusic,
   'Achievement/General/Krampus': Krampus,
+  'Achievement/General/Krampussy': Krampussy,
   'Achievement/General/Pesduk': Pesduk,
 };

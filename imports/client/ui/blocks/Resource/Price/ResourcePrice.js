@@ -4,6 +4,7 @@ import { _ } from 'lodash';
 import { priceTooltip } from '/moduls/game/client/helper';
 import Game from '/moduls/game/lib/main.game';
 import resourceItems from '/imports/content/Resource/client';
+import content from '/imports/content/client';
 import '/imports/client/ui/blocks/Resource/Single/ResourceSingle';
 import '/imports/client/ui/blocks/Resource/Resource.styl';
 import './ResourcePrice.html';
@@ -54,6 +55,16 @@ class ResourcePrice extends BlazeComponent {
         this.resources.push({
           obj: resourceItems[id],
           value,
+        });
+      } else if (content[id]) {
+        this.resources.push({
+          obj: content[id],
+          value,
+        });
+      } else if (id === 'card') {
+        this.resources.push({
+          obj: Game.Cards.items.donate[Object.keys(value)[0]],
+          value: value[Object.keys(value)[0]],
         });
       }
     });

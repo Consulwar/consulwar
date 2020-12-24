@@ -41,7 +41,7 @@ Meteor.methods({
     });
 
     // add reward
-    var profit = Game.Resources.rollProfit(tournament.drop);
+    var profit = Game.Resources.rollProfit(tournament.drop).profit;
     if (profit) {
       Game.Resources.addProfit(profit);
     }

@@ -3,13 +3,32 @@ import { _ } from 'meteor/underscore';
 import { SyncedCron } from 'meteor/percolate:synced-cron';
 import Game from '/moduls/game/lib/main.game';
 import SpecialEffect from '/imports/modules/Effect/lib/SpecialEffect';
+import systemUsername from '/moduls/user/lib/systemUsername';
 import Space from '../lib/space';
 import FlightEvents from './flightEvents';
 import Utils from '../lib/utils';
 import Config from './config';
 import Hex from '../../MutualSpace/lib/Hex';
 import mutualSpaceCollection from '../../MutualSpace/lib/collection';
-import SystemUser from '/moduls/user/server/systemUser';
+
+
+let usernamesInMutualSpace = [];
+const loadUsernamesInMutualSpace = () => {
+  usernamesInMutualSpace = mutualSpaceCollection
+    .find({
+      username: {
+        $exists: true,
+        $nin: [null, systemUsername],
+      },
+    })
+    .fetch()
+    .map(x => x.username);
+};
+
+// Reset cache
+Meteor.setInterval(() => {
+  usernamesInMutualSpace = [];
+}, 1000 * 60 * 60);
 
 const { ATTACK_PLAYER_PERIOD, TRADE_FLEET_PERIOD } = Config;
 
@@ -149,7 +168,7 @@ const spawnPrisonersFleet = function() {
       $match: {
         username: {
           $exists: true,
-          $nin: [null, SystemUser.username],
+          $nin: [null, systemUsername],
         },
       },
     },
@@ -210,7 +229,7 @@ const spawnKrampusFleet = function() {
   const userHexList = mutualSpaceCollection.find({
     username: {
       $exists: true,
-      $nin: [null, SystemUser.username],
+      $nin: [null, systemUsername],
     },
   }).fetch();
 
@@ -258,6 +277,37 @@ const spawnKrampusFleet = function() {
 
     FlightEvents.add(flightData);
   });
+};
+
+const spawnKrampussyFleet = function() {
+  if (usernamesInMutualSpace.length === 0) {
+    loadUsernamesInMutualSpace();
+  }
+
+  const targetUsername = Game.Random.fromArray(usernamesInMutualSpace);
+
+  const [targetPlanet] = Game.Planets.Collection.aggregate([
+    {
+      $match: {
+        username: targetUsername,
+        status: Game.Planets.STATUS.NOBODY,
+        armyId: null,
+        mission: null,
+      },
+    },
+    { $sample: { size: 1 } },
+  ]);
+
+  if (!targetPlanet) {
+    return;
+  }
+
+  targetPlanet.mission = {
+    type: 'krampussy',
+    level: 1,
+  };
+
+  Game.Planets.update(targetPlanet);
 };
 
 const actualizeTradeFleets = function() {
@@ -562,4 +612,5 @@ export default {
   stealUserResources,
   spawnPrisonersFleet,
   spawnKrampusFleet,
+  spawnKrampussyFleet,
 };

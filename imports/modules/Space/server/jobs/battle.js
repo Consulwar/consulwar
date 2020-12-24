@@ -4,7 +4,7 @@ import Game from '/moduls/game/lib/main.game';
 import Battle from '/moduls/battle/server/battle';
 import BattleLib from '/moduls/battle/lib/imports/battle';
 import User from '/imports/modules/User/lib/User';
-import systemUser from '/moduls/user/server/systemUser';
+import systemUsername from '/moduls/user/lib/systemUsername';
 
 import Config from '../config';
 import Space from '../../lib/space';
@@ -15,7 +15,6 @@ import Reptiles from '../reptiles';
 import Utils from '../../lib/utils';
 import spawnEnemy from '../enemySpawner';
 import mutualSpaceCollection from '../../../MutualSpace/lib/collection';
-import systemUsername from '/moduls/user/lib/systemUsername';
 
 const reptilesWin = function({
   battle,
@@ -98,7 +97,7 @@ const humansWin = function({
     }
 
     if (
-      initialUser.username !== systemUser.username
+      initialUser.username !== systemUsername
       && !(
         initialUser.settings
         && initialUser.settings.options
@@ -113,7 +112,7 @@ const humansWin = function({
   }
 
   users.forEach((user) => {
-    if (user.username === systemUser.username) {
+    if (user.username === systemUsername) {
       return;
     }
 
@@ -177,7 +176,7 @@ const humansWin = function({
 
   if (
     Meteor.settings.space.enemySpawner.enabled
-    && initialUser.username !== systemUser.username
+    && initialUser.username !== systemUsername
     && !battle.options.noReward
     && battle.options.missionType
   ) {
@@ -227,7 +226,7 @@ const humansWin = function({
 
 const wreakUnits = function(battle, users) {
   users.forEach((user) => {
-    if (user.username === systemUser.username) {
+    if (user.username === systemUsername) {
       return;
     }
     Game.Wrecks.addUnits({

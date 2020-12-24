@@ -6,6 +6,7 @@ const types = {
   'Пт': 'patrolfleet',
   'РО': 'defencefleet',
   'БФ': 'battlefleet',
+  'Кр': 'krampussy',
 };
 
 const hasUnits = function(available, required) {
@@ -67,7 +68,7 @@ const autopilot = function(planetId) {
       && Space.checkSendFleet({
         planet,
         units: squad.units,
-      })
+      }).canSend
     ) {
       const availableMissions = getNotBusyMissions(types[type], level);
       if (availableMissions.length > 0) {

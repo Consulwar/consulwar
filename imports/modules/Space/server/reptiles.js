@@ -168,7 +168,7 @@ const spawnPrisonersFleet = function() {
       $match: {
         username: {
           $exists: true,
-          $nin: [null, SystemUsername],
+          $nin: [null, systemUsername],
         },
       },
     },
@@ -229,7 +229,7 @@ const spawnKrampusFleet = function() {
   const userHexList = mutualSpaceCollection.find({
     username: {
       $exists: true,
-      $nin: [null, SystemUsername],
+      $nin: [null, systemUsername],
     },
   }).fetch();
 

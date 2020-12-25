@@ -1549,6 +1549,11 @@ const loadHexes = function() {
       const hex = battleEvent.data.targetHex || battleEvent.data.hex;
       visibleHexes[`${hex.x}|${hex.z}`] = true;
     });
+    FlightEvents.getFleetsEvents().forEach((flightEvent) => {
+      const hex = flightEvent.data.targetHex;
+      visibleHexes[`${hex.x}|${hex.z}`] = true;
+    });
+
 
     showHexes({ user, hexes, visibleUsernames, visibleHexes });
 

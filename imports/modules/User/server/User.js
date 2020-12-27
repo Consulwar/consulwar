@@ -26,7 +26,7 @@ Meteor.startup(() => {
   // eslint-disable-next-line global-require
   Space = require('/imports/modules/Space/lib/space').default;
   // eslint-disable-next-line global-require
-  DoomsDayGun = require('/imports/content/Unit/Human/Defense/server/DoomsDayGun');
+  DoomsDayGun = require('/imports/content/Unit/Human/Defense/server/DoomsDayGun').default;
 });
 
 class User extends LibUser {

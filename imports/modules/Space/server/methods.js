@@ -127,20 +127,17 @@ Meteor.methods({
     }
 
     const enemyStartPosition = { ...enemyShip.data.startPosition };
+    if (enemyShip.data.hex) {
+      const center = new Hex(enemyShip.data.hex).center();
+      enemyStartPosition.x += center.x;
+      enemyStartPosition.y += center.y;
+    }
+
     const enemyTargetPosition = { ...enemyShip.data.targetPosition };
-
-    if (enemyShip.data.mission.type === 'prisoners') {
-      if (enemyShip.data.hex) {
-        const center = new Hex(enemyShip.data.hex).center();
-        enemyStartPosition.x += center.x;
-        enemyStartPosition.y += center.y;
-      }
-
-      if (enemyShip.data.targetHex) {
-        const targetHexCenter = new Hex(enemyShip.data.targetHex).center();
-        enemyTargetPosition.x += targetHexCenter.x;
-        enemyTargetPosition.y += targetHexCenter.y;
-      }
+    if (enemyShip.data.targetHex) {
+      const targetHexCenter = new Hex(enemyShip.data.targetHex).center();
+      enemyTargetPosition.x += targetHexCenter.x;
+      enemyTargetPosition.y += targetHexCenter.y;
     }
 
     const vector = {
@@ -155,6 +152,11 @@ Meteor.methods({
       x: targetX,
       y: targetY,
     };
+    if (enemyShip.data.targetHex) {
+      const targetHexCenter = new Hex(enemyShip.data.targetHex).center();
+      targetPosition.x -= targetHexCenter.x;
+      targetPosition.y -= targetHexCenter.y;
+    }
 
     // check and slice units
     let sourceArmyId = basePlanet.armyId;

@@ -240,8 +240,28 @@ class SpaceHistory extends BlazeComponent {
       });
     }
 
+    const rewardTitleRE = new RegExp(/^(Эпик|Очень редкий|Редкий|Необычный|Обычный) (.*)$/);
     if (battle.rewardTitle) {
-      result.rewardTitle = battle.rewardTitle;
+      const [, rarity, name] = battle.rewardTitle.match(rewardTitleRE);
+      result.rewardTitle = `${name} ${rarity}`;
+      switch (rarity) {
+        case 'Эпик':
+          result.rewardTitleColor = 'cw--color_human';
+          break;
+        case 'Очень редкий':
+          result.rewardTitleColor = 'cw--color_crystal';
+          break;
+        case 'Редкий':
+          result.rewardTitleColor = 'cw--color_metal';
+          break;
+        case 'Необычный':
+          result.rewardTitleColor = 'cw--color_credit';
+          break;
+
+        default:
+          result.rewardTitleColor = 'cw--color_white';
+          break;
+      }
     }
 
     result.isBattle1x1 = battle.isBattle1x1;

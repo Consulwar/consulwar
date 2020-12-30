@@ -200,11 +200,7 @@ Meteor.methods({
     if (fromGalaxy) {
       const fromHex = new Hex(fromGalaxy);
       flightData.hex = fromHex;
-      flightData.targetHex = (
-        enemyShip.data.mission.type === 'prisoners'
-          ? { x: 0, z: 0 }
-          : enemyShip.data.targetHex || fromHex
-      );
+      flightData.targetHex = enemyShip.data.targetHex || fromHex;
     }
 
     FlightEvents.add(flightData);

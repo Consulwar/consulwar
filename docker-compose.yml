@@ -1,0 +1,35 @@
+services:
+  consulwar-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - ./:/app:consistent
+      - meteor-local:/app/.meteor/local
+    user: "1000:1000"
+
+  consulwar-build:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app:consistent
+      - meteor-local:/app/.meteor/local
+    user: "1000:1000"
+    command: |
+      sh -c "
+        meteor npm install && \
+        meteor build --directory /tmp/build && \
+        tar -czf /app/bundle/consulwar-$(date +%Y-%m-%d-%H-%M).tar.gz -C /tmp/build/bundle . && \
+        rm -rf /tmp/build && \
+        echo 'Build completed. Bundle is available as bundle-YYYY-MM-DD-HH-MM.tar.gz'
+      "
+
+volumes:
+  meteor-local:
+    name: consulwar-meteor-local
+  mongo-data:
+    driver: local 

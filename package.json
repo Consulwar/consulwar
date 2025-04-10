@@ -37,7 +37,9 @@
   },
   "scripts": {
     "lint": "eslint ./imports;exit 0",
-    "pretest": "npm run lint --silent"
+    "pretest": "npm run lint --silent",
+    "dev": "docker-compose up --build consulwar-dev",
+    "build": "docker-compose up --build consulwar-build"
   },
   "eslintConfig": {
     "extends": "@meteorjs/eslint-config-meteor"

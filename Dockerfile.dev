@@ -1,0 +1,83 @@
+FROM ubuntu:18.04
+
+ARG NODE_VERSION=8.17.0
+ARG METEOR_VERSION=1.6.1.1
+ARG NVM_VERSION=0.35.3
+ARG USER=consulwar
+ARG GROUP=consulwar
+
+
+# Install basic dependencies and set locale
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    python \
+    build-essential \
+    locales \
+    && rm -rf /var/lib/apt/lists/* && \
+    locale-gen en_US.UTF-8
+
+# Set locale environment variables
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+VOLUME ["/app/node_modules", "/app/.meteor/local"]
+
+# Create meteor group and user with proper permissions
+RUN groupadd -g 1000 $GROUP && \
+    useradd -m -u 1000 -g $GROUP $USER && \
+    mkdir -p /app && \
+    mkdir -p /app/node_modules && \
+    mkdir -p /app/.meteor/local && \
+    chown -R $USER:$GROUP /app
+
+USER $USER
+
+# Set environment variables
+ENV HOME=/home/$USER
+ENV NVM_DIR=$HOME/.nvm
+ENV NODE_VERSION=8.17.0
+
+# Install NVM and Node 8.x as root
+RUN mkdir -p $NVM_DIR && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VERSION/install.sh | bash && \
+    . $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default
+
+# Add node and npm to path
+ENV NODE_PATH=$NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# Switch to meteor user and install Meteor
+RUN curl https://install.meteor.com/?release=$METEOR_VERSION | sh
+
+# Switch back to root to set up meteor command
+USER root
+
+# Automatically find the installed meteor-tool version
+RUN METEOR_TOOL_DIR=$(ls -d $HOME/.meteor/packages/meteor-tool/*) && \
+    cp "$METEOR_TOOL_DIR/mt-os.linux.x86_64/scripts/admin/launch-meteor" /usr/local/bin/meteor && \
+    chmod +x /usr/local/bin/meteor && \
+    chown -R $USER:$GROUP /usr/local/bin/meteor
+
+# Switch back to meteor user
+USER $USER
+
+# Add meteor to PATH
+ENV PATH=$HOME/.meteor:$PATH
+
+# Define private volumes
+
+# Set working directory
+WORKDIR /app 
+
+# Expose ports
+EXPOSE 3000 3001
+
+USER $USER
+
+# Default command (can be overridden)
+CMD meteor npm install && meteor --settings settings.json

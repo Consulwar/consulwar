@@ -198,7 +198,7 @@ Game.Cards = {
 
   canUse: function({
     cards,
-    ...options,
+    ...options
   }) {
     for (let cardId in cards) {
       if (cards.hasOwnProperty(cardId)) {

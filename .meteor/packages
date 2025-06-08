@@ -9,7 +9,6 @@ accounts-ui@1.2.0
 iron:router
 sacha:spin
 mizzao:user-status
-stylus@2.513.13
 browser-policy@1.1.0
 underscore@1.0.10
 
@@ -58,3 +57,5 @@ peerlibrary:control-mergebox
 reactive-dict
 email
 meteorhacks:aggregate
+coagmano:stylus@1.1.0
+coffeescript@2.4.1!

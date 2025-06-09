@@ -78,10 +78,20 @@ toggleTooltip = function() {
 };
 
 positionTooltip = function($el) {
-  var $tooltip, direction, hasOffsetLeft, hasOffsetTop, offLeft, offTop, position;
+  var $tooltip, direction, hasOffsetLeft, hasOffsetTop, offLeft, offTop, position, bodyOffset;
   direction = $el.attr('data-tooltip-direction') || 'n';
   $tooltip = $(".tooltip");
+  
+  // Get element position relative to document
   position = $el.offset();
+  
+  // Get body offset to account for centering on large screens
+  bodyOffset = $('body').offset() || { top: 0, left: 0 };
+  
+  // Adjust position to be relative to body instead of document
+  position.top -= bodyOffset.top;
+  position.left -= bodyOffset.left;
+  
   offLeft = $el.attr('data-tooltip-left');
   offTop = $el.attr('data-tooltip-top');
   if (_.isUndefined(offLeft)) {
@@ -98,7 +108,7 @@ positionTooltip = function($el) {
     switch (direction) {
       case 'w':
       case 'e':
-        return (center(vertically($tooltip, $el))) + offTop;
+        return (center(vertically($tooltip, $el))) + offTop - bodyOffset.top;
       case 'n':
         return position.top - $tooltip.outerHeight() - (hasOffsetTop ? offTop : offset[1]);
       case 's':
@@ -109,7 +119,7 @@ positionTooltip = function($el) {
     switch (direction) {
       case 'n':
       case 's':
-        return (center(horizontally($tooltip, $el))) + offLeft;
+        return (center(horizontally($tooltip, $el))) + offLeft - bodyOffset.left;
       case 'w':
         return position.left - $tooltip.outerWidth() - (hasOffsetLeft ? offLeft : offset[0]);
       case 'e':

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
+import { Tooltips } from '/moduls/game/client/tooltips';
 import LayoutMain from '/imports/client/ui/layouts/LayoutMain/LayoutMain';
 import PageIndex from '/imports/client/ui/pages/Index/PageIndex';
 

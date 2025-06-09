@@ -1,4 +1,5 @@
 import buzz from 'buzz';
+import { Tooltips } from '/moduls/game/client/tooltips';
 import '/imports/client/ui/blocks/Puzzle/Chat/PuzzleChat';
 import PuzzleCreate from '/imports/client/ui/blocks/Puzzle/Create/PuzzleCreate';
 

@@ -1,4 +1,5 @@
 import helpers from '/imports/lib/ui/helpers';
+import { Tooltips } from '/moduls/game/client/tooltips';
 import unitItems from '/imports/content/Unit/client';
 import resourceItems from '/imports/content/Resource/client';
 import allContainers from '/imports/content/Container/Fleet/client';

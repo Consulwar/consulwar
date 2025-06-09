@@ -1,56 +1,104 @@
+/**
+ * React 19 Popup System - Migration from Blaze
+ * Maintains the same external API and supports multiple template types:
+ * React components, BlazeComponents, and native Blaze templates
+ */
+
+import React, { useEffect, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
 import { Blaze } from 'meteor/blaze';
 import { Template } from 'meteor/templating';
-import { $ } from 'meteor/jquery';
 import Game from '/moduls/game/lib/main.game';
 import '/imports/client/ui/button/button.styl';
 
-initPopupClient = function() {
-Game.Popup = {
-  zIndex: 100,
+const BlazeWrapper = ({ template, data }) => {
+  const ref = useRef();
+  const viewRef = useRef();
 
-  show({
-    templateName,
-    data,
-    template = Template[templateName],
-    hideClose = false,
-    isMain,
-  }) {
-    this.zIndex += 1;
+  useEffect(() => {
+    if (ref.current && template) {
+      viewRef.current = Blaze.renderWithData(template, data || {}, ref.current);
+    }
+    return () => viewRef.current && Blaze.remove(viewRef.current);
+  }, [template, data]);
 
-    const popup = Blaze.renderWithData(Template.popup, {
-      zIndex: this.zIndex,
-      hideClose,
-      isMain,
-    }, $('.over')[0]);
-    const subtemplate = Blaze.renderWithData(
-      template,
-      data,
-      $(popup.firstNode()).find('.cw--popup__wrapper')[0],
-    );
-    popup.firstNode().focus();
-
-    subtemplate.onViewDestroyed(function() {
-      Game.Popup.zIndex -= 1;
-      Blaze.remove(popup);
-      const nextPopup = $('.popup').last()[0];
-      if (nextPopup) {
-        nextPopup.focus();
-      }
-    });
-  },
+  return <div ref={ref} />;
 };
 
-Template.popup.events({
-  'click .cw--popup__close'(event, templateInstance) {
-    Blaze.remove(templateInstance.view);
-  },
-  'keyup'(event, templateInstance) {
-    if (event.keyCode === 9) {
-      templateInstance.firstNode.focus();
+const Popup = ({ zIndex, hideClose, isMain, children, onClose }) => {
+  const ref = useRef();
+
+  useEffect(() => ref.current?.focus(), []);
+
+  const handleKeyUp = (e) => {
+    if (e.keyCode === 9) ref.current?.focus();
+    if (e.keyCode === 27) onClose();
+  };
+
+  return (
+    <div ref={ref} className="popup" style={{ zIndex }} tabIndex="-1" onKeyUp={handleKeyUp}>
+      <div className="cw--popup__wrapper">
+        {!hideClose && (
+          <button
+            className={`cw--popup__close ${isMain ? 'cw--PageIndex__closeButton' : 'cw--button cw--button_close'}`}
+            data-sound="hover,close"
+            onClick={onClose}
+          />
+        )}
+        {children}
+      </div>
+    </div>
+  );
+};
+
+initPopupClient = function() {
+  let zIndex = 100;
+  const activePopups = new Map();
+  let counter = 0;
+
+  const renderContent = (template, templateName, data) => {
+    if (template?.renderComponent) return template.renderComponent();
+    if (React.isValidElement(template)) return template;
+    if (typeof template === 'function') return React.createElement(template, data);
+    if (template) return <BlazeWrapper template={template} data={data} />;
+    if (templateName && Template[templateName]) return <BlazeWrapper template={Template[templateName]} data={data} />;
+    return <div>No template provided</div>;
+  };
+
+  Game.Popup = {
+    get zIndex() { return zIndex; },
+
+    show({ templateName, data, template = templateName ? Template[templateName] : null, hideClose = false, isMain }) {
+      const container = document.querySelector('.over');
+      if (!container) return console.error('Popup container .over not found');
+
+      const popupDiv = document.createElement('div');
+      container.appendChild(popupDiv);
+      const root = createRoot(popupDiv);
+      const id = ++counter;
+
+      const close = () => {
+        zIndex--;
+        root.unmount();
+        popupDiv.remove();
+        activePopups.delete(id);
+        document.querySelector('.popup:last-child')?.focus();
+      };
+
+      activePopups.set(id, close);
+      zIndex++;
+
+      root.render(
+        <Popup zIndex={zIndex} hideClose={hideClose} isMain={isMain} onClose={close}>
+          {renderContent(template, templateName, data)}
+        </Popup>
+      );
+
+      return { close, popupId: id };
+    },
+
+    closeAll() {
+      activePopups.forEach(close => close());
     }
-    if (event.keyCode === 27) {
-      Blaze.remove(templateInstance.view);
-    }
-  },
-});
+  };
 };
